@@ -1015,66 +1015,71 @@ public class Graph2FoldedMIF {
      *
      * @param xrefs - Object  to convert to PSI-Format
      * @return DOM-Object, representing a <xref>
-     * @exception  uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if it is not defined
+     * @throws uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException
+     *          if it is not defined
      * @see uk.ac.ebi.intact.model.Xref
      */
-    private Element procXrefCollection(Collection xrefs) throws ElementNotParseableException {
+    private Element procXrefCollection( Collection xrefs ) throws ElementNotParseableException {
         // keep track of the existence of a primary Xref
         Xref primaryXref = null;
 
         //generate DOM-Element
-        Element psiXref = doc.createElement("xref");
+        Element psiXref = doc.createElement( "xref" );
         //local elements processing...
-        Iterator iteratorPrim = xrefs.iterator();
-        //the first SPTR Intact Xref will become primary & secondary ref in PSI
-        while (iteratorPrim.hasNext()) {
-            Xref xref = (Xref) iteratorPrim.next();
-            try {
-                if ((xref.getCvDatabase().getShortLabel().equalsIgnoreCase("SPTR") && xref.getPrimaryId() != null) //SPTR found
-                        || !iteratorPrim.hasNext()) { //if no SPTR found, take any (here we take last)
-                    Element psiPrimaryRef = procPrimaryRef(xref);
-                    psiXref.appendChild(psiPrimaryRef);
+        //the first uniprot Intact Xref (preferably with identity qualifier) will become primaryRef in PSI
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            final Xref xref = (Xref) iterator.next();
+            final CvXrefQualifier cvXrefQualifier = xref.getCvXrefQualifier();
+
+            if( xref.getCvDatabase().getShortLabel().equalsIgnoreCase( "uniprot" ) ) {
+
+                if( cvXrefQualifier != null && cvXrefQualifier.getShortLabel().equalsIgnoreCase( "identity" ) ) {
+                    // found Xref( uniprot, identity ) -> we can stop
                     primaryXref = xref;
                     break;
+                } else {
+                    // found Xref( uniprot, not identity) -> carry on searching in case we find an identity later.
+                    primaryXref = xref;
                 }
-            } catch (NullPointerException e) {    //dont worry - try next one
-                logger.warn("Xref without primary db or id found ! Ignoring !");
-            } catch (ElementNotParseableException e) { //dont worry - try next one
-                logger.warn("Xref without primary db or id found ! Ignoring !");
             }
         }
 
-        //if we could not create a primaryID - throw exception
-//        if (!psiXref.hasChildNodes()) {
-//            logger.warn("xrefCollection failed, no child element as primary.");
-//            throw new ElementNotParseableException("couldn't generate primaryID - Xref not parseabel");
-//        }
-
+        if( primaryXref != null ) {
+            try {
+                Element psiPrimaryRef = procPrimaryRef( primaryXref );
+                psiXref.appendChild( psiPrimaryRef );
+            } catch ( NullPointerException e ) {    //dont worry - try next one
+                logger.warn( "Xref without primary db or id found ! Ignoring !" );
+            } catch ( ElementNotParseableException e ) { //dont worry - try next one
+                logger.warn( "Xref without primary db or id found ! Ignoring !" );
+            }
+        }
 
         //the rest becomes secondary Refs
-        Iterator iteratorSnd = xrefs.iterator();
-        while (iteratorSnd.hasNext()) {
-            Xref xref = (Xref) iteratorSnd.next();
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            final Xref xref = (Xref) iterator.next();
             try {
                 Element psiRef = null;
-                if ( primaryXref == null )
+                if( primaryXref == null ) {
                     psiRef = procPrimaryRef( xref );
-                else {
-                    if (primaryXref == xref) break; // don't put the primary as secondary !
+                } else {
+                    if( primaryXref == xref ) {
+                        continue; // Already processed, ship it !
+                    }
                     psiRef = procSecondaryRef( xref );
                 }
 
-                psiXref.appendChild(psiRef);
-            } catch (NullPointerException e) {
-                logger.warn("Xref without primary db or id found ! Ignoring !"); // not required here - so dont worry
-            } catch (ElementNotParseableException e) {
-                logger.warn("Xref without primary db or id found ! Ignoring !"); // not required here - so dont worry
+                psiXref.appendChild( psiRef );
+            } catch ( NullPointerException e ) {
+                logger.warn( "Xref without primary db or id found ! Ignoring !" ); // not required here - so dont worry
+            } catch ( ElementNotParseableException e ) {
+                logger.warn( "Xref without primary db or id found ! Ignoring !" ); // not required here - so dont worry
             }
         }
         //returning result DOMObject
-        if (!psiXref.hasChildNodes()) {
-            logger.warn("xrefcollection failed, no child elements.");
-            throw new ElementNotParseableException("Xref has no Child Elements");
+        if( !psiXref.hasChildNodes() ) {
+            logger.warn( "xrefcollection failed, no child elements." );
+            throw new ElementNotParseableException( "Xref has no Child Elements" );
         }
         return psiXref;
     }
