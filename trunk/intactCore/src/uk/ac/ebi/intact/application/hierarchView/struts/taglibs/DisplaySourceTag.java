@@ -73,24 +73,18 @@ public class DisplaySourceTag extends TagSupport {
                         return EVAL_PAGE;
                     }
 
-                    Iterator iterator = urls.iterator();
-                    int size = urls.size();
+                    /**
+                     * We store the source collection in the session in order to display it
+                     * with a dedicated tag (display:*).
+                     */
+                    session.setAttribute("sources", urls);
 
-                    if (0 == size) {
-                        pageContext.getOut().write ("No source found for that protein (AC = " + AC + ")");
-                    } else if (1 == size) {
-                        // only one source element, let's forward to the relevant page.
-                        LabelValueBean url = (LabelValueBean) iterator.next();
+                    if (urls.size() == 1) {
+                        // only one source element, let's display automatically the relevant page.
+                        LabelValueBean url = (LabelValueBean) urls.get(0);
                         String absoluteUrl = url.getValue();
-
                         user.setSourceURL (absoluteUrl);
-                    } else {
-                        /* More than 1 source available : display a list of link
-                         * So, store the List of item to display in the session and
-                         * call in the JSP display:table tag.
-                         */
-                        session.setAttribute("sources", urls);
-                    } // else
+                    }
                 } // else
             } // if
 
