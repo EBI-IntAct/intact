@@ -10,11 +10,10 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvEditForm;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.persistence.TransactionException;
-import uk.ac.ebi.intact.persistence.CreateException;
+import uk.ac.ebi.intact.business.IntactException;
 
 import org.apache.struts.action.*;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.*;
 
@@ -54,98 +53,35 @@ public class CvEditAction extends IntactBaseAction {
         IntactUserIF user = super.getIntactUser(request);
 
         if (theForm.isSubmitted()) {
-            // The object we are editing at the moment.
-            CvObject cvobj = user.getCurrentEditObject();
-
+            // Commit all the changes.
             try {
-                // Commit the changes.
-                //super.log("About to commit");
-                super.log("before the commit Transaction flag=" + user.isActive());
                 user.commit();
-                super.log("After the commit");
-
-                // Update the current edit object using the helper.
-                super.log("Before the update");
-                super.log("Transaction flag=" + user.isActive());
-                try {
-                    user.begin();
-                }
-                catch (TransactionException te) {
-                    // Unable to create an annotation.
-                    super.addError("error.transaction.begin", te.getNestedMessage());
-                    super.saveErrors(request);
-                    return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-                }
-                super.log("After transaction begun: " + user.isActive());
-
-                try {
-                    user.update(cvobj);
-                }
-                catch (CreateException ce) {
-                    // Error in committing our changes. Force a rollback.
-                    try {
-                        user.rollback();
-                    }
-                    catch (TransactionException te1) {
-                        // Just ignore it.
-                    }
-                    super.log("Unable to update the current CV object: " +
-                        ce.getMessage());
-
-                    // The errors to report back.
-                    super.addError("error.transaction", ce.getNestedMessage());
-                    super.saveErrors(request);
-                    return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-                }
-                super.log("After the update: " + user.isActive());
-                try {
-                    user.commit();
-                }
-                catch (TransactionException te) {
-                    // Unable to create an annotation.
-                    super.addError("error.transaction.commit", te.getNestedMessage());
-                    super.saveErrors(request);
-                    return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-                }
-                super.log("After committing the update: " + user.isActive());
             }
-            catch (TransactionException te) {
-                // Error in committing our changes. Force a rollback.
-                try {
-                    user.rollback();
-                }
-                catch (TransactionException te1) {
-                    // Just ignore it.
-                }
-                super.log("Unable to commit the current transaction: " +
-                    te.getMessage());
-
-                // The errors to report back.
-                super.addError("error.transaction", te.getNestedMessage());
+            catch (IntactException ie) {
+                // Unable to create an annotation.
+                super.addError("error.transaction.commit", ie.getNestedMessage());
                 super.saveErrors(request);
                 return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
             }
+            super.log("After committing the update: " + user.isActive());
         }
         else if (theForm.isDeleted()) {
             super.log("Cv Object is deleted");
             // Confirm the delete.
             return mapping.findForward(WebIntactConstants.FORWARD_DEL_CONFIRM);
         }
-        // To get this far,we must have selected either Submit or Cancel option.
-        super.log("Form is cancelled or submitted");
-
-        // If we have multiple search results then we go to the results page
-        // otherwise go to search page.
-//        Boolean singleCase = (Boolean) super.getSessionObject(request,
-//            WebIntactConstants.SINGLE_MATCH);
-//        // Ensure that we have this attribute or else NullPointerException.
-//        if ((singleCase != null) && !singleCase.booleanValue()) {
-//            // Multiple objects; go to results page.
-//            return mapping.findForward(WebIntactConstants.FORWARD_RESULTS);
-//        }
-//        // The default is to search again.
-//        return mapping.findForward(WebIntactConstants.FORWARD_SEARCH);
+        else {
+            // Assume Cancel is chosen.
+            try {
+                user.rollback();
+            }
+            catch (IntactException ie) {
+                // Unable to rollback the transaction.
+                super.addError("error.transaction.rollback", ie.getNestedMessage());
+                super.saveErrors(request);
+                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            }
+        }
         return mapping.findForward(super.fwdResultsOrSearch(request));
-
     }
 }
