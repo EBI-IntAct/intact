@@ -13,6 +13,7 @@ begin
                          ,'IA_GODENS_GODAGDENORM'
                          ,'IA_GODENS_GOPROT'
                          ,'IA_GODENS_DENSITY'
+                         ,'IA_PAYG'
                         )   
    ) loop
       dbms_output.put_line ('PROMPT Creating audit trigger for '||r_tab.table_name);
