@@ -59,6 +59,16 @@
         <forward name="failure"  path="/error.jsp"/>
     </global-forwards>
 
+    <!-- ========== Global Exceptions ======================================= -->
+    <global-exceptions>
+        <exception
+            key="error.session.expired"
+            path="/loginError.jsp"
+            scope="request"
+            type="uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException"
+        />
+    </global-exceptions>
+
     <!-- ========== Action Mapping Definitions ============================== -->
     <action-mappings>
 
