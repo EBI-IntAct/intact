@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -78,9 +79,9 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
      * @param protein the <code>Protein</code> object.
      */
     public ProteinBean(Protein protein) {
-        myInteractor = protein;
-        mySPAc = getSPAc(protein);
-        setOrganism(protein);
+        myInteractor = (Interactor) IntactHelper.getRealIntactObject(protein);
+        mySPAc = getSPAc();
+        setOrganism();
         setEditState(SAVE_NEW);
     }
 
@@ -90,20 +91,17 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
      */
     public ProteinBean(Component component) {
         myComponent = component;
-        myInteraction = component.getInteraction();
-        myInteractor = component.getInteractor();
-        Interactor interact = component.getInteractor();
-        mySPAc = getSPAc(interact);
+        myInteraction = (Interaction) IntactHelper.getRealIntactObject(
+                component.getInteraction());
+        myInteractor = (Interactor) IntactHelper.getRealIntactObject(
+                component.getInteractor());
+        mySPAc = getSPAc();
         myRole = component.getCvComponentRole().getShortLabel();
         myStoichiometry = component.getStoichiometry();
-        setOrganism(interact);
+        setOrganism();
     }
 
     // Read only properties.
-
-//    public Component getComponent() {
-//        return myComponent;
-//    }
 
     public Component getComponent(EditUserI user) throws SearchException {
         CvComponentRole newrole = getRole(user);
@@ -196,21 +194,6 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         return false;
     }
 
-    /**
-     * Marks this bean as it is ready for deletion from the view.
-     */
-//    public void markForDelete() {
-//        myDeleteFlag = true;
-//    }
-
-    /**
-     * True if this bean is marked for delete.
-     * @return true if this bean is marked for delete.
-     */
-//    public boolean isMarkedForDelete() {
-//        return myDeleteFlag;
-//    }
-
     public void update(EditUserI user) throws SearchException {
         CvComponentRole role = (CvComponentRole) user.getObjectByLabel(
                     CvComponentRole.class, myRole);
@@ -220,15 +203,15 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
 
     // Helper methods
 
-    private void setOrganism(Interactor interact) {
-        BioSource biosource = interact.getBioSource();
+    private void setOrganism() {
+        BioSource biosource = myInteractor.getBioSource();
         if (biosource != null) {
             myOrganism = biosource.getShortLabel();
         }
     }
 
-    private String getSPAc(Interactor interact) {
-        for (Iterator iter = interact.getXrefs().iterator(); iter.hasNext();) {
+    private String getSPAc() {
+        for (Iterator iter = myInteractor.getXrefs().iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
             // Only consider SwissProt database entries.
             if (xref.getCvDatabase().getShortLabel().equals("sptr")) {
