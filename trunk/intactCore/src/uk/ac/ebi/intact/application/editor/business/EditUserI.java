@@ -12,10 +12,7 @@ import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Date;
 import java.io.Serializable;
@@ -202,17 +199,6 @@ public interface EditUserI extends Serializable {
     public void setLastSearchClass(String classname);
 
     /**
-     * Returns the cached search result.
-     * @return the cached search result as an array of <code>ResultBean</code>
-     * objects.
-     *
-     * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(ResultBean))
-     * </pre>
-     */
-//    public Collection getSearchCache();
-
-    /**
      * Caches the last search result. Each object of <code>results</code> is
      * wrapped as a <code>ResultBean</code>.
      * @param results a collection of result beans from the search.
@@ -225,7 +211,9 @@ public interface EditUserI extends Serializable {
 
     /**
      * Adds a new result item to the cache.
-     * @param cvobj the <code>AnnotatedObject</code> object to add to the cache.
+     * @param cvobj the <code>AnnotatedObject</code> object to add to the cache if
+     * <code>cvobj</code> is of as same type as existing items in the search cache (
+     * avoid mixing diffrent types in the search cache).
      */
     public void addToSearchCache(AnnotatedObject cvobj);
 

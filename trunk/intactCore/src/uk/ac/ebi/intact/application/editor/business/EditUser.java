@@ -409,7 +409,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void addToSearchCache(AnnotatedObject anobj) {
-        mySearchCache.add(new ResultBean(anobj));
+        // Only add to the cache list if they are of same type; the check
+        // is made against the first element (assumes that rest are of same type).
+        ResultBean rb = (ResultBean) mySearchCache.iterator().next();
+        if (rb.isSameType(anobj)) {
+            // The same type; add it to the cache.
+            mySearchCache.add(new ResultBean(anobj));
+        }
     }
 
     public void updateSearchCache() {
