@@ -56,7 +56,6 @@
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
     <property name="axis.home" value="${env.AXIS_HOME}"/>
 
-
     <!-- Build working classpath -->
     <path id="project.class.path">
         <fileset dir="${lib.dir}">
@@ -66,7 +65,11 @@
         <pathelement path="${root.dest.dir}"/>
         <pathelement path="${dest.dir}"/>
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
+        <!-- Should be uncommented to compile with struts 1.1 -->
+<!--        <pathelement path="${intact.app.dir}/lib/struts.jar"/>-->
+        <!-- Remove the following line once hv is working with 1.1 -->
         <pathelement path="${root.lib.dir}/struts.jar"/>
+        <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-logging.jar"/>
     </path>
 
@@ -334,39 +337,42 @@
 
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
-	<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
-	   <fileset dir="${basedir}">
-		<include name="*.jsp"/>
-	   	<include name="*.css"/>
-	  	<include name="WEB-INF/config/struts-config.xml"/>
-	  	<include name="WEB-INF/tld/**"/>
-	   </fileset>
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${basedir}">
+                <include name="*.jsp"/>
+                <include name="*.css"/>
+                <include name="WEB-INF/config/struts-config.xml"/>
+                <include name="WEB-INF/tld/**"/>
+            </fileset>
 
-	   <!-- Include jar files for hv. -->
-	   <lib dir="${lib.dir}"/>
+            <!-- Include jar files for hv. -->
+            <lib dir="${lib.dir}"/>
 
-           <!-- Include the intact core  -->
-           <lib dir="${root.dist.dir}">
-		<include name="intact-core.jar"/>
-	   </lib>
+            <!-- Include the intact core  -->
+            <lib dir="${root.dist.dir}">
+                <include name="intact-core.jar"/>
+            </lib>
 
-           <!-- Include common jar files for struts (except for the latest struts). 
-                from the application level. -->
-           <lib dir="${intact.app.dir}/lib"/>
+            <!-- Include common jar files for struts (except for the latest struts).
+            from the application level. -->
+            <lib dir="${intact.app.dir}/lib">
+                <!-- Remove this exclusion once hv is running properly with struts1.1 -->
+                <exclude name="struts.jar"/>
+            </lib>
 
-	   <!-- Include common jar files from intact core. -->
-	   <lib dir="${root.lib.dir}">
-		<include name="jakarta-ojb-0.9.7.jar"/>
-		<include name="log4j-1.2.5.jar"/>
-                <include name="${db}"/>                
+            <!-- Include common jar files from intact core. -->
+            <lib dir="${root.lib.dir}">
+                <include name="jakarta-ojb-0.9.7.jar"/>
+                <include name="log4j-1.2.5.jar"/>
+                <include name="${db}"/>
+                <!-- Remove this line once hv is working with 1.1 -->
+                <include name="struts.jar"/>
                 <include name="commons-lang-1.0.jar"/>
+            </lib>
 
-		<exclude name="struts.jar"/>
-	   </lib>
-
-           <!-- HierarchView classes and config files. -->
-  	   <classes dir="${dest.dir}"/>
-	</war>
+            <!-- HierarchView classes and config files. -->
+            <classes dir="${dest.dir}"/>
+        </war>
     </target>
 
     <!-- =================================================================== -->
