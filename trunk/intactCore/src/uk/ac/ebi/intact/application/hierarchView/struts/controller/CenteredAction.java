@@ -97,7 +97,7 @@ public final class CenteredAction extends IntactBaseAction {
             }
 
             try {
-                GraphHelper gh = new GraphHelper ( user.getIntactHelper() );
+                GraphHelper gh = new GraphHelper ( user );
                 depthInt = Integer.parseInt (depth);
                 in = gh.getInteractionNetwork (AC, depthInt);
             } catch (Exception e) {

@@ -67,7 +67,7 @@ public class DisplaySourceTag extends TagSupport {
                 HighlightmentSource source = HighlightmentSource.getHighlightmentSource(method_class);
 
                 if (null == source) {
-                    pageContext.getOut().write ("source is null! <br>");
+                    pageContext.getOut().write ("An error occured when trying to retreive source.<br>");
                 } else {
                     Collection urls = source.getUrl(AC, session);
 
@@ -75,11 +75,9 @@ public class DisplaySourceTag extends TagSupport {
                     int size = urls.size();
 
                     if (0 == size) {
-
-                        pageContext.getOut().write ("no existing source for that protein (AC=" + AC + ")");
+                        pageContext.getOut().write ("No source found for that protein (AC = " + AC + ")");
 
                     } else if (1 == size) {
-
                         // only one source element, let's forward to the relevant page.
                         LabelValueBean url = (LabelValueBean) iterator.next();
                         String adress = url.getValue();
