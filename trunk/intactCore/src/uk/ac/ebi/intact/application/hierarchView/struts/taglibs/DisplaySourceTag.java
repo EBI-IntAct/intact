@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean;
 import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpSession;

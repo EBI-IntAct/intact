@@ -5,7 +5,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean;
 
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.Interactor;
