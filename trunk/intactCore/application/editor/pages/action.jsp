@@ -28,6 +28,18 @@
     function skipValidation() {
         bCancel = true;
     }
+
+    // Contains general sanity checking rules. Not serious errors but just warning
+    // messages.
+    function sanityCheck() {
+        var label = document.forms[0].shortLabel.value;
+        var size = label.length;
+        var suffix = label.substring(size -2, size);
+        if (suffix == '-x') {
+            return window.confirm('Short label contains the suffix -x, do you want to save as it is?');
+        }
+    }
+
 </script>
 
 <jsp:useBean id="user" scope="session"
@@ -42,14 +54,18 @@
 <table class="table" width="100%" cellspacing="1" cellpadding="2">
     <tr class="tableRowOdd">
         <td align="center" bgcolor="green">
-            <html:submit property="dispatch" disabled="<%=disable.equals(Boolean.TRUE)%>">
+            <html:submit property="dispatch"
+                disabled="<%=disable.equals(Boolean.TRUE)%>"
+                onclick="return sanityCheck()">
                 <bean:message key="button.submit"/>
             </html:submit>
             <br/><bean:message key="button.submit.titleKey"/>
         </td>
 
         <td align="center" bgcolor="palegreen">
-            <html:submit property="dispatch" disabled="<%=disable.equals(Boolean.TRUE)%>">
+            <html:submit property="dispatch"
+                disabled="<%=disable.equals(Boolean.TRUE)%>"
+                onclick="return sanityCheck()">
                 <bean:message key="button.save.continue"/>
             </html:submit>
             <br/><bean:message key="button.save.continue.titleKey"/>

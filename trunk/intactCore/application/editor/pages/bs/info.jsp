@@ -112,5 +112,6 @@
 	</span>	
 </html:messages>
 
+<html:errors property="bs.taxid"/>
 <html:errors property="bs.sanity.taxid.dup"/>
         
