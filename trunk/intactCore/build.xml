@@ -32,7 +32,7 @@
     <property name="ora.props.file.iweb" value="${config.dir}/oracle-iweb.properties"/>
 
     <!-- The non core files. -->
-    <property name="non.core.files" value="**/intact/${app.dir}/**"/>
+    <property name="non.core.files" value="**/intact/${app.dir}/**, **/intact/tutorial/**"/>
 
     <!-- Where the distribution files are going to be (jar) -->
     <property name="dist.dir" value="dist"/>
@@ -49,6 +49,10 @@
 
     <!-- The IntAct node properties. -->
     <property file="config/Institution.properties"/>
+
+    <!-- Tutorial specific properties -->
+    <property name="tutorial.src.dir" value="src/uk/ac/ebi/intact/tutorial"/>
+    <property name="tutorial.dest.dir" value="classes/uk/ac/ebi/intact/tutorial"/>
 
     <!-- Project classpath. -->
     <path id="project.class.path">
@@ -180,6 +184,14 @@
     <target name="clean-intact"
         description="Prepare intact module for a clean build">
         <ant dir="${app.dir}/intact" inheritAll="false" target="clean"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Cleans tutorial module -->
+    <target name="clean-tutorial"
+        description="Prepare tutorial module for a clean build">
+        <delete dir="${tutorial.dest.dir}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -442,6 +454,18 @@
         description="Compiles the data conversion module">
 
         <ant dir="${app.dir}/dataConversion" inheritAll="false" target="compile"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compiles the tutorial module. -->
+    <target name="compile-tutorial" depends="compile-core"
+        description="Compiles the tutorial module">
+
+        <javac srcdir="${tutorial.src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
+            source="1.4">
+            <classpath refid="project.class.path"/>
+        </javac>
     </target>
 
     <!-- =================================================================== -->
