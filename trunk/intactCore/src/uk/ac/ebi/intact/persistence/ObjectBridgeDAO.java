@@ -432,7 +432,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
              //3) copy the new data into it (harder than it sounds!!)
              //4) commit
              //
-             broker.removeFromCache(obj);
              logger.debug("doing update - searching for old data...");
              dummy = broker.getObjectByIdentity(new Identity(obj));
              if(dummy == null) {
@@ -687,7 +686,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             String msg = "remove for object type " + obj.getClass().getName() + " failed: see OBJ exception details";
             throw new TransactionException(msg, pbe);
         }
-
     }
 
     /**
