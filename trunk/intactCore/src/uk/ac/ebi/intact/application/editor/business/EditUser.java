@@ -468,6 +468,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myHelper.startTransaction(BusinessConstants.OBJECT_TX);
     }
 
+    public void endTransaction() throws IntactException {
+        myHelper.finishTransaction();
+    }
+
     public void commit() throws IntactException {
         myHelper.finishTransaction();
         endEditing();
