@@ -12,7 +12,7 @@ package uk.ac.ebi.intact.model;
  * @author Henning Hermjakob
  * @version $id$
  */
-public class Person extends BasicObject {
+public class Person extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //attributes

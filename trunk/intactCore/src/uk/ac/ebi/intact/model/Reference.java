@@ -14,7 +14,7 @@ import java.util.Collection;
  * @author hhe
  * @version $Id$
  */
-public class Reference extends BasicObject {
+public class Reference extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //attributes

@@ -12,7 +12,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $id$
  */
-public class BioSource extends AnnotatedObject implements Editable {
+public class BioSource extends AnnotatedObjectImpl implements Editable {
 
     ///////////////////////////////////////
     //attributes
@@ -179,7 +179,7 @@ public class BioSource extends AnnotatedObject implements Editable {
     /**
      * Equality for BioSources is currently based on equality for
      * <code>AnnotatedObjects</code> and taxIds (String representation of an integer).
-     * @see uk.ac.ebi.intact.model.AnnotatedObject
+     * @see uk.ac.ebi.intact.model.AnnotatedObjectImpl
      * @param o The object to check
      * @return true if the parameter equals this object, false otherwise
      */

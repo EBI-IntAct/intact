@@ -11,7 +11,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class Range extends BasicObject {
+public class Range extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //attributes

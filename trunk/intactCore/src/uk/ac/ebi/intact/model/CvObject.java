@@ -14,7 +14,7 @@ package uk.ac.ebi.intact.model;
  * @author Henning Hermjakob
  * @version $Id$
  */
-public abstract class CvObject extends AnnotatedObject {
+public abstract class CvObject extends AnnotatedObjectImpl {
 
     /**
      * no-arg constructor provided for compatibility with subclasses

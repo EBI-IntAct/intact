@@ -14,7 +14,7 @@ import java.util.Collection;
  * @author hhe
  * @version $Id$
  */
-public class Feature extends BasicObject {
+public class Feature extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //attributes

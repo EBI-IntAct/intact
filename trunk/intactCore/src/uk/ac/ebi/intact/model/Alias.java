@@ -17,7 +17,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe, Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class Alias extends BasicObject {
+public class Alias extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //attributes

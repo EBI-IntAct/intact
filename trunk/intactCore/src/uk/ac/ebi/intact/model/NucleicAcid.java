@@ -12,7 +12,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class NucleicAcid extends Interactor {
+public class NucleicAcid extends InteractorImpl {
 } // end NucleicAcid
 
 
