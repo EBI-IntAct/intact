@@ -35,7 +35,30 @@ public final class AnnotationChecker {
 
         final String type = annotation.getType();
 
-        if( !cache.keySet().contains( type ) ) {
+        if( "expressedIn".equalsIgnoreCase( type ) ) {
+            /**
+             * HACK: in order to get PSI to fit the IntAct model,
+             * ----  we 'stuff' the expressedIn value (as a bioSource shortlabel)
+             *       in a comment of the interaction as follow
+             *
+             *      eg.
+             *          here the protein having the ID P12345 is expressed in the BioSource
+             *          having the shortlabel: human-293t
+             *
+             *      ... code example ...
+             *
+             *      <attributeList>
+             *         <attribute name="expressedIn">P12345:human-293t</attribute>
+             *      </attributeList>
+             */
+
+            // check the protein ID
+
+
+            // Check that the BioSource exists
+
+
+        } else if( !cache.keySet().contains( type ) ) {
             CvTopic cvTopic = null;
 
             try {

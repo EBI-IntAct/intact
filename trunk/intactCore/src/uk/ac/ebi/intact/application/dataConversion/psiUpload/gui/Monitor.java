@@ -80,6 +80,10 @@ public class Monitor {
         frame.setVisible( false );
     }
 
+    private String getWindowsTitle() {
+        return progressBar.getString() + " - " + name;
+    }
+
     public void updateProteinProcessedCound( final int newCount ) {
 
         if( progressBar == null ) {
@@ -93,6 +97,7 @@ public class Monitor {
 
         // update the progress bar
         progressBar.setValue( current );
+        frame.setTitle( getWindowsTitle() );
     }
 
     public void updateProteinProcessedCound( final int newCount, final String status ) {
@@ -109,6 +114,7 @@ public class Monitor {
         // update status
         statusLabel.setText( status );
         statusLabel.update( frame.getGraphics() );
+        frame.setTitle( getWindowsTitle() );
     }
 
 

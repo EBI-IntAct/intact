@@ -34,9 +34,9 @@ public class AllJUnitTests extends TestCase {
      * @return a suite containing tests.
      *         <p/>
      *         <pre>
-     *                                                                         post: return != null
-     *                                                                         post: return->forall(obj : Object | obj.oclIsTypeOf(TestSuite))
-     *                                                                         </pre>
+     *                                                                                         post: return != null
+     *                                                                                         post: return->forall(obj : Object | obj.oclIsTypeOf(TestSuite))
+     *                                                                                         </pre>
      */
     public static Test suite() {
         final TestSuite suite = new TestSuite();

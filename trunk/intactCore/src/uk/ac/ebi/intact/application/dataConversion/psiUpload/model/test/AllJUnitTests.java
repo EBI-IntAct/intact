@@ -34,15 +34,32 @@ public class AllJUnitTests extends TestCase {
      * @return a suite containing tests.
      *         <p/>
      *         <pre>
-     *                                                                                                 post: return != null
-     *                                                                                                 post: return->forall(obj : Object | obj.oclIsTypeOf(TestSuite))
-     *                                                                                                 </pre>
+     *                                                                                                                 post: return != null
+     *                                                                                                                 post: return->forall(obj : Object | obj.oclIsTypeOf(TestSuite))
+     *                                                                                                                 </pre>
      */
     public static Test suite() {
         final TestSuite suite = new TestSuite();
 
+        suite.addTest( uk.ac.ebi.intact.application.dataConversion.psiUpload.model.util.test.AllJUnitTests.suite() );
+
         // Add your test suite here.
         suite.addTest( XrefTest.suite() );
+        suite.addTest( AnnotationTest.suite() );
+        suite.addTest( TissueTest.suite() );
+        suite.addTest( CellTypeTest.suite() );
+        suite.addTest( OrganismTest.suite() );
+        suite.addTest( HostOrganismTest.suite() );
+        suite.addTest( ConfidenceTest.suite() );
+        suite.addTest( ExpressedInTest.suite() );
+        suite.addTest( InteractionDetectionTest.suite() );
+        suite.addTest( InteractionTypeTest.suite() );
+        suite.addTest( ParticipantDetectionTest.suite() );
+        suite.addTest( ProteinInteractorTest.suite() );
+        suite.addTest( ProteinParticipantTest.suite() );
+        suite.addTest( ExperimentDescriptionTest.suite() );
+        suite.addTest( InteractionTest.suite() );
+        suite.addTest( EntryTest.suite() );
         return suite;
     }
 }

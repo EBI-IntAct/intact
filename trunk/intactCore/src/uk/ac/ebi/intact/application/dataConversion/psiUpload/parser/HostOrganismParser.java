@@ -6,12 +6,12 @@
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.parser;
 
 import org.w3c.dom.Element;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.HostOrganismTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.CellTypeTag;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.HostOrganismTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.TissueTag;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
 
 /**
  * That class .

@@ -390,7 +390,22 @@ public class PsiDataLoader {
                         }
 
                     } catch ( IntactException e ) {
+
                         e.printStackTrace();
+
+                        Throwable cause = e;
+                        while ( null != cause.getCause() ) {
+
+                            System.err.println( "" );
+                            System.err.println( "==================================================================" );
+                            System.err.println( "========================== C A U S E =============================" );
+                            System.err.println( "==================================================================" );
+
+                            cause.printStackTrace();
+
+                            cause = cause.getCause();
+                        }
+
                         System.exit( 1 );
                     }
 
