@@ -43,6 +43,13 @@ public interface DAO {
     public void begin() throws TransactionException;
 
     /**
+     * Locks the given object for <b>write</b> access. <b>{@link #begin()} must
+     * be called to prior to this method.</b>
+     * @param obj the object to lock for <b>write</b> access.
+     */
+    public void lock(Object obj);
+
+    /**
      *   closes a DAO (connection).
      *
      * @exception DataSourceException - thrown if the DAO cannot be closed (details in specific errors)
