@@ -145,11 +145,11 @@ public class IntactStatisticsBean {
 
         result.add(new DisplayStatisticsBean("Interactions",
                                              interactionCount,
-                                             "Number of prototype interactions and complexes"));
+                                             "Number of interactions and complexes"));
 
         result.add(new DisplayStatisticsBean("Binary interactions",
                                              binaryInteractionCount,
-                                             "Number of prototype interactions, n-ary interactions expanded according to the \"spoke\" model"));
+                                             "Number of interactions, n-ary interactions expanded according to the \"spoke\" model"));
 
         result.add(new DisplayStatisticsBean("Experiments",
                                              experimentCount,
