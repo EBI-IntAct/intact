@@ -15,10 +15,20 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
+
+<%-- Display the mutation only for a new feature --%>
+<c:if test="${user.view.newFeature}">
+    <html:submit titleKey="feature.mutation.toggle.button.titleKey"
+        onclick="skipValidation();" property="dispatch">
+        <bean:message key="feature.mutation.toggle.button"/>
+    </html:submit>
+</c:if>
 
 <h3>Parent protein</h3>
 
-<table width="100%" border="0" cellspacing="1" cellpadding="2">
+<%-- The table id is for testing purposes --%>
+<table width="100%" border="0" cellspacing="1" cellpadding="2" id="parent.protein">
     <tr class="tableRowHeader">
         <th class="tableCellHeader">
             <bean:message key="feature.parent.label.ac"/>
