@@ -22,6 +22,18 @@
 
         </section>
 
+        <section title="Recent changes" name="new">
+
+                <blockquote>
+                    Changes in January 2004:
+                    <ul>
+                        <li>
+                            PSI MI XML formatted downloads are now available.
+                        </li>
+                    </ul>
+
+                </blockquote>
+        </section>
 
         <section title="IntAct data representation" name="core">
 
@@ -50,8 +62,8 @@
                     second interaction object, in which the binding of Interleukin 2 to the
                     receptor is represented. Both Interaction objects are linked to an experiment,
                     in which the Interaction has been determined.
-                    <img align="left" src="./images/core/intactMainObjects2.jpg"/>
-                    <img align="right" src="./images/core/intactMainObjects.jpg"/>
+                    <img align="left" src="./images/core/intactMainObjects2.jpg" height="108" width="214"/>
+                    <img align="right" src="./images/core/intactMainObjects.jpg" height="160" width="344"/>
                     <br clear="all"/>
                     The following section describes the main objects in detail.
                 </blockquote>
@@ -212,7 +224,7 @@
                                 <a href="http://www.ebi.ac.uk/newt/index.html">NEWT taxonomy server</a>.
                             </dd>
                             <dt>shortLabel</dt>
-                            <dd>The shortLabel is the Swiss-Prot OS code, where available.</dd>
+                            <dd>The shortLabel is the UniProt OS code, where available.</dd>
                             <dt>fullName</dt>
                             <dd>The full name is the scientific name of the species.</dd>
                         </dl>
@@ -267,7 +279,7 @@
                     <blockquote>
                         The name is a short, concise name to identify an
                         object. Names for proteins are
-                        usually Swiss-Prot IDs, names for experiments are usually
+                        usually UniProt IDs, names for experiments are usually
                         the names of the first author of the publication. Names
                         will normally be stable, but they may change, e.g. when the
                         gene name of a protein is changed by the relevant nomenclature
@@ -849,7 +861,7 @@
                                 Since IntAct AC is the most specific, other search values are ignored
                                 if a value was specified for IntAct AC.
                                 <br/>
-                                If a search is performed by Swiss-Prot accession number (SP AC), and no matching protein is found, the editor will access an external server, by default the EBI SRS server, to retrieve the corresponding protein,
+                                If a search is performed by UniProt accession number (SP AC), and no matching protein is found, the editor will access an external server, by default the EBI SRS server, to retrieve the corresponding protein,
                                 <br/>
                                 <img src="./images/editor/editor-int-prot.jpg" title=""
                                     alt="Adding Proteins" width="1026" height="298"/>
@@ -1243,9 +1255,7 @@
             </section> <!-- hierarchView -->
 
 
-            <section name="graph2mif" title="Graph2MIF -  Export IntAct to PSI-MIF-Format">
-
-
+            <section name="graph2mif" title="Graph2MIF -  Export IntAct to PSI Molecular Interaction Format">
                 <section name="graph2mif.overview" title="Overview">
                     <blockquote>
                         This application exports a graph as PSI MI Format (MIF).
@@ -1339,9 +1349,7 @@
                         </blockquote>
                     </section>
                 </section>
-
-
-                <section name="graph2mif.references" title="PSI-MIF-Format">
+                <section name="graph2mif.references" title="PSI Molecular Interaction Format">
                     <blockquote>
 					  <ul>
 						For details about the mapping have a look at the annotated <a href="graph2MIF/MIF-1.23-annotated.xsd">MIF.xsd</a> or
@@ -1362,9 +1370,39 @@
                   please see the <a href="proviz/proviz.html">ProViz user manual</a>.
               </blockquote>
            </section>   <!-- end ProViz -->
- 
+  
+           <section name="targets" title="Targets - prediction of promising targets for pull-down experiments">
+              <blockquote>
+                Uncovering the interactome is one of the primary challenges in the post-genomic era. The topology information gained from the coverage of interaction space can shed light on the likely function and structure of proteins within the network (Vitkup et al, 2001). Here we present a list of the 'best baits' which give the highest return on experimental effort - i.e. those proteins which form 'hubs' in the interaction network. These lists are generated using the Pay-As-You-Go strategy (Lappe, M. Holm, L.(2004) Nature Biotechnology 22, pp 98 - 103) which detects and prioritises those proteins which have the highest likelihood of being hubs based on the current data within IntAct for various species. To illustrate the experimental effort which could be saved by using the strategy recommended here, take the Human interactome as an example. It is estimated that 50,000 experiments would be required to cover the entire human interactome following a purely random strategy for the selection of targets. The information gain here is close to linear for each experiment. This could be drastically reduced to less than 10,000 for 90% coverage of the entire human interactome by using the proteins listed here as baits. This would save years of experimental effort. This of course relies on the timely deposition of experimental data into the IntAct database in order that the Pay-As-You-Go algorithm should be fully uptodate and effective.
+              </blockquote>
+           </section>   <!-- end targets -->
+
+
+
         </section> <!-- applications -->
 
+        <section name="data" title="Data">
+           <section name="cvs" title="Controlled Vocabularies">
+            <blockquote>To ensure data consistency, IntAct makes intensive use of controlled vocabularies. All controlled vocabularies are available in Gene Ontology DAG-Edit format and HTML format, see the <a href="#download">download</a> section. Where the IntAct controlled vocabularies are identical to the <a href="http://psidev.sf.net/">PSI MI consortium</a> controlled vocabularies, only links to the PSI MI web site are given. Some IntAct annotation of controlled vocabulary terms does not fit the GO DAG-Edit format, but as we want to export all available information, some comments might have to be filtered out from the *.def files before editing them in GO DAG-Edit.
+            </blockquote>
+           </section>   <!-- end cvs -->
+           <section name="statistics" title="Statistics">
+<table border="1">
+<tr><td>Object type</td><td>Number</td><td>Remarks</td></tr>
+<tr><td>Experiment</td><td>5</td><td></td></tr>
+<tr><td>Interaction (binary or n-ary)</td><td>6</td><td></td></tr>
+<tr><td>Resulting binary interaction</td><td>7</td><td></td></tr>
+<tr><td>Controlled vocabulary term</td><td>8</td><td></td></tr>
+<tr><td>BioSource</td><td>9</td><td>Normally species, by may map to tissue, cell type etc.</td></tr>
+</table>
+           </section>   <!-- end statistics -->
+           <section name="download" title="Download">
+            <blockquote>
+IntAct data and controlled vocabularies are available from <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/">ftp://ftp.ebi.ac.uk/pub/databases/intact/</a>.
+            </blockquote>
+           </section>   <!-- end download -->
+        </section>   <!-- end data -->
+ 
     </division>
 
 </page>
