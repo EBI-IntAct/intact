@@ -205,11 +205,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
     public void clearTransactions() {
         super.clearTransactions();
 
-        // Clear defined features.
-//        myDefinedFeatures.clear();
-
-        // Clear Ranges.
-//        myRanges.clear();
+        // Clear transaction ranges.
         myRangesToAdd.clear();
         myRangesToDel.clear();
         myRangesToUpdate.clear();

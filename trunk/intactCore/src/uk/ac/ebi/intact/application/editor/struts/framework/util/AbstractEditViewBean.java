@@ -1025,9 +1025,6 @@ public abstract class AbstractEditViewBean implements Serializable {
         myEditClass = IntactHelper.getRealClassName(annobj);
         setShortLabel(annobj.getShortLabel());
         setFullName(annobj.getFullName());
-
-        // Clear any left overs from the previous transaction.
-//        clearTransactions();
     }
 
     private boolean equals(Object obj1, Object obj2) {
