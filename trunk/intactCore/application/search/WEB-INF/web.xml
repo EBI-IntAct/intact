@@ -29,6 +29,18 @@
         <param-value>/config/IntactTypes</param-value>
     </context-param>
 
+    <!-- mapping file used for converting java objects to XML (used by Castor) -->
+    <context-param>
+        <param-name>xmlMappingFile</param-name>
+        <param-value>/config/javaToXmlMapping.xml</param-value>
+    </context-param>
+
+    <!-- XSL stylesheet location NB must be specified relative to the tomcat bin dir -->
+    <context-param>
+        <param-name>xslFile</param-name>
+        <param-value>../webapps/search/intact.xsl</param-value>
+    </context-param>
+
     <!--  Class name of the data source object to be used    -->
     <context-param>
         <param-name>datasource</param-name>

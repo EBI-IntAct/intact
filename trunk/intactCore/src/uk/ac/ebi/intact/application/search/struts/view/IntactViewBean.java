@@ -58,6 +58,17 @@ public class IntactViewBean {
     private String data;
 
     /**
+     * Holds the object as XML
+     */
+    private String asXml;
+
+    /**
+     * stores the object being wrapped. Mainly used for
+     * alternative display options by other views.
+     */
+    private Object wrappedObject;
+
+    /**
      * Set attributes using values from AnnotatedObject. A coarse-grained method to
      * avoid multiple method calls.
      *
@@ -88,6 +99,9 @@ public class IntactViewBean {
         //in a web browser
         data = tmp.replaceAll("\n", "<BR>");
 
+        //save the object locally in case it is needed
+        wrappedObject = obj;
+
         // Cache the annotations and xrefs here to save it from loading
         // multiple times with each invocation to getAnnotations()
         // or getXrefs() methods.
@@ -95,6 +109,33 @@ public class IntactViewBean {
         makeCommentBeans(obj.getAnnotation());
         myXrefs.clear();
         makeXrefBeans(obj.getXref());*/
+    }
+
+    public Object getWrappedObject() {
+
+        return wrappedObject;
+    }
+
+    /**
+     * This method replaces the object currently held in this bean.
+     */
+    public void setWrappedObject(Object obj) {
+        this.initialise(obj);
+    }
+
+    /**
+     * This method sets the wrapped object as XML format. NO integrity
+     * check is performed!!
+     */
+    public void setAsXml(String xml) {
+        asXml = xml;
+    }
+
+    /**
+     * @return the wrapped object details in XML format, or null if not converted.
+     */
+    public String getAsXml() {
+       return asXml;
     }
 
     /**

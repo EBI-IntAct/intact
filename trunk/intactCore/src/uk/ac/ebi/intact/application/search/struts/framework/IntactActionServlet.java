@@ -67,6 +67,7 @@ public class IntactActionServlet extends ActionServlet {
             super.log(ExceptionUtils.getStackTrace(ie));
             // Carry on; may cause problems later on.
         }
+
         // Store the service into the session scope.
         ctx.setAttribute(WebIntactConstants.INTACT_SERVICE, service);
     }

@@ -1,9 +1,15 @@
 <%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants"%>
+
+<%@ page import="javax.xml.transform.*"%>
+<%@ page import="javax.xml.transform.stream.*"%>
+<%@ page import="javax.xml.parsers.*"%>
+<%@ page import="java.io.*"%>
+
  <%--
    /**
     * Search results page.
     *
-    * @author Sugath Mudali (smudali@ebi.ac.uk)
+    * @author Chris Lewington
     * @version $Id$
     */
 --%>
@@ -23,7 +29,6 @@
 <!-- just get the view Bean and dump its data to the web page-->
 <jsp:useBean id="viewbean" scope="session" class="uk.ac.ebi.intact.application.search.struts.view.IntactViewBean" />
 
-<%= viewbean.getData() %>
 <%--
 <display:table width="75%" name="viewbean"
     decorator="uk.ac.ebi.intact.application.search.struts.view.Wrapper">
@@ -34,6 +39,32 @@
 
 --%>
 
+<%
+    //Now get the XML source, the XSL source,
+    //apply the stylesheet transformation and write the result out...
+    StreamSource xml = new StreamSource(new StringReader(viewbean.getAsXml()));
+    String xslFile =  session.getServletContext().getInitParameter(WebIntactConstants.XSL_FILE);
+    StreamSource xsl = new StreamSource(new File(xslFile));
+
+    //write to the JSP output stream
+    StreamResult result = new StreamResult(out);
+
+    TransformerFactory factory = TransformerFactory.newInstance();
+    Transformer transformer = factory.newTransformer(xsl);
+
+    //now apply the XSL and send it to the output stream
+    transformer.transform(xml, result);
+
+    //get the results in XML format, or print as a String if not defined
+    /*String xml = viewbean.getAsXml();
+    if(xml != null) {
+        out.println(xml);
+    }
+    else {
+        out.println(viewbean.getData());
+    }*/
+
+%>
 
 <jsp:include page="footer.jsp" flush="true" />
 

@@ -12,6 +12,12 @@ import org.apache.struts.action.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.*;
+import javax.servlet.*;
+import java.io.*;
+
+//Castor classes needed for XML operations
+import org.exolab.castor.xml.*;
+import org.exolab.castor.mapping.*;
 
 import uk.ac.ebi.intact.application.search.struts.framework.util.*;
 import uk.ac.ebi.intact.application.search.struts.framework.*;
@@ -84,12 +90,36 @@ public class SearchAction extends IntactBaseAction {
        //convert to uppercase to be on the safe side...
         searchValue = theForm.getSearchString().toUpperCase();
 
-        super.log("search action: search param is " + searchParam);
-        super.log("search action: attempting to search by AC first...");
+       //set up the Cator XML mapping resources...
+        Mapping xmlMapping = new Mapping(getClass().getClassLoader());
+        Marshaller marshaller = null;
+        String mappingFile = servlet.getServletContext().getInitParameter(WebIntactConstants.XML_MAPPING_FILE);
+        super.log("setting up XML marshalling resources - using mapping file " + mappingFile);
+        try{
+            xmlMapping.loadMapping(getClass().getResource(mappingFile));
+        }
+        catch(Exception e) {
+            super.log("Search [ERROR] unable to load XML mapping file" + mappingFile);
+            super.log(ExceptionUtils.getStackTrace(e));
+        }
+
+        //define the XML to be written to a String so we can store it simply in the view bean...
+        StringWriter writer = new StringWriter();
+        try{
+            marshaller = new Marshaller(writer);
+            marshaller.setMapping(xmlMapping);
+        }
+        catch (Exception e){
+            super.log("Search [ERROR] unable to initialise the XML marshaller");
+            super.log(ExceptionUtils.getStackTrace(e));
+        }
+
+
 
         // Holds the result from the search.
         Collection results = null;
 
+        super.log("search action: attempting to search by AC first...");
         try {
             results = user.search(classname, searchParam, searchValue);
             if (results.isEmpty()) {
@@ -101,6 +131,7 @@ public class SearchAction extends IntactBaseAction {
                 catch(ClassNotFoundException ce) {
                     super.log("error - can't find class " + classname + ce.toString());
                 }
+
                 if(result == null) {
 
                     //no match on a label - try by xref (primary id)...
@@ -110,6 +141,14 @@ public class SearchAction extends IntactBaseAction {
                     }
                     catch(ClassNotFoundException ce) {
                         super.log("error - can't find class " + classname + ce.toString());
+                    }
+                    catch (IntactException se) {
+                        // Something failed - maybe teh xref doesn't link back to the object?
+                        super.log(ExceptionUtils.getStackTrace(se));
+                        // The errors to report back.
+                        super.addError("error.search", "the error [" + se.getMessage() + "] occurred. There may be no reference to " + searchClass + " objects from an xref");
+                        super.saveErrors(request);
+                        return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
                     }
                     if(result == null) {
 
@@ -158,9 +197,48 @@ public class SearchAction extends IntactBaseAction {
 
                 // The object to display.
                 Object obj = results.iterator().next();
-
                 IntactViewBean viewbean = super.getViewBean(session);
                 viewbean.initialise(obj);
+
+                //marshal the results into XML and put the data into the view bean
+                if(marshaller != null) {
+                    try{
+
+                        super.log("Object about to be converted to XML");
+                        super.log(viewbean.getWrappedObject().toString());
+
+                        marshaller.marshal(viewbean.getWrappedObject());
+
+                        //now get the XML result from the writer and log it...
+                        StringBuffer buf = writer.getBuffer();
+
+                        /*super.log("XML data built:");
+                        //strip out the xml header and add a few breaks first
+                        String tmp = buf.toString();
+                        String data = tmp.replaceAll("><", ">\n<");
+                        super.log(data);*/
+
+                        //set the raw XML data into the bean
+                        viewbean.setAsXml(buf.toString());
+
+                    }
+                    catch(MarshalException e){
+                        super.log("SearchAction [ERROR] failed to marshal results into XML format!");
+                        super.log(ExceptionUtils.getStackTrace(e));
+                    }
+                    catch(org.exolab.castor.xml.ValidationException ve){
+                        super.log("SearchAction [ERROR] marshalling failed - validation problem...");
+                        super.log(ExceptionUtils.getStackTrace(ve));
+                    }
+                }
+                else {
+
+                    //no marshaller - just write the object as a modified string
+                    super.log("no marshaller to write as XML - will use as string instead..");
+
+                }
+
+                //put the view bean into the session for use by the JSPs
                 session.setAttribute(WebIntactConstants.VIEW_BEAN, viewbean);
                 // Save the search parameters for results page to display.
                 session.setAttribute(WebIntactConstants.SEARCH_CRITERIA,
