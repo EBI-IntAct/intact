@@ -7,8 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.security;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.ArrayList;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.exception.InvalidLoginException;
@@ -43,16 +41,16 @@ public class LoginAction extends IntactBaseAction {
      * already been completed.
      *
      * @param mapping The ActionMapping used to select this instance
-     * @param actionForm The optional ActionForm bean for this request (if any)
+     * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+            throws Exception {
         // Clear any previous errors.
         super.clearErrors();
 
@@ -73,26 +71,29 @@ public class LoginAction extends IntactBaseAction {
         IntactUserIF user = null;
 
         // Create a new session if it hasn't created before.
-        HttpSession session = request.getSession();
-        if (session.isNew()) {
-            // New session.
-            Date createTime = new Date(session.getCreationTime());
-            super.log("Starting a new session; created at: " + createTime);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
         }
-        else {
-            // Using an existing session.
-            Date startTime = new Date(session.getCreationTime());
-            Date endTime = new Date(session.getLastAccessedTime());
-            super.log("Using a session created on time: " + startTime +
-                " and last accessed at " + endTime);
-            user = super.getIntactUser(session);
-//            super.log("Previous sessions stats");
-//            super.log("Logged in at: " + user.loginTime() + " logged off at: " +
-//                user.logoffTime());
-//            super.log("Was working on: " + user.getSelectedTopic());
-        }
+        // Create a new session.
+        session = request.getSession(true);
+//        if (session.isNew()) {
+//            // New session.
+//            Date createTime = new Date(session.getCreationTime());
+//            super.log("Starting a new session; created at: " + createTime);
+//        }
+//        else {
+//            // Using an existing session.
+//            Date startTime = new Date(session.getCreationTime());
+//            Date endTime = new Date(session.getLastAccessedTime());
+//            super.log("Using a session created on time: " + startTime +
+//                " and last accessed at " + endTime);
+//            super.log("Starting a new session (invalidating the previous one)");
+//            session.invalidate();
+//            //user = super.getIntactUser(session);
+//        }
         // user could be null if the user was logged off.
-        if (user == null) {
+//        if (user == null) {
             super.log("Creating a new user");
             try {
                 user = new IntactUserImpl(repfile, ds, username, password);
@@ -129,39 +130,20 @@ public class LoginAction extends IntactBaseAction {
                 super.saveErrors(request);
                 return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
             }
-        }
-        // Have a valid user. set the topic selected.
-        user.setSelectedTopic(theForm.getTopic());
+//        }
+//        else {
+//            super.log("Previous sessions stats");
+//            super.log("Logged in at: " + user.loginTime() + " logged off at: " +
+//                user.logoffTime());
+//            //super.log("Was working on: " + user.getSelectedTopic());
+//        }
         // Save the info in the user session object for us to retrieve later.
         super.log("user selected " + theForm.getTopic());
 
         // Need to access the user later.
         session.setAttribute(WebIntactConstants.INTACT_USER, user);
-
-        // Set up the various containers for this session.
-        session.setAttribute(WebIntactConstants.ANNOTS_TO_DELETE,
-            new ArrayList());
-        session.setAttribute(WebIntactConstants.ANNOTS_TO_ADD,
-            new ArrayList());
-        session.setAttribute(WebIntactConstants.XREFS_TO_DELETE,
-            new ArrayList());
-        session.setAttribute(WebIntactConstants.XREFS_TO_ADD,
-            new ArrayList());
-
-//
-//    UserContainer existingContainer = null;
-//    HttpSession session = request.getSession(false);
-//    if ( session != null ){
-//      existingContainer = getUserContainer(request);
-//      session.invalidate();
-//    }else{
-//      existingContainer = new UserContainer();
-//    }
-
-        // Create a new session for the user
-//    session = request.getSession(true);
-//    existingContainer.setUserView(userView);
-//    session.setAttribute(IConstants.USER_CONTAINER_KEY, existingContainer);
+        // Have a valid user. set the topic selected.
+        user.setSelectedTopic(theForm.getTopic());
 
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }
