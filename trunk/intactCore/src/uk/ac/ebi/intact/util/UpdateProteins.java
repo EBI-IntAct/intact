@@ -686,6 +686,7 @@ public class UpdateProteins extends UpdateProteinsI {
          */
         needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
         needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
+        needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_INTERPRO, interproDatabase);
 
         // update SPTR Xrefs
 
@@ -780,6 +781,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
         updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
         updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
+        updateXref (sptrEntry, protein, Factory.XREF_INTERPRO, interproDatabase);
 
         for ( int i = 0; i < proteinAC.length; i++ ) {
             String ac = proteinAC[ i ];

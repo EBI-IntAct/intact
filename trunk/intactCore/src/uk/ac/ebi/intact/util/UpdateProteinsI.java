@@ -48,6 +48,7 @@ public abstract class UpdateProteinsI {
     protected static CvDatabase sptrDatabase;
     protected static CvDatabase sgdDatabase;
     protected static CvDatabase goDatabase;
+    protected static CvDatabase interproDatabase;
 
     /**
      * Describe wether an Xref is related the primary SPTR AC (identityCrefQualifier)
@@ -128,6 +129,12 @@ public abstract class UpdateProteinsI {
             if (goDatabase == null) {
                 logger.error ("Unable to find the GO database in your IntAct node");
                 throw new UpdateException ("Unable to find the GO database in your IntAct node");
+            }
+
+            interproDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "interpro");
+            if (interproDatabase == null) {
+                logger.error ("Unable to find the interpro database in your IntAct node");
+                throw new UpdateException ("Unable to find the interpro database in your IntAct node");
             }
 
             identityXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class, "identity");
