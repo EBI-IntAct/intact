@@ -40,7 +40,6 @@ public class Utilities {
      *
      * @param o
      * @param p
-     * @return
      */
     public static boolean equals(Object o, Object p){
         if (o == p) return true;
