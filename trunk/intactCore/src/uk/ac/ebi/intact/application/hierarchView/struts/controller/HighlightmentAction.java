@@ -55,16 +55,16 @@ public final class HighlightmentAction extends IntactBaseAction {
             throws IOException, ServletException, SessionExpiredException {
 
         // Clear any previous errors.
-        super.clearErrors();
+        clearErrors();
 
         // get the current session
-        HttpSession session = super.getSession(request);
+        HttpSession session = getSession(request);
 
         // retreive user fron the session
-        IntactUserI user = super.getIntactUser(session);
+        IntactUserI user = getIntactUser(session);
         if (null == user) {
-            super.addError ("error.datasource.notCreated");
-            super.saveErrors(request);
+            addError ("error.datasource.notCreated");
+            saveErrors(request);
             return (mapping.findForward("error"));
         }
 
@@ -86,8 +86,8 @@ public final class HighlightmentAction extends IntactBaseAction {
         }
 
         // Report any errors we have discovered back to the original form
-        if (false == super.isErrorsEmpty()) {
-            super.saveErrors(request);
+        if (false == isErrorsEmpty()) {
+            saveErrors(request);
             return (new ActionForward(mapping.getInput()));
         }
 

@@ -53,24 +53,24 @@ public final class SourceAction extends IntactBaseAction {
             throws IOException, ServletException, SessionExpiredException {
 
         // Clear any previous errors.
-        super.clearErrors();
+        clearErrors();
 
         // get the current session
-        HttpSession session = super.getSession(request);
+        HttpSession session = getSession(request);
 
         // retreive user fron the session
-        IntactUserI user = super.getIntactUser(session);
+        IntactUserI user = getIntactUser(session);
         if (null == user) {
-            super.addError ("error.datasource.notCreated");
-            super.saveErrors(request);
+            addError ("error.datasource.notCreated");
+            saveErrors(request);
             return (mapping.findForward("error"));
         }
 
-        String someKeys = request.getParameter(StrutsConstants.ATTRIBUTE_KEYS);
+        String someKeys = request.getParameter (StrutsConstants.ATTRIBUTE_KEYS);
 
         if ((null == someKeys) || (someKeys.length() < 1)) {
             addError ("error.keys.required");
-            super.saveErrors(request);
+            saveErrors(request);
             return (new ActionForward(mapping.getInput()));
         }
 
@@ -78,7 +78,7 @@ public final class SourceAction extends IntactBaseAction {
         String source = user.getMethodClass();
 
         HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(source);
-        Collection keys = highlightmentSource.parseKeys(someKeys);
+        Collection keys = highlightmentSource.parseKeys (someKeys);
 
         user.setKeys(keys);
 

@@ -7,7 +7,6 @@ import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwo
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
 
-import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.simpleGraph.Node;
@@ -81,9 +80,9 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
         try {
             logger.info ("Try to get a list of GO term (from protein AC=" + aProteinAC + ")");
-            result = user.search ("uk.ac.ebi.intact.model.Protein","ac", aProteinAC);
-        } catch (SearchException se) {
-            logger.error ("When trying to get a list of GO", se);
+            result = user.getHelper().search ("uk.ac.ebi.intact.model.Protein","ac", aProteinAC);
+        } catch (IntactException ie) {
+            logger.error ("When trying to get a list of GO", ie);
             return null;
         }
 

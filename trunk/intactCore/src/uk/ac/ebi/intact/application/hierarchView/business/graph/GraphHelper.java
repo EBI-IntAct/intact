@@ -53,7 +53,7 @@ public class GraphHelper  {
 
         // Retreiving interactor from the database according to the given AC
         logger.info ("retrieving Interactor ...");
-        Collection results = this.user.search ("uk.ac.ebi.intact.model.Interactor", "ac", anAC);
+        Collection results = this.user.getHelper().search ("uk.ac.ebi.intact.model.Interactor", "ac", anAC);
         Iterator iter1     = results.iterator ();
 
         //there is at most one - ac is unique

@@ -6,8 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.business;
 
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
@@ -27,45 +27,31 @@ import java.io.Serializable;
  */
 public interface IntactUserI extends Serializable, HttpSessionBindingListener {
 
-    public String getAC();
-    public String getDepth();
+    public String  getAC();
+    public String  getDepth();
     public boolean getHasNoDepthLimit();
-    public String getMethodLabel();
-    public String getMethodClass();
-    public String getBehaviour();
-    public InteractionNetwork getInteractionNetwork();
+    public String  getMethodLabel();
+    public String  getMethodClass();
+    public String  getBehaviour();
     public ImageBean getImageBean();
     public Collection getKeys();
+    public InteractionNetwork getInteractionNetwork();
+    public IntactHelper getHelper ();
 
-    public void setAC(String AC);
+    public void setAC (String AC);
     public void setDepth (String depth);
     public void setHasNoDepthLimit (boolean flag);
     public void setMethodLabel (String methodLabel);
     public void setMethodClass (String methodClass);
-    public void setBehaviour(String behaviour);
-    public void setInteractionNetwork(InteractionNetwork in);
-    public void setImageBean(ImageBean imageBean);
-    public void setKeys(Collection keys);
-
+    public void setBehaviour (String behaviour);
+    public void setImageBean (ImageBean imageBean);
+    public void setKeys (Collection keys);
+    public void setInteractionNetwork (InteractionNetwork in);
 
     /**
      * Set the default value of user's data
      */
-    public void initUserData ();
-
-    /**
-     * Allows the user to retreive a collection of matching IntAct object
-     * according to a criteria given in parameter.
-     *
-     * @param objectType  object type you want to retreive
-     * @param searchParam the field you want to query on
-     * @param searchValue the value you are looking for
-     * @return a collection of <i>objectType</i> object
-     * @throws SearchException in case the search fail
-     */
-    public Collection search (String objectType,
-                              String searchParam,
-                              String searchValue) throws SearchException ;
+    public void init ();
 
 
     /**
