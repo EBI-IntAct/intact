@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -14,48 +14,48 @@ import java.util.*;
  */
 public abstract class AnnotatedObject extends BasicObject {
 
-  ///////////////////////////////////////
-  //attributes
+    ///////////////////////////////////////
+    //attributes
 
 
-/**
- * Short name for the object, not necessarily unique. To be used for example
- * in minimised displays of the object.
- */
+    /**
+     * Short name for the object, not necessarily unique. To be used for example
+     * in minimised displays of the object.
+     */
     protected String shortLabel;
 
-/**
- * The full name or a minimal description of the object.
- */
+    /**
+     * The full name or a minimal description of the object.
+     */
     protected String fullName;
 
-   ///////////////////////////////////////
-   // associations
+    ///////////////////////////////////////
+    // associations
 
-/**
- *
- */
+    /**
+     *
+     */
     public Collection annotation = new Vector();
-/**
- * The curator who has last edited the object.
- */
+    /**
+     * The curator who has last edited the object.
+     */
     public Person curator;
-/**
- *
- */
+    /**
+     *
+     */
     public Collection xref = new Vector();
-/**
- *
- */
+    /**
+     *
+     */
     public Collection referenceQualifier = new Vector();
-/**
- *
- */
+    /**
+     *
+     */
     public Collection reference = new Vector();
 
 
-  ///////////////////////////////////////
-  //access methods for attributes
+    ///////////////////////////////////////
+    //access methods for attributes
 
     public String getShortLabel() {
         return shortLabel;
@@ -70,9 +70,11 @@ public abstract class AnnotatedObject extends BasicObject {
         this.fullName = fullName;
     }
 
-   ///////////////////////////////////////
-   // access methods for associations
-
+    ///////////////////////////////////////
+    // access methods for associations
+    public void setAnnotation(Collection someAnnotation) {
+        this.annotation = someAnnotation;
+    }
     public Collection getAnnotation() {
         return annotation;
     }
@@ -85,9 +87,11 @@ public abstract class AnnotatedObject extends BasicObject {
     public Person getCurator() {
         return curator;
     }
-
     public void setCurator(Person person) {
         this.curator = person;
+    }
+    public void setXref(Collection someXref) {
+        this.xref = someXref;
     }
     public Collection getXref() {
         return xref;
@@ -106,6 +110,9 @@ public abstract class AnnotatedObject extends BasicObject {
     public void removeXref(Xref xref) {
         this.xref.remove(xref);
     }
+    public void setReferenceQualifier(Collection someReferenceQualifier) {
+        this.referenceQualifier = someReferenceQualifier;
+    }
     public Collection getReferenceQualifier() {
         return referenceQualifier;
     }
@@ -114,6 +121,9 @@ public abstract class AnnotatedObject extends BasicObject {
     }
     public void removeReferenceQualifier(ReferenceQualifier referenceQualifier) {
         this.referenceQualifier.remove(referenceQualifier);
+    }
+    public void setReference(Collection someReference) {
+        this.reference = someReference;
     }
     public Collection getReference() {
         return reference;
@@ -133,8 +143,8 @@ public abstract class AnnotatedObject extends BasicObject {
     // instance methods
 
     public String toString() {
-        return this.getAc() + "; owner=" + this.ownerAc 
-	    + "; name=" + this.shortLabel + "\n";
+        return this.getAc() + "; owner=" + this.ownerAc
+                + "; name=" + this.shortLabel + "\n";
     }
 
 

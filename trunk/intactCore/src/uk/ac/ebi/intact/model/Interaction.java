@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -24,7 +24,9 @@ public class Interaction extends Interactor {
     ///////////////////////////////////////
     //attributes
 
-    private String interactionTypeAc;
+    //attributes used for mapping BasicObjects - project synchron
+    private String cvInteractionTypeAc;
+
     /**
      * Represents ...
      */
@@ -65,6 +67,9 @@ public class Interaction extends Interactor {
     ///////////////////////////////////////
     // access methods for associations
 
+    public void setComponent(Collection someComponent) {
+        this.component = someComponent;
+    }
     public Collection getComponent() {
         return component;
     }
@@ -81,6 +86,9 @@ public class Interaction extends Interactor {
         if (removed) component.setInteraction(null);
     }
 
+    public void setReleased(Collection someReleased) {
+        this.released = someReleased;
+    }
     public Collection getReleased() {
         return released;
     }
@@ -97,6 +105,9 @@ public class Interaction extends Interactor {
         if (removed) product.setInteraction(null);
     }
 
+    public void setExperiment(Collection someExperiment) {
+        this.experiment = someExperiment;
+    }
     public Collection getExperiment() {
         return experiment;
     }
@@ -121,6 +132,13 @@ public class Interaction extends Interactor {
         this.cvInteractionType = cvInteractionType;
     }
 
+    //attributes used for mapping BasicObjects - project synchron
+    public String getCvInteractionTypeAc() {
+        return this.cvInteractionTypeAc;
+    }
+    public void setCvInteractionTypeAc(String ac) {
+        this.cvInteractionTypeAc = ac;
+    }
 
     ///////////////////////////////////////
     // instance methods

@@ -23,7 +23,7 @@ public class Component extends BasicObject {
   ///////////////////////////////////////
   //attributes
 
- private String interactorAc;
+    private String interactorAc;
     private String interactionAc;
     private String cvComponentRoleAc;
     private String expressedInAc;
@@ -101,7 +101,10 @@ public class Component extends BasicObject {
             this.interaction = interaction;
             if (interaction != null) interaction.addComponent(this);  
         }
-    } 
+    }
+    public void setBindingDomain(Collection someBindingDomain) {
+        this.bindingDomain = someBindingDomain;
+    }
     public Collection getBindingDomain() {
         return bindingDomain;
     }
@@ -121,8 +124,36 @@ public class Component extends BasicObject {
 
     public void setCvComponentRole(CvComponentRole cvComponentRole) {
         this.cvComponentRole = cvComponentRole;
-    } 
+    }
 
+    //attributes used for mapping BasicObjects - project synchron
+    public String getInteractorAc(){
+        return this.interactorAc;
+    }
+    public void setInteractorAc(String ac){
+        this.interactorAc = ac;
+    }
+
+    public String getInteractionAc(){
+        return this.interactionAc;
+    }
+    public void setInteractionAc(String ac){
+        this.interactionAc = ac;
+    }
+
+    public String getCvComponentRoleAc(){
+        return this.cvComponentRoleAc;
+    }
+    public void setCvComponentRoleAc(String ac){
+        this.cvComponentRoleAc = ac;
+    }
+
+    public String getExpressedInAc(){
+        return this.expressedInAc;
+    }
+    public void setExpressedInAc(String ac){
+        this.expressedInAc = ac;
+    }
 } // end Component
 
 
