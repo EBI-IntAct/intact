@@ -68,7 +68,7 @@ public class XrefAddAction extends AbstractEditorAction {
             if (!user.isQualifierListEmpty()) {
                 xqual = (CvXrefQualifier) user.getObjectByLabel(
                         CvXrefQualifier.class,
-                        ((String) theForm.get("qualifer")).trim());
+                        ((String) theForm.get("qualifier")).trim());
             }
             xref = new Xref(owner, db, (String) theForm.get("primaryId"),
                     (String) theForm.get("secondaryId"),
