@@ -289,12 +289,21 @@
             input="/do/setUpEditorForm"
             scope="request"
             parameter="dispatch">
+
+            <!-- Uses the input for these exceptions -->
+
             <!-- Validation for short label failed. -->
-<!--            <exception-->
-<!--                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"-->
-<!--                type="uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException"-->
-<!--                key="error.shortlabel.validation"-->
-<!--                path="/do/setUpEditorForm"/>-->
+            <exception
+                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+                type="uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException"
+                key="dummy.key"/>
+
+            <!-- Validation for experiment failed. -->
+            <exception
+                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
+                key="dummy.key"/>
+
             <!-- Back to the results page as we got here from a search result -->
             <forward name="results" path="match.layout"/>
             <!-- Back to the search page. -->
