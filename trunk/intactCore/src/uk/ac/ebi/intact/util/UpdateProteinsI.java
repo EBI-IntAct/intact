@@ -27,10 +27,6 @@ public abstract class UpdateProteinsI {
 
     private final static String CV_TOPIC_SEARCH_URL_ASCII = "search-url-ascii";
 
-    // TODO remove it after the April 2004 release
-    // explanation: the ControlledVocab necessary for that feature to work will not be available under CVS before.
-    private final static String SRS_SEARCH_URL = "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+([uniprot-acc:${ac}]|" +
-                                                 "[uniprot-isoid:${ac}])+-vn+2+-ascii";
 
     public static class UpdateException extends Exception {
 
@@ -187,18 +183,12 @@ public abstract class UpdateProteinsI {
                     String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
                                  " in the UNIPROT database";
                     logger.error( msg );
-
-                    // TODO remove that after the release of April 2004
-                    srsUrl = SRS_SEARCH_URL;
-//                    throw new UpdateException( msg );
+                    throw new UpdateException( msg );
                 }
             } else {
                 String msg = "No Annotation in the UNIPROT database, could not get the SRS URL.";
                 logger.error( msg );
-
-                // TODO remove that after the release of April 2004
-                srsUrl = SRS_SEARCH_URL;
-//                throw new UpdateException( msg );
+                throw new UpdateException( msg );
             }
 
             intactDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "intact" );
