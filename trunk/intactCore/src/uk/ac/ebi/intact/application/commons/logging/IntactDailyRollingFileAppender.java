@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.application.commons.logging;
+package uk.ac.ebi.intact.util.logging;
 
 import java.net.UnknownHostException;
 import java.net.InetAddress;
