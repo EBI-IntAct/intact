@@ -8,14 +8,12 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.util.LockManager;
-import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 
@@ -38,6 +36,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
     /**
      * Provides the mapping from resource key to method name.
+     *
      * @return Resource key / method name map.
      */
     protected Map getKeyMethodMap() {
@@ -52,15 +51,16 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
     /**
      * Action for submitting the edit form.
+     *
      * @param mapping the <code>ActionMapping</code> used to select this instance
      * @param form the optional <code>ActionForm</code> bean for this request
      * (if any).
      * @param request the HTTP request we are processing
      * @param response the HTTP response we are creating
      * @return failure mapping for any errors in updating the CV object; search
-     * mapping if the update is successful and the previous search has only one
-     * result; results mapping if the update is successful and the previous
-     * search has produced multiple results.
+     *         mapping if the update is successful and the previous search has only one
+     *         result; results mapping if the update is successful and the previous
+     *         search has produced multiple results.
      * @throws Exception for any uncaught errors.
      */
     public ActionForward submit(ActionMapping mapping,
@@ -92,15 +92,16 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
     /**
      * Action for saving the edit form.
+     *
      * @param mapping the <code>ActionMapping</code> used to select this instance
      * @param form the optional <code>ActionForm</code> bean for this request
      * (if any).
      * @param request the HTTP request we are processing
      * @param response the HTTP response we are creating
      * @return failure mapping for any errors in updating the CV object; search
-     * mapping if the update is successful and the previous search has only one
-     * result; results mapping if the update is successful and the previous
-     * search has produced multiple results.
+     *         mapping if the update is successful and the previous search has only one
+     *         result; results mapping if the update is successful and the previous
+     *         search has produced multiple results.
      * @throws Exception for any uncaught errors.
      */
     public ActionForward save(ActionMapping mapping,
@@ -119,21 +120,22 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
     /**
      * Action for cloning the edit form. The current object is saved before
      * cloning it.
+     *
      * @param mapping the <code>ActionMapping</code> used to select this instance
      * @param form the optional <code>ActionForm</code> bean for this request
      * (if any).
      * @param request the HTTP request we are processing
      * @param response the HTTP response we are creating
      * @return failure mapping for any errors in updating the CV object; search
-     * mapping if the update is successful and the previous search has only one
-     * result; results mapping if the update is successful and the previous
-     * search has produced multiple results.
+     *         mapping if the update is successful and the previous search has only one
+     *         result; results mapping if the update is successful and the previous
+     *         search has produced multiple results.
      * @throws Exception for any uncaught errors.
      */
     public ActionForward clone(ActionMapping mapping,
-                              ActionForm form,
-                              HttpServletRequest request,
-                              HttpServletResponse response)
+                               ActionForm form,
+                               HttpServletRequest request,
+                               HttpServletResponse response)
             throws Exception {
         // Save the form first. Analyze the forward path.
         ActionForward forward = save(mapping, form, request, response);
@@ -172,9 +174,9 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
      * @param request the HTTP request we are processing
      * @param response the HTTP response we are creating
      * @return failure mapping for any errors in cancelling the CV object; search
-     * mapping if the cancel is successful and the previous search has only one
-     * result; results mapping if the cancel is successful and the previous
-     * search has produced multiple results.
+     *         mapping if the cancel is successful and the previous search has only one
+     *         result; results mapping if the cancel is successful and the previous
+     *         search has produced multiple results.
      * @throws Exception for any uncaught errors.
      */
     public ActionForward addAnnot(ActionMapping mapping,
@@ -227,9 +229,9 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
      * @param request the HTTP request we are processing
      * @param response the HTTP response we are creating
      * @return failure mapping for any errors in cancelling the CV object; search
-     * mapping if the cancel is successful and the previous search has only one
-     * result; results mapping if the cancel is successful and the previous
-     * search has produced multiple results.
+     *         mapping if the cancel is successful and the previous search has only one
+     *         result; results mapping if the cancel is successful and the previous
+     *         search has produced multiple results.
      * @throws Exception for any uncaught errors.
      */
     public ActionForward addXref(ActionMapping mapping,
@@ -272,10 +274,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         }
         // We need to create a Xref here because getPrimaryIdLink() returns
         // the primary key with out the link if Xref is null.
-        CvDatabase db = (CvDatabase) user.getObjectByLabel(
-                CvDatabase.class, xb.getDatabase());
-        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
-                CvXrefQualifier.class, xb.getQualifier());
+        CvDatabase db = (CvDatabase) user.getObjectByLabel(CvDatabase.class, xb.getDatabase());
+        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(CvXrefQualifier.class, xb.getQualifier());
         Xref xref = new Xref(user.getInstitution(), db, xb.getPrimaryId(),
                 xb.getSecondaryId(), xb.getReleaseNumber(), xqual);
         // Add the bean to the view; new bean is wrapped around the xref.
@@ -286,21 +286,22 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
     /**
      * Handles both submit/save actions.
+     *
      * @param mapping the <code>ActionMapping</code> used to select this instance
      * @param form the optional <code>ActionForm</code> bean for this request
      * (if any).
      * @param request the HTTP request we are processing
      * @param submit true for submit action.
      * @return failure mapping for any errors in updating the CV object; search
-     * mapping if the update is successful and the previous search has only one
-     * result; results mapping if the update is successful and the previous
-     * search has produced multiple results.
+     *         mapping if the update is successful and the previous search has only one
+     *         result; results mapping if the update is successful and the previous
+     *         search has produced multiple results.
      * @throws Exception for any uncaught errors.
      */
     protected ActionForward submitForm(ActionMapping mapping,
-                                     ActionForm form,
-                                     HttpServletRequest request,
-                                     boolean submit)
+                                       ActionForm form,
+                                       HttpServletRequest request,
+                                       boolean submit)
             throws Exception {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
@@ -311,18 +312,14 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // The current form.
         EditorActionForm editForm = (EditorActionForm) form;
 
-        // Extract the short label for us to check for its uniqueness.
-        String formlabel = (String) editForm.getShortLabel();
+        // The new short label.
+        String newFormLabel = getShortLabel(user, view.getEditClass(),
+                editForm.getShortLabel());
 
-        // Validate the short label.
-        if (user.shortLabelExists(formlabel)) {
-            // Try to get the next available short label by adding -x if it doesn't
-            // end with -
-            formlabel += formlabel.endsWith("-") ? "x" : "-x" ;
-            String newSL = user.getNextAvailableShortLabel(view.getEditClass(), formlabel);
-            // Update the view and the form.
-            view.setShortLabel(newSL);
-            editForm.setShortLabel(newSL);
+        // Update the view and the form.
+        if (!view.getShortLabel().equals(newFormLabel)) {
+            view.setShortLabel(newFormLabel);
+            editForm.setShortLabel(newFormLabel);
         }
         // Runs the editor sanity checking
         view.sanityCheck(user);
@@ -372,5 +369,27 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // is used by subclasses (they need to distinguish between a success or
         // a failure such as duplicate short labels).
         return mapping.findForward(SUCCESS);
+    }
+
+    /**
+     * Returns a unique short label.
+     * @param user to get the next shortlabel available and to check whether given
+     * short label is unique or not.
+     * @param editClass the current editing class.
+     * @param formlabel the short label from the form.
+     * @return the new short label if <code>formlabel</code> is not unique or else
+     * it is as same as <code>formlabel</code>
+     * @throws SearchException for errors in searching the database.
+     */
+    protected String getShortLabel(EditUserI user, Class editClass,
+                                   String formlabel) throws SearchException {
+        // No need to get the next available short label if it is unique.
+        if (!user.shortLabelExists(formlabel)) {
+            return formlabel;
+        }
+        // Try to get the next available short label by adding -x if it doesn't
+        // end with -
+        formlabel += formlabel.endsWith("-") ? "x" : "-x";
+        return user.getNextAvailableShortLabel(editClass, formlabel);
     }
 }
