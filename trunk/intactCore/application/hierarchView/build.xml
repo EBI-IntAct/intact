@@ -273,8 +273,8 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
              <fileset dir="${images.dir}">
                  <!-- Do not remove hv specific files -->
                  <exclude name="clockT.gif"/>
-                 <exclude name="radio.png"/>
-                 <exclude name="radio-chk.png"/>
+                 <exclude name="select.gif"/>
+                 <exclude name="select-chk.gif"/>
             </fileset>
         </delete>
     </target>

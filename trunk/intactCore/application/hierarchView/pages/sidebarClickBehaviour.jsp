@@ -34,8 +34,8 @@
        String applicationContext = request.getContextPath();
        String centerItem = "";
        String addItem    = "";
-       String radio    = "<img src=\""+ applicationContext +"/images/radio.png\" border=\"0\">";
-       String radioChk = "<img src=\""+ applicationContext +"/images/radio-chk.png\" border=\"0\">";
+       String radio    = "<img src=\""+ applicationContext +"/images/select.gif\" border=\"0\">";
+       String radioChk = "<img src=\""+ applicationContext +"/images/select-chk.gif\" border=\"0\">";
 
        if (user.clickBehaviourIsAdd ()) {
            addItem = radioChk;
