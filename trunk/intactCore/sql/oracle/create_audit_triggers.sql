@@ -19,8 +19,20 @@ begin
       dbms_output.put_line (chr(9)||chr(9)||'l_event := ''D'';');
       dbms_output.put_line (chr(9)||'elsif updating then ');
       dbms_output.put_line (chr(9)||chr(9)||'l_event := ''U'';');
-      dbms_output.put_line (chr(9)||chr(9)||':new.updated   := sysdate; '); 
-      dbms_output.put_line (chr(9)||chr(9)||':new.userstamp := user;  '); 
+
+
+      for r_tabcols in (select lower(column_name) col
+                        from   user_tab_columns
+                        where  table_name = upper(r_tab.table_name)
+                        and    lower(column_name) in ('updated', 'userstamp')
+                        order  by column_id)
+      loop
+        if  r_tabcols.col = 'updated' then
+          dbms_output.put_line (chr(9)||chr(9)||':new.updated   := sysdate; '); 
+        else
+          dbms_output.put_line (chr(9)||chr(9)||':new.userstamp := user;  '); 
+        end if;
+      end loop;
 
       dbms_output.put_line (chr(9)||'end if ;  '); 
       dbms_output.put_line (chr(9)||''); 
@@ -28,8 +40,19 @@ begin
 
       dbms_output.put_line (chr(9)||'insert into '||r_tab.table_name||'_audit ');
       dbms_output.put_line (chr(9)||chr(9)||'( event ');
-      dbms_output.put_line (chr(9)||chr(9)||' ,updated   ');
-      dbms_output.put_line (chr(9)||chr(9)||' ,userstamp ');
+
+      for r_tabcols in (select lower(column_name) col
+                        from   user_tab_columns
+                        where  table_name = upper(r_tab.table_name)
+                        and    lower(column_name) in ('updated', 'userstamp')
+                        order  by column_id)
+      loop
+        if  r_tabcols.col = 'updated' then
+           dbms_output.put_line (chr(9)||chr(9)||' ,updated   ');
+        else
+           dbms_output.put_line (chr(9)||chr(9)||' ,userstamp ');
+        end if;
+      end loop;
 
       for r_tabcols in (select lower(column_name) column_name
                         from   user_tab_columns
@@ -42,8 +65,19 @@ begin
       dbms_output.put_line (chr(9)||chr(9)||')');
       dbms_output.put_line (chr(9)||'values');
       dbms_output.put_line (chr(9)||chr(9)||'( l_event ');
-      dbms_output.put_line (chr(9)||chr(9)||', sysdate ');
-      dbms_output.put_line (chr(9)||chr(9)||', user    ');
+
+      for r_tabcols in (select lower(column_name) col
+                        from   user_tab_columns
+                        where  table_name = upper(r_tab.table_name)
+                        and    lower(column_name) in ('updated', 'userstamp')
+                        order  by column_id)
+      loop
+        if  r_tabcols.col = 'updated' then
+           dbms_output.put_line (chr(9)||chr(9)||', sysdate ');
+        else
+           dbms_output.put_line (chr(9)||chr(9)||', user    ');
+        end if;
+      end loop;
 
       for r_tabcols in (select lower(column_name) column_name
                               ,data_type
@@ -52,11 +86,7 @@ begin
                         and    lower(column_name) not in ('updated', 'userstamp')
                         order  by column_id)
       loop
-          --if r_tabcols.data_type != 'CLOB' then
               dbms_output.put_line (chr(9)||chr(9)||', :old.'||r_tabcols.column_name);
-          --else
-   		  --    dbms_output.put_line (chr(9)||chr(9)||', decode (nvl(dbms_lob.compare(:new.'||r_tabcols.column_name||', :old.'||r_tabcols.column_name||'),0) ,0, ''CLOB UNCHANGED'', :old.'||r_tabcols.column_name||')' );            
-          --end if;
       end loop;
 
       dbms_output.put_line (chr(9)||chr(9)||');');
