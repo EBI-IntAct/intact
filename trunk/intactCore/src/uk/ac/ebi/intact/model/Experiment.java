@@ -84,16 +84,17 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
      * source of the experiment data (ie organism). A side-effect of this constructor is to
      * set the <code>created</code> and <code>updated</code> fields of the instance
      * to the current time.
-     * @param owner The <code>Institution</code> which owns this Experiment (non-null)
+     *
+     * @param owner      The <code>Institution</code> which owns this Experiment (non-null)
      * @param shortLabel A String which can be used to refer to the Experiment (non-null)
-     * @param source The biological source of the experimental data (non-null)
-     * @exception NullPointerException thrown if any of the parameters are not set
+     * @param source     The biological source of the experimental data (non-null)
+     * @throws NullPointerException thrown if any of the parameters are not set
      */
-    public Experiment(Institution owner, String shortLabel, BioSource source) {
+    public Experiment( Institution owner, String shortLabel, BioSource source ) {
 
         //TODO Q: does it make sense to create an Experiment without interactions? If not then all the Cv stuff (eg ident method etc) needs to be set also...
-        super(shortLabel, owner);
-        if(source == null) throw new NullPointerException("valid Experiment must have a BioSource!");
+        super( shortLabel, owner );
+        if( source == null ) throw new NullPointerException( "valid Experiment must have a BioSource!" );
         this.bioSource = source;
 
     }
@@ -249,19 +250,28 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
     ///////////////////////////////////////
     // instance methods
 
-    public String toString(){
-        String result;
-        Iterator i;
+    public String toString() {
+        StringBuffer result = new StringBuffer( 128 );
 
-        result = "Experiment: " + this.getAc() + " " + getShortLabel() + " [ " + NEW_LINE;
-        if (null != getInteractions()){
-            i = getInteractions().iterator();
-            while(i.hasNext()){
-                result = result + i.next();
+        result.append("Experiment [AC: " + this.getAc() + " Shortlabel: " + getShortLabel() );
+        result.append(" BioSource: " + (getBioSource() == null ? "-" : getBioSource().getShortLabel() ) );
+        result.append( NEW_LINE );
+        result.append("CvIdentification: " + ( cvIdentification == null ? "-" : cvIdentification.getShortLabel() ));
+        result.append( NEW_LINE );
+        result.append("CvInteraction: " + ( cvInteraction == null ? "NOT SPECIFIED" : cvInteraction.getShortLabel() ) );
+        result.append( NEW_LINE );
+        result.append("Interactions (" );
+        if( null != getInteractions() ) {
+            for( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
+                Interaction interaction = (Interaction) iterator.next();
+                result.append( interaction.getShortLabel() ).append( ", " );
             }
         }
+        result.append( ')' );
+        result.append( NEW_LINE );
+        result.append( ']' );
 
-        return result + "] Experiment";
+        return result.toString();
     }
 
 } // end Experiment
