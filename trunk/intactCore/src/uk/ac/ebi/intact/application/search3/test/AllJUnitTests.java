@@ -9,6 +9,7 @@ import junit.framework.TestSuite;
  * @version AllJunitTests.java Date: Jan 20, 2005 Time: 1:56:47 PM
  */
 public class AllJUnitTests extends TestCase {
+
     /**
      * The constructor with the test name.
      *
@@ -25,8 +26,7 @@ public class AllJUnitTests extends TestCase {
      */
     public static Test suite() {
         TestSuite suite = new TestSuite();
-        suite.addTest(TooLargeTest.suite());
-        suite.addTest(BinarTest.suite());
+        suite.addTest(SearchValidatorTest.suite());
         return suite;
     }
 }
