@@ -289,11 +289,12 @@ public abstract class UpdateProteinsI {
      * Sets the internal helper. This method is used by the editor to set the
      * helper, call necessary methods and close the helper again (the objective
      * is to keep the scope of the Intact helper to minimum).
+     *
      * @param helper the Intact helper to set.
      */
-    public void setIntactHelper(IntactHelper helper) {
+    public void setIntactHelper( IntactHelper helper ) {
         this.helper = helper;
-        this.bioSourceFactory.setIntactHelper(helper);
+        this.bioSourceFactory.setIntactHelper( helper );
     }
 
     /**
