@@ -1,15 +1,18 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.application.statisticView.business.Constants;
 
 import java.util.*;
 import java.sql.Timestamp;
+
+import org.apache.log4j.Logger;
 
 /**
  * This utility allows to get all statistics from the IA_Statistics table.
@@ -36,19 +39,15 @@ import java.sql.Timestamp;
  */
 public class StatisticsSet {
 
+    static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     //------ INSTANCE VARIABLES ----//
-
-    private static ArrayList statCollection = new ArrayList();
-
+    private ArrayList statCollection = null;
 
 
     //--------- PROTECTED METHOD ---------------------//
 
-
-
     /**
-     *
      * This private method is called by the others public method of this class.
      *
      * Get all data of the IA_Statistics table in the IntAct database, thanks to the search method
@@ -56,26 +55,28 @@ public class StatisticsSet {
      * The null parameter in the search method means to retrieve all the data from a table via OJB
      * and JDBC.
      *
+     * As that method can be called by several thread simultaneously, collection data can be corrupted
+     * if the method is not synchronized.
+     *
      * @param helper One instance of the IntactHelper class has to be passed in parameter, to
-     *                  use the search method.
+     *               use the search method.
      */
-    private static void getAllStatisticsIntAct (IntactHelper helper) {
-
+    private synchronized void getAllStatisticsIntAct (IntactHelper helper) throws IntactException {
 
         try {
-
-                // search method to get the IntactStatistics object and all statistics in IntAct
-                // the ObjectBridgeDAO class should allow us to put a null parameter as below
+            // search method to get the IntactStatistics object and all statistics in IntAct
+            // null parameter means no restrictive criteria.
             Collection stat = helper.search("uk.ac.ebi.intact.util.IntactStatistics", "ac", null);
 
-            statCollection.clear();
+            statCollection = new ArrayList();
 
+            logger.info ("Content of the table");
             for (Iterator iterator = stat.iterator(); iterator.hasNext();) {
 
-                    // to retrieve only one line
-                ArrayList oneRow = new ArrayList();
+                // to retrieve only one line
+                ArrayList oneRow = new ArrayList(7);
 
-                    // return the next IntactStatistics object
+                // return the next IntactStatistics object
                 IntactStatistics intStat = (IntactStatistics) iterator.next();
 
                 oneRow.add(intStat.getTimestamp());
@@ -86,96 +87,84 @@ public class StatisticsSet {
                 oneRow.add(new Integer(intStat.getNumberOfExperiments()));
                 oneRow.add(new Integer(intStat.getNumberOfGoTerms()));
 
-
-                    // only for tests... to remove afterwards
+                // only for tests... to remove afterwards
                 Timestamp timestamp = intStat.getTimestamp();
-                int protNumber = intStat.getNumberOfProteins();
-                int interNumber = intStat.getNumberOfInteractions();
+
+                int protNumber     = intStat.getNumberOfProteins();
+                int interNumber    = intStat.getNumberOfInteractions();
                 int binInterNumber = intStat.getNumberOfBinaryInteractions();
-                int complexNumber = intStat.getNumberOfComplexInteractions();
-                int expNumber = intStat.getNumberOfExperiments();
-                int termNumber = intStat.getNumberOfGoTerms();
+                int complexNumber  = intStat.getNumberOfComplexInteractions();
+                int expNumber      = intStat.getNumberOfExperiments();
+                int termNumber     = intStat.getNumberOfGoTerms();
 
-                System.out.println("results for this line: "
-                                        + timestamp + " " + protNumber
-                                        + " " + interNumber + " " + binInterNumber
-                                        + " " + complexNumber + " "+ expNumber
-                                        + " " + termNumber);
+                logger.info (timestamp + " " +
+                             protNumber + " " +
+                             interNumber + " " +
+                             binInterNumber + " " +
+                             complexNumber + " "+
+                             expNumber +" " +
+                             termNumber);
 
-
-                statCollection.add(oneRow);
+                statCollection.add (oneRow);
             }
-
-
         }
         catch (IntactException ie) {
-            System.err.println (ie);
+            logger.error ("when trying to get all statistics, cause: " + ie.getRootCause(), ie);
+            throw ie;
         }
 
     }
 
     /**
-     *
-     * Retrieve the more recent timestamp of the Statistics table
+     * Retrieve the latest timestamp of the Statistics table
      *
      * @param helper to call the getAllStatisticsIntAct method
      * @return Timestamp the timestamp of the last line in the Statistics table
      */
-    public static Timestamp getLastTimestamp(IntactHelper helper) {
-
-        getAllStatisticsIntAct(helper);
-
-        ArrayList getLastRow = (ArrayList)statCollection.get(statCollection.size()-1);
-
-            // to test this class
-        Timestamp forTest = (Timestamp)getLastRow.get(0);
-        System.out.println("the last timestamp is : "+forTest);
-
-        return (Timestamp)getLastRow.get(0);
-
+    public Timestamp getLastTimestamp(IntactHelper helper) throws IntactException{
+            getAllStatisticsIntAct(helper);
+            ArrayList lastRow = (ArrayList) statCollection.get (statCollection.size()-1);
+            return (Timestamp) lastRow.get(0);
     }
 
     /**
-    *
-    * Retrieve the latest data of the Statistics table
-    *
-    * @param helper to call the getAllStatisticsIntAct method
-    * @return Collection which contains the latest data of the Statistics table
-    */
-    public static Collection getLastRow(IntactHelper helper) {
-
-        getAllStatisticsIntAct(helper);
-
-        return (ArrayList)statCollection.get(statCollection.size()-1);
-    }
-
-    /**
-    *
-    * Retrieve the data of the column required in the Statistics table
-    * like for instance, the list of quantity of proteins stored in this table over time
-    *
-    * @param helper to call the getAllStatisticsIntAct method
-    * @return Collection which contains the list of data of one column of the Statistics table
-    */
-    public static Collection getListOfOneField(IntactHelper helper, int fieldToRetrieve) {
-
-        getAllStatisticsIntAct(helper);
-
-        ArrayList theDataList = new ArrayList();
-
-        int i = 0;
-        while ( i < statCollection.size() ) {
-            ArrayList getOneRow = (ArrayList)statCollection.get(i);
-            theDataList.add(getOneRow.get(fieldToRetrieve));
-            i++;
-        }
-        return theDataList;
-    }
-
-    /**
+     * Retrieve the latest data of the Statistics table
      *
-     * @param args
-     * @throws Exception
+     * @param helper to call the getAllStatisticsIntAct method
+     * @return Collection which contains the latest data of the Statistics table
+     */
+    public Collection getLastRow (IntactHelper helper) throws IntactException {
+            getAllStatisticsIntAct(helper);
+            return (ArrayList) statCollection.get (statCollection.size()-1);
+    }
+
+    /**
+     * Retrieve the data of the column required in the Statistics table
+     * like for instance, the list of quantity of proteins stored in this table over time.
+     *
+     * @param helper to call the getAllStatisticsIntAct method
+     * @return Collection which contains the list of data of one column of the Statistics table
+     */
+    public Collection getListOfOneField (IntactHelper helper, int fieldToRetrieve)
+            throws IntactException {
+
+            getAllStatisticsIntAct(helper);
+
+            ArrayList theDataList = new ArrayList();
+
+            int i = 0;
+            while ( i < statCollection.size() ) {
+                ArrayList getOneRow = (ArrayList)statCollection.get(i);
+                theDataList.add(getOneRow.get(fieldToRetrieve));
+                i++;
+            }
+            return theDataList;
+    }
+
+
+
+    /**
+     * D E M O
      */
     public static void main(String[] args) throws Exception {
 
@@ -183,15 +172,10 @@ public class StatisticsSet {
         IntactHelper helper = new IntactHelper();
 
         System.out.println ("utility of the class: count some data in IntAct ");
-
         pfd.getLastTimestamp(helper);
-
         pfd.getLastRow(helper);
-
         pfd.getListOfOneField(helper, 0);
-
     }
-
 }
 
 
