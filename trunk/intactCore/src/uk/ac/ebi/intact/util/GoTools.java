@@ -35,7 +35,7 @@ public class GoTools {
     /**
      *  Maximum length of a fullName
      */
-    private static final int MAX_NAME_LEN = 50;
+    private static final int MAX_NAME_LEN = 250;
 
     /**
      * Generate a label which is unique in targetClass and resembles label.
@@ -136,12 +136,6 @@ public class GoTools {
         current.setFullName(goTerm.substring(0,Math.min(goTerm.length(), MAX_NAME_LEN)));
 
         helper.update(current);
-
-        // Update GO term
-        // The term needs to be stored separately, as the length may exceed the maximum fullName length.
-        current.updateUniqueAnnotation((CvTopic) helper.getObjectByLabel(CvTopic.class, "GO term"),
-                                       goTerm,
-                                       (Institution) helper.getObjectByLabel(Institution.class, "EBI"));
 
         // Update GO description
         if (null != definition.get("definition")) {
@@ -313,16 +307,12 @@ public class GoTools {
     public static String toGoString(CvObject current){
         StringBuffer buf = new StringBuffer();
 
-        Collection annotation = current.getAnnotation();
-        for (Iterator iterator = annotation.iterator(); iterator.hasNext();) {
-            Annotation a = (Annotation) iterator.next();
-            if (a.getCvTopic().getShortLabel().equals("GO term")){
-                buf.append("term: ");
-                buf.append(a.getAnnotationText());
-                buf.append("\n");
-            }
-        }
+        // Write GO term
+        buf.append("term: ");
+        buf.append(current.getFullName());
+        buf.append("\n");
 
+        // Write GO id
         Collection xref = current.getXref();
         for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
             Xref x = (Xref) iterator.next();
@@ -333,7 +323,8 @@ public class GoTools {
             }
         }
 
-        annotation = current.getAnnotation();
+        // Write GO definition
+        Collection annotation = current.getAnnotation();
         for (Iterator iterator = annotation.iterator(); iterator.hasNext();) {
             Annotation a = (Annotation) iterator.next();
 
@@ -344,6 +335,7 @@ public class GoTools {
             }
         }
 
+        // Write definition references
         xref = current.getXref();
         for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
             Xref x = (Xref) iterator.next();
@@ -354,6 +346,7 @@ public class GoTools {
             }
         }
 
+        // Write GO comment
         annotation = current.getAnnotation();
         for (Iterator iterator = annotation.iterator(); iterator.hasNext();) {
             Annotation a = (Annotation) iterator.next();

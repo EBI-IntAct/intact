@@ -165,14 +165,7 @@ public abstract class CvDagObject extends CvObject {
         StringBuffer termLine = new StringBuffer();
 
         // The term itself
-        for (Iterator iterator = annotation.iterator(); iterator.hasNext();) {
-            Annotation annotation = (Annotation) iterator.next();
-            if (annotation.getCvTopic().getShortLabel().equals("GO term")){
-                termLine.append(annotation.getAnnotationText());
-                // There should be only one GO term
-                break;
-            }
-        }
+        termLine.append(getFullName());
 
         // the GO id
         for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
