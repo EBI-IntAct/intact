@@ -23,10 +23,9 @@ import uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.CvAbstractDispatchAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.CvAbstractAction;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.SearchException;
 
 /**
  * Dispatches an action according to 'dispatch' parameter.
@@ -103,7 +102,8 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
             }
             // Update annotations.
             for (Iterator iter = updatecomments.iterator(); iter.hasNext();) {
-                user.update(iter.next());
+                Annotation annot = updateAnnotation(user, (CommentBean) iter.next());
+                user.update(annot);
             }
 
             // Create xrefs and add them to CV object.
@@ -120,7 +120,8 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
             }
             // Update xrefs.
             for (Iterator iter = updatexrefs.iterator(); iter.hasNext();) {
-                user.update(iter.next());
+                Xref xref = updateXref(user, ((XreferenceBean) iter.next()));
+                user.update(xref);
             }
             // Update the cv object.
             user.update(cvobj);
@@ -229,9 +230,6 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
             // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(request);
 
-        // Cancel the current update.
-        user.cancelUpdate();
-
         // Cancel any pending annotations/xrefs.
         CvViewBean viewbean = user.getView();
         viewbean.clearTransAnnotations();
@@ -239,5 +237,55 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
 
         // Either search or results.
         return mapping.findForward(super.getForwardAction(user));
+    }
+
+    // Helper methods
+
+    private Annotation updateAnnotation(IntactUserIF user, CommentBean cb)
+            throws SearchException {
+        // Update with the new description.
+        Annotation annot = cb.getAnnotation();
+        annot.setAnnotationText(cb.getDescription());
+
+        // Only update the topic if they differ.
+        String topic = cb.getTopic();
+        if (!topic.equals(annot.getCvTopic().getShortLabel())) {
+            // Get the topic object for the new annotation.
+            CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class, topic);
+            annot.setCvTopic(cvtopic);
+        }
+        return annot;
+    }
+
+    // Helper methods
+
+    private Xref updateXref(IntactUserIF user, XreferenceBean xb)
+            throws SearchException {
+        // The xref object to update
+        Xref xref = xb.getXref();
+
+        // Only update the database if it has been changed.
+        String database = xb.getDatabase();
+        if (!database.equals(xref.getCvDatabase().getShortLabel())) {
+            // The database the new xref belong to.
+            CvDatabase db = (CvDatabase) user.getObjectByLabel(
+                CvDatabase.class, database);
+            xref.setCvDatabase(db);
+        }
+        xref.setPrimaryId(xb.getPrimaryId());
+        xref.setSecondaryId(xb.getSecondaryId());
+        xref.setDbRelease(xb.getReleaseNumber());
+
+        String qualifier = xb.getQualifier();
+        // Check for null pointer.
+        if (xref.getCvXrefQualifier() != null) {
+            // Only update the quailier if they differ.
+            if (!qualifier.equals(xref.getCvXrefQualifier().getShortLabel())) {
+                CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
+                    CvXrefQualifier.class, qualifier);
+                xref.setCvXrefQualifier(xqual);
+            }
+        }
+        return xref;
     }
 }

@@ -12,11 +12,8 @@ import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.struts.view.EditForm;
 import uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.SearchException;
 
 import org.apache.struts.action.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,22 +65,10 @@ public class XrefEditAction extends CvAbstractAction {
             xb.setEditState(false);
         }
         else if (theForm.savePressed()) {
-            // Save button pressed.
-            Xref xref = null;
-            try {
-                xref = doSaving(user, xb);
-            }
-            catch (SearchException se) {
-                // Can't query the database.
-                super.log(ExceptionUtils.getStackTrace(se));
-                // Clear any previous errors.
-                super.clearErrors();
-                super.addError("error.search", se.getMessage());
-                super.saveErrors(request);
-                return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
-            }
-            // The xref to update.
-            viewbean.addXrefToUpdate(xref);
+            // Save button pressed. The xref to update.
+            viewbean.addXrefToUpdate(xb);
+            // Back to edit
+            xb.setEditState(true);
         }
         else if (theForm.deletePressed()) {
             // Delete is pressed.
@@ -94,39 +79,5 @@ public class XrefEditAction extends CvAbstractAction {
             assert false;
         }
         return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
-    }
-
-    // Helper methods
-
-    private Xref doSaving(IntactUserIF user, XreferenceBean xb)
-            throws SearchException {
-        // The xref object to update
-        Xref xref = xb.getXref();
-
-        // Only update the database if it has been changed.
-        String database = xb.getDatabase();
-        if (!database.equals(xref.getCvDatabase().getShortLabel())) {
-            // The database the new xref belong to.
-            CvDatabase db = (CvDatabase) user.getObjectByLabel(
-                CvDatabase.class, database);
-            xref.setCvDatabase(db);
-        }
-        xref.setPrimaryId(xb.getPrimaryId());
-        xref.setSecondaryId(xb.getSecondaryId());
-        xref.setDbRelease(xb.getReleaseNumber());
-
-        String qualifier = xb.getQualifier();
-        // Check for null pointer.
-        if (xref.getCvXrefQualifier() != null) {
-            // Only update the quailier if they differ.
-            if (!qualifier.equals(xref.getCvXrefQualifier().getShortLabel())) {
-                CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
-                    CvXrefQualifier.class, qualifier);
-                xref.setCvXrefQualifier(xqual);
-            }
-        }
-        // Back to edit
-        xb.setEditState(true);
-        return xref;
     }
 }
