@@ -23,10 +23,7 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class provides the actions required to carry out search operations for intact via a
@@ -40,6 +37,7 @@ import java.util.List;
  */
 
 public class SearchAction extends IntactBaseAction {
+    //TODO these values should move to the constants
     /**
      * this value is needed for the result wrapper
      */
@@ -72,7 +70,7 @@ public class SearchAction extends IntactBaseAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
 
-
+        logger.info("search action");
         // Clear any previous errors.
         super.clearErrors();
 
@@ -91,10 +89,12 @@ public class SearchAction extends IntactBaseAction {
         //set up a highlight list - needs to exist in ALL cases to avoid
         //JSPs having to check for 'null' all the time...
         List labelList = (List) request.getAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST);
-        if (labelList == null)
+        if (labelList == null) {
             labelList = new ArrayList();
-        else
+        }
+        else {
             labelList.clear();     //set one up or wipe out an existing one
+        }
 
         //first check for a tabbed page request - no need to search in this case
         String selectedPage = request.getParameter("selectedChunk");
@@ -110,7 +110,8 @@ public class SearchAction extends IntactBaseAction {
         String searchClass = (String) dyForm.get("searchClass");
         String selectedChunk = (String) dyForm.get("selectedChunk");
         String binaryValue = (String) dyForm.get("binary");
-
+        String viewValue = (String) dyForm.get("view");
+        String filterValue = (String) dyForm.get("filter");
 
         //this tabbed stuff is for handling subsequent page requests from tabbed JSPs
         int selectedChunkInt = Constants.NO_CHUNK_SELECTED;
@@ -119,7 +120,8 @@ public class SearchAction extends IntactBaseAction {
                 selectedChunkInt = Integer.parseInt(selectedChunk);
 
             }
-        } catch (NumberFormatException nfe) {
+        }
+        catch (NumberFormatException nfe) {
             logger.warn("The selected chunk is not an Integer value, it can't be parsed.", nfe);
         }
 
@@ -128,18 +130,16 @@ public class SearchAction extends IntactBaseAction {
         user.setSearchClass(searchClass);
         user.setSelectedChunk(selectedChunkInt);
         user.setBinaryValue(binaryValue);
-
+        user.setView(viewValue);
 
         logger.info("searchValue: " + searchValue);
         logger.info("searchClass: " + searchClass);
         logger.info("selectedChunk: " +
-                (selectedChunkInt == Constants.NO_CHUNK_SELECTED ? "none" : selectedChunk));
+                    (selectedChunkInt == Constants.NO_CHUNK_SELECTED ? "none" : selectedChunk));
         logger.info("binaryValue: " + binaryValue);
 
-
-
         //reset the class string in the form for the next request
-        dyForm.set("searchClass", "");
+        // dyForm.set("searchString", "");
         dyForm.set("selectedChunk", "-1");
 
         //clean out previous single object views
@@ -147,22 +147,6 @@ public class SearchAction extends IntactBaseAction {
 
         // Holds the result from the initial search.
         ResultWrapper results = null;
-
-        //now need to try searches based on AC, label, name or xref (only
-        //ones we will accept for now)...
-
-        //IMPORTANT (Aug 2004):
-        //The new search interface defines a new front page - this implies that
-        //all requests with NO TYPE SPECIFIED should have results sent to the new page as this
-        //is the only request type that can have an empty type now.
-        //CONSEQUENCE:
-        //The new page can have multiple result types to display, but others cannot.
-        //Main impact of change is on Protein searches - previously a 'no type' request with
-        //a Protein result was sent to the binary view. Now this should come from the front
-        //page, OR a single Protein detail view request from a DIFFERENT page.
-
-        //NB obviously can't distinguish between a zero return and a search
-        //with garbage input using this approach.
         logger.info("Classname = " + searchClass);
 
         try {
@@ -174,27 +158,87 @@ public class SearchAction extends IntactBaseAction {
                 return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
             }
 
-            /**  if (!SearchValidator.isValid(searchValue)) {
-             return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
-             }
-
-             **/
-
             SearchHelper searchHelper = new SearchHelper(logger);
 
-            // if it's a binary request first look for this one
+            // TODO this should probably move to the dispatcher action
+            // TODO This should go to a dedicated action
 
+            // if it's a binary request first look for this one
             if (binaryValue != null && !binaryValue.equals("")) {
+                logger.info("calculate binary Value with : " + binaryValue);
+                session.setAttribute("binary", binaryValue);
                 // it's an binary request
                 // convert to binary query to a normal one 
                 binaryValue = binaryValue.replaceAll("\\,%20", ",");
-                results = this.getResults(searchHelper, null, binaryValue, user);
                 session.setAttribute(SearchConstants.SEARCH_CRITERIA, "'" + binaryValue + "'");
 
+                // split query in single criterias
+                Collection queries = new LinkedList();
+                StringTokenizer st = new StringTokenizer(binaryValue, ",");
+                while (st.hasMoreTokens()) {
+                    queries.add(st.nextToken().trim());
+                }
 
-            } else {
+                for (Iterator iterator = queries.iterator(); iterator.hasNext();) {
+                    String criteria = (String) iterator.next();
+                    logger.info("criteria : " + criteria);
+
+                    // first check for ac only
+                    // that takes care of a potential bug when searching for a protein AC
+                    // having splice variant. That would pull the master + all splice variants
+                    ResultWrapper subResults = this.getResults(searchHelper, "Protein", criteria, "ac",
+                                                               user);
+
+                    if (subResults.isEmpty()) {
+                        // then look for all fields if nothing has been found.
+                        //finished all current options, and still nothing - return a failure
+                        subResults =
+                                this.getResults(searchHelper, "Protein", criteria, "all", user);
+                    }
+
+                    if (subResults.isTooLarge()) {
+                        // resultset too large, forward to statistic page
+                        logger.info("subresult is too large");
+                        request.setAttribute(SearchConstants.RESULT_INFO, subResults.getInfo());
+                        return mapping.findForward(SearchConstants.FORWARD_TOO_LARGE);
+                    }
+
+                    if (subResults.isEmpty()) {
+                        // no protein found
+                        logger.info("result is empty");
+                        return mapping.findForward(SearchConstants.FORWARD_NO_PROTEIN_FOUND);
+                    }
+
+                    // search was a sucess
+
+                    if (results == null) {
+                        results = subResults;
+                    }
+                    else {
+                        // merge both results together
+                        Set mergedResults = new HashSet();
+                        mergedResults.addAll(subResults.getResult());
+                        mergedResults.addAll(results.getResult());
+                        logger.info("mergedResults : " + mergedResults);
+                        // create a new ResultInfo
+                        Map resultInfo = new HashMap();
+                        resultInfo.put("uk.ac.ebi.intact.model.ProteinImpl",
+                                       new Integer(mergedResults.size()));
+                        logger.info("create statistic : " + resultInfo);
+                        // create a new resultWerapper
+                        Collection temp = new ArrayList();
+                        temp.addAll(mergedResults);
+                        results =
+                                new ResultWrapper(temp,
+                                                  SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
+
+                    }
+                } // for
+            } // binary value
+            else {
                 //try now the specified String case first
-                results = this.getResults(searchHelper, searchClass, searchValue, user);
+                results =
+                        this.getResults(searchHelper, searchClass, searchValue, filterValue, user);
             }
 
             if (results.isTooLarge()) {
@@ -228,16 +272,16 @@ public class SearchAction extends IntactBaseAction {
             }
 
             //put both the results and also a list of the shortlabels for highlighting into the request
-            // TODO CHANGE THIS .GETLIST !!!!
-            request.setAttribute(SearchConstants.SEARCH_RESULTS, results.getResult());
+
+            Collection searchResult = results.getResult();
+            request.setAttribute(SearchConstants.SEARCH_RESULTS, searchResult);
             request.setAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST, labelList);
 
             //set the original search criteria into the session for use by
             //the view action - needed because if the 'back' button is used from
             //single object views, the original search beans are lost
-            session.setAttribute(SearchConstants.LAST_VALID_SEARCH, searchValue);
 
-            // dispatch to the relevant action
+            session.setAttribute(SearchConstants.LAST_VALID_SEARCH, searchValue);
             String relativeHelpLink = getServlet().getServletContext().getInitParameter("helpLink");
 
             //build the help link out of the context path - strip off the 'search' bit...
@@ -246,14 +290,15 @@ public class SearchAction extends IntactBaseAction {
             String helpLink = relativePath.concat(relativeHelpLink);
             user.setHelpLink(helpLink);
             return mapping.findForward(SearchConstants.FORWARD_DISPATCHER_ACTION);
-        } catch (IntactException se) {
+
+        }
+        catch (IntactException se) {
             logger.info("something went wrong ...");
             // Something failed during search...
             logger.info(se);
             logger.info(se.getNestedMessage());
             logger.info(se.getRootCause().toString());
             logger.info(se.getLocalizedMessage());
-
 
             // clear in case there is some old errors in there.
             super.clearErrors();
@@ -265,8 +310,6 @@ public class SearchAction extends IntactBaseAction {
 
         }
     }
-
-    //---------------------- helper methods ------------------------------------
 
     /**
      * Decides how to perform the search, based upon whether or not the intact type has been
@@ -282,49 +325,29 @@ public class SearchAction extends IntactBaseAction {
      * @param user        The Intact user object (needed by the search helper)
      * @return Collection A Collection of the results, or empty if none found.
      * @throws IntactException Thrown if there was a searching problem
-     **/
-    /**
-     * private Collection getResults(SearchHelper helper, String searchClass, String searchValue,
-     * IntactUserIF user) throws IntactException, TooLargeDataException {
-     * <p/>
-     * Collection result = null; if (searchClass == null || searchClass.length() == 0) {
-     * <p/>
-     * logger.info("we got no class type so let's look for all types of classes");
-     * <p/>
-     * //must be an initial search request, with possible multiple type results. //In this case we
-     * should NOT finish after the first match, but continue //searching across ALL SPECIFIED
-     * TYPES... // use for this search a value result = new ArrayList(); for (Iterator it =
-     * SEARCH_CLASSES.iterator(); it.hasNext();) { result.addAll(helper.doLookup((String) it.next(),
-     * searchValue, 50)); }
-     * <p/>
-     * } else { // this is a normal request from the servlet, we know the class, we know the value.
-     * // nothing can go wrong here result = helper.doLookup(searchClass, searchValue, user); }
-     * <p/>
-     * return result; }
      */
     private ResultWrapper getResults(SearchHelper helper, String searchClass,
-                                     String searchValue, IntactUserIF user) throws IntactException {
+                                     String searchValue, String filterValue, IntactUserIF user)
+            throws IntactException {
 
         ResultWrapper result = null;
-        if (SearchValidator.isSearchable(searchClass)) {
-            result = helper.searchFast(searchValue, searchClass);
-        } else if (searchClass == null || searchClass.length() == 0) {
-            // this is a initial request, so we don?t know how big is the result set
-            // in that case searchFast, get the result from searchFast
-            result = helper.searchFast(searchValue);
+        if (SearchValidator.isSearchable(searchClass) || searchClass.equals("") || searchClass == null) {
+            logger.info("SearchAction: searchfast: " + searchValue + " searchClass: " + searchClass);
+            result = helper.searchFast(searchValue, searchClass, filterValue, user);
+        }
 
-        } else {
+        else {
             // this is a normal request from the servlet, we know the class, we know the value.
             Collection temp = new ArrayList();
+            logger.info("SearchAction: doLookup: " + searchValue + " searchClass: " + searchClass);
             temp.addAll(helper.doLookup(searchClass, searchValue, user));
             result = new ResultWrapper(temp, SearchConstants.MAXIMUM_RESULT_SIZE);
         }
 
-
         return result;
     }
 
-}
 
+}
 
 

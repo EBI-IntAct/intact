@@ -1,156 +1,124 @@
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.struts.view.beans.SimpleViewBean;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.application.search3.struts.util.ProteinUtils;
+import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean;
 import uk.ac.ebi.intact.model.Protein;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.StringTokenizer;
 
 /**
- * /** This class provides the actions required  for an url based search query for 2 proteins. The
- * action recieve 2 proteins from the Search Action
+ * This Action class performs the calculating and the construction of view beans that will be used for a for an url
+ * based search query for 2 protein. It will calculate the interactions and give back the code to forward to the
+ * coresponding JSP site for the representation of the results. This method performances the Request
+ * from the url-based query with http://www.ebi.ac.uk/intact/search/do/search?binary=protein1,protein2.
+ * It calculates all binary and all self interactions between these 2 proteins and returns
+ * code to forward to the specific view.
  *
  * @author Michael Kleen
  * @version BinaryProteinAction.java Date: Jan 14, 2005 Time: 12:53:45 PM
  */
-public class BinaryProteinAction extends IntactBaseAction {
+public class BinaryProteinAction extends AbstractResultAction {
 
 
-    public ActionForward execute(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response) {
+    /**
+     * This method overrides the parent one to process the request more effectively. It avoids
+     * making any assumptions about the beans or the size of search result list and keep all of the
+     * processing in a single place for each Action type.
+     *
+     * @param request  The request object containing the data we want
+     * @param helpLink The help link to use
+     * @return String the return code for forwarding use by the execute method
+     */
+    protected String processResults(HttpServletRequest request, String helpLink) {
 
-        logger.info("binary action");
-        // Session to access various session objects. This will create
-        // a new session if one does not exist.
+        logger.info("binary protein action");
+
+        final Collection someProteins = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
+        Collection results = Collections.EMPTY_LIST;
+
+        logger.info("resultset size " + someProteins.size());
         HttpSession session = super.getSession(request);
 
-        // Handle to the Intact User.
-        IntactUserIF user = super.getIntactUser(session);
-        if (user == null) {
-            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
-        }
+        // first check for self interactions
 
-        // get the search results from the request
-        // and calculate the the particapating interactions
-        Collection someProteins = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
+        // String appPath = getServlet().getServletContext().getInitParameter("searchLink");
+//        String searchURL = request.getContextPath().concat(appPath);
+        String searchURL = super.getSearchURL();
 
-        // forward to error page if we got lesser than 1 protein
-        if (someProteins.size() < 1) {
-            return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
-        }
+        if (someProteins.size() == 1) {
+            Collection beanList = new ArrayList(1);
+            logger.info("Binary Protein Action: one 1 Protein");
 
-        Collection participatingInteractions = this.processtParticipatedInteractions(someProteins);
-        logger.info("interactions : " + participatingInteractions);
+            final Protein selfInteractor = (Protein) someProteins.iterator().next();
+            results = ProteinUtils.getSelfInteractions(selfInteractor);
 
+            boolean hasSelfInteraction = results.size() > 0;
 
-        // forward to error page if we found no interaction
-        if (participatingInteractions.isEmpty()) {
-            return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
-        }
+            if (hasSelfInteraction) {
+                logger.info("BinaryAction: protein has a self interaction ");
+                beanList.add(new PartnersViewBean(selfInteractor, true, helpLink, searchURL,
+                                                  request.getContextPath()));
+                request.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
+                return SearchConstants.FORWARD_PARTNER_VIEW;
 
-
-        // build the URL for searches and pass to the view beans
-        String contextPath = request.getContextPath();
-        String appPath = getServlet().getServletContext().getInitParameter("searchLink");
-        String searchURL = contextPath.concat(appPath);
-
-        // now create an chunk of of wrapped Interactions for the jsp
-        List interactionList = new ArrayList();
-
-        for (Iterator it = participatingInteractions.iterator(); it.hasNext();) {
-
-            Interaction anInteraction = (Interaction) it.next();
-            logger.info("Interaction  = " + anInteraction);
-            interactionList.add(
-                    new SimpleViewBean(anInteraction, user.getHelpLink(), searchURL, contextPath));
-        }
-
-        // now create an list which holds the results and forward to the jsp
-        Collection viewBeanList = new ArrayList();
-        viewBeanList.add(interactionList);
-        // put the viewbeans in the request and send on to the view...
-        request.setAttribute(SearchConstants.VIEW_BEAN_LIST, viewBeanList);
-
-        //get the maximum size beans from the context for later use
-        Map sizeMap = (Map) session.getServletContext().getAttribute(SearchConstants.MAX_ITEMS_MAP);
-
-        return mapping.findForward("results");
-
-    }
-
-
-    private Collection processtParticipatedInteractions(Collection someProteins) {
-
-        logger.info("process ParticaptedInteractions");
-
-        Collection result = new HashSet();
-        Iterator iterator = someProteins.iterator();
-
-
-        // get all interactions from protein1
-
-        Protein protein1 = (Protein) iterator.next();
-        Set componentSet1 = new HashSet(protein1.getActiveInstances());
-        Set component1Interactions = new HashSet();
-
-        for (Iterator iterator1 = componentSet1.iterator(); iterator1.hasNext();) {
-            Component component = (Component) iterator1.next();
-            component1Interactions.add(component.getInteraction());
-        }
-
-        // if we got another protein, get also all interactions from protein2
-        if (someProteins.size() == 2) {
-            Protein protein2 = (Protein) iterator.next();
-            Set componentSet2 = new HashSet(protein2.getActiveInstances());
-
-            for (Iterator iterator2 = componentSet2.iterator(); iterator2.hasNext();) {
-                Component component2 = (Component) iterator2.next();
-                Interaction component2Interaction = component2.getInteraction();
-
-                if (component1Interactions.contains(component2Interaction)) {
-                    result.add(component2Interaction);
-                }
             }
-        } else {
 
-            // check now for self Interactions from protein1
-            for (Iterator iterator3 = component1Interactions.iterator();
-                 iterator3.hasNext();) {
-                Interaction interaction = (Interaction) iterator3.next();
-                Collection interactionComponents = interaction.getComponents();
-
-                if (interactionComponents.size() == 2) {
-                    Iterator iterator4 = interactionComponents.iterator();
-                    Component component1 = (Component) iterator4.next();
-                    Component component2 = (Component) iterator4.next();
-                    if (component1.getStoichiometry() == 1 &&
-                            component2.getStoichiometry() == 1) {
-                        result.add(interaction);
-                    }
-                } else if (interactionComponents.size() == 1) {
-                    Iterator iterator5 = interactionComponents.iterator();
-                    Component component1 = (Component) iterator5.next();
-                    if (component1.getStoichiometry() == 2) {
-                        result.add(interaction);
-                    }
-                }
-            }
         }
-        return result;
-    }
+        else if (someProteins.size() == 2) {
+            logger.info("binary interactions");
 
+            // we got more than 1 protein, so check for binary Interactions between them
+//            try {
+            results = ProteinUtils.getBinaryInteractions(someProteins);
+            logger.info("results interactions size : " + results.size());
+//            }
+//            catch (IntactException e) {
+//                logger.info("wrong datatype, forward to errorpage");
+//                return SearchConstants.FORWARD_FAILURE;
+//            }
+
+        }
+        else {
+
+            // If we got more than 2 proteins forward to errorpage
+            logger.info("more than 2 Proteins, forward to errorpage");
+            return SearchConstants.FORWARD_TOO_MANY_PROTEINS;
+        }
+
+        if (!results.isEmpty()) {
+            logger.info("search sucessful");
+            //TODO use session here
+            request.setAttribute(SearchConstants.SEARCH_RESULTS, results);
+            // the simple action handle the prasentation of the interactions
+            return SearchConstants.FORWARD_SIMPLE_ACTION;
+
+        }
+        else {
+
+
+            logger.info("no interactions found between these proteins resultset empty");
+            // create statistic
+            String info = (String) session.getAttribute("binary");
+            StringTokenizer st = new StringTokenizer(info, ",");
+            Collection query = new ArrayList(results.size());
+
+            while (st.hasMoreTokens()) {
+                String value = st.nextToken();
+                query.add(value);
+            }
+
+            logger.info("forward to no interactions view");
+            // add the statistics to the request and forward to the no interactions jsp
+            request.setAttribute(SearchConstants.RESULT_INFO, query);
+
+            return SearchConstants.FORWARD_NO_INTERACTIONS;
+        }
+    }
 }
-
-
 

@@ -12,10 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,11 +45,14 @@ public class DispatcherAction extends IntactBaseAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
 
+        logger.info("Enter Dispatcher action");
 
         //first check to see if we just need to forward for a tabbed page of an existing result
         String requestedPage = request.getParameter("selectedChunk");
-        if ((requestedPage != null) && (!requestedPage.equals("")))
+        if ((requestedPage != null) && (!requestedPage.equals(""))) {
             return mapping.findForward(SearchConstants.FORWARD_DETAILS_ACTION);
+        }
+
         logger.info("dispatcher action: analysing user's query...");
 
         // Handler to the Intact User.
@@ -61,142 +61,95 @@ public class DispatcherAction extends IntactBaseAction {
             //just set up a new user for the session - if it fails, need to give up!
             user = super.setupUser(request);
             if (user == null) {
-
+                logger.info("no user, forward failer");
                 return mapping.findForward(SearchConstants.FORWARD_FAILURE);
             }
         }
 
         //not an exisiting page request, so get the search results from the request
-        Collection results = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
+        final Collection results = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
 
-        // The first element of the search result.
+        final String binaryValue = user.getBinaryValue();
+        final String viewSource = user.getView();
+
+        logger.info("Binary Value " + binaryValue);
+        logger.info("View Value " + viewSource);
+
+
         Object resultItem = results.iterator().next();
         logger.info("First item className: " + resultItem.getClass().getName());
 
-        // dispatch to the right action accordingly -
-        //IMPORTANT (Aug 2004): With the new views required for search, all requests
-        //that do NOT contain the searchClass should go to the 'simple' initial result
-        //view UNLESS there is only a SINGLE match, in which case the 'appropriate' view should
-        //be used.
-        //All other requests will from now on have the searchClass specified..
+        // now check the type, and forward to the relevant action
+        if (results.size() == 1) {
+            // check for Experiment first
+            if ((Experiment.class.isAssignableFrom(resultItem.getClass()))) {
 
-        String pageSource = null;   //need this later
-        String searchClass = user.getSearchClass(); //this was set in the search Action              
-        String binaryValue = user.getBinaryValue(); // this was set in the search Action
+                logger.info("It's a Experiment, ask forward to SingleResultAction");
+                return mapping.findForward(SearchConstants.FORWARD_DETAILS_ACTION);
+                // now check if it's an Interaction
+            }
+            else if ((Interaction.class.isAssignableFrom(resultItem.getClass()))) {
 
-        // check if it's a binary request
-        if (binaryValue != null && !binaryValue.equals("")) {
-            return mapping.findForward(SearchConstants.FORWARD_BINARYPROTEIN_ACTION);
+                logger.info("It's a Interaction, ask forward to SingleResultAction");
+                return mapping.findForward(SearchConstants.FORWARD_DETAILS_ACTION);
+                // check if it's Protein
+            }
+            else if ((Protein.class.isAssignableFrom(resultItem.getClass()))) {
+
+                // now we got different choices
+                if ((viewSource != null) && (viewSource.equals("partner"))) {
+                    if (binaryValue != null && !binaryValue.equals("")) {
+                        // it's a self interactions from outside
+                        logger.info("It's a Protein,  forwarding to BinaryProteinAction");
+                        return mapping.findForward(SearchConstants.FORWARD_BINARYPROTEIN_ACTION);
+                    }
+                    else {
+                        // it's a request from inside the jsp
+                        logger.info("It's a Protein, forwarding to  PartnerResultAction");
+                        return mapping.findForward(SearchConstants.FORWARD_BINARY_ACTION);
+                    }
+                }
+                // we want the single Protein View
+                logger.info("It's a Protein, ask forward to SingleResultAction");
+                return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
+
+            } // now it can only be a CvObject or a BioSource
+            else if (CvObject.class.isAssignableFrom(resultItem.getClass())) {
+
+                logger.info("It's a CvObjects, ask forward to SingleResultAction");
+                return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
+            }
+            else if (BioSource.class.isAssignableFrom(resultItem.getClass())) {
+
+                logger.info("It's a BioSource, ask forward to SingleResultAction");
+                return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
+            }
+            else {
+                // need to give up, we got an unknown type
+                logger.info(resultItem.getClass() + "is not supported");
+                return mapping.findForward(SearchConstants.FORWARD_FAILURE);
+            }
         }
 
+        // resultsize is bigger than 1, it can only be simple request for the simple or a binary
+        // request with 2 Proteins
+        else if ((results.size() > 1)) {
 
-        //check for a searchClass(ie request from an INTERNAL LINK) and process accordingly...
-        if (searchClass == null || searchClass.length() == 0) {
+            if (binaryValue != null && !binaryValue.equals("")) {
+                // it's a binary interaction request
+                logger.info("Dispatcher ask forwarding to BinaryProteinAction");
+                return mapping.findForward(SearchConstants.FORWARD_BINARYPROTEIN_ACTION);
 
-
-            //initial request - first check for single result. If YES, then forward to the
-            //simple view Action; if NO then forward to the 'main' view....
-            if (results.size() == 1) {
-                logger.info("Dispatcher: initial search request (single result)...");
-                //simplest way to do this is to set the pageSource variable and force subsequent
-                //code to handle it...
-                pageSource = "simple";
-            } else {
-                //handle 'normally'...
-                logger.info(
-                        "Dispatcher: initial search request (no search class specified) - forwarding to SimpleResultAction..");
+            }
+            else {
+                // it's a  multiple requst
+                logger.info("Dispatcher ask forward to SimpleResultAction");
                 return mapping.findForward(SearchConstants.FORWARD_SIMPLE_ACTION);
             }
-        } else {
-            //search class defined - forward to relevant action
-            logger.info("Dispatcher: Search class specified in request (so it came from a link)..");
-            //Need to find out HERE what page the request came from...
-            pageSource = request.getParameter(SearchConstants.PAGE_SOURCE);
         }
-
-        //Proteins are a special case...
-        if (Protein.class.isAssignableFrom(resultItem.getClass())) {
-
-            //NB here need to distinguish between a request for Protein DETAILS
-            //and a request for Protein PARTNER view (as now with the new views, BOTH may have
-            //the search class specified!!)..
-
-            if ((pageSource != null) && (pageSource.equals("simple"))) {
-                //need to send to partners view Action (single or multiple)...
-                logger.info("Dispatcher: forwarding to Protein partners action");
-                return mapping.findForward(SearchConstants.FORWARD_BINARY_ACTION);
-
-            } else if (results.size() > 1) {
-
-                logger.info("Dispatcher: forwarding to Protein beans action");
-                return mapping.findForward(SearchConstants.FORWARD_SIMPLE_ACTION);
-
-            }
-
-            //otherwise must be a standard 'Protein beans' view (link from another internal page)..
-            logger.info("Dispatcher: forwarding to Protein beans action");
-            return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
-
-        }
-
-        //can't be a Protein if we get to here - check for Exps/Interactions..
-
-        //new layout - Sept 2004: for the new layout, we can only get detail
-        //information when a link is clicked from the 'simple' page. Currently
-        //we just check for Experiments or Interactions..
-        //TODO: NEEDS TO BE REFACTORED PROPERLY FROM HERE ON....
-
-        if (((pageSource != null) && (pageSource.equals("simple"))) &
-                (!CvObject.class.isAssignableFrom((resultItem.getClass())))) {
-
-            logger.info("Dispatcher: forwarding to Details action for Experiment/Interaction..");
-            return mapping.findForward(SearchConstants.FORWARD_DETAILS_ACTION);
-
-        }
-
-
-        //TODO: code below probably needs revising for the new views...
-
-        //OLD CODE FOLLOWS (still needed for CvObject/BioSource - should be revised when new
-        //view for those classes is defined)...
-        //NB this code should go to a main detail unless it is a CvObject, in which
-        //case it should do a single view..
-        //Not a protein - deal with the others...
-
-        if ((results.size() == 1) &
-                (Experiment.class.isAssignableFrom(resultItem.getClass()))) {
-            //only use the single view for Proteins (dealt with above),
-            //Experiment and Controlled vocabulary - Interactions
-            // still need to be displayed in the context of an Experiment
-            logger.info("Dispatcher ask forward to DetailAction");
-            return mapping.findForward(SearchConstants.FORWARD_DETAILS_ACTION);
-        } else if ((results.size() > 1) &
-                (Experiment.class.isAssignableFrom(resultItem.getClass()))) {
-            //only use the single view for Proteins (dealt with above),
-            //Experiment and Controlled vocabulary - Interactions
-            // still need to be displayed in the context of an Experiment
-            logger.info("Dispatcher ask forward to DetailAction");
-            return mapping.findForward(SearchConstants.FORWARD_SIMPLE_ACTION);
-        }
-
-
-        if ((results.size() == 1) &
-                (!Interaction.class.isAssignableFrom(resultItem.getClass()))) {
-            //only use the single view for Proteins (dealt with above),
-            //Experiment and Controlled vocabulary - Interactions
-            // still need to be displayed in the context of an Experiment
-            logger.info("Dispatcher ask forward to SingleResultAction");
-            return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
-        } else if ((results.size() > 1) &
-                (Interaction.class.isAssignableFrom(resultItem.getClass()))) {
-            //only use the single view for Proteins (dealt with above),
-            //Experiment and Controlled vocabulary - Interactions
-            // still need to be displayed in the context of an Experiment
-            logger.info("Dispatcher ask forward to SingleResultAction");
-            return mapping.findForward(SearchConstants.FORWARD_SIMPLE_ACTION);
-        }
-
-        logger.info("Dispatcher ask forward to DetailsResultAction");
-        return mapping.findForward(SearchConstants.FORWARD_DETAILS_ACTION);
+        // something went wrong here, forward to error page
+        logger.info("Something went wrong here, forward to error page");
+        return mapping.findForward(SearchConstants.FORWARD_FAILURE);
     }
+
 }
