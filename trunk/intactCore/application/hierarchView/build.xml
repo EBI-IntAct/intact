@@ -271,6 +271,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
                  <exclude name="graph.jsp"/>
                  <exclude name="highlight.jsp"/>
                  <exclude name="selectedSource.jsp"/>
+                 <exclude name="warning.jsp"/>
             </fileset>
         </delete>
 
