@@ -9,16 +9,17 @@
 
 <%@ page language="java"%>
 
-<%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants,
-                 java.util.Map"%>
+<%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants"%>
 <%@ page import="uk.ac.ebi.intact.application.search.struts.view.IntactViewBean"%>
 
 <%@ page import="javax.xml.transform.TransformerFactory"%>
 <%@ page import="javax.xml.transform.stream.StreamResult"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator"%>
+
+<!-- Import util classes -->
+<%@ page import="java.util.Collection, java.util.Map, java.util.Iterator"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
 
 <jsp:include page="header.jsp" flush="true" />
 
@@ -48,10 +49,20 @@
         bean.transform(factory, id, result);
     }
 %>
+    <!-- The footer table. -->
     <table cellpadding="1" cellspacing="0" border="1" width="100%">
         <tr>
             <td align="center">
-                <input type="submit" Name="submit" value="Submit"/>
+                <html:submit property="submit">
+                    <bean:message key="button.expand.contract"/>
+                </html:submit>
+                <html:submit property="submit">
+                    <bean:message key="button.expand.all"/>
+                </html:submit>
+                <html:submit property="submit">
+                    <bean:message key="button.contract.all"/>
+                </html:submit>
+                <html:reset/>
             </td>
         </tr>
     </table>
