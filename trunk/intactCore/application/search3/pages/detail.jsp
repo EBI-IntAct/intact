@@ -234,13 +234,14 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- 'Experiment' title cell plus checkbox -->
-            <%-- <td width="10%" rowspan="2" class="headerdark"> --%>
+            <!-- <td width="10%" rowspan="2" class="headerdark"> -->
             <td rowspan="2" class="headerdark">
-                   <input name="<%= bean.getObjAc()%>" type="checkbox" class="text" checked>
-                        <span class="whiteheadertext">Experiment</span>
-                <%-- help link --%>
+
+                 <!--  <input name="<% //bean.getObjAc()%>" type="checkbox" class="text" checked>  -->
+                    <nobr>  <span class="whiteheadertext">Experiment</span>
+
                 <a href="<%= bean.getHelpLink() + "search.TableLayout"%>" target="new"
-                   class="whitelink"><sup>?</sup>
+                   class="whitelink"><sup>?</sup> </nobr>
                 </a>
             </td>
 
@@ -334,7 +335,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- 'Description' title, linked to help -->
             <%-- <td width="10%" class="headerdarkmid" style="font-weight: bold;"> --%>
             <td class="headerdarkmid" style="font-weight: bold;">
-                <a href="<%= bean.getHelpLink() + "DESC_HELP_SECTION" %>">Description
+                <a href="<%= bean.getHelpLink() + "DESC_HELP_SECTION" %>" class="tdlink">
+                 Description
                 </a>
             </td>
 
@@ -504,11 +506,11 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- first cell - title plus checkbox -->
             <%-- <td width="10%" rowspan="2" class="headermid"> --%>
             <td rowspan="2" class="headermid">
-                <input name="<%= interaction.getAc() %>" type="checkbox" class="text">
-                    <span class="whiteheadertext">Interaction</span>
+                <input name="<%= interaction.getAc() %>" type="checkbox" checked class="text">
+                <nobr>    <span class="whiteheadertext">Interaction</span>
                 <a href="<%= bean.getHelpLink() + "search.TableLayout"%>"
                     target="new" class="whitelink">
-                    <sup>?</sup>
+                    <sup>?</sup>  </nobr>
                 </a>
             </td>
 
@@ -607,7 +609,11 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- 'description' title cell -->
             <%-- NB this was LINKED to help in Experiment!! --%>
             <%-- <td width="10%" class="headerlight">Description</td> --%>
-            <td class="headerlight">Description</td>
+            <td class="headerlight">
+             <a href="<%= bean.getHelpLink() + "DESC_HELP_SECTION" %>" class="tdlink">
+                 Description
+                </a>
+            </td>
             <td colspan="7" class="lefttop">
                 <%= (interaction.getFullName() != null) ? interaction.getFullName() : "-" %>
             </td>
@@ -775,7 +781,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- 'name' title cell, linked to help -->
-            <td class="headerlight">
+            <td class="headerlight"   >
                 <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>"
                     target="new" class="tdlink">Name</a>
             </td>
@@ -829,8 +835,12 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <!-- shortlabel, linked to protein partners search -->
             <td class="data">
+                <nobr>
+                <input name="<%= protein.getAc() %>" type="checkbox" class="text">              
                 <a href="<%= bean.getProteinPartnerURL(protein)%>"><%= protein.getShortLabel() %>
-                </a><br>
+                </a>
+                </nobr>
+                <br>
             </td>
 
             <!-- ac, linked to protein details view -->
@@ -963,7 +973,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
                 <%-- link 1 --%>
                 <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
-                    <%= firstFeature.getFeatureType().toUpperCase() %>
+                    <%= firstFeature.getFeatureType() %>
                 </a>
 
                 <%=firstFeature.getFeatureName()%> of <%=firstFeature.getProteinName()%>
@@ -980,6 +990,9 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         buf.append("]");
                         rangeString = buf.toString();
                         rangeString.trim();
+                         if(rangeString.equalsIgnoreCase("[?-?]")) {
+                            rangeString = "[range undetermined]";
+                        }
                      }
                 %>
                 <%=rangeString %>
@@ -1019,7 +1032,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 %>
                 <%-- link 1 --%>
                 <a href="<%= firstBoundFeature.getCvFeatureTypeSearchURL() %>">
-                    <%= firstBoundFeature.getFeatureType().toUpperCase() %>
+                    <%= firstBoundFeature.getFeatureType() %>
                 </a>
 
                 <%= firstBoundFeature.getFeatureName() %> of <%= firstBoundFeature.getProteinName() %>
@@ -1035,6 +1048,9 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         }
                         buf.append("]");
                         rangeString = buf.toString();
+                         if(rangeString.equalsIgnoreCase("[?-?]")) {
+                            rangeString = "[range undetermined]";
+                        }
                      }
                 %>
                 <%= rangeString %> &nbsp;
@@ -1089,7 +1105,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 <td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
 
                     <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= firstFeature.getFeatureType().toUpperCase() %>
+                        <%= firstFeature.getFeatureType() %>
                     </a>
                     &nbsp;
                     <%= firstFeature.getFeatureName() %> of <%= firstFeature.getProteinName() %>
@@ -1106,6 +1122,9 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         }
                         buf.append("]");
                         rangeString = buf.toString();
+                         if(rangeString.equalsIgnoreCase("[?-?]")) {
+                            rangeString = "[range undetermined]";
+                        }
                      }
                 %>
                     <%= rangeString %>
@@ -1113,7 +1132,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                      //it seems sometimes the detection beans are not present!
                      if(!firstFeature.getCvFeatureIdentSearchURL().equals("")) {
                     %>
-                        detected by
+                        detected by 
 
                     <%-- ** CVFEATUREDETECTION DOES NOT EXIST ** is this 'identification'? --%>
                     <a href="<%= firstFeature.getCvFeatureIdentSearchURL()%>">
@@ -1149,7 +1168,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
                     <%-- link 1 --%>
                     <a href="<%= linkedFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= linkedFeature.getFeatureType().toUpperCase() %>
+                        <%= linkedFeature.getFeatureType() %>
                     </a>
                     &nbsp;
                     <%= linkedFeature.getFeatureName() %> of <%= linkedFeature.getProteinName() %>
@@ -1166,6 +1185,9 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         }
                         buf.append("]");
                         rangeString = buf.toString();
+                         if(rangeString.equalsIgnoreCase("[?-?]")) {
+                            rangeString = "[range undetermined]";
+                        }
                      }
                 %>
                     <%= rangeString %>
@@ -1204,7 +1226,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                     %>
                     <%-- link 1 --%>
                     <a href="<%= boundFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= boundFeature.getFeatureType().toUpperCase() %>
+                        <%= boundFeature.getFeatureType() %>
                     </a>
                     &nbsp;
                     <%= boundFeature.getFeatureName() %> of <%= boundFeature.getProteinName() %>
@@ -1221,6 +1243,9 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         }
                         buf.append("]");
                         rangeString = buf.toString();
+                         if(rangeString.equalsIgnoreCase("[?-?]")) {
+                            rangeString = "[range undetermined]";
+                        }
                      }
                 %>
                     <%= rangeString %> &nbsp;
@@ -1285,7 +1310,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 <td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
 
                     <a href="<%= singleFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= singleFeature.getFeatureType().toUpperCase() %>
+                        <%= singleFeature.getFeatureType() %>
                     </a>
                     &nbsp;
                     <%= singleFeature.getFeatureName() %> of <%= singleFeature.getProteinName() %>
@@ -1302,6 +1327,9 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         }
                         buf.append("]");
                         rangeString = buf.toString();
+                        if(rangeString.equalsIgnoreCase("[?-?]")) {
+                            rangeString = "[range undetermined]";
+                        }
                      }
                 %>
 
@@ -1318,8 +1346,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         <%= singleFeature.getFeatureIdentFullName() %>
                     </a>.<br>
                     <%
-                        }
-                    %>
+                        } else {%>
+                       .<% } %>
 
                 </td>
 
