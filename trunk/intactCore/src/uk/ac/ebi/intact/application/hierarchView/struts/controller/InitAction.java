@@ -80,10 +80,10 @@ public final class InitAction extends IntactBaseAction {
         logger.info ("User's setting ok.");
 
         String host = ((InitForm)form).getHost();
-        System.out.println("THE HOST GIVEN BY JAVASCRIPT: " + host);
+        logger.debug("THE HOST GIVEN BY JAVASCRIPT: " + host);
 
         String protocol = ((InitForm)form).getProtocol();
-        System.out.println("THE PROTOCOL GIVEN BY JAVASCRIPT: " + protocol);
+        logger.debug("THE PROTOCOL GIVEN BY JAVASCRIPT: " + protocol);
 
         session.setAttribute( StrutsConstants.HOST, host );
         session.setAttribute( StrutsConstants.PROTOCOL, protocol) ;
