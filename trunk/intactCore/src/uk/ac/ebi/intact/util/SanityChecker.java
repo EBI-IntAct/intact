@@ -541,7 +541,7 @@ public class SanityChecker {
             helper = new IntactHelper();
             System.out.println("Helper created (User: " + helper.getDbUserName() + " " +
                                "Database: " + helper.getDbName() + ")");
-            System.out.println("results filename: " + args[0]);
+            System.out.println("results filename: " + filename);
             out.println("Checks against Database " + helper.getDbName());
             out.println("----------------------------------");
             out.println();
