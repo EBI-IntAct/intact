@@ -5,7 +5,7 @@
        "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
 
 <!--
-    Tiles definitions for cvedit
+    Tiles definitions for the Editor.
     Author: Sugath Mudali (smudali@ebi.ac.uk)
     Version: $Id$
  -->
