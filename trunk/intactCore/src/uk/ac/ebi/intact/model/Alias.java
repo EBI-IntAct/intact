@@ -19,6 +19,8 @@ package uk.ac.ebi.intact.model;
  */
 public class Alias extends BasicObjectImpl {
 
+    private static final int MAX_ALIAS_NAME_LEN = 30;
+
     ///////////////////////////////////////
     //attributes
 
@@ -81,8 +83,16 @@ public class Alias extends BasicObjectImpl {
     public String getName() {
         return name;
     }
-    public void setName(String name) {
-        this.name = name.toLowerCase();
+    public void setName( String name ) {
+
+        if( name != null ) {
+            if( name.length() >= MAX_ALIAS_NAME_LEN ) {
+                name = name.substring( 0, MAX_ALIAS_NAME_LEN );
+            }
+            name = name.toLowerCase();
+        }
+
+        this.name = name;
     }
 
     public String getParentAc() {
