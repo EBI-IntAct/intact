@@ -10,3 +10,15 @@ shortlabel: isoform-synonym
 term: Isoform synonym
 definition: A synonym for a protein isoform.
 
+shortlabel: orf-name
+term: Open Reading Frame name
+definition: A name temporarily attributed by a sequencing project to an open reading frame. This name is generally based on a cosmid numbering system. 
+example: MtCY277.28c, SYGP-ORF50, SpBC2F12.04, C06E1.1, CG10954.
+comment: Also called Sequencing names or Contig names or Temporary ORFNames.
+
+shortlabel: locus-name
+term: Ordered locus name
+definition: A name used to represent an ORF in a completely sequenced genome or chromosome. It is generally based on a prefix representing the organism and a number which usually represents the sequential ordering of genes on the chromosome. Depending on the genome sequencing center, numbers are attributed only to protein-coding genes, or also to pseudogenes, or also to tRNAs and other features.
+example: HI0934, Rv3245c, At5g34500, YER456W
+comment: Also called OLN, ORF numbers, CDS numbers or Gene numbers.
+
