@@ -16,6 +16,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
@@ -24,7 +26,7 @@ import java.util.*;
 
 /**
  * That class .
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -156,6 +158,9 @@ public final class ProteinInteractorChecker {
             System.out.println( "\ngetIntactObject(" + id + ", " + taxid + ")" );
         }
 
+        CvDatabase uniprot = XrefChecker.getCvDatabase( "uniprot" );
+        CvXrefQualifier identity = ControlledVocabularyRepository.getIdentityQualifier();
+
         if( isSpliceVariant( id ) ) {
             if( DEBUG ) {
                 System.out.println( "is splice variant ID" );
@@ -171,7 +176,9 @@ public final class ProteinInteractorChecker {
             try {
 
                 // search all protein having the uniprot Xref for that ID (it doesn't retreive the splice variant).
-                Collection proteins = helper.getObjectsByXref( Protein.class, proteinId );
+                // We only look for Xref( uniprot, identity )
+
+                Collection proteins = helper.getObjectsByXref( Protein.class, uniprot, identity, proteinId );
                 if( proteins != null ) {
 
                     if( null == taxid ) {
@@ -283,7 +290,12 @@ public final class ProteinInteractorChecker {
 
             Protein protein = null;
             try {
-                Collection proteins = helper.getObjectsByXref( Protein.class, id );
+                Collection proteins = helper.getObjectsByXref( Protein.class, uniprot, identity, id );
+
+                if( proteins == null || proteins.isEmpty() ) {
+                    // If none found, try also with other uniprot Xrefs
+                    proteins = helper.getObjectsByXref( Protein.class, uniprot, id );
+                }
 
                 if( null == taxid ) {
 
@@ -478,7 +490,7 @@ public final class ProteinInteractorChecker {
                 Collection tmp = proteinFactory.insertSPTrProteins( uniprotId, taxId, true ); // taxId can be null !
 
                 Map exceptions = proteinFactory.getParsingExceptions();
-                if( exceptions.size() > 0 ) {
+                if( !exceptions.isEmpty() ) {
                     // there was exception during update, the proteins hasn't been updated.
                     StringBuffer messageBuffer = new StringBuffer( 128 );
                     messageBuffer.append( "Could not update the protein " ).append( uniprotId );
@@ -513,10 +525,9 @@ public final class ProteinInteractorChecker {
 
             if( result == null ) {
                 // error
-                final String msg = "Could not find Protein for uniprot ID: " + uniprotId +
-                                   " and BioSource " + taxId;
+                final String msg = "Could not find Protein for uniprot ID: " + uniprotId + " and BioSource " + taxId;
                 MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
-                System.out.println( msg );
+                System.err.println( msg );
 
             } else {
 
