@@ -213,14 +213,20 @@ public class InsertComplex {
             // link interaction to experiment
             ex.addInteraction(act);
 
-            // Store or update
-            helper.update(act);
-
+            // No need to do an update here because we have created a new Interaction.
+            // In fact, it is an error to do so because you can only update objects that
+            // are already in the DB.
+//                helper.update(act);
             System.err.print("C");
         } else {
             System.err.print("c");
         }
-        helper.update(ex);
+        // Only update if the object exists in the database. Since
+        // the transaction is outside this method, do nothing for creation as it
+        // is handled upon committing the transaction.
+        if (helper.isPersistent(ex)) {
+            helper.update(ex);
+        }
     }
 
     /** Read complex data from flat file and insert it into the database.
