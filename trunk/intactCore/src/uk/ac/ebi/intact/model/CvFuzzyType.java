@@ -164,6 +164,15 @@ public class CvFuzzyType extends CvObject implements Editable {
     // --- End of Inner class -------------------------------------------------
 
     /**
+     * @param type the CvFuzzy label to compare
+     * @return true if <code>type</code> is of Untermined or C or N terminal types.
+     * False is returned for all other instances.
+     */
+    public static final boolean isSingleType(String type) {
+        return type.equals(UNDETERMINED) || type.equals(C_TERMINAL) || type.equals(N_TERMINAL);
+    }
+
+    /**
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
