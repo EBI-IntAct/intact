@@ -243,6 +243,38 @@ public class InteractionNetwork extends Graph {
 
 
   /**
+   * Create a String giving informations for the bioLayout EMBL software
+   * the informations are just pairwise of protein label.
+   *
+   * @return an object String
+   */
+  public String exportBioLayout () {
+
+    EdgeI edge;
+    StringBuffer out        = new StringBuffer();
+    String separator = System.getProperty ("line.separator");
+    int i;
+
+    if (false == this.isInitialized)
+      this.init();
+
+    Vector  myEdges = (Vector)  super.getEdges();
+
+    for (i = 1; i <= sizeEdges(); i++) {
+
+      edge = (EdgeI) myEdges.get (i - 1);
+      String label1 = ((Node) edge.getNode1 ()).getLabel () ;
+      String label2 = ((Node) edge.getNode2 ()).getLabel () ;
+
+      out.append(label1 + "\t" + label2 + separator);
+    }
+
+    return out.toString();
+  } // exportBioLayout
+
+
+
+  /**
    * Send a String to Tulip to calculate coordinates
    * Enter the obtained coordinates in the graph.
    * 
