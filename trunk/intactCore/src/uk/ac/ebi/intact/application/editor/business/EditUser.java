@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -162,7 +161,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     /**
      * Stores the class name of the last search.
      */
-    private String myLastQueryClass;
+//    private String myLastQueryClass;
 
     /**
      * Reference to Newt proxy server instance; transient as it is created
@@ -374,7 +373,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void delete() throws IntactException {
         myEditView.clear();
         // Remove the current edit object from the cache.
-        removeFromSearchCache();
+//        removeFromSearchCache();
         // Remove this from the experiment list.
         if (myEditView.getClass().isAssignableFrom(ExperimentViewBean.class)) {
             removeFromCurrentExperiment((Experiment) myEditView.getAnnotatedObject());
@@ -484,9 +483,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myLastQuery;
     }
 
-    public String getSearchClass() {
-        return myLastQueryClass;
-    }
+//    public String getSearchClass() {
+//        return myLastQueryClass;
+//    }
 
     public void addToSearchCache(Collection results) {
         // Clear previous results.
@@ -499,20 +498,23 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void updateSearchCache() {
-        AnnotatedObject annobj = myEditView.getAnnotatedObject();
+        // Clear previous results.
+        mySearchCache.clear();
+        mySearchCache.add(new ResultBean(myEditView.getAnnotatedObject()));
+//        AnnotatedObject annobj = myEditView.getAnnotatedObject();
         // Remove from the cache and add it again (this will update any
         // changes done in the editor).
-        removeFromSearchCache();
-        if (mySearchCache.isEmpty()) {
-            return;
-        }
+//        removeFromSearchCache();
+//        if (mySearchCache.isEmpty()) {
+//            return;
+//        }
         // Only add to the cache list if they are of same type; the check
         // is made against the first element (assumes that rest are of same type).
-        ResultBean rb = (ResultBean) mySearchCache.iterator().next();
-        if (rb.isSameType(annobj)) {
+//        ResultBean rb = (ResultBean) mySearchCache.iterator().next();
+//        if (rb.isSameType(annobj)) {
             // The same type; add it to the cache.
-            mySearchCache.add(new ResultBean(annobj));
-        }
+//            mySearchCache.add(new ResultBean(annobj));
+//        }
     }
 
     public Collection lookup(String className, String value, boolean cache)
@@ -555,7 +557,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         if (cache) {
             // Cache the search result statuses.
-            myLastQueryClass = className;
+//            myLastQueryClass = className;
             myLastQueryInput = value;
             myLastQuery = searchParam + "=" + value;
             mySearchResultStatus = (results.size() == 1)
@@ -732,10 +734,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     // Helper methods.
 
-    private void removeFromSearchCache() {
-        String ac = myEditView.getAcNoLink();
-        CollectionUtils.filter(mySearchCache, ResultBean.getPredicate(ac));
-    }
+//    private void removeFromSearchCache() {
+//        String ac = myEditView.getAcNoLink();
+//        CollectionUtils.filter(mySearchCache, ResultBean.getPredicate(ac));
+//    }
 
     /**
      * Starts the editing session.
