@@ -11,7 +11,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class CvCellType extends CvObject {
+public class CvCellType extends CvObject implements Editable {
 
     /**
      * This constructor should <b>not</b> be used as it could
