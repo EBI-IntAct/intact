@@ -28,7 +28,6 @@ import uk.ac.ebi.intact.application.mine.business.Constants;
 import uk.ac.ebi.intact.application.mine.business.IntactUser;
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
 import uk.ac.ebi.intact.application.mine.struts.view.AmbiguousBean;
-import uk.ac.ebi.intact.application.mine.struts.view.ErrorForm;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
 
@@ -75,9 +74,10 @@ public class SearchAction extends Action {
 
             // all given parameters are fetched
             Map parameters = request.getParameterMap();
-            String key;
+            String key, tmp;
             String[] values;
             StringTokenizer tok;
+            StringBuffer search = new StringBuffer( 96 );
 
             for (Iterator iter = parameters.keySet().iterator(); iter.hasNext();) {
                 key = (String) iter.next();
@@ -85,24 +85,32 @@ public class SearchAction extends Action {
                 // if a checkbox with a protein was ticked the protein ac
                 // number is the key and stored in the list
                 if ( PROTEIN_PARAMETER.equals( values[0] ) ) {
-                    notSearchAc.add( key.trim() );
+                    tmp = key.trim();
+                    notSearchAc.add( tmp );
+                    search.append( tmp );
                 }
                 else if ( key.equals( Constants.PARAMETER ) ) {
                     tok = new StringTokenizer( values[0], "," );
                     while ( tok.hasMoreTokens() ) {
                         // the parameter can be something else
                         // than a protein -> it has to be searched for
-                        searchAc.add( tok.nextToken().trim() );
+                        tmp = tok.nextToken().trim();
+                        searchAc.add( tmp );
+                        search.append( tmp );
                     }
                 }
+                if ( iter.hasNext() ) {
+                    search.append( Constants.COMMA );
+                }
             }
+            user.setSearch( search.toString() );
 
             if ( ( searchAc.size() + notSearchAc.size() ) > Constants.MAX_SEARCH_NUMBER ) {
                 Constants.LOGGER.warn( "too many searches" );
                 MessageResources mr = getResources( request );
-                request.setAttribute( Constants.ERROR, new ErrorForm( mr
-                        .getMessage( "searchAction.tooMuchProteins", Integer
-                                .toString( Constants.MAX_SEARCH_NUMBER ) ) ) );
+                request.setAttribute( Constants.ERROR, mr.getMessage(
+                        "searchAction.tooMuchProteins", Integer
+                                .toString( Constants.MAX_SEARCH_NUMBER ) ) );
                 return mapping.findForward( Constants.ERROR );
             }
 
@@ -121,9 +129,11 @@ public class SearchAction extends Action {
             // for every ac number of the list a search is done
             for (Iterator iter = searchAc.iterator(); iter.hasNext();) {
                 searchPhrase = (String) iter.next();
+                // the given search phrase is searched in proteins, interactions
+                // and experiments
                 ab = searchForAll( searchPhrase, sh, user );
 
-                // if the search returned a ambiguous result
+                // if the search returned an ambiguous result
                 if ( ab.hasAmbiguousResult() ) {
                     ambiguous = true;
                 }
@@ -168,8 +178,7 @@ public class SearchAction extends Action {
             return mapping.findForward( Constants.SUCCESS );
         }
         catch ( IntactException e ) {
-            request.setAttribute( Constants.ERROR, new ErrorForm( e
-                    .getLocalizedMessage() ) );
+            request.setAttribute( Constants.ERROR, e.getMessage() );
             return mapping.findForward( Constants.ERROR );
         }
     }

@@ -42,6 +42,10 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener,
      */
     public Connection getDBConnection();
 
+    public String getSearch();
+
+    public void setSearch(String s);
+
     /**
      * Returns the shortest paths found by the algorithm
      * 

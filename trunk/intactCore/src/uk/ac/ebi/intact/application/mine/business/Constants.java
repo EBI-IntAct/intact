@@ -31,4 +31,5 @@ public class Constants {
     public static final Integer SINGLETON_GRAPHID = new Integer(
             Integer.MIN_VALUE );
     public static final String GRAPH_HELPER = "graphHelper";
+    public static final String COMMA = ",";
 }
