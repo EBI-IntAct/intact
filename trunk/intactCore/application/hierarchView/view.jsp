@@ -7,6 +7,7 @@
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.graph.*" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.Constants" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants" %>
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.view.OptionGenerator" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader" %>
@@ -64,24 +65,23 @@
     // session = request.getSession (true);
 
 
-   String AC           = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_AC);
-   String depth        = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_DEPTH);
-   Boolean depthLimit  = (Boolean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_NO_DEPTH_LIMIT);
+   String AC           = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
+   String depth        = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_DEPTH);
+   Boolean depthLimit  = (Boolean) session.getAttribute (StrutsConstants.ATTRIBUTE_NO_DEPTH_LIMIT);
    String noDepthLimit = "null";
    if (null != depthLimit) {
      noDepthLimit = depthLimit.toString();
    }
 
-   ImageBean imageBean   = (ImageBean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_IMAGE_BEAN);
+   ImageBean imageBean   = (ImageBean) session.getAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN);
 
-  // String keys           = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_KEYS);
-   Collection keys       = (Collection)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_KEYS);
-   String methodLabel    = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_METHOD_LABEL);
-   String methodClass    = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_METHOD_CLASS);
-   String behaviour      = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_BEHAVIOUR);
-   InteractionNetwork in = (InteractionNetwork) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_GRAPH);
+   Collection keys       = (Collection)  session.getAttribute (StrutsConstants.ATTRIBUTE_KEYS);
+   String methodLabel    = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_METHOD_LABEL);
+   String methodClass    = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_METHOD_CLASS);
+   String behaviour      = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_BEHAVIOUR);
+   InteractionNetwork in = (InteractionNetwork) session.getAttribute (StrutsConstants.ATTRIBUTE_GRAPH);
 
-   Properties properties = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.struts.Constants.PROPERTY_FILE);
+   Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE);
    String debug = null;
    if (null != properties) {
       debug = properties.getProperty ("application.debug");

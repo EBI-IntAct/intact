@@ -5,7 +5,7 @@
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.*,
                  uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean" %>
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.Constants" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.*"%>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader" %>
 
