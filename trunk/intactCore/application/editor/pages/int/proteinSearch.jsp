@@ -52,3 +52,4 @@
         </td>
     </tr>
 </table>
+<html:errors property="int.prot.search"/>

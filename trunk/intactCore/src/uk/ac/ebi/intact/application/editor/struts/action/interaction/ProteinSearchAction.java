@@ -75,7 +75,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // Error if all three fields are empty.
         if ((acLen == 0) && (spAcLen == 0) && (shortLabelLen == 0)) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("int.prot.search",
                     new ActionError("error.int.protein.search.input"));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
@@ -88,7 +88,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
             Matcher matcher = ourIntactAcPat.matcher(ac);
             if (!matcher.matches()) {
                 ActionErrors errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_ERROR,
+                errors.add("int.prot.search",
                         new ActionError("error.int.protein.search.ac"));
                 saveErrors(request, errors);
                 return mapping.findForward(FAILURE);
@@ -100,7 +100,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
             Matcher matcher = ourSpAcPat.matcher(spAc);
             if (!matcher.matches()) {
                 ActionErrors errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_ERROR,
+                errors.add("int.prot.search",
                         new ActionError("error.int.protein.search.sp"));
                 saveErrors(request, errors);
                 return mapping.findForward(FAILURE);
@@ -129,7 +129,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
             }
             // The error to display on the web page.
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("int.prot.search",
                     new ActionError("error.int.protein.search.empty", param));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
@@ -141,7 +141,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
         String protlimit = getService().getResource("protein.search.limit");
         if (psize > Integer.parseInt(protlimit)) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("int.prot.search",
                     new ActionError("error.int.protein.search.many",
                             Integer.toString(psize), param, protlimit));
             saveErrors(request, errors);

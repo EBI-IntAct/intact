@@ -153,6 +153,11 @@ public class EditorActionServlet extends ActionServlet {
         map.put("error.int.protein.edit.role", "int.protein.search");
         map.put(rb.getString("int.proteins.button.search"), "int.protein.search");
         map.put("error.int.sanity.unsaved.prot", "int.protein.search");
+        map.put("error.int.protein.search.input", "int.protein.search");
+        map.put("error.int.protein.search.ac", "int.protein.search");
+        map.put("error.int.protein.search.sp", "int.protein.search");
+        map.put("error.int.protein.search.empty", "int.protein.search");
+        map.put("error.int.protein.search.many", "int.protein.search");
         // Experiment search in the Interaction editor.
         map.put("error.int.sanity.exp", "int.exp.search");
         map.put("error.int.exp.search.input", "int.exp.search");
