@@ -38,3 +38,8 @@
 	</tr>
 
 </table>
+
+<%-- Separation line before the links --%>
+
+<br>
+<hr>
