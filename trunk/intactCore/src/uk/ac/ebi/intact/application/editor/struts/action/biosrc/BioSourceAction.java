@@ -35,7 +35,7 @@ public class BioSourceAction extends AbstractEditorAction {
     /**
      * The tax id database.
      */
-    private static final String TAX_DB = "sgd";
+    private static final String TAX_DB = "newt";
 
     /**
      * Action for submitting the CV info form.
