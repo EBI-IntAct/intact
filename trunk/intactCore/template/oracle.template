@@ -1,2 +1,4 @@
 username=YOUR-ORACLE-USERNAME
 password=YOUR-ORACLE-PASSWORD
+dbalias=YOUR-ORACLE-DATABASE-ALIAS, e.g. INTACT-DEVELOPMENT
+subprotocol=e.g. oracle:thin:@your.machine.url:Portnumber
