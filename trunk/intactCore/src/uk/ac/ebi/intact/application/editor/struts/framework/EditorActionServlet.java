@@ -32,7 +32,7 @@ import uk.ac.ebi.intact.application.editor.util.LockManager;
 public class EditorActionServlet extends ActionServlet {
 
     public void init() throws ServletException {
-        // Make sure to call super;s init().
+        // Make sure to call super's init().
         super.init();
 
         // Save the context to avoid repeat calls.
@@ -105,9 +105,8 @@ public class EditorActionServlet extends ActionServlet {
         map.put(rb.getString("int.proteins.button.save"), "int.prot");
         map.put(rb.getString("int.proteins.button.delete"), "int.prot");
 
-        // Related to feature. NOTE: Add feature is treated as same as editing
-        // or deleteing a protein.
-        map.put(rb.getString("int.proteins.button.feature.add"), "int.prot");
+        // Related to add/edit/delete feature.
+        map.put(rb.getString("int.proteins.button.feature.add"), "int.feature");
         map.put(rb.getString("int.proteins.button.feature.edit"), "int.feature");
         map.put(rb.getString("int.proteins.button.feature.delete"), "int.feature");
 
@@ -171,6 +170,9 @@ public class EditorActionServlet extends ActionServlet {
         map.put("error.exp.int.search.input", "exp.int.search");
         map.put("error.exp.int.search.empty", "exp.int.search");
         map.put("error.exp.int.search.many", "exp.int.search");
+
+        // Saving proteins.
+        map.put(rb.getString("int.proteins.button.save"), "int.protein.search");
 
         // Protein search in the Interaction editor.
         map.put("error.int.protein.edit.role", "int.protein.search");

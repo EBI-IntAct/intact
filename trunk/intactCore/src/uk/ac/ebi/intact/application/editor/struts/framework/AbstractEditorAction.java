@@ -69,16 +69,6 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
     }
 
     /**
-     * Returns the single instance of the Lock manager.
-     * @return the lock manager stored in the application scope.
-     */
-//    protected LockManager getLockManager() {
-//        LockManager lmr = (LockManager) getApplicationObject(
-//                EditorConstants.LOCK_MGR);
-//        return lmr;
-//    }
-
-    /**
      * Returns the Intact User instance saved in a session for given
      * Http request.
      *
@@ -294,8 +284,6 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         // Set the topic.
         user.setSelectedTopic(getService().getTopic(Interaction.class));
 
-        // The interaction we going back to.
-//        user.setView(view.getParent());
         // The interaction we going back to. It is important that we don't
         // reset the view with the interaction because we want to  go back
         //  to the last interaction stage.

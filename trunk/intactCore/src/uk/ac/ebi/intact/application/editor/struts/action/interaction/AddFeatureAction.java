@@ -36,6 +36,9 @@ public class AddFeatureAction extends CommonDispatchAction {
         return map;
     }
 
+    /**
+     * Handles when Edit Protein button is pressed.
+     */     
     public ActionForward add(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,

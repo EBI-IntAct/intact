@@ -97,6 +97,11 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
     private transient List myFeaturesToDel = new ArrayList();
 
     /**
+     * True if this bein selected. Default is not selected.
+     */
+//    private boolean mySelected;
+
+    /**
      * Instantiate an object of this class from a Protein instance.
      * @param protein the <code>Protein</code> object.
      */
@@ -183,6 +188,10 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
         return myInteractor.getFullName();
     }
 
+//    public boolean isSelected() {
+//        return mySelected;
+//    }
+
     // Read/Write properties.
 
     public String getRole() {
@@ -213,6 +222,15 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
         return myOrganism;
     }
 
+//    public void setSelect(String value) {
+//        System.out.println("Value: " + value);
+//        mySelected = true;
+//    }
+//
+//    public void unselect() {
+//        mySelected = false;
+//    }
+
     /**
      * Sets the interaction for this bean. This is necessary for a newly created
      * Interaction as it doesn't exist until it is ready to persist.
@@ -221,67 +239,6 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
     public void setInteraction(Interaction interaction) {
         myInteraction = interaction;
     }
-
-    // Override Objects's hashCode and equal methods.
-
-//    public int hashCode() {
-//        // The result to return.
-//        int result = 0;
-//
-//        // The prime number to calculate the hashcode.
-//        int prime = 17;
-//
-//        result = prime * result + getShortLabel().hashCode();
-//        if (myRole != null) {
-//            result = prime * result + myRole.hashCode();
-//        }
-////        result = prime * result + myFeatures.size();
-//        System.out.println("At result1: " + result);
-//        for (int i = 0; i < myFeatures.size(); i++) {
-//            result = prime * result + myFeatures.get(i).hashCode();
-//        }
-//        System.out.println("Resul2: " + result);
-//        return result;
-//    }
-//    /**
-//     * Compares <code>obj</code> with this object according to
-//     * Java's equals() contract. Only returns <tt>true</tt> if the short label
-//     * role and features for both objects match.
-//     * @param obj the object to compare.
-//     */
-//    public boolean equals(Object obj) {
-//        System.out.println("AT the top of equals");
-//        // Identical to this?
-//        if (obj == this) {
-//            System.out.println("Same bean");
-//            return true;
-//        }
-//        if ((obj != null) && (getClass() == obj.getClass())) {
-//            // Can safely cast it.
-//            ComponentBean other = (ComponentBean) obj;
-//
-//            // Need to compare object attributes. Assume they are not equal.
-//            boolean result = false;
-//            if (getShortLabel().equals(other.getShortLabel())) {
-//                System.out.println("short label match");
-//                if (myRole == null) {
-//                    System.out.println("Roles are null");
-//                    // Other's role must be null as well.
-//                    result = other.myRole == null;
-//                }
-//                System.out.println("Role: " + myRole + " - " + other.myRole);
-//                result = myRole.equals(other.myRole);
-//            }
-//            // No need to check further if the result is false.
-//            if (!result) {
-//                return result;
-//            }
-//            // Check the feature beans.
-//            System.out.println("About to check the features");
-//            return CollectionUtils.isEqualCollection(myFeatures, other.myFeatures);
-//        }
-//        return false;
-//    }
 
     /**
      * List of features if the component is set. An empty list is returned if
@@ -293,11 +250,6 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
      * </pre>
      */
     public List getFeatures() {
-//        Logger.getLogger(EditorConstants.LOGGER).debug("Getting features");
-//        for (Iterator iter = myFeatures.iterator(); iter.hasNext();) {
-//            FeatureBean element = (FeatureBean) iter.next();
-//            System.out.println("Getting the feature: " + element.getAc() + " - " + element.getRanges());
-//        }
         return myFeatures;
     }
 
@@ -323,10 +275,6 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
      * </pre>
      */
     public Collection getFeaturesToDelete() {
-//        // Features common to both add and delete.
-//        Collection common = CollectionUtils.intersection(myFeaturesToDel, myFeaturesToAdd);
-//        // All the features only found in 'features to delete' collection.
-//        return CollectionUtils.subtract(myFeaturesToDel, common);
         return myFeaturesToDel;
     }
 
@@ -348,7 +296,6 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
     public void saveFeature(Feature feature) {
         // Create the feature bean to compare.
         FeatureBean fb = new FeatureBean(feature);
-//        System.out.println("In save feature - component bean - " + fb.getAc() + ", " + fb.getBoundDomain());
 
         // Find the feature bean within the component bean.
         if (myFeatures.contains(fb)) {
@@ -360,14 +307,12 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
             // Update the new feature list if it exist in there. This is important
             // or else getFeatue() wouldn't return an up todate Feature object.
             if (myFeaturesToAdd.contains(fb)) {
-//                System.out.println("Updating existing new feature bean");
                 // Update an existing feature; remove it and add the new bean.
                 myFeaturesToAdd.remove(fb);
                 myFeaturesToAdd.add(fb);
             }
         }
         else {
-//            System.out.println("Adding a new feature as: " + fb.getAc());
             // New feature; just add it.
             myFeatures.add(fb);
             myFeaturesToAdd.add(fb);

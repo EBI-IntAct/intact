@@ -62,21 +62,6 @@ public class SubmitFormAction extends AbstractEditorAction {
         String dispatch = editorForm.getDispatch();
         LOGGER.debug("Dispatch received " + dispatch);
 
-//        if (dispatch == null) {
-//            dispatch = ((InteractionActionForm) form).getDispatchFeature();
-//            LOGGER.debug("Received feature dispatch: " + dispatch);
-//            InteractionActionForm myform = (InteractionActionForm) form;
-//            for (Iterator iter = myform.getProteins().iterator(); iter.hasNext();) {
-//                ComponentBean pb = (ComponentBean) iter.next();
-//                for (Iterator iter1 = pb.getFeatures().iterator(); iter1.hasNext();) {
-//                    FeatureBean fb = (FeatureBean) iter1.next();
-//                    LOGGER.debug("Processing feature " + fb.getAc() + " and selected status: " + fb.isSelected());
-//                    if (fb.isSelected()) {
-//                        LOGGER.debug("Feaure: " + fb.getAc() + " was selected");
-//                    }
-//                }
-//            }
-//        }
         // The action path from the map.
         String path = (String) map.get(dispatch);
 
@@ -85,7 +70,6 @@ public class SubmitFormAction extends AbstractEditorAction {
         }
         LOGGER.info("Received a null mapping; check the EditorActionServlet "
                 + "for setting the action map only for non Interaction form");
-//        LOGGER.error("Dispatch received " + dispatch);
         return mapping.findForward(FAILURE);
     }
 }

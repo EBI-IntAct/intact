@@ -589,6 +589,15 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public void delProtein(int pos) {
+//        // Get the bean from the current view.
+//        int pos = myComponents.indexOf(cb);
+//
+//        // We should have this bean in the view.
+//        assert pos != -1;
+//
+//        // The bean we want to remove.
+//        ComponentBean bean = (ComponentBean) myComponents.get(pos);
+
         // Remove from the view as well; need the index because we need to
         // remove a specific bean (not just any bean which returns true for
         // equals method).
