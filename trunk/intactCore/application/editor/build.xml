@@ -28,6 +28,7 @@
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
     <property name="webapps.dir" value="${tomcat.home}/webapps"/>
+    <property name="xdoclet.home" value="${env.XDOCLET_HOME}"/>
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
@@ -62,8 +63,9 @@
 
     <property name="ant.dir" value="${root.lib.dir}/ant"/>
 
-    <!-- Where is HttpUnit located? -->
+    <!-- Where unit tests located. -->
     <property name="httpunit.install.dir" value="${intact.app.lib.dir}/test/httpunit"/>
+<!--    <property name="mockobjs.install.dir" value="${intact.app.lib.dir}/test/mockobjects"/>-->
 
     <!-- Build working classpath -->
     <path id="project.class.path">
@@ -111,6 +113,11 @@
             <include name="**/*.jar"/>
         </fileset>
 
+        <!-- Runtime jar files for strutstest case. -->
+<!--        <fileset dir="${mockobjs.install.dir}">-->
+<!--            <include name="**/*.jar"/>-->
+<!--        </fileset>-->
+
         <!-- Support jar files for http unit testing -->
         <fileset dir="${httpunit.install.dir}/jars">
             <include name="**/*.jar"/>
@@ -122,12 +129,19 @@
         </fileset>
     </path>
 
+    <!-- The classpath for xdoclet -->
+    <path id="xdoclet.lib.path">
+        <path refid="project.class.path"/>
+        <fileset dir="${xdoclet.home}/lib" includes="*.jar"/>
+    </path>
+
     <!-- =================================================================== -->
 
     <!-- Sets the time stamp and various 'present' properties. -->
     <target name="prepare">
         <mkdir dir="${basedir}/${lib.dir}"/>
         <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+        <available file="${xdoclet.home}" type="dir" property="xdoclet.present"/>
     </target>
 
     <!-- =================================================================== -->
@@ -742,6 +756,39 @@
         <replace file="${dist.dir}/${editor-context-file}"
                  token="[server.name]"
                  value="${server.name}" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays a message to indicate that xdoclet is not available. -->
+
+    <target name="check-xdoclet" depends="prepare" unless="xdoclet.present">
+        <echo message=
+            "XDoclet is not available on your system or XDOCLET_HOME is not set"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Generate Struts configuration and validator files. You must have the
+         xdoclet installed.
+     -->
+    <target name="generate-struts-xml" depends="check-xdoclet">
+        <taskdef name="webdoclet" classname="xdoclet.modules.web.WebDocletTask"
+        classpathref="xdoclet.lib.path"/>
+
+        <webdoclet destDir="${temp.web}/WEB-INF" mergeDir="etc/merge"
+            excludedTags="@author,@version,@todo" force="true">
+            <fileset dir="${root.src.dir}">
+                <include name="**/application/editor/**/*Action.java"/>
+                <include name="**/application/editor/**/*Form.java"/>
+            </fileset>
+            <!-- The strutsconfigxml element generates the struts-config.xml file. -->
+            <strutsconfigxml version="1.1"/>
+
+            <!-- By including this element, the validation.xml file will be
+            generated based on your struts.validation tags. -->
+            <strutsvalidationxml/>
+        </webdoclet>
     </target>
 
 </project>
