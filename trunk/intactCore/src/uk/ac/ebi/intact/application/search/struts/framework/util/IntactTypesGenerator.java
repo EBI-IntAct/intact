@@ -44,9 +44,6 @@ public class IntactTypesGenerator {
      * @param dest the name of the resource file to write Intact types. The
      * postfix '.properties' is appended to the name if it is not present. This
      * shouldn't be null.
-     *
-     * @pre root != null
-     * @pre dest != null
      */
     public IntactTypesGenerator(String root, String dest) {
         myRoot = root;

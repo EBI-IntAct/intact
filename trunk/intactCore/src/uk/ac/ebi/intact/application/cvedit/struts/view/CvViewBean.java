@@ -249,7 +249,7 @@ public class CvViewBean {
     }
 
     /**
-     * Returns a collection <code>XRefe</code>
+     * Returns a collection <code>Xref</code> objects.
      *
      * <pre>
      * post: return->forall(obj: Object | obj.oclIsTypeOf(Xref))

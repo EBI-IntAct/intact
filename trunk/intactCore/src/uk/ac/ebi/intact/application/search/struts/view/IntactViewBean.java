@@ -73,7 +73,7 @@ public class IntactViewBean implements Serializable {
      * Set attributes using values from AnnotatedObject. A coarse-grained method to
      * avoid multiple method calls.
      *
-     * @param obj the <code>intact object</code> to set attributes of this class.
+     * @param obj the intact object to set attributes of this class.
      */
     public void initialise(Object obj) {
 
@@ -200,7 +200,7 @@ public class IntactViewBean implements Serializable {
     }
 
     /**
-     * Returns a collection <code>XRefe</code>
+     * Returns a collection <code>Xref</code>.
      *
      * <pre>
      * post: return->forall(obj: Object | obj.oclIsTypeOf(Xref))
@@ -244,7 +244,7 @@ public class IntactViewBean implements Serializable {
     }
 
     /**
-     * Creates a collection of <code>XrefBean</code> created from given
+     * Creates a collection of <code>Xref</code> objects created from given
      * collection of xreferences.
      * @param xrefs a collection of <code>Xref</code> objects.
      */
@@ -256,7 +256,6 @@ public class IntactViewBean implements Serializable {
     }
 
     public String getData() {
-
         return data;
     }
 }
