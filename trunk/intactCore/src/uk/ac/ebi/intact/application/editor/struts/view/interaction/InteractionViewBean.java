@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
@@ -140,7 +140,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     // Null for any of these values will throw an exception.
     public void validate() throws ValidationException {
         if ((myOrganism == null) || (myInteractionType == null)) {
-//            throw new ExperimentValidationException();
+//            throw new ExperimentException();
         }
     }
 
