@@ -10,6 +10,9 @@ import org.apache.log4j.PropertyConfigurator;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Inititialize the Logger with the log4J properties file.
@@ -30,7 +33,7 @@ public class LoggingInitServlet extends HttpServlet {
      *   <br>
      *   &lt;init-param&gt;<br>
      *     &lt;param-name>log4j-init-file&lt;/param-name&gt;<br>
-     *     &lt;param-value&gt;WEB-INF/classes/config/log4j.properties&lt;/param-value&gt;<br>
+     *     &lt;param-value&gt;/WEB-INF/classes/config/log4j.properties&lt;/param-value&gt;<br>
      *   &lt;/init-param&gt;<br>
      *   <br>
      *   &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;<br>
@@ -38,17 +41,32 @@ public class LoggingInitServlet extends HttpServlet {
      * </p>
      */
     public void init() {
-        String prefix =  getServletContext().getRealPath("/");
-        String configFile = getInitParameter("log4j-init-file");
 
-        // if the logging-init-file is not set (cf. web.xml), then no point in trying
-        if (null != configFile) {
-            PropertyConfigurator.configure (prefix + configFile);
-            // configureAndWatch(String configFilename, long delay_in_milliseconds)
+        /* Get parameter's value in the web.xml file */
+        String configFile = getInitParameter("log4j-init-file");
+        URL configUrl   = null;
+
+        if (configFile != null) {
+            try {
+                configUrl = getServletContext().getResource (configFile);
+            } catch (MalformedURLException e) {
+                System.out.println ("LOGGING INIT: Couldn't get the logging file path from resource " + configFile);
+                return;
+            }
+        } else {
+            System.out.println ("LOGGING INIT: configuration file could not be found (" + configFile + ").");
+            return;
         }
-    } // init
+
+        /* Load the configuration file */
+        System.out.println("LOGGING INIT: load logging properties file " + configUrl.toString() );
+        PropertyConfigurator.configure (configUrl);
+
+        /* For eventual later use, allow to reload the config at regular interval of time */
+        // configureAndWatch(String configFilename, long delay_in_milliseconds)
+    }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
     }
-} // LoggingInit
+}
 
