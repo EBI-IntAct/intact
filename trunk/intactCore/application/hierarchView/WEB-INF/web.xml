@@ -39,10 +39,31 @@
         <param-value>intact_log.txt</param-value>
     </context-param>
 
+    <!-- =================================================================== -->
 
+    <!-- Listener for starting ans stopping the web application,
+         allows to stop the web service properly
+      -->
     <listener>
         <listener-class>uk.ac.ebi.intact.application.hierarchView.business.tulip.WebServiceManager</listener-class>
     </listener>
+
+    <!-- =================================================================== -->
+
+    <!-- Init servlet for the logging facilities -->
+    <servlet>
+      <servlet-name>logging-init</servlet-name>
+      <servlet-class>uk.ac.ebi.intact.application.hierarchView.business.servlet.LoggingInit</servlet-class>
+
+      <init-param>
+        <param-name>logging-init-file</param-name>
+        <param-value>WEB-INF/classes/config/logging.properties</param-value>
+      </init-param>
+
+      <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- =================================================================== -->
 
     <!-- Action Servlet Configuration for Struts -->
     <servlet>
@@ -78,6 +99,8 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <!-- =================================================================== -->
+
     <!-- Declaration of the Image generator servlet -->
     <servlet>
         <servlet-name>GenerateImage</servlet-name>
@@ -89,6 +112,7 @@
         <url-pattern>/GenerateImage</url-pattern>
     </servlet-mapping>
 
+    <!-- =================================================================== -->
 
     <!-- Action Servlet Mapping -->
     <servlet-mapping>

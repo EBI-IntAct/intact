@@ -13,6 +13,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletContextEvent;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
@@ -24,6 +25,8 @@ import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
  */
 
 public class WebServiceManager implements ServletContextListener {
+
+    private static Logger logger = Logger.getLogger("CheckInitTag");
 
     private String deploymentFile   = null;
     private String undeploymentFile = null;
@@ -66,26 +69,27 @@ public class WebServiceManager implements ServletContextListener {
         // The configuration file.
         String configFile = Constants.WEB_SERVICE_PROPERTY_FILE;
 
-        System.out.println ("Loading web service's properties");
+        logger.info ("Loading web service's properties");
         Properties props = PropertyLoader.load (configFile);
 
         if (null != props) {
             String deploymentFile   = props.getProperty ("webService.deployment");
             String undeploymentFile = props.getProperty ("webService.undeployment");
 
-            System.out.println ("Properties Loaded :" +
-                                "\nwebService.deployment = "   + deploymentFile +
-                                "\nwebService.undeployment = " + undeploymentFile);
+            logger.info ("Properties Loaded :" +
+                         "\nwebService.deployment = "   + deploymentFile +
+                         "\nwebService.undeployment = " + undeploymentFile);
 
             if ((null == deploymentFile) || (null == undeploymentFile)) {
                 String msg = "Error, can't initialize WebServiceManager : unable to read properties file.";
+                logger.severe (msg);
                 throw new Exception (msg);
             }
 
             this.setDeploymentFile (deploymentFile);
             this.setUndeploymentFile (undeploymentFile);
 
-            System.out.println ("Properties loaded.");
+            logger.info ("Properties loaded.");
         }
     } // init
 

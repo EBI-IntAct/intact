@@ -63,6 +63,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <property name="webService.properties.filename"   value="${config.dir}/WebService.properties"/>
     <property name="highlighting.properties.filename" value="${config.dir}/Highlighting.properties"/>
 
+    <!-- Properties files on which some tests will be performed -->
     <property resource="${webService.properties.filename}"/>
     <property resource="${highlighting.properties.filename}"/>
 
@@ -75,16 +76,11 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <pathelement path="${root.dest.dir}"/>
         <pathelement path="${dest.dir}"/>
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
-        <!-- Should be uncommented to compile with struts 1.1 -->
-        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
-        <!-- Remove the following line once hv is working with 1.1 -->
-        <!-- <pathelement path="${root.lib.dir}/struts.jar"/> -->
-
+        <!--pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/-->
         <pathelement path="${root.lib.dir}/servlet.jar"/>
+        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-logging.jar"/>
     </path>
-
-
 
     <!-- =================================================================== -->
 
@@ -92,7 +88,8 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         Test some configuration point to warn the user in case of configuration problem.
         The build process is stopped if smething goes wrong.
     -->
-    <target name="all-config-test" depends="test-config">
+    <target name="all-config-test" depends="test-config"
+            description="Performs configuration test and describes eventual problem.">
         <antcall target="webService-hostname-result"/>
         <antcall target="console-location-result"/>
         <antcall target="console-location-available-result"/>
@@ -186,13 +183,17 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <delete dir="${jdoc.dir}"/>
         <delete dir="${ws.dir}"/>
         <delete dir="${dist.dir}"/>
+
         <!-- Struts imported tlds-->
         <delete>
             <fileset dir="${tld.dir}" includes="struts*.tld"/>
         </delete>
+
+        <!-- Web service deployment file -->
+        <delete>
+            <fileset dir="${config.dir}" includes="*.wsdd"/>
+        </delete>
     </target>
-
-
 
     <!-- =================================================================== -->
 
@@ -217,7 +218,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
         <!-- Copy property files -->
         <copy todir="${dest.dir}/config">
-            <fileset dir="WEB-INF/config">
+            <fileset dir="${config.dir}">
                 <include name="*.properties"/>
             </fileset>
         </copy>
@@ -225,6 +226,9 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
         <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
+        <!--
+        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
+        -->
     </target>
 
     <!-- =================================================================== -->
@@ -476,7 +480,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
                 <include name="undeploy.wsdd"/>
             </fileset>
         </copy>
-
 
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${basedir}">
