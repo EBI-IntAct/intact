@@ -30,50 +30,26 @@ import org.apache.ojb.broker.util.logging.Logger;
 public class InsertComplex {
 
     IntactHelper helper;
-    DAOSource dataSource;
-    DAO dao;
+
+    /** All proteins which have been created for the current complex.
+     */
+    HashMap newProteins = new HashMap();
     Logger log = null;
-    long startTime = System.currentTimeMillis();
 
     /**
-     * basic constructor - sets up (hard-coded) data source and an intact helper
+     * basic constructor - sets up intact helper
      */
     public InsertComplex() throws Exception {
 
-        dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
+       try {
+           helper = new IntactHelper();
+       } catch (IntactException ie) {
 
-        //set the config details, ie repository file for OJB in this case
-        Map config = new HashMap();
-        config.put("mappingfile", "config/repository.xml");
-        dataSource.setConfig(config);
-
-        try {
-            dao = dataSource.getDAO();
-	    log = dataSource.getLogger();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-
-             helper = new IntactHelper(dataSource);
-
-         } catch (IntactException ie) {
-
-             //something failed with type map or datasource...
-             String msg = "unable to create intact helper class - no datasource";
-             System.out.println(msg);
-             ie.printStackTrace();
-         }
-
-        // Set cached classes
-        helper.addCachedClass(CvDatabase.class);
-        helper.addCachedClass(Institution.class);
-        helper.addCachedClass(Institution.class);
-        helper.addCachedClass(Protein.class);
-        helper.addCachedClass(CvComponentRole.class);
-//        helper.addCachedClass(Experiment.class);
-        helper.addCachedClass(Interaction.class);
+           //something failed with type map or datasource...
+           String msg = "unable to create intact helper class";
+           System.out.println(msg);
+           ie.printStackTrace();
+       }
     }
 
 
@@ -83,97 +59,117 @@ public class InsertComplex {
     public void addNewXref(AnnotatedObject current,
                            Xref xref)  throws Exception {
 
-        // Todo: Make sure the xref does not yet exist in the object
-
         current.addXref(xref);
+
+        /* The temporary xref will only be added to the object
+           if it does not yet exist in it.
+           Only if it is added it will be made persistent.
+        */
         if (xref.getParentAc() == current.getAc()){
-            dao.create(xref);
+            helper.create(xref);
         }
     }
 
+    /**
+     * Insert a Component object linking an Interactor to an Interaction.
+     *
+     * @param act The interaction to add the Interactor to
+     * @param spAc Swiss-Prot accession number of the Protein to add.
+     *             If the protein does not yet exist, it will be created.
+     * @param role Role of the protein in the interaction.
+     * @throws Exception
+     */
     public void insertComponent (Interaction act,
                                  String spAc,
                                  CvComponentRole role) throws Exception {
-	log.info((System.currentTimeMillis() - startTime) + " ZZ  Insert component");
+
         Component comp = new Component();
         comp.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
         comp.setInteraction(act);
-	log.info((System.currentTimeMillis() - startTime) + " ZZ  Create protein");
         Protein protein = (Protein) helper.getObjectByXref(Protein.class, spAc);
+
+        /* Check if the protein has already been created during the creation of this complex.
+           See Note: transaction in main() for documentation.
+        */
+        if (null == protein){
+            protein = (Protein) this.newProteins.get(spAc);
+        }
+
+        // If the protein does not exist, create it
         if (null == protein){
             protein = new Protein();
             protein.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
             protein.setShortLabel(spAc);
-            dao.create(protein);
+            helper.create(protein);
+            this.newProteins.put(spAc,protein);
             addNewXref(protein,
                        new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                                 (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR"),
                                 spAc,
                                 null, null, null));
         }
-	log.info((System.currentTimeMillis() - startTime) + " ZZ  set interactor");
+
+        // Complete the component
         comp.setInteractor(protein);
-	log.info((System.currentTimeMillis() - startTime) + " ZZ  set role");
         comp.setCvComponentRole(role);
-	log.info((System.currentTimeMillis() - startTime) + " ZZ  create comp");
-        dao.create(comp);
-	
+        helper.create(comp);
     }
 
 
-    public void insertComplex (String interactionNumber,
-                               String bait,
-                               Vector preys,
-                               String experimentLabel) throws Exception {
+    /**
+     * Inserts a complex into the database
+     *
+     * @param interactionNumber The number of the interaction in the publication.
+     *                          Used for the shortLabel.
+     * @param bait Swiss-Prot accession number of the bait protein.
+     * @param preys Swiss-Prot accession numbers of the prey proteins.
+     * @param experimentLabel The short label of the experiment the complex belongs to.
+     * @throws Exception
+     */
+    public void insertComplex(String interactionNumber,
+                              String bait,
+                              Vector preys,
+                              String experimentLabel) throws Exception {
 
-    startTime = System.currentTimeMillis();
-	log.info((System.currentTimeMillis() - startTime) + " ZZ  Get Experiment");
         // Get experiment
         Experiment ex = (Experiment) helper.getObjectByLabel(Experiment.class, experimentLabel);
-        if (null == ex){
+        if (null == ex) {
             ex = new Experiment();
             ex.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
-            dao.create(ex);
+            helper.create(ex);
         }
 
-	log.info((System.currentTimeMillis() - startTime) + " ZZ Get Interaction");
         // Get Interaction
         // The label is the first two letters of the experiment label plus the interaction number
-        String actLabel = experimentLabel.substring(0,2) + "-" + interactionNumber;
-        Interaction act = (Interaction) helper.getObjectByLabel(Interaction.class,actLabel);
-        if (null == act){
+        String actLabel = experimentLabel.substring(0, 2) + "-" + interactionNumber;
+        Interaction act = (Interaction) helper.getObjectByLabel(Interaction.class, actLabel);
+        if (null == act) {
             act = new Interaction();
             act.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
             act.setShortLabel(actLabel);
-            dao.create(act);
+            helper.create(act);
         }
-	log.info(" ZZ Interaction: \n" + act);
-	log.info((System.currentTimeMillis() - startTime) + " ZZ Add bait");
         // add bait
         insertComponent(act, bait, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "bait"));
 
-	log.info((System.currentTimeMillis() - startTime) + " ZZ Add preys");
         // add preys
         for (int i = 0; i < preys.size(); i++) {
             String prey = (String) preys.elementAt(i);
             insertComponent(act, prey, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "prey"));
-	log.info((System.currentTimeMillis() - startTime) + " ZZ Added prey" + i);
-
         }
 
         // link interaction to experiment
         ex.addInteraction(act);
-	log.info((System.currentTimeMillis() - startTime) + " ZZ Added int");
 
         // Store or update
-        dao.update(act);
-	log.info((System.currentTimeMillis() - startTime) + " ZZ Updated int");
-	//        dao.update(ex);
-	log.info((System.currentTimeMillis() - startTime) + " ZZ Updated ex");
-
+        helper.update(act);
     }
 
-
+    /** Read complex data from flat file and insert it into the database.
+     *
+     * @param args InputFileName
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
 
         InsertComplex app = new InsertComplex();
@@ -207,12 +203,26 @@ public class InsertComplex {
             try {
                 // Start transaction.
                 // The transaction range is the interaction.
-                app.dao.begin();
+
+                /* Note: transaction
+                Within one transaction, relational systems provide so-called READ CONSISTENCY.
+                This means that the same query always returns the same result within one transaction.
+                In this application, this has the follwing effect:
+                If a complex contains the same protein more than once, and this protein does
+                not yet exist, it will be created when the first occurrence is encoutered.
+                Due to the read consistency, the getObjectByXref would return null when the protein
+                occurs for the second time and is queried for. As a result, it would be created twice.
+                Therefore it is necessary to maintain newProteins, a HashMap listing all proteins
+                created in the current transaction.
+                */
+
+                app.helper.startTransaction();
+                app.newProteins.clear();
                 app.insertComplex(interactionNumber, bait, preys, experimentLabel);
-                app.dao.commit();
+                app.helper.finishTransaction();
             } catch (Exception ie) {
-                System.err.println("\nError: " + ie.getMessage() + "Ignoring:\n" + line);
-                app.dao.rollback();
+                System.err.println("\nError: " + ie.getMessage() + "\nIgnoring:\n" + line);
+                app.helper.undoTransaction();
             }
 
             // Progress report

@@ -974,8 +974,8 @@ public class IntactHelper implements SearchI, Serializable {
 
         //should be unique...
         if (results.size() > 1) {
-            throw new IntactException("error - more than one result returned with query by"
-                    + aPrimaryId);
+            throw new IntactException("error - more than one result returned with query by "
+                    + aPrimaryId + " ");
         } else {
             if (results.isEmpty()) {
                 return null;
