@@ -322,19 +322,19 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 </a>
             </td>
 
-            <!-- linked to BioSource search -->
-            <% if(bean.getBioSourceName().equalsIgnoreCase("-"))  { %>
 
-            <td colspan="2" class="lefttop">
-                    <nobr><%= bean.getBioSourceName() %></nobr>
-                </a>
-            </td>
+            <% if(bean.getExperimentBioSourceName().equalsIgnoreCase("-"))  { %>
+              <!-- linked to BioSource search -->
+                <td colspan="2" class="lefttop">
+                    <nobr><%= bean.getExperimentBioSourceName() %></nobr>
+                    </a>
+                </td>
             <% }  else { %>
-             <td colspan="2" class="lefttop">
-                <a href="<%= bean.getBioSourceSearchURL() %>">
-                    <nobr><%= bean.getBioSourceName() %></nobr>
-                </a>
-            </td>
+                <td colspan="2" class="lefttop">
+                    <a href="<%= bean.getBioSourceSearchURL() %>">
+                        <nobr><%= bean.getExperimentBioSourceName() %></nobr>
+                    </a>
+                </td>
             <% } %>
         </tr>
 
@@ -342,7 +342,6 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- 'Description' title, linked to help -->
-            <%-- <td width="10%" class="headerdarkmid" style="font-weight: bold;"> --%>
             <td class="headerdarkmid" style="font-weight: bold;">
                 <a href="<%= bean.getHelpLink() + "DESC_HELP_SECTION" %>" class="tdlink">
                  Description
@@ -830,10 +829,26 @@ Displaying <b><%= firstDisplayIndex %></b> to
         </tr>
 
         <!-- Protein data rows, to match the above title cells..... -->
-        <%
+        <%    /**
                 Collection proteins = bean.getProteins(interaction);
                 for(Iterator it1 = proteins.iterator(); it1.hasNext();) {
-                    Protein protein = (Protein)it1.next();
+                Protein protein = (Protein)it1.next();
+
+            **/
+
+        %>
+
+
+            <!-- Protein data rows, to match the above title cells..... -->
+        <%
+
+        for (Iterator iterator = interaction.getComponents().iterator(); iterator.hasNext();) {
+            Component component = (Component) iterator.next();
+            Interactor interactor =  component.getInteractor();
+            if (interactor instanceof Protein) {
+                Protein protein = (Protein) interactor;
+                BioSource bioSource =  component.getExpressedIn();
+
         %>
 
         <%-- data row.... --%>
@@ -858,9 +873,15 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <td class="data"><%= protein.getFullName() %></td>
 
             <!-- expression system, (ie the BioSource Full Name), with a search link -->
+           <%   if(!bean.getBiosourceURL(bioSource).equalsIgnoreCase("-")) { %>
             <td class="data">
-                <a href="<%= bean.getProteinBiosourceURL(protein)%>"><%= protein.getBioSource().getFullName()%></a>
+                <a href="<%= bean.getBiosourceURL(bioSource)%>"><%= bean.getBioSourceName(bioSource)%></a>
             </td>
+            <% } else { %>
+                <td class="data">
+                <%= bean.getBioSourceName(bioSource)%>
+            </td>
+          <% } %>
 
             <!-- uniprot ID, linked 'to biosource' (!) (Guess this should be search in uniprot..)-->
             <%-- This is actually an Xref of the Protein, ie its uniprot Xref... --%>
@@ -888,17 +909,30 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <%-- *** ROW POSITION SWAPPED - SEE 'UNIPROT DESCRIPTION' COMMENT *** --%>
             <%
                     //NB this should never be null....
-                    Component comp = bean.getComponent(protein, interaction);
+
+                  //   Component comp = bean.getComponent(protein, interaction);
+                    if(component != null) {
             %>
+
             <td class="data">
-                <a href="<%= bean.getCvComponentRoleSearchURL(comp)%>">
-                    <%= comp.getCvComponentRole().getShortLabel()%>
+                <a href="<%= bean.getCvComponentRoleSearchURL(component)%>">
+                    <%= component.getCvComponentRole().getShortLabel()%>
                 </a>
             </td>
+         <%
+           } else {
+         %>
 
+                <td class="data">
+                   -
+                    </a>
+                </td>
+           <%  }  %>
         </tr>
         <%
-                }   //end of the proteins loop
+             } // end if
+           }   //end of the proteins loop
+
         %>
 
         <!-- 'sequence features' details start here... -->
