@@ -233,7 +233,7 @@ public class Range extends BasicObjectImpl {
         fromCvFuzzyType = type;
     }
 
-    public CvFuzzyType getToCvFuzzyType_1() {
+    public CvFuzzyType getToCvFuzzyType() {
         return toCvFuzzyType;
     }
 
