@@ -55,7 +55,7 @@ need only the "form-bean" element itself, with the corresponding
         <action path="/visualize"
                 type="uk.ac.ebi.intact.application.hierarchView.struts.controller.VisualizeAction"
                 name="visualizeForm"
-                scope="request"
+                scope="session"
                 input="/view.jsp">
 
             <forward  name="success"  path="/view.jsp"/>
