@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.Xref;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,12 +23,13 @@ import java.util.List;
  */
 
 /**
- * This class provides JSP view information for a particular BioSource Object. It is used in the BioSource View
+ * This class provides JSP view information for a particular BioSource Object. It is used in the
+ * BioSource View
  */
 public class BioSourceViewBean extends AbstractViewBean {
 
     /**
-     * The BioSource Object
+     * The BioSource Object which is wrapped 
      */
     private final BioSource obj;
 
@@ -74,7 +75,6 @@ public class BioSourceViewBean extends AbstractViewBean {
         this.searchURL = searchURL;
         this.obj = obj;
         this.annotationFilters = new ArrayList();
-
         //now set up the Annotation filter list
         annotationFilters = new ArrayList();
         annotationFilters.add("remark");
@@ -112,7 +112,10 @@ public class BioSourceViewBean extends AbstractViewBean {
      * @return String the object's Intact name.
      */
     public String getObjIntactName() {
-        return this.obj.getShortLabel();
+        if (this.obj.getShortLabel() != null) {
+            return this.obj.getShortLabel();
+        }
+        return "-";
     }
 
     /**
@@ -121,7 +124,10 @@ public class BioSourceViewBean extends AbstractViewBean {
      * @return String the AC of the wrapped object.
      */
     public String getObjAc() {
-        return this.obj.getAc();
+        if (this.obj.getAc() != null) {
+            return this.obj.getAc();
+        }
+        return "-";
     }
 
     /**
@@ -163,29 +169,29 @@ public class BioSourceViewBean extends AbstractViewBean {
 
 
     /**
-     * Convenience method to provide a filtered list of Annotations for a given BioSource Object. Useful
-     * in JSP display to apply the same filters of the wrapped BioSource Object.
+     * Convenience method to provide a filtered list of Annotations for a given BioSource Object.
+     * Useful in JSP display to apply the same filters of the wrapped BioSource Object.
      *
      * @return Collection the filtered List of Annotations (empty if there are none)
      */
     public Collection getFilteredAnnotations() {
-         final ArrayList result = new ArrayList();
-         // get all Annotations
-         Collection someAnnotations = this.obj.getAnnotations();
-         // looks what is in it
-         for (Iterator it = someAnnotations.iterator(); it.hasNext();) {
-             Annotation annotation = (Annotation) it.next();
-             //run through the filter
-             if ((!annotationFilters.contains(annotation.getCvTopic().getShortLabel()))) {
-             // if it's not in the filter get them
-             AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation,
-                     this.searchURL);
-             result.add(anAnnotationViewBean);
-             }
-         }
+        final ArrayList result = new ArrayList();
+        // get all Annotations
+        Collection someAnnotations = this.obj.getAnnotations();
+        // looks what is in it
+        for (Iterator it = someAnnotations.iterator(); it.hasNext();) {
+            Annotation annotation = (Annotation) it.next();
+            //run through the filter
+            if ((!annotationFilters.contains(annotation.getCvTopic().getShortLabel()))) {
+                // if it's not in the filter get them
+                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation,
+                        this.searchURL);
+                result.add(anAnnotationViewBean);
+            }
+        }
 
-         return result;
-     }
+        return result;
+    }
 
 
     /**
@@ -257,7 +263,10 @@ public class BioSourceViewBean extends AbstractViewBean {
      * @return the FullName to the given AnnotatedObject
      */
     public String getFullname() {
-        return this.obj.getFullName();
+        if (this.obj.getFullName() != null) {
+            return this.obj.getFullName();
+        }
+        return "-";
     }
 
     /**
