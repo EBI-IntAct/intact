@@ -6,11 +6,17 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework.util.test;
 
-import java.util.*;
-import java.io.*;
-
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorTopicsGenerator;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Test class for EditorTopicsGenerator class.

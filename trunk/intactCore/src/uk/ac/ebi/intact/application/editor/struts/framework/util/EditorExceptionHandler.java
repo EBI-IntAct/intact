@@ -6,16 +6,15 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.*;
 import org.apache.struts.config.ExceptionConfig;
-import org.apache.log4j.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-
 import uk.ac.ebi.intact.application.editor.exception.BaseException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Extends the struts default exception handler to Editor specific behaviour.

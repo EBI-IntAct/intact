@@ -8,7 +8,9 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util.test;
 
 // JUnit classes
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Testsuite that is composed of the individual test classes. Any new test

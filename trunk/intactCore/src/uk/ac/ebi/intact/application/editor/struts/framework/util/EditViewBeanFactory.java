@@ -6,14 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
-import java.util.Map;
-import java.util.HashMap;
-
-import uk.ac.ebi.intact.application.editor.struts.view.cv.CvViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.cv.CvViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.model.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The factory class to create edit view beans.
