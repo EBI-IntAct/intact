@@ -54,7 +54,7 @@ public class ViewForm extends ActionForm {
         if (action.equals("Expand/Contract")) {
             myAction = EXPAND_CONTRACT;
         }
-        else if (action.equals("Expand All")) {
+        else if (action.equals("Full Expand")) {
             myAction = EXPAND_ALL;
         }
         else if (action.equals("Contract All")) {
