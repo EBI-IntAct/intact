@@ -7,11 +7,11 @@
   -->
 
 <%--
-  - Presents Experiments information for an Interaction.
+  - Presents Experiments information for an Interaction. The form name is hard
+  - coded (intExpForm).
   --%>
 
 <%@ page language="java"%>
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
