@@ -11,6 +11,9 @@
     <property file="${webService.properties.file}"/>
     <property name="axis.lib.dir" value="${axis.dir}/WEB-INF/lib"/>
 
+    <property name="lib.dir" value="lib"/>
+    <property name="ws.royere.lib.file" value="${lib.dir}/royere.jar"/>
+
     <property name="wsdd.dir" value="wsdd"/>
     <property name="ws.deploy.file" value="${wsdd.dir}/deploy.wsdd"/>
     <property name="ws.undeploy.file" value="${wsdd.dir}/undeploy.wsdd"/>
@@ -78,6 +81,9 @@
 
         <echo message="Copying web service in Axis..."/>
         <copy file="${ws.tulip.jar.name}" todir="${axis.lib.dir}" overwrite="true"/>
+
+        <echo message="Copy the royere library in Axis (only if present)" />
+        <copy file="${ws.royere.lib.file}" todir="${axis.lib.dir}" failonerror="false" overwrite="true"/>
 
         <echo message="Now you have to restart tomcat before to run the web service"/>
     </target>
