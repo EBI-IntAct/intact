@@ -1,0 +1,65 @@
+$Id$
+**********************************************************************
+README for CvEdit
+**********************************************************************
+
+DIRECTORIES:
+/ (root)        : JSP and css files.
+WEB-INF/lib     : Library files for web. All the files in this location are
+                  included in the WAR file.
+WEB-INF/classes : CvEdit specific (non Intact core) class files.
+WEB-INF/tld     : The tag libraries.
+WEB-INF/config  : Configuration/Property files for the application.
+dist/           : Where the WAR file is created.
+
+INSTALLATION
+    edit repository.xml and OJB.properties in the intact root directory
+    (intactCore/config) to suit your requirements (oracle vs postgres etc).
+    Instead of editing these files manually, you may just run ant set-target-env
+    from intactCore directory. The target environment is specified in
+    build.properties file (intactCore directory). CvEdit has been tested
+    under Oracle 8.1.6 and PostGres 7.2 (local and remote).
+
+BUILD
+    ant war
+        prepares a WAR file to be deployed in a WEB container. The WAR file is
+        created in dist/ directory.
+
+OTHER USEFUL COMMANDS
+    ant deploy (Tomcat specific)
+        deploys the WAR file in dist/ location to CATALINA_HOME/webapps. The
+        environment variable CATALINA_HOME must be set for this command to work
+        correctly.
+
+    ant undeploy (Tomcat specific)
+        reverses the effects of 'ant deploy' command. In addition to that, this
+        command also stops the WEB server (Tomcat) if it is running. As with
+        deploy command, the environment variable CATALINA_HOME must be set for
+        this command to work correctly. An error message, displayed when trying
+        to shutdown the WEB server if it is not running, can be safely ignored. In
+        addition to removing the WAR file, this command also removes the
+        expanded directory as well. For example, CATALINA_HOME/webapps/cvedit
+        directory is removed in addition to CATALINA_HOME/webapps/cvedit.war file.
+
+    ant undeploy war deploy (Tomcat specific)
+        runs all three targets in the specified order. Undeploys the last deployment,
+        creates a new war file and deploy it again.
+
+    ant war-test
+        Not fully implemented yet. The purpose of this command is to create a WAR
+        file for testing. Other similar command, deploy-test and undeploy-test, are
+        also partially implemented.
+
+NOTES
+    The WAR file is being built using jar and class file from various locations.
+    Given below are locations where it looks for these files:
+        / (root)        - jsp and css files.
+        WEB-INF/        - web.xml, struts-config.xml files and tld libraries.
+        WEB-INF/lib     - all the jar files in this location.
+        ../../dist/     - intact-core.jar file.
+        ../lib          - struts specific common jar files.
+        ../../lib       - application common jar files (only a subset).
+        WEB-INF/classes - CvEdit class files.
+
+COMMENTS
+    Send any comments/feedback to smudali@ebi.ac.uk
