@@ -115,6 +115,7 @@
 
 <h1>Search Results for
     <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %></h1>
+    <h4>(short labels of search criteria matches highlighted in <b><i>bold italic</i></b>)</h4>
 <!-- a line to separate the header -->
 <hr size=2>
 
@@ -132,9 +133,9 @@
     //write to the JSP output stream
     StreamResult result = new StreamResult(out);
 
-    if(session.getAttribute(SearchConstants.CV_VIEW_BEAN) != null) {
-        //only have a single CvObject to show..
-        IntactViewBean bean = (IntactViewBean)session.getAttribute(SearchConstants.CV_VIEW_BEAN);
+    if(session.getAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN) != null) {
+        //only have a single object to show..
+        IntactViewBean bean = (IntactViewBean)session.getAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN);
         bean.transform("0", result);
     }
     else {
@@ -159,8 +160,8 @@
         <tr>
 
         <%
-            if(session.getAttribute(SearchConstants.CV_VIEW_BEAN) == null) {
-                //display buttons - none to display for CvObject views..
+            if(session.getAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN) == null) {
+                //display buttons - none to display for single object views..
         %>
             <td align="center">
                 <%
