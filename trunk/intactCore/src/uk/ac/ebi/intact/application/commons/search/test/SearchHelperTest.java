@@ -65,7 +65,8 @@ public class SearchHelperTest extends TestCase {
 
     public void testGetExperiments() {
         try {
-            doTestGetExperiments();
+            doTestGetExperiments(false);
+            doTestGetExperiments(true);
         }
         catch (IntactException e) {
             fail(e.getMessage());
@@ -74,7 +75,8 @@ public class SearchHelperTest extends TestCase {
 
     public void testGetInteractions() {
         try {
-            doTestGetInteractions();
+            doTestGetInteractions(false);
+            doTestGetInteractions(true);
         }
         catch (IntactException e) {
             fail(e.getMessage());
@@ -83,7 +85,8 @@ public class SearchHelperTest extends TestCase {
 
     public void testGetProteins() {
         try {
-            doTestGetProteins();
+            doTestGetProteins(false);
+            doTestGetProteins(true);
         }
         catch (IntactException e) {
             fail(e.getMessage());
@@ -92,19 +95,31 @@ public class SearchHelperTest extends TestCase {
 
     public void testHelperClosing() {
         try {
-            doTestHelperClosing();
+            doTestHelperClosing(false);
+            doTestHelperClosing(true);
         }
         catch (IntactException e) {
             fail(e.getMessage());
         }
     }
 
-    private void doTestGetExperiments() throws IntactException {
+    public void testSimpleLookup() {
+        try {
+            doTestSimpleLookup();
+        }
+        catch (IntactException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    private void doTestGetExperiments(boolean query) throws IntactException {
         // Any valid logger will do fine here.
         Logger logger = Logger.getLogger(EditorConstants.LOGGER);
         SearchHelperI searchHelper = new SearchHelper(logger);
 
-        ResultWrapper rw = searchHelper.search(Experiment.class, "ac", "*", 20);
+        ResultWrapper rw = getResultWrapper(query, searchHelper, Experiment.class,
+                "ac", "*", 20);
+
         List results = rw.getResult();
         assertEquals(results.size(), 2);
         // Not too large
@@ -116,51 +131,55 @@ public class SearchHelperTest extends TestCase {
         assertTrue(labels.contains("ho"));
     }
 
-    private void doTestGetInteractions() throws IntactException {
+    private void doTestGetInteractions(boolean query) throws IntactException {
         Logger logger = Logger.getLogger(EditorConstants.LOGGER);
         SearchHelperI searchHelper = new SearchHelper(logger);
 
         // within max size
-        ResultWrapper rw = searchHelper.search(InteractionImpl.class, "shortLabel",
-                "ga-*", 20);
+        ResultWrapper rw = getResultWrapper(query, searchHelper,InteractionImpl.class,
+                "shortLabel", "ga-*", 20);
+
         List results = rw.getResult();
-        assertEquals(results.size(), 9);
+        assertEquals(results.size(), 8);
         // Not too large
         assertFalse(rw.isTooLarge());
-        assertEquals(rw.getPossibleResultSize(), 9);
+        assertEquals(rw.getPossibleResultSize(), 8);
 
         for (Iterator iter = extractShortLabels(results).iterator(); iter.hasNext();) {
             assertTrue(((String) iter.next()).startsWith("ga-"));
         }
 
         // equals to max size
-        rw = searchHelper.search(InteractionImpl.class, "shortLabel", "ga-*", 9);
+        rw = getResultWrapper(query, searchHelper, InteractionImpl.class,
+                "shortLabel", "ga-*", 8);
+
         results = rw.getResult();
-        assertEquals(results.size(), 9);
+        assertEquals(results.size(), 8);
         // Not too large
         assertFalse(rw.isTooLarge());
-        assertEquals(rw.getPossibleResultSize(), 9);
+        assertEquals(rw.getPossibleResultSize(), 8);
 
         for (Iterator iter = extractShortLabels(results).iterator(); iter.hasNext();) {
             assertTrue(((String) iter.next()).startsWith("ga-"));
         }
 
         // greater than max size
-        rw = searchHelper.search(InteractionImpl.class, "shortLabel", "ga-*", 5);
+        rw = getResultWrapper(query, searchHelper, InteractionImpl.class,
+                "shortLabel", "ga-*", 5);
         results = rw.getResult();
         assertTrue(results.isEmpty());
         // Too large
         assertTrue(rw.isTooLarge());
-        assertEquals(rw.getPossibleResultSize(), 9);
+        assertEquals(rw.getPossibleResultSize(), 8);
     }
 
-    private void doTestGetProteins() throws IntactException {
+    private void doTestGetProteins(boolean query) throws IntactException {
         Logger logger = Logger.getLogger(EditorConstants.LOGGER);
         SearchHelperI searchHelper = new SearchHelper(logger);
 
         // within max size
-        ResultWrapper rw = searchHelper.search(ProteinImpl.class, "shortLabel",
-                "y*", 20);
+        ResultWrapper rw = getResultWrapper(query, searchHelper, ProteinImpl.class,
+                "shortLabel", "y*", 20);
         List results = rw.getResult();
         assertEquals(results.size(), 14);
         // Not too large
@@ -172,7 +191,8 @@ public class SearchHelperTest extends TestCase {
         }
 
         // equals to max size
-        rw = searchHelper.search(ProteinImpl.class, "shortLabel", "y*", 14);
+        rw = getResultWrapper(query, searchHelper, ProteinImpl.class, "shortLabel",
+                "y*", 14);
         results = rw.getResult();
         assertEquals(results.size(), 14);
         // Not too large
@@ -184,7 +204,8 @@ public class SearchHelperTest extends TestCase {
         }
 
         // greater than max size
-        rw = searchHelper.search(ProteinImpl.class, "shortLabel", "y*", 5);
+        rw = getResultWrapper(query, searchHelper, ProteinImpl.class, "shortLabel",
+                "y*", 5);
         results = rw.getResult();
         assertTrue(results.isEmpty());
         // Too large
@@ -192,7 +213,7 @@ public class SearchHelperTest extends TestCase {
         assertEquals(rw.getPossibleResultSize(), 14);
     }
 
-    private void doTestHelperClosing() throws IntactException {
+    private void doTestHelperClosing(boolean query) throws IntactException {
         // Open a helper outside the method.
         IntactHelper helper = null;
         try {
@@ -204,9 +225,10 @@ public class SearchHelperTest extends TestCase {
             SearchHelperI searchHelper = new SearchHelper(logger);
 
             // Calling the method which closes the internal helper.
-            ResultWrapper rw = searchHelper.search(InteractionImpl.class, "ac", "*", 20);
+            ResultWrapper rw = getResultWrapper(query, searchHelper,
+                    InteractionImpl.class, "ac", "*", 20);
 
-            // Use the helper to do a query.
+            // Use the helper (local) to do a query.
             List results = (List) helper.search(Experiment.class, "ac", "*");
 
             List labels = extractShortLabels(results);
@@ -218,6 +240,32 @@ public class SearchHelperTest extends TestCase {
                 helper.closeStore();
             }
         }
+    }
+
+    private void doTestSimpleLookup() throws IntactException {
+        // Any valid logger will do fine here.
+        Logger logger = Logger.getLogger(EditorConstants.LOGGER);
+        SearchHelperI searchHelper = new SearchHelper(logger);
+
+        ResultWrapper rw = searchHelper.doLookupSimple(Experiment.class, "*", 2);
+
+        List results = rw.getResult();
+        assertEquals(results.size(), 2);
+        // Not too large
+        assertFalse(rw.isTooLarge());
+        assertEquals(rw.getPossibleResultSize(), 2);
+
+        List labels = extractShortLabels(results);
+        assertTrue(labels.contains("gavin"));
+        assertTrue(labels.contains("ho"));
+    }
+
+    private ResultWrapper getResultWrapper(boolean query, SearchHelperI helper, Class searchClass,
+                                           String searchParam, String searchValue,
+                                           int max) throws IntactException {
+        return query ? helper.searchByQuery(searchClass, searchParam, searchValue, max)
+                : helper.search(searchClass, searchParam, searchValue, max);
+
     }
 
     private List extractShortLabels(List annobjs) {
