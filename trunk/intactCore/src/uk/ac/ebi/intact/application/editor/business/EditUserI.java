@@ -11,9 +11,8 @@ import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
-import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.GoServerProxy;
@@ -113,17 +112,25 @@ public interface EditUserI extends IntactUserI, Serializable {
     public AbstractEditViewBean getView();
 
     /**
+     * Sets the view using given object.
+     * @param obj either an Annotated object or a Class. The class type is used
+     * when creating a view for a new object. For an existing object,
+     * AnnotatedObject is used.
+     */
+    public void setView(Object obj);
+
+    /**
      * Updates the current Annotated object the user is about to edit.
      * @param annot the <code>AnnotatedObject</code> to set as the current
      * object the user is working presently.
      */
-    public void setView(AnnotatedObject annot);
+//    public void setView(AnnotatedObject annot);
 
     /**
      * Set this class as the editor is editing at the moment.
      * @param clazz the class to set as the editing class.
      */
-    public void setView(Class clazz);
+//    public void setView(Class clazz);
 
     // Search methods
 
@@ -172,13 +179,13 @@ public interface EditUserI extends IntactUserI, Serializable {
     public Collection getSPTRProteins(String pid);
 
     /**
-     * Gets a collection of Proteins by xref.
-     * @param pid the primary id to search for.
-     * @return collection of <code>Protein</code> instances for <code>pid</code>.
-     * @throws SearchException thrown for a search failure.
+     * Returns a collection of splice proteins for given primary id.
+     * @param pid the primary id to search for splice objects.
+     * @return a collection of splice proteins for <code>pid</code>. An empty
+     * collection is returned if there are no proteins found for <code>pid</code>.
+     * @throws SearchException for errors in searching for proteins.
      */
-    public Collection getProteinsByXref(String pid) throws SearchException;
-
+    public Collection getSpliceProteinsByXref(String pid) throws SearchException;
     /**
      * This method provides a means of searching intact objects, within the constraints
      * provided by the parameters to the method.
