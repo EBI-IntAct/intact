@@ -20,8 +20,9 @@
 <c:set var="dblist" value="${intactuser.databaseList}"/>
 <c:set var="qlist" value="${intactuser.qualifierList}"/>
 
+<h3>Crossreferences</h3>
+
 <c:if test="${not empty viewbean.xrefs}">
-    <h3>Xreferences</h3>
 
     <html:form action="/cv/xref/edit">
         <table width="80%">
@@ -120,8 +121,4 @@
             </nested:iterate>
         </table>
     </html:form>
-</c:if>
-
-<c:if test="${empty viewbean.xrefs}">
-    <h3>No Xreferences</h3>
 </c:if>
