@@ -7,8 +7,11 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.parser;
 
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.HostOrganismTag;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.CellTypeTag;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.TissueTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
 
 /**
  * That class .
@@ -42,9 +45,21 @@ public class HostOrganismParser {
 
         final String taxid = root.getAttribute( "ncbiTaxId" );
 
+        final Element cellTypeElement = DOMUtil.getFirstElement( root, "cellType" );
+        CellTypeTag cellType = null;
+        if( null != cellTypeElement ) {
+            cellType = CellTypeParser.process( cellTypeElement );
+        }
+
+        final Element tissueElement = DOMUtil.getFirstElement( root, "tissue" );
+        TissueTag tissue = null;
+        if( null != tissueElement ) {
+            tissue = TissueParser.process( tissueElement );
+        }
+
         HostOrganismTag hostHorganism = null;
         try {
-            hostHorganism = new HostOrganismTag( taxid );
+            hostHorganism = new HostOrganismTag( taxid, cellType, tissue );
         } catch ( IllegalArgumentException e ) {
             MessageHolder.getInstance().addParserMessage( new Message( root, e.getMessage() ) );
         }

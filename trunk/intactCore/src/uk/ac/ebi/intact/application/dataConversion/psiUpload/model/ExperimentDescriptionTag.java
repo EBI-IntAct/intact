@@ -108,6 +108,9 @@ public final class ExperimentDescriptionTag {
             throw new IllegalArgumentException( "You must give a non null/empty fullname for an experimentDescription" );
         }
 
+
+        // TODO make a switch for the mandatory-ness of that value !!!
+        // TODO Because of people submiting their data without having a pubmed ID 
         if( bibRef == null ) {
             throw new IllegalArgumentException( "You must give a non null bibRef for an experimentDescription" );
         }
