@@ -13,7 +13,7 @@ import java.util.*;
  * @intact.example "mass spectrometry"
  * @author hhe
  */
-public class CvIdentification extends CvDagObject implements Editable {
+public class CvIdentification extends CvDagObject {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.

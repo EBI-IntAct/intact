@@ -21,7 +21,7 @@ import java.util.*;
  * </p>
  * </p>
  */
-public class CvInteraction extends CvDagObject implements Editable {
+public class CvInteraction extends CvDagObject {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.

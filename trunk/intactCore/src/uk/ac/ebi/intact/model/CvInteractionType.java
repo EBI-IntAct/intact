@@ -14,7 +14,7 @@ import java.util.*;
  * @intact.example phosphorylation
  * @author hhe
  */
-public class CvInteractionType extends CvDagObject implements Editable {
+public class CvInteractionType extends CvDagObject {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
