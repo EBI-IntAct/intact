@@ -235,6 +235,8 @@ Verison: $Id$
         <delete dir="${jdoc.dir}"/>
         <delete dir="${dist.dir}"/>
 
+        <delete file="last-modified.txt" />
+
         <!-- Clean up the web service directory -->
         <delete file="${ws.dir}/${ws.tulip.jar.name}"/>
         <delete dir="${ws.wsdd.dir}"/>
