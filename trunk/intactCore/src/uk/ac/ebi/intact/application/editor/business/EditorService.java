@@ -7,7 +7,9 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -19,6 +21,15 @@ import java.util.*;
  * @version $Id$
  */
 public class EditorService {
+
+    // Class Data
+
+    /**
+     * Only instance of this class.
+     */
+    private static EditorService ourInstance;
+
+    // Instance Data
 
     /**
      * The editor resource bundle.
@@ -46,6 +57,43 @@ public class EditorService {
      */
     private String myHelpUrl;
 
+    // Class Methods
+
+    /**
+     * Returns the only instance of this class using the default resources file.
+     * However, if this instance has already been initialized by
+     * {@link #getInstance(String)}, it will be returned instead (i.e, the default
+     * resource is ignored).
+     * @return the only instance of this class or null for any errors.
+     * @see #getInstance(String)
+     */
+    public static EditorService getInstance() {
+        try {
+            return getInstance("uk.ac.ebi.intact.application.editor.EditorResources");
+        }
+        catch (EmptyTopicsException ete) {
+            Logger.getLogger(EditorConstants.LOGGER).info(ete);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the only instance of this class using given resources file. This
+     * method not synchronized because it is only invoked by EditorActionServlet at
+     * the init stage.
+     * @param name the resource file name.
+     * @return the only instance of this class.
+     * @throws EmptyTopicsException thrown for an empty resource file.
+     */
+    public static EditorService getInstance(String name) throws EmptyTopicsException {
+        if (ourInstance == null) {
+            ourInstance = new EditorService(name);
+        }
+        return ourInstance;
+    }
+
+    // Constructor private to return the only instance via getInstance method.
+
     /**
      * Construts with the resource file.
      * @param name the name of the resource file.
@@ -53,7 +101,7 @@ public class EditorService {
      * not found.
      * @exception EmptyTopicsException thrown for an empty resource file.
      */
-    public EditorService(String name) throws MissingResourceException,
+    private EditorService(String name) throws MissingResourceException,
             EmptyTopicsException {
         myResources = ResourceBundle.getBundle(name);
         myTopics = ResourceBundle.getBundle(myResources.getString("topics"));
@@ -65,6 +113,7 @@ public class EditorService {
         // Cache the topics after sorting them.
         CollectionUtils.addAll(myTopicsCache, myTopics.getKeys());
         Collections.sort(myTopicsCache);
+
         // Remove Experiment and Interaction and move them to the top of the list.
         // Order is important: interaction first and then followed by Experiment as
         // we want the Experiment to be at the top.
@@ -130,6 +179,16 @@ public class EditorService {
      */
     public String getResource(String key) {
         return myResources.getString(key);
+    }
+
+    /**
+     * Retrieves the resource for given key from the editor resource file as an int.
+     * @param key the key to search for the resource. This must be a key to an integer
+     * property.
+     * @return the resource for <code>key</code> if it is found as an integer.
+     */
+    public int getInteger(String key) {
+        return Integer.parseInt(myResources.getString(key));
     }
 
     /**
