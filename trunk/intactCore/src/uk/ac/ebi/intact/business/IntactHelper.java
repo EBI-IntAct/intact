@@ -640,6 +640,7 @@ public class IntactHelper implements SearchI, Serializable {
             }
         }
 
+
         return resultList;
     }
 
@@ -694,6 +695,7 @@ public class IntactHelper implements SearchI, Serializable {
 
                 return new ArrayList();
             }
+
         } catch (SearchException se) {
 
             //return to action servlet witha forward to error page command
@@ -1578,6 +1580,47 @@ public class IntactHelper implements SearchI, Serializable {
         return partialGraph;
     }
 
+    /**
+     *  Used to obtain the necessary items related to a search object. For example, if the object is a
+     * Protein then we are interested in the Interactions and also the Experiments that the Protein
+     * is related to. In practice this therefore means that we only need the Experiments, since
+     * the Interactions can be obtained from those.
+     *
+     * @param item A search result item (though anything can be tried!)
+     * @return Collection The Experiments related to the parameter item
+     * (empty if none found)
+     */
+    public Collection getRelatedObjects(Object item) {
+
+        Collection results = new ArrayList();
+        if(item instanceof Protein) {
+            //collect all the related experiments (interactions can be displayed from them)
+            Protein protein = (Protein)item;
+            Collection components = protein.getActiveInstance();
+            Iterator iter1 = components.iterator();
+            while(iter1.hasNext()) {
+                Component component = (Component)iter1.next();
+                Interaction interaction = component.getInteraction();
+                Collection experiments = interaction.getExperiment();
+                Iterator iter2 = experiments.iterator();
+                while(iter2.hasNext()) {
+                    results.add(iter2.next());
+                }
+            }
+        }
+
+        if(item instanceof Interaction) {
+            //collect all experiments....
+            Collection experiments = ((Interaction)item).getExperiment();
+            Iterator iter3 = experiments.iterator();
+                while(iter3.hasNext()) {
+                    results.add(iter3.next());
+                }
+        }
+
+        return results;
+    }
+
     //---------------- private helper methods ------------------------------------
 
     /**
@@ -1605,6 +1648,8 @@ public class IntactHelper implements SearchI, Serializable {
             throw new IntactException(msg, de);
             }
     }
+
+
 
 }
 
