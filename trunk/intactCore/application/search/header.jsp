@@ -44,7 +44,7 @@
                                     <table>
                                         <tr>
                                             <th align="left">
-                                                <bean:message key="login.types"/>
+                                                <bean:message key="intact.types"/>
                                             </th>
                                             <td align="left">
                                                 <intact:listIntactTypes resource="config/IntactTypes"/>
