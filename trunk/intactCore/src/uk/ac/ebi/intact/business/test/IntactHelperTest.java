@@ -127,14 +127,13 @@ public class IntactHelperTest extends TestCase {
             //set up some collections to be added to later - needed for
             //some of the constructors..
             Collection experiments = new ArrayList();
-            Collection components = new ArrayList();
 
             experiments.add(exp1);
-            //needs exps, components, type, shortlabel, owner...
+            //needs exps, components (empty in this case), type, shortlabel, owner...
             //No need to set BioSource - taken from the Experiment...
-            int1 = new InteractionImpl(experiments, components, null, "int1", institution);
-            int2 = new InteractionImpl(experiments, components, null, "int2", institution);
-            int3 = new InteractionImpl(experiments, components, null, "int3", institution);
+            int1 = new InteractionImpl(experiments, new ArrayList(), null, "int1", institution);
+            int2 = new InteractionImpl(experiments, new ArrayList(), null, "int2", institution);
+            int3 = new InteractionImpl(experiments, new ArrayList(), null, "int3", institution);
 
             int1.setFullName("test interaction 1");
             int1.setKD(new Float(1));
@@ -156,6 +155,12 @@ public class IntactHelperTest extends TestCase {
             int1.addXref(xref2);
 
             //now link up interactions and proteins via some components..
+            //NB the Components are linked to the Interactions internally - the
+            //Component class adds itself to its Interaction parameter..
+            //Thus from below we should have:
+            //int1 has comp1, comp4
+            //int2 has comp2, comp3
+            //int3 has none
             compRole = new CvComponentRole(institution, "role");
 
             comp1 = new Component(institution, int1, prot1, compRole);
@@ -170,12 +175,6 @@ public class IntactHelperTest extends TestCase {
 
             comp4 = new Component(institution, int1, prot2, compRole);
             comp4.setStoichiometry(4);
-
-            int1.addComponent(comp1);
-            int2.addComponent(comp2);
-            int3.addComponent(comp3);
-            int2.addComponent(comp4);
-            int3.addComponent(comp4);
 
         }
         catch (Exception ie) {
@@ -290,70 +289,7 @@ public class IntactHelperTest extends TestCase {
             System.out.println("performing searches for created objects...");
 
             //now need to query for the objects to make sure they are there..
-            Collection results = null;
-            results = helper.search(institution.getClass().getName(), "shortLabel", "Boss");
-            if(results.size() != 1) System.out.println("create failed for institution! found "
-            + results.size() + " objects.");
-
-            results = helper.search(bio1.getClass().getName(), "shortLabel", "bio1");
-            if(results.size() != 1) System.out.println("create failed for biosource1! found "
-            + results.size() + " objects.");
-
-            results = helper.search(bio2.getClass().getName(), "shortLabel", "bio2");
-            if(results.size() != 1) System.out.println("create failed for biosource2! found "
-            + results.size() + " objects.");
-
-            results = helper.search(exp1.getClass().getName(), "shortLabel", "exp1");
-            if(results.size() != 1) System.out.println("create failed for exp1! found "
-            + results.size() + " objects.");
-
-            results = helper.search(exp2.getClass().getName(), "shortLabel", "exp2");
-            if(results.size() != 1) System.out.println("create failed for exp2! found "
-            + results.size() + " objects.");
-
-            results = helper.search(cvDb.getClass().getName(), "shortLabel", "testCvDb");
-            if(results.size() != 1) System.out.println("create failed for CvDb! found "
-            + results.size() + " objects.");
-
-            results = helper.search(compRole.getClass().getName(), "shortLabel", "role");
-            if(results.size() != 1) System.out.println("create failed for component role! found "
-            + results.size() + " objects.");
-
-            results = helper.search(xref1.getClass().getName(), "primaryId", "xref1");
-            if(results.size() != 1) System.out.println("create failed for xref1! found "
-            + results.size() + " objects.");
-
-            results = helper.search(xref2.getClass().getName(), "primaryId", "xref2");
-            if(results.size() != 1) System.out.println("create failed for xref2! found "
-            + results.size() + " objects.");
-
-            results = helper.search(prot1.getClass().getName(), "shortLabel", "prot1");
-            if(results.size() != 1) System.out.println("create failed for protein1! found "
-            + results.size() + " objects");
-
-            results = helper.search(prot2.getClass().getName(), "shortLabel", "prot2");
-            if(results.size() != 1) System.out.println("create failed for protein2! found "
-            + results.size() + " objects.");
-
-            results = helper.search(prot3.getClass().getName(), "shortLabel", "prot3");
-            if(results.size() != 1) System.out.println("create failed for protein3! found "
-            + results.size() + " objects.");
-
-            results = helper.search(prot4.getClass().getName(), "shortLabel", "prot4");
-            if(results.size() != 1) System.out.println("create failed for protein4! found "
-            + results.size() + " objects.");
-
-            results = helper.search(int1.getClass().getName(), "shortLabel", "int1");
-            if(results.size() != 1) System.out.println("create failed for interaction1! found "
-            + results.size() + " objects.");
-
-            results = helper.search(int2.getClass().getName(), "shortLabel", "int2");
-            if(results.size() != 1) System.out.println("create failed for interaction2! found "
-            + results.size() + " objects.");
-
-            results = helper.search(int3.getClass().getName(), "shortLabel", "int3");
-            if(results.size() != 1) System.out.println("create failed for interaction3! found "
-            + results.size() + " objects.");
+            if(queriesPassed("create")) System.out.println("created test objects found OK.");
             System.out.println("create test completed.");
             //components can be obtained from the interactions...
             System.out.println();
@@ -381,6 +317,11 @@ public class IntactHelperTest extends TestCase {
      * only on the classes mainly updated, and also on the parts of those classes
      * most commonly changed (ie some of their Collections containing in particular
      * Proxy objects).
+     * Basic Structure of test:
+     * 1) start a transaction;
+     * 2) perform some object changes;
+     * 3) re-query those objects and compare before and after details.
+     *
      * IMPORTANT!! It is only possible to update an object which
      * a) is already persistent and b) has been modified with already persistent objects.
      * In other words, OJB will NOT persist any non-persistent referenced objects as part
@@ -400,45 +341,72 @@ public class IntactHelperTest extends TestCase {
             Protein protein = null;
             Experiment exp = null;
             Collection results = null;
+
+            //also want to keep track of 'before' and 'after' Collection
+            //sizes because we have proxies and need to check that additions
+            //do not result in existing items being overwritten
+            int expsCollectionSize = 0;
+            int protAnnotSize = 0;
+            int intsCollectionSize = 0;
+            int compSize = 0;
+            int intAnnotSize = 0;
+            int xrefSize = 0;
+
             boolean searchFailed = false; //used to print an appropriate message
 
             System.out.println("Starting transaction...");
             helper.startTransaction(txType);
             //NB Have to search first (INSIDE the TX) to get the objects to update -
             //This only seems to be an issue for ODMG....
+
+            //Interaction update with Experiment, Annotation, Component, Xref
+            //ie a complex update, commited in a single TX
             results = helper.search(int2.getClass().getName(), "shortLabel", "int2");
             if(!results.isEmpty()) {
-                System.out.println("updating Interaction with an Experiment...");
+                System.out.println("updating Interaction with the following objects:");
+                System.out.println("Experiment, Component, Annotation, Xref...");
                 interaction = (Interaction) results.iterator().next();
+                //save these for later...
+                expsCollectionSize = interaction.getExperiments().size();
+                compSize = interaction.getComponents().size();
+                intAnnotSize = interaction.getAnnotations().size();
+                xrefSize = interaction.getXrefs().size();
+
+                //add the objects, then update in one go
                 interaction.addExperiment(exp2);
+                interaction.addComponent(comp1);
+                interaction.addAnnotation(annot);
+                interaction.addXref(xref1);
                 helper.update(interaction);
-                System.out.println("interaction update test threw no exceptions.");
             }
             else {
                 System.out.println("update test: no test interaction with label 'int2' in DB!");
                 searchFailed = true;
             }
 
+            //Protein update with Annotation
             results = helper.search(prot1.getClass().getName(), "shortLabel", "prot1");
             if(!results.isEmpty()) {
                 System.out.println("Updating a Protein with an Annotation....");
                 protein = (Protein) results.iterator().next();
+                protAnnotSize = protein.getAnnotations().size();  //save for later
                 protein.addAnnotation(annot);
                 helper.update(protein);
-                System.out.println("protein update test threw no exceptions.");
             }
             else {
                 System.out.println("update test: no test protein with label 'prot1' in DB!");
                 searchFailed = true;
             }
 
+            //Experiment update with Interaction
             results = helper.search(exp1.getClass().getName(), "shortLabel", "exp1");
             if(!results.isEmpty()) {
                 System.out.println("Updating an Experiment with an Interaction....");
                 exp = (Experiment) results.iterator().next();
+                intsCollectionSize = exp.getInteractions().size();
+                if(exp.getInteractions().contains(interaction)) System.out.println("WHOOPS! already there!");
                 exp.addInteraction(interaction);
                 helper.update(exp);
-                System.out.println("experiment update test threw no exceptions.");
             }
             else {
                 System.out.println("update test: no test experiment with label 'exp1' in DB!");
@@ -446,13 +414,99 @@ public class IntactHelperTest extends TestCase {
             }
 
             helper.finishTransaction();
+
+            //check the initial searching to see if the test was performed at all
             if(searchFailed) {
                 System.out.println("failed to update properly - searching returned no test objects!");
                 System.out.println(" - perhaps test object creation did not work correctly?");
             }
             else {
+
                  System.out.println("Update Transaction completed without exceptions.");
-            }
+
+                //now check the updated objects to see if the updates happened...
+                System.out.println("update test: Querying for updated objects....");
+
+                //NB this test works because the objects have equals defined - it would
+                //FAIL for equality as object identity.....
+
+                //Interaction check
+                results = helper.search(int2.getClass().getName(), "shortLabel", "int2");
+                System.out.println("Checking objects added to interaction, and comparing sizes..");
+
+                //experiment addition
+                System.out.println("expriments in interaction before update: " + expsCollectionSize);
+                interaction = (Interaction) results.iterator().next();
+                System.out.println("expriments in interaction after update: "
+                        + interaction.getExperiments().size());
+
+                //component addition
+                System.out.println("components in interaction before update: " + compSize);
+                interaction = (Interaction) results.iterator().next();
+                System.out.println("components in interaction after update: "
+                        + interaction.getComponents().size());
+
+                //Annotation addition
+                System.out.println("annotations in interaction before update: " + intAnnotSize);
+                interaction = (Interaction) results.iterator().next();
+                System.out.println("annotations in interaction after update: "
+                        + interaction.getAnnotations().size());
+
+                //Xref addition
+                System.out.println("xrefs in interaction before update: " + xrefSize);
+                interaction = (Interaction) results.iterator().next();
+                System.out.println("xrefs in interaction after update: "
+                        + interaction.getXrefs().size());
+
+                boolean failed = false;
+                if(!interaction.getExperiments().contains(exp2)) {
+                    System.out.println("update test: interaction update with experiment failed!");
+                    failed = true;
+                }
+                if(!interaction.getComponents().contains(comp1)) {
+                    System.out.println("update test: interaction update with component failed!");
+                    failed = true;
+                }
+                if(!interaction.getAnnotations().contains(annot)) {
+                    System.out.println("update test: interaction update with annotation failed!");
+                    failed = true;
+                }
+                if(!interaction.getXrefs().contains(xref1)) {
+                    System.out.println("update test: interaction update with xref failed!");
+                    failed = true;
+                }
+                if(!failed) System.out.println("interaction updated successfully.");
+
+                //Protein check
+                results = helper.search(prot1.getClass().getName(), "shortLabel", "prot1");
+                System.out.println("Checking annot added to protein, and comparing sizes..");
+                System.out.println("annots in protein before update: " + protAnnotSize);
+                protein = (Protein) results.iterator().next();
+                System.out.println("annots in protein after update: "
+                        + protein.getAnnotations().size());
+                if(!protein.getAnnotations().contains(annot)) {
+                    System.out.println("update test: protein update failed!");
+                }
+                else {
+                    System.out.println("protein updated successfully.");
+                }
+
+                //Experiment check
+                results = helper.search(exp1.getClass().getName(), "shortLabel", "exp1");
+                System.out.println("Checking interaction added to exp, and comparing sizes..");
+                System.out.println("interactions in exp before update: " + intsCollectionSize);
+                exp = (Experiment) results.iterator().next();
+                System.out.println("interactions in exp after update: "
+                        + exp.getInteractions().size());
+                if(!exp.getInteractions().contains(interaction)) {
+                    System.out.println("update test: experiment update failed!");
+                }
+                else {
+                    System.out.println("experiment updated successfully.");
+                }
+        }
+
+            System.out.println("update test completed.");
             System.out.println();
         }
         catch(IntactException ie) {
@@ -512,6 +566,9 @@ public class IntactHelperTest extends TestCase {
             helper.finishTransaction();
 
             System.out.println("Delete test completed successfully without exceptions.");
+            System.out.println("Performing query on deleted objects (should be none)....");
+            if(queriesPassed("delete")) System.out.println("deleted objects not found.");
+            System.out.println("delete test completed.");
             System.out.println();
         }
         catch(IntactException ie) {
@@ -536,12 +593,14 @@ public class IntactHelperTest extends TestCase {
             System.out.println("Performing persistence check test...");
             if(helper.isPersistent(prot4)) System.out.println("persistence check on persistent obj OK");
             //now remove one and check again...
+            System.out.println("deleteing object and checking again...");
             helper.delete(prot4);
             if(helper.isPersistent(prot4)) {
                 System.out.println("persistence check on deleted obj FAILED");
             }
             else {
                 //check OK - create it again for later...
+                System.out.println("object is correctly no longer persistent.");
                 helper.create(prot4);
             }
 
@@ -587,7 +646,7 @@ public class IntactHelperTest extends TestCase {
             stop = System.currentTimeMillis();
             time2 = stop - start;
 
-            System.out.println("(Difference between times should be bigger than a few milliseconds)");
+            System.out.println("((cached time - non-cached time) > a few ms)");
             System.out.println("cached search time: " + time1);
             System.out.println("non-cached search time: " + time2);
             }
@@ -924,5 +983,197 @@ public class IntactHelperTest extends TestCase {
 
     }
 
+    /**
+     * Prints out an appropriate error message if necessary when queries on
+     * objects are performed. The validity of the query result depends upon
+     * the test of interest. If no errors are found, no message is printed.
+     * @param testName The test of interest.
+     * @return boolean true if no error messages were printed, false otherwise.
+     * @throws IntactException thrown if there was a problem using the helper for searches.
+     */
+    private boolean queriesPassed(String testName) throws IntactException {
+
+        Collection results = null;
+        boolean checkResult = true;
+
+        results = helper.search(institution.getClass().getName(), "shortLabel", "Boss");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "institution", results));
+            checkResult = false;
+        }
+
+        results = helper.search(bio1.getClass().getName(), "shortLabel", "bio1");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "biosurce1", results));
+            checkResult = false;
+        }
+
+        results = helper.search(bio2.getClass().getName(), "shortLabel", "bio2");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "biosource2", results));
+            checkResult = false;
+        }
+
+        results = helper.search(exp1.getClass().getName(), "shortLabel", "exp1");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "experiment1", results));
+            checkResult = false;
+        }
+
+        results = helper.search(exp2.getClass().getName(), "shortLabel", "exp2");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "experiment2", results));
+            checkResult = false;
+        }
+
+        results = helper.search(cvDb.getClass().getName(), "shortLabel", "testCvDb");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "CvDb", results));
+            checkResult = false;
+        }
+
+        results = helper.search(compRole.getClass().getName(), "shortLabel", "role");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "component role", results));
+            checkResult = false;
+        }
+
+        results = helper.search(xref1.getClass().getName(), "primaryId", "xref1");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "xref1", results));
+            checkResult = false;
+        }
+
+        results = helper.search(xref2.getClass().getName(), "primaryId", "xref2");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "xref2", results));
+            checkResult = false;
+        }
+
+        results = helper.search(prot1.getClass().getName(), "shortLabel", "prot1");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "protein1", results));
+            checkResult = false;
+        }
+
+        results = helper.search(prot2.getClass().getName(), "shortLabel", "prot2");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "protein2", results));
+            checkResult = false;
+        }
+
+        results = helper.search(prot3.getClass().getName(), "shortLabel", "prot3");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "protein3", results));
+            checkResult = false;
+        }
+
+        results = helper.search(prot4.getClass().getName(), "shortLabel", "prot4");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "protein4", results));
+            checkResult = false;
+        }
+
+        results = helper.search(int1.getClass().getName(), "shortLabel", "int1");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "interaction1", results));
+            checkResult = false;
+        }
+        else {
+            //OK so far - now check the Components (not needed for delete test)
+            //NB can't find them directly as we don't know what to search on
+            if(testName != "delete")
+                checkComponents((Interaction)results.iterator().next());
+        }
+
+        results = helper.search(int2.getClass().getName(), "shortLabel", "int2");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "interaction2", results));
+            checkResult = false;
+        }
+        else {
+            //OK so far - now check the Components (not needed for delete test)
+            //NB can't find them directly as we don't know what to search on
+            if(testName != "delete")
+                checkComponents((Interaction)results.iterator().next());
+        }
+
+        results = helper.search(int3.getClass().getName(), "shortLabel", "int3");
+        if (checkFailed(results, testName)) {
+            System.out.println(getString(testName, "interaction3", results));
+            checkResult = false;
+        }
+        else {
+            //OK so far - now check the Components (not needed for delete test)
+            //NB can't find them directly as we don't know what to search on
+            if(testName != "delete")
+                checkComponents((Interaction)results.iterator().next());
+        }
+
+        return checkResult;
+    }
+
+    /**
+     * Helper method to perform certain boolean checks depending upon
+     * the test required. The logic of the test is reversed because it is
+     * used to generate an appropriate error message.
+     * @param data The Collection of items to perform the check on
+     * @param testName The name of the test we are using (currently create and delete)
+     * @return true if the check FAILED, and false otherwise.
+     */
+    private boolean checkFailed(Collection data, String testName) {
+        if(testName == "create") return(data.size() != 1);
+        if(testName == "delete") return(!data.isEmpty());
+        return false;
+    }
+
+    /**
+     * Convenience method to provide a String to print out for error
+     * messages. Just here to save lots of repetitive typing!.
+     * @param testName The test of interest
+     * @param className The class of interest
+     * @param data The search items to which the test refers
+     * @return
+     */
+    private String getString(String testName, String className, Collection data) {
+        return testName + " failed for " + className +"! found "
+                + data.size() + " objects.";
+
+    }
+
+    /**
+     * Convenience method to check if components exist as they should. This is
+     * used as part of the check in the create test. Note it is specific to the
+     * created test objects.
+     * @param interaction
+     */
+    private void checkComponents(Interaction interaction) {
+
+        //For create:
+        //int 1 has comp1, comp4
+        //int2 has comp2, comp3
+        //int3 has none
+        Collection components = interaction.getComponents();
+        if (interaction.getShortLabel() == "int1") {
+            if (!components.contains(comp1)) System.out.println("int1 is missing component comp1!");
+            if (!components.contains(comp4)) System.out.println("int1 is missing component comp4!");
+            if (components.contains(comp2)) System.out.println("int1 contains component comp2 (it shouldn't)!");
+            if (components.contains(comp3)) System.out.println("int1 contains component comp3 (it shouldn't)!");
+        }
+
+        if (interaction.getShortLabel() == "int2") {
+            if (!components.contains(comp2)) System.out.println("int2 is missing component comp2!");
+            if (!components.contains(comp3)) System.out.println("int2 is missing component comp3!");
+            if (components.contains(comp1)) System.out.println("int2 contains component comp1 (it shouldn't)!");
+            if (components.contains(comp4)) System.out.println("int2 contains component comp4 (it shouldn't)!");
+        }
+
+        if (interaction.getShortLabel() == "int3") {
+            if (components.size() != 0)
+                System.out.println("int3 has " + components.size()
+                        + " components (it shouldn't have any)!");
+        }
+
+    }
 
 }
