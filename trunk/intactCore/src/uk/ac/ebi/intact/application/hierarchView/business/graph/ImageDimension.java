@@ -5,9 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.business.graph;
 
+import java.io.Serializable;
 
-public class ImageDimension
-{
+
+public class ImageDimension implements Serializable {
     // ---------------------------------------------------------------- StrutsConstants
     public static float DEFAULT_BORDER = 5f;
 
@@ -49,6 +50,22 @@ public class ImageDimension
     /**
      * Widen the size if the new coordinate is out of the usable space.
      *
+     *     +-----------------------4-----+
+     *     +                             +
+     *     +        1 (x1,y1)            +
+     *     +                             +
+     *     +                             +
+     *     +                             +
+     *     +                             +
+     *     5                             +
+     *     +              6              2 (x2,y2)
+     *     +                             +
+     *     +                             +
+     *     +                             +
+     *     +------3----------------------+
+     *
+     * After adding a set of points we should have obtain something like
+     *
      * @param x the X coordinate
      * @param y the Y coordinate
      */
@@ -61,19 +78,27 @@ public class ImageDimension
 
 
     /**
-     * AjusteCadre ajuste la taille en fonction de la taille des noeuds.
-     * Elle n'est efficace que si les noeuds on deja ete positionnés
+     * Adjust width and height according to components size.
+     * This is efficient only if node have already been set.
      *
-     * @param length length of the conponent
-     * @param height heifth of the component
-     * @param x x coordinate
-     * @param y y coordinate
+     *     +------------------+    ^
+     *     +                  +    |
+     *     +        * (x,y)   +    | height
+     *     +                  +    |
+     *     +------------------+    -
+     *
+     *     <----- width ------>
+     *
+     * @param width width of the conponent
+     * @param height heigth of the component
+     * @param x the X coordinate
+     * @param y the Y coordinate
      */
-    public void adjustCadre (float length, float height, float x, float y) {
+    public void adjustCadre (float width, float height, float x, float y) {
         float tmp = 0;
-        if ((tmp = x  - length/2) < xmin)
+        if ((tmp = x  - width/2) < xmin)
             xmin = tmp;
-        if ((tmp = x  + length/2) > xmax)
+        if ((tmp = x  + width/2) > xmax)
             xmax = tmp;
         if ((tmp = y  - height/2) < ymin)
             ymin = tmp;
