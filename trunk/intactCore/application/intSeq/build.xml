@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT build configuration file for search module.
+     Author: Sugath Mudali, smudali@ebi.ac.uk.
+     Version: $Id$
+-->
+
+<project name="intSeq" basedir="." default="compile">
+    <property name="project.title" value="intSeq"/>
+    <property name="project.version" value="1.0"/>
+
+    <!-- Intact core locations -->
+    <property name="intact.root" value="../.."/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.dest.dir" value="${intact.root}/classes"/>
+    <property name="root.config.dir" value="${intact.root}/config"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
+
+    <!-- Intact application location. -->
+    <property name="intact.app.dir" value=".."/>
+
+    <property name="commons.pages.dir"   value="${intact.app.dir}/pages"/>
+    <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
+    <property name="commons.images.dir"  value="${intact.app.dir}/images"/>
+
+    <property name="pages.dir"          value="pages"/>
+    <property name="images.dir"         value="images"/>
+    <property name="layouts.dir"        value="layouts"/>
+    <property name="layouts.styles.dir" value="${layouts.dir}/styles"/>
+
+    <property name="config.dir"         value="WEB-INF/config" />
+    <property name="lib.dir" value="WEB-INF/lib"/>
+    <property name="tld.dir" value="WEB-INF/tld"/>
+    <property name="dest.dir" value="WEB-INF/classes"/>
+
+    <property name="docs.dir" value="doc/api"/>
+    <property name="dist.dir"           value="dist"/>
+    <property name="war.file"           value="intSeq.war"/>
+
+    <!-- The build properties. -->
+    <property file="${intact.root}/config/build.properties"/>
+
+
+    <!-- This project specific paths. -->
+    <property name="src.dir" value="src"/>
+
+    <!-- intSeq package root. -->
+    <property name="intSeq.pkg.root" value="uk/ac/ebi/intact/application/intSeq"/>
+
+    <!-- Build working classpath -->
+    <path id="project.class.path">
+
+        <!-- Project specific jar files. -->
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- Where the classes are compiled to. -->
+        <pathelement path="${dest.dir}"/>
+
+        <!-- Intact core at root. -->
+        <pathelement path="${root.dest.dir}"/>
+
+        <!-- Common jar files. -->
+        <pathelement path="${root.lib.dir}/junit.jar"/>
+        <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
+        <pathelement path="${root.lib.dir}/struts.jar"/>
+        <pathelement path="${root.lib.dir}/servlet.jar"/>
+        <pathelement path="${root.lib.dir}/biojava-1.22.jar"/>
+        <pathelement path="${root.lib.dir}/jakarta-regexp-1.2.jar"/>
+    </path>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp and various 'present' properties. -->
+    <target name="prepare">
+        <tstamp/>
+        <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Creates the 'docs' directory. -->
+    <target name="mk-docs">
+        <mkdir dir="${docs.dir}" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories for clean build -->
+    <target name="clean" description="Prepare for clean build">
+        <!-- Delete directories first -->
+        <delete dir="${dest.dir}"/>
+        <delete dir="${docs.dir}"/>
+
+        <!-- Tiles commons files -->
+        <delete dir="${images.dir}"/>
+        <delete>
+             <fileset dir="${layouts.dir}">
+                 <!-- Do not remove our specific files -->
+                 <exclude name="sidebar.jsp"/>
+            </fileset>
+        </delete>
+
+        <delete dir="${layouts.styles.dir}"/>
+
+        <delete>
+             <fileset dir="${pages.dir}">
+                 <!-- Do not remove our specific files -->
+                 <exclude name="sidebarInput.jsp"/>
+                 <exclude name="similaritySearch.jsp"/>
+                 <exclude name="similaritySearchResults.jsp"/>
+                 <exclude name="srsSearch.jsp"/>
+                 <exclude name="srsSearchResults.jsp"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Calls the jar task from core build file if intact core jar file
+         is missing.
+    -->
+    <target name="make-jar" depends="prepare" unless="intact.jar.present">
+        <ant dir="${intact.root}" target="jar-core" inheritAll="false"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copy configuration files. -->
+    <target name="cpConfigFiles">
+        <!-- Copy repository files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${root.config.dir}">
+                <include name="repository*.xml"/>
+                <include name="repository.dtd"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy intSeq property files to the intSeq pkg root ${intSeq.pkg.root}-->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="WEB-INF/config">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy
+        property files and XML mapping file-->
+<!--        <copy todir="${dest.dir}/config">-->
+<!--            <fileset dir="WEB-INF/config">-->
+<!--                <include name="*.properties"/>-->
+<!--                <include name="*.xml"/>-->
+<!--            </fileset>-->
+<!--        </copy>-->
+
+        <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
+        <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
+        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile">
+
+        <!-- Create the dest dir if it doesn't exist. -->
+        <mkdir dir="${dest.dir}" />
+
+        <!-- Only compile intSeq sources only. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            includes="**/application/intSeq/**" debug="on" source="1.4">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy configuration files -->
+        <antcall target="cpConfigFiles"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file using the current database setup. -->
+
+    <target name="war" description="Builds a war file"
+            depends="set-db-type, war-pg, war-oracle"/>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file. The database to include is specified as a parameter. -->
+
+    <target name="build-war" depends="compile, make-jar" description="Builds a war file">
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}" />
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+        <!-- Copy struts standard tld files -->
+        <copy todir="${tld.dir}">
+            <fileset dir="${intact.app.dir}/tld">
+                <include name="struts-bean.tld"/>
+                <include name="struts-html.tld"/>
+                <include name="struts-tiles.tld"/>
+            </fileset>
+        </copy>
+
+        <!-- Create local directories to copy common files. -->
+        <mkdir dir="${layouts.styles.dir}"/>
+        <mkdir dir="${images.dir}"/>
+
+        <!-- Common layouts -->
+        <copy todir="${layouts.dir}">
+            <fileset dir="${commons.layouts.dir}"/>
+        </copy>
+
+        <!-- Common images -->
+        <copy todir="${images.dir}">
+            <fileset dir="${commons.images.dir}"/>
+        </copy>
+
+        <!-- Common jsp files -->
+        <copy todir="${pages.dir}">
+            <fileset dir="${commons.pages.dir}"/>
+        </copy>
+
+		<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+		   <fileset dir="${basedir}">
+				<include name="*.jsp"/>
+                <include name="${layouts.dir}/*.jsp"/>
+                <include name="${layouts.styles.dir}/*.css"/>
+                <include name="${images.dir}/*.gif"/>
+                <include name="${pages.dir}/*.jsp"/>
+	  			<include name="WEB-INF/struts-config.xml"/>
+                <include name="WEB-INF/tiles-defs.xml"/>
+                <include name="${tld.dir}/**"/>
+	   		</fileset>
+
+			<!-- Include cvedit specific jar files. -->
+			<lib dir="${lib.dir}">
+                <!-- Avoid NFS temp files (occationally) -->
+                <include name="*.jar"/>
+            </lib>
+
+            <!-- Inlcude the intact core -->
+            <lib dir="${root.dist.dir}"/>
+
+            <!-- Include common jar files for struts. -->
+            <lib dir="${intact.app.dir}/lib" />
+
+			<!-- Include common jar files from intact core. -->
+			<lib dir="${root.lib.dir}">
+				<include name="jakarta-ojb-0.9.7.jar"/>
+				<include name="log4j-1.2.5.jar"/>
+                <include name="${db}"/>
+			</lib>
+
+            <!-- intSeq specific classes -->
+  			<classes dir="${dest.dir}"/>
+		</war>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the database type using the values given in build.properties. -->
+
+    <target name="set-db-type">
+        <condition property="postgres">
+            <contains string="${target.env}" substring="-pg-"/>
+        </condition>
+        <condition property="oracle">
+            <contains string="${target.env}" substring="-oracle-"/>
+        </condition>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file with postgres; should be called only after calling
+        set-db-type. -->
+
+    <target name="war-pg" if="postgres">
+        <echo message="Building a war for postgres"/>
+        <antcall target="build-war">
+            <param name="db" value="postgresql.jar"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file with oracle; should be called only after calling
+        set-db-type. -->
+
+    <target name="war-oracle" if="oracle">
+        <echo message="Building a war for oracle"/>
+        <antcall target="build-war">
+            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server. -->
+    <target name="deploy" description="Deploys the WAR file on the Tomcat server">
+        <ant dir=".." inheritAll="false" target="deploy">
+            <property name="war" value="intSeq/${dist.dir}/${war.file}"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file from the Tomcat server. -->
+    <target name="undeploy"
+        description="Undeploys the WAR file from the Tomcat server">
+        <ant dir=".." inheritAll="false" target="undeploy">
+            <property name="war" value="intSeq"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- These unit tests only run one tests in a single package; we need to add
+         a utility class which can run all the unit tests together.
+     -->
+    <!-- Runs tests using junit. -->
+    <target name="junit-test" depends="compile" description="Run JUnit tests">
+        <junit printsummary="withOutAndErr">
+            <test name=
+                "uk.ac.ebi.intact.application.search.struts.framework.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </junit>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+    <target name="junit-test-stdout" depends="compile"
+            description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner">
+            <arg value=
+                "uk.ac.ebi.intact.application.search.struts.framework.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tomcat">
+        <ant dir=".." inheritAll="false" target="start-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tomcat">
+        <ant dir=".." inheritAll="false" target="stop-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Restarts the Tomcat server. -->
+
+    <target name="restart-tomcat">
+        <ant dir=".." inheritAll="false" target="restart-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays the status of Tomcat server. -->
+
+    <target name="status-tomcat">
+        <ant dir=".." inheritAll="false" target="status-tomcat"/>
+    </target>
+
+<!--
+    <available property="jakarta.regexp.present"
+                  classname="org.apache.regexp.RE"  />
+
+   <target name="regexp">
+
+       </target>
+
+    -->
+</project>
