@@ -5,18 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.business;
 
-import org.apache.log4j.Logger;
-import org.apache.ojb.broker.VirtualProxy;
-import org.apache.ojb.broker.accesslayer.LookupException;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
-import uk.ac.ebi.intact.persistence.*;
-import uk.ac.ebi.intact.simpleGraph.Edge;
-import uk.ac.ebi.intact.simpleGraph.Graph;
-import uk.ac.ebi.intact.simpleGraph.Node;
-import uk.ac.ebi.intact.util.Key;
-import uk.ac.ebi.intact.util.PropertyLoader;
-
 import java.beans.PropertyDescriptor;
 import java.io.Externalizable;
 import java.io.IOException;
@@ -27,7 +15,55 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.apache.ojb.broker.VirtualProxy;
+import org.apache.ojb.broker.accesslayer.LookupException;
+
+import uk.ac.ebi.intact.model.Alias;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.BasicObject;
+import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Constants;
+import uk.ac.ebi.intact.model.CvAliasType;
+import uk.ac.ebi.intact.model.CvComponentRole;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvInteractionType;
+import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
+import uk.ac.ebi.intact.persistence.CreateException;
+import uk.ac.ebi.intact.persistence.DAO;
+import uk.ac.ebi.intact.persistence.DAOFactory;
+import uk.ac.ebi.intact.persistence.DAOSource;
+import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.persistence.ObjectBridgeDAO;
+import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.persistence.TransactionException;
+import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
+import uk.ac.ebi.intact.simpleGraph.Edge;
+import uk.ac.ebi.intact.simpleGraph.EdgeI;
+import uk.ac.ebi.intact.simpleGraph.Graph;
+import uk.ac.ebi.intact.util.Key;
+import uk.ac.ebi.intact.util.PropertyLoader;
 
 
 /**
@@ -1877,110 +1913,110 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     private Graph subGraphPartial( Interaction current,
-                                   int graphDepth,
-                                   Collection experiments,
-                                   int complexExpansion,
-                                   Graph partialGraph ) throws IntactException {
+            int graphDepth,
+            Collection experiments,
+            int complexExpansion,
+            Graph partialGraph ) throws IntactException {
 
 
-        /* This should not occur, but is ok.
-        */
-        if( null == current ) {
-            return partialGraph;
-        }
+/* This should not occur, but is ok.
+*/
+if( null == current ) {
+return partialGraph;
+}
 
-        //System.out.println("subGraphPartial (Interaction) called: " + current.getAc() + " Depth: " + graphDepth);
+//System.out.println("subGraphPartial (Interaction) called: " + current.getAc() + " Depth: " + graphDepth);
 
-        /* If the Interaction has already been visited, return,
-           else mark it.
-        */
-        if( partialGraph.isVisited( current ) ) {
-            return partialGraph;
-        } else {
-            partialGraph.addVisited( current );
-        }
+/* If the Interaction has already been visited, return,
+else mark it.
+*/
+if( partialGraph.isVisited( current ) ) {
+return partialGraph;
+} else {
+partialGraph.addVisited( current );
+}
 
-        /* Create list of baits - the size is set later according to what we have to store */
-        ArrayList baits = null;
+/* Create list of baits - the size is set later according to what we have to store */
+ArrayList baits = null;
 
-        switch ( complexExpansion ) {
-            case Constants.EXPANSION_ALL:
-                {
-                    baits = new ArrayList( current.getComponents().size() );
+switch ( complexExpansion ) {
+case Constants.EXPANSION_ALL:
+{
+baits = new ArrayList( current.getComponents().size() );
 
-                    /* all components are considered as baits */
-                    Iterator i = current.getComponents().iterator();
-                    while ( i.hasNext() ) {
-                        baits.add( i.next() );
-                    }
-                }
-                break;
-            case Constants.EXPANSION_BAITPREY:
-                {
-                    /* only report bait-prey relations.
-                     * If there is no bait, select one arbitrarily. Choose the first.
-                     */
-                    Component bait = current.getBait();
-                    if( null == bait ) {
-                        baits = new ArrayList( current.getComponents().size() );
-                        Iterator i = current.getComponents().iterator();
-                        if( i.hasNext() ) {
-                            baits.add( i.next() );
-                        }
-                    } else {
-                        baits = new ArrayList( 1 );
-                        baits.add( bait );
-                    }
-                }
-        }
+/* all components are considered as baits */
+Iterator i = current.getComponents().iterator();
+while ( i.hasNext() ) {
+ baits.add( i.next() );
+}
+}
+break;
+case Constants.EXPANSION_BAITPREY:
+{
+/* only report bait-prey relations.
+* If there is no bait, select one arbitrarily. Choose the first.
+*/
+Component bait = current.getBait();
+if( null == bait ) {
+ baits = new ArrayList( current.getComponents().size() );
+ Iterator i = current.getComponents().iterator();
+ if( i.hasNext() ) {
+     baits.add( i.next() );
+ }
+} else {
+ baits = new ArrayList( 1 );
+ baits.add( bait );
+}
+}
+}
 
-        /* Create list of preys */
-        ArrayList preys = new ArrayList( current.getComponents().size() );
-        Iterator i = current.getComponents().iterator();
-        while ( i.hasNext() ) {
-            preys.add( i.next() );
-        }
+/* Create list of preys */
+ArrayList preys = new ArrayList( current.getComponents().size() );
+Iterator i = current.getComponents().iterator();
+while ( i.hasNext() ) {
+preys.add( i.next() );
+}
 
-        /* Generate all bait-prey pairs */
-        int countBaits = baits.size();
-        int countPreys = preys.size();
+/* Generate all bait-prey pairs */
+int countBaits = baits.size();
+int countPreys = preys.size();
 
-        for ( int j = 0; j < countBaits; j++ ) {
-            //System.out.println("Bait: " + ((Component) baits.get(j)).getInteractor().getAc());
-            for ( int k = j; k < countPreys; k++ ) {
-                //System.out.println("Prey: " + ((Component) preys.get(k)).getInteractor().getAc());
-                Edge edge = new Edge();
-                Component baitComponent = (Component) baits.get( j );
-                Interactor baitInteractor = baitComponent.getInteractor();
-                Component preyComponent = (Component) preys.get( k );
-                Interactor preyInteractor = preyComponent.getInteractor();
+for ( int j = 0; j < countBaits; j++ ) {
+//System.out.println("Bait: " + ((Component) baits.get(j)).getInteractor().getAc());
+for ( int k = j; k < countPreys; k++ ) {
+//System.out.println("Prey: " + ((Component) preys.get(k)).getInteractor().getAc());
+EdgeI edge = new Edge();
+Component baitComponent = (Component) baits.get( j );
+Interactor baitInteractor = baitComponent.getInteractor();
+Component preyComponent = (Component) preys.get( k );
+Interactor preyInteractor = preyComponent.getInteractor();
 
-                if( baitInteractor != preyInteractor ) {
-                    Node node1 = partialGraph.addNode( baitInteractor );
-                    Node node2 = partialGraph.addNode( preyInteractor );
+if( baitInteractor != preyInteractor ) {
+BasicGraphI node1 = partialGraph.addNode( baitInteractor );
+BasicGraphI node2 = partialGraph.addNode( preyInteractor );
 
-                    edge.setNode1( node1 );
-                    edge.setComponent1( baitComponent );
-                    edge.setNode2( node2 );
-                    edge.setComponent2( preyComponent );
-                    partialGraph.addEdge( edge );
-//                    System.out.println("Adding: " + node1.getAc() + " -> " + node2.getAc());
-                }
-            }
-        }
+edge.setNode1( node1 );
+edge.setComponent1( baitComponent );
+edge.setNode2( node2 );
+edge.setComponent2( preyComponent );
+partialGraph.addEdge( edge );
+//System.out.println("Adding: " + node1.getAc() + " -> " + node2.getAc());
+}
+}
+}
 
-        /* recursively explore all Interactors linked to current Interaction */
-        for ( Iterator iterator = current.getComponents().iterator(); iterator.hasNext(); ) {
-            Component component = (Component) iterator.next();
-            partialGraph = subGraphPartial( component.getInteractor(),
-                                            graphDepth - 1,
-                                            experiments,
-                                            complexExpansion,
-                                            partialGraph );
-        }
+/* recursively explore all Interactors linked to current Interaction */
+for ( Iterator iterator = current.getComponents().iterator(); iterator.hasNext(); ) {
+Component component = (Component) iterator.next();
+partialGraph = subGraphPartial( component.getInteractor(),
+                     graphDepth - 1,
+                     experiments,
+                     complexExpansion,
+                     partialGraph );
+}
 
-        return partialGraph;
-    }
+return partialGraph;
+}
 
     /**
      *  Used to obtain the Experiments related to a search object. For example, if the object is a
