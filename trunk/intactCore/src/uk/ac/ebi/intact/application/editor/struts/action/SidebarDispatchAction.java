@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.math.BigDecimal;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -110,7 +111,17 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         IntactHelper helper = new IntactHelper();
         try {
             Iterator iter0 = helper.getIteratorByReportQuery(countQuery);
-            count =  ((Long) ((Object[])iter0.next())[0]).intValue();
+            Object rowCount = ((Object[]) iter0.next())[0];
+            // Check for oracle
+            if (rowCount.getClass().isAssignableFrom(BigDecimal.class)) {
+                count =  ((BigDecimal) rowCount).intValue();
+            }
+            else {
+                // postgres driver returns Long. Could be a problem for another DB
+                // This may throw a classcast exception which will be logged by the
+                // EditorExceptionHandler - handles genreic exceptions
+                count =  ((Long) rowCount).intValue();
+            }
             if ((count > 0) || (count <= max)) {
                 // The search query
                 Query searchQuery = qf.getSearchQuery(searchClass, searchString);
