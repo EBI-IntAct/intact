@@ -7,9 +7,13 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
+import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Xref;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Bean to store data for an Experiment (in an Interaction).
@@ -50,6 +54,25 @@ public class ExperimentBean extends AbstractEditBean implements Serializable {
 
     public String getFullName() {
         return myExperiment.getFullName();
+    }
+
+    /**
+     * Returns the pubmed id as a link.
+     * @return the pubmed id as a browsable link.
+     */
+    public String getPubMedLink() {
+        for (Iterator iter = myExperiment.getXrefs().iterator(); iter.hasNext(); ) {
+            Xref xref = (Xref) iter.next();
+            if (xref.getCvXrefQualifier().getShortLabel().equals("primary-reference")) {
+                String link = XrefHelper.getPrimaryIdLink(xref);
+                // javascipt to display the link is only for a valid link.
+                if (link.startsWith("http://")) {
+                    return "<a href=\"" + "javascript:showXrefPId('" + link + "')\"" + ">"
+                            + xref.getPrimaryId() + "</a>";
+                }
+            }
+        }
+        return null;
     }
 
     /**
