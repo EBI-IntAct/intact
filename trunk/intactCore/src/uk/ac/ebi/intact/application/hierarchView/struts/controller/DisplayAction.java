@@ -151,6 +151,11 @@ public final class DisplayAction extends IntactBaseAction {
                 saveErrors(request);
                 return (mapping.findForward("error"));
             }
+
+            if (false == isMessagesEmpty()) {
+                // Report any messages we have discovered
+                saveMessages(request);
+            }
         }
 
         logger.info ("DisplayAction: AC=" + AC + " depth=" + depth +

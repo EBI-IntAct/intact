@@ -83,6 +83,11 @@ public final class HighlightmentAction extends IntactBaseAction {
             return (mapping.findForward("error"));
         }
 
+        if (false == isMessagesEmpty()) {
+            // Report any messages we have discovered
+            saveMessages(request);
+        }
+
         // Save our data in the session
         user.setBehaviour (behaviour);
 

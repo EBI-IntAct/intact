@@ -5,12 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.*;
 import org.apache.log4j.Logger;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Super class for all hierarchView related form classes.
@@ -30,6 +30,17 @@ public class IntactBaseForm extends ActionForm {
     private ActionErrors myErrors = new ActionErrors();
 
 
+    /** The global Intact message key. */
+    public static final String INTACT_MESSAGE = "IntactMessage";
+
+    /** Error container */
+    private ActionMessages myMessages = new ActionMessages();
+
+
+    /**
+     * Error managment
+     */
+
     /**
      * return the error set
      * @return the error set
@@ -38,14 +49,6 @@ public class IntactBaseForm extends ActionForm {
         return myErrors;
     }
 
-    /**
-     * Clear error container.
-     */
-    protected void clearErrors() {
-        if (!myErrors.isEmpty()) {
-            myErrors.clear();
-        }
-    }
 
     /**
      * Adds an error with given key.
@@ -77,4 +80,62 @@ public class IntactBaseForm extends ActionForm {
     protected boolean isErrorsEmpty () {
         return myErrors.isEmpty();
     }
+
+
+
+    /**
+     * Message managment
+     */
+
+    /**
+     * return the error set
+     * @return the error set
+     */
+    protected ActionMessages getMessages () {
+        return myMessages;
+    }
+
+
+    /**
+     * Adds an error with given key.
+     *
+     * @param key the error key. This value is looked up in the
+     * IntactResources.properties bundle.
+     */
+    protected void addMessage (String key) {
+        myMessages.add (INTACT_MESSAGE, new ActionMessage(key));
+    }
+
+    /**
+     * Adds an error with given key and value.
+     *
+     * @param key the error key. This value is looked up in the
+     * IntactResources.properties bundle.
+     * @param value the value to substitute for the first place holder in the
+     * IntactResources.properties bundle.
+     */
+    protected void addMessage (String key, String value) {
+        myMessages.add (INTACT_MESSAGE, new ActionMessage (key, value));
+    }
+
+    /**
+     * Specify if an the error set is empty.
+     *
+     * @return boolean false is there are any error registered, else true
+     */
+    protected boolean isMessagesEmpty () {
+        return myMessages.isEmpty();
+    }
+
+    /**
+     * Saves the Messages in given request for <struts:messages> tag.
+     *
+     * @param request the request to save errors.
+     */
+    protected void saveMessages(HttpServletRequest request) {
+        request.setAttribute (org.apache.struts.action.Action.MESSAGE_KEY, getMessages());
+        logger.info ("FORM MESSAGES SAVED");
+    }
+
+
 }
