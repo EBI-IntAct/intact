@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.business;
 
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
-import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.business.IntactException;
@@ -193,25 +192,6 @@ public interface EditUserI extends IntactUserI, Serializable {
             throws IntactException;
 
     /**
-     * Utility method to handle the logic for lookup, ie trying AC, label etc.
-     *
-     * @param className the intact type to search on
-     * @param value the user-specified value.
-     * @param max the maximum number of items to retrieve.
-     * @return the result wrapper which contains the result of the search.
-     * @throws IntactException for errors in searching for persistent system. This
-     * is not thrown if the search produces no output.
-     */
-    public ResultWrapper lookup(String className, String value, int max)
-            throws IntactException;
-
-    /**
-     * Returns the latest search query.
-     * @return the latest search query.
-     */
-    public CriteriaBean getSearchCriteria();
-
-    /**
      * Collection of AnnotatedObjects to add to the search cache. Previous
      * results are removed before adding the new result.
      * @param results a collection of <code>AnnotatedObjects</code> from
@@ -341,24 +321,4 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @return IntactHelper instance assigned to the current user.
      */
     public IntactHelper getIntactHelper() throws IntactException;
-
-    /**
-     * Sets the source class and AC to return back. This is only needed when the
-     * user goes from one view to another (e.g., Experiment to Interaction).
-     * @param clazz the class to return to (e.g., Experiment)
-     * @param ac the AC
-     */
-//    public void setSourceToReturn(Class clazz, String ac);
-
-    /**
-     * Returns the information to go back to.
-     * @return a map entry consists of Class and AC.
-     */
-//    public Map.Entry getSourceToReturn();
-
-    /**
-     * @return true if the user has a source to go back to (i.e., need to get
-     * back to the previous editor)
-     */
-//    public boolean hasSourceToGoBack();
 }

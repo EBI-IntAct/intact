@@ -23,6 +23,21 @@ public class ResultRowData {
     private String myFullName;
     private String myType;
 
+    /**
+     * @param data an array of data. [0]. ac, [1], shortlabel and [2] full name
+     * @param clazz the edit class type.
+     */
+    public ResultRowData(Object[] data, Class clazz) {
+        myAc = (String) data[0];
+        myShortLabel = (String) data[1];
+        myFullName = (String) data[2];
+        myType = IntactHelper.getDisplayableClassName(clazz);
+    }
+
+    /**
+     * Constructs with an annotated object
+     * @param annobj the Annotated object to represent a row
+     */
     public ResultRowData(AnnotatedObject annobj) {
         myAc = annobj.getAc();
         myShortLabel = annobj.getShortLabel();
