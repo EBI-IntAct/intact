@@ -13,6 +13,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
@@ -30,9 +31,9 @@
 %>
 
 <html:form action="/biosource/info">
-    <table width="40%" border="0" cellspacing="1" cellpadding="2">
+    <table width="50%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
-            <th class="tableCellHeader">Action</th>
+            <th class="tableCellHeader" width="30%">Action</th>
             <th class="tableCellHeader">NCBI Tax Id</th>
         </tr>
         <tr class="tableRowEven">
@@ -46,5 +47,16 @@
                     size="10" maxlength="16"/>
             </td>
         </tr>
+
+        <%-- Prints all the error messages relevant to this page only. --%>
+        <logic:messagesPresent>
+            <tr class="tableRowOdd">
+                <td class="tableErrorCell" colspan="2">
+                    <%-- Filter out other error messages. --%>
+                    <html:errors property="biosource"/>
+                </td>
+            </tr>
+        </logic:messagesPresent>
+
     </table>
 </html:form>
