@@ -2,7 +2,6 @@
 
 <%@ page import="java.util.ArrayList,
                  uk.ac.ebi.intact.application.hierarchView.struts.view.utils.OptionGenerator,
-                 uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork,
                  uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants,
                  uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean"%>
@@ -20,6 +19,11 @@
      * Retreive user's data from the session
      */
     IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+
+    if (user == null) {
+        // no user in the session, don't display anything
+        return;
+    }
 
     String AC = user.getAC();
     if (AC == null) AC = "";

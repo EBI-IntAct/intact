@@ -21,6 +21,11 @@
      * Retreive user's data from the session
      */
     IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+
+    if (user == null) {
+        // no user in the session, don't display anything
+        return;
+    }
 %>
 
 <%
