@@ -179,11 +179,7 @@ public class XreferenceBean extends EditBean implements Serializable {
      * @param refQualifier the reference qaulifier as a <code>String</code>.
      */
     public void setQualifier(String refQualifier) {
-        String qualifier = refQualifier.trim();
-        // Avoid empty topic list indicator
-//        if (!qualifier.equals(EditUserI.EMPTY_LIST_ITEM)) {
-//            myReferenceQualifer = qualifier;
-//        }
+        myReferenceQualifer = refQualifier;
     }
 
     // Override Objects's equal method.
