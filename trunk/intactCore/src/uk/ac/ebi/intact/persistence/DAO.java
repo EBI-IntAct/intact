@@ -6,6 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.persistence;
 
+import org.apache.ojb.broker.PersistenceBrokerException;
+
 import java.util.Collection;
 
 /**
@@ -237,4 +239,11 @@ public interface DAO {
      * @param clazz  class to be cached
      */
     public void addCachedClass(Class clazz);
+
+    /**
+     * wipe the whole cache.
+     *
+     * @throws PersistenceBrokerException
+     */
+    public void clearCache() throws PersistenceBrokerException;
 }
