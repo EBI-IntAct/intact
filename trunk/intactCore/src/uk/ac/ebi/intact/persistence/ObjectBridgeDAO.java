@@ -1121,10 +1121,15 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         }
 
+        //Possible that only PROXIES have been returned - if so then we
+        //should really return the concrete classes instead (we only need proxies
+        //inside an object's own collections - currently (!)...
+        Collection finalResults = checkProxies(results);
+
         if ((isCachedClass(searchClass)) & (!results.isEmpty())) {
 
             //must have a unique result that could be queried other than by PK, so cache it locally
-            Iterator it = results.iterator();
+            Iterator it = finalResults.iterator();
             Object obj = it.next();
             if (it.hasNext()) {
 
@@ -1134,7 +1139,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             cache.put(searchClass + "-" + col + "-" + val, obj);
         }
 
-        return results;
+        return finalResults;
     }
 
     /**
@@ -1938,5 +1943,30 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 System.out.println(elem);
             }
         }
+    }
+
+    /**
+     * Helper method to analyse a Collection and get the real items from
+     * the contents if they are Proxies.
+     * @param items The objects to check
+     * @return Collection a list of full objects, or empty if no proxies found
+     */
+    private Collection checkProxies(Collection items) {
+
+        Collection results = new ArrayList();
+        Object obj = null;
+        for(Iterator it = items.iterator(); it.hasNext();) {
+            obj = it.next();
+            if(VirtualProxy.class.isAssignableFrom(obj.getClass())) {
+                //need to get the real object and return that instead
+                results.add(((VirtualProxy)obj).getRealSubject());
+            }
+            else {
+                //not a proxy - return it anyway
+                results.add(obj);
+            }
+        }
+        return results;
+
     }
 }
