@@ -7,14 +7,14 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,17 +75,47 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
 
         LOGGER.info("The current topic is " + topic);
 
-        // Try searching as it is.
-        Collection results = user.lookup(topic, searchString);
-        if (results.isEmpty()) {
-            // No matches found - forward to a suitable page
-            LOGGER.info("No matches were found for the specified search criteria");
-            return mapping.findForward(NO_MATCH);
+        // The maximum number of items to retrieve.
+        int max = getService().getInteger("search.max");
+
+        // The wrapper to hold lookup result.
+        ResultWrapper rw = null;
+        try {
+            rw = user.lookup(getService().getClassName(topic), searchString, max);
         }
+        catch (IntactException ie) {
+            // This can only happen when problems with creating an internal helper
+            // This error is already logged from the User class.
+            ActionErrors errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.intact"));
+            saveErrors(request, errors);
+            return mapping.findForward(FAILURE);
+        }
+
+        // Check the size
+        if (rw.isTooLarge()) {
+            ActionErrors errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.search.large",
+                            Integer.toString(rw.getPossibleResultSize())));
+            saveErrors(request, errors);
+            return mapping.findForward(FAILURE);
+        }
+
+        if (rw.isEmpty()) {
+            // No matches found - forward to a suitable page
+            ActionErrors errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.search.nomatch",
+                            user.getSearchCriteria().getQuery(), user.getSelectedTopic()));
+            saveErrors(request, errors);
+            return mapping.findForward(FAILURE);
+        }
+
         // If we retrieved one object then we can go straight to edit page.
-        if (results.size() == 1) {
+        if (rw.getResult().size() == 1) {
             // The object to edit.
-            AnnotatedObject annobj = (AnnotatedObject) results.iterator().next();
+            AnnotatedObject annobj = (AnnotatedObject) rw.getResult().iterator().next();
 
             // The ac of the object about to edit.
             String ac = annobj.getAc();
@@ -103,12 +133,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             return mapping.findForward("single");
         }
         // Cache the search results.
-        user.addToSearchCache(results);
-
-        // Set the selected topic, so the sidebar displays the currently
-        // selected type (not rquired for a single result as setView method
-        // sets the topic).
-//        user.setSelectedTopic(topic);
+        user.addToSearchCache(rw.getResult());
 
         // Move to the results page.
         return mapping.findForward(RESULT);

@@ -10,6 +10,7 @@ import org.apache.commons.beanutils.DynaBean;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
+import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -232,9 +233,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private String myDatabaseName;
 
     /**
-     * Stores the last query result.
+     * Stores the current query result.
      */
-    private String myLastQuery;
+    private CriteriaBean mySearchCriteria;
 
     /**
      * The search helper. This is recreated if necessary.
@@ -271,18 +272,18 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     // ------------------------------------------------------------------------
 
     // Inner class to sort search result.
-    private static class SearchResultComparator implements Comparator {
-
-        private static SearchResultComparator ourInstance =
-                new SearchResultComparator();
-
-        // Compare on short labels.
-        public int compare(Object obj1, Object obj2) {
-            AnnotatedObject annobj1 = (AnnotatedObject) obj1;
-            AnnotatedObject annobj2 = (AnnotatedObject) obj2;
-            return annobj1.getShortLabel().compareTo(annobj2.getShortLabel());
-        }
-    }
+//    private static class SearchResultComparator implements Comparator {
+//
+//        private static SearchResultComparator ourInstance =
+//                new SearchResultComparator();
+//
+//        // Compare on short labels.
+//        public int compare(Object obj1, Object obj2) {
+//            AnnotatedObject annobj1 = (AnnotatedObject) obj1;
+//            AnnotatedObject annobj2 = (AnnotatedObject) obj2;
+//            return annobj1.getShortLabel().compareTo(annobj2.getShortLabel());
+//        }
+//    }
 
     // ------------------------------------------------------------------------
 
@@ -582,8 +583,22 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
-    public Collection getSPTRProteins(String pid) {
-        return myProteinFactory.insertSPTrProteins(pid);
+    public ResultWrapper getSPTRProteins(String pid, int max) {
+        // The result wrapper to return.
+        ResultWrapper rw = null;
+        Collection prots = myProteinFactory.insertSPTrProteins(pid);
+        if (prots.size() > max) {
+            // Exceeds the maximum size.
+            rw = new ResultWrapper(prots.size(), max);
+        }
+        else if (prots.isEmpty()) {
+            rw = new ResultWrapper(0, max);
+        }
+        else {
+            // Within allowed range
+            rw = new ResultWrapper(prots, max);
+        }
+        return rw;
     }
 
     public Exception getProteinParseException() {
@@ -610,8 +625,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
-    public String getSearchQuery() {
-        return myLastQuery;
+    public CriteriaBean getSearchCriteria() {
+        return mySearchCriteria;
     }
 
     public void addToSearchCache(Collection results) {
@@ -630,34 +645,44 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         mySearchCache.add(annotobj);
     }
 
-    public Collection lookup(String className, String value) throws SearchException {
-        // The result to return.
-        Collection results = new ArrayList();
-
+    public ResultWrapper lookup(Class clazz, String param, String value, int max)
+            throws IntactException {
         // The search helper.
         SearchHelperI helper = getSearchHelper();
 
         // The result to return.
         try {
-            results = helper.doLookupSimple(className, value, this);
+            return helper.searchByQuery(clazz, param, value, max);
         }
         catch (IntactException e) {
-            String msg = "Failed to find any " + className + " records for " + value;
-            throw new SearchException(msg);
+            // This is an internal error. Log it.
+            getLogger().error(e);
+            // Rethrow it again for the presentaion layer to handle it
+            throw e;
         }
-        // Search result in an array to pass to the sort method.
-        AnnotatedObject[] items = (AnnotatedObject[]) results.toArray(
-                new AnnotatedObject[0]);
-        // Sort using the compartor.
-        Arrays.sort(items, SearchResultComparator.ourInstance);
+    }
 
-        // Cache the search query.
-        CriteriaBean critera = (CriteriaBean)
-                helper.getSearchCritera().iterator().next();
-        myLastQuery = critera.getTarget() + "=" + critera.getQuery();
+    public ResultWrapper lookup(String className, String value, int max)
+            throws IntactException {
+        // The search helper.
+        SearchHelperI helper = getSearchHelper();
 
-        // Convert back to the a list.
-        return Arrays.asList(items);
+        // The result to return.
+        try {
+            Class clazz = Class.forName(className);
+            return helper.doLookupSimple(clazz, value, max);
+        }
+        catch (ClassNotFoundException e) {
+            // This is an internal error. Log it.
+            getLogger().error(e);
+            throw new IntactException(e.getMessage());
+        }
+        catch (IntactException e) {
+            // This is an internal error. Log it.
+            getLogger().error(e);
+            // Rethrow it again for the presentaion layer to handle it
+            throw e;
+        }
     }
 
     public boolean shortLabelExists(String label) throws SearchException {
@@ -808,7 +833,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         DAOSource dao = DAOFactory.getDAOSource(myDSClass);
 
         // Construct the the helper.
-        myHelper = new IntactHelper(dao, myUserName, myPassword);
+        myHelper = new IntactHelper(dao, myUserName, myPassword, IntactHelper.ODMG);
 
         try {
             myDatabaseName = myHelper.getDbName();

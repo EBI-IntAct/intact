@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.commons.beanutils.DynaBean;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
+import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
+import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
@@ -67,7 +69,6 @@ public interface EditUserI extends IntactUserI, Serializable {
     public void create(Object object) throws IntactException;
 
     public void update(Object object) throws IntactException;
-
     public void forceUpdate(Object object) throws IntactException;
 
     public void delete(Object object) throws IntactException;
@@ -181,9 +182,10 @@ public interface EditUserI extends IntactUserI, Serializable {
     /**
      * Gets SPTR Proteins via SRS.
      * @param pid the primary id to search for.
-     * @return collection of <code>Protein</code> instances for <code>pid</code>.
+     * @param max the maximum number of proteins allowed.
+     * @return a wrapper containing<code>Protein</code> instances for <code>pid</code>.
      */
-    public Collection getSPTRProteins(String pid);
+    public ResultWrapper getSPTRProteins(String pid, int max);
 
     /**
      * Returns the last protein parse exception.
@@ -208,22 +210,38 @@ public interface EditUserI extends IntactUserI, Serializable {
     public Collection search1(String objectType, String searchParam,
                              String searchValue) throws SearchException;
 
+
+    /**
+     * Utility method to handle the logic for lookup.
+     *
+     * @param clazz the intact class type to search on
+     * @param value the user-specified value.
+     * @param max the maximum number of items to retrieve.
+     * @return the result wrapper which contains the result of the search.
+     * @throws IntactException for errors in searching for persistent system. This
+     * is not thrown if the search produces no output.
+     */
+    public ResultWrapper lookup(Class clazz, String param, String value, int max)
+            throws IntactException;
+
     /**
      * Utility method to handle the logic for lookup, ie trying AC, label etc.
      *
      * @param className the intact type to search on
      * @param value the user-specified value.
-     * @return Collection the results of the search - an empty Collection if no
-     *  results found
-     * @exception SearchException thrown if there were any search problems
+     * @param max the maximum number of items to retrieve.
+     * @return the result wrapper which contains the result of the search.
+     * @throws IntactException for errors in searching for persistent system. This
+     * is not thrown if the search produces no output.
      */
-    public Collection lookup(String className, String value) throws SearchException;
+    public ResultWrapper lookup(String className, String value, int max)
+            throws IntactException;
 
     /**
      * Returns the latest search query.
      * @return the latest search query.
      */
-    public String getSearchQuery();
+    public CriteriaBean getSearchCriteria();
 
     /**
      * Collection of AnnotatedObjects to add to the search cache. Previous
