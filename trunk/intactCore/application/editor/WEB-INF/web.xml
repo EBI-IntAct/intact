@@ -20,16 +20,10 @@
         <param-value>/config/repository.xml</param-value>
     </context-param>
 
-    <!-- Location of the editor topics properties file. -->
+    <!-- Location of the IntAct Editor resources. -->
     <context-param>
-        <param-name>topics</param-name>
-        <param-value>uk.ac.ebi.intact.application.editor.EditorTopics</param-value>
-    </context-param>
-
-    <!-- Location of the newst server properties file. -->
-    <context-param>
-        <param-name>newt</param-name>
-        <param-value>uk.ac.ebi.intact.application.editor.NewtServer</param-value>
+        <param-name>resources</param-name>
+        <param-value>uk.ac.ebi.intact.application.editor.EditorResources</param-value>
     </context-param>
 
     <!--  Class name of the data source object to be used    -->
