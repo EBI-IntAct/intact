@@ -11,9 +11,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
-import uk.ac.ebi.intact.application.editor.util.LockManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +54,9 @@ public class CancelFeatureAction extends AbstractEditorAction {
 
         // Release the lock.
         getLockManager().release(view.getAc());
+
+        // Set back to the normal editor mode.
+        view.turnOffMutationMode();
 
         // If it is a new feature then we need to delete this feature if it has
         // been persisted.
