@@ -49,9 +49,10 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, owner_ac)
          FROM Institution
         WHERE shortLabel='EBI';
 
-INSERT INTO Experiment (ac, shortLabel, owner_ac)
+INSERT INTO Experiment (ac, shortLabel, fullname, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
 	      'gavin',
+              'Analysis of the yeast interactome by tandem affinity purification and subsequent further analysis.',
 	      ac
          FROM Institution
         WHERE shortLabel='EBI';
