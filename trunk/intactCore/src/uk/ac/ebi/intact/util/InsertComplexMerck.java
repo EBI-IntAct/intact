@@ -337,7 +337,7 @@ public class InsertComplexMerck {
 
             Collection components = new ArrayList();
 
-            interaction = new Interaction( experiments, components, cvInteractionType, actLabel, owner );
+            interaction = new InteractionImpl( experiments, components, cvInteractionType, actLabel, owner );
             persist( interaction );
 
             // Initialise list of proteins created

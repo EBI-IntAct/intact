@@ -154,6 +154,7 @@ public class InsertComplex {
         // Filter for the correct protein
         for (Iterator i = proteins.iterator(); i.hasNext();) {
             Protein tmp = (Protein) i.next();
+
             if (tmp.getBioSource().getTaxId().equals( bioSource.getTaxId())) {
                 if (null == targetProtein) {
                     targetProtein = tmp;
@@ -291,7 +292,7 @@ public class InsertComplex {
 
             //got our data - now build the new Interaction (with an empty component Collection)
             //get the info needed to create a new Interaction and build one...
-            Interaction act = new Interaction( experiments, new ArrayList(), cvInteractionType, actLabel, owner );
+            Interaction act = new InteractionImpl( experiments, new ArrayList(), cvInteractionType, actLabel, owner );
             helper.create( act );
 
             // Initialise list of proteins created
