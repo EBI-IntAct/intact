@@ -7,9 +7,7 @@
 
   Package:    IntAct core
 
-  Purpose:    Drop all Oracle components for IntAct
- 
-  Usage:      sqlplus username/password@INSTANCE @drop_tables.sql
+  Purpose:    Drop all Postgres components for IntAct
 
   $Date$
   $Locker$
@@ -17,72 +15,16 @@
 
   *************************************************************/
 
--- Tables
-/*PROMPT Dropping tables ...
-
-PROMPT ... Component */
-DROP TABLE Component;
-
-/*PROMPT ... Int2Exp*/
-DROP TABLE Int2Exp;
-
-/* PROMPT ... Xref*/
-DROP TABLE Xref;
-
-/*PROMPT ... Int2Annot*/
-DROP TABLE Int2Annot;
-
-/*PROMPT ... Exp2Annot*/
-DROP TABLE Exp2Annot;
-
-/*PROMPT ... cvobject2Annot*/
-DROP TABLE cvobject2Annot;
-
-/*PROMPT ... biosource2Annot*/
-DROP TABLE biosource2Annot;
-
-/*PROMPT ... Interactor*/
-DROP TABLE Interactor;
-
-/*PROMPT ... PolymerSeq*/
-DROP TABLE PolymerSeq;
-
-/*PROMPT ... Experiment*/
-DROP TABLE Experiment;
-
-/*PROMPT ... Annotation*/
-DROP TABLE Annotation;
-
-/*PROMPT ... BioSource*/
-DROP TABLE BioSource;
-
-DROP TABLE Cv2Cv;
-
-/*PROMPT ... ControlledVocab*/
-DROP TABLE ControlledVocab;
-
-/*PROMPT ... Institution*/
-DROP TABLE Institution;
-
-/*PROMPT --- IntactNode */
-DROP TABLE IntactNode;
-
--- Sequences
-/*PROMPT Dropping sequences ...
-PROMPT ... Intact_ac*/
-
-DROP SEQUENCE Intact_ac;
-
-
-/*exit;
-
-
--- Grants
-
-exit;*/
-
-
-
-
-
-
+ drop table int2exp ;
+ drop table int2annot ;
+ drop table exp2annot ;
+ drop table cvobject2annot ;
+ drop table biosource2annot ;
+ drop table cv2cv ;
+ drop table controlledvocab ;
+ drop table biosource ;
+ drop table interactor ;
+ drop table annotation ;
+ drop table experiment ;
+ drop table xref ;
+ drop table intactnode ;

@@ -21,6 +21,11 @@
 
   $Date$
   $Auth: hhe / markr  $
+  
+  Change Log :
+  26/03/2003   MR  : - changed composite primary key syntax to comply with version 7.0.x 
+                     - changed polymerSeq to datatype TEXT
+                      
 
   Copyright (c) 2003 The European Bioinformatics Institute, and others.  
   All rights reserved. Please see the file LICENSE 
@@ -196,7 +201,7 @@ CREATE TABLE Interactor
         , fullName              VARCHAR (250)
         /* Colums belonging to BasicObject */
         , owner_ac              VARCHAR (30)    CONSTRAINT fk_Interactor_owner REFERENCES Institution(ac)
-        , polymerSeq            VARCHAR (8000)
+        , polymerSeq            TEXT
 )
 ;
 
@@ -470,16 +475,10 @@ CREATE TABLE Int2Exp
       , userstamp               VARCHAR (30)    DEFAULT    USER    NOT NULL
       , updated                 TIMESTAMP       DEFAULT    now()   NOT NULL
       , timestamp               TIMESTAMP       DEFAULT    now()   NOT NULL
+      , PRIMARY KEY             (interaction_ac, experiment_ac)
 )
-
 ;
 
-/*
-ALTER TABLE Int2Exp
- ADD CONSTRAINT     pk_Int2Exp
-        PRIMARY KEY  (interaction_ac, experiment_ac)
-;
-*/
 
 
     COMMENT ON TABLE Int2Exp IS
@@ -500,7 +499,6 @@ ALTER TABLE Int2Exp
 
 
 
-
 CREATE TABLE Int2Annot
 (       interactor_ac           VARCHAR (30)    NOT NULL CONSTRAINT fk_Int2Annot_interactor REFERENCES Interactor(ac) ON DELETE CASCADE
      ,  annotation_ac           VARCHAR (30)    NOT NULL CONSTRAINT fk_Int2Annot_annotation REFERENCES Annotation(ac) ON DELETE CASCADE
@@ -509,15 +507,9 @@ CREATE TABLE Int2Annot
      ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL  
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  PRIMARY KEY             (interactor_ac, annotation_ac)
 )
 ;
-
-/*
-ALTER TABLE Int2Annot
- ADD  CONSTRAINT     pk_Int2Annot
-        PRIMARY KEY  (interactor_ac, annotation_ac)
-;
-*/
 
     COMMENT ON TABLE Int2Annot IS
     'Int2Annot. Link table from Annotation to Interactor.';
@@ -536,7 +528,6 @@ ALTER TABLE Int2Annot
 
 
 
-
 CREATE TABLE Exp2Annot
 (       experiment_ac           VARCHAR (30)    NOT NULL CONSTRAINT fk_Exp2Annot_experiment REFERENCES Experiment(ac) ON DELETE CASCADE
      ,  annotation_ac           VARCHAR (30)    NOT NULL CONSTRAINT fk_Exp2Annot_annotation REFERENCES Annotation(ac) ON DELETE CASCADE
@@ -545,16 +536,9 @@ CREATE TABLE Exp2Annot
      ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL  
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  PRIMARY KEY             (experiment_ac, annotation_ac)
 )
 ;
-
-
-/*
-ALTER TABLE Exp2Annot
- ADD  CONSTRAINT     pk_Exp2Annot
-      PRIMARY KEY  (experiment_ac, annotation_ac)
-;
-*/
 
     COMMENT ON TABLE Exp2Annot IS
     'Exp2Annot. Link table from Annotation to Experiment.';
@@ -583,16 +567,10 @@ CREATE TABLE cvobject2Annot
      ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL  
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  PRIMARY KEY             (cvobject_ac, annotation_ac)
 )
 ;
 
-
-/*
-ALTER TABLE cvobject2Annot
- ADD CONSTRAINT     pk_cvobject2Annot
-     PRIMARY KEY  (cvobject_ac, annotation_ac)
-;
-*/
 
     COMMENT ON TABLE cvobject2Annot IS
     'cvobject2Annot. Link table from Annotation to Controlled vocabulary.';
@@ -620,15 +598,9 @@ CREATE TABLE Biosource2Annot
      ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL  
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  PRIMARY KEY             (biosource_ac, annotation_ac)
 )
 ;
-
-/*
-ALTER TABLE Biosource2Annot
- ADD  CONSTRAINT     pk_Biosource2Annot
-      PRIMARY KEY  (biosource_ac, annotation_ac)
-;
-*/
     COMMENT ON TABLE Biosource2Annot IS
     'Biosource2Annot. Link table from Annotation to Biosource.';
     COMMENT on COLUMN Biosource2Annot.Biosource_ac IS
@@ -654,16 +626,10 @@ CREATE TABLE Cv2Cv
     ,  updated                 TIMESTAMP        DEFAULT  now()   NOT NULL
     ,  timestamp               TIMESTAMP        DEFAULT  now()   NOT NULL
     ,  userstamp               VARCHAR(30)      DEFAULT  USER    NOT NULL 
-
-);
-
-/* No indexes defined yet. */
-/*
-ALTER TABLE Cv2Cv
- ADD  CONSTRAINT     pk_Cv2Cv
-      PRIMARY KEY  (parent_ac, child_ac)
+    ,  PRIMARY KEY             (parent_ac, child_ac)
+)
 ;
-*/
+
 
 COMMENT ON TABLE Cv2Cv IS
 'Cv2Cv. Link table to establish a Directed Acyclic Graph (DAG) structure for CVs.';
