@@ -322,7 +322,7 @@ public class CCLineExport extends LineExport {
         }
 
         buffer.append( ';' ).append( ' ' ).append( "Experiments=" ).append( experimentCount ).append( ';' ).append( ' ' );
-        buffer.append( "AC=" ).append( protein1.getAc() ).append( ',' ).append( protein2.getAc() );
+        buffer.append( "AC=" ).append( protein1.getAc() ).append( ',' ).append( protein2.getAc() ).append( ';' );
         buffer.append( NEW_LINE );
 
         // generated warning message if the two protein are from different organism
