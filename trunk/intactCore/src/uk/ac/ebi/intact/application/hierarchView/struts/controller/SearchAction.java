@@ -75,7 +75,7 @@ public final class SearchAction extends IntactBaseAction {
             methodLabel = searchForm.getMethod ();
 
             // read the highlighting.proterties file
-            Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+            Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;;
 
             if (null != properties) {
                 methodClass = properties.getProperty ("highlightment.source." + methodLabel + ".class");

@@ -69,7 +69,7 @@ public class RestoreContextFromCookieTag extends TagSupport {
         String depth  = null;
         String maxStr = null;
 
-        // firstly cache the cookie content
+        // firstly cache the cookie content to have direct access instead of traversing the collection
         HashMap cookieCache = new HashMap (cookies.length);
         int i;
         for (i = 0; i < cookies.length; i++) {
@@ -85,19 +85,24 @@ public class RestoreContextFromCookieTag extends TagSupport {
         if (maxStr != null) {
             int max = Integer.parseInt(maxStr);
             // our entry points are store under Q0 .. Q8 (if QUERY_COUNT == 9)
-            String queryString = "";
+            StringBuffer queryBuffer = new StringBuffer(256);
+            String item;
             for (i = 0; i < max; i++) {
-                queryString += (String) cookieCache.get ("Q"+i) + ",";
+                if ((item = (String) cookieCache.get ("Q"+i)) != null) {
+                    queryBuffer.append(item).append(',');
+                }
             }
             // remove the last comma
-            queryString = queryString.substring (0, queryString.length()-1);
+            int len;
+            if ((len = queryBuffer.length()) != 0) {
+                String queryString = queryBuffer.substring (0, len-1);
 
-
-            if (queryString != null && method != null && depth != null) {
-                url = contextPath + "/display.do?AC="+ queryString +"&method="+ method +"&depth="+ depth;
-            } else {
-                // simply display the current page
-                return EVAL_PAGE;
+                if (queryString != null && method != null && depth != null) {
+                    url = contextPath + "/display.do?AC="+ queryString +"&method="+ method +"&depth="+ depth;
+                } else {
+                    // simply display the current page
+                    return EVAL_PAGE;
+                }
             }
         }
 

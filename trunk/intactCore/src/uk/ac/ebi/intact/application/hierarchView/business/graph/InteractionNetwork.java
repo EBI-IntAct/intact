@@ -12,9 +12,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
  * @version $Id$
  */
 
-import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
+import uk.ac.ebi.intact.application.hierarchView.business.*;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageDimension;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient;
@@ -224,7 +222,8 @@ public class InteractionNetwork extends Graph {
     public void initNodeDisplay (NodeI aNode) {
 
         // read the Graph.proterties file
-        Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+//        Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+        Properties properties = IntactUserI.GRAPH_PROPERTIES;
 
         String stringColorNode  = null;
         String stringColorLabel = null;

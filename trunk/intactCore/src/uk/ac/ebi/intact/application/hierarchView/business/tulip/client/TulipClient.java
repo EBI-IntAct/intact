@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import java.rmi.RemoteException;
@@ -60,7 +61,7 @@ public class TulipClient {
             TulipAccessService service = serviceLocator;
 
             // Look in the property file where is the web service
-            Properties properties = PropertyLoader.load (StrutsConstants.WEB_SERVICE_PROPERTY_FILE);
+            Properties properties = IntactUserI.WEB_SERVICE_PROPERTIES;
             String tulipAdress = null;
             if (null != properties) {
                 tulipAdress = properties.getProperty ("webService.adress");

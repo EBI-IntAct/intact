@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.image;
 // intact
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 import uk.ac.ebi.intact.simpleGraph.Node;
@@ -305,7 +306,7 @@ public class DrawGraph {
      */
     private void readPropertyFile () {
 
-        this.properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+        this.properties = IntactUserI.GRAPH_PROPERTIES;
 
         // read the background and border color in the property file
         String stringBgColor     = null;

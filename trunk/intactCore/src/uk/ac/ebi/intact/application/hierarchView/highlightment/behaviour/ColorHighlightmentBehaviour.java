@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
@@ -44,7 +45,7 @@ public class ColorHighlightmentBehaviour extends HighlightmentBehaviour {
     public void applyBehaviour (Node aProtein) {
 
         // read the Graph.proterties file
-        Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+        Properties properties = IntactUserI.GRAPH_PROPERTIES;
 
         String colorString = null;
 

@@ -10,6 +10,7 @@ import org.apache.axis.client.AdminClient;
 import org.apache.axis.utils.Options;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import javax.servlet.ServletContextEvent;
@@ -71,7 +72,7 @@ public class WebServiceManager implements ServletContextListener {
         String configFile = StrutsConstants.WEB_SERVICE_PROPERTY_FILE;
 
         logger.info ("Loading web service's properties");
-        Properties props = PropertyLoader.load (configFile);
+        Properties props = IntactUserI.WEB_SERVICE_PROPERTIES;
 
         if (null != props) {
             String deploymentFile   = props.getProperty ("webService.deployment");
