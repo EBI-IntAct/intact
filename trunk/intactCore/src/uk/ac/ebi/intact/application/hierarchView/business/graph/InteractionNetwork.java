@@ -70,9 +70,11 @@ public class InteractionNetwork extends Graph {
 //    private Node centralProteinNode;
 
     /**
-     * Stores a set of central nodes. There is one by fusioned interaction network
+     * Stores a set of central nodes and interactor. There is one by fusioned interaction network
+     * We need to store both because in the case of an interaction, no node are stored.
      */
     private ArrayList centralNodes;
+    private ArrayList centralInteractors;
 
     /**
      * Describe how the interaction network has been built,
@@ -87,10 +89,12 @@ public class InteractionNetwork extends Graph {
      * Constructor
      */
     public InteractionNetwork (Interactor aCentralProtein) {
-        centralProtein   = aCentralProtein;
-        centralProteinAC = aCentralProtein.getAc();
-        criteriaList     = new ArrayList();
-        centralNodes     = new ArrayList();
+        centralProtein     = aCentralProtein;
+        centralProteinAC   = aCentralProtein.getAc();
+        criteriaList       = new ArrayList();
+        centralNodes       = new ArrayList();
+        centralInteractors = new ArrayList();
+        centralInteractors.add (aCentralProtein); // can be a interaction, a Protein
 
         // wait the user to add some node to reference the central one
         dimension        = new ImageDimension();
@@ -102,9 +106,6 @@ public class InteractionNetwork extends Graph {
         return centralProteinAC;
     }
 
-//    public Node getCentralProteinNode() {
-//        return centralProteinNode;
-//    }
 
     public Interactor getCentralProtein() {
         return centralProtein;
@@ -113,12 +114,17 @@ public class InteractionNetwork extends Graph {
 
 
     public void addCentralProtein (Node node) {
-        if (! centralNodes.contains(node))
+        if (node == null) logger.info ("!!!!!!!!!!!!!!!!!!!!!!! Node == NULL");
+        if ((! centralNodes.contains(node)) && (node != null))
             centralNodes.add (node);
     }
 
     public ArrayList getCentralProteins () {
         return centralNodes;
+    }
+
+    public ArrayList getCentralInteractors () {
+        return centralInteractors;
     }
 
 
@@ -169,8 +175,9 @@ public class InteractionNetwork extends Graph {
         // initialization of the node
         if (null != aNode) {
             if (anInteractor.equals(centralProtein)) {
-//                centralProteinNode = aNode;
                 addCentralProtein(aNode);
+                // TODO: could add the interactor in a Collection ... would solve the problem of an interaction
+
             }
             aNode.put (Constants.ATTRIBUTE_LABEL, anInteractor.getAc ());
 
@@ -488,6 +495,9 @@ public class InteractionNetwork extends Graph {
 
         // fusion search criteria
         criteriaList.addAll (network.getCriteria());
+
+        // fusion interactor list
+        centralInteractors.addAll (network.getCentralInteractors());
 
         chrono.stop();
         String msg = "Network Fusion took " + chrono;
