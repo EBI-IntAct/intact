@@ -107,7 +107,7 @@ public abstract class UpdateProteinsI {
                 HttpProxyManager.setup( null );
             }
 
-        } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
+        } catch( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
             proxyConfigurationNotFound.printStackTrace();
         }
     }
@@ -182,7 +182,7 @@ public abstract class UpdateProteinsI {
             if( annotations != null ) {
                 // find the CvTopic search-url-ascii
                 Annotation searchedAnnotation = null;
-                for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
+                for( Iterator iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
                     Annotation annotation = (Annotation) iterator.next();
                     if( CV_TOPIC_SEARCH_URL_ASCII.equals( annotation.getCvTopic().getShortLabel() ) ) {
                         searchedAnnotation = annotation;
@@ -229,7 +229,7 @@ public abstract class UpdateProteinsI {
             orfNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "orf-name" );
             locusNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "locus-name" );
 
-        } catch ( IntactException e ) {
+        } catch( IntactException e ) {
             if( logger != null ) {
                 logger.error( e );
             }
@@ -384,7 +384,7 @@ public abstract class UpdateProteinsI {
      * @param current the object to which we add a new Xref
      * @param alias   the Alias to add to the AnnotatedObject
      */
-    public abstract void addNewAlias( AnnotatedObject current, final Alias alias );
+    public abstract boolean addNewAlias( AnnotatedObject current, final Alias alias );
 
     /**
      * Gives the count of created protein
@@ -519,4 +519,12 @@ public abstract class UpdateProteinsI {
      */
     public abstract void setLocalTransactionControl( boolean localTransactionControl );
 
+
+    /**
+     * Update all protein found in the provided collection.
+     * If none provided, update all protein that can be retreived from the current intact node.
+     *
+     * @param proteins a Collection of protein.
+     */
+    public abstract int updateAllProteins( Collection proteins ) throws IntactException;
 }
