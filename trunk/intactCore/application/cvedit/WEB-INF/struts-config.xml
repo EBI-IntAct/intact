@@ -68,6 +68,8 @@
 
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
+        <!-- Need this global forward from the index.jsp -->
+        <forward name="login"    path="/do/cv/welcome"/>
         <forward name="success"  path="edit.layout"/>
         <forward name="failure"  path="error.layout"/>
     </global-forwards>
@@ -76,9 +78,15 @@
     <action-mappings>
 
         <!-- Process a user logout -->
+        <action path="/cv/welcome"
+                type="org.apache.struts.actions.ForwardAction"
+            parameter="login.layout">
+        </action>
+
+        <!-- Process a user logout -->
         <action path="/cv/logout"
                 type="uk.ac.ebi.intact.application.cvedit.struts.security.LogoutAction">
-            <forward name="success" path="/login.jsp"/>
+            <forward name="success" path="/do/cv/welcome"/>
         </action>
 
         <!-- Process a user logon. -->
@@ -107,6 +115,12 @@
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="results" path="match.layout"/>
             <forward name="edit" path="edit.layout"/>
+        </action>
+
+        <!-- Process a new search for a Cv Object. -->
+        <action path="/cv/search/new"
+                type="org.apache.struts.actions.ForwardAction"
+                parameter="search.layout">
         </action>
 
         <!-- When the user selects  -->
