@@ -21,11 +21,6 @@
 
 <html:form action="/featureDispatch" onsubmit="return validateFeatureForm(this)">
     <html:hidden property="anchor" />
-    <%-- This is a hack to get through with the validation as mutation form has
-         no short label
-    --%>
-    <html:hidden property="shortLabel" value="xy"/>
-
     <jsp:include page="parent_protein.jsp" />
     </p>
     <jsp:include page="new_feature.jsp" />
