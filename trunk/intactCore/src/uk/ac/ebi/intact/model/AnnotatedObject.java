@@ -49,14 +49,22 @@ public abstract class AnnotatedObject extends BasicObject {
      *
      */
     public Collection annotation = new Vector();
+
     /**
      * The curator who has last edited the object.
      */
     public Person curator;
+
     /**
      *
      */
     public Collection xref = new Vector();
+
+    /**
+     * Hold aliases of an Annotated object.
+     * ie. alternative name for the current object.
+     */
+    private Collection aliases = new ArrayList();
 
     /**
      *
@@ -87,7 +95,6 @@ public abstract class AnnotatedObject extends BasicObject {
         if(owner == null) throw new NullPointerException("valid " +getClass().getName()+" must have an owner (Institution)!");
         this.shortLabel = shortLabel;
         this.owner = owner;
-
     }
     // Class methods
 
@@ -103,7 +110,7 @@ public abstract class AnnotatedObject extends BasicObject {
         if ((menuList == null) || forceUpdate){
             menuList = new Vector();
             // get all elements of the class
-            Collection allElements = helper.search(targetClass.getName(),"ac","*");
+            Collection allElements = helper.search( targetClass.getName(), "ac", "*" );
             // save all shortLabels
             for (Iterator i = allElements.iterator(); i.hasNext();) {
                 menuList.add(((AnnotatedObject) i.next()).getShortLabel());
@@ -148,13 +155,17 @@ public abstract class AnnotatedObject extends BasicObject {
     public void setCurator(Person person) {
         this.curator = person;
     }
+
+
+    ///////////////////
+    // Xref related
+    ///////////////////
     public void setXref(Collection someXref) {
         this.xref = someXref;
     }
     public Collection getXref() {
         return xref;
     }
-
     /**
      * Adds an xref to the object. The xref will only be added
      * if an equivalent xref is not yet part of the object.
@@ -169,6 +180,34 @@ public abstract class AnnotatedObject extends BasicObject {
     public void removeXref(Xref xref) {
         this.xref.remove(xref);
     }
+
+
+    ///////////////////
+    // Alias related
+    ///////////////////
+    public void setAlias(Collection someAliases) {
+        this.aliases = someAliases;
+    }
+    public Collection getAliases() {
+        return aliases;
+    }
+    /**
+     * Adds an xref to the object. The xref will only be added
+     * if an equivalent xref is not yet part of the object.
+     *
+     */
+    public void addAlias( Alias alias ) {
+        if (! this.aliases.contains( alias )) {
+            this.aliases.add( alias );
+            alias.setParentAc( this.getAc() );
+        }
+    }
+    public void removeXref( Alias alias ) {
+        this.aliases.remove( alias );
+    }
+
+
+
      public void setReference(Collection someReference) {
         this.reference = someReference;
     }
@@ -206,6 +245,7 @@ public abstract class AnnotatedObject extends BasicObject {
         // Update dependent objects
         for (Iterator i = xref.iterator(); i.hasNext();) {
             Xref xref = (Xref) i.next();
+
             helper.update(xref);
         }
         for (Iterator i = annotation.iterator(); i.hasNext();) {
@@ -247,11 +287,24 @@ public abstract class AnnotatedObject extends BasicObject {
     /** Returns true if the "important" attributes are equal.
      */
     public boolean equals (Object o) {
+        // TODO: the reviewed version of the intact model will provide a better implementation
         if (this == o) return true;
         if (!(o instanceof AnnotatedObject)) return false;
-        if (!super.equals(o)) return false;
+        if (!super.equals(o)) {
+            return false;
+        }
 
         final AnnotatedObject annotatedObject = (AnnotatedObject) o;
+
+        Iterator e1 = xref.iterator();
+        Iterator e2 = annotatedObject.xref.iterator();
+
+        while(e1.hasNext() && e2.hasNext()) {
+            Xref o1 = (Xref) e1.next();
+            Xref o2 = (Xref) e2.next();
+            if (!(o1==null ? o2==null : o1.equals(o2)))
+                return false;
+        }
 
         return (Utilities.equals (this.shortLabel, annotatedObject.getShortLabel()) &&
                 Utilities.equals (this.fullName, annotatedObject.getFullName()));
@@ -264,6 +317,11 @@ public abstract class AnnotatedObject extends BasicObject {
     public int hashCode(){
 
         int code = super.hashCode();
+
+        for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
+            Xref xref = (Xref) iterator.next();
+            code = 29 * code + xref.hashCode();
+        }
 
         if (null != shortLabel) code = 29 * code + shortLabel.hashCode();
         if (null != fullName)   code = 29 * code + fullName.hashCode();
