@@ -882,7 +882,7 @@ public class HtmlBuilder {
      * @param aProtein
      * @throws java.io.IOException
      */
-    public void htmlView(ProteinProxy aProtein) throws IOException {
+    public void htmlView(ProteinImpl aProtein) throws IOException {
         htmlView( (Protein) aProtein );
     }
 
@@ -1016,7 +1016,7 @@ public class HtmlBuilder {
      * @param act
      * @throws java.io.IOException
      */
-    public void htmlView(InteractionProxy act) throws IOException {
+    public void htmlView(InteractionImpl act) throws IOException {
         htmlView( (Interaction) act );
     }
 
