@@ -15,6 +15,7 @@
         around the value. -->
     <xsl:param name="tableName" select="'tbl_0'"/>
     <xsl:param name="searchLink"/>
+    <xsl:param name="searchParams"/> <!-- list of strings identifying search details -->
 
     <xsl:output method="xml" version="1.0" indent="yes"
         doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -54,7 +55,9 @@
                 <xsl:value-of select="@ac"/>
             </td>
             <td>
-                <xsl:value-of select="@shortLabel"/>
+                <xsl:call-template name="draw_short_label">
+                <xsl:with-param name="label" select="@shortLabel"/>
+                </xsl:call-template>
             </td>
 
             <td>
@@ -126,7 +129,9 @@
             </xsl:call-template>
 
             <td>
-                <xsl:value-of select="@shortLabel"/>
+                <xsl:call-template name="draw_short_label">
+                <xsl:with-param name="label" select="@shortLabel"/>
+                </xsl:call-template>
             </td>
             <td>
                 <xsl:value-of select="@fullName"/>
@@ -185,12 +190,20 @@
                         </xsl:variable>
 
                         <!-- put link on the Protein short label -->
-                        <xsl:call-template name="draw_label_link">
+                       <xsl:call-template name="draw_label_link">
+<!--                       <xsl:call-template name="draw_short_label"> -->
                             <xsl:with-param name="label" select="@shortLabel"/>
                             <xsl:with-param name="type" select="'Protein'"/>
                         </xsl:call-template>
-                        <!-- <xsl:value-of select="@shortLabel"/> -->
-                        <acronym title="{$title}">[<xsl:value-of select="substring(../CvComponentRole/@shortLabel, 1, 1)"/>]</acronym>
+                        <!-- Put in a [] tooltip for the CvRole, linked to the CvObject
+                            NB can't use the cv_link template here as the link content is
+                            different to the text displayed on screen -->
+                        <acronym title="{$title}">[
+                            <xsl:variable name="link">
+                                <xsl:value-of select="concat($searchLink, ../CvComponentRole/@shortLabel, '&amp;', 'searchClass=CvComponentRole')"/>
+                            </xsl:variable>
+                            <a href="{$link}"><xsl:value-of select="substring(../CvComponentRole/@shortLabel, 1, 1)"/></a>
+                            ]</acronym>
                         <!-- Avoid printing  ',' for the last protein -->
                         <xsl:if test="not(position()=last())">, </xsl:if>
                     </xsl:for-each>
@@ -215,8 +228,21 @@
                 <xsl:value-of select="@ac"/>
             </td>
             <td>
-                <xsl:value-of select="@shortLabel"/>[
-                <xsl:value-of select="substring(../CvComponentRole/@shortLabel, 1, 1)"/>]
+                <xsl:call-template name="draw_short_label">
+                <xsl:with-param name="label" select="@shortLabel"/>
+                </xsl:call-template>
+
+                <xsl:variable name="title">
+                   <xsl:value-of select="../CvComponentRole/@shortLabel"/>
+                </xsl:variable>
+                    <!--  can't use the cv_link template here as the link content is
+                            different to the text displayed on screen -->
+                <acronym title="{$title}">[
+                    <xsl:variable name="link">
+                        <xsl:value-of select="concat($searchLink, ../CvComponentRole/@shortLabel, '&amp;', 'searchClass=CvComponentRole')"/>
+                    </xsl:variable>
+                    <a href="{$link}"><xsl:value-of select="substring(../CvComponentRole/@shortLabel, 1, 1)"/></a>
+                    ]</acronym>
             </td>
 
             <td colspan="2">
@@ -291,6 +317,7 @@ CvTissue | CvTopic | CvXrefQualifier">
                 <xsl:for-each select="child::parents">
                     <xsl:call-template name="draw_cv_link">
                         <xsl:with-param name="cv" select="@shortLabel"/>
+                        <xsl:with-param name="type" select="'CvInteraction'"/>
                         <!-- need to also pass the parent's element tag name here... -->
                     </xsl:call-template>
                     <!-- Avoid printing  ',' for the last protein -->
@@ -305,6 +332,7 @@ CvTissue | CvTopic | CvXrefQualifier">
                 <xsl:for-each select="child::childs">
                     <xsl:call-template name="draw_cv_link">
                         <xsl:with-param name="cv" select="@shortLabel"/>
+                        <xsl:with-param name="type" select="'CvInteraction'"/>
                         <!-- need to also pass the child's element tag name here... -->
                     </xsl:call-template>
                     <!-- Avoid printing  ',' for the last protein -->
@@ -331,7 +359,53 @@ CvTissue | CvTopic | CvXrefQualifier">
                 <xsl:value-of select="@ac"/>
             </td>
             <td>
-                <xsl:value-of select="@shortLabel"/>
+                <xsl:call-template name="draw_short_label">
+                <xsl:with-param name="label" select="@shortLabel"/>
+                </xsl:call-template>
+            </td>
+
+            <td>
+                <xsl:value-of select="@fullName"/>
+            </td>
+        </tr>
+
+        <xsl:for-each select="annotations/Annotation">
+            <tr class="Interaction">
+                <td colspan="2">
+                    <xsl:value-of select="CvTopic/@shortLabel"/>
+                </td>
+
+                <td colspan="3">
+                    <xsl:value-of select="@annotationText"/>
+                </td>
+            </tr>
+        </xsl:for-each>
+
+        <xsl:for-each select="xrefs/Xref">
+            <tr class="CvObject">
+                <xsl:call-template name="draw-xrefs"/>
+            </tr>
+        </xsl:for-each>
+    </xsl:template>
+
+    <!--
+        ****************************************************************************
+        ** Template for single Protein display - same basically as CvObject,
+        ** but kept seperate in case we want to display other things for Proteins later
+        *************************************************************************-->
+    <xsl:template match="intact-root/Protein">
+        <!-- use a CvObject display format here -->
+        <tr class="CvObject">
+            <td colspan="2">
+                <b>Protein</b>
+            </td>
+            <td>
+                <xsl:value-of select="@ac"/>
+            </td>
+            <td>
+                <xsl:call-template name="draw_short_label">
+                <xsl:with-param name="label" select="@shortLabel"/>
+                </xsl:call-template>
             </td>
 
             <td>
@@ -384,7 +458,17 @@ CvTissue | CvTopic | CvXrefQualifier">
         <xsl:variable name="link">
             <xsl:value-of select="concat($searchLink, $label, '&amp;', 'searchClass=', $type)"/>
         </xsl:variable>
-            <a href="{$link}"><xsl:value-of select="$label"/></a>
+
+        <xsl:choose>
+                <xsl:when test="contains($searchParams, $label)">
+                   <a href="{$link}"><b><i><xsl:value-of select="$label"/></i></b></a>
+                </xsl:when>
+
+                <xsl:otherwise>
+                <a href="{$link}"><xsl:value-of select="$label"/></a>
+                </xsl:otherwise>
+            </xsl:choose>
+
     </xsl:template>
 
     <!--
@@ -564,6 +648,27 @@ CvTissue | CvTopic | CvXrefQualifier">
         <td>
             <xsl:value-of select="@dbRelease"/>
         </td>
+    </xsl:template>
+
+    <!--
+    ****************************************************************************
+    ** template for drawing a short label - needs highlighting if searched for
+    *************************************************************************-->
+    <xsl:template name="draw_short_label">
+        <xsl:param name="label"/>
+
+        <!-- if the short label identifies a search-for item highlight it,
+             otherwise just use the label itself -->
+            <xsl:choose>
+                <xsl:when test="contains($searchParams, $label)">
+                   <b><i><xsl:value-of select="$label"/></i></b>
+                </xsl:when>
+
+                <xsl:otherwise>
+                <xsl:value-of select="$label"/>
+                </xsl:otherwise>
+            </xsl:choose>
+
     </xsl:template>
 
 </xsl:stylesheet>
