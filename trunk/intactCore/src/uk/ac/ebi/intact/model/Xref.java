@@ -207,6 +207,15 @@ public class Xref extends BasicObjectImpl {
 
         final Xref xref = (Xref) o;
 
+        // Check for parent AC.
+        if (parentAc != null) {
+            if (!parentAc.equals(xref.parentAc)) return false;
+        }
+        else {
+            if (xref.parentAc != null) return false;
+        }
+
+        // Check for CV database.
         if(cvDatabase != null) {
              if (!cvDatabase.equals(xref.cvDatabase)) return false;
         }
@@ -214,6 +223,7 @@ public class Xref extends BasicObjectImpl {
             if (xref.cvDatabase != null) return false;
         }
 
+        // Check for primary id.
         if(primaryId != null) {
              return (primaryId.equals(xref.primaryId));
         }
