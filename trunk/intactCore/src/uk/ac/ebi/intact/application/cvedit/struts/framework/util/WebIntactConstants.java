@@ -20,6 +20,11 @@ public interface WebIntactConstants {
     public static final String INTACT_SERVICE = "IntactService";
 
     /**
+     * To access intact types.
+     */
+    public static final String INTACT_TYPES = "intacttypes";
+
+    /**
      * The key to access an Intact user.
      */
     public static final String INTACT_USER = "intactuser";
@@ -74,19 +79,9 @@ public interface WebIntactConstants {
     public static final String FORWARD_NO_MATCHES = "noMatch";
 
     /**
-     * Search by AC.
-     */
-    public static final String SEARCH_BY_AC = "ac";
-
-    /**
      * Search by Label.
      */
     public static final String SEARCH_BY_LABEL = "shortLabel";
-
-    /**
-     * Create a new object.
-     */
-    public static final String CREATE_NEW = "createNew";
 
     /**
      * Used as a key to identify a mapping filename (for Castor).
@@ -99,12 +94,6 @@ public interface WebIntactConstants {
      * is deifned in the web.xml file as a servlet context parameter
      */
     public static final String DATA_SOURCE = "datasource";
-
-    /**
-     * A key to identify an intact object types property file -
-     * its value is defined in the web.xml file as a servlet context parameter.
-     */
-//    public static final String INTACT_TYPES_FILE = "intacttypesfile";
 
     /**
      * The bean to display short labels when the user is adding a new CV obj.
