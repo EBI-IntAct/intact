@@ -58,9 +58,6 @@
                 <bean:message key="xrefs.button.add"/>
             </html:submit>
         </td>
-<%--        <td class="tableCell" align="right" valign="top">--%>
-<%--            <html:reset/>--%>
-<%--        </td>--%>
         <td class="tableCell" align="left" valign="top">
             <html:select property="xref.database">
                 <html:options name="dblist" />
@@ -76,7 +73,8 @@
             <html:text property="xref.releaseNumber" size="15"/>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:select property="xref.qualifier">
+            <html:select property="xref.qualifier"
+                value="<%=user.getView().getDefaultXrefQualifier()%>">
                 <html:options name="qlist" />
             </html:select>
         </td>
