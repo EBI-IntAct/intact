@@ -30,6 +30,14 @@ public final class SearchForm extends IntactBaseForm {
 
     public static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
+    /**
+     */
+    private static final int SEARCH = 0;
+
+    /**
+     */
+    private static final int ADD = 1;
+
     // --------------------------------------------------- Instance Variables
 
     // the queryString of the protein to search.
@@ -42,26 +50,69 @@ public final class SearchForm extends IntactBaseForm {
      */
     private String method = null;
 
-    // ----------------------------------------------------------- Getters and Setters
+    /**
+     * Saves the user action.
+     */
+    private int myAction;
+
+    private String actionName;
+
+    /**
+     * Sets the action.
+     * @param action the action for the form. If this contains the word
+     * 'AC' then the search is by AC otherwise the search is by label.
+     */
+    public void setAction(String action) {
+        actionName = action;
+
+        if (action.equals("Add")) {
+            myAction = ADD;
+        }
+        else if (action.equals("Search")) {
+            myAction = SEARCH;
+        }
+    }
+
+
+    public String getAction () {
+        return actionName;
+    }
+
 
     public String getQueryString() {
         return (this.queryString);
     }
 
+
     public void setQueryString(String queryString) {
         this.queryString = queryString;
     }
 
+
     public String getMethod() {
         return (this.method);
     }
+
 
     public void setMethod (String method) {
         this.method = method;
     }
 
 
-    // --------------------------------------------------------- Public Methods
+    /**
+     * True if Search button is pressed.
+     */
+    public boolean searchSelected() {
+        return myAction == SEARCH;
+    }
+
+
+    /**
+     * True if Add button is pressed.
+     */
+    public boolean addSelected() {
+        return myAction == ADD;
+    }
 
 
     /**

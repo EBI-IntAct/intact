@@ -45,6 +45,16 @@ public final class StrutsConstants {
      * The name of the HTTP attribute to describe the URL of the highlight source.
      */
     public static final String ATTRIBUTE_SOURCE_URL = "url";
+
+
+    /**
+     * Action allowed to create an interaction network
+     */
+    public static final int CREATE_INTERACTION_NETWORK = 0;
+
+    public static final int ADD_INTERACTION_NETWORK = 1;
+
+    public static final int UPDATE_INTERACTION_NETWORK = 2;
 }
 
 

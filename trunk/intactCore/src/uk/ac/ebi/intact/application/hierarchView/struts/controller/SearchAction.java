@@ -67,11 +67,12 @@ public final class SearchAction extends IntactBaseAction {
         String methodLabel = null;
         String methodClass = null;
         String behaviourDefault = null;
+        SearchForm searchForm = (SearchForm) form;
 
         if (null != form) {
             // read form values from the bean
-            queryString = ((SearchForm) form).getQueryString ();
-            methodLabel = ((SearchForm) form).getMethod ();
+            queryString = searchForm.getQueryString ();
+            methodLabel = searchForm.getMethod ();
 
             // read the highlighting.proterties file
             Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
@@ -93,17 +94,26 @@ public final class SearchAction extends IntactBaseAction {
             saveErrors(request);
             return (mapping.findForward("error"));
         } else {
-            // Save user's data
+            if (searchForm.searchSelected()) {
+                user.init();
+                // Save user's data
+                user.setDepthToDefault();
+                user.setMethodLabel (methodLabel);
+                user.setMethodClass (methodClass);
+                user.setBehaviour (behaviourDefault);
+            }
+
             user.setQueryString (queryString);
-            user.setDepthToDefault();
-            //user.resetSourceURL();
-            user.setMethodLabel (methodLabel);
-            user.setMethodClass (methodClass);
-            user.setBehaviour (behaviourDefault);
 
             // Creation of the graph and the image
             try {
-                produceInteractionNetworkImage (user);
+                int action = StrutsConstants.CREATE_INTERACTION_NETWORK;
+                if (true == searchForm.addSelected()) {
+                    action = StrutsConstants.ADD_INTERACTION_NETWORK;
+                }
+
+                updateInteractionNetwork (user, action);
+                produceImage (user);
             } catch (MultipleResultException e) {
                 return (mapping.findForward("displayWithSearch"));
             }
