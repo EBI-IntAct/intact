@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
      ANT master build configuration file for applications
-     Authors: Sugath Mudali (smudali@ebi.ac.uk), Samuel Kerrien
+     Authors: Sugath Mudali (smudali@ebi.ac.uk), Samuel Kerrien (skerrien@ebi.ac.uk)
 -->
 
 <project name="application" basedir="." default="compile">
@@ -9,11 +9,14 @@
     <property name="project.title" value="application"/>
 
     <property environment="env"/>
-    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
-    <property name="axis.home" value="${env.CATALINA_HOME}/webapps/axis"/>
+
+    <property name="tomcat.home"     value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir"     value="${tomcat.home}/webapps"/>
+    <property name="webapps.war.dir" value="${webapps.dir}/app-dir"/>
+    <property name="axis.home"       value="${webapps.dir}/axis"/>
 
     <property name="start-tomcat" value="${tomcat.home}/bin/startup.sh"/>
-    <property name="stop-tomcat" value="${tomcat.home}/bin/shutdown.sh"/>
+    <property name="stop-tomcat"  value="${tomcat.home}/bin/shutdown.sh"/>
 
     <!-- =================================================================== -->
 
@@ -65,10 +68,15 @@
     <!-- =================================================================== -->
 
     <!-- Deploys the war file on the Tomcat server. -->
+
     <target name="deploy" depends="check-tomcat" if="tomcat.present"
         description="Deploys the WAR file on the Tomcat server">
+
+        <!-- Create the war repository directory -->
+        <mkdir dir="${webapps.war.dir}" />
+
         <!-- Copy the file across to the deploy dir. -->
-        <copy file="${war}" todir="${tomcat.home}/webapps" overwrite="yes"/>
+        <copy file="${war}" todir="${webapps.war.dir}" overwrite="yes"/>
 
         <echo message="Please start Tomcat to take effect (ant start-tomcat)"/>
     </target>
@@ -76,6 +84,7 @@
     <!-- =================================================================== -->
 
     <!-- Undeploys the war file from the Tomcat server. -->
+
     <target name="undeploy" depends="check-tomcat" if="tomcat.present"
         description="Removes the WAR file and the directory from the Tomcat server">
 
@@ -83,9 +92,10 @@
         <antcall target="stop-tomcat"/>
 
         <!-- Remove the war file. -->
-        <delete file="${tomcat.home}/webapps/${war}.war" quiet="true"/>
-        <!-- Delete the dircectory. -->
-        <delete dir="${tomcat.home}/webapps/${war}" quiet="true"/>
+        <delete file="${webapps.war.dir}/${war}.war" quiet="true"/>
+
+        <!-- Delete the directory. -->
+        <delete dir="${webapps.war.dir}/${war}" quiet="true"/>
     </target>
 
 </project>

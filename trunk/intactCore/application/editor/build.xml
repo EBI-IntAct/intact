@@ -21,6 +21,14 @@
     <!-- Intact application location. -->
     <property name="intact.app.dir" value=".."/>
 
+    <!-- context path for editor store in the application level -->
+    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
+    <property name="editor-context-file"    value="editor-context.xml"/>
+
+    <property environment="env"/>
+    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir" value="${tomcat.home}/webapps"/>
+
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
@@ -330,6 +338,10 @@
         <ant dir=".." inheritAll="false" target="deploy">
             <property name="war" value="${ant.project.name}/${dist.dir}/${war.file}"/>
         </ant>
+
+        <!-- Copy context files in the Tomcat's webapps directory -->
+        <copy file="${intact.context.dir}/${editor-context-file}"
+              todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -340,6 +352,9 @@
         <ant dir=".." inheritAll="false" target="undeploy">
             <property name="war" value="${ant.project.name}"/>
         </ant>
+
+        <!-- Delete context files from the Tomcat's webapps directory -->
+        <delete file="${webapps.dir}/${editor-context-file}" quiet="true"/>
     </target>
 
     <!-- =================================================================== -->
