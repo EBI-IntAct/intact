@@ -15,8 +15,6 @@
 <!-- Our own tags to display CV topics -->
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact" %>
 
-<intact:resetTransaction/>
-
 <jsp:include page="header.jsp" flush="true" />
 
 <h1>Search Results from WebIntact for
