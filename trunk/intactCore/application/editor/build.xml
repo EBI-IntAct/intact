@@ -448,7 +448,7 @@
         <java classname="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorTopicsGenerator"
             fork="true">
             <arg line="${root.dest.dir} ${editor.topics.file}"/>
-            <classpath refid="project.test.class.path"/>
+            <classpath refid="project.class.path"/>
         </java>
     </target>
 
@@ -469,7 +469,21 @@
     <!-- =================================================================== -->
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
-    <target name="junit-test-stdout" depends="compile-all, war"
+    <target name="junit-test-stdout" depends="war, compile-all"
+        description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value=
+                "uk.ac.ebi.intact.application.editor.struts.framework.util.test.AllJUnitTests"/>
+            <classpath refid="project.test.class.path"/>
+        </java>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Similar to junit-test-stdout but without calling 'war' dependent target.
+         Use this target ONLY after calling junit-test-stdout at least once.
+         -->
+    <target name="junit-test-stdout-quick" depends="compile-all"
         description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value=
