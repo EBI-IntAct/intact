@@ -6,31 +6,31 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.biosrc;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction;
+import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.NewtServerProxy;
-import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-import java.io.*;
+import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
- * Handles when the user enters a value for tax id. The short label and the full
- * name of the BioSource object is replaced with the values retrieved from the
- * Newt server using the tax id.
+ * The action to handle tax id for a bio source.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class BioSourceAction extends AbstractEditorAction {
+public class BioSourceAction extends SubmitFormAction {
 
     /**
      * The tax id database.
@@ -38,38 +38,55 @@ public class BioSourceAction extends AbstractEditorAction {
     private static final String TAX_DB = "newt";
 
     /**
-     * Action for submitting the CV info form.
-     * @param mapping the <code>ActionMapping</code> used to select this instance
-     * @param form the optional <code>ActionForm</code> bean for this request
-     * (if any).
-     * @param request the HTTP request we are processing
-     * @param response the HTTP response we are creating
-     * @return failure mapping for any errors in searching the database; refresh
-     * mapping if the screen needs to be updated (this will only happen if the
-     * short label on the screen is different to the short label returned by
-     * getUnqiueShortLabel method. For all other instances, success mapping is
-     * returned.
-     * @throws java.lang.Exception for any uncaught errors.
+     * Process the specified HTTP request, and create the corresponding
+     * HTTP response (or forward to another web component that will create
+     * it). Return an ActionForward instance describing where and how
+     * control should be forwarded, or null if the response has
+     * already been completed.
+     *
+     * @param mapping - The <code>ActionMapping</code> used to select this instance
+     * @param form - The optional <code>ActionForm</code> bean for this request (if any)
+     * @param request - The HTTP request we are processing
+     * @param response - The HTTP response we are creating
+     *
+     * @return - represents a destination to which the action servlet,
+     * <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
+     * or HttpServletResponse.sendRedirect() to, as a result of processing
+     * activities of an <code>Action</code> class
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
+        // To report errors.
+        ActionErrors errors;
+
         // Extract the tax id from the form.
         DynaActionForm theForm = (DynaActionForm) form;
+
+        // The tax id to search the Newt database.
         String taxid = (String) theForm.get("taxId");
 
         // Handler to the user.
         EditUserI user = getIntactUser(request);
 
+        // Must be an integer.
+        try {
+            Integer.parseInt(taxid);
+        }
+        catch (NumberFormatException nfe) {
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.taxid.mask", taxid));
+            saveErrors(request, errors);
+            return mapping.findForward(FORWARD_FAILURE);
+        }
+
         // Validate the tax id; it should be unique.
         if (!validateTaxId(user, taxid, request)) {
-            return mapping.getInputForward();
+            return mapping.findForward(FORWARD_FAILURE);
         }
-        // To report errors.
-        ActionErrors errors;
-
         // This shouldn't crash the application as we had
         // already created the correct editor view bean.
         BioSourceViewBean bioview = (BioSourceViewBean) user.getView();
@@ -83,7 +100,7 @@ public class BioSourceAction extends AbstractEditorAction {
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.newt.url"));
             saveErrors(request, errors);
-            return mapping.getInputForward();
+            return mapping.findForward(FORWARD_FAILURE);
         }
 
         // The response from the Newt server.
@@ -92,7 +109,7 @@ public class BioSourceAction extends AbstractEditorAction {
 
         // Any errors?
         if (hasErrors(request)) {
-            return mapping.getInputForward();
+            return mapping.findForward(FORWARD_FAILURE);
         }
         // Values from newt.
         String newtLabel = newtResponse.getShortLabel();
@@ -118,21 +135,15 @@ public class BioSourceAction extends AbstractEditorAction {
         // Retrieve the xref bean for previous tax id.
         XreferenceBean taxXref = findXref(TAX_DB, bioview);
 
-        // Set the values for existing tax ref.
+        // Have we got an existing Xref?
         if (taxXref != null) {
-            // We have a xref bean for previous tax id; set it with inputs from
-            // the form.
-            taxXref.setPrimaryId(taxid);
-            taxXref.setSecondaryId(newtLabel);
-            // Need to update this xref.
-            bioview.addXrefToUpdate(taxXref);
+            // Delete the existing xref as we are replacing it with a new one.
+            bioview.delXref(taxXref);
         }
-        else {
-            // We don't have an xref for tax id yet; create xref with data
-            // from the form.
-            Xref xref = createTaxXref(user, taxid, newtLabel);
-            bioview.addXref(xref);
-        }
+        // Add the nex Xref.
+        Xref xref = createTaxXref(user, taxid, newtLabel);
+        bioview.addXref(new XreferenceBean(xref));
+
         // Set the view with the new inputs.
         bioview.setShortLabel(newtLabel);
         bioview.setFullName(newtName);
