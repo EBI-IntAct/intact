@@ -32,8 +32,6 @@ import java.text.SimpleDateFormat;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 /**
  * Parse an URL and update the IntAct database.
  * <p>
@@ -83,52 +81,46 @@ import org.apache.log4j.Logger;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-
-
-public class UpdateProteins implements UpdateProteinsI {
-
-    private class UpdateException extends Exception {
-        public UpdateException (String message) {
-            super(message);
-        }
-    }
-
-    private final static org.apache.log4j.Logger logger = Logger.getLogger("updateProtein");
+public class UpdateProteins extends UpdateProteinsI {
 
     private static final String ENTRY_OUTPUT_FILE = "/tmp/Entries.error";
 
-    IntactHelper helper = null;
+
 
     // to record entry error
-    String filename = null;
-    FileOutputStream file = null;
-    BufferedOutputStream buffer = null;
-    String currentEntry = null;
+    private String filename = null;
+    private FileOutputStream file = null;
+    private BufferedOutputStream buffer = null;
 
     // flag for output on STDOUT
     private boolean debugOnScreen = false;
 
-    // cache useful object to avoid redoing queries
-    CvDatabase sptrDatabase;
-    CvDatabase sgdDatabase;
-    CvDatabase goDatabase;
-    Institution myInstitution;
+
 
     // iterator on all parsed Entries.
-    EntryIterator entryIterator = null;
+    private EntryIterator entryIterator = null;
 
     // count of all potential protein
     // (i.e. for a SPTREntry, we can create/update several IntAct protein. One by BioSource)
-    int proteinTotal;
+    private int proteinTotal;
 
     // Successfully created/updated protein in IntAct
-    int proteinCreated;
-    int proteinUpdated;
-    int proteinUpToDate;
-    int entryCount;
-    int entrySkipped;
+    private int proteinCreated;
+    private int proteinUpdated;
+    private int proteinUpToDate;
+    private int entryCount;
+    private int entrySkipped;
 
-    NewtServerProxy newtProxy;
+    /**
+     * Set of updated/created proteins during the process.
+     */
+    private Collection proteins;
+
+
+    public UpdateProteins (IntactHelper helper) throws UpdateException{
+         super (helper);
+    }
+
 
 
     public int getCreatedCount () {
@@ -167,7 +159,9 @@ public class UpdateProteins implements UpdateProteinsI {
         this.debugOnScreen = debug;
     }
 
-    public void init (IntactHelper helper) throws UpdateException {
+    public void init () {
+
+        proteins = new ArrayList();
 
         proteinTotal    = 0;
         proteinCreated  = 0;
@@ -175,50 +169,6 @@ public class UpdateProteins implements UpdateProteinsI {
         proteinUpToDate = 0;
         entryCount      = 0;
         entrySkipped    = 0;
-
-        try {
-            myInstitution = (Institution) helper.getObjectByLabel(Institution.class, "EBI");
-            if (myInstitution == null) {
-                logger.error ("Unable to find the Institution");
-                throw new UpdateException ("Unable to find the Institution");
-            }
-
-            sgdDatabase   = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SGD");
-            if (sgdDatabase == null) {
-                logger.error ("Unable to find the SGD database in your IntAct node");
-                throw new UpdateException ("Unable to find the SGD database in your IntAct node");
-            }
-
-            sptrDatabase  = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR");
-            if (sptrDatabase == null) {
-                logger.error ("Unable to find the SPTR database in your IntAct node");
-                throw new UpdateException ("Unable to find the SPTR database in your IntAct node");
-            }
-
-            goDatabase   = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "GO");
-            if (goDatabase == null) {
-                logger.error ("Unable to find the GO database in your IntAct node");
-                throw new UpdateException ("Unable to find the GO database in your IntAct node");
-            }
-        } catch (IntactException e) {
-            logger.error (e);
-            throw new UpdateException ("Couldn't find needed object in IntAct, cause: " + e.getMessage());
-        }
-
-        this.helper = helper;
-
-        URL url = null;
-        try {
-            // TODO: switch back to the right server when fixed.
-//            url = new URL("http://www.ebi.ac.uk/newt/display");
-            url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display");
-        } catch (MalformedURLException e) {
-            logger.error ("Newt URL is invalid", e);
-            throw new UpdateException ("Unable to create Newt proxy, invalid URL: " + url);
-        }
-
-        newtProxy = new NewtServerProxy(url);
-        newtProxy.enableCaching();
     }
 
     public final String getUrl(String sptrAC) {
@@ -393,10 +343,6 @@ public class UpdateProteins implements UpdateProteinsI {
 
         boolean needUpdate = false;
 
-        String oldTax = bioSource.getTaxId();
-        String oldShort = bioSource.getShortLabel();
-        String oldFull = bioSource.getFullName();
-
         // compare these two BioSource and update in case of differences
         String newtTaxid = newtBioSource.getTaxId();
         if (false == bioSource.getTaxId().equals (newtTaxid)) {
@@ -493,7 +439,6 @@ public class UpdateProteins implements UpdateProteinsI {
         int i;
 
         try {
-
             // according to the SPTR entry, get the corresponding proteins in IntAct
             Collection proteins = getProteinsFromSPTrAC (sptrEntry, taxid, helper);
             if (proteins == null) {
@@ -595,7 +540,7 @@ public class UpdateProteins implements UpdateProteinsI {
                                 } else {
                                     // Inconsistancy: we should have 0 or 1 record
                                     logger.error ("The taxid " + newtBioSource.getTaxId() +
-                                            " gives us several BioSource in IntAct.");
+                                                  " gives us several BioSource in IntAct.");
                                     error = true;
                                 }
 
@@ -866,11 +811,12 @@ public class UpdateProteins implements UpdateProteinsI {
             logger.info ("SKIP: SPTR Xref[spAC: " + proteinAC[0] + ", spId: " + shortLabel + "] already exists");
         }
 
-
         if (needUpdate == true) {
             // update databse
             try {
                 helper.update (protein);
+                // keep that protein
+                proteins.add(protein);
 
                 if (debugOnScreen) System.out.print (" U");
                 proteinUpdated++;
@@ -886,7 +832,6 @@ public class UpdateProteins implements UpdateProteinsI {
         }
 
         return false;
-
     } // updateExistingProtein
 
 
@@ -939,6 +884,8 @@ public class UpdateProteins implements UpdateProteinsI {
         // update database
         try {
             helper.update (protein);
+            // keep that protein
+            proteins.add(protein);
 
             logger.info ("protein updated: " + protein);
             if (debugOnScreen) System.out.print(" C");
@@ -953,9 +900,17 @@ public class UpdateProteins implements UpdateProteinsI {
     } // createNewProtein
 
 
+    public Collection insertSPTrProteins (String proteinAc) {
+
+        String url = getUrl(proteinAc);
+        int i = insertSPTrProteins(url, null, true);
+        if (debugOnScreen) System.out.println(i + " proteins created/updated.");
+
+        return proteins;
+    }
+
     public int insertSPTrProteins (String sourceUrl,
                                    String taxid,
-                                   IntactHelper helper,
                                    boolean update) {
 
         logger.info ("update from URL: " + sourceUrl);
@@ -963,12 +918,11 @@ public class UpdateProteins implements UpdateProteinsI {
 
         if (sourceUrl == null) return 0;
 
-        try {
-            init (helper);
-        } catch (UpdateException e) {
-            e.printStackTrace();
-            return getCreatedCount() + getUpdatedCount();
-        }
+        /**
+         * Init() has to be called in order to have the statistics properly initialized
+         * as well as to keep track of all updated/created proteins.
+         */
+        init ();
 
         // check the taxid parameter validity
         try {
@@ -1014,7 +968,7 @@ public class UpdateProteins implements UpdateProteinsI {
                  *  E X I T   H E R E
                  *  after n iteration
                  */
-//                if (entryCount == 20) return proteinCreated + proteinUpdated;
+                // if (entryCount == 200) return proteinCreated + proteinUpdated;
 
 
                 // Check if there is any exception remaining in the Entry before to use it
@@ -1215,12 +1169,12 @@ public class UpdateProteins implements UpdateProteinsI {
                 System.exit (1);
             }
 
-            UpdateProteinsI update = new UpdateProteins ();
+            UpdateProteinsI update = new UpdateProteins (helper);
             Chrono chrono = new Chrono();
             chrono.start();
 
             update.setDebugOnScreen (true);
-            int nb = update.insertSPTrProteins (url, null, helper, true);
+            int nb = update.insertSPTrProteins (url, null, true);
 
             chrono.stop();
             System.out.println("Time elapsed: " + chrono);
