@@ -27,14 +27,12 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.util.GoTools;
-import uk.ac.ebi.intact.util.NewtServerProxy;
-import uk.ac.ebi.intact.util.UpdateProteins;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.util.*;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -168,9 +166,16 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private String myLastQueryClass;
 
     /**
-     * Reference to Newt proxy server instance.
+     * Reference to Newt proxy server instance; transient as it is created
+     * if required.
      */
     private transient NewtServerProxy myNewtServer;
+
+    /**
+     * Reference to Go proxy server instance; transient as it is created
+     * if required.
+     */
+    private transient GoServerProxy myGoServer;
 
     /**
      * Reference to the Protein factory.
@@ -656,11 +661,25 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return mySessionEndTime;
     }
 
-    public NewtServerProxy getNewtProxy(URL url) {
+    public NewtServerProxy getNewtProxy() {
         if (myNewtServer == null) {
-            myNewtServer = new NewtServerProxy(url);
+            try {
+                myNewtServer = new NewtServerProxy();
+            }
+            catch (MalformedURLException murle) {
+                // This should never happen because default constructor has a
+                // valid URL.
+                Logger.getLogger(EditorConstants.LOGGER).info(murle);
+            }
         }
         return myNewtServer;
+    }
+
+    public GoServerProxy getGoProxy() {
+        if (myGoServer == null) {
+            myGoServer = new GoServerProxy();
+        }
+        return myGoServer;
     }
 
     public String getHelpTag() {

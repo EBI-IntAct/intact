@@ -10,8 +10,6 @@ import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -39,11 +37,6 @@ public class EditorService {
     private List myTopicsCache = new ArrayList();
 
     /**
-     * Reference to Newt proxy server URL.
-     */
-    private URL myNewtServerUrl;
-
-    /**
      * The search server URL.
      */
     private String mySearchUrl;
@@ -59,10 +52,9 @@ public class EditorService {
      * @exception MissingResourceException thrown when the resource file is
      * not found.
      * @exception EmptyTopicsException thrown for an empty resource file.
-     * @exception MalformedURLException thrown for incorrect Newt URL property.
      */
     public EditorService(String name) throws MissingResourceException,
-            EmptyTopicsException, MalformedURLException {
+            EmptyTopicsException {
         myResources = ResourceBundle.getBundle(name);
         myTopics = ResourceBundle.getBundle(myResources.getString("topics"));
         // Must have Intact Types to edit.
@@ -70,8 +62,6 @@ public class EditorService {
             throw new EmptyTopicsException(
                     "Editor topic resource file can't be empty");
         }
-        myNewtServerUrl = new URL(myResources.getString("newt.server.url"));
-
         // Cache the topics after sorting them.
         CollectionUtils.addAll(myTopicsCache, myTopics.getKeys());
         Collections.sort(myTopicsCache);
@@ -99,14 +89,6 @@ public class EditorService {
      */
     public Collection getIntactTypes() {
         return myTopicsCache;
-    }
-
-    /**
-     * Returns reference to the Newt server proxy.
-     * @return URL to the new Newt server proxy; null for an invalid URL.
-     */
-    public URL getNewtServerUrl() {
-        return myNewtServerUrl;
     }
 
     /**
