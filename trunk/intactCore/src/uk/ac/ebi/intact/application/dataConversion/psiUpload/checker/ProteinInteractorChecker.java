@@ -328,12 +328,12 @@ public final class ProteinInteractorChecker {
          */
 
         /**
-         * 1. retreive either protein or splice variant from IntAct            (COULD BE A FUNCTION)
+         * 1. retreive either protein or splice variant from IntAct
          *    getIntactObject( Object[2] prot_and_sv,  )
          *    1a. if something as been found, cache it and finish
          *    1b. if not, use UpdateProteins to get the data and search again.
          *
-         * 2. do as in 1.          (CALL THE FUNCTIOn)
+         * 2. do as in 1. 
          *    2a. if found ok
          *    2b. if not, error.
          *
@@ -400,13 +400,9 @@ public final class ProteinInteractorChecker {
                 final String msg = "Could not find Protein for uniprot ID: " + uniprotId +
                                    " and BioSource " + taxId;
                 MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
+                System.out.println( msg );
 
             } else {
-
-                // display what has been found
-                if( result == null ) {
-                    throw new IllegalArgumentException( "Result should not be null here !!!!" );
-                }
 
                 if( result.isSpliceVariantExisting() ) {
 
