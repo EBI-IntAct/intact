@@ -171,18 +171,8 @@ public class Experiment extends AnnotatedObject implements Editable {
     // instance methods
 
     public String toString(){
-        String result;
-        Iterator i;
 
-        result = "Experiment: " + this.getAc() + " " + this.shortLabel + " [ \n";
-        if (null != this.getInteraction()){
-            i = this.getInteraction().iterator();
-            while(i.hasNext()){
-                result = result + i.next();
-            }
-        }
-
-        return result + "] Experiment\n";
+       return "Experiment: " + this.getAc() + " " + this.shortLabel + "\n";
     }
 
 } // end Experiment
