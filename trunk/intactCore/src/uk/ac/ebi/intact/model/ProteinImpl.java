@@ -20,7 +20,7 @@ import java.util.Iterator;
  * @author hhe
  * @version $Id$
  */
-public class ProteinImpl extends InteractorImpl implements Protein {
+public class ProteinImpl extends InteractorImpl implements Protein, Editable {
 
     ///////////////////////////////////////
     //Constants
