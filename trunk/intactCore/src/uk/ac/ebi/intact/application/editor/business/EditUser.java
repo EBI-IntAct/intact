@@ -635,6 +635,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myCurrentExperiments;
     }
 
+    public Set getCurrentInteractions() {
+        // For the moment return an empty set.
+        return Collections.EMPTY_SET;
+    }
+
     public Annotation getAnnotation(CommentBean cb) throws SearchException {
         // The topic for the new annotation.
         CvTopic cvtopic = (CvTopic) getObjectByLabel(CvTopic.class, cb.getTopic());
