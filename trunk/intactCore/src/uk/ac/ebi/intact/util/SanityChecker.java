@@ -21,6 +21,15 @@ import java.util.Iterator;
 public class SanityChecker {
 
     /**
+     * TODO additional checks
+     * 	    a) an annotation should only have 1 annotation concerning uniprot-dr-export
+     *      b) an experiment could have 1..n annotation concerning uniprot-dr-export
+     *      c) look for biosource with a taxid NULL
+     *      d) is there annotations with same text and topic ? Could cause bug with OJB data loading.
+     */
+
+
+    /**
      * Service termination hook (gets called when the JVM terminates from a signal).
      * eg.
      * <pre>
@@ -36,12 +45,10 @@ public class SanityChecker {
         public DatabaseConnexionShutdownHook( IntactHelper helper ) {
             super();
             this.helper = helper;
-            System.out.println( "Database Connexion Shutdown Hook installed." );
         }
 
         public void run() {
-            System.out.println("JDBCShutdownHook thread started");
-            if (helper != null ){
+            if( helper != null ) {
                 try {
                     helper.closeStore();
                     System.out.println( "Connexion to the database closed." );
@@ -52,7 +59,6 @@ public class SanityChecker {
             }
         }
     }
-
 
 
     private static final String NEW_LINE = System.getProperty( "line.separator" );
@@ -68,6 +74,7 @@ public class SanityChecker {
     private PreparedStatement experimentStatement;
     private PreparedStatement interationStatement;
     private PreparedStatement proteinStatement;
+    private PreparedStatement bioSourceStatement;
 
     //holds the accumulated results of the test executions
     private StringBuffer experimentWithoutInteractions;
@@ -98,34 +105,58 @@ public class SanityChecker {
     private StringBuffer interactionWithSelfProteinAndStoichiometryLowerThan2;
     private StringBuffer interactionWithMoreThan2SelfProtein;
 
+    private StringBuffer bioSourceWithNoTaxId;
+
     private StringBuffer singleProteinCheck;
     private StringBuffer noProteinCheck;
     private StringBuffer proteinWithNoUniprotIdentity;
+    private StringBuffer proteinWithMoreThanOneUniprotIdentity;
 
     //The Experiments and Interactions - may be used in more than one test
     private CvDatabase uniprot;
     private CvXrefQualifier identity;
 
+    // for annotations at the experiment level.
+    private CvTopic onHoldCvTopic;
 
-    public SanityChecker(IntactHelper helper, PrintWriter writer) throws IntactException, SQLException {
+
+    public SanityChecker( IntactHelper helper, PrintWriter writer ) throws IntactException, SQLException {
         this.writer = writer;
 
         //set up statements to get user info...
         //NB remember the Connection belongs to the helper - don't close it anywhere but
         //let the helper do it at the end!!
         Connection conn = helper.getJDBCConnection();
-        proteinStatement = conn.prepareStatement("SELECT userstamp, timestamp FROM ia_interactor WHERE ac=?");
-        interationStatement = conn.prepareStatement("SELECT userstamp, timestamp FROM ia_interactor WHERE ac=?");
-        experimentStatement = conn.prepareStatement("SELECT userstamp, timestamp FROM ia_experiment WHERE ac=?");
-
+        bioSourceStatement = conn.prepareStatement( "SELECT userstamp, timestamp FROM ia_biosource WHERE ac=?" );
+        proteinStatement = conn.prepareStatement( "SELECT userstamp, timestamp FROM ia_interactor WHERE ac=?" );
+        interationStatement = conn.prepareStatement( "SELECT userstamp, timestamp FROM ia_interactor WHERE ac=?" );
+        experimentStatement = conn.prepareStatement( "SELECT userstamp, timestamp FROM ia_experiment WHERE ac=?" );
 
 
         uniprot = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
+        if( uniprot == null ) {
+            throw new RuntimeException( "Your IntAct node doesn't contain the required: CvDatabase( uniprot )." );
+        }
+
         identity = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "identity" );
+        if( uniprot == null ) {
+            throw new RuntimeException( "Your IntAct node doesn't contain the required: CvXrefQualifier( identity )." );
+        }
+
+        onHoldCvTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, "on-hold" );
+        if( uniprot == null ) {
+            throw new RuntimeException( "Your IntAct node doesn't contain the required: CvTopic( on-hold )." );
+        }
 
         String msg = null;
 
         //initialize buffers that will accumulate the test results..
+
+        //
+        // B I O S O U R C E
+        //
+        bioSourceWithNoTaxId = new StringBuffer( "BioSource having no taxId set" + SEPARATOR );
+
 
         //
         // E X P E R I M E N T S
@@ -147,6 +178,7 @@ public class SanityChecker {
 
         msg = "Experiments with no CvInteraction)" + SEPARATOR;
         experimentWithoutCvInteraction = new StringBuffer( msg );
+
 
         //
         // I N T E R A C T I O  N S
@@ -196,11 +228,15 @@ public class SanityChecker {
         msg = "Interactions with No Components" + SEPARATOR;
         noProteinCheck = new StringBuffer( msg );
 
+
         //
         // P R O T E I N S
         //
         msg = "proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot)" + SEPARATOR;
         proteinWithNoUniprotIdentity = new StringBuffer( msg );
+
+        msg = "proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot)" + SEPARATOR;
+        proteinWithMoreThanOneUniprotIdentity = new StringBuffer( msg );
     }
 
     /*--------------------- Work Methods ------------------------------------------------
@@ -222,6 +258,8 @@ public class SanityChecker {
     *   12. Any experiment missing CvInteraction
     *   13. Any experiment missing CvIdentification
     *   14. Any proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot)
+    *   15. Any BioSource with a NULL or empty taxid.
+    *   16. Any proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot)
     *
     * TODO: We could check if some Xrefs are orphan (check is the parent_ac is found in IA_INTERACTOR, IA_EXPERIMENT, IA_CONTROLLEDVOCAB)
     *
@@ -232,100 +270,181 @@ public class SanityChecker {
     *
     */
 
-    /**
-     * Performs checks on Experiments.
-     * @throws IntactException Thrown if there was a Helper problem
-     * @throws SQLException Thrown if there was a DB access problem
-     */
-    public void checkExperiments( Collection experiments ) throws IntactException, SQLException  {
+    public void checkBioSource( Collection bioSources ) throws IntactException, SQLException {
 
-        System.out.println ( "Checking on Experiment (rules 8, 11, 12, 13) ..." );
+        int bioSourceWithNoTaxIdCount = 0;
 
+        System.out.println( "Checking on BioSource (rule 15) ..." );
 
-        for(Iterator it = experiments.iterator(); it.hasNext();) {
-            Experiment exp = (Experiment)it.next();
+        for ( Iterator it = bioSources.iterator(); it.hasNext(); ) {
+            BioSource bioSource = (BioSource) it.next();
 
-            //check 8
-            if(exp.getInteractions().size() < 1) {
-                //record it.....
-                getUserInfo(experimentWithoutInteractions, exp);
-            }
-
-            //check 11
-            if( exp.getBioSource() == null ) {
-                getUserInfo( experimentWithoutOrganism, exp );
-            }
-
-            //check 12
-            if( exp.getCvInteraction() == null ) {
-                getUserInfo( experimentWithoutCvInteraction, exp );
-            }
-
-            //check 13
-            if( exp.getCvIdentification() == null ) {
-                getUserInfo( experimentWithoutCvIdentification, exp );
+            //check 15
+            if( bioSource.getTaxId() == null || "".equals( bioSource.getTaxId() ) ) {
+                getUserInfo( bioSourceWithNoTaxId, bioSource );
+                bioSourceWithNoTaxIdCount++;
             }
         }
-        writeResults(experimentWithoutInteractions);
-        writer.println();
-        writeResults(experimentWithoutOrganism);
-        writer.println();
-        writeResults(experimentWithoutCvInteraction);
-        writer.println();
-        writeResults(experimentWithoutCvIdentification);
-        writer.println();
+
+        if( bioSourceWithNoTaxIdCount > 0 ) {
+            writeResults( bioSourceWithNoTaxId );
+            writer.println();
+        }
+    }
+
+    private boolean isExperimentOnHold( Experiment experiment ) {
+
+        boolean onHold = false;
+
+        for ( Iterator iterator = experiment.getAnnotations().iterator(); iterator.hasNext() && !onHold; ) {
+            Annotation annotation = (Annotation) iterator.next();
+
+            if( onHoldCvTopic.equals( annotation.getCvTopic() ) ) {
+                onHold = true;
+            }
+        }
+
+        return onHold;
     }
 
     /**
      * Performs checks on Experiments.
+     *
      * @throws IntactException Thrown if there was a Helper problem
-     * @throws SQLException Thrown if there was a DB access problem
+     * @throws SQLException    Thrown if there was a DB access problem
      */
-    public void checkExperimentsPubmedIds( Collection experiments ) throws IntactException, SQLException  {
+    public void checkExperiments( Collection experiments ) throws IntactException, SQLException {
 
-        System.out.println ( "Checking on Experiment and their pubmed IDs (rules 1 and 2) ..." );
+        int experimentWithoutInteractionsCount = 0,
+                experimentWithoutOrganismCount = 0,
+                experimentWithoutCvInteractionCount = 0,
+                experimentWithoutCvIdentificationCount = 0;
 
-        //check 1 and 2
-        for(Iterator it = experiments.iterator(); it.hasNext();) {
-            Experiment exp = (Experiment)it.next();
-            int pubmedCount = 0;
-            int pubmedPrimaryCount = 0;
-            Collection Xrefs = exp.getXrefs();
-            for ( Iterator iterator = Xrefs.iterator (); iterator.hasNext (); ) {
-                Xref xref = (Xref) iterator.next ();
-                if (xref.getCvDatabase().getShortLabel().equals("pubmed")) {
-                    pubmedCount++;
-                    if (xref.getCvXrefQualifier().getShortLabel().equals("primary-reference")) {
-                        pubmedPrimaryCount++;
-                    }
+        System.out.println( "Checking on Experiment (rules 8, 11, 12, 13) ..." );
+
+        for ( Iterator it = experiments.iterator(); it.hasNext(); ) {
+            Experiment exp = (Experiment) it.next();
+
+            if( !isExperimentOnHold( exp ) ) {
+
+                //check 8
+                if( exp.getInteractions().size() < 1 ) {
+                    //record it.....
+                    getUserInfo( experimentWithoutInteractions, exp );
+                    experimentWithoutInteractionsCount++;
                 }
-            }
 
-            if(pubmedCount == 0) {
-                //record it.....
-                getUserInfo(expCheckNoPubmed, exp);
-            }
+                //check 11
+                if( exp.getBioSource() == null ) {
+                    getUserInfo( experimentWithoutOrganism, exp );
+                    experimentWithoutOrganismCount++;
+                }
 
-            if (pubmedPrimaryCount != 1) {
-                //record it.....
-                getUserInfo(expCheckNoPubmedWithPrimaryReference, exp);
-            }
+                //check 12
+                if( exp.getCvInteraction() == null ) {
+                    getUserInfo( experimentWithoutCvInteraction, exp );
+                    experimentWithoutCvInteractionCount++;
+                }
+
+                //check 13
+                if( exp.getCvIdentification() == null ) {
+                    getUserInfo( experimentWithoutCvIdentification, exp );
+                    experimentWithoutCvIdentificationCount++;
+                }
+            } // if
+        } // for
+
+        // Write report
+        if( experimentWithoutInteractionsCount > 0 ) {
+            writeResults( experimentWithoutInteractions );
+            writer.println();
         }
 
-        writeResults(expCheckNoPubmed);
-        writeResults(expCheckNoPubmedWithPrimaryReference);
-        writer.println();
+        if( experimentWithoutOrganismCount > 0 ) {
+            writeResults( experimentWithoutOrganism );
+            writer.println();
+        }
 
+        if( experimentWithoutCvInteractionCount > 0 ) {
+            writeResults( experimentWithoutCvInteraction );
+            writer.println();
+        }
+
+        if( experimentWithoutCvIdentificationCount > 0 ) {
+            writeResults( experimentWithoutCvIdentification );
+            writer.println();
+        }
+    }
+
+    /**
+     * Performs checks on Experiments.
+     *
+     * @throws IntactException Thrown if there was a Helper problem
+     * @throws SQLException    Thrown if there was a DB access problem
+     */
+    public void checkExperimentsPubmedIds( Collection experiments ) throws IntactException, SQLException {
+
+        int expCheckNoPubmedCount = 0,
+                expCheckNoPubmedWithPrimaryReferenceCount = 0;
+
+        System.out.println( "Checking on Experiment and their pubmed IDs (rules 1 and 2) ..." );
+
+        //check 1 and 2
+        for ( Iterator it = experiments.iterator(); it.hasNext(); ) {
+            Experiment exp = (Experiment) it.next();
+
+            if( !isExperimentOnHold( exp ) ) {
+                int pubmedCount = 0;
+                int pubmedPrimaryCount = 0;
+                Collection Xrefs = exp.getXrefs();
+                for ( Iterator iterator = Xrefs.iterator(); iterator.hasNext(); ) {
+                    Xref xref = (Xref) iterator.next();
+                    if( xref.getCvDatabase().getShortLabel().equals( "pubmed" ) ) {
+                        pubmedCount++;
+                        if( xref.getCvXrefQualifier().getShortLabel().equals( "primary-reference" ) ) {
+                            pubmedPrimaryCount++;
+                        }
+                    }
+                }
+
+                if( pubmedCount == 0 ) {
+                    //record it.....
+                    getUserInfo( expCheckNoPubmed, exp );
+                    expCheckNoPubmedCount++;
+                }
+
+                if( pubmedPrimaryCount != 1 ) {
+                    //record it.....
+                    getUserInfo( expCheckNoPubmedWithPrimaryReference, exp );
+                    expCheckNoPubmedWithPrimaryReferenceCount++;
+                }
+            } // if not on hold
+        } // for
+
+        if( expCheckNoPubmedCount > 0 ) {
+            writeResults( expCheckNoPubmed );
+            writer.println();
+        }
+
+        if( expCheckNoPubmedWithPrimaryReferenceCount > 0 ) {
+            writeResults( expCheckNoPubmedWithPrimaryReference );
+            writer.println();
+        }
     }
 
     /**
      * Performs Interaction checks.
-     * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
+     *
+     * @throws uk.ac.ebi.intact.business.IntactException
+     *          thrown if there was a search problem
      */
     public void checkInteractions( Collection interactions ) throws IntactException, SQLException {
 
-        System.out.println( "Checking on Interactions (rule 7) ..." );
+        int interactionWithNoExperimentCheckCount = 0,
+                interactionWithNoCvInteractionTypeCheckCount = 0,
+                interactionWithNoOrganismCheckCount = 0;
 
+        System.out.println( "Checking on Interactions (rule 7) ..." );
 
         for ( Iterator it = interactions.iterator(); it.hasNext(); ) {
             Interaction interaction = (Interaction) it.next();
@@ -347,59 +466,80 @@ public class SanityChecker {
             }
         }
         //now dump the results...
-        writeResults( interactionWithNoExperimentCheck );
-        writer.println();
-        writeResults( interactionWithNoCvInteractionTypeCheck );
-        writer.println();
-        writeResults( interactionWithNoOrganismCheck );
-        writer.println();
+        if( interactionWithNoExperimentCheckCount > 0 ) {
+            writeResults( interactionWithNoExperimentCheck );
+            writer.println();
+        }
+
+        if( interactionWithNoCvInteractionTypeCheckCount > 0 ) {
+            writeResults( interactionWithNoCvInteractionTypeCheck );
+            writer.println();
+        }
+
+        if( interactionWithNoOrganismCheckCount > 0 ) {
+            writeResults( interactionWithNoOrganismCheck );
+            writer.println();
+        }
     }
 
     /**
      * Performs Interaction checks.
-     * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
+     *
+     * @throws uk.ac.ebi.intact.business.IntactException
+     *          thrown if there was a search problem
      */
-    public void checkInteractionsBaitAndPrey( Collection interactions ) throws IntactException, SQLException  {
+    public void checkInteractionsBaitAndPrey( Collection interactions ) throws IntactException, SQLException {
 
-        System.out.println ( "Checking on Interactions (rule 6) ..." );
+        int interactionWithNoCategoriesCheckCount = 0,
+                interactionWithMixedComponentCategoriesCheckCount = 0,
+                interactionWithNoAgentCheckCount = 0,
+                interactionWithNoTargetCheckCount = 0,
+                interactionWithNoBaitCheckCount = 0,
+                interactionWithNoPreyCheckCount = 0,
+                interactionWithOnlyOneNeutralCheckCount = 0,
+                interactionWithMoreThan2SelfProteinCount = 0,
+                interactionWithSelfProteinAndStoichiometryLowerThan2Count = 0,
+                interactionWithProteinCountLowerThan2Count = 0;
+
+        System.out.println( "Checking on Interactions (rule 6) ..." );
 
         //check 7
-        for (Iterator it = interactions.iterator(); it.hasNext();) {
+        for ( Iterator it = interactions.iterator(); it.hasNext(); ) {
             Interaction interaction = (Interaction) it.next();
 
             Collection components = interaction.getComponents();
-            int preyCount        = 0,
-                baitCount        = 0,
-                agentCount       = 0,
-                targetCount      = 0,
-                neutralCount     = 0,
-                selfCount        = 0,
-                complexCount     = 0,
-                unspecifiedCount = 0;
+            int preyCount = 0,
+                    baitCount = 0,
+                    agentCount = 0,
+                    targetCount = 0,
+                    neutralCount = 0,
+                    selfCount = 0,
+                    complexCount = 0,
+                    unspecifiedCount = 0;
             float selfStoichiometry = 0;
             float neutralStoichiometry = 0;
 
-            for ( Iterator iterator = components.iterator (); iterator.hasNext (); ) {
-                Component component = (Component) iterator.next ();
+            for ( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
+                Component component = (Component) iterator.next();
                 //record it.....
 
-                if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "bait" )) {
+                if( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "bait" ) ) {
                     baitCount++;
-                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "prey" )) {
+                } else if( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "prey" ) ) {
                     preyCount++;
-                }  else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "target" )) {
+                } else if( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "target" ) ) {
                     targetCount++;
-                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "agent" )) {
+                } else if( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "agent" ) ) {
                     agentCount++;
-                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "neutral" )) {
+                } else if( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "neutral" ) ) {
                     neutralCount++;
                     neutralStoichiometry = component.getStoichiometry();
-                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "self" )) {
+                } else if( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "self" ) ) {
                     selfCount++;
                     selfStoichiometry = component.getStoichiometry();
-                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "complex" )) {
+                } else if( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "complex" ) ) {
                     complexCount++;
-                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "unspecified" )) {
+                } else if( component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "unspecified" ) ) {
                     unspecifiedCount++;
                 }
             }
@@ -415,68 +555,78 @@ public class SanityChecker {
              * if you have self you must have only one protein with Stochiometry >= 2
              */
 
-            int baitPrey    = (baitCount + preyCount > 0 ? 1 : 0);
-            int targetAgent = (targetCount + agentCount > 0 ? 1 : 0);
-            int neutral     = (neutralCount > 0 ? 1 : 0);
-            int self        = (selfCount > 0 ? 1 : 0);
-            int complex     = (complexCount > 0 ? 1 : 0);
-            int unspecified = (unspecifiedCount > 0 ? 1 : 0);
+            int baitPrey = ( baitCount + preyCount > 0 ? 1 : 0 );
+            int targetAgent = ( targetCount + agentCount > 0 ? 1 : 0 );
+            int neutral = ( neutralCount > 0 ? 1 : 0 );
+            int self = ( selfCount > 0 ? 1 : 0 );
+            int complex = ( complexCount > 0 ? 1 : 0 );
+            int unspecified = ( unspecifiedCount > 0 ? 1 : 0 );
 
             int categoryCount = baitPrey + targetAgent + neutral + self + complex + unspecified;
 
             switch ( categoryCount ) {
                 case 0:
                     // none of those categories
-                    getUserInfo(interactionWithNoCategoriesCheck, interaction);
+                    getUserInfo( interactionWithNoCategoriesCheck, interaction );
+                    interactionWithNoCategoriesCheckCount++;
                     break;
 
                 case 1:
                     // exactly 1 category
-                    if (baitPrey == 1) {
+                    if( baitPrey == 1 ) {
                         // bait-prey
-                        if ( baitCount == 0 ) {
-                            getUserInfo(interactionWithNoBaitCheck, interaction);
-                        } else if ( preyCount == 0 ) {
-                            getUserInfo(interactionWithNoPreyCheck, interaction);
+                        if( baitCount == 0 ) {
+                            getUserInfo( interactionWithNoBaitCheck, interaction );
+                            interactionWithNoBaitCheckCount++;
+                        } else if( preyCount == 0 ) {
+                            getUserInfo( interactionWithNoPreyCheck, interaction );
+                            interactionWithNoPreyCheckCount++;
                         }
 
-                    } else if (targetAgent == 1) {
+                    } else if( targetAgent == 1 ) {
                         // target-agent
-                        if ( targetCount == 0 ) {
-                            getUserInfo(interactionWithNoTargetCheck, interaction);
-                        } else if ( agentCount == 0 ) {
-                            getUserInfo(interactionWithNoAgentCheck, interaction);
+                        if( targetCount == 0 ) {
+                            getUserInfo( interactionWithNoTargetCheck, interaction );
+                            interactionWithNoTargetCheckCount++;
+                        } else if( agentCount == 0 ) {
+                            getUserInfo( interactionWithNoAgentCheck, interaction );
+                            interactionWithNoAgentCheckCount++;
                         }
 
-                    } else if (self == 1) {
+                    } else if( self == 1 ) {
                         // it has to be > 1
-                        if (selfCount > 1) {
-                           getUserInfo(interactionWithMoreThan2SelfProtein, interaction);
+                        if( selfCount > 1 ) {
+                            getUserInfo( interactionWithMoreThan2SelfProtein, interaction );
+                            interactionWithMoreThan2SelfProteinCount++;
                         } else { // = 1
-                            if (selfStoichiometry < 2F) {
-                                getUserInfo(interactionWithSelfProteinAndStoichiometryLowerThan2, interaction);
+                            if( selfStoichiometry < 2F ) {
+                                getUserInfo( interactionWithSelfProteinAndStoichiometryLowerThan2, interaction );
+                                interactionWithSelfProteinAndStoichiometryLowerThan2Count++;
                             }
                         }
 
-                    } else if (complex == 1) {
+                    } else if( complex == 1 ) {
                         // it has to be > 1
                         if( complexCount < 2 ) {
-                            getUserInfo(interactionWithProteinCountLowerThan2, interaction);
+                            getUserInfo( interactionWithProteinCountLowerThan2, interaction );
+                            interactionWithProteinCountLowerThan2Count++;
                         }
 
                     } else {
                         // neutral
-                        if( neutralCount == 1) {
-                           if ( neutralStoichiometry < 2 ) {
-                               getUserInfo(interactionWithOnlyOneNeutralCheck, interaction);
-                           }
+                        if( neutralCount == 1 ) {
+                            if( neutralStoichiometry < 2 ) {
+                                getUserInfo( interactionWithOnlyOneNeutralCheck, interaction );
+                                interactionWithOnlyOneNeutralCheckCount++;
+                            }
                         }
                     }
                     break;
 
                 default:
                     // > 1 : mixed up categories !
-                    getUserInfo(interactionWithMixedComponentCategoriesCheck, interaction);
+                    getUserInfo( interactionWithMixedComponentCategoriesCheck, interaction );
+                    interactionWithMixedComponentCategoriesCheckCount++;
 
             } // switch
 
@@ -484,113 +634,162 @@ public class SanityChecker {
         }
 
         //now dump the results...
-        writeResults( interactionWithNoCategoriesCheck );
-        writeResults( interactionWithMixedComponentCategoriesCheck );
+        if( interactionWithNoCategoriesCheckCount > 0 ) {
+            writeResults( interactionWithNoCategoriesCheck );
+            writer.println();
+        }
 
-        writeResults( interactionWithNoAgentCheck);
-        writeResults( interactionWithNoTargetCheck );
+        if( interactionWithMixedComponentCategoriesCheckCount > 0 ) {
+            writeResults( interactionWithMixedComponentCategoriesCheck );
+            writer.println();
+        }
 
-        writeResults( interactionWithNoBaitCheck );
-        writeResults( interactionWithNoPreyCheck );
+        if( interactionWithNoAgentCheckCount > 0 ) {
+            writeResults( interactionWithNoAgentCheck );
+            writer.println();
+        }
 
-        writeResults( interactionWithOnlyOneNeutralCheck );
-        writer.println();
+        if( interactionWithNoTargetCheckCount > 0 ) {
+            writeResults( interactionWithNoTargetCheck );
+            writer.println();
+        }
 
+        if( interactionWithNoBaitCheckCount > 0 ) {
+            writeResults( interactionWithNoBaitCheck );
+            writer.println();
+        }
+
+        if( interactionWithNoPreyCheckCount > 0 ) {
+            writeResults( interactionWithNoPreyCheck );
+            writer.println();
+        }
+
+        if( interactionWithOnlyOneNeutralCheckCount > 0 ) {
+            writeResults( interactionWithOnlyOneNeutralCheck );
+            writer.println();
+        }
+
+        if( interactionWithMoreThan2SelfProteinCount > 0 ) {
+            writeResults( interactionWithMoreThan2SelfProtein );
+            writer.println();
+        }
+
+        if( interactionWithSelfProteinAndStoichiometryLowerThan2Count > 0 ) {
+            writeResults( interactionWithSelfProteinAndStoichiometryLowerThan2 );
+            writer.println();
+        }
+
+        if( interactionWithProteinCountLowerThan2Count > 0 ) {
+            writeResults( interactionWithProteinCountLowerThan2 );
+            writer.println();
+        }
     }
 
     /**
      * Performs checks against Proteins.
+     *
      * @throws IntactException Thrown if there were Helper problems
-     * @throws SQLException thrown if there were DB access problems
+     * @throws SQLException    thrown if there were DB access problems
      */
     public void checkComponentOfInteractions( Collection interactions ) throws IntactException, SQLException {
 
-        System.out.println ( "Checking on Components (rules 5 and 6) ..." );
+        int singleProteinCheckCount = 0,
+                noProteinCheckCount = 0;
+
+        System.out.println( "Checking on Components (rules 5 and 6) ..." );
 
         //checks 5 and 6 (easier if done together)
-        for (Iterator it = interactions.iterator(); it.hasNext();) {
+        for ( Iterator it = interactions.iterator(); it.hasNext(); ) {
 
             Interaction interaction = (Interaction) it.next();
             Collection components = interaction.getComponents();
             int originalSize = components.size();
             int matchCount = 0;
             Protein proteinToCheck = null;
-            if (components.size() > 0) {
+            if( components.size() > 0 ) {
                 Component firstOne = (Component) components.iterator().next();
 
-                if (firstOne.getInteractor() instanceof Protein) {
+                if( firstOne.getInteractor() instanceof Protein ) {
                     proteinToCheck = (Protein) firstOne.getInteractor();
-                    components.remove(firstOne); //don't check it twice!!
+                    components.remove( firstOne ); //don't check it twice!!
                 } else {
                     //not interested (for now) in Interactions that have
                     //interactors other than Proteins (for now)...
                     return;
                 }
 
-                for (Iterator iter = components.iterator(); iter.hasNext();) {
+                for ( Iterator iter = components.iterator(); iter.hasNext(); ) {
                     Component comp = (Component) iter.next();
                     Interactor interactor = comp.getInteractor();
-                    if (interactor.equals(proteinToCheck)) {
+                    if( interactor.equals( proteinToCheck ) ) {
                         //check it against the first one..
                         matchCount++;
                     }
                 }
                 //now compare the count and the original - if they are the
                 //same then we have found one that needs to be flagged..
-                if (matchCount == originalSize) {
-                    getUserInfo(singleProteinCheck, interaction);
+                if( matchCount == originalSize ) {
+                    getUserInfo( singleProteinCheck, interaction );
+                    singleProteinCheckCount++;
                 }
 
             } else {
                 //Interaction has no Components!! This is in fact test 5...
-                getUserInfo(noProteinCheck, interaction);
+                getUserInfo( noProteinCheck, interaction );
+                noProteinCheckCount++;
             }
         }
 
-        writeResults(singleProteinCheck);
-        writer.println();
-        writeResults(noProteinCheck);
-        writer.println();
+        if( singleProteinCheckCount > 0 ) {
+            writeResults( singleProteinCheck );
+            writer.println();
+        }
+
+        if( noProteinCheckCount > 0 ) {
+            writeResults( noProteinCheck );
+            writer.println();
+        }
     }
 
     public void checkProteins( Collection proteins ) throws SQLException {
-        System.out.println ( "Checking on Proteins (rule 14) ..." );
 
-        boolean error = false;
-        if( identity == null ){
-            proteinWithNoUniprotIdentity.append( "Could not find identity CvXrefQualifier in the intact node." + NEW_LINE );
-            error = true;
-        }
+        int proteinWithNoUniprotIdentityCount = 0,
+                proteinWithMoreThanOneUniprotIdentityCount = 0;
 
-        if( uniprot == null ) {
-            proteinWithNoUniprotIdentity.append( "Could not find uniprot CvDatabase in the intact node." + NEW_LINE );
-            error = true;
-        }
+        System.out.println( "Checking on Proteins (rules 14 and 16) ..." );
 
-        if( !error ) {
+        //checks 14
+        for ( Iterator it = proteins.iterator(); it.hasNext(); ) {
+            Protein protein = (Protein) it.next();
 
-            //checks 14
-            for (Iterator it = proteins.iterator(); it.hasNext();) {
-                Protein protein = (Protein) it.next();
+            Collection xrefs = protein.getXrefs();
+            int count = 0;
+            for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+                Xref xref = (Xref) iterator.next();
 
-                Collection xrefs = protein.getXrefs();
-                boolean found = false;
-                for ( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
-                    Xref xref = (Xref) iterator.next();
-
-                    if( uniprot.equals( xref.getCvDatabase() ) && identity.equals( xref.getCvXrefQualifier() ) ) {
-                        found = true;
-                    }
-                } // xrefs
-
-                if( !found ) {
-                    getUserInfo(proteinWithNoUniprotIdentity, protein);
+                if( uniprot.equals( xref.getCvDatabase() ) && identity.equals( xref.getCvXrefQualifier() ) ) {
+                    count++;
                 }
-            } // proteins
+            } // xrefs
+
+            if( count == 0 ) {
+                getUserInfo( proteinWithNoUniprotIdentity, protein );
+                proteinWithNoUniprotIdentityCount++;
+            } else if( count > 1 ) {
+                getUserInfo( proteinWithMoreThanOneUniprotIdentity, protein );
+                proteinWithMoreThanOneUniprotIdentityCount++;
+            }
+        } // proteins
+
+        if( proteinWithNoUniprotIdentityCount > 0 ) {
+            writeResults( proteinWithNoUniprotIdentity );
+            writer.println();
         }
 
-        writeResults(proteinWithNoUniprotIdentity);
-        writer.println();
+        if( proteinWithMoreThanOneUniprotIdentityCount > 0 ) {
+            writeResults( proteinWithMoreThanOneUniprotIdentity );
+            writer.println();
+        }
     }
 
     /**
@@ -599,12 +798,20 @@ public class SanityChecker {
     public void cleanUp() {
 
         try {
-            if(experimentStatement != null) experimentStatement.close();
-            if(interationStatement != null) interationStatement.close();
-            if(proteinStatement != null) proteinStatement.close();
-        }
-        catch(SQLException se) {
-            System.out.println("failed to close statement!!");
+            if( experimentStatement != null ) {
+                experimentStatement.close();
+            }
+            if( interationStatement != null ) {
+                interationStatement.close();
+            }
+            if( proteinStatement != null ) {
+                proteinStatement.close();
+            }
+            if( bioSourceStatement != null ) {
+                bioSourceStatement.close();
+            }
+        } catch ( SQLException se ) {
+            System.out.println( "failed to close statement!!" );
             se.printStackTrace();
         }
     }
@@ -614,51 +821,57 @@ public class SanityChecker {
     /**
      * Helper method to obtain userstamp info from a given record, and
      * then if it has any to append the details to a result buffer.
+     *
      * @param buf The result buffer we want the info put into (may want more than one
-     * result displayed for a single Intact type)
+     *            result displayed for a single Intact type)
      * @param obj The Intact object that user info is required for.
      * @throws SQLException thrown if there were DB problems
      */
-    private void getUserInfo(StringBuffer buf, IntactObject obj) throws SQLException {
+    private void getUserInfo( StringBuffer buf, IntactObject obj ) throws SQLException {
 
         String user = null;
         Timestamp date = null;
         ResultSet results = null;
 
-        if(obj instanceof Experiment) {
-            experimentStatement.setString(1, obj.getAc());
+        if( obj instanceof Experiment ) {
+            experimentStatement.setString( 1, obj.getAc() );
             results = experimentStatement.executeQuery();
 
-        } else if( obj instanceof Interaction) {
-            interationStatement.setString(1, obj.getAc());
+        } else if( obj instanceof Interaction ) {
+            interationStatement.setString( 1, obj.getAc() );
             results = interationStatement.executeQuery();
 
-        } else if( obj instanceof Protein) {
-            proteinStatement.setString(1, obj.getAc());
+        } else if( obj instanceof Protein ) {
+            proteinStatement.setString( 1, obj.getAc() );
             results = proteinStatement.executeQuery();
+
+        } else if( obj instanceof BioSource ) {
+            bioSourceStatement.setString( 1, obj.getAc() );
+            results = bioSourceStatement.executeQuery();
         }
 
         //Connection conn = null;
         //stmt = conn.prepareStatement(sql);
-        if(results.next()) {
-            user = results.getString("userstamp");
-            date = results.getTimestamp("timestamp");
+        if( results.next() ) {
+            user = results.getString( "userstamp" );
+            date = results.getTimestamp( "timestamp" );
         }
 
-        buf.append("AC: " + obj.getAc() + "\t" + " User: " + user + "\t" + "When: " + date + NEW_LINE);
+        buf.append( "AC: " + obj.getAc() + "\t" + " User: " + user + "\t" + "When: " + date + NEW_LINE );
     }
 
     /**
      * Handles dumping results to a file. If no results were found
      * then an apporpiate message is printed instead.
+     *
      * @param buf The data to be dumped to the file
      */
-    private void writeResults(StringBuffer buf) {
+    private void writeResults( StringBuffer buf ) {
 
-        writer.println(buf);
-        if (buf.indexOf("User") == -1) {
+        writer.println( buf );
+        if( buf.indexOf( "User" ) == -1 ) {
             //none found - write useful message
-            writer.println("No matches for this test.");
+            writer.println( "No matches for this test." );
             writer.println();
         }
 
@@ -706,6 +919,13 @@ public class SanityChecker {
 
             long start = System.currentTimeMillis();
             //do checks here.....
+
+            //get the Experiment and Interaction info from the DB for later use.
+            Collection bioSources = helper.search( BioSource.class.getName(), "ac", "*" );
+            System.out.println( bioSources.size() + " biosources loaded." );
+            checker.checkBioSource( bioSources );
+            bioSources = null;
+            Runtime.getRuntime().gc(); // free memory before to carry on.
 
             //get the Experiment and Interaction info from the DB for later use.
             Collection experiments = helper.search( Experiment.class.getName(), "ac", "*" );
@@ -773,6 +993,6 @@ public class SanityChecker {
             }
         }
 
-       System.exit( 0 );
+        System.exit( 0 );
     }
 }
