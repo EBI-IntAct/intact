@@ -623,13 +623,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * </pre>
      */
     private Iterator getProteinsToUpdateIter() {
-        // All the proteins to update.
-        Collection prots = CollectionUtils.subtract(myProteinsToUpdate,
-                myProteinsToDel);
         // Holds Proteins to update.
         Collection result = new ArrayList();
         // Remove any proteins marked for deletions.
-        for (Iterator iter = prots.iterator(); iter.hasNext();) {
+        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
             ProteinBean pb = (ProteinBean) iter.next();
 //            System.out.println("Going though with " + pb.getShortLabel());
             if (pb.isMarkedForDelete()) {
