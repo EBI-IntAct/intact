@@ -442,20 +442,16 @@ public class UpdateProteins extends UpdateProteinsI {
      * in IntAct in order to update its data or create brand new if it doesn't exists.
      *
      * @param sptrEntry the SPTR entry
-     * @param taxid species filter (null means no filter). That taxid must not be obsolete.
      * @param update If true, update existing Protein objects according to the retrieved data.
      *               else, skip existing Protein objects.
      */
     private void createProteinFromSPTrEntry( final SPTREntry sptrEntry,
-                                             final String taxid,
                                              final boolean update ) throws SPTRException {
 
         Protein protein = null;
         int i;
 
-        logger.info( "TaxId Filter given: " + ( taxid == null ? "-" : taxid ) );
         logger.info( "Update flag: " + update );
-
 
         try {
             // according to the SPTR entry, get the corresponding proteins in IntAct
@@ -1745,10 +1741,42 @@ public class UpdateProteins extends UpdateProteinsI {
 
     public int insertSPTrProteinsFromURL( String sourceUrl, String taxid, boolean update ) {
 
-        logger.info( "update from URL: " + sourceUrl );
-        if( debugOnScreen ) System.out.println( "update from URL: " + sourceUrl );
+        Collection result = null;
 
-        if( sourceUrl == null ) return 0;
+        try {
+            logger.info( "update from URL: " + sourceUrl );
+            if( debugOnScreen ) System.out.println( "update from URL: " + sourceUrl );
+
+            if( sourceUrl == null ) return 0;
+
+            URL url = new URL( sourceUrl );
+            InputStream is = url.openStream();
+
+            result = insertSPTrProteins( is, taxid, update );
+
+            is.close();
+
+        } catch( MalformedURLException e ) {
+            if( debugOnScreen ) e.printStackTrace();
+            logger.error( "URL error: " + sourceUrl, e );
+            logger.error( "Please provide a valid URL" );
+
+        } catch( IOException e ) {
+            if( debugOnScreen ) e.printStackTrace();
+            logger.error( "URL error: " + sourceUrl, e );
+            logger.error( "Please provide a valid URL" );
+        }
+
+        return ( result == null ? 0 : result.size() );
+    }
+
+
+    private Collection insertSPTrProteins( InputStream inputStream, boolean update ) {
+
+        if( inputStream == null ) {
+            logger.error( "You are trying to update using a null InputStream" );
+            return null;
+        }
 
         /**
          * Init() has to be called in order to have the statistics properly initialized
@@ -1756,34 +1784,14 @@ public class UpdateProteins extends UpdateProteinsI {
          */
         reset();
 
-        // check the taxid parameter validity
         try {
-            if( taxid != null ) {
-                String newTaxid = bioSourceFactory.getUpToDateTaxid( taxid );
-                if( newTaxid == null ) {
-                    logger.error( "Could not find an up-to-date taxid for " + taxid + " abort update procedure." );
-                    return getProteinCreatedCount() + getProteinUpdatedCount() +
-                           getSpliceVariantCreatedCount() + getSpliceVariantUpdatedCount();
-                }
-            }
-        } catch( IntactException ie ) {
-            String msg = "Could not find an up-to-date taxid for " + taxid + " abort update procedure.";
-            logger.error( msg, ie );
-            return getProteinCreatedCount() + getProteinUpdatedCount() +
-                    getSpliceVariantCreatedCount() + getSpliceVariantUpdatedCount();
-        }
-
-
-        try {
-            URL url = new URL( sourceUrl );
-
             // parse it with YASP
             if( debugOnScreen ) {
                 System.out.print( "Parsing..." );
                 System.out.flush();
             }
 
-            entryIterator = YASP.parseAll( url );
+            entryIterator = YASP.parseAll( inputStream );
 
             if( debugOnScreen ) System.out.println( "done" );
 
@@ -1829,7 +1837,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
                 if( debugOnScreen ) System.out.print( "(" + sptrEntry.getID() + ":" );
 
-                createProteinFromSPTrEntry( sptrEntry, taxid, update );
+                createProteinFromSPTrEntry( sptrEntry, update );
 
                 if( debugOnScreen ) System.out.println( ")" );
 
@@ -1843,11 +1851,6 @@ public class UpdateProteins extends UpdateProteinsI {
             e.printStackTrace();
             logger.error( e.getOriginalException() );
 
-        } catch( MalformedURLException e ) {
-            e.printStackTrace();
-            logger.error( "URL error: " + sourceUrl, e );
-            logger.error( "Please provide a valid URL" );
-
         } catch( Exception e ) {
             e.printStackTrace();
             logger.error( "Error while processing an SPTREntry", e );
@@ -1857,8 +1860,43 @@ public class UpdateProteins extends UpdateProteinsI {
 
         printStats();
 
-        return getProteinCreatedCount() + getProteinUpdatedCount() +
-               getSpliceVariantCreatedCount() + getSpliceVariantUpdatedCount();
+        return proteins;
+    }
+
+
+    public Collection insertSPTrProteins( InputStream inputStream, String taxid, boolean update ) {
+
+        // check the taxid parameter validity
+        try {
+            if( taxid != null ) {
+                String newTaxid = bioSourceFactory.getUpToDateTaxid( taxid );
+                if( newTaxid == null ) {
+                    logger.error( "Could not find an up-to-date taxid for " + taxid + " abort update procedure." );
+                    return null;
+                }
+            }
+        } catch( IntactException ie ) {
+            String msg = "Could not find an up-to-date taxid for " + taxid + " abort update procedure.";
+            logger.error( msg, ie );
+            return null;
+        }
+
+        insertSPTrProteins( inputStream, update ); // updates the collection: proteins
+
+        if( taxid != null ){
+            // filter out using the given taxid before to return the collection.
+            Collection c = filterOnTaxid( proteins,  taxid ) ;
+            if( logger.isInfoEnabled() ) {
+                logger.info ( "Protein selected after filtering ("+ c.size() +"):" );
+                for( Iterator iterator = c.iterator(); iterator.hasNext(); ) {
+                    Protein protein = (Protein) iterator.next();
+                    logger.info( "\t" + protein.getShortLabel() );
+                }
+            }
+            return c;
+        }
+
+        return proteins;
     }
 
     private void printStats() {

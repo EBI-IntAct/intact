@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.Collection;
+import java.io.InputStream;
 
 import org.apache.log4j.Logger;
 
@@ -229,6 +230,22 @@ public abstract class UpdateProteinsI {
     }
 
 
+
+    /**
+     * Inserts zero or more proteins created from SPTR entries which are retrieved from a Stream.
+     * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
+     * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism,
+     * unless the taxid parameter is not null.
+     *
+     * @param inputStream  The straem from which YASP will read the ENtries content.
+     * @param taxid        Of all entries retrieved from sourceURL, insert only those which have this
+     *                     taxid.
+     *                     If taxid is empty, insert all protein objects.
+     * @param update       If true, update existing Protein objects according to the retrieved data.
+     *                     else, skip existing Protein objects.
+     * @return             Collection of protein objects created/updated.
+     */
+    public abstract Collection insertSPTrProteins( InputStream inputStream, String taxid, boolean update );
 
     /**
      * Inserts zero or more proteins created from SPTR entries which are retrieved from a URL.
