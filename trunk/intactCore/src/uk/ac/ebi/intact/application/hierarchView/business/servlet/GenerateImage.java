@@ -95,7 +95,7 @@ public class GenerateImage extends HttpServlet {
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    logger.error ("Couldn't convert the DOM document");
+                    logger.error ("Couldn't convert the DOM document", e);
                 }
             }
             else logger.error ("SVG DOM document is null");

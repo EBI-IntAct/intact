@@ -48,6 +48,10 @@ public class InitTag extends TagSupport {
         initDataSource ();
         initWebService ();
 
+        HttpSession session = super.pageContext.getSession();
+        logger.info ("Session timeout set to " + session.getMaxInactiveInterval() + " seconds.");
+        logger.info ("See <session-config> in web.xml to customize.");
+
         // TODO : forward to an error page in case of exception
 
         return EVAL_PAGE;
@@ -87,17 +91,16 @@ public class InitTag extends TagSupport {
             }
             catch (DataSourceException de) {
                 // Unable to get a data source...can't proceed
-                de.printStackTrace ();
-                logger.error (de.toString());
+                logger.error (de.getMessage(), de);
                 throw new JspException ("Unable to get a data source.");
             }
             catch (IntactException se) {
                 // Unable to construct lists such as topics, db names etc.
-                logger.error (se.toString());
-                se.printStackTrace ();
+                logger.error (se.getMessage(), se);
             }
 
         } catch (Exception ioe) {
+            logger.error ("could not initialize user's HTTPSession");
             throw new JspException ("Fatal error: init tag could not initialize user's HTTPSession.");
         }
     } // initDataSource
@@ -122,7 +125,7 @@ public class InitTag extends TagSupport {
                 logger.info ("Tulip web service deployed successfully");
                 servletContext.setAttribute (Constants.WEB_SERVICE_MANAGER, WSmanager);
             } catch (Exception e) {
-                logger.info (e.getMessage() + "\n" + e.toString());
+                logger.error ("Unable to deploy the web service", e);
                 throw new JspException ("Fatal error: init tag could not deploy the Tulip web service.");
             }
         } else {

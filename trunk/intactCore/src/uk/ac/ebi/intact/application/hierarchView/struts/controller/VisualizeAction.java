@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.VisualizeForm;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.ServletException;
@@ -55,7 +56,7 @@ public final class VisualizeAction extends IntactBaseAction {
                                   ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response)
-            throws IOException, ServletException {
+            throws IOException, ServletException, SessionExpiredException {
 
         // Clear any previous errors.
         super.clearErrors();
@@ -160,11 +161,28 @@ public final class VisualizeAction extends IntactBaseAction {
                 return (mapping.findForward("error"));
             }
 
-            // If depth desacrease we don't have to access IntAct, we have to reduce the current graph.
+            // TODO : If depth desacrease we don't have to access IntAct, we have to reduce the current graph.
 
             String dataTlp  = in.exportTlp();
-            super.log ("\n" + dataTlp + "\n\n");
-            in.importDataToImage (dataTlp);
+
+            try {
+                String[] errorMessages;
+                errorMessages = in.importDataToImage(dataTlp);
+
+                if ((null != errorMessages) && (errorMessages.length > 0)) {
+                    for (int i = 0; i<errorMessages.length; i++) {
+                         addError("error.webService", errorMessages[i]);
+                        logger.error (errorMessages[i]);
+                    }
+                    super.saveErrors(request);
+                    return (mapping.findForward("error"));
+                }
+            } catch (Exception e) {
+                addError ("error.webService", e.getMessage());
+                logger.error (e.getMessage(), e);
+                super.saveErrors(request);
+                return (mapping.findForward("error"));
+            }
 
             // GraphToImage te = new GraphToImage (in);
             GraphToSVG te = new GraphToSVG (in);
@@ -184,15 +202,12 @@ public final class VisualizeAction extends IntactBaseAction {
             session.setAttribute (StrutsConstants.ATTRIBUTE_GRAPH, in);
         }
 
-        super.log(" Populating form from " + visualizeForm);
-
-        // Print debug in the log file
-        super.log("VisualizeAction: AC=" + AC +
-                " depth=" + depth +
-                " noDepthLimit=" + hasNoDepthLimit +
-                " methodLabel=" + methodLabel +
-                " methodClass=" + methodClass +
-                "\nlogged on in session " + session.getId());
+        logger.info ("VisualizeAction: AC=" + AC +
+                     " depth=" + depth +
+                     " noDepthLimit=" + hasNoDepthLimit +
+                     " methodLabel=" + methodLabel +
+                     " methodClass=" + methodClass +
+                     "\nlogged on in session " + session.getId());
 
         // Forward control to the specified success URI
         return (mapping.findForward("success"));

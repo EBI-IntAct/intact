@@ -5,11 +5,15 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,6 +24,8 @@ import javax.servlet.http.HttpSession;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  */
 public abstract class IntactBaseAction extends Action {
+
+    public static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /** The global Intact error key. */
     public static final String INTACT_ERROR = "IntactError";
@@ -34,18 +40,16 @@ public abstract class IntactBaseAction extends Action {
      * @return an instance of <code>IntactUserImpl</code> stored in
      * <code>session</code>
      */
-    protected IntactUser getIntactUser(HttpSession session) {
+    protected IntactUser getIntactUser(HttpSession session)
+            throws SessionExpiredException {
         IntactUser service = (IntactUser) session.getAttribute(Constants.USER_KEY);
-        return service;
-    }
 
-    /**
-     * Convenience method that logs for agiven message.
-     * @param message string that describes the error or exception
-     */
-    protected void log(String message) {
-        if (super.servlet.getDebug() >= 1)
-            super.servlet.log(message);
+        if (null == service) {
+            logger.warn ("Session expired ... forward to error page.");
+            throw new SessionExpiredException();
+        }
+
+        return service;
     }
 
     /**
@@ -54,9 +58,17 @@ public abstract class IntactBaseAction extends Action {
      * @return session associated with given request. Null is returned if there
      * is no session associated with <code>request</code>.
      */
-    protected HttpSession getSession(HttpServletRequest request) {
+    protected HttpSession getSession(HttpServletRequest request)
+            throws SessionExpiredException {
         // Don't create a new session.
-        return request.getSession(false);
+        HttpSession session = request.getSession(false);
+
+        if (null == session) {
+            logger.warn ("Session expired ... forward to error page.");
+            throw new SessionExpiredException();
+        }
+
+        return session;
     }
 
     /**
@@ -95,8 +107,13 @@ public abstract class IntactBaseAction extends Action {
      *
      * @param request the request to save errors.
      */
-    protected void saveErrors(HttpServletRequest request) {
+    protected void saveErrors(HttpServletRequest request)
+            throws SessionExpiredException {
         super.saveErrors(request, myErrors);
+
+        // As an error occured, remove the image data stored in the session
+        HttpSession session = this.getSession(request);
+        session.removeAttribute(StrutsConstants.ATTRIBUTE_IMAGE_BEAN);
     }
 
     /**

@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -52,13 +53,15 @@ public final class CenteredAction extends IntactBaseAction {
                                   ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response)
-            throws IOException, ServletException {
+            throws IOException, ServletException, SessionExpiredException {
 
         // Clear any previous errors.
         super.clearErrors();
 
         // get the current session
+        logger.info ("Try to get a session.");
         HttpSession session = super.getSession(request);
+        logger.info ("Got it !");
 
         String AC = null;
 
@@ -67,17 +70,17 @@ public final class CenteredAction extends IntactBaseAction {
 
         if ((null == AC) || (AC.length() < 1)) {
             addError("error.centeredAC.required");
-        }
-
-        // Report any errors we have discovered back to the original form
-        if (false == super.isErrorsEmpty()) {
             super.saveErrors(request);
             return (new ActionForward(mapping.getInput()));
         }
 
-        String currentAC = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
+        String currentAC = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
 
-        if (!AC.equals(currentAC)) {
+        /*
+         * Don't create the interaction network if it is the same,
+         * data are already in the session.
+         */
+        if (false == AC.equals(currentAC)) {
 
             // Creation of the graph and the image
             InteractionNetwork in = null;
@@ -85,19 +88,20 @@ public final class CenteredAction extends IntactBaseAction {
             int depthInt = 0;
             String depth = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_DEPTH);
 
-            try {
-                // retreive datasource fron the session
-                IntactUser user = (IntactUser) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY);
-                if (null == user) {
-                    addError ("error.datasource.notCreated");
-                    super.saveErrors(request);
-                    return (mapping.findForward("error"));
-                }
-                GraphHelper gh = new GraphHelper ( user.getIntactHelper() );
+            // retreive datasource fron the session
+            IntactUser user = super.getIntactUser(session);
+            if (null == user) {
+                addError ("error.datasource.notCreated");
+                super.saveErrors(request);
+                return (mapping.findForward("error"));
+            }
 
+            try {
+                GraphHelper gh = new GraphHelper ( user.getIntactHelper() );
                 depthInt = Integer.parseInt (depth);
                 in = gh.getInteractionNetwork (AC, depthInt);
             } catch (Exception e) {
+                logger.error ("when trying to get an interaction network", e);
                 addError ("error.interactionNetwork.notCreated");
                 super.saveErrors(request);
                 return (mapping.findForward("error"));
@@ -119,8 +123,27 @@ public final class CenteredAction extends IntactBaseAction {
             }
 
             String dataTlp = in.exportTlp();
-            in.importDataToImage(dataTlp);
 
+            try {
+                String[] errorMessages;
+                errorMessages = in.importDataToImage(dataTlp);
+
+                if ((null != errorMessages) && (errorMessages.length > 0)) {
+                    for (int i = 0; i<errorMessages.length; i++) {
+                         addError("error.webService", errorMessages[i]);
+                        logger.error (errorMessages[i]);
+                    }
+                    super.saveErrors(request);
+                    return (mapping.findForward("error"));
+                }
+            } catch (Exception e) {
+                addError ("error.webService", e.getMessage());
+                logger.error (e);
+                super.saveErrors(request);
+                return (mapping.findForward("error"));
+            }
+
+            // No error, produce the layout.
             GraphToSVG te = new GraphToSVG(in);
             te.draw();
             ImageBean ib  = te.getImageBean();
@@ -133,16 +156,13 @@ public final class CenteredAction extends IntactBaseAction {
 
             // Save our data in the session
             session.setAttribute(StrutsConstants.ATTRIBUTE_AC, AC);
-
-            // store the bean
             session.setAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN, ib);
-            // store the graph
             session.setAttribute (StrutsConstants.ATTRIBUTE_GRAPH, in);
         }
 
         // Print debug in the log file
-        super.log("CenteredAction: AC=" + AC +
-                  "\nlogged on in session " + session.getId());
+        logger.info ("CenteredAction: AC=" + AC +
+                     "\nlogged on in session " + session.getId());
 
         // Remove the obsolete form bean
         if (mapping.getAttribute() != null) {

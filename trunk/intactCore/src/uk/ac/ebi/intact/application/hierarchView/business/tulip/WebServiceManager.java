@@ -114,7 +114,7 @@ public class WebServiceManager implements ServletContextListener {
             // web service stopped
             started = false;
         } catch (Exception e) {
-          throw e;
+            throw e;
         }
     } // undeploy
 
@@ -131,7 +131,7 @@ public class WebServiceManager implements ServletContextListener {
             // web service started
             started = true;
         } catch (Exception e) {
-          throw e;
+            throw e;
         }
     } // deploy
 
@@ -167,7 +167,6 @@ public class WebServiceManager implements ServletContextListener {
                 else {
                     // FAILURE
                     Exception e = new Exception ("Unable to process the WSDD file: " + wsddFile);
-                    logger.info("", e);
                     throw (e);
                 }
             }
@@ -177,7 +176,6 @@ public class WebServiceManager implements ServletContextListener {
             }
         } else {
             Exception e = new Exception ("Unable to open the WSDD file: " + wsddFile);
-            logger.error("",e);
             throw (e);
         }
 
@@ -201,7 +199,6 @@ public class WebServiceManager implements ServletContextListener {
             logger.info ("Tulip web service undeployed successfully");
         } catch (Exception e) {
             logger.error ("Unable to undeploy the web service", e);
-            e.printStackTrace();
         }
     } // contextDestroyed
 

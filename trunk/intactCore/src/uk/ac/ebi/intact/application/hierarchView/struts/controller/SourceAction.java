@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +49,7 @@ public final class SourceAction extends IntactBaseAction {
                                   ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response)
-            throws IOException, ServletException {
+            throws IOException, ServletException, SessionExpiredException {
 
         // Clear any previous errors.
         super.clearErrors();
@@ -58,11 +59,8 @@ public final class SourceAction extends IntactBaseAction {
 
         String someKeys = request.getParameter(StrutsConstants.ATTRIBUTE_KEYS);
 
-        if ((null == someKeys) || (someKeys.length() < 1))
+        if ((null == someKeys) || (someKeys.length() < 1)) {
             addError ("error.keys.required");
-
-        // Report any errors we have discovered back to the original form
-        if (false == super.isErrorsEmpty()) {
             super.saveErrors(request);
             return (new ActionForward(mapping.getInput()));
         }
@@ -76,8 +74,8 @@ public final class SourceAction extends IntactBaseAction {
         session.setAttribute(StrutsConstants.ATTRIBUTE_KEYS, keys);
 
         // Print debug in the log file
-        super.log("SourceAction: keys=" + keys +
-                "\nlogged on in session " + session.getId());
+        logger.info ("SourceAction: keys=" + keys +
+                     "\nlogged on in session " + session.getId());
 
         // Remove the obsolete form bean
         if (mapping.getAttribute() != null) {

@@ -30,6 +30,7 @@ public class CheckInitTag  extends TagSupport {
     // LOGGER
     private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
+    // Name of the page we forward to in case of error
     private String forwardOnError;
 
     public String getForwardOnError() {
@@ -58,18 +59,14 @@ public class CheckInitTag  extends TagSupport {
         IntactUser user = (IntactUser) session.getAttribute (Constants.USER_KEY);
 
         if (null == user) {
-            logger.error ("Data source unavailable, forward to home page");
+            logger.error ("Data source unavailable, forward to " + this.forwardOnError);
             // user doesn't exists
             try {
                 // FORWARD
                 super.pageContext.forward (this.forwardOnError);
                 return SKIP_PAGE;
-            } catch (ServletException e) {
-                logger.error (e.toString());
-                e.printStackTrace();
-            } catch (IOException e) {
-                logger.error (e.toString());
-                e.printStackTrace();
+            } catch (Exception e) {
+                logger.error (e);
             }
         }
 
@@ -79,17 +76,13 @@ public class CheckInitTag  extends TagSupport {
                 (WebServiceManager) servletContext.getAttribute (Constants.WEB_SERVICE_MANAGER);
 
         if ((null == webServiceManager) || (false == webServiceManager.isRunning() )) {
-            logger.error ("Web Service not properly deployed, forward to home page");
+            logger.error ("Web Service not properly deployed, forward to " + this.forwardOnError);
             try {
                 // FORWARD
                 super.pageContext.forward (this.forwardOnError);
                 return SKIP_PAGE;
-            } catch (ServletException e) {
-                logger.error (e.toString());
-                e.printStackTrace();
-            } catch (IOException e) {
-                logger.error (e.toString());
-                e.printStackTrace();
+            } catch (Exception e) {
+                logger.error (e);
             }
         }
 

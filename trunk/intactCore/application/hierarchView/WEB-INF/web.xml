@@ -43,6 +43,9 @@
 
     <!-- Listener for starting ans stopping the web application,
          allows to stop the web service properly
+         That class implements ServletContextListener so has the following methods
+            public void contextInitialized (ServletContextEvent event);
+            public void contextDestroyed (ServletContextEvent event);
       -->
     <listener>
         <listener-class>uk.ac.ebi.intact.application.hierarchView.business.tulip.WebServiceManager</listener-class>
@@ -120,6 +123,18 @@
         <url-pattern>*.do</url-pattern>
     </servlet-mapping>
 
+    <!-- =================================================================== -->
+
+    <!-- Define the default session timeout for your application,
+         in minutes.  From a servlet or JSP page, you can modify
+         the timeout for a particular session dynamically by using
+         HttpSession.getMaxInactiveInterval().
+      -->
+    <session-config>
+      <session-timeout>15</session-timeout>    <!-- 15 minutes -->
+    </session-config>
+
+    <!-- =================================================================== -->
 
     <!-- The Welcome File List -->
     <welcome-file-list>

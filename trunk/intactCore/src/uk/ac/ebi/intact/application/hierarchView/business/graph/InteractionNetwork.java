@@ -283,7 +283,8 @@ public class InteractionNetwork extends Graph {
      * @param dataTlp The obtained String by the exportTlp() method
      * @return an array of error message or <b>null</b> if no error occurs.
      */
-    public String[] importDataToImage (String dataTlp) {
+    public String[] importDataToImage (String dataTlp)
+           throws Exception {
 
         ProteinCoordinate[] result;
         TulipClient client  = new TulipClient();
@@ -292,7 +293,11 @@ public class InteractionNetwork extends Graph {
         // if (!client.isReady()) throw new IOException ("Unable to create Tulip Web service");
 
         // get coordinates
-        result = client.getComputedTlpContent(dataTlp);
+        try {
+            result = client.getComputedTlpContent(dataTlp);
+        } catch (Exception e) {
+            throw e;
+        }
 
         if (null == result) {
             // throw new IOException ("Tulip send back no data.");

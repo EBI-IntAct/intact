@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 
 /**
@@ -34,13 +35,10 @@ public class TulipClient {
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /* --------------------------------------------------- Instance variable
-
     /**
     * Stub to handle the tulip web service
     */
     private TulipAccess tulip;
-
-
 
 
     /* --------------------------------------------------- Methods
@@ -51,7 +49,6 @@ public class TulipClient {
     */
     public TulipClient () {
         try {
-
             // Make a service locator (allow to find the service)
             TulipAccessServiceLocator serviceLocator = new TulipAccessServiceLocator();
 
@@ -62,12 +59,11 @@ public class TulipClient {
             TulipAccessService service = serviceLocator;
 
             // Look in the property file where is the web service
-
             Properties properties = PropertyLoader.load (StrutsConstants.WEB_SERVICE_PROPERTY_FILE);
             String tulipAdress = null;
             if (null != properties) {
                 tulipAdress = properties.getProperty ("webService.adress");
-                logger.info ("Tulip web service URL: " + tulipAdress);
+                logger.debug ("Tulip web service URL: " + tulipAdress);
             } else {
                 tulip = null;
                 return;
@@ -79,9 +75,11 @@ public class TulipClient {
             tulip = service.getTulip (tulipUrl);
 
         } catch (MalformedURLException e) {
+            logger.error("The Tulip web service URL is malformed", e);
             tulip = null;
         }
         catch (javax.xml.rpc.ServiceException se) {
+            logger.error("Unable to create the Tulip web service", se);
             tulip = null;
         }
 
@@ -108,7 +106,8 @@ public class TulipClient {
      * @param tlpContent the tlp content to compute
      * @return the collection of protein coordinates
      */
-    public ProteinCoordinate[] getComputedTlpContent (String tlpContent) {
+    public ProteinCoordinate[] getComputedTlpContent (String tlpContent)
+           throws Exception {
 
         ProteinCoordinate[] pc = null;
         String mask = "0";
@@ -119,9 +118,8 @@ public class TulipClient {
             try {
                 pc = tulip.getComputedTlpContent (tlpContent, mask);
             } catch (java.rmi.RemoteException se) {
-                logger.error ("Exception during retreiving proteins' coordinate");
-                logger.error (se.toString());
-                se.printStackTrace ();
+                logger.error ("Unable to retreive proteins' coordinates", se);
+                throw new Exception (se.getMessage());
             }
         }
 
@@ -168,6 +166,7 @@ public class TulipClient {
     public static void main (String args[]) {
 
         TulipClient client = new TulipClient();
+
         String content = "(nodes 1 2 3 4 5 6 7 8 9 )\n" +
                 "(edge 1 7 2)\n" +
                 "(edge 2 7 8)\n" +
@@ -181,7 +180,11 @@ public class TulipClient {
 
         ProteinCoordinate[] proteins = null;
 
-        proteins = client.getComputedTlpContent (content);
+        try {
+            proteins = client.getComputedTlpContent (content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (null == proteins) {
             System.out.println ("Error during retreiving of proteins coordinates (null).");

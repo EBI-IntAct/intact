@@ -11,11 +11,13 @@ import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.persistence.SearchException;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
@@ -66,12 +68,10 @@ public class IntactUser implements HttpSessionBindingListener {
         fileMap.put (Constants.MAPPING_FILE_KEY, mapping);
         ds.setConfig (fileMap);
 
-
         // build a helper for use throughout a session
         this.intactHelper = new IntactHelper (ds);
         logger.info ("IntactHelper created.");
     }
-
 
 
     // Implements HttpSessionBindingListener
@@ -80,20 +80,21 @@ public class IntactUser implements HttpSessionBindingListener {
      * Will call this method when an object is bound to a session.
      * Not doing anything.
      */
-    public void valueBound(HttpSessionBindingEvent event) {
+    public void valueBound (HttpSessionBindingEvent event) {
     }
 
     /**
      * Will call this method when an object is unbound from a session.
      */
-    public void valueUnbound(HttpSessionBindingEvent event) {
+    public void valueUnbound (HttpSessionBindingEvent event) {
         try {
             this.intactHelper.closeStore();
+            this.intactHelper = null;
+            logger.info ("IntactHelper datasource closed (cause: removing attribute from session)");
         }
         catch(IntactException ie) {
             //failed to close the store - not sure what to do here yet....
-            logger.error ("error when closing the IntactHelper store");
-            logger.error (ie.toString());
+            logger.error ("error when closing the IntactHelper store", ie);
         }
     }
 

@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.hierarchView.highlightment.source.Highlightm
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.HighlightmentForm;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +52,7 @@ public final class HighlightmentAction extends IntactBaseAction {
                                   ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response)
-            throws IOException, ServletException {
+            throws IOException, ServletException, SessionExpiredException {
 
         // Clear any previous errors.
         super.clearErrors();
@@ -86,8 +87,8 @@ public final class HighlightmentAction extends IntactBaseAction {
         session.setAttribute (StrutsConstants.ATTRIBUTE_BEHAVIOUR, behaviour);
 
         // Print debug in the log file
-        super.log("HighlightmentAction: behaviour=" + behaviour +
-                "\nlogged on in session " + session.getId());
+        logger.info ("HighlightmentAction: behaviour=" + behaviour +
+                     "\nlogged on in session " + session.getId());
 
         // Remove the obsolete form bean
         if (mapping.getAttribute() != null) {
