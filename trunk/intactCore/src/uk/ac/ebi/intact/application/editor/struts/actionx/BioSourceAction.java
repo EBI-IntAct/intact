@@ -18,16 +18,13 @@ import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.util.NewtServerProxy;
 import org.apache.struts.action.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.util.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.io.*;
 
 /**
@@ -39,13 +36,6 @@ import java.io.*;
  * @version $Id$
  */
 public class BioSourceAction extends AbstractEditorAction {
-
-    /**
-     * Regular expression to extract short label and fullname. The pattern is
-     * a number|text for short label|full name|ignore other text
-     */
-    private static final Pattern REG_EXP =
-            Pattern.compile("(\\d+)\\|(.*?)\\|(.*?)\\|.*");
 
     /**
      * The tax id database.
@@ -85,44 +75,30 @@ public class BioSourceAction extends AbstractEditorAction {
         // To report errors.
         ActionErrors errors;
 
-        // The service instance to access newt server properties.
-        EditorService service = super.getService();
-
-        // Check for null URL - for an invalid URL loaded from properties file.
-        URL newtUrl = service.getNewtURL();
-        if (newtUrl == null) {
-            errors = new ActionErrors();
-            errors.add(EDITOR_ERROR, new ActionError("error.newt.connection",
-                    newtUrl.toExternalForm()));
-            saveErrors(request, errors);
-            return new ActionForward(mapping.getInput());
-        }
-        // The queries to send to Newt server.
-        String query = service.getNewtQueryParameters() + taxid + "\r\n";
-
-        // Get the newt response.
-        String newtResp = null;
-        try {
-            newtResp = this.getNewtResponse(newtUrl, query);
-            super.log("newt response: " + newtResp);
-        }
-        catch (IOException ioe) {
-            // Error in communcating with the server.
-            errors = new ActionErrors();
-            errors.add(EDITOR_ERROR, new ActionError("error.newt.io",
-                    newtUrl.toExternalForm()));
-            saveErrors(request, errors);
-            return new ActionForward(mapping.getInput());
-        }
-        // Parse the newt response.
-        Matcher matcher = REG_EXP.matcher(newtResp);
-
         // This shouldn't crash the application as we had
         // already created the correct editor view bean.
         BioSourceViewBean bioview = (BioSourceViewBean) user.getView();
 
-        // We should have matches.
-        if (!matcher.matches()) {
+        // The service instance to access newt server properties.
+        EditorService service = super.getService();
+
+        // Handler to the Newt server.
+        NewtServerProxy newtServer = service.getNewtServer();
+
+        // Query the server.
+        NewtServerProxy.NewtResponse newtResponse = null;
+        try {
+            newtResponse = newtServer.query(Integer.parseInt(taxid));
+        }
+        catch (IOException ioe) {
+            // Error in communcating with the server.
+            errors = new ActionErrors();
+            errors.add("biosource",
+                    new ActionError("error.newt.connection", ioe.getMessage()));
+            saveErrors(request, errors);
+            return new ActionForward(mapping.getInput());
+        }
+        catch (SearchException se) {
             errors = new ActionErrors();
             errors.add("cvinfo", new ActionError("error.newt.search", taxid));
             saveErrors(request, errors);
@@ -131,14 +107,14 @@ public class BioSourceAction extends AbstractEditorAction {
             return new ActionForward(mapping.getInput());
         }
         // Values from newt.
-        String newtLabel = matcher.group(2);
-        String newtName = matcher.group(3);
+        String newtLabel = newtResponse.getShortLabel();
+        String newtName = newtResponse.getFullName();
 
         // Validate the short label; compute the new name using
         // scientific name and tax id for an empty short label.
-        newtLabel = newtLabel.length() == 0
-                ? this.getUniqueShortLabel(newtName, taxid, user)
-                : user.getUniqueShortLabel(newtLabel, taxid);
+        newtLabel = newtResponse.hasShortLabel()
+                ?  user.getUniqueShortLabel(newtLabel, taxid)
+                : this.getUniqueShortLabel(newtName, taxid, user);
 
         // Validate the scientific name.
         if (newtName.length() == 0) {
@@ -201,67 +177,21 @@ public class BioSourceAction extends AbstractEditorAction {
         }
         catch (SearchException se) {
             // Can't query the database.
-            super.log(ExceptionUtils.getStackTrace(se));
+            log(ExceptionUtils.getStackTrace(se));
             ActionErrors errors = new ActionErrors();
             errors.add("cvinfo", new ActionError("error.search",
                     "Unable to search the database to check for unique tax ids"));
-            super.saveErrors(request, errors);
+            saveErrors(request, errors);
             return false;
         }
         // result is not empty if we have this taxid on the database.
         if (!results.isEmpty()) {
             ActionErrors errors = new ActionErrors();
             errors.add("cvinfo", new ActionError("error.newt.taxid", taxid));
-            super.saveErrors(request, errors);
+            saveErrors(request, errors);
             return false;
         }
         return true;
-    }
-
-    private String getNewtResponse(URL url, String query) throws IOException {
-        URLConnection servletConnection = url.openConnection();
-        // Turn off caching
-        servletConnection.setUseCaches(false);
-
-        // Wrting to the server.
-        servletConnection.setDoOutput(true);
-
-        // Write the taxid to the server.
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(
-                    new OutputStreamWriter(servletConnection.getOutputStream()));
-            // Send the query and flush it.
-            writer.write(query);
-            writer.flush();
-            writer.close();
-        }
-        finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                }
-                catch (IOException ioe) {
-                }
-            }
-        }
-        // The reader to read response from the server.
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(
-                    new InputStreamReader(servletConnection.getInputStream()));
-            // We are expcting a single line from the server.
-            return reader.readLine();
-        }
-        finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                }
-                catch (IOException ioe) {
-                }
-            }
-        }
     }
 
     /**
@@ -297,7 +227,7 @@ public class BioSourceAction extends AbstractEditorAction {
         CvDatabase db = (CvDatabase) user.getObjectByLabel(
                 CvDatabase.class, TAX_DB);
 
-        return  new Xref(owner, db, taxid, label, null, null);
+        return new Xref(owner, db, taxid, label, null, null);
     }
 
     /**
