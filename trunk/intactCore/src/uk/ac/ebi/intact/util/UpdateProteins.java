@@ -384,11 +384,14 @@ public class UpdateProteins extends UpdateProteinsI {
             // there is a filter, check if the given taxid is valid AND not obsolete
             BioSource newtBioSource = getNewtBiosource (taxid);
             if (newtBioSource != null) {
-                if (false == newtBioSource.getTaxId().equals(taxid)) {
+                if (newtBioSource.getTaxId().equals(taxid)) {
+                    // the current taxid is up-to-date
+                    uptodateTaxid = taxid;
+                } else {
                     // obsolete taxid ... update IntAct and the taxid filter
-                    Collection c = helper.search ( BioSource.class.getName(),
-                                                   "taxId",
-                                                   taxid);
+                    Collection c = helper.search(BioSource.class.getName(),
+                            "taxId",
+                            taxid);
                     if (c.size() == 0) {
                         // doesn't exist in IntAct
 
@@ -398,14 +401,14 @@ public class UpdateProteins extends UpdateProteinsI {
                     } else if (c.size() == 1) {
                         // it Exists so update it
                         BioSource bs = (BioSource) c.iterator().next();
-                        bs = updateBioSource (bs, newtBioSource);
+                        bs = updateBioSource(bs, newtBioSource);
 
                         // update the taxid filter
                         uptodateTaxid = bs.getTaxId();
                     } else {
                         // Inconsistancy: we should have 0 or 1 record
-                        logger.error ( "The taxid " + newtBioSource.getTaxId() +
-                                       " gives us several BioSource in IntAct.");
+                        logger.error("The taxid " + newtBioSource.getTaxId() +
+                                " gives us several BioSource in IntAct.");
                     }
                 }
             } else {
@@ -908,6 +911,67 @@ public class UpdateProteins extends UpdateProteinsI {
         return proteins;
     }
 
+    /**
+     * Creates a simple Protein object for entries which are not in SPTR.
+     * The Protein will more or less only contain the crossreference to the source database.
+     * @param anAc The primary identifier of the protein in the external database.
+     * @param aDatabase The database in which the protein is listed.
+     * @param aTaxId The tax id the protein should have
+     * @return the protein created or retrieved from the IntAct database
+     */
+    public Protein insertSimpleProtein(String anAc, CvDatabase aDatabase, String aTaxId)
+            throws IntactException{
+
+        // Search for the protein or create it
+        Collection newProteins = helper.getObjectsByXref(Protein.class, anAc);
+
+        // Get or create valid biosource from taxid
+        BioSource validBioSource = getValidBioSource(aTaxId);
+
+        /* If there were obsolete taxids in the db, they should now be updated.
+           So we will only compare valid biosources.
+        */
+
+        // Filter for exactly one entry with appropriate taxId
+        Protein targetProtein = null;
+        for (Iterator i = newProteins.iterator(); i.hasNext();){
+            Protein tmpProtein = (Protein) i.next();
+            if (tmpProtein.getBioSource().getTaxId().equals(validBioSource.getTaxId())){
+                if (null == targetProtein){
+                    targetProtein = tmpProtein;
+                } else {
+                    throw new IntactException("More than one Protein with AC "
+                                              + anAc
+                                              + " and taxid "
+                                              + aTaxId
+                                              + " found.");
+                }
+            }
+        }
+
+        if (null == targetProtein) {
+            // No appropriate protein found, create it.
+
+            // Create new Protein
+            targetProtein = new Protein((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
+                                             validBioSource, anAc);
+            helper.create(targetProtein);
+
+            // Create new Xref if a DB has been given
+            if (null != aDatabase) {
+                Xref newXref = new Xref();
+                newXref.setOwner(myInstitution);
+                newXref.setCvDatabase(aDatabase);
+                newXref.setPrimaryId(anAc);
+                targetProtein.addXref(newXref);
+                helper.create(newXref);
+            }
+        }
+
+        return targetProtein;
+    }
+
+
     public int insertSPTrProteins (String sourceUrl,
                                    String taxid,
                                    boolean update) {
@@ -1129,6 +1193,83 @@ public class UpdateProteins extends UpdateProteinsI {
 
     public String getErrorFileName () {
         return filename;
+    }
+
+
+    /**
+     * Create or update a BioSource object from a taxid.
+     * @param aTaxId The tax id to create/update a biosource for
+     * @return a valid, persistent BioSource
+     */
+    public BioSource getValidBioSource (String aTaxId) throws IntactException {
+
+        // If a valid BioSource object already exists, return it.
+        if (bioSourceCache.containsKey(aTaxId)) {
+            return (BioSource) bioSourceCache.get(aTaxId);
+        }
+
+        // Get all existing BioSources with aTaxId
+        // Exception if there are more than one.
+        Collection currentBioSources = helper.search (BioSource.class.getName(),
+                                                      "taxId", aTaxId);
+        if (currentBioSources.size() > 1) {
+            throw new IntactException("More than one BioSource with this taxId found: " + aTaxId);
+        }
+
+        // Get a correct BioSource from Newt
+        BioSource validBioSource = getNewtBiosource(aTaxId);
+        if (null == validBioSource) {
+            throw new IntactException("The taxId is invalid: " + aTaxId);
+        }
+
+        // The verified BioSource
+        BioSource newBioSource = null;
+
+        // If there is no current BioSource, create it
+        if (0 == currentBioSources.size()) {
+            if (validBioSource.equals(aTaxId)) {
+                // look for that new taxid in Intact
+                helper.create(validBioSource);
+                newBioSource = validBioSource;
+            } else {
+                // it was obsolete
+                Collection bioSources = helper.search (BioSource.class.getName(),
+                                                              "taxId", validBioSource.getTaxId());
+                switch (bioSources.size()) {
+                    case 0:
+                        // doesn't exists, so create it.
+                        helper.create(validBioSource);
+                        newBioSource = validBioSource;
+                        break;
+
+                    case 1:
+                        // it exists, try to update it.
+                        BioSource intactBs = (BioSource) bioSources.iterator().next();
+                        newBioSource = updateBioSource(intactBs, validBioSource);
+
+                    default:
+                        throw new IntactException("More than one BioSource with this taxId found: " + aTaxId);
+                }
+            }
+        } else {
+            // only one BioSource found with the original taxid
+            // If it is obsolete, update current BioSource
+            BioSource currentBioSource = (BioSource) currentBioSources.iterator().next();
+            if (! currentBioSource.equals(validBioSource)){
+                newBioSource = updateBioSource(currentBioSource, validBioSource);
+            }  else {
+                newBioSource = currentBioSource;
+            }
+        }
+
+        // Return valid BioSource and update cache
+        /* The bioSourceCache will also contain associations from obsolete taxIds
+           to valid BioSource objects to avoid looking up the same obsolete Id
+           over and over again.
+        */
+        bioSourceCache.put(aTaxId, newBioSource);
+
+        return newBioSource;
     }
 
 

@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.model.*;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
@@ -41,6 +42,11 @@ public abstract class UpdateProteinsI {
     protected static CvDatabase sgdDatabase;
     protected static CvDatabase goDatabase;
     protected static Institution myInstitution;
+
+    /**
+     * Cache valid BioSource objects for taxIds.
+     */
+    protected static HashMap bioSourceCache = null;
 
     protected NewtServerProxy newtProxy;
 
@@ -96,6 +102,9 @@ public abstract class UpdateProteinsI {
 
         newtProxy = new NewtServerProxy(url);
         newtProxy.enableCaching();
+
+        bioSourceCache = new HashMap();
+
     }
 
 
@@ -127,6 +136,18 @@ public abstract class UpdateProteinsI {
      * @return          a set of created/updated protein.
      */
     public abstract Collection insertSPTrProteins (String proteinAc);
+
+    /**
+     * Creates a simple Protein object for entries which are not in SPTR.
+     * The Protein will more or less only contain the crossreference to the source database.
+     * @param anAc The primary identifier of the protein in the external database.
+     * @param aDatabase The database in which the protein is listed.
+     * @param aTaxId The tax id the protein should have
+     * @return the protein created or retrieved from the IntAct database
+     */
+    public abstract Protein insertSimpleProtein (String anAc, CvDatabase aDatabase,
+                                                 String aTaxId)
+            throws IntactException;
 
     /**
      * From a given sptr AC, returns a full URL from where a flatfile format SPTR entry
@@ -236,4 +257,12 @@ public abstract class UpdateProteinsI {
      * @return the filename or null if not existing
      */
     public abstract String getErrorFileName ();
+
+    /**
+     * Create or update a BioSource object from a taxid.
+     * @param aTaxId The tax id to create/update a biosource for
+     * @return a valid, persistent BioSource
+     */
+    public abstract BioSource getValidBioSource (String aTaxId) throws IntactException;
+
 }
