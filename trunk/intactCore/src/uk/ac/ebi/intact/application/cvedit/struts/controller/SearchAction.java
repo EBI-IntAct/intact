@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.struts.view.*;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.SearchException;
 
 /**
@@ -55,94 +56,53 @@ public class SearchAction extends IntactBaseAction {
         // Clear any previous errors.
         super.clearErrors();
 
-        // The search parameters.
-        String searchParam = null;
-        String searchValue = null;
-
         // Session to access various session objects.
         HttpSession session = super.getSession(request);
 
         // Handler to the Intact User.
-        if (session == null) super.log("Session is null");
-        else super.log("Session is not null");
         IntactUserIF user = super.getIntactUser(session);
-        if (user == null) super.log("User is null");
-        else super.log("User is not null");
+
+        // The form to access input data.
+        DynaActionForm theForm = (DynaActionForm) form;
 
         // The topic selected by the user.
-        String topic = user.getSelectedTopic();
+        String topic = (String) theForm.get("topic");
+        user.setSelectedTopic(topic);
+
+        String searchString = (String) theForm.get("searchString");
+
+        super.log("search action: topic is " + topic);
 
         // The class name associated with the topic.
         String classname = super.getIntactService().getClassName(topic);
-
-        // The form to access input data.
-        SearchForm theForm = (SearchForm) form;
-
-        if (theForm.searchByAc()) {
-            // Search by AC.
-            searchParam = WebIntactConstants.SEARCH_BY_AC;
-            searchValue = normalizeValue(theForm.getAcNumber());
-        }
-        else if (theForm.searchByLabel()) {
-           // Search by short label.
-           searchParam = WebIntactConstants.SEARCH_BY_LABEL;
-           searchValue = normalizeValue(theForm.getLabel());
-        }
-        else if (theForm.createNew()) {
-            super.log("creating a new CV object");
-
-            // Retrieve all the short labels.
-            Collection labels = null;
-            try {
-                labels = getAllShortLabels(user, classname);
-            }
-            catch (SearchException se) {
-                super.log(ExceptionUtils.getStackTrace(se));
-                // The errors to report back.
-                super.addError("error.search", se.getNestedMessage());
-                super.saveErrors(request);
-                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-            }
-            //  Store the short lables in a session for jsp.
-            session.setAttribute(WebIntactConstants.SHORT_LABEL_BEAN, labels);
-            return mapping.findForward(WebIntactConstants.FORWARD_CREATE);
-        }
-        else {
-            // Unknown action; should never happen.
-            assert false;
-        }
-
-        super.log("search action: search param is " + searchParam);
-        super.log("search action: search value is " + searchValue);
-        super.log("search action: topic is " + topic);
 
         // Holds the result from the search.
         Collection results = null;
 
         try {
-            results = user.search(classname, searchParam, searchValue);
+            // try searching first using all uppercase, then all lower case if it returns nothing...
+            // NB this would be better done at the DB level, but keep it here for now
+            String upperCaseValue = searchString.toUpperCase();
+            results = doLookup(classname, upperCaseValue, user);
+            if (results.isEmpty()) {
+                // now try all lower case....
+                String lowerCaseValue = searchString.toLowerCase();
+                results = doLookup(classname, lowerCaseValue, user);
+            }
         }
-        catch (SearchException se) {
+        catch (SearchException ie) {
             // Something failed during search...
-            super.log(ExceptionUtils.getStackTrace(se));
+            super.log(ExceptionUtils.getStackTrace(ie));
             // The errors to report back.
-            super.addError("error.search", se.getNestedMessage());
+            super.addError("error.search", ie.getNestedMessage());
             super.saveErrors(request);
             return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
         }
         if (results.isEmpty()) {
             // No matches found - forward to a suitable page
             super.log("No matches were found for the specified search criteria");
-            // The errors to report back.
-            super.addError("error.no.match");
-            super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(WebIntactConstants.FORWARD_NO_MATCHES);
         }
-        // Save the search parameters for results page to display.
-        user.setSearchQuery(searchParam + "=" + searchValue);
-//        session.setAttribute(WebIntactConstants.SEARCH_CRITERIA,
-//            searchParam + "=" + searchValue);
-
         // Sets the result status type.
         user.setSearchResultStatus(results.size());
 
@@ -185,16 +145,50 @@ public class SearchAction extends IntactBaseAction {
     }
 
     /**
-     * Normalize a given string.
-     * @param value the value to normalize.
-     * @return "*" if <code>value</code> is either <code>null</code> or
-     *  empty; otherwise <code>value</code>.
+     * utility method to handle the logic for lookup, ie trying AC, label etc.
+     * Isolating it here allows us to change initial strategy if we want to.
+     * NB this will probably be refactored out into the IntactHelper class later on.
      *
-     * <pre>
-     * post: return = if (value <> null or value.size = 0) result = value else (result = value) endif
-     * </pre>
+     * @param className the intact type to search on
+     * @param value the user-specified value
+     * @param user The object holding the IntactHelper for a given user/session
+     * (passed as a parameter to avoid using an instance variable, which may
+     *  cause thread problems).
+     * @return Collection the results of the search - an empty Collection if no results found
+     * @exception SearchException thrown if there were any search problems
      */
-    private String normalizeValue(String value) {
-        return ((value == null) || (value.length() == 0)) ? "*" : value;
+    private Collection doLookup(String className, String value, IntactUserIF user)
+        throws SearchException {
+
+        Collection results = new ArrayList();
+
+        //try search on AC first...
+        results = user.search(className, "ac", value);
+        if (results.isEmpty()) {
+            // No matches found - try a search by label now...
+            super.log("now searching for class " + className + " with label " + value);
+            results = user.search(className, "shortLabel", value);
+            if (results.isEmpty()) {
+                //no match on label - try by xref....
+                super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
+                Collection xrefs = user.search(Xref.class.getName(), "primaryId", value);
+
+                //could get more than one xref, eg if the primary id is a wildcard search value -
+                //then need to go through each xref found and accumulate the results...
+                Iterator it = xrefs.iterator();
+                Collection partialResults = new ArrayList();
+                while (it.hasNext()) {
+                    partialResults = user.search(className, "ac", ((Xref) it.next()).getParentAc());
+                    results.addAll(partialResults);
+                }
+
+                if (results.isEmpty()) {
+                    //no match by xref - try finally by name....
+                    super.log("no matches found using ac, shortlabel or xref - trying fullname...");
+                    results = user.search(className, "fullName", value);
+                }
+            }
+        }
+        return results;
     }
 }

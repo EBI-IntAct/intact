@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
-import uk.ac.ebi.intact.application.cvedit.struts.view.CvAddForm;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 import uk.ac.ebi.intact.model.CvObject;
@@ -50,51 +49,39 @@ public class CvAddAction extends IntactBaseAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        // Need the form to get data entered by the user.
-        CvAddForm theForm = (CvAddForm) form;
 
-        if (theForm.isSubmitted()) {
-            // The form is submitted.
-            formSubmitted(request, theForm.getShortLabel());
+        // Process the user request.
+        process(request, form);
 
-            // Any errors in creating a new CV object?
-            if (super.hasErrors()) {
-                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-            }
-            // Set it single match; once the editing is over, it will return
-            // back to the search page.
-            IntactUserIF user = super.getIntactUser(request);
-            user.setSearchResultStatus(1);
-            return mapping.findForward(WebIntactConstants.FORWARD_EDIT);
+        // Any errors in creating a new CV object?
+        if (super.hasErrors()) {
+            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
         }
-        // Cancel assumed.
-        super.log("Form is cancelled");
-        // Back to the search page.
-        return mapping.findForward(WebIntactConstants.FORWARD_SEARCH);
+        // To the edit patge.
+        return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }
 
     /**
      * This method is responsible for handling the sequence of events when the
-     * user presses Submit button to create a new CV object. Errors are added
+     * user presses the New button to create a new CV object. Errors are added
      * to super classes's error container as they occur.
      *
      * @param request the request to access various objects saved under a
      * session.
-     * @param label the short label to create new CV object.
+     * @param form the form to access the user input.
      * @exception SessionExpiredException for an expired session.
      */
-    private void formSubmitted(HttpServletRequest request, String label)
+    private void process(HttpServletRequest request, ActionForm form)
             throws SessionExpiredException {
-        super.log("Form is submitted");
-
         // Clear any previous errors.
         super.clearErrors();
 
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(request);
 
-        // The topic selected by the user.
-        String topic = user.getSelectedTopic();
+        DynaActionForm theForm = (DynaActionForm) form;
+        String  topic = (String) theForm.get("topic");
+        String label = (String) theForm.get("shortLabel");
 
         // The class name associated with the topic.
         String classname = super.getIntactService().getClassName(topic);
