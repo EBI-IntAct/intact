@@ -37,7 +37,7 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
     //used to override any default password specified
     private String password;
 
-    private Logger logger;
+    private transient Logger logger;
 
     public ObjectBridgeDAOSource() {
 
@@ -51,6 +51,21 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
 
             // do nothing - not finding a logger is not a failure condition
         }
+    }
+
+    // Methods to handle special serialization issues.
+
+    /**
+     * Logger is set in this method as it is declared as transient.
+     * @param in the input stream
+     * @throws IOException for errors in reading from the stream (required by
+     * the method signature)
+     * @throws ClassNotFoundException required by the method signature.
+     */
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+        in.defaultReadObject();
+        logger = Logger.getLogger(OJB_LOGGER_NAME);
     }
 
     /**
