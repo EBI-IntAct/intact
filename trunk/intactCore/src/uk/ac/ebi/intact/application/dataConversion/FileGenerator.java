@@ -462,6 +462,17 @@ public class FileGenerator {
      * Checks for a negative interaction.
      * NB This will have to be done using SQL otherwise we end up materializing
      * all interactions just to do the check.
+     * <p>
+     * Also the new intact curation rules specify that an Experiment should ONLY
+     * contain negative Interactions if it is annotated as 'negative'. Thus to decide
+     * if an Experiment is classified as 'negative', the Annotations of that Experiment
+     * need to be checked for one with a 'negative' Controlled Vocab attached to it as a topic.
+     * </p>
+     * <p>
+     * However at some point in the future there may be a possibility that only the Interactions
+     * will be marked as 'negative' (not the Experiment), and so these should be checked also,
+     * with duplicate matches being ignored.
+     * </p>
      * This method has to be static because it is called by the static 'classifyExperiments'.
      *
      */
@@ -473,8 +484,14 @@ public class FileGenerator {
                 "(select ac from ia_annotation where topic_ac in " +
                 "(select ac from ia_controlledvocab where shortlabel='negative')))";
 
+        //query to obtain Experiment ACs by searching for an Annotation for the
+        //Experiment classified as 'negative' itself
+        String expSql = "select experiment_ac from ia_exp2annot where annotation_ac in " +
+                "(select ac from ia_annotation where topic_ac in " +
+                "(select ac from ia_controlledvocab where shortlabel='negative'))";
+
         IntactHelper helper = new IntactHelper();
-        Set expAcs = new HashSet(); //used to collect ACs from a query
+        Set expAcs = new HashSet(); //used to collect ACs from a query - Set avoids duplicates
 
         Connection conn = null;
         Statement stmt = null;  //ordinary Statement will do - won't be reused
@@ -484,14 +501,24 @@ public class FileGenerator {
             //safest way to do this is directly through the Connection.....
             conn = helper.getJDBCConnection();
             stmt = conn.createStatement();
-            rs = stmt.executeQuery(sql);
+            rs = stmt.executeQuery(expSql);
             while(rs.next()) {
                 //stick them into the Set of ACs
-                //NB check that these do not disappear when the ResultSet gets closed!!
                 expAcs.add(rs.getString("experiment_ac"));
             }
             rs.close();
+            stmt.close();
             //System.out.println("DEBUG: size of AC List: " + expAcs.size());
+
+            //now query via the Interactions...
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            while(rs.next()) {
+                //stick them into the Set of ACs
+                expAcs.add(rs.getString("experiment_ac"));
+            }
+            rs.close();
+            stmt.close();
 
             //now get the shortlabels of the Experiments as these are what we need...
             for(Iterator it = expAcs.iterator(); it.hasNext();) {
