@@ -27,6 +27,27 @@ import java.util.regex.Matcher;
 
 public class ManagerFiles {
 
+          /**
+     * Inner class to generate unique ids to use primary keys for CommentBean
+     * class.
+     */
+    private static class UniqueID {
+
+        /**
+         * The initial value. All the unique ids are based on this value for any
+         * (all) user(s).
+         */
+        private static long theirCurrentTime = System.currentTimeMillis();
+
+        /**
+         * Returns a unique id using the initial seed value.
+         */
+        private static synchronized long get() {
+            return theirCurrentTime++;
+        }
+    }
+
+
         //---------- INSTANCE VARIABLES -------------//
 
     /**
@@ -123,8 +144,8 @@ public class ManagerFiles {
      * @return string which represents the generated file name.
      */
     public String GetRandFileName (Object extensionFile) {
-            Random ran = new Random ();
-            long rand = ran.nextLong();
+
+            long rand = UniqueID.get();
                 //to concat the value with the file pathname string,
                 // cast the random long into a string.
             String s = String.valueOf(rand);
@@ -464,7 +485,7 @@ public class ManagerFiles {
       */
     protected String GetLineSeparator () {
         return System.getProperty ("line.separator");
-    } // GetLineSeparator
+    } // getLineSeparator
 
 
 }

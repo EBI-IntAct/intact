@@ -25,14 +25,14 @@ public class ProteinSearchForm extends ActionForm {
             /**
              * The protein topic captured by the user in the provided text field in srsSearch.jsp
              */
-           private String srsTopic = "";
+           private String searchString = "";
 
            public void setSearchString (String srsQuery) {
-               this.srsTopic = srsQuery;
+               this.searchString = srsQuery;
            }
 
            public String getSearchString (){
-                return (this.srsTopic);
+                return (this.searchString);
            }
 
 
@@ -49,7 +49,7 @@ public class ProteinSearchForm extends ActionForm {
 
                ActionErrors errors = new ActionErrors();
 
-               if ((srsTopic == null || srsTopic.length() < 1)) {
+               if ((searchString == null || searchString.length() < 1)) {
                    errors.add("idseqerror", new ActionError("error.id.required"));
                }
 
@@ -66,7 +66,7 @@ public class ProteinSearchForm extends ActionForm {
            /*
            */
            public void reset (ActionMapping map, HttpServletRequest query) {
-              this.srsTopic = null;
+              this.searchString = null;
            }
 
 

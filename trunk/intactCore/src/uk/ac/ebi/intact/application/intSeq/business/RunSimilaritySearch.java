@@ -67,7 +67,7 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
     protected ManagerFilesBlast fileInput = null;
     protected ManagerFilesBlast fileOutput = null;
 
-    boolean blastOrFasta = false;
+    boolean blast = false;
     boolean commandExecution = false;
 
 
@@ -170,7 +170,7 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
                 boolean optionLooked = this.SearchOptionTab ("\\s", theOptions);
                 if (optionLooked == true) {
 
-                    if (blastOrFasta == true) {
+                    if (blast == true) {
                             //when the tabular output blast file is used (-m 9 ncbi or -m 9 fasta)
                         listResults = fileOutput.ResultParsingTableFile(SeqIdConstants.PARSING_TABLE_BLAST_FILE);
                         indexEvalue = 6;
@@ -223,8 +223,8 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
      */
     protected boolean ExecBlast () {
 
-        this.FillSeqFileConcatCommand (SeqIdConstants.DIR_INPUT_BLAST, true);
-        this.FillSeqFileConcatCommand (SeqIdConstants.DIR_OUTPUT_BLAST, false);
+        this.FillSeqFileConcatCommand (SeqIdConstants.DIR_INPUT_BLAST, true); // input
+        this.FillSeqFileConcatCommand (SeqIdConstants.DIR_OUTPUT_BLAST, false); // output
 
             //retrieves the current Java Runtime Environment
         Runtime rt = Runtime.getRuntime();
@@ -232,14 +232,16 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
         try{
                 //Process returned to the JVM
             Process child = rt.exec(command);
-                // limited buffer siwe: the process needs that a bufferReader
-                // reads the input and output stream.
-                // to obtain the process's ouput stream
+
+                // screen output management
             InputStream stdin = child.getInputStream();
-            InputStreamReader isr = new InputStreamReader(stdin);
-            BufferedReader br = new BufferedReader (isr);
-            while ( (br.readLine()) != null)
-                continue;
+            OutputProcessManagement(stdin, true);
+
+            InputStream stdin_error = child.getErrorStream();
+            OutputProcessManagement(stdin_error, true);
+
+            OutputStream stdout = child.getOutputStream();
+            OutputProcessManagement(stdout, false);
 
                 // wait for the end of the blast process, 0 if it has been well done.
                 // sometimes, process block, and even deadlock
@@ -248,10 +250,7 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
             // any program needs this file anymore
             fileInput.DeleteFile();
 
-                //terminates the currently JVM
-            //rt.exit(finish);
-
-            child.destroy();
+            //child.destroy();
 
                 //test if the process has been finished in a right way ( value 0 if it is the case )
             if (exitValue == 0) {
@@ -308,7 +307,7 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
             ArrayList splitCommandLine = new ArrayList();
             splitCommandLine.add("/ebi/extserv/data1/appbin/linux-x86/ncbi-blast/blastall");
             splitCommandLine.add("/ebi/extserv/data1/appbin/linux-x86/wu-blast/blastp");
-            blastOrFasta = this.SearchOptionTab ("\\s", splitCommandLine);
+            blast = this.SearchOptionTab ("\\s", splitCommandLine);
 
             if (input == true) {
                     //creates a file with a random name.
@@ -322,7 +321,8 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
                 }
 
                     // adds option(s) to the command line.
-                if (blastOrFasta == true) {
+                // fasta if FALSE, TRUE if blast
+                if (blast == true) {
                     command = this.command.concat(" -i " + wholePathFile);
                 }
                 else {
@@ -352,7 +352,7 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
                 wholePathFile = fileOutput.GetPathFile();
 
                     // adds the blast or fasta command option to the command line.
-                if (blastOrFasta == true) {
+                if (blast == true) {
                     command = this.command.concat(" -o " + wholePathFile);
                 }
                 else {
@@ -386,6 +386,54 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
         }
         return false;
     }
+
+
+    /**
+     * This method manages the output stream of a process:
+     * limited buffer size: the process needs that a bufferReader
+     * reads the screen output stream and the error output stream.
+     *
+     * @param stream manage this screen output stream with the appropriate object.
+     * @param in boolean to specify if the previous Object parameter is an InputStream
+     *                                                              or an OutputStream.
+     *
+     * */
+    protected void OutputProcessManagement (Object stream, boolean in) {
+
+        try {
+            if (in == true) {
+                InputStreamReader isr = new InputStreamReader((InputStream)stream);
+                BufferedReader br = new BufferedReader (isr);
+                while ( (br.readLine()) != null)
+                    continue;
+
+                br.close();
+                isr.close();
+            }
+            else {
+                //OutputStreamWriter osr = new OutputStreamWriter((OutputStream)stream);
+                PrintWriter pw = null;
+                if (stream != null) {
+                    pw = new PrintWriter((OutputStream)stream);
+                }
+                pw.println();
+                if (pw != null) {
+                    pw.flush();
+                }
+                pw.close();
+                /*BufferedWriter br_writer = new BufferedWriter (osr);
+                br_writer.flush();
+
+                osr.close();
+                br_writer.close();*/
+            }
+
+        }
+        catch (IOException io) {
+            System.err.println(io);
+        }
+    }
+
 
     /**
      * This method tests if the evalue is smaller than the constant defined in the web.xml file,
@@ -425,13 +473,6 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
         return alignResults;
     }
 
-        // if we need to format the protein database in a Fasta format file, before the blastall execution
-    protected void FormatDatabase (File dbFile) {
-        // formatdb -i "input file for formatting"
-            //result = Fasta format file representing the database
-
-            // info in this web page: --- http://ccgb.umn.edu/support/software/NCBI/README.formatdb
-    }
 
 
 

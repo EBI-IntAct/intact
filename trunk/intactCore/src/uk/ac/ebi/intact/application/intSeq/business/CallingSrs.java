@@ -348,10 +348,5 @@ public class CallingSrs implements CallingSrsIF{
     }
 
     */
- /*  in order to retrieve the class name of an object in Intact
-    protected void PrintClassName (Object obj) {
-             System.out.println("The class of " + obj +
-                                " is " + obj.getClass().getName());
-         }
-   */
+
 }

@@ -106,7 +106,11 @@ public class ProteinSearchAction extends IntactBaseAction {
             //IntactUserIF user = super.getIntactUser(session);
 
             ArrayList toTransfer = new ArrayList();
-            ArrayList accDes = intactSrs.RetrieveAccDes();
+
+        /**
+         * Desc of the array ...
+         */
+        ArrayList accDes = intactSrs.RetrieveAccDes();
             if (accDes.size() == 0) {
                     errors.add(super.INTACT_ERROR, new ActionError("error.srs.emptyfile"));
                     super.saveErrors(idQuery, errors);

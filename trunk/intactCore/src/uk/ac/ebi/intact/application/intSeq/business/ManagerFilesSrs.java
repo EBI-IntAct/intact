@@ -69,7 +69,7 @@ public class ManagerFilesSrs extends ManagerFiles {
      * <code>CreateWriter</code> method must be called only once,
      * before the loop, and deleted from this method.
      *
-     * @param theLine the string put in the file, with a <code>GetLineSeparator</code>
+     * @param theLine the string put in the file, with a <code>getLineSeparator</code>
      *          method to separate each line.
      *
      */
