@@ -18,6 +18,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Properties;
+import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
@@ -79,13 +80,11 @@ public class DisplayInteractionNetworkTag extends TagSupport {
 
                 // read the Graph.properties file
                 String mapName = null;
-                String format = null;
 
                 Properties properties = IntactUserI.GRAPH_PROPERTIES;;
 
                 if (null != properties) {
                     mapName = properties.getProperty ("hierarchView.image.map.name");
-                    format = properties.getProperty ("hierarchView.image.format.name");
                 } else {
                     logger.error("Unable to load properties from " +
                                  uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
@@ -95,7 +94,16 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                  * Prepare an identifier unique for the generated image name, it will allows
                  * to take advantage of the client side caching.
                  */
-                String queryString = user.getQueryString();
+                InteractionNetwork network = user.getInteractionNetwork();
+
+                ArrayList criterias = network.getCriteria();
+                int max = criterias.size();
+                StringBuffer sb = new StringBuffer (256);
+                for (int i = 0; i < max; i++) {
+                    sb.append ( ( (String[]) criterias.get(i) )[0] ).append(',');
+                }
+
+                String queryString = sb.toString();
                 int depth = user.getCurrentDepth();
                 String method = user.getMethodClass();
                 String key = user.getSelectedKey();
@@ -117,8 +125,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                  */
                 String msg = "<p align=\"left\">\n"
                         + "  <center>"
-                        + "     <img src=\""+ contextPath +"/GenerateImage?format=" + format
-                        +        "&context="+ userContext +"\" "
+                        + "     <img src=\""+ contextPath +"/GenerateImage?context="+ userContext +"\" "
                         + "      USEMAP=\"#" + mapName +"\" width=\""+ imageWidth +"\" "
                         +        "height=\""+ imageHeight +"\"  border =\"0\">"
                         + "     <br>"
