@@ -1,48 +1,51 @@
-shortlabel: definition
-term: Definition of the controlled vocabulary term
+shortlabel: caution
+term:  warning about errors/ grounds for confusion.
 
 shortlabel: comment
 term: Comment for public view
 
-shortlabel: function
-term: Biological Function of the Object
-function: Describes the biological function of the Object.
+shortlabel: definition
+term: Definition of the controlled vocabulary term
 
-shortlabel: url
-term: URL/Web address
-definition: The URL (Web address) at which to find more information on the object.
-
-shortlabel: remark
-term: Internal remark
-definition: Internal remark. Will normally not be shown to the public.
-
-shortlabel: search-url
-term: Search engine URL.
-definition: Normally used for CvDatabase. The URL of a search engine which will retrieve an object by its primary  identifier. 
-example: http://www.expasy.org/cgi-bin/niceprot.pl?${ac} is the search url for the database sptr. If ${ac} is replaced by an SPTR accession number, the resulting URL http://www.expasy.org/cgi-bin/niceprot.pl?P12345 will retrieve the corresponding database object.
+shortlabel: disease
+term: The interaction has a disease association.
+comment: The interaction is shown to have a disease association OR
 
 shortlabel: example
 term: Example
 definition: Comment topic used to mark examples, normally used for the explanation of controlled vocabulary terms.
 
-shortlabel: disease
-term: The interaction has a disease association.
-comment: The interaction is shown to have a disease association OR
-Mutations in any or all of the interacting proteins have a disease association.
-
-shortlabel: caution
-term:  warning about errors/ grounds for confusion.
-
-shortlabel: pathway
-term: refers to the metabolic pathway that the interaction/complex is involved in.
+shortlabel: function
+term: Biological Function of the Object
+function: Describes the biological function of the Object.
 
 shortlabel: isoform-comment
 term: Protein isoform's comment for public view
 
+shortlabel: pathway
+term: refers to the metabolic pathway that the interaction/complex is involved in.
+
 shortlabel: prerequisite ptm
 term: PTM required for an interaction to occur.
+
+shortlabel: remark
+term: Internal remark
+definition: Internal remark. Will normally not be shown to the public.
 
 shortlabel: resulting ptm
 term: PTM occurs subsequent to interaction occuring
 definition: PTM occuring to one protein within the complex as a result of the complex formation.
+
+shortlabel: search-url
+term: Search engine URL.
+definition: Normally used for CvDatabase. The URL of a search engine which will retrieve an object by its primary  identifier. 
+example: http://www.expasy.org/cgi-bin/niceprot.pl?${ac} is the search url for the database uniprot. If ${ac} is replaced by an SPTR accession number, the resulting URL http://www.expasy.org/cgi-bin/niceprot.pl?P12345 will retrieve the corresponding database object.
+
+shortlabel: search-url-ascii
+term: Search URL to retrieve an external entry in ASCII format
+definition: Normally used for CvDatabase objects. A URL to retrieve an external object by its accession number. Same as search-url, but the URL retrieves the external object as ASCII text.
+
+shortlabel: url
+term: URL/Web address
+definition: The URL (Web address) at which to find more information on the object.
 
