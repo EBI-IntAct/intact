@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.commons.search;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Query;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
-import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Alias;
@@ -41,6 +41,12 @@ public class SearchHelper implements SearchHelperI {
      * Collection of CriteriaBean
      */
     private Collection searchCriteria = new ArrayList();
+
+    /**
+     * Boolean to check if the database is connected
+     */
+    private Boolean connected;
+
 
     /**
      * Create a search helper for which all the log message will be written by the provided logger.
@@ -139,6 +145,7 @@ public class SearchHelper implements SearchHelperI {
 
     public ResultWrapper search(Class clazz, String searchParam,
                                 String searchValue, int max) throws IntactException {
+
         IntactHelper helper = new IntactHelper();
 
         // Replace * with % for SQL
@@ -214,7 +221,7 @@ public class SearchHelper implements SearchHelperI {
     }
 
     public ResultWrapper searchByQuery(Class clazz, String searchParam,
-                                   String searchValue, int max) throws IntactException {
+                                       String searchValue, int max) throws IntactException {
         // The helper to run the query against.
         IntactHelper helper = null;
 
@@ -271,13 +278,14 @@ public class SearchHelper implements SearchHelperI {
      * into the IntactHelper class later on.
      *
      * @param className The class to search on (only comes from a link clink) - useful for
-     * optimizing search
-     * @param value the user-specified value
-     * @param user object holding the IntactHelper for a given user/session (passed as a
-     * parameter to avoid using an instance variable, which may cause thread
-     * problems).
+     *                  optimizing search
+     * @param value     the user-specified value
+     * @param user      object holding the IntactHelper for a given user/session (passed as a
+     *                  parameter to avoid using an instance variable, which may cause thread
+     *                  problems).
      * @return Collection the results of the search - an empty Collection if no results found
-     * @throws uk.ac.ebi.intact.business.IntactException thrown if there were any search problems
+     * @throws uk.ac.ebi.intact.business.IntactException
+     *          thrown if there were any search problems
      */
     private Collection doSearch(String className, String value, IntactUserI user)
             throws IntactException {
@@ -295,10 +303,10 @@ public class SearchHelper implements SearchHelperI {
             if (results.isEmpty()) {
                 //no match on label - try by alias.
                 logger.info("no match on label - looking for: " + className +
-                        " with name alias ID " +
-                        value);
+                            " with name alias ID " +
+                            value);
                 Collection aliases = user.search(Alias.class.getName(), "name",
-                        value.toLowerCase());
+                                                 value.toLowerCase());
 
                 //could get more than one alias, eg if the name is a wildcard search value -
                 //then need to go through each alias found and accumulate the results...
@@ -311,8 +319,8 @@ public class SearchHelper implements SearchHelperI {
             if (results.isEmpty()) {
                 //no match on label - try by xref....
                 logger.info("no match on label - looking for: " + className +
-                        " with primary xref ID " +
-                        value);
+                            " with primary xref ID " +
+                            value);
                 Collection xrefs = user.search(Xref.class.getName(), "primaryId", value);
 
                 //could get more than one xref, eg if the primary id is a wildcard search value -
@@ -348,7 +356,8 @@ public class SearchHelper implements SearchHelperI {
      * @param clazz The class to search on.
      * @param value the user-specified value
      * @return the result wrapper which contains the result of the search
-     * @throws uk.ac.ebi.intact.business.IntactException thrown if there were any search problems
+     * @throws uk.ac.ebi.intact.business.IntactException
+     *          thrown if there were any search problems
      */
     private ResultWrapper doSearchSimple(Class clazz, String value, int max)
             throws IntactException {
@@ -369,49 +378,151 @@ public class SearchHelper implements SearchHelperI {
     }
 
     /**
-     * This method is only used in the initial request from the Search Application. You enter with a
-     * query, It uses the ia_search table for retrieving the results, if the resultset is too large,
-     * the ResultWrapper contains no data.
+     * Returns true  if a simple count on the ia_search table works, if not false
      *
-     * @param query is a string with holds the search value
-     * @return ResultWrapper ResultWrapper with the result in it. if the resultset is too large,
-     *         the ResultWrapper contains no data.
-     * @throws IntactException
+     * @return true if a simple count on the ia_search table works, if not return false
      */
-    public ResultWrapper searchFast(String query) throws IntactException {
+    public boolean connected() {
+        logger.info("check if is connected");
+        //set up with first call
+        if (connected == null) {
+            final String testQuery = "SELECT COUNT(*) FROM " + this.SEARCH_TABLE;
+            IntactHelper helper = null;
+            ResultSet rs = null;
+            Statement stmt = null;
+            try {
+                helper = new IntactHelper();
+                final Connection conn = helper.getJDBCConnection();
+                stmt = conn.createStatement();
+                rs = stmt.executeQuery(testQuery);
+                // if we got a result, the search table exists
+                if (rs.next()) {
+                    connected = new Boolean(true);
+                }
+                // if we got no result,the search table exists
+                else {
+                    connected = new Boolean(false);
+                }
+                //  an exception means that something is wrong
+            }
+            catch (IntactException e) {
+                connected = new Boolean(false);
 
+            }
+            catch (SQLException e) {
+                connected = new Boolean(false);
+
+            }
+            finally {
+                if (rs != null) {
+                    try {
+                        rs.close();
+                    }
+                    catch (SQLException e) {
+                        // what i should do here ?
+                        // throw an exception makes no sense
+                    }
+                }
+
+                if (stmt != null) {
+                    try {
+                        stmt.close();
+                    }
+                    catch (SQLException e) {
+                        // what i should do here ?
+                        // throw an exception makes no sense
+                    }
+                }
+
+                if (helper != null) {
+                    try {
+                        helper.closeStore();
+                    }
+                    catch (IntactException e) {
+                        // what i should do here ?
+                        // throw an exception makes no sense
+                    }
+                }
+            }
+        }
+        return connected.booleanValue();
+    }
+
+    /**
+     * This Method provides a full index search on the ia_search table and returns a ResultWrapper which contains
+     * the Object which fits by the query. If the result size is too large, you will get back an empty resultwrapper
+     * which contains a statistic for the results. This method is private and only for internal usage. it should
+     * replaced as soon as possible with a lucene based solution.
+     *
+     * @param query       the user-specified value
+     * @param searchClass String which represents the name of the class  to search on.
+     * @param type        String  the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
+     * @param user        f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
+     * @return the result wrapper which contains the result of the search
+     * @throws uk.ac.ebi.intact.business.IntactException
+     *          thrown if there were any search problems
+     */
+    private ResultWrapper search(String query, String searchClass, String type, IntactUserI user)
+            throws IntactException {
+
+        // first check if we got a type, we have to search for a type if the type is not null
+        // and not "all"
+        boolean hasType = (type != null) && (!type.trim().equals("")) && !type.equals("all");
+        boolean hasSearchClass = (searchClass != null) && (!searchClass.trim().equals(""));
+
+        // now check for the search Class
+
+        IntactHelper helper = user.getIntactHelper();
+
+        logger.info("search with value with query : " + query + " searchClass :" + searchClass);
         // replace  the "*" with "%"
+
         String sqlValue = query.replaceAll("\\*", "%");
-        sqlValue.toLowerCase();
+        sqlValue = sqlValue.replaceAll("\\'", "");
+        sqlValue = sqlValue.toLowerCase();
+        logger.info(sqlValue);
+
+        // if we want to search for CvObjects, it's not referenced as such in ia_search,
+        // but as its implementation (eg. CvTopic).
+
+        if (searchClass.equalsIgnoreCase("cvobject")) {
+            searchClass = "Cv";
+        }
 
         // split the query
         Collection someSearchValues = this.splitQuery(sqlValue);
 
         // create the tail of the sql query
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(128);
         String value = null;
 
         for (Iterator iterator = someSearchValues.iterator(); iterator.hasNext();) {
             value = (String) iterator.next();
-            sb.append("value LIKE '");
+            sb.append("(value LIKE '");
             sb.append(value);
-            sb.append("'");
-            sb.append(" OR ac LIKE '");
-            sb.append(value.toUpperCase());
-            sb.append("'");
+            sb.append("')");
             if (iterator.hasNext()) {
                 sb.append(" OR ");
             }  // end if
         } // end for
 
-        IntactHelper helper = new IntactHelper();
-        String sqlCount = "SELECT COUNT(distinct(ac)), objclass from " + SEARCH_TABLE + " where " +
-                sb.toString() +
-                " GROUP BY objclass";
+        String sqlCount = "SELECT COUNT(distinct(ac)), objclass FROM " + SEARCH_TABLE + " WHERE " +
+                sb.toString();
 
+        // if we are looking for a type expand the query
+        if (hasType) {
+            sqlCount = sqlCount + " AND type='" + type + "'";
+        }
+        // if we are looking for a specific searchclass exapnd the query
+        if (hasSearchClass) {
+            sqlCount = sqlCount + " AND objclass LIKE '%" + searchClass + "%'";
+        }
+
+        sqlCount = sqlCount + " GROUP BY objclass";
+
+        logger.info(sqlCount);
         Connection conn = null;
         Statement stmt = null;
-        PreparedStatement labelStmt = null;
         ResultSet rs = null;
 
         // Access the Connection via the helper.
@@ -427,13 +538,22 @@ public class SearchHelper implements SearchHelperI {
 
             while (rs.next()) {
                 int classCount = rs.getInt(1);
+                logger.info("classCount " + classCount);
                 className = rs.getString(2);
+                logger.info("ClassName : " + className);
                 resultInfo.put(className, new Integer(classCount));
                 count += classCount;
+                logger.info("Count summ : " + count);
             }
 
+            if (rs != null) {
+                rs.close();
+                rs = null;
+            }
+            logger.info("Count = " + count);
             // check the result size if the result is too large return an empty ResultWrapper
             if (count > SearchConstants.MAXIMUM_RESULT_SIZE) {
+                logger.info("Result too Large return an empty result Wrapper");
                 return new ResultWrapper(count, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
             }
 
@@ -441,7 +561,17 @@ public class SearchHelper implements SearchHelperI {
             String sql = "SELECT distinct(ac), objclass from " + SEARCH_TABLE + " where " +
                     sb.toString();
 
-            stmt = conn.createStatement();
+            if (hasType) {
+                sql = sql + " and type='" + type + "'";
+            }
+
+            if (hasSearchClass) {
+                sql = sql + "AND objclass LIKE " + "'%" + searchClass + "%'";
+            }
+
+
+            logger.info(sql);
+            //stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
             // get the result from the resultset and query via the intacthelper the objects and
@@ -450,7 +580,7 @@ public class SearchHelper implements SearchHelperI {
             String ac = null;
             className = null;
             Class clazz = null;
-            ArrayList searchResult = new ArrayList();
+            ArrayList searchResult = new ArrayList(count);
 
             while (rs.next()) {
                 ac = rs.getString(1);
@@ -458,7 +588,6 @@ public class SearchHelper implements SearchHelperI {
                 clazz = Class.forName(className);
                 searchResult.add(helper.getObjectByAc(clazz, ac));
             }
-
             return new ResultWrapper(searchResult, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
 
         }
@@ -469,156 +598,111 @@ public class SearchHelper implements SearchHelperI {
             }
             throw new IntactException("SQL errors, see the log out for more info");
 
-        } catch (ClassNotFoundException e) {
-            throw new IntactException("Recieved an intact typ which is not valid, see the log out for more info");
-
-        } catch (NullPointerException e) {
-            throw new IntactException("Problems with the resultset, see the log out for more info");
-
-        } finally {
-            //  close all database connections
-            helper.closeStore();
-            try {
-                rs.close();
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (labelStmt != null) {
-                    labelStmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException se) {
-                throw new IntactException("Problems with closing the IntactHelper");
-            } catch (NullPointerException e) {
-                throw new IntactException("Problems with closing the IntactHelper");
-            }
         }
-    }   // end searchFast
-
-    public ResultWrapper searchFast(String query, String searchClass) throws IntactException {
-
-
-        // replace  the "*" with "%"
-        String sqlValue = query.replaceAll("\\*", "%");
-        sqlValue.toLowerCase();
-
-        // split the query
-        Collection someSearchValues = this.splitQuery(sqlValue);
-
-        // create the tail of the sql query
-        StringBuffer sb = new StringBuffer();
-        String value = null;
-
-        for (Iterator iterator = someSearchValues.iterator(); iterator.hasNext();) {
-            value = (String) iterator.next();
-            sb.append("(value LIKE '");
-            sb.append(value);
-            sb.append("'");
-            sb.append(" OR ac LIKE '");
-            sb.append(value.toUpperCase());
-            sb.append("')");
-            if (iterator.hasNext()) {
-                sb.append(" OR ");
-            }  // end if
-        } // end for
-
-        IntactHelper helper = new IntactHelper();
-
-        String sqlCount = "SELECT COUNT(distinct(ac)), objclass from " + SEARCH_TABLE + " where " +
-                sb.toString() +
-                " and objclass LIKE '%" + searchClass + "%'" + " group by objclass";
-
-
-        Connection conn = null;
-        Statement stmt = null;
-        PreparedStatement labelStmt = null;
-        ResultSet rs = null;
-
-        // Access the Connection via the helper.
-        try {
-
-            conn = helper.getJDBCConnection();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sqlCount);
-
-            int count = 0;
-            String className = null;
-            Map resultInfo = new HashMap();
-
-            while (rs.next()) {
-                int classCount = rs.getInt(1);
-                className = rs.getString(2);
-                resultInfo.put(className, new Integer(classCount));
-                count += classCount;
-            }
-
-            // check the result size if the result is too large return an empty ResultWrapper
-            if (count > SearchConstants.MAXIMUM_RESULT_SIZE) {
-                return new ResultWrapper(count, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
-            }
-
-            // we got an result, and it's in the limit, so now we need the ac's
-            String sql = "SELECT distinct(ac), objclass from " + SEARCH_TABLE + " where " +
-                    sb.toString() + "AND objclass LIKE " + "'%" + searchClass + "%'";
-
-
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sql);
-
-            // get the result from the resultset and query via the intacthelper the objects and
-            // put the data in a ResultWrapper
-
-            String ac = null;
-            className = null;
-            Class clazz = null;
-            ArrayList searchResult = new ArrayList();
-
-            while (rs.next()) {
-                ac = rs.getString(1);
-                className = rs.getString(2);
-                clazz = Class.forName(className);
-                searchResult.add(helper.getObjectByAc(clazz, ac));
-            }
-            return new ResultWrapper(searchResult, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
-
-        } catch (SQLException se) {
-            while ((se.getNextException()) != null) {
-                logger.info(se.getSQLState());
-                logger.info("SQL: Error Code: " + se.getErrorCode());
-            }
-            throw new IntactException("SQL errors, see the log out for more info");
-
-        } catch (ClassNotFoundException e) {
-            throw new IntactException("Recieved an intact typ which is not valid, see the log out for more info");
-        }
-        catch (NullPointerException e) {
-            throw new IntactException("Problems with the resultset, see the log out for more info");
-
+        catch (ClassNotFoundException e) {
+            throw new IntactException("Received an intact typ which is not valid, see the log out for more info");
         }
         finally {
             //  close all database connections
-            helper.closeStore();
             try {
-                rs.close();
+
+                if (rs != null) {
+                    rs.close();
+                }
+
                 if (stmt != null) {
                     stmt.close();
                 }
-                if (labelStmt != null) {
-                    labelStmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
             }
             catch (SQLException se) {
-                throw new IntactException("Problems with closing the IntactHelper");
-            }
-            catch (NullPointerException e) {
-                throw new IntactException("Problems with closing the IntactHelper");
+                throw new IntactException("Problems with closing the JDBC Resource");
             }
         }
     }   // end searchFast
+
+    /**
+     * Workaround to provide an Interactor search with the ia_search table.
+     *
+     * @param searchValue the user-specified search value
+     * @param type        type String  the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
+     * @param user        user f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
+     * @return the result wrapper which contains the result of the search
+     * @throws uk.ac.ebi.intact.business.IntactException
+     *          thrown if there were any search problems
+     */
+    private ResultWrapper getInteractors(final String searchValue, String type, IntactUserI user)
+            throws IntactException {
+
+        logger.info("search Interactor");
+
+        // getting all results for proteins and interactions
+        ResultWrapper proteins = this.search(searchValue, "Protein", type, user);
+        ResultWrapper interactions = this.search(searchValue, "Interaction", type, user);
+
+        // now check whats going on with the results and calculate the summ of both
+        if (proteins.isTooLarge() || interactions.isTooLarge()) {
+
+            logger.info("Search Helper: getInteractors method, result too large");
+            int count = 0;
+            int proteinCount = 0;
+            int interactionCount = 0;
+            Map resultInfo = new HashMap();
+
+            // the result is too large just getting the info a return an empty resultwrapper
+            if (proteins.isTooLarge()) {
+                Map proteinInfo = proteins.getInfo();
+                proteinCount =
+                        ((Integer) proteinInfo.get("uk.ac.ebi.intact.model.ProteinImpl")).intValue();
+                resultInfo.put("uk.ac.ebi.intact.model.ProteinImpl", new Integer(proteinCount));
+            }
+
+            if (interactions.isTooLarge()) {
+                Map interactionInfo = interactions.getInfo();
+                interactionCount = ((Integer) interactionInfo.get("uk.ac.ebi.intact.model.InteractionImpl")).intValue();
+                resultInfo.put("uk.ac.ebi.intact.model.InteractionImpl",
+                               new Integer(interactionCount));
+            }
+
+            count = proteinCount + interactionCount;
+
+            // create the info
+
+            logger.info("return empty resultwrapper");
+
+            return new ResultWrapper(count, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
+
+        }
+        else {
+            // we are in the limit, add everything to a new resultwrapper
+            Collection temp = new ArrayList(proteins.getResult().size() + interactions.getResult().size());
+            temp.addAll(proteins.getResult());
+            temp.addAll(interactions.getResult());
+            return new ResultWrapper(temp, SearchConstants.MAXIMUM_RESULT_SIZE);
+        }
+    }
+
+    /**
+     * This Method provides a full index search on the ia_search table and returns a ResultWrapper which contains
+     * the object which fits by the query. If the result size is too large, you will get back an empty
+     * uk.ac.ebi.intact.application.commons.search.ResultWrapper which contains a statistic for the results
+     *
+     * @param query the user-specified search value
+     * @param type  String the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
+     * @param user  user f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
+     * @return the result wrapper which contains the result of the search
+     * @throws uk.ac.ebi.intact.business.IntactException
+     *          thrown if there were any search problems
+     */
+    public ResultWrapper searchFast(String query, String searchClass, String type,
+                                    IntactUserI user)
+            throws IntactException {
+
+        if (searchClass.equalsIgnoreCase("Interactor")) {
+            return this.getInteractors(query, type, user);
+        }
+        else {
+            return this.search(query, searchClass, type, user);
+        }
+    }
+
 }
- 
