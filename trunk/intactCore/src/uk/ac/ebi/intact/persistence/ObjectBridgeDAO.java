@@ -1380,6 +1380,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     public Collection getCollectionByQuery(Query query) {
         return broker.getCollectionByQuery(query);
     }
+    
+    public Iterator getIteratorByReportQuery(Query query) {
+        return broker.getReportQueryIteratorByQuery(query);
+    }
 
 //-------------------------- private helper methods ----------------------------------------
 

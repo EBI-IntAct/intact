@@ -13,6 +13,7 @@ import org.apache.ojb.broker.accesslayer.OJBIterator;
 import org.apache.ojb.broker.metadata.*;
 import org.apache.ojb.broker.metadata.fieldaccess.PersistentField;
 import org.apache.ojb.broker.query.*;
+
 import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
 
 import java.sql.Connection;
@@ -710,7 +711,11 @@ public abstract class AbstractObjectBridgeDAO implements DAO {
     public Collection getCollectionByQuery(Query query) {
         return myBroker.getCollectionByQuery(query);
     }
-
+    
+    public Iterator getIteratorByReportQuery(Query query) {
+        return myBroker.getReportQueryIteratorByQuery(query);
+    }
+    
     protected Object getIdentity(Object obj) {
         Identity ident = new Identity(obj, myBroker);
         return myBroker.getObjectByIdentity(ident);

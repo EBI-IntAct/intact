@@ -1656,6 +1656,10 @@ return partialGraph;
         return dao.getCollectionByQuery(query);
     }
 
+    public Iterator getIteratorByReportQuery(Query query) {
+        return dao.getIteratorByReportQuery(query);
+    }
+    
     /**
      * Returns the real object wrapped around the proxy for given object of
      * IntactObjectProxy type.

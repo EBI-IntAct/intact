@@ -382,4 +382,11 @@ public interface DAO {
      * @return a collection items retrieved by executing <code>query</code>.
      */
     public Collection getCollectionByQuery(Query query);
+    
+    /**
+     * Returns an iterator for executing the query.
+     * @param query to execute.
+     * @return an iterator consists of Object[]. 
+     */
+    public Iterator getIteratorByReportQuery(Query query);
 }
