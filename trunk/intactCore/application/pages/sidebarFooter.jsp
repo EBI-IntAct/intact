@@ -12,16 +12,21 @@
   - The common footer for the sidebar.
 --%>
 
-<jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.commons.business.IntactUserI"/>
-
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
-<c:if test="${not empty user.userName}">
-    User: <c:out value="${user.userName}"/>
-    <br/>
-</c:if>
+<c:if test="${not empty session.user}">
 
-<c:if test="${not empty user.databaseName}">
-    Database: <c:out value="${user.databaseName}"/>
+    <jsp:useBean id="user"
+                 scope="session"
+                 class="uk.ac.ebi.intact.application.commons.business.IntactUserI" />
+
+    <c:if test="${not empty user.userName}">
+        User: <c:out value="${user.userName}"/>
+        <br/>
+    </c:if>
+
+    <c:if test="${not empty user.databaseName}">
+        Database: <c:out value="${user.databaseName}"/>
+    </c:if>
+
 </c:if>
