@@ -92,7 +92,7 @@ public final class DisplayAction extends IntactBaseAction {
         String behaviourDefault = null;
 
         if ((null == AC) || (AC.trim().length() == 0)) {
-            addError ("error.AC.required");
+            addError ("error.queryString.required");
         }
 
         LabelValueBean lvb = null;
@@ -127,7 +127,7 @@ public final class DisplayAction extends IntactBaseAction {
             user.init();
 
             // Save user's data
-            user.setAC (AC);
+            user.setQueryString (AC);
             try {
                 int d = Integer.parseInt(depth);
                 user.setCurrentDepth(d);

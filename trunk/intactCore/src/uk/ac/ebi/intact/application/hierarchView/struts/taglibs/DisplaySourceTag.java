@@ -68,17 +68,17 @@ public class DisplaySourceTag extends TagSupport {
 
             Collection xRef = interactor.getXref();
 
-            String AC = user.getAC();
+            String queryString = user.getQueryString();
             String method_class = user.getMethodClass();
 
-            if (null != AC) {
+            if (null != queryString) {
                 // get the implementation class of the selected source
                 HighlightmentSource source = HighlightmentSource.getHighlightmentSource (method_class);
 
                 if (null == source) {
                     pageContext.getOut().write ("An error occured when trying to retreive source.<br>");
                 } else {
-                    logger.info ("Display highlight source items for AC = " + AC +
+                    logger.info ("Display highlight source items for query = " + queryString +
                                  " SourceClass = " + method_class);
 
                     List urls = null;

@@ -9,9 +9,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
+import uk.ac.ebi.intact.model.Interactor;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +72,7 @@ public final class CenteredAction extends IntactBaseAction {
             return (mapping.findForward("error"));
         }
 
-        String currentAC = user.getAC();
+        String currentAC = user.getQueryString();
 
         /*
          * Don't create the interaction network if it is the same,
@@ -78,8 +80,9 @@ public final class CenteredAction extends IntactBaseAction {
          */
         if (false == AC.equals(currentAC)) {
             // Save our data
-            user.setAC (AC);
+            user.setQueryString (AC);
             user.setDepthToDefault();
+            user.resetSourceURL();
 
             // Creation of the graph and the image
             try {
@@ -90,7 +93,7 @@ public final class CenteredAction extends IntactBaseAction {
 
             if (false == isErrorsEmpty()) {
                 // Rollback to the old AC
-                user.setAC (currentAC);
+                user.setQueryString (currentAC);
 
                 // Report any errors we have discovered back to the original form
                 saveErrors(request);

@@ -63,14 +63,14 @@ public final class SearchAction extends IntactBaseAction {
         // retreive user fron the session
         IntactUserI user = getIntactUser(session);
 
-        String AC    = null;
+        String queryString = null;
         String methodLabel = null;
         String methodClass = null;
         String behaviourDefault = null;
 
         if (null != form) {
             // read form values from the bean
-            AC          = ((SearchForm) form).getAC ();
+            queryString = ((SearchForm) form).getQueryString ();
             methodLabel = ((SearchForm) form).getMethod ();
 
             // read the highlighting.proterties file
@@ -94,7 +94,7 @@ public final class SearchAction extends IntactBaseAction {
             return (mapping.findForward("error"));
         } else {
             // Save user's data
-            user.setAC (AC);
+            user.setQueryString (queryString);
             user.setDepthToDefault();
             //user.resetSourceURL();
             user.setMethodLabel (methodLabel);
@@ -115,7 +115,7 @@ public final class SearchAction extends IntactBaseAction {
             }
         }
 
-        logger.info ("SearchAction: AC=" + AC +
+        logger.info ("SearchAction: query=" + queryString +
                      " methodLabel=" + methodLabel +
                      " methodClass=" + methodClass);
 

@@ -80,7 +80,7 @@ public class IntactUser implements IntactUserI {
     private String sourceURL;
 
     // User's form fields
-    private String AC;
+    private String queryString;
     private int currentDepth;
     private int defaultDepth;
     private int minimalDepth;
@@ -92,8 +92,8 @@ public class IntactUser implements IntactUserI {
     private String behaviour;
 
 
-    public String getAC() {
-        return AC;
+    public String getQueryString() {
+        return queryString;
     }
 
     public int getCurrentDepth() {
@@ -141,7 +141,7 @@ public class IntactUser implements IntactUserI {
      * @return
      */
     public boolean InteractionNetworkReadyToBeDisplayed(){
-        return ((null != AC) && (null != imageBean));
+        return ((null != queryString) && (null != imageBean));
     }
 
     /**
@@ -150,7 +150,7 @@ public class IntactUser implements IntactUserI {
      * @return boolean true if the interaction network can be highlighted, esle false.
      */
     public boolean InteractionNetworkReadyToBeHighlighted(){
-        return (null != AC) && (null != keys) && (behaviour != null) && (null != interactionNetwork);
+        return (null != queryString) && (null != keys) && (behaviour != null) && (null != interactionNetwork);
     }
 
     public InteractionNetwork getInteractionNetwork() {
@@ -181,8 +181,8 @@ public class IntactUser implements IntactUserI {
     }
 
 
-    public void setAC(String AC) {
-        this.AC = AC;
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
     }
 
     /**
@@ -233,12 +233,12 @@ public class IntactUser implements IntactUserI {
         selectedKey = key;
     }
 
-    public void setSourceURL(String sourceURL) {
-        this.sourceURL = sourceURL;
+    public void setSourceURL(String aSourceURL) {
+        sourceURL = aSourceURL;
     }
 
     public void resetSourceURL() {
-        setSourceURL(null);
+        sourceURL = null;
     }
 
 
@@ -280,7 +280,7 @@ public class IntactUser implements IntactUserI {
      * Set the default value of user's data
      */
     public void init () {
-        this.AC = null;
+        this.queryString = null;
 
         // read the Graph.properties file
         Properties properties = PropertyLoader.load (StrutsConstants.GRAPH_PROPERTY_FILE);
@@ -425,7 +425,7 @@ public class IntactUser implements IntactUserI {
             String classParameter = properties.getProperty ("search.parameter.class.name");
             String classValue     = properties.getProperty ("search.parameter.class.value");
 
-            searchURL = url + "?" + queryParameter + "=" + AC + "&" +
+            searchURL = url + "?" + queryParameter + "=" + queryString + "&" +
                         classParameter + "=" + classValue;
         }
 
