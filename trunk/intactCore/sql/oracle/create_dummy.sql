@@ -137,7 +137,7 @@ INSERT INTO Annotation (ac, topic_ac, owner_ac, description)
 	      'Describes the biological function of the Object.'
          FROM Institution i, ControlledVocab cv
         WHERE i.shortLabel='EBI' 
-          AND cv.shortLabel='Definition';
+          AND cv.shortLabel='Function';
 
 INSERT INTO obj2annot (annotation_ac, cvobject_ac)
        SELECT a.ac,	
