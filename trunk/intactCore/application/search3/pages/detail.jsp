@@ -580,9 +580,19 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- interaction type, linked to CvInteractionType -->
             <%-- <td width="20%" class="lefttop"> --%>
             <td class="lefttop">
+                <%
+                //the CvInteractionType may be null - check for it...
+                if(interaction.getCvInteractionType() == null) {
+                    out.write("-");
+                }
+                else {
+            %>
                 <a href="<%= bean.getCvInteractionTypeSearchURL(interaction)%>">
                     <%= interaction.getCvInteractionType().getShortLabel() %>
                 </a>
+                <%
+                }
+                %>
             </td>
 
             <!-- dissociation constant -->
@@ -969,7 +979,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                         }
                         buf.append("]");
                         rangeString = buf.toString();
-                        rangeString.trim(); 
+                        rangeString.trim();
                      }
                 %>
                 <%=rangeString %>
@@ -1103,7 +1113,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                      //it seems sometimes the detection beans are not present!
                      if(!firstFeature.getCvFeatureIdentSearchURL().equals("")) {
                     %>
-                        detected by 
+                        detected by
 
                     <%-- ** CVFEATUREDETECTION DOES NOT EXIST ** is this 'identification'? --%>
                     <a href="<%= firstFeature.getCvFeatureIdentSearchURL()%>">
