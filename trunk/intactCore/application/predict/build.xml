@@ -137,6 +137,7 @@
             <fileset dir="${root.config.dir}">
                 <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
+                <include name="Institution.properties"/>
             </fileset>
         </copy>
 
@@ -378,7 +379,8 @@
     <!-- Runs the Oracle data fill program -->
     <target name="payg-ora" depends="compile"
         description="Runs utility to create PAYG tables for Oracle database">
-        <java classname="uk.ac.ebi.intact.application.predict.util.PredictOra" fork="true">
+        <java classname="uk.ac.ebi.intact.application.predict.util.PredictOra"
+            fork="true" maxmemory="512m">
             <classpath refid="project.run.class.path"/>
         </java>
     </target>
