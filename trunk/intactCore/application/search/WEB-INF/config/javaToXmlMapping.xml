@@ -108,6 +108,14 @@
        <xml name="url" node="attribute"/>
     </field>
 
+    <field name="created" type="timestamp" >
+        <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="timestamp" >
+        <xml node="attribute"/>
+    </field>
+
   </class>
 
 
@@ -263,6 +271,15 @@
        <xml name="formOf" node="attribute"
 		reference="true"/>
     </field>
+
+    <field name="created" type="timestamp" >
+        <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="timestamp" >
+        <xml node="attribute"/>
+    </field>
+
   </class>
 
 
@@ -385,6 +402,14 @@
     <field name="cvInteractionType" type="uk.ac.ebi.intact.model.CvInteractionType">
        <xml name="cvInteractionType" node="element"
        reference="true"/>
+    </field>
+
+    <field name="created" type="timestamp" >
+        <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="timestamp" >
+        <xml node="attribute"/>
     </field>
 
   </class>
@@ -1034,6 +1059,14 @@
     <field name="relatedExperiment" type="uk.ac.ebi.intact.model.Experiment">
        <xml name="relatedExperiment" node="element"
 		reference="true"/>
+    </field>
+
+    <field name="created" type="timestamp" >
+        <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="timestamp" >
+        <xml node="attribute"/>
     </field>
 
   </class>
