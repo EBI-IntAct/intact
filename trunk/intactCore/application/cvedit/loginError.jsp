@@ -13,7 +13,7 @@
 
 <html:html locale="true">
 <head>
-    <title><bean:message key="login.title"/></title>
+    <title><bean:message key="error.title"/></title>
     <html:base/>
 </head>
 
