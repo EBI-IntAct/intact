@@ -27,5 +27,9 @@ do scripts/javaRun.sh GoTools download uk.ac.ebi.intact.model.$cv psi-mi $1/$cv.
    perl -w scripts/dag2html.pl -targetDir $1 -stems $cv
 done
 
+# create a single DAG-Edit file for all hierarchical CVS for curation support
+echo Creating DAG-Edit formatted file
+perl -w scripts/toDagEditFormat.pl -sourceDagFile $1/CvInteractionType.dag -sourceDagFile $1/CvIdentification.dag -sourceDagFile $1/CvInteraction.dag -sourceDefFile $1/CvInteractionType.def -sourceDefFile $1/CvIdentification.def -sourceDefFile $1/CvInteraction.def -targetDagFile $1/allCVsInDAGeditFormat.dag -targetDefFile $1/allCVsInDAGeditFormat.def
+
 # end
 
