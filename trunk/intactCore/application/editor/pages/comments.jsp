@@ -1,4 +1,4 @@
-<!--
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.view.EditForm"%><!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
