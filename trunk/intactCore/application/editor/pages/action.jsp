@@ -15,6 +15,7 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <script language="JavaScript" type="text/javascript">
 
@@ -48,6 +49,16 @@
             </html:submit>
             <br/><bean:message key="button.save.continue.titleKey"/>
         </td>
+
+        <%-- Clone button if the view says so --%>
+        <c:if test="${view.cloneState}">
+            <td align="center" bgcolor="limegreen">
+            <html:submit property="dispatch">
+                <bean:message key="button.clone"/>
+            </html:submit>
+                <br/><bean:message key="button.clone.titleKey"/>
+            </td>
+        </c:if>
 
         <td align="center" bgcolor="yellow">
             <html:submit property="dispatch">
