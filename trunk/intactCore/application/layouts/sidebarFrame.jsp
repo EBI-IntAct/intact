@@ -20,7 +20,7 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/layouts/styles/intact.css"/>
 </head>
 
-<body bgcolor="#boc4de" topmargin="0" leftmargin="0">
+<body bgcolor="#cccccc" topmargin="0" leftmargin="0">
 
    <tiles:insert definition="intact.sidebar.layout" ignore="true"/>
 

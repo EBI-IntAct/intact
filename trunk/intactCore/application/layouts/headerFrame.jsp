@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/layouts/styles/intact.css"/>
 </head>
 
-<body bgcolor="#ffeeaa" topmargin="0" leftmargin="0">
+<body topmargin="0" leftmargin="0">
 
    <tiles:insert definition="intact.header.layout" ignore="true"/>
 
