@@ -79,7 +79,8 @@ scripts/javaRun.sh UpdateProteins file:data/yeast_test.sp
 
 echo ""
 echo "Inserting Complexes ..."
-scripts/javaRun.sh InsertComplex data/ho_gavin_${DATASET}.dat 4932
+
+scripts/javaRun.sh InsertComplex -file data/ho_gavin_${DATASET}.dat -taxId 4932 -interactionType aggregation
 
 #end
 
