@@ -6,8 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.struts.action.*;
 import org.apache.struts.Globals;
+import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -32,6 +32,11 @@ public class FillFormAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
+//        System.out.println("At the beginning of form dispatch");
+//        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+//            String para = (String) e.nextElement();
+//            System.out.println("parameters: " + para + " - " + request.getParameter(para));
+//        }
         // The editor form.
         EditorActionForm editorForm = (EditorActionForm) form;
 

@@ -6,16 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 
-import java.util.List;
-
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
-
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The form to edit bio experiment data.
@@ -146,7 +146,13 @@ public class InteractionActionForm extends EditorActionForm {
     }
 
     public void setExperiments(List exps) {
-        myExperiments = exps;
+        if (myExperiments != null) {
+            // See the comment for setProteins(List)
+            if (CollectionUtils.isEqualCollection(myExperiments, exps)) {
+                return;
+            }
+        }
+        myExperiments = new ArrayList(exps);
     }
 
     public List getExperiments() {
@@ -154,7 +160,14 @@ public class InteractionActionForm extends EditorActionForm {
     }
 
     public void setProteins(List proteins) {
-        myProteins = proteins;
+        if (myProteins != null) {
+            // No need to create a new proteins if both collections contain same.
+            // This might be the case for page refresh for other than proteins.
+            if (CollectionUtils.isEqualCollection(myProteins,  proteins)) {
+                return;
+            }
+        }
+        myProteins = new ArrayList(proteins);
     }
 
     public List getProteins() {
@@ -162,7 +175,13 @@ public class InteractionActionForm extends EditorActionForm {
     }
 
     public void setExpsOnHold(List exps) {
-        myExpsOnHold = exps;
+        if (myExpsOnHold != null) {
+            // See the comment for setProteins(List)
+            if (CollectionUtils.isEqualCollection(myExpsOnHold, exps)) {
+                return;
+            }
+        }
+        myExpsOnHold = new ArrayList(exps);
     }
 
     public List getExpsOnHold() {

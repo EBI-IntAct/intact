@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -648,14 +649,18 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * considered as unsaved.
      */
     public void removeUnsavedProteins() {
-        List unsaved = new ArrayList();
-        for (Iterator iter = myProteins.iterator(); iter.hasNext(); ) {
-            ProteinBean pb = (ProteinBean) iter.next();
-            if (pb.getEditState().equals(ProteinBean.SAVE_NEW)) {
-                unsaved.add(pb);
-            }
-        }
-        myProteins.removeAll(unsaved);
+//        // Collects unsaved proteins to remove.
+//        List unsaved = new ArrayList();
+//
+//        for (Iterator iter = myProteins.iterator(); iter.hasNext(); ) {
+//            ProteinBean pb = (ProteinBean) iter.next();
+//            if (pb.getEditState().equals(ProteinBean.SAVE_NEW)) {
+//                unsaved.add(pb);
+//            }
+//        }
+
+        CollectionUtils.filter(myProteins, ProteinBeanPredicate.ourInstance);
+//        myProteins.removeAll(unsaved);
     }
 
     /**
@@ -663,19 +668,19 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @param pb the bean to compare.
      * @return true if another 'saved' already exists.
      */
-    public boolean hasDuplicates(ProteinBean pb) {
-        for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
-            ProteinBean bean = (ProteinBean) iter.next();
-            // Only consider committed proteins.
-            if (!bean.getEditState().equals(ProteinBean.VIEW)) {
-                continue;
-            }
-            if (bean.equals(pb)) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    public boolean hasDuplicates(ProteinBean pb) {
+//        for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
+//            ProteinBean bean = (ProteinBean) iter.next();
+//            // Only consider committed proteins.
+//            if (!bean.getEditState().equals(ProteinBean.VIEW)) {
+//                continue;
+//            }
+//            if (bean.equals(pb)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * Returns a collection of <code>ProteinBean</code> objects.
@@ -831,6 +836,20 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // know it has been already persisted by persist() call.
         user.update(intact);
     }
+
+    // Static Inner Class -----------------------------------------------------
+
+    private static class ProteinBeanPredicate implements Predicate {
+
+        private static ProteinBeanPredicate ourInstance = new ProteinBeanPredicate();
+
+        public boolean evaluate(Object object) {
+            return !((ProteinBean) object).getEditState().equals(
+                    ProteinBean.SAVE_NEW);
+        }
+    }
+
+    // End of Inner class -----------------------------------------------------
 
     // Sanity checking routines
 
