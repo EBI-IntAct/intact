@@ -106,9 +106,9 @@ public class IntactHelperTest extends TestCase {
             exp2 = new Experiment(institution, "exp2", bio2);
             exp2.setFullName("test experiment 2");
 
-            prot1 = new Protein(institution, bio1, "prot1");
-            prot2 = new Protein(institution, bio1, "prot2");
-            prot3 = new Protein(institution, bio1, "prot3");
+            prot1 = new ProteinImpl(institution, bio1, "prot1");
+            prot2 = new ProteinImpl(institution, bio1, "prot2");
+            prot3 = new ProteinImpl(institution, bio1, "prot3");
 
             prot1.setFullName("test protein 1");
             prot1.setCrc64("dummy 1 crc64");
@@ -125,9 +125,9 @@ public class IntactHelperTest extends TestCase {
             experiments.add(exp1);
             //needs exps, components, type, shortlabel, owner...
             //No need to set BioSource - taken from the Experiment...
-            int1 = new Interaction(experiments, components, null, "int1", institution);
-            int2 = new Interaction(experiments, components, null, "int2", institution);
-            int3 = new Interaction(experiments, components, null, "int3", institution);
+            int1 = new InteractionImpl(experiments, components, null, "int1", institution);
+            int2 = new InteractionImpl(experiments, components, null, "int2", institution);
+            int3 = new InteractionImpl(experiments, components, null, "int3", institution);
 
             int1.setFullName("test interaction 1");
             int1.setKD(new Float(1));
