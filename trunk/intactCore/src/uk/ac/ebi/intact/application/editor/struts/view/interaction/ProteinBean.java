@@ -200,7 +200,7 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     /**
      * Compares <code>obj</code> with this object according to
      * Java's equals() contract. Only returns <tt>true</tt> if the short labels
-     * for both objects match.
+     * and roles for both objects match
      * @param obj the object to compare.
      */
     public boolean equals(Object obj) {
@@ -211,8 +211,13 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         if ((obj != null) && (getClass() == obj.getClass())) {
             // Can safely cast it.
             ProteinBean other = (ProteinBean) obj;
-            return this.getShortLabel().equals(other.getShortLabel())
-                    && this.myRole.equals(other.myRole);
+            if (getShortLabel().equals(other.getShortLabel())) {
+                if (myRole == null) {
+                    // Other's role must be null as well.
+                    return other.myRole == null;
+                }
+                return myRole.equals(other.myRole);
+            }
         }
         return false;
     }

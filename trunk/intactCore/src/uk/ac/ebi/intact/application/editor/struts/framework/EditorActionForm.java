@@ -12,12 +12,14 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.Globals;
+import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,7 +115,14 @@ public class EditorActionForm extends ValidatorForm {
     }
 
     public void setAnnotations(List annotations) {
-        myAnnotations = annotations;
+        if (myAnnotations != null) {
+            // No need to create a new proteins if both collections contain same.
+            // This might be the case for page refresh for other than proteins.
+            if (CollectionUtils.isEqualCollection(myAnnotations, annotations)) {
+                return;
+            }
+        }
+        myAnnotations = new ArrayList(annotations);
     }
 
     public List getAnnotations() {
@@ -129,7 +138,13 @@ public class EditorActionForm extends ValidatorForm {
     }
 
     public void setXrefs(List xrefs) {
-        myXrefs = xrefs;
+        if (myXrefs != null) {
+            // See the comment for setAnnotations(List)
+            if (CollectionUtils.isEqualCollection(myXrefs, xrefs)) {
+                return;
+            }
+        }
+        myXrefs = new ArrayList(xrefs);
     }
 
     public List getXrefs() {
