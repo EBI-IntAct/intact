@@ -122,7 +122,7 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
         if (results.size() == 1) {
             // The object to edit.
             CvObject cvobj = (CvObject) results.iterator().next();
-            user.setCurrentEditObject(cvobj);
+            user.updateView(cvobj);
 
             // Straight to the edit jsp.
             return mapping.findForward(CvEditConstants.FORWARD_EDIT);
@@ -211,7 +211,7 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
             // Commit all the changes.
             user.commit();
             // Set the new object as the current edit object.
-            user.setCurrentEditObject(cvobj);
+            user.updateView(cvobj);
             // Added a new CV object; update the drop down list.
             user.refreshList();
         }
