@@ -64,20 +64,16 @@ public class ExperimentBean extends AbstractEditBean implements Serializable {
 
     /**
      * Compares <code>obj</code> with this object according to
-     * Java's equals() contract. Only returns <tt>true</tt> if the short labels
-     * for both objects match.
+     * Java's equals() contract. Delegates the task to
+     * {@link uk.ac.ebi.intact.model.Experiment#equals(Object)}.
      * @param obj the object to compare.
+     * @return true only if <code>obj</code> is an instance of this class
+     * and its wrapped Experiment equals to this object's Experiment. For all
+     * other instances, false is returned.
      */
     public boolean equals(Object obj) {
-        // Identical to this?
-        if (obj == this) {
-            return true;
-        }
-        if ((obj != null) && (getClass() == obj.getClass())) {
-            // Can safely cast it.
-            ExperimentBean other = (ExperimentBean) obj;
-            return myExperiment.getShortLabel().equals(
-                    other.myExperiment.getShortLabel());
+        if (obj instanceof ExperimentBean) {
+            return myExperiment.equals(((ExperimentBean) obj).myExperiment);
         }
         return false;
     }
