@@ -93,4 +93,13 @@ public class EditForm extends ActionForm {
     public boolean savePressed() {
         return myCommand.equals("Save");
     }
+
+    /**
+     * True if a button with given title is pressed.
+     * @param title the title of the button to compare.
+     * @return <code>true</code> if <code>title</code> is pressed.
+     */
+    public boolean buttonPressed(String title) {
+        return myCommand.equals(title);
+    }
 }
