@@ -805,6 +805,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
         fb1.setBoundDomain(fb2.getShortLabel());
         fb2.setBoundDomain(fb1.getShortLabel());
 
+        // This important as we can't reply on unique features anymore!
+        fb1.setBoundDomainAc(fb2.getAc());
+        fb2.setBoundDomainAc(fb1.getAc());
+
         // Make sure to set the linked beans to false (or else they will
         // display as checked).
         fb1.setChecked(false);
