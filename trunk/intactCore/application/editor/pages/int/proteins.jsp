@@ -23,6 +23,10 @@
 <%-- Menu to add a new Protein --%>
 <c:set var="rolelist_" value="${view.addProteinRoleMenu}"/>
 
+<%-- BioSource menu lists --%>
+<c:set var="biosrclist" value="${view.editBioSourceMenu}"/>
+<c:set var="biosrclist_" value="${view.addBioSourceMenu}"/>
+
 <h3>Proteins</h3>
 
 <c:if test="${not empty intForm.map.proteins}">
@@ -40,14 +44,15 @@
             <th class="tableCellHeader" width="10%">
                 <bean:message key="label.ac"/>
             </th>
-            <th class="tableCellHeader" width="60%" rowspan="2">
+            <th class="tableCellHeader" width="10%" rowspan="2">Organism</th>
+            <th class="tableCellHeader" width="50%" rowspan="2">
                 <bean:message key="label.fullname"/>
             </th>
         </tr>
         <tr class="tableRowHeader">
             <th class="tableCellHeader">Role*</th>
             <th class="tableCellHeader">Stoichiometry</th>
-            <th class="tableCellHeader">Organism</th>
+            <th class="tableCellHeader">ExpressedIn</th>
         </tr>
         <%-- To calculate row or even row --%>
         <c:set var="row"/>
@@ -105,6 +110,9 @@
                     <bean:write name="proteins" property="ac"/>
                 </td>
                 <td class="tableCell" rowspan="2">
+                    <bean:write name="proteins" property="organism"/>
+                </td>
+                <td class="tableCell" rowspan="2">
                     <bean:write name="proteins" property="fullName"/>
                 </td>
             </tr>
@@ -149,44 +157,61 @@
                     <td class="tableCell">
                         <bean:write name="proteins" property="stoichiometry"/>
                     </td>
+                    <td class="tableCell">
+                        <bean:write name="proteins" property="expressedIn"/>
+                    </td>
                 </c:if>
 
                 <c:if test="${save}">
                     <td class="tableCell">
-                        <html:select name="proteins" property="role" indexed="true">
+                        <html:select name="proteins" property="role" indexed="true"
+                            styleClass="inputRequired">
                             <html:options name="rolelist" />
                         </html:select>
                     </td>
                     <td class="tableCell">
                         <html:text name="proteins" size="5" property="stoichiometry" indexed="true"/>
                     </td>
+                    <td class="tableCell">
+                        <html:select name="proteins" property="expressedIn" indexed="true">
+                            <html:options name="biosrclist" />
+                        </html:select>
+                    </td>
                 </c:if>
 
                 <c:if test="${saveNew}">
                     <td class="tableCell">
-                        <html:select name="proteins" property="role" indexed="true">
+                        <html:select name="proteins" property="role" indexed="true"
+                            styleClass="inputRequired">
                             <html:options name="rolelist_" />
                         </html:select>
                     </td>
                     <td class="tableCell">
                         <html:text name="proteins" size="5" property="stoichiometry" indexed="true"/>
+                    </td>
+                    <td class="tableCell">
+                        <html:select name="proteins" property="expressedIn" indexed="true">
+                            <html:options name="biosrclist_" />
+                        </html:select>
                     </td>
                 </c:if>
 
                 <c:if test="${error}">
                     <td class="tableCell">
-                        <html:select name="proteins" property="role" indexed="true">
+                        <html:select name="proteins" property="role" indexed="true"
+                            styleClass="inputRequired">
                             <html:options name="rolelist_" />
                         </html:select>
                     </td>
                     <td class="tableCell">
                         <html:text name="proteins" size="5" property="stoichiometry" indexed="true"/>
                     </td>
+                    <td class="tableCell">
+                        <html:select name="proteins" property="expressedIn" indexed="true">
+                            <html:options name="biosrclist_" />
+                        </html:select>
+                    </td>
                 </c:if>
-
-                <td class="tableCell">
-                    <bean:write name="proteins" property="organism"/>
-                </td>
             </tr>
         </c:forEach>
     </table>
