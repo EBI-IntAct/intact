@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.application.mine.business.graph.model.SearchObject;
  */
 public class Dijkstra extends IntegerDijkstraPathfinder {
     // the maximal depth to search for the path
+    // if no property could ne found the default depth is 5
     private static final int MAX_LEVEL = Integer
             .parseInt( IntactUserI.MINE_PROPERTIES.getProperty(
                     "dijkstra.maxDepth", "5" ) );
@@ -191,7 +192,7 @@ public class Dijkstra extends IntegerDijkstraPathfinder {
 
         // if the node which shortest path was found is not the source node
         // source_ is an instance variable of the
-        // <tt>IntegerDijkstraTemplate</tt> class and represent the start node.
+        // IntegerDijkstraTemplate class and represent the start node.
         if ( vertex != source_ ) {
             // it is tried to get the search object to the given node
             SearchObject currentSearchObject = (SearchObject) searchObjectMap
@@ -261,7 +262,7 @@ public class Dijkstra extends IntegerDijkstraPathfinder {
                  * path for the given searchObjects. that does not contradict
                  * that we call the 'pathWasFound' method for the two objects,
                  * because the 'pathWasFound' method means we have found the
-                 * shortest path between these two nodes whereas this check is
+                 * shortest path between these two nodes, whereas this check is
                  * more global and tests whether the current path is the
                  * shortest of all found paths for the two objects.
                  */

@@ -36,10 +36,14 @@ import uk.ac.ebi.intact.application.mine.business.graph.model.SearchObject;
  * @author Andreas Groscurth
  */
 public class MineHelper {
+    // SQL statement to select the graphid for a given interactor
     private static final String SELECT_GRAPHKEY = "SELECT DISTINCT graphid FROM ia_interactions "
             + "WHERE protein1_ac=? or protein2_ac=?";
+    // SQL statement to select the shortlabels for a given set of interactors
     private static final String SELECT_SHORTLABEL = "SELECT shortlabel FROM ia_interactor "
             + "WHERE ac IN";
+    // delimiter to build a sql string from a collection
+    private static final String SQL_DELIMITER = "'";
 
     private IntactUserI intactUser;
 
@@ -176,8 +180,7 @@ public class MineHelper {
         Storage storage = new MineStorage( graph.numVertices() );
         Dijkstra d = new Dijkstra( storage, searchMap );
 
-        // for easy access the nodes and the search objects are rearranged into
-        // an array
+        // for easy access the nodes are rearranged into an array
         Vertex[] nodes = (Vertex[]) searchMap.keySet().toArray(
                 new Vertex[searchMap.keySet().size()] );
 
@@ -233,7 +236,8 @@ public class MineHelper {
                 // hashset. either of the nodes have to be added to the
                 // collection because the first element does not indicate the
                 // start node of the edge it can also be the end node of the
-                // edge !!!
+                // edge !!! e.g. A-B-C can be: 1) A-B and 2) B-C
+                // but also 1) B-A and 2) B-C and so on
                 miNe.add( nodes[0].element() );
                 miNe.add( nodes[1].element() );
             }
@@ -245,6 +249,9 @@ public class MineHelper {
             try {
                 intactUser.addToSingletons( getShortLabels( searchAc ) );
             }
+            // something went wrong and no shortlabels could be found. to
+            // provide that the application nevertheless go on the accession
+            // numbers are stored
             catch ( SQLException e ) {
                 intactUser.addToSingletons( searchAc );
             }
@@ -255,6 +262,9 @@ public class MineHelper {
             try {
                 intactUser.addToPath( getShortLabels( miNe ) );
             }
+            // something went wrong and no shortlabels could be found. to
+            // provide that the application nevertheless go on the accession
+            // numbers are stored
             catch ( SQLException e ) {
                 intactUser.addToPath( miNe );
             }
@@ -279,9 +289,9 @@ public class MineHelper {
         // [1,2,3,4] -> "'1','2','3','4'"
         for (Iterator iter = acs.iterator(); iter.hasNext();) {
             ac = iter.next().toString();
-            buf.append( "'" + ac + "'" );
+            buf.append( SQL_DELIMITER ).append( ac ).append( SQL_DELIMITER );
             if ( iter.hasNext() ) {
-                buf.append( "," );
+                buf.append( Constants.COMMA );
             }
         }
 

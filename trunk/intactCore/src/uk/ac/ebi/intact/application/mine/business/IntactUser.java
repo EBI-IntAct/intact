@@ -10,9 +10,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 
@@ -27,8 +25,8 @@ import uk.ac.ebi.intact.business.IntactHelper;
 public class IntactUser implements IntactUserI {
     private IntactHelper intactHelper;
     private Collection paths;
-    private Map graphMap;
     private Collection singletons;
+    private String search;
 
     /**
      * Creates a new intact user
@@ -37,9 +35,9 @@ public class IntactUser implements IntactUserI {
      */
     public IntactUser() throws IntactException {
         intactHelper = new IntactHelper();
-        graphMap = new Hashtable();
         paths = new HashSet();
         singletons = new HashSet();
+        search = "";
     }
 
     /*
@@ -218,7 +216,7 @@ public class IntactUser implements IntactUserI {
             for (Iterator iter = path.iterator(); iter.hasNext();) {
                 link.append( iter.next() );
                 if ( iter.hasNext() ) {
-                    link.append( "," );
+                    link.append( Constants.COMMA );
                 }
             }
             // boundaries stores the sizes of the different networks
@@ -226,8 +224,8 @@ public class IntactUser implements IntactUserI {
             boundaries += path.size();
             borders.append( boundaries );
             if ( it.hasNext() ) {
-                link.append( "," );
-                borders.append( "," );
+                link.append( Constants.COMMA );
+                borders.append( Constants.COMMA );
             }
         }
         // the boundaries of the different connecting networks are added to the
@@ -241,7 +239,29 @@ public class IntactUser implements IntactUserI {
 
             link.append( "&singletons=" + sing );
         }
+        link.append( "&method=" ).append(
+                HIERARCHVIEW_PROPERTIES.get( "hv.method" ) );
+        link.append( "&depth=" ).append(
+                HIERARCHVIEW_PROPERTIES.get( "hv.depth" ) );
         Constants.LOGGER.warn( link );
         return link.toString();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getSearch()
+     */
+    public String getSearch() {
+        return search;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#setSearch(java.lang.String)
+     */
+    public void setSearch(String s) {
+        search = s;
     }
 }

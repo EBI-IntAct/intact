@@ -21,7 +21,6 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.mine.business.Constants;
 import uk.ac.ebi.intact.application.mine.business.IntactUser;
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
-import uk.ac.ebi.intact.application.mine.struts.view.ErrorForm;
 import uk.ac.ebi.intact.business.IntactException;
 
 /**
@@ -59,8 +58,7 @@ public class WelcomeAction extends Action {
             }
         }
         catch ( IntactException e ) {
-            request.setAttribute( Constants.ERROR, new ErrorForm( e
-                    .getLocalizedMessage() ) );
+            request.setAttribute( Constants.ERROR, e.getMessage() );
             return mapping.findForward( Constants.ERROR );
         }
 
