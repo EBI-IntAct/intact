@@ -112,4 +112,22 @@
         <put name="sidebar" value="search.sidebar.layout"/>
     </definition>
 
+    <!-- ===================================================================-->
+
+    <!-- Layout for the lock admin page -->
+
+    <!-- admin header layout  -->
+    <definition name="admin.header.layout" path="/layouts/headerLayout.jsp">
+        <put name="header.title" value="IntAct Editor - Locks (Admin)"/>
+    </definition>
+
+    <!-- Layout for the admin locks display -->
+    <definition name="admin.locks.layout" path="/layouts/intactLayout.jsp">
+        <put name="title"  value="Editor"/>
+        <put name="sidebar" value="/layouts/sidebarLayout.jsp"/>
+        <put name="header" value="admin.header.layout"/>
+        <put name="content" value="/pages/admin/locks.jsp"/>
+        <put name="footer" value="/pages/footer.jsp"/>
+    </definition>
+
 </tiles-definitions>
