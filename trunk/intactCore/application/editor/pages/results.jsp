@@ -46,7 +46,7 @@
     <display:table width="100%" name="results" pagesize="50" requestURI="<%=uri%>"
         decorator="uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultDisplayWrapper">
         <display:column property="ac" title="AC"/>
-        <display:column property="shortLabel" title="Short Label" sort="true"/>
+        <display:column property="shortLabel" title="Short Label" sort="true" autolink="true"/>
         <display:column property="fullName" title="Full Name" />
         <display:column property="lock" title="Lock" />
     </display:table>

@@ -22,7 +22,7 @@ import java.util.Collections;
  * @version $Id$
  *
  * @struts.action
- *      path="/cv/dispatch"
+ *      path="/cvDispatch"
  *      name="cvForm"
  *      scope="session"
  *      validate="false"

@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
  * @version $Id$
  *
  * @struts.action
- *      path="/exp/dispatch"
+ *      path="/expDispatch"
  *      name="expForm"
  *      scope="session"
  *      validate="false"

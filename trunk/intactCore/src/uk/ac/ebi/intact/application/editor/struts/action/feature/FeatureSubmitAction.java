@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
  * @version $Id$
  *
  * @struts.action
- *      path="/feature/dispatch"
+ *      path="/featureDispatch"
  *      name="featureForm"
  *      scope="session"
  *      validate="false"

@@ -22,7 +22,7 @@ import java.util.Collections;
  * @version $Id$
  *
  * @struts.action
- *      path="/seq/dispatch"
+ *      path="/seqDispatch"
  *      name="seqForm"
  *      scope="session"
  *      validate="false"
