@@ -18,6 +18,16 @@
     <property name="dest.dir" value="dest"/>
     <property name="war.file" value="intact.war"/>
 
+    <!-- The build properties. -->
+    <property file="${intact.root}/config/build.properties"/>
+
+    <!-- Intact application location. -->
+    <property name="intact.app.dir" value=".."/>
+
+    <!-- Context path -->
+    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
+    <property name="intact-context-file" value="intact-context.xml"/>
+
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
     <property name="webapps.dir" value="${tomcat.home}/webapps"/>
@@ -81,7 +91,7 @@
 
     <!-- Builds a war file. -->
 
-    <target name="war" description="Builds a war file" depends="build-doc">
+    <target name="war" description="Builds a war file" depends="build-doc, gen-context-file">
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}"/>
@@ -120,6 +130,27 @@
             </fileset>
         </war>
 
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Create the context file. -->
+
+    <target name="gen-context-file">
+        <echo message="Creating the context file..."/>
+
+        <!-- Copy the template file -->
+        <copy todir="${dist.dir}"
+              file="${intact.context.dir}/${intact-context-file}"
+              overwrite="true" />
+
+        <!-- Customize the context file -->
+        <replace file="${dist.dir}/${intact-context-file}"
+                 token="[WAR.FILE.NAME]"
+                 value="${war.file}" />
+        <replace file="${dist.dir}/${intact-context-file}"
+                 token="[server.name]"
+                 value="${server.name}" />
     </target>
 
     <!-- =================================================================== -->

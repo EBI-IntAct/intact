@@ -437,6 +437,9 @@
         <replace file="${dist.dir}/${statisticView-context-file}"
                  token="[WAR.FILE.NAME]"
                  value="${war.name}" />
+        <replace file="${dist.dir}/${statisticView-context-file}"
+                 token="[server.name]"
+                 value="${server.name}" />
     </target>
 
 </project>

@@ -3,4 +3,4 @@
         version : $Id$
   -->
 
-<Context path="/intact/editor" docBase="app-dir/[WAR.FILE.NAME]" />
+<Context path="/[server.name]/editor" docBase="app-dir/[WAR.FILE.NAME]" />

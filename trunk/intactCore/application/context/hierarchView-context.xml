@@ -3,4 +3,4 @@
       version : $Id$
   -->
 
-<Context path="/intact/hierarchView" docBase="app-dir/[WAR.FILE.NAME]" />
+<Context path="/[server.name]/hierarchView" docBase="app-dir/[WAR.FILE.NAME]" />

@@ -463,6 +463,9 @@
         <replace file="${dist.dir}/${graph2MIF.context.file}"
                  token="[WAR.FILE.NAME]"
                  value="${war.file}" />
+        <replace file="${dist.dir}/${graph2MIF.context.file}"
+                 token="[server.name]"
+                 value="${server.name}" />
 
         <replace file="${dist.dir}/${graph2MIF.context.file}"
                  token=".war"

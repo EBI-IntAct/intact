@@ -3,4 +3,4 @@
         version : $Id$
   -->
 
-<Context path="/intact/search" docBase="app-dir/[WAR.FILE.NAME]" />
+<Context path="/[server.name]/search" docBase="app-dir/[WAR.FILE.NAME]" />

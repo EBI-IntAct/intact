@@ -459,6 +459,9 @@
         <replace file="${dist.dir}/${search-context-file}"
                  token="[WAR.FILE.NAME]"
                  value="${war.file}" />
+        <replace file="${dist.dir}/${search-context-file}"
+                 token="[server.name]"
+                 value="${server.name}" />
     </target>
 
 </project>
