@@ -1,4 +1,4 @@
-td.proteinEditCell {
+td.editCell {
     font-size: 8pt;
     font-family: Arial, verdana, sans-serif;
     text-align: left;
@@ -6,7 +6,7 @@ td.proteinEditCell {
     background-color: #ff8c00
 }
 
-td.proteinErrorCell {
+td.errorCell {
     color: white;
     background-color: red
 }
