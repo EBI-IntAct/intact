@@ -217,6 +217,16 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient Institution myInstitution;
 
     /**
+     * The name of the current user.
+     */
+    private String myUserName;
+
+    /**
+     * The name of the current database.
+     */
+    private String myDatabaseName;
+
+    /**
      * Stores the last query result.
      */
     private String myLastQuery;
@@ -252,11 +262,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * A set of currently edited/added interactions.
      */
     private transient Set myCurrentInteractions = new HashSet();
-
-    /**
-     * Holds user data.
-     */
-//    private UserInfo myUserInfo;
 
     // ------------------------------------------------------------------------
 
@@ -390,29 +395,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     // Implementation of IntactUserI interface.
 
     public String getUserName() {
-        if (myHelper != null) {
-            try {
-                return myHelper.getDbUserName();
-            }
-            catch (LookupException e) {
-            }
-            catch (SQLException e) {
-            }
-        }
-        return null;
+        return myUserName;
     }
 
     public String getDatabaseName() {
-        if (myHelper != null) {
-            try {
-                return myHelper.getDbName();
-            }
-            catch (LookupException e) {
-            }
-            catch (SQLException e) {
-            }
-        }
-        return null;
+        return myDatabaseName;
     }
 
     public Collection search(String objectType, String searchParam,
@@ -811,6 +798,27 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private void initialize() throws IntactException {
         // Construct the the helper.
         myHelper = new IntactHelper(myDAOSource);
+
+        // Initialize the valid user name and the database.
+        try {
+            myUserName = myHelper.getDbUserName().toLowerCase();
+        }
+        catch (LookupException e) {
+            throw new IntactException("Unable to initialize the user name", e);
+        }
+        catch (SQLException e) {
+            throw new IntactException("Unable to initialize the user name", e);
+        }
+
+        try {
+            myDatabaseName = myHelper.getDbName();
+        }
+        catch (LookupException e) {
+            throw new IntactException("Unable to initialize the database name", e);
+        }
+        catch (SQLException e) {
+            throw new IntactException("Unable to initialize the database name", e);
+        }
 
         // Initialize the institution; this ensures that a connection is made
         // as a valid user.
