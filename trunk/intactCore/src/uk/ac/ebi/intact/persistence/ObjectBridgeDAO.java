@@ -481,6 +481,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 //                    tx1.commit();
 //                }
 //                else
+                broker.store(obj);
                 broker.commitTransaction();
             }
         }
