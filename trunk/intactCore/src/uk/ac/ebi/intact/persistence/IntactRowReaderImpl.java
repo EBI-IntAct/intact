@@ -3,7 +3,7 @@ package uk.ac.ebi.intact.persistence;
 import org.apache.ojb.broker.accesslayer.RowReaderDefaultImpl;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
-import org.apache.ojb.broker.metadata.DescriptorRepository;
+import org.apache.ojb.broker.metadata.MetadataManager;
 import org.apache.ojb.broker.PersistenceBrokerException;
 
 import java.util.*;
@@ -20,6 +20,12 @@ import java.lang.reflect.Constructor;
  */
 public class IntactRowReaderImpl extends RowReaderDefaultImpl {
 
+    /**
+     * Constructor delegates to the parent.
+     */
+    public IntactRowReaderImpl(ClassDescriptor cld) {
+        super(cld);
+    }
 
     /**
      * Method used by the main OJB code in <code>RowReaderDefaultImpl</code> to
@@ -126,13 +132,13 @@ public class IntactRowReaderImpl extends RowReaderDefaultImpl {
         Collection result = new ArrayList();
         ClassDescriptor extentDesc = null;
         if(!clazz.isInterface()) {
-            extentDesc = DescriptorRepository.getDefaultInstance().getDescriptorFor(clazz);
+            extentDesc = MetadataManager.getInstance().getRepository().getDescriptorFor(clazz);
             result.add(extentDesc);
             //System.out.println("Adding concrete descriptor for " + clazz.getName());
             return result;
         }
         //System.out.println("found interface of type " + clazz.getName());
-        extentDesc = DescriptorRepository.getDefaultInstance().getDescriptorFor(clazz);
+        extentDesc = MetadataManager.getInstance().getRepository().getDescriptorFor(clazz);
         Collection extents = extentDesc.getExtentClasses();
 
         //need the class descriptors of them....

@@ -189,9 +189,9 @@ public class IntactHelper implements SearchI, Externalizable {
             DAOSource dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
 
             //set the config details, ie repository file for OJB in this case
-            Map config = new HashMap();
-            config.put("mappingfile", "config/repository.xml");
-            dataSource.setConfig(config);
+//            Map config = new HashMap();
+//            config.put("mappingfile", "config/repository.xml");
+//            dataSource.setConfig(config);
 
             //set up a logger
             pr = dataSource.getLogger();
@@ -1409,8 +1409,7 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
-     *  This method is used for searching by scientific name (provided that name is unique).
-     *  The BioSource object is the only intact object with this attribute.
+     *  This method is used for searching by short label (provided that name is unique).
      *
      * @param name the name of the BioSource required
      *
@@ -1419,13 +1418,11 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException thrown if a search problem occurs, or more than
      * one BioSource found
      *
-     * NB Not tested yet - requires BioSource data in DB
-     *
      */
     public BioSource getBioSourceByName(String name) throws IntactException {
 
         Collection resultList = null;
-        resultList = this.search("uk.ac.ebi.intact.model.BioSource", "scientificName", name);
+        resultList = this.search("uk.ac.ebi.intact.model.BioSource", "shortLabel", name);
 
         if (resultList.isEmpty()) return null;
         if (resultList.size() > 1) throw new IntactException("More than one BioSource returned by name search");
@@ -1433,20 +1430,22 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
-     * Searches for a BioSource given a tax ID. Only a single BioSource is
-     * found for given tax id and null values for cell type and tissue.
-     * @param taxId The tax ID to search on
-     * @return BioSource The matching BioSource object, or null if none found (for
-     * the combination of tax id, cell and tissue)
+     *  Searches for a BioSource given a tax ID. Only a single BioSource is found
+     * for given tax id and null values for cell type and tissue.
+     * @param taxId The tax ID to search on - should be unique
+     * @return BioSource The matching BioSource object, or null if none found (for the
+     * combination of tax id, cell and tissue)
      * @exception IntactException thrown if there was a search problem.
+     *
      */
     public BioSource getBioSourceByTaxId(String taxId) throws IntactException {
-        // List of biosource objects for given tax id.
+
+        //List of biosurce objects for given tax id
         Collection results = search(BioSource.class.getName(), "taxId", taxId);
 
         // Get the biosource with null values for cell type and tisse
         //  (there is only one of them exists).
-        for (Iterator iter = results.iterator(); iter.hasNext(); ) {
+        for (Iterator iter = results.iterator(); iter.hasNext(); )  {
             BioSource biosrc = (BioSource) iter.next();
             if ((biosrc.getCvCellType() == null) && (biosrc.getCvTissue() == null)) {
                 return biosrc;

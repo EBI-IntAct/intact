@@ -27,8 +27,9 @@ public interface DAOSource {
      * fails then an exception is thrown back to the caller.</p>
      *
      * @param configFiles - the collection of configuration files to be used
-     *
      * @exception DataSourceException - thrown if there are configuration problems
+     * @deprecated Configuration data, if required, should be set using
+     * individual implementation constructors - not through this method.
      *
      */
     public void setConfig(Map configFiles) throws DataSourceException;
@@ -91,7 +92,7 @@ public interface DAOSource {
     public String getConfig();
 
     /**
-     *   Defines whether or not data are saved automatically
+     *   Defines whether or not data are saved automatically.
      */
     public void setAutoSave(boolean val);
 

@@ -9,6 +9,8 @@ import java.util.*;
 import java.io.*;
 
 import org.apache.ojb.broker.*;
+import org.apache.ojb.broker.metadata.MetadataManager;
+import org.apache.ojb.broker.metadata.JdbcConnectionDescriptor;
 // import org.apache.ojb.broker.metadata.*;
 
 import org.apache.log4j.Logger;
@@ -20,6 +22,7 @@ import uk.ac.ebi.intact.model.Constants;
  *  away the details of the ObjectBridge creation mechanism.</p>
  *
  * @author Chris Lewington
+ * @version $Id$
  *
  */
 
@@ -29,6 +32,7 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
 
 
     //holds the filename containing the OR mapping data
+    //NB ** this is no longer required for OJB rc5+. **
     private String repositoryFile;
 
     //holds any username that overrides a default user
@@ -37,20 +41,32 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
     //used to override any default password specified
     private String password;
 
+    //OJB class holding configuration details
+    private MetadataManager metaData;
+
+    //Default broker key to connect to a DB using info specified in config files
+    private PBKey defaultKey;
+
+    //String used by OJB to identify connection descriptors
+    private String jcdAlias;
+
+    //The OJB connection descriptor for a default connection
+    private JdbcConnectionDescriptor defaultDbDescriptor;
+
     private transient Logger logger;
 
+    /**
+     * Default constructor. Sets up the logger, metadata, default broker
+     * key, DB connection details for a default DB connection as specified
+     * in the OJB configuration files.
+     */
     public ObjectBridgeDAOSource() {
 
-        //just set up a logger
-        try {
-//            logger = LoggerFactory.getLogger(Class.forName("org.apache.ojb.broker.util.logging.Log4jLoggerImpl"));
-            logger = Logger.getLogger(OJB_LOGGER_NAME);
-
-        }
-        catch(Exception ce) {
-
-            // do nothing - not finding a logger is not a failure condition
-        }
+        logger = Logger.getLogger(OJB_LOGGER_NAME);
+        metaData = MetadataManager.getInstance();
+        defaultKey = metaData.getDefaultPBKey();
+        defaultDbDescriptor = metaData.connectionRepository().getDescriptor(defaultKey);
+        jcdAlias = defaultDbDescriptor.getJcdAlias();
     }
 
     // Methods to handle special serialization issues.
@@ -73,10 +89,10 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
      * the content of the configuration file whose name is passed
      * in as a parameter.</p>
      *
-     * @param configFiles - a collection of config filenames (this is only one for ObjectBridge)
-     *
+     * @param configFiles - This should contain the configuration file name for OJB.
      * @exception DataSourceException - thrown if there are problems obtaining
      * configuration data
+     * @deprecated This method is no longer required for use with OJB rc5+.
      *
      */
     public void setConfig(Map configFiles) throws DataSourceException {
@@ -132,13 +148,25 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
     public DAO getDAO() throws DataSourceException {
 
         PersistenceBroker broker = null;
-        if (repositoryFile == null) {
-
-            throw new DataSourceException("cannot obtain a data connection - no mapping file!");
-        }
         try {
 
-            broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile));
+            //NB for rc5 we do not need to pass the config file name - instead simply
+            //use the metadatamanager to obtain the default PBKey, which is picked up
+            //from the OJB default connection descriptor.
+            PBKey key = null;
+            if((user == null)) {
+                //OK to use the default user/password to build the DAO
+                key = defaultKey;
+            }
+            else {
+
+                //assume the following:
+                //1) Users only connect to the default DB specified in config files
+                //2) the password to be used should go with the specified new user
+                key = new PBKey(jcdAlias, user, password);
+            }
+
+            broker = PersistenceBrokerFactory.createPersistenceBroker(key);
         }
         catch(Exception e) {
 
@@ -156,80 +184,71 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
     /**
      *  Returns a connection to the data source, and connects to it using
      * the supplied username and password. If the username is null or the details
-     * are invalid then a default connection will be attempted.
-     *
+     * are invalid then a default connection will be attempted. This method is
+     * simply a convenience method so users may avoid first calling setUser and
+     * setPassword.
      * @param user - the username to connect with
      * @param password - user's password (null values allowed)
      * @return a Data Access Object (connection)
      */
      public DAO getDAO(String user, String password) throws DataSourceException {
 
-        PersistenceBroker broker = null;
-        if (repositoryFile == null) {
-
-            throw new DataSourceException("cannot obtain a data connection - no mapping file!");
-        }
-        if(user == null) {
-
-            //no valid username supplied - will connect with default user..
-            logger.debug("cannot connect to data store with username of null - using default user details..");
-            return this.getDAO();
-        }
-        try {
-
-            //if username is non-null, just get a broker based on supplied details..
-            //NB null passwords allowed
-            PBKey key = new PBKey(repositoryFile, user, password);
-            broker = PersistenceBrokerFactory.createPersistenceBroker(key);
-        }
-        catch(Exception e) {
-
-            logger.debug("failed to obtain a connection with username [" + user + "] and password [" + password + "]; exception details:");
-            logger.debug(e.toString());
-            logger.debug("attempting default connection instead...");
-            //first try and get a default connection
-            try {
-                return this.getDAO();
-            }
-            catch(DataSourceException de) {
-
-                String msg = "invalid user details supplied - even failed to obtain a default connection!";
-                throw new DataSourceException(msg, de);
-            }
-        }
-
-        //create an ObjectBridgeDAO, passing the initialised broker as a param
-        return new ObjectBridgeDAO(broker);
+        setUser(user);
+        setPassword(password);
+        return getDAO();
 
     }
 
+    /**
+     * @deprecated The file name is not required for OJB rc5+.
+     * @return
+     */
+    public String getConfig() {
+        return "config file for OJB is internally specified for OJB rc5+";
+    }
 
+    /**
+     * Provides the name of the data source for a default connection.
+     * @return String the data source name.
+     */
     public String getDataSourceName() {
-
-        //not important - will implement later if required...
-        return null;
+        return defaultDbDescriptor.getDatasourceName();
     }
 
+    /**
+     * Provides access to the ClassLoader which was used to load up the
+     * OJB classes themselves.
+     * @return ClassLoader The ClassLoader used for OJB.
+     */
     public ClassLoader getClassLoader() {
 
-        //not supported by OJB broker interface
-        return null;
+        return PersistenceBroker.class.getClassLoader();
     }
 
-    public String getConfig() {
+    /**
+     * Sets the auto-commit value.
+     * @param shouldSave true to have auto-commit on (default), false otherwise.
+     */
+    public void setAutoSave(boolean shouldSave) {
 
-        return "configuration file is " + repositoryFile;
+        if(!shouldSave) {
+            defaultDbDescriptor.setUseAutoCommit(JdbcConnectionDescriptor.AUTO_COMMIT_SET_FALSE);
+        }
+        else {
+            //set to OJB default
+            defaultDbDescriptor.setUseAutoCommit(JdbcConnectionDescriptor.AUTO_COMMIT_SET_TRUE_AND_TEMPORARY_FALSE);
+        }
     }
 
-    public void setAutoSave(boolean val) {
-
-        //not important - will implement if required later...
-    }
-
+    /**
+     * Checks for auto-commit settings.
+     * @return true if on, false otherwise.
+     */
     public boolean isAutoSaveSet() {
 
-        //not important - will implement later if required...
-        return false;
+        int commit = defaultDbDescriptor.getUseAutoCommit();
+        if(commit == JdbcConnectionDescriptor.AUTO_COMMIT_SET_FALSE) return false;
+        return true;
     }
 
     public void setLogger(Logger l) {
