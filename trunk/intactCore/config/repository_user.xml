@@ -111,8 +111,8 @@
          indexed="true"
       />
       <field-descriptor id="11"
-         name="polymerSeqAc"
-         column="polymerSeq_ac"
+         name="sequence"
+         column="polymerseq"
          jdbc-type="VARCHAR"
       />
       <field-descriptor id="12"
@@ -162,12 +162,12 @@
       </collection-descriptor>
 
        <!-- Interactors and Annotations are linked via a (non-qualified) indirection
-            table Obj2Annot..... -->
+            table INT2ANNOT..... -->
      <collection-descriptor
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          proxy="true"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="INT2ANNOT"
 
       >
          <fk-pointing-to-this-class column="interactor_ac"/>
@@ -294,12 +294,12 @@
       </collection-descriptor>
 
       <!-- Interactors and Annotations are linked via a (non-qualified) indirection
-            table Obj2Annot..... -->
+            table INT2ANNOT..... -->
      <collection-descriptor
          proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="INT2ANNOT"
       >
          <fk-pointing-to-this-class column="interactor_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -461,12 +461,12 @@
       </collection-descriptor>
 
       <!-- Experiments and Annotations are linked via a (non-qualified) indirection
-            table Obj2Annot..... -->
+            table EXP2ANNOT..... -->
       <collection-descriptor
       proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="EXP2ANNOT"
       >
          <fk-pointing-to-this-class column="experiment_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -558,7 +558,7 @@
          proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="BIOSOURCE2ANNOT"
       >
          <fk-pointing-to-this-class column="biosource_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1067,12 +1067,12 @@
       </collection-descriptor>
 
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
-            table Obj2Annot -->
+            table CVOBJECT2ANNOT -->
       <collection-descriptor
       proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1153,12 +1153,12 @@
       </collection-descriptor>
 
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
-            table Obj2Annot -->
+            table CVOBJECT2ANNOT -->
      <collection-descriptor
      proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1244,12 +1244,12 @@
       </collection-descriptor>
 
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
-            table Obj2Annot -->
+            table CVOBJECT2ANNOT -->
      <collection-descriptor
      proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1330,12 +1330,12 @@
       </collection-descriptor>
 
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
-            table Obj2Annot -->
+            table CVOBJECT2ANNOT -->
      <collection-descriptor
      proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1439,12 +1439,12 @@
       </collection-descriptor>
 
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
-            table Obj2Annot -->
+            table CVOBJECT2ANNOT -->
      <collection-descriptor
      proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1524,12 +1524,12 @@
       </collection-descriptor>
 
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
-            table Obj2Annot -->
+            table CVOBJECT2ANNOT -->
     <collection-descriptor
     proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1609,12 +1609,12 @@
       </collection-descriptor>
 
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
-            table Obj2Annot -->
+            table CVOBJECT2ANNOT -->
      <collection-descriptor
      proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="OBJ2ANNOT"
+         indirection-table="CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
