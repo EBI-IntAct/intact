@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.commons.search;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Query;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Alias;
@@ -46,7 +45,6 @@ public class SearchHelper implements SearchHelperI {
      * Boolean to check if the database is connected
      */
     private Boolean connected;
-
 
     /**
      * Create a search helper for which all the log message will be written by the provided logger.
@@ -462,7 +460,7 @@ public class SearchHelper implements SearchHelperI {
      * @throws uk.ac.ebi.intact.business.IntactException
      *          thrown if there were any search problems
      */
-    private ResultWrapper search(String query, String searchClass, String type, IntactUserI user)
+    private ResultWrapper search(String query, String searchClass, String type, IntactHelper helper, int maximumResultSize)
             throws IntactException {
 
         // first check if we got a type, we have to search for a type if the type is not null
@@ -472,7 +470,7 @@ public class SearchHelper implements SearchHelperI {
 
         // now check for the search Class
 
-        IntactHelper helper = user.getIntactHelper();
+
 
         logger.info("search with value with query : " + query + " searchClass :" + searchClass);
         // replace  the "*" with "%"
@@ -552,9 +550,9 @@ public class SearchHelper implements SearchHelperI {
             }
             logger.info("Count = " + count);
             // check the result size if the result is too large return an empty ResultWrapper
-            if (count > SearchConstants.MAXIMUM_RESULT_SIZE) {
+            if (count > maximumResultSize) {
                 logger.info("Result too Large return an empty result Wrapper");
-                return new ResultWrapper(count, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
+                return new ResultWrapper(count, maximumResultSize, resultInfo);
             }
 
             // we got an result, and it's in the limit, so now we need the ac's
@@ -588,7 +586,7 @@ public class SearchHelper implements SearchHelperI {
                 clazz = Class.forName(className);
                 searchResult.add(helper.getObjectByAc(clazz, ac));
             }
-            return new ResultWrapper(searchResult, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
+            return new ResultWrapper(searchResult, maximumResultSize, resultInfo);
 
         }
         catch (SQLException se) {
@@ -625,19 +623,19 @@ public class SearchHelper implements SearchHelperI {
      *
      * @param searchValue the user-specified search value
      * @param type        type String  the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
-     * @param user        user f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
+     * @param helper      user f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
      * @return the result wrapper which contains the result of the search
      * @throws uk.ac.ebi.intact.business.IntactException
      *          thrown if there were any search problems
      */
-    private ResultWrapper getInteractors(final String searchValue, String type, IntactUserI user)
+    private ResultWrapper getInteractors(final String searchValue, String type, IntactHelper helper, int numberOfResults)
             throws IntactException {
 
         logger.info("search Interactor");
 
         // getting all results for proteins and interactions
-        ResultWrapper proteins = this.search(searchValue, "Protein", type, user);
-        ResultWrapper interactions = this.search(searchValue, "Interaction", type, user);
+        ResultWrapper proteins = this.search(searchValue, "Protein", type, helper, numberOfResults);
+        ResultWrapper interactions = this.search(searchValue, "Interaction", type, helper, numberOfResults);
 
         // now check whats going on with the results and calculate the summ of both
         if (proteins.isTooLarge() || interactions.isTooLarge()) {
@@ -669,7 +667,7 @@ public class SearchHelper implements SearchHelperI {
 
             logger.info("return empty resultwrapper");
 
-            return new ResultWrapper(count, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
+            return new ResultWrapper(count, numberOfResults, resultInfo);
 
         }
         else {
@@ -677,7 +675,7 @@ public class SearchHelper implements SearchHelperI {
             Collection temp = new ArrayList(proteins.getResult().size() + interactions.getResult().size());
             temp.addAll(proteins.getResult());
             temp.addAll(interactions.getResult());
-            return new ResultWrapper(temp, SearchConstants.MAXIMUM_RESULT_SIZE);
+            return new ResultWrapper(temp, numberOfResults);
         }
     }
 
@@ -686,22 +684,22 @@ public class SearchHelper implements SearchHelperI {
      * the object which fits by the query. If the result size is too large, you will get back an empty
      * uk.ac.ebi.intact.application.commons.search.ResultWrapper which contains a statistic for the results
      *
-     * @param query the user-specified search value
-     * @param type  String the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
-     * @param user  user f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
+     * @param query  the user-specified search value
+     * @param type   String the filter type (ac, shortlabel, xref etc.) if type is null it will be 'all'
+     * @param helper user f uk.ac.ebi.intact.application.commons.business.IntactUserI for getting the IntactHelper
      * @return the result wrapper which contains the result of the search
      * @throws uk.ac.ebi.intact.business.IntactException
      *          thrown if there were any search problems
      */
     public ResultWrapper searchFast(String query, String searchClass, String type,
-                                    IntactUserI user)
+                                    IntactHelper helper, int numberOfResults)
             throws IntactException {
 
         if (searchClass.equalsIgnoreCase("Interactor")) {
-            return this.getInteractors(query, type, user);
+            return this.getInteractors(query, type, helper, numberOfResults);
         }
         else {
-            return this.search(query, searchClass, type, user);
+            return this.search(query, searchClass, type, helper, numberOfResults);
         }
     }
 
