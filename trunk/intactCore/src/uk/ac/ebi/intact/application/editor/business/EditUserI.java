@@ -58,8 +58,6 @@ public interface EditUserI extends Serializable {
      */
     public boolean isEditing();
 
-    // Methods releated to drop down lists
-
     // Transaction Methods
 
     public void begin() throws IntactException;
