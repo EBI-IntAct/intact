@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view;
 
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -55,7 +56,8 @@ public class ResultBean implements Serializable {
         myAc = annobj.getAc();
         myShortLabel = annobj.getShortLabel();
         myFullName = annobj.getFullName();
-        mySearchClass = annobj.getClass().getName();
+//        mySearchClass = annobj.getClass().getName();
+        mySearchClass = IntactHelper.getRealClassName(annobj).getName();
     }
 
     /**
