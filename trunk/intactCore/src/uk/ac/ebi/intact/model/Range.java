@@ -56,7 +56,7 @@ public class Range extends BasicObjectImpl {
     /**
      * Sequence size limit for this class
      */
-    private static final int MAX_SEQ_SIZE = 100;
+    public static final int MAX_SEQ_SIZE = 100;
 
     /**
      * TODO Comments
