@@ -258,6 +258,7 @@ public class Graph2FoldedMIF {
                 throw new ElementNotParseableException("Interactor without experiment:" + e.getMessage());
             }
         }
+
         //getComponent1/2 ...
         Element psiParticipantList = doc.createElement("participantList");
         psiInteraction.appendChild(psiParticipantList);
@@ -273,20 +274,15 @@ public class Graph2FoldedMIF {
             }
         }
 
-        // TODO: shouldn't it be in the experiment scope ?
-        //because we cannot directly get related interactionTypes, we generate them out of related Experiments
-        Collection relInteractionTypes = getRelInteractionTypes(relExperiments);
-        Iterator relInteractionTypesIterator = relInteractionTypes.iterator();
-        while (relInteractionTypesIterator.hasNext()) {
-            CvInteraction cvInteraction = (CvInteraction) relInteractionTypesIterator.next();
-            Element psiInteractionType = null;
-            try {
-                psiInteractionType = procCvInteractionType(cvInteraction);
-                psiInteraction.appendChild(psiInteractionType);
-            } catch (ElementNotParseableException e) {
-                logger.info("interactionType failed (not required):" + e.getMessage());
-            } // not one is required - so dont worry
-        }
+        // CvInteractionType of the Interaction
+        Element psiInteractionType = null;
+        try {
+            psiInteractionType = procCvInteractionType( edge.getComponent1().getInteraction().getCvInteractionType() );
+            psiInteraction.appendChild(psiInteractionType);
+        } catch (ElementNotParseableException e) {
+            logger.info("interactionType failed (not required):" + e.getMessage());
+        } // not one is required - so dont worry
+
         //because we cannot directly get Xref , we get it this way
         try {
             Collection xrefs = edge.getComponent1().getInteraction().getXrefs();
@@ -304,7 +300,6 @@ public class Graph2FoldedMIF {
         }
         return psiInteraction;
     }
-
 
 
     /**
@@ -488,7 +483,7 @@ public class Graph2FoldedMIF {
             }
         }
         try {
-            Element psiXref = procXrefCollection(cvInteractionDetection.getXrefs());
+            Element psiXref = procXrefCollectionOfControlledVocabulary(cvInteractionDetection.getXrefs());
             psiInteractionDetection.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
             logger.warn("xref failed (required):" + e.getMessage());
@@ -516,7 +511,7 @@ public class Graph2FoldedMIF {
      * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if PSIrequired Elements are missing within graph
      * @see uk.ac.ebi.intact.model.CvInteraction
      */
-    private Element procCvInteractionType(CvInteraction cvInteractionType) throws ElementNotParseableException {
+    private Element procCvInteractionType(CvInteractionType cvInteractionType) throws ElementNotParseableException {
        /* TODO: could be factorized with the procCvInteractionDetection if
           TODO: the name of the node is given in parameter.
         */
@@ -532,8 +527,9 @@ public class Graph2FoldedMIF {
                 throw new ElementNotParseableException("no cvInteractionType ShortLabel");
             }
         }
+
         try {
-            Element psiXref = procXrefCollection(cvInteractionType.getXrefs());
+            Element psiXref = procXrefCollectionOfControlledVocabulary(cvInteractionType.getXrefs());
             psiInteractionDetection.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
             logger.warn("xref failed (required):" + e.getMessage());
@@ -546,6 +542,7 @@ public class Graph2FoldedMIF {
                 throw new ElementNotParseableException("no cvInteractionType Xref");
             }
         }
+
         //returning result DOMObject
         if (!psiInteractionDetection.hasChildNodes()) {
             logger.warn("cvInteractionType failed, no child elements.");
@@ -575,7 +572,7 @@ public class Graph2FoldedMIF {
             }
         }
         try {
-            Element psiXref = procXrefCollection(cvIdentification.getXrefs());
+            Element psiXref = procXrefCollectionOfControlledVocabulary(cvIdentification.getXrefs());
             psiParticipantDetection.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
             logger.warn("xref failed (required):" + e.getMessage());
@@ -816,7 +813,7 @@ public class Graph2FoldedMIF {
             }
         }
         try {
-            Element psiXref = procXrefCollection(cvFeatureType.getXrefs());
+            Element psiXref = procXrefCollectionOfControlledVocabulary(cvFeatureType.getXrefs());
             psiFeatureDescription.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
             logger.warn("xref failed (required):" + e.getMessage());
@@ -858,7 +855,7 @@ public class Graph2FoldedMIF {
             }
         }
         try {
-            Element psiXref = procXrefCollection(cvFeatureIdentification.getXrefs());
+            Element psiXref = procXrefCollectionOfControlledVocabulary(cvFeatureIdentification.getXrefs());
             psiFeatureDetection.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
             logger.warn("xref failed (required):" + e.getMessage());
@@ -932,7 +929,7 @@ public class Graph2FoldedMIF {
         //getReference @todo
         //getXref
         try {
-            Element psiXref = procXrefCollection(interactor.getXrefs());
+            Element psiXref = procXrefCollectionOfProtein( interactor.getXrefs() ) ;
             psiProteinInteractor.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
             logger.info("xref failed (not required):" + e.getMessage());
@@ -1000,12 +997,95 @@ public class Graph2FoldedMIF {
         return psiSequence;
     }
 
+    /**
+     * Selection of the primaryRef if the collection belongs to a Protein.
+     *
+     * @param xrefs xrefs from which we'll try to find a primaryRef.
+     * @return DOM-Object, representing a <xref>
+     * @throws ElementNotParseableException
+     */
+    private Element procXrefCollectionOfProtein( final Collection xrefs )
+            throws ElementNotParseableException {
+
+        // keep track of the existence of a primary Xref
+        Xref primaryXref = null;
+
+
+        //local elements processing...
+        //the first uniprot Intact Xref (preferably with identity qualifier) will become primaryRef in PSI
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            final Xref xref = (Xref) iterator.next();
+            final CvXrefQualifier cvXrefQualifier = xref.getCvXrefQualifier();
+            final CvDatabase db = xref.getCvDatabase();
+
+            if( cvXrefQualifier != null ) {
+                if( "identity".equals( cvXrefQualifier.getShortLabel() ) &&
+                    "uniprot".equals( db.getShortLabel() ) ) {
+                    // found Xref( uniprot, identity ) -> we can stop
+                    primaryXref = xref;
+                    break;
+                } else {
+                    // found Xref( uniprot, not identity) -> carry on searching in case we find an identity later.
+                    primaryXref = xref;
+                }
+            }
+        }
+
+        return procXrefCollection( xrefs, primaryXref );
+    }
 
     /**
-     * This method gets an Collection of Xfres and, beacause PSI often does not allow a list of xrefs,
+     * Selection of the primaryRef if the collection belongs to a CvObject.
+     *
+     * @param xrefs xrefs from which we'll try to find a primaryRef.
+     * @return DOM-Object, representing a <xref>
+     * @throws ElementNotParseableException
+     */
+    private Element procXrefCollectionOfControlledVocabulary( final Collection xrefs )
+            throws ElementNotParseableException {
+
+         // keep track of the existence of a primary Xref
+        Xref primaryXref = null;
+
+
+        //local elements processing...
+        //the first uniprot Intact Xref (preferably with identity qualifier) will become primaryRef in PSI
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            final Xref xref = (Xref) iterator.next();
+            final CvDatabase db = xref.getCvDatabase();
+
+            if( "psi-mi".equals( db.getShortLabel() ) ) {
+                // found Xref( psi-mi ) -> we can stop
+                primaryXref = xref;
+                break;
+            } else {
+                // found Xref( psi-mi ) -> carry on searching in case we find an identity later.
+                primaryXref = xref;
+            }
+        }
+
+        return procXrefCollection( xrefs, primaryXref );
+    }
+
+
+    /**
+     * Create the DOM representation for a Collection of Xref without particular criteria about the
+     * selection of the primaryRef
+     *
+     * @param xrefs xrefs from which we'll try to find a primaryRef.
+     * @return DOM-Object, representing a <xref>
+     * @throws ElementNotParseableException
+     */
+    private Element procXrefCollection( final Collection xrefs ) throws ElementNotParseableException {
+           return procXrefCollection( xrefs, null );
+    }
+
+
+    /**
+     * This method gets an Collection of Xref and, beacause PSI often does not allow a list of xrefs,
      * takes the 1st primary ref as psiPrimaryRef and all others as secondary Refs.
-     * if no SPTR xref is found, make the first one the primary Xref.
-     * This SPTR Xref is only valid for Interactor, however that function is used also with :
+     * if no UNIPROT xref is found, make the first one the primary Xref.
+     * This UNIPROT Xref is only valid for Interactor, however that function is used also with :
      * CvInteraction
      * CvIdentification
      * CvFeature
@@ -1019,30 +1099,10 @@ public class Graph2FoldedMIF {
      *          if it is not defined
      * @see uk.ac.ebi.intact.model.Xref
      */
-    private Element procXrefCollection( Collection xrefs ) throws ElementNotParseableException {
-        // keep track of the existence of a primary Xref
-        Xref primaryXref = null;
+    private Element procXrefCollection( final Collection xrefs, Xref primaryXref ) throws ElementNotParseableException {
 
         //generate DOM-Element
         Element psiXref = doc.createElement( "xref" );
-        //local elements processing...
-        //the first uniprot Intact Xref (preferably with identity qualifier) will become primaryRef in PSI
-        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
-            final Xref xref = (Xref) iterator.next();
-            final CvXrefQualifier cvXrefQualifier = xref.getCvXrefQualifier();
-
-            if( xref.getCvDatabase().getShortLabel().equalsIgnoreCase( "uniprot" ) ) {
-
-                if( cvXrefQualifier != null && cvXrefQualifier.getShortLabel().equalsIgnoreCase( "identity" ) ) {
-                    // found Xref( uniprot, identity ) -> we can stop
-                    primaryXref = xref;
-                    break;
-                } else {
-                    // found Xref( uniprot, not identity) -> carry on searching in case we find an identity later.
-                    primaryXref = xref;
-                }
-            }
-        }
 
         if( primaryXref != null ) {
             try {
@@ -1061,6 +1121,7 @@ public class Graph2FoldedMIF {
             try {
                 Element psiRef = null;
                 if( primaryXref == null ) {
+                    primaryXref = xref;
                     psiRef = procPrimaryRef( xref );
                 } else {
                     if( primaryXref == xref ) {
@@ -1076,13 +1137,16 @@ public class Graph2FoldedMIF {
                 logger.warn( "Xref without primary db or id found ! Ignoring !" ); // not required here - so dont worry
             }
         }
+
         //returning result DOMObject
         if( !psiXref.hasChildNodes() ) {
             logger.warn( "xrefcollection failed, no child elements." );
             throw new ElementNotParseableException( "Xref has no Child Elements" );
         }
+
         return psiXref;
     }
+
 
     /**
      * This method gets a Xref and convert it to xref with one primaryRef
@@ -1636,25 +1700,5 @@ public class Graph2FoldedMIF {
         }
 
         return psiNames;
-    }
-
-
-    /**
-     * WorkAround Method getRelInteractionTypes retrieves a Collection of all related InteractionTypes
-     * of an Collection of Experiments
-     * @param relExperiments where related InteractionTypes are returned for
-     * @return Collection of Features
-     * @see uk.ac.ebi.intact.model.Feature
-     */
-
-    private Collection getRelInteractionTypes(Collection relExperiments) {
-        // TODO: an HashSet would me more appropriate ? this is a distinct set of CvInteraction !
-        Collection relInteractionTypes = new ArrayList( relExperiments.size() );
-        Iterator relExperimentsIterator = relExperiments.iterator();
-        while (relExperimentsIterator.hasNext()) {
-            Experiment experiment = (Experiment) relExperimentsIterator.next();
-            relInteractionTypes.add(experiment.getCvInteraction());
-        }
-        return relInteractionTypes;
     }
 }
