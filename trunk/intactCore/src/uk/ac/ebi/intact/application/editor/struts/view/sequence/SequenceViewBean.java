@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.util.List;
 
@@ -130,8 +131,17 @@ public class SequenceViewBean extends AbstractEditViewBean {
         if (getSequence().length() > 0) {
             // The current protein.
             Protein prot = (Protein) getAnnotatedObject();
-            // Only set the sequence for when we have a seq.
-            prot.setSequence(user.getIntactHelper(), getSequence());
+            IntactHelper helper = null;
+            try {
+                // Only set the sequence for when we have a seq.
+                helper = user.getIntactHelper();
+                prot.setSequence(helper, getSequence());
+            }
+            finally {
+                if (helper != null) {
+                    helper.closeStore();
+                }
+            }
         }
     }
 
