@@ -284,6 +284,19 @@ public class Component extends BasicObjectImpl {
     public void setExpressedInAc(String ac){
         this.expressedInAc = ac;
     }
+
+    /**
+     * This is a package visible method specifically for the clone method
+     * of InteractionImpl class. The present setInteraction method changes
+     * the argument passed, thus causing changes to the source of the
+     * clone.
+     *
+     * @param interaction the interaction to set. This simply replaces
+     * the existing interaction.
+     */
+    void setInteractionForClone(Interaction interaction) {
+        this.interaction = interaction;
+    }
 } // end Component
 
 
