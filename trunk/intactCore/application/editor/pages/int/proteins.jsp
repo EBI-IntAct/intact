@@ -24,7 +24,6 @@
 <c:set var="rolelist_" value="${view.addProteinRoleMenu}"/>
 
 <%-- BioSource menu lists --%>
-<c:set var="biosrclist" value="${view.editBioSourceMenu}"/>
 <c:set var="biosrclist_" value="${view.addBioSourceMenu}"/>
 
 <h3>Proteins</h3>
@@ -174,7 +173,7 @@
                     </td>
                     <td class="tableCell">
                         <html:select name="proteins" property="expressedIn" indexed="true">
-                            <html:options name="biosrclist" />
+                            <html:options name="biosrclist_" />
                         </html:select>
                     </td>
                 </c:if>
