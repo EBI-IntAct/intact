@@ -102,42 +102,54 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
             // Therefore we need to keep track of Interactions already processed.
             // TODO: could be set to the maximum size.
             HashSet processedInteractions = new HashSet();
-
+            logger.info("Doing binary view for Interactor:");
+            logger.info("class: " + query.getClass().getName());
+            logger.info("AC: " + query.getAc());
+            logger.info("label: " + query.getShortLabel());
             while (i.hasNext()){
                 Component c1 = (Component) i.next();
                 Interaction interaction = c1.getInteraction();
-                if ( ! processedInteractions.contains( interaction ) ) {
+                if(c1 != null) logger.error("Component details: " + c1.toString());
+                if(interaction != null) {
+                logger.info("Related Interaction:");
+                logger.info("class: " + interaction.getClass().getName());
+                logger.info("label: " + interaction.getShortLabel());
+                    if ( ! processedInteractions.contains( interaction ) ) {
 
-                    // Keep list of processed Interactions
-                    processedInteractions.add( interaction );
+                        // Keep list of processed Interactions
+                        processedInteractions.add( interaction );
 
-                    // Insert all Interactors of the current interaction
-                    Iterator j = interaction.getComponents().iterator();
-                    while (j.hasNext()) {
-                        Component c2 = (Component) j.next();
-                        Interactor result = c2.getInteractor();
+                        // Insert all Interactors of the current interaction
+                        Iterator j = interaction.getComponents().iterator();
+                        while (j.hasNext()) {
+                            Component c2 = (Component) j.next();
+                            Interactor result = c2.getInteractor();
 
-                        /* The query should not be added as a result.
-                         * However, if e.g. the query interacts with itself,
-                         * it should be listed. Therefore, compare the components.
-                         * If getStoichiometry >= 2, we have a homodimer,
-                         * which should also be listed as a self-interaction.
-                         */
-                        if (( c1 != c2 ) || (c2.getStoichiometry () >= 2.0 )) {
-                            // Now insert the current interaction appropriately
-                            HashSet interactionsOfQueryAndResult =
-                                    (HashSet) currentResults.get( result );
-                            if (null == interactionsOfQueryAndResult) {
-                                interactionsOfQueryAndResult = new HashSet();
+                            /* The query should not be added as a result.
+                             * However, if e.g. the query interacts with itself,
+                             * it should be listed. Therefore, compare the components.
+                             * If getStoichiometry >= 2, we have a homodimer,
+                             * which should also be listed as a self-interaction.
+                             */
+                            if (( c1 != c2 ) || (c2.getStoichiometry () >= 2.0 )) {
+                                // Now insert the current interaction appropriately
+                                HashSet interactionsOfQueryAndResult =
+                                        (HashSet) currentResults.get( result );
+                                if (null == interactionsOfQueryAndResult) {
+                                    interactionsOfQueryAndResult = new HashSet();
 
-                                // add a new, empty HashSet
-                                currentResults.put( result, interactionsOfQueryAndResult );
-                            }
+                                    // add a new, empty HashSet
+                                    currentResults.put( result, interactionsOfQueryAndResult );
+                                }
 
-                            interactionsOfQueryAndResult.add( interaction );
-                        } // if
-                    } // while
-                } // if
+                                interactionsOfQueryAndResult.add( interaction );
+                            } // if
+                        } // while
+                    }
+                }// if
+                else {
+                    logger.error("Protein is not connected to an Interaction!");
+                }
             } // while
         } // if
     } // addInteractor
