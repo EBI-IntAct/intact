@@ -252,8 +252,6 @@
         <copy todir="${temp.web}/WEB-INF/tld">
             <fileset dir="${intact.app.dir}/tld">
                 <include name="*.tld"/>
-                <!-- Don't need intact.tld for this application -->
-                <exclude name="intact.tld"/>
             </fileset>
             <!-- Editor tag libraries. -->
             <fileset dir="${tld.dir}"/>
