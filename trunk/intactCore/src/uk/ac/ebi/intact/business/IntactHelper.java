@@ -1132,7 +1132,7 @@ public class IntactHelper implements SearchI, Externalizable {
      * Searches for objects by classname and Xref.
      *
      * @param clazz the class we are looking for
-     * @param database the CvDatase of the Xref that links back to the object of type clazz
+     * @param database the CvDatabase of the Xref that links back to the object of type clazz
      * @param aPrimaryId the primaryId of the Xref
      *
      * @return a Collection of object of type clazz for which a Xref having the given primaryId
@@ -1154,6 +1154,45 @@ public class IntactHelper implements SearchI, Externalizable {
                 ||
                 ( null == database && null == xref.getCvDatabase() ) ) {
                 results.addAll( this.search( clazz.getName(), "ac", xref.getParentAc() ) );
+            }
+        }
+        return results;
+    }
+
+    /**
+     * Searches for objects by classname and Xref.
+     *
+     * @param clazz the class we are looking for
+     * @param database the CvDatabase of the Xref that links back to the object of type clazz
+     * @param qualifier the CvXrefQualifier of the Xref that links back to the object of type clazz
+     * @param aPrimaryId the primaryId of the Xref
+     *
+     * @return a Collection of object of type clazz for which a Xref having the given primaryId
+     *         and CvDatabase has been found.
+     */
+    public Collection getObjectsByXref( Class clazz,
+                                        CvDatabase database,
+                                        CvXrefQualifier qualifier,
+                                        String aPrimaryId ) throws IntactException {
+
+        // get the Xref from the database
+        Collection xrefs = this.search( Xref.class.getName(), "primaryId", aPrimaryId );
+        Collection results = new ArrayList();
+
+        // add all referenced objects of the searched class
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            Xref xref = (Xref) iterator.next();
+            // if the CvDatabase are the same (null or not), we add the parent.
+            if( ( null != database && database.equals( xref.getCvDatabase() ) )
+                ||
+                ( null == database && null == xref.getCvDatabase() ) ) {
+
+                if( ( null != qualifier && qualifier.equals( xref.getCvXrefQualifier() ) )
+                    ||
+                    ( null == qualifier && null == xref.getCvXrefQualifier() ) ) {
+
+                    results.addAll( this.search( clazz.getName(), "ac", xref.getParentAc() ) );
+                }
             }
         }
         return results;
