@@ -6,17 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
-import org.apache.commons.beanutils.DynaBean;
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.*;
 import org.apache.struts.config.FormBeanConfig;
-import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.util.RequestUtils;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,7 +26,7 @@ import javax.servlet.http.HttpSession;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class AbstractEditorAction extends Action {
+public abstract class AbstractEditorAction extends Action implements ForwardConstants {
 
     /** The global Intact error key. */
     public static final String EDITOR_ERROR = "EditError";
@@ -40,12 +39,36 @@ public abstract class AbstractEditorAction extends Action {
     /**
      * The key to success action.
      */
-    protected static final String FORWARD_SUCCESS = "success";
+//    protected static final String FORWARD_SUCCESS = "success";
 
     /**
      * The key to failure action.
      */
-    protected static final String FORWARD_FAILURE = "failure";
+//    protected static final String FORWARD_FAILURE = "failure";
+
+    /**
+     * Forward to the search page.
+     */
+//    protected static final String FORWARD_SEARCH = "search";
+
+    /**
+     * Forward to the results page.
+     */
+//    protected static final String FORWARD_RESULTS = "results";
+
+    // Class Methods
+
+    /**
+     * Returns true if given value is empty.
+     * @param value the value to check for empty.
+     * @return true if <code>value</code> is empty; any excess spaces
+     * are removed before checking for empty.
+     */
+    public static boolean isPropertyEmpty(String value) {
+        return value.trim().length() == 0;
+    }
+
+    // Protected methods
 
     /**
      * Returns the only instance of Intact Service instance.
@@ -156,8 +179,7 @@ public abstract class AbstractEditorAction extends Action {
      * </pre>
      */
     protected String getForwardAction(EditUserI user) {
-        return user.hasSingleSearchResult() ? EditorConstants.FORWARD_SEARCH :
-                EditorConstants.FORWARD_RESULTS;
+        return user.hasSingleSearchResult() ? SEARCH : RESULT;
     }
 
     /**
@@ -188,15 +210,15 @@ public abstract class AbstractEditorAction extends Action {
      * @throws InstantiationException errors in creating the bean
      * @throws IllegalAccessException errors in creating the bean
      */
-    protected DynaBean getDynaBean(HttpServletRequest request, String formName)
-            throws InstantiationException, IllegalAccessException {
-        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(
-                Globals.MODULE_KEY);
-        FormBeanConfig config = appConfig.findFormBeanConfig(formName);
-        DynaActionFormClass dynaClass =
-                DynaActionFormClass.createDynaActionFormClass(config);
-        return dynaClass.newInstance();
-    }
+//    protected DynaBean getDynaBean(HttpServletRequest request, String formName)
+//            throws InstantiationException, IllegalAccessException {
+//        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(
+//                Globals.MODULE_KEY);
+//        FormBeanConfig config = appConfig.findFormBeanConfig(formName);
+//        DynaActionFormClass dynaClass =
+//                DynaActionFormClass.createDynaActionFormClass(config);
+//        return dynaClass.newInstance();
+//    }
 
     /**
      * Returns true if errors in stored in the request
@@ -315,16 +337,6 @@ public abstract class AbstractEditorAction extends Action {
      */
     protected boolean isPropertyEmpty(DynaActionForm form, String name) {
         return ((String) form.get(name)).trim().length() == 0;
-    }
-
-    /**
-     * Returns true if given value is empty.
-     * @param value the value to check for empty.
-     * @return true if <code>value</code> is empty; any excess spaces
-     * are removed before checking for empty.
-     */
-    protected boolean isPropertyEmpty(String value) {
-        return value.trim().length() == 0;
     }
 
     // Helper Methods
