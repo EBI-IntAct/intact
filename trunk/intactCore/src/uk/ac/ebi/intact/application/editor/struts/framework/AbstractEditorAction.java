@@ -226,11 +226,10 @@ public abstract class AbstractEditorAction extends Action {
     /**
      * Returns the forward for input.
      * @param mapping the mapping to get forward action.
-     * @return forward action stored in <code>mapping</code> under
-     * {@link uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants#FORWARD_INPUT}.
+     * @return forward action stored in <code>mapping</code> under "input".
      */
     protected ActionForward inputForward(ActionMapping mapping) {
-        return mapping.findForward(EditorConstants.FORWARD_INPUT);
+        return mapping.findForward("input");
     }
 
     // Helper Methods
