@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.business;
 
 import java.util.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -21,6 +23,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.util.GoTools;
+import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DAOFactory;
@@ -161,6 +164,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * Stores the class name of the last search.
      */
     private String myLastQueryClass;
+
+    /**
+     * Reference to Newt proxy server instance.
+     */
+    private transient NewtServerProxy myNewtServer;
 
     // Static Methods.
 
@@ -495,6 +503,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public Date logoffTime() {
         return mySessionEndTime;
+    }
+
+    public NewtServerProxy getNewtProxy(URL url) {
+        if (myNewtServer == null) {
+            myNewtServer = new NewtServerProxy(url);
+        }
+        return myNewtServer;
     }
 
     // Helper methods.
