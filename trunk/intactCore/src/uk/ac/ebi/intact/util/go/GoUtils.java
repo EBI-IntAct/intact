@@ -169,9 +169,24 @@ public class GoUtils {
     private static final int ourMaxNameLen = 250;
 
     /**
+     * The short label of the pubmed database.
+     */
+    private static final String ourPubMedDB = "pubmed";
+
+    /**
+     * The short label of the resid database.
+     */
+    private static final String ourResIdDB = "resid";
+
+    /**
      * The pattern to match the PubMed id.
      */
     private static final Pattern ourPubmedRegex = Pattern.compile("PMID:(\\d+)");
+
+    /**
+     * The line identifier for a RES.
+     */
+    private static final String ourResId = "RESID:";
 
     // Private attributes
 
@@ -522,12 +537,14 @@ public class GoUtils {
                     myGoIdDatabase);
         }
         CvDatabase pubmedDB = (CvDatabase) myHelper.getObjectByLabel(
-                CvDatabase.class, "pubmed");
+                CvDatabase.class, ourPubMedDB);
+        CvDatabase residDB = (CvDatabase) myHelper.getObjectByLabel(
+                CvDatabase.class, ourResIdDB);
         CvXrefQualifier goDefRef = (CvXrefQualifier) myHelper.getObjectByLabel(
                 CvXrefQualifier.class, "go-definition-ref");
 
         // Update shortLabel. Label has to be unique!
-        String goTerm = goRec.getGoTerm();//(String) definition.get("term");
+        String goTerm = goRec.getGoTerm();
 
         // The short label for the current node.
         String label;
@@ -607,13 +624,28 @@ public class GoUtils {
 
         // add definition references
         for (Iterator defs = goRec.getDefinitionReferences(); defs.hasNext();) {
-            Matcher m = ourPubmedRegex.matcher((String) defs.next());
+            String defRef = (String) defs.next();
+            Matcher m = ourPubmedRegex.matcher(defRef);
             if (m.matches()) {
                 // add Pubmed xref
                 Xref xref = new Xref(inst, pubmedDB, m.group(1), null, null, goDefRef);
                 if (!current.getXrefs().contains(xref)) {
                     current.addXref(xref);
                     myHelper.create(xref);
+                }
+                continue;
+            }
+            if (defRef.startsWith(ourResId)) {
+                String residStr = defRef.substring(ourResId.length());
+                StringTokenizer stk = new StringTokenizer(residStr, ",");
+                while (stk.hasMoreTokens()) {
+                    String token = stk.nextToken();
+                    // add Resid xref
+                    Xref xref = new Xref(inst, residDB, token.trim(), null, null, goDefRef);
+                    if (!current.getXrefs().contains(xref)) {
+                        current.addXref(xref);
+                        myHelper.create(xref);
+                    }
                 }
             }
         }
@@ -701,7 +733,8 @@ public class GoUtils {
      * @param out the write to write to
      * @param v14 true for DAG 14 format (the new format).
      */
-    private void printGoDef(CvObject cvobj, PrintWriter out, boolean v14) {
+    private void printGoDef(CvObject cvobj, PrintWriter out, boolean v14)
+            throws IntactException {
         // Write shortlabel (for the old format)
         if (!v14) {
             out.print("shortlabel: ");
@@ -737,17 +770,77 @@ public class GoUtils {
             out.print(a.getCvTopic().getShortLabel() + ": ");
             out.println(a.getAnnotationText());
         }
+        // Print pubmed db info.
+        String pubmedLine = getPubmedString(cvobj);
+        if (pubmedLine != null) {
+            out.print(pubmedLine);
+        }
 
-        // Write definition references
-        Collection xref = cvobj.getXrefs();
-        for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
-            Xref x = (Xref) iterator.next();
-            if (x.getCvDatabase().getShortLabel().equals("pubmed")) {
-                out.print("definition_reference: PMID:");
-                out.println(x.getPrimaryId());
-            }
+        // Print resid db info.
+        String residLine = getResIdString(cvobj);
+        if (residLine != null) {
+            out.println(residLine);
+        }
+        // Need to print a dummy definition reference if none found.
+        if ((pubmedLine == null) && (residLine == null)) {
+            out.println("definition_reference: PMID:INTACT");
         }
         // Blank line to separate an entry.
         out.println();
+    }
+
+    private String getPubmedString(CvObject cvobj) throws IntactException {
+        // The line separator.
+        String nl = System.getProperty("line.separator");
+
+        // Construct the result.
+        StringBuffer sb = new StringBuffer();
+
+        CvDatabase pubmedDB = (CvDatabase) myHelper.getObjectByLabel(
+                CvDatabase.class, ourPubMedDB);
+
+        Collection xref = cvobj.getXrefs();
+        for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
+            Xref x = (Xref) iterator.next();
+            if (!x.getCvDatabase().equals(pubmedDB)) {
+                 continue;
+            }
+            if (x.getCvDatabase().equals(pubmedDB)) {
+                sb.append("definition_reference: PMID:");
+                sb.append(x.getPrimaryId());
+                sb.append(nl);
+            }
+        }
+        return sb.length() > 0 ? sb.toString() : null;
+    }
+
+    private String getResIdString(CvObject cvobj) throws IntactException {
+        // Construct the result.
+        StringBuffer sb = new StringBuffer();
+
+        CvDatabase residDB = (CvDatabase) myHelper.getObjectByLabel(
+                CvDatabase.class, ourResIdDB);
+
+        // A flag to print to print first resid entry.
+        boolean first = true;
+
+        Collection xref = cvobj.getXrefs();
+        for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
+            Xref x = (Xref) iterator.next();
+            if (!x.getCvDatabase().equals(residDB)) {
+                 continue;
+            }
+            if (first) {
+                sb.append("definition_reference: ");
+                sb.append(ourResId);
+                sb.append(x.getPrimaryId());
+                first = false;
+            }
+            else {
+                sb.append(" , ");
+                sb.append(x.getPrimaryId());
+            }
+        }
+        return sb.length() > 0 ? sb.toString() : null;
     }
 }
