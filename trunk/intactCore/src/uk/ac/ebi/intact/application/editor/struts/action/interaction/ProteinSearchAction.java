@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionAc
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.ProteinImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -126,7 +127,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
         }
         else {
             try {
-                rw = user.lookup(Protein.class, param, value, max);
+                rw = user.lookup(ProteinImpl.class, param, value, max);
             }
             catch (IntactException ie) {
                 // This can only happen when problems with creating an internal helper
