@@ -57,9 +57,9 @@ public class ResultAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // The ac to search
-        String ac = request.getParameter("ac");
+        String ac = getValue(request, "ac");
         // The type to edit.
-        String type = request.getParameter("type");
+        String type = getValue(request, "type");
 
         // At this point we should have valid ac and type. Validate them. It is
         // possible for these parameters to contain invalid characters (as a result
@@ -96,6 +96,7 @@ public class ResultAction extends AbstractEditorAction {
             // have been added or removed this way will not be visible until it
             // is removed and reloaded again.
             if ((clazz == Experiment.class) && helper.isInCache(clazz, ac)) {
+                System.out.println("In Cache now");
                 helper.removeFromCache(clazz, ac);
             }
             annobj = (AnnotatedObject) helper.getObjectByAc(clazz, ac);
@@ -111,6 +112,15 @@ public class ResultAction extends AbstractEditorAction {
         LOGGER.info("Number of xrefs: " + annobj.getXrefs().size());
 
         return mapping.findForward(SUCCESS);
+    }
+
+    private static String getValue(HttpServletRequest request, String key) {
+        String value = request.getParameter(key);
+        if (value != null) {
+            return value;
+        }
+        // Coming from SidebarAction class.
+        return (String) request.getAttribute(key);
     }
 
     private Class getModelClass(String type) throws ClassNotFoundException {

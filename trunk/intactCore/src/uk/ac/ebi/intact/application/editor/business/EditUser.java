@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
@@ -196,11 +195,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private String myDatabaseName;
 
     /**
-     * Stores the current query result.
-     */
-    private CriteriaBean mySearchCriteria;
-
-    /**
      * The search helper. This is recreated if necessary.
      */
     private transient SearchHelperI mySearchHelper;
@@ -236,11 +230,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * Contains views when the user navigates from one editor to another.
      */
     private transient Stack myViewStack = new Stack();
-
-    /**
-     * This flag will be
-     */
-//    private boolean myReleaseView;
 
     // ------------------------------------------------------------------------
 
@@ -325,6 +314,12 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Release the current view back to the pool.
         releaseView();
+
+        // Release any views stored on the view stack back to the pool.
+        EditViewBeanFactory factory = EditViewBeanFactory.getInstance();
+        while (!myViewStack.empty()) {
+            factory.returnObject((AbstractEditViewBean) myViewStack.pop());
+        }
     }
 
     // Override Objects's equal method.
@@ -379,7 +374,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void setView(AbstractEditViewBean view) {
-//        // Return the view back to the pool.
+        // Return the view back to the pool.
         releaseView();
         myEditView = view;
     }
@@ -562,18 +557,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return null;
     }
 
-    public CriteriaBean getSearchCriteria() {
-        return mySearchCriteria;
-    }
-
     public void addToSearchCache(Collection results) {
         // Clear previous results.
         mySearchCache.clear();
-
-        // Wrap as ResultsBeans for tag library to display.
-        for (Iterator iter = results.iterator(); iter.hasNext();) {
-            mySearchCache.add(new ResultRowData((AnnotatedObject) iter.next()));
-        }
+        mySearchCache.addAll(results);
     }
 
     public void updateSearchCache(AnnotatedObject annotobj) {
@@ -590,32 +577,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // The result to return.
         try {
             return helper.searchByQuery(clazz, param, value, max);
-        }
-        catch (IntactException e) {
-            // This is an internal error. Log it.
-            getLogger().error("", e);
-            // Rethrow it again for the presentaion layer to handle it
-            throw e;
-        }
-    }
-
-    public ResultWrapper lookup(String className, String value, int max)
-            throws IntactException {
-        // The search helper.
-        SearchHelperI helper = getSearchHelper();
-
-        // The result to return.
-        try {
-            Class clazz = Class.forName(className);
-            ResultWrapper rw = helper.doLookupSimple(clazz, value, max);
-            // Cache the search query.
-            mySearchCriteria = (CriteriaBean) helper.getSearchCritera().iterator().next();
-            return rw;
-        }
-        catch (ClassNotFoundException e) {
-            // This is an internal error. Log it.
-            getLogger().error("", e);
-            throw new IntactException(e.getMessage());
         }
         catch (IntactException e) {
             // This is an internal error. Log it.

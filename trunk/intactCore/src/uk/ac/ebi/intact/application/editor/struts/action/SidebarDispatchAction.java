@@ -6,17 +6,17 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
+import org.apache.ojb.broker.query.Query;
 import org.apache.struts.action.*;
-import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.OJBQueryFactory;
+import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -32,12 +32,12 @@ import java.util.Map;
  *      parameter="dispatch"
  *
  * @struts.action-forward
- *      name="single"
+ *      name="create"
  *      path="/do/choose"
  *
  * @struts.action-forward
- *      name="create"
- *      path="/do/choose"
+ *      name="secure"
+ *      path="/do/secure/edit"
  */
 public class SidebarDispatchAction extends AbstractEditorDispatchAction {
 
@@ -92,62 +92,81 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // The maximum number of items to retrieve.
         int max = getService().getInteger("search.max");
 
-        // The wrapper to hold lookup result.
-        ResultWrapper rw = null;
+        // The query factory to get a query.
+        OJBQueryFactory qf = OJBQueryFactory.getInstance();
+
+        // The class for the topic.
+        Class searchClass = Class.forName(getService().getClassName(topic));
+
+        // The query to get a search result size.
+        Query countQuery = qf.getSearchCountQuery(searchClass, searchString);
+
+        // The results to display.
+        List results = new ArrayList();
+
+        // The actual search count.
+        int count = 0;
+
+        IntactHelper helper = new IntactHelper();
         try {
-            rw = user.lookup(getService().getClassName(topic), searchString, max);
+            Iterator iter0 = helper.getIteratorByReportQuery(countQuery);
+            count =  ((Long) ((Object[])iter0.next())[0]).intValue();
+            if ((count > 0) || (count <= max)) {
+                // The search query
+                Query searchQuery = qf.getSearchQuery(searchClass, searchString);
+
+                // Not empty and within the max limits. Do the search
+                Iterator iter1 = helper.getIteratorByReportQuery(searchQuery);
+
+                // Fill the results set.
+                while (iter1.hasNext()) {
+                    results.add(new ResultRowData((Object[])iter1.next(), searchClass));
+                }
+            }
         }
-        catch (IntactException ie) {
-            // This can only happen when problems with creating an internal helper
-            // This error is already logged from the User class.
-            ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.intact"));
-            saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+        finally {
+            helper.closeStore();
         }
 
-        // Check the size
-        if (rw.isTooLarge()) {
+        // Too large result set?
+        if (count > max) {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.search.large",
-                            Integer.toString(rw.getPossibleResultSize())));
+                    new ActionError("error.search.large", Integer.toString(count)));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
 
-        if (rw.isEmpty()) {
+        // Nothing found?
+        if (count == 0) {
             // No matches found - forward to a suitable page
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.search.nomatch",
-                            user.getSearchCriteria().getQuery(), user.getSelectedTopic()));
+                    new ActionError("error.search.nomatch", searchString, topic));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
 
-        // If we retrieved one object then we can go straight to edit page.
-        if (rw.getResult().size() == 1) {
-            // The object to edit.
-            AnnotatedObject annobj = (AnnotatedObject) rw.getResult().iterator().next();
+        // Only one instance found?
+        if (count == 1) {
+            // The search returned only one instance.
+            ResultRowData row = (ResultRowData) results.get(0);
 
-            // The ac of the object about to edit.
-            String ac = annobj.getAc();
-
-            // Try to acuire the lock.
-            ActionErrors errors = acquire(ac, user.getUserName());
+            // Try to acquire the lock.
+            ActionErrors errors = acquire(row.getAc(), user.getUserName());
             if (errors != null) {
                 saveErrors(request, errors);
                 return mapping.findForward(FAILURE);
             }
-            // Set the view to this annotated object.
-            user.setView(annobj);
+            // Set the attributes in the request for the results action to get them
+            request.setAttribute("ac", row.getAc());
+            request.setAttribute("type", row.getType());
 
-            // Single item found
-            return mapping.findForward("single");
+            // Go through the secure action.
+            return mapping.findForward("secure");
         }
-        // Cache the search results.
-        user.addToSearchCache(rw.getResult());
+        // Multiple results found. Cache the search results.
+        user.addToSearchCache(results);
 
         // Move to the results page.
         return mapping.findForward(RESULT);
