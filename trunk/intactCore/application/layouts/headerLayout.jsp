@@ -6,5 +6,5 @@
     Version: $Id$
 --%>
 
-<font size="6"><tiles:getAsString name="header.title"/></font>
+<span class="header"><tiles:getAsString name="header.title"/></span>
 <hr>
