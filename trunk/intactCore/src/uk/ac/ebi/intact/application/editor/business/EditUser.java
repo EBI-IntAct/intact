@@ -19,6 +19,9 @@ import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
+import uk.ac.ebi.intact.application.commons.search.SearchHelper;
+import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.business.IntactException;
@@ -77,18 +80,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     // End of Inner classes
 
-    // Static data
-
-    /**
-     * Single result found with the last search.
-     */
-    private static final int theirSingleEntry = 0;
-
-    /**
-     * Multiple results found with the last search.
-     */
-    private static final int theirMultipleEntries = 1;
-
     // End of static data
 
     /**
@@ -125,11 +116,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient AbstractEditViewBean myEditView;
 
     /**
-     * Stores the status of last search: multiple results or a single result.
-     */
-    private transient int mySearchResultStatus;
-
-    /**
      * Holds the last search results. No need to save search results.
      */
     private transient Collection mySearchCache = new ArrayList();
@@ -151,19 +137,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient Institution myInstitution;
 
     /**
-     * Stores the last query input.
-     */
-    private String myLastQueryInput;
-
-    /**
      * Stores the last query result.
      */
     private String myLastQuery;
 
     /**
-     * Stores the class name of the last search.
+     * The search helper. This is recreated if necessary.
      */
-//    private String myLastQueryClass;
+    private transient SearchHelperI mySearchHelper;
 
     /**
      * Reference to Newt proxy server instance; transient as it is created
@@ -475,14 +456,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
-    public boolean hasSingleSearchResult() {
-        return mySearchResultStatus == theirSingleEntry;
-    }
-
-    public String getSearchInput() {
-        return myLastQueryInput;
-    }
-
     public String getSearchQuery() {
         return myLastQuery;
     }
@@ -503,51 +476,24 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         mySearchCache.add(new ResultBean(myEditView.getAnnotatedObject(), lmr));
     }
 
-    public Collection lookup(String className, String value, boolean cache)
-            throws SearchException {
+    public Collection lookup(String className, String value) throws SearchException {
         // The result to return.
         Collection results = new ArrayList();
-        // The search parameter.
-        String searchParam = "ac";
 
-        //try search on AC first...
-        results = search1(className, searchParam, value);
-        if (results.isEmpty()) {
-            // No matches found - try a search by label now...
-//            super.log("now searching for class " + className + " with label " + value);
-            searchParam = "shortLabel";
-            results = search1(className, searchParam, value);
-            if (results.isEmpty()) {
-                //no match on label - try by xref....
-                //super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
-                searchParam = "primaryId";
-                Collection xrefs = search1(Xref.class.getName(), searchParam, value);
+        // The search helper.
+        SearchHelperI helper = getSearchHelper();
 
-                //could get more than one xref, eg if the primary id is a wildcard search value -
-                //then need to go through each xref found and accumulate the results...
-                Iterator it = xrefs.iterator();
-                Collection partialResults = new ArrayList();
-                searchParam = "ac";
-                while (it.hasNext()) {
-                    partialResults = search1(className, searchParam,
-                            ((Xref) it.next()).getParentAc());
-                    results.addAll(partialResults);
-                }
-                if (results.isEmpty()) {
-                    //no match by xref - try finally by name....
-//                    super.log("trying fullname...last resort");
-                    searchParam = "fullName";
-                    results = search1(className, searchParam, value);
-                }
-            }
+        // The result to return.
+        try {
+            results = helper.doLookup(className, value, this);
         }
-        if (cache) {
-            // Cache the search result statuses.
-            myLastQueryInput = value;
-            myLastQuery = searchParam + "=" + value;
-            mySearchResultStatus = (results.size() == 1)
-                    ? theirSingleEntry : theirMultipleEntries;
+        catch (IntactException e) {
+            String msg = "Failed to find any " + className + " records for " + value;
+            throw new SearchException(msg);
         }
+        CriteriaBean critera = (CriteriaBean)
+                helper.getSearchCritera().iterator().next();
+        myLastQuery = critera.getTarget() + "=" + critera.getQuery();
         return results;
     }
 
@@ -725,6 +671,18 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     // Helper methods.
+
+    /**
+     * @return returns an instance of search helper. A new object is created
+     * if the current search helper is null.
+     */
+    private SearchHelperI getSearchHelper() {
+        if (mySearchHelper == null) {
+            Logger logger = Logger.getLogger(EditorConstants.LOGGER);
+            mySearchHelper = new SearchHelper(logger);
+        }
+        return mySearchHelper;
+    }
 
     /**
      * Starts the editing session.
