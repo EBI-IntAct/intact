@@ -81,7 +81,7 @@ PART 2 : INSTALL THE WEB APPLICATION
 (3) Configure how to access the search application
     ----------------------------------------------
     - edit the 'WEB-INF/config/Search.properties' file.
-    - customize :
+    - you can customize :
         * 'search.url' with the hostname of the server which hosts the search application.
 
 (4) Build the application war file
