@@ -1072,9 +1072,10 @@ public class DRLineExport {
 
                 int count = proteinEligible.size();
                 float percentage = ( (float) count / (float) proteinCount ) * 100;
-                System.out.println( count + " protein" + ( count > 1 ? "s" : "" ) +
-                                    " eligible for export out of " + proteinCount +
-                                    " processed (" + percentage + "%)." );
+                log ( count + " protein" + ( count > 1 ? "s" : "" ) +
+		      " eligible for export out of " + proteinCount +
+		      " processed (" + percentage + "%)." );
+		System.out.print('.');
             }
         } // all proteins
 
