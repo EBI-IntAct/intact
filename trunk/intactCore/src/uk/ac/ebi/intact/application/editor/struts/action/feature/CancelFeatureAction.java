@@ -53,18 +53,11 @@ public class CancelFeatureAction extends AbstractEditorAction {
         // Release the lock.
         user.releaseLock();
 
-        // Reset the dispatch of the interaction form. This is important because
-        // any submit action will act upon this flag (Edit Feature will not invoke
-        // again because dispatch isn't empty).
-        ((FeatureActionForm) form).resetDispatch();
-
         // If it is a new feature then we need to delete this feature if it has
         // been persisted.
         if (((FeatureViewBean) user.getView()).isNewFeature()) {
-//            System.out.println("Is a new feature");
             return mapping.findForward("delete");
         }
-//        System.out.println("is an old feature");
         // Sets the destination interaction to return to.
         setDestinationInteraction(request);
 

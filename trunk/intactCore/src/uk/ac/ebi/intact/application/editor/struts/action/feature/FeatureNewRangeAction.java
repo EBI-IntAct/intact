@@ -36,11 +36,11 @@ public class FeatureNewRangeAction extends CommonDispatchAction {
      */
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
-        map.put("feature.range.button.add", "addFeature");
+        map.put("feature.range.button.add", "addRange");
         return map;
     }
 
-    public ActionForward addFeature(ActionMapping mapping,
+    public ActionForward addRange(ActionMapping mapping,
                                     ActionForm form,
                                     HttpServletRequest request,
                                     HttpServletResponse response)

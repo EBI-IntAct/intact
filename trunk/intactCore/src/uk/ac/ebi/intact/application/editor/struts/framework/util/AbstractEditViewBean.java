@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
-import uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
@@ -24,8 +23,6 @@ import uk.ac.ebi.intact.model.Xref;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
  * This super bean encapsulates behaviour for a common editing session. This
@@ -223,6 +220,10 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     protected void reset(Class clazz) {
         myEditClass = clazz;
+
+        // Clear annotations and xrefs.
+        myAnnotations.clear();
+        myXrefs.clear();
 
         // Set them to null as they may have previous values.
         setAnnotatedObject(null);
@@ -658,26 +659,6 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * Validates the data in the view bean.
-     * @param user handler to the user to access the DB.
-     * @throws ValidationException thrown when this bean contains invalid data.
-     * For example, an experiment must contain non null values for organism,
-     * interaction and identification. Currently this method is empty as no
-     * validations are preformed.
-     */
-//    public void validate(EditUserI user)
-//            throws SearchException, ValidationException {
-//        if (getShortLabel() == null) {
-//            throw new ShortLabelException();
-//        }
-//        // Validate the short label
-//        Matcher matcher = SHORT_LABEL_PAT.matcher(getShortLabel());
-//        if (!matcher.matches()) {
-//            throw new ShortLabelException();
-//        }
-//    }
-
-    /**
      * Copies properties from given form to the bean.
      * @param form the form to update the internal data.
      */
@@ -758,44 +739,6 @@ public abstract class AbstractEditViewBean implements Serializable {
         return false;
     }
 
-//    protected void snapshot(AnnotatedObject annobj, EditUserI user) throws SearchException {
-//        annobj.setFullName(getFullName());
-//
-//        // Add existing annotations.
-//        for (Iterator iter = getAnnotations().iterator(); iter.hasNext();) {
-//            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-//            annobj.addAnnotation(annot);
-//        }
-//
-//        // Add existing xrefs.
-//        for (Iterator iter = getXrefs().iterator(); iter.hasNext();) {
-//            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-//            annobj.addXref(xref);
-//        }
-//
-//        // Create annotations and add them to CV object.
-//        for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
-//            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-//            annobj.addAnnotation(annot);
-//        }
-//        // Delete annotations and remove them from CV object.
-//        for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
-//            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-//            annobj.removeAnnotation(annot);
-//        }
-//
-//        // Create xrefs and add them to CV object.
-//        for (Iterator iter = getXrefsToAdd().iterator(); iter.hasNext();) {
-//            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-//            annobj.addXref(xref);
-//        }
-//        // Delete xrefs and remove them from CV object.
-//        for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
-//            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-//            annobj.removeXref(xref);
-//        }
-//    }
-
     // Protected Methods
 
     /**
@@ -838,6 +781,8 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @param annotations a collection of <code>Annotation</code> objects.
      */
     private void makeCommentBeans(Collection annotations) {
+        // Clear previous annotations.
+        myAnnotations.clear();
         for (Iterator iter = annotations.iterator(); iter.hasNext();) {
             Annotation annot = (Annotation) iter.next();
             myAnnotations.add(new CommentBean(annot));
@@ -850,6 +795,8 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @param xrefs a collection of <code>Xref</code> objects.
      */
     private void makeXrefBeans(Collection xrefs) {
+        // Clear previous xrefs.
+        myXrefs.clear();
         for (Iterator iter = xrefs.iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
             myXrefs.add(new XreferenceBean(xref));
@@ -950,7 +897,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Clears annotations stored transaction containers.
      */
     private void clearTransAnnotations() {
-        myAnnotations.clear();
         myAnnotsToAdd.clear();
         myAnnotsToDel.clear();
         myAnnotsToUpdate.clear();
@@ -960,7 +906,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Clears xrefs stored in transaction containers.
      */
     private void clearTransXrefs() {
-        myXrefs.clear();
         myXrefsToAdd.clear();
         myXrefsToDel.clear();
         myXrefsToUpdate.clear();
