@@ -50,7 +50,7 @@
 
         <tr>
             <td>
-                   <html:text property="AC" value="<%= AC %>" size="12""/>
+                   <html:text property="AC" value="<%= AC %>" size="12"/>
             </td>
 
         </tr>
