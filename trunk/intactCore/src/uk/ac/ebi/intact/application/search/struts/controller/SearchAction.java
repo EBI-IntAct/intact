@@ -141,20 +141,41 @@ public class SearchAction extends IntactBaseAction {
             //1) do a single item view if the request was from a link rather than a search
             //   query (ie a searchClass was specified) - DOES NOT apply to Interactions,
             // because we wnat to see the Protein shortlabels in that case (ie normal view);
-            //2) All other requests go to the 'detail view' for the complex processing
-            if((results.size() == 1) & (!searchClass.equals("")) & (!searchClass.equals("Interaction"))) {
+            //2) A single object view of a Protein not attached to any Interaction;
+            //3) All other requests go to the 'detail view' for the complex processing
+            if((results.size() == 1) & (!searchClass.equals("")) &
+                    (!searchClass.equals("Interaction"))) {
                 System.out.println("single view requested from page link (type given)...");
                 return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
 
             }
-            else {
+            else if ((results.size() == 1) & (searchClass.equals("")) &
+                    (results.iterator().next() instanceof Protein)){
+                //apparently it is possible for the DB to contain Proteins
+                //which are not attached to Interactions - assume for now
+                //that these will be individual (ie SPECIFIC) searches and hence
+                //require single object views.
+                //NB **** most complex case is where the results are > 1 Protein
+                //but a *MIX* of ones that are attached and not attached. This could
+                //happen if eg the shortlabels are similar! Then not all the displays
+                //are the same...would have to be handled in the ProteinPartnerAction
+                //somehow.....
 
-                //set the original search criteria into the session for use by
-                //the view action - needed because if the 'back' button is used from
-                //single object views, the original search details are lost
-                session.setAttribute(SearchConstants.LAST_VALID_SEARCH, searchValue);
-                return mapping.findForward(SearchConstants.FORWARD_DETAIL_ACTION);
-             }
+                //check the Protein for no attached Interactions....
+                Protein protein = (Protein)results.iterator().next();
+                if(protein.getActiveInstance().isEmpty()) {
+                    System.out.println("single view for a non-attached Protein requested..");
+                    return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
+                }
+
+            }
+
+            //set the original search criteria into the session for use by
+            //the view action - needed because if the 'back' button is used from
+            //single object views, the original search details are lost
+            session.setAttribute(SearchConstants.LAST_VALID_SEARCH, searchValue);
+            return mapping.findForward(SearchConstants.FORWARD_DETAIL_ACTION);
+
         }
         catch (IntactException se) {
             // Something failed during search...
