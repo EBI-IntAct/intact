@@ -309,9 +309,6 @@ public class IntactUser implements IntactUserI {
         // build a helper for use throughout a session
         this.intactHelper = new IntactHelper (dataSource);
         logger.info ("IntactHelper created.");
-
-        // TODO: Load all properties files
-
     }
 
     /**
