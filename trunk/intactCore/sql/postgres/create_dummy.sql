@@ -26,7 +26,7 @@ INSERT INTO Institution (shortLabel, fullName, postalAddress, url, ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.core.model.CvDatabase',
+	      'uk.ac.ebi.intact.model.CvDatabase',
 	      'SPTR',
 	      ac 
          FROM Institution 
@@ -34,7 +34,7 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, owner_ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.core.model.CvDatabase',
+	      'uk.ac.ebi.intact.model.CvDatabase',
 	      'PubMed',
 	      'PubMed',
 	      ac 
@@ -43,7 +43,7 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.core.model.CvDatabase',
+	      'uk.ac.ebi.intact.model.CvDatabase',
 	      'SGD',
 	      'Saccharomyces Genome Database',
 	      ac 
@@ -52,7 +52,7 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.core.model.CvDatabase',
+	      'uk.ac.ebi.intact.model.CvDatabase',
 	      'GO',
 	      'Gene Ontology',
 	      ac 
@@ -61,7 +61,7 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.core.model.CvComponentRole',
+	      'uk.ac.ebi.intact.model.CvComponentRole',
 	      'bait',
 	      ac 
          FROM Institution 
@@ -69,7 +69,7 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, owner_ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.core.model.CvComponentRole',
+	      'uk.ac.ebi.intact.model.CvComponentRole',
 	      'prey',
 	      ac 
          FROM Institution
@@ -91,7 +91,7 @@ INSERT INTO Experiment(ac, shortLabel, owner_ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.core.model.CvTopic',
+	      'uk.ac.ebi.intact.model.CvTopic',
 	      'Function',
 	      'Biological Function of the Object',
 	      ac 
@@ -100,7 +100,7 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.core.model.CvTopic',
+	      'uk.ac.ebi.intact.model.CvTopic',
 	      'Remark',
 	      'Internal remark',
 	      ac 
@@ -109,7 +109,7 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.core.model.CvTopic',
+	      'uk.ac.ebi.intact.model.CvTopic',
 	      'Note',
 	      'Public note',
 	      ac 
@@ -118,7 +118,7 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
 
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.core.model.CvTopic',
+	      'uk.ac.ebi.intact.model.CvTopic',
 	      'Definition',
 	      'Definition of an annotation topic',
 	      ac 
