@@ -10,14 +10,12 @@ import org.apache.commons.beanutils.DynaBean;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
@@ -99,30 +97,6 @@ public interface EditUserI extends IntactUserI, Serializable {
      * object the user is working presently.
      */
     public void updateView(AnnotatedObject annot);
-
-    // Methods to create forms.
-
-    /**
-     * Returns a DynaBean form constructed using given form name and Http request.
-     * @param formName the name of the form.
-     * @param request Http to extract the information to construct the form.
-     * @return the DynaBean form; the form specification must be defined in the
-     * struts configuration file under <code>name</code>. A cached form is
-     * returned if a form exists in the local cache saved under
-     * <code>formName</code>. A null form is retured for any errors (such
-     * as unable to construct an instance).
-     */
-    public DynaBean getDynaBean(String formName, HttpServletRequest request);
-
-    /**
-     * Returns a EditForm constructed using given form name
-     * @param formName the name of the form.
-     * @return the <code>EditForm</code> form. A cached form is
-     * returned if a form exists in the local cache saved under
-     * <code>formName</code> or else a new form is created and
-     * saved in the cache before returning it.
-     */
-    public EditForm getEditForm(String formName);
 
     // Search methods
 

@@ -11,8 +11,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.*;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.business.BusinessConstants;
@@ -28,7 +30,6 @@ import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.net.URL;
@@ -140,11 +141,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient EditViewBeanFactory myViewFactory;
 
     /**
-     * The factory to create various form beans.
-     */
-    private transient EditorFormFactory myFormFactory;
-
-    /**
      * The factory to create various menus.
      */
     private transient EditorMenuFactory myMenuFactory;
@@ -246,7 +242,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void valueBound(HttpSessionBindingEvent event) {
         // Create the factories.
         myViewFactory = new EditViewBeanFactory();
-        myFormFactory = new EditorFormFactory();
         myMenuFactory = new EditorMenuFactory(myHelper);
     }
 
@@ -378,14 +373,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Get the new view for the new edit object.
         myEditView = myViewFactory.factory(annot);
         myEditView.setMenuFactory(myMenuFactory);
-    }
-
-    public DynaBean getDynaBean(String formName, HttpServletRequest request) {
-        return myFormFactory.getDynaBean(formName, request);
-    }
-
-    public EditForm getEditForm(String formName) {
-        return myFormFactory.getEditForm(formName);
     }
 
     public Object getObjectByLabel(String className, String label)
