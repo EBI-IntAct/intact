@@ -38,7 +38,7 @@ public class Wrapper extends TableDecorator {
         String ac = bean.getAc();
         String className = bean.getClassName();
         int lastPos = className.lastIndexOf('.');
-        return "<a href=results?ac=" + ac + "&searchClass="
+        return "<a href=result?ac=" + ac + "&searchClass="
                 + className.substring(lastPos + 1) + ">" + bean.getShortLabel() + "</a>";
     }
 }

@@ -27,7 +27,7 @@ Search class: <c:out value="${user.searchClass}"/>
 <%-- Javascript code to link to the search page. --%>
 <jsp:include page="js.jsp" />
 
-<html:form action="/results">
+<html:form action="/result">
     <display:table width="100%" name="searchlist"
         decorator="uk.ac.ebi.intact.application.editor.struts.view.Wrapper">
         <display:column property="searchLink" title="AC" />
