@@ -771,11 +771,13 @@ CREATE TABLE IA_Feature
         , identification_ac     VARCHAR(30)    CONSTRAINT fk_Feature_identification_ac REFERENCES IA_ControlledVocab(ac)
         , featureType_ac        VARCHAR(30)    CONSTRAINT fk_Feature_featureType_ac REFERENCES IA_ControlledVocab(ac)
         , linkedfeature_ac      VARCHAR(30)    CONSTRAINT fk_Feature_feature REFERENCES IA_Feature(ac)
+        , owner_ac              VARCHAR (30)   CONSTRAINT fk_Feature_owner REFERENCES IA_Institution(ac)
         , shortLabel            VARCHAR(20)
         , fullName              VARCHAR(250)
 )
 ;
 
+CREATE INDEX i_Feature_owner_ac on IA_Feature(owner_ac);
 CREATE INDEX i_Feature_component_ac on IA_Feature(component_ac);
 CREATE INDEX i_Feature_linkedfeature_ac on IA_Feature(linkedfeature_ac);
 CREATE INDEX i_Feature_identification_ac on IA_Feature(identification_ac);
@@ -818,6 +820,7 @@ CREATE TABLE IA_Range
         , undetermined          CHAR           NOT NULL CHECK ( undetermined IN ('N','Y') )
         , link                  CHAR           NOT NULL CHECK ( link IN ('N','Y') )
         , feature_ac            VARCHAR(30)    NOT NULL CONSTRAINT fk_Range_feature REFERENCES IA_Feature(ac) ON DELETE CASCADE
+        , owner_ac              VARCHAR (30)   CONSTRAINT fk_Range_owner REFERENCES IA_Institution(ac)
         , fromIntervalStart     DECIMAL(5)
         , fromIntervalEnd       DECIMAL(5)
         , fromFuzzyType_ac      VARCHAR(30)    CONSTRAINT fk_Range_fromFuzzyType_ac REFERENCES IA_ControlledVocab(ac)
@@ -828,6 +831,7 @@ CREATE TABLE IA_Range
 )
 ;
 
+CREATE INDEX i_Range_owner_ac on IA_Range(owner_ac);
 CREATE INDEX i_Range_fromFuzzyType_ac on IA_Range(fromFuzzyType_ac);
 CREATE INDEX i_Range_toFuzzyType_ac on IA_Range(toFuzzyType_ac);
 CREATE INDEX i_Range_feature_ac on IA_Range(feature_ac);
