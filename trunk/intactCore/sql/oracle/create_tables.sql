@@ -123,7 +123,7 @@ CREATE TABLE IA_BioSource
         , updated                 DATE            DEFAULT  SYSDATE NOT NULL
         , timestamp               DATE            DEFAULT  SYSDATE NOT NULL
         , userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
-        , taxId                   VARCHAR(30)     CONSTRAINT uq_BioSource$taxId UNIQUE USING INDEX TABLESPACE &&intactIndexTablespace
+        , taxId                   VARCHAR(30)     			 NOT NULL
         , owner_ac                VARCHAR2(30)    CONSTRAINT fk_BioSource$owner REFERENCES IA_Institution(ac)
         , shortLabel              VARCHAR2(20)
         , fullName                VARCHAR2(250)
@@ -968,7 +968,7 @@ set term on
 PROMPT Creating table "IA_PAYG"
 CREATE TABLE IA_PAYG(
       NID                 VARCHAR2(20) NOT NULL 
-    , SPECIES             VARCHAR2(30) CONSTRAINT FK_PAYG_SPECIES REFERENCES IA_BIOSOURCE(TAXID)
+    , SPECIES             VARCHAR2(30) NOT NULL
     , BAIT                INTEGER
     , PREY                INTEGER
     , INDEGREE            NUMBER(6)
