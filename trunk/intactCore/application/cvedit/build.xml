@@ -201,6 +201,23 @@
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
 
+        <!-- Create local directories to copy common files. -->
+        <mkdir dir="${basedir}/layouts/styles"/>
+        <mkdir dir="${basedir}/images"/>
+
+        <!-- Common layouts -->
+        <copy todir="${basedir}/layouts">
+            <fileset dir="${intact.app.dir}/layouts"/>
+        </copy>
+        <!-- Common images -->
+        <copy todir="${basedir}/images">
+            <fileset dir="${intact.app.dir}/images"/>
+        </copy>
+        <!-- Common jsp files -->
+        <copy todir="${basedir}/pages">
+            <fileset dir="${intact.app.dir}/pages"/>
+        </copy>
+
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
 
