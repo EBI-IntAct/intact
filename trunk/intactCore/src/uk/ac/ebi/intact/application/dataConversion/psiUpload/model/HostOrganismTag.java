@@ -125,7 +125,7 @@ public final class HostOrganismTag {
         if( null == cellType ) {
             buf.append( '-' );
         } else {
-            buf.append( cellType.getPsiDefinition().getId() );
+            buf.append( cellType.toString() );
         }
         buf.append( '}' );
         return buf.toString();

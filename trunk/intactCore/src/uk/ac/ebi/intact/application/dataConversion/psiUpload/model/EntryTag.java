@@ -57,17 +57,43 @@ public final class EntryTag {
             throw new IllegalArgumentException( "You must give a non empty Collection of interactions for an Entry" );
         }
 
+        for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
+            Object o = (Object) iterator.next();
+            if( !( o instanceof InteractionTag ) ) {
+                throw new IllegalArgumentException( "The Interaction collection added to the entry doesn't " +
+                                                    "contains only InteractionTag: " + o.getClass().getName() + "." );
+            }
+        }
+
         this.interactions = new ReadOnlyCollection( interactions );
 
         if( experimentDescriptions == null ) {
             this.experimentDescriptions = new ReadOnlyHashMap( new HashMap( 0 ) );
         } else {
+
+            for ( Iterator iterator = experimentDescriptions.values().iterator(); iterator.hasNext(); ) {
+                Object o = (Object) iterator.next();
+                if( !( o instanceof ExperimentDescriptionTag ) ) {
+                    throw new IllegalArgumentException( "The ExperimentDescription collection added to the entry doesn't " +
+                                                        "contains only ExperimentDescriptionTag: " + o.getClass().getName() + "." );
+                }
+            }
+
             this.experimentDescriptions = new ReadOnlyHashMap( experimentDescriptions );
         }
 
         if( experimentDescriptions == null ) {
             this.proteinInteractors = new ReadOnlyHashMap( new HashMap( 0 ) );
         } else {
+
+            for ( Iterator iterator = proteinInteractors.values().iterator(); iterator.hasNext(); ) {
+                Object o = (Object) iterator.next();
+                if( !( o instanceof ProteinInteractorTag ) ) {
+                    throw new IllegalArgumentException( "The ProteinInteractor collection added to the entry doesn't " +
+                                                        "contains only ProteinInteractorTag: " + o.getClass().getName() + "." );
+                }
+            }
+
             this.proteinInteractors = new ReadOnlyHashMap( proteinInteractors );
         }
     }
@@ -94,8 +120,8 @@ public final class EntryTag {
      * @param id the id referencing the wanted ProteinParticipantTag
      * @return an ProteinParticipantTag or null if the id is not found.
      */
-    public ProteinParticipantTag getProteinInteractors( final String id ) {
-        return (ProteinParticipantTag) proteinInteractors.get( id );
+    public ProteinInteractorTag getProteinInteractors( final String id ) {
+        return (ProteinInteractorTag) proteinInteractors.get( id );
     }
 
     public Collection getInteractions() {

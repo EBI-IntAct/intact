@@ -13,7 +13,11 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
  */
 public final class Constants {
 
+    // Databases shortlabel
     public static final String UNIPROT_DB_SHORTLABEL = "uniprot";
     public static final String PSI_DB_SHORTLABEL = "psi-mi";
     public static final String PUBMED_DB_SHORTLABEL = "pubmed";
+
+    // keywords
+    public static final String EXPRESSED_IN = "expressedIn";
 }

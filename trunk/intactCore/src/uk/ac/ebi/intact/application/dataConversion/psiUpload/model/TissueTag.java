@@ -38,14 +38,18 @@ public class TissueTag {
 
     public TissueTag( final XrefTag psiDefinition, final String shortlabel ) {
 
-        if( psiDefinition == null ) {
-            throw new IllegalArgumentException( "You must give a non null psi definition for a tissue" );
-        }
+        if( shortlabel == null || shortlabel.trim().equals( "" ) ) {
+            throw new IllegalArgumentException( "You must give a non null/empty shortlabel for a cellType" );
+        }        
 
-        if( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
-            throw new IllegalArgumentException( "You must give a psi-mi Xref, not " + psiDefinition.getDb() +
-                                                " for a tissue" );
-        }
+//        if( psiDefinition == null ) {
+//            throw new IllegalArgumentException( "You must give a non null psi definition for a tissue" );
+//        }
+//
+//        if( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
+//            throw new IllegalArgumentException( "You must give a psi-mi Xref, not " + psiDefinition.getDb() +
+//                                                " for a tissue" );
+//        }
 
         this.psiDefinition = psiDefinition;
         this.shortlabel = shortlabel;
