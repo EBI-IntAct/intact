@@ -32,34 +32,6 @@ import org.apache.commons.collections.CollectionUtils;
  */
 public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener {
 
-    // Beginning of Inner classes
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * Inner class to generate unique ids to use primary keys for CommentBean
-     * class.
-     */
-    private static class UniqueID {
-
-        /**
-         * The initial value. All the unique ids are based on this value for any
-         * (all) user(s).
-         */
-        private static long theirCurrentTime = System.currentTimeMillis();
-
-        /**
-         * Returns a unique id using the initial seed value.
-         */
-        private static synchronized long get() {
-            return theirCurrentTime++;
-        }
-    }
-
-    // ------------------------------------------------------------------------
-
-    // End of Inner classes
-
     // Static data
 
     /**
@@ -161,16 +133,6 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         theirNameToType.put(theirTopicNames, CvTopic.class);
         theirNameToType.put(theirDBNames, CvDatabase.class);
         theirNameToType.put(theirQualifierNames, CvXrefQualifier.class);
-    }
-
-    // Static Methods.
-
-    /**
-     * Returns the unique id based on the current time; the ids are unique
-     * for a session.
-     */
-    public static long getId() {
-        return UniqueID.get();
     }
 
     // Constructors.
