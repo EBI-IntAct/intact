@@ -1009,7 +1009,7 @@ public class PsiDataBuilder implements DataBuilder {
         // getProteinAc() @todo
         // getXrefs()
         try {
-            Element psiXref = doXref(feature.getXref());
+            Element psiXref = doXrefCollection(feature.getXrefs(), "psi-mi");
             psiFeature.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
             logger.info("xref failed (not required):" + e.getMessage());
