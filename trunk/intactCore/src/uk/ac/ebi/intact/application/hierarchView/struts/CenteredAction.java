@@ -1,22 +1,18 @@
 package uk.ac.ebi.intact.application.hierarchView.struts;
 
-import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
-import uk.ac.ebi.intact.application.hierarchView.business.image.*;
-import uk.ac.ebi.intact.application.hierarchView.business.*;
+import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
-import java.io.IOException;
-import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+
 
 /**
  * Implementation of <strong>Action</strong> that validates a centered submisson (from a link).
@@ -44,114 +40,112 @@ public final class CenteredAction extends Action {
      * @exception ServletException if a servlet exception occurs
      */
     public ActionForward perform (ActionMapping mapping,
-				                  ActionForm form,
-				                  HttpServletRequest request,
-				                  HttpServletResponse response)
-	throws IOException, ServletException {
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response)
+            throws IOException, ServletException {
 
-	// Extract attributes we will need
-	Locale locale = getLocale(request);
-    // TODO : replace that for Struts 1.1
-    //MessageResources messages = getResources (request);
-    MessageResources messages = getResources ();
+        // get the current session
+        HttpSession session = request.getSession();
 
-	// get the current session
-	HttpSession session = request.getSession();
+        // read form values from the bean
+        ActionErrors errors = new ActionErrors();
 
-	// read form values from the bean
-	ActionErrors errors = new ActionErrors();
+        String AC = null;
 
-	String AC = null;
+        // look in the request ...
+        AC = request.getParameter ("AC");
 
-	// look in the request ...
-	AC = request.getParameter ("AC");
+        if ((null == AC) || (AC.length() < 1)) {
+            errors.add("AC", new ActionError("error.centeredAC.required"));
+        }
 
-	if ((null == AC) || (AC.length() < 1)) {
-	  errors.add("AC", new ActionError("error.centeredAC.required"));
-	}
-	
-	// Report any errors we have discovered back to the original form
-	if (!errors.empty()) {
-	    saveErrors(request, errors);
-	    return (new ActionForward(mapping.getInput()));
-	}
+        // Report any errors we have discovered back to the original form
+        if (!errors.empty()) {
+            saveErrors(request, errors);
+            return (new ActionForward(mapping.getInput()));
+        }
 
-	String currentAC = (String)  session.getAttribute (Constants.ATTRIBUTE_AC);
-	
-	if (!AC.equals(currentAC)) {
-	
-	  // Creation of the graph and the image
-	  InteractionNetwork in = null;
+        String currentAC = (String)  session.getAttribute (Constants.ATTRIBUTE_AC);
 
-	  int depthInt = 0;
-	  String depth = (String) session.getAttribute (Constants.ATTRIBUTE_DEPTH);
+        if (!AC.equals(currentAC)) {
 
-	  try {
-	    GraphHelper gh = new GraphHelper ();
-	    depthInt = Integer.parseInt (depth);
-	    in = (InteractionNetwork) gh.getInteractionNetwork (AC, depthInt);
-	  } catch (Exception e) {
-	    errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.notCreated"));
-	    saveErrors(request, errors);
-	    return (mapping.findForward("error"));
-	  }
+            // Creation of the graph and the image
+            InteractionNetwork in = null;
 
-	  if (null == in) {
-	    // warn the user that an error occur
-	    errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.notCreated"));
-	  } else {
-	    if (0 == in.sizeNodes()) {
-	      errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.noProteinFound"));
-	    }
-	  }
+            int depthInt = 0;
+            String depth = (String) session.getAttribute (Constants.ATTRIBUTE_DEPTH);
 
-	  if (!errors.empty()) {
-	    // Report any errors we have discovered back to the original form
-	    saveErrors(request, errors);
-	    return (mapping.findForward("error"));
-	  }
-	  
-	  String dataTlp         = in.exportTlp(); 
-	  in.importDataToImage(dataTlp);
-	  
-	  // GraphToImage te        = new GraphToImage(in);
-	  GraphToSVG te        = new GraphToSVG(in);
-	  te.draw();
-	  ImageBean ib           = te.getImageBean();
-	  
-	  if (null == ib) {
-	    errors.add("ImageBean", new ActionError("error.ImageBean.build"));
-	    saveErrors(request, errors);
-	    return (mapping.findForward("error"));
-	  }
+            try {
+                // retreive datasource fron the session
+                IntactUser user = (IntactUser) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY);
+                if (null == user) {
+                    errors.add ("Datasource", new ActionError("error.datasource.notCreated"));
+                    saveErrors(request, errors);
+                    return (mapping.findForward("error"));
+                }
+                GraphHelper gh = new GraphHelper ( user.getIntactHelper() );
 
-	  // Save our data in the session
-	session.setAttribute(Constants.ATTRIBUTE_AC, AC);
+                depthInt = Integer.parseInt (depth);
+                in = gh.getInteractionNetwork (AC, depthInt);
+            } catch (Exception e) {
+                errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.notCreated"));
+                saveErrors(request, errors);
+                return (mapping.findForward("error"));
+            }
 
-	  // store the bean 
-	  session.setAttribute (Constants.ATTRIBUTE_IMAGE_BEAN, ib);	  
-	  // store the graph
-	  session.setAttribute (Constants.ATTRIBUTE_GRAPH, in);
+            if (null == in) {
+                // warn the user that an error occur
+                errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.notCreated"));
+            } else {
+                if (0 == in.sizeNodes()) {
+                    errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.noProteinFound"));
+                }
+            }
 
-	  // Take keys to null int the session
-	  //	  session.setAttribute (Constants.ATTRIBUTE_KEYS, null);
-	}
+            if (!errors.empty()) {
+                // Report any errors we have discovered back to the original form
+                saveErrors(request, errors);
+                return (mapping.findForward("error"));
+            }
 
-	// Print debug in the log file
-	if (servlet.getDebug() >= 1)
-	    servlet.log("CenteredAction: AC=" + AC +
-	                "\nlogged on in session " + session.getId());
+            String dataTlp = in.exportTlp();
+            in.importDataToImage(dataTlp);
+
+            GraphToSVG te = new GraphToSVG(in);
+            te.draw();
+            ImageBean ib  = te.getImageBean();
+
+            if (null == ib) {
+                errors.add("ImageBean", new ActionError("error.ImageBean.build"));
+                saveErrors(request, errors);
+                return (mapping.findForward("error"));
+            }
+
+            // Save our data in the session
+            session.setAttribute(Constants.ATTRIBUTE_AC, AC);
+
+            // store the bean
+            session.setAttribute (Constants.ATTRIBUTE_IMAGE_BEAN, ib);
+            // store the graph
+            session.setAttribute (Constants.ATTRIBUTE_GRAPH, in);
+        }
+
+        // Print debug in the log file
+        if (servlet.getDebug() >= 1)
+            servlet.log("CenteredAction: AC=" + AC +
+                    "\nlogged on in session " + session.getId());
 
         // Remove the obsolete form bean
-	if (mapping.getAttribute() != null) {
+        if (mapping.getAttribute() != null) {
             if ("request".equals(mapping.getScope()))
                 request.removeAttribute(mapping.getAttribute());
             else
                 session.removeAttribute(mapping.getAttribute());
         }
 
-	// Forward control to the specified success URI
-	return (mapping.findForward("success"));
+        // Forward control to the specified success URI
+        return (mapping.findForward("success"));
 
     }
 

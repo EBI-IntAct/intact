@@ -1,21 +1,14 @@
 package uk.ac.ebi.intact.application.hierarchView.struts;
 
 
-import java.io.IOException;
-import java.util.Locale;
+import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
-
-import  uk.ac.ebi.intact.application.hierarchView.highlightment.source.*;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * Implementation of <strong>Action</strong> that validates an highlightment submisson.
@@ -50,11 +43,6 @@ public final class HighlightmentAction extends Action {
 				                  HttpServletResponse response)
 	throws IOException, ServletException {
 
-	// Extract attributes we will need
-	Locale locale = getLocale(request);
-    // TODO : replace that for Struts 1.1
-    //MessageResources messages = getResources (request);
-    MessageResources messages = getResources ();
 	ActionErrors errors = new ActionErrors();
 	HttpSession session = request.getSession();
 
