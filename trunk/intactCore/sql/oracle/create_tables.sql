@@ -1292,7 +1292,7 @@ CREATE TABLE ia_interactions
       , taxid           VARCHAR2(30)
       , interaction_ac  VARCHAR2(30)    CONSTRAINT fk_interactions$interaction REFERENCES IA_Interactor(ac) ON DELETE CASCADE
       , weight          NUMBER(4,3)
-      , graphid         INTEGER
+      , graphid         NUMBER(32)
 )
 TABLESPACE &&intactMainTablespace;
 
