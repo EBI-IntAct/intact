@@ -34,12 +34,6 @@ import java.util.*;
 public abstract class AbstractEditViewBean implements Serializable {
 
     /**
-     * The pattern for a valid short label.
-     */
-//    private static Pattern SHORT_LABEL_PAT =
-//            Pattern.compile("[a-z0-9\\-:_]+ ?[a-z0-9\\-:_]+$");
-
-    /**
      * The Annotated object to wrap this bean around.
      */
     private AnnotatedObject myAnnotObject;
@@ -84,10 +78,10 @@ public abstract class AbstractEditViewBean implements Serializable {
     private List myAnnotsToDel = new ArrayList();
 
     /**
-     * List of annotations to update. This collection is cleared once the user
+     * Set of annotations to update. This collection is cleared once the user
      * commits the transaction.
      */
-    private List myAnnotsToUpdate = new ArrayList();
+    private Set myAnnotsToUpdate = new HashSet();
 
     /**
      * List of xrefs to add. This collection is cleared once the user commits
@@ -102,10 +96,10 @@ public abstract class AbstractEditViewBean implements Serializable {
     private List myXrefsToDel = new ArrayList();
 
     /**
-     * List of xrefs to update. This collection is cleared once the user
+     * Set of xrefs to update. This collection is cleared once the user
      * commits the transaction.
      */
-    private List myXrefsToUpdate = new ArrayList();
+    private Set myXrefsToUpdate = new HashSet();
 
     /**
      * The factory to create various menus; this is transient as it is set from
@@ -466,62 +460,26 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * Replaces an existing annotation bean with a new bean. This method takes
-     * care of refreshing relevant lists. For example, if the existing bean is in
-     * the new collection, it will be removed from the new collection before the
-     * new bean is added.
-     * @param oldcb the existing bean to replace.
-     * @param newcb the new bean to replace <code>oldcb</code>.
+     * Saves the bean in the update list. Replaces any previous bean with same
+     * key (can perform many edits to a single bean). The bean is not added if
+     * it is a new bean.
+     * @param cb the bean to update.
      */
-    public void saveComment(CommentBean oldcb, CommentBean newcb) {
-        // Does the existing bean belong to the newly added beans?
-        if (myAnnotsToAdd.contains(oldcb)) {
-            // Remove from the 'new' list.
-            myAnnotsToAdd.remove(oldcb);
-            // Remove from the view.
-            myAnnotations.remove(oldcb);
-            // Add the updated bean.
-            addAnnotation(newcb);
-        }
-        else {
-            // Remove from the 'update' list.
-            myAnnotsToUpdate.remove(oldcb);
-            // Remove from the view.
-            myAnnotations.remove(oldcb);
-            // Add to the update list.
-            myAnnotsToUpdate.add(newcb);
-            // Add to the view as well.
-            myAnnotations.add(newcb);
+    public void saveAnnotation(CommentBean cb) {
+        if (!myAnnotsToAdd.contains(cb)) {
+            myAnnotsToUpdate.add(cb);
         }
     }
 
     /**
-     * Replaces an existing xref bean with a new bean. This method takes care of
-     * refreshing relevant lists. For example, if the existing bean is in
-     * the new collection, it will be removed from the new collection before the
-     * new bean is added.
-     * @param oldxb the existing bean to replace.
-     * @param newxb the new bean to replace <code>oldexb</code>.
+     * Saves the bean in the update list. Replaces any previous bean with same
+     * key (can perform many edits to a single bean). The bean is not added if
+     * it is a new bean.
+     * @param xb the bean to update.
      */
-    public void saveXref(XreferenceBean oldxb, XreferenceBean newxb) {
-        // Does the existing bean belong to the newly added beans?
-        if (myXrefsToAdd.contains(oldxb)) {
-            // Remove from the 'new' list.
-            myXrefsToAdd.remove(oldxb);
-            // Remove from the view.
-            myXrefs.remove(oldxb);
-            // Add the updated bean.
-            addXref(newxb);
-        }
-        else {
-            // Remove from the existing 'update' list.
-            myXrefsToUpdate.remove(oldxb);
-            // Remove from the view.
-            myXrefs.remove(oldxb);
-            // Add to the updated list.
-            myXrefsToUpdate.add(newxb);
-            // Add to the view as well.
-            myXrefs.add(newxb);
+    public void saveXref(XreferenceBean xb) {
+        if (!myXrefsToAdd.contains(xb)) {
+            myXrefsToUpdate.add(xb);
         }
     }
 

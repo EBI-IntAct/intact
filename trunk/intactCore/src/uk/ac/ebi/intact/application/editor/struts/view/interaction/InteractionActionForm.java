@@ -149,13 +149,7 @@ public class InteractionActionForm extends EditorActionForm {
     }
 
     public void setExperiments(List exps) {
-        if (myExperiments != null) {
-            // See the comment for setProteins(List)
-            if (CollectionUtils.isEqualCollection(myExperiments, exps)) {
-                return;
-            }
-        }
-        myExperiments = new ArrayList(exps);
+        myExperiments = exps;
     }
 
     public List getExperiments() {
@@ -179,13 +173,7 @@ public class InteractionActionForm extends EditorActionForm {
     }
 
     public void setExpsOnHold(List exps) {
-        if (myExpsOnHold != null) {
-            // See the comment for setProteins(List)
-            if (CollectionUtils.isEqualCollection(myExpsOnHold, exps)) {
-                return;
-            }
-        }
-        myExpsOnHold = new ArrayList(exps);
+        myExpsOnHold = exps;
     }
 
     public List getExpsOnHold() {

@@ -72,7 +72,6 @@ public class ExperimentHoldAction extends AbstractEditorAction {
                 errors.add(ActionErrors.GLOBAL_ERROR,
                         new ActionError("error.int.exp.hold.add", eb.getShortLabel()));
                 saveErrors(request, errors);
-                return mapping.getInputForward();
             }
             else {
                 // Wants to add the selected experiment to the Interaction.
@@ -85,6 +84,6 @@ public class ExperimentHoldAction extends AbstractEditorAction {
             // Must have pressed 'Hide'.
             view.hideExperimentToHold(eb);
         }
-        return mapping.findForward(SUCCESS);
+        return mapping.getInputForward();
     }
 }
