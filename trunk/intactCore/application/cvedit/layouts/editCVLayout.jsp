@@ -8,7 +8,7 @@
 
 <tiles:insert attribute="info"/>
 <tiles:insert attribute="comments"/>
-<hr></hr>
+<tiles:insert attribute="add-comments"/>
 <tiles:insert attribute="xrefs"/>
-<hr></hr>
+<tiles:insert attribute="add-xrefs"/>
 <tiles:insert attribute="action"/>
