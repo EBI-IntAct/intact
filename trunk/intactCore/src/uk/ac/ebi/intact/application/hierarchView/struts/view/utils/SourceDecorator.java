@@ -3,10 +3,9 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.application.hierarchView.struts.view;
+package uk.ac.ebi.intact.application.hierarchView.struts.view.utils;
 
 import org.apache.taglibs.display.Decorator;
-import java.util.List;
 import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
 
@@ -54,7 +53,6 @@ public class SourceDecorator extends Decorator {
         String sourceLink = lvb.getValue();
 
         // convert my URL string in UTF-8 format (= become %3d, ...)
-
         String encodedUrl = null;
         try {
             encodedUrl = URLEncoder.encode (sourceLink, "UTF-8");
@@ -64,6 +62,23 @@ public class SourceDecorator extends Decorator {
         }
 
         return "<a href=\"/hierarchView/displaySourceContent.do?url=" + encodedUrl + "\">" + sourceName + "</a>";
+    }
+
+    /**
+     * Send back the desciption of the source and in case it doesn't exists,
+     * give a meaningfull message.
+     * @return the soruce description or an explanation messages.
+     */
+    public String getDescription () {
+        LabelValueBean lvb = (LabelValueBean) this.getObject();
+        if (lvb == null) return "";
+
+        String description = lvb.getDescription();
+        if (description == null || description.trim().length() == 0) {
+            description = "<font color=\"#898989\"> No description available </font>";
+        }
+
+        return description;
     }
 
 }
