@@ -1,10 +1,10 @@
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
 import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
-//import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.simpleGraph.*;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -37,10 +37,9 @@ public class ColorHighlightmentBehaviour
    *
    * @param aProtein the node on which we want to apply the behaviour
    */
-  public void applyBehaviour (Protein aProtein) {
+  public void applyBehaviour (Node aProtein) {
  
     // apply the behaviour
-    // node.setColor (Color.red);
     
     // read the ApplicationResource.proterties file 
     Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);

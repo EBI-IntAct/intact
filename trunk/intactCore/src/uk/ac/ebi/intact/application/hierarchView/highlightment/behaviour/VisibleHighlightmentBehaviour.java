@@ -2,9 +2,9 @@
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
 import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
-//import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
+import uk.ac.ebi.intact.simpleGraph.*;
 
 import java.util.Collection;
 import java.lang.UnsupportedOperationException;
@@ -41,8 +41,9 @@ public class VisibleHighlightmentBehaviour
 
      /* Remove all proteins of the collection "proteins" */
      b = newList.removeAll(proteins);
-     if (!b) throw new UnsupportedOperationException("Unable to remove a protein");
-   
+     // if (!b) throw new UnsupportedOperationException("Unable to remove a protein");
+       
+
     return newList;
   } // modifyCollection
 
@@ -53,7 +54,7 @@ public class VisibleHighlightmentBehaviour
    *
    * @param aProtein the node on which we want to apply the behaviour
    */
-  public void applyBehaviour (Protein aProtein) {
+  public void applyBehaviour (Node aProtein) {
     aProtein.put(Constants.ATTRIBUTE_VISIBLE, new Boolean (false));
 
   } // applyBehaviour

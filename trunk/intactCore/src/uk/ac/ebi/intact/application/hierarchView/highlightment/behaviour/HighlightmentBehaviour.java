@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
 import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
+import uk.ac.ebi.intact.simpleGraph.*;
 
 import java.util.Iterator;
 import java.util.Collection;
@@ -58,7 +59,7 @@ public abstract class HighlightmentBehaviour {
    *
    * @param aProtein the node on which we want to apply the behaviour
    */
-  abstract public void applyBehaviour (Protein aProtein);
+  abstract public void applyBehaviour (Node aProtein);
 
 /**
    * Allow to apply a modification on the collection. 
@@ -89,7 +90,7 @@ public abstract class HighlightmentBehaviour {
     if (null != proteins) {
       Iterator iterator = proteins.iterator();
       while (iterator.hasNext()) {
-	Protein protein = (Protein) iterator.next();
+	Node protein = (Node) iterator.next();
 	applyBehaviour (protein);
       }
     }
