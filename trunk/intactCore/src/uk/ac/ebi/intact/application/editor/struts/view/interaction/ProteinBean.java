@@ -37,12 +37,6 @@ public class ProteinBean extends EditBean implements Serializable {
      */
     public static final String ERROR = "error";
 
-    /**
-     * The formatter to format Protein error messages.
-     */
-//    private static final MessageFormat FORMATTER =
-//            new MessageFormat("Protein ({0}) with similar role ({1}) already exists!");
-
     // Instance Data
 
     /**
