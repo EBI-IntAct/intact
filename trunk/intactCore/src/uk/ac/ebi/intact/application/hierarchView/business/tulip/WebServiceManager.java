@@ -90,6 +90,8 @@ public class WebServiceManager implements ServletContextListener {
             this.setDeploymentFile (deploymentFile);
             this.setUndeploymentFile (undeploymentFile);
             logger.info ("Properties loaded.");
+        } else {
+            logger.warn ("Unable to load properties file: " + StrutsConstants.WEB_SERVICE_PROPERTY_FILE);
         }
     } // init
 
