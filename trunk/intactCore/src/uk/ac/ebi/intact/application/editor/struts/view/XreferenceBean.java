@@ -270,6 +270,21 @@ public class XreferenceBean extends AbstractEditKeyBean {
         myReferenceQualifer = "";
     }
 
+    /**
+     * Returns true if given bean is equivalent to the current bean.
+     * @param xb the bean to compare.
+     * @return true database, primary, secondary, release number and
+     * reference qualifier are equivalent; otherwise false is returned.
+     */
+    public boolean isEquivalent(XreferenceBean xb) {
+        // Check attributes.
+        return xb.getDatabase().equals(getDatabase())
+                && xb.getPrimaryId().equals(getPrimaryId())
+                && xb.getSecondaryId().equals(getSecondaryId())
+                && xb.getReleaseNumber().equals(getReleaseNumber())
+                && xb.getQualifier().equals(getQualifier());
+    }
+
     // Helper methods
 
     /**

@@ -57,6 +57,7 @@
 
             <c:if test="${annotations.editState == 'editing'}" var="edit"/>
             <c:if test="${annotations.editState == 'saving'}" var="save"/>
+            <c:if test="${annotations.editState == 'error'}" var="error"/>
 
             <c:if test="${edit}">
                 <td class="tableCell"/>
@@ -81,7 +82,7 @@
                     </html:submit>
                 </c:if>
 
-                <c:if test="${save}">
+                <c:if test="${save or error}">
                     <html:submit indexed="true" property="annotCmd"
                         titleKey="annotations.button.save.titleKey">
                         <bean:message key="annotations.button.save"/>
@@ -105,7 +106,7 @@
                 </td>
             </c:if>
 
-            <c:if test="${save}">
+            <c:if test="${save or error}">
                 <td class="tableCell">
                     <html:select name="annotations" property="topic" indexed="true">
                         <html:options name="topiclist" />
@@ -118,4 +119,8 @@
         </tr>
         </c:forEach>
     </table>
+
+    <%-- Errors are displayed here --%>
+    <html:errors property="annotation.exists"/>
+    <html:errors property="annotation.unsaved"/>
 </c:if>

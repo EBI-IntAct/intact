@@ -66,6 +66,7 @@
 
             <c:if test="${xrefs.editState == 'editing'}" var="edit"/>
             <c:if test="${xrefs.editState == 'saving'}" var="save"/>
+            <c:if test="${xrefs.editState == 'error'}" var="error"/>
 
             <c:if test="${edit}">
                 <td class="tableCell"/>
@@ -92,7 +93,7 @@
                         </html:submit>
                     </c:if>
 
-                    <c:if test="${save}">
+                    <c:if test="${save or error}">
                         <html:submit indexed="true" property="xrefCmd"
                             titleKey="xrefs.button.save.titleKey">
                             <bean:message key="xrefs.button.save"/>
@@ -127,7 +128,7 @@
                 </c:if>
 
                 <%-- In save mode --%>
-                <c:if test="${save}">
+                <c:if test="${save or error}">
                     <td class="tableCell">
                         <html:select name="xrefs" property="database" indexed="true">
                             <html:options name="dblist" />
@@ -151,4 +152,8 @@
             </tr>
         </c:forEach>
     </table>
+
+    <%-- Errors are displayed here --%>
+    <html:errors property="xref.exists"/>
+    <html:errors property="xref.unsaved"/>
 </c:if>

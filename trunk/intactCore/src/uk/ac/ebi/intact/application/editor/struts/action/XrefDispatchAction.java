@@ -6,10 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
@@ -159,8 +156,29 @@ public class XrefDispatchAction extends AbstractEditorAction {
         // The xref we are about to save.
         XreferenceBean xb = editorForm.getSelectedXref();
 
-        // Handler to the EditUserI.
+        // Handler to the EditUser.
         EditUserI user = getIntactUser(request);
+
+        // The current view of the edit session.
+        AbstractEditViewBean view = user.getView();
+
+        // Does this bean exist in the current view?
+        if (view.xrefExists(xb)) {
+            // Mark the bean as error.
+            xb.setEditState(AbstractEditBean.ERROR);
+
+            // The errors to display.
+            ActionErrors errors = new ActionErrors();
+            errors.add("xref.exists", new ActionError("error.edit.xref.exists"));
+            // Save the errors to display later
+            saveErrors(request, errors);
+
+            // Set the anchor
+            setAnchor(request, editorForm);
+
+            // Back to the edit form
+            return mapping.getInputForward();
+        }
 
         // For Go database, set values from the Go server.
         if (xb.getDatabase().equals("go")) {
@@ -173,7 +191,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
             }
         }
         // Save the bean in the view.
-        user.getView().saveXref(xb);
+        view.saveXref(xb);
 
         // Back to the view mode again.
         xb.setEditState(AbstractEditBean.VIEW);

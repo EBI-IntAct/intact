@@ -76,3 +76,4 @@
 <%--    </logic:messagesPresent>--%>
 </table>
 <html:errors property="annotation"/>
+<html:errors property="new.annotation"/>

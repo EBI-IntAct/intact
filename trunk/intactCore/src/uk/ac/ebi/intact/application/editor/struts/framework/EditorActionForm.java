@@ -15,9 +15,11 @@ import org.apache.struts.validator.ValidatorForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * The form to edit cv data. This form also is the super class for other
@@ -222,6 +224,31 @@ public class EditorActionForm extends ValidatorForm {
                 if (AbstractEditorAction.isPropertyEmpty(xb.getPrimaryId())) {
                     errors = new ActionErrors();
                     errors.add("xref.pid", new ActionError("error.xref.pid"));
+                    return errors;
+                }
+            }
+            // Submitting or saving the form
+            if (dispatch.equals(msgres.getMessage("button.submit"))
+                    || dispatch.equals(msgres.getMessage("button.save.continue"))) {
+                // Look for unsaved annotations.
+                for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
+                    CommentBean cb = (CommentBean) iter.next();
+                    if (!cb.getEditState().equals(AbstractEditBean.VIEW)) {
+                        errors = new ActionErrors();
+                        errors.add("annotation.unsaved",
+                                new ActionError("error.annotation.unsaved"));
+                        return errors;
+                    }
+                }
+                // Look for unsaved xrefs.
+                for (Iterator iter = myXrefs.iterator(); iter.hasNext();) {
+                    XreferenceBean xb = (XreferenceBean) iter.next();
+                    if (!xb.getEditState().equals(AbstractEditBean.VIEW)) {
+                        errors = new ActionErrors();
+                        errors.add("xref.unsaved",
+                                new ActionError("error.xref.unsaved"));
+                        return errors;
+                    }
                 }
             }
         }

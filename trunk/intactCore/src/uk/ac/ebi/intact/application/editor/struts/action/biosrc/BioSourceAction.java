@@ -152,8 +152,8 @@ public class BioSourceAction extends SubmitFormAction {
                     link));
             saveMessages(request, msgs);
         }
-
-        return mapping.findForward(SUCCESS);
+        // Update the screen
+        return mapping.getInputForward();
     }
 
     private NewtServerProxy.NewtResponse getNewtResponse(EditUserI user,

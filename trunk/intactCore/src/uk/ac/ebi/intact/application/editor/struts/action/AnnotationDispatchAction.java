@@ -6,9 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
@@ -155,8 +153,29 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
         // The annotation we are editing at the moment.
         CommentBean cb = editorForm.getSelectedAnnotation();
 
+        // The current view of the edit session.
+        AbstractEditViewBean view = getIntactUser(request).getView();
+
+        // Does this bean exist in the current view?
+        if (view.annotationExists(cb)) {
+            // Mark the bean as error.
+            cb.setEditState(AbstractEditBean.ERROR);
+
+            ActionErrors errors = new ActionErrors();
+            errors.add("annotation.exists",
+                    new ActionError("error.edit.annotation.exists"));
+            // Save the errors to display later
+            saveErrors(request, errors);
+
+            // Set the anchor
+            setAnchor(request, editorForm);
+
+            // Back to the edit form
+            return mapping.getInputForward();
+        }
+
         // Save the annotation in the view.
-        getIntactUser(request).getView().saveAnnotation(cb);
+        view.saveAnnotation(cb);
 
         // Back to the view mode.
         cb.setEditState(AbstractEditBean.VIEW);

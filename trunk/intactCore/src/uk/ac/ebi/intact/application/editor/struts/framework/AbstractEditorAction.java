@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
  * Super class for all Editor related action classes.
@@ -299,6 +300,28 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
      */
     protected Object getApplicationObject(String attrName) {
         return super.servlet.getServletContext().getAttribute(attrName);
+    }
+
+    /**
+     * Sets the anchor in the form if an anchor exists.
+     *
+     * @param request the HTTP request to get anchor.
+     * @param form the form to set the anchor and also to extract the dispath
+     * event.
+     *
+     * @see EditorService#getAnchor(java.util.Map, HttpServletRequest, String)
+     */
+    protected void setAnchor(HttpServletRequest request, EditorActionForm form) {
+        // The map containing anchors.
+        Map map = (Map) getApplicationObject(EditorConstants.ANCHOR_MAP);
+
+        // Any anchors to set?
+        String anchor = EditorService.getInstance().getAnchor(map, request,
+                form.getDispatch());
+        // Set the anchor only if it is set.
+        if (anchor != null) {
+            form.setAnchor(anchor);
+        }
     }
 
     // Helper Methods
