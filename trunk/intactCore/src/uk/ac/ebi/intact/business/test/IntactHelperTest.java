@@ -70,9 +70,9 @@ public class IntactHelperTest extends TestCase {
         dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
 
         //set the config details, ie repository file for OJB in this case
-        Map config = new HashMap();
-        config.put("mappingfile", "config/repository.xml");
-        dataSource.setConfig(config);
+//        Map config = new HashMap();
+//        config.put("mappingfile", "config/repository.xml");
+//        dataSource.setConfig(config);
 
             helper = new IntactHelper(dataSource);
 
@@ -136,13 +136,13 @@ public class IntactHelperTest extends TestCase {
             int3 = new InteractionImpl(experiments, new ArrayList(), null, "int3", institution);
 
             int1.setFullName("test interaction 1");
-            int1.setKD(new Float(1));
+            int1.setKD(new Float(1f));
 
             int2.setFullName("test interaction 2");
-            int2.setKD(new Float(2));
+            int2.setKD(new Float(2f));
 
             int3.setFullName("test interaction 3");
-            int3.setKD(new Float(3));
+            int3.setKD(new Float(3f));
 
 
             //create some xrefs and link to proteins/interactions
@@ -283,6 +283,8 @@ public class IntactHelperTest extends TestCase {
             System.out.println("Performing create test using "
                     + this.getTxType(txType) + " transaction...");
             helper.startTransaction(txType);
+//            System.out.println("trying to create institution...");
+//            helper.create(institution);
             helper.create(persistList);
             helper.finishTransaction();
             System.out.println("Create transaction completed with no exceptions.");

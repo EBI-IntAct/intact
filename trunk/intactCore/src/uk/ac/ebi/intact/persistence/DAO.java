@@ -52,11 +52,8 @@ public interface DAO {
     /**
          * Provides the database name that is being connected to.
          * @return String the database name, or an empty String if the query fails
-         * @exception org.apache.ojb.broker.accesslayer.LookupException thrown on error
-         * getting the Connection
-         * @exception SQLException thrown if the metatdata can't be obtained
          */
-        public String getDbName() throws LookupException, SQLException;
+        public String getDbName();
         /**
          * Provides the user name that is connecting to the DB.
          * @return String the user name, or an empty String if the query fails
