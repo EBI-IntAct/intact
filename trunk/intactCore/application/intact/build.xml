@@ -120,6 +120,7 @@
                 <include name="*.css"/>
                 <include name="*.xsl"/>
                 <include name="*.html"/>
+                <include name="robot.txt"/>
 
                 <!-- doc related -->
                 <include name="*.jsp"/>
