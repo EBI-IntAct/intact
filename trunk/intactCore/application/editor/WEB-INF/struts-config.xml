@@ -31,7 +31,6 @@
             type="org.apache.struts.action.DynaActionForm">
             <form-property name="topic" type="java.lang.String"/>
             <form-property name="searchString" initial="*" type="java.lang.String"/>
-            <form-property name="shortLabel" type="java.lang.String"/>
         </form-bean>
 
         <!-- Form bean for adding a comment (annotation) -->
@@ -43,7 +42,7 @@
 
         <!-- Form for editing Annotated info (short label, fullname) data -->
         <form-bean name="cvInfoForm"
-            type="org.apache.struts.action.DynaActionForm">
+            type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="ac" type="java.lang.String"/>
             <form-property name="shortLabel" type="java.lang.String"/>
             <form-property name="fullName" type="java.lang.String"/>
@@ -290,7 +289,15 @@
             input="/do/setUpEditorForm"
             scope="request"
             parameter="dispatch">
+            <!-- Validation for short label failed. -->
+<!--            <exception-->
+<!--                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"-->
+<!--                type="uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException"-->
+<!--                key="error.shortlabel.validation"-->
+<!--                path="/do/setUpEditorForm"/>-->
+            <!-- Back to the results page as we got here from a search result -->
             <forward name="results" path="match.layout"/>
+            <!-- Back to the search page. -->
             <forward name="search" path="search.layout"/>
         </action>
 
