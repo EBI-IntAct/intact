@@ -278,6 +278,13 @@
                 <include name="log4j-1.2.5.jar"/>
                 <include name="${db}"/>
                 <include name="commons-pool.jar"/>
+                <!-- All the following files are required for ProteinUpdate to work -->
+                <include name="yasp.jar"/>
+                <include name="aristotle.jar"/>
+                <include name="flatfilewriter.jar"/>
+                <include name="sptr-interfaces.jar"/>
+                <include name="gnu-regexp-1.1.2.jar"/>
+                <include name="antlr.jar"/>
             </fileset>
         </copy>
 
