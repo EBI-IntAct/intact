@@ -24,13 +24,28 @@ public class Utilities {
 	for example -Dconfig=pathname
      */
     public static Properties getProperties(String aParameterName) throws IOException{
-        // get properties
-        Properties properties = new Properties();
-        FileInputStream in = new FileInputStream(System.getProperty(aParameterName));
-        properties.load(in);
-        in.close();
 
-        return properties;
+	// get properties
+	Properties properties = new Properties();
+	FileInputStream in = new FileInputStream(System.getProperty(aParameterName));
+	properties.load(in);
+	in.close();
+
+	return properties;
+    }
+
+    /** compares two objects.
+     * This is a workaround for the case where o is null
+     * and o.equals(p) returns exceptions.
+     *
+     * @param o
+     * @param p
+     * @return
+     */
+    public static boolean equals(Object o, Object p){
+        if (o == p) return true;
+        if (null == o && null != p) return false;
+        return (o.equals(p));
     }
 }
 
