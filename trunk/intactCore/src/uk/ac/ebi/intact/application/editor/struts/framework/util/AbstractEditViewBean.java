@@ -139,8 +139,24 @@ public abstract class AbstractEditViewBean {
      * Returns accession number.
      * @return the accession number as a <code>String</code> instance.
      */
-    public String getAc() {
+    public String getAcNoLink() {
         return myAnnotObject.getAc();
+    }
+
+    /**
+     * Returns a link to the search application.
+     * @return ac as a link to the seatch application or an empty string if this
+     * object is not yet persisted (i.r., ac is not yet set).
+     */
+    public String getAc() {
+        if (getAcNoLink() == null) {
+            return "";
+        }
+        String className = myAnnotObject.getClass().getName();
+        int lastPos = className.lastIndexOf('.');
+        String type = className.substring(lastPos + 1);
+        return "<a href=\"" + "javascript:show('" + type + "', " + "'"
+                + getShortLabel() + "')\"" + ">" + getAcNoLink() + "</a>";
     }
 
     /**
