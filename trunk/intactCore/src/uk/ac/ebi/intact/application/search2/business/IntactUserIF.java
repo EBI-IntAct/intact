@@ -19,28 +19,6 @@ import java.util.Collection;
 public interface IntactUserIF
         extends uk.ac.ebi.intact.application.commons.business.IntactUserI {
 
-    /**
-     * Return the search criteria.
-     * @return the search criteria as a <code>String</code> object.
-     */
-    public String getSearchCritera();
-
-    /**
-     * This method provides a means of searching intact objects, within the constraints
-     * provided by the parameters to the method.
-     *
-     * @param objectType the object type to be searched
-     * @param searchParam the parameter to search on (eg field)
-     * @param searchValue the search value to match with the parameter
-     *
-     * @return the results of the search (empty if no matches were found).
-     *
-     * @exception IntactException thrown if problems are encountered during the
-     * search process.
-     */
-    public Collection search(String objectType, String searchParam,
-                              String searchValue) throws IntactException;
-
     public void setHelpLink(String link);
     public String getHelpLink();
 
