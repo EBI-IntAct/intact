@@ -86,7 +86,7 @@ public class IntactHelper implements SearchI, Serializable {
 
     Logger pr = null;
 
-    public Logger getLogger(){
+    public Logger getLogger() {
             return pr;
     }
 
@@ -512,6 +512,7 @@ public class IntactHelper implements SearchI, Serializable {
 
     //methods implemented from the SearchI interface...
     /**
+    *  Not Yet Fully Implemented.
      *  @see SearchI
      */
     public Collection paramSearch(String objectType, String searchParam, String searchValue,
@@ -526,6 +527,7 @@ public class IntactHelper implements SearchI, Serializable {
 
 
     /**
+     * Not Yet Fully Implemented.
      * @see SearchI
      */
     public List stringSearch(String objectType, String searchString,
@@ -584,8 +586,11 @@ public class IntactHelper implements SearchI, Serializable {
 
     /**
      * Search which provides an Iterator rather than a Collection. This is particularly
-     * useful for web applications which may need to close result data for DB resource
+     * useful for applications which may need to close result data for DB resource
      * reasons (the iterator from this method can be passed to <code>closeResults</code>).
+     * Note that this will NOT close oracle cursors on the oracle server, as it seems the
+     * only guranteed way to do that is to 'cose' the connection (preferably via an oracle
+     * connection pool supplied with the driver).
      * @param objectType - the object type to be searched
      * @param searchParam - the parameter to search on (eg field)
      * @param searchValue - the search value to match with the parameter
@@ -1481,7 +1486,7 @@ public class IntactHelper implements SearchI, Serializable {
         }
         return graph;
 
-    };
+    }
 
     private Graph subGraphPartial(Interactor startNode,
                                   int graphDepth,
