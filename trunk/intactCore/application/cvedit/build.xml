@@ -18,6 +18,8 @@
     <property name="root.dist.dir" value="${intact.root}/dist"/>
     <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
+    <!-- Intact application location. -->
+    <property name="intact.app.dir" value=".."/>
 
     <property name="dist.dir" value="dist"/>
     <property name="war.file" value="cvedit.war"/>
@@ -25,6 +27,7 @@
     <!-- This project specific paths. -->
     <property name="src.dir" value="src"/>
     <property name="lib.dir" value="WEB-INF/lib"/>
+    <property name="tld.dir" value="WEB-INF/tld"/>
     <property name="dest.dir" value="WEB-INF/classes"/>
     <property name="docs.dir" value="doc/api"/>
 
@@ -45,7 +48,8 @@
         <!-- Common jar files. -->
         <pathelement path="${root.lib.dir}/junit.jar"/>
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
-        <pathelement path="${root.lib.dir}/struts.jar"/>
+        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
+        <pathelement path="${root.lib.dir}/commons-lang-1.0.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
     </path>
 
@@ -116,7 +120,9 @@
 
         <!-- Only compile cvedit sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            includes="**/application/cvedit/**" debug="on" source="1.4">
+            debug="on" source="1.4"
+            includes="**/application/cvedit/**"
+            excludes="**/test/**">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -135,12 +141,19 @@
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
 
+        <!-- Copy struts standard tld files -->
+        <copy todir="${tld.dir}">
+            <fileset dir="${intact.app.dir}/tld">
+                <include name="*.tld"/>
+            </fileset>
+        </copy>
+
 		<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
 		   <fileset dir="${basedir}">
 				<include name="*.jsp"/>
 	        	<include name="*.css"/>
 	  			<include name="WEB-INF/struts-config.xml"/>
-	  			<include name="WEB-INF/tld/**"/>
+	  			<include name="${tld.dir}/**"/>
 	   		</fileset>
 
 			<!-- Include cvedit specific jar files. -->
@@ -152,15 +165,14 @@
             <!-- Inlcude the intact core -->
             <lib dir="${root.dist.dir}" />
 
+            <!-- Include common jar files for struts. -->
+            <lib dir="${intact.app.dir}/lib" />
+
 			<!-- Include common jar files from intact core. -->
 			<lib dir="${root.lib.dir}">
 				<include name="jakarta-ojb-0.9.7.jar"/>
-				<include name="struts.jar"/>
+                <include name="commons-lang-1.0.jar"/>
 				<include name="log4j-1.2.5.jar"/>
-				<include name="commons-beanutils.jar"/>
-				<include name="commons-collections-2.0.jar"/>
-				<include name="commons-pool.jar"/>
-				<include name="commons-logging.jar"/>
 				<include name="pgjdbc2.jar"/>
 			</lib>
 
@@ -207,7 +219,7 @@
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
     <target name="junit-test-stdout" depends="compile"
             description="Runs JUnit directly with output directed to stdout">
-        <java classname="junit.textui.TestRunner">
+        <java classname="junit.textui.TestRunner" fork="true">
             <arg value=
                 "uk.ac.ebi.intact.application.cvedit.struts.framework.util.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
