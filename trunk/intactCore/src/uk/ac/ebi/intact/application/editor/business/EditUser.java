@@ -143,6 +143,24 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private transient Set myCurrentInteractions = new HashSet();
 
+    // ------------------------------------------------------------------------
+
+    // Inner class to sort search result.
+    private static class SearchResultComparator implements Comparator {
+
+        private static SearchResultComparator ourInstance =
+                new SearchResultComparator();
+
+        // Compare on short labels.
+        public int compare(Object obj1, Object obj2) {
+            AnnotatedObject annobj1 = (AnnotatedObject) obj1;
+            AnnotatedObject annobj2 = (AnnotatedObject) obj2;
+            return annobj1.getShortLabel().compareTo(annobj2.getShortLabel());
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
     // Constructors.
 
     /**
@@ -502,10 +520,19 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             String msg = "Failed to find any " + className + " records for " + value;
             throw new SearchException(msg);
         }
+        // Search result in an array to pass to the sort method.
+        AnnotatedObject[] items = (AnnotatedObject[]) results.toArray(
+                new AnnotatedObject[0]);
+        // Sort using the compartor.
+        Arrays.sort(items, SearchResultComparator.ourInstance);
+
+        // Cache the search query.
         CriteriaBean critera = (CriteriaBean)
                 helper.getSearchCritera().iterator().next();
         myLastQuery = critera.getTarget() + "=" + critera.getQuery();
-        return results;
+
+        // Convert back to the a list.
+        return Arrays.asList(items);
     }
 
     public String getUniqueShortLabel(String shortlabel) throws SearchException {
