@@ -60,7 +60,7 @@
     <!-- The help link (relative to context root)-->
     <context-param>
         <param-name>helpLink</param-name>
-        <param-value>/search.html#search.</param-value>
+        <param-value>displayDoc.jsp?section=</param-value>
     </context-param>
 
     <!-- The link for interaction partner views to access Experiment
