@@ -11,10 +11,6 @@ import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.*;
 
-//only used by zacharia's test
-import javax.jdo.Query;
-import javax.jdo.Extent;
-
 import java.util.*;
 import java.io.*;
 
