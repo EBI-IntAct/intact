@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.io.*;
 
 //as good a logging facility as any other....
-import org.apache.ojb.broker.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import uk.ac.ebi.intact.util.*;
 import uk.ac.ebi.intact.persistence.*;
