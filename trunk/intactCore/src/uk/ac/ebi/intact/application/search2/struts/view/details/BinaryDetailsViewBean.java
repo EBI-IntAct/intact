@@ -79,8 +79,8 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
 
         HashMap results = binaryData.getData();
 
-        if (null != query.getActiveInstance()) {
-            Iterator i = query.getActiveInstance().iterator();
+        if (null != query.getActiveInstances()) {
+            Iterator i = query.getActiveInstances().iterator();
 
             // Check if the current query is already in the result set
             if (null != results.get(query)) {
@@ -107,7 +107,7 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
                     processedInteractions.add( interaction );
 
                     // Insert all Interactors of the current interaction
-                    Iterator j = interaction.getComponent().iterator();
+                    Iterator j = interaction.getComponents().iterator();
                     while (j.hasNext()) {
                         Component c2 = (Component) j.next();
                         Interactor result = c2.getInteractor();

@@ -225,7 +225,7 @@ public class HtmlBuilder {
      */
     private void htmlViewAnnotation(AnnotatedObject anObject) throws IOException {
 
-        Collection annot = anObject.getAnnotation();
+        Collection annot = anObject.getAnnotations();
 
         if (null != annot)
         {
@@ -256,7 +256,7 @@ public class HtmlBuilder {
             String searchUrl = (String) dbUrls.get(anXref.getCvDatabase());
             if (null == searchUrl){
                 // it has not yet been checked if there is a search-url for this db.
-                Collection dbAnnotation = anXref.getCvDatabase().getAnnotation();
+                Collection dbAnnotation = anXref.getCvDatabase().getAnnotations();
                 if (null != dbAnnotation){
                     Iterator i = dbAnnotation.iterator();
                     while (i.hasNext()){
@@ -339,7 +339,7 @@ public class HtmlBuilder {
      */
     private void htmlViewXref(AnnotatedObject anObject) throws IOException {
 
-        Collection annot = anObject.getXref();
+        Collection annot = anObject.getXrefs();
 
         if (null != annot)
         {
@@ -981,7 +981,7 @@ public class HtmlBuilder {
         rs.write("<td colspan=\"4\">");
 
         rs.write("<code>");
-        Iterator c = act.getComponent().iterator();
+        Iterator c = act.getComponents().iterator();
         while (c.hasNext()) {
             htmlViewPartial((Component) c.next());
         }
@@ -1011,7 +1011,7 @@ public class HtmlBuilder {
         htmlViewAnnotation(ex);
         htmlViewXref(ex);
 
-        Iterator i = ex.getInteraction().iterator();
+        Iterator i = ex.getInteractions().iterator();
 
         int count = 0;
         while (i.hasNext()) {

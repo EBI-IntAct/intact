@@ -53,12 +53,12 @@ public class ProteinDetailsViewBean extends DetailsViewBean {
 
             // TODO could be pushed as isOrphan() in the Protein class.
             // We skip all orphan protein.
-            Collection activeInstance = protein.getActiveInstance();
+            Collection activeInstance = protein.getActiveInstances();
             if (activeInstance == null || activeInstance.size() == 0) {
                 continue;
             }
 
-            Collection components = protein.getActiveInstance();
+            Collection components = protein.getActiveInstances();
 
 //            System.out.println("Protein: " + protein.getShortLabel());
 
@@ -70,7 +70,7 @@ public class ProteinDetailsViewBean extends DetailsViewBean {
                 // get all Experiment involving that interaction
 
                 // keep a copy of distinct Experiment
-                for (Iterator iterator2 = interaction.getExperiment().iterator(); iterator2.hasNext();) {
+                for (Iterator iterator2 = interaction.getExperiments().iterator(); iterator2.hasNext();) {
                     Experiment experiment = (Experiment) iterator2.next();
                     // add a copy of the experiment
 //                    System.out.println("Distinct Experiment: " + experiment.getShortLabel());
@@ -89,19 +89,19 @@ public class ProteinDetailsViewBean extends DetailsViewBean {
 
             // TODO could be pushed as isOrphan() in the Protein class.
             // We skip all orphan protein.
-            Collection activeInstance = protein.getActiveInstance();
+            Collection activeInstance = protein.getActiveInstances();
             if (activeInstance == null || activeInstance.size() == 0) {
                 continue;
             }
 
-            Collection components = protein.getActiveInstance();
+            Collection components = protein.getActiveInstances();
 
             // get all Interaction involving that Protein
             for (Iterator iterator2 = components.iterator(); iterator2.hasNext();) {
                 Component component = (Component) iterator2.next();
                 Interaction interaction = component.getInteraction();
 
-                Collection int_exps = interaction.getExperiment();
+                Collection int_exps = interaction.getExperiments();
                 for ( Iterator iterator3 = int_exps.iterator (); iterator3.hasNext (); ) {
                     Experiment experiment = (Experiment) iterator3.next ();
                     Experiment ex = (Experiment) experiments.get( experiment.getAc() );

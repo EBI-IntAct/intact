@@ -91,15 +91,15 @@ public class DetailsViewBean extends AbstractViewBean
                                          experiment.getShortLabel(),
                                          experiment.getBioSource() );
         ex.setAc(experiment.getAc());
-        ex.setAnnotation( experiment.getAnnotation() );
+        ex.setAnnotation( experiment.getAnnotations() );
         ex.setCurator( experiment.getCurator() );
         ex.setCvInteraction( experiment.getCvInteraction() );
         ex.setCvIdentification( experiment.getCvIdentification() );
-        ex.setEvidence( experiment.getEvidence() );
+        ex.setEvidences( experiment.getEvidences() );
         ex.setFullName( experiment.getFullName() );
-        ex.setReference( experiment.getReference() );
+        ex.setReferences( experiment.getReferences() );
         ex.setRelatedExperiment( experiment.getRelatedExperiment() );
-        ex.setXref( experiment.getXref() );
+        ex.setXrefs( experiment.getXrefs() );
         return ex;
     }
 
