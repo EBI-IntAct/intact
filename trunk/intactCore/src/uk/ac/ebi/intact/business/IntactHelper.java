@@ -1335,6 +1335,30 @@ public class IntactHelper implements SearchI, Serializable {
     }
 
     /**
+     * Delete all elements in a collection.
+     */
+    public void deleteAllElements(Collection aCollection) throws IntactException {
+        try {
+
+            if(dao == null) connect();
+
+            //just to be safe, restrict write access..
+            synchronized(this) {
+                for (Iterator i = aCollection.iterator(); i.hasNext();) {
+                    dao.remove((Object) i.next());
+                }
+            }
+
+        }
+        catch(Exception de) {
+
+               String msg = "intact helper: error deleting collection elements";
+               throw new IntactException(msg, de);
+
+        }
+    }
+
+    /**
      * Returns a subgraph centered on startNode.
      * The subgraph will contain all nodes which are up to graphDepth interactions away from startNode.
      * Only Interactions which belong to one of the Experiments in experiments will be taken into account.
