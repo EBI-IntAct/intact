@@ -464,7 +464,7 @@
             scope="session">
 
             <forward name="submit" path="/do/expSubmit"/>
-            <forward name="save" path="/do/expSubmit"/>
+<!--            <forward name="save" path="/do/expSubmit"/>-->
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/expAnnotSubmit"/>
@@ -523,24 +523,33 @@
             name="expForm"
             validate="false"
             scope="session" >
-            <forward name="success" path="/do/fillExpForm"/>
-            <forward name="intEdit" path="/do/intEditSave"/>
+<!--            <forward name="expSave" path="/do/expSave"/>-->
+            <forward name="success" path="/do/intLink"/>
         </action>
+<!---->
+<!--        <action path="/expSave"-->
+<!--            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.ExperimentSaveAction"-->
+<!--            name="expForm"-->
+<!--            input="/do/fillExpForm"-->
+<!--            validate="true"-->
+<!--            scope="session">-->
+<!--            <forward name="success" path="/do/intLink"/>-->
+<!---->
+<!-- Uses the input for validation exceptions -->
+<!--            <exception-->
+<!--                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"-->
+<!--                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"-->
+<!--                key="dummy.key"/>-->
+<!--        </action>-->
 
-        <action path="/intEditSave"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
+        <!-- Links an Interaction from an Experiment.
+        -->
+        <action path="/intLink"
+            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionLinkAction"
             name="expForm"
-            input="/do/fillExpForm"
-            validate="true"
-            scope="session"
-            parameter="dispatch">
+            validate="false"
+            scope="session" >
             <forward name="success" path="/do/fillIntForm"/>
-
-            <!-- Uses the input for validation exceptions -->
-            <exception
-                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
-                key="dummy.key"/>
         </action>
 
         <!-- Action to handle when an experiment is added to an Interaction
