@@ -146,10 +146,10 @@ public class FileGenerator {
 
             //classification for this BioSource is output as:
             //'<filename> <comma-seperated shortLabel list>'
-            System.out.println(smallFile + " " + pattern.toString());
+	    //only print patterns if they are non-empty
+            if(pattern.length() != 0)
+		System.out.println(smallFile + " " + pattern.toString());
 
-            //only need to print out the negatives if the negative StringBuffer
-            //has anything in it....
             if(negPattern.length() != 0)
                 System.out.println(negFile + " " + negPattern.toString());
 
