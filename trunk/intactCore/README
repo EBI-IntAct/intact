@@ -50,6 +50,7 @@ In general, it will also help to have the following environment variables set to
 
 $CATALINA_HOME - the home directory of your tomcat installation
 $JAVA_HOME - the home directory of your JDK
+$CLASSPATH should contains, at least, the current directory (i.e. : .). It allows Ant to find build.properties.
 
 Intact has been tested on both Linux (7.1 and 8.0) and Windows2000 running inside cygwin, and with both local and
 remote postgres databases as well as a remote oracle DB. Thus intact is based around a linux/unix environment, but if you
