@@ -6,7 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.cvedit.struts.security;
 
-import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.CvAbstractAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.business.IntactException;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class LogoutAction extends IntactBaseAction {
+public class LogoutAction extends CvAbstractAction {
 
     /**
      * Process the specified HTTP request, and create the corresponding
