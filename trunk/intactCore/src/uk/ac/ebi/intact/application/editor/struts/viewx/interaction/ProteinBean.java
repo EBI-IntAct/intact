@@ -4,7 +4,7 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.application.editor.struts.viewx.interaction;
+package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
