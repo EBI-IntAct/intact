@@ -48,56 +48,76 @@
 
     int max = criterias.size();
     // remove the last comma and white space
-    StringBuffer contextToDisplay = new StringBuffer();
+    StringBuffer contextToDisplay = new StringBuffer(256);
     if ((max = context.length()) > 0) {
-       	Object network = session.getAttribute("network");
-		Object singletons = session.getAttribute("singletons");
-    	String tmp = context.substring (0, max-2);
-    	
-    	if("null".equals(network) && "null".equals(singletons)) {
+       	String network = (String)session.getAttribute("network");
+		String singletons = (String)session.getAttribute("singletons");
+		
+		String tmp = context.substring (0, max-2);
+    	// if no MiNe parameters are given the default HV display is used
+    	if(null == network && null == singletons) {
+    		// the normal hv display
 	        contextToDisplay.append("Interaction network for ");
     	    contextToDisplay.append(tmp).append("<br>");
         }
         else {
 			String net = "This is the minimal connecting network for ";
-			
-    	    StringTokenizer tokens = new StringTokenizer(network.toString(), ",");
+			// the string containing the borders of the networks is split
+    	    StringTokenizer tokens = new StringTokenizer(network, ",");
+    	    // the int array stores the length of the different 
+    	    // connecting networks
         	int[] borders = new int[tokens.countTokens()];
         	int i = 0;
-        	String tok;
+        	// the borders are parsed as an int and stored in the array
 	        while(tokens.hasMoreTokens()) {
     	      borders[i++] = Integer.parseInt(tokens.nextToken());
         	}
-
+			// the string containing the shortlabels of the interactors
+			// of the minimal connecting networks are split
         	tokens = new StringTokenizer(tmp, ",");
 			contextToDisplay.append(net);
 			i = 1;
 			int j = 0;
 			while(tokens.hasMoreTokens()) {
+				// the current interactor is added
 				contextToDisplay.append(tokens.nextToken());
+				// if the boundary of the current interaction network is reached 
 				if(i == borders[j]) {
+				   // if there are more interactors are available
 				   if(tokens.hasMoreTokens()) {
-				     contextToDisplay.append("<br>" + net);
+				     // because there are more interactors available
+				     // a newline is created and the beginning text
+				     // for each network is added
+				     contextToDisplay.append("<br>").append(net);
 				   }
 				   j++;
 				}
 				i++;
 			}
-			if(!"null".equals(singletons)) {
+			
+			// if there are also singletons available
+			// they are added to the comment line with a link
+			// to the search application
+			if(null != singletons) {
+        		String tok;
 				contextToDisplay.append("<br>The following proteins are not in "+
 									"a connecting network: "); 
-				tokens = new StringTokenizer(singletons.toString(),",");
+				tokens = new StringTokenizer(singletons,",");
 				while(tokens.hasMoreTokens()) {
+				  // the current singleton is fetched
 				  tok = tokens.nextToken().trim();
 				  contextToDisplay.append(prefix + "shortLabel: ");
+				  // the search string for the current singleton is fetched
 	              contextToDisplay.append("<a href=\"" + user.getSearchUrl(tok, false) + "\"");
 	              contextToDisplay.append(" target=\"_blank\">" + tok + "</a>");
         		  contextToDisplay.append(suffix + " ");
         		}
+				session.setAttribute("singletons", null);
 			}
+			// the attribute is erazed to allow the user to work
+			// without problems without the mine informations
+			session.setAttribute("network", null);
 		}
-		session.setAttribute("network", "null");
-		session.setAttribute("singletons", "null");
 	}
     String selectedKey = user.getSelectedKey();
     if (selectedKey == null) selectedKey = "";
