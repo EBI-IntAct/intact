@@ -81,7 +81,7 @@
 
         <forward name="failure" path="error.layout"/>
         <!-- Fill the form with search results -->
-        <forward name="result" path="/do/show/results"/>
+        <forward name="result" path="/do/showResults"/>
         <!-- Back to the search page. -->
         <forward name="search" path="search.layout"/>
     </global-forwards>
@@ -151,7 +151,7 @@
         </action>
 
         <!-- Fill the form with search results for the JSP to display. -->
-        <action path="/show/results"
+        <action path="/showResults"
             type="org.apache.struts.actions.ForwardAction"
             parameter="match.layout">
         </action>
