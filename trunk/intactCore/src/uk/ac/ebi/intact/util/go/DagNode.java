@@ -9,6 +9,9 @@ package uk.ac.ebi.intact.util.go;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDagObject;
+import uk.ac.ebi.intact.model.Alias;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.CvAliasType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -90,6 +93,11 @@ public class DagNode {
     private String myGoShortLabel;
 
     /**
+     * Contains a list of aliases (strings)
+     */
+    private List myAliases = new ArrayList();
+
+    /**
      * Default constructor
      */
     public DagNode() {
@@ -151,6 +159,10 @@ public class DagNode {
         myAdditionalParents.add(new GoParentData(id, term, label));
     }
 
+    public void addAlias(String alias) {
+        myAliases.add(alias);
+    }
+
     /**
      * Save the current DAG node to the database.
      *
@@ -209,10 +221,25 @@ public class DagNode {
                 additionalParent = (CvDagObject) goUtils.insertDefinition(myGoId,
                         myGoTerm, myGoShortLabel, false);
             }
-
             // Add the link between parent and child
             targetNode.addParent(additionalParent);
             helper.update(additionalParent);
+        }
+        // Add aliases.
+        if (!myAliases.isEmpty()) {
+            // Cache objects to create aliases.
+            Institution owner = helper.getInstitution();
+            CvAliasType aliasType = (CvAliasType) helper.getObjectByLabel(
+                    CvAliasType.class, "go-synonym");
+
+            for (Iterator iter = myAliases.iterator(); iter.hasNext(); ) {
+                Alias alias = new Alias(owner, targetNode, aliasType, (String) iter.next());
+                // Do the check to avoid creating duplicate aliases.
+                if (!targetNode.getAliases().contains(alias)) {
+                    targetNode.addAlias(alias);
+                    helper.create(alias);
+                }
+            }
         }
         helper.update(targetNode);
     }

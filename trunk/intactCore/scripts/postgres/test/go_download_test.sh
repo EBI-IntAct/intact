@@ -55,6 +55,15 @@ then
 fi
 
 echo ""
+echo "Download CvAliasType"
+scripts/javaRun.sh GoTools download uk.ac.ebi.intact.model.CvAliasType - \
+$TEMP_DIR/CvAliasType.def
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
+echo ""
 echo "Download CvDatabase"
 scripts/javaRun.sh GoTools download uk.ac.ebi.intact.model.CvDatabase - \
 $TEMP_DIR/CvDatabase.def

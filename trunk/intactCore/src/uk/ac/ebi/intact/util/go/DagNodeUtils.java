@@ -55,6 +55,20 @@ public class DagNodeUtils {
             Pattern.compile("([^\\\\:]*)[\\\\: ]*(.*)");
 
     /**
+     * This pattern identifies a synonym.
+     */
+    private static final Pattern ourSynonymRegx = Pattern.compile("synonym:");
+
+    /**
+     * This pattern identifies a single synonym entry.
+     * pattern: [, followed by a character, \: and any group of characters
+     * until ] is encountered (this matches the pattern [A\:ac]). Or group of
+     * chars till ; encountered (this matches the pattern AAC).
+     */
+    private static final Pattern ourSynonymItemRegx =
+            Pattern.compile("\\[(\\w)\\\\:([^\\]]+)|([^;]+)");
+
+    /**
      * Reference to the GoTools.
      */
     private GoUtils myGoUtilsHandler;
@@ -171,9 +185,26 @@ public class DagNodeUtils {
                             // Store goterm
                             node.addParentData(goIdMatch.group(2), goTerm, m.group(1));
                         }
+                        // Any synoyms?
+                        String[] synonymns = ourSynonymRegx.split(termLine);
+                        // Can ignore the first as it contains the go id part.
+                        for (int i = 1; i < synonymns.length; i++) {
+                            Matcher m1 = ourSynonymItemRegx.matcher(synonymns[i]);
+                            if (m1.find()) {
+                                if (m1.group(1) != null) {
+                                    // A:\ac case
+                                    node.addAlias(m1.group(1) + ":" + m1.group(2));
+                                }
+                                else {
+                                    // AAC case
+                                    node.addAlias(m1.group(3).trim());
+                                }
+                            }
+                        }
                     }
                 }
                 else {
+                    // We only get here if we are parsing files saved in pre14 format.
                     goIdMatch = ourGoIdRegex.matcher(termLine);
                     if (goIdMatch.find()) {
                         // The first Go id is the id of the current term,

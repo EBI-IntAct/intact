@@ -4,6 +4,7 @@
  */
 package uk.ac.ebi.intact.util.go;
 
+import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.CvDagObject;
 
 import java.io.PrintWriter;
@@ -100,7 +101,7 @@ public class DagGenerator {
     }
 
     /**
-     * Prints the term and goid info.
+     * Prints the term, goid and synonym info
      */
     private void term2DagLine(CvDagObject current) {
         // v14 has shortlabel\: go term
@@ -118,6 +119,21 @@ public class DagGenerator {
 
         if (goid != null) {
             myWriter.print(" ; " + goid);
+        }
+
+        // Print aliases.
+        for (Iterator iter = current.getAliases().iterator(); iter.hasNext(); ) {
+            String alias = ((Alias) iter.next()).getName();
+            int pos = alias.indexOf(":");
+            if (pos != -1) {
+                // Case: A\:ac
+                myWriter.print(" ; synonym:[" + alias.substring(0, pos) + "\\"
+                        + alias.substring(pos) + "]");
+            }
+            else {
+                // Case: AAA
+                myWriter.print(" ; synonym:" + alias);
+            }
         }
     }
 }

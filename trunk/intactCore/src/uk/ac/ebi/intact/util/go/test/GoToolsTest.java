@@ -803,6 +803,10 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
         assertTrue(checkDBXref(cvfeature, goid, "MI:0161", identity));
         assertTrue(checkDBXref(cvfeature, resid, "AA0232", godef));
+        // Two aliases.
+        assertEquals(cvfeature.getAliases().size(), 2);
+        assertTrue(checkAlias(cvfeature, "DM2"));
+        assertTrue(checkAlias(cvfeature, "D:meth_b"));
 
         shortlabel = "4-hydroxy-l-proline";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -822,6 +826,10 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
         assertTrue(checkDBXref(cvfeature, goid, "MI:0149", identity));
         assertTrue(checkDBXref(cvfeature, resid, "AA0030", godef));
+        // Two aliases.
+        assertEquals(cvfeature.getAliases().size(), 2);
+        assertTrue(checkAlias(cvfeature, "HYP"));
+        assertTrue(checkAlias(cvfeature, "P:hy_g"));
 
         shortlabel = "tau-phosphohistidine";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -841,6 +849,10 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
         assertTrue(checkDBXref(cvfeature, goid, "MI:0174", identity));
         assertTrue(checkDBXref(cvfeature, resid, "AA0035", godef));
+        // Two aliases.
+        assertEquals(cvfeature.getAliases().size(), 2);
+        assertTrue(checkAlias(cvfeature, "HPE"));
+        assertTrue(checkAlias(cvfeature, "H:po_e"));
 
         shortlabel = "n-acetyl-l-arginine";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -860,6 +872,10 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
         assertTrue(checkDBXref(cvfeature, goid, "MI:0123", identity));
         assertTrue(checkDBXref(cvfeature, resid, "AA0354", godef));
+        // Two aliases.
+        assertEquals(cvfeature.getAliases().size(), 2);
+        assertTrue(checkAlias(cvfeature, "RAC"));
+        assertTrue(checkAlias(cvfeature, "R:ac"));
 
         shortlabel = "hypusine";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -879,6 +895,10 @@ public class GoToolsTest extends TestCase {
         assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
         assertTrue(checkDBXref(cvfeature, goid, "MI:0187", identity));
         assertTrue(checkDBXref(cvfeature, resid, "AA0116", godef));
+        // Two aliases.
+        assertEquals(cvfeature.getAliases().size(), 2);
+        assertTrue(checkAlias(cvfeature, "KHY"));
+        assertTrue(checkAlias(cvfeature, "K:hypu"));
 
         shortlabel = "his-tagged";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -896,6 +916,31 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getXrefs().size(), 1);
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, goid, "MI:0521", identity));
+        // Three aliases.
+        assertEquals(cvfeature.getAliases().size(), 3);
+        assertTrue(checkAlias(cvfeature, "6-His-tagged"));
+        assertTrue(checkAlias(cvfeature, "Hexa-His-tagged"));
+        assertTrue(checkAlias(cvfeature, "Histidine-tagged"));
+
+        // No Aliases for this object.
+        shortlabel = "tagged-protein";
+        cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
+                shortlabel);
+        // Must have the object
+        assertNotNull(cvfeature);
+        assertNotNull(cvfeature.getAc());
+        // Check the full name.
+        assertEquals(cvfeature.getFullName(), "Tagged-protein");
+        // There is one annotation.
+        assertEquals(cvfeature.getAnnotations().size(), 1);
+        // Must contain the topic definition.
+        assertTrue(containsTopic(cvfeature, definition));
+        // One xref.
+        assertEquals(cvfeature.getXrefs().size(), 1);
+        // Compare the primary id for the object
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0507", identity));
+        // No aliases.
+        assertTrue(cvfeature.getAliases().isEmpty());
     }
 
     private void doTestCvFeatureTypeDag() throws IntactException {
@@ -970,6 +1015,8 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getXrefs().size(), 1);
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, goid, "MI:0005", identity));
+        // No aliases.
+        assertTrue(cvfeature.getAliases().isEmpty());
 
         shortlabel = "complete sequence";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
@@ -987,6 +1034,8 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getXrefs().size(), 1);
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, goid, "MI:0056", identity));
+        // No aliases.
+        assertTrue(cvfeature.getAliases().isEmpty());
 
         shortlabel = "epr";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
@@ -1005,6 +1054,10 @@ public class GoToolsTest extends TestCase {
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, pubmed, "11817959", godef));
         assertTrue(checkDBXref(cvfeature, goid, "MI:0042", identity));
+        // Two aliases.
+        assertEquals(cvfeature.getAliases().size(), 2);
+        assertTrue(checkAlias(cvfeature, "EPR"));
+        assertTrue(checkAlias(cvfeature, "ESR"));
 
         shortlabel = "protein staining";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
@@ -1023,6 +1076,8 @@ public class GoToolsTest extends TestCase {
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, pubmed, "12015990", godef));
         assertTrue(checkDBXref(cvfeature, goid, "MI:0094", identity));
+        // No aliases.
+        assertTrue(cvfeature.getAliases().isEmpty());
 
         shortlabel = "western blot";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
@@ -1040,6 +1095,9 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getXrefs().size(), 1);
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, goid, "MI:0113", identity));
+        // One alias.
+        assertEquals(cvfeature.getAliases().size(), 1);
+        assertTrue(checkAlias(cvfeature, "Immuno blot"));
 
         shortlabel = "x-ray";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
@@ -1057,6 +1115,9 @@ public class GoToolsTest extends TestCase {
         assertEquals(cvfeature.getXrefs().size(), 1);
         // Compare the primary id for the object
         assertTrue(checkDBXref(cvfeature, goid, "MI:0114", identity));
+        // One alias.
+        assertEquals(cvfeature.getAliases().size(), 1);
+        assertTrue(checkAlias(cvfeature, "X-ray"));
     }
 
     private void doTestCvFeatureIdentificationDag() throws IntactException {
@@ -1141,6 +1202,11 @@ public class GoToolsTest extends TestCase {
             }
         }
         return false;
+    }
+
+    private boolean checkAlias(AnnotatedObject annobj, String name) {
+        List aliasNames = extractAliasNames((List) annobj.getAliases());
+        return aliasNames.contains(name);
     }
 
     private boolean hasChild(CvDagObject cvdag, String label) {
@@ -1232,5 +1298,13 @@ public class GoToolsTest extends TestCase {
             labels.add(((AnnotatedObject) iter.next()).getShortLabel());
         }
         return labels;
+    }
+
+    private List extractAliasNames(List aliases) {
+        List names = new ArrayList();
+        for (Iterator iter = aliases.iterator(); iter.hasNext();) {
+            names.add(((Alias) iter.next()).getName());
+        }
+        return names;
     }
 }
