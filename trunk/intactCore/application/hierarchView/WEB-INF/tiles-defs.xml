@@ -36,7 +36,7 @@
     | side  |_________________________________|
     | bar   |                                 |
     |       |                                 |
-    | see   |           content               |
+    | see   |           content               |     (!) each part is a frame
     | below |         (see below)             |
     |       |                                 |
     |       |                                 |
@@ -46,13 +46,13 @@
 
     Result Content layout :
      _________________________________________
+    |                   |  Highlight title   |
+    |    Graph title    |                    |
+    |...................|    source list     |
     |                   |                    |
-    |    Graph title    |  Highlight title   |
-    |___________________|____________________|
-    |                   |                    |
-    |                   |                    |
-    |       Graph       |     Highlight      |
-    |                   |                    |
+    |                   |___________________ |
+    |       Graph       |     Highlight      |      (!) each part is a frame
+    |                   |      source        |
     |                   |                    |
     |                   |                    |
     |                   |                    |
@@ -96,11 +96,11 @@
 
     <!-- hierarchView page description -->
     <definition name="hierarchView.layout" path="/layouts/intactLayoutFrame.jsp">
-        <put name="title"    value="IntAct - hierarchView"/>
-        <put name="header"   value="headerFrame.jsp"/>
+        <put name="title"     value="IntAct - hierarchView"/>
+        <put name="header"    value="headerFrame.jsp"/>
         <!-- just no content - this must be defined -->
-        <put name="content"  value="../pages/blank.jsp"/>
-        <put name="sidebar"  value="sidebarFrame.jsp"/>
+        <put name="content"   value="../pages/blank.jsp"/>
+        <put name="sidebar"   value="sidebarFrame.jsp"/>
     </definition>
 
     <!-- General content for result layout
@@ -121,6 +121,13 @@
 
     <!-- ============ Definition of tiles used in the content frame ======= -->
 
+    <!-- Used when the user request a highlighting, so we only refresh the graph layout -->
+    <definition name="hierarchView.graphAndTitle.layout" path="/layouts/graphFrame.jsp">
+    </definition>
+
+    <definition name="hierarchView.graphError.layout" path="/pages/errorFrame.jsp">
+    </definition>
+
     <definition name="hierarchView.graphTitle.layout" path="/pages/graphTitle.jsp">
     </definition>
 
@@ -134,6 +141,11 @@
     </definition>
 
     <definition name="hierarchView.selectedSource.layout" path="/pages/selectedSource.jsp">
+    </definition>
+
+    <!-- ===== Definition of the forward page to the search application === -->
+
+    <definition name="search.result.layout" path="/pages/forwardToSearch.jsp">
     </definition>
 
 </tiles-definitions>

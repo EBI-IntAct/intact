@@ -41,8 +41,9 @@
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
 
-        <forward  name="success"  path="hierarchView.result.layout"/>
-        <forward  name="error"    path="hierarchView.error.layout"/>
+        <forward  name="success"            path="hierarchView.result.layout"/>
+        <forward  name="error"              path="hierarchView.error.layout"/>
+        <forward  name="displayWithSearch"  path="search.result.layout"/>
 
     </global-forwards>
 
@@ -101,7 +102,11 @@
         <!-- Processes the request to display the content of a highlight source-->
         <action path="/displaySourceContent"
                 type="uk.ac.ebi.intact.application.hierarchView.struts.controller.DisplaySourceAction"
-                scope="request"/>
+                scope="request">
+
+            <forward name="success" path="hierarchView.selectedSource.layout"/>
+
+        </action>
 
     </action-mappings>
 
