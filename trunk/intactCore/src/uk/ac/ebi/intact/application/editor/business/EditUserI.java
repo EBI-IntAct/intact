@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
@@ -206,21 +205,22 @@ public interface EditUserI extends IntactUserI, Serializable {
     public String getSearchQuery();
 
     /**
-     * Caches the last search result. Each object of <code>results</code> is
-     * wrapped as a <code>ResultBean</code>.
-     * @param results a collection of result beans from the search.
+     * Collection of AnnotatedObjects to add to the search cache. Previous
+     * results are removed before adding the new result.
+     * @param results a collection of <code>AnnotatedObjects</code> from
+     * the search.
      *
      * <pre>
-     * pre: results->forall(obj: Object | obj.oclIsTypeOf(ResultBean))
+     * pre: results->forall(obj: Object | obj.oclIsTypeOf(AnnotatedObjects))
      * </pre>
      */
     public void addToSearchCache(Collection results);
 
     /**
      * Clears existing search cache and replace it with given bean.
-     * @param rb the result bean to set in the search cache.
+     * @param annotobj the AnnotatedObject to set as the search cache.
      */
-    public void updateSearchCache(ResultBean rb);
+    public void updateSearchCache(AnnotatedObject annotobj);
 
     /**
      * Returns a unique short label.

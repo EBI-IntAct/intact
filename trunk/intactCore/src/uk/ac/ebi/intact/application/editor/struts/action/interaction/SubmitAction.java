@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
@@ -70,8 +69,7 @@ public class SubmitAction extends SubmitDispatchAction {
                 // Update the search cache with the experiment, so the Cancel from the
                 // experiment will correctly return to the result page with single
                 // experiment (or else it will display the last edited Interaction).
-                ResultBean rb = new ResultBean(annobj);
-                user.updateSearchCache(rb);
+                user.updateSearchCache(annobj);
 
                 // Return to the experiment editor.
                 return mapping.findForward(EXP);
