@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.cvedit.struts.view;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl;
+import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 
 import java.io.Serializable;
 
@@ -163,7 +164,11 @@ public class XreferenceBean extends EditBean implements Serializable {
      * @param refQualifier the reference qaulifier as a <code>String</code>.
      */
     public void setQualifier(String refQualifier) {
-        myReferenceQualifer = refQualifier.trim();
+        String qualifier = refQualifier.trim();
+        // Avoid empty topic list indicator
+        if (!qualifier.equals(IntactUserIF.EMPTY_LIST_ITEM)) {
+            myReferenceQualifer = qualifier;
+        }
     }
 
     // Override Objects's equal method.
