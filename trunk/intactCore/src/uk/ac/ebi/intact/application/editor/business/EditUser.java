@@ -138,12 +138,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient EditViewBeanFactory myViewFactory;
 
     /**
-     * The factory to create read only views.  The factory lasts
-     * only for a session, hence it is transient.
-     */
-    private transient ROViewBeanFactory myNonEditViewFactory;
-
-    /**
      * The factory to create various form beans.
      */
     private transient EditorFormFactory myFormFactory;
@@ -224,7 +218,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void valueBound(HttpSessionBindingEvent event) {
         // Create the factories.
         myViewFactory = new EditViewBeanFactory();
-        myNonEditViewFactory = new ROViewBeanFactory();
         myFormFactory = new EditorFormFactory();
         myMenuFactory = new EditorMenuFactory(myHelper);
     }
@@ -493,14 +486,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public Date logoffTime() {
         return mySessionEndTime;
-    }
-
-    public AbstractROViewBean getReadOnlyView(Class clazz, String shortLabel)
-            throws SearchException {
-        // Try searching as it is.
-        AnnotatedObject annonj = (AnnotatedObject) getObjectByLabel(clazz,
-                shortLabel);
-        return myNonEditViewFactory.factory(annonj);
     }
 
     // Helper methods.
