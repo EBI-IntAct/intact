@@ -59,7 +59,9 @@
     <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
     <init-param>
       <param-name>application</param-name>
-      <param-value>/config/ApplicationResources</param-value>
+
+      <!-- The name of the Struts property file, '.properties' is automatically added -->
+      <param-value>/config/Struts</param-value>
     </init-param>
     <init-param>
       <param-name>config</param-name>
