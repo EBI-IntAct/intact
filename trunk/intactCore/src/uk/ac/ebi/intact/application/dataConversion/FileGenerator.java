@@ -8,6 +8,7 @@ import org.w3c.dom.*;
 
 
 import java.util.*;
+import java.sql.*;
 
 
 /**
@@ -25,6 +26,13 @@ public class FileGenerator {
     //NB changed for testing - usually 100
     public static final int SMALLSCALELIMIT = 500;
     public static final int LARGESCALESIZE = 2500;
+
+    /**
+     * Holds the shortLabels of any Experiments found to contain
+     * Interactions with 'negative' information. It has to be a static
+     * because the method used for writing the classifications is a static...
+     */
+    private static List negExpLabels = new ArrayList();
 
     private IntactHelper helper;
 
@@ -104,28 +112,60 @@ public class FileGenerator {
             BioSource bioSource = (BioSource) iterator.next();
             ArrayList smallScaleExp = (ArrayList) ((HashMap) allExp.get(bioSource)).get("small");
 
-            String fileName = bioSource.getShortLabel().replace(' ','-') + "_small.xml";
+            String fileNameRoot = bioSource.getShortLabel().replace(' ','-');
+            //create two filenames, one for usual exps and one for any 'negatives'
+            String smallFile = fileNameRoot + "_small.xml";
+            String negFile = fileNameRoot + "_small_negative.xml";
+
+            //buffers to hold the labels for small and negative small exps
+            StringBuffer negPattern = new StringBuffer();
             StringBuffer pattern = new StringBuffer();
+
+            String label = null;
             for (int i = 0; i < smallScaleExp.size(); i++) {
                 Experiment experiment = (Experiment) smallScaleExp.get(i);
-                pattern.append(experiment.getShortLabel());
-                // Add comma as separator, but not after last shortLabel
-                if (i < smallScaleExp.size() - 1) {
-                    pattern.append(",");
+                label = experiment.getShortLabel();
+
+                //put the Experiment label in the correct place, depending upon
+                //its sub-classification (ie negative or not)
+                if(negExpLabels.contains(label)) {
+                    negPattern.append(label + ",");
+                }
+                else {
+                pattern.append(label + ",");
                 }
             }
+            //strip off trailing comma - can't do this in advance as we don't
+            //know how big the buffers can be now!
+            pattern.deleteCharAt(pattern.length()-1);
+            if(negPattern.length() != 0) negPattern.deleteCharAt(negPattern.length()-1);
 
-            System.out.println(fileName + " " + pattern.toString());
+            //classification for this BioSource is output as:
+            //'<filename> <comma-seperated shortLabel list>'
+            System.out.println(smallFile + " " + pattern.toString());
 
+            //only need to print out the negatives if the negative StringBuffer
+            //has anything in it....
+            if(negPattern.length() != 0)
+                System.out.println(negFile + " " + negPattern.toString());
+
+
+            //Now do the large ones...
+            //NB these are classified into single files, one for each shortLabel
             ArrayList largeScaleExp = (ArrayList) ((HashMap) allExp.get(bioSource)).get("large");
-
+            String fileName = fileNameRoot;
             for (int i = 0; i < largeScaleExp.size(); i++) {
                 Experiment experiment = (Experiment) largeScaleExp.get(i);
+                label = experiment.getShortLabel();
+                if(negExpLabels.contains(label)) {
+                    fileName = fileName + "_" + label + "_negative";
+                }
+                else {
+                    fileName = fileName + "_" + label;
+                }
 
-                fileName = bioSource.getShortLabel().replace(' ','-')
-                        + "_" + experiment.getShortLabel()
-                        + ".xml";
-                System.out.println(fileName + " " + experiment.getShortLabel());
+                //dump out the generated <filename> <label> pair
+                System.out.println(fileName + ".xml" + " " + label);
             }
         }
     }
@@ -199,7 +239,9 @@ public class FileGenerator {
             }
         }
 
-        // Now all experiments have been sorted into allExp
+        // Now all experiments have been sorted into allExp - check for those containing
+        //'negative' results...
+        classifyNegatives();
         return allExp;
     }
 
@@ -411,6 +453,84 @@ public class FileGenerator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //----------------------- private helper methods -------------------------------------
+
+    /**
+     * Checks for a negative interaction.
+     * NB This will have to be done using SQL otherwise we end up materializing
+     * all interactions just to do the check.
+     * This method has to be static because it is called by the static 'classifyExperiments'.
+     *
+     */
+    private static void classifyNegatives() throws IntactException {
+
+        //query to get at the Experiment ACs containing negative interaction annotations
+        String sql = "select experiment_ac from ia_int2exp where interaction_ac in " +
+                "(select interactor_ac from ia_int2annot where annotation_ac in " +
+                "(select ac from ia_annotation where topic_ac in " +
+                "(select ac from ia_controlledvocab where shortlabel='negative')))";
+
+        IntactHelper helper = new IntactHelper();
+        Set expAcs = new HashSet(); //used to collect ACs from a query
+
+        Connection conn = null;
+        Statement stmt = null;  //ordinary Statement will do - won't be reused
+        PreparedStatement labelStmt = null; //needs a parameter
+        ResultSet rs = null;
+        try {
+            //safest way to do this is directly through the Connection.....
+            conn = helper.getJDBCConnection();
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            while(rs.next()) {
+                //stick them into the Set of ACs
+                //NB check that these do not disappear when the ResultSet gets closed!!
+                expAcs.add(rs.getString("experiment_ac"));
+            }
+            rs.close();
+            //System.out.println("DEBUG: size of AC List: " + expAcs.size());
+
+            //now get the shortlabels of the Experiments as these are what we need...
+            for(Iterator it = expAcs.iterator(); it.hasNext();) {
+                labelStmt = conn.prepareStatement("SELECT shortlabel FROM ia_experiment WHERE ac= ?");
+                labelStmt.setString(1, (String)it.next());
+                rs = labelStmt.executeQuery();
+                while(rs.next()) negExpLabels.add(rs.getString("shortlabel"));
+            }
+            //System.out.println("DEBUG: size of shortlabel list: " + negExpLabels.size());
+            //System.out.println("DEBUG: shortlabels in neg list:");
+            for(Iterator it = negExpLabels.iterator(); it.hasNext();) {
+                  System.out.println(it.next());
+            }
+
+        }
+        catch(SQLException se) {
+
+            System.out.println(se.getSQLState());
+            System.out.println(se.getErrorCode());
+            se.printStackTrace();
+            while((se.getNextException()) != null) {
+                System.out.println(se.getSQLState());
+                System.out.println(se.getErrorCode());
+                se.printStackTrace();
+            }
+        }
+        finally {
+            try {
+                if (stmt != null) stmt.close();
+                if(labelStmt != null) labelStmt.close();
+                if (conn != null) conn.close();
+            }
+            catch(SQLException se) {
+                se.printStackTrace();
+            }
+
+        }
+
+
+
     }
 
 }
