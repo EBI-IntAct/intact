@@ -906,7 +906,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         catch(PersistenceBrokerException pbe) {
 
             //problem doing the query....
-            String msg = "search failed: problem executing query " + query.toString();
+            String msg = "search failed: problem executing query - Query details:\n";
+            String details = "Criteria: " + query.getCriteria().toString() + "\n";
+            String details2 = "class: " + query.getSearchClass().getName() + "\n";
+            String details3 = "attribute requested: " + query.getRequestedAttribute() + "\n";
             logger.info(msg);
             throw new SearchException(msg, pbe);
 

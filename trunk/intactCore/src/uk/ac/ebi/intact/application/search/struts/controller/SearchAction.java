@@ -402,8 +402,11 @@ public class SearchAction extends IntactBaseAction {
         catch (IntactException se) {
             // Something failed during search...
             super.log(ExceptionUtils.getStackTrace(se));
+            super.log(se.getNestedMessage());
+            super.log(se.getRootCause().toString());
+            super.log(se.getLocalizedMessage());
             // The errors to report back.
-            super.addError("error.search", se.getNestedMessage());
+            super.addError("error.search", se.getMessage());
             super.saveErrors(request);
             return mapping.findForward(SearchConstants.FORWARD_FAILURE);
         }
@@ -457,13 +460,22 @@ public class SearchAction extends IntactBaseAction {
                 //try search on AC first...
                 results = doSearch(className, value, user);
                 if (!results.isEmpty()) {
+                    super.log("found search match - class: " + className +", value: " + value);
                     break;
                 }
             }
         }
         else {
+            super.log("className supplied in request - going straight to search...");
             String className = packageName + searchClass;
+            super.log("attempting search for " + className + " with value " + value);
             results = doSearch(className, value, user);
+            if(results.isEmpty()) {
+                super.log("no search results found for class: " + className +", value: " + value);
+            }
+            else {
+                super.log("found search match - class: " + className +", value: " + value);
+            }
         }
         return results;
     }
@@ -494,6 +506,7 @@ public class SearchAction extends IntactBaseAction {
         results = user.search(className, "ac", value);
         if (results.isEmpty()) {
             // No matches found - try a search by label now...
+            super.log("no match found for " + className + " with ac= " + value);
             super.log("now searching for class " + className + " with label " + value);
             results = user.search(className, "shortLabel", value);
             if (results.isEmpty()) {
