@@ -9,29 +9,33 @@
 
 <%@ page language="java" import="java.util.Collection,
     uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants,
-    java.util.ArrayList,
-    uk.ac.ebi.intact.application.cvedit.struts.view.CommentBean,
-    uk.ac.ebi.intact.application.cvedit.business.IntactUserIF"
+    uk.ac.ebi.intact.application.cvedit.business.IntactUserIF,
+    uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean"
 %>
 <!-- JSTL tag libraries-->
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
-<%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
+<%@ taglib uri="/WEB-INF/tld/display.tld" prefix="display" %>
 
 <!-- Our own tags to begin transactions. -->
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact" %>
 
 <jsp:include page="header.jsp" flush="true" />
 
-<jsp:useBean id="viewbean" scope="session"
-    class="uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean"/>
+<jsp:useBean id="IntactUser" scope="session"
+    class="uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl"/>
+
+<c:set var="viewbean" value="${IntactUser.view}"/>
+<c:set var="emptycoll" value="${viewbean.emptyCollection}"/>
 
 <%
-    // Aliases to save us from typing the full name.
-    String annotations = WebIntactConstants.ANNOTS_TO_VIEW;
-    String xrefs = WebIntactConstants.XREFS_TO_VIEW;
+    // The keys to save annotations and xrefs.
+    String annotations = "annotations";
+    String xrefs = "xrefs";
+
+    CvViewBean viewbean = IntactUser.getView();
 
     // Need to save in a session to access them later.
     Collection annotcoll = viewbean.getAnnotations();
@@ -40,9 +44,6 @@
     // Save x'refereneces in a session object to access them later.
     Collection xrefcoll = viewbean.getXrefs();
     session.setAttribute(xrefs, xrefcoll);
-
-    // To display an empty table when we have no annotations or xrefs.
-    session.setAttribute("emptycoll", viewbean.getEmptyCollection());
 
     // The number of rows per page.
     int rowspp = 10;
@@ -80,7 +81,7 @@
     <fmt:parseNumber var="maxpages" value="${maxannotpages}"/>
     <!-- Has the current page exceeded the maxmium pages we can display? -->
     <c:if test="${pno > maxpages}">
-        <c:set var="annotations" value="${emptycoll}" scope="request"/>
+        <c:set var="annotations" value="${emptycoll}"/>
     </c:if>
 </c:if>
 
@@ -93,19 +94,19 @@
     <fmt:parseNumber var="maxpages" value="${maxxrefpages}"/>
     <!-- Has the current page exceeded the maxmium pages we can display? -->
     <c:if test="${pno > maxpages}">
-        <c:set var="xrefs" value="${emptycoll}" scope="request"/>
+        <c:set var="xrefs" value="${emptycoll}"/>
     </c:if>
 </c:if>
 
 <h2><html:errors/></h2>
 
-<h3><%=viewbean.getTopic()%></h3>
+<h3><c:out value="${viewbean.topic}"/></h3>
 
 <hr size=2>
 
-Accession Number: <b><c:out value="${viewbean.ac}" /></b>
+Accession Number: <b><c:out value="${viewbean.ac}"/></b>
 &nbsp;&nbsp;Short Label:
-<html:text property="shortLabel" value="<%=viewbean.getShortLabel()%>" size="16" />
+<html:text property="shortLabel" value="<%=viewbean.getShortLabel()%>" size="16" readonly="true"/>
 
 <!-- a line to separate the header -->
 <hr size=2>
@@ -152,17 +153,6 @@ Accession Number: <b><c:out value="${viewbean.ac}" /></b>
 <hr size=2>
 
 <h3>Xreferences</h3>
-
-<%--
-<% String pno = (String) request.getParameter("page");
-   if (pno != null) {
-       int p = Integer.parseInt(pno);
-       if (p > ((Integer) session.getAttribute("maxpages")).intValue()) {
-           session.setAttribute(xrefs, viewbean.getEmptyXrefs());
-       }
-   }
-%>
---%>
 
 <display:table width="100%" name="<%=xrefs%>" pagesize="<%=rowspps%>"
     decorator="uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBeanWrapper">
@@ -229,6 +219,3 @@ Accession Number: <b><c:out value="${viewbean.ac}" /></b>
 </html:form>
 
 <jsp:include page="footer.jsp" flush="true" />
-
-<!-- Start the transaction now. -->
-<!-- intact:beginTransaction/ -->
