@@ -2,6 +2,7 @@
 <!--
 ANT build configuration file for hierarchView module.
 Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
+Verison: $Id$
 -->
 <project name="hv" basedir="." default="compile">
 
@@ -585,6 +586,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
                 <include name="log4j-1.2.5.jar"/>
                 <include name="${db}"/>
                 <include name="commons-lang-1.0.jar"/>
+                <include name="commons-pool.jar"/>
             </lib>
 
             <!-- HierarchView classes and config files. -->
