@@ -647,10 +647,10 @@ STORAGE (INITIAL 3K NEXT 3K) PARALLEL;
 PROMPT ... Cv2Cv
 CREATE TABLE Cv2Cv
 (
-	paren_ac		VARCHAR2(30)	CONSTRAINT fk_Cv2Cv$parent
+	parent_ac		VARCHAR2(30)	CONSTRAINT fk_Cv2Cv$parent
 						REFERENCES ControlledVocab(ac)
 						ON DELETE CASCADE,
-	child_ac		VARCHAR2(30)	CONSTRAINT fk_Cv2Cv$chile
+	child_ac		VARCHAR2(30)	CONSTRAINT fk_Cv2Cv$child
 						REFERENCES ControlledVocab(ac)
 						ON DELETE CASCADE,
 	created			DATE		DEFAULT  sysdate NOT NULL,

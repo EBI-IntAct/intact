@@ -585,7 +585,7 @@ CREATE TABLE Cv2Cv
 	parent_ac		VARCHAR(30)	CONSTRAINT fk_Cv2Cv_parent
 						REFERENCES ControlledVocab(ac)
 						ON DELETE CASCADE,
-	child_ac		VARCHAR(30)	CONSTRAINT fk_Cv2Cv_chile
+	child_ac		VARCHAR(30)	CONSTRAINT fk_Cv2Cv_child
 						REFERENCES ControlledVocab(ac)
 						ON DELETE CASCADE,
 	created			DATE		DEFAULT  now() NOT NULL,
