@@ -22,9 +22,9 @@ public class CvViewBean {
 
     /**
      * Static empty container to return to JSPs to display
-     * no rows (or else display tag library throws an exception).
+     * no rows (to stop display tag library throwing an exception).
      */
-    private static Collection theirEmptyCollection = new ArrayList();
+    private static Collection theirEmptyCollection = Collections.EMPTY_LIST;
 
     /**
      * Selected topic.
@@ -58,7 +58,6 @@ public class CvViewBean {
      * @param cvobj the <code>CvObject</code> to set attributes of this class.
      */
     public void initialise(CvObject cvobj) {
-        //myCvObject = cvobj;
         setAc(cvobj.getAc());
         setShortLabel(cvobj.getShortLabel());
 
