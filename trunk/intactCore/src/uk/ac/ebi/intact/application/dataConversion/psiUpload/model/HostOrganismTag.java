@@ -14,6 +14,16 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
  *              &lt;shortLabel&gt;s cerevisiae&lt;/shortLabel&gt;
  *              &lt;fullName&gt;Saccharomyces cerevisiae&lt;/fullName&gt;
  *          &lt;/names&gt;
+ *          &lt;tissue&gt;
+ *              &lt;xref&gt;
+ *                  &lt;primaryRef db="psi-mi" id="MI:xxx" secondary="" version=""/&gt;
+ *              &lt;/xref&gt;
+ *          &lt;/tissue&gt;
+ *          &lt;cellType&gt;
+ *              &lt;xref&gt;
+ *                  &lt;primaryRef db="psi-mi" id="MI:xxx" secondary="" version=""/&gt;
+ *              &lt;/xref&gt;
+ *          &lt;/cellType&gt;
  *      &lt;/hostOrganism&gt;
  * </pre>
  *
@@ -24,9 +34,13 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.model;
 public final class HostOrganismTag {
 
     private final String taxId;
+    private CellTypeTag cellType;
+    private TissueTag tissue;
 
-    public HostOrganismTag( final String taxId ) {
+    ////////////////////////
+    // Constructors
 
+    public HostOrganismTag( String taxId ) {
         if( taxId == null || taxId.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "You must give a non null/empty taxId for a hostOrganism" );
         }
@@ -40,15 +54,32 @@ public final class HostOrganismTag {
         this.taxId = taxId;
     }
 
+    public HostOrganismTag( final String taxId, final CellTypeTag cellType, final TissueTag tissue ) {
+        this( taxId );
+        this.cellType = cellType;
+        this.tissue = tissue;
+    }
+
+
+    //////////////////////
+    // Getters
+
     public String getTaxId() {
         return taxId;
     }
 
+    public TissueTag getTissue() {
+        return tissue;
+    }
+
+    public CellTypeTag getCellType() {
+        return cellType;
+    }
 
     ////////////////////////
     // Equality
 
-    public boolean equals( final Object o ) {
+    public boolean equals( Object o ) {
         if( this == o ) {
             return true;
         }
@@ -58,7 +89,13 @@ public final class HostOrganismTag {
 
         final HostOrganismTag hostOrganismTag = (HostOrganismTag) o;
 
-        if( taxId != null ? !taxId.equals( hostOrganismTag.taxId ) : hostOrganismTag.taxId != null ) {
+        if( cellType != null ? !cellType.equals( hostOrganismTag.cellType ) : hostOrganismTag.cellType != null ) {
+            return false;
+        }
+        if( !taxId.equals( hostOrganismTag.taxId ) ) {
+            return false;
+        }
+        if( tissue != null ? !tissue.equals( hostOrganismTag.tissue ) : hostOrganismTag.tissue != null ) {
             return false;
         }
 
@@ -66,13 +103,30 @@ public final class HostOrganismTag {
     }
 
     public int hashCode() {
-        return ( taxId != null ? taxId.hashCode() : 0 );
+        int result;
+        result = taxId.hashCode();
+        result = 29 * result + ( cellType != null ? cellType.hashCode() : 0 );
+        result = 29 * result + ( tissue != null ? tissue.hashCode() : 0 );
+        return result;
     }
+
 
     public String toString() {
         final StringBuffer buf = new StringBuffer();
         buf.append( "HostOrganismTag" );
         buf.append( "{taxId=" ).append( taxId );
+        buf.append( ", tissue=" );
+        if( null == tissue ) {
+            buf.append( '-' );
+        } else {
+            buf.append( tissue.getPsiDefinition().getId() );
+        }
+        buf.append( ", cellType=" );
+        if( null == cellType ) {
+            buf.append( '-' );
+        } else {
+            buf.append( cellType.getPsiDefinition().getId() );
+        }
         buf.append( '}' );
         return buf.toString();
     }
