@@ -127,6 +127,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         intact.setBioSource(biosource);
         intact.setCvInteractionType(type);
+        intact.setKD(myKD);
 
         // Create experiments and add them to CV object.
         for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
@@ -185,14 +186,60 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
     }
 
-    // Override to provde menus needed for this editor.
-    public Map getEditorMenus() throws SearchException {
-        // The object we are editing at the moment.
-        Interaction exp = (Interaction) getAnnotatedObject();
-        Map map = (exp.getBioSource() == null)
-                ? getMenuFactory().getInteractionMenus(1)
-                : getMenuFactory().getInteractionMenus(0);
-        return map;
+    /**
+     * The organism menu list.
+     * @return the organism menu consisting of organism short labels. The first
+     * item in the menu may contain '---Select---' if the current organism is
+     * not set.
+     * @throws SearchException for errors in generating menus.
+     */
+    public List getOrganismMenu() throws SearchException {
+        int mode = (myOrganism == null) ? 1 : 0;
+        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISMS, mode);
+    }
+
+    /**
+     * The interaction type menu list.
+     * @return the interaction type menu consisting of interaction type short
+     * labels. The first item in the menu may contain '---Select---' if the
+     * current interaction type is not set.
+     * @throws SearchException for errors in generating menus.
+     */
+    public List getInteractionTypeMenu() throws SearchException {
+        int mode = (myInteractionType == null) ? 1 : 0;
+        return getMenuFactory().getMenu(EditorMenuFactory.INTERACTION_TYPES, mode);
+    }
+
+    /**
+     * Returns the selected interaction type. It is necessary to match the
+     * current interaction to what is given in the drop down list. For example,
+     * the match for current interaction type 'xyz' could be '...xyz'. If we don't
+     * peform this mapping, the hightlighted menu always defaults to the first
+     * item in the list.
+     * @return the mapped menu item as it appears in the drop down list. If there
+     * is no Interaction Type for this experiment (i.e, null) or the current interaction
+     * is not found (highly unlikely), the selected menu defaults to the first
+     * item in the list (doesn't mean that the first item is the selected one).
+     * @throws SearchException for errors in constructing the menu.
+     */
+    public String getSelectedInterationType() throws SearchException {
+        return getSelectedMenuItem(myInteractionType,
+                EditorMenuFactory.INTERACTION_TYPES);
+    }
+
+    /**
+     * Returns the normalized interaction. This is the opposite of
+     * {@link #getSelectedInterationType()} method. Given an item from the drop
+     * sown list, this method returns the normalized version of it. For example,
+     * the match for current interaction '..xyz' this method returns 'xyz'.
+     * @param item the menu item to normalize.
+     * @return the normalized menu item as without menu level indicator
+     * characters.
+     * @throws SearchException for errors in constructing the menu.
+     */
+    public String getNormalizedInterationType(String item) throws SearchException {
+        return getNormalizedMenuItem(item,
+                EditorMenuFactory.INTERACTION_TYPES);
     }
 
     /**
