@@ -35,7 +35,6 @@
             <th class="tableCellHeader" width="20%">From</th>
             <th class="tableCellHeader" width="20%">TO</th>
             <th class="tableCellHeader" width="20%">Link</th>
-            <th class="tableCellHeader" width="20%">Undetermined</th>
         </tr>
         <%-- To calculate row or even row --%>
         <c:set var="row"/>
@@ -108,9 +107,6 @@
                     <td class="tableCell">
                         <bean:write name="ranges" property="link"/>
                     </td>
-                    <td class="tableCell">
-                        <bean:write name="ranges" property="undetermined"/>
-                    </td>
                 </c:if>
 
                 <%-- Save or Error mode --%>
@@ -125,11 +121,6 @@
                     </td>
                     <td class="tableCell">
                         <html:select name="ranges" property="link" indexed="true">
-                            <html:options name="boolean_menu" />
-                        </html:select>
-                    </td>
-                    <td class="tableCell">
-                        <html:select name="ranges" property="undetermined" indexed="true">
                             <html:options name="boolean_menu" />
                         </html:select>
                     </td>

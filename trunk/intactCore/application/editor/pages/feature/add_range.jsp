@@ -32,7 +32,6 @@
         <th class="tableCellHeader">From Range</th>
         <th class="tableCellHeader">To Range</th>
         <th class="tableCellHeader">Link</th>
-        <th class="tableCellHeader">Undetermined</th>
     </tr>
 
     <tr class="tableRowEven">
@@ -57,11 +56,6 @@
 
         <td class="tableCell" align="left" valign="top">
             <html:select property="newRange.link" name="featureForm" styleClass="inputRequired">
-                <html:options name="boolean_menu"/>
-            </html:select>
-        </td>
-        <td class="tableCell" align="left" valign="top">
-            <html:select property="newRange.undetermined" name="featureForm">
                 <html:options name="boolean_menu"/>
             </html:select>
         </td>
