@@ -10,6 +10,7 @@
                       </tr>
                     </tbody>
                   </table>
+
                   <table border="0" cellpadding="0" cellspacing="0" width="434">
                     <tbody>
                       <tr>
@@ -17,6 +18,7 @@
                       </tr>
                     </tbody>
                   </table>
+                  
                   <table border="0" cellpadding="0" cellspacing="0" width="100%">
                     <tbody>
                       <tr>
@@ -82,6 +84,7 @@
                         <span class="pbold"><a name="document"></a>Documentation:</span>
                         <ul>
                           <li class="greenboldsmalllist"><span class="text"> <a href="doc/html/documentation.html">User manual</a></span></li>
+                          <li class="greenboldsmalllist"><span class="text"> <a href="doc/html/tutorial/index.html">IntAct API tutorial</a></span></li>
                           <li class="greenboldsmalllist"><span class="text">Data model (<a href="http://intact.sourceforge.net/uml/intactCore.gif">UML class diagram</a>, <a href="http://intact.sourceforge.net/doc/api/index.html">Javadoc</a>)</span></li>
                           <li class="greenboldsmalllist"><span class="text"><a href="http://intact.sourceforge.net/doc/">Implementation overview</a></span><br>
                           </li>
