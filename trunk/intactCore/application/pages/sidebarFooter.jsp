@@ -14,7 +14,7 @@
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
-<c:if test="${not empty session.user}">
+<c:if test="${not empty sessionScope.user}">
 
     <jsp:useBean id="user"
                  scope="session"
