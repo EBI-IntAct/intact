@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view;
 
 import org.apache.struts.action.ActionForm;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generic form to edit a collection (annotation or xref).
@@ -21,7 +21,7 @@ public class EditForm extends ActionForm {
     /**
      * Holds a list of items.
      */
-    private ArrayList myItems;
+    private List myItems;
 
     /**
      * The index of the current annotaion.
@@ -37,7 +37,7 @@ public class EditForm extends ActionForm {
      * Sets items.
      * @param items a list of <code>Object</code>s.
      */
-    public void setItems(ArrayList items) {
+    public void setItems(List items) {
         this.myItems = items;
     }
 
