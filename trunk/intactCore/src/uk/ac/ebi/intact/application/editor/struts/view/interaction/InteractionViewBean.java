@@ -192,8 +192,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
             intact.setCvInteractionType(type);
         }
         // Get the objects using their short label.
-        BioSource biosource = (BioSource) user.getObjectByLabel(BioSource.class, myOrganism);
-        intact.setBioSource(biosource);
+        if (myOrganism != null) {
+            BioSource biosource = (BioSource) user.getObjectByLabel(
+                    BioSource.class, myOrganism);
+            intact.setBioSource(biosource);
+        }
         intact.setKD(myKD);
 
         // Delete experiments.
@@ -346,27 +349,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
     }
 
-    // TODO Remove this later
-    // Null for any of these values will throw an exception.
-//    public void validate(EditUserI user) throws ValidationException,
-//            SearchException {
-//        super.validate(user);
-//
-//        if (myInteractionType == null) {
-//            throw new InteractionException("error.int.validation.type");
-//        }
-//        if (myOrganism == null) {
-//            throw new InteractionException("error.int.validation.biosrc");
-//        }
-//        // Look for any unsaved or error proteins.
-//        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
-//            ComponentBean pb = (ComponentBean) iter.next();
-//            if (!pb.getEditState().equals(AbstractEditBean.VIEW)) {
-//                throw new InteractionException();
-//            }
-//        }
-//    }
-
     /**
      * The organism menu list.
      *
@@ -376,8 +358,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @throws SearchException for errors in generating menus.
      */
     public List getOrganismMenu() throws SearchException {
-        int mode = (myOrganism == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISM, mode);
+        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISM, 1);
     }
 
     /**
