@@ -20,9 +20,9 @@
     <html:hidden property="anchor" />
 
     <jsp:include page="info.jsp" />
-    <jsp:include page="annots.jsp" />
+    <jsp:include page="../annots.jsp" />
     <jsp:include page="../addAnnots.jsp" />
-    <jsp:include page="xrefs.jsp" />
+    <jsp:include page="../xrefs.jsp" />
     <jsp:include page="../addXrefs.jsp" />
 
     <p></p>

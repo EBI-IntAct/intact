@@ -27,7 +27,7 @@
     <jsp:include page="ranges.jsp" />
     </p>
     <jsp:include page="add_range.jsp" />
-    <jsp:include page="xrefs.jsp" />
+    <jsp:include page="../xrefs.jsp" />
     <jsp:include page="../addXrefs.jsp" />
 
     <p></p>
