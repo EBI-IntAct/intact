@@ -313,20 +313,10 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
         // Validate the short label.
         if (user.shortLabelExists(formlabel)) {
-            // Found more than one entry with the same short label.
-            String link = "<a href=\"javascript:show('" + user.getSelectedTopic()
-                    + "', '" + formlabel + "')\">here</a>";
-            ActionErrors errors = new ActionErrors();
-            errors.add("shortLabel",
-                    new ActionError("error.label", formlabel, link));
-            saveErrors(request, errors);
-            // Display the errors in the input page.
-            return mapping.getInputForward();
-        }
-        // Does the shortlabel ends with -x?
-        if (formlabel.endsWith("-x")) {
-            String newSL = user.getNextAvailableShortLabel(view.getEditClass(),
-                    formlabel);
+            // Try to get the next available short label by adding -x if it doesn't
+            // end with -
+            formlabel += formlabel.endsWith("-") ? "x" : "-x" ;
+            String newSL = user.getNextAvailableShortLabel(view.getEditClass(), formlabel);
             // Update the view and the form.
             view.setShortLabel(newSL);
             editForm.setShortLabel(newSL);
