@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.cvedit.struts.view.*;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.*;
+import uk.ac.ebi.intact.business.IntactException;
 
 import org.apache.struts.action.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -64,9 +65,6 @@ public class CommentAddAction extends IntactBaseAction {
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(request);
 
-        // DAO for searching.
-        DAO dao = user.getDAO();
-
         try {
             // Get the topic object for the new annotation.
             cvtopic = (CvTopic) user.getObjectByLabel(
@@ -94,7 +92,7 @@ public class CommentAddAction extends IntactBaseAction {
             user.create(annot);
             super.log("Transaction after create: " + user.isActive());
         }
-        catch (CreateException ce) {
+        catch (IntactException ce) {
             // Unable to create an annotation; no nested message provided.
             super.addError("error.create", ce.getMessage());
             super.saveErrors(request);
@@ -103,10 +101,14 @@ public class CommentAddAction extends IntactBaseAction {
         // Add this new annotation to the cv object and update it.
         CvObject cvobj = user.getCurrentEditObject();
         cvobj.addAnnotation(annot);
-
-        //helper.update(cvobj);
-        //super.update(cvobj);
-
+        try {
+            user.update(cvobj);
+        }
+        catch (IntactException ce) {
+            super.addError("error.update", ce.getMessage());
+            super.saveErrors(request);
+            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+        }
         // The annotation collection for display.
         Collection beans = (Collection) super.getSessionObject(request,
             WebIntactConstants.ANNOTATIONS);
