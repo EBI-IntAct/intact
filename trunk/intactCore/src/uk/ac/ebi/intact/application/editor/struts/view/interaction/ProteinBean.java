@@ -39,29 +39,24 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     // Instance Data
 
     /**
+     * The interaction this protein belongs to.
+     */
+    private Interaction myInteraction;
+
+    /**
+     * The interactor of the bean.
+     */
+    private Interactor myInteractor;
+
+    /**
      * The object this instance is created with.
      */
     private Component myComponent;
 
     /**
-     * The AC.
-     */
-    private String myAc;
-
-    /**
-     * The short label.
-     */
-    private String myShortLabel;
-
-    /**
      * Swiss-Prot AC.
      */
     private String mySPAc;
-
-    /**
-     * The full name of the Protein.
-     */
-    private String myFullName;
 
     /**
      * The role of this Protein.
@@ -81,20 +76,16 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     /**
      * A flag to indicate that this instance is marked for deletion.
      */
-    private boolean myDeleteFlag;
+//    private boolean myDeleteFlag;
 
     /**
      * Instantiate an object of this class from a Protein instance.
      * @param protein the <code>Protein</code> object.
      */
-    public ProteinBean(Protein protein) {
-        myComponent = new Component();
-        myComponent.setOwner(protein.getOwner());
-        myComponent.setInteractor(protein);
-        myAc = protein.getAc();
-        myShortLabel = protein.getShortLabel();
+    public ProteinBean(Protein protein, Interaction interaction) {
+        myInteraction = interaction;
+        myInteractor = protein;
         mySPAc = getSPAc(protein);
-        myFullName = protein.getFullName();
         setOrganism(protein);
         setEditState(SAVE_NEW);
     }
@@ -105,11 +96,10 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
      */
     public ProteinBean(Component component) {
         myComponent = component;
+        myInteraction = component.getInteraction();
+        myInteractor = component.getInteractor();
         Interactor interact = component.getInteractor();
-        myAc = interact.getAc();
-        myShortLabel = interact.getShortLabel();
         mySPAc = getSPAc(interact);
-        myFullName = interact.getFullName();
         myRole = component.getCvComponentRole().getShortLabel();
         myStoichiometry = component.getStoichiometry();
         setOrganism(interact);
@@ -123,27 +113,32 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
 
     public Component getComponent(EditUserI user) throws SearchException {
         CvComponentRole newrole = getRole(user);
-        if (newrole != null) {
+        // We must have a non null role for a valid component.
+        if (newrole == null) {
+            return null;
+        }
+        // Component is null if this bean constructed from a Protein.
+        if (myComponent == null) {
+            myComponent = new Component(user.getInstitution(), myInteraction,
+                    myInteractor, newrole);
+        }
+        else {
             myComponent.setCvComponentRole(newrole);
         }
         myComponent.setStoichiometry(getStoichiometry());
-        BioSource neworg = getOrganism(user);
-        if (neworg != null) {
-            myComponent.getInteractor().setBioSource(neworg);
-        }
         return myComponent;
     }
 
     public String getAc() {
-        return myAc;
+        return myInteractor.getAc();
     }
 
     public String getShortLabel() {
-        return myShortLabel;
+        return myInteractor.getShortLabel();
     }
 
     public String getShortLabelLink() {
-        return getLink("Protein", myShortLabel);
+        return getLink("Protein", getShortLabel());
     }
 
     public String getSpAc() {
@@ -151,7 +146,7 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     }
 
     public String getFullName() {
-        return myFullName;
+        return myInteractor.getFullName();
     }
 
     // Read/Write properties.
@@ -176,10 +171,6 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         return myOrganism;
     }
 
-    public void setOrganism(String organism) {
-        myOrganism = organism;
-    }
-
     // Override Objects's equal method.
 
     /**
@@ -196,7 +187,7 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         if ((obj != null) && (getClass() == obj.getClass())) {
             // Can safely cast it.
             ProteinBean other = (ProteinBean) obj;
-            return this.myShortLabel.equals(other.myShortLabel)
+            return this.getShortLabel().equals(other.getShortLabel())
                     && this.myRole.equals(other.myRole);
         }
         return false;
@@ -205,17 +196,17 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     /**
      * Marks this bean as it is ready for deletion from the view.
      */
-    public void markForDelete() {
-        myDeleteFlag = true;
-    }
+//    public void markForDelete() {
+//        myDeleteFlag = true;
+//    }
 
     /**
      * True if this bean is marked for delete.
      * @return true if this bean is marked for delete.
      */
-    public boolean isMarkedForDelete() {
-        return myDeleteFlag;
-    }
+//    public boolean isMarkedForDelete() {
+//        return myDeleteFlag;
+//    }
 
     public void update(EditUserI user) throws SearchException {
         CvComponentRole role = (CvComponentRole) user.getObjectByLabel(
@@ -248,13 +239,6 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         if (myRole != null) {
             return (CvComponentRole) user.getObjectByLabel(
                     CvComponentRole.class, myRole);
-        }
-        return null;
-    }
-
-    private BioSource getOrganism(EditUserI user) throws SearchException  {
-        if (myOrganism != null) {
-            return (BioSource) user.getObjectByLabel(BioSource.class, myOrganism);
         }
         return null;
     }
