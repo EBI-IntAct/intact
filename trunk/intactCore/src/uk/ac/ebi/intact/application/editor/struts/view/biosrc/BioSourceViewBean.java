@@ -10,6 +10,8 @@ import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.validation.BioSourceException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -96,6 +98,15 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     // Override to provide BioSource help tag.
     public String getHelpTag() {
         return "editor.biosource";
+    }
+
+    // Override to provide biosource specific sanity checking.
+    public void sanityCheck(EditUserI user) throws ValidationException,
+            SearchException {
+        // Tax id can't be null.
+        if (myTaxId == null) {
+            throw new BioSourceException("sanity.bs.taxid");
+        }
     }
 
     // Getter/Setter methods for attributes.
