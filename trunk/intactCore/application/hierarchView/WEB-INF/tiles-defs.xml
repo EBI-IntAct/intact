@@ -75,11 +75,17 @@
     <!-- ============ Sidebars ============================================ -->
 
     <!-- Sidebar for the search page -->
-    <definition name="intact.sidebar.layout" path="/layouts/sidebar.jsp">
+    <definition name="hv.intact.sidebar" path="/layouts/sidebar.jsp">
         <put name="search" value="/pages/sidebarSearch.jsp"/>
         <put name="graph"  value="/pages/sidebarGraph.jsp"/>
         <put name="click"  value="/pages/sidebarClickBehaviour.jsp"/>
-        <put name="menu"   value="hierarchView.menu.links"/>
+    </definition>
+
+    <!-- Sidebar for the search page -->
+    <definition name="intact.sidebar.layout" path="/layouts/sidebarLayout.jsp">
+        <put name="input-dialog" value="hv.intact.sidebar"/>
+        <put name="menu" value="hierarchView.menu.links"/>
+        <put name="footer" value="/pages/sidebarFooter.jsp"/>
     </definition>
 
     <!-- ============ Commons to all IntAct pplication ==================== -->
