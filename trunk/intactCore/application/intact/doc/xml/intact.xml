@@ -417,6 +417,17 @@
                         </p>
 
                         <p>
+                            <a NAME="experiment.single.chunked.view"></a>An other example result screen when searching for an Experiment,
+                            this time there are too many interactions to display it in one go. So, the Experiment is splited in several pages
+                            that you can reach using the index above the Experiment.
+                            <br/>
+                            This is shown below:
+                        </p>
+                        <p>
+                            <img SRC="./images/search/exp-chunked.png" border="0" />
+                        </p>
+
+                        <p>
                             <a NAME="interaction.single.view"></a>An example result screen when searching for an Interaction is shown below:
                         </p>
                         <p>
@@ -1233,37 +1244,46 @@
 
 
             <section name="graph2mif" title="Graph2MIF -  Export IntAct to PSI-MIF-Format">
+
+
                 <section name="graph2mif.overview" title="Overview">
                     <blockquote>
                         This application exports a graph as PSI MI Format (MIF).
                         The user can access this using the SOAP protocol as a WebService, Servlet or direct.
                     </blockquote>
                 </section>
+
+
                 <section name="graph2mif.access" title="Access">
                     <blockquote>
-                        The URL to access the service depends upon the server, where the webservice
-                        is installed. Generally access should be like:
-                        <pre>http://server.domain:port/graph2mif</pre>
+                        The URL to access the web service is the following:
+                        <pre>http://server.domain:port/intact/graph2mif</pre>
                         <br/>
-                        For validation: Just call the URL above
-                        within a browser. You should retrieve something like "And now... Some Services"
-                        and a list including a "soap" item.
+                        You can replace <code>server.domain:port</code> by <code>www.ebi.ac.uk</code>
+                        <br/>
+                        <br/>
+                        For validation: Just call the URL above within a browser.
+                        It should displays a basic web form which allows to fill in the parameters of your query.
                         <br/>
                         There are two ways to request a MIF:
                         <ul>
                             <li>Soap: Using a SOAPClient. The only method you have to call is
-                                <pre>http://server.domain:port/graph2mif/soap/getMIF(ac,depth,striftmif)</pre>.
+                                <code>http://server.domain:port/intact/graph2mif/soap/getMIF(ac,depth,striftmif)</code>.
                             </li>
-                            <li>direct URL call: You can call
-                                <pre>http://server.domain:port/graph2mif/getxml?ac=
+
+                            <li>Direct URL call:
+                                <code>http://server.domain:port/intact/graph2mif/getXML?ac=
                                     <i>Ac</i>&amp;depth=
                                     <i>Integer</i>&amp;strict=
                                     <i>(true|false)</i>
-                                </pre>
+                                </code>
+
                             </li>
                         </ul>
                     </blockquote>
                 </section>
+
+
                 <section name="graph2mif.usage" title="Usage">
                     <blockquote>
                         Depending on the way you would like to access the data you call the soap-method
@@ -1281,42 +1301,46 @@
                         The resulting graph will be returned in MIF as formated XML-String.
                         <br/>
                     </blockquote>
+
+
                     <section name="graph2mif.usage.wsclient" title="Example webservice client">
                         <blockquote>
                             The example java webservice client
                             <i>Graph2MIFWSClient</i> is also included in this package.
                             <br/>
                             The client must know where to access the WebService, so go to the source code and change the Line with
-                            <pre>URL url = new URL("...")</pre>
+                            <code>URL url = new URL("...")</code>
                             to your system. Afterwards you can compile it using
                             <i>ant client"</i>.
                             <br/>
                             Just call:
-                            <pre>java uk.ac.ebi.intact.application.graph2MIF.Graph2MIFWSClient
+                            <code>java uk.ac.ebi.intact.application.graph2MIF.Graph2MIFWSClient
                                 <i>ac</i>
                                 <i>depth</i>
                                 <i>(true|false)</i>
-                            </pre>
-                            for getting a graph of IntAct as MIF. The result will be printed to
-                            <i>STDOUT</i>.
+                            </code>
+                            to get a graph of IntAct as MIF. The result will be printed to <i>STDOUT</i>.
                             Have a look at the simple source code for getting an impression of how to write your own client.
                         </blockquote>
                     </section>
+
+
                     <section name="graph2mif.usage.console" title="Example console client">
                         <blockquote>
                             This client does not implemnt a WebService, it directly access the IntAct Database.
                             The rest is mainly the same:
-                            <pre>java uk.ac.ebi.intact.application.graph2MIF.Graph2MIFClient
+                            <code>java uk.ac.ebi.intact.application.graph2MIF.Graph2MIFClient
                                 <i>ac</i>
                                 <i>depth</i>
                                 <i>(true|false)</i>
-                            </pre>
-                            for getting a graph of IntAct as MIF. The result will be printed to
-                            <i>STDOUT</i>.
+                            </code>
+                            to get a graph of IntAct as MIF. The result will be printed to <i>STDOUT</i>.
                             Have also a look at the simple source code for getting an impression of how to write your own client.
                         </blockquote>
                     </section>
                 </section>
+
+
                 <section name="graph2mif.references" title="PSI-MIF-Format">
                     <blockquote>
 					  <ul>
@@ -1330,6 +1354,7 @@
                     </blockquote>
                 </section>
             </section>   <!-- end graph2MIF -->
+
 
            <section name="proviz" title="ProViz - Standalone Interaction Visualization System">
               <blockquote>
