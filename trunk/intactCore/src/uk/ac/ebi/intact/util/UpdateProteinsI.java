@@ -25,12 +25,12 @@ import org.apache.log4j.Logger;
  */
 public abstract class UpdateProteinsI {
 
-    protected final static org.apache.log4j.Logger logger = Logger.getLogger("updateProtein");
+    protected final static org.apache.log4j.Logger logger = Logger.getLogger( "updateProtein" );
 
 
-    public class UpdateException extends Exception {
-        public UpdateException (String message) {
-            super(message);
+    public static class UpdateException extends Exception {
+        public UpdateException( String message ) {
+            super( message) ;
         }
     }
 
@@ -81,9 +81,16 @@ public abstract class UpdateProteinsI {
     protected static boolean localTransactionControl = true;
 
 
-    public UpdateProteinsI (  ) {
+    //////////////////////////////////
+    // Constructors
+
+    public UpdateProteinsI( boolean setOutputOn ) {
         try {
-            HttpProxyManager.setup();
+            if( setOutputOn )
+                HttpProxyManager.setup( );
+            else
+                HttpProxyManager.setup( null );
+
         } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
             proxyConfigurationNotFound.printStackTrace ();
         }
@@ -96,7 +103,7 @@ public abstract class UpdateProteinsI {
      * @throws UpdateException
      */
     public UpdateProteinsI( IntactHelper helper, int cacheSize ) throws UpdateException {
-        this();
+        this( true );
         this.helper = helper;
         collectDefaultObject( helper );
 
@@ -104,6 +111,20 @@ public abstract class UpdateProteinsI {
         bioSourceFactory.setLogger( logger );
     }
 
+    /**
+     * Default constructor which initialize the bioSource cache to default.
+     *
+     * @param helper IntactHelper object to access (read/write) the database.
+     * @throws UpdateException
+     */
+    public UpdateProteinsI( IntactHelper helper, boolean setOutputOn ) throws UpdateException {
+        this( setOutputOn );
+        this.helper = helper;
+        collectDefaultObject( helper );
+
+        bioSourceFactory = new BioSourceFactory( helper, myInstitution );
+        bioSourceFactory.setLogger( logger );
+    }
 
     /**
      * Default constructor which initialize the bioSource cache to default.
@@ -112,14 +133,12 @@ public abstract class UpdateProteinsI {
      * @throws UpdateException
      */
     public UpdateProteinsI ( IntactHelper helper ) throws UpdateException {
-        this();
-        this.helper = helper;
-        collectDefaultObject( helper );
-
-        bioSourceFactory = new BioSourceFactory( helper, myInstitution );
-        bioSourceFactory.setLogger( logger );
+        this( helper, true );
     }
 
+
+    //////////////////////////////////
+    // Methods
 
     private void collectDefaultObject (IntactHelper helper) throws UpdateException{
 
@@ -291,11 +310,15 @@ public abstract class UpdateProteinsI {
     public abstract REMatch[] match (String textin, String pattern) ;
 
     /**
-     * add (not update) a new Xref to the given Annotated object and write it in the database.
+     * add (not update) a new Xref to the given Annotated object and write
+     * it in the database.
+     *
      * @param current the object to which we add a new Xref
      * @param xref the Xref to add to the AnnotatedObject
+     *
+     * @return true if the object as been added, else false.
      */
-    public abstract void addNewXref (AnnotatedObject current, final Xref xref );
+    public abstract boolean addNewXref (AnnotatedObject current, final Xref xref );
 
     /**
      * add (not update) a new Xref to the given Annotated object and write it in the database.
