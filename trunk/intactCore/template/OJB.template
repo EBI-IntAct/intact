@@ -213,10 +213,14 @@ SequenceManagerGlobalIDs=false
 #----------------------------------------------------------------------------------------
 # The ObjectCacheClass entry tells OJB which concrete instance Cache
 # implementation is to be used.
-ObjectCacheClass=org.apache.ojb.broker.cache.ObjectCacheDefaultImpl
-#ObjectCacheClass=org.apache.ojb.broker.cache.ObjectCacheEmptyImpl
-#
-#
+# This proterty is set automatically by the IntAct build script.
+# Current options are
+# ObjectCacheClass=org.apache.ojb.broker.cache.ObjectCacheDefaultImpl
+# ObjectCacheClass=org.apache.ojb.broker.cache.ObjectCacheEmptyImpl
+# The effective setting:
+ObjectCacheClass=[CACHEIMPLEMENTATION]
+# 
+# 
 #----------------------------------------------------------------------------------------
 # Locking
 #----------------------------------------------------------------------------------------

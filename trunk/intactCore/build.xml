@@ -219,6 +219,10 @@
         <replace file="${ojb.dest.file}">
             <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.PostgresSequenceManager" />
         </replace>
+
+        <replace file="${ojb.dest.file}">
+            <replacefilter token="[CACHEIMPLEMENTATION]" value="${ojb.ObjectCacheClass}"/>
+        </replace>
     </target>
 
     <!-- =================================================================== -->
@@ -253,6 +257,10 @@
 
         <replace file="${ojb.dest.file}">
             <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.DbSequenceManager"/>
+        </replace>
+
+        <replace file="${ojb.dest.file}">
+            <replacefilter token="[CACHEIMPLEMENTATION]" value="${ojb.ObjectCacheClass}"/>
         </replace>
     </target>
 
