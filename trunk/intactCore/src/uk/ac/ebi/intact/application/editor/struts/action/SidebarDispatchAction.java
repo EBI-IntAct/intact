@@ -15,7 +15,6 @@ import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.OJBQueryFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.business.IntactHelper;
 
@@ -97,20 +96,11 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // The maximum number of items to retrieve.
         int max = getService().getInteger("search.max");
 
-        // The query factory to get a query.
-        OJBQueryFactory qf = OJBQueryFactory.getInstance();
-
         // The class for the topic.
         Class searchClass = Class.forName(getService().getClassName(topic));
 
         // The array to store queries.
-        Query[] queries = new Query[2];
-
-        // The query to get a search result size.
-        queries[0] = qf.getSearchCountQuery(searchClass, searchString);
-
-        // The search query
-        queries[1] = qf.getSearchQuery(searchClass, searchString);
+        Query[] queries = getSearchQueries(searchClass, searchString);
 
         // The results to display.
         List results = new ArrayList();
