@@ -162,7 +162,11 @@ public class XmlLoader
                 ((IntactNode)o).setRejected(intactNode.getRejected());
             }
         }
-        System.out.println("[XmlLoader] store object with ac= " + ((BasicObject)o).getAc());
+        if (BasicObject.class.isAssignableFrom(o.getClass())) {
+            System.out.println("[XmlLoader] store object with ac= " + ((BasicObject)o).getAc());
+        } else if  (o.getClass() == Institution.class) {
+            System.out.println("[XmlLoader] store Institution with ac= " + ((Institution)o).getAc());
+        }
         broker.store(o);
     }
 
