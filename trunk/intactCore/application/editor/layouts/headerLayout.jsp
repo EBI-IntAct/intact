@@ -13,6 +13,7 @@
 <%@ page language="java"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <span class="header">
@@ -20,8 +21,8 @@
 </span>
 
 <div style="text-align: right;">
-    <intact:documentation section="editor" title="Help Topics"/>
-    <intact:documentation section="editor.faq" title="FAQ"/>
+    <editor:helpLink tag="editor" title="Help Topics"/>
+    <editor:helpLink tag="editor.faq" title="FAQ"/>
     <br>
 </div>
 <hr>
