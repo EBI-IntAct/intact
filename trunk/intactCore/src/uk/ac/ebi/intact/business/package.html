@@ -17,7 +17,7 @@ objects of a given object, thereby avoiding the overhead of a database connectio
 is known that only the nearest neighbours are required. As mentioned elsewhere, these are
 automatically loaded into memory for each individual object search in order to optimise
 castor lazy loading. The searching itself is managed with the help of a map of simple intact
-classnames to full java classnames, which allows other objects (such as the {@link uk.ac.ebi.intact.persistence.CastorDAO}
+classnames to full java classnames, which allows other objects (such as the {@link uk.ac.ebi.intact.persistence.DAO}
 object) to build approrpriate object queries. The map itself is provided to the <code>ItactHelper</code>
 class upon instance creation.
 <p>
@@ -33,9 +33,7 @@ class upon instance creation.
 The following classes are used by the <code>IntactHelper</code> class:
 <ul>
    <li>{@link uk.ac.ebi.intact.persistence.DAO}
-   <li>{@link uk.ac.ebi.intact.persistence.CastorDAO} (via the above, as a specific implementation)
    <li>{@link uk.ac.ebi.intact.persistence.DAOSource}
-   <li>{@link uk.ac.ebi.intact.persistence.CastorDAO} (via the above, as a specific implementation)
 </ul>
 
 
