@@ -84,7 +84,7 @@ public class CommentBean extends EditBean implements Serializable {
      * @param topic the new topic as a <code>String</code>.
      */
     public void setTopic(String topic) {
-        myTopic = topic;
+        myTopic = topic.trim();
     }
 
     /**
