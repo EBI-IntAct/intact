@@ -375,15 +375,9 @@ public class GoTools {
         }
 	
         // Write all comments in GO format
-        System.out.println( current );
-
         Collection annotation = current.getAnnotations();
-        System.out.println( annotation.size() + " annotations" );
-
         for ( Iterator iterator = annotation.iterator(); iterator.hasNext(); ) {
             Annotation a = (Annotation) iterator.next();
-
-            System.out.println( "\t" + a );
 
             buf.append( ( a.getCvTopic().getShortLabel() ).toLowerCase() + ": " );
             buf.append( a.getAnnotationText() );
