@@ -6,20 +6,17 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Query;
 import org.apache.struts.action.*;
-import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
-import uk.ac.ebi.intact.application.commons.search.SearchHelper;
-import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -101,39 +98,12 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // The array to store queries.
         Query[] queries = getSearchQueries(searchClass, searchString);
 
-        // The search helper to do the searching.
-        SearchHelperI searchHelper = new SearchHelper(Logger.getLogger(
-                EditorConstants.LOGGER));
-
-        // The result wrapper returned from the search.
-        ResultWrapper rw = searchHelper.searchByQuery(queries, max);
-
-        // Too large result set?
-        if (rw.isTooLarge()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.search.large",
-                            Integer.toString(rw.getPossibleResultSize())));
-            saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
-        }
-
-        // Nothing found?
-        if (rw.isEmpty()) {
-            // No matches found - forward to a suitable page
-            ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.search.nomatch", searchString, topic));
-            saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
-        }
-
         // The results to display.
-        List results = new ArrayList();
+        List results = super.search(queries, max, request);
 
-        // Convert to result row data.
-        for (Iterator iter = rw.getResult().iterator(); iter.hasNext();) {
-            results.add(new ResultRowData((Object[]) iter.next(), searchClass));
+        if (results.isEmpty()) {
+            // Errors or empty or too large
+            return mapping.findForward(FAILURE);
         }
 
         // Only one instance found?
