@@ -108,9 +108,11 @@
                           <span class="text">
                           <br>
                           <p>
-                          http://www.ebi.ac.uk/intact/search/do/search?searchString=<b><font color="blue">&lt;query.string&gt;</font></b>[&searchClass=<b><font color="red">&lt;object.name&gt;</font></b>]
+                          http://www.ebi.ac.uk/intact/search/do/search?searchString=<b><font color="blue">&lt;query.string&gt;</font></b><!--[&searchClass=<b><font color="red">&lt;object.name&gt;</font></b>]-->
                           </p>
                             <b><font color="blue">&lt;query.string&gt;</font></b> is the user query that the searched object should match.
+                            <br/>
+                            Wildcards are supported.
                             <br/>
                             it can be either:
                             <ul>
@@ -120,7 +122,7 @@
                                <li> Xref (UniProt, GO, FlyBase, SGD, Interpro...) </li>
                                <li> Alias (gene name, locus, orf ...) </li>
                             </ul>
-
+                            <!--
                             <br>
                             <b><font color="red">&lt;object.name&gt;</font></b> is an <u>optional</u> parameter, it describes
                             the type of the object you are looking for.
@@ -132,6 +134,8 @@
                                <li> Experiment </li>
                                <li> CvObject, or one of its sub-types: CvDatabase, CvInteractionType...</li>
                             </ul>
+                            -->
+
                             <br>
                             </span>
                           </li>
@@ -317,6 +321,16 @@
                                 Comparative and Functional Genomics Volume 4, Issue 1, 2003. Pages:
                                 16-19<br>
                             <a href="http://www3.interscience.wiley.com/cgi-bin/abstract/102531157/START">http://www3.interscience.wiley.com/cgi-bin/abstract/102531157/START</a><br>
+                            </span> </li>
+                          <li class="greenboldsmalllist">
+                            <span class="text">
+                                ProViz is a tool for the visualization of protein–protein interaction networks,
+                                developed by the IntAct European project. It provides facilities for navigating in large
+                                graphs and exploring biologically relevant features, and adopts emerging standards such
+                                as GO and PSI-MI.<br>
+                                Florian Iragne ,Macha Nikolski ,Bertrand Mathieu ,David Auber and David Sherman<br>
+                                Bioinformatics Volume 21 Issue 2, 2005. Pages 272-274<br>
+                            <a href="http://bioinformatics.oupjournals.org/cgi/content/abstract/21/2/272?eaf">http://bioinformatics.oupjournals.org/cgi/content/abstract/21/2/272?eaf</a><br>
                             </span> </li>
                         </ul>
                         <div align="right"><a href="#a0"><img src="http://www.ebi.ac.uk/Information/images/arrow_up2.gif" border="0" height="21" width="19"></a><br>
