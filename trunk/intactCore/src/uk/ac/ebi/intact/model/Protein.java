@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -16,49 +16,53 @@ import java.util.*;
  */
 public class Protein extends Interactor {
 
-  ///////////////////////////////////////
-  //attributes
+    ///////////////////////////////////////
+    //attributes
 
-  private String polymerSeqAc;
-  protected String formOfAc;
+    //attributes used for mapping BasicObjects - project synchron
+    public String  cvProteinFormAc;
 
-/**
- * The protein sequence. If the protein is present in a public database,
- * the sequence should not be repeated.
- */
+
+    private String polymerSeqAc;
+    protected String formOfAc;
+
+    /**
+     * The protein sequence. If the protein is present in a public database,
+     * the sequence should not be repeated.
+     */
     protected String sequence;
 
-/**
- * Represents the CRC64 checksum. This checksum is used to
- * detect potential inconsistencies between the sequence the object
- * refers to and the external sequence object, for example when the external
- * object has been updated.
- */
+    /**
+     * Represents the CRC64 checksum. This checksum is used to
+     * detect potential inconsistencies between the sequence the object
+     * refers to and the external sequence object, for example when the external
+     * object has been updated.
+     */
     protected String crc64;
 
-   ///////////////////////////////////////
-   // associations
+    ///////////////////////////////////////
+    // associations
 
-/**
+    /**
 
- */
+     */
     public Protein formOf;
-/**
- *
- */
+    /**
+     *
+     */
     public CvProteinForm cvProteinForm;
-/**
- *
- */
+    /**
+     *
+     */
     public Collection feature = new Vector();
-/**
- *
- */
+    /**
+     *
+     */
     public Collection modification = new Vector();
 
 
-  ///////////////////////////////////////
-  //access methods for attributes
+    ///////////////////////////////////////
+    //access methods for attributes
 
     public String getSequence() {
         return sequence;
@@ -73,8 +77,8 @@ public class Protein extends Interactor {
         this.crc64 = crc64;
     }
 
-   ///////////////////////////////////////
-   // access methods for associations
+    ///////////////////////////////////////
+    // access methods for associations
 
     public Protein getFormOf() {
         return formOf;
@@ -112,6 +116,16 @@ public class Protein extends Interactor {
     public void removeModification(Modification modification) {
         this.modification.remove(modification);
     }
+
+
+    //attributes used for mapping BasicObjects - project synchron
+    public String  getCvProteinFormAc() {
+        return cvProteinFormAc;
+    }
+    public void setCvProteinFormAc(String cvProteinFormAc) {
+        this.cvProteinFormAc = cvProteinFormAc;
+    }
+
 } // end Protein
 
 

@@ -14,31 +14,33 @@ import java.util.*;
  */
 public class JournalRef extends Reference {
 
-  ///////////////////////////////////////
-  //attributes
+    ///////////////////////////////////////
+    //attributes
 
+    //attributes used for mapping BasicObjects - project synchron
+    public String cvJournalAc;
 
-/**
- * Represents ...
- */
+    /**
+     * Represents ...
+     */
     protected Integer pubmidId;
 
-/**
- * Represents ...
- */
+    /**
+     * Represents ...
+     */
     protected String firstpage;
 
-   ///////////////////////////////////////
-   // associations
+    ///////////////////////////////////////
+    // associations
 
-/**
- *
- */
+    /**
+     *
+     */
     public CvJournal cvJournal;
 
 
-  ///////////////////////////////////////
-  //access methods for attributes
+    ///////////////////////////////////////
+    //access methods for attributes
 
     public Integer getPubmidId() {
         return pubmidId;
@@ -53,8 +55,8 @@ public class JournalRef extends Reference {
         this.firstpage = firstpage;
     }
 
-   ///////////////////////////////////////
-   // access methods for associations
+    ///////////////////////////////////////
+    // access methods for associations
 
     public CvJournal getCvJournal() {
         return cvJournal;
@@ -62,6 +64,14 @@ public class JournalRef extends Reference {
 
     public void setCvJournal(CvJournal cvJournal) {
         this.cvJournal = cvJournal;
+    }
+
+    //attributes used for mapping BasicObjects - project synchron
+    public void setCvJournalAc(String ac) {
+        this.cvJournalAc = ac;
+    }
+    public String getCvJournalAc(){
+        return this.cvJournalAc;
     }
 
 } // end JournalRef

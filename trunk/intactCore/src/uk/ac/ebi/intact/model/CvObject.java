@@ -20,7 +20,10 @@ public abstract class CvObject extends AnnotatedObject {
    ///////////////////////////////////////
    // associations
 
-    private String ojbConcreteClass;
+    //attributes used for mapping BasicObjects - project synchron
+    public String cvProteinFormAc;
+
+
 /**
  * 
  */
@@ -39,8 +42,15 @@ public abstract class CvObject extends AnnotatedObject {
             this.cvProteinForm = cvProteinForm;
             if (cvProteinForm != null) cvProteinForm.setCvObject(this);  
         }      
-    } 
+    }
 
+    //attributes used for mapping BasicObjects - project synchron
+    public String getCvProteinFormAc(){
+        return this.cvProteinFormAc;
+    }
+    public void setCvProteinFormAc(String ac){
+        this.cvProteinFormAc = ac;
+    }
 } // end CvObject
 
 

@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -11,32 +11,37 @@ import java.util.*;
 
 /**
  * Represents a crossreference to another database.
- * 
+ *
  * @author hhe
  */
 public class Xref extends BasicObject {
 
-  ///////////////////////////////////////
-  //attributes
+    ///////////////////////////////////////
+    //attributes
 
-    private String qualifierAc;
-    protected String databaseAc;
+    //private String qualifierAc;
+    //protected String databaseAc;
     protected String parentAc;
 
-/**
- * Primary identifier of the database referred to.
- */
+    //attributes used for mapping BasicObjects - project synchron
+    protected String cvXrefQualifierAc;
+    protected String cvDatabaseAc;
+
+
+    /**
+     * Primary identifier of the database referred to.
+     */
     protected String primaryId;
 
-/**
- * Secondary identifier of the database. This will usually be 
- * a meaningful name, for example a domain name.
- */
+    /**
+     * Secondary identifier of the database. This will usually be
+     * a meaningful name, for example a domain name.
+     */
     protected String secondaryId;
-/**
- * The release number of the external database from which the object 
- * has been updated.
- */
+    /**
+     * The release number of the external database from which the object
+     * has been updated.
+     */
     protected String dbRelease;
 
     ///////////////////////////////////////
@@ -60,22 +65,22 @@ public class Xref extends BasicObject {
         this.dbRelease = aDatabaseRelease;
     }
 
-   ///////////////////////////////////////
-   // associations
+    ///////////////////////////////////////
+    // associations
 
-/**
- * 
- */
+    /**
+     *
+     */
     public CvXrefQualifier cvXrefQualifier;
 
- /**
- * 
- */
+    /**
+     *
+     */
     public CvDatabase cvDatabase;
 
 
-  ///////////////////////////////////////
-  //access methods for attributes
+    ///////////////////////////////////////
+    //access methods for attributes
 
     public String getPrimaryId() {
         return primaryId;
@@ -102,8 +107,8 @@ public class Xref extends BasicObject {
         this.parentAc = parentAc;
     }
 
-   ///////////////////////////////////////
-   // access methods for associations
+    ///////////////////////////////////////
+    // access methods for associations
 
     public CvXrefQualifier getCvXrefQualifier() {
         return cvXrefQualifier;
@@ -111,7 +116,7 @@ public class Xref extends BasicObject {
 
     public void setCvXrefQualifier(CvXrefQualifier cvXrefQualifier) {
         this.cvXrefQualifier = cvXrefQualifier;
-    } 
+    }
     public CvDatabase getCvDatabase() {
         return cvDatabase;
     }
@@ -119,6 +124,22 @@ public class Xref extends BasicObject {
     public void setCvDatabase(CvDatabase cvDatabase) {
         this.cvDatabase = cvDatabase;
     }
+
+    //attributes used for mapping BasicObjects - project synchron
+    public String getCvXrefQualifierAc() {
+        return cvXrefQualifierAc;
+    }
+    public void setCvXrefQualifierAc(String ac) {
+        this.cvXrefQualifierAc = ac;
+    }
+
+    public String getCvDatabaseAc() {
+        return cvDatabaseAc;
+    }
+    public void setCvDatabaseAc(String ac) {
+        this.cvDatabaseAc = ac;
+    }
+
 
     ///////////////////////////////////////
     // instance methods
@@ -132,11 +153,11 @@ public class Xref extends BasicObject {
         Xref comparator = (Xref) obj;
         if (super.isSameObject(obj)
                 &&
-            this.cvDatabase.equals(comparator.getCvDatabase())
+                this.cvDatabase.equals(comparator.getCvDatabase())
                 &&
-            this.primaryId.equals(comparator.getPrimaryId())){
+                this.primaryId.equals(comparator.getPrimaryId())){
             return true;
-            } else {
+        } else {
             return false;
         }
     }

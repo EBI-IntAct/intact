@@ -15,6 +15,8 @@ public class Range extends BasicObject {
   ///////////////////////////////////////
   //attributes
 
+    //attributes used for mapping BasicObjects - project synchron
+    protected String ModificationAc;
 
 /**
  * Represents ...
@@ -64,6 +66,14 @@ public class Range extends BasicObject {
             if (modification != null) modification.setRange(this);  
         }      
     } 
+
+    //attributes used for mapping BasicObjects - project synchron
+    public String getModificationAc() {
+        return this.ModificationAc;
+    }
+    public void setModificationAc(String ac) {
+        this.ModificationAc = ac;
+    }
 
 } // end Range
 

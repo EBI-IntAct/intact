@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -9,35 +9,38 @@ import java.util.*;
 
 /**
  * An alternative name for the object.
- * 
+ *
  * @author hhe
  */
 public class Alias extends BasicObject {
 
-  ///////////////////////////////////////
-  //attributes
+    ///////////////////////////////////////
+    //attributes
+
+    // Attributes used for mapping BasicObjects
+    public String CvAliasTypeAc;
 
 
-/**
- * Alternative name for the object.
- */
+    /**
+     * Alternative name for the object.
+     */
     protected String name;
 
-   ///////////////////////////////////////
-   // associations
+    ///////////////////////////////////////
+    // associations
 
-/**
- * 
- */
+    /**
+     *
+     */
     public CvAliasType cvAliasType;
-/**
- * The reference object(s) this alias refers to.
- */
+    /**
+     * The reference object(s) this alias refers to.
+     */
     public Collection referenceObject = new Vector();
 
 
-  ///////////////////////////////////////
-  //access methods for attributes
+    ///////////////////////////////////////
+    //access methods for attributes
 
     public String getName() {
         return name;
@@ -46,8 +49,8 @@ public class Alias extends BasicObject {
         this.name = name;
     }
 
-   ///////////////////////////////////////
-   // access methods for associations
+    ///////////////////////////////////////
+    // access methods for associations
 
     public CvAliasType getCvAliasType() {
         return cvAliasType;
@@ -55,15 +58,15 @@ public class Alias extends BasicObject {
 
     public void setCvAliasType(CvAliasType cvAliasType) {
         this.cvAliasType = cvAliasType;
-    } 
+    }
     public Collection getReferenceObject() {
         return referenceObject;
     }
     public void addReferenceObject(AnnotatedObject annotatedObject) {
-        if (! this.referenceObject.contains(annotatedObject)) this.referenceObject.add(annotatedObject);  
+        if (! this.referenceObject.contains(annotatedObject)) this.referenceObject.add(annotatedObject);
     }
-    public void removeReferenceObject(AnnotatedObject annotatedObject) {    
-        this.referenceObject.remove(annotatedObject);        
+    public void removeReferenceObject(AnnotatedObject annotatedObject) {
+        this.referenceObject.remove(annotatedObject);
     }
 
 } // end Alias

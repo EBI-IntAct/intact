@@ -18,6 +18,8 @@ public class Person extends BasicObject {
   ///////////////////////////////////////
   //attributes
 
+    //attributes used for mapping BasicObjects - project synchron
+    public String institutionAc;
 
 /**
  * The first names of a person, as they should be shown in any output.
@@ -90,7 +92,15 @@ public class Person extends BasicObject {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
-    } 
+    }
+
+    //attributes used for mapping BasicObjects - project synchron
+    public String getInstitutionAc() {
+        return institutionAc;
+    }
+    public void setInstitutionAc(String ac) {
+        this.institutionAc = ac;
+    }
 
 } // end Person
 
