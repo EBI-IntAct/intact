@@ -32,6 +32,7 @@
     <hr size=2>
 
     <html:submit property="action" value="Submit" />
+    <html:reset/>
     <html:submit property="action" value="Cancel" />
 </html:form>
 

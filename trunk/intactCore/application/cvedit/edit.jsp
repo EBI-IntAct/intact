@@ -30,8 +30,8 @@
 
 <%
     // Aliases to save us from typing the full name.
-    String annotations = WebIntactConstants.ANNOTATIONS;
-    String xrefs = WebIntactConstants.XREFS;
+    String annotations = WebIntactConstants.ANNOTS_TO_VIEW;
+    String xrefs = WebIntactConstants.XREFS_TO_VIEW;
 
     // Need to save in a session to access them later.
     Collection annotcoll = viewbean.getAnnotations();
@@ -45,7 +45,7 @@
     session.setAttribute("emptycoll", viewbean.getEmptyCollection());
 
     // The number of rows per page.
-    int rowspp = 2;
+    int rowspp = 10;
 
     // Need a string version for display tag.
     String rowspps = Integer.toString(rowspp);
@@ -231,4 +231,4 @@ Accession Number: <b><c:out value="${viewbean.ac}" /></b>
 <jsp:include page="footer.jsp" flush="true" />
 
 <!-- Start the transaction now. -->
-<intact:beginTransaction/>
+<!-- intact:beginTransaction/ -->
