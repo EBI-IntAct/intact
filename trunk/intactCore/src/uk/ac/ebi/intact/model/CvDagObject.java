@@ -246,7 +246,7 @@ public abstract class CvDagObject extends CvObject {
         // the GO id
         for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
             Xref xref = (Xref) iterator.next();
-            if (xref.getCvDatabase().getShortLabel().equals("GO")){
+            if (xref.getCvDatabase().getShortLabel().equals("go")){
                 termLine.append(" ; " + xref.getPrimaryId());
                 // There should be only one GO ID
                 break;
