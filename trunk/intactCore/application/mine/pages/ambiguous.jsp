@@ -19,6 +19,7 @@
 <jsp:useBean id="ambiguous" scope="request" class="java.util.Collection" />
 
 <script language="JavaScript" type="text/javascript">
+
 	function check() {
 		// number stores the number of checked checkboxes
 	    var number = 0; 

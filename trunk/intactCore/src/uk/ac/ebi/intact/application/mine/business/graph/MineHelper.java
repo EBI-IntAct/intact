@@ -21,6 +21,7 @@ import jdsl.graph.api.Edge;
 import jdsl.graph.api.Graph;
 import jdsl.graph.api.Vertex;
 import jdsl.graph.ref.IncidenceListGraph;
+import uk.ac.ebi.intact.application.mine.business.Constants;
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
 import uk.ac.ebi.intact.application.mine.business.MineException;
 import uk.ac.ebi.intact.application.mine.business.graph.model.EdgeObject;
@@ -99,30 +100,22 @@ public class MineHelper {
                             "SELECT DISTINCT bac, graphid FROM ia_interactions "
                                     + "WHERE p1ac=? or p2ac=?");
 
-            String ac, bioSource;
+            String ac;
             NetworkKey key;
             ResultSet set;
             Collection search;
-            // for every search ac number the biosource and graphid is fetched
-            // and stored in a map where the keys the wrapper class of the two
-            // strings are and the value a collection of the ac nr.
+
             for (Iterator iter = searchFor.iterator(); iter.hasNext();) {
                 ac = iter.next().toString();
                 pstm.setString(1, ac);
                 pstm.setString(2, ac);
                 set = pstm.executeQuery();
-                // the ac is not part in an interaction
-                // to detect that the biosource is set to an empty value
-                int graphid = 0;
-                if (!set.next()) {
-                    bioSource = "";
-                }
-                else {
-                    bioSource = set.getString(1);
-                    graphid = set.getInt(2);
-                }
-                // create a new wrapper class to store taxid and graphid
-                key = new NetworkKey(bioSource, graphid);
+
+                // if something was found in the database a new key is created
+                // with the database information, otherwise the dummy key is
+                // taken
+                key = !set.next() ? Constants.DUMMY_KEY : new NetworkKey(set
+                        .getString(1), set.getInt(2));
 
                 // if the network map contains the current key the search ac is
                 // added to the collection of the current key, otherwise a new

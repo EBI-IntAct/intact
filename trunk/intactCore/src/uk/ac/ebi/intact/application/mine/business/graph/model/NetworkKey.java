@@ -4,10 +4,9 @@
  */
 package uk.ac.ebi.intact.application.mine.business.graph.model;
 
-
 /**
- * The class <tt>NetworkKey</tt> is a wrapper class to store the shortest paths
- * of a biosource and graphid.
+ * The class <tt>NetworkKey</tt> is a wrapper class to store a biosource and
+ * graphid.
  * 
  * @author Andreas Groscurth
  */
@@ -52,14 +51,14 @@ public class NetworkKey implements Comparable {
             return false;
         }
         NetworkKey dw = (NetworkKey) o;
+
         return bioSource.equals(dw.bioSource) && graphID == dw.graphID;
     }
 
     public int hashCode() {
         return bioSource.hashCode() + graphID;
     }
-    
-    
+
     /*
      * (non-Javadoc)
      * 
