@@ -6,7 +6,6 @@
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.test;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,16 +21,7 @@ import uk.ac.ebi.intact.util.test.mocks.MockInputStream;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class AnnotationParserTest extends TestCase {
-
-    /**
-     * Constructs a NewtServerProxyTest instance with the specified name.
-     *
-     * @param name the name of the test.
-     */
-    public AnnotationParserTest( final String name ) {
-        super( name );
-    }
+public class AnnotationParserTest extends ParserTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all
@@ -41,20 +31,26 @@ public class AnnotationParserTest extends TestCase {
         return new TestSuite( AnnotationParserTest.class );
     }
 
+    private AnnotationTag parse( String xmlContent ) {
 
-    public void testProcess_basicComment() {
+        clearParserMessages();
 
         final MockInputStream is = new MockInputStream();
-        is.setBuffer( MockXmlContent.ANNOTATION_1 );
+        is.setBuffer( xmlContent );
         final Document document = MockDocumentBuilder.build( is );
         final Element element = document.getDocumentElement();
 
-        AnnotationTag annotation = null;
-        try {
-            annotation = AnnotationParser.process( element );
-        } catch ( IllegalArgumentException iae ) {
-            fail( "The creation of an AnnotationTag failed where it shouldn't have." );
-        }
+        AnnotationTag annotation = AnnotationParser.process( element );
+        displayExistingMessages();
+
+        return annotation;
+    }
+
+
+    public void testProcess_basicComment() {
+
+        AnnotationTag annotation = parse( MockXmlContent.ANNOTATION_1 );
+
         assertNotNull( annotation );
         assertEquals( "comment", annotation.getType() );
         assertEquals( "my comment", annotation.getText() );
@@ -62,17 +58,8 @@ public class AnnotationParserTest extends TestCase {
 
     public void testProcess_basicRemark() {
 
-        final MockInputStream is = new MockInputStream();
-        is.setBuffer( MockXmlContent.ANNOTATION_2 );
-        final Document document = MockDocumentBuilder.build( is );
-        final Element element = document.getDocumentElement();
+        AnnotationTag annotation = parse( MockXmlContent.ANNOTATION_2 );
 
-        AnnotationTag annotation = null;
-        try {
-            annotation = AnnotationParser.process( element );
-        } catch ( IllegalArgumentException iae ) {
-            fail( "The creation of an AnnotationTag failed where it shouldn't have." );
-        }
         assertNotNull( annotation );
         assertEquals( "remark", annotation.getType() );
         assertEquals( "my remark", annotation.getText() );
@@ -80,14 +67,9 @@ public class AnnotationParserTest extends TestCase {
 
     public void testProcess_noType() {
 
-        final MockInputStream is = new MockInputStream();
-        is.setBuffer( MockXmlContent.ANNOTATION_3 );
-        final Document document = MockDocumentBuilder.build( is );
-        final Element element = document.getDocumentElement();
-
         try {
             // an empty string is ok.
-            AnnotationParser.process( element );
+            AnnotationTag annotation = parse( MockXmlContent.ANNOTATION_3 );
         } catch ( IllegalArgumentException iae ) {
             fail( "The creation of an AnnotationTag didn't failed where it should have. A type is required" );
         }
@@ -95,16 +77,13 @@ public class AnnotationParserTest extends TestCase {
 
     public void testProcess_noText() {
 
-        final MockInputStream is = new MockInputStream();
-        is.setBuffer( MockXmlContent.ANNOTATION_4 );
-        final Document document = MockDocumentBuilder.build( is );
-        final Element element = document.getDocumentElement();
-
+        AnnotationTag annotation = null;
         try {
-            AnnotationParser.process( element );
-            fail( "The creation of an AnnotationTag didn't failed where it should have. A text is required" );
+            // an empty string is ok.
+            annotation = parse( MockXmlContent.ANNOTATION_4 );
+            fail( "The creation of an AnnotationTag didn't failed where it should have. A type is required" );
         } catch ( IllegalArgumentException iae ) {
-            // ok !
+            // ok.
         }
     }
 }

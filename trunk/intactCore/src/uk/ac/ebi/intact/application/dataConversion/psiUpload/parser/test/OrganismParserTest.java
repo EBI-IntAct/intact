@@ -63,13 +63,15 @@ public class OrganismParserTest extends TestCase {
         CellTypeTag cellType = bioSource.getCellType();
         assertNotNull( cellType );
         assertEquals( "MI:987", cellType.getPsiDefinition().getId() );
+        assertEquals( "9876", cellType.getShortlabel() );
 
         TissueTag tissue = bioSource.getTissue();
         assertNotNull( tissue );
         assertEquals( "MI:123", tissue.getPsiDefinition().getId() );
+        assertEquals( "1234", tissue.getShortlabel() );
     }
 
-    
+
     public void testProcessOnlyTaxId() {
 
         OrganismTag bioSource = parse( MockXmlContent.ORGANISM_2 );
@@ -98,6 +100,7 @@ public class OrganismParserTest extends TestCase {
         TissueTag tissue = bioSource.getTissue();
         assertNotNull( tissue );
         assertEquals( "MI:123", tissue.getPsiDefinition().getId() );
+        assertEquals( "1234", tissue.getShortlabel() );
     }
 
 
@@ -111,6 +114,7 @@ public class OrganismParserTest extends TestCase {
         CellTypeTag cellType = bioSource.getCellType();
         assertNotNull( cellType );
         assertEquals( "MI:987", cellType.getPsiDefinition().getId() );
+        assertEquals( "1234", cellType.getShortlabel() );
 
         TissueTag tissue = bioSource.getTissue();
         assertNull( tissue );

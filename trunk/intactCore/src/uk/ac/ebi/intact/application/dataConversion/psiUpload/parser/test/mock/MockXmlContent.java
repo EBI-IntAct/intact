@@ -300,11 +300,19 @@ public class MockXmlContent {
             "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
             "                    </names>" + NEW_LINE +
             "                    <tissue>" + NEW_LINE +
+            "                        <names>" + NEW_LINE +
+            "                            <shortLabel>1234</shortLabel>" + NEW_LINE +
+            "                            <fullName>ldfiglsfd</fullName>" + NEW_LINE +
+            "                        </names>" + NEW_LINE +
             "                        <xref>" + NEW_LINE +
             "                            <primaryRef db=\"psi-mi\" id=\"MI:123\" secondary=\"\" version=\"\"/>" + NEW_LINE +
             "                        </xref>" + NEW_LINE +
             "                   </tissue>" + NEW_LINE +
             "                   <cellType>" + NEW_LINE +
+            "                        <names>" + NEW_LINE +
+            "                            <shortLabel>9876</shortLabel>" + NEW_LINE +
+            "                            <fullName>skufgh</fullName>" + NEW_LINE +
+            "                        </names>" + NEW_LINE +
             "                        <xref>" + NEW_LINE +
             "                           <primaryRef db=\"psi-mi\" id=\"MI:987\" secondary=\"\" version=\"\"/>" + NEW_LINE +
             "                        </xref>" + NEW_LINE +
@@ -326,6 +334,10 @@ public class MockXmlContent {
             "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
             "                    </names>" + NEW_LINE +
             "                    <tissue>" + NEW_LINE +
+            "                        <names>" + NEW_LINE +
+            "                            <shortLabel>1234</shortLabel>" + NEW_LINE +
+            "                            <fullName>ldfiglsfd</fullName>" + NEW_LINE +
+            "                        </names>" + NEW_LINE +
             "                        <xref>" + NEW_LINE +
             "                            <primaryRef db=\"psi-mi\" id=\"MI:123\" secondary=\"\" version=\"\"/>" + NEW_LINE +
             "                        </xref>" + NEW_LINE +
@@ -339,6 +351,10 @@ public class MockXmlContent {
             "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
             "                    </names>" + NEW_LINE +
             "                   <cellType>" + NEW_LINE +
+            "                        <names>" + NEW_LINE +
+            "                            <shortLabel>1234</shortLabel>" + NEW_LINE +
+            "                            <fullName>ldfiglsfd</fullName>" + NEW_LINE +
+            "                        </names>" + NEW_LINE +
             "                        <xref>" + NEW_LINE +
             "                           <primaryRef db=\"psi-mi\" id=\"MI:987\" secondary=\"\" version=\"\"/>" + NEW_LINE +
             "                        </xref>" + NEW_LINE +
@@ -353,11 +369,19 @@ public class MockXmlContent {
             "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
             "                    </names>" + NEW_LINE +
             "                    <tissue>" + NEW_LINE +
+            "                        <names>" + NEW_LINE +
+            "                            <shortLabel>1234</shortLabel>" + NEW_LINE +
+            "                            <fullName>ldfiglsfd</fullName>" + NEW_LINE +
+            "                        </names>" + NEW_LINE +
             "                        <xref>" + NEW_LINE +
             "                            <primaryRef db=\"psi-mi\" id=\"MI:123\" secondary=\"\" version=\"\"/>" + NEW_LINE +
             "                        </xref>" + NEW_LINE +
             "                   </tissue>" + NEW_LINE +
             "                   <cellType>" + NEW_LINE +
+            "                        <names>" + NEW_LINE +
+            "                            <shortLabel>9876</shortLabel>" + NEW_LINE +
+            "                            <fullName>dstjtj</fullName>" + NEW_LINE +
+            "                        </names>" + NEW_LINE +
             "                        <xref>" + NEW_LINE +
             "                           <primaryRef db=\"psi-mi\" id=\"MI:987\" secondary=\"\" version=\"\"/>" + NEW_LINE +
             "                        </xref>" + NEW_LINE +
@@ -379,6 +403,10 @@ public class MockXmlContent {
             "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
             "                    </names>" + NEW_LINE +
             "                    <tissue>" + NEW_LINE +
+            "                        <names>" + NEW_LINE +
+            "                            <shortLabel>1234</shortLabel>" + NEW_LINE +
+            "                            <fullName>ldfiglsfd</fullName>" + NEW_LINE +
+            "                        </names>" + NEW_LINE +
             "                        <xref>" + NEW_LINE +
             "                            <primaryRef db=\"psi-mi\" id=\"MI:123\" secondary=\"\" version=\"\"/>" + NEW_LINE +
             "                        </xref>" + NEW_LINE +
@@ -392,6 +420,10 @@ public class MockXmlContent {
             "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
             "                    </names>" + NEW_LINE +
             "                   <cellType>" + NEW_LINE +
+            "                        <names>" + NEW_LINE +
+            "                            <shortLabel>1234</shortLabel>" + NEW_LINE +
+            "                            <fullName>ldfiglsfd</fullName>" + NEW_LINE +
+            "                        </names>" + NEW_LINE +
             "                        <xref>" + NEW_LINE +
             "                           <primaryRef db=\"psi-mi\" id=\"MI:987\" secondary=\"\" version=\"\"/>" + NEW_LINE +
             "                        </xref>" + NEW_LINE +
@@ -520,6 +552,7 @@ public class MockXmlContent {
             "                <attributeList>" + NEW_LINE +
             "                    <attribute name=\"comment\">a first comment.</attribute>" + NEW_LINE +
             "                    <attribute name=\"test\">A first test</attribute>" + NEW_LINE +
+            "                    <attribute name=\"expressedIn\">EBI-222:rat</attribute>" + NEW_LINE +
             "                    <attribute name=\"remark\">Oh! a remark</attribute>" + NEW_LINE +
             "                </attributeList>" + NEW_LINE +
             "                <confidence unit=\"arbitrary\" value=\"high\"/>" + NEW_LINE +
