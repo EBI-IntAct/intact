@@ -72,6 +72,9 @@ public class DisplaySourceTag extends TagSupport {
 
             Interactor interactor = in.getCentralProtein();
             ArrayList centrals = in.getCentralProteins();
+            logger.info("Central protein AC: " + interactor.getAc());
+            logger.info(centrals.size() + " central protein(s) referenced in the interaction network.");
+
             Collection xRefs = new ArrayList (50);
 
             int max = centrals.size();
