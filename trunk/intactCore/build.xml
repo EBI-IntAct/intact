@@ -551,6 +551,16 @@
         </java>
     </target>
 
+    <!-- Runs the unit tester for a package. The package to run must be given
+         as -Dtest.package="......."
+    -->
+    <target name="test-package-stdout" depends="compile-core"
+            description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="${test.package}.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
 
 
 
