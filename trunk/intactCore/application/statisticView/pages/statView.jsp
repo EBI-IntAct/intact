@@ -27,6 +27,7 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/display.tld"     prefix="display" %>
+
 <%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact" %>
 
 <%
@@ -81,41 +82,37 @@ Database: <b><%= bean.getDatabaseName() %></b>.
             <td valign="top" height="*">
 
 <%
-    ArrayList rows = new ArrayList( 6 );
+    ArrayList rows = new ArrayList( 5 );
     IntactStatistics latest = bean.getLastRow();
 
     rows.add (new DisplayStatisticsBean ("Proteins",
                                         latest.getNumberOfProteins(),
-                                        "Number of proteins in the database."));
+                                        "Number of proteins in the database"));
 
     rows.add (new DisplayStatisticsBean ("Interactions",
                                         latest.getNumberOfInteractions(),
                                         "Number of distinct interactions"));
 
-    rows.add (new DisplayStatisticsBean ("thereof with 2 interactors",
+    rows.add (new DisplayStatisticsBean ("Binary interactions",
                                         latest.getNumberOfBinaryInteractions(),
-                                        "Binary interactions"));
-
-    rows.add (new DisplayStatisticsBean ("thereof with more than 2 interactors",
-                                        latest.getNumberOfComplexInteractions(),
-                                        "Interactions with more than two interactors (complexes)."));
+                                        "Number of interactions involving two interactors"));
 
     rows.add (new DisplayStatisticsBean ("Experiments",
                                         latest.getNumberOfExperiments(),
-                                        "Distincts experiments."));
+                                        "Distincts experiments"));
 
     rows.add (new DisplayStatisticsBean ("Terms",
                                         latest.getNumberOfGoTerms(),
-                                        "Controlled vocabulary terms define possible choices for text attributes."));
+                                        "Controlled vocabulary terms define possible choices for text attributes"));
 
-    session.setAttribute("statistics", rows);
+    request.setAttribute("statistics", rows);
 %>
 
-<!-- Displays the available highlightment source -->
-       <display:table name="statistics" width="90%">
-               <display:column property="object" title="Object" width="22% "/>
-               <display:column property="count"                 width="8%" />
-               <display:column property="description"           width="70%" />
+       <!-- Displays the available highlightment source -->
+       <display:table name="statistics" width="80%">
+               <display:column property="object" title="Object" width="22%" styleClass="tableCellAlignRight" />
+               <display:column property="count"                 width="8%"  styleClass="tableCellAlignRight" />
+               <display:column property="description"           width="70%"  />
 
                <display:setProperty name="basic.msg.empty_list"
                                     value="No statistics available..." />
@@ -141,8 +138,8 @@ Database: <b><%= bean.getDatabaseName() %></b>.
 
                 <%
                     String filename = ChartBuilder.generateXYChart( bean,
-                                                                    ChartBuilder.COMPLEX_DATA,
-                                                                    "IntAct complexes","","",
+                                                                    ChartBuilder.ALL_INTERACTIONS_DATA,
+                                                                    "IntAct Interactions","","",
                                                                     session,
                                                                     new PrintWriter( out ));
                     String graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
@@ -150,26 +147,25 @@ Database: <b><%= bean.getDatabaseName() %></b>.
 
                 <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
 
-
-                </td>
-                <td valign="top" height="*">
+        </td>
+        <td valign="top" height="*">
 
                 <%
                     filename = ChartBuilder.generateXYChart( bean,
-                                                            ChartBuilder.EXPERIMENT_DATA,
-                                                            "IntAct experiments","","",
-                                                            session,
-                                                            new PrintWriter( out ));
+                                                             ChartBuilder.BINARY_INTERACTIONS_DATA,
+                                                             "IntAct binary interactions","","",
+                                                             session,
+                                                             new PrintWriter( out ));
                     graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
                 %>
 
                 <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
 
-                </td>
-                </tr>
+        </td>
+        </tr>
 
-                <tr>
-                <td valign="top" height="*">
+        <tr>
+        <td colspan="2" valign="top" align="center" height="*">
 
                 <%
                     filename = ChartBuilder.generateXYChart( bean,
@@ -182,8 +178,25 @@ Database: <b><%= bean.getDatabaseName() %></b>.
 
                 <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
 
-                </td>
-                <td valign="top" height="*">
+        </td>
+        </tr>
+
+        <tr>
+        <td valign="top" height="*">
+
+                <%
+                    filename = ChartBuilder.generateXYChart( bean,
+                                                            ChartBuilder.EXPERIMENT_DATA,
+                                                            "IntAct experiments","","",
+                                                            session,
+                                                            new PrintWriter( out ));
+                    graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
+                %>
+
+                <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
+
+        </td>
+        <td valign="top" height="*">
 
                 <%
                     filename = ChartBuilder.generateXYChart( bean,
@@ -196,10 +209,10 @@ Database: <b><%= bean.getDatabaseName() %></b>.
 
                 <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
 
-            </td>
-        </tr>
-        </tbody>
-    </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
     </td>
     </tr>
 
