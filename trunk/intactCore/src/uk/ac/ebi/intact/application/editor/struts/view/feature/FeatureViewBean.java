@@ -408,8 +408,8 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     // Override the super method to initialize this class specific resetting.
-    protected void reset(Class clazz) {
-        super.reset(clazz);
+    public void reset() {
+        super.reset();
 
         setCvFeatureType(null);
         setCvFeatureIdentification(null);
@@ -417,13 +417,22 @@ public class FeatureViewBean extends AbstractEditViewBean {
         // Clear ranges
         myRanges.clear();
 
+        setParentView(null);
+        setComponent(null);
+        myMutationMode = false;
+        myCurrentLayoutName = ourDefaultLayoutName;
+    }
+
+    // Override the super method to initialize this class specific resetting.
+    public void reset(Class clazz) {
+        super.reset(clazz);
         // Mark it as a new feature.
         myNewFeature = true;
     }
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    protected void reset(AnnotatedObject annobj) {
+    public void reset(AnnotatedObject annobj) {
         super.reset(annobj);
 
         // Must be a feature.

@@ -178,21 +178,22 @@ public abstract class AbstractEditViewBean implements Serializable {
      * when creating a view bean for a new object. For an existing object,
      * AnnotatedObject is used.
      */
-    public void reset(Object obj) {
-        // Clear any left overs from previous transaction.
-        clearTransactions();
-
-        // Refresh menus.
-        clearMenus();
-
-        // Check for annotated object.
-        if (AnnotatedObject.class.isAssignableFrom(obj.getClass())) {
-            reset((AnnotatedObject) obj);
-        }
-        else {
-            reset((Class) obj);
-        }
-    }
+//    public void reset(Object obj) {
+////        // Clear any left overs from previous transaction.
+////        clearTransactions();
+////
+////        // Refresh menus.
+////        clearMenus();
+////        reset();
+//
+//        // Check for annotated object.
+//        if (AnnotatedObject.class.isAssignableFrom(obj.getClass())) {
+//            reset((AnnotatedObject) obj);
+//        }
+//        else {
+//            reset((Class) obj);
+//        }
+//    }
 
     /**
      * Resets the bean with the current edit class. This method is called when
@@ -200,24 +201,28 @@ public abstract class AbstractEditViewBean implements Serializable {
      * that time).
      * @param clazz the Class of the new annotated object.
      */
-    protected void reset(Class clazz) {
+    public void reset(Class clazz) {
+        // Reset the object.
+        reset();
         myEditClass = clazz;
-
-        // Clear annotations and xrefs.
-        myAnnotations.clear();
-        myXrefs.clear();
-
-        // Set them to null as they may have previous values.
-        setAnnotatedObject(null);
-        setShortLabel(null);
-        setFullName(null);
+//
+//        // Clear annotations and xrefs.
+//        myAnnotations.clear();
+//        myXrefs.clear();
+//
+//        // Set them to null as they may have previous values.
+//        setAnnotatedObject(null);
+//        setShortLabel(null);
+//        setFullName(null);
     }
 
     /**
      * Resets with the bean using an existing Annotated object.
      * @param annobj <code>AnnotatedObject</code> object to set this bean.
      */
-    protected void reset(AnnotatedObject annobj) {
+    public void reset(AnnotatedObject annobj) {
+        // Reset the object.
+        reset();
         setShortLabel(annobj.getShortLabel());
         resetAnnotatedObject(annobj);
         // Cache the annotations and xrefs here to save it from loading
@@ -571,9 +576,22 @@ public abstract class AbstractEditViewBean implements Serializable {
     /**
      * Deletes all the links to sub objects of the current edit object.
      */
-    public void clear() {
+    public void reset() {
         // Clear Transaction containers.
         clearTransactions();
+
+        // Clear annotations and xrefs.
+        myAnnotations.clear();
+        myXrefs.clear();
+
+        // Set them to null as they may have previous values.
+        setAnnotatedObject(null);
+        setShortLabel(null);
+        setFullName(null);
+        myEditClass = null;
+
+        // Clear menus.
+        clearMenus();
     }
 
     /**

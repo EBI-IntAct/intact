@@ -46,15 +46,15 @@ public class SequenceViewBean extends AbstractEditViewBean {
     private transient Map myMenus = new HashMap();
 
     // Override the super method to initialize this class specific resetting.
-    protected void reset(Class clazz) {
-        super.reset(clazz);
+    public void reset() {
+        super.reset();
         // Set fields to null.
         mySequence = null;
         myOrganism = null;
     }
 
     // Override the super method to set the tax id.
-    protected void reset(AnnotatedObject annobj) {
+    public void reset(AnnotatedObject annobj) {
         super.reset(annobj);
 
         // Must be a protein (for the moment, this could be the new abstract super).
