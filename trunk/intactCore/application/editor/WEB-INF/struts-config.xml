@@ -190,7 +190,6 @@
             <exception key="error.init.menu"
                 type="uk.ac.ebi.intact.persistence.SearchException"
                 path="login.error.layout"/>
-            <forward name="failure" path="login.error.layout"/>
             <!-- Successful login; present the search page. -->
             <forward name="success" path="search.layout"/>
         </action>
