@@ -24,7 +24,6 @@ import uk.ac.ebi.intact.application.mine.business.IntactUserI;
 import uk.ac.ebi.intact.application.mine.business.graph.MineHelper;
 import uk.ac.ebi.intact.application.mine.business.graph.model.MineData;
 import uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey;
-import uk.ac.ebi.intact.application.mine.business.graph.model.ShortestPathHelper;
 import uk.ac.ebi.intact.application.mine.struts.view.ErrorForm;
 
 /**
@@ -78,7 +77,7 @@ public class DisplayAction extends Action {
 
             Constants.LOGGER.info("start minehelper");
 
-            ShortestPathHelper helper = new MineHelper(user);
+            MineHelper helper = new MineHelper(user);
             // the network map maps the wrapper class containing
             // the biosource taxid and the graphid to a collection
             // of search acnr.
