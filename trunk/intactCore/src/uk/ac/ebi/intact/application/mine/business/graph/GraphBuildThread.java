@@ -7,9 +7,9 @@ package uk.ac.ebi.intact.application.mine.business.graph;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 
 import jdsl.graph.api.Vertex;
 import jdsl.graph.ref.IncidenceListGraph;
@@ -24,10 +24,12 @@ import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
  * @author Andreas Groscurth
  */
 public class GraphBuildThread extends Thread {
+    private static final String SELECT_QUERY = "SELECT * FROM ia_interactions WHERE graphid=";
+
     // the static values are set by the GraphManager !
     static IntactUserI intactUser;
     static Cache cache;
-    static Collection running;
+    static Set running;
 
     private Integer toProcceed;
 
@@ -58,7 +60,6 @@ public class GraphBuildThread extends Thread {
             }
         }
         catch ( SQLException e ) {
-            e.printStackTrace();
         }
 
     }
@@ -72,7 +73,6 @@ public class GraphBuildThread extends Thread {
      * @throws SQLException
      */
     private GraphData buildGraph(Integer graphid) throws SQLException {
-        System.out.println( "building " + graphid );
         Statement stm = intactUser.getDBConnection().createStatement();
         ResultSet set = null;
         IncidenceListGraph graph = null;
@@ -80,8 +80,7 @@ public class GraphBuildThread extends Thread {
         String protein1_ac, protein2_ac, interaction_ac;
         Map nodeLabelMap = new Hashtable();
 
-        set = stm.executeQuery( "SELECT * FROM ia_interactions WHERE graphid="
-                + graphid );
+        set = stm.executeQuery( SELECT_QUERY + graphid );
         // the graph is initialised
         graph = new IncidenceListGraph();
         while ( set.next() ) {
