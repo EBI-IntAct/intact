@@ -249,8 +249,10 @@ Verison: $Id$
                 <exclude name="display.tld"/>
                 <exclude name="redirect.tld"/>
             </fileset>
-
         </delete>
+
+        <!-- Libraries -->
+        <delete file="{lib.dir}/jstl.jar" />
 
         <!-- Tiles commons files -->
         <delete>
