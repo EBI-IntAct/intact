@@ -14,10 +14,18 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 
+<script language="JavaScript" type="text/javascript">
+    // Set the hidden interaction field when the user clicks on any Interaction
+    // button.
+    function setIntAc(ac) {
+        document.forms["expForm"].intac.value=ac;
+    }
+</script>
+
 <jsp:include page="../js.jsp" />
 
-<html:form action="/expDispatch" focus="shortLabel">
-
+<html:form action="/expDispatch">
+          <html:hidden property="intac" />
     <!-- Displays error messages for the short label -->
 <%--    <logic:messagesPresent>--%>
 <%--        <table width="100%" border="0" cellspacing="1" cellpadding="2">--%>
