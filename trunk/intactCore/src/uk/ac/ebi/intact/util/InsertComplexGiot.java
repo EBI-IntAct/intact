@@ -11,8 +11,6 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.fileParsing.beans.GiotLineBean;
 import uk.ac.ebi.intact.util.fileParsing.BeanStreamReader;
 import uk.ac.ebi.intact.util.fileParsing.SerializationHelper;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
-import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.sptr.flatfile.yasp.YASP;
 import uk.ac.ebi.sptr.flatfile.yasp.YASPException;
 import uk.ac.ebi.sptr.flatfile.yasp.EntryIterator;
@@ -82,7 +80,7 @@ public class InsertComplexGiot {
     private Institution       owner;
     private BioSource         yeast;
     private Collection        allKnownDrosophila;
-    private CvDatabase        sptr;
+    private CvDatabase        uniprot;
     private Experiment        giotExperiment;
     private CvInteractionType interactionType;
 
@@ -113,8 +111,8 @@ public class InsertComplexGiot {
                                IntactHelper helper )
             throws MalformedURLException,
             IOException,
-            IntactException, NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException, InstantiationException, UpdateProteinsI.UpdateException {
+            IntactException, NoSuchMethodException,
+            UpdateProteinsI.UpdateException {
 
         this.helper = helper;
 
@@ -249,9 +247,9 @@ public class InsertComplexGiot {
             throw new IntactException ( "Could not find the Institution: EBI. Stop processing." );
         }
 
-        sptr = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sptr" );
-        if ( sptr == null ){
-            throw new IntactException ( "Could not find the CvDatabase: sptr. Stop processing." );
+        uniprot = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
+        if ( uniprot == null ){
+            throw new IntactException ( "Could not find the CvDatabase: uniprot. Stop processing." );
         }
 
         BioSourceFactory bioSourceFactory = new BioSourceFactory( helper, owner );
@@ -537,7 +535,7 @@ public class InsertComplexGiot {
                         Protein p = (Protein) iterator.next ();
                         for ( Iterator iterator2 = p.getXrefs ().iterator (); iterator2.hasNext (); ) {
                             Xref xref = (Xref) iterator2.next ();
-                            if (xref.getCvDatabase().equals( sptr ) && xref.getPrimaryId().equals( sptr1 )) {
+                            if (xref.getCvDatabase().equals( uniprot ) && xref.getPrimaryId().equals( sptr1 )) {
                                protein1 = p;
                             }
                         }
@@ -616,7 +614,7 @@ public class InsertComplexGiot {
                         Protein p = (Protein) iterator.next ();
                         for ( Iterator iterator2 = p.getXrefs ().iterator (); iterator2.hasNext (); ) {
                             Xref xref = (Xref) iterator2.next ();
-                            if (xref.getCvDatabase().equals( sptr ) && xref.getPrimaryId().equals( sptr2 )) {
+                            if (xref.getCvDatabase().equals( uniprot ) && xref.getPrimaryId().equals( sptr2 )) {
                                protein2 = p;
                             }
                         }

@@ -1134,7 +1134,7 @@ public class PsiDataBuilder implements DataBuilder {
             //getReference @todo
             //getXref
             try {
-                Element psiXref = doXrefCollection(interactor.getXrefs(), "sptr");
+                Element psiXref = doXrefCollection(interactor.getXrefs(), "uniprot");
                 psiProteinInteractor.appendChild(psiXref);
             } catch (ElementNotParseableException e) {
                 logger.info("xref failed (not required):" + e.getMessage());

@@ -46,7 +46,7 @@ public abstract class UpdateProteinsI {
     /**
      * Xref databases
      */
-    protected static CvDatabase sptrDatabase;
+    protected static CvDatabase uniprotDatabase;
     protected static CvDatabase sgdDatabase;
     protected static CvDatabase goDatabase;
     protected static CvDatabase interproDatabase;
@@ -156,10 +156,10 @@ public abstract class UpdateProteinsI {
                 throw new UpdateException ("Unable to find the SGD database in your IntAct node");
             }
 
-            sptrDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sptr");
-            if (sptrDatabase == null) {
-                logger.error ("Unable to find the SPTR database in your IntAct node");
-                throw new UpdateException ("Unable to find the SPTR database in your IntAct node");
+            uniprotDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "uniprot");
+            if (uniprotDatabase == null) {
+                logger.error ("Unable to find the UNIPROT database in your IntAct node");
+                throw new UpdateException ("Unable to find the UNIPROT database in your IntAct node");
             }
 
             goDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go");

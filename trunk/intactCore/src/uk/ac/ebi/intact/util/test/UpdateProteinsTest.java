@@ -92,7 +92,7 @@ public class UpdateProteinsTest extends TestCase {
     /**
      * Xref databases
      */
-    private static CvDatabase sptrDatabase;
+    private static CvDatabase uniprotDatabase;
     private static CvDatabase sgdDatabase;
     private static CvDatabase goDatabase;
     private static CvDatabase interproDatabase;
@@ -121,9 +121,9 @@ public class UpdateProteinsTest extends TestCase {
             fail( "Could not load CvDatabase: sgd" );
         }
 
-        sptrDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sptr" );
-        if( sptrDatabase == null ) {
-            fail( "Could not load CvDatabase: sptr" );
+        uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
+        if( uniprotDatabase == null ) {
+            fail( "Could not load CvDatabase: uniprot" );
         }
 
         goDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "go" );
@@ -623,8 +623,8 @@ public class UpdateProteinsTest extends TestCase {
         String ac = protein.getAc();
 
         // Check Xrefs
-        confirmXref( protein, ac, sptrDatabase, identityXrefQualifier, "Q00402", "num1_yeast" );
-        confirmXref( protein, ac, sptrDatabase, secondaryXrefQualifier, "Q03767", "num1_yeast" );
+        confirmXref( protein, ac, uniprotDatabase, identityXrefQualifier, "Q00402", "num1_yeast" );
+        confirmXref( protein, ac, uniprotDatabase, secondaryXrefQualifier, "Q03767", "num1_yeast" );
         confirmXref( protein, ac, goDatabase, null, "GO:0005934", "C:bud tip" );
         confirmXref( protein, ac, goDatabase, null, "GO:0005938", "C:cell cortex" );
         confirmXref( protein, ac, goDatabase, null, "GO:0015631", "F:tubulin binding" );
@@ -878,12 +878,12 @@ public class UpdateProteinsTest extends TestCase {
         String ac = protein.getAc();
 
         // Check Xrefs
-        confirmXref( protein, ac, sptrDatabase, identityXrefQualifier, "O01367", "how_drome" );
-        confirmXref( protein, ac, sptrDatabase, secondaryXrefQualifier, "O02392", "how_drome" );
-        confirmXref( protein, ac, sptrDatabase, secondaryXrefQualifier, "P91680", "how_drome" );
-        confirmXref( protein, ac, sptrDatabase, secondaryXrefQualifier, "Q8IN11", "how_drome" );
-        confirmXref( protein, ac, sptrDatabase, secondaryXrefQualifier, "Q8T999", "how_drome" );
-        confirmXref( protein, ac, sptrDatabase, secondaryXrefQualifier, "Q94539", "how_drome" );
+        confirmXref( protein, ac, uniprotDatabase, identityXrefQualifier, "O01367", "how_drome" );
+        confirmXref( protein, ac, uniprotDatabase, secondaryXrefQualifier, "O02392", "how_drome" );
+        confirmXref( protein, ac, uniprotDatabase, secondaryXrefQualifier, "P91680", "how_drome" );
+        confirmXref( protein, ac, uniprotDatabase, secondaryXrefQualifier, "Q8IN11", "how_drome" );
+        confirmXref( protein, ac, uniprotDatabase, secondaryXrefQualifier, "Q8T999", "how_drome" );
+        confirmXref( protein, ac, uniprotDatabase, secondaryXrefQualifier, "Q94539", "how_drome" );
         confirmXref( protein, ac, goDatabase, null, "GO:0005634", "C:nucleus" );
         confirmXref( protein, ac, goDatabase, null, "GO:0003723", "F:RNA binding" );
         confirmXref( protein, ac, goDatabase, null, "GO:0007155", "P:cell adhesion" );
@@ -922,13 +922,13 @@ public class UpdateProteinsTest extends TestCase {
         ac = sv.getAc();
 
         // Check Xrefs
-        confirmXref( sv, ac, sptrDatabase, isoFormParentXrefQualifier, protein.getAc(), "how_drome" );
-        confirmXref( sv, ac, sptrDatabase, identityXrefQualifier, "O01367", "o01367-1" );
-        confirmXref( sv, ac, sptrDatabase, secondaryXrefQualifier, "O02392", "o01367-1" );
-        confirmXref( sv, ac, sptrDatabase, secondaryXrefQualifier, "P91680", "o01367-1" );
-        confirmXref( sv, ac, sptrDatabase, secondaryXrefQualifier, "Q8IN11", "o01367-1" );
-        confirmXref( sv, ac, sptrDatabase, secondaryXrefQualifier, "Q8T999", "o01367-1" );
-        confirmXref( sv, ac, sptrDatabase, secondaryXrefQualifier, "Q94539", "o01367-1" );
+        confirmXref( sv, ac, uniprotDatabase, isoFormParentXrefQualifier, protein.getAc(), "how_drome" );
+        confirmXref( sv, ac, uniprotDatabase, identityXrefQualifier, "O01367", "o01367-1" );
+        confirmXref( sv, ac, uniprotDatabase, secondaryXrefQualifier, "O02392", "o01367-1" );
+        confirmXref( sv, ac, uniprotDatabase, secondaryXrefQualifier, "P91680", "o01367-1" );
+        confirmXref( sv, ac, uniprotDatabase, secondaryXrefQualifier, "Q8IN11", "o01367-1" );
+        confirmXref( sv, ac, uniprotDatabase, secondaryXrefQualifier, "Q8T999", "o01367-1" );
+        confirmXref( sv, ac, uniprotDatabase, secondaryXrefQualifier, "Q94539", "o01367-1" );
 
         // Check Alias
         confirmAlias( sv, sv.getAc(), isoformSynonym, "a" );
@@ -952,13 +952,13 @@ public class UpdateProteinsTest extends TestCase {
         ac = sv.getAc();
 
         // Check Xrefs
-        confirmXref( sv, ac, sptrDatabase, isoFormParentXrefQualifier, protein.getAc(), "how_drome" );
-        confirmXref( sv, ac, sptrDatabase, identityXrefQualifier, "O01367", "o01367-2" );
-        confirmXref( sv, ac, sptrDatabase, secondaryXrefQualifier, "O02392", "o01367-2" );
-        confirmXref( sv, ac, sptrDatabase, secondaryXrefQualifier, "P91680", "o01367-2" );
-        confirmXref( sv, ac, sptrDatabase, secondaryXrefQualifier, "Q8IN11", "o01367-2" );
-        confirmXref( sv, ac, sptrDatabase, secondaryXrefQualifier, "Q8T999", "o01367-2" );
-        confirmXref( sv, ac, sptrDatabase, secondaryXrefQualifier, "Q94539", "o01367-2" );
+        confirmXref( sv, ac, uniprotDatabase, isoFormParentXrefQualifier, protein.getAc(), "how_drome" );
+        confirmXref( sv, ac, uniprotDatabase, identityXrefQualifier, "O01367", "o01367-2" );
+        confirmXref( sv, ac, uniprotDatabase, secondaryXrefQualifier, "O02392", "o01367-2" );
+        confirmXref( sv, ac, uniprotDatabase, secondaryXrefQualifier, "P91680", "o01367-2" );
+        confirmXref( sv, ac, uniprotDatabase, secondaryXrefQualifier, "Q8IN11", "o01367-2" );
+        confirmXref( sv, ac, uniprotDatabase, secondaryXrefQualifier, "Q8T999", "o01367-2" );
+        confirmXref( sv, ac, uniprotDatabase, secondaryXrefQualifier, "Q94539", "o01367-2" );
 
         // Check Alias
         confirmAlias( sv, sv.getAc(), isoformSynonym, "b" );
@@ -1197,7 +1197,7 @@ public class UpdateProteinsTest extends TestCase {
         ac = proteinRat.getAc();
 
         // Check Xrefs
-        confirmXref( proteinRat, ac, sptrDatabase, identityXrefQualifier, "P13953", "drd2_rat" );
+        confirmXref( proteinRat, ac, uniprotDatabase, identityXrefQualifier, "P13953", "drd2_rat" );
         confirmXref( proteinRat, ac, interproDatabase, null, "IPR000276", "GPCR_Rhodpsn" );
 
         // Check Alias
@@ -1235,8 +1235,8 @@ public class UpdateProteinsTest extends TestCase {
         ac = sv.getAc();
 
         // Check Xrefs
-        confirmXref( sv, ac, sptrDatabase, identityXrefQualifier, "P13953", "p13953-1_rat" );
-        confirmXref( sv, ac, sptrDatabase, isoFormParentXrefQualifier, proteinRat.getAc(), "drd2_rat" );
+        confirmXref( sv, ac, uniprotDatabase, identityXrefQualifier, "P13953", "p13953-1_rat" );
+        confirmXref( sv, ac, uniprotDatabase, isoFormParentXrefQualifier, proteinRat.getAc(), "drd2_rat" );
 
 
         //////////////////////////////
@@ -1251,8 +1251,8 @@ public class UpdateProteinsTest extends TestCase {
         ac = sv.getAc();
 
         // Check Xrefs
-        confirmXref( sv, ac, sptrDatabase, identityXrefQualifier, "P13953", "p13953-2_rat" );
-        confirmXref( sv, ac, sptrDatabase, isoFormParentXrefQualifier, proteinRat.getAc(), "drd2_rat" );
+        confirmXref( sv, ac, uniprotDatabase, identityXrefQualifier, "P13953", "p13953-2_rat" );
+        confirmXref( sv, ac, uniprotDatabase, isoFormParentXrefQualifier, proteinRat.getAc(), "drd2_rat" );
 
     }
 
@@ -1288,7 +1288,7 @@ public class UpdateProteinsTest extends TestCase {
         ac = proteinMouse.getAc();
 
         // Check Xrefs
-        confirmXref( proteinMouse, ac, sptrDatabase, identityXrefQualifier, "P13953", "drd2_mouse" );
+        confirmXref( proteinMouse, ac, uniprotDatabase, identityXrefQualifier, "P13953", "drd2_mouse" );
         confirmXref( proteinMouse, ac, interproDatabase, null, "IPR000276", "GPCR_Rhodpsn" );
 
         // Check Alias
@@ -1307,7 +1307,7 @@ public class UpdateProteinsTest extends TestCase {
         ac = proteinRat.getAc();
 
         // Check Xrefs
-        confirmXref( proteinRat, ac, sptrDatabase, identityXrefQualifier, "P13953", "drd2_rat" );
+        confirmXref( proteinRat, ac, uniprotDatabase, identityXrefQualifier, "P13953", "drd2_rat" );
         confirmXref( proteinRat, ac, interproDatabase, null, "IPR000276", "GPCR_Rhodpsn" );
 
         // Check Alias
@@ -1347,8 +1347,8 @@ public class UpdateProteinsTest extends TestCase {
         ac = sv.getAc();
 
         // Check Xrefs
-        confirmXref( sv, ac, sptrDatabase, identityXrefQualifier, "P13953", "p13953-1_mouse" );
-        confirmXref( sv, ac, sptrDatabase, isoFormParentXrefQualifier, proteinMouse.getAc(), "drd2_mouse" );
+        confirmXref( sv, ac, uniprotDatabase, identityXrefQualifier, "P13953", "p13953-1_mouse" );
+        confirmXref( sv, ac, uniprotDatabase, isoFormParentXrefQualifier, proteinMouse.getAc(), "drd2_mouse" );
 
 
         //////////////////////////////
@@ -1363,8 +1363,8 @@ public class UpdateProteinsTest extends TestCase {
         ac = sv.getAc();
 
         // Check Xrefs
-        confirmXref( sv, ac, sptrDatabase, identityXrefQualifier, "P13953", "p13953-2_mouse" );
-        confirmXref( sv, ac, sptrDatabase, isoFormParentXrefQualifier, proteinMouse.getAc(), "drd2_mouse" );
+        confirmXref( sv, ac, uniprotDatabase, identityXrefQualifier, "P13953", "p13953-2_mouse" );
+        confirmXref( sv, ac, uniprotDatabase, isoFormParentXrefQualifier, proteinMouse.getAc(), "drd2_mouse" );
 
 
         //////////////////////////////
@@ -1379,8 +1379,8 @@ public class UpdateProteinsTest extends TestCase {
         ac = sv.getAc();
 
         // Check Xrefs
-        confirmXref( sv, ac, sptrDatabase, identityXrefQualifier, "P13953", "p13953-1_rat" );
-        confirmXref( sv, ac, sptrDatabase, isoFormParentXrefQualifier, proteinRat.getAc(), "drd2_rat" );
+        confirmXref( sv, ac, uniprotDatabase, identityXrefQualifier, "P13953", "p13953-1_rat" );
+        confirmXref( sv, ac, uniprotDatabase, isoFormParentXrefQualifier, proteinRat.getAc(), "drd2_rat" );
 
 
         //////////////////////////////
@@ -1395,8 +1395,8 @@ public class UpdateProteinsTest extends TestCase {
         ac = sv.getAc();
 
         // Check Xrefs
-        confirmXref( sv, ac, sptrDatabase, identityXrefQualifier, "P13953", "p13953-2_rat" );
-        confirmXref( sv, ac, sptrDatabase, isoFormParentXrefQualifier, proteinRat.getAc(), "drd2_rat" );
+        confirmXref( sv, ac, uniprotDatabase, identityXrefQualifier, "P13953", "p13953-2_rat" );
+        confirmXref( sv, ac, uniprotDatabase, isoFormParentXrefQualifier, proteinRat.getAc(), "drd2_rat" );
 
     } // P13953
 

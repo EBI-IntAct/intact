@@ -1180,7 +1180,7 @@ public class UpdateProteins extends UpdateProteinsI {
             }
 
             Xref sptrXref = new Xref( myInstitution,
-                                      sptrDatabase,
+                                      uniprotDatabase,
                                       ac,
                                       shortLabel, null, null );
 
@@ -1378,7 +1378,7 @@ public class UpdateProteins extends UpdateProteinsI {
         if( isoformXref == null ) {
             // error ... but create it.
             isoformXref = new Xref( myInstitution,
-                                    sptrDatabase, // TODO: check if that's right !
+                                    uniprotDatabase, // TODO: check if that's right !
                                     master.getAc(), // primaryId
                                     master.getShortLabel(), // secondaryId
                                     null, isoFormParentXrefQualifier );
@@ -1544,7 +1544,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // check the only single Xref (isoform-parent), which references the master spliceVariant ...
         Xref isoformXref = new Xref( myInstitution,
-                                     sptrDatabase, // TODO: check if that's right !
+                                     uniprotDatabase, // TODO: check if that's right !
                                      master.getAc(), // primaryId
                                      master.getShortLabel(), // secondaryId
                                      null, isoFormParentXrefQualifier );

@@ -214,7 +214,7 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         for (Iterator iter = myInteractor.getXrefs().iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
             // Only consider SwissProt database entries.
-            if (xref.getCvDatabase().getShortLabel().equals("sptr")) {
+            if (xref.getCvDatabase().getShortLabel().equals("uniprot")) {
                 return xref.getPrimaryId();
             }
         }
