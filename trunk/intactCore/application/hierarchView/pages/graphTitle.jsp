@@ -17,7 +17,8 @@
                  uk.ac.ebi.intact.application.hierarchView.business.Constants,
                  uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork,
                  java.util.Collection,
-                 java.util.Iterator" %>
+                 java.util.Iterator,
+                 java.util.ArrayList" %>
 
 <%
     /**
@@ -29,37 +30,28 @@
     InteractionNetwork in = user.getInteractionNetwork();
     if (in == null) return ;
 
-    String selectedKey = user.getSelectedKey();
-    String keys = "";
     String prefix = "<b>";
     String suffix = "</b>";
-    if (selectedKey != null) {
-        Collection c = user.getKeys();
 
-        if (c != null && !c.isEmpty()) {
-            c.remove (selectedKey);
-
-            Iterator i = c.iterator();
-            StringBuffer sb = new StringBuffer();
-            String separator = ", ";
-
-            while (i.hasNext()) {
-                sb.append(prefix).append((String)i.next()).append(suffix).append(separator);
-            }
-
-            if (sb.length() > 0) {
-                sb.insert (0,", children term : ");
-                keys = sb.substring(0, sb.length()-separator.length());
-            } else {
-                keys = "";
-            }
-        }
+    ArrayList criterias = in.getCriteria();
+    int max = criterias.size();
+    StringBuffer context = new StringBuffer();
+    for (int i=0; i < max; i++) {
+        String[] aCriteria = (String[]) criterias.get(i);
+        context.append(prefix + aCriteria[1] + " : " + aCriteria[0] + suffix + ", ");
+    }
+    // remove the last comma and white space
+    String contextToDisplay = "";
+    if ((max = context.length()) > 0) {
+        contextToDisplay = context.substring (0, max-2);
     }
 
+    String selectedKey = user.getSelectedKey();
     if (selectedKey == null) selectedKey = "";
     else {
         selectedKey = "<br>Highlight by " + prefix + selectedKey + suffix;
     }
+
 %>
 
 <table border="0" cellspacing="3" cellpadding="3" width="100%" heigth="100%">
@@ -67,9 +59,10 @@
       <tr>
              <td>
                    <!-- displays the interaction network -->
-                   Interaction network for AC: <b><%= user.getAC() %></b>
+                   Interaction network for <%= contextToDisplay %>
+
                    <!-- display the highlight context -->
-                   <%= selectedKey %><%= keys %>
+                   <%= selectedKey %>
                    <br>
                    #nodes:<b><%= in.sizeNodes() %></b>  #edges:<b><%= in.sizeEdges() %></b>
              </td>
