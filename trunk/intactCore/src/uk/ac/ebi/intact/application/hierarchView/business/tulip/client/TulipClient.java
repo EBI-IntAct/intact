@@ -48,7 +48,7 @@ public class TulipClient {
       // Make a service locator (allow to find the service)
       TulipAccessServiceLocator serviceLocator = new TulipAccessServiceLocator();
 
-      // Ask the service to maintain the session int order to keep values between two call
+      // Ask the service to maintain the session in order to keep values between two call
       serviceLocator.setMaintainSession (true);
       
       // get a service object
@@ -157,6 +157,55 @@ public class TulipClient {
 
     return result;
   } // getLineSeparator
+
+
+
+
+  /**********************
+   *     TEST METHOD    *
+   **********************/
+  public static void main (String args[]) {
+
+    TulipClient client = new TulipClient();
+    String content = "(nodes 1 2 3 4 5 6 7 8 9 )\n" +
+                     "(edge 1 7 2)\n" +
+                     "(edge 2 7 8)\n" +
+                     "(edge 3 7 9)\n" +
+                     "(edge 4 7 5)\n" +
+                     "(edge 5 7 1)\n" +
+                     "(edge 6 7 3)\n" +
+                     "(edge 7 7 4)\n" +
+                     "(edge 8 7 3)\n" +
+                     "(edge 9 7 6)";
+
+    ProteinCoordinate[] proteins = null;
+
+    proteins = client.getComputedTlpContent (content);
+
+    if (null == proteins) {
+      System.out.println ("Error during retreiving of proteins coordinates (null).");
+      System.exit (1);
+    }
+
+    if (0 == proteins.length) {
+      System.out.println ("No protein retrived.");
+    } else {
+      for (int i = 0; i < proteins.length; i++) {
+	// display coordinates
+	System.out.println (proteins[i].getId() + 
+			    " \t X=" + proteins[i].getX() +  
+			    " \t Y=" + proteins[i].getY()
+			   );
+      } // for
+    } // else
+    
+  } // main
+
+
+
+
+
+
 
 } // TulipClient
 
