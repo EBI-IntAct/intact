@@ -4,10 +4,22 @@
 
 <form-validation>
     <global>
+        <!-- The pattern for a short label; any character(s) in the
+             set [a-z0-9-:_], an optional space and then any character(s)
+             from the previous set.
+        -->
         <constant>
-            <!-- The pattern for a label -->
             <constant-name>label-pat</constant-name>
             <constant-value>^[a-z0-9\-:_]+ ?[a-z0-9\-:_]+$</constant-value>
+        </constant>
+
+        <!-- The pattern to filter out Select item in a drop down list. This
+             is as same as label-pat except for additional '.' for dag menu
+             items.
+        -->
+        <constant>
+            <constant-name>menu-pat</constant-name>
+            <constant-value>^[a-z0-9\-:_\.]+ ?[a-z0-9\-:_]+$</constant-value>
         </constant>
     </global>
 
@@ -55,7 +67,7 @@
                 <msg name="mask" key="error.annotation.topic"/>
                 <var>
                     <var-name>mask</var-name>
-                    <var-value>${label-pat}</var-value>
+                    <var-value>${menu-pat}</var-value>
                 </var>
             </field>
         </form>
@@ -69,7 +81,7 @@
                 <msg name="mask" key="error.xref.database"/>
                 <var>
                     <var-name>mask</var-name>
-                    <var-value>${label-pat}</var-value>
+                    <var-value>${menu-pat}</var-value>
                 </var>
             </field>
 
@@ -83,7 +95,7 @@
                 <msg name="mask" key="error.xref.qualifier"/>
                 <var>
                     <var-name>mask</var-name>
-                    <var-value>${label-pat}</var-value>
+                    <var-value>${menu-pat}</var-value>
                 </var>
             </field>
         </form>
@@ -91,14 +103,40 @@
         <!-- ==================== BioSource Form ========================== -->
 
         <form name="bioSourceForm">
+            <!-- The tax id is numeric -->
             <field property="taxId" depends="required, mask">
                 <msg name="mask" key="error.taxid.mask"/>
-                <arg0 key="biosource.taxid.label"/>
+                <arg0 key="biosource.label.tax"/>
                 <var>
                     <var-name>mask</var-name>
                     <var-value>^\d+$</var-value>
                 </var>
             </field>
         </form>
+
+        <!-- ==================== Interaction Form ========================== -->
+
+        <form name="interactionForm">
+            <!-- Must be a valid item (short label) from drop down list -->
+            <field property="organism" depends="required, mask">
+                <msg name="mask" key="error.int.biosrc"/>
+                <arg0 key="int.label.biosrc"/>
+                <var>
+                    <var-name>mask</var-name>
+                    <var-value>${menu-pat}</var-value>
+                </var>
+            </field>
+
+            <!-- Must be a valid item (short label) from drop down list -->
+            <field property="interactionType" depends="required, mask">
+                <msg name="mask" key="error.int.cvtype"/>
+                <arg0 key="int.label.cvtype"/>
+                <var>
+                    <var-name>mask</var-name>
+                    <var-value>${menu-pat}</var-value>
+                </var>
+            </field>
+        </form>
+
     </formset>
 </form-validation>
