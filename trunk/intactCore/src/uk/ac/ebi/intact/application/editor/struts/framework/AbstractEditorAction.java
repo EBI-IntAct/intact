@@ -194,17 +194,20 @@ public abstract class AbstractEditorAction extends Action {
      * Returns an edit form from a session object. The forms which require
      * editing (e.g., annotations, xref and proteins in an interaction) are
      * stored in a session.
-     * @param session the Http session to retrieve the form.
+     * @param request the Http request to retrieve the session.
      * @param formName the name of the form stored in <code>session</code>.
      * @return an <code>EditForm</code> stored in <code>session</code>. A
      * new form is created and stored in the session before returning it.
+     * @exception SessionExpiredException for an expired session.
      */
-    protected EditForm getEditForm(HttpSession session, String formName) {
+    protected EditForm getEditForm(HttpServletRequest request, String formName)
+            throws SessionExpiredException {
+        HttpSession session = getSession(request);
         if (session.getAttribute(formName) == null) {
             // The new form.
             EditForm form = null;
             // Special form form xref editing.
-            if (formName.equals("xrefEditForm")) {
+            if (formName.equals(EditorConstants.FORM_XREF_EDIT)) {
                 form = new XrefEditForm();
             }
             else {
