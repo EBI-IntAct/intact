@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.exception.ExperimentValidationException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 
@@ -70,6 +71,17 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
         // The current view.
         AbstractEditViewBean viewbean = user.getView();
 
+        // Validate the data.
+        try {
+            viewbean.validate();
+        }
+        catch (ExperimentValidationException ex) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("exp.validation", new ActionError("error.exp.validation"));
+            saveErrors(request, errors);
+            return mapping.getInputForward();
+        }
+
         try {
             // Begin the transaction.
             user.begin();
@@ -103,6 +115,8 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
         }
         // Update the search cache.
         user.updateSearchCache();
+        // Need to rebuild the menu again. Remove it from cache.
+        viewbean.removeMenu();
         // All changes are committed successfully; either search or results.
         return mapping.findForward(getForwardAction(user));
     }
@@ -162,6 +176,8 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
         }
         // Remove the current edit object from the cache.
         user.removeFromSearchCache();
+        // Need to rebuild the menu again. Remove it from cache.
+        user.getView().removeMenu();
         // Deleted successfully; either search or results.
         return mapping.findForward(getForwardAction(user));
     }
