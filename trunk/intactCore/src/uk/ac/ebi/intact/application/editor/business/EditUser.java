@@ -155,6 +155,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient Institution myInstitution;
 
     /**
+     * Stores the last query input.
+     */
+    private String myLastQueryInput;
+
+    /**
      * Stores the last query result.
      */
     private String myLastQuery;
@@ -418,11 +423,15 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return mySearchResultStatus == theirSingleEntry;
     }
 
-    public String getLastSearchQuery() {
+    public String getSearchInput() {
+        return myLastQueryInput;
+    }
+
+    public String getSearchQuery() {
         return myLastQuery;
     }
 
-    public String getLastSearchClass() {
+    public String getSearchClass() {
         return myLastQueryClass;
     }
 
@@ -501,6 +510,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         if (cache) {
             // Cache the search result statuses.
             myLastQueryClass = className;
+            myLastQueryInput = value;
             myLastQuery = searchParam + "=" + value;
             mySearchResultStatus = (results.size() == 1)
                     ? theirSingleEntry : theirMultipleEntries;
