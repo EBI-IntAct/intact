@@ -50,6 +50,7 @@ public class GraphHelper {
      */
     public GraphData getGraph(Integer graphid) throws SQLException {
         GraphData graphData = (GraphData) graphMap.get( graphid );
+
         // if no data was found for the graphid the graph is build
         // and stored in the map
         if ( null == graphData ) {
@@ -78,8 +79,8 @@ public class GraphHelper {
         String protein1_ac, protein2_ac, interaction_ac;
         Map nodeLabelMap = new Hashtable();
 
-        String query = "SELECT * FROM ia_interactions WHERE graphID=" + graphid;
-        set = stm.executeQuery( query );
+        set = stm.executeQuery( "SELECT * FROM ia_interactions WHERE graphid="
+                + graphid );
         // the graph is initialised
         graph = new IncidenceListGraph();
         while ( set.next() ) {

@@ -120,7 +120,6 @@ public class MineHelper {
         Integer key;
         ResultSet set;
         Collection search;
-
         // every given accession number is taken and its graphid and taxid
         // is fetched
         for (Iterator iter = searchFor.iterator(); iter.hasNext();) {
@@ -137,7 +136,7 @@ public class MineHelper {
             }
             else {
                 // a new graphid is generated
-                key = new Integer( set.getInt( 2 ) );
+                key = new Integer( set.getInt( 1 ) );
             }
             // if the map contains the current key
             // the accession number is added to the other numbers belonging
@@ -193,13 +192,17 @@ public class MineHelper {
         for (int i = 0; i < nodes.length; i++) {
             // the searchobject for the current node is fetched
             so1 = (SearchObject) searchMap.get( nodes[i] );
+
             for (int j = i + 1; j < nodes.length; j++) {
                 // the searchobject for the other node is fetched
                 so2 = (SearchObject) searchMap.get( nodes[j] );
+
                 // if a path was already found for the current two searchobjects
                 // no search is started !
                 if ( !so1.hasPathAlreadyFound( so2 ) ) {
                     // the shortest path for the two nodes
+                    Constants.LOGGER.info( "search starts from " + nodes[i]
+                            + " to " + nodes[j] );
                     d.execute( graph, nodes[i], nodes[j] );
                     storage.cleanup();
                 }
@@ -210,30 +213,33 @@ public class MineHelper {
         // to avoid duplicates a HashSet is used.
         Collection miNe = new HashSet();
         Edge edge;
-        Sequence shortesPath;
+        Sequence shortestPath;
         for (Iterator iter = searchMap.values().iterator(); iter.hasNext();) {
             so1 = (SearchObject) iter.next();
-            shortesPath = so1.getPath();
-
-            for (ObjectIterator edgeIter = shortesPath.elements(); iter
+            shortestPath = so1.getPath();
+            // it can happen that a search has no path e.g. if the node is
+            // to far away from every other node ! then no path could have found
+            // and therefore the path is null
+            if ( shortestPath == null ) {
+                continue;
+            }
+            for (ObjectIterator edgeIter = shortestPath.elements(); edgeIter
                     .hasNext();) {
                 // the current edge of the path
                 edge = (Edge) edgeIter.nextObject();
                 // the end nodes of the edges are fetched
                 nodes = graph.endVertices( edge );
 
-                // if the path as still elements we just add the start node
-                // of the edge to avoid on purpose redundant adds to the
-                // collection
-                if ( edgeIter.hasNext() ) {
-                    miNe.add( nodes[0].element() );
-                }
-                // the path has no more elements the end node is added
-                else {
-                    miNe.add( nodes[1].element() );
-                }
+                // no check for duplicates has to been done because its a
+                // hashset. either of the nodes have to be added to the
+                // collection because the first element does not indicate the
+                // start node of the edge it can also be the end node of the
+                // edge !!!
+                miNe.add( nodes[0].element() );
+                miNe.add( nodes[1].element() );
             }
         }
+
         // if no path was found the search accession numbers are added with
         // their shortlabels to the singletons of the user
         if ( miNe.isEmpty() ) {
@@ -258,6 +264,7 @@ public class MineHelper {
         // which is enough in most cases
         StringBuffer buf = new StringBuffer( 96 );
         String ac;
+
         // the collection of the accession numbers is exploded to the
         // stringbuffer for the sql statement.
         // [1,2,3,4] -> "'1','2','3','4'"
@@ -269,12 +276,11 @@ public class MineHelper {
             }
         }
 
-        String query = SELECT_SHORTLABEL + "(" + buf + ")";
         // the collection with the accession numbers is cleared
         // because it is reused for the shortlabels
         acs.clear();
         Statement stm = intactUser.getDBConnection().createStatement();
-        ResultSet set = stm.executeQuery( query );
+        ResultSet set = stm.executeQuery( SELECT_SHORTLABEL + "(" + buf + ")" );
         // every shortLabel is added to the collection.
         // the order of the shortlabel is not relevant !
         while ( set.next() ) {
