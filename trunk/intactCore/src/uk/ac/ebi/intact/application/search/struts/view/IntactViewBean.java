@@ -6,10 +6,25 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search.struts.view;
 
-import uk.ac.ebi.intact.model.*;
-
-import java.util.*;
 import java.io.Serializable;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Iterator;
+
+import org.w3c.dom.*;
+import org.exolab.castor.mapping.Mapping;
+import org.exolab.castor.mapping.MappingException;
+import org.exolab.castor.xml.Marshaller;
+import org.exolab.castor.xml.MarshalException;
+import org.exolab.castor.xml.ValidationException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.*;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.dom.DOMSource;
 
 /**
  * Bean to display an Intact object. This bean is used by results.jsp to display
@@ -20,242 +35,185 @@ import java.io.Serializable;
  */
 public class IntactViewBean implements Serializable {
 
+    // Class Data.
+
     /**
-     * Static empty container to return to JSPs to display
-     * no rows (or else display tag library throws an exception).
+     * A list of element names we want the status attributes for.
      */
-    //private static Collection theirEmptyCollection = new ArrayList();
-
+    private static List expElementTags = Arrays.asList(
+            new String[]{"experiment", "interaction", "interactor"});
 
     /**
-     * Selected topic.
+     * The name of the status attribute.
      */
-    private String mySelectedTopic;
+    private static String STATUS_ATTRIBUTE = "status";
 
     /**
-     * Accession number.
+     * True string.
      */
-    private String myAc;
+    private static String TRUE_STR = Boolean.TRUE.toString();
 
     /**
-     * The short label.
+     * False string.
      */
-    private String myShortLabel;
+    private static String FALSE_STR = Boolean.FALSE.toString();
+
+    // Instance Data.
 
     /**
-     * The annotations.
+     * The document node of the XML tree.
      */
-    private Collection myAnnotations = new ArrayList();
+    private Document rootNode;
 
     /**
-     * The Xreferences.
-     */
-    private Collection myXrefs = new ArrayList();
-
-    /**
-     * stores the object as a String for simple display
-     * of everything.
-     */
-    private String data;
-
-    /**
-     * Holds the object as XML
-     */
-    private String asXml;
-
-    /**
-     * stores the object being wrapped. Mainly used for
+     * Stores the object being wrapped. Mainly used for
      * alternative display options by other views.
      */
     private Object wrappedObject;
 
     /**
-     * Set attributes using values from AnnotatedObject. A coarse-grained method to
-     * avoid multiple method calls.
-     *
-     * @param obj the intact object to set attributes of this class.
+     * The name of the stylesheet to use to transform this object.
      */
-    public void initialise(Object obj) {
+    private String stylesheet;
 
-        if(obj instanceof Institution) {
-            setAc(((Institution)obj).getAc());
-        }
-        else {
-            if(obj instanceof AnnotatedObject) {
-                setAc(((AnnotatedObject)obj).getAc());
-                setShortLabel(((AnnotatedObject)obj).getShortLabel());
+    /**
+     * Construct an instance of this class for given object.
+     * @param object the object to contruct the view.
+     */
+    public IntactViewBean(Object object) {
+        this.wrappedObject = object;
+    }
+
+    /**
+     * Sets the stylesheet.
+     * @param xslt the name of the stylesheet to use for transformation.
+     */
+    public void setStylesheet(String xslt) {
+        this.stylesheet = xslt;
+    }
+
+    /**
+     * Marshsasls the wrapped object to an XML node.
+     * @param mapping the mapping file for castor to do mapping.
+     * @param db the document builder to create an XML node.
+     * @exception MappingException for errrors with setting the map file.
+     * @exception MarshalException thrown for marshalling errors.
+     * @exception ValidationException thrown for XML validation errors.
+     */
+    public void marshall(Mapping mapping, DocumentBuilder db)
+            throws MappingException, MarshalException, ValidationException {
+        // Create the root node for the XML tree.
+        this.rootNode = db.newDocument();
+        // The output is written to the root node.
+        Marshaller marshaller = new Marshaller(this.rootNode);
+        marshaller.setMapping(mapping);
+        // Marshall using the root node.
+        marshaller.marshal(this.wrappedObject);
+    }
+
+    /**
+     * Transforms this bean using given stylesheet.
+     * @param factory the factory to create a transformer.
+     * @param id the id for the table parameter (for XSL).
+     * @param out holder for the transformation result.
+     * @exception TransformerConfigurationException thrown during the parse
+     *  when it is constructing the Templates object and fails.
+     */
+    public void transform(TransformerFactory factory, int id, Result out)
+            throws TransformerException {
+        Transformer transformer =
+                factory.newTransformer(new StreamSource(this.stylesheet));
+        // Set the global parameters.
+        transformer.setParameter("tableName", "tbl_" + id);
+        // Perform the transform.
+        transformer.transform(new DOMSource(this.rootNode), out);
+    }
+
+    /**
+     * This method adds the status attribute to all the elements with AC as an
+     * attribute except for Xref elements.
+     */
+    public void addStatusNodes() {
+        // Set the status in the root element.
+        this.rootNode.getDocumentElement().setAttribute(STATUS_ATTRIBUTE, FALSE_STR);
+        // Now go through the expandable list.
+        for (Iterator iter = expElementTags.iterator(); iter.hasNext(); ) {
+            NodeList elements = this.rootNode.getElementsByTagName((String) iter.next());
+            // Process each element.
+            //int length = elements.getLength();
+            for (int length = elements.getLength(), i = 0; i < length; i++) {
+                Element element = (Element) elements.item(i);
+                element.setAttribute(STATUS_ATTRIBUTE, FALSE_STR);
             }
-            else {
+        }
+    }
 
-                //something odd - unknown type!!
-                //ignore for now as this should never happen...
+    /**
+     * Changes the status for given AC.
+     * @param ac the AC to search for the element.
+     */
+    public void changeElementStatus(String ac) {
+        // Set the status in the root element.
+        Element rootElement = this.rootNode.getDocumentElement();
+        if (rootElement.getAttribute("ac").equals(ac)) {
+            toggle(rootElement);
+            // Changed the status at root; no need to check for other nodes
+            // (assuming that root AC is unique).
+            return;
+        }
+        // Now go through the expandable list.
+        for (Iterator iter = expElementTags.iterator(); iter.hasNext(); ) {
+            NodeList elements = this.rootNode.getElementsByTagName((String) iter.next());
+            // Process each element.
+            int length = elements.getLength();
+            for (int i = 0; i < length; i++) {
+                Element element = (Element) elements.item(i);
+                if (element.getAttribute("ac").equals(ac)) {
+                    toggle(element);
+                }
             }
         }
-
-        //set display info
-        //String tmp = obj.toString();
-        String tmp = obj.toString();
-
-        //now replace the \n chars with a break recognised
-        //in a web browser
-        data = tmp.replaceAll("\n", "<BR>");
-
-        //save the object locally in case it is needed
-        wrappedObject = obj;
-
-        // Cache the annotations and xrefs here to save it from loading
-        // multiple times with each invocation to getAnnotations()
-        // or getXrefs() methods.
-        /*myAnnotations.clear();
-        makeCommentBeans(obj.getAnnotation());
-        myXrefs.clear();
-        makeXrefBeans(obj.getXref());*/
     }
 
-    public Object getWrappedObject() {
-
-        return wrappedObject;
-    }
+    // Helper methods.
 
     /**
-     * This method replaces the object currently held in this bean.
+     * Changes the status of given element.
+     * @param element the element to change the status.
      */
-    public void setWrappedObject(Object obj) {
-        this.initialise(obj);
+    private void toggle(Element element) {
+        String attValue = element.getAttribute(STATUS_ATTRIBUTE);
+        String value = attValue.equals(FALSE_STR) ? TRUE_STR : FALSE_STR;
+        element.setAttribute(STATUS_ATTRIBUTE, value);
     }
 
+    // All the following methods for debugging purposes only.
     /**
-     * This method sets the wrapped object as XML format. NO integrity
-     * check is performed!!
+     * Helper method to dump the XML tree.
+     * @param filename the name of the file to dump the XML tree.
      */
-    public void setAsXml(String xml) {
-        asXml = xml;
-    }
+//    public void dumpXML(String filename) {
+//        StreamResult sr = new StreamResult(new File(filename));
+//        DOMSource dom = new DOMSource(this.rootNode);
+//        TransformerFactory tFactory = TransformerFactory.newInstance();
+//        Transformer transformer = null;
+//        try {
+//            transformer = tFactory.newTransformer();
+//            transformer.transform(dom, sr);
+//        }
+//        catch (TransformerConfigurationException e) {
+//            e.printStackTrace();
+//        }
+//        catch (TransformerException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    /**
-     * @return the wrapped object details in XML format, or null if not converted.
-     */
-    public String getAsXml() {
-       return asXml;
-    }
-
-    /**
-     * Sets the selected topic.
-     *
-     * @param topic the selected topic.
-     */
-    public void setTopic(String topic) {
-        mySelectedTopic = topic;
-    }
-
-    /**
-     * Returns the selected topic.
-     */
-    public String getTopic() {
-        return mySelectedTopic;
-    }
-
-    /**
-     * Sets the accession number.
-     *
-     * @param ac the accession number; shouldn't be null.
-     */
-    public void setAc(String ac) {
-        myAc = ac;
-    }
-
-    /**
-     * Returns accession number.
-     */
-    public String getAc() {
-        return myAc;
-    }
-
-    /**
-     * Sets ther short label.
-     *
-     * @param shortLabel the short label to set
-     */
-    public void setShortLabel(String shortLabel) {
-        myShortLabel = shortLabel;
-    }
-
-    /**
-     * Returns the short label.
-     */
-    public String getShortLabel() {
-        return myShortLabel;
-    }
-
-    /**
-     * Returns a collection of <code>CommentBean</code> objects.
-     *
-     * <pre>
-     * post: return != null
-     * post: return->forall(obj : Object | obj.oclIsTypeOf(CommentBean))
-     * </pre>
-     */
-    public Collection getAnnotations() {
-        return myAnnotations;
-    }
-
-    /**
-     * Returns a collection <code>Xref</code>.
-     *
-     * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(Xref))
-     * </pre>
-     */
-    public Collection getXrefs() {
-        return myXrefs;
-    }
-
-    /**
-     * Returns an empty collection. This is to stop display tag library from
-     * throwing an exception when there are no rows to display for a high page
-     * number (only happens when we have two tables with different rows on
-     * a single page).
-     *
-     * <pre>
-     * post: return->isEmpty
-     * </pre>
-     */
-    public Collection getEmptyCollection() {
-        return new ArrayList();
-    }
-
-    /**
-     * Returns a string representation of this object. Mainly for debugging.
-     */
-    public String toString() {
-        return "ac: " + getAc() + " short label: " + getShortLabel();
-    }
-
-    /**
-     * Creates a collection of <code>CommentBean</code> created from given
-     * collection of annotations.
-     * @param annotations a collection of <code>Annotation</code> objects.
-     */
-    private void makeCommentBeans(Collection annotations) {
-        for (Iterator iter = annotations.iterator(); iter.hasNext();) {
-            Annotation annot = (Annotation) iter.next();
-            //myAnnotations.add(new CommentBean(annot));
-        }
-    }
-
-    /**
-     * Creates a collection of <code>Xref</code> objects created from given
-     * collection of xreferences.
-     * @param xrefs a collection of <code>Xref</code> objects.
-     */
-    private void makeXrefBeans(Collection xrefs) {
-        for (Iterator iter = xrefs.iterator(); iter.hasNext();) {
-            Xref xref = (Xref) iter.next();
-            //myXrefs.add(new XreferenceBean(xref));
-        }
-    }
-
-    public String getData() {
-        return data;
-    }
+//    public Document root() {
+//        return this.rootNode;
+//    }
+//
+//    public List getList() {
+//        return IntactViewBean.expElementTags;
+//    }
 }
