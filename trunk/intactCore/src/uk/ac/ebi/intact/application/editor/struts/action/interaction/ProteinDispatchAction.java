@@ -119,17 +119,6 @@ public class ProteinDispatchAction extends AbstractEditorAction {
             pb.setEditState(ProteinBean.ERROR);
             return mapping.findForward(FAILURE);
         }
-
-        // Any duplicate Proteins (same role)?
-        if (viewbean.hasDuplicates(pb)) {
-            ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.int.protein.edit.dup",
-                            pb.getShortLabel(), pb.getRole()));
-            saveErrors(request, errors);
-            pb.setEditState(ProteinBean.ERROR);
-            return mapping.findForward(FAILURE);
-        }
         // The protein to update.
         viewbean.addProteinToUpdate(pb);
 
