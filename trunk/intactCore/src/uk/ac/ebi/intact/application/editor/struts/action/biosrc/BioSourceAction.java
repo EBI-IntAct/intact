@@ -48,15 +48,14 @@ public class BioSourceAction extends SubmitFormAction {
      * control should be forwarded, or null if the response has
      * already been completed.
      *
-     * @param mapping - The <code>ActionMapping</code> used to select this instance
-     * @param form - The optional <code>ActionForm</code> bean for this request (if any)
-     * @param request - The HTTP request we are processing
+     * @param mapping  - The <code>ActionMapping</code> used to select this instance
+     * @param form     - The optional <code>ActionForm</code> bean for this request (if any)
+     * @param request  - The HTTP request we are processing
      * @param response - The HTTP response we are creating
-     *
      * @return - represents a destination to which the action servlet,
-     * <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
-     * or HttpServletResponse.sendRedirect() to, as a result of processing
-     * activities of an <code>Action</code> class
+     *         <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
+     *         or HttpServletResponse.sendRedirect() to, as a result of processing
+     *         activities of an <code>Action</code> class
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
@@ -102,14 +101,12 @@ public class BioSourceAction extends SubmitFormAction {
             return mapping.getInputForward();
         }
         // Values from newt.
-        String newtLabel = newtResponse.getShortLabel();
         String newtName = newtResponse.getFullName();
 
-        // Validate the short label; compute the new name using
-        // scientific name and tax id for an empty short label.
-        newtLabel = newtResponse.hasShortLabel()
-                ? user.getUniqueShortLabel(newtLabel, taxid)
-                : this.getUniqueShortLabel(newtName, taxid, user);
+        // Compute a new name using scientific name and tax id if the Newt server
+        // hasn't got a short label.
+        String newtLabel = newtResponse.hasShortLabel()
+                ? newtResponse.getShortLabel() : getUniqueShortLabel(newtResponse);
 
         // Covert to lowercase as we only allow LC characters for a short label.
         newtLabel = newtLabel.toLowerCase();
@@ -118,7 +115,7 @@ public class BioSourceAction extends SubmitFormAction {
         if (newtName.length() == 0) {
             errors = new ActionErrors();
             errors.add("bs.taxid", new ActionError("error.newt.name", taxid));
-            // Display the error and continue on.
+            // Save the error and continue on.
             saveErrors(request, errors);
         }
         // Retrieve the xref bean for previous tax id.
@@ -138,11 +135,23 @@ public class BioSourceAction extends SubmitFormAction {
         bioview.setFullName(newtName);
         bioview.setTaxId(taxid);
 
-		// Any existing tax ids?
-		if (taxIdExists(user, taxid, request)) {
-			;
-//			return mapping.getInputForward();
-		}
+        // Collection of biosources for the current taxid.
+        Collection results = user.search1(BioSource.class.getName(),
+                "taxId", taxid);
+
+        // AC of the current biosource.
+        String ac = user.getView().getAc();
+
+        // Any existing tax ids?
+        if (taxIdExists(results, ac)) {
+            // Found a tax id which belongs to another biosource.
+            ActionMessages msgs = new ActionMessages();
+            String topic = user.getSelectedTopic();
+            String link = getBioSourcesLink(results, ac, topic);
+            msgs.add("bs.taxid", new ActionMessage("error.newt.taxid", taxid,
+                    link));
+            saveMessages(request, msgs);
+        }
 
         return mapping.findForward(SUCCESS);
     }
@@ -178,26 +187,19 @@ public class BioSourceAction extends SubmitFormAction {
 
     /**
      * Returns a unique short label.
-     * @param name the scientific nsme returned by the Newt server.
-     * @param taxid the tax id to use as the extrnal ac when short label is
-     * not unique
-     * @param user handler to the user to access the method to get a
-     * unique short label.
-     * @return tax id if the computed short label is empty; otherwise
-     * it could be either new computed label or the tax id.
-     * @throws SearchException for errors in searching the database.
+     * @param response the response from the Newt server.
+     * @return default short label from the Newt response if the computed short
+     * label is empty; otherwise it is the new computed label.
      */
-    private String getUniqueShortLabel(String name, String taxid, EditUserI user)
-            throws SearchException {
+    private String getUniqueShortLabel(NewtServerProxy.NewtResponse response) {
         // Save the computed a short label.
-        String newlabel = computeShortLabel(name);
+        String newlabel = computeShortLabel(response.getFullName());
         // new label is empty if a label cannot be constructed.
         if (newlabel.length() == 0) {
-            // Try the tax id as an external ac.
-            return user.getUniqueShortLabel(taxid);
+            // Get the default short label from the newt response.
+            return response.getShortLabel();
         }
-        // Check for uniqueness of the computed label.
-        return user.getUniqueShortLabel(newlabel, taxid);
+        return newlabel;
     }
 
     private Xref createTaxXref(EditUserI user, String taxid, String label)
@@ -206,22 +208,21 @@ public class BioSourceAction extends SubmitFormAction {
         Institution owner = user.getInstitution();
 
         // The database the new xref belong to.
-        CvDatabase db = (CvDatabase) user.getObjectByLabel(
-                CvDatabase.class, TAX_DB);
+        CvDatabase db = (CvDatabase) user.getObjectByLabel(CvDatabase.class, TAX_DB);
 
-        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
-                CvXrefQualifier.class, "identity");
+        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(CvXrefQualifier.class, "identity");
         return new Xref(owner, db, taxid, label, null, xqual);
     }
 
     /**
      * Returns the Xreference bean for given primary id and the database name.
-     * @param dbname the name of the database to match.
+     *
+     * @param dbname  the name of the database to match.
      * @param bioview the view bean to access the xrefs and the tax id.
      * @return <code>XreferenceBean</code> whose database name and primary id
-     * are as same as <code>dbname</code> and the primar id of
-     * <code>bioview</code> respectively; <code>null</code> is returned for
-     * otherwise.
+     *         are as same as <code>dbname</code> and the primar id of
+     *         <code>bioview</code> respectively; <code>null</code> is returned for
+     *         otherwise.
      */
     private XreferenceBean findXref(String dbname, BioSourceViewBean bioview) {
         // The xrefs to loop.
@@ -243,10 +244,11 @@ public class BioSourceAction extends SubmitFormAction {
 
     /**
      * Returns the short label computed using the scientific name.
+     *
      * @param sciName the scientific name to compute the short label.
      * @return this is computed as follows: concatenation of the first three
-     * chars of the first word and the first two characters of the second
-     * word. An empty string is returned for all other instances.
+     *         chars of the first word and the first two characters of the second
+     *         word. An empty string is returned for all other instances.
      */
     private String computeShortLabel(String sciName) {
         // Split the scientific name to extract first two awards.
@@ -266,81 +268,65 @@ public class BioSourceAction extends SubmitFormAction {
         return firstThreeChars + firstTwoChars;
     }
 
-	/**
-	 * True if there is a tax id other than the current one exists of the
-	 * persistent system. 
-	 * @param user the handler to user to search the database.
-	 * @param taxid the tax id to search in the database for.
-	 * @param request the HTTP request to save errors
-	 * @return <code>false</code> if the search fails or a BioSource
-	 * instance found  with the same <code>taxid</code>.
-	 * @exception SearchException for errors in acccessing the database.
-	 */
-	private boolean taxIdExists(EditUserI user, String taxid,
-		HttpServletRequest request) throws SearchException {
-		// Holds the results from the search.
-		Collection results = user.search1(BioSource.class.getName(), 
-			"taxId", taxid);
-		if (results.isEmpty()) {
-			// Don't have this tax id on the database.
-			return false;
-		}
-		// Found a BioSource; is it as same as the current record?
-		String currentAc = user.getView().getAc();
+    /**
+     * True if there is a tax id other than the current one exists of the
+     * persistent system.
+     *
+     * @param results a collection of biosources for the current tax id.
+     * @param ac      the AC of the current biosource. Could be null for a new biosource.
+     * @return <code>false</code> if the search fails or a BioSource
+     *         instance found  with the same <code>taxid</code>.
+     */
+    private boolean taxIdExists(Collection results, String ac) {
+        if (results.isEmpty()) {
+            // Don't have this tax id on the database.
+            return false;
+        }
+        // If we found a single record; is it the current record ?
+        if (results.size() == 1) {
+            String resultAc = ((BioSource) results.iterator().next()).getAc();
+            if (resultAc.equals(ac)) {
+                // We have retrieved the same record from the DB.
+                return false;
+            }
+        }
+        return true;
+    }
 
-		// If we found a single record then it must be the current record.
-		if (results.size() == 1) {
-			// Check for null here as it could be null for a new biosource.
-			if (currentAc != null) {
-				String resultAc = ((BioSource) results.iterator().next()).getAc();
-				if (currentAc.equals(resultAc)) {
-					// We have retrieved the same record from the DB.
-					return false;
-				}
-			}
-		}
-		// Found a tax id which belongs to another biosource.
-		ActionMessages msgs = new ActionMessages();
-		String topic = user.getSelectedTopic();
-		String link = getBioSourcesLink(results, currentAc, topic);
-		msgs.add("bs.taxid", new ActionMessage("error.newt.taxid", taxid, link));
-		saveMessages(request, msgs);
-		return true;
-	}
-	
-	/**
-	 * Returns a list of biosource links derived from given collection.
-	 * @param results a collection of BioSOurce objects.
-	 * @param ac the AC to filter out. The biosource with this AC is not
-	 * included in the list.
-	 * @param topic the topic to incliude in the search link.
-	 * @return a link to access various biosources from the search application.
-	 */
-	private String getBioSourcesLink(Collection results, String ac, String topic) {
-		// The buffer to construct existing labels.
-		StringBuffer sb = new StringBuffer();
-		
-		// Flag to indicate processing of the first item.
-		boolean first = true;
-		
-		// Search the database.
-		for (Iterator iter = results.iterator(); iter.hasNext();) {
-			BioSource bs = (BioSource) iter.next();
-			if (bs.getAc().equals(ac)) {
-				// Filter out the current ac.
-				continue;
-			}
-			String label = bs.getShortLabel();
-			if (first) {
-				// Avoid prefixing with "," for the first item.
-				first = false;
-			}
-			else {
-				sb.append(", ");
-			}
-			sb.append("<a href=\"" + "javascript:show('" + topic + "', '"
-					+ label + "')\"" + ">" + label + "</a>");
-		}
-		return sb.toString();
-	}
+    /**
+     * Returns a list of biosource links derived from given collection.
+     *
+     * @param results a collection of BioSOurce objects.
+     * @param ac      the AC to filter out. The biosource with this AC is not
+     *                included in the list.
+     * @param topic   the topic to incliude in the search link.
+     * @return a link to access various biosources from the search application.
+     */
+    private String getBioSourcesLink(Collection results, String ac, String topic) {
+        // The buffer to construct existing labels.
+        StringBuffer sb = new StringBuffer();
+
+        // Flag to indicate processing of the first item.
+        boolean first = true;
+
+        // Search the database.
+        for (Iterator iter = results.iterator(); iter.hasNext();) {
+            BioSource bs = (BioSource) iter.next();
+            if (bs.getAc().equals(ac)) {
+                // Filter out the current ac.
+                continue;
+            }
+            String label = bs.getShortLabel();
+            if (first) {
+                // Avoid prefixing with "," for the first item.
+                first = false;
+            }
+            else {
+                sb.append(", ");
+            }
+            sb.append("<a href=\"" + "javascript:show('" + topic + "', '"
+                    + label + "')\"" + ">" + label + "</a>");
+        }
+        return sb.toString();
+    }
 }
