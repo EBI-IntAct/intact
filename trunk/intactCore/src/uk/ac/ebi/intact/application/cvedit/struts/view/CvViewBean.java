@@ -10,6 +10,8 @@ import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
 
+import org.apache.commons.collections.CollectionUtils;
+
 /**
  * Bean to display an Intact object. This bean is used by edit.jsp to display
  * and capture the data.
@@ -51,18 +53,28 @@ public class CvViewBean {
     private Collection myXrefs = new ArrayList();
 
     /**
-     * Holds the transaction (add/delete) for annotations. This collection
-     * is cleared once the user commits the transaction. No need to save
-     * annotations in a transaction.
+     * Holds annotations to add. This collection is cleared once the user
+     * commits the transaction.
      */
-    private transient Collection myAnnotTransactions = new ArrayList();
+    private transient Collection myAnnotsToAdd = new ArrayList();
 
     /**
-     * Holds the transaction (add/delete) for xrefs. This collection
-     * cleared once the user commits the transaction. No need to save
-     * xrefs in a transaction.
+     * Holds annotations to del. This collection is cleared once the user
+     * commits the transaction.
      */
-    private transient Collection myXrefTransactions = new ArrayList();
+    private transient Collection myAnnotsToDel = new ArrayList();
+
+    /**
+     * Holds xrefs to add. This collection is cleared once the user commits
+     * the transaction.
+     */
+    private transient Collection myXrefsToAdd = new ArrayList();
+
+    /**
+     * Holds xrefs to del. This collection is cleared once the user commits
+     * the transaction.
+     */
+    private transient Collection myXrefsToDel = new ArrayList();
 
     /**
      * Set attributes using values from CvObject. A coarse-grained method to
@@ -145,55 +157,46 @@ public class CvViewBean {
      * @param annotation the annotation to add.
      *
      * <pre>
-     * post: myAnnotTransactions = myAnnotTransactions@pre + 1
+     * post: myAnnotsToAdd = myAnnotsToAdd@pre + 1
      * post: myAnnotations = myAnnotations@pre + 1
      * </pre>
      */
     public void addAnnotation(Annotation annotation) {
-        CommentBean cb = TransactionalCommentBean.createCommentBeanAdd(annotation);
-        myAnnotTransactions.add(cb);
+        CommentBean cb = new CommentBean(annotation);
+        // Annotation to add.
+        myAnnotsToAdd.add(cb);
         // Add to the view as well.
         myAnnotations.add(cb);
     }
 
     /**
-     * Removes an annotation for given key.
-     * @param key the primary key.
-     * @param annotation the annotation to remove.
+     * Removes an annotation
+     * @param cb the comment bean to remove.
      *
      * <pre>
-     * post: myAnnotTransactions = myAnnotTransactions@pre - 1
+     * post: myAnnotsToDel = myAnnotsToDel@pre - 1
      * post: myAnnotations = myAnnotations@pre - 1
      * </pre>
      */
-    public void delAnnotation(long key, Annotation annotation) {
-        CommentBean cb =
-                TransactionalCommentBean.createCommentBeanDel(key, annotation);
-        if (myAnnotTransactions.contains(cb)) {
-            // We are removing an annotation that was added during the current
-            // transaction.
-            myAnnotTransactions.remove(cb);
-        }
-        else {
-            // Deleting an annotation that already exists on the persistent sys.
-            myAnnotTransactions.add(cb);
-        }
+    public void delAnnotation(CommentBean cb) {
+        // Add to the container to delete annotations.
+        myAnnotsToDel.add(cb);
         // Remove from the view as well.
         myAnnotations.remove(cb);
     }
 
     /**
-     * Finds the annotation for a given key.
-     * @param key the key to search for the annotation.
-     * @return the <code>Annotation</code> object whose key matches with given
-     * <code>key</code>. <code>null</code> is returned if no matching annotation
+     * Finds the bean for a given key.
+     * @param key the key to search for the bean.
+     * @return the <code>CommentBean</code> object whose key matches with given
+     * <code>key</code>. <code>null</code> is returned if no matching bean
      * is found.
      */
-    public Annotation findAnnotation(long key) {
+    public CommentBean findAnnotationCB(long key) {
         for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
             CommentBean bean = (CommentBean) iter.next();
             if (bean.getKey() == key) {
-                return bean.getAnnotation();
+                return bean;
             }
         }
         // Not found the bean.
@@ -203,36 +206,46 @@ public class CvViewBean {
     /**
      * Returns a collection of annotations to add.
      * @return the collection of annotations to add to the current CV object.
+     * Could be empty if there are no annotations to add.
      *
      * <pre>
-     * post: return->forAll(a | a.getTransState() = TransactionalCommentBean.ADD)
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(CommentBean)
      * </pre>
      */
     public Collection getAnnotationsToAdd() {
-        return getTransAnnots(TransactionalCommentBean.ADD);
+        // Annotations common to both add and delete.
+        Collection common = CollectionUtils.intersection(myAnnotsToAdd, myAnnotsToDel);
+        // All the annotations only found in annotations to add collection.
+        return CollectionUtils.subtract(myAnnotsToAdd, common);
     }
 
     /**
      * Returns a collection of annotations to remove.
      * @return the collection of annotations to remove from the current CV object.
+     * Could be empty if there are no annotations to delete.
      *
      * <pre>
-     * post: return->forAll(a | a.getTransState() = TransactionalCommentBean.DEL)
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(CommentBean)
      * </pre>
      */
     public Collection getAnnotationsToDel() {
-        return getTransAnnots(TransactionalCommentBean.DEL);
+        // Annotations common to both add and delete.
+        Collection common = CollectionUtils.intersection(myAnnotsToAdd, myAnnotsToDel);
+        // All the annotations only found in annotations to delete collection.
+        return CollectionUtils.subtract(myAnnotsToDel, common);
     }
 
     /**
-     * Clears annotations stored in the transaction container.
+     * Clears annotations stored transaction containers.
      *
      * <pre>
-     * post: myAnnotTransactions.isEmpty()
+     * post: myAnnotsToAdd.isEmpty()
+     * post: myAnnotsToDel.isEmpty()
      * </pre>
      */
     public void clearTransAnnotations() {
-        myAnnotTransactions.clear();
+        myAnnotsToAdd.clear();
+        myAnnotsToDel.clear();
     }
 
     /**
@@ -251,55 +264,46 @@ public class CvViewBean {
      * @param xref the xref to add.
      *
      * <pre>
-     * post: myXrefTransactions = myXrefTransactions@pre + 1
+     * post: myXrefsToAdd = myXrefsToAdd@pre + 1
      * post: myXrefs = myXrefs@pre + 1
      * </pre>
      */
     public void addXref(Xref xref) {
-        XreferenceBean xb = TransactionalXrefBean.createXrefBeanAdd(xref);
-        myXrefTransactions.add(xb);
+        XreferenceBean xb = new XreferenceBean(xref);
+        // Xref to add.
+        myXrefsToAdd.add(xb);
         // Add to the view as well.
         myXrefs.add(xb);
     }
 
     /**
-     * Removes a xref for given key.
-     * @param key the primary key.
-     * @param xref the annotation to remove.
+     * Removes a xref.
+     * @param xb the X'reference bean to remove.
      *
      * <pre>
-     * post: myXrefTransactions = myXrefTransactions@pre - 1
+     * post: myXrefsToDel = myXrefsToDel@pre + 1
      * post: myXrefs = myXrefs@pre - 1
      * </pre>
      */
-    public void delXref(long key, Xref xref) {
-        XreferenceBean xb =
-                TransactionalXrefBean.createXrefBeanDel(key, xref);
-        if (myXrefTransactions.contains(xb)) {
-            // We are removing a xref that was added during the current
-            // transaction.
-            myXrefTransactions.remove(xb);
-        }
-        else {
-            // Deleting a xref that already exists on the persistent system.
-            myXrefTransactions.add(xb);
-        }
+    public void delXref(XreferenceBean xb) {
+        // Add to the container to delete the xref.
+        myXrefsToDel.add(xb);
         // Remove from the view as well.
         myXrefs.remove(xb);
     }
 
     /**
-     * Finds the xref for a given key.
-     * @param key the key to search for the xref.
-     * @return the <code>Xref</code> object whose key matches with given
-     * <code>key</code>. <code>null</code> is returned if no matching xref
+     * Finds the bean for a given key.
+     * @param key the key to search for the bean.
+     * @return the <code>XreferenceBean</code> object whose key matches with given
+     * <code>key</code>. <code>null</code> is returned if no matching bean
      * is found.
      */
-    public Xref findXref(long key) {
+    public XreferenceBean findXref(long key) {
         for (Iterator iter = myXrefs.iterator(); iter.hasNext();) {
             XreferenceBean bean = (XreferenceBean) iter.next();
             if (bean.getKey() == key) {
-                return bean.getXref();
+                return bean;
             }
         }
         // Not found the bean.
@@ -309,36 +313,46 @@ public class CvViewBean {
     /**
      * Returns a collection of xrefs to add.
      * @return the collection of xrefs to add to the current CV object.
+     * Could be empty if there are no xrefs to add.
      *
      * <pre>
-     * post: return->forAll(a | a.getTransState() = TransactionalXrefBean.ADD)
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(XreferenceBean))
      * </pre>
      */
     public Collection getXrefsToAdd() {
-        return getTransXrefs(TransactionalXrefBean.ADD);
+        // Xrefs common to both add and delete.
+        Collection common = CollectionUtils.intersection(myXrefsToAdd, myXrefsToDel);
+        // All the xrefs only found in xrefs to add collection.
+        return CollectionUtils.subtract(myXrefsToAdd, common);
     }
 
     /**
      * Returns a collection of xrefs to remove.
      * @return the collection of xrefs to remove from the current CV object.
+     * Could be empty if there are no xrefs to delete.
      *
      * <pre>
-     * post: return->forAll(a | a.getTransState() = TransactionalXrefBean.DEL)
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(XreferenceBean))
      * </pre>
      */
     public Collection getXrefsToDel() {
-        return getTransXrefs(TransactionalXrefBean.DEL);
+        // Xrefs common to both add and delete.
+        Collection common = CollectionUtils.intersection(myXrefsToAdd, myXrefsToDel);
+        // All the xrefs only found in xrefs to delete collection.
+        return CollectionUtils.subtract(myXrefsToDel, common);
     }
 
     /**
-     * Clears xrefs stored in the transaction container.
+     * Clears xrefs stored in transaction containers.
      *
      * <pre>
-     * post: myXrefTransactions.isEmpty()
+     * post: myXrefsToAdd.isEmpty()
+     * post: myXrefsToDel.isEmpty()
      * </pre>
      */
     public void clearTransXrefs() {
-        myXrefTransactions.clear();
+        myXrefsToAdd.clear();
+        myXrefsToDel.clear();
     }
 
     /**
@@ -387,41 +401,5 @@ public class CvViewBean {
             Xref xref = (Xref) iter.next();
             myXrefs.add(new XreferenceBean(xref));
         }
-    }
-
-    /**
-     * Returns transactional comment bean for given transaction state.
-     * @param state the transaction state; ADD or DEL
-     * @return a collection of <code>Annotations</code> for given state.
-     */
-    private Collection getTransAnnots(int state) {
-        // The collection to return.
-        Collection result = new ArrayList();
-        // Filter out annotations.
-        for (Iterator iter = myAnnotTransactions.iterator(); iter.hasNext(); ) {
-            TransactionalCommentBean tcb = (TransactionalCommentBean) iter.next();
-            if (tcb.getTransState() == state) {
-                result.add(tcb.getAnnotation());
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Returns transactional xref bean for given transaction state.
-     * @param state the transaction state; ADD or DEL
-     * @return a collection of <code>Xrefs</code> for given state.
-     */
-    private Collection getTransXrefs(int state) {
-        // The collection to return.
-        Collection result = new ArrayList();
-        // Filter out xrefs.
-        for (Iterator iter = myXrefTransactions.iterator(); iter.hasNext(); ) {
-            TransactionalXrefBean txb = (TransactionalXrefBean) iter.next();
-            if (txb.getTransState() == state) {
-                result.add(txb.getXref());
-            }
-        }
-        return result;
     }
 }
