@@ -61,8 +61,8 @@ public class ExperimentDescriptionParserTest extends TestCase {
         // assertEquals\\( $2\\, $1 \\)
 
 
-        // Pubmed id
-        final XrefTag bibref = experiment.getBibRef();
+        // Pubmed ids
+        XrefTag bibref = experiment.getBibRef();
         assertNotNull( bibref );
 
         assertEquals( true, bibref.isPrimaryRef() );
@@ -72,6 +72,17 @@ public class ExperimentDescriptionParserTest extends TestCase {
         assertEquals( "", bibref.getVersion() );
         assertEquals( "", bibref.getSecondary() );
 
+        final Collection secondaryBibRefs = experiment.getAdditionalBibRef();
+        assertNotNull( secondaryBibRefs );
+        assertEquals( 1, secondaryBibRefs.size() );
+
+        bibref = (XrefTag) secondaryBibRefs.iterator().next();
+        assertEquals( false, bibref.isPrimaryRef() );
+        assertEquals( true, bibref.isSecondaryRef() );
+        assertEquals( "11809999", bibref.getId() );
+        assertEquals( "pubmed", bibref.getDb() );
+        assertEquals( "", bibref.getVersion() );
+        assertEquals( "", bibref.getSecondary() );
 
         // Xrefs
         final Collection xrefs = experiment.getXrefs();

@@ -66,6 +66,7 @@ public final class ExperimentDescriptionTag {
     private final String fullname;
 
     private final XrefTag bibRef;
+    private final Collection additionalBibRef;
     private final HostOrganismTag hostOrganism;
     private final InteractionDetectionTag interactionDetection;
     private final ParticipantDetectionTag participantDetection;
@@ -92,6 +93,7 @@ public final class ExperimentDescriptionTag {
     public ExperimentDescriptionTag( final String shortlabel,
                                      final String fullname,
                                      final XrefTag bibRef,
+                                     final Collection additionalBibRef,
                                      final Collection xrefs,
                                      final Collection annotations,
                                      final HostOrganismTag hostOrganism,
@@ -138,11 +140,25 @@ public final class ExperimentDescriptionTag {
             for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
                 Object o = (Object) iterator.next();
                 if( !( o instanceof XrefTag ) ) {
-                    throw new IllegalArgumentException( "The annotation collection added to the interaction doesn't " +
+                    throw new IllegalArgumentException( "The annotation collection added to the experiment doesn't " +
                                                         "contains only XrefTag." );
                 }
             }
             this.xrefs = new ReadOnlyCollection( xrefs );
+        }
+
+        if( additionalBibRef == null ) {
+            this.additionalBibRef = new ReadOnlyCollection( new ArrayList( 0 ) );
+        } else {
+            // check the collection content
+            for ( Iterator iterator = additionalBibRef.iterator(); iterator.hasNext(); ) {
+                Object o = (Object) iterator.next();
+                if( !( o instanceof XrefTag ) ) {
+                    throw new IllegalArgumentException( "The additionalBibRef collection added to the experiment doesn't " +
+                                                        "contains only XrefTag." );
+                }
+            }
+            this.additionalBibRef = new ReadOnlyCollection( additionalBibRef );
         }
 
         if( annotations == null ) {
@@ -152,7 +168,7 @@ public final class ExperimentDescriptionTag {
             for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
                 Object o = (Object) iterator.next();
                 if( !( o instanceof AnnotationTag ) ) {
-                    throw new IllegalArgumentException( "The annotation collection added to the interaction doesn't " +
+                    throw new IllegalArgumentException( "The annotation collection added to the experiment doesn't " +
                                                         "contains only AnnotationTag." );
                 }
             }
@@ -178,6 +194,10 @@ public final class ExperimentDescriptionTag {
 
     public XrefTag getBibRef() {
         return bibRef;
+    }
+
+    public Collection getAdditionalBibRef() {
+        return additionalBibRef;
     }
 
     public Collection getXrefs() {
@@ -217,6 +237,9 @@ public final class ExperimentDescriptionTag {
         if( annotations != null ? !annotations.equals( experimentDescriptionTag.annotations ) : experimentDescriptionTag.annotations != null ) {
             return false;
         }
+        if( additionalBibRef != null ? !additionalBibRef.equals( experimentDescriptionTag.additionalBibRef ) : experimentDescriptionTag.additionalBibRef != null ) {
+            return false;
+        }
         if( !bibRef.equals( experimentDescriptionTag.bibRef ) ) {
             return false;
         }
@@ -252,6 +275,7 @@ public final class ExperimentDescriptionTag {
         result = 29 * result + participantDetection.hashCode();
         result = 29 * result + ( xrefs != null ? xrefs.hashCode() : 0 );
         result = 29 * result + ( annotations != null ? annotations.hashCode() : 0 );
+        result = 29 * result + ( additionalBibRef != null ? additionalBibRef.hashCode() : 0 );
         return result;
     }
 
@@ -262,7 +286,15 @@ public final class ExperimentDescriptionTag {
         buf.append( "{shortlabel=" ).append( shortlabel );
         buf.append( ",fullname=" ).append( fullname );
         buf.append( ",bibRef=" ).append( bibRef );
-
+        buf.append( ",additional bibref=" );
+        if( additionalBibRef.size() == 0 ) {
+            buf.append( "none" );
+        }
+        for ( Iterator iterator = additionalBibRef.iterator(); iterator.hasNext(); ) {
+            final XrefTag bibref = (XrefTag) iterator.next();
+            buf.append( bibref );
+        }
+        
         buf.append( ",annotations=" );
         if( annotations.size() == 0 ) {
             buf.append( "none" );
