@@ -1912,7 +1912,7 @@ public class IntactHelper implements SearchI, Externalizable {
                                            INSTITUTION_CONFIG_FILE + " and set 'Institution.shortLabel' correctly" );
 
             // search for it (force it for LC as short labels must be in LC).
-            shortlabel = shortlabel.trim().toLowerCase();
+            shortlabel = shortlabel.trim();
             Collection result = search( Institution.class.getName(), "shortLabel", shortlabel );
 
             if( result.size() == 0 ){
