@@ -4,18 +4,16 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.application.editor.struts.viewx.interaction;
+package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
-import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.ValidationException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.SearchException;
-import org.apache.commons.beanutils.DynaBean;
 import org.apache.struts.tiles.ComponentContext;
 
 import java.util.*;
@@ -44,14 +42,33 @@ public class InteractionViewBean extends AbstractEditViewBean {
     private String myInteractionType;
 
     /**
-     * The experiment.
+     * The collection of Experiments. Transient as it is only valid for the
+     * current display.
      */
-    private String myExperiment;
+    private transient List myExperiments = new ArrayList();
 
     /**
-     * The collection of Proteins.
+     * Holds Experiments to add. This collection is cleared once the user
+     * commits the transaction.
      */
-    private List myProteins = new ArrayList();
+    private transient List myExperimentsToAdd = new ArrayList();
+
+    /**
+     * Holds Experiments to del. This collection is cleared once the user
+     * commits the transaction.
+     */
+    private transient List myExperimentsToDel = new ArrayList();
+
+    /**
+     * Holds Experiments to not yet added. Only valid for the current session.
+     */
+    private transient List myExperimentsToHold = new ArrayList();
+
+    /**
+     * The collection of Proteins. Transient as it is only valid for the
+     * current display.
+     */
+    private transient List myProteins = new ArrayList();
 
     /**
      * Holds Proteins to add. This collection is cleared once the user
@@ -85,9 +102,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
         if (inter != null) {
             setInteractionType(intact.getCvInteractionType().getShortLabel());
         }
-//        Experiment exp = intact.get;
-        // Clear previous Proteins.
-        myProteins.clear();
+        // Clear any left overs from previous transaction.
+        clearTransactions();
+
+        // Prepare for Proteins and Experiments for display.
+        makeExperimentBeans(intact.getExperiment());
         makeProteinBeans(intact.getComponent());
     }
 
@@ -125,15 +144,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
     }
 
-    // Override to provide Experiment info.
-    public void fillEditorSpecificInfo(DynaBean form) {
-        form.set("kD", myKD);
-        form.set("organism", myOrganism);
-        form.set("interactionType", myInteractionType);
-        form.set("experiment", myExperiment);
-        form.set("searchInput", "");
-    }
-
     // Override to provde menus needed for this editor.
     public Map getEditorMenus() throws SearchException {
         // The object we are editing at the moment.
@@ -166,16 +176,174 @@ public class InteractionViewBean extends AbstractEditViewBean {
         myKD = kd;
     }
 
+    public Float getKD() {
+        return myKD;
+    }
+
     public void setOrganism(String organism) {
         myOrganism = organism;
+    }
+
+    public String getOrganism() {
+        return myOrganism;
     }
 
     public void setInteractionType(String interaction) {
         myInteractionType = interaction;
     }
 
-    public String setExperiment(String experiment) {
-        return myExperiment;
+    public String getInteractionType() {
+        return myInteractionType;
+    }
+
+    /**
+     * Adds an Experiment.
+     * @param expbean the Experiment bean to add.
+     *
+     * <pre>
+     * post: myExperimentsToAdd = myExperimentsToAdd@pre + 1
+     * post: myExperiments = myExperiments@pre + 1
+     * </pre>
+     */
+    public void addExperiment(ExperimentBean expbean) {
+        // Experiment to add.
+        myExperimentsToAdd.add(expbean);
+        // Add to the view as well.
+        myExperiments.add(expbean);
+    }
+
+    /**
+     * True if given experiment exists in this object's experiment collection.
+     * @param expbean the bean to compare.
+     * @return true <code>expbean</code> exists in this object's experiment
+     * collection. The comparision uses the equals method of
+     * <code>ExperimentBean</code> class.
+     *
+     * <pre>
+     * post: return->true implies myExperimentsToAdd.exists(exbean)
+     * </pre>
+     */
+    public boolean experimentExists(ExperimentBean expbean) {
+        return myExperiments.contains(expbean);
+    }
+
+    /**
+     * Removes an Experiment
+     * @param expbean the Experiment bean to remove.
+     *
+     * <pre>
+     * post: myExperimentsToDel = myExperimentsToDel@pre - 1
+     * post: myExperiments = myExperiments@pre - 1
+     * </pre>
+     */
+    public void delExperiment(ExperimentBean expbean) {
+        // Add to the container to delete experiments.
+        myExperimentsToDel.add(expbean);
+        // Remove from the view as well.
+        myExperiments.remove(expbean);
+    }
+
+    /**
+     * Adds an Experiment bean to hold.
+     * @param exps a collection of <code>Experiment</code> to add.
+     * <pre>
+     * pre:  forall(obj : Object | obj.oclIsTypeOf(Experiment))
+     * post: myExperimentsToHold = myExperimentsToHold@pre + 1
+     * post: myExperimentsToHold = myExperimentsToHold@pre + exps->size
+     * </pre>
+     */
+    public void addExperimentToHold(Collection exps) {
+        for (Iterator iter = exps.iterator(); iter.hasNext(); ) {
+            ExperimentBean expbean = new ExperimentBean((Experiment) iter.next());
+            // Avoid duplicates.
+            if (!myExperimentsToHold.contains(expbean)) {
+                myExperimentsToHold.add(expbean);
+            }
+        }
+    }
+
+    /**
+     * Hides an Experiment bean from hold.
+     * @param expbean an <code>ExperimentBean</code> to hide.
+     * <pre>
+     * pre: myExperimentsToHold->includes(expbean)
+     * post: myExperimentsToHold = myExperimentsToHold@pre - 1
+     * </pre>
+     */
+    public void hideExperimentToHold(ExperimentBean expbean) {
+        myExperimentsToHold.remove(expbean);
+    }
+
+    /**
+     * Returns a collection of <code>ExperimentBean</code> objects.
+     *
+     * <pre>
+     * post: return != null
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(ExperimentBean))
+     * </pre>
+     */
+    public List getExperiments() {
+        return myExperiments;
+    }
+
+    /**
+     * Returns a collection of <code>ExperimentBean</code> objects on hold.
+     *
+     * <pre>
+     * post: return != null
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(ExperimentBean))
+     * </pre>
+     */
+    public List getHoldExperiments() {
+        return myExperimentsToHold;
+    }
+
+    /**
+     * Returns an <code>ExperimentBean</code> at given location.
+     * @param index the position to return <code>ExperimentBean</code>.
+     * @return <code>ExperimentBean</code> at <code>index</code>.
+     *
+     * <pre>
+     * pre: index >=0 and index < myExperiments->size
+     * post: return != null
+     * post: return = myExperiments->at(index)
+     * </pre>
+     */
+    public ExperimentBean getExperiment(int index) {
+        return (ExperimentBean) myExperiments.get(index);
+    }
+
+    /**
+     * Returns an <code>ExperimentBean</code> from a collection of
+     * 'hold' experiments at given location.
+     * @param index the position to return <code>ExperimentBean</code>.
+     * @return <code>ExperimentBean</code> at <code>index</code> from 'hold'
+     * (or experiment not yet added) collection.
+     *
+     * <pre>
+     * pre: index >=0 and index < myExperimentsToHold->size
+     * post: return != null
+     * post: return = myExperimentsToHold->at(index)
+     * </pre>
+     */
+    public ExperimentBean getHoldExperiment(int index) {
+        return (ExperimentBean) myExperimentsToHold.get(index);
+    }
+
+    /**
+     * Fills the given form with Experiment data.
+     * @param form the form to fill with.
+     */
+    public void fillExperiments(EditForm form) {
+        form.setItems(myExperiments);
+    }
+
+    /**
+     * Fills the given form with 'hold' Experiments.
+     * @param form the form to fill with.
+     */
+    public void fillHoldExperiments(EditForm form) {
+        form.setItems(myExperimentsToHold);
     }
 
     /**
@@ -258,12 +426,37 @@ public class InteractionViewBean extends AbstractEditViewBean {
     public void fillProteins(EditForm form) {
         form.setItems(myProteins);
     }
+
+    // Override super to add extra.
+    public void clearTransactions() {
+        super.clearTransactions();
+
+        // Clear experiments.
+        myExperimentsToAdd.clear();
+        myExperimentsToDel.clear();
+        myExperimentsToHold.clear();
+
+        // Clear Proteins
+        myProteinsToAdd.clear();
+        myProteinsToDel.clear();
+        myProteinsToUpdate.clear();
+    }
+
     // Helper methods
 
     private void makeProteinBeans(Collection components) {
+        myProteins.clear();
         for (Iterator iter = components.iterator(); iter.hasNext();) {
             Component comp = (Component) iter.next();
             myProteins.add(new ProteinBean(comp));
+        }
+    }
+
+    private void makeExperimentBeans(Collection exps) {
+        myExperiments.clear();
+        for (Iterator iter = exps.iterator(); iter.hasNext();) {
+            Experiment exp = (Experiment) iter.next();
+            myExperiments.add(new ExperimentBean(exp));
         }
     }
 }
