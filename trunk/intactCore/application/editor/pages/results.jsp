@@ -45,14 +45,8 @@
     <display:table width="100%" name="results" pagesize="50" requestURI="<%=uri%>"
         decorator="uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultDisplayWrapper">
         <display:column property="ac" title="AC"/>
-        <display:column property="shortLabel" title="Short Label"/>
+        <display:column property="shortLabel" title="Short Label" sort="true"/>
         <display:column property="fullName" title="Full Name" />
         <display:column property="lock" title="Lock" />
     </display:table>
 </html:form>
-
-<%--<html:messages id="message" message="true">--%>
-<%--	<span class="warning">--%>
-<%--		<bean:write name="message" filter="false"/>--%>
-<%--	</span>--%>
-<%--</html:messages>--%>
