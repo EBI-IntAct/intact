@@ -56,10 +56,10 @@ public class CvEditPreAction extends CvAbstractAction {
         CvViewBean viewbean = user.getView();
 
         // Fill the form to edit short label and full name.
-        DynaBean dynaForm = this.getCvInfoForm(request, session);
-        dynaForm.set("ac", viewbean.getAc());
-        dynaForm.set("shortLabel", viewbean.getShortLabel());
-        dynaForm.set("fullName", viewbean.getFullName());
+//        DynaBean dynaForm = this.getCvInfoForm(request, session);
+//        dynaForm.set("ac", viewbean.getAc());
+//        dynaForm.set("shortLabel", viewbean.getShortLabel());
+//        dynaForm.set("fullName", viewbean.getFullName());
 
         // Fill data for annotations.
         EditForm ceForm = this.getEditForm(session,
@@ -88,24 +88,24 @@ public class CvEditPreAction extends CvAbstractAction {
      * post: session.getAttribute(CvEditConstants.CV_INFO_FORM) != Null
      * </pre>
      */
-    private DynaBean getCvInfoForm(HttpServletRequest request, HttpSession session)
-            throws InstantiationException, IllegalAccessException {
-        // Fill the form to edit short label and full name.
-        DynaBean dynaForm = (DynaBean) session.getAttribute(
-                CvEditConstants.CV_INFO_FORM);
-        if (dynaForm == null) {
-            ModuleConfig appConfig =
-                    (ModuleConfig) request.getAttribute(Globals.MODULE_KEY);
-            FormBeanConfig config = appConfig.findFormBeanConfig(
-                    CvEditConstants.CV_INFO_FORM);
-            DynaActionFormClass dynaClass =
-                DynaActionFormClass.createDynaActionFormClass(config);
-            dynaForm = dynaClass.newInstance();
-            session.setAttribute(CvEditConstants.CV_INFO_FORM, dynaForm);
-            super.log("Created cvinfo instance ");
-        }
-        return dynaForm;
-    }
+//    private DynaBean getCvInfoForm(HttpServletRequest request, HttpSession session)
+//            throws InstantiationException, IllegalAccessException {
+//        // Fill the form to edit short label and full name.
+//        DynaBean dynaForm = (DynaBean) session.getAttribute(
+//                CvEditConstants.CV_INFO_FORM);
+//        if (dynaForm == null) {
+//            ModuleConfig appConfig =
+//                    (ModuleConfig) request.getAttribute(Globals.MODULE_KEY);
+//            FormBeanConfig config = appConfig.findFormBeanConfig(
+//                    CvEditConstants.CV_INFO_FORM);
+//            DynaActionFormClass dynaClass =
+//                DynaActionFormClass.createDynaActionFormClass(config);
+//            dynaForm = dynaClass.newInstance();
+//            session.setAttribute(CvEditConstants.CV_INFO_FORM, dynaForm);
+//            super.log("Created cvinfo instance ");
+//        }
+//        return dynaForm;
+//    }
 
     /**
      * Returns the edit form for given type.
