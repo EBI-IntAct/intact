@@ -8,12 +8,12 @@
 
     <property name="project.title" value="application"/>
 
-    <property name="script" value="tomcat.sh"/>
-    <property name="script.dir" value="../scripts"/>
-
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
     <property name="axis.home" value="${env.AXIS_HOME}"/>
+
+    <property name="start-tomcat" value="${tomcat.home}/bin/startup.sh"/>
+    <property name="stop-tomcat" value="${tomcat.home}/bin/shutdown.sh"/>
 
     <!-- =================================================================== -->
 
@@ -62,9 +62,7 @@
 
     <target name="start-tomcat" depends="check-tomcat" if="tomcat"
         description="Starts Tomcat server">
-        <antcall target="admin-tomcat">
-            <param name="command" value="start"/>
-        </antcall>
+        <exec executable="${start-tomcat}" dir="${basedir}" vmlauncher="false" os="Linux"/>
     </target>
 
     <!-- =================================================================== -->
@@ -73,33 +71,7 @@
 
     <target name="stop-tomcat" depends="check-tomcat" if="tomcat"
         description="Stops Tomcat server">
-        <antcall target="admin-tomcat">
-            <param name="command" value="stop"/>
-        </antcall>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Restarts the Tomcat server. -->
-
-    <target name="restart-tomcat" depends="check-tomcat" if="tomcat"
-        description="Restarts Tomcat server">
-        <antcall target="admin-tomcat">
-            <param name="command" value="restart"/>
-        </antcall>
-
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Displays the status of Tomcat server. -->
-
-    <target name="status-tomcat" depends="check-tomcat" if="tomcat"
-        description="Displays the status of the Tomcat server">
-        <antcall target="admin-tomcat">
-            <param name="command" value="status"/>
-        </antcall>
-
+        <exec executable="${stop-tomcat}" dir="${basedir}" vmlauncher="false" os="Linux"/>
     </target>
 
     <!-- =================================================================== -->
@@ -126,16 +98,6 @@
         <delete file="${tomcat.home}/webapps/${war}.war" quiet="true"/>
         <!-- Delete the dircectory. -->
         <delete dir="${tomcat.home}/webapps/${war}" quiet="true"/>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- This script calls the external tomcat shell script. -->
-
-    <target name="admin-tomcat" >
-        <exec executable="${script}" dir="${script.dir}" vmlauncher="false" os="Linux">
-            <arg line="${command}"/>
-        </exec>
     </target>
 
 </project>
