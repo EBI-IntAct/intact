@@ -6,10 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.persistence;
 
-import org.apache.ojb.broker.PersistenceBrokerException;
-
 import org.apache.log4j.Logger;
+import org.apache.ojb.broker.PersistenceBrokerException;
+import org.apache.ojb.broker.accesslayer.LookupException;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -49,15 +50,33 @@ public interface DAO {
     public void closeResults(Iterator itemIterator);
 
     /**
+         * Provides the database name that is being connected to.
+         * @return String the database name, or an empty String if the query fails
+         * @exception org.apache.ojb.broker.accesslayer.LookupException thrown on error
+         * getting the Connection
+         * @exception SQLException thrown if the metatdata can't be obtained
+         */
+        public String getDbName() throws LookupException, SQLException;
+        /**
+         * Provides the user name that is connecting to the DB.
+         * @return String the user name, or an empty String if the query fails
+         * @exception org.apache.ojb.broker.accesslayer.LookupException thrown on error
+         * getting the Connection
+         * @exception SQLException thrown if the metatdata can't be obtained
+         */
+        public String getDbUserName() throws LookupException, SQLException;
+
+    /**
      *   Used to begin a transaction.
+     * @param txType the Transaction type (eg object or JDBC level)
      *
      * @exception TransactionException - can be thrown if a transaction is already in progress
      *
      */
-    public void begin() throws TransactionException;
+    public void begin(int txType) throws TransactionException;
 
     /**
-     * Locks the given object for <b>write</b> access. <b>{@link #begin()} must
+     * Locks the given object for <b>write</b> access. <b>{@link #begin(int)} must
      * be called to prior to this method.</b>
      * @param obj the object to lock for <b>write</b> access.
      */
