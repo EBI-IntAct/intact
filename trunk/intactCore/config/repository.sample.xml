@@ -32,9 +32,10 @@
    		driver="org.postgresql.Driver"
    		protocol="jdbc"
    		subprotocol="postgresql"
-		dbalias="clewington"
-   		username="clewington"
-   		password=""
+        eager-release="false"
+		dbalias="DATABASE"
+   		username="USER"
+   		password="PASSWORD"
         />
 <!-- Connection descriptor for remote Oracle database -->
 <!--jdbc-connection-descriptor
