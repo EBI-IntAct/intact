@@ -17,6 +17,9 @@
 <%@page import="java.util.Collection"%>
 
 
+<hierarchView:checkInit forwardOnError="/index.jsp" />
+
+
 <html:html locale="true">
 
 <head>
