@@ -203,6 +203,7 @@
                 <include name="*.jpg"/>
                 <include name="*.css"/>
                 <include name="*.xsl"/>
+                <include name="*.html"/>
                 <include name="WEB-INF/struts-config.xml"/>
                 <include name="WEB-INF/tiles-defs.xml"/>
                 <include name="${tld.dir}/**"/>
