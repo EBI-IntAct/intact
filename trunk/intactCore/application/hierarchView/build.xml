@@ -86,6 +86,9 @@ Verison: $Id$
     <property file="${highlighting.properties.filename}"/>
     <property file="${search.properties.filename}"/>
 
+    <!-- The name of the last modified file -->
+    <property name="last.modified.file" value="last-modified.txt"/>
+
     <!-- Build working classpath -->
     <path id="project.class.path">
         <fileset dir="${lib.dir}">
@@ -516,7 +519,7 @@ Verison: $Id$
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
-    <target name="build-war" depends="compile, make-jar">
+    <target name="build-war" depends="compile, gen-last-modified-file, make-jar">
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
@@ -569,6 +572,7 @@ Verison: $Id$
                 <include name="${images.dir}/*"/>
                 <include name="${pages.dir}/**"/>
                 <include name="${layouts.dir}/**"/>
+                <include name="${last.modified.file}"/>
             </fileset>
 
             <!-- Include jar files for hv. -->
@@ -677,9 +681,18 @@ Verison: $Id$
 
     <!-- Stops the Tomcat server. -->
 
-
     <target name="stop-tomcat" description="Stop the Tomcat server" >
         <ant dir=".." inheritAll="false" target="stop-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Generates the last modified date file. -->
+
+    <target name="gen-last-modified-file">
+        <ant dir=".." inheritAll="false" target="gen-last-modified-file">
+            <property name="file" value="hierarchView/${last.modified.file}"/>
+        </ant>
     </target>
 
 </project>
