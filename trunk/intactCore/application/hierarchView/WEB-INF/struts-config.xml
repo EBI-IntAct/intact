@@ -28,6 +28,10 @@
         <form-bean name="ClickBehaviourForm"
                    type="uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm"/>
 
+        <!-- form container for the hostname management -->
+        <form-bean name="initForm"
+                   type="uk.ac.ebi.intact.application.hierarchView.struts.view.InitForm"/>
+
     </form-beans>
 
     <!-- ========== Global Exceptions ======================================= -->
@@ -56,9 +60,10 @@
 
         <!-- Action mapping for the hierarchView application -->
         <!-- Entrance of the application -->
-        <action
-            path="/init"
-            type="uk.ac.ebi.intact.application.hierarchView.struts.controller.InitAction">
+        <action path="/init"
+                type="uk.ac.ebi.intact.application.hierarchView.struts.controller.InitAction"
+                name="initForm"
+                scope="request">
 
             <forward name="success" path="hierarchView.layout"/>
         </action>
