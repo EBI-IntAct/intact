@@ -78,7 +78,7 @@ public abstract class IntactBaseAction extends Action {
      * Clear error container.
      */
     protected void clearErrors() {
-        if (!myErrors.empty()) {
+        if (!myErrors.isEmpty()) {
             myErrors.clear();
         }
     }
