@@ -145,18 +145,18 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Delete proteins and remove it from the interaction.
         for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
-            ProteinBean pb = (ProteinBean) iter.next();
-            Component comp = pb.getComponent();//(ProteinBean) iter.next()).getComponent();
-//            Component comp = ((ProteinBean) iter.next()).getComponent();
+//            ProteinBean pb = (ProteinBean) iter.next();
+//            Component comp = pb.getComponent();//(ProteinBean) iter.next()).getComponent();
+            Component comp = ((ProteinBean) iter.next()).getComponent();
             // No need to delete from persistent storage if the link to this
             // Protein is not persisted.
             if (comp.getAc() == null) {
-                System.out.println("Trying to delete a non persistent protein: " +
-                        pb.getShortLabel() + " and " + pb.getEditState());
+//                System.out.println("Trying to delete a non persistent protein: " +
+//                        pb.getShortLabel() + " and " + pb.getEditState());
                 continue;
             }
-            System.out.println("Deleting a persistent Protein: " +
-                    pb.getShortLabel() + " and " + pb.getEditState());
+//            System.out.println("Deleting a persistent Protein: " +
+//                    pb.getShortLabel() + " and " + pb.getEditState());
             user.delete(comp);
             intact.removeComponent(comp);
         }
@@ -459,24 +459,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
     public void addProtein(Protein protein) {
         // Add to the view.
         myProteins.add(new ProteinBean(protein));
-    }
-
-    /**
-     * Removes a Protein.
-     * @param pb the Protein bean to remove.
-     *
-     * <pre>
-     * post: myProteinsToDel = myProteinsToDel@pre - 1
-     * post: myProteins = myProteins@pre - 1
-     * </pre>
-     */
-    public void delProtein(ProteinBean pb, int pos) {
-        // Add to the container to delete proteins.
-        myProteinsToDel.add(pb);
-        // Remove from the view as well; need the index because we need to
-        // remove a specific bean (not just any bean which returns true for
-        // equals method).
-        myProteins.remove(pos);
     }
 
     /**
