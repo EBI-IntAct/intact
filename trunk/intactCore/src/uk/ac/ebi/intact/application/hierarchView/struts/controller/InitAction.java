@@ -13,12 +13,8 @@ import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseActi
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
-import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
