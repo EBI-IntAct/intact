@@ -33,7 +33,7 @@ public class DagNode {
      */
     DagNode parent;
 
-    /** The additional additionalParents of the current node.
+    /** The additional parents of the current node.
      */
     Hashtable additionalParents;
 
@@ -46,14 +46,31 @@ public class DagNode {
      */
     String goterm;
 
+
+    /** Default constructor
+     *
+     */
+    private DagNode(){
+        super();
+        parent = null;
+        additionalParents = new Hashtable();
+        indentLevel = 0;
+        goid = null;
+    }
+
     /**  Read new nodes from the input, add nodes to the aParent node.
      * @param in Go Dag format input source
-     * @param aParent The aParent node to which new nodes will be added.
+     * @param aParent The node to which new nodes will be added.
+     *
+     * @exception IOException
+     * @exception RESyntaxException
+     * @exception Exception
      */
     public static DagNode addNodes(BufferedReader in,
                                    DagNode aParent,
                                    Class aTargetClass,
-                                   IntactHelper helper)
+                                   IntactHelper helper,
+                                   int count)
             throws IOException, RESyntaxException, Exception {
 
         DagNode current = null;
@@ -67,8 +84,12 @@ public class DagNode {
                 // Read the next node from flat file
                 current = nextDagNode(in);
                 if (null == current) {
+
                     // The end of the flat file has been reached.
                     return null;
+                }  else {
+                    // Progress report
+                    System.err.print (".");
                 }
             }
 
@@ -77,16 +98,14 @@ public class DagNode {
                     current.parent = aParent;
                 }
                 current.storeDagNode(aTargetClass,helper);
-                System.out.println(current);
-                current = addNodes(in, current, aTargetClass, helper);
+                current = addNodes(in, current, aTargetClass, helper, count);
             } else {
                 if (aParent == null) {
                     // Special case for the root node. It is the only node without a aParent.
                     // make node persistent
                     current.storeDagNode(aTargetClass,helper);
-                    System.out.println(current);
                     // Recurse into the dag.
-                    return addNodes(in, current, aTargetClass, helper);
+                    return addNodes(in, current, aTargetClass, helper, count);
                 } else {
                     // A node has been found which has a lower indentation level than the current aParent.
                     // Return from the current level to the next higher node.
@@ -111,7 +130,9 @@ public class DagNode {
 
     /**
      * Returns the next DagNode from a GO DAG file
-     * @param in
+     * @param in the flat file data source
+     * @throws IOException
+     * @throws RESyntaxException
      */
     private static DagNode nextDagNode(BufferedReader in)
 	throws IOException, RESyntaxException {
@@ -171,14 +192,6 @@ public class DagNode {
         }
         return node;
     };
-
-    private DagNode(){
-        super();
-        parent = null;
-        additionalParents = new Hashtable();
-        indentLevel = 0;
-        goid = null;
-    }
 
     /** Create a hashtable which contains temporary data defining a GO term.
      *
