@@ -181,16 +181,23 @@ public interface EditUserI extends IntactUserI, Serializable {
     public boolean hasSingleSearchResult();
 
     /**
-     * Returns the last search query.
-     * @return the last search query.
+     * Returns the latest search input.
+     * @return the latest search input. This is basically as same as the
+     *{@link #getSearchQuery()} without the search parameter.
      */
-    public String getLastSearchQuery();
+    public String getSearchInput();
 
     /**
-     * Returns the class name of the last search.
-     * @return the class name of the last search as a <code>String</code>.
+     * Returns the latest search query.
+     * @return the latest search query.
      */
-    public String getLastSearchClass();
+    public String getSearchQuery();
+
+    /**
+     * Returns the class name of the latest search.
+     * @return the class name of the latest search as a <code>String</code>.
+     */
+    public String getSearchClass();
 
     /**
      * Caches the last search result. Each object of <code>results</code> is
