@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
@@ -52,12 +51,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * current display.
      */
     private transient List myInteractions = new ArrayList();
-
-    /**
-     * Holds Interactions to add. This collection is cleared once the user
-     * commits the transaction.
-     */
-    private transient List myInteractionsToAdd = new ArrayList();
 
     /**
      * Holds Interactions to del. This collection is cleared once the user
@@ -147,6 +140,14 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         exp.setCvInteraction(interaction);
         exp.setCvIdentification(ident);
 
+        // Delete interactions from the experiment. Do this block of code before
+        // clearing interactions or else 'this' experiment wouln't be removed
+        // from interactions.
+        for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
+            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
+            exp.removeInteraction(intact);
+        }
+
         // --------------------------------------------------------------------
         // Need this fix to get around the proxies.
         // 1. Clear all the interaction proxies first.
@@ -158,17 +159,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             exp.addInteraction(intact);
         }
         // --------------------------------------------------------------------
-
-        // Add interaction to the experiment.
-//        for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
-//            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
-//            exp.addInteraction(intact);
-//        }
-        // Delete interactions from the experiment.
-        for (Iterator iter = getInteractionsToDel().iterator(); iter.hasNext();) {
-            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
-            exp.removeInteraction(intact);
-        }
     }
 
     // Override the super method as the current experiment is added to the
@@ -338,9 +328,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public void addInteraction(InteractionBean intbean) {
-        // Interaction to add.
-        myInteractionsToAdd.add(intbean);
-        // Add to the view as well.
+        // Add to the view.
         myInteractions.add(intbean);
     }
 
@@ -397,7 +385,8 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Returns a collection of <code>InteractionBean</code> objects.
+     * Returns a collection of <code>InteractionBean</code>s for the current
+     * experiment.
      *
      * <pre>
      * post: return != null
@@ -444,7 +433,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         super.clearTransactions();
 
         // Clear interactions.
-        myInteractionsToAdd.clear();
         myInteractionsToDel.clear();
         myInteractionsToHold.clear();
         clearInteractionToHold();
@@ -479,39 +467,5 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             Interaction interaction = (Interaction) iter.next();
             myInteractions.add(new InteractionBean(interaction));
         }
-    }
-
-    /**
-     * Returns a collection of interactions to add.
-     * @return the collection of interactions to add to the current Experiment.
-     * Empty if there are no interactions to add.
-     *
-     * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(InteractionBean)
-     * </pre>
-     */
-//    private Collection getInteractionsToAdd() {
-//        // Interaction common to both add and delete.
-//        Collection common = CollectionUtils.intersection(
-//                myInteractionsToAdd, myInteractionsToDel);
-//        // All the interactions only found in interaction to add collection.
-//        return CollectionUtils.subtract(myInteractionsToAdd, common);
-//    }
-
-    /**
-     * Returns a collection of interactions to remove.
-     * @return the collection of interactions to remove from the current Experiment.
-     * Could be empty if there are no interactions to delete.
-     *
-     * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(InteractionBean)
-     * </pre>
-     */
-    private Collection getInteractionsToDel() {
-        // Interactions common to both add and delete.
-        Collection common = CollectionUtils.intersection(
-                myInteractionsToAdd, myInteractionsToDel);
-        // All the interactions only found in interaction to delete collection.
-        return CollectionUtils.subtract(myInteractionsToDel, common);
     }
 }
