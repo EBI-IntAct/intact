@@ -23,11 +23,18 @@
 
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
-            <th class="tableCellHeader" width="10%">Action</th>
-            <th class="tableCellHeader" width="10%">Short Label</th>
-            <th class="tableCellHeader" width="10%">Pubmed Id</th>
-            <th class="tableCellHeader" width="10%">IntAct AC</th>
-            <th class="tableCellHeader" width="60%">Full Name</th>
+            <th class="tableCellHeader" width="20%">
+                <bean:message key="label.action"/>
+            </th>
+            <th class="tableCellHeader" width="10%">
+                <bean:message key="label.shortlabel"/>
+            </th>
+            <th class="tableCellHeader" width="10%">
+                <bean:message key="label.ac"/>
+            </th>
+            <th class="tableCellHeader" width="60%">
+                <bean:message key="label.fullname"/>
+            </th>
         </tr>
         <%-- To calculate row or even row --%>
         <c:set var="row"/>
@@ -51,8 +58,6 @@
 
                 <td class="tableCell">
                     <bean:write name="interaction" property="shortLabelLink" filter="false"/>
-                </td>
-                <td class="tableCell">
                 </td>
                 <td class="tableCell">
                     <bean:write name="interaction" property="ac"/>
