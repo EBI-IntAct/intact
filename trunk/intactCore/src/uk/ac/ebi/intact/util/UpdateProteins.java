@@ -354,19 +354,6 @@ public class UpdateProteins implements UpdateProteinsI {
         if (taxid == null) return null;
 
         logger.info ("Try to get BioSource data from Newt");
-
-        // get the species name from Newt
-//        URL url = null;
-//        try {
-//            // TODO: switch back to the right server when fixed.
-////            url = new URL("http://www.ebi.ac.uk/newt/display");
-//            url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display");
-//        } catch (MalformedURLException e) {
-//            logger.error ("Newt URL is invalid", e);
-//            return null;
-//        }
-//
-//        NewtServerProxy server = new NewtServerProxy(url);
         NewtServerProxy.NewtResponse response = null;
 
         try {
