@@ -86,10 +86,10 @@ public class AnnotationParserTest extends TestCase {
         final Element element = document.getDocumentElement();
 
         try {
+            // an empty string is ok.
             AnnotationParser.process( element );
-            fail( "The creation of an AnnotationTag didn't failed where it should have. A type is required" );
         } catch ( IllegalArgumentException iae ) {
-            // ok !
+            fail( "The creation of an AnnotationTag didn't failed where it should have. A type is required" );
         }
     }
 
