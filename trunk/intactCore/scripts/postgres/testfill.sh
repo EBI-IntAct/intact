@@ -31,15 +31,17 @@ echo
 # wait until server has properly started up
 sleep 2
 
-psql -U $DBUSER -d $2 -f sql/postgres/drop_tables.sql
-psql -U $DBUSER -d $2 -f sql/postgres/create_tables.sql
-psql -U $DBUSER -d $2 -f sql/postgres/create_dummy.sql
+psql -p 5555 -U $DBUSER -d $2 -f sql/postgres/drop_tables.sql
+psql -p 5555 -U $DBUSER -d $2 -f sql/postgres/create_tables.sql
+psql -p 5555 -U $DBUSER -d $2 -f sql/postgres/create_dummy.sql
 
 echo "Inserting controlled vocabularies"
-
 scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvTopic data/controlledVocab/CvTopic.def
 scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvXrefQualifier data/controlledVocab/CvXrefQualifier.def
 scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase data/controlledVocab/CvDatabase.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvComponentRole data/controlledVocab/CvComponentRole.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvIdentification data/controlledVocab/CvIdentification.def data/controlledVocab/CvIdentification.dag
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteraction data/controlledVocab/CvInteraction.def data/controlledVocab/CvInteraction.dag
 
 echo "Inserting Proteins and their Xrefs ..."
 scripts/javaRun.sh InsertGo data/go_${DATASET}.dat "http://www.geneontology.org/doc/GO.defs"
