@@ -133,7 +133,7 @@
     <html:link href='javascript:clearAll()'>
         Clear All
     </html:link>
-   <html:link href='http://web7-node1.ebi.ac.uk:8160/intact/search/search.html' target="new">
+   <html:link href='http://web7-node1.ebi.ac.uk:8160/intact/displayDoc.jsp?section=ALL' target="new">
         Help
     </html:link>
     <hr size=2>
