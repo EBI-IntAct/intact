@@ -9,7 +9,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 
 import javax.servlet.ServletException;
@@ -56,7 +56,7 @@ public final class SourceAction extends IntactBaseAction {
         // get the current session
         HttpSession session = super.getSession(request);
 
-        String someKeys = request.getParameter(Constants.ATTRIBUTE_KEYS);
+        String someKeys = request.getParameter(StrutsConstants.ATTRIBUTE_KEYS);
 
         if ((null == someKeys) || (someKeys.length() < 1))
             addError ("error.keys.required");
@@ -68,12 +68,12 @@ public final class SourceAction extends IntactBaseAction {
         }
 
         // get the class method name to create an instance
-        String source = (String) session.getAttribute (Constants.ATTRIBUTE_METHOD_CLASS);
+        String source = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_METHOD_CLASS);
 
         HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(source);
         Collection keys = highlightmentSource.parseKeys(someKeys);
 
-        session.setAttribute(Constants.ATTRIBUTE_KEYS, keys);
+        session.setAttribute(StrutsConstants.ATTRIBUTE_KEYS, keys);
 
         // Print debug in the log file
         super.log("SourceAction: keys=" + keys +

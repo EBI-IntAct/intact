@@ -93,4 +93,4 @@ public final class Constants {
 
 
 
-} // Constants
+} // StrutsConstants

@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccess;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessService;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -62,7 +62,7 @@ public class TulipClient {
 
             // Look in the property file where is the web service
 
-            Properties properties = PropertyLoader.load (Constants.WEB_SERVICE_PROPERTY_FILE);
+            Properties properties = PropertyLoader.load (StrutsConstants.WEB_SERVICE_PROPERTY_FILE);
             String tulipAdress = null;
             if (null != properties) {
                 tulipAdress = properties.getProperty ("webService.adress");

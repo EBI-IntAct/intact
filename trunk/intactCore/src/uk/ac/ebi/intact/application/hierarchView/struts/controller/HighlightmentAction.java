@@ -10,7 +10,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.HighlightmentForm;
 
@@ -65,7 +65,7 @@ public final class HighlightmentAction extends IntactBaseAction {
             behaviour = ((HighlightmentForm) form).getBehaviour ();
 
             // get the class method name to create an instance
-            String source = (String) session.getAttribute (Constants.ATTRIBUTE_METHOD_CLASS);
+            String source = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_METHOD_CLASS);
 
             // update the option (given in this request) of the source in the session
             HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(source);
@@ -83,7 +83,7 @@ public final class HighlightmentAction extends IntactBaseAction {
         }
 
         // Save our data in the session
-        session.setAttribute (Constants.ATTRIBUTE_BEHAVIOUR, behaviour);
+        session.setAttribute (StrutsConstants.ATTRIBUTE_BEHAVIOUR, behaviour);
 
         // Print debug in the log file
         super.log("HighlightmentAction: behaviour=" + behaviour +

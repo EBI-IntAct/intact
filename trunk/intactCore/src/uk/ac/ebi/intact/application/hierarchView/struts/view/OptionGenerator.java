@@ -6,7 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.struts.view;
 
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -31,7 +31,7 @@ public class OptionGenerator {
         ArrayList sources = new ArrayList ();
 
         // read the ApplicationResource.proterties file
-        Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE_HIGHLIGHTING);
+        Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE_HIGHLIGHTING);
 
         if (null != properties) {
 
@@ -78,7 +78,7 @@ public class OptionGenerator {
         ArrayList behaviours = new ArrayList ();
 
         // read the ApplicationResource.proterties file
-        Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE_HIGHLIGHTING);
+        Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE_HIGHLIGHTING);
 
         if (null != properties) {
 

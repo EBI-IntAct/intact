@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 // intact
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
 
 import javax.servlet.http.HttpSession;
@@ -47,10 +47,10 @@ public class DisplaySourceTag extends TagSupport {
 
         try {
 
-            String AC = (String) session.getAttribute (Constants.ATTRIBUTE_AC);
-            String method_class = (String) session.getAttribute (Constants.ATTRIBUTE_METHOD_CLASS);
+            String AC = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
+            String method_class = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_METHOD_CLASS);
 
-            Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+            Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE);
             String debug = null;
             if (null != properties) {
                 debug = properties.getProperty ("application.debug");

@@ -23,7 +23,7 @@ public class TulipAccessImpl implements TulipAccess {
 
 
   /**************/
-  /** Constants */
+  /** StrutsConstants */
   /**************/
 
   /**

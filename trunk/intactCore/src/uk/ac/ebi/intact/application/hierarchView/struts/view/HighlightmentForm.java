@@ -4,7 +4,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -67,7 +67,7 @@ public final class HighlightmentForm extends ActionForm {
 
         // clean the session
         HttpSession session = request.getSession();
-        session.removeAttribute(Constants.ATTRIBUTE_BEHAVIOUR);
+        session.removeAttribute(StrutsConstants.ATTRIBUTE_BEHAVIOUR);
 
     } // reset
 

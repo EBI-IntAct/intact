@@ -29,7 +29,7 @@ import java.util.*;
 public class InteractionNetwork extends Graph {
 
 
-    /*********************************************************************** Constants */
+    /*********************************************************************** StrutsConstants */
     private static int DEFAULT_COLOR_NODE_RED   = 0;
     private static int DEFAULT_COLOR_NODE_GREEN = 0;
     private static int DEFAULT_COLOR_NODE_BLUE  = 255;
