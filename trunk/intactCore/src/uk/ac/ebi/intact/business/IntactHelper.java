@@ -1687,7 +1687,7 @@ public class IntactHelper implements SearchI, Serializable {
     }
 
     /**
-     *  Used to obtain the necessary items related to a search object. For example, if the object is a
+     *  Used to obtain the Experiments related to a search object. For example, if the object is a
      * Protein then we are interested in the Interactions and also the Experiments that the Protein
      * is related to. In practice this therefore means that we only need the Experiments, since
      * the Interactions can be obtained from those.
@@ -1696,7 +1696,7 @@ public class IntactHelper implements SearchI, Serializable {
      * @return Collection The Experiments related to the parameter item
      * (empty if none found)
      */
-    public Collection getRelatedObjects(Object item) {
+    public Collection getRelatedExperiments(Object item) {
 
         Collection results = new ArrayList();
         if(item instanceof Protein) {
