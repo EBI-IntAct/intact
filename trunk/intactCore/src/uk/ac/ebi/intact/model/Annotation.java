@@ -103,22 +103,47 @@ public class Annotation extends BasicObjectImpl {
      * @param o The object to check
      * @return true if the parameter equals this object, false otherwise
      */
-    public boolean equals(Object o){
-        if (this == o) return true;
-        if (!(o instanceof Annotation)) return false;
+    public boolean equals( Object o ) {
+        if( this == o ) {
+            return true;
+        }
+        if( !( o instanceof Annotation ) ) {
+            return false;
+        }
 
         final Annotation annotation = (Annotation) o;
 
-        if(cvTopic != null) {
-        if (!cvTopic.equals(annotation.cvTopic)) return false;
-        }
-        else {
-           if (annotation.cvTopic != null) return false;
+        // Issue
+        // -----
+        // Two object being annotated with different object having the same CvTopic and text,
+        // As soon as OJB has loaded one of them from the database, the other one is NOT.
+        // The reason is that if the equals method of Annotation is based only on CvTopic and text
+        // hence one of the object is loaded and cached, then when we query for the second one, OJB finds it
+        // as already loaded.
+        //
+        // Solution (HACK)
+        // --------
+        // To get around the problem of shared annotation having the same CvTopic and text, we take its ac into account.
+        // Hence, two Annotations having the same CvTopic and text can be different, hence all loaded normally by OJB.
+        if( ac != null ) {
+            return !ac.equals( annotation.ac );
+        } 
+
+
+        if( cvTopic != null ) {
+            if( !cvTopic.equals( annotation.cvTopic ) ) {
+                return false;
+            }
+        } else {
+            if( annotation.cvTopic != null ) {
+                return false;
+            }
         }
 
+
         //get to here and cvTopics are equal (null or non-null)
-        if(annotationText != null) {
-            return annotationText.equals(annotation.annotationText);
+        if( annotationText != null ) {
+            return annotationText.equals( annotation.annotationText );
         }
         return annotation.annotationText == null;
     }
