@@ -62,9 +62,7 @@ to identify the source page of the request to the Action classes.
 
     //The List of view beans used to provide the data for this JSP. This is in fact
     //a List of sublists, partitioned by result type.
-
-    //List viewBeans = (List)session.getAttribute(SearchConstants.VIEW_BEAN_LIST);
-    List partitionList = (List)session.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    List partitionList = (List)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
 
     //get the maximum size beans from the context for later use
     Map sizeMap = (Map)session.getServletContext().getAttribute(SearchConstants.MAX_ITEMS_MAP);
@@ -190,44 +188,34 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 else {
                     //need plurals - appending 's' works in most cases..
             %>
-            <!-- <td style="vertical-align: top;"><%= firstItem.getIntactType() + "s" %> -->
             <td><%= firstItem.getIntactType() + "s" %>
             </td>
             <%
                 }
             %>
 
-           <!--  <td width="10%" nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="1"> -->
             <td nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="1">
                 <a href="<%= firstItem.getHelpLink() + "AnnotatedObject.shortLabel"%>" target="new"
                    class="tdlink">Name
                 </a>&nbsp;
             </td>
 
-           <!-- <td width="10%" nowrap="nowrap" class="headerdarkmid"> -->
             <td nowrap="nowrap" class="headerdarkmid">
                 <a href="<%= firstItem.getHelpLink() + "BasicObject.ac"%>" target="new"
                    class="tdlink">Ac
                 </a>
             </td>
 
-           <!-- <td width="80%" nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="3"> -->
             <td nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="3">
                 <a href="<%= firstItem.getHelpLink() + "AnnotatedObject.fullName"%>" target="new"
                    class="tdlink">Description
                 </a>
-
-                <!-- this looks like just junk, maybe? -->
-                <a href="http://www.ebi.ac.uk/intact/displayDoc.jsp?section=" target="new"
-                    class="tdlink"><nobr></nobr></a><small><small><small><span
-                    style="color: rgb(255, 0, 0);"></span></small></small></small><br>
             </td>
 
             <%-- now for Interactions and Experiments we need an extra header.. --%>
             <%
                 if(Experiment.class.isAssignableFrom(firstItem.getObject().getClass())) {
             %>
-            <!-- <td colspan="2" nowrap="nowrap" class="headerdarkmid">Interactions -->
             <td class="headerdarkmid">Interactions
             </td>
             <%
@@ -273,7 +261,8 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <%
                 } else {
             %>
-            <!-- <td style="vertical-align: top;"> -->
+
+            <!-- checkbox -->
             <td>
                 <input name="<%= bean.getObjAc()%>" type="checkbox" class="text" checked>
             </td>
@@ -285,19 +274,17 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 need to set a value in the request to identify this JSP, so that the struts
                 Action classes know what to do with eg Protein search requests..
             --%>
-            <td style="vertical-align: top;">
+            <td nowrap="nowrap" style="vertical-align: top;">
                 <a href="<%= searchURL + "&" + SearchConstants.PAGE_SOURCE + "=simple"%>">
                     <b><span style="color: rgb(255, 0, 0);"><%= bean.getObjIntactName() %></span></b>
                 </a><br>
             </td>
 
             <!-- AC, not linked -->
-            <!-- <td width="10%" class="lefttop"><%= bean.getObjAc() %> -->
-            <td class="lefttop"><%= bean.getObjAc() %>
+            <td nowrap="nowrap" class="lefttop"><%= bean.getObjAc() %>
             </td>
 
             <!-- Description (ie full name - or a dash if there isn't one), not linked -->
-            <!-- <td width="80%" class="lefttop" rowspan="1" colspan="3"> -->
             <td class="lefttop" rowspan="1" colspan="3">
                 <%= bean.getObjDescription() %><br>
             </td>
@@ -308,8 +295,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 if((Experiment.class.isAssignableFrom(bean.getObject().getClass())) ||
                     (Interaction.class.isAssignableFrom(bean.getObject().getClass()))) {
             %>
-            <!-- <td colspan="2" class="lefttop"> -->
-            <td>
+            <td class="data">
                 <nobr><%= bean.getRelatedItemsSize() %><br></nobr>
             </td>
             <%

@@ -48,7 +48,8 @@
 
     //The view bean used to provide the data for this JSP. Could probably use
     //the jsp:useBean tag instead, but do it simply for now...
-    ProteinViewBean bean = (ProteinViewBean)session.getAttribute(SearchConstants.VIEW_BEAN);
+    //ProteinViewBean bean = (ProteinViewBean)session.getAttribute(SearchConstants.VIEW_BEAN);
+    ProteinViewBean bean = (ProteinViewBean)request.getAttribute(SearchConstants.VIEW_BEAN);
 %>
 
 
@@ -193,14 +194,14 @@ others are subsequent rows.
                 <!-- cells for each Xref item, starting with the link to
                 the Cvdatabase details (ie through search) -->
                 <!-- NB the text is assumed to be the shortlabel of the CvDB -->
-                <td style="vertical-align: top;">
+                <td class="data" style="vertical-align: top;">
                     <a href="<%= bean.getCvDbURL(xref)%>"><%= xref.getCvDatabase().getShortLabel()%></a>
                 </td>
 
                 <!-- a DB-sourced URL for the Primary Id (the text should be the primary Id)...
                 NB if it is null we can't write a link
                 -->
-                <td>
+                <td class="data">
                     <%
                         String idUrl = bean.getPrimaryIdURL(xref);
                         if(idUrl != null) {
@@ -215,7 +216,7 @@ others are subsequent rows.
                 </td>
 
                 <!-- a secondary Id (no links, so simple) -->
-                <td>
+                <td class="data">
                     <%
                         if(xref.getSecondaryId() != null) out.write(xref.getSecondaryId());
                         else out.write("-");
@@ -223,7 +224,7 @@ others are subsequent rows.
                 </td>
 
                 <!-- Xref qualifier (dash if null) -->
-                <td>
+                <td class="data">
                     <%
                         if(xref.getCvXrefQualifier() != null) {
                     %>
@@ -253,9 +254,8 @@ others are subsequent rows.
             <td class="headerdarkmid">Sequence length<br></td>
 
             <!-- seq length itself -->
-            <td
-                style="vertical-align: top; background-color: rgb(255, 255, 255);"
-                rowspan="1" colspan="4"><%= bean.getSeqLength() %><br>
+            <td style="vertical-align: top; background-color: rgb(255, 255, 255);"
+                class="data" rowspan="1" colspan="4"><%= bean.getSeqLength() %><br>
             </td>
         </tr>
 
@@ -266,9 +266,8 @@ others are subsequent rows.
             <td class="headerdarkmid">CRC64 checksum<br></td>
 
             <!-- value -->
-            <td
-                style="vertical-align: top; background-color: rgb(255, 255, 255);"
-                rowspan="1" colspan="4"><%= bean.getCheckSum() %><br>
+            <td style="vertical-align: top; background-color: rgb(255, 255, 255);"
+                class="data" rowspan="1" colspan="4"><%= bean.getCheckSum() %><br>
             </td>
 
         </tr>
@@ -276,7 +275,7 @@ others are subsequent rows.
         <!-- the sequence itself, written as blocks... -->
         <tr bgcolor="white">
 
-            <td colspan="5" style="background-color: rgb(255, 255, 255);">
+            <td class="data" colspan="5" style="background-color: rgb(255, 255, 255);">
 
 <%
     //Write out a formatted sequence, if there is one...

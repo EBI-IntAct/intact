@@ -57,12 +57,13 @@
     String minePath = relativePath.concat("mine/display.jsp");
 
     //The List of view beans used to provide the data for this JSP.
-    List viewBeanList = (List)session.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    List viewBeanList = (List)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
 
-   //the list of shortlabels for the search matches - need to be highlighted
+    //the list of shortlabels for the search matches - need to be highlighted
     //NB the SearchAction ensures (in most cases!) this will not be null
     List highlightList = (List)request.getAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST);
     if(highlightList == null) highlightList = new ArrayList();  //avoids null checks everywhere!
+
 
 %>
 
@@ -79,15 +80,28 @@
 </span><span class="smalltext">)<br></span></p>
 
 <%
+    //first check to see if the bean list is null - if it is then it means that the
+    //request is not a new one, but rather a tabbed page request. In this case get the
+    //previously saved bean from the session and use that for the rest of this display....
+    if(viewBeanList == null) {
+        viewBeanList = new ArrayList();
+        MainDetailViewBean existingBean =
+                (MainDetailViewBean)session.getAttribute(SearchConstants.LARGE_EXPERIMENT_BEAN);
+        viewBeanList.add(existingBean);
+        //need to get its shortlabel for highlighting
+        //(this comes from the request in all cases EXCEPT a tabbed view)
+        highlightList.add(existingBean.getObjIntactName());
+    }
     //now go through the viewbean list and produce a table for each bean.....
     for(Iterator it = viewBeanList.iterator(); it.hasNext();) {
         MainDetailViewBean bean = (MainDetailViewBean)it.next();
 %>
 <%
-        //first thing is to check for a 'large' Experiment - if it is, then need to display
+        //first thing is to check for a 'large' Experiment view - if it is, then need to display
         //a table with tabbed pages...
         //NB Use the REAL size of the Interaction list here - the BEAN holds a SUBLIST
-        if(bean.getObject().getInteractions().size() > Constants.MAX_PAGE_SIZE) {
+        if((bean.getObject().getInteractions().size() > Constants.MAX_PAGE_SIZE) &
+            (!bean.isInteractionView())) {
 
             //put this particular viewbean into the SESSION (because the next tabbed
             //page request will be different to the current request) so that subsequent
@@ -210,7 +224,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
 
 <!-- main results tables -->
-<table style="width: 100%; background-color: rgb(241, 245, 248);"
+<%--<table style="width: 100%; background-color: rgb(241, 245, 248);"--%>
+<table style="background-color: rgb(241, 245, 248);"
         border="1" cellpadding="5" cellspacing="0" bordercolor="#4b9996">
 
     <tbody>
@@ -219,7 +234,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- 'Experiment' title cell plus checkbox -->
-            <td width="10%" rowspan="2" class="headerdark">
+            <%-- <td width="10%" rowspan="2" class="headerdark"> --%>
+            <td rowspan="2" class="headerdark">
                    <input name="<%= bean.getObjAc()%>" type="checkbox" class="text" checked>
                         <span class="whiteheadertext">Experiment</span>
                 <%-- help link --%>
@@ -229,21 +245,24 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- 'name' title, linked to help -->
-            <td width="10%" nowrap="nowrap" class="headerdarkmid">
+            <%-- <td width="10%" nowrap="nowrap" class="headerdarkmid"> --%>
+            <td nowrap="nowrap" class="headerdarkmid">
                 <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>" target="new"
                    class="tdlink">Name
                 </a>
             </td>
 
             <!-- 'ac' title, linked to help -->
-            <td width="10%" nowrap="nowrap" class="headerdarkmid">
+            <%-- <td width="10%" nowrap="nowrap" class="headerdarkmid"> --%>
+            <td nowrap="nowrap" class="headerdarkmid">
                 <a href="<%= bean.getHelpLink() + "BasicObject.ac"%>" target="new"
                    class="tdlink">Ac
                 </a>
             </td>
 
             <!-- 'identification' title, linked to help -->
-            <td width="20%" nowrap="nowrap" class="headerdarkmid">
+            <%-- <td width="20%" nowrap="nowrap" class="headerdarkmid"> --%>
+            <td nowrap="nowrap" class="headerdarkmid">
                 <a href="<%= bean.getHelpLink() + "CVINTERACTION_HELP_SECTION"%>" target="new"
                    class="tdlink">Interaction identification
                 </a>
@@ -266,7 +285,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
         <!-- Experiment first data row -->
         <tr>
-            <td width="10%" class="lefttop">
+            <%-- <td width="10%" class="lefttop"> --%>
+            <td nowrap="nowrap" class="lefttop">
                 <%
                     if(highlightList.contains(bean.getObjIntactName())) {
                 %>
@@ -282,10 +302,12 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 %>
             </td>
 
-            <td width="10%" class="lefttop"><%= bean.getObjAc()%></td>
+            <%-- <td width="10%" class="lefttop"><%= bean.getObjAc()%></td> --%>
+            <td nowrap="nowrap" class="lefttop"><%= bean.getObjAc()%></td>
 
             <!-- linked to the CvInteraction search -->
-            <td width="20%" class="lefttop">
+            <%-- <td width="20%" class="lefttop"> --%>
+            <td class="lefttop">
                 <a href="<%= bean.getCvInteractionSearchURL() %>">
                     <%= bean.getObject().getCvInteraction().getShortLabel() %>
                 </a>
@@ -310,7 +332,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- 'Description' title, linked to help -->
-            <td width="10%" class="headerdarkmid" style="font-weight: bold;">
+            <%-- <td width="10%" class="headerdarkmid" style="font-weight: bold;"> --%>
+            <td class="headerdarkmid" style="font-weight: bold;">
                 <a href="<%= bean.getHelpLink() + "DESC_HELP_SECTION" %>">Description
                 </a>
             </td>
@@ -330,7 +353,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- 'Annotation' title cell (linked to help) -->
-            <td width="10%" class="headerdarkmid" rowspan="<%= annotations.size() %>" colspan="1">
+            <%-- <td width="10%" class="headerdarkmid" rowspan="<%= annotations.size() %>" colspan="1"> --%>
+            <td class="headerdarkmid" rowspan="<%= annotations.size() %>" colspan="1">
                 <a href="<%= bean.getHelpLink() + "ANNOT_HELP_SECTION" %>" class="tdlink">
                     Annotation <br>
                 </a>
@@ -342,14 +366,6 @@ Displaying <b><%= firstDisplayIndex %></b> to
             --%>
 
         <%
-
-            //skip any remarks - should not be not publicly visible
-            //Collection expRemarks = new ArrayList();
-            //for(Iterator it5 = annotations.iterator(); it5.hasNext();) {
-                //Annotation annotation = (Annotation)it5.next();
-                //if(annotation.getCvTopic().getShortLabel().equals("remark")) expRemarks.add(annotation);
-            //}
-            //annotations.removeAll(expRemarks);
 
             rowCount = 0;
             for(Iterator iter = annotations.iterator(); iter.hasNext();) {
@@ -371,8 +387,22 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- annotation text cell -->
-            <td style="vertical-align: top;" rowspan="1" colspan="6">
+            <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
+                <%
+                    //need to check for a 'url' annotation and hyperlink them if so...
+                    if(annot.getCvTopic().getShortLabel().equals("url")) {
+                %>
+                <a href="<%= annot.getAnnotationText() %>">
+                    <%= annot.getAnnotationText() %>
+                </a><br>
+                <%
+                    }
+                    else {
+                %>
                 <%= annot.getAnnotationText() %><br>
+                <%
+                    }
+                %>
             </td>
 
       </tr>
@@ -389,7 +419,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- 'Xref' title cell - linked to help -->
-            <td width="10%" class="headerdarkmid" rowspan="<%= xrefs.size()%>" colspan="1"
+            <%-- <td width="10%" class="headerdarkmid" rowspan="<%= xrefs.size()%>" colspan="1" --%>
+            <td class="headerdarkmid" rowspan="<%= xrefs.size()%>" colspan="1"
                 style="text-align: justify;">
                 <a href="<%= bean.getHelpLink() + "XREF_HELP_SECTION"%>" class="tdlink">
                     Xref<br>
@@ -412,7 +443,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <!-- link to the Xref CvDatabase details -->
             <%-- (I think - example is pubmed) --%>
-            <td width="10%" class="lefttop" colspan="1">
+            <%-- <td width="10%" class="lefttop" colspan="1"> --%>
+            <td class="lefttop" colspan="1">
                 <a href="<%= bean.getCvDbURL(xref) %>" class="tdlink">
                     <%= xref.getCvDatabase().getShortLabel() %>
                 </a>
@@ -421,7 +453,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- actual search link to the Xref-->
             <%-- ie the real URL filled with the ID - NB if it is null we can't write a link --%>
 
-            <td width="10%" class="lefttop">
+            <%-- <td width="10%" class="lefttop"> --%>
+            <td class="lefttop">
             <%
                 String idUrl = bean.getPrimaryIdURL(xref);
                 if(idUrl != null) {
@@ -469,7 +502,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- first cell - title plus checkbox -->
-            <td width="10%" rowspan="2" class="headermid">
+            <%-- <td width="10%" rowspan="2" class="headermid"> --%>
+            <td rowspan="2" class="headermid">
                 <input name="<%= interaction.getAc() %>" type="checkbox" class="text">
                     <span class="whiteheadertext">Interaction</span>
                 <a href="<%= bean.getHelpLink() + "search.TableLayout"%>"
@@ -479,7 +513,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- 'name' title cell, linked to help -->
-            <td width="10%" class="headerlight">
+            <%-- <td width="10%" class="headerlight"> --%>
+            <td class="headerlight">
                 <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>"
                     target="new" class="tdlink">
                     Name
@@ -487,7 +522,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- 'ac' title cell, linked to help -->
-            <td width="10%" class="headerlight">
+            <%-- <td width="10%" class="headerlight"> --%>
+            <td class="headerlight">
                 <a href="<%= bean.getHelpLink() + "BasicObject.ac" %>"
                     target="new" class="tdlink">
                     Ac
@@ -495,7 +531,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!--'interaction type' header cell, linked to help -->
-            <td width="20%" class="headerlight">
+            <%-- <td width="20%" class="headerlight"> --%>
+            <td class="headerlight">
                 <a href="<%= bean.getHelpLink() + "Interaction.CvInteractionType" %>"
                     target="new" class="tdlink">
                     Interaction type
@@ -504,7 +541,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <!-- 'dissociation constant' header cell, linked to help -->
             <%-- ** NB: make sure the text is 'Kd' and not 'kD' ** --%>
-            <!-- <td style="vertical-align: top;" rowspan="1" colspan="4">  -->
+            <%-- <td style="vertical-align: top;" rowspan="1" colspan="4">  --%>
             <td style="vertical-align: top;" class="headerlight" rowspan="1" colspan="4">
                 <a href="<%= bean.getHelpLink() + "Interaction.kD"%>"
                     target="new" class="tdlink">
@@ -518,7 +555,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- shortlabel -->
-            <td width="10%" class="lefttop">
+            <%-- <td width="10%" class="lefttop"> --%>
+            <td nowrap="nowrap" class="lefttop">
                 <%
                     if(highlightList.contains(interaction.getShortLabel())) {
                 %>
@@ -536,17 +574,19 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- ac -->
-            <td width="10%" class="lefttop"><%= interaction.getAc() %></td>
+            <%-- <td width="10%" class="lefttop"><%= interaction.getAc() %></td> --%>
+            <td nowrap="nowrap" class="lefttop"><%= interaction.getAc() %></td>
 
             <!-- interaction type, linked to CvInteractionType -->
-            <td width="20%" class="lefttop">
+            <%-- <td width="20%" class="lefttop"> --%>
+            <td class="lefttop">
                 <a href="<%= bean.getCvInteractionTypeSearchURL(interaction)%>">
                     <%= interaction.getCvInteractionType().getShortLabel() %>
                 </a>
             </td>
 
             <!-- dissociation constant -->
-            <td style="vertical-align: top;" rowspan="1" colspan="4">
+            <td class="data" style="vertical-align: top;" rowspan="1" colspan="4">
                 <%= (interaction.getKD() != null) ? interaction.getKD().toString() : "-" %>
             </td>
         </tr>
@@ -556,7 +596,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <!-- 'description' title cell -->
             <%-- NB this was LINKED to help in Experiment!! --%>
-            <td width="10%" class="headerlight">Description</td>
+            <%-- <td width="10%" class="headerlight">Description</td> --%>
+            <td class="headerlight">Description</td>
             <td colspan="7" class="lefttop">
                 <%= (interaction.getFullName() != null) ? interaction.getFullName() : "-" %>
             </td>
@@ -566,15 +607,6 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <%-- NB: THERE MAY BE ANNOTATION AND XREF BLOCKS AT THIS POINT AS WELL... --%>
         <%
                 Collection intAnnots = bean.getFilteredAnnotations(interaction);
-                //Collection intAnnots = interaction.getAnnotations();
-                //skip remarks - should not be not publicly visible
-                //Collection remarks = new ArrayList();
-                //for(Iterator it4 = intAnnots.iterator(); it4.hasNext();) {
-                    //Annotation annotation = (Annotation)it4.next();
-                    //if(annotation.getCvTopic().getShortLabel().equals("remark")) remarks.add(annotation);
-                //}
-                //intAnnots.removeAll(remarks);
-
                 Collection intXrefs = interaction.getXrefs();
         %>
 
@@ -585,7 +617,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- 'Annotation' title cell (linked to help) -->
-            <td width="10%" class="headerlight" rowspan="<%= intAnnots.size() %>" colspan="1">
+            <%-- <td width="10%" class="headerlight" rowspan="<%= intAnnots.size() %>" colspan="1"> --%>
+            <td class="headerlight" rowspan="<%= intAnnots.size() %>" colspan="1">
                 <a href="<%= bean.getHelpLink() + "ANNOT_HELP_SECTION" %>" class="tdlink">
                     Annotation <br>
                 </a>
@@ -610,15 +643,30 @@ Displaying <b><%= firstDisplayIndex %></b> to
         %>
 
             <!-- annotation 'topic' title cell -->
-            <td style="vertical-align: top;">
+            <td class="data" style="vertical-align: top;">
                 <a href="<%= bean.getCvTopicSearchURL(annot)%>" style="font-weight: bold;">
                     <%= annot.getCvTopic().getShortLabel()%>
                 </a><br>
             </td>
 
             <!-- annotation text cell -->
+            <%
+                    //need to check for a 'url' annotation and hyperlink them if so...
+                    if(annot.getCvTopic().getShortLabel().equals("url")) {
+            %>
             <td style="vertical-align: top;" rowspan="1" colspan="6">
+                <a href="<%= annot.getAnnotationText() %>" class="tdlink">
+                    <%= annot.getAnnotationText() %>
+                </a><br>
+            <%
+                    }
+                    else {
+            %>
+            <td style="vertical-align: top;" rowspan="1" colspan="6" class="data">
                 <%= annot.getAnnotationText() %><br>
+                <%
+                    }
+                %>
             </td>
 
       </tr>
@@ -635,7 +683,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- 'Xref' title cell - linked to help -->
-            <td width="10%" class="headerlight" rowspan="<%= intXrefs.size()%>" colspan="1"
+            <%-- <td width="10%" class="headerlight" rowspan="<%= intXrefs.size()%>" colspan="1" --%>
+            <td class="headerlight" rowspan="<%= intXrefs.size()%>" colspan="1"
                 style="text-align: justify;">
                 <a href="<%= bean.getHelpLink() + "XREF_HELP_SECTION"%>" class="tdlink">
                     Xref<br>
@@ -657,7 +706,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <!-- link to the Xref CvDatabase details -->
             <%-- (I think - example is pubmed) --%>
-            <td width="10%" class="lefttop" colspan="1">
+            <%-- <td width="10%" class="lefttop" colspan="1"> --%>
+            <td class="lefttop" colspan="1">
                 <a href="<%= bean.getCvDbURL(xref) %>" class="tdlink">
                     <%= xref.getCvDatabase().getShortLabel() %>
                 </a>
@@ -666,7 +716,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- actual search link to the Xref-->
             <%-- ie the real URL filled with the ID - NB if it is null we can't write a link --%>
 
-            <td width="10%" class="lefttop">
+           <%-- <td width="10%" class="lefttop"> --%>
+           <td class="lefttop">
             <%
                     String idUrl = bean.getPrimaryIdURL(xref);
                     if(idUrl != null) {
@@ -708,51 +759,52 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
         <!-- title cell -->
         <%-- NB the span should be equal to the number of Proteins, +1 for the sub-headers --%>
-            <td width="10%" class="headerlight"
+            <td class="headerlight"
                 rowspan="<%= interaction.getComponents().size() + 1%>" colspan="1">
                 Interacting molecules<br>
             </td>
 
             <!-- 'name' title cell, linked to help -->
-            <td width="10%" class="headerlight">
+            <td class="headerlight">
                 <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>"
-                    target="new" class="tdlink">
-                    Name
-                </a>
+                    target="new" class="tdlink">Name</a>
             </td>
 
             <!-- 'ac' title cell, linked to help -->
-            <td width="10%" class="headerlight">
+            <td class="headerlight">
                 <a href="<%= bean.getHelpLink() + "BasicObject.ac"%>"
-                    target="new" class="tdlink">
-                    Ac
-                </a>
+                    target="new" class="tdlink">Ac</a>
             </td>
 
-            <!-- 'role' title cell, linked to help-->
-            <td width="20%" class="headerlight">
-                <a href="<%= bean.getHelpLink() + "Role"%>">
-                    Role
-                </a>
-            </td>
+            <!-- 'uniprot description' title cell -->
+            <%-- *** NOTE ***
+            This has been SWAPPED in position compared to the specification as it is not
+            possible to format the 'role' cell properly in its current position in the
+            specification. This is due to the fact that it appears in a column whose size
+            is determined by a wider cell ('interaction identification'). The only other way
+            is to split things up into sub-tables - this then gets very messy!
+            --%>
+            <%-- not linked again --%>
+            <td nowrap="nowrap" class="headerlight">UniProt description<br></td>
+
 
             <!-- 'expression system' title cell -->
             <%-- NB this seems NOT to be linked --%>
-            <td style="vertical-align: top;" class="headerlight">
-                Expression system<br>
-            </td>
+            <td class="headerlight">Expression system<br></td>
 
             <!-- 'uniprot ac' title cell -->
             <%-- again seems to NOT be linked to help --%>
-            <td class="headerlight" width="20%">UniProt Ac<br></td>
+            <td class="headerlight">UniProt Ac<br></td>
 
             <!-- 'gene name' title cell -->
             <%-- again NOT linked to help --%>
-            <td class="headerlight" width="10%">Gene name</td>
+            <td class="headerlight">Gene name</td>
 
-            <!-- 'uniprot description' title cell -->
-            <%-- not linked again --%>
-            <td class="headerlight" width="20%">UniProt description<br></td>
+            <!-- 'role' title cell, linked to help -->
+            <%-- *** ROW POSITION SWAPPED - SEE 'UNIPROT DESCRIPTION' COMMENT *** --%>
+            <td class="headerlight">
+                <a href="<%= bean.getHelpLink() + "Role"%>" class="tdlink">Role</a>
+            </td>
         </tr>
 
         <!-- Protein data rows, to match the above title cells..... -->
@@ -766,48 +818,34 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <tr>
 
             <!-- shortlabel, linked to protein partners search -->
-            <td width="10%" class="lefttop">
-                <a href="<%= bean.getProteinPartnerURL(protein)%>">
-                    <%= protein.getShortLabel() %>
+            <td class="data">
+                <a href="<%= bean.getProteinPartnerURL(protein)%>"><%= protein.getShortLabel() %>
                 </a><br>
             </td>
 
             <!-- ac, linked to protein details view -->
-            <td width="10%" class="lefttop">
-                <a href="<%= bean.getProteinSearchURL(protein)%>">
-                    <%= protein.getAc() %>
-                </a>
+            <td class="data">
+                <a href="<%= bean.getProteinSearchURL(protein)%>"><%= protein.getAc() %></a>
             </td>
 
-
-            <!-- role, linked CvComponentRole search -->
-            <%
-                    //NB this should never be null....
-                    Component comp = bean.getComponent(protein, interaction);
-            %>
-            <td width="20%" class="lefttop">
-                <a href="<%= bean.getCvComponentRoleSearchURL(comp)%>">
-                    <%= comp.getCvComponentRole().getShortLabel()%>
-                </a>
-            </td>
+            <!-- uniprot description -->
+            <%-- ASSUME this is the same as the Protein fullName --%>
+            <%-- *** ROW POSITION SWAPPED - SEE 'UNIPROT DESCRIPTION' COMMENT *** --%>
+            <td class="data"><%= protein.getFullName() %></td>
 
             <!-- expression system, (ie the BioSource Full Name), with a search link -->
-            <td style="vertical-align: top;">
-                <a href="<%= bean.getProteinBiosourceURL(protein)%>">
-                    <%= protein.getBioSource().getFullName()%>
-                </a>
+            <td class="data">
+                <a href="<%= bean.getProteinBiosourceURL(protein)%>"><%= protein.getBioSource().getFullName()%></a>
             </td>
 
             <!-- uniprot ID, linked 'to biosource' (!) (Guess this should be search in uniprot..)-->
             <%-- This is actually an Xref of the Protein, ie its uniprot Xref... --%>
-            <td class="lefttop" width="20%">
+            <td class="data">
             <%
                     if(bean.getUniprotLabel(protein) != "-") {
                         //link it
             %>
-                <a href="<%= bean.getUniprotSearchURL(protein)%>">
-                    <%= bean.getUniprotLabel(protein) %>
-                </a>
+                <a href="<%= bean.getUniprotSearchURL(protein)%>"><%= bean.getUniprotLabel(protein) %></a>
                 <%
                     }
                     else {
@@ -820,13 +858,20 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- gene name(s), not linked -->
-            <td class="lefttop" width="10%"><%= bean.getGeneNames(protein)%></td>
+           <td class="data"><%= bean.getGeneNames(protein)%></td>
 
-            <!-- uniprot description -->
-            <%-- ASSUME this is the same as the Protein fullName --%>
-            <td class="lefttop" width="20%">
-                <%= protein.getFullName() %>
+            <!-- role, linked CvComponentRole search -->
+            <%-- *** ROW POSITION SWAPPED - SEE 'UNIPROT DESCRIPTION' COMMENT *** --%>
+            <%
+                    //NB this should never be null....
+                    Component comp = bean.getComponent(protein, interaction);
+            %>
+            <td class="data">
+                <a href="<%= bean.getCvComponentRoleSearchURL(comp)%>">
+                    <%= comp.getCvComponentRole().getShortLabel()%>
+                </a>
             </td>
+
         </tr>
         <%
                 }   //end of the proteins loop
@@ -886,7 +931,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                      //need to display linked feature info
             %>
             <!-- 'interaction' title cell -->
-            <td style="vertical-align: top;">
+            <td class="data" style="vertical-align: top;">
                 interaction<br>
             </td>
 
@@ -899,7 +944,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 text2: detected by <link 3: CvfeatureDetection (!!)>, interacts with <above again, but
                 for the Feature that is 'linked to'>
             --%>
-            <td style="vertical-align: top;" rowspan="1" colspan="6">
+            <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
 
                 <%-- link 1 --%>
                 <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
@@ -1019,12 +1064,12 @@ Displaying <b><%= firstDisplayIndex %></b> to
         %>
 
                 <!-- 'mutation' title cell -->
-                <td style="vertical-align: top;">mutation<br>
+                <td class="data" style="vertical-align: top;">mutation<br>
                 </td>
 
 
                 <%-- feature type info, plus search link --%>
-                <td style="vertical-align: top;" rowspan="1" colspan="6">
+                <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
 
                     <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
                         <%= firstFeature.getFeatureType() %>
@@ -1077,11 +1122,11 @@ Displaying <b><%= firstDisplayIndex %></b> to
             %>
             <tr>
                 <!-- 'interaction' title cell -->
-                <td style="vertical-align: top;">
+                <td class="data" style="vertical-align: top;">
                 interaction<br>
                 </td>
 
-                <td style="vertical-align: top;" rowspan="1" colspan="6">
+                <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
 
                     <%-- link 1 --%>
                     <a href="<%= linkedFeature.getCvFeatureTypeSearchURL() %>">
@@ -1211,12 +1256,12 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <tr>
 
                 <!-- 'mutation' title cell -->
-                <td style="vertical-align: top;">mutation<br>
+                <td class="data" style="vertical-align: top;">mutation<br>
                 </td>
 
 
                 <%-- feature type info, plus search link --%>
-                <td style="vertical-align: top;" rowspan="1" colspan="6">
+                <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
 
                     <a href="<%= singleFeature.getCvFeatureTypeSearchURL() %>">
                         <%= singleFeature.getFeatureType() %>
@@ -1270,7 +1315,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
 </table>
 
 <!-- END of the main display table -->
-
+<br>
 <!-- button bar for the table -->
 <%@ include file="buttonBar.html" %>
 
