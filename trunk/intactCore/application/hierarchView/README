@@ -19,6 +19,7 @@ needed Ant task to install hierarchView.
 In the following part, I will consider that :
    - the intactCore database access is already properly configured (cf. intactCore/README)
    - the Tulip software had been installed (www.tulip-software.org)
+     and the needed environment variable properly set.
    - a gcc 2.96 compiler is available on you system
      it will allows to compile the command line tulip access software.
    - you have already a proper installation of Tomcat (jakarta.apache.org/tomcat)
@@ -69,26 +70,35 @@ In the following part, I will consider that :
 	    echo $DISPLAY      (just to check)
 
 
-(5) Build the application war file
+(5) Configure the Highlighting
+    --------------------------
+
+    - edit the 'WEB-INF/config/Highlighting.properties' file.
+    - customize :
+        * 'highlightment.source.GO.hostname' with the hostname of the interpro web server.
+
+
+(6) Build the application war file
     ------------------------------
     run 'ant undeploy war deploy', will clean Tomcat and install the web application.
 
 
-(6) Start Tomcat
+(7) Start Tomcat
     ------------
     run 'ant start-tomcat'
 
 
-(5) Start the web service
+(8) Test the web service (OPTIONAL)
     ---------------------
-    run 'ant start-ws', will make become the tulip web service available.
-    You can test if the web service is properly running by running 'ant test-ws', you should
-    get the sended TLP content and the returned list of protein's coordinates.
+    run 'ant start-ws', to start the tulip web service.
+    You don't need to do that step to use hierarchView.
+    By running 'ant test-ws', you should get the sended TLP
+    content and the returned list of protein's coordinates.
 
 
-(6) Try the web application
+(9) Try the web application
     -----------------------
-    let's open a browser and go to http://[YOU_WEB_SERVER]/hierarchView
+    let's open a browser and go to http://[TOMCAT_HOSTNAME]/hierarchView
 
 
 
