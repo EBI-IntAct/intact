@@ -14,7 +14,7 @@ import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
- * This class provides the general editor services common to all the editors.
+ * This class provides the general editor services common to all the users.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -96,7 +96,18 @@ public class EditorService {
      * Returns the link to the search application.
      * @return the link to the search application as a String object.
      */
-    public String getSerachLink() {
+    public String getSearchLink() {
         return myResources.getString("search.url");
+    }
+
+    /**
+     * Returns the standard help link as an HTML snippet.
+     * @param tag the tag to add to the help link.
+     * @param title the title to display for the link.
+     * @return the help HTML snippet as a String.
+     */
+    public String getHelpLinkAsHTML(String server, String tag, String title) {
+        String link = server + myResources.getString("help.url") + "#" + tag;
+        return "<a target=\"help\" href=\"" + link + "\">" + title + "</a>";
     }
 }

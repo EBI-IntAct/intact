@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.biosrc;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.business.IntactException;
@@ -40,9 +41,14 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         super.persist(user);
     }
 
-    // Ovverride to provide BioSource layout.
+    // Override to provide BioSource layout.
     public void setLayout(ComponentContext context) {
         context.putAttribute("content", "edit.biosrc.layout");
+    }
+
+    // Ovverride to provide BioSource help tag.
+    public String getHelpTag() {
+        return "biosource";
     }
 
     // Getter/Setter methods for tax id.

@@ -262,6 +262,12 @@ public interface EditUserI extends Serializable {
      */
     public NewtServerProxy getNewtProxy(URL url);
 
+    /**
+     * Returns the help tag for the current view bean.
+     * @return the help tag for the current view bean as a String object.
+     */
+    public String getHelpTag();
+
     // Session methods
 
     /**

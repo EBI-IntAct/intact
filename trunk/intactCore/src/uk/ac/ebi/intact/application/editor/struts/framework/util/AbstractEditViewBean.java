@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException;
@@ -455,6 +456,16 @@ public abstract class AbstractEditViewBean {
      */
     public void setLayout(ComponentContext context) {
         // Empty
+    }
+
+    /**
+     * Returns the help tag link for the current view bean; subclasses must
+     * override this method to return the help tag (if necessary) or else the
+     * link to the CV editor is returned.
+     * @return the tag as a String for the current view bean.
+     */
+    public String getHelpTag() {
+        return "cv.editors";
     }
 
     /**

@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentException;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -82,6 +83,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     // Ovverride to provide Experiment layout.
     public void setLayout(ComponentContext context) {
         context.putAttribute("content", "edit.exp.layout");
+    }
+
+    // Override to provide Experiment help tag.
+    public String getHelpTag() {
+        return "experiment";
     }
 
     // Null for any of these values will throw an exception.
