@@ -26,7 +26,17 @@ DECLARE
    l_comma char(1):=',';
 begin
 
-   for r_tab in (select table_name from user_tables where table_name not like '%AUDIT' )
+   for r_tab in (select table_name 
+                 from   user_tables 
+                 where  table_name not like '%AUDIT' 
+                 and    table_name not in
+                        ( 'IA_GODENS_BINARY'
+                         ,'IA_GODENS_GODAG'
+                         ,'IA_GODENS_GODAGDENORM'
+                         ,'IA_GODENS_GOPROT'
+                         ,'IA_GODENS_DENSITY'
+                        )      
+                )
    loop
 
       dbms_output.put_line ('PROMPT Creating table "'||lower(r_tab.table_name)||'_audit"');

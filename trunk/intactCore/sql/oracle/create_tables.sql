@@ -836,10 +836,10 @@ TABLESPACE &&intactMainTablespace
 PCTFREE    15
 /
 
-CREATE INDEX igoBaitkey ON ia_goDens_binary (goBait) TABLESPACE &&intactIndexTablespace
+CREATE INDEX igoBaitkey ON ia_goDens_binary (goBait) reverse TABLESPACE &&intactIndexTablespace
 /
 
-CREATE INDEX igoPreykey ON ia_goDens_binary (goPrey) TABLESPACE &&intactIndexTablespace
+CREATE INDEX igoPreykey ON ia_goDens_binary (goPrey) reverse TABLESPACE &&intactIndexTablespace
 /
 
 
@@ -855,10 +855,10 @@ TABLESPACE &&intactMainTablespace
 PCTFREE    15
 /
 
-CREATE INDEX iGoParent ON ia_goDens_GoDag (parent) TABLESPACE &&intactIndexTablespace
+CREATE INDEX iGoParent ON ia_goDens_GoDag (parent) reverse TABLESPACE &&intactIndexTablespace
 /
 
-CREATE INDEX iGoChild ON ia_goDens_GoDag (child) TABLESPACE &&intactIndexTablespace
+CREATE INDEX iGoChild ON ia_goDens_GoDag (child) reverse TABLESPACE &&intactIndexTablespace
 /
 
 
@@ -875,7 +875,7 @@ PCTFREE    15
 /
 
 
-CREATE INDEX iGoParentDenorm ON ia_goDens_GoDagDenorm (parent) TABLESPACE &&intactIndexTablespace
+CREATE INDEX iGoParentDenorm ON ia_goDens_GoDagDenorm (parent) reverse TABLESPACE &&intactIndexTablespace
 /
 
 
@@ -889,7 +889,7 @@ TABLESPACE &&intactMainTablespace
 PCTFREE    15
 /
 
-CREATE INDEX iGoId ON ia_goDens_GoProt (goid) TABLESPACE &&intactIndexTablespace
+CREATE INDEX iGoId ON ia_goDens_GoProt (goid) reverse TABLESPACE &&intactIndexTablespace
 /
 
 PROMPT Creating table "ia_goDens_density"
@@ -904,9 +904,9 @@ TABLESPACE &&intactMainTablespace
 PCTFREE    15
 /
 
-CREATE INDEX igoId1 ON ia_goDens_density(goid1) TABLESPACE &&intactIndexTablespace
+CREATE INDEX igoId1 ON ia_goDens_density(goid1) reverse TABLESPACE &&intactIndexTablespace
 /
-CREATE INDEX igoId2 ON ia_goDens_density(goid2) TABLESPACE &&intactIndexTablespace
+CREATE INDEX igoId2 ON ia_goDens_density(goid2) reverse TABLESPACE &&intactIndexTablespace
 /
 
 
