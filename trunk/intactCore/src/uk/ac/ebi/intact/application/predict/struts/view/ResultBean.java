@@ -14,7 +14,7 @@ import java.util.Iterator;
 
 /**
  *
- * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
 public class ResultBean {
@@ -37,26 +37,10 @@ public class ResultBean {
     public ResultBean(Protein protein, int rank) throws IntactException {
         myRank = rank;
         myFullName = protein.getFullName();
+        myShortLabelLink = "<a href=\"" + "javascript:show('Protein', '"
+                + protein.getShortLabel() + "')\">" + protein.getShortLabel()
+                + "</a>";
 
-        // The primary id link.
-        String link = XrefHelper.getEmptyLink();
-
-        // Boolean flag set to true when a proper link is found.
-        boolean linkFound = false;
-
-        // Get all the xrefs and iterate through them.
-        for (Iterator iter = protein.getXrefs().iterator(); iter.hasNext();) {
-            link = XrefHelper.getPrimaryIdLink((Xref) iter.next());
-            if (link.startsWith("http://")) {
-                // Found a non empty link.
-                linkFound = true;
-                break;
-            }
-        }
-        // javascipt to display the link is only for a valid link.
-        myShortLabelLink = linkFound ?
-                "<a href=\"" + "javascript:showProtein('" + link + "')\">"
-                + protein.getShortLabel() + "</a>" : link;
     }
 
     // Get methods to access info from JSP pages.
