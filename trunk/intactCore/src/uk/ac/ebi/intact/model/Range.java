@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import java.util.ArrayList;
+
 /**
  * <p>
  * Represents a location on a sequence.
@@ -148,7 +150,6 @@ public class Range extends BasicObjectImpl {
      * the following defined:
      *
      * @param owner the owner of this range.
-     * @param parent the parent of this range; must not be null and must have an AC.
      * @param fromStart The starting point of the 'from' interval for the Range.
      * @param fromEnd The end point of the 'from' interval.
      * @param toStart The starting point of the 'to' interval of the Range
@@ -162,18 +163,9 @@ public class Range extends BasicObjectImpl {
      * but '-3 to -8', '12 to 1' and  '5 to -7' are <b>not</b>.
      * </p>
      */
-    public Range (Institution owner, Feature parent, int fromStart, int fromEnd, int toStart, int toEnd, String seq) {
+    public Range(Institution owner, int fromStart, int fromEnd, int toStart, int toEnd, String seq) {
         //NB negative intervals are allowed!! This needs more sophisticated checking..
         super(owner);
-
-        // Range must have a Feature.
-        if (parent == null) {
-            throw new NullPointerException("Parent can't be null");
-        }
-        if (parent.getAc() == null) {
-            throw new IllegalArgumentException("Parent feature must have an AC");
-        }
-        this.featureAc = parent.getAc();
 
         if (fromEnd < fromStart) throw new IllegalArgumentException ("End of 'from' interval must be bigger than the start!");
         if (toEnd < toStart) throw new IllegalArgumentException ("End of 'to' interval must be bigger than the start!");
@@ -255,6 +247,10 @@ public class Range extends BasicObjectImpl {
         toCvFuzzyType = type;
     }
 
+    public void setParentAc(String parentAc) {
+        this.featureAc = parentAc;
+    }
+
     /**
      * Equality for Ranges is currently based on equality for
      * <code>Modification</code>, position from and position to (ints).
@@ -313,6 +309,19 @@ public class Range extends BasicObjectImpl {
         result = 29 * result + sequence.hashCode();
 
         return result;
+    }
+
+    /**
+     * Returns a cloned version of the current object.
+     * @return a cloned version of the current Range. The fuzzy types
+     * are not cloned (shared).
+     * @throws CloneNotSupportedException for errors in cloning this object.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        Range copy = (Range) super.clone();
+        // Reset the parent ac.
+        copy.featureAc = null;
+        return copy;
     }
 
     //---------------- private utility methods -----------------------
