@@ -8,10 +8,10 @@ package uk.ac.ebi.intact.struts.service;
 
 import uk.ac.ebi.intact.struts.framework.exceptions.InvalidLoginException;
 import uk.ac.ebi.intact.struts.framework.exceptions.MissingIntactTypesException;
-import uk.ac.ebi.intact.core.business.IntactHelper;
-import uk.ac.ebi.intact.core.business.IntactException;
-import uk.ac.ebi.intact.core.persistence.DAO;
-import uk.ac.ebi.intact.core.persistence.DataSourceException;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.DAO;
+import uk.ac.ebi.intact.persistence.DataSourceException;
 
 import java.util.ResourceBundle;
 import java.util.Map;

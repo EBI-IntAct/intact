@@ -11,14 +11,14 @@ import java.beans.*;
 
 import uk.ac.ebi.intact.struts.framework.exceptions.InvalidLoginException;
 import uk.ac.ebi.intact.struts.framework.exceptions.MissingIntactTypesException;
-import uk.ac.ebi.intact.core.persistence.*;
-import uk.ac.ebi.intact.core.model.Constants;
-import uk.ac.ebi.intact.core.model.CvTopic;
-import uk.ac.ebi.intact.core.model.CvObject;
-import uk.ac.ebi.intact.core.model.CvDatabase;
-import uk.ac.ebi.intact.core.util.Key;
-import uk.ac.ebi.intact.core.business.IntactHelper;
-import uk.ac.ebi.intact.core.business.IntactException;
+import uk.ac.ebi.intact.persistence.*;
+import uk.ac.ebi.intact.model.Constants;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.util.Key;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.ServletException;
 
