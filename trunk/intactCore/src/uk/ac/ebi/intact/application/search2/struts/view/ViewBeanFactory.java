@@ -56,7 +56,8 @@ public class ViewBeanFactory {
      */
     private static Map ourBeanToBinaryView = new HashMap ();
 
-    // Stores the beans to create in a map.
+    // Stores the beans to create in a map. Make sure to update HtmlBuilder when you
+    // add a new view bean.
     static {
         // Details view beans.
         ourBeanToDetailsView.put ( Experiment.class, DetailsViewBean.class );
@@ -71,6 +72,7 @@ public class ViewBeanFactory {
         ourBeanToSingleItemView.put ( CvXrefQualifier.class, SingleViewBean.class );
         ourBeanToSingleItemView.put ( CvTopic.class, SingleViewBean.class );
         ourBeanToSingleItemView.put ( CvInteraction.class, SingleViewBean.class );
+        ourBeanToSingleItemView.put ( CvInteractionType.class, SingleViewBean.class );
         ourBeanToSingleItemView.put ( CvComponentRole.class, SingleViewBean.class );
         ourBeanToSingleItemView.put ( CvIdentification.class, SingleViewBean.class );
         ourBeanToSingleItemView.put ( BioSource.class, SingleViewBean.class );
