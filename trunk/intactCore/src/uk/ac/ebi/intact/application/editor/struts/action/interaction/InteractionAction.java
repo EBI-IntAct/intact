@@ -56,7 +56,6 @@ public class InteractionAction extends AbstractEditorAction {
         view.setKD((Float) theForm.get("kD"));
         view.setOrganism((String) theForm.get("organism"));
         view.setInteractionType((String) theForm.get("interactionType"));
-//        view.setExperiment((String) theForm.get("experiment"));
 
         // Clear previous entries and reset to the default values.
         theForm.reset(mapping, request);
