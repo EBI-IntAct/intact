@@ -23,14 +23,6 @@ public interface Storage {
     public static final int EDGE_TO_PARENT = 2;
 
     /**
-     * Returns all objects for the given vertex which are stored
-     * 
-     * @param v the vertex
-     * @return the objects belonging to the vertex
-     */
-    public Object[] getElements(Vertex v);
-
-    /**
      * Returns a specific element for a given vertex
      * 
      * @param v the vertex

@@ -16,35 +16,39 @@ import jdsl.graph.api.Graph;
  * @author Andreas Groscurth
  */
 public class MineData implements Serializable {
-	private Graph graph;
-	private Map accMap;
-	
-	/**
-	 * Creates a new MineData object
-	 * 
-	 * @param g the graph
-	 * @param m the accession nr map
-	 */
-	public MineData(Graph g, Map m) {
-		graph = g;
-		accMap = m;
-	}
+    private Graph graph;
+    private Map accMap;
 
-	/**
-	 * Returns the accession nr map
-	 * 
-	 * @return the accnr map
-	 */
-	public Map getAccMap() {
-		return accMap;
-	}
+    /**
+     * Creates a new MineData object
+     * 
+     * @param g the graph
+     * @param m the accession nr map
+     */
+    public MineData(Graph g, Map m) {
+        if (g == null || m == null) {
+            throw new IllegalArgumentException("neither the graph"
+                    + "nor the map are allowed to be null !");
+        }
+        graph = g;
+        accMap = m;
+    }
 
-	/**
-	 * Returns the graph
-	 * 
-	 * @return the graph
-	 */
-	public Graph getGraph() {
-		return graph;
-	}
+    /**
+     * Returns the accession nr map
+     * 
+     * @return the accnr map
+     */
+    public Map getAccMap() {
+        return accMap;
+    }
+
+    /**
+     * Returns the graph
+     * 
+     * @return the graph
+     */
+    public Graph getGraph() {
+        return graph;
+    }
 }

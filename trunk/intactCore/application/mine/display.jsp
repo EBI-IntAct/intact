@@ -12,7 +12,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 
-<html:html>
+<html>
 <head>
      <title>IntAct MiNe: external request management</title>
 </head>
@@ -32,4 +32,4 @@
         //-->
     </script>
 </body>
-</html:html>
+</html>
