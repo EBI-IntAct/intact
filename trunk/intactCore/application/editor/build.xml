@@ -30,8 +30,12 @@
     <!-- This project specific paths. -->
     <property name="src.dir" value="src"/>
     <property name="lib.dir" value="WEB-INF/lib"/>
-    <property name="tld.dir" value="WEB-INF/tld"/>
-    <property name="dest.dir" value="WEB-INF/classes"/>
+
+    <!-- A snapshot of the war file -->
+    <property name="temp.web" value="temp-web"/>
+
+    <!--    <property name="tld.dir" value="WEB-INF/tld"/>-->
+    <property name="dest.dir" value="${temp.web}/WEB-INF/classes"/>
     <property name="docs.dir" value="doc/api"/>
 
     <!-- editor package root. -->
@@ -96,6 +100,14 @@
     <target name="clean" description="Prepare for clean build">
         <!-- Delete directories first -->
         <delete dir="${dest.dir}"/>
+        <delete dir="${docs.dir}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Cleans temp-web and docs directories  -->
+    <target name="clean-all" description="Prepare for a new war file">
+        <delete dir="${temp.web}"/>
         <delete dir="${docs.dir}"/>
     </target>
 
@@ -188,40 +200,46 @@
 
     <target name="build-war" depends="compile">
 
-        <!-- Create the distribution dir if it doesn't exist. -->
-        <mkdir dir="${dist.dir}"/>
+        <!-- Copy XML (configuration) files -->
+        <copy todir="${temp.web}/WEB-INF">
+            <fileset dir="WEB-INF">
+                <include name="*.xml"/>
+                <exclude name="web.xml"/>
+            </fileset>
+        </copy>
 
-        <!-- Create local directories to copy common files. -->
-        <mkdir dir="${basedir}/layouts/styles"/>
-        <mkdir dir="${basedir}/images"/>
-        <mkdir dir="${basedir}/${tld.dir}"/>
-
-        <!-- Common layouts -->
-        <copy todir="${basedir}/layouts">
+        <!-- Common/Editor layouts -->
+        <copy todir="${temp.web}/layouts">
             <fileset dir="${intact.app.dir}/layouts">
                 <!-- Don't need any frame lauyouts for this application -->
                 <exclude name="*Frame.jsp"/>
                 <!--  No EBI header for this application (yet) -->
                 <exclude name="ebiHeaderLayout.jsp"/>
             </fileset>
+            <!-- Editor specific layouts -->
+            <fileset dir="layouts"/>
         </copy>
+
         <!-- Common images -->
-        <copy todir="${basedir}/images">
+        <copy todir="${temp.web}/images">
             <fileset dir="${intact.app.dir}/images"/>
         </copy>
-        <!-- Common jsp files -->
-        <copy todir="${basedir}/pages">
+
+        <!-- Common/Editor jsp files -->
+        <copy todir="${temp.web}/pages">
             <fileset dir="${intact.app.dir}/pages">
                 <!-- Don't need error frame JSP for this application -->
                 <exclude name="errorFrame.jsp"/>
             </fileset>
+            <!-- Editor specific pages -->
+            <fileset dir="pages"/>
         </copy>
 
-        <!-- Delete the war file or else it will keep the old one -->
-        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+        <!-- The welcome file at the root. -->
+        <copy file="welcome.jsp" todir="${temp.web}"/>
 
-        <!-- Copy struts standard tld files -->
-        <copy todir="${tld.dir}">
+         <!-- Common struts standard tld files -->
+        <copy todir="${temp.web}/WEB-INF/tld">
             <fileset dir="${intact.app.dir}/tld">
                 <include name="*.tld"/>
                 <!-- Don't need intact.tld for this application -->
@@ -229,43 +247,40 @@
             </fileset>
         </copy>
 
+        <!-- Copy jar files -->
+        <copy todir="${temp.web}/WEB-INF/lib">
+            <!-- Editor specific jar files. -->
+            <fileset dir="WEB-INF/lib"/>
+            <!-- Inlcude the intact core -->
+            <fileset dir="${root.dist.dir}"/>
+            <!-- Inlcude application common jar files. -->
+            <fileset dir="${intact.app.dir}/lib"/>
+            <!-- Include required jar files from intact core. -->
+            <fileset dir="${root.lib.dir}">
+                <include name="jakarta-ojb-0.9.7.jar"/>
+                <include name="log4j-1.2.5.jar"/>
+                <include name="${db}"/>
+            </fileset>
+        </copy>
+
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}"/>
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
         <!-- Generate editor topics -->
         <!--        <antcall target="gen-editor-topics"/>-->
 
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
-            <fileset dir="${basedir}">
-                <include name="*.jsp"/>
-                <include name="*.css"/>
-                <include name="WEB-INF/struts-config.xml"/>
-                <include name="WEB-INF/tiles-defs.xml"/>
-                <include name="WEB-INF/validat*.xml"/>
-                <include name="${tld.dir}/**"/>
+            <fileset dir="${temp.web}">
+                <include name="welcome.jsp"/>
                 <include name="images/*"/>
                 <include name="pages/**"/>
                 <include name="layouts/**"/>
             </fileset>
 
-            <!-- Include editor specific jar files. -->
-            <lib dir="${lib.dir}">
-                <!-- Avoid NFS temp files (occationally) -->
-                <include name="*.jar"/>
-            </lib>
-
-            <!-- Inlcude the intact core -->
-            <lib dir="${root.dist.dir}"/>
-
-            <!-- Include common jar files for struts. -->
-            <lib dir="${intact.app.dir}/lib"/>
-
-            <!-- Include common jar files from intact core. -->
-            <lib dir="${root.lib.dir}">
-                <include name="jakarta-ojb-0.9.7.jar"/>
-                <include name="log4j-1.2.5.jar"/>
-                <include name="${db}"/>
-            </lib>
-
-            <!-- editor specific classes -->
-            <classes dir="${dest.dir}"/>
+            <webinf dir="${temp.web}/WEB-INF"/>
         </war>
     </target>
 
