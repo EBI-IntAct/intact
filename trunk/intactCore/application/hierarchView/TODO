@@ -7,22 +7,19 @@ T O   D O
 
 
 
+- in the startup create a logger object and put it in the context to allow better tracing.
+
+- Find a way to check if a web service is currently running (in the runtime)
+  test could be done when a new user is lauching the first page !
+
 + Check if the current use of Struts couldn't be improved
   + refactoring the package architecture
   - Storing the ActionBean instead of each data separetly
+  - take advantage of Struts 1.1 to remove all Form and let Struts generate ans manage them.
 
 + Contact David Binns to go on colaboration
   + mail sent on 29.1.2003 to ask for a talk
   - See the current state of Interpro and how it's possible to integrate our features
-
-+ Remove all internal links in Interpro
-  + modifying the simple.xsl file to customize our displaying (given to David Binns)
-
-- Detect during the Build process if every configuration file have been customized
-  if not don't allow to start Tomcat and display a meaningfull message.
-
-- IntAct software workshop notes
-  - Hierarchview: Database timeouts and limited number of connections need to be caught.
 
 + See with Florian Iragne (forian.iragne@labri.fr, Bordeaux)
    + Test the Turender web service
@@ -58,8 +55,6 @@ T O   D O
 	functionality is downloaded. And .jar and .class files does get
 	cached by most browsers. 
 
-- Find a way to check if a web service is currently running (in the runtime)
-
 - solve browser behaviour problem
 	o Netscape, remove frames
 
@@ -84,11 +79,37 @@ WAIT FOR INTEGRATION IN BORDEAUX ...
   - Color of selected (the one given in the form) and non selected proteins
   - Cventually boldness of them all
 
+
+
+
+
 ====================================
               D O N E
 ====================================
 
+(05.02.2003)
++ Detect during the Build process if every configuration file have been customized
+  if not don't allow to build a war and display a meaningfull message.
+  + In WebService.properties
+    + console location
+    + web service hostname
+  + In Highlighting.properties
+    + interpro hostname
 
+(05.02.2003)
++ create a custom tag which redirect to the index page if something is not well set (datasource, web service)
+
+(04.02.2003)
++ put in a properties file the hostname of the interpro application !
+  cf. GOHighlightmentSource.java
+
+(04.02.2003)
++ Improve the web service managment by deploying it in the run time.
+
+(03.02.2003)
++ IntAct software workshop notes
+  + Hierarchview: Database timeouts
+  + Hierarchview: limited number of connections need to be caught.
 
 + Create a Custom Tag to initialize the session at startup of the application
   + Store in the session an IntactHelper (cf. Sugath) to solve the current
@@ -106,6 +127,9 @@ WAIT FOR INTEGRATION IN BORDEAUX ...
 
 + Write an installation note
    + cf intactCore/application/hierarchView/README
+
++ Remove all internal links in Interpro
+  + modifying the simple.xsl file to customize our displaying (given to David Binns)
 
 + Presents to Sugath the new architecture to generate picture !
   generate svg and the servlet build on the fly the image according to parameters (format ...)
