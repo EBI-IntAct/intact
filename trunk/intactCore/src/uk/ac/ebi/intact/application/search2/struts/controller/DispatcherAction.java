@@ -69,13 +69,14 @@ public class DispatcherAction extends IntactBaseAction {
 
         // dispatch to the right action accordingly
         logger.info( "First item className: " + resultItem.getClass().getName() );
-        if( resultItem.getClass().isAssignableFrom( ProteinProxy.class ) ||
-            resultItem.getClass().isAssignableFrom( Protein.class ) ) {
+        if(Protein.class.isAssignableFrom(resultItem.getClass())) {
 
             if( ( results.size() == 1 ) ) {
                 String searchClass = user.getSearchClass();
                 logger.info( "SearchClass: " + searchClass );
 
+                //check to see if the request came from a link on a page
+                //(ie searchClass is non-empty) - if so, do a single view
                 if( searchClass.equals( "Protein" ) || searchClass.equals( "ProteinImpl" ) ) {
                     logger.info( "Dispatcher ask forward to SingleResultAction" );
                     return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
@@ -90,7 +91,8 @@ public class DispatcherAction extends IntactBaseAction {
         }
 
         if( ( results.size() == 1 ) & ( ! Interaction.class.isAssignableFrom( resultItem.getClass() ) ) ) {
-            //only use the single view for Proteins, Experiment and Controlled vocabulary - Interactions
+            //only use the single view for Proteins (dealt with above),
+            //Experiment and Controlled vocabulary - Interactions
             // still need to be displayed in the context of an Experiment
             logger.info( "Dispatcher ask forward to SingleResultAction" );
             return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
