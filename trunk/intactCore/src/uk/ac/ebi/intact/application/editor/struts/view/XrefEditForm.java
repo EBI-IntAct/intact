@@ -31,7 +31,7 @@ public class XrefEditForm extends EditForm {
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
         // The current xref.
-        XreferenceBean xref = (XreferenceBean) getItems()[getIndex()];
+        XreferenceBean xref = (XreferenceBean) getSelectedBean();
         if (xref.getPrimaryId().trim().equals("")) {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
