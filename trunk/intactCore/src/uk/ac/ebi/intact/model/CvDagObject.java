@@ -159,6 +159,11 @@ public abstract class CvDagObject extends CvObject {
             // get an arbitrary element of the target class
             Collection allElements = helper.search(targetClass.getName(),"ac","*");
             Iterator i = allElements.iterator();
+
+            // Check for no items.
+            if (!i.hasNext()) {
+                return menuList;
+            }
             CvDagObject current = (CvDagObject) i.next();
 
             // get the root element
