@@ -57,11 +57,8 @@ public class CvEditAction extends IntactBaseAction {
         // Determine the action taken by the user.
         CvEditForm theForm = (CvEditForm) form;
 
-        // Handler to the Intact User.
-        IntactUserIF user = super.getIntactUser(request);
-
         if (theForm.isSubmitted()) {
-            // Sumbit butoon pressed.
+            // Form submitted.
             formSubmitted(request);
 
             // Any errors in committing the transaction?
@@ -76,7 +73,7 @@ public class CvEditAction extends IntactBaseAction {
         }
         // Either Cancel or form is sumbitted without errors (all changes are
         // committed successfully).
-        return mapping.findForward(super.fwdResultsOrSearch(request));
+        return mapping.findForward(super.getForwardAction(request));
     }
 
     /**
@@ -140,8 +137,8 @@ public class CvEditAction extends IntactBaseAction {
             // Commit all the changes.
             user.commit();
 
-            // Need to update the drop down lists for certain types.
-            user.updateList(cvobj.getClass());
+            // Update the drop down lists for certain types.
+//            user.refreshList();
         }
         catch (IntactException ie1) {
             try {
@@ -153,15 +150,15 @@ public class CvEditAction extends IntactBaseAction {
             }
             // Log the stack trace.
             super.log(ExceptionUtils.getStackTrace(ie1));
-            // Error with committing changes.
-            super.addError("error.transaction.commit", ie1.getNestedMessage());
+            // Error with updating.
+            super.addError("error.update", ie1.getNestedMessage());
             super.saveErrors(request);
         }
-        catch (SearchException se) {
-            // Unable to construct the lists.
-            super.addError("error.search", se.getNestedMessage());
-            super.saveErrors(request);
-        }
+//        catch (SearchException se) {
+//            // Unable to construct the lists.
+//            super.addError("error.search", se.getNestedMessage());
+//            super.saveErrors(request);
+//        }
         finally {
             // Clear containers; regradless of the outcome.
             viewbean.clearTransAnnotations();
