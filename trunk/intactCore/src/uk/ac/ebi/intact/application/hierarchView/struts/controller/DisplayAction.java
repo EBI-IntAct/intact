@@ -132,7 +132,8 @@ public final class DisplayAction extends IntactBaseAction {
 
             session.setAttribute( StrutsConstants.HOST, host );
             session.setAttribute( StrutsConstants.PROTOCOL, protocol );
-
+            session.setAttribute("network", request.getParameter("network"));
+            session.setAttribute("singletons", request.getParameter("singletons"));
             // Save user's data
             user.setQueryString (AC);
             try {
