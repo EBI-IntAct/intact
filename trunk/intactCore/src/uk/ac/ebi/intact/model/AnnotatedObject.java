@@ -246,7 +246,7 @@ public abstract class AnnotatedObject extends BasicObject {
 
     public String toString() {
         return this.getAc() + "; owner=" + this.ownerAc
-                + "; name=" + this.shortLabel + "\n";
+                + "; name=" + this.shortLabel + "; fullname=" + fullName;
     }
 
 } // end AnnotatedObject
