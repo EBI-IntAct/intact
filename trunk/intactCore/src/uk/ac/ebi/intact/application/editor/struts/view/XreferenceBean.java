@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.GoServerProxy;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 /**
  * Bean to store data for x'references.
@@ -61,7 +60,8 @@ public class XreferenceBean extends AbstractEditBean {
     /**
      * Default constructor.
      */
-    public XreferenceBean() {}
+    public XreferenceBean() {
+    }
 
     /**
      * Instantiate an object of this class from a Xref object.
@@ -131,26 +131,14 @@ public class XreferenceBean extends AbstractEditBean {
                 CvDatabase.class, myDatabaseName);
         CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
                 CvXrefQualifier.class, myReferenceQualifer);
-        if (myXref == null) {
-            myXref = new Xref(user.getInstitution(), db, getPrimaryId(),
-                    getSecondaryId(), getReleaseNumber(), xqual);
-        }
-        else {
-            myXref.setCvDatabase(db);
-            myXref.setPrimaryId(myPrimaryId);
-            myXref.setSecondaryId(mySecondaryId);
-            myXref.setDbRelease(myReleaseNumber);
-            myXref.setCvXrefQualifier(xqual);
-        }
+        // Update the existing xref with new values.
+        myXref.setCvDatabase(db);
+        myXref.setPrimaryId(myPrimaryId);
+        myXref.setSecondaryId(mySecondaryId);
+        myXref.setDbRelease(myReleaseNumber);
+        myXref.setCvXrefQualifier(xqual);
         return myXref;
     }
-
-    /**
-     * Returns the reference to the Xref object this instance is created with.
-     */
-//    public Xref getXref() {
-//        return myXref;
-//    }
 
     /**
      * Return the database name.
@@ -300,7 +288,7 @@ public class XreferenceBean extends AbstractEditBean {
 
     /**
      * Resets fields to blanks, so the addXref form doesn't display
-     * previous values. Calls the super reset to reset the internal key.
+     * previous values.
      */
     public void reset() {
         myDatabaseName = "";
