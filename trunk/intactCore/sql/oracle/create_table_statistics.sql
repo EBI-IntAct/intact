@@ -16,13 +16,26 @@
 
 /* This table will record the amount of some specific data in the IntAct database, at a given time */
 
+DROP TRIGGER  TRG_IA_Statistics;
+DROP SEQUENCE Intact_statistics_seq;
+DROP TABLE    IA_Statistics;
+
+
+
+-- Sequence for table's AC
+PROMPT Creating sequence "Intact_statistics_seq"
+CREATE SEQUENCE Intact_statistics_seq
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
 
 
 PROMPT Creating table "IA_Statistics"
 CREATE TABLE IA_Statistics
 (     ac                          INT NOT NULL
                                   CONSTRAINT pk_Statistics
-                                  PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+                                  PRIMARY KEY USING INDEX TABLESPACE USERS
       , timestamp               DATE            DEFAULT  SYSDATE NOT NULL
       , protein_number         NUMBER(10)      DEFAULT  0       NOT NULL
       , interaction_number     NUMBER(10)      DEFAULT  0       NOT NULL
@@ -31,7 +44,8 @@ CREATE TABLE IA_Statistics
       , experiment_number      NUMBER(10)      DEFAULT  0       NOT NULL
       , term_number            NUMBER(10)      DEFAULT  0       NOT NULL
 )
-TABLESPACE &&intactMainTablespace;
+TABLESPACE USERS;
+
 
 set term off
     COMMENT ON TABLE IA_Statistics.timestamp IS
@@ -50,3 +64,19 @@ set term off
     'how many different controlled vocabularies terms are stored in the database'
 set term on
 
+
+
+-- Create the trigger to update the table AC
+PROMPT Creating table "TRG_IA_Statistics"
+CREATE OR REPLACE TRIGGER TRG_IA_Statistics
+BEFORE INSERT
+ON IA_Statistics
+FOR EACH ROW
+BEGIN
+  select Intact_statistics_seq.nextval
+  into :new.ac
+  from dual;
+END;
+
+/
+exit;
