@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.application.statisticView.business.Constants;
 
 import java.util.*;
 import java.sql.Timestamp;
@@ -39,10 +38,26 @@ import org.apache.log4j.Logger;
  */
 public class StatisticsSet {
 
-    static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
+    private Logger logger;
 
-    //------ INSTANCE VARIABLES ----//
-    private ArrayList statCollection = null;
+    // ------ CONSTRUCTORS --------- //
+
+    /**
+     * Allows to create an instance with a default logger
+     */
+    public StatisticsSet () {
+        this(StatisticsSet.class.getName());
+    }
+
+    /**
+     * If you want to have a logging facilities from that class you have to give your
+     * own logger name.
+     * @param loggername the name of your Log4J logger
+     */
+    public StatisticsSet (String loggername) {
+         logger = Logger.getLogger(loggername);
+    }
+
 
 
     //--------- PROTECTED METHOD ---------------------//
@@ -55,13 +70,14 @@ public class StatisticsSet {
      * The null parameter in the search method means to retrieve all the data from a table via OJB
      * and JDBC.
      *
-     * As that method can be called by several thread simultaneously, collection data can be corrupted
-     * if the method is not synchronized.
+     * todo : would be nice to implement a caching system,
      *
      * @param helper One instance of the IntactHelper class has to be passed in parameter, to
      *               use the search method.
      */
-    private synchronized void getAllStatisticsIntAct (IntactHelper helper) throws IntactException {
+    private ArrayList getAllStatisticsIntAct (IntactHelper helper) throws IntactException {
+
+        ArrayList statCollection = null;
 
         try {
             // search method to get the IntactStatistics object and all statistics in IntAct
@@ -97,22 +113,26 @@ public class StatisticsSet {
                 int expNumber      = intStat.getNumberOfExperiments();
                 int termNumber     = intStat.getNumberOfGoTerms();
 
-                logger.info (timestamp + " " +
-                             protNumber + " " +
-                             interNumber + " " +
-                             binInterNumber + " " +
-                             complexNumber + " "+
-                             expNumber +" " +
-                             termNumber);
+                if (null != logger) logger.info (timestamp + " " +
+                                                 protNumber + " " +
+                                                 interNumber + " " +
+                                                 binInterNumber + " " +
+                                                 complexNumber + " "+
+                                                 expNumber +" " +
+                                                 termNumber);
 
                 statCollection.add (oneRow);
+
+
             }
         }
         catch (IntactException ie) {
-            logger.error ("when trying to get all statistics, cause: " + ie.getRootCause(), ie);
+            if (null != logger)
+                logger.error ("when trying to get all statistics, cause: " + ie.getRootCause(), ie);
             throw ie;
         }
 
+        return statCollection;
     }
 
     /**
@@ -121,9 +141,10 @@ public class StatisticsSet {
      * @param helper to call the getAllStatisticsIntAct method
      * @return Timestamp the timestamp of the last line in the Statistics table
      */
-    public Timestamp getLastTimestamp(IntactHelper helper) throws IntactException{
-            getAllStatisticsIntAct(helper);
-            ArrayList lastRow = (ArrayList) statCollection.get (statCollection.size()-1);
+    public Timestamp getLastTimestamp(IntactHelper helper)
+            throws IntactException{
+            ArrayList stats = getAllStatisticsIntAct(helper);
+            ArrayList lastRow = (ArrayList) stats.get (stats.size()-1);
             return (Timestamp) lastRow.get(0);
     }
 
@@ -133,9 +154,10 @@ public class StatisticsSet {
      * @param helper to call the getAllStatisticsIntAct method
      * @return Collection which contains the latest data of the Statistics table
      */
-    public Collection getLastRow (IntactHelper helper) throws IntactException {
-            getAllStatisticsIntAct(helper);
-            return (ArrayList) statCollection.get (statCollection.size()-1);
+    public Collection getLastRow (IntactHelper helper)
+            throws IntactException {
+            ArrayList stats = getAllStatisticsIntAct(helper);
+            return (ArrayList) stats.get (stats.size()-1);
     }
 
     /**
@@ -145,16 +167,17 @@ public class StatisticsSet {
      * @param helper to call the getAllStatisticsIntAct method
      * @return Collection which contains the list of data of one column of the Statistics table
      */
-    public Collection getListOfOneField (IntactHelper helper, int fieldToRetrieve)
+    public Collection getListOfOneField (IntactHelper helper,
+                                                      int fieldToRetrieve)
             throws IntactException {
 
-            getAllStatisticsIntAct(helper);
+            ArrayList stats = getAllStatisticsIntAct(helper);
 
             ArrayList theDataList = new ArrayList();
 
             int i = 0;
-            while ( i < statCollection.size() ) {
-                ArrayList getOneRow = (ArrayList)statCollection.get(i);
+            while ( i < stats.size() ) {
+                ArrayList getOneRow = (ArrayList) stats.get(i);
                 theDataList.add(getOneRow.get(fieldToRetrieve));
                 i++;
             }
