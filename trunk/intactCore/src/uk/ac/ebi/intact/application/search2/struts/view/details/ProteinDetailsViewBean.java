@@ -1,17 +1,20 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.search2.struts.view.details;
 
-import org.apache.commons.collections.CollectionUtils;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Protein;
 
+import java.io.Writer;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.Map;
 
 /**
  *
@@ -31,9 +34,17 @@ public class ProteinDetailsViewBean extends DetailsViewBean {
         super(objects, link);
     }
 
-    public String getHTML() {
 
-        Set experiments = new HashSet();
+
+
+    /**
+     * Building the Protein view in the comtext of the wrapped Proteins' Experiment.
+     *
+     * @param writer the writer to use to write the HTML data out.
+     */
+    public void getHTML( Writer writer ) {
+
+        Map experiments = new HashMap();
 
         // build a collection of distinct experiments from the set of Proteins.
         for (Iterator iterator1 = getWrappedObjects().iterator(); iterator1.hasNext();) {
@@ -62,54 +73,48 @@ public class ProteinDetailsViewBean extends DetailsViewBean {
                     Experiment experiment = (Experiment) iterator2.next();
                     // add a copy of the experiment
 //                    System.out.println("Distinct Experiment: " + experiment.getShortLabel());
-                    experiments.add( new Experiment( experiment ) );
+                    if ( ! experiments.containsKey( experiment.getAc() )){
+                        Experiment ex = createShallowExperiment( experiment );
+                        experiments.put( experiment.getAc(), ex );
+                    }
                 }
             }
         }
 
-        /* for each experiment, limit the interactions to those involving at least
-         * one of the wrapped Protein.
-         */
-        for (Iterator iterator1 = experiments.iterator(); iterator1.hasNext();) {
-            Experiment experiment = (Experiment) iterator1.next();
 
-            Collection interactions = experiment.getInteraction();
-            System.out.println("Experiment: " + experiment.getShortLabel());
+        // build a collection of distinct experiments from the set of Proteins.
+        for (Iterator iterator1 = getWrappedObjects().iterator(); iterator1.hasNext();) {
+            Protein protein = (Protein) iterator1.next();
 
-            /* Check if the interaction involves one of the Protein found.
-             * If so, keep the interaction, else don't display it.
-             */
-            Collection interactionToDisplay = new HashSet( interactions.size() );
-            for (Iterator iterator2 = interactions.iterator(); iterator2.hasNext();) {
-                Interaction interaction = (Interaction) iterator2.next();
-//                System.out.println("Interaction: " + interaction.getShortLabel());
+            // TODO could be pushed as isOrphan() in the Protein class.
+            // We skip all orphan protein.
+            Collection activeInstance = protein.getActiveInstance();
+            if (activeInstance == null || activeInstance.size() == 0) {
+                continue;
+            }
 
-                Collection components = interaction.getComponent();
-//                System.out.println( components.size() + " components");
-                Collection proteins = new HashSet( components.size() );
-                for (Iterator iterator3 = components.iterator(); iterator3.hasNext();) {
-                    Component component = (Component) iterator3.next();
-                    Interactor interactor = component.getInteractor();
-                    if (interactor instanceof Protein) {
-                        proteins.add(interactor);
-                    }
+            Collection components = protein.getActiveInstance();
+
+            // get all Interaction involving that Protein
+            for (Iterator iterator2 = components.iterator(); iterator2.hasNext();) {
+                Component component = (Component) iterator2.next();
+                Interaction interaction = component.getInteraction();
+
+                Collection int_exps = interaction.getExperiment();
+                for ( Iterator iterator3 = int_exps.iterator (); iterator3.hasNext (); ) {
+                    Experiment experiment = (Experiment) iterator3.next ();
+                    Experiment ex = (Experiment) experiments.get( experiment.getAc() );
+                    ex.addInteraction( interaction );
                 }
-
-                Collection result = CollectionUtils.intersection( proteins, getWrappedObjects() );
-                if ( false == result.isEmpty() ) {
-                    interactionToDisplay.add( interaction );
-                }
-            } // interaction
-
-            experiment.setInteraction( interactionToDisplay );
-        } // experiments
+            }
+        }
 
         // The order is important: initialize the map before resetting the
         // wrapped object or else it will use the short labels of experiments.
         initHighlightMap();
-        setWrappedObjects( experiments );
+        setWrappedObjects( experiments.values() );
 
-        // sends bach the HTML content
-        return super.getHTML();
+        // write the HTML content
+        super.getHTML( writer );
     }
 }
