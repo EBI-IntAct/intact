@@ -97,11 +97,11 @@ public class SanityChecker {
                                             "\n" + "------------------------------------------------" + NEW_LINE);
 
         interactionWithNoCategoriesCheck =
-                new StringBuffer("Interactions with no categories (bait-prey, target-agent, neutral, complex, self)" +
+                new StringBuffer("Interactions with no categories (bait-prey, target-agent, neutral, complex, self, unspecified)" +
                                  "\n" + "---------------------------------------------------------------------" + NEW_LINE);
 
         interactionWithMixedComponentCategoriesCheck =
-                new StringBuffer("Interactions with mixed categories (bait-prey, target-agent, neutral, complex, self)" +
+                new StringBuffer("Interactions with mixed categories (bait-prey, target-agent, neutral, complex, self, unspecified)" +
                                  "\n" + "---------------------------------------------------------------------" + NEW_LINE);
 
         interactionWithNoBaitCheck = new StringBuffer("Interactions with no bait" +
@@ -261,13 +261,14 @@ public class SanityChecker {
             Interaction interaction = (Interaction) it.next();
 
             Collection components = interaction.getComponents();
-            int preyCount    = 0,
-                baitCount    = 0,
-                agentCount   = 0,
-                targetCount  = 0,
-                neutralCount = 0,
-                selfCount    = 0,
-                complexCount = 0;
+            int preyCount        = 0,
+                baitCount        = 0,
+                agentCount       = 0,
+                targetCount      = 0,
+                neutralCount     = 0,
+                selfCount        = 0,
+                complexCount     = 0,
+                unspecifiedCount = 0;
             float selfStoichiometry = 0;
             float neutralStoichiometry = 0;
 
@@ -291,6 +292,8 @@ public class SanityChecker {
                     selfStoichiometry = component.getStoichiometry();
                 } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "complex" )) {
                     complexCount++;
+                } else if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "unspecified" )) {
+                    unspecifiedCount++;
                 }
             }
 
@@ -310,8 +313,9 @@ public class SanityChecker {
             int neutral     = (neutralCount > 0 ? 1 : 0);
             int self        = (selfCount > 0 ? 1 : 0);
             int complex     = (complexCount > 0 ? 1 : 0);
+            int unspecified = (unspecifiedCount > 0 ? 1 : 0);
 
-            int categoryCount = baitPrey + targetAgent + neutral + self + complex;
+            int categoryCount = baitPrey + targetAgent + neutral + self + complex + unspecified;
 
             switch ( categoryCount ) {
                 case 0:
