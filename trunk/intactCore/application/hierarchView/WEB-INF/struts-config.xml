@@ -127,7 +127,11 @@
             <forward name="success" path="hierarchView.selectedSource.layout"/>
 
         </action>
-
+		
+		<!-- Clears the path highlighting if the application was called by MiNe -->
+		<action path="/clearMinePath"
+                type="uk.ac.ebi.intact.application.hierarchView.struts.controller.ClearMinePathAction"
+                scope="request"/>
     </action-mappings>
 
     <!-- ============ Plug Ins Configuration ================================== -->

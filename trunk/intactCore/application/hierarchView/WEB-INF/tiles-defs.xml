@@ -85,6 +85,7 @@
         <put name="graph"  value="/pages/sidebarGraph.jsp"/>
         <put name="click"  value="/pages/sidebarClickBehaviour.jsp"/>
         <put name="psi"    value="/pages/sidebarPsiDownload.jsp"/>
+		<put name="mine"   value="/pages/sidebarMine.jsp"/>
     </definition>
 
     <!-- Sidebar for the search page -->
