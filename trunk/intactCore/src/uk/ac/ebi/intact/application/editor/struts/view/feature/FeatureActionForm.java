@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -35,7 +36,7 @@ public class FeatureActionForm extends EditorActionForm {
      * The pattern to match for a mutation entry.
      * Patern: starts with an alpha character, followed by digits and an alpha char.
      */
-    public static final Pattern MUT_ITEM_REGX = Pattern.compile("^[a-z]+(\\d+)[a-z]+$");
+    public static final Pattern MUT_ITEM_REGX = Pattern.compile("^([a-z]+)(\\d+)([a-z]+)$");
 
     /**
      * The parent ac
@@ -214,13 +215,10 @@ public class FeatureActionForm extends EditorActionForm {
         // Trap errors for Saving/Submitting the feature.
         else if (dispatch.equals(msgres.getMessage("button.submit"))
                 || dispatch.equals(msgres.getMessage("button.save.continue"))) {
-            // Check the full name for Feature mutations.
-            EditorService service = (EditorService)
-                    super.getServlet().getServletContext().getAttribute(EditorConstants.EDITOR_SERVICE);
             // Do the mutation specific validation in mutation mode.
             if (myMutationState) {
-                System.out.println("Just about to do mutation validation");
-                errors = validateMutations(service);
+                // Check the full name for Feature mutations.
+                errors = validateMutations();
             }
             else {
                 // Must have ranges.
@@ -236,6 +234,18 @@ public class FeatureActionForm extends EditorActionForm {
             }
         }
         return errors;
+    }
+
+    /**
+     * This method is pulrely for testing hte validation of mutations.
+     * @param fullname
+     * @param featureSep
+     * @param rangeSep
+     * @return
+     */
+    public ActionErrors testValidateMutations(String fullname, String featureSep,
+                                              String rangeSep) {
+        return doValidateMutations(fullname, featureSep, rangeSep);
     }
 
     /**
@@ -261,12 +271,28 @@ public class FeatureActionForm extends EditorActionForm {
         return errors;
     }
 
-    private ActionErrors validateMutations(EditorService service) {
+    private ActionErrors validateMutations() {
+        EditorService service = (EditorService)
+                super.getServlet().getServletContext().getAttribute(EditorConstants.EDITOR_SERVICE);
+
+        String featureSep = service.getResource("mutation.feature.sep");
+        String rangeSep = service.getResource("mutation.range.sep");
+        return doValidateMutations(getFullName(), featureSep, rangeSep);
+    }
+
+    /**
+     * Does the mutation validation  here. Need this method for testing.
+     * @param text the text to do the validation
+     * @param featureSep the separator char for a feature
+     * @param rangeSep the seprator char for a range
+     * @return may be null if there no errors.
+     */
+    private static ActionErrors doValidateMutations(String text, String featureSep,
+                                                    String rangeSep) {
         // The errors to return.
         ActionErrors errors = null;
 
-        StringTokenizer stk1 = new StringTokenizer(getFullName(),
-                service.getResource("mutation.feature.sep"));
+        StringTokenizer stk1 = new StringTokenizer(text, featureSep);
         if (!stk1.hasMoreTokens()) {
             // No Features given in the full name.
             errors = new ActionErrors();
@@ -276,33 +302,64 @@ public class FeatureActionForm extends EditorActionForm {
         }
         // Found some features.
 
-        // The range separator.
-        String sep = service.getResource("mutation.range.sep");
+        // Collector for range values.
+        List rangeValues = new ArrayList();
         do {
+            rangeValues.clear();
             String feature = stk1.nextToken();
-            StringTokenizer stk2 = new StringTokenizer(feature, sep);
+            StringTokenizer stk2 = new StringTokenizer(feature, rangeSep);
             if (!stk2.hasMoreTokens()) {
                 // Only a single range specified
-                errors = validateMutationElement(feature);
+                errors = validateMutationElement(feature.trim(), rangeValues);
                 continue;
             }
             do {
                 // Ranges specified
-                errors = validateMutationElement(stk2.nextToken());
-            } while (stk2.hasMoreTokens() && (errors == null));
-        } while (stk1.hasMoreTokens() && (errors == null));
+                String range = stk2.nextToken().trim();
+                errors = validateMutationElement(range, rangeValues);
+            }
+            while (stk2.hasMoreTokens() && (errors == null));
+        }
+        while (stk1.hasMoreTokens() && (errors == null));
         return errors;
     }
 
-    private ActionErrors validateMutationElement(String element) {
-        Matcher matcher = MUT_ITEM_REGX.matcher(element.trim());
-        if (!matcher.matches()) {
-            // Invalid entry.
-            ActionErrors errors = new ActionErrors();
-            errors.add("feature.mutation.invalid",
-                    new ActionError("error.feature.mutation.invalid", element));
-            return errors;
+    /**
+     * Performs the validation on an individual element.
+     * @param element the element to perform the validation.
+     * @param seen a list of seen ranges for a Feature
+     * @return null if there are no errors.
+     */
+    private static ActionErrors validateMutationElement(String element, List seen) {
+        // The action errors to return.
+        ActionErrors errors = null;
+        Matcher matcher = MUT_ITEM_REGX.matcher(element);
+        if (matcher.matches()) {
+            // The element is in correct format.
+            if (matcher.group(1).equals(matcher.group(3))) {
+                errors = new ActionErrors();
+                errors.add("feature.mutation.invalid",
+                        new ActionError("error.feature.mutation.same", matcher.group(1),
+                                matcher.group(3)));
+            }
+            // A valid element. Check if the range value was seen before or not.
+            if (seen.contains(matcher.group(2))) {
+                errors = new ActionErrors();
+                errors.add("feature.mutation.invalid",
+                        new ActionError("error.feature.mutation.range", element,
+                                matcher.group(2)));
+            }
+            else {
+                // Not seen. Add it to the seen collection.
+                seen.add(matcher.group(2));
+            }
         }
-        return null;
+        else {
+            // Invalid entry.
+            errors = new ActionErrors();
+            errors.add("feature.mutation.invalid",
+                    new ActionError("error.feature.mutation.format", element));
+        }
+        return errors;
     }
 }
