@@ -1,4 +1,3 @@
-<%@ page import="org.apache.commons.beanutils.DynaBean"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -19,18 +18,6 @@
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
-
-<%-- Class wide declarations. --%>
-<%!
-    String formName = "resultForm";
-%>
-
-<%-- Fill the form before the display --%>
-<%
-    DynaBean form = user.getDynaBean(formName, request);
-    user.fillSearchResult(form);
-    request.setAttribute(formName, form);
-%>
 
 Search class: <c:out value="${user.searchClass}"/>
 &nbsp;Query: <c:out value="${user.searchQuery}"/>
