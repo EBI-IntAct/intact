@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.commons.search.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.test.RangeBeanTest;
 
 /**
  * Contains all JUnit Tests class for the
