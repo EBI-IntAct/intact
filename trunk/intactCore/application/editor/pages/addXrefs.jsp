@@ -27,6 +27,10 @@
 <c:set var="dblist" value="${view.addDatabaseMenu}"/>
 <c:set var="qlist" value="${menus['QualifierNames']}"/>
 
+<style type="text/css">
+    <%@ include file="/layouts/styles/editor.css" %>
+</style>
+
 <%-- Adds a new xreferece. This will invoke addXref action. --%>
 <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
@@ -62,12 +66,12 @@
 <%--            <html:reset/>--%>
 <%--        </td>--%>
         <td class="tableCell" align="left" valign="top">
-            <html:select property="xref.database">
+            <html:select property="xref.database" styleClass="inputRequired">
                 <html:options name="dblist" />
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="xref.primaryId" size="15"/>
+            <html:text property="xref.primaryId" size="15" styleClass="inputRequired"/>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:text property="xref.secondaryId" size="15"/>
