@@ -87,8 +87,10 @@
             <form-property name="inter" type="java.lang.String"/>
             <form-property name="ident" type="java.lang.String"/>
 
-            <!-- Property for any button action related to an Interaction -->
-            <form-property name="intCmd" type="java.lang.String"/>
+            <!-- Property to set AC related to an Interaction when a button
+                 is pressed
+            -->
+            <form-property name="intac" type="java.lang.String"/>
 
             <!-- Search parameters for an experiment -->
             <form-property name="intSearchLabel" type="java.lang.String"/>
