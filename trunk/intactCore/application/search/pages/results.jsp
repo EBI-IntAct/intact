@@ -25,6 +25,13 @@
     // To allow access hierarchView properties.
     IntactServiceIF service = (IntactServiceIF) application.getAttribute(
             SearchConstants.INTACT_SERVICE);
+
+    //build the absolute path out of the context path for 'search'
+    String ctxtPath = (request.getContextPath());
+    String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+
+    //build the URL for hierarchView from the absolute path and the relative details..
+    String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
 %>
 
 <script language="JavaScript" type="text/javascript">
@@ -85,7 +92,7 @@
                 }
             }
         }
-        var link = "<%=service.getHierarchViewProp("hv.url")%>"
+        var link = "<%=hvPath%>"
             + "?AC=" + ac + "&depth=" + <%=service.getHierarchViewProp("hv.depth")%>
             + "&method=" + "<%=service.getHierarchViewProp("hv.method")%>";
         //window.alert(link);
@@ -139,8 +146,6 @@
         //plus the filename as specified in the servlet context
         String relativeHelpLink = this.getServletConfig().getServletContext().getInitParameter("helpLink");
         //build the help link out of the context path - strip off the 'search' bit...
-        String ctxtPath = (request.getContextPath());
-        String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
         String helpLink = relativePath.concat(relativeHelpLink) + "TOP_DOC";
     %>
     <!-- 'http://web7-node1.ebi.ac.uk:8160/intact/displayDoc.jsp?section=ALL' -->
