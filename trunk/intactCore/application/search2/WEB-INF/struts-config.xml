@@ -13,6 +13,17 @@
      the corresponding Java classes for you.  Otherwise, you would
      need only the "form-bean" element itself, with the corresponding
      "name" and "type" attributes.
+
+     Workflow:
+                                                   _________
+                                              ==> | Binary |===|
+                                             |    |________|   |
+  Query     _________       ____________     |     ________    |     ____________
+ =======>  | Search | ===> | Dispatcher | ===|==> | Single |===|==> | Result.jsp |
+           |________|      |____________|    |    |________|   |    |____________|
+                                             |     _________   |
+                                              ==> | Details |==|
+                                                  |_________|
 -->
 
 
