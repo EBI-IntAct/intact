@@ -34,6 +34,9 @@
         <%  // Add server url if link start with "/"
             String serverPath = request.getContextPath();
 
+            // remove the application name from the path
+            serverPath = serverPath.substring (0, serverPath.lastIndexOf('/'));
+
             String link = item.getLink();
             if (link.startsWith("/"))
                 link = serverPath + link;
