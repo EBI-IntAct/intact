@@ -161,7 +161,7 @@
         //plus the filename as specified in the servlet context
         String relativeHelpLink = this.getServletConfig().getServletContext().getInitParameter("helpLink");
         //build the help link out of the context path - strip off the 'search' bit...
-        String helpLink = relativePath.concat(relativeHelpLink) + "TOP_DOC";
+        String helpLink = relativePath.concat(relativeHelpLink) + bean.getHelpSection();
 
 %>
         <html:link href="<%=helpLink %>" target="new">
