@@ -103,6 +103,10 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <delete dir="${jdoc.dir}"/>
         <delete dir="${ws.dir}"/>
         <delete dir="${dist.dir}"/>
+        <!-- Struts imported tlds-->
+        <delete>
+            <fileset dir="${tld.dir}" includes="struts*.tld"/>
+        </delete>
     </target>
 
 
@@ -192,7 +196,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <echo message="Generating WSDL file..."/>
         <java classname="org.apache.axis.wsdl.Java2WSDL" fork="yes">
             <arg line="-o ${ws.tulip.wsdl}"/>
-            <arg value="-l http://localhost:8080/axis/services/tulip"/>
+            <arg value="-lhttp://localhost:8080/axis/services/tulip"/>
             <arg line="-n urn:tulip"/>
             <arg value="-p ${ws.tulip.server.pkg}"/>
             <arg value="urn:${ws.tulip.server.pkg}"/>
@@ -317,6 +321,9 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <target name="start-ws"
         description="Start the web service by using the deployment file">
 
+       <echo message=
+            "DEPRECATED; That task is now automatically managed"/>
+
         <echo message="Starting the web service" />
         <java classname="org.apache.axis.client.AdminClient" fork="yes">
             <arg line="${ws.deploy.file}"/>
@@ -329,6 +336,9 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <!-- Stop the web service by using the undeployment file -->
     <target name="stop-ws"
         description="Stop the web service by using the undeployment file">
+
+        <echo message=
+            "DEPRECATED; That task is now automatically managed"/>
 
         <echo message="Stopping the web service" />
         <java classname="org.apache.axis.client.AdminClient" fork="yes">
@@ -360,7 +370,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
-    <target name="build-war" depends="compile, make-jar">
+    <target name="build-war" depends="compile, make-jar, deploy-ws">
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
@@ -376,16 +386,21 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
             </fileset>
         </copy>
 
+        <!-- Copy web service deployments files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${ws.wsdd.dir}">
+                <include name="deploy.wsdd"/>
+                <include name="undeploy.wsdd"/>
+            </fileset>
+        </copy>
+
+
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${basedir}">
                 <include name="*.jsp"/>
                 <include name="*.css"/>
                 <include name="WEB-INF/config/struts-config.xml"/>
                 <include name="WEB-INF/tld/*.tld"/>
-
-                <!--
-                <include name="WEB-INF/tld/**"/>
-                -->
             </fileset>
 
             <!-- Include jar files for hv. -->
@@ -398,22 +413,13 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
             <!-- Include common jar files for struts (except for the latest struts).
             from the application level. -->
-            <lib dir="${intact.app.dir}/lib">
-                <!-- Remove this exclusion once hv is running properly with struts1.1 -->
-                <!--
-                <exclude name="struts.jar"/>
-                -->
-            </lib>
+            <lib dir="${intact.app.dir}/lib"/>
 
             <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">
                 <include name="jakarta-ojb-0.9.7.jar"/>
                 <include name="log4j-1.2.5.jar"/>
                 <include name="${db}"/>
-                <!-- Remove this line once hv is working with 1.1 -->
-                <!--
-                <include name="struts.jar"/>
-                -->
                 <include name="commons-lang-1.0.jar"/>
             </lib>
 
