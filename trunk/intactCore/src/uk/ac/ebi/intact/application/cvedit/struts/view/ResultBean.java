@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.view;
 
 import java.io.Serializable;
-import java.text.DateFormat;
 
 import org.apache.commons.collections.Predicate;
 
@@ -49,11 +48,6 @@ public class ResultBean implements Serializable {
     // ------------------------------------------------------------------------
 
     // End of inner classes.
-
-    /**
-     * The date formatter instance to format dates.
-     */
-    private static DateFormat DATE_FORMATTER = DateFormat.getDateInstance();
 
     /**
      * Reference to CV object.
@@ -101,30 +95,6 @@ public class ResultBean implements Serializable {
         return myCvObject.getFullName();
     }
 
-    /**
-     * Returns the last updated date.
-     * @return the last updated date as a formatted <code>String</code>.
-     */
-    public String getUpdated() {
-        return DATE_FORMATTER.format(myCvObject.getUpdated());
-    }
-
-    /**
-     * Returns the created date.
-     * @return the created date as a formatted <code>String</code>.
-     */
-    public String getCreated() {
-        return DATE_FORMATTER.format(myCvObject.getCreated());
-    }
-
-    /**
-     * Returns the short label of the owner.
-     * @return short label of the owner as a <code>String</code>.
-     */
-    public String getOwner() {
-        return myCvObject.getOwner().getShortLabel();
-    }
-
     // Override Objects's equal method.
 
     /**
@@ -145,9 +115,4 @@ public class ResultBean implements Serializable {
         }
         return false;
     }
-
-    // For debugging only.
-//    public String toString() {
-//        return "AC: " + myCvObject.getAc() + " SL: " + myCvObject.getShortLabel();
-//    }
 }
