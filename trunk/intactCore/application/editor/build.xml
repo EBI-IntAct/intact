@@ -298,6 +298,9 @@
                 <include name="sptr-interfaces.jar"/>
                 <include name="gnu-regexp-1.1.2.jar"/>
                 <include name="antlr.jar"/>
+                <!-- Used by GoServerProxy -->
+                <include name="xercesImpl.jar"/>
+                <include name="xml-apis.jar"/>
             </fileset>
         </copy>
 
