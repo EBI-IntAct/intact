@@ -15,43 +15,44 @@
    - @version $Id$
 -->
 
-<%@ page import="uk.ac.ebi.intact.util.StatisticsDataSet,
-                 java.text.SimpleDateFormat,
+<%@ page import="java.text.SimpleDateFormat,
                  java.util.GregorianCalendar,
                  java.util.Calendar,
                  java.util.ArrayList,
                  uk.ac.ebi.intact.application.statisticView.struts.view.FilterBean,
-                 uk.ac.ebi.intact.application.statisticView.business.data.StatisticsBean,
-                 uk.ac.ebi.intact.application.statisticView.business.Constants,
-                 uk.ac.ebi.intact.application.statisticView.business.data.NoDataException,
-                 uk.ac.ebi.intact.util.IntactStatistics,
+                 uk.ac.ebi.intact.application.statisticView.temp.StatisticsBean,
+                 uk.ac.ebi.intact.application.statisticView.business.util.Constants,
+                 uk.ac.ebi.intact.application.statisticView.business.exception.NoDataException,
+                 uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics,
                  java.sql.Timestamp,
                  java.sql.Date,
-                 org.apache.log4j.Logger"%>
+                 org.apache.log4j.Logger,
+                 uk.ac.ebi.intact.application.statisticView.temp.StatisticsDataSet,
+                 uk.ac.ebi.intact.application.statisticView.temp.StatisticsBean,
+                 uk.ac.ebi.intact.application.statisticView.temp.StatisticsBean,
+                 uk.ac.ebi.intact.application.statisticView.business.data.StatisticHelper"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
 <%
     Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
-
-    StatisticsBean bean = null;
-    Date eldest = null;
+    StatisticHelper helper = null;
+   Date eldest = null;
     try {
-        bean = StatisticsDataSet.getInstance( Constants.LOGGER_NAME ).getStatisticBean();
-        IntactStatistics statistics = bean.getFirstRow();
-        Timestamp timestamp = statistics.getTimestamp();
+        helper = new StatisticHelper();
+        Timestamp timestamp = helper.getFirstTimestamp();
+        System.out.println("timestamp");
         eldest = new Date( timestamp.getTime() );
         logger.info( "Oldest date found: " + eldest );
-    } catch ( NoDataException nde ) {
-        // forward to an error page.
+    } catch ( Exception nde ) {
         logger.error( "Error while trying to get the first timestamp.", nde );
     }
 
     /**
      * create the links
      */
-    SimpleDateFormat dateFormater = StatisticsDataSet.dateFormater;
+    SimpleDateFormat dateFormater = helper.dateFormater;
     Calendar calendar = GregorianCalendar.getInstance();
     ArrayList filters = new ArrayList();
     filters.add( new FilterBean( "-", "" ) );
@@ -63,6 +64,7 @@
         filters.add( new FilterBean( "" + i, iMonthAgo ) );
         i++;
     }
+
 
     pageContext.setAttribute( "filters", filters );
 %>
@@ -79,7 +81,7 @@
         <tr>
             <td>
 
-            <html:form action="/filter">
+            <html:form action="/statistics">
                <table>
                   <tr>
                      <td>
@@ -114,7 +116,7 @@
                    %>
 
 
-               <html:form action="/filter">
+               <html:form action="/statistics">
 
                <table>
                   <tr>
