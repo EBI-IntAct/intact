@@ -35,6 +35,12 @@
         <put name="footer" value="/pages/sidebarFooter.jsp"/>
     </definition>
 
+    <!-- Sidebar for the ediit page -->
+    <definition name="edit.sidebar.layout" path="/layouts/sidebarLayout.jsp">
+        <put name="menu" value="search.menu.links"/>
+        <put name="footer" value="/pages/sidebarFooter.jsp"/>
+    </definition>
+
     <!-- =============== Editor Layouts =================================== -->
 
     <!-- The edit CV page layout. -->
@@ -102,7 +108,7 @@
     <!-- Edit page description. -->
     <definition name="edit.layout" extends="login.layout"
         controllerUrl="/do/tiles/editorSwitch">
-        <put name="sidebar" value="search.sidebar.layout"/>
+        <put name="sidebar" value="edit.sidebar.layout"/>
         <put name="content" value="edit.cv.layout"/>
     </definition>
 
