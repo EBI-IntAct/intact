@@ -72,13 +72,13 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
 
         // Validate the data.
         try {
-            viewbean.validate();
+            viewbean.validate(user);
         }
         catch (ExperimentValidationException ex) {
             ActionErrors errors = new ActionErrors();
             errors.add("exp.validation", new ActionError("error.exp.validation"));
             saveErrors(request, errors);
-            return mapping.getInputForward();
+            return mapping.findForward(EditorConstants.FORWARD_INPUT);
         }
 
         try {
