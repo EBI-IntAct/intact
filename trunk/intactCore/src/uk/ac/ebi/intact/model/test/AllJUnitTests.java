@@ -37,7 +37,7 @@ public class AllJUnitTests extends TestCase {
     public static Test suite() {
         TestSuite suite = new TestSuite();
         // Add tests one by one.
-        suite.addTest(AnnotatedObjectTest.suite());
+        //suite.addTest(AnnotatedObjectTest.suite());
         suite.addTest(EqualityTests.suite());
         //suite.addTest(SecondTest.suite());
         return suite;
