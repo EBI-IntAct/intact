@@ -643,6 +643,41 @@ CREATE TABLE IntactNode
 STORAGE (INITIAL 3K NEXT 3K) PARALLEL;
 
 
+/* The relation table which establishes a graph structure between CV objects */
+PROMPT ... Cv2Cv
+CREATE TABLE Cv2Cv
+(
+	paren_ac		VARCHAR2(30)	CONSTRAINT fk_Cv2Cv$parent
+						REFERENCES ControlledVocab(ac)
+						ON DELETE CASCADE,
+	child_ac		VARCHAR2(30)	CONSTRAINT fk_Cv2Cv$chile
+						REFERENCES ControlledVocab(ac)
+						ON DELETE CASCADE,
+	created			DATE		DEFAULT  sysdate NOT NULL,
+	updated			DATE		DEFAULT  sysdate NOT NULL,
+	timestamp		DATE		DEFAULT  sysdate NOT NULL,
+	userstamp		VARCHAR2(30)	DEFAULT	 USER	 NOT NULL  ,
+	deprecated		SMALLINT	DEFAULT  0	 NOT NULL
+);
+
+/* No indexes defined yet. */
+
+COMMENT ON TABLE Cv2Cv IS
+'Cv2Cv. Link table to establish a Directed Acyclic Graph (DAG) structure for CVs.'
+COMMENT on COLUMN Cv2Cv.parent_ac IS
+'Refers to the parent object.';
+COMMENT on COLUMN Cv2Cv.child_ac IS
+'Refers to the child term.';
+COMMENT on COLUMN Cv2Cv.created IS
+'Date of the creation of the row.';
+COMMENT on COLUMN Cv2Cv.updated IS
+'Date of the last update of the row.';
+COMMENT on COLUMN Cv2Cv.timestamp IS
+'Date of the last update of the column.';
+COMMENT on COLUMN Cv2Cv.userstamp IS
+'Database user who has performed the last update of the column.';
+
+
 
 
 -- Sequences

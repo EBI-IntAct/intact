@@ -46,6 +46,8 @@ DROP TABLE Annotation;
 /*PROMPT ... BioSource*/
 DROP TABLE BioSource;
 
+DROP TABLE Cv2Cv;
+
 /*PROMPT ... ControlledVocab*/
 DROP TABLE ControlledVocab;
 

@@ -48,6 +48,9 @@ DROP TABLE Annotation;
 PROMPT ... BioSource
 DROP TABLE BioSource;
 
+PROMPT ... Cv2Cv
+DROP TABLE Cv2Cv;
+
 PROMPT ... ControlledVocab
 DROP TABLE ControlledVocab;
 
