@@ -145,7 +145,6 @@ public class BioSourceFactory {
         }
 
         // Get all existing BioSources with aTaxId
-        // Exception if there are more than one.
         Collection currentBioSources = helper.search( BioSource.class.getName(), "taxId", aTaxId );
 
         if( null == currentBioSources ) {
@@ -157,72 +156,149 @@ public class BioSourceFactory {
             intactBioSource = getOriginalBioSource( currentBioSources );
         }
 
+        // The verified BioSource
+        BioSource newBioSource = null;
+
         // Get a correct BioSource from Newt
+        // we could have created our own biosource like 'in vitro' ... in which case, newt is unaware of it !
         BioSource validBioSource = getNewtBiosource( aTaxId );
-        if( null == validBioSource ) {
+
+        if( null == validBioSource && intactBioSource == null ) {
+
             if( logger != null ) {
                 logger.error( "The taxId is invalid: " + aTaxId );
             }
             throw new IntactException( "The taxId is invalid: " + aTaxId );
-        }
 
-        // The verified BioSource
-        BioSource newBioSource = null;
+        } else if( null == validBioSource && intactBioSource != null ) {
 
-        // If there is no current BioSource, create it
-        if( intactBioSource == null ) {
+            // we have a biosource in intact that Newt doesn't know about, return it.
+            if( logger != null ) {
+                logger.error( "The taxId " + aTaxId + " was found in IntAct but doesn't exists in Newt." );
+            }
+            newBioSource = intactBioSource;
+
+        } else if( null != validBioSource && intactBioSource == null ) {
+
+            // newt biosource has been found and nothing in intact.
+            // chech if the given taxid was obsolete.
             if( validBioSource.getTaxId().equals( aTaxId ) ) {
+
                 // not in IntAct and found in Newt so make it persistent in IntAct
                 helper.create( validBioSource );
                 newBioSource = validBioSource;
+
             } else {
-                // taxid was obsolete
+                // the given taxid was obsolete, check if intact contains already a biosource for the new taxid.
+
+                // both were found but different taxid, ie. taxid was obsolete.
+                final String newTaxid = validBioSource.getTaxId();
                 Collection bioSources = helper.search( BioSource.class.getName(),
-                                                       "taxId", validBioSource.getTaxId() );
+                                                       "taxId",
+                                                       newTaxid );
                 switch ( bioSources.size() ) {
                     case 0:
                         // doesn't exists, so create it.
                         if( logger != null ) {
-                            logger.info( "Creating new bioSource(" + validBioSource.getTaxId() + ")." );
+                            logger.info( "Creating new bioSource(" + newTaxid + ")." );
                         }
                         helper.create( validBioSource );
                         newBioSource = validBioSource;
+
+                        // cache the new taxid as well.
+                        bioSourceCache.put( newTaxid, newBioSource );
                         break;
 
                     case 1:
                         // it exists, try to update it.
                         BioSource intactBs = (BioSource) bioSources.iterator().next();
                         if( logger != null ) {
-                            logger.info( "Updating existing BioSource (" + validBioSource.getTaxId() + ")" );
+                            logger.info( "Updating existing BioSource (" + newTaxid + ")" );
                         }
                         newBioSource = updateBioSource( intactBs, validBioSource );
+
+                        // cache the new taxid as well.
+                        bioSourceCache.put( newTaxid, newBioSource );
                         break;
 
                     default:
+                        // more than one !
                         if( logger != null ) {
-                            logger.error( "More than one BioSource with this taxId found: " + aTaxId );
+                            logger.error( "More than one BioSource with this taxId found: " + aTaxId +
+                                          ". Check for the original one." );
                         }
-                        throw new IntactException( "More than one BioSource with this taxId found: " + aTaxId );
+
+                        newBioSource = getOriginalBioSource( bioSources ); // fail if more than one !
                 }
             }
+
         } else {
-            // only one BioSource found with the original taxid
-            // If it is obsolete, update current BioSource
+
+            // BioSource found in IntAct AND in Newt.
+
             if( !intactBioSource.equals( validBioSource ) ) {
                 if( logger != null ) {
                     logger.info( "Updating existing BioSource (" + validBioSource.getTaxId() + ")" );
                 }
-                newBioSource = updateBioSource( intactBioSource, validBioSource );
+                if( validBioSource.getTaxId().equals( aTaxId ) ) {
+
+                    // given taxid was ok
+                    newBioSource = updateBioSource( intactBioSource, validBioSource );
+
+                } else {
+
+                    // The given taxid was obsolete.
+                    // (!) It could be a problem if the taxid was obsolete, and there is already a biosource
+                    // in intact with the new taxid. In which case, we can't just update or two BioSources
+                    // will have the same taxid.
+                    final String newTaxid = validBioSource.getTaxId();
+                    Collection bioSources = helper.search( BioSource.class.getName(),
+                                                           "taxId",
+                                                           newTaxid );
+                    switch ( bioSources.size() ) {
+                        case 0:
+                            // doesn't exists, so create it.
+                            if( logger != null ) {
+                                logger.info( "Creating new bioSource(" + newTaxid + ")." );
+                            }
+                            helper.create( validBioSource );
+                            newBioSource = validBioSource;
+
+                            break;
+
+                        case 1:
+                            // it exists, try to update it.
+                            BioSource intactBs = (BioSource) bioSources.iterator().next();
+                            if( logger != null ) {
+                                logger.info( "Updating existing BioSource (" + newTaxid + ")" );
+                            }
+                            newBioSource = updateBioSource( intactBs, validBioSource );
+
+                            break;
+
+                        default:
+                            // more than one !
+                            if( logger != null ) {
+                                logger.error( "More than one BioSource with this taxId found: " + aTaxId +
+                                              ". Check for the original one." );
+                            }
+
+                            BioSource original = getOriginalBioSource( bioSources ); // fail if more than one !
+                            newBioSource = updateBioSource( original, validBioSource );
+                    }
+
+                    // cache the new taxid as well.
+                    bioSourceCache.put( newTaxid, newBioSource );
+                }
+
             } else {
+                // intact biosource was up-to-date
                 newBioSource = intactBioSource;
             }
         }
 
-        // Return valid BioSource and update cache
-        /* The bioSourceCache will also contain associations from obsolete taxIds
-         * to valid BioSource objects to avoid looking up the same obsolete Id
-         * over and over again.
-         */
+        // The bioSourceCache will also contain associations from obsolete taxIds to valid
+        // BioSource objects to avoid looking up the same obsolete Id over and over again.
         bioSourceCache.put( aTaxId, newBioSource );
 
         return newBioSource;
