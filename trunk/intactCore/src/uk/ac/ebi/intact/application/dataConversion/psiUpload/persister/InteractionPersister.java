@@ -319,7 +319,6 @@ public final class InteractionPersister {
      *
      * @param interaction
      * @param helper
-     * @return
      * @throws IntactException
      */
     private static void createShortlabel( final InteractionTag interaction,
@@ -412,9 +411,12 @@ public final class InteractionPersister {
      * <br>
      * It checks as well if the generated shortlabel as already been associated to an other Interaction.
      *
-     * @param bait
-     * @param prey
-     * @return
+     * @param psiInteraction The interaction we are investigating on.
+     * @param experiments Collection in which after processing we have all ExperimentWrapper (shortlabel +
+     *                    experimentDescription) in which the interaction hasn't been created yet.
+     * @param bait the label for the bait (could be gene name or SPTR entry AC)
+     * @param prey the label for the prey (could be gene name or SPTR entry AC)
+     * @param helper data access
      */
     private static void createInteractionShortLabels( final InteractionTag psiInteraction,
                                                       final Collection experiments,
@@ -484,7 +486,7 @@ public final class InteractionPersister {
                 }
 
                 // Give the remaining experiment a shortlabel.
-                // takes care of gaps in the shortlabel sequence.
+                // takes care of gaps in the shortlabel sequence (label-1, label-2, label-3 ...).
                 // could create new gaps if some already exists.
                 boolean atLeastOneInteractionWithoutShortlabel = false;
                 boolean oneExperimentHasAlreadyBeenUpdated = false;
@@ -805,7 +807,7 @@ public final class InteractionPersister {
     private static ProteinHolder getProtein( final ProteinParticipantTag proteinParticipant ) {
 
         final ProteinInteractorTag proteinInteractor = proteinParticipant.getProteinInteractor();
-        final BioSource bioSource = OrganismChecker.getBioSource( proteinInteractor.getOrganism().getTaxId() );
+        final BioSource bioSource = OrganismChecker.getBioSource( proteinInteractor.getOrganism() );
         final String proteinId = proteinInteractor.getUniprotXref().getId();
 
         return ProteinInteractorChecker.getProtein( proteinId, bioSource );
