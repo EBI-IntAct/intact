@@ -20,7 +20,7 @@
 <!--
     .error {
         color: white;
-        background-color: blue
+        background-color: red
     }
 
     .owner {
@@ -50,8 +50,11 @@
 <bean:define id="results" name="user" property="searchResult"
     type="java.util.List"/>
 
+<%-- The uri when clicking on tab links --%>
+<bean:define id="uri" value="<%=request.getContextPath() + "/do/fillResultForm"%>"/>
+
 <html:form action="/result">
-    <display:table width="100%" name="results" pagesize="50"
+    <display:table width="100%" name="results" pagesize="50" requestURI="<%=uri%>"
         decorator="uk.ac.ebi.intact.application.editor.struts.view.ResultDisplayWrapper">
         <display:column property="ac" title="AC"/>
         <display:column property="shortLabel" title="Short Label"/>
