@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-     ANT build configuration file for hierarchView module.
-     Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
+ANT build configuration file for hierarchView module.
+Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 -->
 <project name="hv" basedir="." default="compile">
 
     <property name="project.title" value="hierarchView"/>
 
-    <property name="intact.root" value="../.."/>
-    <property name="root.lib.dir" value="${intact.root}/lib"/>
-    <property name="root.dist.dir" value="${intact.root}/dist"/>
-    <property name="root.src.dir" value="${intact.root}/src"/>
-    <property name="root.dest.dir" value="${intact.root}/classes"/>
+    <property name="intact.root"     value="../.."/>
+    <property name="root.lib.dir"    value="${intact.root}/lib"/>
+    <property name="root.dist.dir"   value="${intact.root}/dist"/>
+    <property name="root.src.dir"    value="${intact.root}/src"/>
+    <property name="root.dest.dir"   value="${intact.root}/classes"/>
     <property name="root.config.dir" value="${intact.root}/config"/>
-    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.dist.dir"   value="${intact.root}/dist"/>
 
     <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
-    <property name="lib.dir" value="WEB-INF/lib"/>
-    <property name="dest.dir" value="WEB-INF/classes"/>
+    <property name="lib.dir"    value="WEB-INF/lib"/>
+    <property name="tld.dir"    value="WEB-INF/tld"/>
+    <property name="dest.dir"   value="WEB-INF/classes"/>
     <property name="config.dir" value="WEB-INF/config"/>
-    <property name="jdoc.dir" value="doc/api"/>
-    <property name="dist.dir" value="dist"/>
-    <property name="war.file" value="hierarchView.war"/>
+    <property name="jdoc.dir"   value="doc/api"/>
+    <property name="dist.dir"   value="dist"/>
+    <property name="war.file"   value="hierarchView.war"/>
 
     <!-- Intact application location. -->
     <property name="intact.app.dir" value=".."/>
@@ -69,9 +70,10 @@
         <pathelement path="${dest.dir}"/>
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
         <!-- Should be uncommented to compile with struts 1.1 -->
-<!--        <pathelement path="${intact.app.dir}/lib/struts.jar"/>-->
+        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <!-- Remove the following line once hv is working with 1.1 -->
-        <pathelement path="${root.lib.dir}/struts.jar"/>
+        <!-- <pathelement path="${root.lib.dir}/struts.jar"/> -->
+
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-logging.jar"/>
     </path>
@@ -79,14 +81,14 @@
     <!-- =================================================================== -->
 
     <!-- Sets the time stamp and 'intact.jar.present' property if intact core
-         jar file is found.
+    jar file is found.
     -->
     <target name="prepare">
         <tstamp/>
         <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
 
         <!-- These targets are called to display messages if tomcat or axis
-             are not present.
+        are not present.
         -->
         <ant dir=".." inheritAll="false" target="check-tomcat"/>
         <ant dir=".." inheritAll="false" target="check-axis"/>
@@ -96,7 +98,7 @@
 
     <!-- Remove 'dest' and 'jdoc' directories for clean build. -->
     <target name="clean"
-            description="Prepare for clean build; removes api docs and classes dirs">
+        description="Prepare for clean build; removes api docs and classes dirs">
         <delete dir="${dest.dir}"/>
         <delete dir="${jdoc.dir}"/>
         <delete dir="${ws.dir}"/>
@@ -108,7 +110,7 @@
     <!-- =================================================================== -->
 
     <!-- Calls the jar task from core build file if intact core jar file
-         is missing.
+    is missing.
     -->
     <target name="make-jar" depends="prepare" unless="intact.jar.present">
         <ant dir="${intact.root}" target="jar-core" inheritAll="false"/>
@@ -142,12 +144,12 @@
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="compile"
-            description="Compile the source tree and copy the configuration files"
-            depends="prepare">
+        description="Compile the source tree and copy the configuration files"
+        depends="prepare">
         <mkdir dir="${dest.dir}" />
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-	       includes="**/application/hierarchView/**" debug="on">
+            includes="**/application/hierarchView/**" debug="on">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -164,7 +166,7 @@
     <!-- =================================================================== -->
 
     <!-- Ensures that tomcat.present property is called only once to avoid
-         error from Ant.
+    error from Ant.
     -->
 
     <target name="run-once" unless="tomcat.present">
@@ -176,16 +178,16 @@
 
     <!-- Compile the web service source tree. -->
     <target name="deploy-ws" description="Create and deploy the web service"
-            depends="run-once, compile" if="axis.present">
+        depends="run-once, compile" if="axis.present">
         <!-- Create ws specific directories. -->
         <mkdir dir="${ws.dir}"/>
         <mkdir dir="${ws.wsdd.dir}"/>
         <mkdir dir="${ws.wsdl.dir}"/>
 
         <!-- Generate WSDL file. This needs to run in a separate JVM to avoid
-             any clashes with linkage problem with Document class. Also, -o
-             option is passed via arg line instead of value to avoid creating
-             a wsdl with a space in the name!
+        any clashes with linkage problem with Document class. Also, -o
+        option is passed via arg line instead of value to avoid creating
+        a wsdl with a space in the name!
         -->
         <echo message="Generating WSDL file..."/>
         <java classname="org.apache.axis.wsdl.Java2WSDL" fork="yes">
@@ -242,14 +244,14 @@
         <!-- Compile the client generated files -->
         <echo message="Compiling client generated files"/>
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-	       includes="${ws.tulip.client.dir}/generated/**" debug="on">
+            includes="${ws.tulip.client.dir}/generated/**" debug="on">
             <classpath refid="project.class.path"/>
         </javac>
 
         <!-- Copy the configuration file to the current directory. -->
         <echo message="Copying configuration file to the ${root.dest.dir} dir"/>
         <copy file="${config.dir}/${ws.props.file}" todir="${root.dest.dir}"
-              overwrite="true"/>
+            overwrite="true"/>
 
         <!-- Create the web service jar file (which will be deployed later on Axis). -->
         <!-- First delete the jar file if it exists. -->
@@ -259,7 +261,7 @@
         <jar destfile="${ws.tulip.jar}">
             <fileset dir="${root.dest.dir}" includes="${ws.props.file}"/>
             <fileset dir="${dest.dir}" includes="${ws.tulip.server.dir}/**"/>
-	    </jar>
+        </jar>
 
         <!-- Delete the webservice properties file. -->
         <echo message="Deleting the configuration file"/>
@@ -268,7 +270,7 @@
         <!-- Copy the service to Axis installed on Tomcat. -->
         <echo message="Copy the service to Axis (installed on Tomcat)"/>
         <copy file="${ws.tulip.jar}" todir="${tomcat.home}/webapps/axis/WEB-INF/lib"
-              overwrite="true"/>
+            overwrite="true"/>
 
         <echo message="Modify the deployment file"/>
         <antcall target="mod-deployfile" />
@@ -283,7 +285,7 @@
 
     <!-- Compile the web service source tree. -->
     <target name="undeploy-ws" description="Undeploys the web service"
-            depends="run-once" if="axis.present">
+        depends="run-once" if="axis.present">
 
         <antcall target="stop-ws"/>
 
@@ -304,47 +306,47 @@
         <!-- Replace the SoapBinding generated class name by the implementation one -->
         <echo message="Replace the SoapBinding name by the implementation one" />
         <replace file="${ws.deploy.file}" token="TulipSoapBindingImpl"
-                 value="TulipAccessImpl" />
+            value="TulipAccessImpl" />
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Start the web service by using the modified deployment file.
-         TODO : check if the deployment file is in the right place.
+    TODO : check if the deployment file is in the right place.
       -->
     <target name="start-ws"
-            description="Start the web service by using the deployment file">
+        description="Start the web service by using the deployment file">
 
-       <echo message="Starting the web service" />
-       <java classname="org.apache.axis.client.AdminClient" fork="yes">
+        <echo message="Starting the web service" />
+        <java classname="org.apache.axis.client.AdminClient" fork="yes">
             <arg line="${ws.deploy.file}"/>
             <classpath refid="project.class.path"/>
-       </java>
+        </java>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Stop the web service by using the undeployment file -->
     <target name="stop-ws"
-            description="Stop the web service by using the undeployment file">
+        description="Stop the web service by using the undeployment file">
 
-       <echo message="Stopping the web service" />
-       <java classname="org.apache.axis.client.AdminClient" fork="yes">
+        <echo message="Stopping the web service" />
+        <java classname="org.apache.axis.client.AdminClient" fork="yes">
             <arg line="${ws.undeploy.file}"/>
             <classpath refid="project.class.path"/>
-       </java>
+        </java>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Tests the web service  -->
     <target name="test-ws"
-            description="Test the web service and display results on the screen">
+        description="Test the web service and display results on the screen">
 
-       <echo message="Testing the web service" />
-       <java classname="uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient" fork="yes">
+        <echo message="Testing the web service" />
+        <java classname="uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient" fork="yes">
             <classpath refid="project.class.path"/>
-       </java>
+        </java>
     </target>
 
     <!-- =================================================================== -->
@@ -352,7 +354,7 @@
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-            depends="set-db-type, war-pg, war-oracle"/>
+        depends="set-db-type, war-pg, war-oracle"/>
 
     <!-- =================================================================== -->
 
@@ -365,12 +367,25 @@
 
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+        <!-- Copy struts standard tld files -->
+        <copy todir="${tld.dir}">
+            <fileset dir="${intact.app.dir}/tld">
+                <include name="struts-bean.tld"/>
+                <include name="struts-html.tld"/>
+            </fileset>
+        </copy>
+
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${basedir}">
                 <include name="*.jsp"/>
                 <include name="*.css"/>
                 <include name="WEB-INF/config/struts-config.xml"/>
+                <include name="WEB-INF/tld/*.tld"/>
+
+                <!--
                 <include name="WEB-INF/tld/**"/>
+                -->
             </fileset>
 
             <!-- Include jar files for hv. -->
@@ -385,7 +400,9 @@
             from the application level. -->
             <lib dir="${intact.app.dir}/lib">
                 <!-- Remove this exclusion once hv is running properly with struts1.1 -->
+                <!--
                 <exclude name="struts.jar"/>
+                -->
             </lib>
 
             <!-- Include common jar files from intact core. -->
@@ -394,7 +411,9 @@
                 <include name="log4j-1.2.5.jar"/>
                 <include name="${db}"/>
                 <!-- Remove this line once hv is working with 1.1 -->
+                <!--
                 <include name="struts.jar"/>
+                -->
                 <include name="commons-lang-1.0.jar"/>
             </lib>
 
@@ -419,8 +438,8 @@
     <!-- =================================================================== -->
 
     <!--
-        Builds a war file with postgres; should be called only after calling
-        set-db-type. -->
+    Builds a war file with postgres; should be called only after calling
+    set-db-type. -->
 
     <target name="war-pg" if="postgres">
         <echo message="Building a war for postgres"/>
@@ -432,13 +451,14 @@
     <!-- =================================================================== -->
 
     <!--
-        Builds a war file with oracle; should be called only after calling
-        set-db-type. -->
+    Builds a war file with oracle; should be called only after calling
+    set-db-type. -->
 
     <target name="war-oracle" if="oracle">
         <echo message="Building a war for oracle"/>
         <antcall target="build-war">
             <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+            <!--param name="db" value="jdbc-9.2.0.1.0-jdk1.2.x.jar"/-->
         </antcall>
     </target>
 
