@@ -27,7 +27,7 @@ using the MetadataManager.
    		password="@USER_PASSWD@"
         eager-release="false"
    		batch-mode="false"
-        useAutoCommit="1"
+        useAutoCommit="@AUTO_COMMIT@"
         ignoreAutoCommitExceptions="false"
      >
 
