@@ -666,6 +666,7 @@
 
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value="${test.case}"/>
+            <jvmarg value="-ea"/>
             <classpath refid="project.test.class.path"/>
         </java>
     </target>
