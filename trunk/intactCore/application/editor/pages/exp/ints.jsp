@@ -23,7 +23,7 @@
 
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
-            <th class="tableCellHeader" width="20%">
+            <th class="tableCellHeader" width="20%" colspan="2">
                 <bean:message key="label.action"/>
             </th>
             <th class="tableCellHeader" width="10%">
@@ -48,6 +48,13 @@
                     <tr class="tableRowOdd">
                 </c:otherwise>
             </c:choose>
+
+                <td class="tableCell">
+                    <html:submit indexed="true" property="intCmd"
+                        titleKey="int.exp.button.edit.titleKey">
+                        <bean:message key="int.exp.button.edit"/>
+                    </html:submit>
+                </td>
 
                 <td class="tableCell">
                     <html:submit indexed="true" property="intCmd"
