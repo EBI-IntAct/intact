@@ -110,10 +110,10 @@ public class GoServerProxy {
         URLConnection servletConnection = url.openConnection();
 
         // Turn off caching
-        servletConnection.setUseCaches(false);
+        servletConnection.setUseCaches( false );
 
         // Wrting to the server.
-        servletConnection.setDoOutput(true);
+        servletConnection.setDoOutput( true );
 
         // The reader to read response from the server.
         InputStream inputStream = null;
@@ -127,8 +127,10 @@ public class GoServerProxy {
             try {
                 parser.parse( source );
             } catch ( SAXException e ) {
+                e.printStackTrace() ;
                 throw new GoIdNotFoundException( goId );
             } catch ( IOException e ) {
+                e.printStackTrace() ;
                 throw e;
             }
         }
@@ -285,11 +287,14 @@ public class GoServerProxy {
                 throws SAXException {
 
             if (localName.equals( NAME )) {
-                this.name = contentTagBuffer.toString().trim();
-                contentTagBuffer = new StringBuffer(64);
+
+                this.name        = contentTagBuffer.toString().trim();
+                contentTagBuffer = new StringBuffer( 64 );
+
             } else if (localName.equals( CATEGORY )) {
-                this.category = contentTagBuffer.toString().trim();
-                contentTagBuffer = new StringBuffer(64);
+
+                this.category    = contentTagBuffer.toString().trim();
+                contentTagBuffer = new StringBuffer( 64 );
             }
         }
 
