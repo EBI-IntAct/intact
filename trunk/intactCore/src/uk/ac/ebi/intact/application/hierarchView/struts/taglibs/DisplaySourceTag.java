@@ -12,13 +12,18 @@ import uk.ac.ebi.intact.application.hierarchView.highlightment.source.Highlightm
 import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.simpleGraph.Node;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.ServletRequest;
 import java.util.List;
 import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
@@ -65,8 +70,23 @@ public class DisplaySourceTag extends TagSupport {
             }
 
             Interactor interactor = in.getCentralProtein();
+            ArrayList centrals = in.getCentralProteins();
+            Collection xRefs = new ArrayList (50);
 
-            Collection xRef = interactor.getXref();
+            int max = centrals.size();
+            for (int x = 0; x<max; x++) {
+                // union of disctinct xref
+                Node centralProtein = (Node) centrals.get(x);
+                interactor = centralProtein.getInteractor();
+                Collection xRefs2 = interactor.getXref();
+                Iterator iterator = xRefs2.iterator();
+                while (iterator.hasNext()) {
+                    Xref aXref = (Xref) iterator.next();
+                    if (! xRefs.contains(aXref)) {
+                        xRefs.add(aXref);
+                    }
+                }
+            }
 
             String queryString = user.getQueryString();
             String method_class = user.getMethodClass();
@@ -84,7 +104,9 @@ public class DisplaySourceTag extends TagSupport {
                     List urls = null;
 
                     try {
-                        urls = source.getSourceUrls(xRef);
+                        ServletRequest request = pageContext.getRequest();
+                        String serverPath = "http://" + request.getServerName() + ":" + request.getServerPort();
+                        urls = source.getSourceUrls(xRefs, serverPath);
                     } catch (IntactException ie) {
                         String msg = "ERROR<br>The hierarchView system is not properly configured. Please warn your administrator.";
                         pageContext.getOut().write (msg);

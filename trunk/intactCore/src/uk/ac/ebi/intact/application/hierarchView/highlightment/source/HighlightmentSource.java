@@ -115,9 +115,10 @@ public abstract class HighlightmentSource {
      * if the method send back no URL, the given parameter is wrong.
      *
      * @param xRef The collection of XRef from which we want to get the list of corresponding URL
+     * @param serverPath the server path where our application is running
      * @return a set of URL pointing on the highlightment source.
      */
-    abstract public List getSourceUrls (Collection xRef)
+    abstract public List getSourceUrls (Collection xRef, String serverPath)
             throws IntactException;
 
 
