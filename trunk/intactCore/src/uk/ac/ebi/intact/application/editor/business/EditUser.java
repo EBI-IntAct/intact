@@ -298,20 +298,20 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditView;
     }
 
-    public void setView(Class clazz) {
+    public void setView(Object obj) {
         // Start editing the object.
         startEditing();
-        // Get the new view for the new edit object.
-        myEditView = myViewFactory.factory(clazz);
-        myEditView.reset(clazz);
-    }
-
-    public void setView(AnnotatedObject annot) {
-        // Start editing the object.
-        startEditing();
-        // Get the new view for the new edit object.
-        myEditView = myViewFactory.factory(IntactHelper.getRealClassName(annot));
-        myEditView.reset(annot);
+        // Check for annotated object.
+        if (AnnotatedObject.class.isAssignableFrom(obj.getClass())) {
+            // View based on the class for given edit object.
+            myEditView = myViewFactory.factory(IntactHelper.getRealClassName(obj));
+        }
+        else {
+            // The new view based on the class type.
+            myEditView = myViewFactory.factory((Class) obj);
+        }
+        // Resets the view.
+        myEditView.reset(obj);
     }
 
     public String getSelectedTopic() {
@@ -456,9 +456,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myProteinFactory.insertSPTrProteins(pid);
     }
 
-    public Collection getProteinsByXref(String pid) throws SearchException {
+    public Collection getSpliceProteinsByXref(String pid) throws SearchException {
         try {
-            return myHelper.getObjectsByXref(Protein.class, pid);
+            return myHelper.getSpliceProteinsByXref(pid);
         }
         catch (IntactException e) {
             throw new SearchException(e.getMessage());
