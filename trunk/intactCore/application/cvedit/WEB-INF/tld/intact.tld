@@ -49,6 +49,11 @@
             object.
         </info>
         <attribute>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
             <name>resource</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
