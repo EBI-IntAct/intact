@@ -194,7 +194,7 @@
             <replacefilter token="@DRIVER_NAME@" value="oracle.jdbc.pool.OracleConnectionCacheImpl"/>
             <replacefilter token="@URL_SUBPROTOCOL@" value="oracle:thin:@vodka.ebi.ac.uk:1521"/>
             <replacefilter token="@URL_DBALIAS@" value="IDEV"/>
-            <replacefilter token="@USER_NAME@" value="ops$$${env.USER}"/>
+            <replacefilter token="@USER_NAME@" property="username"/>
             <replacefilter token="@USER_PASSWD@" property="password"/>
         </replace>
         <!-- Copy the template to config directory -->
