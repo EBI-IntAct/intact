@@ -18,6 +18,12 @@ import uk.ac.ebi.intact.business.IntactException;
  */
 public abstract class AnnotatedObject extends BasicObject {
 
+    /**
+     * Cache a Vector of all shortLabels of the class, e.g. for menus.
+     *
+     */
+    protected static Vector menuList = null;
+
     /////////////////////////////////
     //attributes
 
@@ -57,6 +63,28 @@ public abstract class AnnotatedObject extends BasicObject {
      */
     public Collection reference = new Vector();
 
+    // Class methods
+
+    /** Return a Vector of all shortLabels of the class, e.g. for menus.
+     *
+     * @param helper Database access object
+     * @param forceUpdate If true, an update of the list is forced.
+     *
+     * @return Vector of Strings. Each string one shortlabel.
+     */
+    public static Vector getMenuList(Class targetClass, IntactHelper helper, boolean forceUpdate)
+            throws IntactException {
+        if ((menuList == null) || forceUpdate){
+            menuList = new Vector();
+            // get all elements of the class
+            Collection allElements = helper.search(targetClass.getName(),"ac","*");
+            // save all shortLabels
+            for (Iterator i = allElements.iterator(); i.hasNext();) {
+                menuList.add(((AnnotatedObject) i.next()).getShortLabel());
+            }
+        }
+        return menuList;
+    }
 
     ///////////////////////////////////////
     //access methods for attributes
