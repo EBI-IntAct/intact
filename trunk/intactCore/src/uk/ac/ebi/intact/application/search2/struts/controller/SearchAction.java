@@ -21,9 +21,7 @@ import uk.ac.ebi.intact.model.Xref;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * This class provides the actions required to carry out search operations
@@ -106,7 +104,6 @@ public class SearchAction extends IntactBaseAction {
         //with garbage input using this approach...
         super.log("search action: attempting to search by AC first...");
         try {
-
             results = doLookup(searchClass, searchValue, user);
             if (results.isEmpty()) {
                 //try searching first using all uppercase, then all lower case if it returns nothing...
@@ -118,15 +115,17 @@ public class SearchAction extends IntactBaseAction {
                     //now try all lower case....
                     String lowerCaseValue = searchValue.toLowerCase();
                     results = doLookup(searchClass, lowerCaseValue, user);
+
                     if (results.isEmpty()) {
                         //finished all current options, and still nothing - return a failure
                         super.log("No matches were found for the specified search criteria");
-                        // Save the search parameters for results page to display.
-                        session.setAttribute(SearchConstants.SEARCH_CRITERIA,
-                                user.getSearchCritera() + "=" + searchValue);
-                        return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
-                    }
 
+                        // Save the search parameters for results page to display.
+                        session.setAttribute( SearchConstants.SEARCH_CRITERIA,
+                                              user.getSearchCritera() + "=" + searchValue);
+
+                        return mapping.findForward( SearchConstants.FORWARD_NO_MATCHES );
+                    }
                 }
             }
             super.log("search action: search results retrieved OK");
@@ -193,8 +192,10 @@ public class SearchAction extends IntactBaseAction {
      */
     private Collection doLookup(String searchClass, String value, IntactUserIF user)
             throws IntactException {
+        Collection queries = splitQuery( value );
 
-        Collection results = new ArrayList();
+        // avoid to have duplicate intact object in the dataset.
+        Collection results = new HashSet();
         String packageName = AnnotatedObject.class.getPackage().getName() + ".";
         if(searchClass.length() == 0) {
 
@@ -203,7 +204,12 @@ public class SearchAction extends IntactBaseAction {
                 // The class name associated with the search request.
                 String className = packageName + SEARCH_ORDER[i];
                 //try search on AC first...
-                results = doSearch(className, value, user);
+                for ( Iterator iterator = queries.iterator (); iterator.hasNext (); ) {
+                    String subQuery = (String) iterator.next ();
+                    System.out.println ( "Search for subquery: " +subQuery );
+                    results.addAll( doSearch(className, subQuery, user) );
+                    System.out.println ( "Item count: " + results.size());
+                }
                 if (!results.isEmpty()) {
                     super.log("found search match - class: " + className +", value: " + value);
                     break;
@@ -214,7 +220,12 @@ public class SearchAction extends IntactBaseAction {
             super.log("className supplied in request - going straight to search...");
             String className = packageName + searchClass;
             super.log("attempting search for " + className + " with value " + value);
-            results = doSearch(className, value, user);
+            for ( Iterator iterator = queries.iterator (); iterator.hasNext (); ) {
+                String subQuery = (String) iterator.next ();
+                System.out.println ( "Search for subquery: " +subQuery );
+                results.addAll( doSearch(className, subQuery, user) );
+                System.out.println ( "Item count: " + results.size());
+            }
             if(results.isEmpty()) {
                 super.log("no search results found for class: " + className +", value: " + value);
             }
@@ -223,6 +234,26 @@ public class SearchAction extends IntactBaseAction {
             }
         }
         return results;
+    }
+
+
+    /**
+     * Split the query string.
+     * It generated one sub query by comma separated parameter.
+     * e.g. a, b,c, d will gives {{a}, {b}, {c}, {d}}
+     *
+     * @param query the query string to split
+     * @return one to many subquery of the comma separated list.
+     */
+    private Collection splitQuery( String query ) {
+        Collection queries = new HashSet();
+
+        StringTokenizer st = new StringTokenizer( query, "," );
+        while (st.hasMoreTokens()) {
+            queries.add( st.nextToken().trim() );
+        }
+
+        return queries;
     }
 
     /**
