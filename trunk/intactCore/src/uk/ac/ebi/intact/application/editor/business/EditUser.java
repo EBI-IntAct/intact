@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
+import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.*;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
@@ -294,7 +295,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void begin() throws IntactException {
-        myHelper.startTransaction();
+        myHelper.startTransaction(BusinessConstants.OBJECT_TX);
     }
 
     public void commit() throws IntactException {
