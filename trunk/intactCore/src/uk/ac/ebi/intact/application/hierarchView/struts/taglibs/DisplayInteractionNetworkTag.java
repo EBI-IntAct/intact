@@ -59,6 +59,8 @@ public class DisplayInteractionNetworkTag extends TagSupport {
             ImageBean imageBean   = user.getImageBean();
             String behaviour      = user.getBehaviour();
             InteractionNetwork in = user.getInteractionNetwork();
+            int imageHeight       = imageBean.getImageHeight();
+            int imageWidth        = imageBean.getImageWidth();
 
             /**
              * Apply an highlight if needed data are available
@@ -78,17 +80,12 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                 // read the Graph.properties file
                 String mapName = null;
                 String format = null;
-                int imageHeight = 0;
-                int imageWidth = 0;
+
                 Properties properties = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
 
                 if (null != properties) {
                     mapName = properties.getProperty ("hierarchView.image.map.name");
                     format = properties.getProperty ("hierarchView.image.format.name");
-                    String heightStr = properties.getProperty ("hierarchView.image.size.default.image.height");
-                    String widthStr  = properties.getProperty ("hierarchView.image.size.default.image.length");
-                    imageHeight = Integer.parseInt(heightStr);
-                    imageWidth  = Integer.parseInt(widthStr);
                 } else {
                     logger.error("Unable to load properties from " +
                                  uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
@@ -101,11 +98,11 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                 String AC = user.getAC();
                 int depth = user.getCurrentDepth();
                 String method = user.getMethodClass();
-                Collection keys = user.getKeys();
+                String key = user.getSelectedKey();
                 String highlightContext = "";
-                if (keys != null) {
+                if (key != null) {
                     // a highlight has been requested
-                    highlightContext = (String) keys.iterator().next();
+                    highlightContext = key;
                     // only relevant to add the behaviour if one is applied
                     highlightContext += behaviour;
                 }
@@ -131,6 +128,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
             }
 
         } catch (Exception ioe) {
+            logger.error("could not display interaction network", ioe);
             throw new JspException ("Error: could not display interaction network.");
         }
 
