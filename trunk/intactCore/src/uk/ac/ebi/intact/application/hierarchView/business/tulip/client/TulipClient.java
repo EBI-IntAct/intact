@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.util.Chrono;
-import uk.ac.ebi.intact.util.HttpProxyManager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,16 +30,6 @@ import java.util.Properties;
 public class TulipClient {
 
     static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
-
-    static {
-        // initialise the proxy setting if needed
-        try {
-            HttpProxyManager.setup();
-        } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
-            proxyConfigurationNotFound.printStackTrace();
-        }
-    }
-
 
     ///////////////////////
     // Instance variable
@@ -146,8 +135,8 @@ public class TulipClient {
             return tulip.getErrorMessages( hasToBeCleaned );
         } catch ( RemoteException re ) {
             // create an error message to display
-            String[] errors = new String[ 1 ];
-            errors[ 0 ] = "\n\nError while checking errors.";
+            String[] errors = new String[1];
+            errors[0] = "\n\nError while checking errors.";
 
             logger.error( "Unable to get error messages", re );
             return errors;
@@ -189,9 +178,9 @@ public class TulipClient {
 
             System.out.print( "Try to get service messages ... " );
             String[] msg = client.getErrorMessages( true );
-            for ( int i = 0; i < msg.length; i++ ) {
+            for( int i = 0; i < msg.length; i++ ) {
                 // display coordinates
-                System.out.println( "message " + i + ") " + msg[ i ] );
+                System.out.println( "message " + i + ") " + msg[i] );
             } // for
 
             System.exit( 1 );
@@ -200,11 +189,11 @@ public class TulipClient {
         if( 0 == proteins.length ) {
             System.out.println( "No protein retreived." );
         } else {
-            for ( int i = 0; i < proteins.length; i++ ) {
+            for( int i = 0; i < proteins.length; i++ ) {
                 // display coordinates
-                System.out.println( proteins[ i ].getId() +
-                                    " \t X=" + proteins[ i ].getX() +
-                                    " \t Y=" + proteins[ i ].getY() );
+                System.out.println( proteins[i].getId() +
+                                    " \t X=" + proteins[i].getX() +
+                                    " \t Y=" + proteins[i].getY() );
             } // for
         } // else
 
