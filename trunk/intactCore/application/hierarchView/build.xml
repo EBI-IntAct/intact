@@ -41,6 +41,9 @@ Verison: $Id$
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
+    <!-- The logging configuration -->
+    <property file="${intact.root}/config/log4j.properties"/>
+
     <!-- Web service related properties. -->
     <property name="ws.dir" value="ws"/>
     <property name="ws.wsdd.dir" value="ws/wsdd"/>
@@ -216,6 +219,31 @@ Verison: $Id$
         <!-- These targets are called to display messages if tomcat or axis are not present. -->
         <ant dir=".." inheritAll="false" target="check-tomcat"/>
         <ant dir=".." inheritAll="false" target="check-axis"/>
+
+        <!-- Check the log level -->
+        <condition property="log.level.is.error">
+            <contains string="${log4j.logger.hierarchView}" substring="ERROR"/>
+        </condition>
+
+        <ant target="check-log-level" />
+
+    </target>
+
+
+    <!-- =================================================================== -->
+
+    <!-- If the log level isn't set to ERROR, a blocking message is displayed to let the user know -->
+    <target name="check-log-level" unless="log.level.is.error" >
+
+        <echo>
+            BEWARE that if the logging feature isn't set to ERROR (ie. ${log4j.logger.hierarchView}),
+            it might affect considerably the performance of the application.
+            Up to now, even the WARN level is generating a huge load of log.
+            cf. the file $INTACT_CORE/config/log4j.properties (section hierarchView).
+        </echo>
+
+        <input message="Press the ENTER to continue..."/>
+
     </target>
 
     <!-- =================================================================== -->

@@ -31,6 +31,9 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
+    <!-- The logging configuration -->
+    <property file="${intact.root}/config/log4j.properties"/>
+
     <property name="dist.dir" value="dist"/>
 	<property name="docs.dir" value="doc/api"/>
     <property name="war.file" value="graph2mif.war"/>
@@ -97,14 +100,28 @@
         <mkdir dir="${basedir}/${lib.dir}"/>
         <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
 
+        <!-- Check the log level -->
+        <condition property="log.level.is.error">
+            <contains string="${log4j.logger.graph2MIF}" substring="ERROR"/>
+        </condition>
+
+        <ant target="check-log-level" />
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- If the log level isn't set to ERROR, a blocking message is displayed to let the user know -->
+    <target name="check-log-level" unless="log.level.is.error" >
+
         <echo>
-            BEWARE that if the logging feature isn't set to ERROR,
-            it will desacrease considerably the response time of the application.
+            BEWARE that if the logging feature isn't set to ERROR (ie. ${log4j.logger.graph2MIF}),
+            it might affect considerably the performance of the application.
             Up to now, even the WARN level is generating a huge load of log.
             cf. the file $INTACT_CORE/config/log4j.properties (section graph2mif).
         </echo>
 
-        <input message="Press the ENTER key to continue..."/>
+        <input message="Press the ENTER to continue..."/>
 
     </target>
 
@@ -176,8 +193,9 @@
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
         <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
-    </target>
 
+    </target>
+    
     <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
