@@ -303,6 +303,16 @@ public class IntactHelper implements SearchI, Serializable {
     }
 
     /**
+     * Wrapper for uk.ac.ebi.intact.persistence#DAO(Object)
+     * @param obj the object to check for.
+     * @return <code>true</code> if <code>obj</code> is persisted or it has non
+     * null primary key value (shouldn't do it).
+     */
+    public boolean isPersistent(Object obj) {
+        return dao.isPersistent(obj);
+    }
+
+    /**
      * starts a business level transaction. This allows finer grained
      * transaction management of business operations (eg for performing
      * a number of creates/deletes within one unit of work). You can choose, by
