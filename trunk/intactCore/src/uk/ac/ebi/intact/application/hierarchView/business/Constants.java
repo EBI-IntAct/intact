@@ -17,6 +17,17 @@ public final class Constants {
 
     // ******************************************************* Properties file
 
+
+    /**
+     * The name of the left frame
+     */
+    public static final String LEFT_FRAME_NAME = "frameView";
+
+    /**
+     * The name of the left frame
+     */
+    public static final String RIGHT_FRAME_NAME = "frameHierarchy";
+
     /**
      * The name of the logger specific of hierarchView
      */

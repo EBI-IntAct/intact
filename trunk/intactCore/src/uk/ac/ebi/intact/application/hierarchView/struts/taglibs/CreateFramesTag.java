@@ -79,9 +79,12 @@ public class CreateFramesTag extends TagSupport {
         // Create frames
         StringBuffer sb = new StringBuffer ();
 
+        String rightFrameName = Constants.RIGHT_FRAME_NAME ;
+        String leftFrameName = Constants.LEFT_FRAME_NAME ;
+
         sb.append("  <frameset cols=\"50%, 50%\">\n");
-        sb.append("    <frame name=\"frameView\"      src=\""+ leftUrl +"\">\n");
-        sb.append("    <frame name=\"frameHierarchy\" src=\""+ rightUrl +"\">\n");
+        sb.append("    <frame name=\"" + leftFrameName  + "\" src=\""+ leftUrl +"\">\n");
+        sb.append("    <frame name=\"" + rightFrameName + "\" src=\""+ rightUrl +"\">\n");
         sb.append("  </frameset>\n");
         sb.append("  <noframes>\n");
         sb.append("    <p>This frameset document contains:\n");

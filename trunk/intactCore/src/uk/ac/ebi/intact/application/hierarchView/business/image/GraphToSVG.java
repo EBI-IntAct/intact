@@ -19,7 +19,6 @@ import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwo
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Vector;
@@ -67,9 +66,9 @@ public class GraphToSVG
     private final static int DEFAULT_COLOR_BORDER_RED   = 255;
     private final static int DEFAULT_COLOR_BORDER_GREEN = 255;
     private final static int DEFAULT_COLOR_BORDER_BLUE  = 255;
-    private final static String DEFAULT_COLOR_BORDER    = DEFAULT_COLOR_BORDER_RED + "," +
-            DEFAULT_COLOR_BORDER_GREEN + "," +
-            DEFAULT_COLOR_BORDER_BLUE;
+//    private final static String DEFAULT_COLOR_BORDER    = DEFAULT_COLOR_BORDER_RED + "," +
+//            DEFAULT_COLOR_BORDER_GREEN + "," +
+//            DEFAULT_COLOR_BORDER_BLUE;
 
     private final static String DEFAULT_LABEL_FONT_NAME  = "Arial";
     private final static String DEFAULT_LABEL_FONT_SIZE  = "10";
@@ -127,7 +126,7 @@ public class GraphToSVG
     /**
      *
      */
-    private float[] marginColor;
+//    private float[] marginColor;
 
     /**
      *
@@ -196,12 +195,10 @@ public class GraphToSVG
 
         ImageDimension dimension = in.getImageDimension();
 
-
         this.dimensionRateX  = dimension.length() / imageLength;
         this.dimensionRateY  = dimension.height() / imageHeight;
         this.imageSizex      = imageLength + borderSize * 2;
         this.imageSizey      = imageHeight + borderSize * 2;
-
     } // GraphToImage
 
 
@@ -570,14 +567,14 @@ public class GraphToSVG
 
         ImageDimension dimension = graph.getImageDimension();
 
-        float x1            = newCoordinateNode (proteinX,
-                dimension.xmin(),
-                proteinLength ,
-                getDimensionRateX());
-        float y1            = newCoordinateNode (proteinY,
-                dimension.ymin(),
-                proteinHeight,
-                getDimensionRateY());
+        float x1 = newCoordinateNode (proteinX,
+                                      dimension.xmin(),
+                                      proteinLength ,
+                                      getDimensionRateX());
+        float y1 = newCoordinateNode (proteinY,
+                                      dimension.ymin(),
+                                      proteinHeight,
+                                      getDimensionRateY());
 
         int x2 = (int) x1 + ((int) proteinLength);
         int y2 = (int) y1 + ((int) proteinHeight);
@@ -587,7 +584,6 @@ public class GraphToSVG
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
-
 
         if (this.shapeEnable.equalsIgnoreCase ("enable")) {
             Color colorNode = (Color) protein.get(Constants.ATTRIBUTE_COLOR_NODE);
@@ -628,7 +624,6 @@ public class GraphToSVG
         // set the protein as drawn
         ArrayList listOfProteins = graph.getOrderedNodes();
         drawnNode[listOfProteins.indexOf(protein)] = true;
-
     } // drawNode
 
 
@@ -728,13 +723,12 @@ public class GraphToSVG
      * drawing process, call methods to draw nodes, edges ...
      *
      */
-    public void draw() throws IOException
-    {
+    public void draw(){
         int i;
-        int numberOfProtein         = graph.sizeNodes();
-        int numberOfInteraction     = graph.sizeEdges();
+        int numberOfProtein     = graph.sizeNodes();
+        int numberOfInteraction = graph.sizeEdges();
 
-        ArrayList listOfProtein     = graph.getOrderedNodes();
+        ArrayList listOfProtein  = graph.getOrderedNodes();
         Vector listOfInteraction = (Vector) graph.getEdges();
 
         EdgeI interaction;
@@ -753,8 +747,8 @@ public class GraphToSVG
         g.setColor (this.backgroundColor);
         g.fillRect (0,
                     0,
-                   (int) imageSizex,
-                   (int) imageSizey);
+                    (int) imageSizex,
+                    (int) imageSizey);
 
         if (textAntialiased.equalsIgnoreCase ("enable")) {
             // Enable antialiasing for text
@@ -777,8 +771,9 @@ public class GraphToSVG
             proteinR    = (uk.ac.ebi.intact.simpleGraph.Node) interaction.getNode1();
             proteinL    = (uk.ac.ebi.intact.simpleGraph.Node) interaction.getNode2();
 
+            // draw edge only if both nodes are visible
             if (((Boolean) proteinR.get(Constants.ATTRIBUTE_VISIBLE)).booleanValue() == true &&
-                    ((Boolean) proteinL.get(Constants.ATTRIBUTE_VISIBLE)).booleanValue() == true) {
+                ((Boolean) proteinL.get(Constants.ATTRIBUTE_VISIBLE)).booleanValue() == true) {
                 drawEdge(interaction, g);
             }
         } // for
@@ -786,11 +781,9 @@ public class GraphToSVG
         // restore the default Stroke (thickness)
         g.setStroke (defaultStroke);
 
-
         uk.ac.ebi.intact.simpleGraph.Node tmp;
 
         // We draw all visible nodes
-
         mapCode.append("<MAP NAME=\"" + mapName + "\">");
 
         for(int j = 0; j < numberOfProtein; j++) {
@@ -807,12 +800,11 @@ public class GraphToSVG
             g.setColor (borderColor);
             g.drawRect (0,
                         0,
-                       (int) imageSizex - 1,
-                       (int) imageSizey - 1);
+                        (int) imageSizex - 1,
+                        (int) imageSizey - 1);
         }
 
-        // The following populates the document root with the
-        // generated SVG content.
+        // The following populates the document root with the generated SVG content.
         Element root = document.getDocumentElement();
         g.getRoot(root);
     } // draw

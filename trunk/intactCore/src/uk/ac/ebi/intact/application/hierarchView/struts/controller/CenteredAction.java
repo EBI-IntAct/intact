@@ -8,17 +8,9 @@ package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
-import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
-import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
-import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundException;
-import uk.ac.ebi.intact.persistence.SearchException;
-import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -62,9 +54,15 @@ public final class CenteredAction extends IntactBaseAction {
         super.clearErrors();
 
         // get the current session
-        logger.info ("Try to get a session.");
         HttpSession session = super.getSession(request);
-        logger.info ("Got it !");
+
+        // retreive user fron the session
+        IntactUserIF user = super.getIntactUser(session);
+        if (null == user) {
+            super.addError ("error.datasource.notCreated");
+            super.saveErrors(request);
+            return (mapping.findForward("error"));
+        }
 
         String AC = null;
 
@@ -77,7 +75,7 @@ public final class CenteredAction extends IntactBaseAction {
             return (new ActionForward(mapping.getInput()));
         }
 
-        String currentAC = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
+        String currentAC = user.getAC();
 
         /*
          * Don't create the interaction network if it is the same,
@@ -85,82 +83,19 @@ public final class CenteredAction extends IntactBaseAction {
          */
         if (false == AC.equals(currentAC)) {
 
+            String depth = user.getDepth();
+
             // Creation of the graph and the image
-            InteractionNetwork in = null;
+            super.produceInteractionNetworkImage (AC, depth, user);
 
-            int depthInt = 0;
-            String depth = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_DEPTH);
-
-            // retreive datasource fron the session
-            IntactUser user = super.getIntactUser(session);
-            if (null == user) {
-                addError ("error.datasource.notCreated");
+            if (false == super.isErrorsEmpty()) {
+                // Report any errors we have discovered back to the original form
                 super.saveErrors(request);
                 return (mapping.findForward("error"));
             }
 
-            try {
-                GraphHelper gh = new GraphHelper ( user );
-                depthInt = Integer.parseInt(depth);
-                in = gh.getInteractionNetwork (AC, depthInt);
-            } catch (ProteinNotFoundException e) {
-                super.addError ("error.protein.notFound", AC);
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-
-            } catch (SearchException e) {
-                super.addError ("error.search.process", e.getMessage());
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-
-            } catch (IntactException e) {
-                super.addError ("error.interactionNetwork.notCreated", e.getMessage());
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-            }
-
-            if (0 == in.sizeNodes()) {
-                super.addError ("error.interactionNetwork.noProteinFound");
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-            }
-
-            String dataTlp = in.exportTlp();
-
-            try {
-                String[] errorMessages;
-                errorMessages = in.importDataToImage(dataTlp);
-
-                if ((null != errorMessages) && (errorMessages.length > 0)) {
-                    for (int i = 0; i<errorMessages.length; i++) {
-                        addError("error.webService", errorMessages[i]);
-                        logger.error (errorMessages[i]);
-                    }
-                    super.saveErrors(request);
-                    return (mapping.findForward("error"));
-                }
-            } catch (Exception e) {
-                addError ("error.webService", e.getMessage());
-                logger.error (e.getMessage(), e);
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-            }
-
-            // No error, produce the layout.
-            GraphToSVG te = new GraphToSVG(in);
-            te.draw();
-            ImageBean ib  = te.getImageBean();
-
-            if (null == ib) {
-                addError("error.ImageBean.build");
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-            }
-
-            // Save our data in the session
-            session.setAttribute(StrutsConstants.ATTRIBUTE_AC, AC);
-            session.setAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN, ib);
-            session.setAttribute (StrutsConstants.ATTRIBUTE_GRAPH, in);
+            // Save our data
+            user.setAC (AC);
         }
 
         // Print debug in the log file

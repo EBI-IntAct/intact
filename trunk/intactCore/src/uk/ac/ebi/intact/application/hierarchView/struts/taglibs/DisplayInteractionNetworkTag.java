@@ -7,8 +7,9 @@ package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 // intact
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
@@ -43,8 +44,9 @@ public class DisplayInteractionNetworkTag extends TagSupport {
         HttpSession session = pageContext.getSession();
 
         try {
-            ImageBean imageBean = (ImageBean) session.getAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN);
-            String AC           = (String)    session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
+            IntactUserIF user = (IntactUserIF) session.getAttribute (Constants.USER_KEY);
+            ImageBean imageBean = user.getImageBean();
+            String AC = user.getAC();
 
             /**
              *  Display only the picture if an AC is in the session

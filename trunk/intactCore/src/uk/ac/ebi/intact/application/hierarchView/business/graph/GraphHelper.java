@@ -5,10 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.business.graph;
 
-// hierarchView
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundException;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
@@ -31,12 +30,12 @@ public class GraphHelper  {
 
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
-    IntactUser user;
+    IntactUserIF user;
 
     /**
      * basic constructor - sets up (hard-coded) data source and an intact helper.
      */
-    public GraphHelper (IntactUser intactUser) {
+    public GraphHelper (IntactUserIF intactUser) {
         user = intactUser;
     } // GraphHelper
 

@@ -714,7 +714,7 @@ public class GraphToImage {
      * drawing process, call methods to draw nodes, edges ...
      *
      */
-    public void draw() throws IOException
+    public void draw()
     {
         int i;
         int numberOfProtein         = graph.sizeNodes();

@@ -1,9 +1,8 @@
 package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 
-// JDK
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
@@ -70,7 +69,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         Collection result = null;
         Iterator iterator;
         Collection listGOTerm = new ArrayList();
-        IntactUser user = (IntactUser) aSession.getAttribute (uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY);
+        IntactUserIF user = (IntactUserIF) aSession.getAttribute (uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY);
 
         if (null == user) {
             logger.error("No user found in the session, unable to search for GO terms");
@@ -93,6 +92,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
         // get Xref collection
         Collection xRef = interactor.getXref();
+        logger.info(result.size() + "Xref found");
         Iterator xRefIterator = xRef.iterator() ;
 
         while (xRefIterator.hasNext() ) {
@@ -103,6 +103,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
                 goterm[0] = xref.getPrimaryId();
                 goterm[1] = xref.getSecondaryId();
                 listGOTerm.add(goterm);
+                logger.info (xref.getPrimaryId());
             }
         }
 
@@ -122,7 +123,9 @@ public class GoHighlightmentSource extends HighlightmentSource {
      */
     public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) {
         Collection nodeList = new Vector ();
-        Collection keys     = (Collection)  aSession.getAttribute (StrutsConstants.ATTRIBUTE_KEYS);
+
+        IntactUserIF user = (IntactUserIF) aSession.getAttribute(Constants.USER_KEY);
+        Collection keys     = user.getKeys();
 
         // Read source option in the session
         String  check = (String)  aSession.getAttribute (ATTRIBUTE_OPTION_CHILDREN);
@@ -238,7 +241,9 @@ public class GoHighlightmentSource extends HighlightmentSource {
                 goTermInfo        = (String[]) list.next();
                 goTerm            = goTermInfo[0];
                 goTermDescription = goTermInfo[1];
-                String url = hostname + "/ingo/ego/DisplayGoTerm?id=" + goTerm + "&format=contentonly";
+                String url = hostname + "/ingo/ego/DisplayGoTerm?selected=" + goTerm + "&intact=true&format=contentonly";
+
+                // http://web7-node1.ebi.ac.uk:8110/ingo/ego/DisplayGoTerm?selected=GO:0005635,GO:0005637&intact=true&format=contentonly
 
                 urls.add ( new LabelValueBean (goTerm, url, goTermDescription) );
             }

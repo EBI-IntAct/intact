@@ -15,13 +15,13 @@ import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
 import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
-import java.io.Serializable;
+
 
 import org.apache.log4j.Logger;
 
@@ -33,15 +33,48 @@ import org.apache.log4j.Logger;
  * This class implements the <tt>HttpSessionBindingListener</tt> interface for it
  * can be notified of session time outs.
  *
- * @author Originaly : Chris Lewington, Sugath Mudali (smudali@ebi.ac.uk)
- *         Modified by Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
-public class IntactUser implements Serializable, HttpSessionBindingListener {
+public class IntactUser implements IntactUserIF {
 
     static Logger logger = Logger.getLogger(uk.ac.ebi.intact.application.hierarchView.business.Constants.LOGGER_NAME);
 
     private IntactHelper intactHelper;
 
+    // User's properties (forms data)
+    private String AC;
+    private String depth;
+    private boolean hasNoDepthLimit;
+    private String methodLabel;
+    private String methodClass;
+    private String behaviour;
+    private InteractionNetwork interactionNetwork;
+    private ImageBean imageBean;
+    private Collection keys;
+
+    public String getAC()               { return (this.AC); }
+    public String getDepth()            { return (this.depth); }
+    public boolean getHasNoDepthLimit() { return (this.hasNoDepthLimit); }
+    public String getMethodLabel()      { return (this.methodLabel); }
+    public String getMethodClass()      { return (this.methodClass); }
+    public String getBehaviour()        { return behaviour; }
+    public InteractionNetwork getInteractionNetwork() {
+        return interactionNetwork;
+    }
+    public ImageBean getImageBean() { return imageBean; }
+    public Collection getKeys()     { return keys; }
+
+    public void setAC(String AC)                    { this.AC = AC; }
+    public void setDepth (String depth)             { this.depth = depth; }
+    public void setHasNoDepthLimit (boolean flag)   { this.hasNoDepthLimit = flag; }
+    public void setMethodLabel (String methodLabel) { this.methodLabel = methodLabel; }
+    public void setMethodClass (String methodClass) { this.methodClass = methodClass; }
+    public void setBehaviour(String behaviour)      { this.behaviour = behaviour; }
+    public void setInteractionNetwork(InteractionNetwork in) {
+        this.interactionNetwork = in;
+    }
+    public void setImageBean(ImageBean imageBean) { this.imageBean = imageBean; }
+    public void setKeys(Collection keys)          { this.keys = keys; }
 
 
     /**
@@ -58,8 +91,10 @@ public class IntactUser implements Serializable, HttpSessionBindingListener {
      * @exception IntactException thrown for any error in creating lists such
      *  as topics, database names etc.
      */
-    public IntactUser (String mapping, String dsClass)
-        throws DataSourceException, IntactException {
+    public IntactUser (String mapping, String dsClass) throws DataSourceException, IntactException {
+
+        initUserData();
+
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
         // Pass config details to data source - don't need fast keys as only
@@ -73,6 +108,21 @@ public class IntactUser implements Serializable, HttpSessionBindingListener {
         logger.info ("IntactHelper created.");
     }
 
+    /**
+     * Set the default value of user's data
+     */
+    public void initUserData () {
+
+        this.AC = null;
+        this.depth = null;
+        this.hasNoDepthLimit = false;
+        this.methodLabel = null;
+        methodClass = null;
+        behaviour = null;
+        interactionNetwork = null;
+        imageBean = null;
+        keys = null;
+    }
 
     /**
      * Allows the user to retreive a collection of matching IntAct object

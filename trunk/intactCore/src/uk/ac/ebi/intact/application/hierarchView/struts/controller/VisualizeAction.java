@@ -5,20 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.SearchException;
-
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
-import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
-import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.VisualizeForm;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
-import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundException;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -68,6 +60,14 @@ public final class VisualizeAction extends IntactBaseAction {
         // get the current session
         HttpSession session = super.getSession(request);
 
+        // retreive user fron the session
+        IntactUserIF user = super.getIntactUser(session);
+        if (null == user) {
+            super.addError ("error.datasource.notCreated");
+            super.saveErrors(request);
+            return (mapping.findForward("error"));
+        }
+
         String AC    = null;
         String depth = null;
         boolean hasNoDepthLimit = false; // the default value.
@@ -82,7 +82,7 @@ public final class VisualizeAction extends IntactBaseAction {
             hasNoDepthLimit = ((VisualizeForm) form).getHasNoDepthLimit ();
             methodLabel     = ((VisualizeForm) form).getMethod ();
 
-            // read the ApplicationResource.proterties file
+            // read the highlighting.proterties file
             Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE_HIGHLIGHTING);
 
             if (null != properties) {
@@ -118,99 +118,30 @@ public final class VisualizeAction extends IntactBaseAction {
                 }
             }
 
-            // Save our data in the session
-            session.setAttribute (StrutsConstants.ATTRIBUTE_AC, AC);
-            session.setAttribute (StrutsConstants.ATTRIBUTE_DEPTH, depth);
-            session.setAttribute (StrutsConstants.ATTRIBUTE_NO_DEPTH_LIMIT, new Boolean (hasNoDepthLimit));
-            session.setAttribute (StrutsConstants.ATTRIBUTE_METHOD_LABEL, methodLabel);
-            session.setAttribute (StrutsConstants.ATTRIBUTE_METHOD_CLASS, methodClass);
-            session.setAttribute (StrutsConstants.ATTRIBUTE_BEHAVIOUR, behaviourDefault);
+            // Save user's data
+            user.setAC (AC);
+            user.setDepth (depth);
+            user.setHasNoDepthLimit (hasNoDepthLimit);
+            user.setMethodLabel (methodLabel);
+            user.setMethodClass (methodClass);
+            user.setBehaviour (behaviourDefault);
 
 
             // Creation of the graph and the image
-            int depthInt = 0;
-            InteractionNetwork in = null;
+            super.produceInteractionNetworkImage (AC, depth, user);
 
-            // retreive user fron the session
-            IntactUser user = super.getIntactUser(session);
-            if (null == user) {
-                super.addError ("error.datasource.notCreated");
+            if (false == super.isErrorsEmpty()) {
+                // Report any errors we have discovered back to the original form
                 super.saveErrors(request);
                 return (mapping.findForward("error"));
             }
-
-            try {
-                GraphHelper gh = new GraphHelper ( user );
-                depthInt = Integer.parseInt(depth);
-                in = gh.getInteractionNetwork (AC, depthInt);
-            } catch (ProteinNotFoundException e) {
-                super.addError ("error.protein.notFound", AC);
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-
-            } catch (SearchException e) {
-                super.addError ("error.search.process", e.getMessage());
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-
-            } catch (IntactException e) {
-                super.addError ("error.interactionNetwork.notCreated", e.getMessage());
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-            }
-
-            if (0 == in.sizeNodes()) {
-                super.addError ("error.interactionNetwork.noProteinFound");
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-            }
-
-            // TODO : If depth desacrease we don't have to access IntAct, we have to reduce the current graph.
-
-            String dataTlp  = in.exportTlp();
-
-            try {
-                String[] errorMessages;
-                errorMessages = in.importDataToImage(dataTlp);
-
-                if ((null != errorMessages) && (errorMessages.length > 0)) {
-                    for (int i = 0; i<errorMessages.length; i++) {
-                         addError("error.webService", errorMessages[i]);
-                        logger.error (errorMessages[i]);
-                    }
-                    super.saveErrors(request);
-                    return (mapping.findForward("error"));
-                }
-            } catch (Exception e) {
-                addError ("error.webService", e.getMessage());
-                logger.error (e.getMessage(), e);
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-            }
-
-            // GraphToImage te = new GraphToImage (in);
-            GraphToSVG te = new GraphToSVG (in);
-            te.draw ();
-            ImageBean ib = te.getImageBean ();
-
-            if (null == ib) {
-                super.addError ("error.ImageBean.build");
-                super.saveErrors(request);
-                return (mapping.findForward("error"));
-            }
-
-            // store the bean
-            session.setAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN, ib);
-            // store the graph
-            session.setAttribute (StrutsConstants.ATTRIBUTE_GRAPH, in);
         }
 
         logger.info ("VisualizeAction: AC=" + AC +
                      " depth=" + depth +
                      " noDepthLimit=" + hasNoDepthLimit +
                      " methodLabel=" + methodLabel +
-                     " methodClass=" + methodClass +
-                     "\nlogged on in session " + session.getId());
+                     " methodClass=" + methodClass);
 
         // Forward control to the specified success URI
         return (mapping.findForward("success"));

@@ -9,7 +9,7 @@ import org.w3c.dom.Document;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ConvertSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
@@ -49,8 +49,17 @@ public class GenerateImage extends HttpServlet {
     public void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse)
             throws ServletException{
 
-        try
-        {
+        try {
+            // get the current user session
+            HttpSession session = aRequest.getSession ();
+            IntactUserIF user = (IntactUserIF) session.getAttribute (Constants.USER_KEY);
+            ImageBean ib = user.getImageBean();
+
+            if (null == ib) {
+                logger.error ("ImageBean in the session is null");
+                return;
+            }
+
             // binary output
             ServletOutputStream out = aResponse.getOutputStream();
 
@@ -64,22 +73,14 @@ public class GenerateImage extends HttpServlet {
                 className = propertiesBusiness.getProperty ("hierarchView.image.format." + format + ".class" );
             }
 
+            // Encode the off-screen image into a JPEG and send it to the client
             ConvertSVG convert = ConvertSVG.getConvertSVG(className);
             logger.info (className + " created");
 
-            // Encode the off-screen image into a JPEG and send it to the client
+            // set MIME type according to user format choice
             String typeMime = convert.getMimeType();
             logger.info ("set MIME Type to " + typeMime);
             aResponse.setContentType(typeMime);
-
-            // get the current user session
-            HttpSession session = aRequest.getSession();
-            ImageBean ib = (ImageBean) session.getAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN);
-
-            if (null == ib) {
-                logger.error ("ImageBean in the session is null");
-                return;
-            }
 
             Document document = ib.getDocument();
             if (null != document) {

@@ -5,10 +5,17 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
+import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundException;
+import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.business.IntactException;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
@@ -19,9 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * Super class for all Intact related action classes.
+ * Super class for all hierarchView related action classes.
  *
- * @author Sugath Mudali (smudali@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
 public abstract class IntactBaseAction extends Action {
 
@@ -40,16 +47,16 @@ public abstract class IntactBaseAction extends Action {
      * @return an instance of <code>IntactUserImpl</code> stored in
      * <code>session</code>
      */
-    protected IntactUser getIntactUser(HttpSession session)
+    protected IntactUserIF getIntactUser(HttpSession session)
             throws SessionExpiredException {
-        IntactUser service = (IntactUser) session.getAttribute(Constants.USER_KEY);
+        IntactUserIF user = (IntactUserIF) session.getAttribute(Constants.USER_KEY);
 
-        if (null == service) {
+        if (null == user) {
             logger.warn ("Session expired ... forward to error page.");
             throw new SessionExpiredException();
         }
 
-        return service;
+        return user;
     }
 
     /**
@@ -113,7 +120,8 @@ public abstract class IntactBaseAction extends Action {
 
         // As an error occured, remove the image data stored in the session
         HttpSession session = this.getSession(request);
-        session.removeAttribute(StrutsConstants.ATTRIBUTE_IMAGE_BEAN);
+        IntactUserIF user = getIntactUser(session);
+        user.setImageBean (null);
     }
 
     /**
@@ -132,7 +140,87 @@ public abstract class IntactBaseAction extends Action {
      * @param attrName the attribute name.
      * @return an application object stored in a session under <tt>attrName</tt>.
      */
-    private Object getApplicationObject(String attrName) {
-        return super.servlet.getServletContext().getAttribute(attrName);
-    }
-}
+//    private Object getApplicationObject(String attrName) {
+//        return super.servlet.getServletContext().getAttribute(attrName);
+//    }
+
+
+
+
+    /**
+     * Produces and updates the user session with :
+     * <blockquote>
+     *      the InteractionNetwork corresponding to the given AC and depth. <br>
+     *      the image data corresponding to the produced InteractionNetwork
+     * </blockquote>
+     * Any errors are stored in the <i>ActionErrors</i> object. A test need to be done
+     * afterward to check if any errors have occured.
+     *
+     * @param AC the protein identifier on which is centered the interaction network.
+     * @param depth the search depth around the cetered protein
+     * @param user where are saved produced data
+     */
+    public void produceInteractionNetworkImage (String AC, String depth, IntactUserIF user) {
+
+        int depthInt = 0;
+        InteractionNetwork in = null;
+
+        try {
+            GraphHelper gh = new GraphHelper(user);
+            depthInt = Integer.parseInt(depth);
+            in = gh.getInteractionNetwork(AC, depthInt);
+        } catch (ProteinNotFoundException e) {
+            addError ("error.protein.notFound", AC);
+            return;
+
+        } catch (SearchException e) {
+            addError ("error.search.process", e.getMessage());
+            return;
+
+        } catch (IntactException e) {
+            addError ("error.interactionNetwork.notCreated", e.getMessage());
+            return;
+        }
+
+        if (0 == in.sizeNodes()) {
+            addError ("error.interactionNetwork.noProteinFound");
+            return;
+        }
+
+        // TODO : If depth desacrease we don't have to access IntAct, we have to reduce the current graph.
+
+        String dataTlp  = in.exportTlp();
+
+        try {
+            String[] errorMessages;
+            errorMessages = in.importDataToImage(dataTlp);
+
+            if ((null != errorMessages) && (errorMessages.length > 0)) {
+                for (int i = 0; i<errorMessages.length; i++) {
+                    addError("error.webService", errorMessages[i]);
+                    logger.error (errorMessages[i]);
+                }
+                return;
+            }
+        } catch (Exception e) {
+            addError ("error.webService", e.getMessage());
+            logger.error (e.getMessage(), e);
+            return;
+        }
+
+        GraphToSVG te = new GraphToSVG (in);
+        te.draw ();
+        ImageBean ib = te.getImageBean ();
+
+        if (null == ib) {
+            addError ("error.ImageBean.build");
+            return;
+        }
+
+        // store the image data and the graph
+        user.setImageBean (ib);
+        user.setInteractionNetwork (in);
+    } // produceInteractionNetworkImage
+
+
+} // IntactBaseAction
