@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.OrganismTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinHolder;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinInteractorTag;
@@ -28,6 +29,8 @@ import java.util.*;
  * @version $Id$
  */
 public final class ProteinInteractorChecker {
+
+    private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     private static class AmbiguousBioSourceException extends Exception {
 
@@ -474,16 +477,36 @@ public final class ProteinInteractorChecker {
                 source = "UpdateProteins";
                 Collection tmp = proteinFactory.insertSPTrProteins( uniprotId, taxId, true ); // taxId can be null !
 
-                if( DEBUG ) {
-                    System.out.println( tmp.size() + " Protein created/updated." );
-                }
+                Map exceptions = proteinFactory.getParsingExceptions();
+                if( exceptions.size() > 0 ) {
+                    // there was exception during update, the proteins hasn't been updated.
+                    StringBuffer messageBuffer = new StringBuffer( 128 );
+                    messageBuffer.append( "Could not update the protein " ).append( uniprotId );
+                    messageBuffer.append( " using UpdateProteins, a parsing error occured." );
 
-                // search against updated database
-                try {
-                    result = getIntactProtein( uniprotId, taxId, helper );
-                } catch ( AmbiguousBioSourceException e ) {
-                    MessageHolder.getInstance().addCheckerMessage( new Message( e.getMessage() ) );
-                    System.out.println( e.getMessage() );
+                    // get stacktraces
+                    for ( Iterator iterator = exceptions.values().iterator(); iterator.hasNext(); ) {
+                        Throwable t = (Throwable) iterator.next();
+                        messageBuffer.append( ExceptionUtils.getStackTrace( t ) );
+                        messageBuffer.append( LINE_SEPARATOR ).append( "============================================" );
+                    }
+
+                    String msg = messageBuffer.toString();
+                    MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
+                    System.err.println( msg );
+                } else {
+
+                    if( DEBUG ) {
+                        System.out.println( tmp.size() + " Protein created/updated." );
+                    }
+
+                    // search against updated database
+                    try {
+                        result = getIntactProtein( uniprotId, taxId, helper );
+                    } catch ( AmbiguousBioSourceException e ) {
+                        MessageHolder.getInstance().addCheckerMessage( new Message( e.getMessage() ) );
+                        System.out.println( e.getMessage() );
+                    }
                 }
             }
 
