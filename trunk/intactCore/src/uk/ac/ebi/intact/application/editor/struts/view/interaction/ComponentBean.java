@@ -6,21 +6,20 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
+import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.*;
 
 import java.io.Serializable;
-import java.util.*;
-
-import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Bean to hold data for a component in an Interaction.
@@ -95,11 +94,6 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
      * A list of features to delete.
      */
     private transient List myFeaturesToDel = new ArrayList();
-
-    /**
-     * True if this bein selected. Default is not selected.
-     */
-//    private boolean mySelected;
 
     /**
      * Instantiate an object of this class from a Protein instance.
@@ -188,10 +182,6 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
         return myInteractor.getFullName();
     }
 
-//    public boolean isSelected() {
-//        return mySelected;
-//    }
-
     // Read/Write properties.
 
     public String getRole() {
@@ -276,6 +266,18 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
      */
     public Collection getFeaturesToDelete() {
         return myFeaturesToDel;
+    }
+
+    /**
+     * Returns a collection of Feature beans added.
+     * @return a collection of Feature beans added.
+     *
+     * <pre>
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(FeatureBean))
+     * </pre>
+     */
+    public Collection getFeaturesAdded() {
+        return myFeaturesToAdd;
     }
 
     /**
