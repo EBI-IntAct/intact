@@ -166,6 +166,7 @@ public class FileGenerator {
 
                 //dump out the generated <filename> <label> pair
                 System.out.println(fileName + ".xml" + " " + label);
+                fileName = fileNameRoot;    //reset to Biosource for the next Experiment
             }
         }
     }
@@ -501,9 +502,9 @@ public class FileGenerator {
             }
             //System.out.println("DEBUG: size of shortlabel list: " + negExpLabels.size());
             //System.out.println("DEBUG: shortlabels in neg list:");
-            for(Iterator it = negExpLabels.iterator(); it.hasNext();) {
-                  System.out.println(it.next());
-            }
+            //for(Iterator it = negExpLabels.iterator(); it.hasNext();) {
+                  //System.out.println(it.next());
+            //}
 
         }
         catch(SQLException se) {
