@@ -6,14 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.biosrc;
 
-import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.action.DynaActionForm;
+import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvCellType;
 import uk.ac.ebi.intact.model.CvTissue;
 
@@ -75,34 +75,17 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         else {
             bs.setTaxId(getTaxId());
         }
-        // Set tissue and cell objects if they aren't null.
-        if (getTissue() != null) {
-            CvTissue tissue = (CvTissue) user.getObjectByLabel(
-                    CvTissue.class, getTissue());
-            bs.setCvTissue(tissue);
-        }
-        if (getCellType() != null) {
-            CvCellType cell = (CvCellType) user.getObjectByLabel(
-                    CvCellType.class, getCellType());
-            bs.setCvCellType(cell);
-        }
+        // Set tissue and cell objects.
+        bs.setCvTissue(getTissue(user));
+        bs.setCvCellType(getCellType(user));
     }
 
     // Override to provide set experiment from the bean.
     public void updateFromForm(DynaActionForm dynaform) {
         // Set the common values by calling super first.
         super.updateFromForm(dynaform);
-
-        // These two items need to be normalized.
-        String tissue = (String) dynaform.get("tissue");
-        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(tissue)) {
-            setTissue(tissue);
-        }
-
-        String cell = (String) dynaform.get("cellType");
-        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(cell)) {
-            setCellType(cell);
-        }
+        setTissue((String) dynaform.get("tissue"));
+        setCellType((String) dynaform.get("cellType"));
     }
 
     // Override to provide BioSource layout.
@@ -130,7 +113,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     public void setCellType(String cellType) {
-        myCellType = cellType;
+        myCellType = normalizeMenuItem(cellType);
     }
 
     public String getTissue() {
@@ -138,30 +121,52 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     public void setTissue(String tissue) {
-        myTissue = tissue;
+        myTissue = normalizeMenuItem(tissue);
     }
 
     /**
      * The cell type menu list.
      * @return the cell type menu consisting of CvCellType short labels.
-     * The first item in the menu may contain '---Select---' if the cell type
-     * is not set.
+     * The first item in the menu contains the '---Select---' item.
      * @throws SearchException for errors in generating menus.
      */
     public List getCellTypeMenu() throws SearchException {
-        int mode = (myCellType == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.CELLS, mode);
+        return getMenuFactory().getMenu(EditorMenuFactory.CELLS, 1);
     }
 
     /**
      * The tissue menu list.
      * @return the tissue menu consisting of CvTissue short labels.
-     * The first item in the menu may contain '---Select---' if the tissue is
-     * not set.
+     * The first item in the menu contains the '---Select---' item.
      * @throws SearchException for errors in generating menus.
      */
     public List getTissueMenu() throws SearchException {
-        int mode = (myTissue == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.TISSUES, mode);
+        return getMenuFactory().getMenu(EditorMenuFactory.TISSUES, 1);
+    }
+
+    /**
+     * Returns the CvTissue object using the current tissue.
+     * @param user the user to get the CvTissue object from a persistent system.
+     * @return CvTissue object or null if the current tissue is null.
+     * @throws SearchException for errors in retrieving the CvTisue object.
+     */
+    private CvTissue getTissue(EditUserI user) throws SearchException {
+        if (myTissue == null) {
+            return null;
+        }
+        return (CvTissue) user.getObjectByLabel(CvTissue.class, myTissue);
+    }
+
+    /**
+     * Returns the CvCellType object using the current cell type.
+     * @param user the user to get the CvCellType object from a persistent system.
+     * @return CvCellType object or null if the current cell type is null.
+     * @throws SearchException for errors in retrieving the CvCellType object.
+     */
+    private CvCellType getCellType(EditUserI user) throws SearchException {
+        if (myCellType == null) {
+            return null;
+        }
+        return (CvCellType) user.getObjectByLabel(CvCellType.class, myCellType);
     }
 }
