@@ -115,16 +115,18 @@ public class SaveContextInCookieTag extends TagSupport {
 
         // save queries without the last comma
         String queryString = null;
-        try {
-            queryString = URLEncoder.encode (sb.substring(0, sb.length()-1), "UTF-8");
-        } catch (UnsupportedEncodingException uee) {
-            logger.error ("Unsupported encoding system");
-            return EVAL_PAGE;
+        if( sb.length() > 0 ) {
+            try {
+                queryString = URLEncoder.encode( sb.substring( 0, sb.length() - 1 ), "UTF-8" );
+            } catch (UnsupportedEncodingException uee) {
+                logger.error ("Unsupported encoding system");
+                return EVAL_PAGE;
+            }
         }
 
-        saveCookie (applicationPath, "QUERY", queryString);
-        saveCookie (applicationPath, "DEPTH",       ""+user.getCurrentDepth());
-        saveCookie (applicationPath, "METHOD",      user.getMethodLabel());
+        saveCookie (applicationPath, "QUERY",  queryString);
+        saveCookie (applicationPath, "DEPTH",  ""+user.getCurrentDepth());
+        saveCookie (applicationPath, "METHOD", user.getMethodLabel());
 
         return EVAL_PAGE;
     }
