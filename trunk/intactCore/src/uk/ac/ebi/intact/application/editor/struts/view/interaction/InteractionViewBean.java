@@ -6,20 +6,23 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts.tiles.ComponentContext;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
-import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.business.IntactException;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.commons.collections.CollectionUtils;
+import uk.ac.ebi.intact.model.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Interaction edit view bean.
@@ -142,12 +145,23 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Delete proteins and remove it from the interaction.
         for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
-            Component comp = ((ProteinBean) iter.next()).getComponent();
+            ProteinBean pb = (ProteinBean) iter.next();
+            Component comp = pb.getComponent();//(ProteinBean) iter.next()).getComponent();
+//            Component comp = ((ProteinBean) iter.next()).getComponent();
+            // No need to delete from persistent storage if the link to this
+            // Protein is not persisted.
+            if (comp.getAc() == null) {
+                System.out.println("Trying to delete a non persistent protein: " +
+                        pb.getShortLabel() + " and " + pb.getEditState());
+                continue;
+            }
+            System.out.println("Deleting a persistent Protein: " +
+                    pb.getShortLabel() + " and " + pb.getEditState());
             user.delete(comp);
             intact.removeComponent(comp);
         }
         // Update proteins.
-        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
+        for (Iterator iter = getProteinsToUpdateIter(); iter.hasNext();) {
             ProteinBean pb = (ProteinBean) iter.next();
             Component comp = pb.getComponent(user);
             intact.addComponent(comp);
@@ -466,6 +480,24 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
+     * Removes a Protein from given position.
+     * @param pos the position in the current Protein collection.
+     *
+     * <pre>
+     * post: myProteinsToDel = myProteinsToDel@pre + 1
+     * post: myProteins = myProteins@pre - 1
+     * </pre>
+     */
+    public void delProtein(int pos) {
+        // Remove from the view as well; need the index because we need to
+        // remove a specific bean (not just any bean which returns true for
+        // equals method).
+        ProteinBean pb = (ProteinBean) myProteins.remove(pos);
+        // Add to the container to delete proteins.
+        myProteinsToDel.add(pb);
+    }
+
+    /**
      * Adds a Protein bean to update.
      * @param pb a <code>ProteinBean</code> object to update.
      *
@@ -566,7 +598,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     /**
      * Returns a collection of experiments to add.
-     * @return the collection of experiments to add to the current CV object.
+     * @return the collection of experiments to add to the current Interaction.
      * Empty if there are no experiments to add.
      *
      * <pre>
@@ -583,7 +615,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     /**
      * Returns a collection of experiments to remove.
-     * @return the collection of experiments to remove from the current CV object.
+     * @return the collection of experiments to remove from the current Interaction.
      * Could be empty if there are no experiments to delete.
      *
      * <pre>
@@ -596,5 +628,34 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 myExperimentsToAdd, myExperimentsToDel);
         // All the experiments only found in experiments to delete collection.
         return CollectionUtils.subtract(myExperimentsToDel, common);
+    }
+
+    /**
+     * Returns an Iterator of proteins to update. This excludes any Proteins
+     * already marked for deletions.
+     * @return the collection of proteins to update for the current Interaction.
+     * Could be empty if there are no proteins to update.
+     *
+     * <pre>
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(ProteinBean)
+     * </pre>
+     */
+    private Iterator getProteinsToUpdateIter() {
+        // All the proteins to update.
+        Collection prots = CollectionUtils.subtract(myProteinsToUpdate,
+                myProteinsToDel);
+        // Holds Proteins to update.
+        Collection result = new ArrayList();
+        // Remove any proteins marked for deletions.
+        for (Iterator iter = prots.iterator(); iter.hasNext();) {
+            ProteinBean pb = (ProteinBean) iter.next();
+//            System.out.println("Going though with " + pb.getShortLabel());
+            if (pb.isMarkedForDelete()) {
+                continue;
+            }
+//            System.out.println("Adding to the list to update: " + pb.getShortLabel());
+            result.add(pb);
+        }
+        return result.iterator();
     }
 }
