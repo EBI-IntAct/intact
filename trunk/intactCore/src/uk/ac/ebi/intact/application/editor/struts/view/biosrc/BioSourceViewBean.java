@@ -46,9 +46,9 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         context.putAttribute("content", "edit.biosrc.layout");
     }
 
-    // Ovverride to provide BioSource help tag.
+    // Override to provide BioSource help tag.
     public String getHelpTag() {
-        return "biosource";
+        return "editor.biosource";
     }
 
     // Getter/Setter methods for tax id.

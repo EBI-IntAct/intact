@@ -163,7 +163,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     // Override to provide Interaction help tag.
     public String getHelpTag() {
-        return "interaction";
+        return "editor.interaction";
     }
 
     // Null for any of these values will throw an exception.
