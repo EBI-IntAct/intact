@@ -1,3 +1,9 @@
+shortlabel: definition
+term: Definition of the controlled vocabulary term
+
+shortlabel: comment
+term: Comment for public view
+
 shortlabel: function
 term: Biological Function of the Object
 function: Describes the biological function of the Object.
@@ -6,25 +12,26 @@ shortlabel: url
 term: URL/Web address
 definition: The URL (Web address) at which to find more information on the object.
 
-shortlabel: comment
-term: Comment for public view
-
-shortlabel: isoform-comment
-term: Protein isoform's comment for public view
-
-shortlabel: definition
-term: Definition of the controlled vocabulary term
-
 shortlabel: remark
 term: Internal remark
 definition: Internal remark. Will normally not be shown to the public.
 
 shortlabel: search-url
 term: Search engine URL.
-definition: Normally used for CvDatabase. Within the search URL, ${ac} is the variable which will be replaced by the primary identifier of a crossreference. The resulting URL will retrieve an object by its primary  identifier.  
+definition: Normally used for CvDatabase. The URL of a search engine which will retrieve an object by its primary  identifier. 
 example: http://www.expasy.org/cgi-bin/niceprot.pl?${ac} is the search url for the database sptr. If ${ac} is replaced by an SPTR accession number, the resulting URL http://www.expasy.org/cgi-bin/niceprot.pl?P12345 will retrieve the corresponding database object.
 
 shortlabel: example
 term: Example
 definition: Comment topic used to mark examples, normally used for the explanation of controlled vocabulary terms.
+
+shortlabel: isoform-comment
+term: Protein isoform's comment for public view
+
+shortlabel: prerequisite ptm
+term: PTM required for an interaction to occur.
+
+shortlabel: resulting ptm
+term: PTM occurs subsequent to interaction occuring
+definition: PTM occuring to one protein within the complex as a result of the complex formation.
 

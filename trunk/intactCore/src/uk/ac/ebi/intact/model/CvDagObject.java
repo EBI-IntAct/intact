@@ -6,9 +6,9 @@ package uk.ac.ebi.intact.model;
 
 import java.util.Collection;
 import java.util.ArrayList;
-//import java.util.HashSet;
 import java.util.Iterator;
-//import java.util.Set;
+
+import uk.ac.ebi.intact.util.GoTools;
 
 /**
  * Controlled vocabulary class for CVs which are organised in a Directed
@@ -19,11 +19,6 @@ import java.util.Iterator;
  * @version $Id$
  */
 public abstract class CvDagObject extends CvObject {
-
-    /**
-     * Cache a Set of all shortLabels of the class, e.g. for menus.
-     */
-//    private static Set menuList = null;
 
     ///////////////////////////////////////
     // associations
@@ -212,9 +207,10 @@ public abstract class CvDagObject extends CvObject {
      *
      * @param currentDepth The current depth in the DAG. Translated into leading blanks.
      * @param aParent The current parents. All parents exept aParent are listed in the DAG line as additional parents.
+     * @param goidDatabase The database xref from which to generate the goid
      * @return a single string containing the GO DAG flatfile representation of the current object and all its decendents.
      */
-    public String toGoDag(int currentDepth, CvDagObject aParent){
+    public String toGoDag(int currentDepth, CvDagObject aParent, String goidDatabase){
 
         StringBuffer currentTree = new StringBuffer();
 
@@ -231,14 +227,14 @@ public abstract class CvDagObject extends CvObject {
             currentTree.append("%");
 
         // write the current term
-        currentTree.append(term2DagLine());
+        currentTree.append(term2DagLine(goidDatabase));
 
         // additional parents
         for (Iterator iParents = parents.iterator(); iParents.hasNext();) {
             CvDagObject parent = (CvDagObject) iParents.next();
             if (aParent != parent) {
                 currentTree.append(" % ");
-                currentTree.append(parent.term2DagLine());
+                currentTree.append(parent.term2DagLine(goidDatabase));
             }
         }
 
@@ -247,32 +243,29 @@ public abstract class CvDagObject extends CvObject {
 
         // Iterate over children to add subtrees.
         for (Iterator iterator = children.iterator(); iterator.hasNext();) {
-            currentTree.append(((CvDagObject) iterator.next()).toGoDag(currentDepth+1, this));
+            currentTree.append(((CvDagObject) iterator.next()).toGoDag(currentDepth+1, this, goidDatabase));
         }
         return currentTree.toString();
     }
 
     /**
      * TODO comments
-     *
+     * @param goidDatabase The database xref from which to generate the goid
      * @return  a single GOid - GOterm pair in appropriate formatting for the GO DAG
      */
-    private String term2DagLine() {
+    private String term2DagLine(String goidDatabase) {
 
         StringBuffer termLine = new StringBuffer();
 
         // The term itself
         termLine.append(getFullName());
 
-        // the GO id
-        for (Iterator iterator = getXrefs().iterator(); iterator.hasNext();) {
-            Xref xref = (Xref) iterator.next();
-            if (xref.getCvDatabase().getShortLabel().equals("go")){
-                termLine.append(" ; " + xref.getPrimaryId());
-                // There should be only one GO ID
-                break;
-            }
-        }
+        // Write GO id
+	String goid = GoTools.getGoid(this, goidDatabase);
+
+	if (null != goid){
+	    termLine.append(" ; " + goid);
+	};
 
         // add synonyms here once they are defined
 
@@ -285,8 +278,8 @@ public abstract class CvDagObject extends CvObject {
      * @return a single string containing the GO DAG flatfile representation
      * of the current object and all its descendants.
      */
-    public String toGoDag(){
-        return toGoDag(0, this);
+    public String toGoDag(String goidDatabase){
+        return toGoDag(0, this, goidDatabase);
     }
 
 } // end CvDagObject

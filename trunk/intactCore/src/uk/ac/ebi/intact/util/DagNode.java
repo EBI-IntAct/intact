@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.util;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvDagObject;
 
 import java.io.BufferedReader;
@@ -67,6 +68,7 @@ public class DagNode {
                                    DagNode aParent,
                                    Class aTargetClass,
                                    IntactHelper helper,
+				   String goidDatabase,
                                    int count)
             throws IOException, RESyntaxException, Exception {
 
@@ -94,15 +96,15 @@ public class DagNode {
                 if (null != aParent) {
                     current.parent = aParent;
                 }
-                current.storeDagNode(aTargetClass,helper);
-                current = addNodes(in, current, aTargetClass, helper, count);
+                current.storeDagNode(aTargetClass,helper, goidDatabase);
+                current = addNodes(in, current, aTargetClass, helper, goidDatabase, count);
             } else {
                 if (aParent == null) {
                     // Special case for the root node. It is the only node without a aParent.
                     // make node persistent
-                    current.storeDagNode(aTargetClass,helper);
+                    current.storeDagNode(aTargetClass,helper, goidDatabase);
                     // Recurse into the dag.
-                    return addNodes(in, current, aTargetClass, helper, count);
+                    return addNodes(in, current, aTargetClass, helper, goidDatabase, count);
                 } else {
                     // A node has been found which has a lower indentation level than the current aParent.
                     // Return from the current level to the next higher node.
@@ -214,32 +216,45 @@ public class DagNode {
      *
      * @param targetClass The class into which the node will be inserted.
      * @param helper      Database access object.
+     * @param goidDatabase The database xref to use to identify the current node from the goid.
      * @throws Exception
      */
-    private void storeDagNode(Class targetClass, IntactHelper helper) throws Exception {
+    private void storeDagNode(Class targetClass, 
+			      IntactHelper helper, 
+			      String goidDatabase) throws Exception {
 
         CvDagObject targetNode = null;
         CvDagObject directParent = null;
 
         System.out.println(goid);
         // Get parent and child (targetNode) from the database
-        targetNode = (CvDagObject) helper.getObjectByXref(targetClass, goid);
+	if (goidDatabase.equals("-")){
+	    throw new IntactException("Can't store DAG node without goidDatabase and goid");
+	} else {       
+	    targetNode = (CvDagObject) GoTools.selectCvObject(helper, goidDatabase, goid, null, targetClass);
+	}
 
         // if the target node is not defined, create it.
         if (targetNode == null) {
             targetNode = (CvDagObject) GoTools.insertDefinition(newDefinitionHash(goid, goterm),
                                                                 helper,
+								goidDatabase, 
                                                                 targetClass,
                                                                 false);
         }
 
         // Insert the direct parent
-        if (parent != null) {
-            directParent = (CvDagObject) helper.getObjectByXref(targetClass, parent.goid);
+        if (parent != null) {	
+	    if (goidDatabase.equals("-")){		
+		throw new IntactException("Can't store DAG node without goidDatabase and goid");
+	    } else {
+		directParent =  (CvDagObject) GoTools.selectCvObject(helper, goidDatabase, parent.goid, null, targetClass);
+	    } 
 
             if (directParent == null) {
                 directParent = (CvDagObject) GoTools.insertDefinition(newDefinitionHash(goid, goterm),
                                                                       helper,
+								      goidDatabase,
                                                                       targetClass,
                                                                       false);
             }
@@ -254,12 +269,20 @@ public class DagNode {
         for (Enumeration e = additionalParents.keys(); e.hasMoreElements();) {
             String nextGoid = (String) e.nextElement();
             String nextGoterm = (String) additionalParents.get(nextGoid);
-            CvDagObject additionalParent = (CvDagObject) helper.getObjectByXref(targetClass, nextGoid);
+            CvDagObject additionalParent = null;
+	    if (goidDatabase.equals("-")){		
+		throw new IntactException("Can't store DAG node without goidDatabase and goid");
+	    } else {
+		additionalParent =  (CvDagObject) GoTools.selectCvObject(helper, goidDatabase, nextGoid, null, targetClass);
+;
+	    } 
+
             if (additionalParent == null) {
                 additionalParent = (CvDagObject) GoTools.insertDefinition(newDefinitionHash(nextGoid, nextGoterm),
-                                                                      helper,
-                                                                      targetClass,
-                                                                      false);
+									  helper,
+									  goidDatabase,
+									  targetClass,
+									  false);
             }
 
             // Add the link between parent and child
