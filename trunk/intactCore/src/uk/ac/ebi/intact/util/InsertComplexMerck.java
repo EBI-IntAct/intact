@@ -57,6 +57,8 @@ public class InsertComplexMerck {
      */
     private BioSource bioSource;
 
+    private CvDatabase medline, sptr;
+    CvComponentRole bait, prey;
     /**
      * The interaction type used for everything - kept here to avoid lots of
      * unnecessary DB calls. Needs to be set for everything anyway
@@ -78,6 +80,9 @@ public class InsertComplexMerck {
             System.out.println( msg );
             ie.printStackTrace();
         }
+
+        collectCommonObject();
+
         try {
             proteinFactory = new UpdateProteins( helper );
 
@@ -85,7 +90,7 @@ public class InsertComplexMerck {
             // Set local transaction control to false.
             proteinFactory.setLocalTransactionControl( false );
         }
-        catch (UpdateProteinsI.UpdateException e) {
+        catch ( UpdateProteinsI.UpdateException e) {
             //something failed with type map or datasource...
             String msg = "unable to create protein factory";
             System.out.println( msg );
@@ -93,6 +98,103 @@ public class InsertComplexMerck {
         }
     }
 
+    private void collectCommonObject() throws IntactException {
+
+        owner = (Institution) helper.getObjectByLabel( Institution.class, "EBI" );
+        if ( owner == null ){
+            throw new IntactException ( "Could not find the Institution: EBI. Stop processing." );
+        }
+
+        sptr = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sptr" );
+        if ( sptr == null ){
+            throw new IntactException ( "Could not find the CvDatabase: sptr. Stop processing." );
+        }
+
+        bait = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "bait" );
+        if ( bait == null ){
+            throw new IntactException ( "Could not find the CvComponentRole: bait. Stop processing." );
+        }
+
+        prey = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "prey" );
+        if ( prey == null ){
+            throw new IntactException ( "Could not find the CvComponentRole: prey. Stop processing." );
+        }
+    }
+
+
+    /**
+     * Retreive a collection of proteins from IntAct, the criteria is a SPTR accession number.
+     * <br>
+     * A distinction is done on the accession number because it can be a protein or s splice
+     * variant.
+     * <pre>
+     * eg: P123456 is a protein
+     *     P123456-2 is a splice variant of P123456
+     * </pre>
+     * In the case of a protein, they are searched in Intact by cross reference,
+     * however, splice variants are searched by shortlabel.
+     *
+     * @param sptrAC SPTR accession number
+     * @return Collection of Protein found.
+     * @throws IntactException
+     */
+    private Collection getProteinsBySPTRAccessionNumber ( String sptrAC ) throws IntactException {
+        Collection proteins = null;
+
+        if ( isSpliceVariantAC( sptrAC ) ) {
+            // this is a splice variant
+            proteins = new ArrayList( 1 );
+            Protein protein = (Protein) helper.getObjectByLabel( Protein.class, sptrAC );
+            if ( protein != null )
+                proteins.add( protein );
+        } else {
+            // this is a protein
+            proteins = helper.getObjectsByXref( Protein.class, sptrAC );
+        }
+
+        return proteins;
+    }
+
+    /**
+     * Check if the given ac describe a splice variant of a master protein.
+     * <br>
+     * It basically checks if there if a '-' in the AC, if so, that's a splice variant.
+     *
+     * @param ac the Accession number to check
+     * @return true if it is a splice variant accession number, else false.
+     */
+    private boolean isSpliceVariantAC( String ac ) {
+        int index = ac.indexOf( "-" ); // search for splice variant (eg: P123456-1)
+        if ( index != -1 )
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * Check if a protein (either master of splice variant) can be described by the given SPTR accession number.
+     *
+     * @param protein the Protein we are checking in
+     * @param ac the ac with
+     * @return true if the given protein can be described by the given SPTR accession number, else false.
+     * @throws IntactException
+     */
+    private boolean isThatACBelongsToThatProtein( Protein protein, String ac ) throws IntactException {
+        if ( isSpliceVariantAC( ac ) ) {
+            // Check for the shortLabel
+            if ( protein.getShortLabel().equals( ac ) )
+                return true;
+        } else {
+            // check for a SPTR cross reference qith the ac as promaryId
+            for ( Iterator iterator = protein.getXrefs ().iterator (); iterator.hasNext (); ) {
+                Xref xref = (Xref) iterator.next ();
+                if ( xref.getCvDatabase().equals( sptr ) && xref.getPrimaryId().equals( ac ))
+                    return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Insert a Component object linking an Interactor to an Interaction.
@@ -116,19 +218,19 @@ public class InsertComplexMerck {
             proteins = (Collection) createdProteins.get( spAc );
         }
         else {
-            proteins = helper.getObjectsByXref( Protein.class, spAc );
+            proteins = getProteinsBySPTRAccessionNumber( spAc );
 
             if ( 0 == proteins.size() ) {
                 // * If the protein does not exist, create it
-                System.err.print("P");
 
                 // if it is an sptr protein, create a full protein object
-                proteins.addAll(proteinFactory.insertSPTrProteins( spAc ));
+                proteins.addAll(proteinFactory.insertSPTrProteins( spAc, taxId, true ));
+
+                System.err.print("P");
 
                 // if it looks like an sgd protein, create it with an xref to sgd
                 if ((0 == proteins.size()) && (spAc.substring(0, 1 ).equals ( "S" )) ) {
-                    CvDatabase sgd = (CvDatabase) helper.getObjectByLabel ( CvDatabase.class, "sgd");
-                    proteins.add ( proteinFactory.insertSimpleProtein( spAc, sgd, taxId ) );
+                    proteins.add ( proteinFactory.insertSPTrProteins( spAc, taxId, true ) );
                 }
             }
             else {
@@ -143,11 +245,12 @@ public class InsertComplexMerck {
         // Filter for the correct protein
         for (Iterator i = proteins.iterator(); i.hasNext();) {
             Protein tmp = (Protein) i.next();
-            if (tmp.getBioSource().getTaxId().equals( taxId )) {
+            if (tmp.getBioSource().getTaxId().equals( taxId ) && isThatACBelongsToThatProtein( tmp, spAc ) ) {
                 if (null == targetProtein) {
                     targetProtein = tmp;
                 }
                 else {
+                    // should not happen
                     throw new IntactException("More than one target protein found for: " + spAc );
                 }
             }
@@ -160,18 +263,18 @@ public class InsertComplexMerck {
         // Complete the component
         Component component = new Component( owner, interaction, targetProtein, role );
 
-        store( component );
+        persist( component );
     }
 
 
     /**
-     * Choose for the user if an update or a create is needed to store the current state
+     * Choose for the user if an update or a create is needed to persist the current state
      * of the object o in the database.
      *
-     * @param o the object to store, a mapping MUST exist for that object type.
+     * @param o the object to persist, a mapping MUST exist for that object type.
      * @throws IntactException
      */
-    private void store( Object o ) throws IntactException {
+    private void persist( Object o ) throws IntactException {
         if ( helper.isPersistent( o ) ) {
             helper.update( o );
         } else {
@@ -183,14 +286,14 @@ public class InsertComplexMerck {
      * Inserts a complex into the database
      * If the complex already exists, it is skipped!
      *
-     * @param bait Swiss-Prot accession number of the bait protein.
-     * @param preys Swiss-Prot accession numbers of the prey proteins.
+     * @param baitAC Swiss-Prot accession number of the bait protein.
+     * @param preyACs Swiss-Prot accession numbers of the prey proteins.
      * @param experimentLabel The short label of the experiment the complex
      belongs to.
      * @throws Exception
      */
-    public void insertComplex(String bait,
-                              ArrayList preys,
+    public void insertComplex(String baitAC,
+                              ArrayList preyACs,
                               String experimentLabel,
                               String commentTopicLabel,
                               String commentTopicDescription
@@ -201,7 +304,7 @@ public class InsertComplexMerck {
             // doesn't exists, create it.
             experiment = new Experiment( owner, experimentLabel, bioSource );
 
-            store( experiment );
+            persist( experiment );
 
             // Create the pubmed reference if the experiment Label is just a number.
             try {
@@ -214,11 +317,11 @@ public class InsertComplexMerck {
 
                 Xref pubmedRef = new Xref( owner, pubmedDB, experimentLabel, null, null, pubmedXref );
 
-                store( pubmedRef );
+                persist( pubmedRef );
 
                 experiment.addXref( pubmedRef );
 
-                store( experiment );
+                persist( experiment );
             } catch (Exception e) {
                 // tough luck, we don't create that Xref and keep it quiet ...
             }
@@ -226,7 +329,7 @@ public class InsertComplexMerck {
 
         // Get Interaction
         // The label is the first two letters of the experiment label plus the interaction number
-        String actLabel = bait + "-" + preys.get( 0 );
+        String actLabel = baitAC + "-" + preyACs.get( 0 );
         Interaction interaction = (Interaction) helper.getObjectByLabel( Interaction.class, actLabel );
         if ( null == interaction ) {
             Collection experiments = new ArrayList();
@@ -235,29 +338,25 @@ public class InsertComplexMerck {
             Collection components = new ArrayList();
 
             interaction = new Interaction( experiments, components, cvInteractionType, actLabel, owner );
-            store( interaction );
+            persist( interaction );
 
             // Initialise list of proteins created
             createdProteins = new HashMap();
 
             // add bait
 
-            // TODO bait could be centralized
-            insertComponent( interaction, bait, bioSource.getTaxId(),
-                             (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "bait") );
+            insertComponent( interaction, baitAC, bioSource.getTaxId(), bait);
 
-            // TODO could be centralized.
-            CvComponentRole role = (CvComponentRole) helper.getObjectByLabel ( CvComponentRole.class, "prey" );
             // add preys
-            for (int i = 0; i < preys.size(); i++) {
-                String prey = (String) preys.get( i );
-                insertComponent( interaction, prey, bioSource.getTaxId(), role );
+            for (int i = 0; i < preyACs.size(); i++) {
+                String preyAc = (String) preyACs.get( i );
+                insertComponent( interaction, preyAc, bioSource.getTaxId(), prey );
             }
             // Add auxiliary data as comment
             CvTopic topic = (CvTopic) helper.getObjectByLabel( CvTopic.class, commentTopicLabel );
             Annotation comment = new Annotation( owner, topic );
             comment.setAnnotationText( commentTopicDescription );
-            store( comment );
+            persist( comment );
             interaction.addAnnotation( comment );
 
             // link interaction to experiment
@@ -271,7 +370,7 @@ public class InsertComplexMerck {
             System.err.print("c");
         }
 
-        store( experiment );
+        persist( experiment );
     }
 
     /**
@@ -285,15 +384,6 @@ public class InsertComplexMerck {
      * @throws Exception
      */
     public void insert( String filename, String taxId, String interactionType ) throws Exception {
-
-        //makes sense to get the Institution here - avoids a call
-        //to the DB for every line processed...
-        owner = (Institution) helper.getObjectByLabel( Institution.class, "EBI" );
-
-        if ( owner == null ) {
-            System.out.println ( "Cound not find that Institution (ebi). exit..." );
-            return;
-        }
 
         // get a valid Biosource from either Intact or Newt
         BioSourceFactory bioSourceFactory = new BioSourceFactory( helper, owner );
@@ -311,6 +401,8 @@ public class InsertComplexMerck {
             return;
         }
 
+        // TODO: REFACTOR THIS TO USE THE BeanReader
+
         BufferedReader file = new BufferedReader( new FileReader( filename ) );
         String line;
         int lineCount = 0;
@@ -325,7 +417,7 @@ public class InsertComplexMerck {
             StringTokenizer st = new StringTokenizer( line );
             ArrayList preys = new ArrayList();
             preys.add( st.nextToken() );
-            String bait = st.nextToken();
+            String baitAC = st.nextToken();
             String experimentLabel = st.nextToken();
 
             // Read the remainder of the line
@@ -337,7 +429,7 @@ public class InsertComplexMerck {
 
             // Insert results into database
             try {
-                insertComplex( bait, preys, experimentLabel, "remark", comment.toString() );
+                insertComplex( baitAC, preys, experimentLabel, "remark", comment.toString() );
             }
             catch (Exception ie) {
                 ie.printStackTrace();
