@@ -15,6 +15,8 @@ import uk.ac.ebi.intact.model.Experiment;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
+import java.util.Set;
+import java.util.Iterator;
 
 /**
  * The action class to search an Experiment (in the context of an Interaction).
@@ -47,6 +49,29 @@ public class ExperimentSearchAction extends AbstractEditorAction {
             throws Exception {
         DynaActionForm theForm = (DynaActionForm) form;
 
+        // The action button pressed.
+        String action = (String) theForm.get("action");
+
+        // Handler to the current user.
+        EditUserI user = getIntactUser(request);
+
+        // Can safely cast it as we have the correct editor view bean.
+        InteractionViewBean view = (InteractionViewBean) user.getView();
+
+        if (action.equals("Get recent")) {
+            Set recentExps = user.getCurrentExperiments();
+            if (recentExps.isEmpty()) {
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                        new ActionError("error.int.exp.search.recent.empty"));
+                saveErrors(request, errors);
+                return mapping.getInputForward();
+            }
+            // We have edited/added experiments in the current session.
+            view.addExperimentToHold(recentExps);
+            return mapping.findForward(FORWARD_SUCCESS);
+        }
+
         // The search parameter.
         String searchParam = getSearchParam(theForm);
 
@@ -59,9 +84,6 @@ public class ExperimentSearchAction extends AbstractEditorAction {
             saveErrors(request, errors);
             return mapping.getInputForward();
         }
-        // Handler to the current user.
-        EditUserI user = getIntactUser(request);
-
         // The collection to hold experiments.
         Collection experiments = user.search(Experiment.class.getName(), searchParam,
                 searchValue);
@@ -85,9 +107,6 @@ public class ExperimentSearchAction extends AbstractEditorAction {
             saveErrors(request, errors);
             return mapping.getInputForward();
         }
-        // Can safely cast it as we have the correct editor view bean.
-        InteractionViewBean view = (InteractionViewBean) user.getView();
-
         // Add the search result to the holder.
         view.addExperimentToHold(experiments);
 
@@ -105,15 +124,6 @@ public class ExperimentSearchAction extends AbstractEditorAction {
         if (!isPropertyEmpty(form, "ac")) {
             return "ac";
         }
-        if (!isPropertyEmpty(form, "spAc")) {
-            return "spAc";
-        }
-//        if (((String) form.get("ac")).length() != 0) {
-//            return "ac";
-//        }
-//        if (((String) form.get("spAc")).length() != 0) {
-//            return "spAc";
-//        }
         return "shortLabel";
     }
 }
