@@ -492,6 +492,63 @@ public abstract class AbstractEditViewBean {
         return myMenuFactory;
     }
 
+    /**
+     * Returns the selected menu item after mapping the current item to the
+     * normalized menu.
+     * @param item the selected item
+     * @param type the menu type e.g., INTERACTIONS or IDENTIFICATIONS
+     * @return the displaued menu item for given <code>item</code>.
+     * @throws SearchException for errors in constructing the menu.
+     */
+    protected String getSelectedMenuItem(String item, String type)
+            throws SearchException {
+        if (item == null) {
+            return "";
+        }
+        // The factory to get access to menus.
+        EditorMenuFactory factory = getMenuFactory();
+
+        // The menu for the type.
+        List list = factory.getMenu(type, 0);
+
+        // Get the normalized version of the interaction list.
+        List normalList = factory.getDagMenu(type, 0);
+
+        // The position where the current interaction ocurrs.
+        int pos = normalList.indexOf(item);
+        if (pos != -1) {
+            return (String) list.get(pos);
+        }
+        return "";
+    }
+
+    /**
+     * Returns the normalized menu item after stripping off menu level characters
+     * from gievn menu item.
+     * @param item the selected item from the menu.
+     * @param type the menu type e.g., INTERACTIONS or IDENTIFICATIONS
+     * @return the normalized menu item for given <code>item</code>.
+     * @throws SearchException for errors in constructing the menu.
+     */
+    protected String getNormalizedMenuItem(String item, String type)
+            throws SearchException {
+        // The factory to get access to menus.
+        EditorMenuFactory factory = getMenuFactory();
+
+        // Get the normalized version of the interaction list.
+        List normalList = factory.getDagMenu(type, 0);
+
+        // The menu for the type.
+        List list = factory.getMenu(type, 0);
+
+        // The position where the current interaction ocurrs.
+        int pos = list.indexOf(item);
+        if (pos != -1) {
+            return (String) normalList.get(pos);
+        }
+        return "";
+    }
+
     // Helper Methods
 
     /**
