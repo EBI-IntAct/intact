@@ -10,7 +10,7 @@
 
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
-    <property name="axis.home" value="${env.AXIS_HOME}"/>
+    <property name="axis.home" value="${env.CATALINA_HOME}/webapps/axis"/>
 
     <property name="start-tomcat" value="${tomcat.home}/bin/startup.sh"/>
     <property name="stop-tomcat" value="${tomcat.home}/bin/shutdown.sh"/>
@@ -21,9 +21,9 @@
          error from Ant.
     -->
 
-    <target name="run-once"  unless="tomcat.present">
+    <target name="run-once" unless="tomcat.present">
         <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
-        <available file="${tomcat.home}/webapps/axis/WEB-INF/web.xml" property="axis.present"/>
+        <available file="${axis.home}/WEB-INF/web.xml" property="axis.present"/>
     </target>
 
     <!-- =================================================================== -->
