@@ -121,26 +121,10 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // These two items need to be normalized.
         String interaction = (String) dynaform.get("inter");
         if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(interaction)) {
-            try {
-                interaction = getNormalizedInter(interaction);
-            }
-            catch (SearchException e) {
-                // Should log this exception; the validate method will fail if
-                // this exception is thrown.
-                e.printStackTrace();
-            }
             setInter(interaction);
         }
         String identification = (String) dynaform.get("ident");
         if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(identification)) {
-            try {
-                identification = getNormalizedIdent(identification);
-            }
-            catch (SearchException e) {
-                // Should log this exception; the validate method will fail if
-                // this exception is thrown.
-                e.printStackTrace();
-            }
             setIdent(identification);
         }
     }
@@ -190,7 +174,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public List getInterMenu() throws SearchException {
         int mode = (myInter == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.INTERACTIONS, mode);
+        return getMenuFactory().getDagMenu(EditorMenuFactory.INTERACTIONS, mode);
     }
 
     /**
@@ -202,7 +186,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public List getIdentMenu() throws SearchException {
         int mode = (myIdent == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.IDENTIFICATIONS, mode);
+        return getMenuFactory().getDagMenu(EditorMenuFactory.IDENTIFICATIONS, mode);
     }
 
     // Getter/Setter methods for Organism.
@@ -230,58 +214,5 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     public void setIdent(String identification) {
         myIdent = identification;
-    }
-
-    /**
-     * Returns the selected interaction. It is necessary to match the
-     * current interaction to what is given in the drop down list. For example,
-     * the match for current interaction 'xyz' could be '...xyz'. If we don't
-     * peform this mapping, the hightlighted menu always defaults to the first
-     * item in the list.
-     * @return the mapped menu item as it appears in the drop down list. If there
-     * is no Interaction for this experiment (i.e, null) or the current inteaction
-     * is not found (highly unlikely), the selected menu defaults to the first
-     * item in the list (doesn't mean that the first item is the selected one).
-     * @throws SearchException for errors in constructing the menu.
-     */
-    public String getSelectedInter() throws SearchException {
-        return getSelectedMenuItem(myInter, EditorMenuFactory.INTERACTIONS);
-    }
-
-    /**
-     * Returns the selected identification
-     * @return the mapped menu item as it appears in the drop down list.
-     * @throws SearchException for errors in constructing the menu.
-     * @see #getSelectedInter()
-     */
-    public String getSelectedIdent() throws SearchException {
-        return getSelectedMenuItem(myIdent,
-                EditorMenuFactory.IDENTIFICATIONS);
-    }
-
-    /**
-     * Returns the normalized interaction. This is the opposite of
-     * {@link #getSelectedInter()} method. Given an item from the drop
-     * sown list, this method returns the normalized version of it. For example,
-     * the match for current interaction '..xyz' this method returns 'xyz'.
-     * @param item the menu item to normalize.
-     * @return the normalized menu item as without menu level indicator
-     * characters.
-     * @throws SearchException for errors in constructing the menu.
-     */
-    private String getNormalizedInter(String item) throws SearchException {
-        return getNormalizedMenuItem(item, EditorMenuFactory.INTERACTIONS);
-    }
-
-    /**
-     * Returns the normalized identification.
-     * @param item the menu item to normalize.
-     * @return the normalized menu item as without menu level indicator
-     * characters.
-     * @throws SearchException for errors in constructing the menu.
-     * @see #getNormalizedInter(String)
-     */
-    private String getNormalizedIdent(String item) throws SearchException {
-        return getNormalizedMenuItem(item, EditorMenuFactory.IDENTIFICATIONS);
     }
 }
