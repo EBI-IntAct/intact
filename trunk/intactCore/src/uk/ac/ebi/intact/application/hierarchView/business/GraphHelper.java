@@ -2,14 +2,12 @@ package uk.ac.ebi.intact.application.hierarchView.business;
 
 // hierarchView
 import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
-import uk.ac.ebi.intact.util.IntactCoreApp;
 
 // intact
 import uk.ac.ebi.intact.simpleGraph.*;
 import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.*;
 
 // JDK
 import java.util.*;
@@ -19,11 +17,8 @@ import java.util.*;
 /**
  * GraphHelper.java
  *
- *
- * Created: Tue Aug 27 13:58:11 2002
- *
  * @author Samuel Kerrien
- * @version
+ * @version $Id$
  */
 
 public class GraphHelper  {
@@ -32,7 +27,7 @@ public class GraphHelper  {
   private DAOSource dataSource;
 
   /**
-   * basic constructor - sets up (hard-coded) data source and an intact helper
+   * basic constructor - sets up (hard-coded) data source and an intact helper.
    */
   public GraphHelper()  throws Exception {
     

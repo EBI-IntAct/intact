@@ -2,9 +2,7 @@ package uk.ac.ebi.intact.application.hierarchView.struts;
 
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Locale;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -15,25 +13,21 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionServlet;
 import org.apache.struts.util.MessageResources;
 
 import  uk.ac.ebi.intact.application.hierarchView.highlightment.source.*;
-import  uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour.*;
-
 
 /**
  * Implementation of <strong>Action</strong> that validates an highlightment submisson.
  *
  * @author Samuel Kerrien
- * @version 
+ * @version $Id$
  */
 
 public final class HighlightmentAction extends Action {
 
 
     // --------------------------------------------------------- Public Methods
-
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -43,7 +37,7 @@ public final class HighlightmentAction extends Action {
      * already been completed.
      *
      * @param mapping The ActionMapping used to select this instance
-     * @param actionForm The optional ActionForm bean for this request (if any)
+     * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      *
