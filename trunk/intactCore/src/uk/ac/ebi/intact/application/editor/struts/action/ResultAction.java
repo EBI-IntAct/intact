@@ -50,7 +50,7 @@ public class ResultAction extends AbstractEditorAction {
         EditUserI user = super.getIntactUser(request);
 
         // The class name to search.
-        String className = user.getLastSearchClass();
+        String className = user.getSearchClass();
 
         // Strip the package bit from the name.
         int lastPos = className.lastIndexOf('.');
