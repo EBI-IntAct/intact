@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessService;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
+import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 

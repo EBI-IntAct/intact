@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.util.Chrono;
 
 
 import org.apache.struts.action.*;
