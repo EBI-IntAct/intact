@@ -169,11 +169,11 @@ public class InsertComplex {
         }
 
         //now build the Component.....
-        Component comp = new Component(owner, act, targetProtein, role);
+        Component comp = new Component( owner, act, targetProtein, role );
 
        // comp.setInteractor(targetProtein);
        // comp.setCvComponentRole(role);
-        helper.create(comp);
+        helper.create( comp );
     }
 
     /**
@@ -195,11 +195,11 @@ public class InsertComplex {
             //a non-null owner, shortLabel and BioSource....
             logger.debug("no Experiment found with label " +
                     experimentLabel + ": creating a new one...");
-            ex = new Experiment(owner, experimentLabel, bioSource);
+            ex = new Experiment( owner, experimentLabel, bioSource );
             //NB as this is already in a TX scope the Experiment will not be persisted yet!!
             helper.create(ex);
             logger.debug("checking it was persisted.....");
-            Experiment dummy = (Experiment)helper.getObjectByLabel(Experiment.class, experimentLabel);
+            Experiment dummy = (Experiment) helper.getObjectByLabel(Experiment.class, experimentLabel);
             if (dummy == null) logger.debug("Error: new Experiment not created; may be nested TX problem...");
         }
         //Experiments in the DB SHOULD have a BioSource - but just in case
@@ -266,14 +266,14 @@ public class InsertComplex {
      * @param bait Swiss-Prot accession number of the bait protein.
      * @param preys Swiss-Prot accession numbers of the prey proteins.
      * @param actLabel The short label to be used for the Interaction
-     * @param ex The Experiment that the Complex belongs to
+     * @param experiment The Experiment that the Complex belongs to
      * @throws Exception
      */
     public void insertComplex(String interactionNumber,
                               String bait,
                               Vector preys,
                               String actLabel,
-                              Experiment ex,
+                              Experiment experiment,
                               String interactionTypeLabel) throws Exception {
 
         // Get Interaction
@@ -283,27 +283,24 @@ public class InsertComplex {
         //if (null == act) {
 
             Collection experiments = new ArrayList();
-            //Experiment ex = getExperiment(experimentLabel);
-            experiments.add(ex);
+            //Experiment experiment = getExperiment(experimentLabel);
+            experiments.add( experiment );
 
             // if requested, try to set the CvInteractionType.
-            CvInteractionType cvInteractionType = getInteractionType(interactionTypeLabel);
+            CvInteractionType cvInteractionType = getInteractionType( interactionTypeLabel );
 
             //got our data - now build the new Interaction (with an empty component Collection)
             //get the info needed to create a new Interaction and build one...
-            Interaction act = new Interaction(experiments, new ArrayList(),
-                    cvInteractionType, actLabel, owner);
-            helper.create(act);
+            Interaction act = new Interaction( experiments, new ArrayList(), cvInteractionType, actLabel, owner );
+            helper.create( act );
 
             // Initialise list of proteins created
             createdProteins = new HashMap();
 
             // add bait
-            insertComponent(act, bait,
-                    (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "bait"));
+            insertComponent(act, bait, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "bait"));
 
-            CvComponentRole role = (CvComponentRole) helper.getObjectByLabel(
-                    CvComponentRole.class, "prey");
+            CvComponentRole role = (CvComponentRole) helper.getObjectByLabel ( CvComponentRole.class, "prey" );
             // add preys
             for (int i = 0; i < preys.size(); i++) {
                 String prey = (String) preys.elementAt( i );
@@ -311,13 +308,13 @@ public class InsertComplex {
             }
 
             // link interaction to experiment
-            ex.addInteraction(act);
+            experiment.addInteraction( act );
 
             // No need to do an update here because we have created a new Interaction.
             // In fact, it is an error to do so because you can only update objects that
             // are already in the DB.
 //            helper.update(act);
-            System.err.print("C");
+            System.err.print( "C" );
         //}
         //else {
             //System.err.print("c");
@@ -328,8 +325,8 @@ public class InsertComplex {
         // NOTE: This update causes problem with the postgres driver. It seems to be OK
         // with the oracle though. The indirection table is properly updated irrespective
         // of this statement (probably by adding interaction to the experiment).
-//        if (helper.isPersistent(ex)) {
-//            helper.update(ex);
+//        if (helper.isPersistent(experiment)) {
+//            helper.update(experiment);
 //        }
     }
 
@@ -349,6 +346,8 @@ public class InsertComplex {
         //makes sense to get the Institution here - avoids a call
         //to the DB for every line processed...
         owner = (Institution) helper.getObjectByLabel(Institution.class, "EBI");
+
+        // TODO: this block below could be replaced by the BioSourceFactory !!!!!!!
 
         //now get a valid BioSource - has to be done via newt,
         //and we don't want to go to get one every time a line
@@ -398,7 +397,7 @@ public class InsertComplex {
                 //first make sure there is a BioSource that is persistent....
                 //NB this must be done in a seperate TX as it is needed later...
                 helper.startTransaction(BusinessConstants.OBJECT_TX);
-                helper.create(bioSource);
+                helper.create( bioSource );
                 helper.finishTransaction();
             }
             catch (Exception ie) {
@@ -453,7 +452,7 @@ public class InsertComplex {
                     //need it to be 'fully' defined before they can be persisted
                     //(due to the Experiment now needing to have a BioSource defined..)
                     helper.startTransaction(BusinessConstants.OBJECT_TX);
-                    experiment = getExperiment(experimentLabel);
+                    experiment = getExperiment( experimentLabel );
                     helper.finishTransaction();
 
                     //now do the Complexes....
