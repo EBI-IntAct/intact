@@ -17,6 +17,7 @@
 <jsp:include page="../js.jsp" />
 
 <html:form action="/bsDispatch" focus="shortLabel">
+    <html:hidden property="anchor" />
 
     <jsp:include page="info.jsp" />
     <jsp:include page="annots.jsp" />

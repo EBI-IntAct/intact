@@ -16,6 +16,9 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
+<%-- The anchor name for this page --%>
+<a name="int.exp.search"/>
+
 <table width="50%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
         <th class="tableCellHeader" width="10%" colspan="2">
@@ -53,3 +56,4 @@
         </td>
     </tr>
 </table>
+<html:errors property="int.sanity.exp"/>

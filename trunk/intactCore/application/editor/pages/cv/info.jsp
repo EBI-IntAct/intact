@@ -45,3 +45,4 @@
         </td>
     </tr>
 </table>
+<html:errors property="shortLabel"/>

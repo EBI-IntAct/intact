@@ -17,28 +17,7 @@
 <jsp:include page="../js.jsp" />
 
 <html:form action="/cvDispatch">
-
-    <!-- Displays error messages for the short label -->
-<%--    <logic:messagesPresent>--%>
-<%--        <table width="100%" border="0" cellspacing="1" cellpadding="2">--%>
-<%--            <html:messages id="shortLabel">--%>
-<%--                <tr class="tableRowEven">--%>
-<%--                    <td class="tableErrorCell"><bean:write name="shortLabel"/></td>--%>
-<%--                </tr>--%>
-<%--            </html:messages>--%>
-<%--        </table>--%>
-<%--    </logic:messagesPresent>--%>
-
-    <!-- Displays existing short labels. -->
-<%--    <logic:messagesPresent message="true">--%>
-<%--        <table width="100%" border="0" cellspacing="1" cellpadding="2">--%>
-<%--            <html:messages id="message" message="true">--%>
-<%--                <tr class="tableRowEven">--%>
-<%--                    <td class="tableCell"><bean:write name="message" filter="false"/></td>--%>
-<%--                </tr>--%>
-<%--            </html:messages>--%>
-<%--        </table>--%>
-<%--    </logic:messagesPresent>--%>
+    <html:hidden property="anchor" />
 
     <jsp:include page="info.jsp" />
     <jsp:include page="annots.jsp" />

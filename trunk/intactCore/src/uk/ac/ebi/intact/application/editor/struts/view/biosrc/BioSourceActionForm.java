@@ -87,8 +87,7 @@ public class BioSourceActionForm extends EditorActionForm {
         }
         catch (NumberFormatException nfe) {
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.taxid.mask", getTaxId()));
+            errors.add("bs.taxid", new ActionError("error.taxid.mask", getTaxId()));
         }
         return errors;
     }

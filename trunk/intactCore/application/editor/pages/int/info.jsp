@@ -33,6 +33,9 @@
     }
 </script>
 
+<%-- The anchor name for this page --%>
+<a name="info"/>
+
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
         <th class="tableCellHeader">
@@ -53,6 +56,7 @@
         <td class="tableCell">
             <bean:write property="ac" name="intForm" filter="false"/>
         </td>
+
         <td class="tableCell">
             <html:text property="shortLabel" size="20" maxlength="20"
                 name="intForm" styleClass="inputRequired"/>
@@ -63,6 +67,7 @@
         </td>
     </tr>
 </table>
+<html:errors property="shortLabel"/>
 
 <p></p>
 
@@ -91,14 +96,14 @@
             <html:select property="interactionType" name="intForm" styleClass="inputRequired">
                 <html:options name="intertypemenu" />
             </html:select>
-            <html:errors property="int.interaction"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
             <html:select property="organism" name="intForm" styleClass="inputRequired">
                 <html:options name="organismmenu" />
             </html:select>
-            <html:errors property="int.organism"/>
         </td>
     </tr>
 </table>
+<html:errors property="int.interaction"/>
+<html:errors property="int.organism"/>

@@ -97,18 +97,15 @@ public class ExperimentActionForm extends EditorActionForm {
         // Must select from the drop down list.
         if (getOrganism().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.exp.biosrc"));
+            errors.add("exp.biosrc", new ActionError("error.exp.biosrc"));
         }
         else if (getInter().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.exp.inter"));
+            errors.add("exp.inter", new ActionError("error.exp.inter"));
         }
         else if (getIdent().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.exp.ident"));
+            errors.add("exp.ident", new ActionError("error.exp.ident"));
         }
         return errors;
     }
