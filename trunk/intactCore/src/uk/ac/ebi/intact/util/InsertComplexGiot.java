@@ -81,7 +81,6 @@ public class InsertComplexGiot {
      */
     private Institution       owner;
     private BioSource         yeast;
-    private BioSource         fly;
     private Collection        allKnownDrosophila;
     private CvDatabase        sptr;
     private Experiment        giotExperiment;
@@ -256,11 +255,11 @@ public class InsertComplexGiot {
         }
 
         BioSourceFactory bioSourceFactory = new BioSourceFactory( helper, owner );
-        yeast = bioSourceFactory.getValidBioSource( "4932" ); // yeast
-        fly   = bioSourceFactory.getValidBioSource( "7215" ); // drosophila
+
+        yeast = bioSourceFactory.getValidBioSource( "4932" );
 
         allKnownDrosophila = new ArrayList( 8 );
-        allKnownDrosophila.add( fly );
+        allKnownDrosophila.add( bioSourceFactory.getValidBioSource( "7215" ) );
         allKnownDrosophila.add( bioSourceFactory.getValidBioSource( "7220" ) );
         allKnownDrosophila.add( bioSourceFactory.getValidBioSource( "7224" ) );
         allKnownDrosophila.add( bioSourceFactory.getValidBioSource( "7226" ) );
@@ -285,6 +284,14 @@ public class InsertComplexGiot {
 
             helper.create( giotExperiment );
             System.out.println ( "Create Giot experiment with label: giot-2003" );
+        } else {
+            System.out.println ( "giot-2003-ex1 already exist, use that one." );
+
+            if ( giotExperiment.getBioSource() == null) {
+                giotExperiment.setBioSource( yeast );
+                helper.update( giotExperiment );
+                System.out.println ( "Giot's BioSource wasn't set, update it to: " + yeast.getShortLabel() );
+            }
         }
 
         // MUST be done before Annotation because it might be used
@@ -831,13 +838,10 @@ public class InsertComplexGiot {
         while ( ! foundLabel ) {
 
             sCount = "" + (++count);
-            boolean labelAlreadyUsed = false;
-
             label = _bait + "-" + _prey + "-" + sCount;
 
             // check if truncation needed.
             while ( label.length() > 20 ) {
-
                 if ( _bait.length() > _prey.length() ) {
                     _bait = _bait.substring( 0, _bait.length() - 1 ); // remove last charachter
                 } else {
@@ -845,23 +849,12 @@ public class InsertComplexGiot {
                 }
 
                 label = _bait + "-" + _prey + "-" + sCount;
-            }
+            } // while
 
-            // we have the right size now ... search for existing one !
+            // we have the right label's size now ... search for existing one !
             Collection interactions = helper.search(Interaction.class.getName(), "shortlabel", label);
-            if ( interactions.size() > 0 ) {
-                // check if we find the Giot experiment
-                for ( Iterator iterator = interactions.iterator (); iterator.hasNext () && labelAlreadyUsed == false; ) {
-                    Interaction interaction = (Interaction) iterator.next ();
-                    if ( interaction.getExperiments().contains( giotExperiment )) {
-                        labelAlreadyUsed = true;
-                    }
-                } // for
-
-                if ( labelAlreadyUsed == false )
-                    foundLabel = true;
-
-            } else {
+            if ( interactions.size() == 0 ) {
+                // This label is not used yet, exit the loop
                 foundLabel = true;
             }
         } // while
