@@ -34,6 +34,25 @@ public interface DAOSource {
     public void setConfig(Map configFiles) throws DataSourceException;
 
     /**
+     * Used to specify a user for connecting to the persistent store. If this
+     * method is not used, default user details will be obtained from details supplied
+     * in the setConfig method (eg from a supplied config file).
+     * @param user the username to use for connection (overrides any default)
+     */
+    public void setUser(String user);
+
+    public String getUser();
+
+    /**
+     * Used to define a password which overrides any default supplied via config data.
+     * Should typically be used in conjunction with the setUser method for consistency.
+     * @param passowrd the password to be used for persistent store connection.
+     */
+    public void setPassword(String password);
+
+    public String getPassword();
+
+    /**
      *  This method returns a connection to the data source.
      *
      * @return a Data Access Object (ie a connection)
@@ -41,6 +60,20 @@ public interface DAOSource {
      * @exception DataSourceException - thrown if a DAO cannot be obtained
     */
     public DAO getDAO() throws DataSourceException;
+
+    /**
+     *  Returns a connection made using the specified user details. Note that
+     * if either a null username is supplied, or a connection could not be made
+     * with the supplied details, then a default connection will be attempted.
+     *
+     * @param user username to make a connection with
+     * @param password the user's password (null values are allowed)
+     *
+     * @return a Data Access Object
+     *
+     * @exception DataSourceException - thrown if a DAO cannot be obtained
+    */
+    public DAO getDAO(String user, String password) throws DataSourceException;
 
     /**
      *  @return the name of the data source (as per configuration)

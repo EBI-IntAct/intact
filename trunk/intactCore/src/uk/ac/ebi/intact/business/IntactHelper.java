@@ -37,6 +37,10 @@ public class IntactHelper implements SearchI, Serializable {
     DAOSource dataSource = null;
     Map classInfo = null;
 
+    //used to cache user details if supplied
+    String user;
+    String password;
+
     /**
      * used internally to manage transaction creation
      */
@@ -96,13 +100,53 @@ public class IntactHelper implements SearchI, Serializable {
 
         }
 
-        //NB this needs to be a generic logger, from ObjectBridge?...
+        //set up a logger
         pr = dataSource.getLogger();
 
         //get a DAO so some work can be done!!
         try {
 
             dao = dataSource.getDAO();
+        }
+        catch (DataSourceException de) {
+
+            String msg = "intact helper: There was a problem accessing a data store";
+            throw new IntactException(msg, de);
+
+        }
+    }
+
+    /**
+     * Constructor allowing a helper instance to be created with a given
+     * username and password.
+     *
+     * @param source - the data source to be connected to
+     * @param user - the username to make a connection with
+     * @param password - the user's password (null values allowed)
+     */
+    public IntactHelper(DAOSource source, String user, String password) throws IntactException {
+
+        dataSource = source;
+
+        if (source == null) {
+
+            //couldn't get a mapping from the context, so can't search!!
+            String msg = "intact helper: unable to search for any objects - data source required";
+            throw new IntactException(msg);
+
+        }
+
+        //set up a logger
+        pr = dataSource.getLogger();
+
+        //cache the user details in case they are needed later, eg for reconnection
+        this.user = user;
+        this.password = password;
+
+        //get a DAO using the supplied user details
+        try {
+
+            dao = dataSource.getDAO(user, password);
         }
         catch (DataSourceException de) {
 
@@ -176,7 +220,8 @@ public class IntactHelper implements SearchI, Serializable {
      */
     public boolean isUserVerified(String user, String password) {
 
-        return dao.isUserValid(user, password);
+        if(dao != null) return dao.isUserValid(user, password);
+        return false;
     }
 
     /**
@@ -195,7 +240,7 @@ public class IntactHelper implements SearchI, Serializable {
 
             dao.close();
         }
-        catch(DataSourceException de) {
+        catch(Exception de) {
 
             throw new IntactException("failed to close data source!", de);
         }
@@ -279,7 +324,7 @@ public class IntactHelper implements SearchI, Serializable {
 
         try {
 
-            if(dao == null) dao = dataSource.getDAO();
+            if(dao == null) connect();
 
             //just to be safe, restrict write access..
             synchronized (this) {
@@ -287,11 +332,6 @@ public class IntactHelper implements SearchI, Serializable {
                 dao.makePersistent(objects);
 
             }
-
-        } catch (DataSourceException de) {
-
-            String msg = "intact helper: There was a problem accessing a data store";
-            throw new IntactException(msg, de);
 
         } catch (CreateException ce) {
 
@@ -331,7 +371,7 @@ public class IntactHelper implements SearchI, Serializable {
 
            try {
 
-               if(dao == null) dao = dataSource.getDAO();
+               if(dao == null) connect();
 
                //just to be safe, restrict write access..
                synchronized(this) {
@@ -341,7 +381,6 @@ public class IntactHelper implements SearchI, Serializable {
                }
 
            }
-
            catch(Exception de) {
 
                   String msg = "intact helper: could not close data source connection properly";
@@ -362,7 +401,7 @@ public class IntactHelper implements SearchI, Serializable {
 
         try {
 
-            if(dao == null) dao = dataSource.getDAO();
+            if(dao == null) connect();
 
                 //just to be safe, restrict write access..
                 synchronized(this) {
@@ -370,7 +409,6 @@ public class IntactHelper implements SearchI, Serializable {
                     dao.create(obj);
 
                 }
-
         }
         catch(Exception de) {
 
@@ -393,7 +431,7 @@ public class IntactHelper implements SearchI, Serializable {
 
            try {
 
-               if(dao == null) dao = dataSource.getDAO();
+               if(dao == null) connect();
 
                //just to be safe, restrict write access..
                synchronized(this) {
@@ -401,9 +439,7 @@ public class IntactHelper implements SearchI, Serializable {
                 dao.update(obj);
 
                }
-
            }
-
            catch(Exception de) {
 
                   String msg = "intact helper: could not close data source connection properly";
@@ -510,18 +546,8 @@ public class IntactHelper implements SearchI, Serializable {
         /* get a Data Access Object (ie a connection) for the data source
         * NB assumed pooling is managed within the persistence layer..
         */
-        try {
 
-            if (null == dao) {
-                dao = dataSource.getDAO();
-            }
-
-        } catch (DataSourceException de) {
-
-            String msg = "intact helper: There was a problem accessing a data store";
-            throw new IntactException(msg, de);
-
-        }
+         if (null == dao) connect();
 
         //now retrieve an object...
         try {
@@ -599,18 +625,7 @@ public class IntactHelper implements SearchI, Serializable {
         /* get a Data Access Object (ie a connection) for the data source
         * NB assumed pooling is managed within the persistence layer..
         */
-        try {
-
-            if (null == dao) {
-                dao = dataSource.getDAO();
-            }
-
-        } catch (DataSourceException de) {
-
-            String msg = "intact helper: There was a problem accessing a data store";
-            throw new IntactException(msg, de);
-
-        }
+        if (null == dao) connect();
 
         //now do the search...
         try {
@@ -1465,6 +1480,33 @@ public class IntactHelper implements SearchI, Serializable {
         return partialGraph;
     }
 
+    //---------------- private helper methods ------------------------------------
+
+    /**
+     * tries to get a connection if a DAO has (somehow!) not been
+     * set.
+     *
+     * @exception IntactException thrown if obtaining a DAO failed
+     */
+    private void connect() throws IntactException {
+
+        try {
+            if(user != null) {
+
+                //try to create using given user details
+                dao = dataSource.getDAO(user, password);
+            }
+            else {
+
+                //create as default user
+                dao = dataSource.getDAO();
+            }
+        }
+        catch(DataSourceException de) {
+            String msg = "failed to create a DAO when it was (somehow!) originally null";
+            throw new IntactException(msg, de);
+            }
+    }
 
 }
 

@@ -89,12 +89,21 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     private transient Transaction tx;
 
     private String repositoryFile;
+    private String user;
+    private String password;
+
+    //used to save connection info in ODMG format
+    private String connectionDetails;
 
 
     public ObjectBridgeDAO(PersistenceBroker broker) {
 
         this.broker = broker;
         repositoryFile = broker.getDescriptorRepository().getPBkey().getRepositoryFile();
+
+        //get user details and cache for later use
+        user = broker.getPBKey().getUser();
+        password = broker.getPBKey().getPassword();
 
         try {
 
@@ -112,7 +121,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         try {
 
-            db.open("config/repository.xml", Database.OPEN_READ_WRITE);
+            //connect using the user details supplied to the broker
+            //NB ODMG expects reopsitory location, user, password to be seperated by #
+            connectionDetails = "config/repository.xml#" + user +"#" + password;
+            db.open(connectionDetails, Database.OPEN_READ_WRITE);
 
         }
         catch(ODMGException e) {
@@ -120,6 +132,22 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             logger.error("failed to open database!!", e);
         }
 
+    }
+
+    /**
+     * changes the username and password details used for connection.
+     * Note that this is NOT currently a runtime change, but will change
+     * to a different user if eg the DAO is serialized. This may be modified
+     * later to (if possible) provide runtime user switching.
+     *
+     * @param user the new username
+     * @param passwqord the new user password
+     */
+    public void resetUserInfo(String user, String password) {
+
+        this.user = user;
+        this.password = password;
+        connectionDetails = "config/repository.xml#" + user +"#" + password;
     }
 
     public void addCachedClass(Class clazz) {
@@ -249,8 +277,19 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             odmg = OJB.getInstance();
             db = odmg.newDatabase();
-            db.open("config/repository.xml", Database.OPEN_READ_WRITE);
-            broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile));
+
+            //check for a user/password override of default
+            if(user != null) {
+
+                db.open(connectionDetails, Database.OPEN_READ_WRITE);
+                broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile, user, password));
+            }
+            else {
+
+                //should creeate based on default user details
+                db.open("config/repository.xml", Database.OPEN_READ_WRITE);
+                broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile));
+            }
 
         }
         catch(ODMGException e) {
