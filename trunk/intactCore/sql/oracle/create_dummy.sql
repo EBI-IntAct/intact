@@ -37,22 +37,6 @@ INSERT INTO IA_intactnode (ac, ownerprefix, owner_ac)
          FROM IA_Institution
         WHERE shortLabel='EBI';
 
-INSERT INTO IA_ControlledVocab (ac, objClass, shortLabel, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvComponentRole',
-	      'bait',
-	      ac
-         FROM IA_Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO IA_ControlledVocab (ac, objClass, shortLabel, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvComponentRole',
-	      'prey',
-	      ac
-         FROM IA_Institution
-        WHERE shortLabel='EBI';
-
 INSERT INTO IA_Experiment (ac, shortLabel, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'gavin',
