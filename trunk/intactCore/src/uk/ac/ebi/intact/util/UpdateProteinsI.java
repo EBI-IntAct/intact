@@ -57,6 +57,11 @@ public abstract class UpdateProteinsI {
     protected static CvXrefQualifier identityXrefQualifier;
     protected static CvXrefQualifier secondaryXrefQualifier;
 
+    protected CvXrefQualifier isoFormParentXrefQualifier;
+
+    protected CvTopic isoformComment;
+    protected CvAliasType isoformSynonym;
+
     protected static CvAliasType geneNameAliasType;
     protected static CvAliasType geneNameSynonymAliasType;
 
@@ -68,7 +73,7 @@ public abstract class UpdateProteinsI {
      * If true, each protein is updated in a distinct transaction.
      * If localTransactionControl is false, no local transactions are initiated,
      * control is left with the calling class.
-     * This can be used e.g. to have transctions span the insertion of all
+     * This can be used e.g. to have transactions span the insertion of all
      * proteins of an entire complex.
      * Default is true.
      */
@@ -158,6 +163,24 @@ public abstract class UpdateProteinsI {
             if (secondaryXrefQualifier == null) {
                 logger.error ("Unable to find the identity CvXrefQualifier in your IntAct node");
                 throw new UpdateException ("Unable to find the identity CvXrefQualifier in your IntAct node");
+            }
+
+            isoFormParentXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class, "isoform-parent");
+            if (secondaryXrefQualifier == null) {
+                logger.error ("Unable to find the isoform-parent CvXrefQualifier in your IntAct node");
+                throw new UpdateException ("Unable to find the identity CvXrefQualifier in your IntAct node");
+            }
+
+            isoformComment = (CvTopic) helper.getObjectByLabel(CvTopic.class, "isoform-comment");
+            if (isoformComment == null) {
+                logger.error ("Unable to find the isoform-comment CvTopic in your IntAct node");
+                throw new UpdateException ("Unable to find the isoform-comment CvTopic in your IntAct node");
+            }
+
+            isoformSynonym = (CvAliasType) helper.getObjectByLabel(CvAliasType.class, "isoform-synonym");
+            if (isoformSynonym == null) {
+                logger.error ("Unable to find the isoform-synonym CvAliasType in your IntAct node");
+                throw new UpdateException ("Unable to find the isoform-synonym CvAliasType in your IntAct node");
             }
 
             geneNameAliasType = (CvAliasType) helper.getObjectByLabel(CvAliasType.class, "gene-name");
@@ -265,34 +288,23 @@ public abstract class UpdateProteinsI {
     public abstract void addNewAlias (AnnotatedObject current, final Alias alias);
 
     /**
-     * add (not update) a new BioSource to the db and send it back.
-     * @param institution The owner of the BioSource to create
-     * @param orgName Organism name
-     * @param taxId Taxonomy ID
-     * @return the newly created BioSource
-     */
-    public abstract BioSource addBioSource (Institution institution,
-                                            String orgName,
-                                            String taxId) ;
-
-    /**
      * Gives the count of created protein
      * @return created protein count
      */
-    public abstract int getCreatedCount () ;
+    public abstract int getProteinCreatedCount () ;
 
     /**
      * Gives the count of updated protein
      * @return updated protein count
      */
-    public abstract int getUpdatedCount () ;
+    public abstract int getProteinUpdatedCount () ;
 
     /**
      * Gives the count of up-to-date protein
      * (i.e. existing in IntAct but don't need to be updated)
      * @return up-to-date protein count
      */
-    public abstract int getUpToDateCount () ;
+    public abstract int getProteinUpToDateCount () ;
 
     /**
      * Gives the count of all potential protein
@@ -306,6 +318,42 @@ public abstract class UpdateProteinsI {
      * @return
      */
     public abstract int getProteinSkippedCount () ;
+
+
+    /**
+     * Gives the count of created splice variant
+     * @return created protein count
+     */
+    public abstract int getSpliceVariantCreatedCount () ;
+
+    /**
+     * Gives the count of updated splice variant
+     * @return updated protein count
+     */
+    public abstract int getSpliceVariantUpdatedCount () ;
+
+    /**
+     * Gives the count of up-to-date splice variant
+     * (i.e. existing in IntAct but don't need to be updated)
+     * @return up-to-date protein count
+     */
+    public abstract int getSpliceVariantUpToDateCount () ;
+
+    /**
+     * Gives the count of all potential splice variant
+     * (i.e. for an SPTREntry, we can create/update several IntAct protein. One by entry's taxid)
+     * @return potential protein count
+     */
+    public abstract int getSpliceVariantCount () ;
+
+    /**
+     * Gives the count of splice variant which gaves us errors during the processing.
+     * @return
+     */
+    public abstract int getSpliceVariantSkippedCount () ;
+
+
+
 
     /**
      * Gives the number of entry found in the given URL
