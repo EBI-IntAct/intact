@@ -9,6 +9,9 @@ definition: The URL (Web address) at which to find more information on the objec
 shortlabel: comment
 term: Comment for public view
 
+shortlabel: isoform-comment
+term: Protein isoform's comment for public view
+
 shortlabel: definition
 term: Definition of the controlled vocabulary term
 
