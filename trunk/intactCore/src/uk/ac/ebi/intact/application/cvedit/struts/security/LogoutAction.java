@@ -9,7 +9,9 @@ package uk.ac.ebi.intact.application.cvedit.struts.security;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
+import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,8 +50,7 @@ public class LogoutAction extends IntactBaseAction {
         HttpSession session = super.getSession(request);
 
         // Retrieve the user object from the session.
-        IntactUserIF user =
-            (IntactUserIF) session.getAttribute(WebIntactConstants.INTACT_USER);
+        IntactUserIF user = super.getIntactUser(session);
 
         // Remove the user from the session.
         session.removeAttribute(WebIntactConstants.INTACT_USER);
@@ -57,6 +58,15 @@ public class LogoutAction extends IntactBaseAction {
         if (user != null) {
             super.log("User " + user.getUser() + " logged off at " +
                 user.logoffTime());
+            // Close the connection to the persistent storage.
+            try {
+                user.logoff();
+            }
+            catch (IntactException ie) {
+                // Problems with logging off. Just log the errors as there
+                // is little point in informing the user.
+                super.log(ExceptionUtils.getStackTrace(ie));
+            }
         }
         // Session is no longer valid.
         session.invalidate();
