@@ -121,38 +121,10 @@ CREATE OR REPLACE FUNCTION make_audit_tables () RETURNS varchar AS '
           -- Dynamic SQL: issue the DDL to make an audit table
           EXECUTE ddl_command;
 
-          --return ddl_command;
 
-          -- Now make a composite pk on the audit table, using the original pk of the master table plus a timestamp
-          -- This all requires a bit of string processing, because of the content of pg_constraint.conname
-
-          ddl_command := ''ALTER TABLE ''|| tableNames.tablename ||''_audit  ADD CONSTRAINT pk_''|| tableNames.tablename ||''_audit PRIMARY KEY  ( updated '';
-
-          SELECT conkey INTO pkSequence FROM pg_constraint WHERE (conname like ''pk%'' or conname like ''%_pkey%'') AND conrelid= relNode;
-
-          nextChar:='' '';
-          i:=2;
-          WHILE nextChar !='''' LOOP
-
-              nextChar := substr(pksequence,i,1);
-              IF nextChar in ('','' , ''}'') THEN
-          
-                 SELECT attname INTO pkCol FROM pg_attribute WHERE attrelid=relNode AND attnum = keyElem;
-                 ddl_command  := ddl_command || '','' || pkCol;
-                 keyElem := '''';
-                 IF nextChar = ''}'' THEN
-                      ddl_command  := ddl_command || '');\n'' ;
-                 END IF;
-              ELSE
-                 keyElem := keyElem||nextChar;
-              END IF;
-              i :=i+1;
-          END LOOP;
-          -- Dynamic SQL: issue the DDL to make a pk
-          EXECUTE ddl_command;
 
        END LOOP;
-       --return ddl_command;
+
        RETURN ''Audit tables created succesfully'';
 
     END;
