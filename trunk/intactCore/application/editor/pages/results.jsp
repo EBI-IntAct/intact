@@ -43,7 +43,7 @@
 
 <html:form action="/secure/edit">
     <display:table width="100%" name="results" pagesize="50" requestURI="<%=uri%>"
-        decorator="uk.ac.ebi.intact.application.editor.struts.view.ResultDisplayWrapper">
+        decorator="uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultDisplayWrapper">
         <display:column property="ac" title="AC"/>
         <display:column property="shortLabel" title="Short Label"/>
         <display:column property="fullName" title="Full Name" />
