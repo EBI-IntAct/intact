@@ -3,7 +3,9 @@
 <%@ page autoFlush="true" %>
 
 <%@ page import="uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants,
-                 uk.ac.ebi.intact.application.search2.struts.controller.SearchAction"%>
+                 uk.ac.ebi.intact.application.search2.struts.controller.SearchAction,
+                 java.util.Collection,
+                 java.util.Iterator"%>
  <%--
    /**
     * no matches page.
@@ -15,18 +17,18 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 
 <%
-    String info = (String)session.getAttribute(SearchConstants.SEARCH_CRITERIA);
-    String[] searchList = SearchAction.SEARCH_ORDER;
-    StringBuffer sb =  new StringBuffer(searchList[0]);
-    int size = searchList.length;
-    for (int i = 1; i < size; i++) {
-        if (i < (size - 1)) {
-            sb.append(", ");
+    String info = (String) session.getAttribute( SearchConstants.SEARCH_CRITERIA );
+    Collection searchList = SearchAction.SEARCH_CLASSES;
+    Iterator iterator = searchList.iterator ();
+    StringBuffer sb =  new StringBuffer( (String) iterator.next() );
+    while (  iterator.hasNext () ) {
+        String classname = (String) iterator.next ();
+        if (iterator.hasNext ()) {
+           sb.append(", ");
+        } else {
+           sb.append(" or ");
         }
-        else {
-            sb.append(" or ");
-        }
-        sb.append(searchList[i]);
+        sb.append( classname );
     }
 %>
 
