@@ -57,11 +57,17 @@
 
         <!-- Common jar files. -->
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
+        <pathelement path="${root.lib.dir}/commons-cli-1.0.jar"/>
+        <pathelement path="${root.lib.dir}/yasp.jar"/>
+        <pathelement path="${root.lib.dir}/aristotle.jar"/>
+        <pathelement path="${root.lib.dir}/flatfilewriter.jar"/>
+        <pathelement path="${root.lib.dir}/sptr-interfaces.jar"/>
         <pathelement path="${root.lib.dir}/jakarta-regexp-1.2.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
+        <pathelement path="${root.lib.dir}/junit.jar"/>
+
         <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-lang.jar"/>
-
     </path>
 
     <path id="project.test.class.path">
@@ -105,7 +111,7 @@
         <!-- Delete directories first -->
         <delete dir="${dest.dir}"/>
         <delete dir="${docs.dir}"/>
-	  <delete dir="${lib.dir}"/>
+        <delete dir="${lib.dir}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -147,14 +153,14 @@
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="compile" depends="make-jar, set-db-type"
- 				description="Compiles non test source files">
+        description="Compiles non test source files">
 
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}"/>
 
-	<!-- now make sure the correct DB driver is copied -->
-	<antcall target="cp-postgres"/>
-	<antcall target="cp-oracle"/>
+        <!-- now make sure the correct DB driver is copied -->
+        <antcall target="cp-postgres"/>
+        <antcall target="cp-oracle"/>
 
         <!-- Only compile sources. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
@@ -167,7 +173,22 @@
         <!-- Copy configuration files -->
         <antcall target="cp-config-files"/>
 
-	</target>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the test source tree. -->
+    <target name="compile-test" depends="compile" description="Compiles test source files">
+
+        <!-- Only compile test sources. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes="**/application/dataConversion/psiUpload/test/**">
+
+            <classpath refid="project.class.path"/>
+        </javac>
+
+    </target>
 
     <!-- =================================================================== -->
 
@@ -181,7 +202,7 @@
         <!-- Only compile dataConversion sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.4"
-            includes="**/application/dataConversion/**">
+            includes="**/application/dataConversion/**, **/application/psiUpload/**">
             <classpath refid="project.test.class.path"/>
         </javac>
 
@@ -191,13 +212,10 @@
 
     <!-- =================================================================== -->
 
-
-    <!-- =================================================================== -->
-
     <!-- Copies jar files. The database to include is specified as a parameter. -->
     <target name="copy-lib" depends="gen-last-modified-file">
 
-	  <!-- Create the lib dir if it doesn't exist. -->
+        <!-- Create the lib dir if it doesn't exist. -->
         <mkdir dir="${lib.dir}"/>
 
         <!-- Copy jar files -->
@@ -209,12 +227,18 @@
             <!-- Include required jar files from intact core. -->
             <fileset dir="${root.lib.dir}">
                 <include name="jakarta-ojb-0.9.7.jar"/>
+                <include name="commons-cli-1.0.jar"/>
+                <include name="yasp.jar"/>
+                <include name="aristotle.jar"/>
+                <include name="flatfilewriter.jar"/>
+                <include name="sptr-interfaces.jar"/>
                 <include name="log4j-1.2.5.jar"/>
                 <include name="${db}"/>
                 <include name="commons-pool.jar"/>
                 <include name="xercesImpl.jar"/>
                 <include name="xml-apis.jar"/>
-		    <include name="jakarta-regexp-1.2.jar"/>
+                <include name="gnu-regexp-1.1.2.jar"/>
+                <include name="jakarta-regexp-1.2.jar"/>
             </fileset>
         </copy>
 
@@ -265,36 +289,6 @@
 
     <!-- =================================================================== -->
 
-
-    <!-- =================================================================== -->
-
-    <!-- These unit tests only run one tests in a single package; we need to add
-         a utility class which can run all the unit tests together.
-     -->
-    <!-- Runs tests using junit. -->
-    <target name="junit-test" depends="compile-all" description="Run JUnit tests">
-        <junit printsummary="withOutAndErr">
-            <test name=
-                "uk.ac.ebi.intact.application.editor.struts.framework.util.test.AllJUnitTests"/>
-            <classpath refid="project.test.class.path"/>
-        </junit>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
-    <target name="junit-test-stdout" depends="compile-all"
-        description="Runs JUnit directly with output directed to stdout">
-        <java classname="junit.textui.TestRunner" fork="true">
-            <arg value=
-                "uk.ac.ebi.intact.application.editor.struts.framework.util.test.AllJUnitTests"/>
-            <classpath refid="project.test.class.path"/>
-        </java>
-    </target>
-
-    <!-- =================================================================== -->
-
-
     <!-- Generates the last modified date file. -->
 
     <target name="gen-last-modified-file">
@@ -305,5 +299,14 @@
 
     <!-- =================================================================== -->
 
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+
+    <target name="junit-test-stdout" depends="clean, compile-test"
+            description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="uk.ac.ebi.intact.application.psiUpload.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
 
 </project>
