@@ -46,6 +46,7 @@ Verison: $Id$
 
     <!-- Web service related properties. -->
     <property name="ws.dir" value="ws"/>
+    <property name="ws.lib.dir" value="ws/lib"/>
     <property name="ws.wsdd.dir" value="ws/wsdd"/>
     <property name="ws.wsdl.dir" value="ws/wsdl"/>
     <property name="ws.tulip.wsdl" value="${ws.wsdl.dir}/tulip.wsdl"/>
@@ -102,9 +103,9 @@ Verison: $Id$
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
         <pathelement path="${root.lib.dir}/junit.jar"/>
-        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <pathelement path="${root.lib.dir}/commons-logging.jar"/>
 
+        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
     </path>
 
     <!-- =================================================================== -->
@@ -434,6 +435,7 @@ Verison: $Id$
     <!-- Compile the web service source tree. -->
     <target name="make-ws" description="Create the web service" depends="compile">
 
+        <mkdir dir="${ws.lib.dir}"/>
         <mkdir dir="${ws.wsdd.dir}"/>
         <mkdir dir="${ws.wsdl.dir}"/>
 
@@ -524,6 +526,20 @@ Verison: $Id$
         <echo message="Modify the deployment file"/>
         <antcall target="mod-deployfile" />
 
+        <!-- ask the user if he wants to use Tulip or GVF -->
+        <echo message="" />
+        <echo message="" />
+        <input message="Do you want the web service to use Tulip or the Graph Visualization Framework ? "
+               validargs="T,GVF"
+               addproperty="choosen.layout.engine" />
+
+        <condition property="use.gvf">
+            <equals arg1="GVF" arg2="${choosen.layout.engine}"/>
+        </condition>
+
+        <antcall target="modify-deploy-to-use-gvf" />
+
+        <!-- Cleaning up -->
         <echo message="Delete generated files"/>
         <delete dir="uk"/>
 
@@ -552,6 +568,27 @@ Verison: $Id$
 
     <!-- =================================================================== -->
 
+    <!-- In case the user has choosen to use royere (ie. variable use.royere is true)
+         We replace the default implementation class (TulipAccessImpl) by the one using
+         Royere (RoyereImpl).
+      -->
+    <target name="modify-deploy-to-use-gvf" if="use.gvf">
+
+        <!-- Replace Tulip implementation (default) by Royere's -->
+        <echo message="Replace Tulip implementation (default) by the one using GVF" />
+        <replace file="${ws.deploy.file}" token="TulipAccessImpl" value="GVFImpl" />
+
+        <!-- Copy the royere library in the package -->
+        <echo message="Include the royere library (contains GVF) in the web service archive." />
+        <copy todir="${ws.lib.dir}">
+            <fileset dir="${lib.dir}">
+                <include name="royere.jar"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Replace current class in the deployment file by those from the implementation -->
     <target name="mod-deployfile">
 
@@ -572,6 +609,8 @@ Verison: $Id$
         description="Test the web service and display results on the screen">
 
         <echo message="Testing the web service" />
+        <echo message="End point: ${webService.adress}" />
+
         <java classname="uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient" fork="yes">
             <classpath refid="project.class.path"/>
         </java>
