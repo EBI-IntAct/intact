@@ -10,9 +10,11 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import javax.servlet.http.HttpSessionBindingListener;
 import java.util.Collection;
+import java.util.Properties;
 import java.io.Serializable;
 
 /**
@@ -27,6 +29,13 @@ import java.io.Serializable;
  * @version $Id$
  */
 public interface IntactUserI extends Serializable, HttpSessionBindingListener {
+
+    // All the properties needed by the user (Session scope !)
+    public static final Properties GRAPH_PROPERTIES        = PropertyLoader.load (StrutsConstants.GRAPH_PROPERTY_FILE);
+    public static final Properties SEARCH_PROPERTIES       = PropertyLoader.load (StrutsConstants.SEARCH_PROPERTY_FILE);
+    public static final Properties WEB_SERVICE_PROPERTIES  = PropertyLoader.load (StrutsConstants.WEB_SERVICE_PROPERTY_FILE);
+    public static final Properties HIGHLIGHTING_PROPERTIES = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+
 
     public String  getQueryString();
     public String  getApplicationPath();

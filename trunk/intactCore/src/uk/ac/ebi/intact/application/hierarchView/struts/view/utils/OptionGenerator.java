@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.application.hierarchView.struts.view.utils;
 
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class OptionGenerator {
         ArrayList sources = new ArrayList ();
 
         // read the Highlighting.proterties file
-        Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+        Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;;
 
         if (null != properties) {
 
@@ -89,7 +90,7 @@ public class OptionGenerator {
     public static LabelValueBean getDefaultSource () {
 
         // read the Highlighting.proterties file
-        Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+        Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;;
 
         if (null != properties) {
 
@@ -139,7 +140,7 @@ public class OptionGenerator {
     public static LabelValueBean getSource (String sourceName) {
 
         // read the Highlighting.proterties file
-        Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+        Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;;
 
         if (null != properties) {
 
@@ -196,7 +197,7 @@ public class OptionGenerator {
         ArrayList behaviours = new ArrayList ();
 
         // read the Highlighting.proterties file
-        Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+        Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;;
 
         if (null != properties) {
 

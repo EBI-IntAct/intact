@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
 
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -45,7 +44,6 @@ public class IntactUser implements IntactUserI {
     private static final int MAXIMAL_DEPTH = 2;
     private static final int DEFAULT_DEPTH = 1;
 
-
     /**
      * datasource entry point
      */
@@ -74,6 +72,8 @@ public class IntactUser implements IntactUserI {
     /**
      * Collection of keys received from the current source.
      * The highlightment of the current interaction network is done according to these keys.
+     * <b>keys</b> contains a set of keys to take into account in the highlight process
+     * <b>selectedKey</b> is the one which has been selected by the user
      */
     private Collection keys;
     private String selectedKey;
@@ -190,6 +190,7 @@ public class IntactUser implements IntactUserI {
     public InteractionNetwork getInteractionNetwork() {
         return interactionNetwork;
     }
+
     public ImageBean getImageBean() {
         return imageBean;
     }
@@ -320,7 +321,7 @@ public class IntactUser implements IntactUserI {
         this.queryString = null;
 
         // read the Graph.properties file
-        Properties properties = PropertyLoader.load (StrutsConstants.GRAPH_PROPERTY_FILE);
+        Properties properties = GRAPH_PROPERTIES;
 
         if (null != properties) {
             String depth = properties.getProperty ("hierarchView.graph.depth.default");
@@ -435,6 +436,31 @@ public class IntactUser implements IntactUserI {
     }
 
 
+   public String getSearchUrl (String query) {
+        String searchURL = null;
+
+        // read the Search.properties file
+        Properties properties = SEARCH_PROPERTIES;
+
+        if (null != properties) {
+            String url = properties.getProperty ("search.url");
+            String queryParameter = properties.getProperty ("search.parameter.query.name");
+//            String classParameter = properties.getProperty ("search.parameter.class.name");
+//            String classValue     = properties.getProperty ("search.parameter.class.value");
+
+            searchURL = url + "?" + queryParameter + "=" + query; //  + "&" + classParameter + "=" + classValue
+        }
+
+        logger.info ("search URL = " + searchURL);
+        return searchURL;
+    }
+
+
+    public String getSearchUrl () {
+        return getSearchUrl (queryString);
+    }
+
+
     // Implements HttpSessionBindingListener
 
     /**
@@ -456,31 +482,5 @@ public class IntactUser implements IntactUserI {
             //failed to close the store - not sure what to do here yet....
             logger.error ("error when closing the IntactHelper store", ie);
         }
-    }
-
-
-    public String getSearchUrl (String query) {
-        String searchURL = null;
-
-        // read the Search.properties file
-        Properties properties = PropertyLoader.load (StrutsConstants.SEARCH_PROPERTY_FILE);
-
-        if (null != properties) {
-            String url = properties.getProperty ("search.url");
-            String queryParameter = properties.getProperty ("search.parameter.query.name");
-            String classParameter = properties.getProperty ("search.parameter.class.name");
-            String classValue     = properties.getProperty ("search.parameter.class.value");
-
-            searchURL = url + "?" + queryParameter + "=" + query + "&" +
-                        classParameter + "=" + classValue;
-        }
-
-        logger.info ("search URL = " + searchURL);
-        return searchURL;
-    }
-
-
-    public String getSearchUrl () {
-        return getSearchUrl (queryString);
     }
 }

@@ -238,8 +238,9 @@ public class GoHighlightmentSource extends HighlightmentSource {
          throws IntactException {
 
 
-        // get in the Highlightment properties file where is hosted interpro
-        Properties props = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+        // get in the Highlightment properties file where is interpro
+        Properties props = IntactUserI.HIGHLIGHTING_PROPERTIES;
+
         if (null == props) {
             String msg = "Unable to find the interpro hostname. "+
                          "The properties file '" + StrutsConstants.HIGHLIGHTING_PROPERTY_FILE + "' couldn't be loaded.";

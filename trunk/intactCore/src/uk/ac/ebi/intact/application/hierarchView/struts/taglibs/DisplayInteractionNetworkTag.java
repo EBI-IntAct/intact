@@ -81,7 +81,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                 String mapName = null;
                 String format = null;
 
-                Properties properties = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
+                Properties properties = IntactUserI.GRAPH_PROPERTIES;;
 
                 if (null != properties) {
                     mapName = properties.getProperty ("hierarchView.image.map.name");
