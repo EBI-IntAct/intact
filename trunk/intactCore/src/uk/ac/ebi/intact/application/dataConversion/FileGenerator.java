@@ -23,7 +23,8 @@ public class FileGenerator {
 
     // if an experiment has more than this many interactions it is considered to be large scale.
     //NB changed for testing - usually 100
-    public static final int SMALLSCALELIMIT = 1000;
+    public static final int SMALLSCALELIMIT = 500;
+    public static final int LARGESCALESIZE = 2500;
 
     private IntactHelper helper;
 
@@ -249,10 +250,10 @@ public class FileGenerator {
 
         //need to process the big ones chunk by chunk -
         //do this by splitting the Interactions into manageable
-        //pieces (1000 each), then building and writing some XML to seperate
+        //pieces (LARGESCALESIZE each), then building and writing some XML to seperate
         //files....
         int startIndex = 0;
-        int endIndex = 1000; //NB END INDEX IS EXCLUSIVE!!
+        int endIndex = LARGESCALESIZE; //NB END INDEX IS EXCLUSIVE!!
         //int endIndex = 2;
         int chunkCount = 1; //used to distinguish files
         String mainFileName = null;
@@ -328,8 +329,8 @@ public class FileGenerator {
 
                     chunkCount++;
                     startIndex = endIndex;
-                    endIndex = endIndex + 1000;
-                    //endIndex = endIndex + 2; //should normally be eg 1000
+                    endIndex = endIndex + LARGESCALESIZE;
+                    //endIndex = endIndex + 2; //should normally be eg LARGESCALESIZE
                 }
 
             }
