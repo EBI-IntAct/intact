@@ -271,22 +271,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     // ------------------------------------------------------------------------
 
-    // Inner class to sort search result.
-//    private static class SearchResultComparator implements Comparator {
-//
-//        private static SearchResultComparator ourInstance =
-//                new SearchResultComparator();
-//
-//        // Compare on short labels.
-//        public int compare(Object obj1, Object obj2) {
-//            AnnotatedObject annobj1 = (AnnotatedObject) obj1;
-//            AnnotatedObject annobj2 = (AnnotatedObject) obj2;
-//            return annobj1.getShortLabel().compareTo(annobj2.getShortLabel());
-//        }
-//    }
-
-    // ------------------------------------------------------------------------
-
     // Constructors.
 
     /**
@@ -854,7 +838,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Initialize the Protein factory.
         try {
-            myProteinFactory = new UpdateProteins(myHelper);
+            myProteinFactory = new UpdateProteins(new IntactHelper(dao, myUserName, myPassword));
         }
         catch (UpdateProteinsI.UpdateException e) {
             throw new IntactException("Unable to create the Protein factory");
@@ -894,6 +878,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Release all the locks held by this user.
         lm.releaseAllLocks(getUserName());
         myHelper.closeStore();
+        myProteinFactory.closeStore();
     }
 
     /**
