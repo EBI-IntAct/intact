@@ -13,8 +13,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <html:form action="/interaction/protein/search">
     <table width="50%" border="0" cellspacing="1" cellpadding="2">
@@ -24,7 +23,7 @@
             <th class="tableCellHeader" width="10%">SP AC</th>
             <th class="tableCellHeader" width="10%">IntAct AC</th>
             <th class="tableCellHeader" width="2%">
-                <editor:helpLink tag="int.proteins"/>
+                <intact:documentation section="editor.int.proteins"/>
             </th>
         </tr>
         <tr class="tableRowEven">
@@ -43,16 +42,5 @@
                 <html:text property="ac" size="10" maxlength="16"/>
             </td>
         </tr>
-
-        <%-- Prints all the error messages relevant to this page only. --%>
-        <logic:messagesPresent>
-            <tr class="tableRowOdd">
-                <td class="tableErrorCell" colspan="5">
-                    <%-- Filter out other error messages. --%>
-                    <html:errors property="int.protein.search"/>
-                </td>
-            </tr>
-        </logic:messagesPresent>
-
     </table>
 </html:form>
