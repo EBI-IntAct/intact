@@ -161,11 +161,17 @@
             parameter="search.layout">
         </action>
 
+        <!---
+            NOTE: Some forms are delcared with session scope. These forms are
+            created in LoginAction class (after a successful login) and saved
+            in a session. This avoids creating a new form for each request.
+            -->
+
         <!-- Process when a user selects an Editor object from a search result. -->
         <action path="/results"
             name="resultForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.ResultAction"
-            scope="request">
+            scope="session">
         </action>
 
         <!-- Process selection of Submit, Cancel or Delete buttons from edit.jsp. We need
@@ -187,7 +193,7 @@
         <action path="/info/edit"
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorInfoAction"
             name="cvinfoForm"
-            scope="request">
+            scope="session">
         </action>
 
         <!-- Handles when the user clickes on aut complete for tax id. -->
