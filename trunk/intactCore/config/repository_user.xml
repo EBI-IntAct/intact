@@ -519,13 +519,6 @@
          jdbc-type="VARCHAR"
       />
 
-      <field-descriptor id="5"
-         name="scientificName"
-         column="scientificName"
-         jdbc-type="VARCHAR"
-         indexed="true"
-      />
-
       <field-descriptor id="6"
          name="taxId"
          column="taxId"
