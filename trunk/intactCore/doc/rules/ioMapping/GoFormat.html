@@ -1,0 +1,120 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+   
+  <meta name="GENERATOR"
+ content="Mozilla/4.77 [en] (X11; U; Linux 2.4.19-xfs i686) [Netscape]">
+  <title>IntAct Documentation Template</title>
+</head>
+<body background="http://www.ebi.ac.uk/intact/images/intact_bkg.jpg">
+<img src="http://www.ebi.ac.uk/intact/images/logo_intact.gif"
+ alt="IntAct logo" align="right">
+<h1>Mapping rules for GO flat files<br>
+</h1>
+This document describes the mapping between GO format flat files and the
+IntAct database.<br>
+<br>
+The GO flat file format is described at <a
+ href="http://www.geneontology.org/doc/GO.doc.html#datarep">http://www.geneontology.org/doc/GO.doc.html#datarep</a><br>
+<br>
+<h3>GO def file:</h3>
+GO definition files are mapped into children of the abstact IntAct class
+CvObject.<br>
+<br>
+<table cellpadding="2" cellspacing="2" border="1" width="100%">
+  <tbody>
+    <tr>
+      <td valign="top"><b>GO tag<br>
+      </b></td>
+      <td valign="top"><b>IntAct attribute in CvObject<br>
+      </b></td>
+    </tr>
+    <tr>
+      <td valign="top">term<br>
+      </td>
+      <td valign="top">fullName<br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">goid<br>
+      </td>
+      <td valign="top">Xrefs. CvDatabase.shortlabel="GO"<br>
+Xrefs.primaryid=goid<br>
+Xrefs.secondaryid=term (potentially truncated)<br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">definition<br>
+      </td>
+      <td valign="top">Annotation.CvTopic.shortlabel="Definition"<br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+      <pre>comment</pre>
+      </td>
+      <td valign="top">Annotation.CvTopic.shortlabel="Comment"<br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+      <pre>definition_reference</pre>
+      </td>
+      <td valign="top">Only mapped if the reference is to a pubmed id.<br>
+Xrefs. CvDatabase.shortlabel="PubMed"<br>
+Xrefs.CvXrefQualifier="GO-definition-ref"<br>
+Xrefs.primaryid=(parsed PMID)<br>
+Xrefs.secondaryid not mapped.</td>
+    </tr>
+    <tr>
+      <td valign="top"><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Tags not part of GO flat file format:</b><br>
+      </td>
+      <td valign="top"><br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">shortlabel<br>
+      </td>
+      <td valign="top">shortLabel: If no shortLabel is defined, part of the
+term is used as the shortLabel. If term is too long, a unique label is generated
+from the goid.</td>
+    </tr>
+    <tr>
+      <td valign="top">intact_ac<br>
+      </td>
+      <td valign="top">ac<br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">[annotation topic]<br>
+      </td>
+      <td valign="top">any IntAct annotation topic is mapped to a GO tag,
+the annotation content to the GO value.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<h3>GO dag file:</h3>
+GO dag files are mapped into children of the abstact IntAct class CvDagObject.<br>
+<br>
+<hr>
+<address>Henning Hermjakob, 5-Mar-2003</address>
+<br>
+</body>
+</html>
