@@ -267,22 +267,6 @@ public interface EditUserI extends Serializable {
     public String getUniqueShortLabel(String shortlabel, String extAc)
             throws SearchException;
 
-    // Methods to create forms
-
-    /**
-     * Returns a new DynaBean instance for given form name. This new bean is
-     * stored in <code>request</code> object.
-     * @param formName the name of the form configured in the struts
-     * configuration file.
-     * @param request the HTTP request to get the application configuration.
-     * The new bean is stored in this object under <code>formName</code>.
-     * @return a <code>DynaBean</code> instance.
-     * @throws InstantiationException errors in creating the bean
-     * @throws IllegalAccessException errors in creating the bean
-     */
-    public DynaBean createForm(String formName, HttpServletRequest request)
-            throws InstantiationException, IllegalAccessException;
-
     /**
      * Popluate the given form with search result.
      * @param dynaForm the form to populate.
