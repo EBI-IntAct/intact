@@ -74,6 +74,20 @@
         <pathelement path="${intact.app.dir}/lib/commons-beanutils.jar"/>
     </path>
 
+    <!-- The run class path for the utility applications to fill tables -->
+    <path id="project.run.class.path">
+        <!-- Where the classes are compiled to. -->
+        <pathelement path="${dest.dir}"/>
+
+        <!-- Inlcude the intact core -->
+        <pathelement path="${root.jar.file}"/>
+
+        <!-- Runtime jar files from the root library. -->
+        <fileset dir="${root.lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
     <!-- =================================================================== -->
 
     <!-- Sets the time stamp and various 'present' properties. -->
@@ -192,11 +206,7 @@
                 <exclude name="*Frame.jsp"/>
                 <!--  No EBI header for this application (yet) -->
                 <exclude name="ebiHeaderLayout.jsp"/>
-                <!-- Header layout for this application; exclude the general one -->
-<!--                <exclude name="headerLayout.jsp"/>-->
             </fileset>
-            <!-- Application specific layouts goes here -->
-<!--            <fileset dir="layouts"/>-->
         </copy>
 
         <!-- Common images -->
@@ -351,6 +361,26 @@
         <ant dir=".." inheritAll="false" target="gen-last-modified-file">
             <property name="file" value="predict/${last.modified.file}"/>
         </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the Postgres data fill program -->
+    <target name="payg-pg" depends="compile"
+        description="Runs utility to create PAYG tables for Postgres database">
+        <java classname="uk.ac.ebi.intact.application.predict.util.PredictPg" fork="true">
+            <classpath refid="project.run.class.path"/>
+        </java>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the Oracle data fill program -->
+    <target name="payg-ora" depends="compile"
+        description="Runs utility to create PAYG tables for Oracle database">
+        <java classname="uk.ac.ebi.intact.application.predict.util.PredictOra" fork="true">
+            <classpath refid="project.run.class.path"/>
+        </java>
     </target>
 
     <!-- =================================================================== -->
