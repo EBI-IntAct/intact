@@ -1,92 +1,37 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.  
+All rights reserved. Please see the file LICENSE 
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.model;
 
 import java.util.Collection;
-import java.util.ArrayList;
 
 /**
- * New class which factors out owner and evidences from IntactObject.
- * This allows objects which do not have an owner (eg: Institution)
- * to inherit from IntactObject.
  *
- * @author intact team
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
+ *
+ * @see uk.ac.ebi.intact.model.BasicObjectImpl
  */
-public abstract class BasicObject extends IntactObject {
+public interface BasicObject extends IntactObject {
 
-    // TODO: synchron? this should moved somewhere else.
-    private String ownerAc;
+    public void setEvidences(Collection someEvidence);
 
-    ///////////////////////////////////////
-    // associations
+    public Collection getEvidences();
 
-    /**
-     * TODO comments + plural name
-     */
-    private Collection evidences = new ArrayList();
+    public void addEvidence(Evidence evidence);
 
-    /**
-     * TODO comments
-     */
-    private Institution owner;
+    public void removeEvidence(Evidence evidence);
 
+    public Institution getOwner();
 
-    /**
-     * Protected constructor for use by subclasses
-     */
-    protected BasicObject () {
-        super();
-    }
+    public void setOwner(Institution institution);
 
-    protected BasicObject (Institution owner) {
+    public String getOwnerAc();
 
-        this();
-        this.owner = owner;
-    }
+    public void setOwnerAc(String ac);
 
-
-    ///////////////////////////////////////
-    // access methods for associations
-
-    public void setEvidences(Collection someEvidence) {
-        this.evidences = someEvidence;
-    }
-    public Collection getEvidences() {
-        return evidences;
-    }
-    public void addEvidence(Evidence evidence) {
-        if (!this.evidences.contains(evidence)) this.evidences.add(evidence);
-    }
-
-    public void removeEvidence(Evidence evidence) {
-        this.evidences.remove(evidence);
-    }
-
-    public Institution getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Institution institution) {
-        this.owner = institution;
-        // TODO: synchron ?
-        this.ownerAc = institution.getAc();
-    }
-
-    ///////////////////////////////////////
-    // access methods for associations
-
-    public String getOwnerAc() {
-        return ownerAc;
-    }
-    public void setOwnerAc(String ac) {
-        this.ownerAc = ac;
-    }
-
-
-    ///////////////////////////////////////
-    // instance methods
-
-    public String toString() {
-        return super.toString() + "; owner=" + owner.getAc();
-    }
+    public String toString();
 
 }
