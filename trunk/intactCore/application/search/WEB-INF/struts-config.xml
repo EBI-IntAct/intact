@@ -25,9 +25,12 @@
         <form-bean name="welcomeForm"
                    type="uk.ac.ebi.intact.application.search.struts.view.WelcomeForm"/>
 
-        <!-- cv search form bean -->
+        <!-- Search form bean -->
         <form-bean name="searchForm"
                    type="uk.ac.ebi.intact.application.search.struts.view.SearchForm"/>
+
+        <!-- Dummy form bean -->
+        <form-bean name="dummyForm" type="org.apache.struts.action.DynaActionForm"/>
 
     </form-beans>
 
@@ -70,12 +73,13 @@
         </action>
 
         <!-- Process a user selects from a search result. -->
-        <action path="/results"
-                type="uk.ac.ebi.intact.application.search.struts.controller.ResultsAction"
+        <action path="/view"
+                type="uk.ac.ebi.intact.application.search.struts.controller.ViewAction"
+                name="dummyForm"
                 scope="request"
                 input="/results.jsp">
+            <forward name="results" path="/results.jsp"/>
         </action>
-
 
     <!-- The standard administrative actions available with Struts -->
     <!-- These would be either omitted or protected by security -->
