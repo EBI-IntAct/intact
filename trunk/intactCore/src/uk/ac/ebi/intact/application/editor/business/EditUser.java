@@ -91,11 +91,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     // End of static data
 
     /**
-     * The user ID.
-     */
-    private String myUser;
-
-    /**
      * Reference to the Intact Helper.
      */
     private IntactHelper myHelper;
@@ -207,7 +202,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     public EditUser(String mapping, String dsClass, String user,
                     String password) throws DataSourceException, IntactException {
-        myUser = user;
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
         // Pass config details to data source - don't need fast keys as only
