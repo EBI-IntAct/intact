@@ -141,7 +141,7 @@
              <fileset dir="${pages.dir}">
                  <!-- Do not remove our specific files -->
                  <exclude name="statView.jsp"/>
-                 <exclude name="jFreeChart.jsp"/>
+                 <exclude name="sidebarFilter.jsp"/>
             </fileset>
         </delete>
 

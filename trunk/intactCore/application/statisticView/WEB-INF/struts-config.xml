@@ -17,10 +17,19 @@ need only the "form-bean" element itself, with the corresponding
 
 <struts-config>
 
+    <!-- ========== Form Bean Definitions =================================== -->
+    <form-beans>
+
+        <!-- The filter form -->
+        <form-bean name="filterForm"
+                   type="uk.ac.ebi.intact.application.statisticView.struts.view.FilterForm"/>
+
+    </form-beans>
+
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
 
-        <forward name="start" path="/do/init" />
+        <forward name="start"   path="/do/init" />
 
     </global-forwards>
 
@@ -32,6 +41,17 @@ need only the "form-bean" element itself, with the corresponding
         <action path="/init"
                 type="org.apache.struts.actions.ForwardAction"
                 parameter="statisticView.layout">
+        </action>
+
+        <!-- data filtering -->
+        <action path="/filter"
+                type="uk.ac.ebi.intact.application.statisticView.struts.controller.FilterAction"
+                name="filterForm"
+                validate="false"
+                scope="request">
+
+            <forward name="success" path="statisticView.layout"/>
+
         </action>
 
     </action-mappings>

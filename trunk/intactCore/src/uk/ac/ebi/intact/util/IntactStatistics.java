@@ -194,8 +194,8 @@ public class IntactStatistics implements Comparable {
      *         from being compared to this Object.
      */
     public final int compareTo( final Object o ) {
-        final Timestamp t = ( (IntactStatistics) o ).getTimestamp();
 
-        return (int) ( t.getTime() - this.timestamp.getTime() );
+        final Timestamp t = ( (IntactStatistics) o ).getTimestamp();
+        return timestamp.compareTo( t );
     }
 }

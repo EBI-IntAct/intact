@@ -24,6 +24,8 @@ import org.apache.ojb.broker.accesslayer.LookupException;
 
 import java.util.*;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 
 public final class StatisticsDataSet {
@@ -33,8 +35,12 @@ public final class StatisticsDataSet {
     ////////////////////////////////
 
     public static final long DATA_NOT_LOADED = -1;
+    public static final long NONE = -1;
 
     public static final long MAXIMUM_DATA_AVAILABILITY = 1000 * 60 * 60 * 24 * 1; // one days in ms.
+
+    public static final SimpleDateFormat dateFormater = new SimpleDateFormat ( "dd-MMM-yyyy" );
+
 
 
     ///////////////////////////////
@@ -154,6 +160,22 @@ public final class StatisticsDataSet {
             logger.info( "Look for statistics..." );
 
             final Collection intactStatistics = helper.search( IntactStatistics.class.getName(), "ac", null );
+
+            logger.info( "closing IntactHelper..." );
+            helper.closeStore();
+
+            // keep track of the time.
+            timestamp = System.currentTimeMillis();
+
+            logger.info ("Content of the table before sorting");
+            for (Iterator iterator = intactStatistics.iterator(); iterator.hasNext();) {
+
+                // return the next IntactStatistics object
+                final IntactStatistics singleItem = (IntactStatistics) iterator.next();
+                logger.info ( singleItem );
+            }
+
+
             if (intactStatistics.size() > 0) {
                 final Object[] array = intactStatistics.toArray();
                 Arrays.sort( array );
@@ -161,20 +183,14 @@ public final class StatisticsDataSet {
                 statistics = new ArrayList( intactStatistics.size() );
                 for ( int i = 0; i < array.length; i++ ) {
                     final Object o = array[ i ];
-                    statistics.add(o);
+                    statistics.add( o );
                 }
             } else {
                 // empty collection.
                 statistics = new ArrayList( 1 );
             }
 
-            helper.closeStore();
-            logger.info( "closing IntactHelper..." );
-
-            // keep track of the time.
-            timestamp = System.currentTimeMillis();
-
-            logger.info ("Content of the table");
+            logger.info ("Content of the table after sorting");
             for (Iterator iterator = statistics.iterator(); iterator.hasNext();) {
 
                 // return the next IntactStatistics object
@@ -201,10 +217,70 @@ public final class StatisticsDataSet {
      * @return a bean containing the statistics and the database source details.
      */
     public final synchronized StatisticsBean getStatisticBean() throws NoDataException {
+
+        return getStatisticBean (null, null);
+    }
+
+    /**
+     * Return the data collected, this is the only public method.
+     *
+     * @param startDate the date from which we want to display the statistics.
+     *        null indicated that there is no start date.
+     *        That date has to respect the format defined by the SimpleDateFormater (DD-MMM-YYYY)
+     * @param stopDate the date until which we want to display the statistics.
+     *        null indicated that there is no end date.
+     *        That date has to respect the format defined by the SimpleDateFormater (DD-MMM-YYYY)
+     *
+     * @return a bean containing the statistics and the database source details.
+     */
+    public final synchronized StatisticsBean getStatisticBean( final String startDate,
+                                                               final String stopDate )
+            throws NoDataException {
+
         if (statistics == null || statistics.size() == 0)
             throw new NoDataException();
 
-        return new StatisticsBean( statistics, databaseName, userName );
+        long start = NONE;
+        if ( startDate != null ) {
+            try {
+                start = dateFormater.parse( startDate ).getTime();
+            } catch ( ParseException e ) {
+                e.printStackTrace ();
+            }
+        }
+
+        long stop = NONE;
+        if ( stopDate != null ) {
+            try {
+                stop = dateFormater.parse(stopDate).getTime();
+            } catch ( ParseException e ) {
+                e.printStackTrace ();
+            }
+        }
+
+        if ( start != NONE || stop != NONE ) {
+            // filter
+            final ArrayList filteredStatistics = new ArrayList();
+            for ( Iterator iterator = statistics.iterator (); iterator.hasNext (); ) {
+                final IntactStatistics statistics = (IntactStatistics) iterator.next ();
+                final long timestamp = statistics.getTimestamp().getTime();
+                boolean keepIt = true;
+
+                if ( start != NONE )
+                    if (timestamp < start) keepIt = false;
+
+                if ( stop != NONE )
+                    if (timestamp > stop) keepIt = false;
+
+                if ( keepIt )
+                    filteredStatistics.add( statistics );
+            } // for
+
+        return new StatisticsBean( filteredStatistics, databaseName, userName );
     }
+
+    // full dataset
+    return new StatisticsBean( statistics, databaseName, userName );
+}
 }
 

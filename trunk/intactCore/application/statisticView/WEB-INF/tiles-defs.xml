@@ -17,14 +17,16 @@
     <definition name="stat.menu.links" path="/layouts/menu.jsp">
         <put name="title" value="Links"/>
         <putList name="items">
+            <item value="IntAct home" link="/"/>
             <item value="Refresh" link="../init.jsp"/>
         </putList>
     </definition>
 
     <!-- ============ Sidebars ============================================ -->
 
-    <!-- Sidebar for the SrsSearchResults and SimilaritySearchResults pages -->
+    <!-- Sidebar for the statisticView application -->
     <definition name="stat.sidebar.layout" path="/layouts/sidebar.jsp">
+        <put name="filter" value="/pages/sidebarFilter.jsp"/>
         <put name="menu" value="stat.menu.links"/>
     </definition>
 
