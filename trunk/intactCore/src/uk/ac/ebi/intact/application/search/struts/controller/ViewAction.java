@@ -14,8 +14,6 @@ import uk.ac.ebi.intact.application.search.struts.view.ViewForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
