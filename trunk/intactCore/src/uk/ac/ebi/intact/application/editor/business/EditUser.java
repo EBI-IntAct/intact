@@ -16,7 +16,7 @@ import uk.ac.ebi.intact.application.editor.event.LogoutEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.IntactException;
@@ -24,7 +24,6 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
@@ -233,6 +232,16 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private transient Set myCurrentInteractions = new HashSet();
 
+    /**
+     * Contains views when the user navigates from one editor to another.
+     */
+    private transient Stack myViewStack = new Stack();
+
+    /**
+     * This flag will be
+     */
+//    private boolean myReleaseView;
+
     // ------------------------------------------------------------------------
 
     // Constructors.
@@ -303,7 +312,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * method sets the logout time.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
-//        getLogger().info("User is about to unbound");
         ServletContext ctx = event.getSession().getServletContext();
         LockManager lm = (LockManager) ctx.getAttribute(EditorConstants.LOCK_MGR);
 
@@ -311,9 +319,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         EventListener listener = (EventListener) ctx.getAttribute(
                 EditorConstants.EVENT_LISTENER);
         listener.notifyObservers(new LogoutEvent(getUserName()));
-
-        // Not an error, just a logging statemet to see values are unbound or not
-//        getLogger().error("User unbound: " + getUserName());
 
         // Release all the locks held by this user.
         lm.releaseAllLocks(getUserName());
@@ -373,27 +378,45 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditView = null;
     }
 
-    public void setView(InteractionViewBean view) {
-        // Return the view back to the pool.
+    public void setView(AbstractEditViewBean view) {
+//        // Return the view back to the pool.
         releaseView();
         myEditView = view;
     }
 
     public void setView(Class clazz) {
+        setView(clazz, true);
+    }
+
+    public void setView(Class clazz, boolean release) {
+        if (release) {
+            // Return the view back to the pool.
+            releaseView();
+        }
+        else {
+            myViewStack.push(myEditView);
+        }
         // Start editing the object.
         startEditing();
-        // Return the view back to the pool.
-        releaseView();
         // The new view based on the class type.
         myEditView = EditViewBeanFactory.getInstance().borrowObject(clazz);
         myEditView.reset(clazz);
     }
 
     public void setView(AnnotatedObject annobj) {
+        setView(annobj, true);
+    }
+
+    public void setView(AnnotatedObject annobj, boolean release) {
+        if (release) {
+            // Return the view back to the pool.
+            releaseView();
+        }
+        else {
+            myViewStack.push(myEditView);
+        }
         // Start editing the object.
         startEditing();
-        // Return the view back to the pool.
-        releaseView();
         // View based on the class for given edit object.
         myEditView = EditViewBeanFactory.getInstance().borrowObject(
                 IntactHelper.getRealClassName(annobj));
@@ -410,20 +433,30 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditView.resetClonedObject(obj, this);
     }
 
-    public void setViewFeature() {
-        // Start editing the object.
-        startEditing();
-        // We are not releasing the view to preserve the existing interaction view
-        myEditView = EditViewBeanFactory.getInstance().borrowObject(Feature.class);
-        myEditView.reset(Feature.class);
+    public boolean restorePreviousView() {
+        if (hasPreviousView()) {
+            setView(popPreviousView());
+            return true;
+        }
+        return false;
     }
 
-    public void setViewFeature(Feature feature) {
-        // Start editing the object.
-        startEditing();
-        // We are not releasing the view to preserve the existing interaction view
-        myEditView = EditViewBeanFactory.getInstance().borrowObject(Feature.class);
-        myEditView.reset(feature);
+    public AbstractEditViewBean popPreviousView() {
+        if (hasPreviousView()) {
+            return (AbstractEditViewBean) myViewStack.pop();
+        }
+        return null;
+    }
+
+    public AbstractEditViewBean peekPreviousView() {
+        if (hasPreviousView()) {
+            return (AbstractEditViewBean) myViewStack.peek();
+        }
+        return null;
+    }
+
+    public boolean hasPreviousView() {
+        return !myViewStack.isEmpty();
     }
 
     public String getSelectedTopic() {
@@ -483,6 +516,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public void cancelEdit() {
         endEditing();
+        releaseView();
         // Can't release the view vbecause it is required to display the cancelled
         // view in the search page.
     }
@@ -538,14 +572,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Wrap as ResultsBeans for tag library to display.
         for (Iterator iter = results.iterator(); iter.hasNext();) {
-            mySearchCache.add(iter.next());
+            mySearchCache.add(new ResultRowData((AnnotatedObject) iter.next()));
         }
     }
 
     public void updateSearchCache(AnnotatedObject annotobj) {
         // Clear previous results.
         mySearchCache.clear();
-        mySearchCache.add(annotobj);
+        mySearchCache.add(new ResultRowData(annotobj));
     }
 
     public ResultWrapper lookup(Class clazz, String param, String value, int max)

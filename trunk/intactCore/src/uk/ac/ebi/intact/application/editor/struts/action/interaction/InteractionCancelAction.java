@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.action.CancelFormAction;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,22 +62,33 @@ public class InteractionCancelAction extends CancelFormAction {
         // The current view of the edit session.
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
-        IntactHelper helper = user.getIntactHelper();
-        try {
-            // Delete any features that have been added.
-            view.delFeaturesAdded(helper);
-
-            // Check and see if we have to go to the experiment page.
-            if (view.isSourceFromAnExperiment()) {
-                // Set the experiment to go back.
-                setDestinationExperiment(request, helper);
-                // Back to the experiment editor.
-                forward = mapping.findForward(EXP);
+        if (view.hasFeaturesAdded()) {
+            System.out.println("Have adde some new features, delete them");
+            // We have some features added. Will remove them first before going back.
+            IntactHelper helper = user.getIntactHelper();
+            try {
+                // Delete any features that have been added.
+                view.delFeaturesAdded(helper);
+            }
+            finally {
+                helper.closeStore();
             }
         }
-        finally {
-            helper.closeStore();
+        else {
+            System.out.println("No new features added");
+        }
+        // Cancel the edit session.
+        user.cancelEdit();
+
+        // Check and see if we have to go back to the experiment page.
+        if (user.restorePreviousView()) {
+            // Back to the experiment editor.
+            forward = mapping.findForward(EXP);
         }
         return forward;
+    }
+
+    protected void cancelEdit(EditUserI user) {
+        // No operation as we need to access the current view
     }
 }

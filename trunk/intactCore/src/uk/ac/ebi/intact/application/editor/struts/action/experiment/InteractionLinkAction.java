@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interaction;
 
@@ -56,9 +55,6 @@ public class InteractionLinkAction extends CommonDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // Cache the this experiment's AC because we need to set it later.
-        String expAc = user.getView().getAc();
-
         // The AC of the interaction we are about to edit.
         String intAc = (String) ((ExperimentActionForm) form).getIntac();
 
@@ -76,22 +72,17 @@ public class InteractionLinkAction extends CommonDispatchAction {
         // We must have this Interaction.
         assert inter != null;
 
-        // Try to acuire the lock.
+        // Try to acquire the lock.
         ActionErrors errors = acquire(intAc, user.getUserName());
         if (errors != null) {
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
-        // Try to acuire the lock.
         // Set the topic.
         user.setSelectedTopic(EditorService.getTopic(Interaction.class));
 
-        // Set the interaction as the new view.
-        user.setView(inter);
-
-        // Set the experiment AC, so we can come back to this experiment again.
-        System.out.println("Just about to set the source exp: " + expAc);
-        ((InteractionViewBean) user.getView()).setSourceExperimentAc(expAc);
+        // Set the interaction as the new view, don't release the previous view.
+        user.setView(inter, false);
 
         // Update the form.
         return mapping.findForward(SUCCESS);

@@ -438,13 +438,14 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * @param interaction the interaction to update or add.
      */
     public void updateInteractionRow(Interaction interaction) {
-        List exps = extractExpShortLabels(interaction.getExperiments());
+        // Extract the experiment ACs for gievn interaction
+        List exps = extractExperimentACs(interaction.getExperiments());
         
         // If the current experiment is not in the list, we can ignore
-        if (!exps.contains(getShortLabel())) {
+        if (!exps.contains(getAc())) {
             return;
         }
-        // The current experiment is part of the given interaction.
+        // Given interaction is part of the current experiment.
         
         // Create a dummy row data for comparision.
         InteractionRowData dummy = new InteractionRowData(interaction);
@@ -460,8 +461,10 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     /**
      * Deletes the row matching the given ac.
      * @param ac the AC to delete the interaction row.
+     * @return true if the interaction was removed successfully (i.e, the
+     * interaction for given ac belongs to this experiment).
      */
-    public void deleteInteractionRow(String ac) {
+    public boolean deleteInteractionRow(String ac) {
         // Create a dummy row data for comparision.
         InteractionRowData dummy = new InteractionRowData(ac);
         
@@ -469,7 +472,9 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         if (myInteractions.contains(dummy)) {
             int pos = myInteractions.indexOf(dummy);
             myInteractions.remove(pos);
+            return true;
         }
+        return false;
     }
     
     // Helper methods
@@ -530,10 +535,10 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         myInteractions.clear();
     }
     
-    private List extractExpShortLabels(Collection exps) {
+    private List extractExperimentACs(Collection exps) {
         List list = new ArrayList();
         for (Iterator iter = exps.iterator(); iter.hasNext(); ) {
-            list.add(((Experiment) iter.next()).getShortLabel());
+            list.add(((Experiment) iter.next()).getAc());
         }
         return list;
     }

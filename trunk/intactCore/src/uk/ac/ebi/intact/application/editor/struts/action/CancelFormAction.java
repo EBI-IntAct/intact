@@ -56,10 +56,15 @@ public class CancelFormAction extends AbstractEditorAction {
             // Release the lock.
             getLockManager().release(annobj.getAc());
         }
-        // Cancel the current edit session.
-        user.cancelEdit();
+        cancelEdit(user);
 
         // Back to the search page.
         return mapping.findForward(RESULT);
+    }
+
+    // Subclasses can override this method to delay cancelling the edit session.
+    protected void cancelEdit(EditUserI user) {
+        // Cancel the current edit session.
+        user.cancelEdit();
     }
 }

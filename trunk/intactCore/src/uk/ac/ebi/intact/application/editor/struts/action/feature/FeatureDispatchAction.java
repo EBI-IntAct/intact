@@ -111,7 +111,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         user.setSelectedTopic(EditorService.getTopic(Interaction.class));
 
         // The parent view of the current view.
-        InteractionViewBean intView = view.getParentView();
+        InteractionViewBean intView = (InteractionViewBean) user.popPreviousView();
 
         // Update individual Features if in mutation mode.
         if (view.isInMutationMode()) {
@@ -201,6 +201,8 @@ public class FeatureDispatchAction extends CommonDispatchAction {
                 helper.finishTransaction();
             }
             catch (IntactException ie) {
+                // Log the stack trace.
+                LOGGER.error("", ie);
                 try {
                     helper.undoTransaction();
                 }
@@ -223,6 +225,8 @@ public class FeatureDispatchAction extends CommonDispatchAction {
                 helper.finishTransaction();
             }
             catch (IntactException ie) {
+                // Log the stack trace.
+                LOGGER.error("", ie);
                 try {
                     helper.undoTransaction();
                 }

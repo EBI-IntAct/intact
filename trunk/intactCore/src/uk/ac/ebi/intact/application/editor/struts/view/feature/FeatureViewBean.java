@@ -39,11 +39,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * The default laytout name.
      */
     private static final String ourDefaultLayoutName = "edit.feature.layout";
-
-    /**
-     * The parent of this view bean (Feature is part of an Interaction)
-     */
-    private InteractionViewBean myParentViewBean;
     
     /**
      * The component this feature belongs to.
@@ -158,22 +153,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
         return !myMutationMode;
     }
 
-    /**
-     * Sets the parent view of this feature.
-     * @param parent the parent of this view.
-     */
-    public void setParentView(InteractionViewBean parent) {
-        myParentViewBean = parent;
-    }
-
-    /**
-     * Returns the handler to the parent view.
-     * @return the Interaction view as the parent of this view.
-     */
-    public InteractionViewBean getParentView() {
-        return myParentViewBean;
-    }
-    
     /**
      * Sets the component for this feature.
      * @param component the component this feature belongs to.
@@ -395,7 +374,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
         // Clear ranges
         myRanges.clear();
 
-        setParentView(null);
         setComponent(null);
         myMutationMode = false;
         myCurrentLayoutName = ourDefaultLayoutName;
