@@ -494,9 +494,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Remove from the cache and add it again (this will update any
         // changes done in the editor).
         removeFromSearchCache();
-//        this.addToSearchCache(annobj);
-
-//        private void addToSearchCache(AnnotatedObject anobj) {
         if (mySearchCache.isEmpty()) {
             return;
         }
@@ -507,7 +504,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             // The same type; add it to the cache.
             mySearchCache.add(new ResultBean(annobj));
         }
-//        }
     }
 
     public Collection lookup(String className, String value, boolean cache)
@@ -714,7 +710,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     // Helper methods.
 
     private void removeFromSearchCache() {
-        String ac = myEditView.getAc();
+        String ac = myEditView.getAcNoLink();
         CollectionUtils.filter(mySearchCache, ResultBean.getPredicate(ac));
     }
 
