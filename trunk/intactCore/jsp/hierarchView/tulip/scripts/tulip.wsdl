@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:tulip" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:intf="urn:tulip" xmlns:impl="urn:tulip-impl" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+   <wsdl:message name="getComputedTlpContentRequest">
+
+      <wsdl:part name="in0" type="SOAP-ENC:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getLineSeparatorResponse">
+
+      <wsdl:part name="return" type="SOAP-ENC:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getComputedTlpContentResponse">
+
+      <wsdl:part name="return" type="SOAP-ENC:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getLineSeparatorRequest">
+
+   </wsdl:message>
+
+   <wsdl:portType name="TulipAccess">
+
+      <wsdl:operation name="getComputedTlpContent" parameterOrder="in0">
+
+         <wsdl:input message="intf:getComputedTlpContentRequest"/>
+
+         <wsdl:output message="intf:getComputedTlpContentResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getLineSeparator">
+
+         <wsdl:input message="intf:getLineSeparatorRequest"/>
+
+         <wsdl:output message="intf:getLineSeparatorResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="tulipSoapBinding" type="intf:TulipAccess">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getComputedTlpContent">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input>
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="getComputedTlpContent"/>
+
+         </wsdl:input>
+
+         <wsdl:output>
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:tulip"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getLineSeparator">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input>
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="getLineSeparator"/>
+
+         </wsdl:input>
+
+         <wsdl:output>
+
+            <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:tulip"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="TulipAccessService">
+
+      <wsdl:port name="tulip" binding="intf:tulipSoapBinding">
+
+         <wsdlsoap:address location="http://arafel:8080/axis/services/tulip"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
