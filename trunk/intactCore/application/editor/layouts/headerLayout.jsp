@@ -22,6 +22,5 @@
 <div style="text-align: right;">
     <intact:documentation section="editor" title="Help Topics"/>
     <intact:documentation section="editor.faq" title="FAQ"/>
-    <br>
 </div>
 <hr>
