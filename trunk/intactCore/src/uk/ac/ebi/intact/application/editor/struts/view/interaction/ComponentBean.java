@@ -160,11 +160,7 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
                     BioSource.class, myExpressedIn);
         }
         myComponent.setExpressedIn(expressedIn);
-//
-//        // Update the binding domain by removing the 'deleted' features.
-//        for (Iterator iter = myFeaturesToDel.iterator(); iter.hasNext();) {
-//            myComponent.removeBindingDomain((Feature) iter.next());
-//        }
+
         return myComponent;
     }
 
@@ -313,17 +309,14 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
     /**
      * Removes the feature from view and add it to the collection of features
      * to delete
-     * @param feature the Feature to delete.
+     * @param bean the Feature bean to delete.
      */
-    public void delFeature(Feature feature) {
-        // Wrap the feature in a bean.
-        FeatureBean fb = new FeatureBean(feature);
-        
+    public void delFeature(FeatureBean bean) {
         // Remove it from the view (it was added as a bean).
-        myFeatures.remove(fb);
+        myFeatures.remove(bean);
         
         // Add the feature to delete.
-        myFeaturesToDel.add(fb);
+        myFeaturesToDel.add(bean);
     }
 
     /**
@@ -335,10 +328,11 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
      * </pre>
      */
     public Collection getFeaturesToDelete() {
-        // Features common to both add and delete.
-        Collection common = CollectionUtils.intersection(myFeaturesToDel, myFeaturesToAdd);
-        // All the features only found in 'features to delete' collection.
-        return CollectionUtils.subtract(myFeaturesToDel, common);
+//        // Features common to both add and delete.
+//        Collection common = CollectionUtils.intersection(myFeaturesToDel, myFeaturesToAdd);
+//        // All the features only found in 'features to delete' collection.
+//        return CollectionUtils.subtract(myFeaturesToDel, common);
+        return myFeaturesToDel;
     }
 
     /**
@@ -359,6 +353,7 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
     public void saveFeature(Feature feature) {
         // Create the feature bean to compare.
         FeatureBean fb = new FeatureBean(feature);
+//        System.out.println("In save feature - component bean - " + fb.getAc() + ", " + fb.getBoundDomain());
 
         // Find the feature bean within the component bean.
         if (myFeatures.contains(fb)) {
@@ -370,18 +365,23 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
             // Update the new feature list if it exist in there. This is important
             // or else getFeatue() wouldn't return an up todate Feature object.
             if (myFeaturesToAdd.contains(fb)) {
-                System.out.println("Updating existing new feature bean");
+//                System.out.println("Updating existing new feature bean");
                 // Update an existing feature; remove it and add the new bean.
                 myFeaturesToAdd.remove(fb);
                 myFeaturesToAdd.add(fb);
             }
         }
         else {
-            System.out.println("Adding a new feature as: " + fb.getAc());
+//            System.out.println("Adding a new feature as: " + fb.getAc());
             // New feature; just add it.
             myFeatures.add(fb);
             myFeaturesToAdd.add(fb);
         }
+    }
+
+    public void clearTransactions() {
+        myFeaturesToAdd.clear();
+        myFeaturesToDel.clear();
     }
 
     // Helper methods

@@ -333,7 +333,9 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 //            return mapping.findForward(RESULT);
 //        }
         // Refresh the current view
-        view.refresh();
+//        view.refresh();
+        // Clear any left overs from previous transaction.
+        view.clearTransactions();
 
         // We can't use mapping.getInputForward here as this return value
         // is used by subclasses (they need to distinguish between a success or

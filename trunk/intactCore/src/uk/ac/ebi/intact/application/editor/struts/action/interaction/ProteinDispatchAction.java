@@ -8,18 +8,21 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
 import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * The action class for editing a Protein.
@@ -28,6 +31,15 @@ import javax.servlet.http.HttpServletResponse;
  * @version $Id$
  */
 public class ProteinDispatchAction extends AbstractEditorAction {
+
+//    protected Map getKeyMethodMap() {
+//        Map map = new HashMap();
+//        map.put("int.proteins.button.edit", "edit");
+//        map.put("int.proteins.button.save", "save");
+//        map.put("int.proteins.button.feature.add", "addFeature");
+//        map.put("int.proteins.button.delete", "delete");
+//        return map;
+//    }
 
     /**
      * This method dispatches calls to various methods using the 'dispatch' parameter.
@@ -52,39 +64,31 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         // The command associated with the dispatch
         String cmd = intform.getDispatch();
 
-        System.out.println("Command is: " + cmd);
         // Message resources to access button labels.
         MessageResources msgres = getResources(request);
 
         if (cmd.equals(msgres.getMessage("int.proteins.button.edit"))) {
-            return edit(mapping, form, request, response);
+            return edit(mapping, intform, request);
         }
         if (cmd.equals(msgres.getMessage("int.proteins.button.save"))) {
-            return save(mapping, form, request, response);
+            return save(mapping, intform, request);
         }
-//        if (cmd.equals(msgres.getMessage("int.proteins.button.delete"))) {
-//            return delete(mapping, form, request, response);
-//        }
         if (cmd.equals(msgres.getMessage("int.proteins.button.feature.add"))) {
-            return addFeature(mapping, intform, request, response);
+            request.setAttribute("dispatch", "add");
+            return mapping.findForward(FEATURE);
+//            return addFeature(mapping, intform, request);
         }
-//        if (cmd.equals(msgres.getMessage("int.proteins.button.feature.edit"))) {
-//            return editFeature(mapping, form, request, response);
-//        }
         // default is delete protein.
-        return delete(mapping, form, request, response);
+        return delete(mapping, intform, request);
     }
 
-    public ActionForward edit(ActionMapping mapping,
-                              ActionForm form,
-                              HttpServletRequest request,
-                              HttpServletResponse response)
-            throws Exception {
-        // The form.
-        InteractionActionForm intform = (InteractionActionForm) form;
 
+    public ActionForward edit(ActionMapping mapping,
+                              InteractionActionForm form,
+                              HttpServletRequest request)
+            throws Exception {
         // The protein we are editing at the moment.
-        ComponentBean pb = intform.getSelectedComponent();
+        ComponentBean pb = form.getSelectedComponent();
 
         // We must have the protein bean.
         assert pb != null;
@@ -97,19 +101,16 @@ public class ProteinDispatchAction extends AbstractEditorAction {
     }
 
     public ActionForward save(ActionMapping mapping,
-                              ActionForm form,
-                              HttpServletRequest request,
-                              HttpServletResponse response)
+                              InteractionActionForm form,
+                              HttpServletRequest request)
             throws Exception {
-        // The form.
-        InteractionActionForm intform = (InteractionActionForm) form;
-
         // The current view of the edit session.
         InteractionViewBean viewbean =
                 (InteractionViewBean) getIntactUser(request).getView();
 
+
         // The component we are editing at the moment.
-        ComponentBean cb = intform.getSelectedComponent();
+        ComponentBean cb = form.getSelectedComponent();
 
         // We must have the protein bean.
         assert cb != null;
@@ -137,37 +138,35 @@ public class ProteinDispatchAction extends AbstractEditorAction {
     }
 
     public ActionForward delete(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response)
+                                InteractionActionForm form,
+                                HttpServletRequest request)
             throws Exception {
-        // The form.
-        InteractionActionForm intform = (InteractionActionForm) form;
-
         // The current view of the edit session.
         InteractionViewBean view =
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // Delete this Protein from the view.
-        view.delProtein(intform.getDispatchIndex());
+        view.delProtein(form.getDispatchIndex());
 
         // Update the form.
         return mapping.findForward(SUCCESS);
     }
 
-    private ActionForward addFeature(ActionMapping mapping,
-                                    InteractionActionForm form,
-                                    HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward addFeature(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
             throws Exception {
+
+//    private ActionForward addFeature(ActionMapping mapping,
+//                                    InteractionActionForm form,
+//                                    HttpServletRequest request)
+//            throws Exception {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
         // Still with the interaction view.
         InteractionViewBean intView = (InteractionViewBean) user.getView();
-
-        // Save the interaction ac to get back to.
-//        String ac = intView.getAc();
 
         // Set the selected topic as other operation use it for various tasks.
         user.setSelectedTopic("Feature");
@@ -180,34 +179,17 @@ public class ProteinDispatchAction extends AbstractEditorAction {
 
         // Set the parent for the feature view.
         featureView.setParentView(intView);
-        
+//        featureView.setParent((Interaction) intView.getAnnotatedObject());
+
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
+
         // The selected component from the form.
-        ComponentBean selectedComp = form.getSelectedComponent();
+        ComponentBean selectedComp = intform.getSelectedComponent();
         
         // The component for the feature.
         featureView.setComponent(selectedComp.getComponent(user));
 
-        // The interaction to get back.
-//        featureView.setSourceInteractionAc(ac);
-
         return mapping.findForward(FEATURE);
     }
-//
-//    private ActionForward editFeature(ActionMapping mapping,
-//                                    ActionForm form,
-//                                    HttpServletRequest request,
-//                                    HttpServletResponse response) {
-//
-//        System.out.println("I am in the edit feature");
-//        return mapping.findForward(SUCCESS);
-//    }
-//
-//    public ActionForward deleteFeature(ActionMapping mapping,
-//                              ActionForm form,
-//                              HttpServletRequest request,
-//                              HttpServletResponse response)
-//            throws Exception {
-//        System.out.println("I am in the DELETE feature");
-//        return mapping.findForward(SUCCESS);
-//    }
 }

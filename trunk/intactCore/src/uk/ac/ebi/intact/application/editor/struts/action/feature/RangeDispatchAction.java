@@ -10,15 +10,9 @@ import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.model.Protein;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,16 +45,12 @@ public class RangeDispatchAction extends AbstractEditorAction {
         // The form.
         FeatureActionForm featureForm = (FeatureActionForm) form;
 
-        // Handler to the EditUserI.
-        EditUserI user = getIntactUser(request);
-
         // The current view of the edit session.
         FeatureViewBean view =
                 (FeatureViewBean) getIntactUser(request).getView();
 
         // The range we are editing at the moment.
         RangeBean bean = featureForm.getSelectedRange();
-//        System.out.println("Selected range: " + bean.getFromRange() + " - " + bean.getToRange());
 
         // The command associated with the dispatch
         String cmd = featureForm.getDispatch();
@@ -69,102 +59,39 @@ public class RangeDispatchAction extends AbstractEditorAction {
         MessageResources msgres = getResources(request);
 
         if (cmd.equals(msgres.getMessage("feature.range.button.edit"))) {
-//            return edit(mapping, featureForm, request, response);
             // Set the state to save this bean.
             bean.setEditState(AbstractEditBean.SAVE);
         }
-
-        // Handle Save event.
         else if (cmd.equals(msgres.getMessage("feature.range.button.save"))) {
-            // The updated range bean.
-            Feature feature = (Feature) view.getAnnotatedObject();
-            RangeBean updated = new RangeBean(bean.getRange(feature, user),
-                    bean.getKey());
+            // Does the range exist in the current ranges?
+            if (view.rangeExists(bean)) {
+                ActionErrors errors = new ActionErrors();
+                errors.add("feature.range.exists",
+                        new ActionError("error.feature.range.exists"));
+                saveErrors(request, errors);
 
-//            System.out.println("Updated range: " + updated.getFromRange() + " - " + updated.getToRange());
+                // Display the errors.
+                return mapping.getInputForward();
+            }
+            // The updated range bean; this needs to be a separate copy (don't
+            // want form and the view to share the same copy).
+            RangeBean updated = (RangeBean) bean.clone();
+
             // Save the bean in the view.
-            view.saveRange(bean, updated);
+            view.saveRange(updated);
 
             // Back to the view mode.
             bean.setEditState(AbstractEditBean.VIEW);
         }
         else {
             // Default is to delete a range. Delete the selected Range
-            //  from the view.
-            view.delRange(featureForm.getDispatchIndex());
+            // from the view.
+            view.delRange(bean);
         }
+        // Refresh the existing defined feature.
+        view.refreshDefinedFeature();
+
         // Update the form.
         return mapping.getInputForward();
-//        return delete(mapping, form, request, response);
     }
-
-//    public ActionForward edit(ActionMapping mapping,
-//                              FeatureActionForm form,
-//                              HttpServletRequest request,
-//                              HttpServletResponse response)
-//            throws Exception {
-//        // The range we are editing at the moment.
-//        RangeBean rb = form.getSelectedRange();
-//
-//        // We must have the range bean.
-//        assert rb != null;
-//
-//        // Must save this bean.
-//        rb.setEditState(AbstractEditBean.SAVE);
-//
-//        // Update the form.
-//        return mapping.findForward(SUCCESS);
-//    }
-
-//    public ActionForward save(ActionMapping mapping,
-//                              FeatureViewBean view,
-//                              RangeBean bean,
-//                              EditUserI user)
-//            throws Exception {
-//        // The current view of the edit session.
-////        FeatureViewBean viewbean =
-////                (FeatureViewBean) getIntactUser(request).getView();
-//
-//        // We must have the range bean.
-////        assert rb != null;
-//
-//        // Handler to the EditUserI.
-////        EditUserI user = getIntactUser(request);
-//
-//        // The updated range bean.
-//        RangeBean updated = new RangeBean(bean.getRange(user), bean.getKey());
-//
-//        // Save the bean in the view.
-//        view.saveRange(bean, updated);
-//
-//        // Back to the view mode.
-//        bean.setEditState(AbstractEditBean.VIEW);
-//
-//        // Update the form.
-//        return mapping.findForward(SUCCESS);
-//    }
-//
-//    public ActionForward delete(ActionMapping mapping,
-//                                FeatureViewBean view,
-//                                RangeBean bean,
-//                                HttpServletRequest request,
-//                                HttpServletResponse response)
-//            throws Exception {
-//        // The form.
-//        // The current view of the edit session.
-////        InteractionViewBean view =
-////                (InteractionViewBean) getIntactUser(request).getView();
-////
-//        // The protein we are editing at the moment.
-////        ComponentBean pb = intform.getSelectedProtein();
-//
-//        // We must have the protein bean.
-////        assert pb != null;
-//
-//        // Delete this Protein from the view.
-//        view.delRange(intform.getDispatchIndex());
-//
-//        // Update the form.
-//        return mapping.findForward(SUCCESS);
-//    }
 }

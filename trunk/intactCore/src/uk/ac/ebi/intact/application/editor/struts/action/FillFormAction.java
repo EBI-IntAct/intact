@@ -16,10 +16,9 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Enumeration;
 
 /**
- * Fills the form with values for ac, short label and full name.
+ * Fills the form with values for display.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -40,13 +39,9 @@ public class FillFormAction extends AbstractEditorAction {
         // The editor form.
         EditorActionForm editorForm = (EditorActionForm) form;
 
-        // Any anchors to set?
-        String anchor = getAnchor(request, editorForm);
+        // Set anchor if necessary.
+        setAnchor(request, editorForm);
 
-        // Set the anchor only if it is set.
-        if (anchor != null) {
-            editorForm.setAnchor(anchor);
-        }
         // The view of the current object we are editing at the moment.
         AbstractEditViewBean view = getIntactUser(request).getView();
 
@@ -63,7 +58,39 @@ public class FillFormAction extends AbstractEditorAction {
         return mapping.findForward(SUCCESS);
     }
 
-    private String getAnchor(HttpServletRequest request, EditorActionForm form) {
+    /**
+     * Sets the anchor in the form if an anchor exists.
+     *
+     * @param request the HTTP request to get anchor.
+     * @param form the form to set the anchor and also to extract the dispath
+     * event.
+     *
+     * @see #getAnchor(HttpServletRequest, EditorActionForm)
+     */
+    protected void setAnchor(HttpServletRequest request, EditorActionForm form) {
+        // Any anchors to set?
+        String anchor = getAnchor(request, form);
+
+        // Set the anchor only if it is set.
+        if (anchor != null) {
+            form.setAnchor(anchor);
+        }
+    }
+
+    /**
+     * Returns an anchor name by (1). error message, (2) the dispatch event.
+     * <code>null</code> is returned if no anchor was found for the above two.
+     * This method is protected for a subclass to overide it. For example,
+     * this allows an anchor to determine by analysing another method other than
+     * default two methods.
+     *
+     * @param request the request holds the error message.
+     * @param form the form to get the dispatch event.
+     * @return anchor appropriate for (1) error in <code>request</code> or (2)
+     * button. <code>null</code> if no none found. All anchors are stored in
+     * a map by the initial servlet for the editor.
+     */
+    protected String getAnchor(HttpServletRequest request, EditorActionForm form) {
         // The map containing anchors.
         Map anchorMap = (Map) getApplicationObject(EditorConstants.ANCHOR_MAP);
 
@@ -84,10 +111,10 @@ public class FillFormAction extends AbstractEditorAction {
                 return (String) anchorMap.get(key);
             }
         }
-        
-        // Any messages? Messages are storde under this key. 
+
+        // Any messages? Messages are storde under this key.
 //        String msgkey = Globals.MESSAGE_KEY;
-//        
+//
 //        if (request.getAttribute(msgkey) != null) {
 //        	ActionMessages msgs = (ActionMessages) request.getAttribute(msgkey);
 //			// Only interested in the first (or only) message.
@@ -99,7 +126,7 @@ public class FillFormAction extends AbstractEditorAction {
 //			// Check the map for the msg key.
 //			if (anchorMap.containsKey(key)) {
 //				return (String) anchorMap.get(key);
-//			}        	 
+//			}
 //        }
         // Start searching the dispatch.
         String dispatch = form.getDispatch();

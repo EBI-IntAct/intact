@@ -97,13 +97,6 @@ public class DeleteFormAction extends AbstractEditorAction {
             // Back to the experiment editor.
             forward = mapping.findForward(EXP);
         }
-        else if (FeatureViewBean.class.isAssignableFrom(user.getView().getClass())) {
-            // Sets the destination interaction to return to.
-            setDestinationInteraction(request);
-
-            // Back to the interaction editor.
-            forward = mapping.findForward(INT);
-        }
         else {
             // Back to the search page.
             forward = mapping.findForward(SEARCH);
