@@ -1,17 +1,17 @@
-$participant detection ; MI:0002
- %predetermined ; MI:0221
-  %radio-labelled protein ; MI:0222
- %peptide massfingerprinting ; MI:0082
- %protein sequence identification ; MI:0093
-  %peptide synthesis ; MI:0083
-  %sequence tag identification ; MI:0102
-  %de novo protein sequencing by mass spectrometry ; MI:0032
-  %edman degradation ; MI:0039
- %nucleotide sequence identification ; MI:0078
-  %full identification by sequencing ; MI:0056
-  %partial dna sequence identification by hybridization ; MI:0080
-   %primer specific pcr ; MI:0088
-   %southern blot ; MI:0103
- %western blot ; MI:0113
-  %monoclonal antibody ; MI:0072
-  %polyclonal antibody ; MI:0086
+$participant detectio\: participant detection ; MI:0002
+ @is_a@predetermined ; MI:0221
+  @is_a@radio-labelled prote\: radio-labelled protein ; MI:0222
+ @is_a@peptide massfingerpr\: peptide massfingerprinting ; MI:0082
+ @is_a@protein sequence ide\: protein sequence identification ; MI:0093
+  @is_a@peptide synthesis ; MI:0083
+  @is_a@sequence tag identif\: sequence tag identification ; MI:0102
+  @is_a@de novo protein sequ\: de novo protein sequencing by mass spectrometry ; MI:0032
+  @is_a@edman degradation ; MI:0039
+ @is_a@nucleotide sequence\: nucleotide sequence identification ; MI:0078
+  @is_a@full identification\: full identification by sequencing ; MI:0056
+  @is_a@partial dna sequence\: partial dna sequence identification by hybridization ; MI:0080
+   @is_a@primer specific pcr ; MI:0088
+   @is_a@southern blot ; MI:0103
+ @is_a@western blot ; MI:0113
+  @is_a@monoclonal antibody ; MI:0072
+  @is_a@polyclonal antibody ; MI:0086

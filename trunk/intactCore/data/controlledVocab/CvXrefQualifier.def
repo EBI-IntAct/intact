@@ -1,37 +1,37 @@
-shortlabel: component
-term: GO term for cellular component
+term: component: GO term for cellular component
+definition_reference: PMID:INTACT
 
-shortlabel: function
-term: GO term denoting function of the complex
+term: function: GO term denoting function of the complex
 definition: GO term denoting function of the complex.
+definition_reference: PMID:INTACT
 
-shortlabel: go-definition-ref
-term: GO definition reference
+term: go-definition-ref: GO definition reference
 definition: This qualifier is used when the crossreference is imported from the GO tag definition_reference.
-remark: Normally not used in manual curation.
+remark_internal: Normally not used in manual curation.
+definition_reference: PMID:INTACT
 
-shortlabel: identity
-term: Reference to the identical object in another database
+term: identity: Reference to the identical object in another database
 example: The same protein, described in two different databases.
 definition: This qualifier is used when the object referred to by the crossreference describes the same object. The reference will usually be done by primary accession number of the external database.
+definition_reference: PMID:INTACT
 
-shortlabel: isoform-parent
-term: Reference to the master sequence from which this isoform has been derived.
+term: isoform-parent: Reference to the master sequence from which this isoform has been derived.
 definition: This qualifier is used when an isoform is created, the object refered is the protein to which the original sequence belongs.
+definition_reference: PMID:INTACT
 
-shortlabel: primary-reference
-term: Used to indicate the PMID from which the experimental data is taken
+term: primary-reference: Used to indicate the PMID from which the experimental data is taken
+definition_reference: PMID:INTACT
 
-shortlabel: process
-term: GO term for biological process in which the complex is involved.
+term: process: GO term for biological process in which the complex is involved.
+definition_reference: PMID:INTACT
 
-shortlabel: secondary-ac
-term: Secondary accession number
+term: secondary-ac: Secondary accession number
 definition: This qualifier is used when the object referred to by the crossreference describes the same object, and the identifier used is a secondary identifier in the external database. Crossreferences using secondary accession numbers are only included in IntAct to allow to retrieve imported proteins by their secondary accession numbers.
-remark: Normally not used in manual curation.
+remark_internal: Normally not used in manual curation.
+definition_reference: PMID:INTACT
 
-shortlabel: see-also
-term: Related object in IntAct
+term: see-also: Related object in IntAct
 definition: Related object in IntAct, usually of the same class.
 example: Two experiments published by the same author in different papers, where the author refers to his previous work in one of them. In this case, the second experiment can optionally use an IntAct crossreference to the first experiment, using the reference qualifier "see-also".
+definition_reference: PMID:INTACT
 
