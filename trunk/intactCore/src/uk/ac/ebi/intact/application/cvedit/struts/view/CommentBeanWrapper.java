@@ -30,7 +30,7 @@ public class CommentBeanWrapper extends TableDecorator {
      */
     public String getDescription() {
         String text = ((CommentBean) super.getObject()).getText();
-        return "<textarea name=\"text\" rows=\"3\" cols=\"80\" readonly=\"yes\">"
+        return "<textarea name=\"text\" rows=\"3\" cols=\"85\" readonly=\"yes\">"
             + text + "</textarea>";
     }
 
