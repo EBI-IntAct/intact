@@ -193,7 +193,7 @@ public class SanityChecker {
     public final ReportTopic INTERACTION_WITH_NO_AGENT = new ReportTopic( "Interactions with no agent" );
     public final ReportTopic INTERACTION_WITH_ONLY_ONE_NEUTRAL = new ReportTopic( "Interactions with only one neutral component" );
     public final ReportTopic INTERACTION_WITH_PROTEIN_COUNT_LOWER_THAN_2 = new ReportTopic( "Interactions with less than 2 proteins (Role = complex)" );
-    public final ReportTopic INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2 = new ReportTopic( "Interactions with protein having their role set to self and its stoichiometry lower than 2.0" );
+    public final ReportTopic INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2 = new ReportTopic( "Interactions with protein having their role set to self and its stoichiometry lower than 1.0" );
     public final ReportTopic INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN = new ReportTopic( "Interactions with more than one protein having their role set to self" );
     public final ReportTopic SINGLE_PROTEIN_CHECK = new ReportTopic( "Interactions with only One Protein" );
     public final ReportTopic NO_PROTEIN_CHECK = new ReportTopic( "Interactions with No Components" );
@@ -272,12 +272,12 @@ public class SanityChecker {
      *   5.  Any interaction with no protein attached
      *   6.  Any interaction with 1 protein attached, stoichiometry=1
      *   7.  Any Interaction missing a link to an Experiment
-     *   8.  Any experiment with no Interaction linked to it
+     *   8.  Any experiment (not on hold) with no Interaction linked to it
      *   9.  Any interaction missing CvInteractionType
      *   10. Any interaction missing Organism
-     *   11. Any experiment missing Organism
-     *   12. Any experiment missing CvInteraction
-     *   13. Any experiment missing CvIdentification
+     *   11. Any experiment (not on hold) missing Organism
+     *   12. Any experiment (not on hold) missing CvInteraction
+     *   13. Any experiment (not on hold) missing CvIdentification
      *   14. Any proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot)
      *   15. Any BioSource with a NULL or empty taxid.
      *   16. Any proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot)
@@ -514,7 +514,7 @@ public class SanityChecker {
                         if( selfCount > 1 ) {
                             addMessage( INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN, interaction );
                         } else { // = 1
-                            if( selfStoichiometry < 2F ) {
+                            if( selfStoichiometry < 1F ) {
                                 addMessage( INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2, interaction );
                             }
                         }
@@ -541,7 +541,7 @@ public class SanityChecker {
 
             } // switch
 
-            // What about self or the unknown category ?
+            // What about the unknown category ?
         }
     }
 
