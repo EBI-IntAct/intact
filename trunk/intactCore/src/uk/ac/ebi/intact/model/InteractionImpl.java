@@ -9,6 +9,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -132,8 +133,44 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     }
 
+	public Interaction copy() {
+		// The interaction to return. This is empty but we will fill data later.
+		Interaction interaction = new InteractionImpl();
+        
+        // Share the owner.
+        interaction.setOwner(getOwner());
+        // "-x" is added as the suffix.
+        interaction.setShortLabel(getShortLabel() + "-x");
+        interaction.setFullName(getFullName());
+        interaction.setKD(getKD());
+        
+        // Experiments are not copied.
+        interaction.setExperiments(Collections.EMPTY_LIST);
+        
+        // Share the cv interaction type and biosource.
+        interaction.setCvInteractionType(getCvInteractionType());
+        interaction.setBioSource(getBioSource());
+        
+        // New components, will contain same number of componets.
+        Collection comps= new ArrayList(getComponents().size());
+        for (Iterator iter =getComponents().iterator(); iter.hasNext(); ) {
+            Component comp = (Component) iter.next();
+            // Add as a new componet with shared Protein.
+            comps.add(new Component(comp.getOwner(), interaction,
+                comp.getInteractor(), comp.getCvComponentRole()));
+        }
+        interaction.setComponents(comps);
+        
+        // Copy xrefs.
+        Collection xrefs = new ArrayList(getXrefs().size());
+        for (Iterator iter = getXrefs().iterator(); iter.hasNext();) {
+            xrefs.add(((Xref) iter.next()).copy());
+        }
+        interaction.setXrefs(xrefs);
+		return interaction;
+	}
 
-    ///////////////////////////////////////
+	///////////////////////////////////////
     //access methods for attributes
 
     public Float getKD() {

@@ -132,4 +132,8 @@ public class InteractionProxy extends InteractorProxy implements Interaction {
     public int hashCode () {
         return realSubject().hashCode();
     }
+    
+    public Interaction copy() {
+        return realSubject().copy();
+    }
 }
