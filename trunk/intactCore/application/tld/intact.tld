@@ -79,6 +79,10 @@
             <name>section</name>
             <required>false</required>
         </attribute>
+        <attribute>
+            <name>title</name>
+            <required>false</required>
+        </attribute>
     </tag>
 
 </taglib>
