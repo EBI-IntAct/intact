@@ -126,6 +126,9 @@
     <html:link href='javascript:clearAll()'>
         Clear All
     </html:link>
+   <html:link href='http://web7-node1.ebi.ac.uk:8160/intact/search/search.html' target="new">
+        Help
+    </html:link>
     <hr size=2>
 
 <!-- Get the view Bean and dump its data to the web page-->
