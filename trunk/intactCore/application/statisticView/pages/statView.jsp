@@ -3,11 +3,9 @@
    - All rights reserved. Please see the file LICENSE
    - in the root directory of this distribution.
    -
-   - This should be displayed in the content part of the IntAct layout,
-   - it displays the Srs Search text field where the user should capture
-   - a protein reference or a protein word.
+   - That page is displaying some statistics about the curent intact node.
    -
-   - @author ${User} (shuet@ebi.ac.uk)
+   - @author Sophie Huet (shuet@ebi.ac.uk), Samuel Kerrien (skerrien@ebi.ac.uk)
    - @version $Id$
 -->
 
@@ -16,9 +14,12 @@
                  java.util.Iterator,
                  java.util.Collection,
                  uk.ac.ebi.intact.application.statisticView.business.data.DataManagement,
-                 java.util.ArrayList"%>
+                 java.util.ArrayList,
+                 uk.ac.ebi.intact.business.IntactException,
+                 uk.ac.ebi.intact.application.statisticView.business.servlet.StatBean"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/display.tld"     prefix="display" %>
 
 
 
@@ -36,65 +37,68 @@
             <%
                 DataManagement dat = new DataManagement();
                 String lastDate = dat.getLastTimestamp();
+                out.println(lastDate);
             %>
-            <%=lastDate%>
             <br>
             </td>
         </tr>
 
         <tr>
             <td valign="top" height="*">
-                <table width="80%" border="1" cellspacing="0" cellpadding="1">
-                    <tr class="tableRowHeader">
-                        <th class="tableCellHeader" width="35%">Object</th>
-                        <th class="tableCellHeader" width="15%">Number</th>
-                        <th class="tableCellHeader" width="50%">Description</th>
-                    </tr>
+
 
 <%
-    ArrayList leftColumnName = new ArrayList();
-    leftColumnName.add("Proteins");
-    leftColumnName.add("Interactions");
-    leftColumnName.add("thereof with 2 interactors");
-    leftColumnName.add("thereof with more than 2 interactors");
-    leftColumnName.add("Experiments");
-    leftColumnName.add("Terms");
+    ArrayList rows = new ArrayList();
+    try {
+        Collection listDataTable = dat.getLastStatistics();
+        Iterator iterator = listDataTable.iterator();
 
-    ArrayList rightColumnName = new ArrayList();
-    rightColumnName.add("Number of proteins in the database.");
-    rightColumnName.add("Number of distinct interactions.");
-    rightColumnName.add("Binary interactions.");
-    rightColumnName.add("Interactions with more than two interactors (complexes).");
-    rightColumnName.add("Distincts experiments.");
-    rightColumnName.add("Controlled vocabulary terms define possible choices for text attributes.");
+        rows.add (new StatBean ("Proteins",
+                                ((Integer) iterator.next()).intValue(),
+                                "Number of proteins in the database."));
 
-    Collection listDataTable = dat.getLastStatistics();
-    int j = 0;
-    for (Iterator iterator = listDataTable.iterator(); iterator.hasNext();  ) {
-        Integer i = (Integer) iterator.next();
-        String objectColumnName = (String) leftColumnName.get(j);
-        String descriptionColumnName = (String) rightColumnName.get(j);
+        rows.add (new StatBean ("Interactions",
+                                ((Integer) iterator.next()).intValue(),
+                                "Number of distinct interactions"));
 
+        rows.add (new StatBean ("thereof with 2 interactors",
+                                ((Integer) iterator.next()).intValue(),
+                                "Binary interactions"));
+
+        rows.add (new StatBean ("thereof with more than 2 interactors",
+                                ((Integer) iterator.next()).intValue(),
+                                "Interactions with more than two interactors (complexes)."));
+
+        rows.add (new StatBean ("Experiments",
+                                ((Integer) iterator.next()).intValue(),
+                                "Distincts experiments."));
+
+        rows.add (new StatBean ("Terms",
+                                ((Integer) iterator.next()).intValue(),
+                                "Controlled vocabulary terms define possible choices for text attributes."));
+
+        session.setAttribute("statistics", rows);
+        dat.closeDataStore();
 %>
-                    <tr class="tableRowHeader">
 
-                        <td align="right">
-                            <%= objectColumnName %>
-                        </td>
-                        <td  align="right">
-                            <font size="2"> <%= i %> </font>
-                        </td>
-                        <td align="left">
-                            <%= descriptionColumnName %>
-                        </td>
+       <!-- Displays the available highlightment source -->
+       <display:table
+            name="statistics" width="70%">
+               <display:column property="object" title="Object" width="22% "/>
+               <display:column property="count"                 width="8%" />
+               <display:column property="description"           width="70%" />
 
-                    </tr>
+               <display:setProperty name="basic.msg.empty_list"
+                                    value="No statistics available..." />
+       </display:table>
+
+
 <%
-        j++;
-    }
+
+        // will be added to each servlet URL to avoid browser caching
+        long time = System.currentTimeMillis();
 %>
 
-                </table>
             </td>
         </tr>
 
@@ -112,19 +116,21 @@
                     <tbody>
                         <tr>
                             <td valign="top" height="*">
-                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Protein">
+
+                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Protein&time=<%= time %>">
+
                             </td>
                             <td valign="top" height="*">
-                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Interaction">
+                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Interaction&time=<%= time %>">
                             </td>
                         </tr>
 
                         <tr>
                             <td valign="top" height="*">
-                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Experiment">
+                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Experiment&time=<%= time %>">
                             </td>
                             <td valign="top" height="*">
-                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Term">
+                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Term&time=<%= time %>">
                             </td>
                         </tr>
                     </tbody>
@@ -134,3 +140,13 @@
 
     </tbody>
 </table>
+
+<%
+   } catch (IntactException ie) {
+
+        out.println ("Error when trying to get the latest statistics.");
+
+    }
+%>
+
+

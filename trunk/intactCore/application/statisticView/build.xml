@@ -30,6 +30,7 @@
     <property name="pages.dir"          value="pages"/>
     <property name="images.dir"         value="images"/>
     <property name="layouts.dir"        value="layouts"/>
+    <property name="styles.dir"         value="${layout.dir}/styles"/>
 
 
     <!-- context path for statisticsView store in the application level -->
@@ -42,6 +43,10 @@
 
     <property name="war.dir"           value="statisticView"/>
     <property name="war.file"           value="${war.dir}.war"/>
+
+    <!-- context path for statisticView store in the application level -->
+    <property name="intact.context.dir"          value="${intact.app.dir}/context"/>
+    <property name="statisticView-context-file"  value="statisticView-context.xml"/>
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
@@ -58,11 +63,6 @@
 
     <!-- Build working classpath -->
     <path id="project.class.path">
-
-        <!-- Project specific jar files. -->
-        <fileset dir="${lib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
 
         <!-- Intact core at root. -->
         <pathelement path="${root.dest.dir}"/>
@@ -107,7 +107,7 @@
         <!-- Delete the Struts imported tlds-->
         <delete>
              <fileset dir="${tld.dir}">
-                  <exclude name="statisticsView.tld"/>
+                  <exclude name="display.tld"/>
              </fileset>
         </delete>
 
@@ -119,7 +119,7 @@
              </fileset>
         </delete>
 
-        <delete dir="${layouts.styles.dir}"/>
+        <delete dir="${styles.dir}"/>
 
         <delete>
              <fileset dir="${pages.dir}">
@@ -153,7 +153,7 @@
 
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
-        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
+<!--        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>-->
     </target>
 
     <!-- =================================================================== -->
@@ -209,6 +209,8 @@
                 <include name="struts-html.tld"/>
                 <include name="struts-logic.tld"/>
                 <include name="struts-tiles.tld"/>
+
+                <include name="display.tld"/>
             </fileset>
         </copy>
 
@@ -232,12 +234,6 @@
             <fileset dir="${commons.pages.dir}"/>
         </copy>
 
-        <!-- copy needed classes from the util directory
-        <copy todir="${dest.dir}/uk/ac/ebi/intact/util">
-            <fileset dir="${root.util.dir}/StatisticsSet.java"/>
-            <fileset dir="${root.util.dir}/IntactStatistics.java"/>
-        </copy>           -->
-
         <!-- Copy log4j properties file -->
         <copy todir="${dest.dir}/config">
             <fileset dir="${root.config.dir}">
@@ -248,25 +244,21 @@
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${basedir}">
                 <include name="*.jsp"/>
-                <include name="${layouts.dir}/*.jsp"/>
+                <include name="${layouts.dir}/**"/>
                 <include name="${pages.dir}/*.jsp"/>
                 <include name="${images.dir}/*.gif"/>
-                <include name="${layouts.styles.dir}/*.css"/>
+<!--                <include name="${styles.dir}/*.css"/>-->
                 <include name="WEB-INF/struts-config.xml"/>
                 <include name="WEB-INF/tiles-defs.xml"/>
                 <include name="${tld.dir}/**"/>
             </fileset>
 
-            <!-- Include intSeq specific jar files. -->
-			<lib dir="${lib.dir}">
-                <!-- Avoid NFS temp files (occationally) -->
-                <include name="*.jar"/>
+            <!-- Include the intact core  -->
+            <lib dir="${root.dist.dir}">
+                <include name="intact-core.jar"/>
             </lib>
 
-            <!-- Inlcude the intact core -->
-            <lib dir="${root.dist.dir}"/>
-
-            <!-- Include common jar files for struts. -->
+            <!-- Include Struts' jars. -->
             <lib dir="${intact.app.dir}/lib" />
 
             <!-- Include common jar files from intact core. -->
@@ -276,6 +268,8 @@
                 <include name="${db}"/>
 			</lib>
 
+            <!-- Include StatisticView jars. -->
+            <lib dir="${lib.dir}" />
 
             <!-- StatisticView classes and config files. -->
             <classes dir="${dest.dir}"/>
@@ -333,6 +327,14 @@
 
         <copy file="${dist.dir}/${war.file}" todir="${tomcat.home}/webapps"/>
         <echo message="Now you have to restart Tomcat ... "/>
+
+        <ant dir=".." inheritAll="false" target="deploy">
+            <property name="war" value="statisticView/${dist.dir}/${war.file}"/>
+        </ant>
+
+        <!-- Copy context files in the Tomcat's webapps directory -->
+        <copy file="${intact.context.dir}/${statisticView-context-file}"
+              todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -341,9 +343,12 @@
          It assumes that $CATALINA_HOME is defined in your system
       -->
     <target name="undeploy" description="Undeploys the WAR file from the Tomcat server">
-        <delete file="${tomcat.home}/webapps/${war.file}" quiet="true"/>
-        <delete dir="${tomcat.home}/webapps/${war.dir}" quiet="true"/>
-        <echo message="Application undeployed ... "/>
+        <ant dir=".." inheritAll="false" target="undeploy">
+            <property name="war" value="statisticView"/>
+        </ant>
+
+        <!-- Delete context files from the Tomcat's webapps directory -->
+        <delete file="${webapps.dir}/${statisticView-context-file}" quiet="true"/>
     </target>
 
     <!-- =================================================================== -->
