@@ -7,7 +7,7 @@
 
 <project name="intact" basedir="." default="war">
 
-    <property name="project.title" value="search"/>
+    <property name="project.title" value="intact"/>
     <property name="project.version" value="1.0"/>
 
     <property name="dist.dir" value="dist"/>
@@ -45,6 +45,25 @@
             </fileset>
 
         </war>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server. -->
+    <target name="deploy" description="Deploys the WAR file on the Tomcat server">
+        <ant dir=".." inheritAll="false" target="deploy">
+            <property name="war" value="intact/${dist.dir}/${war.file}"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file from the Tomcat server. -->
+    <target name="undeploy"
+        description="Undeploys the WAR file from the Tomcat server">
+        <ant dir=".." inheritAll="false" target="undeploy">
+            <property name="war" value="intact"/>
+        </ant>
     </target>
 
     <!-- =================================================================== -->
