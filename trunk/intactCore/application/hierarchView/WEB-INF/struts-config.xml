@@ -24,6 +24,10 @@
         <form-bean name="InteractionNetworkForm"
                    type="uk.ac.ebi.intact.application.hierarchView.struts.view.InteractionNetworkForm"/>
 
+        <!-- form container for the click behaviour management -->
+        <form-bean name="ClickBehaviourForm"
+                   type="uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm"/>
+
     </form-beans>
 
     <!-- ========== Global Exceptions ======================================= -->
@@ -87,9 +91,20 @@
                 scope="request"
                 input="hierarchView.result.layout"/>
 
-        <!-- Processes the centered view action -->
-        <action path="/centered"
-                type="uk.ac.ebi.intact.application.hierarchView.struts.controller.CenteredAction"
+        <!-- Processes the setting of the current click behaviour -->
+        <action path="/clickBehaviour"
+                type="uk.ac.ebi.intact.application.hierarchView.struts.controller.ClickBehaviourAction"
+                name="ClickBehaviourForm"
+                scope="request">
+
+            <!-- refresh only the sidebar -->
+            <forward name="success" path="/layouts/sidebarFrame.jsp"/>
+
+        </action>
+
+        <!-- Processes the click action -->
+        <action path="/click"
+                type="uk.ac.ebi.intact.application.hierarchView.struts.controller.ClickAction"
                 scope="request"
                 input="hierarchView.result.layout"/>
 
