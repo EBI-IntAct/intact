@@ -20,7 +20,6 @@
 
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0">
 
-<%--<jsp:include page="<%=request.getContextPath()%>/pages/footer.jsp" />--%>
    <tiles:insert definition="intact.footer.layout" ignore="true"/>
 
 </body>

@@ -28,10 +28,6 @@
             <form-property name="searchClass" type="java.lang.String"/>
         </form-bean>
 
-        <!-- Search form bean -->
-<!--        <form-bean name="viewForm"-->
-<!--                   type="uk.ac.ebi.intact.application.search2.struts.view.ViewForm"/>-->
-
     </form-beans>
 
     <!-- ========== Global Forward Definitions ============================== -->
@@ -58,51 +54,73 @@
             <forward name="success" path="/do/search"/>
         </action>
 
-        <!-- Process a user searches for a CV Object. The form is in a session because
-             we reuse search details from view action. Currently once a search has been
-             successful, there are a number of options for subsequent processing:
-             - generate beans for a detailed view
-             - generate a bean for a single object view
-             - process requests from a protein view that is different to the main views
-             -->
+        <!-- Process a user searches. The form is in a session because we reuse search details
+             from view action. Currently once a search has been successful, we delegate the
+             choice of choosing the relevant action to a dispatcher.
+          -->
         <action path="/search"
                 name="sidebarForm"
                 type="uk.ac.ebi.intact.application.search2.struts.controller.SearchAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
-            <forward name="results" path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
-            <forward name="detailAction" path="/do/detail"/>
-            <forward name="freeTextSearchAction" path="/do/freeTextSearch"/>
-            <forward name="linkSearchAction"     path="/do/linkSearch"/>
-            <forward name="proteinBinaryAction"  path="/do/proteinBinarySearch"/>
+            <forward name="dispatcher" path="/do/dispatcher"/>
         </action>
 
-        <!-- processed when a single object view is required after a search. This is
-            typically accessed from the searchAction rather than a user request
-        -->
-        <action path="/freeTextSearch"
-                type="uk.ac.ebi.intact.application.search2.struts.controller.FreeTextSearchAction"
+
+        <!-- Decide accordingly to the data retreived and the parameters given by the user,
+             which action will process the data collected in order to display them to the user.
+             The dispatcher could either delegate the processing to the following actions:
+             - single,
+             - binary,
+             - details.
+          -->
+        <action path="/dispatcher"
+                type="uk.ac.ebi.intact.application.search2.struts.controller.DispatcherAction"
+                scope="session">
+            <forward name="results" path="match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+            <forward name="single" path="/do/single"/>
+            <forward name="binary" path="/do/binary"/>
+            <forward name="details" path="/do/details"/>
+        </action>
+
+
+        <!-- A single IntAct object has to be prepared and displayed.
+             It could process either a collection containing a single:
+             - Protein
+             - Interaction
+             - Experiment
+          -->
+        <action path="/single"
+                type="uk.ac.ebi.intact.application.search2.struts.controller.SingleResultAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="results" path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
         </action>
 
-        <!-- processed when a single object view is required after a search. This is
-            typically accessed from the searchAction rather than a user request
-        -->
-        <action path="/linkSearch"
-                type="uk.ac.ebi.intact.application.search2.struts.controller.LinkSearchAction"
+
+        <!-- one or more proteins have to be prepared.
+             It's processessing a collection of Protein.
+          -->
+        <action path="/binary"
+                type="uk.ac.ebi.intact.application.search2.struts.controller.BinaryResultAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="results" path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
         </action>
 
-        <!-- Protein binary action  -->
-        <action path="/proteinBinarySearch"
-                type="uk.ac.ebi.intact.application.search2.struts.controller.ProteinBinaryAction"
+
+        <!-- one to many intactObjects have to be prepared
+             It could process either a collection of:
+             - Protein,
+             - Interaction,
+             - Experiment.
+          -->
+        <action path="/details"
+                type="uk.ac.ebi.intact.application.search2.struts.controller.DetailsResultAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="results" path="match.layout"/>

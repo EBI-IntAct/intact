@@ -12,8 +12,7 @@
 <html:html>
 
 <head>
-<%--    <html:base target="_top"/>--%>
-    <base href="<%=request.getContextPath()%>" target="_top">
+    <base target="_top">
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
