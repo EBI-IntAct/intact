@@ -218,6 +218,9 @@
             </fileset>
         </copy>
 
+        <!-- Generate editor topics -->
+        <antcall target="gen-editor-topics"/>
+
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${basedir}">
                 <include name="*.jsp"/>
