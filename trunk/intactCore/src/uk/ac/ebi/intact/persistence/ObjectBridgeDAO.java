@@ -8,16 +8,11 @@ package uk.ac.ebi.intact.persistence;
 
 import java.util.*;
 import java.lang.reflect.*;
-import java.beans.PropertyDescriptor;
 import java.io.*;
-import java.sql.*;
 
 import org.apache.ojb.broker.*;
-import org.apache.ojb.broker.singlevm.*;
 import org.apache.ojb.broker.util.logging.*;
-import org.apache.ojb.broker.accesslayer.*;
 import org.apache.ojb.broker.query.*;
-import org.apache.ojb.broker.util.*;
 import org.apache.ojb.broker.util.configuration.impl.*;
 import org.apache.ojb.broker.util.configuration.*;
 import org.apache.ojb.broker.metadata.*;
@@ -26,16 +21,13 @@ import org.apache.ojb.broker.metadata.*;
 import org.odmg.*;
 import org.apache.ojb.odmg.*;
 
-import uk.ac.ebi.intact.*;
-import uk.ac.ebi.intact.util.Key;
-
 /**
  *  <p>This class provides an ObjectBridge-specific Data Access Object, which
  * effectively wraps up an ObjectBridge broker object. Note that this DAO only
  * provides a wrapped object from the ObjectBridge kernel, NOT the ODMG interface.</p>
  *
- * @author Chris Lewington
- *
+ * @author Chris Lewington, Sugath Mudali
+ * @version $Id$
  */
 
 public class ObjectBridgeDAO implements DAO, Serializable {
@@ -51,11 +43,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * A log utility, used if required
      */
     private Logger logger;
-
-    /**
-     * turns debugging on or off
-     */
-    private boolean debug;
 
     /** cache to be used for caching by unique search parameters. The parameter
      * is the key, and the value is the key used by the OJB cache.
@@ -85,8 +72,19 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      */
     private transient Transaction tx;
 
+    /**
+     * OJB repository file (contains mappings).
+     */
     private String repositoryFile;
+
+    /**
+     * The user name to access the database.
+     */
     private String user;
+
+    /**
+     * The password to access the database.
+     */
     private String password;
 
     //used to save connection info in ODMG format
@@ -138,7 +136,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * later to (if possible) provide runtime user switching.
      *
      * @param user the new username
-     * @param passwqord the new user password
+     * @param password the new user password
      */
     public void resetUserInfo(String user, String password) {
 
@@ -159,7 +157,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     public void setLogger(org.apache.ojb.broker.util.logging.Logger p) {
 
         logger = p;
-        debug = false;
     }
 
 
@@ -234,6 +231,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             throw new TransactionException(msg, pe);
         }
 
+    }
+
+    public void lock(Object obj) {
+        tx.lock(obj, Transaction.WRITE);
     }
 
     /**
@@ -791,13 +792,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      *
      * @param type - the class name (ie table) to be searched
      * @param col - the parameter (column name) to search on (usually ac number or name)
-     * @param value - the value of the search parameter
+     * @param val - the value of the search parameter
      *
      * @return a collection containing the results of the searches
      *
      * @exception SearchException -  thrown for errors during the search process, eg query problems
-     * @exception TransactionException - thrown for transaction problems, eg called outside a transaction scope
-     * @exception DataSourceException -  thrown for other problems usually related to the persistence engine
      *
      */
     public Collection find(String type, String col, String val) throws SearchException {
@@ -998,16 +997,16 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * if more complex ones are needed in future then this method is the place
      * to modify the logic - note however that this is not a trivial exercise..
      */
-    private String buildQuery(String className, String col) {
-
-        StringBuffer buf = new StringBuffer("SELECT p FROM ");
-        buf.append(className);
-        buf.append(" p WHERE ");
-        buf.append(col);
-        buf.append("=$1");
-
-        return buf.toString();
-    }
+//    private String buildQuery(String className, String col) {
+//
+//        StringBuffer buf = new StringBuffer("SELECT p FROM ");
+//        buf.append(className);
+//        buf.append(" p WHERE ");
+//        buf.append(col);
+//        buf.append("=$1");
+//
+//        return buf.toString();
+//    }
 
     /**
      * <p>
