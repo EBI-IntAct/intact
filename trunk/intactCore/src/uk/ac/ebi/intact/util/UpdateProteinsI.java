@@ -158,14 +158,17 @@ public abstract class UpdateProteinsI {
     private void collectDefaultObject( IntactHelper helper ) throws UpdateException {
 
         try {
-            myInstitution = (Institution) helper.getObjectByLabel( Institution.class, "EBI" );
-            if( myInstitution == null ) {
-                String msg = "Unable to find the Institution: EBI";
-                if( logger != null ) {
-                    logger.error( msg );
-                }
-                throw new UpdateException( msg );
-            }
+            myInstitution = helper.getInstitution();
+            // Sugath: I commented out this code because getInstitution() shouldn't return
+            // a null instutition. It may throw an IntactException which should be captured
+            // by the try block. 
+//            if( myInstitution == null ) {
+//                String msg = "Unable to find the Institution: check your Institution configuration file";
+//                if( logger != null ) {
+//                    logger.error( msg );
+//                }
+//                throw new UpdateException( msg );
+//            }
 
             /**
              * Load CVs
