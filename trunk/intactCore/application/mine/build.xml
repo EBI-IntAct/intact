@@ -108,6 +108,9 @@
         <!-- layout commons files -->
         <delete>
             <fileset dir="${layouts.dir}">
+                <exclude name="headerLayout.jsp"/>
+                <exclude name="menu.jsp"/>
+                <exclude name="sidebarLayout.jsp"/>
             </fileset>
         </delete>
 
@@ -220,6 +223,9 @@
             <fileset dir="${intact.app.dir}/layouts">
                 <!-- Don't need any frame layouts for this application -->
                 <exclude name="*Frame.jsp"/>
+                <exclude name="intactTestLayout.jsp"/>
+                <exclude name="headerLayout.jsp"/>
+
                 <!--  No EBI header for this application (yet) -->
                 <exclude name="ebiHeaderLayout.jsp"/>
             </fileset>
