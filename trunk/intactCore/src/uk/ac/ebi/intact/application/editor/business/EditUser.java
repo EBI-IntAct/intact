@@ -301,16 +301,21 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * method sets the logout time.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
+        // This method is also called when logging in (invalidate the session).
+        if (myUserName == null) {
+            // Called by session invalidate when logging in.
+            return;
+        }
         ServletContext ctx = event.getSession().getServletContext();
         LockManager lm = (LockManager) ctx.getAttribute(EditorConstants.LOCK_MGR);
 
         // Notify the event listener.
         EventListener listener = (EventListener) ctx.getAttribute(
                 EditorConstants.EVENT_LISTENER);
-        listener.notifyObservers(new LogoutEvent(getUserName()));
+        listener.notifyObservers(new LogoutEvent(myUserName));
 
         // Release all the locks held by this user.
-        lm.releaseAllLocks(getUserName());
+        lm.releaseAllLocks(myUserName);
 
         // Release the current view back to the pool.
         releaseView();
