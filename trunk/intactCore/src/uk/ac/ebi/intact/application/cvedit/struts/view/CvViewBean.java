@@ -275,14 +275,14 @@ public class CvViewBean {
     public void delXref(long key, Xref xref) {
         XreferenceBean xb =
                 TransactionalXrefBean.createXrefBeanDel(key, xref);
-        if (myXrefTransactions.contains(xref)) {
+        if (myXrefTransactions.contains(xb)) {
             // We are removing a xref that was added during the current
             // transaction.
-            myXrefTransactions.remove(xref);
+            myXrefTransactions.remove(xb);
         }
         else {
             // Deleting a xref that already exists on the persistent system.
-            myXrefTransactions.add(xref);
+            myXrefTransactions.add(xb);
         }
         // Remove from the view as well.
         myXrefs.remove(xb);
@@ -415,7 +415,7 @@ public class CvViewBean {
     private Collection getTransXrefs(int state) {
         // The collection to return.
         Collection result = new ArrayList();
-        // Filter out annotations.
+        // Filter out xrefs.
         for (Iterator iter = myXrefTransactions.iterator(); iter.hasNext(); ) {
             TransactionalXrefBean txb = (TransactionalXrefBean) iter.next();
             if (txb.getTransState() == state) {
