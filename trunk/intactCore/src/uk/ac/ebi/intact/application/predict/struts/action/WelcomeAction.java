@@ -67,7 +67,7 @@ public class WelcomeAction extends AbstractPredictAction {
             String repfile = ctx.getInitParameter("mappingfile");
             String ds = ctx.getInitParameter("datasource");
             try {
-                user = new PredictUser(repfile, ds);
+                user = PredictUser.create(repfile, ds);
                 System.out.println("Predict user created");
             }
             catch (DataSourceException dse) {
