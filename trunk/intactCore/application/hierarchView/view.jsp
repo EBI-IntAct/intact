@@ -7,7 +7,7 @@
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.graph.*" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.Constants" %>
 
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.OptionGenerator" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.OptionGenerator" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean" %>
 <%@ page import="java.util.ArrayList" %>
@@ -55,6 +55,11 @@
    /**
     * Retreive data from the session
     */
+
+    // create session
+    // session = request.getSession (true);
+
+
    String AC           = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_AC);
    String depth        = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_DEPTH);
    Boolean depthLimit  = (Boolean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_NO_DEPTH_LIMIT);
