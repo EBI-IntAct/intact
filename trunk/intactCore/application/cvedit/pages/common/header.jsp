@@ -1,2 +1,2 @@
-<font size="6">IntAct - Control Vocabulary Editor</font>
+<font size="6">IntAct - Controlled Vocabulary Editor</font>
 <hr>
