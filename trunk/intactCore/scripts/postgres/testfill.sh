@@ -133,6 +133,14 @@ then
 fi
 
 
+echo ""
+echo "Insert CvFuzzyType"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvFuzzyType - data/controlledVocab/CvFuzzyType.def
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
 #echo "Stop the script before to insert proteins and complexes ... "
 #exit 0
 
