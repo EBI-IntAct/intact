@@ -154,6 +154,10 @@
        <xml name="fullName" node="attribute"/>
     </field>
 
+    <field name="url" type="string">
+       <xml name="url" node="attribute"/>
+    </field>
+
   </class>
 
 
