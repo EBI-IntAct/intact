@@ -128,6 +128,8 @@ public class DisplaySourceTag extends TagSupport {
                         LabelValueBean url = (LabelValueBean) urls.get(0);
                         String absoluteUrl = url.getValue();
                         user.setSourceURL (absoluteUrl);
+                    } else {
+                        user.setSourceURL (null);
                     }
                 } // else
             } // if
