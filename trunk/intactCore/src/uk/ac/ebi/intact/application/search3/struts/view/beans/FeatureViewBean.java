@@ -1,3 +1,9 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
+
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.model.*;
@@ -6,10 +12,9 @@ import uk.ac.ebi.intact.util.SearchReplace;
 import java.util.*;
 
 /**
- * This view bean is used to access the information relating to Features for
- * display by JSPs. For every Component of an Interaction that contains feature information,
- * the will be a feature view bean related to it.
- * TODO: The ranges need handling - a Feature can have more than one...
+ * This view bean is used to access the information relating to Features for display by JSPs. For
+ * every Component of an Interaction that contains feature information, the will be a feature view
+ * bean related to it. TODO: The ranges need handling - a Feature can have more than one...
  *
  * @author Chris Lewington
  * @version $Id$
@@ -23,8 +28,8 @@ public class FeatureViewBean extends AbstractViewBean {
     private Feature feature;
 
     /**
-     * Holds the URL to perform subsequent searches from JSPs - used
-     * to build 'complete' URLs for use by JSPs
+     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for
+     * use by JSPs
      */
     private String searchURL;
 
@@ -39,19 +44,18 @@ public class FeatureViewBean extends AbstractViewBean {
     private String cvFeatureIdentSearchURL = "";
 
     /**
-     * Map of retrieved DB URLs already retrieved from the DB. This
-     * is basically a cache to avoid recomputation every time a CvDatabase URL
-     * is requested.
+     * Map of retrieved DB URLs already retrieved from the DB. This is basically a cache to avoid
+     * recomputation every time a CvDatabase URL is requested.
      */
     private Map dbUrls;
 
 
     /**
-     * Constructor. Takes a Feature that relates to an Interaction, and wraps the beans
-     * for it.
-     * @param feature The Feature we are interested in
-     * @param link The link to help pages
-     * @param searchURL The standard search URL
+     * Constructor. Takes a Feature that relates to an Interaction, and wraps the beans for it.
+     *
+     * @param feature     The Feature we are interested in
+     * @param link        The link to help pages
+     * @param searchURL   The standard search URL
      * @param contextPath The platform context path for the application
      */
     public FeatureViewBean(Feature feature, String link, String searchURL, String contextPath) {
@@ -65,15 +69,14 @@ public class FeatureViewBean extends AbstractViewBean {
 
 //---------------- basic abstract methods that need implementing --------------
     /**
-     * Adds the shortLabel of the Feature to an internal list used
-     * later for highlighting in a display.
-     * NOT SURE IF WE STILL NEED THIS!!
+     * Adds the shortLabel of the Feature to an internal list used later for highlighting in a
+     * display. NOT SURE IF WE STILL NEED THIS!!
      */
     public void initHighlightMap() {
-            Set set  = new HashSet( 1 );
-            set.add( feature.getShortLabel() );
-            setHighlightMap(set);
-        }
+        Set set = new HashSet(1);
+        set.add(feature.getShortLabel());
+        setHighlightMap(set);
+    }
 
 
     /**
@@ -84,10 +87,10 @@ public class FeatureViewBean extends AbstractViewBean {
     }
 
     /**
-     * This is left over from the earlier version - will be removed.
-     * It does nothing here.
+     * This is left over from the earlier version - will be removed. It does nothing here.
      */
-    public void getHTML( java.io.Writer writer ){};
+    public void getHTML(java.io.Writer writer) {
+    };
 
     //-------------------------- the useful stuff ------------------------------------
 
@@ -102,11 +105,12 @@ public class FeatureViewBean extends AbstractViewBean {
 
     /**
      * Provides a view bean for any bound Feature.
-     * @return featureViewBean a view bean for the Feature bound to this one, or null if
-     * there is no bound feature
+     *
+     * @return featureViewBean a view bean for the Feature bound to this one, or null if there is no
+     *         bound feature
      */
     public FeatureViewBean getBoundFeatureView() {
-        if(feature.getBoundDomain() != null)
+        if (feature.getBoundDomain() != null)
             return new FeatureViewBean(feature.getBoundDomain(),
                     getHelpLink(), searchURL, getContextPath());
         return null;
@@ -114,24 +118,37 @@ public class FeatureViewBean extends AbstractViewBean {
 
     /**
      * Provides the feature type short label.
+     *
      * @return String the CvFeatureType shortLabel, or '-' if the feature type itself is null.
      */
     public String getFeatureType() {
 
-        if(feature.getCvFeatureType() != null)
-            return feature.getCvFeatureType().getShortLabel();
+        if (feature.getCvFeatureType() != null) {
+            // get the complete result
+            String label = feature.getCvFeatureType().getShortLabel();
+            // get the first char
+            String begin = label.substring(0, 1);
+            // put it to uppercase
+            begin = begin.toUpperCase();
+            // get the rest and add it to the beginning
+            String rest = label.substring(1, label.length());
+            return begin + rest;
+            
+
+        }
         return "-";
 
     }
 
     /**
      * Provides the short label of the feature identification.
-     * @return String the CvFeatureIdentification shortLabel, or '-' if the identification
-     * object itself is null
+     *
+     * @return String the CvFeatureIdentification shortLabel, or '-' if the identification object
+     *         itself is null
      */
     public String getFeatureIdentificationName() {
 
-        if(feature.getCvFeatureIdentification() != null)
+        if (feature.getCvFeatureIdentification() != null)
             return feature.getCvFeatureIdentification().getShortLabel();
         return "-";
     }
@@ -144,12 +161,13 @@ public class FeatureViewBean extends AbstractViewBean {
 
     /**
      * Provides the full name of the feature identification.
-     * @return String the CvFeatureIdentification full name, or '-' if the identification
-     * object itself or its full name are null
+     *
+     * @return String the CvFeatureIdentification full name, or '-' if the identification object
+     *         itself or its full name are null
      */
     public String getFeatureIdentFullName() {
 
-        if((feature.getCvFeatureIdentification() != null) &&
+        if ((feature.getCvFeatureIdentification() != null) &&
                 (feature.getCvFeatureIdentification().getFullName() != null))
             return feature.getCvFeatureIdentification().getFullName();
         return "-";
@@ -163,8 +181,8 @@ public class FeatureViewBean extends AbstractViewBean {
     //------------------------------ useful URLs --------------------------------------
 
     /**
-     * Provides a String representation of a URL to perform a search on
-     * CvFeatureType
+     * Provides a String representation of a URL to perform a search on CvFeatureType
+     *
      * @return String a String representation of a search URL link for CvFeatureType.
      */
     public String getCvFeatureTypeSearchURL() {
@@ -179,13 +197,13 @@ public class FeatureViewBean extends AbstractViewBean {
     }
 
     /**
-     * Provides a String representation of a URL to perform a search on
-     * CvFeatureIdentification
+     * Provides a String representation of a URL to perform a search on CvFeatureIdentification
+     *
      * @return String a String representation of a search URL link for CvFeatureIdentification.
      */
     public String getCvFeatureIdentSearchURL() {
 
-        if ((cvFeatureIdentSearchURL == "") &&(feature.getCvFeatureIdentification() != null)) {
+        if ((cvFeatureIdentSearchURL == "") && (feature.getCvFeatureIdentification() != null)) {
             //set it on the first call
             //get the CvInteraction object and pull out its AC
             cvFeatureIdentSearchURL = searchURL + feature.getCvFeatureIdentification().getAc()
@@ -195,14 +213,14 @@ public class FeatureViewBean extends AbstractViewBean {
     }
 
 
-
     /**
-     * Provides a String representation of a URL to provide acces to an Xrefs'
-     * database (curently via AC). The URL is at present stored via an
-     * Annotation for the Xref in the Intact DB itself.
+     * Provides a String representation of a URL to provide acces to an Xrefs' database (curently
+     * via AC). The URL is at present stored via an Annotation for the Xref in the Intact DB
+     * itself.
+     *
      * @param xref The Xref for which the DB URL is required
-     * @return String a String representation of a DB URL link for the Xref, or a '-'
-     * if there is no stored URL link for this Xref
+     * @return String a String representation of a DB URL link for the Xref, or a '-' if there is no
+     *         stored URL link for this Xref
      */
     public String getPrimaryIdURL(Xref xref) {
 
