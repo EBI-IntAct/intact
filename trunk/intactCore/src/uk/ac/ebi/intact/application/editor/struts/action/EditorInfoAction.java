@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -17,6 +17,13 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Action class when the use presses Save button to save short label and full
+ * name.
+ *
+ * @author Sugath Mudali (smudali@ebi.ac.uk)
+ * @version $Id$
+ */
 public class EditorInfoAction extends AbstractEditorAction {
 
     /**
