@@ -83,6 +83,11 @@ public class LabelValueBean {
    */
   protected String value = null;
 
+/**
+   * The description to be returned to the server.
+   */
+  protected String description = null;
+
 
 
   // ----------------------------------------------------------- Constructors
@@ -92,10 +97,12 @@ public class LabelValueBean {
    *
    * @param label The label to be displayed to the user
    * @param value The value to be returned to the server
+   * @param description The description to be returned to the server
    */
-  public LabelValueBean(String label, String value) {
+  public LabelValueBean(String label, String value, String description) {
     this.label = label;
     this.value = value;
+    this.description = description;
   }
 
 
@@ -110,6 +117,9 @@ public class LabelValueBean {
     return (this.value);
   }
 
+  public String getDescription() {
+    return (this.description);
+  }
 
   // --------------------------------------------------------- Public Methods
 
@@ -122,6 +132,8 @@ public class LabelValueBean {
     sb.append(this.label);
     sb.append(", value=");
     sb.append(this.value);
+    sb.append(", description=");
+    sb.append(this.description);
     sb.append("]");
     return (sb.toString());
   }
