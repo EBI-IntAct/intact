@@ -1,13 +1,11 @@
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
-import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.simpleGraph.*;
+import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
+import uk.ac.ebi.intact.simpleGraph.Node;
 
-import java.awt.Color;
-import java.util.Collection;
+import java.awt.*;
 import java.util.Properties;
 
   /**

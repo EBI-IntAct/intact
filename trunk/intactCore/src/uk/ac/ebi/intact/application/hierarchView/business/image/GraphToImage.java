@@ -1,27 +1,20 @@
 package uk.ac.ebi.intact.application.hierarchView.business.image;
 
 // intact
-import uk.ac.ebi.intact.simpleGraph.*;
-
-// hierarchView
-import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.struts.*;
+import com.keypoint.PngEncoder;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.ImageDimension;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.simpleGraph.EdgeI;
+import uk.ac.ebi.intact.simpleGraph.Node;
 
-// PNG Encoder
-import com.keypoint.*;
-
-// JDK
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.util.*;
-import java.util.Properties;
-import java.io.BufferedWriter;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.FileOutputStream;
-import java.lang.Boolean;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.Vector;
 
 
 /**

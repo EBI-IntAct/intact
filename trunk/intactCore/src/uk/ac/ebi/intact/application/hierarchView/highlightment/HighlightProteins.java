@@ -1,18 +1,16 @@
 package uk.ac.ebi.intact.application.hierarchView.highlightment;
 
-import uk.ac.ebi.intact.application.hierarchView.highlightment.source.*;
-import uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour.*;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
-import uk.ac.ebi.intact.application.hierarchView.business.image.*;
-import uk.ac.ebi.intact.application.hierarchView.business.servlet.*;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
-
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour.HighlightmentBehaviour;
+import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
+import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Collection;
 
 

@@ -1,14 +1,12 @@
 
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
-import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
-import uk.ac.ebi.intact.simpleGraph.*;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.simpleGraph.Node;
 
-import java.util.Collection;
-import java.lang.UnsupportedOperationException;
 import java.util.ArrayList;
+import java.util.Collection;
 
   /**
    * Abstract class allowing to deals with the Highlightment behaviour,
