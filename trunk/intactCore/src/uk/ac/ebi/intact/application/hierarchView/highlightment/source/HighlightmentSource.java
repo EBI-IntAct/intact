@@ -48,6 +48,12 @@ public abstract class HighlightmentSource {
             // Create an instance of the class invoked
             object = cls.newInstance();
 
+            if (false == (object instanceof HighlightmentSource)) {
+                // my object is not from the proper type
+                logger.error (aClassName + " is not a HighlightmentSource");
+                return null;
+            }
+
         } catch (Exception e) {
             logger.error ("Unable to instanciate object:" + aClassName);
             // nothing to do, object is already setted to null
@@ -108,11 +114,10 @@ public abstract class HighlightmentSource {
      * eg. produce a list of GO terms if GO is the source.<br>
      * if the method send back no URL, the given parameter is wrong.
      *
-     * @param aSession session in which we'll retreive the datasource
-     * @param aProteinAC a protein identifier (AC).
+     * @param xRef The collection of XRef from which we want to get the list of corresponding URL
      * @return a set of URL pointing on the highlightment source.
      */
-    abstract public List getSourceUrls (String aProteinAC, HttpSession aSession)
+    abstract public List getSourceUrls (Collection xRef)
             throws IntactException;
 
 
