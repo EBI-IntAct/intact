@@ -194,7 +194,6 @@ lob (polymerSeq)
    STORE AS SEGNAME (TABLESPACE &&intactLobTablespace
                      PCTVERSION 0
                      CACHE READS
-                     NOLOGGING
                     )
 ;
 
