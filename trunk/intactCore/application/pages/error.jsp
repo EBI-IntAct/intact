@@ -11,9 +11,13 @@
   --%>
 
 <%@ page language="java" %>
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/tld/struts-html.tld"  prefix="html" %>
+<%@ taglib uri="/WEB-INF/tld/struts-bean.tld"  prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic" %>
+<%@ taglib uri="/WEB-INF/tld/intact.tld"       prefix="intact"%>
+
+<%-- restore eventual errors inorder to be displayed --%>
+<intact:restoreErrors/>
 
 <h1><font color="red">Validation Error</font></h1>
 You must correct the following error(s) before proceeding:
@@ -26,3 +30,6 @@ You must correct the following error(s) before proceeding:
     </ul>
 </logic:messagesPresent>
 </hr>
+
+<%-- Clear errors to avoid their accumulation --%>
+<intact:clearErrors/>
