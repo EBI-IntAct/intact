@@ -1323,8 +1323,14 @@ public class PsiDataBuilder implements DataBuilder {
         if (null == annotation){
             throw new ElementNotParseableException("Annotation is null");
         }
+
+        //filter the object - NB if this grows any more, put into a filter method instead..
         if (annotation.getCvTopic().getShortLabel().equals("remark")){
-            throw new ElementNotParseableException("Annotation with topic remark not exported.");
+            throw new ElementNotParseableException("Annotation with topic 'remark' not exported.");
+        }
+
+        if (annotation.getCvTopic().getShortLabel().equals("uniprot-dr-export")){
+            throw new ElementNotParseableException("Annotation with topic 'uniprot-dr-export' not exported.");
         }
         //generate DOM-Element
         Element psiAttribute = doc.createElement("attribute");
