@@ -51,15 +51,15 @@
 
                 <td class="tableCell">
                     <html:submit indexed="true" property="intCmd"
-                        titleKey="int.exp.button.edit.titleKey">
-                        <bean:message key="int.exp.button.edit"/>
+                        titleKey="exp.int.button.edit.titleKey">
+                        <bean:message key="exp.int.button.edit"/>
                     </html:submit>
                 </td>
 
                 <td class="tableCell">
                     <html:submit indexed="true" property="intCmd"
-                        titleKey="int.exp.button.del.titleKey">
-                        <bean:message key="int.exp.button.del"/>
+                        titleKey="exp.int.button.del.titleKey">
+                        <bean:message key="exp.int.button.del"/>
                     </html:submit>
                 </td>
 
