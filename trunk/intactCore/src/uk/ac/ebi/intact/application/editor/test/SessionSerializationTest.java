@@ -9,14 +9,12 @@ package uk.ac.ebi.intact.application.editor.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.SerializationUtils;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -24,9 +22,6 @@ import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
 import java.util.Collection;
 
 /**
@@ -36,12 +31,6 @@ import java.util.Collection;
  * @version $Id$
  */ 
 public class SessionSerializationTest extends TestCase  {
-
-    /**
-     * Where to find the mapping file.
-     */
-    private static String ourMappingFile =
-            "temp-web/WEB-INF/classes/config/repository.xml";
 
     /**
      * The DAOSource class name.
@@ -60,11 +49,6 @@ public class SessionSerializationTest extends TestCase  {
 
     public void setUp() throws DataSourceException, IntactException {
         DAOSource ds = DAOFactory.getDAOSource(ourDAOSourceClass);
-
-        //set the config details, ie repository file for OJB in this case
-//        Map config = new HashMap();
-//        config.put("mappingfile", ourMappingFile);
-//        ds.setConfig(config);
         myHelper = new IntactHelper(ds);
     }
 
@@ -441,13 +425,13 @@ public class SessionSerializationTest extends TestCase  {
             assertEquals(preUser, postUser0);
 
             // No search query.
-            assertNull(preUser.getSearchQuery());
-            assertNull(postUser0.getSearchQuery());
+            assertNull(preUser.getSearchCriteria());
+            assertNull(postUser0.getSearchCriteria());
 
             // Do a search query.
-            Collection results = preUser.lookup("CvTopic", "*");
+            Collection results = preUser.lookup("CvTopic", "*", 20).getResult();
             // There should be a search query.
-            assertNotNull(preUser.getSearchQuery());
+            assertNotNull(preUser.getSearchCriteria());
 
             // Seralize it.
             byte[] bytes1 = SerializationUtils.serialize(preUser);
@@ -455,8 +439,8 @@ public class SessionSerializationTest extends TestCase  {
             EditUserI postUser1 = (EditUserI) SerializationUtils.deserialize(bytes1);
 
             // Same search queery.
-            assertNotNull(postUser1.getSearchQuery());
-            assertEquals(preUser.getSearchQuery(), postUser1.getSearchQuery());
+            assertNotNull(postUser1.getSearchCriteria());
+            assertEquals(preUser.getSearchCriteria(), postUser1.getSearchCriteria());
 
             // Do a search.
             Collection results1 = myHelper.search(CvTopic.class.getName(), "ac", "*");
@@ -489,9 +473,6 @@ public class SessionSerializationTest extends TestCase  {
         }
         catch (IntactException ie) {
            fail(ie.getMessage());
-        }
-        catch (SearchException se) {
-            fail(se.getMessage());
         }
     }
 }
