@@ -61,9 +61,16 @@ public class ViewAction extends IntactBaseAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
+
+        HttpSession session = getSession(request);
+
         // The collection of beans to process.
-        Map idToView = (Map) super.getSession(request).getAttribute(
-                SearchConstants.FORWARD_MATCHES);
+        Map idToView = (Map) session.getAttribute(SearchConstants.FORWARD_MATCHES);
+
+        //first check for a CvObject - if there is one in the session
+        //then the 'back' button has been pressed from a CvObject view before
+        //coming to here, so we need to clear it to get the correct display
+        session.setAttribute(SearchConstants.CV_VIEW_BEAN, null);
 
         //debug stuff...
         System.out.println("new view requested...");
@@ -94,21 +101,24 @@ public class ViewAction extends IntactBaseAction {
                     //ensure Xrefs can be expanded properly - that is why
                     //the calls cannot be done outside the conditionl..
                     setStatus(bean, "Interaction", mode);
-                    List componentAcs = bean.getAcs("Component");
+                    Collection componentAcs = bean.getAcs("Component");
                     bean.modifyXml(XmlBuilder.EXPAND_NODES, componentAcs);
                     setStatus(bean, "Protein", mode);
 
                     //need to expand the Xrefs and Annotations for Interactions and Proteins also.
-                    List expXrefs = bean.getAcs("Xref");
+                    Collection expXrefs = bean.getAcs("Xref");
                     bean.modifyXml(XmlBuilder.EXPAND_NODES, expXrefs);
-                    List annotationAcs = bean.getAcs("Annotation");
+                    Collection annotationAcs = bean.getAcs("Annotation");
                     bean.modifyXml(XmlBuilder.EXPAND_NODES, annotationAcs);
                 }
                 else {
 
-                    //compact view required - this is basically what was doen
+                    //compact view required - this is basically what was done
                     //for the first view, so simplest way to handle it is to forward back to
-                    //the search action with the original search criteria...
+                    //the search action with the original search criteria specified in the form...
+                    String searchValue = (String)session.getAttribute(SearchConstants.LAST_VALID_SEARCH);
+                    DynaActionForm dyForm = (DynaActionForm)session.getAttribute(SearchConstants.SEARCH_FORM);
+                    if(dyForm != null) dyForm.set("searchString", searchValue);
                     return mapping.findForward("proteinView");
                 }
 
@@ -142,7 +152,7 @@ public class ViewAction extends IntactBaseAction {
 
     private void setStatus(IntactViewBean bean, String tagName, int mode)
             throws ParserConfigurationException, IntactException {
-        List acs = bean.getAcs(tagName);
+        Collection acs = bean.getAcs(tagName);
         bean.modifyXml(mode, acs);
         bean.resetStatus(acs, mode);
     }
