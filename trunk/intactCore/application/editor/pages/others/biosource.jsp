@@ -26,13 +26,13 @@
                 <bean:message key="label.action"/>
             </th>
             <th class="tableCellHeader">
-                <bean:message key="biosrc.label.tax"/>
+                <bean:message key="biosource.label.tax"/>
             </th>
         </tr>
         <tr class="tableRowEven">
             <td class="tableCell">
-                <html:submit titleKey="biosource.taxid.button.titleKey">
-                    <bean:message key="biosource.taxid.button"/>
+                <html:submit titleKey="biosource.button.taxid.titleKey">
+                    <bean:message key="biosource.button.taxid"/>
                 </html:submit>
             </td>
             <td class="tableCell">
