@@ -18,8 +18,13 @@
         <parameter name="in0" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>
         <parameter name="in1" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>
       </operation>
-      <parameter name="allowedMethods" value="getComputedTlpContent"/>
-      <parameter name="scope" value="Session"/>
+      <operation name="getErrorMessages" returnQName="return" >
+        <parameter name="in0" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="cleanErrorMessages" >
+      </operation>
+      <parameter name="allowedMethods" value="getComputedTlpContent getErrorMessages cleanErrorMessages"/>
+      <parameter name="scope" value="Application"/>
 
       <typeMapping
         xmlns:ns="urn:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"
@@ -33,6 +38,14 @@
         xmlns:ns="urn:tulip"
         qname="ns:ArrayOf_tns1_ProteinCoordinate"
         type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.ProteinCoordinate[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="urn:tulip"
+        qname="ns:ArrayOf_SOAP-ENC_string"
+        type="java:java.lang.String[]"
         serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
         deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"

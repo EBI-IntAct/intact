@@ -288,20 +288,23 @@ public class InteractionNetwork extends Graph {
    * Enter the obtained coordinates in the graph.
    * 
    * @param dataTlp The obtained String by the exportTlp() method 
+   * @return an array of error message or <b>null</b> if no error occurs.
    */
-  public void importDataToImage (String dataTlp) throws IOException {
+  public String[] importDataToImage (String dataTlp) {
 
     ProteinCoordinate[] result;
     TulipClient client  = new TulipClient();
     
     // Call Tulip Web Service
-    if (!client.isReady()) throw new IOException ("Unable to create Tulip Web service"); 
+    // if (!client.isReady()) throw new IOException ("Unable to create Tulip Web service"); 
     
     // get coordinates
-    result    = client.getComputedTlpContent(dataTlp);
+    result = client.getComputedTlpContent(dataTlp);
 
     if (null == result) {
-      throw new IOException ("Tulip send back no data.");
+      // throw new IOException ("Tulip send back no data.");
+      String[] errors = client.getErrorMessages (true);
+      return errors;
     } else {
       // update protein coordinates
       for (int i = 0; i < result.length; i++) {
@@ -318,6 +321,8 @@ public class InteractionNetwork extends Graph {
 	protein.put (Constants.ATTRIBUTE_COORDINATE_Y, y);
       } // for
     } // else
+
+    return null;
     
   } //importDataToImage
 
