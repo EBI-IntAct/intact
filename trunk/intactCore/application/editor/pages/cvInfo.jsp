@@ -41,7 +41,7 @@
     // front if it is focusable.
     function makeNewWindow(link) {
         if (!newWindow || newWindow.closed) {
-            newWindow = window.open(link, "display", "height=500,width=600");
+            newWindow = window.open(link, "display", "scrollbars=yes,height=500,width=600");
             newWindow.focus();
         }
         else if (newWindow.focus) {
@@ -52,7 +52,7 @@
 
     // Will be invoked when the user selects on a link.
     function show(topic, label) {
-        var link = "<%=service.getSearchLink()%>"
+        var link = "<%=service.getSearchURL(request)%>"
             + "?searchString=" + label + "&searchClass=" + topic;
         //    window.alert(link);
         makeNewWindow(link);
