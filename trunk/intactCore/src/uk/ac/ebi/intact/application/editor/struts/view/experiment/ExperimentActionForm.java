@@ -76,37 +76,4 @@ public class ExperimentActionForm extends EditorActionForm {
     public String getIntSearchAC() {
         return myIntSearchAC;
     }
-
-    /**
-     * Validate the properties that have been set from the HTTP request.
-     *
-     * @param mapping the mapping used to select this instance
-     * @param request the servlet request we are processing
-     * @return <tt>ActionErrors</tt> object that contains validation errors. If
-     * no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
-     * object is returned.
-     */
-//    public ActionErrors validate(ActionMapping mapping,
-//                                 HttpServletRequest request) {
-//        ActionErrors errors = super.validate(mapping, request);
-//
-//        // Only proceed if super method does not find any errors.
-//        if ((errors != null) && !errors.isEmpty()) {
-//            return errors;
-//        }
-//        // Must select from the drop down list.
-//        if (getOrganism().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-//            errors = new ActionErrors();
-//            errors.add("exp.biosrc", new ActionError("error.exp.biosrc"));
-//        }
-//        else if (getInter().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-//            errors = new ActionErrors();
-//            errors.add("exp.inter", new ActionError("error.exp.inter"));
-//        }
-//        else if (getIdent().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-//            errors = new ActionErrors();
-//            errors.add("exp.ident", new ActionError("error.exp.ident"));
-//        }
-//        return errors;
-//    }
 }
