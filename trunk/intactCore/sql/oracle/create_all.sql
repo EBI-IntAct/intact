@@ -90,11 +90,14 @@ PROMPT **********************************
 @create_audit_triggers.sql
 PROMPT
 PROMPT
+PROMPT Creating parentAc triggers ...
+PROMPT **********************************
+@create_xref_trigger.sql
+PROMPT
+PROMPT
 PROMPT Done !
 PROMPT
 PROMPT
-
-
 
 exit;
 
