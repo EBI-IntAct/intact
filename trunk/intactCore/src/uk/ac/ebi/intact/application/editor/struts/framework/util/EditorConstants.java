@@ -69,16 +69,6 @@ public interface EditorConstants {
     public static final String FORWARD_REFRESH = "refresh";
 
     /**
-     * Forward to fill with BioSource data.
-     */
-    public static final String FORWARD_BIOSOURCE = "biosource";
-
-    /**
-     * The name of the CV info form.
-     */
-    public static final String CV_INFO_FORM = "cvinfoForm";
-
-    /**
      * The name of the Xref edit form.
      */
     public static final String XREF_EDIT_FORM = "xrefEditForm";
@@ -87,9 +77,4 @@ public interface EditorConstants {
      * The name of the Comment (annotation) edit form.
      */
     public static final String COMMENT_EDIT_FORM = "commentEditForm";
-
-    /**
-     * The bio source edit form.
-     */
-    public static final String BIO_SOURCE_FORM = "bioSourceForm";
 }
