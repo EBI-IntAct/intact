@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.struts.viewx.interaction.ProteinBean;
 import uk.ac.ebi.intact.application.editor.struts.viewx.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
@@ -64,13 +65,13 @@ public class ProteinEditAction extends AbstractEditorAction {
 
         if (theForm.editPressed()) {
             // Must save this bean.
-            pb.setEditState(false);
+            pb.setEditState(EditBean.SAVE);
         }
         else if (theForm.savePressed()) {
             // The protein to update.
             viewbean.addProteinToUpdate(pb);
-            // Back to edit
-            pb.setEditState(true);
+            // Back to the view mode.
+            pb.setEditState(EditBean.VIEW);
         }
         else if (theForm.deletePressed()) {
             // Delete is pressed.
