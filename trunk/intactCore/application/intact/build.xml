@@ -21,8 +21,7 @@
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
     <property name="webapps.dir" value="${tomcat.home}/webapps"/>
-
-
+   
     <!-- Documentation related -->
     <property name="xml.dir"    value="doc/xml"/>
     <property name="xsl.dir"    value="doc/xsl"/>
@@ -103,6 +102,12 @@
                 <!-- doc related -->
                 <include name="*.jsp"/>
                 <include name="doc/html/**"/>
+
+                <!-- static html images -->
+                <include name="images/**"/> 
+
+                <!-- static publications -->
+                <include name="publications/**"/> 
             </fileset>
         </war>
 
