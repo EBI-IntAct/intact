@@ -1,16 +1,17 @@
 package uk.ac.ebi.intact.util;
 
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.io.BufferedWriter;
 import java.io.EOFException;
 import java.io.FileWriter;
-import java.io.BufferedWriter;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Utility class to perform some sanity checks on the DB. Mainly for use by curators.
@@ -524,10 +525,18 @@ public class SanityChecker {
 
         try {
 
+            String filename = null;
             if (args.length != 1) {
 
+                java.util.Date date = new java.util.Date();
+                SimpleDateFormat formatter = new SimpleDateFormat( "yyyy.MM.dd@HH:mm" );
+                String time = formatter.format( date );
+                filename = "sanityCheck-" + time + ".txt";
+
                 System.out.println("Usage: dbCheck.sh SanityChecker <filename>");
-                System.exit(1);
+                System.out.println("<filename> automatically set to: " + filename );
+            } else {
+                filename = args[0];
             }
 
             out = new PrintWriter(new BufferedWriter(new FileWriter(args[0])));
