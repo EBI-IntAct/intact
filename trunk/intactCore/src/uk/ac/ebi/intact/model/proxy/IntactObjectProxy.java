@@ -94,4 +94,13 @@ public class IntactObjectProxy  extends VirtualProxy implements IntactObject {
     public int hashCode () {
         return realSubject().hashCode();
     }
+
+    /**
+     * A call to this method should materialize the real object.
+     * @return String representation of the proxied object.
+     */
+    public String toString() {
+        return realSubject().toString();
+
+    }
 }
