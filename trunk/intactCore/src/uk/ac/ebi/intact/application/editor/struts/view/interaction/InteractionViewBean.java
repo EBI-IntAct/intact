@@ -139,33 +139,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
             Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
             intact.removeExperiment(exp);
         }
-
-//        // Delete proteins and remove it from the interaction.
-//        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
-//            Component comp = ((ProteinBean) iter.next()).getComponent();
-//            // No need to delete from persistent storage if the link to this
-//            // Protein is not persisted.
-//            if (comp.getAc() == null) {
-//                continue;
-//            }
-//            user.delete(comp);
-//            intact.removeComponent(comp);
-//        }
-//        // Update proteins.
-//        for (Iterator iter = getProteinsToUpdateIter(); iter.hasNext();) {
-//            ProteinBean pb = (ProteinBean) iter.next();
-//            pb.update(user);
-//            Component comp = pb.getComponent(user);
-//            intact.addComponent(comp);
-//            if (user.isPersistent(comp)) {
-//                user.update(comp);
-//            }
-//            else {
-//                user.create(comp);
-//            }
-//        }
-
-        //
         super.persist(user);
     }
 
@@ -180,19 +153,18 @@ public class InteractionViewBean extends AbstractEditViewBean {
         Interaction intact = (Interaction) getAnnotatedObject();
         // Delete proteins and remove it from the interaction.
         for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
-            Component comp = ((ProteinBean) iter.next()).getComponent();
+            Component comp = ((ProteinBean) iter.next()).getComponent(user);
             // No need to delete from persistent storage if the link to this
             // Protein is not persisted.
-            if (comp.getAc() == null) {
+            if ((comp == null) || (comp.getAc() == null)) {
                 continue;
             }
             user.delete(comp);
             intact.removeComponent(comp);
         }
         // Update proteins.
-        for (Iterator iter = getProteinsToUpdateIter(); iter.hasNext();) {
+        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
             ProteinBean pb = (ProteinBean) iter.next();
-            pb.update(user);
             Component comp = pb.getComponent(user);
             intact.addComponent(comp);
             if (user.isPersistent(comp)) {
@@ -484,7 +456,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public void addProtein(Protein protein) {
         // Add to the view.
-        myProteins.add(new ProteinBean(protein));
+        myProteins.add(new ProteinBean(protein, (Interaction) getAnnotatedObject()));
     }
 
     /**
@@ -503,6 +475,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
         ProteinBean pb = (ProteinBean) myProteins.remove(pos);
         // Add to the container to delete proteins.
         myProteinsToDel.add(pb);
+        // Remove from the update list if it has already been added.
+        myProteinsToUpdate.remove(pb);
     }
 
     /**
@@ -628,29 +602,5 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 myExperimentsToAdd, myExperimentsToDel);
         // All the experiments only found in experiments to delete collection.
         return CollectionUtils.subtract(myExperimentsToDel, common);
-    }
-
-    /**
-     * Returns an Iterator of proteins to update. This excludes any Proteins
-     * already marked for deletions.
-     * @return the collection of proteins to update for the current Interaction.
-     * Could be empty if there are no proteins to update.
-     *
-     * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(ProteinBean)
-     * </pre>
-     */
-    private Iterator getProteinsToUpdateIter() {
-        // Holds Proteins to update.
-        Collection result = new ArrayList();
-        // Remove any proteins marked for deletions.
-        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
-            ProteinBean pb = (ProteinBean) iter.next();
-            if (pb.isMarkedForDelete()) {
-                continue;
-            }
-            result.add(pb);
-        }
-        return result.iterator();
     }
 }
