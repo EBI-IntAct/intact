@@ -66,6 +66,18 @@ public class CommentBean extends AbstractEditKeyBean {
     }
 
     /**
+     * Override to make a clone of this object.
+     *
+     * @return a cloned version of the current instance.
+     * @throws CloneNotSupportedException for errors in cloning.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        CommentBean copy = (CommentBean) super.clone();
+        copy.myAnnotation = null;
+        return copy;
+    }
+
+    /**
      * Updates the internal annotation with the new values from the form.
      * @param helper the IntactHelper to search the database
      * @return an Annotation created or updated using values in the bean.
@@ -75,8 +87,14 @@ public class CommentBean extends AbstractEditKeyBean {
         // The topic for the annotation.
         CvTopic cvtopic = (CvTopic) helper.getObjectByLabel(CvTopic.class,
                 getTopic());
-        // Update the existing annotation object.
-        myAnnotation.setCvTopic(cvtopic);
+        // Create a new annotation (true if this object was cloned).
+        if (myAnnotation == null) {
+            myAnnotation = new Annotation(getService().getOwner(), cvtopic);
+        }
+        else {
+            // Update the existing annotation object.
+            myAnnotation.setCvTopic(cvtopic);
+        }
         myAnnotation.setAnnotationText(getDescription());
         return myAnnotation;
     }
