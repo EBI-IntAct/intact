@@ -33,14 +33,15 @@
     <!-- =============== Sidebars ====================================== -->
 
     <!-- Sidebar for the login page -->
-    <definition name="login.sidebar.layout" path="/layouts/sidebar.jsp">
+    <definition name="login.sidebar.layout" path="/layouts/sidebarLayout.jsp">
         <put name="input-dialog" value="/pages/loginInput.jsp"/>
     </definition>
 
     <!-- Sidebar for the search page -->
-    <definition name="search.sidebar.layout" path="/layouts/sidebar.jsp">
+    <definition name="search.sidebar.layout" extends="login.sidebar.layout">
         <put name="input-dialog" value="/pages/sidebar.jsp"/>
         <put name="menu" value="search.menu.links"/>
+        <put name="footer" value="/pages/sidebarFooter.jsp"/>
     </definition>
 
     <!-- Sidebar for the result page -->
@@ -48,10 +49,7 @@
         <put name="menu" value="result.menu.links"/>
     </definition>
 
-    <!-- Sidebar for the edit page -->
-    <definition name="edit.sidebar.layout" path="/layouts/sidebar.jsp">
-        <put name="menu" value="result.menu.links"/>
-    </definition>
+    <!-- =============== Editor Layouts =================================== -->
 
     <!-- The edit CV page layout. -->
     <definition name="edit.cv.layout" path="/layouts/cvLayout.jsp">
@@ -133,7 +131,7 @@
     <!-- Edit page description. -->
     <definition name="edit.layout" extends="login.layout"
         controllerUrl="/do/tiles/editorSwitch">
-        <put name="sidebar" value="edit.sidebar.layout"/>
+        <put name="sidebar" value="result.sidebar.layout"/>
         <put name="content" value="edit.cv.layout"/>
     </definition>
 
