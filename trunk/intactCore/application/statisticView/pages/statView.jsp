@@ -59,9 +59,12 @@
 
 <tr>
 <td valign="top" height="*">
-<br>
-Database: <b><%= bean.getDatabaseName() %></b>.
-<br>
+
+<!--
+        Comment for developpers.
+        This is the Database from which we extracted the data.
+        Database: <%= bean.getDatabaseName() %>
+-->
 
             <%
                 if (noData) {
@@ -72,7 +75,7 @@ Database: <b><%= bean.getDatabaseName() %></b>.
             %>
 
             <bean:message key="stat.present.content.string"/>
-            <b><%= lastDate %></b>
+            <b><%= lastDate %></b>.
 
             <br>
             </td>
