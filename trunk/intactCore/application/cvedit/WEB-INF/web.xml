@@ -26,7 +26,7 @@
     -->
     <context-param>
         <param-name>intacttypesfile</param-name>
-        <param-value>/config/IntactTypes</param-value>
+        <param-value>uk.ac.ebi.intact.application.cvedit.IntactTypes</param-value>
     </context-param>
 
     <!--  Class name of the data source object to be used    -->
@@ -39,10 +39,6 @@
     <servlet>
         <servlet-name>action</servlet-name>
         <servlet-class>uk.ac.ebi.intact.application.cvedit.struts.framework.IntactActionServlet</servlet-class>
-        <init-param>
-            <param-name>application</param-name>
-            <param-value>/config/IntactResources</param-value>
-        </init-param>
 
         <init-param>
             <param-name>config</param-name>
