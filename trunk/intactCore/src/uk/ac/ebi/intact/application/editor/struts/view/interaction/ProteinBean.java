@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 
@@ -75,6 +76,11 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     private String myOrganism;
 
     /**
+     * Expressed in as a biosource short label.
+     */
+    private String myExpressedIn;
+
+    /**
      * Instantiate an object of this class from a Protein instance.
      * @param protein the <code>Protein</code> object.
      */
@@ -99,6 +105,7 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         myRole = component.getCvComponentRole().getShortLabel();
         myStoichiometry = component.getStoichiometry();
         setOrganism();
+        setExpressedIn();
     }
 
     // Read only properties.
@@ -118,6 +125,13 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
             myComponent.setCvComponentRole(newrole);
         }
         myComponent.setStoichiometry(getStoichiometry());
+
+        // The expressed in to set in the component.
+        if (myExpressedIn != null) {
+            BioSource expressedIn = (BioSource) user.getObjectByLabel(
+                    BioSource.class, myExpressedIn);
+            myComponent.setExpressedIn(expressedIn);
+        }
         return myComponent;
     }
 
@@ -148,7 +162,9 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     }
 
     public void setRole(String role) {
-        myRole = role;
+        if (!role.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            myRole = role;
+        }
     }
 
     public float getStoichiometry() {
@@ -157,6 +173,22 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
 
     public void setStoichiometry(float stoichiometry) {
         myStoichiometry = stoichiometry;
+    }
+
+    public String getExpressedIn() {
+        if (myComponent != null) {
+            BioSource bs = myComponent.getExpressedIn();
+            if (bs != null) {
+                myExpressedIn = bs.getShortLabel();
+            }
+        }
+        return myExpressedIn;
+    }
+
+    public void setExpressedIn(String expressedIn) {
+        if (!expressedIn.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            myExpressedIn = expressedIn;
+        }
     }
 
     public String getOrganism() {
@@ -194,12 +226,12 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         return false;
     }
 
-    public void update(EditUserI user) throws SearchException {
-        CvComponentRole role = (CvComponentRole) user.getObjectByLabel(
-                    CvComponentRole.class, myRole);
-        myComponent.setCvComponentRole(role);
-        myComponent.setStoichiometry(myStoichiometry);
-    }
+//    public void update(EditUserI user) throws SearchException {
+//        CvComponentRole role = (CvComponentRole) user.getObjectByLabel(
+//                    CvComponentRole.class, myRole);
+//        myComponent.setCvComponentRole(role);
+//        myComponent.setStoichiometry(myStoichiometry);
+//    }
 
     // Helper methods
 
@@ -207,6 +239,13 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
         BioSource biosource = myInteractor.getBioSource();
         if (biosource != null) {
             myOrganism = biosource.getShortLabel();
+        }
+    }
+
+    private void setExpressedIn() {
+        BioSource bs = myComponent.getExpressedIn();
+        if (bs != null) {
+            myExpressedIn = bs.getShortLabel();
         }
     }
 
