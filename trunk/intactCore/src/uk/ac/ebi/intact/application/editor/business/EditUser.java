@@ -27,9 +27,6 @@ import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.DAOFactory;
-import uk.ac.ebi.intact.persistence.DAOSource;
-import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
@@ -216,11 +213,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient Institution myInstitution;
 
     /**
-     * The name of the data source class.
-     */
-    private String myDSClass;
-
-    /**
      * The name of the current user.
      */
     private String myUserName;
@@ -277,42 +269,25 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     // Constructors.
 
     /**
-     * Constructs an instance of this class with given data source class,
-     * the name of the user and the password.
+     * The default constructor. This constructor uses the default values for
+     * user and password (mainly for testing).
+     */
+    public EditUser() {
+    }
+
+    /**
+     * Constructs an instance of this class with given user and the password.
      *
-     * @param dsClass the class name of the Data Source.
      * @param user the user
      * @param password the password of <code>user</code>.
-     *
-     * @exception uk.ac.ebi.intact.persistence.DataSourceException for error in getting the data source; this
-     *  could be due to the errors in repository files.
      * @exception IntactException for errors in creating IntactHelper; possibly
      * due to an invalid user.
      */
-    public EditUser(String dsClass, String user, String password)
-            throws DataSourceException, IntactException {
-        myDSClass = dsClass;
+    public EditUser(String user, String password) throws IntactException {
         myUserName = user;
         myPassword = password;
         // Initialize the object.
         initialize();
-    }
-
-    /**
-     * This constructor for Seralization test class. The user and password is set
-     * to null. This is equivalent to calling
-     * {@link EditUser(String, String, String, String)} with null values for
-     * user and password.
-     * @param dsClass the class name of the Data Source.
-     * @throws DataSourceException for error in getting the data source; this
-     * could be due to the errors in repository files.
-     * @throws IntactException for errors in creating IntactHelper.
-     *
-     * @see uk.ac.ebi.intact.application.editor.test.SessionSerializationTest
-     */
-    public EditUser(String dsClass) throws IntactException,
-            DataSourceException {
-        this(dsClass, null, null);
     }
 
     // Methods to handle special serialization issues.
@@ -325,9 +300,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         catch (IntactException ie) {
             throw new IOException(ie.getMessage());
-        }
-        catch (DataSourceException dse) {
-            throw new IOException(dse.getMessage());
         }
     }
 
@@ -449,8 +421,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditState;
     }
 
-    public IntactHelper getIntactHelper() {
-        return myHelper;
+    public IntactHelper getIntactHelper() throws IntactException {
+        // Construct the the helper.
+        return new IntactHelper(myUserName, myPassword);
     }
     
     public void startEditing() {
@@ -824,11 +797,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * Called by the constructors to initialize the object.
      * @throws IntactException for errors in accessing the persistent system.
      */
-    private void initialize() throws IntactException, DataSourceException {
-        DAOSource dao = DAOFactory.getDAOSource(myDSClass);
+    private void initialize() throws IntactException {
+//        DAOSource dao = DAOFactory.getDAOSource(myDSClass);
 
         // Construct the the helper.
-        myHelper = new IntactHelper(dao, myUserName, myPassword);
+        myHelper = new IntactHelper(myUserName, myPassword);
 
         try {
             myDatabaseName = myHelper.getDbName();
