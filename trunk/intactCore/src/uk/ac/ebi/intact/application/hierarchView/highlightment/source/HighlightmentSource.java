@@ -57,7 +57,7 @@ public abstract class HighlightmentSource {
    * Return the html code for specific options of the source to integrate int the highlighting form.
    * if the method return null, the source hasn't options.
    *
-   * @param aSession the current session
+   * @param aSession the current session.
    * @return the html code for specific options of the source.
    */
   abstract public String getHtmlCodeOption(HttpSession aSession);
@@ -67,8 +67,8 @@ public abstract class HighlightmentSource {
    * Return a set of keys corresponding to the source and finding in the IntAct database.
    * if the method send back no keys, the given parameter have not keys for the source.
    *
-   * @param aProteinAC : a protein identifier (AC)
-   * @return a set of keys (this keys are a String)
+   * @param aProteinAC : a protein identifier (AC).
+   * @return a set of keys (this keys are a String).
    */
   abstract public Collection getKeysFromIntAct (String aProteinAC);
 
@@ -77,22 +77,22 @@ public abstract class HighlightmentSource {
    * Create a set of protein we must highlight in the graph given in parameter.
    * The session is used to know what protein to select.
    *
-   * @param aSession the session to update
-   * @param aGraph the graph we want to highlight
-   * @return a set of nodes to highlight
+   * @param aSession the session to update.
+   * @param aGraph the graph we want to highlight.
+   * @return a set of nodes to highlight.
    */
   abstract public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph);
 
 
   /**
-   * Allows to update the session.<br>
+   * Allows to update the session.
    * This method must be called by <b>parseRequest</b> to do that work, so
    * the implemented class don't have to know how to update the session
    * but just what value to pick in the request and save in the session.
    *
-   * @param aSession the session to update 
+   * @param aSession the session to update.
    * @param aRequest the request int which we get parameter to save in the session.
-   * @param aKey the name of the parameter to save in the session
+   * @param aKey the name of the parameter to save in the session.
    */
   protected void updateSession (HttpSession aSession, HttpServletRequest aRequest, String aKey) {
 
@@ -122,8 +122,8 @@ public abstract class HighlightmentSource {
    * These parameter are specific of the implementation.
    * The implementated method will have to use the updateSession method to do the work.
    *
-   * @param aRequest request in which we have to get parameters to save in the session
-   * @param aSession session in which we have to save the parameter
+   * @param aRequest request in which we have to get parameters to save in the session.
+   * @param aSession session in which we have to save the parameter.
    */
   abstract public void parseRequest (HttpServletRequest aRequest, HttpSession aSession);
 
@@ -132,8 +132,8 @@ public abstract class HighlightmentSource {
    * Return a set of URL allowing to redirect to an end page of the highlightment source
    * if the method send back no URL, the given parameter is wrong.
    *
-   * @param aProteinAC : a protein identifier (AC)
-   * @return a set of URL pointing on the highlightment source
+   * @param aProteinAC : a protein identifier (AC).
+   * @return a set of URL pointing on the highlightment source.
    */
   abstract public Collection getUrl (String aProteinAC);
 
@@ -152,7 +152,7 @@ public abstract class HighlightmentSource {
    * Parse the set of key generate by the method above and given a set of keys.
    *
    * @param someKeys a string which contains some key separates by a character.
-   * @return the splitted version of the key string  
+   * @return the splitted version of the key string.
    */
   abstract public Collection parseKeys (String someKeys);
 
