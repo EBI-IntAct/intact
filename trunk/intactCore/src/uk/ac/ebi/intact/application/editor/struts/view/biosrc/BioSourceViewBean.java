@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.biosrc;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.tiles.ComponentContext;
@@ -32,7 +33,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     // Override the super method to persist tax id.
-    public void persist(EditUserI user) throws IntactException {
+    public void persist(EditUserI user) throws IntactException, SearchException {
         // The order is important! update super last as it does
         // the update of the object.
         ((BioSource) getAnnotatedObject()).setTaxId(getTaxId());
