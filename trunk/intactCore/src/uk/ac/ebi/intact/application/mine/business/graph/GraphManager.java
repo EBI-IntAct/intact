@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
+import jdsl.graph.api.Graph;
+
 import org.shiftone.cache.Cache;
 import org.shiftone.cache.policy.lru.LruCacheFactory;
 
@@ -18,7 +20,7 @@ import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
  * @author Andreas Groscurth
  */
 public class GraphManager extends Thread {
-    private static GraphManager INSTANCE;
+    private static final GraphManager INSTANCE = new GraphManager();
     // the timeout for the cache after which elements are erazed
     // the time is measured in milliseconds and therefore
     // 5 minutes are written in this way !
@@ -42,7 +44,7 @@ public class GraphManager extends Thread {
      * 
      * @param user the intact user
      */
-    private GraphManager(IntactUserI user) {
+    private GraphManager() {
         /**
          * the cache strucuture is created with <br>
          * a dummy name <br>
@@ -58,7 +60,6 @@ public class GraphManager extends Thread {
 
         // the structures are set for the GraphBuilder Thread to avoid
         // initialising a new thread with always the same data.
-        GraphBuildThread.intactUser = user;
         GraphBuildThread.cache = cache;
         GraphBuildThread.running = running;
 
@@ -72,15 +73,16 @@ public class GraphManager extends Thread {
      * Called by the client to retrieve a graphdata object for the given id.
      * 
      * @param id the graphid
+     * @param user the intactUser of the current user
      * @return the graphData or null if not avaiable
      */
-    public GraphData getGraphData(Integer id) {
+    public GraphData getGraphData(Integer id, IntactUserI user) {
         GraphData graphData = (GraphData) cache.getObject( id );
 
         // no data available for the given id
         if ( graphData == null ) {
             // the id is pushed into the incoming stack
-            incoming.push( id );
+            incoming.push( new GraphBuildData(user, id) );
             // because its no data available yet null is returned
             return null;
         }
@@ -93,10 +95,7 @@ public class GraphManager extends Thread {
      * 
      * @return GraphManager the instance
      */
-    public static synchronized GraphManager getInstance(IntactUserI user) {
-        if ( INSTANCE == null ) {
-            INSTANCE = new GraphManager( user );
-        }
+    public static GraphManager getInstance() {
         return INSTANCE;
     }
 
@@ -117,17 +116,17 @@ public class GraphManager extends Thread {
                 if ( !incoming.isEmpty() ) {
                     // get the next graphid for which the graph should be
                     // built
-                    final Integer toProcceed = (Integer) incoming.pop();
+                    final GraphBuildData buildData = (GraphBuildData) incoming.pop();
 
                     synchronized ( running ) {
                         // if for the given ID nothing can be found in the
                         // cache and in the running structure -> a new thread
                         // starts for building the graph for the given ID
-                        if ( cache.getObject( toProcceed ) == null
-                                && !running.contains( toProcceed ) ) {
-                            running.add( toProcceed );
+                        if ( cache.getObject( buildData.toProceed ) == null
+                                && !running.contains( buildData.toProceed ) ) {
+                            running.add( buildData.toProceed );
                             // a new Thread builds the graph
-                            new GraphBuildThread( toProcceed ).start();
+                            new GraphBuildThread( buildData.toProceed, buildData.user ).start();
                         }
                     }
                 }
@@ -137,5 +136,15 @@ public class GraphManager extends Thread {
         catch ( InterruptedException e ) {
             e.printStackTrace();
         }
+    }
+    
+    private static class GraphBuildData {
+    	private IntactUserI user;
+    	private Integer toProceed;
+    	
+    	public GraphBuildData(IntactUserI user, Integer toProceed) {
+    		this.user = user;
+    		this.toProceed = toProceed; 
+    	}
     }
 }
