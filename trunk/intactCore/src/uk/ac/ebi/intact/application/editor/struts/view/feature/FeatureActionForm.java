@@ -10,8 +10,12 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.DispatchActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
+import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,18 +25,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The action form for the Feature editor.
+ * The action form for the Feature editor. This form wraps around an EditorActionForm
+ * so it can provide its own setShortLabel() method with struts tags.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.form name="featureForm"
  */
-public class FeatureActionForm extends EditorActionForm {
+public class FeatureActionForm extends DispatchActionForm implements EditorFormI {
 
     /**
      * The pattern to match for a mutation entry.
      * Patern: starts with an alpha character, followed by digits and an alpha char.
      */
     public static final Pattern MUT_ITEM_REGX = Pattern.compile("^([a-z]+)(\\d+)([a-z]+)$");
+
+    /**
+     * Delegator for EditorFormI methods.
+     */
+    private EditorActionForm myDelegate = new EditorActionForm();
 
     /**
      * The parent ac
@@ -69,7 +81,98 @@ public class FeatureActionForm extends EditorActionForm {
      */
     private RangeBean myNewRange = new RangeBean();
 
+    /**
+     * Keeps track of mutation state.
+     */
     private boolean myMutationState;
+
+    // Implementation of EditorFormI methods
+    /**
+     * Need to override the super method write these tags to the validation file.
+     *
+     * @struts.validator type="required"
+     *
+     * @struts.validator type="mask" msgkey="error.shortlabel.mask"
+     * @struts.validator-args arg0resource="label.shortlabel"
+     * @struts.validator-var name="mask" value="^[a-z0-9][a-z0-9\-:_\s]*[a-z0-9]$"
+     *
+     * @struts.validator type="maxlength" msgkey="error.shortlabel.maxlength"
+     * @struts.validator-args arg1value="${var:maxlength}"
+     * @struts.validator-var name="maxlength" value="20"
+     */
+    public void setShortLabel(String label) {
+        myDelegate.setShortLabel(label);
+    }
+
+    public String getShortLabel() {
+        return myDelegate.getShortLabel();
+    }
+
+    public void setFullName(String fullname) {
+        myDelegate.setFullName(fullname);
+    }
+
+    public String getFullName() {
+        return myDelegate.getFullName();
+    }
+
+    public void setAc(String ac) {
+        myDelegate.setAc(ac);
+    }
+
+    public String getAc() {
+        return myDelegate.getAc();
+    }
+
+    public void setAnnotations(List annotations) {
+    }
+
+    public List getAnnotations() {
+        return null;
+    }
+
+    public void setAnnotCmd(int index, String value) {
+    }
+
+    public CommentBean getSelectedAnnotation() {
+        return null;
+    }
+
+    public void setXrefs(List xrefs) {
+        myDelegate.setXrefs(xrefs);
+    }
+
+    public List getXrefs() {
+        return myDelegate.getXrefs();
+    }
+
+    public void setXrefCmd(int index, String value) {
+        setDispatch(index, value);
+    }
+
+    public XreferenceBean getSelectedXref() {
+        return (XreferenceBean) myDelegate.getXrefs().get(getDispatchIndex());
+    }
+
+    public CommentBean getNewAnnotation() {
+        return myDelegate.getNewAnnotation();
+    }
+
+    public XreferenceBean getNewXref() {
+        return myDelegate.getNewXref();
+    }
+
+    public void clearNewBeans() {
+        myDelegate.clearNewBeans();
+    }
+
+    public String getAnchor() {
+        return myDelegate.getAnchor();
+    }
+
+    public void setAnchor(String anchor) {
+        myDelegate.setAnchor(anchor);
+    }
 
     // Getter/Setter methods.
 
@@ -182,7 +285,7 @@ public class FeatureActionForm extends EditorActionForm {
 
     public ActionErrors validateSubmit() {
         // Look for unsaved xrefs.
-        ActionErrors errors = super.validateUnsavedXref();
+        ActionErrors errors = myDelegate.validateUnsavedXref();
         if (errors != null) {
             return errors;
         }
@@ -212,7 +315,7 @@ public class FeatureActionForm extends EditorActionForm {
     }
 
     /**
-     * This method is purely for testing hte validation of mutations.
+     * This method is purely for testing the validation of mutations.
      * @param fullname
      * @param featureSep
      * @param rangeSep

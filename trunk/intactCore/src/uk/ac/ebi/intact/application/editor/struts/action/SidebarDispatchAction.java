@@ -24,6 +24,20 @@ import java.util.Map;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/sidebar"
+ *      name="sidebarForm"
+ *      validate="false"
+ *      parameter="dispatch"
+ *
+ * @struts.action-forward
+ *      name="single"
+ *      path="/do/choose"
+ *
+ * @struts.action-forward
+ *      name="create"
+ *      path="/do/choose"
  */
 public class SidebarDispatchAction extends AbstractEditorDispatchAction {
 

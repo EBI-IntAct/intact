@@ -10,7 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
@@ -112,24 +112,22 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     // Override to provide set feature from the form.
-    public void copyPropertiesFrom(EditorActionForm editorForm) {
+    public void copyPropertiesFrom(EditorFormI form) {
         // Set the common values by calling super first.
-        super.copyPropertiesFrom(editorForm);
+        super.copyPropertiesFrom(form);
 
         // Cast to the feature form to get feature data.
-        FeatureActionForm featureForm = (FeatureActionForm) editorForm;
+        FeatureActionForm featureForm = (FeatureActionForm) form;
         setCvFeatureType(featureForm.getFeatureType());
         setCvFeatureIdentification(featureForm.getFeatureIdent());
     }
 
     // Override to copy Feature data.
-    public void copyPropertiesTo(EditorActionForm form) {
+    public void copyPropertiesTo(EditorFormI form) {
         super.copyPropertiesTo(form);
 
-        // Cast to the feature form to copy feature data.
-        FeatureActionForm featureForm = (FeatureActionForm) form;
-
         // Properties related to the parent protein.
+        FeatureActionForm featureForm = (FeatureActionForm) form;
         featureForm.setParentAc(getParentAc());
         featureForm.setParentShortLabel(getParentShortLabel());
         featureForm.setParentFullName(getParentFullName());
@@ -351,8 +349,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     // Override the super to persist others.
-    public void persistOthers(EditUserI user) throws IntactException,
-            SearchException {
+    public void persistOthers(EditUserI user) throws IntactException {
         try {
             // Begin the transaction.
             user.begin();
@@ -374,6 +371,15 @@ public class FeatureViewBean extends AbstractEditViewBean {
             }
             // Rethrow the exception to be logged.
             throw ie1;
+        }
+        catch (SearchException se) {
+            try {
+                user.rollback();
+            }
+            catch (IntactException ie) {
+            }
+            // Rethrow the exception to be logged.
+            throw new IntactException("Search exception", se);
         }
     }
 

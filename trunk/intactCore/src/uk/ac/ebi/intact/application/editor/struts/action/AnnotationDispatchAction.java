@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
@@ -23,6 +23,41 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/cv/annot/submit"
+ *      name="cvForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/exp/annot/submit"
+ *      name="expForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/bs/annot/submit"
+ *      name="bsForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/int/annot/submit"
+ *      name="intForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/seq/annot/submit"
+ *      name="seqForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
  */
 public class AnnotationDispatchAction extends AbstractEditorAction {
 
@@ -45,7 +80,7 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // The editor form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // The command associated with the dispatch
         String cmd = editorForm.getDispatch();
@@ -83,7 +118,7 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
                                 HttpServletResponse response)
             throws Exception {
         // The editor form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // The annotation we are editing at the moment.
         CommentBean cb = editorForm.getSelectedAnnotation();
@@ -115,7 +150,7 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
                                 HttpServletResponse response)
             throws Exception {
         // The edit form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // The annotation we are about to delete.
         CommentBean cb = editorForm.getSelectedAnnotation();
@@ -148,7 +183,7 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
                                 HttpServletResponse response)
             throws Exception {
         // The edit form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // The annotation we are editing at the moment.
         CommentBean cb = editorForm.getSelectedAnnotation();

@@ -19,6 +19,8 @@ import java.util.List;
  * 
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.form name="intForm"
  */
 public class InteractionActionForm extends EditorActionForm {
 
@@ -94,6 +96,10 @@ public class InteractionActionForm extends EditorActionForm {
         return myOragnism;
     }
 
+    /**
+     * @struts.validator type="mask" msgkey="error.int.cvtype"
+     * @struts.validator-var name="mask" value="${menu-pat}"
+     */
     public void setInteractionType(String inter) {
         myInteractionType = inter;
     }

@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 
@@ -25,6 +25,13 @@ import java.util.Map;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/int/feature/link"
+ *      name="intForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      parameter="dispatch"
  */
 public class FeatureLinkAction extends AbstractEditorDispatchAction {
 
@@ -149,7 +156,7 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
                                      ActionForm form,
                                      HttpServletRequest request) {
         // Set the anchor if necessary.
-        setAnchor(request, (EditorActionForm) form);
+        setAnchor(request, (EditorFormI) form);
 
         // Update the form.
         return mapping.getInputForward();

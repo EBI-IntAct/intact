@@ -22,6 +22,16 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/int/link"
+ *      name="expForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *
+ * @struts.action-forward
+ *      name="success"
+ *      path="/do/int/fill/form"
  */
 public class InteractionLinkAction extends CommonDispatchAction {
 

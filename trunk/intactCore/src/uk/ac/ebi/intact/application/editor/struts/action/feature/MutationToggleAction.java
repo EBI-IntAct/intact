@@ -22,6 +22,16 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/feature/mutation"
+ *      name="featureForm"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action-forward
+ *      name="success"
+ *      path="/do/feature/fill/form"
  */
 public class MutationToggleAction extends AbstractEditorAction {
 

@@ -20,6 +20,17 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * The actions belong to this class is in struts-actions.xml file as this class
+ * extends from another class which has struts tags.
+ *
+ * @struts.action
+ *      path="/feature/delete"
+ *      validate="false"
+ *
+ * @struts.action-forward
+ *      name="success"
+ *      path="/do/int/fill/form"
  */
 public class DeleteFeatureAction extends DeleteFormAction {
 

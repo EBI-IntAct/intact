@@ -23,6 +23,13 @@ import java.util.Map;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/int/prot"
+ *      name="intForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      parameter="dispatchProtein"
  */
 public class ProteinDispatchAction extends AbstractEditorDispatchAction {
 

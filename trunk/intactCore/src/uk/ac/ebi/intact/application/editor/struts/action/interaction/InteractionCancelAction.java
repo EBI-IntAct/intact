@@ -21,6 +21,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/int/cancel"
+ *      validate="false"
+ *
+ * @struts.action-forward
+ *      name="experiment"
+ *      path="/do/exp/fill/form"
  */
 public class InteractionCancelAction extends CancelFormAction {
 

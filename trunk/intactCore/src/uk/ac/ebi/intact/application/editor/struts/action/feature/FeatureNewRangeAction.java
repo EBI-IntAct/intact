@@ -21,6 +21,12 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/feature/range/new"
+ *      name="featureForm"
+ *      input="edit.layout"
+ *      scope="session"
  */
 public class FeatureNewRangeAction extends AbstractEditorAction {
 

@@ -27,6 +27,13 @@ import java.util.regex.Pattern;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/int/prot/search"
+ *      name="intForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
  */
 public class ProteinSearchAction extends AbstractEditorAction {
 

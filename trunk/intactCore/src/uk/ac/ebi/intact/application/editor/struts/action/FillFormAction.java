@@ -10,7 +10,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +21,46 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/cv/fill/form"
+ *      name="cvForm"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/exp/fill/form"
+ *      name="expForm"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/bs/fill/form"
+ *      name="bsForm"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/int/fill/form"
+ *      name="intForm"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/feature/fill/form"
+ *      name="featureForm"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/seq/fill/form"
+ *      name="seqForm"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action-forward
+ *      name="success"
+ *      path="edit.layout"
  */
 public class FillFormAction extends AbstractEditorAction {
 
@@ -30,7 +70,7 @@ public class FillFormAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // The editor form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // Set anchor if necessary.
         setAnchor(request, editorForm);

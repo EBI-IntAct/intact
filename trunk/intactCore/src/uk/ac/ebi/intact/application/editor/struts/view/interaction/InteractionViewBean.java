@@ -13,7 +13,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
@@ -207,8 +207,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     // Override the super to persist others.
-    public void persistOthers(EditUserI user) throws IntactException,
-            SearchException {
+    public void persistOthers(EditUserI user) throws IntactException {
         // First transaction for
         try {
             // Begin the transaction.
@@ -232,6 +231,15 @@ public class InteractionViewBean extends AbstractEditViewBean {
             // Rethrow the exception to be logged.
             throw ie1;
         }
+        catch (SearchException se) {
+            try {
+                user.rollback();
+            }
+            catch (IntactException ie) {
+            }
+            // Rethrow the exception to be logged.
+            throw new IntactException("Search exception", se);
+        }
         // Need another transaction to delete features.
         try {
             // Begin the transaction.
@@ -254,6 +262,15 @@ public class InteractionViewBean extends AbstractEditViewBean {
             }
             // Rethrow the exception to be logged.
             throw ie1;
+        }
+        catch (SearchException se) {
+            try {
+                user.rollback();
+            }
+            catch (IntactException ie) {
+            }
+            // Rethrow the exception to be logged.
+            throw new IntactException("Search exception", se);
         }
     }
 
@@ -290,7 +307,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy data from the form.
-    public void copyPropertiesFrom(EditorActionForm editorForm) {
+    public void copyPropertiesFrom(EditorFormI editorForm) {
         // Set the common values by calling super first.
         super.copyPropertiesFrom(editorForm);
 
@@ -302,7 +319,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy Interaction data.
-    public void copyPropertiesTo(EditorActionForm form) {
+    public void copyPropertiesTo(EditorFormI form) {
         super.copyPropertiesTo(form);
 
         // Cast to the interaction form to copy interaction data.

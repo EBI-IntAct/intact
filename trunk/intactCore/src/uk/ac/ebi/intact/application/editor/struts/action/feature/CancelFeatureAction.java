@@ -22,6 +22,20 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/feature/cancel"
+ *      name="featureForm"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action-forward
+ *      name="interaction"
+ *      path="/do/int/fill/form"
+ *
+ * @struts.action-forward
+ *      name="delete"
+ *      path="/do/feature/delete"
  */
 public class CancelFeatureAction extends AbstractEditorAction {
 

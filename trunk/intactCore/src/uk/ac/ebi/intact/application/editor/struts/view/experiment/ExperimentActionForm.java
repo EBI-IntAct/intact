@@ -13,6 +13,8 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.form name="expForm"
  */
 public class ExperimentActionForm extends EditorActionForm {
 
@@ -31,6 +33,10 @@ public class ExperimentActionForm extends EditorActionForm {
         return myInteractionAC;
     }
 
+    /**
+     * @struts.validator type="mask" msgkey="error.exp.biosrc"
+     * @struts.validator-var name="mask" value="${menu-pat}"
+     */
     public void setOrganism(String organism) {
         myOragnism = organism;
     }
@@ -39,6 +45,10 @@ public class ExperimentActionForm extends EditorActionForm {
         return myOragnism;
     }
 
+    /**
+     * @struts.validator type="mask" msgkey="error.exp.inter"
+     * @struts.validator-var name="mask" value="${menu-pat}"
+     */
     public void setInter(String inter) {
         myInter = inter;
     }
@@ -47,6 +57,10 @@ public class ExperimentActionForm extends EditorActionForm {
         return myInter;
     }
 
+    /**
+     * @struts.validator type="mask" msgkey="error.exp.ident"
+     * @struts.validator-var name="mask" value="${menu-pat}"
+     */
     public void setIdent(String ident) {
         myIdent = ident;
     }
