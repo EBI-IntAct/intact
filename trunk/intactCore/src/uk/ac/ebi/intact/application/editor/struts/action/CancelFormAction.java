@@ -11,6 +11,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,14 +53,14 @@ public class CancelFormAction extends AbstractEditorAction {
         // Cancel the current edit session.
         user.cancelEdit();
 
-        // Release the lock.
-        user.releaseLock();
-
         // Update the search cache to display the current object.
         AnnotatedObject annobj = user.getView().getAnnotatedObject();
         if ((annobj != null) && (annobj.getAc() != null)) {
             // Only update the persistent objects.
             user.updateSearchCache(annobj);
+
+            // Release the lock.
+            getLockManager().release(annobj.getAc());
         }
         // Back to the search page.
         return mapping.findForward(RESULT);

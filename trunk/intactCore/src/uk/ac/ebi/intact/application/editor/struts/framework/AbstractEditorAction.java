@@ -8,10 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
+import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -21,6 +18,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
@@ -112,6 +110,13 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
             throw new SessionExpiredException();
         }
         return user;
+    }
+
+    /**
+     * @return the lock manager stored in the application context.
+     */
+    protected LockManager getLockManager() {
+        return (LockManager) getApplicationObject(EditorConstants.LOCK_MGR);
     }
 
     /**
@@ -336,6 +341,25 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         }
     }
 
+    /**
+     * Tries to acquire a lock for given id and owner.
+     * @param ac the id or the accession number to lock.
+     * @param owner the owner of the lock.
+     * @return null if there are no errors in acquiring the lock or else
+     * non null value is returned to indicate errors.
+     */
+    protected ActionErrors acquire(String ac, String owner) {
+        // Try to acuire the lock.
+        if (!getLockManager().acquire(ac, owner)) {
+            ActionErrors errors = new ActionErrors();
+            // The owner of the lock (not the current user).
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.lock", ac, getLockManager().getOwner(ac)));
+            return errors;
+        }
+        return null;
+    }
+    
     // Helper Methods
 
     /**

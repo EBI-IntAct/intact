@@ -39,9 +39,6 @@ public class InteractionLinkAction extends CommonDispatchAction {
         }
         // No errors. Linking starts from here.
 
-        // Check the lock.
-        LockManager lmr = LockManager.getInstance();
-
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
@@ -59,15 +56,12 @@ public class InteractionLinkAction extends CommonDispatchAction {
         assert inter != null;
 
         // Try to acuire the lock.
-        if (!lmr.acquire(intAc, user.getUserName())) {
-            ActionErrors errors = new ActionErrors();
-            // The owner of the lock (not the current user).
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.lock", intAc, lmr.getOwner(intAc)));
+        ActionErrors errors = acquire(intAc, user.getUserName());
+        if (errors != null) {
             saveErrors(request, errors);
-            // Show the errors in the input page.
-            return mapping.getInputForward();
+            return mapping.findForward(FAILURE);
         }
+        // Try to acuire the lock.
         // Set the topic.
         user.setSelectedTopic(getService().getTopic(Interaction.class));
 

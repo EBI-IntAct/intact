@@ -14,6 +14,8 @@ import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.event.EventListener;
+import uk.ac.ebi.intact.application.editor.event.LoginEvent;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -84,6 +86,11 @@ public class LoginAction extends AbstractEditorAction {
 
         // Need to access the user later.
         session.setAttribute(EditorConstants.INTACT_USER, user);
+
+        // Notify the event listener.
+        EventListener listener = (EventListener) ctx.getAttribute(
+                EditorConstants.EVENT_LISTENER);
+        listener.notifyObservers(new LoginEvent(username));
 
         // Store the server path.
         ctx.setAttribute(EditorConstants.SERVER_PATH, request.getContextPath());

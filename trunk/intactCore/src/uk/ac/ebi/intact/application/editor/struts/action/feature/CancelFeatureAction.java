@@ -11,7 +11,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,12 +51,15 @@ public class CancelFeatureAction extends AbstractEditorAction {
         // Cancel the current edit session.
         user.cancelEdit();
 
+        // The current view.
+        FeatureViewBean view = (FeatureViewBean) user.getView();
+
         // Release the lock.
-        user.releaseLock();
+        getLockManager().release(view.getAc());
 
         // If it is a new feature then we need to delete this feature if it has
         // been persisted.
-        if (((FeatureViewBean) user.getView()).isNewFeature()) {
+        if (view.isNewFeature()) {
             return mapping.findForward("delete");
         }
         // Sets the destination interaction to return to.

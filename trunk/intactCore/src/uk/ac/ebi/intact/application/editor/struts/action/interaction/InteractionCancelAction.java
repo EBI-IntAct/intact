@@ -53,6 +53,8 @@ public class InteractionCancelAction extends CancelFormAction {
 
         // Check and see if we have to go to the experiment page.
         if (view.isSourceFromAnExperiment()) {
+            // Release the lock before going back to the experiment.
+            getLockManager().release(view.getAc());
             // Set the experiment to go back.
             setDestinationExperiment(request);
             // Back to the experiment editor.
