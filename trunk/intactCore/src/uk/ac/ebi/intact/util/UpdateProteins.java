@@ -68,6 +68,8 @@ import java.util.*;
  *                 c) If a Protein from PROTEINS has a taxid not found in the SPTREntry, we display
  *                    a warning message.
  *
+ *      TODO: DOCUMENT HERE HOW ARE HANDLED THE SPLICE VARIANT
+ *
  *   The update and creation process (2.3.2 a and b) includes a check of the following Xref :
  *   SPTR, GO, SGD, INTERPRO, FLYBASE.
  *
@@ -490,6 +492,10 @@ public class UpdateProteins extends UpdateProteinsI {
              * Process all collected BioSource
              */
             int taxidCount = taxids.size();
+            boolean generateProteinShortlabelUsingBiosource = false;
+            if ( taxidCount > 1 ) {
+               generateProteinShortlabelUsingBiosource = true;
+            }
             for (i = 0; i < taxidCount; i++) {
 
                 proteinTotal++;
@@ -528,7 +534,7 @@ public class UpdateProteins extends UpdateProteinsI {
                     if ( localTransactionControl ){
                         helper.startTransaction( BusinessConstants.OBJECT_TX );
                     }
-                    if ( ( protein = createNewProtein (sptrEntry, bioSource) ) != null ) {
+                    if ( ( protein = createNewProtein (sptrEntry, bioSource, generateProteinShortlabelUsingBiosource) ) != null ) {
                         logger.info ("creation sucessfully done");
 
                         // Keep that reference as existing protein for that Entry and taxid.
@@ -554,7 +560,7 @@ public class UpdateProteins extends UpdateProteinsI {
                         if (localTransactionControl){
                             helper.startTransaction( BusinessConstants.OBJECT_TX );
                         }
-                        if (updateExistingProtein (protein, sptrEntry, bioSource)) {
+                        if (updateExistingProtein (protein, sptrEntry, bioSource, generateProteinShortlabelUsingBiosource)) {
                             logger.info ("update sucessfully done");
                         }
                         if (localTransactionControl) {
@@ -646,7 +652,8 @@ public class UpdateProteins extends UpdateProteinsI {
                                          */
                                         helper.startTransaction( BusinessConstants.JDBC_TX );
                                     }
-                                    if ( updateExistingSpliceVariant( isoForm, id, spliceVariant, master, sptrEntry, bioSource ) ) {
+                                    if ( updateExistingSpliceVariant( isoForm, id, spliceVariant, master, sptrEntry,
+                                                                      bioSource, generateProteinShortlabelUsingBiosource ) ) {
                                         logger.info ("update sucessfully done");
                                     }
                                     if (localTransactionControl) {
@@ -686,7 +693,8 @@ public class UpdateProteins extends UpdateProteinsI {
                                      */
                                     helper.startTransaction( BusinessConstants.JDBC_TX );
                                 }
-                                if ( ( spliceVariant = createNewSpliceVariant( isoForm, id, master, sptrEntry, bioSource ) ) != null ) {
+                                if ( ( spliceVariant = createNewSpliceVariant( isoForm, id, master, sptrEntry, bioSource,
+                                                                               generateProteinShortlabelUsingBiosource ) ) != null ) {
                                     logger.info ("creation sucessfully done");
 
 
@@ -946,6 +954,44 @@ public class UpdateProteins extends UpdateProteinsI {
         return needUpdate;
     } // updateAliases
 
+    private String generateProteinShortLabel(SPTREntry sptrEntry,
+                                             BioSource bioSource,
+                                             boolean generateProteinShortlabelUsingBiosource) throws SPTRException {
+        String shortlabel = null;
+
+        if ( generateProteinShortlabelUsingBiosource ) {
+
+            String[][] genes = sptrEntry.getGenes();
+
+            if( genes.length > 0 && genes[0].length > 0 ) // if there is at least one gene
+              shortlabel = genes[0][0];
+
+            if( shortlabel == null ) {
+                System.err.println ( "WARNING: could not generate the Shortlabel, no gene name available. Using the AC." );
+                shortlabel = sptrEntry.getID().toLowerCase();
+            } else {
+                // check if the ID contains already _specie (TREMBL)
+                int index = shortlabel.indexOf( '_' );
+                if ( index != -1 ) {
+                    shortlabel = shortlabel.substring( 0, index );
+                }
+
+                // Concatenate Biosource to the gene name !
+                if ( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals("") ) {
+                    shortlabel = shortlabel + "_" + bioSource.getShortLabel();
+                } else {
+                    System.err.println ( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
+                    shortlabel = shortlabel + "_" + bioSource.getTaxId();
+                }
+            }
+        } else {
+            shortlabel = sptrEntry.getID().toLowerCase();
+        }
+
+        return shortlabel.toLowerCase();
+    }
+
+
     /**
      * Update an existing protein with data from a SPTR Entry.
      *
@@ -959,7 +1005,8 @@ public class UpdateProteins extends UpdateProteinsI {
      */
     private boolean updateExistingProtein (Protein protein,
                                            SPTREntry sptrEntry,
-                                           BioSource bioSource)
+                                           BioSource bioSource,
+                                           boolean generateProteinShortlabelUsingBiosource)
             throws SPTRException,
             IntactException {
 
@@ -967,7 +1014,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // get the protein info we need
         String fullName    = sptrEntry.getProteinName();
-        String shortLabel  = sptrEntry.getID().toLowerCase();
+        String shortLabel  = generateProteinShortLabel( sptrEntry, bioSource, generateProteinShortlabelUsingBiosource);
         String proteinAC[] = sptrEntry.getAccessionNumbers();
         String sequence    = sptrEntry.getSequence();
         String crc64       = sptrEntry.getCRC64();
@@ -1007,6 +1054,10 @@ public class UpdateProteins extends UpdateProteinsI {
             protein.setBioSource (bioSource);
             needUpdate = true;
         }
+
+        // TODO: the update od the cross reference and the alias should also:
+        // TODO   o Delete Xref that are no longer in the Entry
+        // TODO   o Delete Alias that are no longer in the Entry
 
         /*
         * false || false -> false
@@ -1087,11 +1138,18 @@ public class UpdateProteins extends UpdateProteinsI {
      * @throws IntactException
      */
     private Protein createNewProtein (SPTREntry sptrEntry,
-                                      BioSource bioSource)
+                                      BioSource bioSource,
+                                      boolean generateProteinShortlabelUsingBiosource)
             throws SPTRException,
             IntactException {
 
-        String shortLabel  = sptrEntry.getID().toLowerCase();
+        /**
+         * To avoid to have multiple species having the same short label
+         * eg. cdc42 are known in human, mouse, bovine and dog
+         * we shoold have the labels: cdc42_human, cdc42_mouse ...
+         */
+        String shortLabel = generateProteinShortLabel( sptrEntry, bioSource, generateProteinShortlabelUsingBiosource);
+
         Protein protein = new Protein (myInstitution, bioSource, shortLabel);
 
         // get the protein info we need
@@ -1202,7 +1260,8 @@ public class UpdateProteins extends UpdateProteinsI {
                                                  Protein spliceVariant,
                                                  Protein master,
                                                  SPTREntry sptrEntry,
-                                                 BioSource bioSource)
+                                                 BioSource bioSource,
+                                                 boolean generateProteinShortlabelUsingBiosource)
             throws SPTRException,
             IntactException {
 
@@ -1216,6 +1275,16 @@ public class UpdateProteins extends UpdateProteinsI {
         // get the spliceVariant info we need
         String fullName    = sptrEntry.getProteinName();
         String shortLabel  = isoId;
+
+        if( generateProteinShortlabelUsingBiosource ) {
+            if ( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals("") ) {
+                shortLabel = shortLabel + "_" + bioSource.getShortLabel();
+            } else {
+                System.err.println ( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
+                shortLabel = shortLabel + "_" + bioSource.getTaxId();
+            }
+        }
+        shortLabel = shortLabel.toLowerCase();
 
         String sequence    = null;
         String crc64 = null;
@@ -1385,10 +1454,23 @@ public class UpdateProteins extends UpdateProteinsI {
                                             String isoId,
                                             Protein master,
                                             SPTREntry sptrEntry,
-                                            BioSource bioSource)
+                                            BioSource bioSource,
+                                            boolean generateProteinShortlabelUsingBiosource)
             throws SPTRException, IntactException {
 
-        Protein spliceVariant = new Protein( myInstitution, bioSource, isoId );
+
+        String shortLabel = isoId;
+
+        if( generateProteinShortlabelUsingBiosource ) {
+            if ( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals("") ) {
+                shortLabel = shortLabel + "_" + bioSource.getShortLabel();
+            } else {
+                System.err.println ( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
+                shortLabel = shortLabel + "_" + bioSource.getTaxId();
+            }
+        }
+
+        Protein spliceVariant = new Protein( myInstitution, bioSource, shortLabel.toLowerCase() );
 
         // get the spliceVariant info we need
         helper.create( spliceVariant );
@@ -1660,9 +1742,11 @@ public class UpdateProteins extends UpdateProteinsI {
             }
 
         } catch (YASPException e) {
+            e.printStackTrace();
             logger.error (e.getOriginalException());
 
         } catch (MalformedURLException e) {
+            e.printStackTrace();
             logger.error ("URL error: " + sourceUrl, e);
             logger.error ("Please provide a valid URL");
 
