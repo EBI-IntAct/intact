@@ -59,7 +59,10 @@ public class DisplayShortLabelsTag extends TagSupport {
         String editLabel = editObject.getShortLabel();
         // The class name of the current edit object.
         String className = editObject.getClass().getName();
+
+        // JSP writer to write the output.
         JspWriter out = pageContext.getOut();
+
         try {
             Collection results = user.search(className, "shortLabel", "*");
             // The counter to count line length.
@@ -78,8 +81,10 @@ public class DisplayShortLabelsTag extends TagSupport {
                 else {
                     out.write(", ");
                 }
-                out.write("<a href=javascript:show('" + label + "')"
-                        + ">" + label + "</a>");
+                // Strip the package name from the class name.
+                String topic = className.substring(className.lastIndexOf('.') + 1);
+                out.write("<a href=\"" + "javascript:show('" + topic + "', '"
+                        + label + "')\"" + ">" + label + "</a>");
                 lineLength += label.length();
                 if (lineLength > 80) {
                     out.write("<br/>");
