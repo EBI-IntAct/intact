@@ -41,6 +41,14 @@
             <form-property name="description" type="java.lang.String"/>
         </form-bean>
 
+        <!-- Form for editing CV info (short label, fullname) data -->
+        <form-bean name="cvinfoForm"
+                   type="org.apache.struts.action.DynaActionForm">
+            <form-property name="ac" type="java.lang.String"/>
+            <form-property name="shortLabel" type="java.lang.String"/>
+            <form-property name="fullName" type="java.lang.String"/>
+        </form-bean>
+
         <!-- Form for editing a comment -->
         <form-bean name="commentEditForm"
             type="uk.ac.ebi.intact.application.cvedit.struts.view.EditForm"/>
@@ -65,8 +73,8 @@
 
         <form-bean name="resultForm"
                    type="org.apache.struts.action.DynaActionForm">
-            <form-property name="items"
-                   type="uk.ac.ebi.intact.application.cvedit.struts.view.ResultBean[]"/>
+            <!-- A collection of ResultBean objects -->
+            <form-property name="items" type="java.util.Collection"/>
         </form-bean>
 
     </form-beans>
@@ -114,6 +122,14 @@
             <forward name="success" path="search.layout"/>
         </action>
 
+        <!-- This action is called by tiles when displaying the header. The
+             header is changed for editing a CV object. No forward is associated
+             with this action.
+        -->
+        <action path="/cv/tiles/header"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.TilesHeaderAction">
+        </action>
+
         <!-- Process an action for the sidebar. -->
         <action path="/cv/sidebar"
                 name="sidebarForm"
@@ -159,7 +175,7 @@
              the dummyForm as JavaScript uses the hidden property. dispatch property
              contains the action to take (submit/cancel/delete). If we got to this from
              a results page, then go to the results page back again else (i.e., if we got
-             here from a direct search) start a new search.
+             here from a direct search) then start a new search.
          -->
         <action path="/cv/edit"
                 type="uk.ac.ebi.intact.application.cvedit.struts.controller.CvEditDispatchAction"
@@ -170,7 +186,17 @@
             <forward name="search" path="search.layout"/>
         </action>
 
-        <!-- Actions relating to comments (annotations) -->
+        <!-- Actions relating to editing the info for a CV object. The form
+             must be in session for it to retain information for changes to
+            the form such as adding annotations/xrfers.
+        -->
+        <action path="/cv/info/edit"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CvInfoAction"
+                name="cvinfoForm"
+                scope="session">
+            <!-- New label; need to refresh the screen. -->
+            <forward name="refresh" path="/do/cv/edit/pre"/>
+        </action>
 
         <!-- Adds a new comment or annotation; updates the edit contents -->
         <action path="/cv/comment/add"
