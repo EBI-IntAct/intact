@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.io.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.HashMap;
 
 /**
  * The proxy to the Newt server. An example for the use of this class:
@@ -31,6 +32,29 @@ public class NewtServerProxy {
 
     // Inner Classes
     // ------------------------------------------------------------------------
+    private static class NewtCache {
+        private HashMap cache = new HashMap ();
+
+        public void clear () {
+            cache.clear();
+        }
+
+        public void store (int taxid, NewtResponse response) {
+            cache.put (taxid+"", response);
+        }
+
+        public NewtResponse get (int taxid) {
+            return (NewtResponse) cache.get (taxid+"");
+        }
+
+        public int size() {
+            return cache.size();
+        }
+    } // NewtCache
+
+
+
+
     public static class NewtResponse {
         private int myTaxId;
         private String myShortLabel;
@@ -80,6 +104,18 @@ public class NewtServerProxy {
 
     // Class Data
 
+    private NewtCache cache = null;
+
+    public void enableCaching () {
+        cache = new NewtCache();
+    }
+
+    public void disableCaching () {
+        cache = null;
+    }
+
+
+
     /**
      * Regular expression to extract short label and fullname. The pattern is
      * -- number|short_label|full_name|ignore other text
@@ -119,19 +155,34 @@ public class NewtServerProxy {
      * @exception TaxIdNotFoundException thrown when the server fails to find
      * a response for tax id.
      */
-    public NewtResponse query(int taxid) throws IOException,
+    public NewtResponse query (int taxid) throws IOException,
             TaxIdNotFoundException {
+
+        NewtResponse newtRes = null;
+
+        if (cache != null) {
+            newtRes = cache.get (taxid);
+            if (newtRes != null) return newtRes;
+        }
+
         // Query the Newt server.
         String response = getNewtResponse(SEARCH_PREFIX + taxid + "\r\n");
         // Parse the newt response.
+
+        if (response == null) {
+            System.out.println("... Response from Newt("+ taxid +") is NULL ...");
+        }
+
         Matcher matcher = REG_EXP.matcher(response);
         if (!matcher.matches()) {
             throw new TaxIdNotFoundException(taxid);
         }
         // Values from newt stored in
-        NewtResponse newtRes = new NewtResponse (matcher.group(1),
-                                                 matcher.group(2),
-                                                 matcher.group(3));
+        newtRes = new NewtResponse (matcher.group(1),
+                                    matcher.group(2),
+                                    matcher.group(3));
+
+        if (cache != null) cache.store (taxid, newtRes);
 
         return newtRes;
     }
