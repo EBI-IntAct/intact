@@ -411,7 +411,13 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     tx.commit();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    throw (TransactionException) ex;
+                    //BUG: the following line is wrong since
+                    //there is no guarantee the exception is
+                    //a TransactionException; in fact it won't be!!
+                    //this causes a ClassCastException when the
+                    //ODMG tx.commit fails......
+                    //throw (TransactionException) ex;
+                    throw new TransactionException("ODMG transaction commit failed", ex);
                 }
 
                 //reset the TX reference to avoid confusion, and also
