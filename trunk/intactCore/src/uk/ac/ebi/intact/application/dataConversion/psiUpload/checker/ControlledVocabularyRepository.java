@@ -20,18 +20,18 @@ import uk.ac.ebi.intact.model.CvXrefQualifier;
 
 public class ControlledVocabularyRepository {
 
-    private boolean initialised = false;
-
     private static boolean initialisationDone = false;
 
     private static CvTopic authorConfidenceTopic = null;
     private static CvXrefQualifier primaryReferenceXrefQualifier = null;
+    private static CvXrefQualifier identityXrefQualifier = null;
     private static CvXrefQualifier seeAlsoXrefQualifier;
 
 
     public static void check( IntactHelper helper ) {
         initialise( helper );
     }
+
 
     /////////////////////////
     // Getters
@@ -45,6 +45,10 @@ public class ControlledVocabularyRepository {
 
     public static CvXrefQualifier getSeeAlsoXrefQualifier() {
         return seeAlsoXrefQualifier;
+    }
+
+    public static CvXrefQualifier getIdentityQualifier() {
+        return identityXrefQualifier;
     }
 
 
@@ -73,6 +77,7 @@ public class ControlledVocabularyRepository {
 
             primaryReferenceXrefQualifier = getCvXrefQualifierByLabel( helper, "primary-reference" );
             seeAlsoXrefQualifier = getCvXrefQualifierByLabel( helper, "see-also" );
+            identityXrefQualifier = getCvXrefQualifierByLabel( helper, "identity" );
 
             initialisationDone = true;
         }
