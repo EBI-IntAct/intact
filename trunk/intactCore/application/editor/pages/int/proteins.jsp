@@ -296,7 +296,7 @@
                     <%-- Empty cells for error/link boxes --%>
                     <td class="tableCell" rowspan="2"/>
                     <td class="tableCell" rowspan="2">
-                        <nested:checkbox property="linked"/>
+                        <nested:checkbox property="checked"/>
                     </td>
 
                    <%-- Edit feature button --%>

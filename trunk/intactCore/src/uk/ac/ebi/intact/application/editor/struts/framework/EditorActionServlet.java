@@ -105,12 +105,12 @@ public class EditorActionServlet extends ActionServlet {
         map.put(rb.getString("int.proteins.button.save"), "int.prot");
         map.put(rb.getString("int.proteins.button.delete"), "int.prot");
 
-        // Related to add/edit/delete feature.
+        // Related to add/edit feature.
         map.put(rb.getString("int.proteins.button.feature.add"), "int.feature");
         map.put(rb.getString("int.proteins.button.feature.edit"), "int.feature");
-        map.put(rb.getString("int.proteins.button.feature.delete"), "int.feature");
 
-        // Feature link/unlink.  
+        // Feature delete/link/unlink.
+        map.put(rb.getString("int.proteins.button.feature.delete"), "int.feature.link");
         map.put(rb.getString("int.proteins.button.feature.link"), "int.feature.link");
         map.put(rb.getString("int.proteins.button.feature.unlink"), "int.feature.link");
 
@@ -205,7 +205,7 @@ public class EditorActionServlet extends ActionServlet {
         map.put("error.int.feature.unlink.error", "feature.link");
 
         // Deleting a feature
-        map.put(rb.getString("int.proteins.button.feature.delete"), "int.protein.search");
+        map.put(rb.getString("int.proteins.button.feature.delete"), "feature.link");
 
         return map;
     }

@@ -780,8 +780,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Make sure to set the linked beans to false (or else they will
         // display as checked).
-        fb1.setLinked(false);
-        fb2.setLinked(false);
+        fb1.setChecked(false);
+        fb2.setChecked(false);
 
         // We only add one bean because its bound domain has the short label
         // of the other bean (ie., short label of fb2).
@@ -809,8 +809,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Make sure to set the linked beans to false (or else they will
         // display as checked).
-        fb.setLinked(false);
-        toFb.setLinked(false);
+        fb.setChecked(false);
+        toFb.setChecked(false);
 
         // Add to the set to update the database later.
         myUnlinkFeatures.add(fb);
@@ -1024,9 +1024,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 // The linked feature bean.
                 FeatureBean fb2 = getFeatureBean(fb1.getBoundDomain());
 
-                // fb2 must exist.
-                assert fb2 != null;
-
+                // Linked feature may have already been deleted.
+                if (fb2 == null) {
+                    continue;
+                }
                 // The linked feature.
                 Feature linkedFeature = fb2.getFeature(user);
                 linkedFeature.setBoundDomain(null);

@@ -21,11 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * The form to edit bio experiment data.
+ * The Interaction form.
  * 
  * @author Sugath Mudali (smudali@ebi.ac.uk)
- * @version $Id: InteractionActionForm.java,v 1.5 2004/06/15 16:03:02 smudali
- * Exp $
+ * @version $Id$
  */
 public class InteractionActionForm extends EditorActionForm {
 
@@ -83,18 +82,6 @@ public class InteractionActionForm extends EditorActionForm {
      * The list of proteins on hold for the current interaction.
      */
     private List myExpsOnHold;
-
-    /**
-     * Stores the protein dispatch action (to determine what course of action to
-     * take when Edit/Save/Delete Protein button selected).
-     */
-//    private String myProteinDispatch;
-
-    /**
-     * Stores the feature dispatch action (to determine what course of action to
-     * take when Add/Edit/Delete Feature button selected).
-     */
-//    private String myFeatureDispatch;
 
     // Setter / Getter methods.
     public void setKd(Float kd) {
@@ -249,7 +236,7 @@ public class InteractionActionForm extends EditorActionForm {
             for (Iterator iterator1 = compBean.getFeatures().iterator(); iterator1
                     .hasNext();) {
                 FeatureBean featureBean = (FeatureBean) iterator1.next();
-                featureBean.setLinked(false);
+                featureBean.setChecked(false);
             }
         }
     }
@@ -271,6 +258,34 @@ public class InteractionActionForm extends EditorActionForm {
 //        }
 //        return null;
 //    }
+
+    /**
+     * Returns a list of selected (checkboxes) Feature beans.
+     * This method assumes that {@link #validate(ActionMapping, HttpServletRequest)}
+     * has been called prior to calling this method because it returns the first
+     * two selected features (even when the user has incorrcetly selected more
+     * than two features).
+     *
+     * @return a list of selected features beans. The list is empty if no items
+     * were selected.
+     */
+    public List getFeaturesToDelete() {
+        // The array to collect features to delete.
+        List fbs = new ArrayList();
+
+        // Loop through components collecting checked features.
+        for (Iterator iter0 = getComponents().iterator(); iter0.hasNext();) {
+            ComponentBean compBean = (ComponentBean) iter0.next();
+            for (Iterator iter1 = compBean.getFeatures().iterator();
+                 iter1.hasNext();) {
+                FeatureBean featureBean = (FeatureBean) iter1.next();
+                if (featureBean.isChecked()) {
+                    fbs.add(featureBean);
+                }
+            }
+        }
+        return fbs;
+    }
 
     /**
      * Returns an array that contains two selected (checkboxes) Feature beans.
@@ -303,7 +318,7 @@ public class InteractionActionForm extends EditorActionForm {
                     .hasNext()
                     && fbs[1] == null;) {
                 FeatureBean featureBean = (FeatureBean) iter1.next();
-                if (featureBean.isLinked()) {
+                if (featureBean.isChecked()) {
                     fbs[idx] = featureBean;
                     ++idx;
                 }
@@ -328,7 +343,7 @@ public class InteractionActionForm extends EditorActionForm {
             for (Iterator iter1 = compBean.getFeatures().iterator();
                  iter1.hasNext();) {
                 FeatureBean fb = (FeatureBean) iter1.next();
-                if (fb.isLinked()) {
+                if (fb.isChecked()) {
                     return fb;
                 }
             }
@@ -355,6 +370,18 @@ public class InteractionActionForm extends EditorActionForm {
         }
         return null;
     }
+
+//    public void deleteFeature(FeatureBean fb) {
+//        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
+//            ComponentBean cb = (ComponentBean) iter.next();
+//            List features = cb.getFeatures();
+//            if (features.contains(fb)) {
+//                // Remove the bean and exit from the method.
+//                features.remove(fb);
+//                return;
+//            }
+//        }
+//    }
 
     /**
      * Validates Interaction info page.
@@ -410,15 +437,14 @@ public class InteractionActionForm extends EditorActionForm {
             for (Iterator iter1 = cb.getFeatures().iterator(); iter1.hasNext()
                     && count <= 2;) {
                 FeatureBean fb = (FeatureBean) iter1.next();
-                if (fb.isLinked()) {
+                if (fb.isChecked()) {
                     ++count;
                 }
             }
         }
         if (count != 2) {
             errors = new ActionErrors();
-            errors.add("feature.link",
-                    new ActionError("error.int.feature.link"));
+            errors.add("feature.link", new ActionError("error.int.feature.link"));
         }
         return errors;
     }
@@ -438,15 +464,14 @@ public class InteractionActionForm extends EditorActionForm {
             for (Iterator iter1 = cb.getFeatures().iterator(); iter1.hasNext()
                     && count <= 1;) {
                 FeatureBean fb = (FeatureBean) iter1.next();
-                if (fb.isLinked()) {
+                if (fb.isChecked()) {
                     ++count;
                 }
             }
         }
         if (count != 1) {
             errors = new ActionErrors();
-            errors.add("feature.link",
-                    new ActionError("error.int.feature.unlink"));
+            errors.add("feature.link", new ActionError("error.int.feature.unlink"));
         }
         return errors;
     }
