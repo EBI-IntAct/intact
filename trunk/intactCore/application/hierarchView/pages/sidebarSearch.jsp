@@ -1,11 +1,11 @@
 <%@ page language="java" %>
 
 <%@ page import="java.util.ArrayList,
-                 uk.ac.ebi.intact.application.hierarchView.struts.view.OptionGenerator,
+                 uk.ac.ebi.intact.application.hierarchView.struts.view.utils.OptionGenerator,
                  uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork,
                  uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants,
-                 uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean"%>
+                 uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
