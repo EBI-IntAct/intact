@@ -335,7 +335,7 @@ public class RangeTest extends TestCase {
     }
 
     private void checkSequence(Range range, String sequence, String expected) {
-        range.setSequenceRaw(sequence);
+        range.setSequence(sequence);
         if (sequence == null) {
             assertNull(range.getSequene());
         }

@@ -530,7 +530,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
             // Create the updated range.
             Range range = ((RangeBean) iter.next()).getRange(user);
             // Set the sequence for the range.
-            range.setSequenceRaw(sequence);
+            range.setSequence(sequence);
             // Avoid creating duplicate Ranges.
             if (feature.getRanges().contains(range)) {
                 continue;
@@ -550,7 +550,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         for (Iterator iter = myRangesToUpdate.iterator(); iter.hasNext();) {
             // Update the 'updated' range.
             Range range = ((RangeBean) iter.next()).getRange(user);
-            range.setSequenceRaw(sequence);
+            range.setSequence(sequence);
             user.update(range);
         }
         // No need to test whether this 'feature' persistent or not because we
