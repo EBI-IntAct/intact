@@ -24,8 +24,9 @@ public class ControlledVocabularyRepository {
 
     private static boolean initialisationDone = false;
 
-    private static CvTopic authorConfidence = null;
-    private static CvXrefQualifier primaryRef = null;
+    private static CvTopic authorConfidenceTopic = null;
+    private static CvXrefQualifier primaryReferenceXrefQualifier = null;
+    private static CvXrefQualifier seeAlsoXrefQualifier;
 
 
     public static void check( IntactHelper helper ) {
@@ -34,12 +35,16 @@ public class ControlledVocabularyRepository {
 
     /////////////////////////
     // Getters
-    public static CvTopic getAuthorConfidence() {
-        return authorConfidence;
+    public static CvTopic getAuthorConfidenceTopic() {
+        return authorConfidenceTopic;
     }
 
     public static CvXrefQualifier getPrimaryXrefQualifier() {
-        return primaryRef;
+        return primaryReferenceXrefQualifier;
+    }
+
+    public static CvXrefQualifier getSeeAlsoXrefQualifier() {
+        return seeAlsoXrefQualifier;
     }
 
 
@@ -49,14 +54,12 @@ public class ControlledVocabularyRepository {
 
         if( initialisationDone == false ) {
 
-            initialisationDone = true;
-
             ////////////////////////////
             // author confidence
             String name = "author-confidence";
             try {
-                authorConfidence = (CvTopic) helper.getObjectByLabel( CvTopic.class, name );
-                if( authorConfidence == null ) {
+                authorConfidenceTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, name );
+                if( authorConfidenceTopic == null ) {
                     final String msg = "Could not find CvTopic by shortlabel: " + name;
                     MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
                 } else {
@@ -68,23 +71,30 @@ public class ControlledVocabularyRepository {
                 e.printStackTrace();
             }
 
-            ///////////////////////////
-            // Primary reference
-            name = "primary-reference";
-            try {
-                primaryRef = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class,
-                                                                        name );
-                if( primaryRef == null ) {
-                    final String msg = "Could not find CvXrefQualifier by shortlabel: " + name;
-                    MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
-                } else {
-                    System.out.println( "Found CvXrefQualifier with shortlabel: " + name );
-                }
-            } catch ( IntactException e ) {
-                final String msg = "An error occured while searching for CvXrefQualifier having the shortlabel: " + name;
-                MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
-                e.printStackTrace();
-            }
+            primaryReferenceXrefQualifier = getCvXrefQualifierByLabel( helper, "primary-reference" );
+            seeAlsoXrefQualifier = getCvXrefQualifierByLabel( helper, "see-also" );
+
+            initialisationDone = true;
         }
     } // init
+
+    private static CvXrefQualifier getCvXrefQualifierByLabel( final IntactHelper helper, final String name ) {
+        CvXrefQualifier qualifier = null;
+
+        try {
+            qualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, name );
+            if( qualifier == null ) {
+                final String msg = "Could not find CvXrefQualifier by shortlabel: " + name;
+                MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
+            } else {
+                System.out.println( "Found CvXrefQualifier with shortlabel: " + name );
+            }
+        } catch ( IntactException e ) {
+            final String msg = "An error occured while searching for CvXrefQualifier having the shortlabel: " + name;
+            MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
+            e.printStackTrace();
+        }
+
+        return qualifier;
+    }
 }
