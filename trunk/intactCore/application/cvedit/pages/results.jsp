@@ -1,5 +1,5 @@
 <%@ page import="uk.ac.ebi.intact.application.cvedit.business.IntactUserIF,
-                 uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants"%>
+                 uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants"%>
 <%@ page language="java" %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
