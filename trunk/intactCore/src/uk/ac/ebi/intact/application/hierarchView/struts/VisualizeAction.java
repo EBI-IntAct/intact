@@ -113,6 +113,11 @@ public final class VisualizeAction extends Action {
 	  saveErrors(request, errors);
 	  return (mapping.findForward("error"));
 	} else {
+
+	  if (hasNoDepthLimit == true) {
+	    depth = null;
+	  }
+
 	  // Save our data in the session
 	  session.setAttribute(Constants.ATTRIBUTE_AC, AC);
 	  session.setAttribute(Constants.ATTRIBUTE_DEPTH, depth);
