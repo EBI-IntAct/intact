@@ -4,8 +4,6 @@
  */
 package uk.ac.ebi.intact.application.mine.business.graph.model;
 
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * The class <tt>NetworkKey</tt> is a wrapper class to store the shortest paths
@@ -16,7 +14,6 @@ import java.util.Iterator;
 public class NetworkKey implements Comparable {
     private String bioSource;
     private int graphID;
-    private Collection shortestPaths;
 
     /**
      * Creates a new Object for the given biosource and graphid.
@@ -61,21 +58,8 @@ public class NetworkKey implements Comparable {
     public int hashCode() {
         return bioSource.hashCode() + graphID;
     }
-
-    /**
-     * @return Returns the shortestPath.
-     */
-    public Collection getShortestPath() {
-        return shortestPaths;
-    }
-
-    /**
-     * @param shortestPath The shortestPath to set.
-     */
-    public void setShortestPath(Collection shortestPath) {
-        this.shortestPaths = shortestPath;
-    }
-
+    
+    
     /*
      * (non-Javadoc)
      * 
@@ -88,36 +72,5 @@ public class NetworkKey implements Comparable {
             return other.graphID - graphID;
         }
         return comp;
-    }
-
-    /**
-     * Returns the length of the shortestPath
-     * 
-     * @return the length of the path
-     */
-    public int getPathSize() {
-        return shortestPaths == null ? 0 : shortestPaths.size();
-    }
-
-    /**
-     * Returns the shortest path as a string reprasentation.
-     * 
-     * @return The string with all elements of the path seperated by comma
-     */
-    public String printShortestPath() {
-        if (shortestPaths == null) {
-            return "";
-        }
-        Iterator pathIter = shortestPaths.iterator();
-        Object o;
-        StringBuffer hv = new StringBuffer();
-        while (pathIter.hasNext()) {
-            o = pathIter.next();
-            hv.append(o);
-            if (pathIter.hasNext()) {
-                hv.append(",");
-            }
-        }
-        return hv.toString();
     }
 }
