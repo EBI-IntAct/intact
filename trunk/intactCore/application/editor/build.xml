@@ -183,6 +183,8 @@
         <copy todir="${dest.dir}/${editor.pkg.root}">
             <fileset dir="WEB-INF/config">
                 <include name="*.properties"/>
+                <!-- Exclude the resources for testing -->
+                <exclude name="TestResources.properties"/>
             </fileset>
         </copy>
 
@@ -518,6 +520,10 @@
 
         <!-- Only call this if the temp web dir is present -->
         <antcall target="compile-all"/>
+
+        <!-- Copy resource file required for testing -->
+        <copy todir="${dest.dir}/${editor.pkg.root}"
+            file="WEB-INF/config/TestResources.properties" />
 
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value="${test.class}"/>
