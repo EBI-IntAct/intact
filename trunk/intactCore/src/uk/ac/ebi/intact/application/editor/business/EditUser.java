@@ -22,6 +22,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.util.GoTools;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.beanutils.DynaBean;
+import org.apache.log4j.Logger;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -256,7 +257,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                 myInstitution = (Institution) result.iterator().next();
             }
             catch (IntactException ie) {
-                EditorLogger.log(ie);
+                Logger.getLogger(EditorConstants.LOGGER).info(ie);
             }
         }
         return myInstitution;
