@@ -76,8 +76,7 @@ public class ExperimentDescriptionPersister {
 
 
         // (3) Create a new Experiment
-        final String taxid = experimentDescription.getHostOrganism().getTaxId();
-        final BioSource biosource = HostOrganismChecker.getBioSource( taxid );
+        final BioSource biosource = HostOrganismChecker.getBioSource( experimentDescription.getHostOrganism() );
 
         experiment = new Experiment( helper.getInstitution(),
                                      shortlabel,
