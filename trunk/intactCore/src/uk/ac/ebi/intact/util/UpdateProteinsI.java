@@ -7,30 +7,99 @@
  */
 package uk.ac.ebi.intact.util;
 
-import java.io.*;
-import java.util.*;
 import gnu.regexp.* ;
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
-
-//re: YASP
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.sptr.flatfile.yasp.*;
-import uk.ac.ebi.interfaces.sptr.*;
 
 //re: IntAct OJB
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.*;
-import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
+
+import java.net.URL;
+import java.net.MalformedURLException;
+import java.util.Collection;
+
+import org.apache.log4j.Logger;
 
 
 
 /**
  * Defines the functionality of protein import utilities.
  */
-public interface UpdateProteinsI {
+public abstract class UpdateProteinsI {
 
-   /**
+    protected final static org.apache.log4j.Logger logger = Logger.getLogger("updateProtein");
+
+    protected class UpdateException extends Exception {
+        public UpdateException (String message) {
+            super(message);
+        }
+    }
+
+
+    // cache useful object to avoid redoing queries
+    protected static CvDatabase sptrDatabase;
+    protected static CvDatabase sgdDatabase;
+    protected static CvDatabase goDatabase;
+    protected static Institution myInstitution;
+
+    protected NewtServerProxy newtProxy;
+
+    protected IntactHelper helper = null;
+
+    /**
+     *
+     * @param helper IntactHelper object to access (read/write) the database.
+     * @throws UpdateException
+     */
+    public UpdateProteinsI (IntactHelper helper) throws UpdateException {
+         this.helper = helper;
+
+        try {
+            myInstitution = (Institution) helper.getObjectByLabel(Institution.class, "EBI");
+            if (myInstitution == null) {
+                logger.error ("Unable to find the Institution");
+                throw new UpdateException ("Unable to find the Institution");
+            }
+
+            sgdDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SGD");
+            if (sgdDatabase == null) {
+                logger.error ("Unable to find the SGD database in your IntAct node");
+                throw new UpdateException ("Unable to find the SGD database in your IntAct node");
+            }
+
+            sptrDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR");
+            if (sptrDatabase == null) {
+                logger.error ("Unable to find the SPTR database in your IntAct node");
+                throw new UpdateException ("Unable to find the SPTR database in your IntAct node");
+            }
+
+            goDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "GO");
+            if (goDatabase == null) {
+                logger.error ("Unable to find the GO database in your IntAct node");
+                throw new UpdateException ("Unable to find the GO database in your IntAct node");
+            }
+        } catch (IntactException e) {
+            logger.error (e);
+            throw new UpdateException ("Couldn't find needed object in IntAct, cause: " + e.getMessage());
+        }
+
+        this.helper = helper;
+
+        URL url = null;
+        try {
+            url = new URL("http://www.ebi.ac.uk/newt/display");
+//            url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display");
+        } catch (MalformedURLException e) {
+            logger.error ("Newt URL is invalid", e);
+            throw new UpdateException ("Unable to create Newt proxy, invalid URL: " + url);
+        }
+
+        newtProxy = new NewtServerProxy(url);
+        newtProxy.enableCaching();
+    }
+
+
+    /**
     * Inserts zero or more proteins created from SPTR entries which are retrieved from a URL.
     * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
     * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism,
@@ -41,16 +110,23 @@ public interface UpdateProteinsI {
     * @param taxid      Of all entries retrieved from sourceURL, insert only those which have this
     *                   taxid.
     *                   If taxid is empty, insert all protein objects.
-    * @param helper     IntactHelper object to access (read) the database.
     * @param update     If true, update existing Protein objects according to the retrieved data.
     *                   else, skip existing Protein objects.
     * @return           The number of protein objects created.
     */
+    public abstract int insertSPTrProteins (String sourceUrl,
+                                            String taxid,
+                                            boolean update);
 
-    public int insertSPTrProteins (String sourceUrl,
-                                   String taxid,
-                                   IntactHelper helper,
-                                   boolean update);
+    /**
+     * Inserts zero or more proteins created from SPTR entries which are retrieved from an SPTR Accession number.
+     * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
+     * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism.
+     *
+     * @param proteinAc SPTR Accession number of the protein to insert/update
+     * @return          a set of created/updated protein.
+     */
+    public abstract Collection insertSPTrProteins (String proteinAc);
 
     /**
      * From a given sptr AC, returns a full URL from where a flatfile format SPTR entry
@@ -61,7 +137,7 @@ public interface UpdateProteinsI {
      * @param sptrAC a SPTR AC
      * @return a full URL.
      */
-    public String getUrl (String sptrAC) ;
+    public abstract String getUrl (String sptrAC) ;
 
     /**
      * From a given URL, returns a string of a SPTR entry. 
@@ -69,7 +145,7 @@ public interface UpdateProteinsI {
      * @param url a URL which outputs flatfile of
      * @return a full URL.
      */
-    public String getAnEntry (String url) ;
+    public abstract String getAnEntry (String url) ;
 
     /**
      * from a given string and a given pattern(string), to find all matches. The matched are  
@@ -78,15 +154,15 @@ public interface UpdateProteinsI {
      * @param pattern A string as a pattern.
      * @return A list of matched pattern.
      */
-    public REMatch[] match (String textin, String pattern) ;
+    public abstract REMatch[] match (String textin, String pattern) ;
 
     /**
      * add (not update) a new Xref to the given Annotated object and write it in the database.
      * @param current
      * @param xref
      */
-    public void addNewXref (AnnotatedObject current,
-                            Xref xref) ;
+    public abstract void addNewXref (AnnotatedObject current,
+                                     Xref xref) ;
 
     /**
      * add (not update) a new BioSource to the db and send it back.
@@ -95,70 +171,69 @@ public interface UpdateProteinsI {
      * @param taxId Taxonomy ID
      * @return the newly created BioSource
      */
-    public BioSource addBioSource (Institution institution,
-                                   String orgName,
-                                   String taxId) ;
-
+    public abstract BioSource addBioSource (Institution institution,
+                                            String orgName,
+                                            String taxId) ;
 
     /**
      * Gives the count of created protein
      * @return created protein count
      */
-    public int getCreatedCount () ;
+    public abstract int getCreatedCount () ;
 
     /**
      * Gives the count of updated protein
      * @return updated protein count
      */
-    public int getUpdatedCount () ;
+    public abstract int getUpdatedCount () ;
 
     /**
      * Gives the count of up-to-date protein
      * (i.e. existing in IntAct but don't need to be updated)
      * @return up-to-date protein count
      */
-    public int getUpToDateCount () ;
+    public abstract int getUpToDateCount () ;
 
     /**
      * Gives the count of all potential protein
      * (i.e. for an SPTREntry, we can create/update several IntAct protein. One by entry's taxid)
      * @return potential protein count
      */
-    public int getProteinCount () ;
+    public abstract int getProteinCount () ;
 
     /**
      * Gives the count of protein which gaves us errors during the processing.
      * @return
      */
-    public int getProteinSkippedCount () ;
+    public abstract int getProteinSkippedCount () ;
 
     /**
      * Gives the number of entry found in the given URL
      * @return entry count
      */
-    public int getEntryCount () ;
+    public abstract int getEntryCount () ;
 
     /**
      * Gives the number of entry successfully processed.
      * @return entry successfully processed count.
      */
-    public int getEntryProcessededCount () ;
+    public abstract int getEntryProcessededCount () ;
 
     /**
      * Gives the number of entry skipped during the process.
      * @return skipped entry count.
      */
-    public int getEntrySkippedCount () ;
+    public abstract int getEntrySkippedCount () ;
 
     /**
      * Allows to displays on the screen what's going on during the update process.
      * @param debug <b>true</b> to enable, <b>false</b> to disable
      */
-    public void setDebugOnScreen (boolean debug);
+    public abstract void setDebugOnScreen (boolean debug);
 
     /**
      * return the filename in which have been saved all Entries which gaves us processing errors.
      * @return the filename or null if not existing
      */
-    public String getErrorFileName ();
+    public abstract String getErrorFileName ();
 }
