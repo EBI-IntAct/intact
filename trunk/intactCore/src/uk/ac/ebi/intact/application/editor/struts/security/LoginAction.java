@@ -10,8 +10,6 @@ import java.io.IOException;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinEditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.model.Constants;
@@ -60,15 +58,6 @@ public class LoginAction extends AbstractEditorAction {
         DynaActionForm theForm = (DynaActionForm) form;
         String username = (String) theForm.get("username");
         String password = (String) theForm.get("password");
-
-        // Validate the form parameters as we are using dynamic form.
-        if (username == null || username.length() < 1) {
-            ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("global.required", "username"));
-            super.saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
 
         // Save the context to avoid repeat calls.
         ServletContext ctx = super.getServlet().getServletContext();
