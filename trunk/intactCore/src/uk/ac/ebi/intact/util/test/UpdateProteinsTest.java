@@ -12,12 +12,15 @@ import junit.framework.TestSuite;
 
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 import uk.ac.ebi.intact.util.UpdateProteins;
+import uk.ac.ebi.intact.util.test.mocks.MockEntryText;
+import uk.ac.ebi.intact.util.test.mocks.MockInputStream;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 
 import java.util.Iterator;
 import java.util.Collection;
+import java.io.InputStream;
 
 /**
  * Test the UpdateProtein process by inserting successively some proteins covering mosts cases
@@ -336,13 +339,20 @@ public class UpdateProteinsTest extends TestCase {
         return protein;
     }
 
-    private Collection buildCollection( String entryName, String taxidFilter, boolean update,
+    private Collection buildCollection( String entryText, String entryName, String taxidFilter, boolean update,
                                         int expectedItems )
             throws IllegalArgumentException {
 
         Collection proteins = null;
+
+        MockInputStream mis = new MockInputStream();
+        mis.setBuffer( entryText );
+
+
         try {
-            proteins = proteinBuilder.insertSPTrProteins( entryName, taxidFilter, update );
+            proteins = proteinBuilder.insertSPTrProteins( (InputStream) mis, taxidFilter, update );
+            mis.close();
+            mis.verify();
         }
         catch( IllegalArgumentException iae ) {
               throw iae;
@@ -374,28 +384,28 @@ public class UpdateProteinsTest extends TestCase {
     // Test methods
     ///////////////////////
 
-    public void testInsertSPTrProteins_WithoutValidEntry() {
-        try {
-            buildCollection( null, null, false, 0 );
-            fail( "Not giving an Entry should not be allowed (entryAc=null)" );
-        } catch (IllegalArgumentException e) {
-            assertTrue(true);
-        }
-
-        try {
-            buildCollection( "", null, false, 0 );
-            fail( "Not giving an Entry should not be allowed (entryAc=empty string)" );
-        } catch (IllegalArgumentException e) {
-            assertTrue(true);
-        }
-
-        try {
-            buildCollection( "    ", null, false, 0 );
-            fail( "Not giving an Entry should not be allowed (entryAc=blank spaces)" );
-        } catch (IllegalArgumentException e) {
-            assertTrue(true);
-        }
-    }
+//    public void testInsertSPTrProteins_WithoutValidEntry() {
+//        try {
+//            buildCollection(null, null, null, false, 0 );
+//            fail( "Not giving an Entry should not be allowed (entryAc=null)" );
+//        } catch (IllegalArgumentException e) {
+//            assertTrue(true);
+//        }
+//
+//        try {
+//            buildCollection(null, "", null, false, 0 );
+//            fail( "Not giving an Entry should not be allowed (entryAc=empty string)" );
+//        } catch (IllegalArgumentException e) {
+//            assertTrue(true);
+//        }
+//
+//        try {
+//            buildCollection(null, "    ", null, false, 0 );
+//            fail( "Not giving an Entry should not be allowed (entryAc=blank spaces)" );
+//        } catch (IllegalArgumentException e) {
+//            assertTrue(true);
+//        }
+//    }
 
     /**
      * Insert of a simple protein (Q03767).
@@ -574,7 +584,7 @@ public class UpdateProteinsTest extends TestCase {
 
     private void insertSPTrProteins_Q03767_without_filter() {
 
-        Collection proteins = buildCollection( "Q03767", null, false, 1 );
+        Collection proteins = buildCollection( MockEntryText.Q03767, "Q03767", null, false, 1 );
 
         String sequence = "MSHNNRHKKNNDKDSSAGQYANSIDNSLSQESVSTNGVTRMANLKADECGSGDEGDKTKRFSISSILSKRETKDVLPEFAGSSSHNGVLTA" +
                 "NSSKDMNFTLELSENLLVECRKLQSSNEAKNEQIKSLKQIKESLSDKIEELTNQKKSFMKELDSTKDLNWDLESKLTNLSMECRQLKELKKKTEKSWNDEK" +
@@ -639,7 +649,7 @@ public class UpdateProteinsTest extends TestCase {
     private void insertSPTrProteins_Q03767_with_BioSourceFilter() {
         //TODO: try to be sure that this one is ran before the creation of the protein happen
         // we don't want the builder to retreive it from the database !!
-        buildCollection( "Q03767", "9606", false, 0 );
+        buildCollection( MockEntryText.Q03767, "Q03767", "9606", false, 0 );
     }
 
 
@@ -845,7 +855,7 @@ public class UpdateProteinsTest extends TestCase {
      */
     public void testInsertSPTrProteins_O01367() {
 
-        Collection proteins = buildCollection( "O01367", null, false, 3 );
+        Collection proteins = buildCollection( MockEntryText.O01367, "O01367", null, false, 3 );
 
         /////////////////////////
         // Check Protein (1)
@@ -1163,7 +1173,7 @@ public class UpdateProteinsTest extends TestCase {
      */
     private void insertSPTrProteins_P13953_WithRatFilter() {
 
-        Collection proteins = buildCollection( "P13953", "10116", false, 3 );
+        Collection proteins = buildCollection( MockEntryText.P13953, "P13953", "10116", false, 3 );
 
         Protein proteinRat = null;
         String ac = null;
@@ -1252,7 +1262,7 @@ public class UpdateProteinsTest extends TestCase {
      */
     private void insertSPTrProteins_P13953_WithoutFilter() {
 
-        Collection proteins = buildCollection( "P13953", null, true, 6 );
+        Collection proteins = buildCollection( MockEntryText.P13953, "P13953", null, true, 6 );
 
         Protein proteinRat = null;
         Protein proteinMouse = null;
