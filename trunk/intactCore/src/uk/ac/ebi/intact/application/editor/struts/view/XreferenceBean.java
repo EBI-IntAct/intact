@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view;
 
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
@@ -36,6 +37,11 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
      * The pattern to replace the ac.
      */
     private static Pattern ourSearchUrlPat = Pattern.compile("\\$\\{ac\\}");
+
+    /**
+     * The helper to get the primary id link.
+     */
+    private XrefHelper myXrefHelper = new XrefHelper();
 
     /**
      * Reference to the Xref object this instance is created with.
@@ -131,28 +137,16 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
         if (myXref == null) {
             return myPrimaryId;
         }
-        // Null to indicate that there is no search-url in the annotations.
-        String searchUrl = null;
 
-        // Loop through annotations looking for search-url.
-        Collection annots = myXref.getCvDatabase().getAnnotations();
-        for (Iterator iter = annots.iterator(); iter.hasNext(); ) {
-            Annotation annot = (Annotation) iter.next();
-            if (annot.getCvTopic().getShortLabel().equals("search-url")){
-                // save searchUrl for future use
-                searchUrl = annot.getAnnotationText();
-                break;
-            }
+        // The primary id link.
+        String link = myXrefHelper.getPrimaryIdLink(myXref);
+
+        // javascipt to display the link is only for a valid link.
+        if (link.startsWith("http://")) {
+            return "<a href=\"" + "javascript:showXrefPId('" + link + "')\"" + ">"
+                    + myPrimaryId + "</a>";
         }
-        if (searchUrl == null) {
-            // No links
-            return myPrimaryId;
-        }
-        Matcher matcher = ourSearchUrlPat.matcher(searchUrl);
-        // After replacing the ac with primary id.
-        searchUrl = matcher.replaceAll(myPrimaryId);
-        return "<a href=\"" + "javascript:showXrefPId('" + searchUrl + "')\"" + ">"
-                + myPrimaryId + "</a>";
+        return link;
     }
 
     /**
