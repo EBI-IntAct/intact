@@ -57,7 +57,7 @@
 
                     <td class="tableCell">
                         <html:submit indexed="true" property="cmd"
-                            titleKey="interaction.exp.button.del.titleKey">
+                            titleKey="int.exp.button.del.titleKey">
                             <bean:message key="button.delete"/>
                         </html:submit>
                     </td>

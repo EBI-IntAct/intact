@@ -24,12 +24,12 @@
         </tr>
         <tr class="tableRowEven">
             <td class="tableCell">
-                <html:submit titleKey="interaction.exp.button.recent.titleKey">
-                    <bean:message key="interaction.exp.button.recent"/>
+                <html:submit titleKey="int.exp.button.recent.titleKey">
+                    <bean:message key="int.exp.button.recent"/>
                 </html:submit>
             </td>
             <td class="tableCell">
-                <html:submit titleKey="biosource.taxid.button.titleKey">
+                <html:submit titleKey="int.exps.button.search.titleKey">
                     <bean:message key="button.search"/>
                 </html:submit>
             </td>

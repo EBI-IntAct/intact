@@ -56,15 +56,15 @@
 
                     <td class="tableCell">
                         <html:submit indexed="true" property="cmd"
-                            titleKey="interaction.exp.button.add.titleKey">
+                            titleKey="int.exp.button.add.titleKey">
                             <bean:message key="button.add"/>
                         </html:submit>
                     </td>
 
                     <td class="tableCell">
                         <html:submit indexed="true" property="cmd"
-                            titleKey="interaction.exp.button.hide.titleKey">
-                            <bean:message key="interaction.exp.button.hide"/>
+                            titleKey="int.exp.button.hide.titleKey">
+                            <bean:message key="int.exp.button.hide"/>
                         </html:submit>
                     </td>
 
