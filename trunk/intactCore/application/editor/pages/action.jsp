@@ -25,7 +25,7 @@
 
 <table class="table" width="100%" cellspacing="1" cellpadding="2">
     <tr class="tableRowOdd">
-        <td align="center" bgcolor="palegreen">
+        <td align="center" bgcolor="green">
             <html:submit property="dispatch">
                 <bean:message key="button.submit"/>
             </html:submit>
@@ -34,7 +34,7 @@
 
         <td align="center" bgcolor="palegreen">
             <html:submit property="dispatch">
-                <bean:message key="button.save"/>
+                <bean:message key="button.save.continue"/>
             </html:submit>
             <br/>Saves the changes to the database
         </td>
