@@ -14,9 +14,12 @@ import java.util.*;
  */
 public abstract class AnnotatedObject extends BasicObject {
 
-    ///////////////////////////////////////
+    /////////////////////////////////
     //attributes
 
+
+    //attributes used for mapping BasicObjects - project synchron
+    protected String curatorAc;
 
     /**
      * Short name for the object, not necessarily unique. To be used for example
@@ -138,6 +141,15 @@ public abstract class AnnotatedObject extends BasicObject {
         boolean removed = this.reference.remove(reference);
         if (removed) reference.removeAnnotatedObject(this);
     }
+
+    //attributes used for mapping BasicObjects - project synchron
+    public String getCuratorAc() {
+        return this.curatorAc;
+    }
+    public void setCuratorAc(String ac) {
+        this.curatorAc = ac;
+    }
+
 
     ///////////////////////////////////////
     // instance methods
