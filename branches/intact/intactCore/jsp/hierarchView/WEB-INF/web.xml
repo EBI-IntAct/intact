@@ -96,7 +96,7 @@
   <!-- Declaration of the Image generator servlet -->
   <servlet>
     <servlet-name>GenerateImage</servlet-name>
-    <servlet-class>uk.ac.ebi.intact.core.application.hierarchView.business.servlet.GenerateImage</servlet-class>
+    <servlet-class>uk.ac.ebi.intact.application.hierarchView.business.servlet.GenerateImage</servlet-class>
   </servlet>
  
   <servlet-mapping>

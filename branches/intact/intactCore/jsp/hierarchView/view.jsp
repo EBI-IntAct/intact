@@ -2,13 +2,13 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
 
-<%@ page import="uk.ac.ebi.intact.core.application.hierarchView.highlightment.*" %>
-<%@ page import="uk.ac.ebi.intact.core.application.hierarchView.business.graph.*" %>
-<%@ page import="uk.ac.ebi.intact.core.application.hierarchView.struts.Constants" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.*" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.graph.*" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.Constants" %>
 
-<%@ page import="uk.ac.ebi.intact.core.application.hierarchView.business.OptionGenerator" %>
-<%@ page import="uk.ac.ebi.intact.core.application.hierarchView.business.PropertyLoader" %>
-<%@ page import="uk.ac.ebi.intact.core.application.hierarchView.business.image.ImageBean" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.OptionGenerator" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean" %>
 <%@ page import="java.util.ArrayList" %>
 <%@page import="java.io.*" %>
 <%@page import="java.util.Properties"%>

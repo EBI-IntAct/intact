@@ -19,8 +19,8 @@ INSTALLATION
   parameters for the database you are using. IntAct has been tested
   under Oracle 8.1.6 and PostGres 7.2.
 - edit the file config/OJB.properties. You need to uncomment either
-  SequenceManagerClass=uk.ac.ebi.intact.core.persistence.PostgresSequenceManager or
-  SequenceManagerClass=uk.ac.ebi.intact.core.persistence.DbSequenceManager (for Oracle).
+  SequenceManagerClass=uk.ac.ebi.intact.persistence.PostgresSequenceManager or
+  SequenceManagerClass=uk.ac.ebi.intact.persistence.DbSequenceManager (for Oracle).
 
 
 BUILD:

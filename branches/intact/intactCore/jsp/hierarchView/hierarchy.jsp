@@ -2,10 +2,10 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
 
-<%@ page import="uk.ac.ebi.intact.core.application.hierarchView.highlightment.source.*" %>
-<%@ page import="uk.ac.ebi.intact.core.application.hierarchView.struts.Constants" %>
-<%@ page import="uk.ac.ebi.intact.core.application.hierarchView.struts.*"%>
-<%@ page import="uk.ac.ebi.intact.core.application.hierarchView.business.PropertyLoader" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.*" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.Constants" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.*"%>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader" %>
 
 <%@page import="java.util.Collection" %>
 <%@page import="java.util.Iterator" %>

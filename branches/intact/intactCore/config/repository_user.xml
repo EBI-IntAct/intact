@@ -4,51 +4,51 @@
 -->
 
 <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.BasicObject"
+	  class="uk.ac.ebi.intact.model.BasicObject"
 >
-       <extent-class class-ref="uk.ac.ebi.intact.core.model.Annotation"/>
-       <extent-class class-ref="uk.ac.ebi.intact.core.model.IntactNode"/>
-       <extent-class class-ref="uk.ac.ebi.intact.core.model.Institution"/>
-       <extent-class class-ref="uk.ac.ebi.intact.core.model.Component"/>
-       <extent-class class-ref="uk.ac.ebi.intact.core.model.Xref"/>
-       <extent-class class-ref="uk.ac.ebi.intact.core.model.AnnotatedObject"/>
+       <extent-class class-ref="uk.ac.ebi.intact.model.Annotation"/>
+       <extent-class class-ref="uk.ac.ebi.intact.model.IntactNode"/>
+       <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/>
+       <extent-class class-ref="uk.ac.ebi.intact.model.Component"/>
+       <extent-class class-ref="uk.ac.ebi.intact.model.Xref"/>
+       <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObject"/>
 </class-descriptor>
 
 
 <class-descriptor
-       class="uk.ac.ebi.intact.core.model.AnnotatedObject"
+       class="uk.ac.ebi.intact.model.AnnotatedObject"
 >
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.BioSource"/>
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.Experiment"/>
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.Interactor"/>
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.CvObject"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.BioSource"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Experiment"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Interactor"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvObject"/>
 </class-descriptor>
 
 
 <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.CvObject"
+	  class="uk.ac.ebi.intact.model.CvObject"
 >
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.CvComponentRole" />
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.CvInteractionType" />
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.CvDatabase" />
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.CvXrefQualifier" />
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.CvTopic" />
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.CvIdentification" />
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.CvInteraction" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvComponentRole" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvInteractionType" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvDatabase" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvXrefQualifier" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvTopic" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvIdentification" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvInteraction" />
 </class-descriptor>
 
 <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.Interactor"
+	  class="uk.ac.ebi.intact.model.Interactor"
 >
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.Interaction" />
-    <extent-class class-ref="uk.ac.ebi.intact.core.model.Protein" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.Interaction" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.Protein" />
 </class-descriptor>
 
 
 
 
 <class-descriptor
-    class="uk.ac.ebi.intact.core.model.Protein"
+    class="uk.ac.ebi.intact.model.Protein"
     table="Interactor"
 >
       <!-- ***************** fields from superclasses ********************* -->
@@ -123,7 +123,7 @@
       <!--  The self-reference seems to cause severe problems for OJB. Left out for now.
       <reference-descriptor
          name="formOf"
-         class-ref="uk.ac.ebi.intact.core.model.Protein"
+         class-ref="uk.ac.ebi.intact.model.Protein"
       >
          <foreignkey field-id-ref="12"/>
       </reference-descriptor>
@@ -132,7 +132,7 @@
 
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
@@ -140,7 +140,7 @@
 
       <reference-descriptor
          name="bioSource"
-         class-ref="uk.ac.ebi.intact.core.model.BioSource"
+         class-ref="uk.ac.ebi.intact.model.BioSource"
       >
          <!-- key from a BioSource to an Interactor -->
          <foreignkey field-id-ref="8"/>
@@ -149,7 +149,7 @@
        <!-- fields from AnnotatedObject (intactCore only) -->
      <collection-descriptor
          name="xref"
-         element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+         element-class-ref="uk.ac.ebi.intact.model.Xref"
      >
 
          <inverse-foreignkey field-id-ref="10"/>
@@ -159,7 +159,7 @@
             table Obj2Annot..... -->
      <collection-descriptor
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          proxy="true"
          indirection-table="OBJ2ANNOT"
 
@@ -171,7 +171,7 @@
      <collection-descriptor
      proxy="true"
          name="activeInstance"
-         element-class-ref="uk.ac.ebi.intact.core.model.Component"
+         element-class-ref="uk.ac.ebi.intact.model.Component"
       >
         <inverse-foreignkey field-id-ref="6"/>
       </collection-descriptor>
@@ -182,7 +182,7 @@
 
    <!-- descriptor for Interaction.....-->
    <class-descriptor
-      class="uk.ac.ebi.intact.core.model.Interaction"
+      class="uk.ac.ebi.intact.model.Interaction"
       table="Interactor"
    >
 
@@ -254,21 +254,21 @@
 
     <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
 
      <reference-descriptor
          name="cvInteractionType"
-         class-ref="uk.ac.ebi.intact.core.model.CvInteractionType"
+         class-ref="uk.ac.ebi.intact.model.CvInteractionType"
       >
          <foreignkey field-id-ref="9"/>
       </reference-descriptor>
 
      <reference-descriptor
          name="bioSource"
-         class-ref="uk.ac.ebi.intact.core.model.BioSource"
+         class-ref="uk.ac.ebi.intact.model.BioSource"
       >
          <foreignkey field-id-ref="8"/>
     </reference-descriptor>
@@ -277,7 +277,7 @@
       <collection-descriptor
       proxy="true"
          name="xref"
-         element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+         element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
        <inverse-foreignkey field-id-ref="10"/>
       </collection-descriptor>
@@ -287,7 +287,7 @@
      <collection-descriptor
          proxy="true"
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="OBJ2ANNOT"
       >
          <fk-pointing-to-this-class column="interactor_ac"/>
@@ -299,7 +299,7 @@
     <collection-descriptor
       proxy="true"
          name="experiment"
-         element-class-ref="uk.ac.ebi.intact.core.model.Experiment"
+         element-class-ref="uk.ac.ebi.intact.model.Experiment"
          indirection-table="INT2EXP"
       >
          <fk-pointing-to-this-class column="interaction_ac"/>
@@ -312,7 +312,7 @@
      <collection-descriptor
          proxy="true"
          name="activeInstance"
-         element-class-ref="uk.ac.ebi.intact.core.model.Component"
+         element-class-ref="uk.ac.ebi.intact.model.Component"
       >
          <inverse-foreignkey field-id-ref="6"/>
       </collection-descriptor>
@@ -321,7 +321,7 @@
       <collection-descriptor
          proxy="true"
          name="component"
-         element-class-ref="uk.ac.ebi.intact.core.model.Component"
+         element-class-ref="uk.ac.ebi.intact.model.Component"
       >
          <inverse-foreignkey field-id-ref="7"/>
       </collection-descriptor>
@@ -336,7 +336,7 @@
 
 <!-- Definitions for Experiment -->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.Experiment"
+	  class="uk.ac.ebi.intact.model.Experiment"
 	  table="Experiment"
    >
 
@@ -407,35 +407,35 @@
       <!-- used for class identification - OJB uses it directly -->
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
 
       <reference-descriptor
          name="bioSource"
-         class-ref="uk.ac.ebi.intact.core.model.BioSource"
+         class-ref="uk.ac.ebi.intact.model.BioSource"
       >
          <foreignkey field-id-ref="7"/>
       </reference-descriptor>
 
       <reference-descriptor
          name="relatedExperiment"
-         class-ref="uk.ac.ebi.intact.core.model.Experiment"
+         class-ref="uk.ac.ebi.intact.model.Experiment"
       >
          <foreignkey field-id-ref="10"/>
       </reference-descriptor>
 
       <reference-descriptor
          name="cvIdentification"
-         class-ref="uk.ac.ebi.intact.core.model.CvIdentification"
+         class-ref="uk.ac.ebi.intact.model.CvIdentification"
       >
          <foreignkey field-id-ref="9"/>
       </reference-descriptor>
 
       <reference-descriptor
          name="cvInteraction"
-         class-ref="uk.ac.ebi.intact.core.model.CvInteraction"
+         class-ref="uk.ac.ebi.intact.model.CvInteraction"
       >
          <foreignkey field-id-ref="8"/>
       </reference-descriptor>
@@ -444,7 +444,7 @@
       <collection-descriptor
       proxy="true"
          name="xref"
-         element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+         element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
           <inverse-foreignkey field-id-ref="10"/>
       </collection-descriptor>
@@ -454,7 +454,7 @@
       <collection-descriptor
       proxy="true"
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="OBJ2ANNOT"
       >
          <fk-pointing-to-this-class column="experiment_ac"/>
@@ -467,7 +467,7 @@
      <collection-descriptor
      proxy="true"
          name="interaction"
-         element-class-ref="uk.ac.ebi.intact.core.model.Interaction"
+         element-class-ref="uk.ac.ebi.intact.model.Interaction"
          indirection-table="INT2EXP"
       >
          <fk-pointing-to-this-class column="experiment_ac"/>
@@ -483,7 +483,7 @@
 
    <!-- Definitions for Biosource -->
   <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.BioSource"
+	  class="uk.ac.ebi.intact.model.BioSource"
       table="BioSource"
    >
      <field-descriptor id="1"
@@ -530,7 +530,7 @@
 
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
 
       >
          <foreignkey field-id-ref="2"/>
@@ -539,7 +539,7 @@
      <collection-descriptor
             proxy="true"
             name="xref"
-            element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+            element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
         <inverse-foreignkey field-id-ref="10"/>
       </collection-descriptor>
@@ -548,7 +548,7 @@
    <collection-descriptor
          proxy="true"
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="OBJ2ANNOT"
       >
          <fk-pointing-to-this-class column="biosource_ac"/>
@@ -569,7 +569,7 @@
         to AnnotatedObject and Experiment
    -->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.Annotation"
+	  class="uk.ac.ebi.intact.model.Annotation"
 
 	  table="Annotation"
    >
@@ -622,7 +622,7 @@
       <!-- references to other classes -->
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
 
       >
          <foreignkey field-id-ref="2"/>
@@ -630,7 +630,7 @@
 
    <reference-descriptor
          name="cvTopic"
-         class-ref="uk.ac.ebi.intact.core.model.CvTopic"
+         class-ref="uk.ac.ebi.intact.model.CvTopic"
       >
          <foreignkey field-id-ref="6"/>
       </reference-descriptor>
@@ -645,7 +645,7 @@
 
    <!-- Definitions for Institution -->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.Institution"
+	  class="uk.ac.ebi.intact.model.Institution"
 	  table="Institution"
    >
    <!-- *********** fields identical to BasicObject ************** -->
@@ -698,7 +698,7 @@
 
 <!-- Definitions for IntactNode -->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.IntactNode"
+	  class="uk.ac.ebi.intact.model.IntactNode"
 	  table="IntactNode"
    >
       <field-descriptor id="1"
@@ -762,7 +762,7 @@
 
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="11"/>
       </reference-descriptor>
@@ -778,7 +778,7 @@
 
    <!-- Definitions for Xref -->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.Xref"
+	  class="uk.ac.ebi.intact.model.Xref"
 
 	  table="Xref"
    >
@@ -847,21 +847,21 @@
 
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
 
       <reference-descriptor
          name="cvXrefQualifier"
-         class-ref="uk.ac.ebi.intact.core.model.CvXrefQualifier"
+         class-ref="uk.ac.ebi.intact.model.CvXrefQualifier"
       >
          <foreignkey field-id-ref="7"/>
       </reference-descriptor>
 
       <reference-descriptor
          name="cvDatabase"
-         class-ref="uk.ac.ebi.intact.core.model.CvDatabase"
+         class-ref="uk.ac.ebi.intact.model.CvDatabase"
       >
          <foreignkey field-id-ref="8"/>
       </reference-descriptor>
@@ -877,7 +877,7 @@
 
    <!-- Definitions for Component -->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.Component"
+	  class="uk.ac.ebi.intact.model.Component"
       table="Component"
    >
 
@@ -947,35 +947,35 @@
       <!-- other reference descriptors for related classes-->
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
 
      <reference-descriptor
          name="interactor"
-         class-ref="uk.ac.ebi.intact.core.model.Interactor"
+         class-ref="uk.ac.ebi.intact.model.Interactor"
       >
          <foreignkey field-id-ref="6"/>
       </reference-descriptor>
 
       <reference-descriptor
          name="interaction"
-         class-ref="uk.ac.ebi.intact.core.model.Interaction"
+         class-ref="uk.ac.ebi.intact.model.Interaction"
       >
          <foreignkey field-id-ref="7"/>
       </reference-descriptor>
 
      <reference-descriptor
          name="expressedIn"
-         class-ref="uk.ac.ebi.intact.core.model.BioSource"
+         class-ref="uk.ac.ebi.intact.model.BioSource"
       >
          <foreignkey field-id-ref="9"/>
       </reference-descriptor>
 
       <reference-descriptor
          name="cvComponentRole"
-         class-ref="uk.ac.ebi.intact.core.model.CvComponentRole"
+         class-ref="uk.ac.ebi.intact.model.CvComponentRole"
       >
          <foreignkey field-id-ref="8"/>
       </reference-descriptor>
@@ -991,7 +991,7 @@
 
 <!-- Definitions for CvXrefQualifier....-->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.CvXrefQualifier"
+	  class="uk.ac.ebi.intact.model.CvXrefQualifier"
 
 	  table="ControlledVocab"
    >
@@ -1046,7 +1046,7 @@
 
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
@@ -1056,7 +1056,7 @@
     <collection-descriptor
     proxy="true"
          name="xref"
-         element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+         element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="7"/>
       </collection-descriptor>
@@ -1066,7 +1066,7 @@
       <collection-descriptor
       proxy="true"
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="OBJ2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
@@ -1078,7 +1078,7 @@
 
 <!-- Definitions for CvDatabase....-->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.CvDatabase"
+	  class="uk.ac.ebi.intact.model.CvDatabase"
 
 	  table="ControlledVocab"
    >
@@ -1134,7 +1134,7 @@
 
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
@@ -1142,7 +1142,7 @@
     <collection-descriptor
     proxy="true"
          name="xref"
-         element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+         element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="8"/>
       </collection-descriptor>
@@ -1152,7 +1152,7 @@
      <collection-descriptor
      proxy="true"
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="OBJ2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
@@ -1167,7 +1167,7 @@
 
 -->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.CvTopic"
+	  class="uk.ac.ebi.intact.model.CvTopic"
 
 	  table="ControlledVocab"
    >
@@ -1223,7 +1223,7 @@
 
     <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
@@ -1233,7 +1233,7 @@
       <collection-descriptor
       proxy="true"
          name="xref"
-         element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+         element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="10"/>
       </collection-descriptor>
@@ -1243,7 +1243,7 @@
      <collection-descriptor
      proxy="true"
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="OBJ2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
@@ -1254,7 +1254,7 @@
 
 <!-- Definitions for CvInteractionType....-->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.CvInteractionType"
+	  class="uk.ac.ebi.intact.model.CvInteractionType"
 	  table="ControlledVocab"
    >
 
@@ -1309,7 +1309,7 @@
 
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
@@ -1319,7 +1319,7 @@
       <collection-descriptor
       proxy="true"
          name="xref"
-         element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+         element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="10"/>
       </collection-descriptor>
@@ -1329,7 +1329,7 @@
      <collection-descriptor
      proxy="true"
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="OBJ2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
@@ -1340,7 +1340,7 @@
 
 <!-- Definitions for CvInteraction....-->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.CvInteraction"
+	  class="uk.ac.ebi.intact.model.CvInteraction"
 	  table="ControlledVocab"
    >
 
@@ -1394,7 +1394,7 @@
 
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
@@ -1404,7 +1404,7 @@
       <collection-descriptor
       proxy="true"
          name="xref"
-         element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+         element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="10"/>
       </collection-descriptor>
@@ -1414,7 +1414,7 @@
      <collection-descriptor
      proxy="true"
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="OBJ2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
@@ -1425,7 +1425,7 @@
 
 <!-- Definitions for CvIdentification....-->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.CvIdentification"
+	  class="uk.ac.ebi.intact.model.CvIdentification"
 	  table="ControlledVocab"
    >
 
@@ -1479,7 +1479,7 @@
 
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
@@ -1489,7 +1489,7 @@
       <collection-descriptor
       proxy="true"
          name="xref"
-         element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+         element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="10"/>
       </collection-descriptor>
@@ -1499,7 +1499,7 @@
     <collection-descriptor
     proxy="true"
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="OBJ2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
@@ -1510,7 +1510,7 @@
 
 <!-- Definitions for CvComponentRole....-->
    <class-descriptor
-	  class="uk.ac.ebi.intact.core.model.CvComponentRole"
+	  class="uk.ac.ebi.intact.model.CvComponentRole"
 	  table="ControlledVocab"
    >
 
@@ -1563,7 +1563,7 @@
 
       <reference-descriptor
          name="owner"
-         class-ref="uk.ac.ebi.intact.core.model.Institution"
+         class-ref="uk.ac.ebi.intact.model.Institution"
       >
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
@@ -1573,7 +1573,7 @@
      <collection-descriptor
      proxy="true"
          name="xref"
-         element-class-ref="uk.ac.ebi.intact.core.model.Xref"
+         element-class-ref="uk.ac.ebi.intact.model.Xref"
 
       >
          <inverse-foreignkey field-id-ref="10"/>
@@ -1584,7 +1584,7 @@
      <collection-descriptor
      proxy="true"
          name="annotation"
-         element-class-ref="uk.ac.ebi.intact.core.model.Annotation"
+         element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="OBJ2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
