@@ -236,6 +236,7 @@
                 </td>
 
                 <!-- number of Interactions, linked new detail page -->
+                <!-- here 's a bug --> 
                 <td align="center" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <a href="<%= partner.getInteractionsSearchURL()%>"><%= partner.getNumberOfInteractions() %></a>
                 </td>
