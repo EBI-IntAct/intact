@@ -6,12 +6,9 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.statisticView.struts.view;
 
 import org.apache.struts.action.ActionMapping;
-import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
 
 import javax.servlet.http.HttpServletRequest;
-
-import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseForm;
-import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 
 /**
  * Form bean for the main form of the view.jsp page.  
@@ -24,9 +21,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.Constants;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public final class FilterForm extends IntactBaseForm {
-
-    public static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
+public final class FilterForm extends ActionForm {
 
     // --------------------------------------------------- Instance Variables
 
