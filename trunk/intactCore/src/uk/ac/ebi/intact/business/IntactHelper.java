@@ -137,31 +137,32 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      */
     public IntactHelper(DAOSource source) throws IntactException {
-
-        dataSource = source;
-
-        if (source == null) {
-
-            //couldn't get a mapping from the context, so can't search!!
-            String msg = "intact helper: unable to search for any objects - data source required";
-            throw new IntactException(msg);
-
-        }
-
-        //set up a logger
-        pr = dataSource.getLogger();
-
-        //get a DAO so some work can be done!!
-        try {
-
-            dao = dataSource.getDAO();
-        }
-        catch (DataSourceException de) {
-
-            String msg = "intact helper: There was a problem accessing a data store";
-            throw new IntactException(msg, de);
-
-        }
+        this(source, source.getUser(), source.getPassword());
+//
+//        dataSource = source;
+//
+//        if (source == null) {
+//
+//            //couldn't get a mapping from the context, so can't search!!
+//            String msg = "intact helper: unable to search for any objects - data source required";
+//            throw new IntactException(msg);
+//
+//        }
+//
+//        //set up a logger
+//        pr = dataSource.getLogger();
+//
+//        //get a DAO so some work can be done!!
+//        try {
+//
+//            dao = dataSource.getDAO();
+//        }
+//        catch (DataSourceException de) {
+//
+//            String msg = "intact helper: There was a problem accessing a data store";
+//            throw new IntactException(msg, de);
+//
+//        }
     }
 
     /**
