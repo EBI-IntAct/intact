@@ -66,19 +66,34 @@ public final class ClickAction extends IntactBaseAction {
         AC = request.getParameter ("AC");
 
         if ((null == AC) || (AC.trim().length() == 0)) {
-            addError("error.centeredAC.required");
-            saveErrors(request);
-            return (mapping.findForward("error"));
+            /* we display an error page is the network doesn't exists
+             * else just a warning message.
+             */
+            String errorKey = "error.centeredAC.required"; // default is center
+            if (user.clickBehaviourIsAdd()) {
+               errorKey = "error.addAC.required"; // default is center
+            }
+
+            if (user.getInteractionNetwork() == null) {
+                addError (errorKey);
+                saveErrors (request);
+                return (mapping.findForward("error"));
+            } else {
+                addMessage (errorKey);
+                saveMessages (request);
+                // no processing to do ... just redisplay the interaction network.
+                return (mapping.findForward("success"));
+            }
         }
 
         if (user.clickBehaviourIsCenter()) {
-            // Center the view
-
             // Save our data
             user.setInteractionNetwork (null);
             user.setQueryString (AC);
             user.setDepthToDefault();
             user.resetSourceURL();
+
+            // Center the view
 
             // Creation of the graph and the image
             try {
@@ -87,16 +102,6 @@ public final class ClickAction extends IntactBaseAction {
             } catch (MultipleResultException e) {
                 return (mapping.findForward("displayWithSearch"));
             }
-
-            if (false == isErrorsEmpty()) {
-                // Report any errors we have discovered back to the original form
-                saveErrors(request);
-                return (mapping.findForward("error"));
-            }
-
-            // Print debug in the log file
-            logger.info ("CenteredAction: AC=" + AC +
-                    "\nlogged on in session " + session.getId());
 
         } else if (user.clickBehaviourIsAdd()) {
             // Add the network for which the central protein is the one the user clicked
@@ -110,13 +115,23 @@ public final class ClickAction extends IntactBaseAction {
                 // should not happen
                 return (mapping.findForward("displayWithSearch"));
             }
-
-            if (false == isErrorsEmpty()) {
-                // Report any errors we have discovered during the interaction network producing
-                saveErrors(request);
-                return (mapping.findForward("error"));
-            }
         }
+
+
+        if (false == isErrorsEmpty()) {
+            // Report any errors we have discovered during the interaction network producing
+            saveErrors(request);
+            return (mapping.findForward("error"));
+        }
+
+        if (false == isMessagesEmpty()) {
+            // Report any messages we have discovered
+            saveMessages(request);
+        }
+
+        // Print debug in the log file
+        logger.info ("ClickAction: AC=" + AC);
+
 
         // Remove the obsolete form bean
         if (mapping.getAttribute() != null) {

@@ -93,7 +93,9 @@ public final class SearchAction extends IntactBaseAction {
             // Report any errors we have discovered back to the original form
             saveErrors(request);
             return (mapping.findForward("error"));
+
         } else {
+
             if (searchForm.searchSelected()) {
                 user.init();
                 // Save user's data
@@ -122,6 +124,11 @@ public final class SearchAction extends IntactBaseAction {
                 // Report any errors we have discovered during the interaction network producing
                 saveErrors(request);
                 return (mapping.findForward("error"));
+            }
+
+            if (false == isMessagesEmpty()) {
+                // Report any messages we have discovered
+                saveMessages(request);
             }
         }
 

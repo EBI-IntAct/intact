@@ -10,9 +10,13 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseForm;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 
 /**
  * Form bean for the main form of the view.jsp page.  
@@ -122,7 +126,7 @@ public final class SearchForm extends IntactBaseForm {
      * @param request The servlet request we are processing
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
-        this.queryString     = null;
+        this.queryString = null;
         this.method = null;
     } // reset
 
@@ -140,12 +144,38 @@ public final class SearchForm extends IntactBaseForm {
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
 
-        if ((queryString == null) || (queryString.trim().length() == 0)) {
-            addError ("error.queryString.required");
+        HttpSession session = request.getSession(false);
+        boolean networkExists = false;
+
+        // in the case the network already exists and the user ADD with an
+        // EMPTY searchString ... we display a warning MESSAGE instead of ERROR
+        if ((addSelected()) && (null != session)) {
+            IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER_KEY);
+            if (user != null) {
+                if (null != user.getInteractionNetwork()) {
+                    networkExists = true;
+                }
+            }
         }
 
-        if ((method == null) || (method.trim().length() == 0))
-            addError ("error.method.required");
+        if ((queryString == null) || (queryString.trim().length() == 0)) {
+            if (networkExists)
+                 addMessage ("error.queryString.required");
+            else addError ("error.queryString.required");
+        }
+
+        if ((method == null) || (method.trim().length() == 0)) {
+            if (networkExists)
+                 addMessage ("error.method.required");
+            else addError ("error.method.required");
+        }
+
+        if (false == isMessagesEmpty()) {
+            /* save messages in the context, that feature is not included in Struts 1.1
+             * currently it's only possible to manage ActionErrors when validating a form.
+             */
+            saveMessages (request);
+        }
 
         return getErrors();
     }

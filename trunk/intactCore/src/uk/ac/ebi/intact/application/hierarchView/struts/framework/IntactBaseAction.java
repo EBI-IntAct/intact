@@ -19,9 +19,7 @@ import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.business.IntactException;
 
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.*;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +45,13 @@ public abstract class IntactBaseAction extends Action {
 
     /** Error container */
     private ActionErrors myErrors = new ActionErrors();
+
+
+    /** The global Intact message key. */
+    public static final String INTACT_MESSAGE = "IntactMessage";
+
+    /** Message container */
+    private ActionMessages myMessages = new ActionMessages();
 
     /**
      * Says if an IntactUser object is currently available in the session.
@@ -106,6 +111,11 @@ public abstract class IntactBaseAction extends Action {
         return request.getSession(true);
     }
 
+
+
+     /////////////////////
+    // Error management
+
     /**
      * Clear error container.
      */
@@ -162,9 +172,69 @@ public abstract class IntactBaseAction extends Action {
         return myErrors.isEmpty();
     }
 
+
+
+
+
+     //////////////////////
+    // Message management
+
+    /**
+     * Clear Message container.
+     */
+    protected void clearMessages() {
+        if (!myMessages.isEmpty()) {
+            myMessages.clear();
+        }
+    }
+
+    /**
+     * Adds an Message with given key.
+     *
+     * @param key the Message key. This value is looked up in the
+     * Struts.properties bundle.
+     */
+    protected void addMessage (String key) {
+        myMessages.add(INTACT_MESSAGE, new ActionMessage (key));
+//        myMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage (key));
+    }
+
+    /**
+     * Adds an Message with given key and value.
+     *
+     * @param key the Message key. This value is looked up in the
+     * Struts.properties bundle.
+     * @param value the value to substitute for the first place holder in the
+     * Struts.properties bundle.
+     */
+    protected void addMessage (String key, String value) {
+        myMessages.add(INTACT_MESSAGE, new ActionMessage (key, value));
+//        myMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage (key, value));
+    }
+
+    /**
+     * Saves the Messages in given request for <struts:messages> tag.
+     *
+     * @param request the request to save errors.
+     */
+    protected void saveMessages(HttpServletRequest request) {
+        super.saveMessages(request, myMessages);
+        logger.info ("################################ MESSAGES SAVED");
+    }
+
+    /**
+     * Specify if an the Message set is empty.
+     *
+     * @return boolean false is there are any Message registered, else true
+     */
+    protected boolean isMessagesEmpty () {
+        return myMessages.isEmpty();
+    }
+
+
+
+     /////////////////////
     // Helper methods.
-
-
 
     /**
      * Create a new IntactUser and store it in the session.<br>
@@ -288,12 +358,12 @@ public abstract class IntactBaseAction extends Action {
         int depth = user.getCurrentDepth();
 
         StringTokenizer st = new StringTokenizer (queryString, ",");
-        ArrayList queries = new ArrayList(10);
+        ArrayList queries = new ArrayList(30);
         String aQuery;
         while (st.hasMoreElements()) {
-            aQuery = st.nextToken().trim();
+            aQuery = st.nextToken().trim(); // remove front and back blank space
             if (aQuery.length() > 0)
-               queries.add (aQuery); // remove front and back blank space
+               queries.add (aQuery);
         }
         int max = queries.size();
 
@@ -307,23 +377,49 @@ public abstract class IntactBaseAction extends Action {
                 case StrutsConstants.CREATE_INTERACTION_NETWORK:
                     for (int i = 0; i < max; i++) {
                         query = (String) queries.get(i);
-                        in = gh.addInteractionNetwork (in, query, depth);
-                    }
+                        try {
+                            in = gh.addInteractionNetwork (in, query, depth);
+                        } catch (ProteinNotFoundException e) {
+                            addMessage ("warning.protein.notFound", query);
+                            logger.info ("############################################## CRT: Message added 4 " + query);
 
+                            addError   ("error.protein.notFound", query);
+                        }
+
+                        // if no network built, display any errors. Else any messages.
+                        if (in == null) {
+                            clearMessages(); // display errors
+                            logger.info ("############################################## clear Message");
+
+                        } else {
+                            clearErrors();   // display messages
+                            logger.info ("############################################## clear Error");
+
+                        }
+                    }
                     break;
+
 
                 case StrutsConstants.ADD_INTERACTION_NETWORK:
                     in = user.getInteractionNetwork();
                     for (int i = 0; i < max; i++) {
                         query = (String) queries.get(i);
-                        in = gh.addInteractionNetwork (in, query, depth);
+                        try {
+                            in = gh.addInteractionNetwork (in, query, depth);
+                        } catch (ProteinNotFoundException e) {
+                            addMessage ("warning.protein.notFound", query);
+                            logger.info ("############################################## ADD: Message added 4 " + query);
+                        }
                     }
-
                     break;
 
                 case StrutsConstants.UPDATE_INTERACTION_NETWORK:
                     in = user.getInteractionNetwork();
-                    in = gh.updateInteractionNetwork (in, depth);
+                    try {
+                        in = gh.updateInteractionNetwork (in, depth);
+                    } catch (ProteinNotFoundException e) {
+                        addError ("error.protein.notFound", queryString);
+                    }
                     break;
 
                 default:
@@ -331,16 +427,23 @@ public abstract class IntactBaseAction extends Action {
             }
 
             chrono.stop();
-            String msg = "Time for retreiving the interaction network ( " +
-                         in.sizeNodes() + " proteins, " + in.sizeEdges() + " edges) :" +
-                         chrono;
+            String msg = null;
+            if (in == null) {
+                msg = new StringBuffer().append("No interaction network retreived, took ").append (chrono).toString();
+            } else {
+                msg = new StringBuffer().append("Time for retreiving the interaction network ( ").append (
+                        in.sizeNodes()).append(" proteins, ").append(in.sizeEdges()).append(" edges) :").append(
+                        chrono).toString();
+            }
             logger.info(msg);
 
-        } catch (ProteinNotFoundException e) {
-            addError ("error.protein.notFound", queryString);
-            return;
+            if (in == null) {
+                // no protein found
+                return;
+            }
 
-        } catch (SearchException e) {
+
+        }  catch (SearchException e) {
             addError ("error.search.process", e.getMessage());
             return;
 
