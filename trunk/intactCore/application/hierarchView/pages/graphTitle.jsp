@@ -19,6 +19,7 @@
                  java.util.Collection,
                  java.util.Iterator,
                  java.util.ArrayList,
+                 java.util.StringTokenizer,
                  uk.ac.ebi.intact.application.commons.search.CriteriaBean" %>
 
 <%
@@ -27,7 +28,7 @@
      */
     IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
     if (user.getSearchUrl() == null) return ;
-
+	
     InteractionNetwork in = user.getInteractionNetwork();
     if (in == null) return ;
 
@@ -47,11 +48,57 @@
 
     int max = criterias.size();
     // remove the last comma and white space
-    String contextToDisplay = "";
+    StringBuffer contextToDisplay = new StringBuffer();
     if ((max = context.length()) > 0) {
-        contextToDisplay = context.substring (0, max-2);
-    }
+       	Object network = session.getAttribute("network");
+		Object singletons = session.getAttribute("singletons");
+    	String tmp = context.substring (0, max-2);
+    	
+    	if("null".equals(network) && "null".equals(singletons)) {
+	        contextToDisplay.append("Interaction network for ");
+    	    contextToDisplay.append(tmp).append("<br>");
+        }
+        else {
+			String net = "This is the minimal connecting network for ";
+			
+    	    StringTokenizer tokens = new StringTokenizer(network.toString(), ",");
+        	int[] borders = new int[tokens.countTokens()];
+        	int i = 0;
+        	String tok;
+	        while(tokens.hasMoreTokens()) {
+    	      borders[i++] = Integer.parseInt(tokens.nextToken());
+        	}
 
+        	tokens = new StringTokenizer(tmp, ",");
+			contextToDisplay.append(net);
+			i = 1;
+			int j = 0;
+			while(tokens.hasMoreTokens()) {
+				contextToDisplay.append(tokens.nextToken());
+				if(i == borders[j]) {
+				   if(tokens.hasMoreTokens()) {
+				     contextToDisplay.append("<br>" + net);
+				   }
+				   j++;
+				}
+				i++;
+			}
+			if(!"null".equals(singletons)) {
+				contextToDisplay.append("<br>The following proteins are not in "+
+									"a connecting network: "); 
+				tokens = new StringTokenizer(singletons.toString(),",");
+				while(tokens.hasMoreTokens()) {
+				  tok = tokens.nextToken().trim();
+				  contextToDisplay.append(prefix + "shortLabel: ");
+	              contextToDisplay.append("<a href=\"" + user.getSearchUrl(tok, false) + "\"");
+	              contextToDisplay.append(" target=\"_blank\">" + tok + "</a>");
+        		  contextToDisplay.append(suffix + " ");
+        		}
+			}
+		}
+		session.setAttribute("network", "null");
+		session.setAttribute("singletons", "null");
+	}
     String selectedKey = user.getSelectedKey();
     if (selectedKey == null) selectedKey = "";
     else {
@@ -64,13 +111,7 @@
 
       <tr>
              <td>
-                   <!-- displays the interaction network -->
-                   Interaction network for <%= contextToDisplay %>
-
-                   <!-- display the highlight context -->
-                   <%= selectedKey %>
-                   <br>
-                   #nodes:<b><%= in.sizeNodes() %></b>  #edges:<b><%= in.sizeEdges() %></b>
+			 <%= contextToDisplay.toString() %>
              </td>
       </tr>
 
