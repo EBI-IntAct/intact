@@ -24,13 +24,15 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
  * @struts.action path="/interaction"
- * name="expForm"
- * input="edit.layout"
- * scope="session"
- * validate="false"
+ *      name="expForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *
  * @struts.action-forward name="editInt"
- * path="/do/int/link"
+ *      path="/do/int/link"
  */
 public class InteractionAction extends AbstractEditorAction {
 
