@@ -1058,7 +1058,7 @@ CREATE TABLE IA_PubMed
      ,  status                  VARCHAR2(30)
      ,  description             VARCHAR2(100)
 )
-TABLESPACE INTACT_TAB
+TABLESPACE &&intactMainTablespace
 ;
 
 set term on
