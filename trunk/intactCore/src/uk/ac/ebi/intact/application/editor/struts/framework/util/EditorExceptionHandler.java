@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import uk.ac.ebi.intact.application.editor.exception.BaseException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 
 /**
  * Extends the struts default exception handler to Editor specific behaviour.
@@ -52,7 +53,12 @@ public class EditorExceptionHandler extends ExceptionHandler {
         myLogger.info(ex);
 
         // Figure out what type of exception has been thrown.
-        if (ex instanceof BaseException) {
+        if (ex instanceof ValidationException) {
+            ValidationException valex = (ValidationException) ex;
+            property = valex.getFilterKey();
+            error = new ActionError(valex.getMessageKey());
+        }
+        else if (ex instanceof BaseException) {
             // Editor specific exception.
             BaseException baseEx = (BaseException) ex;
             error = new ActionError(baseEx.getMessageKey(), baseEx.getMessage());
