@@ -74,8 +74,15 @@ public class DisplayAction extends Action {
 
         Constants.LOGGER.info( "start minehelper" );
 
-        MineHelper helper = new MineHelper( user );
-
+        MineHelper helper = null;
+        try {
+            helper = new MineHelper( user );
+        }
+        catch ( MineException e3 ) {
+            request.setAttribute( Constants.ERROR, new ErrorBean(
+                    "displayAction.noData" ) );
+            return mapping.findForward( Constants.ERROR );
+        }
         // the network map maps the unique graphid to the accession numbers
         // which are in the graph represented by the graphid
         // Integer -> Collection (related protein ac)
@@ -101,7 +108,7 @@ public class DisplayAction extends Action {
             // if the current search ac are in a graph in the database
             if ( graphid != Constants.SINGLETON_GRAPHID && search.size() > 1 ) {
                 // the shortest path is computed
-                Constants.LOGGER.warn( "searching for MiNe with " + search );
+                Constants.LOGGER.info( "searching for MiNe with " + search );
                 GraphData graphData;
                 // the graphManager is responsible for building and storing the
                 // graphs it is implemented as a singleton so just one instance
@@ -154,8 +161,11 @@ public class DisplayAction extends Action {
         // to the error page
         if ( user.getPaths().isEmpty() ) {
             Constants.LOGGER.warn( "no connecting network found" );
+            // the singletons are wrapped into a string
+            // [1,2,3] -> 1,2,3
             String singletons = user.getSingletons().toString();
             singletons = singletons.substring( 1, singletons.length() - 1 );
+
             request.setAttribute( Constants.ERROR, new ErrorBean( mr
                     .getMessage( "displayAction.noNetwork", singletons ) ) );
             return mapping.findForward( Constants.ERROR );
