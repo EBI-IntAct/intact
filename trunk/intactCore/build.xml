@@ -181,26 +181,6 @@
 
     <!-- =================================================================== -->
 
-    <!-- Sets the oracle test environment. -->
-    <target name="set-ora-d002-env" description="Sets the oracle d002 environment">
-        <echo message="Setting the target environment to oracle d002 database"/>
-        <antcall target="set-ora-env">
-            <param name="ora.properties" value="${ora.props.file.d002}"/>
-        </antcall>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Sets the oracle test environment. -->
-    <target name="set-ora-iweb-env" description="Sets the oracle iweb environment">
-        <echo message="Setting the target environment to oracle iweb database"/>
-        <antcall target="set-ora-env">
-            <param name="ora.properties" value="${ora.props.file.iweb}"/>
-        </antcall>
-    </target>
-
-    <!-- =================================================================== -->
-
     <!-- Convert repository.template to postgres format. -->
     <target name="set-postgres-env" description="Sets postgres environment">
         <echo message="Setting the target environment to local postgres database"/>
@@ -244,22 +224,22 @@
     <!-- =================================================================== -->
 
     <!-- Convert repository.template to oracle format. -->
-    <target name="set-ora-env" description="Sets oracle environment">
+    <target name="set-oracle-env" description="Sets oracle environment">
         <condition property="oracle.property.missing">
             <not>
-                <available file="${ora.properties}"/>
+                <available file="${ora.props.file}"/>
             </not>
         </condition>
 
         <fail if="oracle.property.missing">
-              Unable to find ${ora.properties} file;
+              Unable to find ${ora.props.file} file;
               see template/oracle.template file for the format.
         </fail>
 
         <!-- Copy the template to config directory first -->
         <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
 
-        <replace file="${rep.dest.file}" propertyfile="${ora.properties}">
+        <replace file="${rep.dest.file}" propertyfile="${ora.props.file}">
             <replacefilter token="@DBMS_NAME@" value="Oracle" />
             <replacefilter token="@DRIVER_NAME@" value="oracle.jdbc.pool.OracleConnectionCacheImpl"/>
             <replacefilter token="@URL_SUBPROTOCOL@" property="subprotocol"/>
