@@ -10,7 +10,7 @@ import org.apache.struts.action.*;
 
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.business.IntactServiceIF;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +36,7 @@ public abstract class IntactBaseAction extends Action {
      */
     protected IntactServiceIF getIntactService() {
         IntactServiceIF service = (IntactServiceIF)
-            getApplicationObject(WebIntactConstants.INTACT_SERVICE);
+            getApplicationObject(CvEditConstants.INTACT_SERVICE);
         return service;
     }
 
@@ -56,7 +56,7 @@ public abstract class IntactBaseAction extends Action {
     protected IntactUserIF getIntactUser(HttpServletRequest request)
             throws SessionExpiredException {
         IntactUserIF user = (IntactUserIF)
-            getSessionObject(request,WebIntactConstants.INTACT_USER);
+            getSessionObject(request,CvEditConstants.INTACT_USER);
         if (user == null) {
             throw new SessionExpiredException();
         }
@@ -78,7 +78,7 @@ public abstract class IntactBaseAction extends Action {
     protected IntactUserIF getIntactUser(HttpSession session)
             throws SessionExpiredException {
         IntactUserIF user = (IntactUserIF)
-            session.getAttribute(WebIntactConstants.INTACT_USER);
+            session.getAttribute(CvEditConstants.INTACT_USER);
         if (user == null) {
             throw new SessionExpiredException();
         }
@@ -188,14 +188,14 @@ public abstract class IntactBaseAction extends Action {
      * @param user the user to determine where to go.
      *
      * <pre>
-     * post: return = WebIntactConstants.FORWARD_SEARCH or
-     *                WebIntactConstants.FORWARD_RESULTS
+     * post: return = CvEditConstants.FORWARD_SEARCH or
+     *                CvEditConstants.FORWARD_RESULTS
      * post: return <> Undefined
      * </pre>
      */
     protected String getForwardAction(IntactUserIF user) {
-        return user.hasSingleSearchResult() ? WebIntactConstants.FORWARD_SEARCH :
-                WebIntactConstants.FORWARD_RESULTS;
+        return user.hasSingleSearchResult() ? CvEditConstants.FORWARD_SEARCH :
+                CvEditConstants.FORWARD_RESULTS;
     }
 
     /**
@@ -207,8 +207,8 @@ public abstract class IntactBaseAction extends Action {
      * @see #getForwardAction(IntactUserIF)
      *
      * <pre>
-     * post: return = WebIntactConstants.FORWARD_SEARCH or
-     *                WebIntactConstants.FORWARD_RESULTS
+     * post: return = CvEditConstants.FORWARD_SEARCH or
+     *                CvEditConstants.FORWARD_RESULTS
      * post: return <> Undefined
      * </pre>
      */

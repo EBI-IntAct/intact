@@ -7,7 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.model.*;
@@ -76,7 +76,7 @@ public class CommentAddAction extends IntactBaseAction {
             super.clearErrors();
             super.addError("error.search", se.getMessage());
             super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         // The new annotation to add to database.
         Annotation annot = new Annotation();
@@ -91,6 +91,6 @@ public class CommentAddAction extends IntactBaseAction {
         // Clear previous entries.
         theForm.reset(mapping, request);
 
-        return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
+        return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
     }
 }

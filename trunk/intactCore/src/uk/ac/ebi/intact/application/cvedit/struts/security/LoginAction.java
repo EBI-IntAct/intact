@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.application.cvedit.struts.security;
 import java.io.IOException;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl;
 import uk.ac.ebi.intact.persistence.DataSourceException;
@@ -65,7 +65,7 @@ public class LoginAction extends IntactBaseAction {
             errors.add(ActionErrors.GLOBAL_ERROR,
                 new ActionError("global.required", "username"));
             super.saveErrors(request, errors);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
 
         // Save the context to avoid repeat calls.
@@ -73,7 +73,7 @@ public class LoginAction extends IntactBaseAction {
 
         // Name of the mapping file and data source.
         String repfile = ctx.getInitParameter(Constants.MAPPING_FILE_KEY);
-        String ds = ctx.getInitParameter(WebIntactConstants.DATA_SOURCE);
+        String ds = ctx.getInitParameter(CvEditConstants.DATA_SOURCE);
 
         // Create an instance of IntactService.
         IntactUserIF user = null;
@@ -95,7 +95,7 @@ public class LoginAction extends IntactBaseAction {
             // The errors to report back.
             super.addError("error.datasource", de.getMessage());
             super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         catch (IntactException ie) {
             // Unable to access the intact helper.
@@ -103,7 +103,7 @@ public class LoginAction extends IntactBaseAction {
             // The errors to report back.
             super.addError("error.invalid.user");
             super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         catch (SearchException se) {
             // Unable to construct lists such as topics, db names etc.
@@ -112,15 +112,15 @@ public class LoginAction extends IntactBaseAction {
             super.addError("error.invalid.user");
 //            super.addError("error.search", se.getMessage());
             super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
 //        super.log("Existing session timeout is: " + session.getMaxInactiveInterval());
 //        session.setMaxInactiveInterval(90);
 //        super.log("New session timeout is: " + session.getMaxInactiveInterval());
 
         // Need to access the user later.
-        session.setAttribute(WebIntactConstants.INTACT_USER, user);
+        session.setAttribute(CvEditConstants.INTACT_USER, user);
 
-        return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
+        return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
     }
 }

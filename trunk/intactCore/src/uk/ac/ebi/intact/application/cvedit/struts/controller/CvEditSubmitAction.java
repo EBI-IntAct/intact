@@ -7,7 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBean;
@@ -119,7 +119,7 @@ public class CvEditSubmitAction extends IntactBaseAction {
             // Error with updating.
             super.addError("error.update", ie1.getNestedMessage());
             super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         finally {
             // Clear containers; regradless of the outcome.
