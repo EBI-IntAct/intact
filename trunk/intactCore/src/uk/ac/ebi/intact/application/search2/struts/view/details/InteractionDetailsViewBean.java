@@ -10,10 +10,7 @@ import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 
 import java.io.Writer;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -36,7 +33,7 @@ public class InteractionDetailsViewBean extends DetailsViewBean {
 
     public void getHTML( Writer writer ) {
 
-        Set experiments = new HashSet();
+        HashMap experiments = new HashMap();
 
         // build a collection of distinct experiments from the set of Interactions.
         for (Iterator iterator1 = getWrappedObjects().iterator(); iterator1.hasNext();) {
@@ -44,24 +41,23 @@ public class InteractionDetailsViewBean extends DetailsViewBean {
             Collection localExperiments = interaction.getExperiment();
             for (Iterator iterator2 = localExperiments.iterator(); iterator2.hasNext();) {
                 Experiment experiment = (Experiment) iterator2.next();
-                // add a copy of the experiment
-                experiments.add( createShallowExperiment( experiment ) );
+
+                // If the experiment is not yet processed, add a copy to the current set
+                Experiment shallowCopy = (Experiment) experiments.get(experiment.getAc());
+                if (null == shallowCopy){
+                    shallowCopy = createShallowExperiment( experiment );
+                    experiments.put(experiment.getAc(), shallowCopy);
+                }
+
+                // add the interaction to the shallow experiment
+                shallowCopy.addInteraction(interaction);
             }
-        }
-
-        // for each experiment, limit the interactions to the set wrapped in the bean.
-        for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
-            Experiment experiment = (Experiment) iterator.next();
-
-            Collection interactions = experiment.getInteraction();
-            Collection result = CollectionUtils.intersection(interactions, getWrappedObjects());
-            experiment.setInteraction(result);
         }
 
         // The order is important: initialize the map before resetting the
         // wrapped object or else it will use the short labels of experiments.
         initHighlightMap();
-        setWrappedObjects( experiments );
+        setWrappedObjects( experiments.values() );
 
         // write the HTML content
         super.getHTML( writer );
