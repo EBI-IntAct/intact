@@ -32,22 +32,10 @@
         <param-value>uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource</param-value>
     </context-param>
 
-    <!-- The search link (relative to context root)-->
-    <context-param>
-        <param-name>searchLink</param-name>
-        <param-value>/do/search?searchString=</param-value>
-    </context-param>
-
-    <!-- The help link (relative to context root)-->
-    <context-param>
-        <param-name>helpLink</param-name>
-        <param-value>displayDoc.jsp?section=</param-value>
-    </context-param>
-
-      <!-- Action Servlet Configuration -->
+        <!-- Action Servlet Configuration -->
     <servlet>
         <servlet-name>action</servlet-name>
-        <servlet-class>uk.ac.ebi.intact.application.search2.struts.framework.IntactActionServlet</servlet-class>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
         <init-param>
             <param-name>application</param-name>
             <param-value>/config/IntactResources</param-value>

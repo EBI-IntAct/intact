@@ -182,7 +182,8 @@
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             includes="**/application/mine/**,
                       **/application/commons/**"
-            debug="on" source="1.4">
+            debug="on" source="1.4"
+        	excludes="**/test/**">
             <classpath refid="project.class.path"/>
         </javac>
 

@@ -45,15 +45,21 @@ public class SearchAction extends Action {
         IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER);
         try {
             // if no user exists in the session a new user is created
+            // this is done because via the external management this action
+            // can be called as first action
             if (user == null) {
                 user = new IntactUser();
                 session.setAttribute(Constants.USER, user);
             }
-            user.clearAll();
+            else {
+                // clear all former found paths and singletons
+                user.clearAll();
+            }
             Constants.LOGGER.info("created user");
 
-            // a list to store the ac numbers to search for
+            // a collection of ac nr which are needed to search for
             Collection searchAc = new HashSet();
+            // a collection of ac nr which do not need to search for
             Collection notSearchAc = new HashSet();
             // all given parameters are fetched
             Map parameters = request.getParameterMap();
@@ -67,19 +73,22 @@ public class SearchAction extends Action {
                 // if a checkbox with a protein was checked the protein ac
                 // number is the key and stored in the list
                 if ("on".equals(values[0])) {
+                    // the ac is added to the notSearch collection
+                    // because its sure that its a protein
                     notSearchAc.add(key.toString().trim());
                 }
-                // the default parameter 'AC' is given
                 else if (key.equals(Constants.PARAMETER)) {
                     tok = new StringTokenizer(values[0], ",");
                     while (tok.hasMoreTokens()) {
+                        // the parameter can be something else
+                        // than a protein -> it has to be searched for
                         searchAc.add(tok.nextToken().trim());
                     }
                 }
             }
 
             //TODO: FORWARD TO AMBIGUOUS PAGE !!!!!!
-            if (searchAc.size() + notSearchAc.size() > Constants.MAX_SEARCH_NUMBER) {
+            if ((searchAc.size() + notSearchAc.size()) > Constants.MAX_SEARCH_NUMBER) {
                 request.setAttribute(Constants.ERROR, new ErrorForm(
                         "The number of selected proteins " + "is greater than "
                                 + Constants.MAX_SEARCH_NUMBER
@@ -88,54 +97,60 @@ public class SearchAction extends Action {
             }
 
             boolean ambiguous = false;
-            // the map stores the ac as key and its search results as value.
-            // This is needed to store the information for the ambiguous page.
-            //Map map = new HashMap();
+            // the collection stores all found ambiguous results by the search
             Collection ambiguousResults = new HashSet();
 
-            String ac;
+            String searchPhrase;
             AmbiguousBean ab;
-            Collection toSearchFor = new HashSet();
+            Collection mineSearchAc = new HashSet();
 
             // the search helper provides the search for the ac numbers
             SearchHelper sh = new SearchHelper(Constants.LOGGER);
             // for every ac number of the list a search is done
             for (Iterator iter = searchAc.iterator(); iter.hasNext();) {
-                ac = iter.next().toString();
-                ab = searchFor(ac, sh, user);
+                searchPhrase = iter.next().toString();
+                ab = searchFor(searchPhrase, sh, user);
                 Collections.min(searchAc);
                 // if the search returned a ambiguous result
                 if (ab.hasAmbiguousResult()) {
                     ambiguous = true;
                 }
                 else {
+                    // if not the found protein is added to the
+                    // collection used for the dijkstra algorithm
                     for (Iterator it = ab.getProteins().iterator(); it
                             .hasNext();) {
-                        toSearchFor.add(((Interactor) it.next()).getAc());
+                        mineSearchAc.add(((Interactor) it.next()).getAc());
                     }
                 }
-                ab.setSearchAc(ac);
+                // the searchPhrase is stored to distinguish which search result
+                // belongs to which search phrase
+                ab.setSearchAc(searchPhrase);
                 ambiguousResults.add(ab);
             }
 
             // if the results are ambiguous the application is forwarded to a
             // special page to display all search results.
             if (ambiguous) {
+                // because we want also the information of the proteins
+                // which were not used in the first search - the informations
+                // are now fetched
                 for (Iterator iter = notSearchAc.iterator(); iter.hasNext();) {
-                    ac = iter.next().toString();
-                    ab = searchFor(ac, sh, user);
-                    ab.setSearchAc(ac);
+                    searchPhrase = iter.next().toString();
+                    ab = searchFor(searchPhrase, sh, user);
+                    ab.setSearchAc(searchPhrase);
                     ambiguousResults.add(ab);
                 }
                 request.setAttribute(Constants.AMBIGOUS, ambiguousResults);
                 return mapping.findForward(Constants.AMBIGOUS);
             }
             else {
-                toSearchFor.addAll(notSearchAc);
+                // the search result is not ambiguous therefore
+                // the other proteins are added to the mine search collection
+                mineSearchAc.addAll(notSearchAc);
             }
 
-            request.setAttribute(Constants.SEARCH, toSearchFor);
-
+            request.setAttribute(Constants.SEARCH, mineSearchAc);
             return mapping.findForward(Constants.SUCCESS);
         }
         catch (Exception e) {

@@ -55,11 +55,11 @@ public class DisplayAction extends Action {
             HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(true);
         IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER);
+        // the ac nr for the minimal connecting network are fetched
+        Collection searchFor = (Collection) request
+                .getAttribute(Constants.SEARCH);
 
         try {
-            Collection searchFor = (Collection) request
-                    .getAttribute(Constants.SEARCH);
-
             // if no user is in the current session an excepion is thrown
             // because up to now a user should have been created and e.g.
             // the search ac nr. should have been set.
@@ -90,15 +90,16 @@ public class DisplayAction extends Action {
                 // the key stores the taxid and graphid for the current search
                 key = (NetworkKey) iter.next();
                 search = (Collection) networks.get(key);
-
+                Constants.LOGGER.warn("start with " + key);
                 // if the current search ac are in a graph in the database
-                if (key.getGraphID() != 0) {
+                if (key != Constants.DUMMY_KEY) {
                     // the wrapper class which stores the graph and the
                     // searchac->vertex map is fetched from the user
                     md = user.getMineData(key);
                     // if there is no data, the graph is build and add to the
                     // user
                     if (md == null) {
+                        //TODO: STRUCTURE WHICH IS VALID OVER A SESSION
                         md = helper.buildGraph(key);
                         user.addToGraphMap(key, md);
                     }
@@ -131,7 +132,7 @@ public class DisplayAction extends Action {
                                 + "Therfore no display is available !"));
                 return mapping.findForward(Constants.ERROR);
             }
-
+            // forward to the result page
             return mapping.findForward(Constants.SUCCESS);
         }
         catch (Exception e) {
