@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.business;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.VirtualProxy;
 import org.apache.ojb.broker.accesslayer.LookupException;
+import org.apache.ojb.broker.query.Query;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
 import uk.ac.ebi.intact.persistence.*;
@@ -15,7 +16,6 @@ import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Edge;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
-import uk.ac.ebi.intact.util.Key;
 import uk.ac.ebi.intact.util.PropertyLoader;
 
 import java.io.Externalizable;
@@ -38,6 +38,24 @@ import java.util.*;
  */
 public class IntactHelper implements SearchI, Externalizable {
 
+    // Inner static class ------------------------------------------------------
+
+    public static final class PersistenceType {
+        private final int myType;
+
+        private PersistenceType(int type) {
+            myType = type;
+        }
+    }
+
+    // End of Inner class ------------------------------------------------------
+
+    /** The Persistence Broker */
+    public static final PersistenceType PB = new PersistenceType(0);
+
+    /** The ODMG */
+    public static final PersistenceType ODMG = new PersistenceType(1);
+
     /**
      * Path of the configuration file which allow to retrieve the
      * inforamtion related to the IntAct node we are running on.
@@ -45,13 +63,11 @@ public class IntactHelper implements SearchI, Externalizable {
     private static final String INSTITUTION_CONFIG_FILE = "/config/Institution.properties";
 
     //initialise variables used for persistence
-    private DAO dao = null;
-    private DAOSource dataSource = null;
-    private Map classInfo = null;
+    private DAO dao;
+    private DAOSource dataSource;
 
-    //used to cache user details if supplied
-    private String user;
-    private String password;
+    //Logger is not serializable - but transient on its own doesn't work!
+    private transient Logger pr;
 
     public void addCachedClass(Class clazz) {
         if (dao != null) {
@@ -73,13 +89,6 @@ public class IntactHelper implements SearchI, Externalizable {
     public void removeFromCache(Object obj) {
         dao.removeFromCache(obj);
     }
-
-    //a set containing intact properties we are NOT interested in when retirving relations
-    //NB this is a result of making the design decision to use Java Bean Introspection
-    private Set notRequired = new HashSet();
-
-    //Logger is not serializable - but transient on its own doesn't work!
-    private transient Logger pr = null;
 
     /**
      * Method required for writing to disk via Serializable. Needed because
@@ -132,15 +141,10 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public IntactHelper() throws IntactException {
         try {
-            DAOSource dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
-
-            //set up a logger
-            pr = dataSource.getLogger();
-
-            //get a DAO so some work can be done!!
-            dao = dataSource.getDAO();
-        } catch (DataSourceException de) {
-
+            DAOSource ds = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
+            initialize(ds, ds.getUser(), ds.getPassword(), PB);
+        }
+        catch (DataSourceException de) {
             String msg = "intact helper: There was a problem accessing a data store";
             throw new IntactException(msg, de);
         }
@@ -156,84 +160,21 @@ public class IntactHelper implements SearchI, Externalizable {
      * @param password - the user's password (null values allowed)
      */
     public IntactHelper(DAOSource source, String user, String password) throws IntactException {
-        dataSource = source;
-
-        if (source == null) {
-            //couldn't get a mapping from the context, so can't search!!
-            String msg = "intact helper: unable to search for any objects - data source required";
-            throw new IntactException(msg);
-        }
-
-        //set up a logger
-        pr = dataSource.getLogger();
-
-        //cache the user details in case they are needed later, eg for reconnection
-        this.user = user;
-        this.password = password;
-
-        //get a DAO using the supplied user details
-        try {
-
-            dao = dataSource.getDAO(user, password);
-        } catch (DataSourceException de) {
-
-            String msg = "intact helper: There was a problem accessing a data store";
-            throw new IntactException(msg, de);
-
-        }
+        this(source, user, password, PB);
     }
 
     /**
-     * <p>
-     *  This constructor allows creation of an <code>IntactHelper</code> with a
-     * <code>Map</code> of java classnames to <code>PropertyDescriptor</code> information.
-     *  Supplying the <code>Map</code> allows for performance improvements since it
-     * reduces the reflection operations needed. The format of the <code>Map</code> should
-     * be as follows:
-     * </p>
-     * <p>
-     * <ul>
-     * <li>key - a full java classname (eg java.lang.String)
-     * <li>value - an array of <code>PropertyDescriptor</code> objects
-     * </ul>
+     * Constructor allowing a helper instance to be created with a given
+     * username and password.
      *
-     * @param source the data source to be used
-     * @param classInfo the <code>Map</code> containing reflection information for classes
-     *
-     * @exception IntactException thrown if no data source is supplied
-     *
+     * @param source - the data source to be connected to
+     * @param user - the username to make a connection with
+     * @param password - the user's password (null values allowed)
+     * @param type the persistence type (e.g., ODMG or PB)
      */
-    public IntactHelper(Map classInfo, DAOSource source) throws IntactException {
-
-        this(source);
-        this.classInfo = classInfo;
-
-        //debug info...
-        pr.info("intact helper: created, data source is " + source.getClass().getName());
-        pr.info("intact helper: classInfo specified, classes are:");
-        Set keys = classInfo.keySet();
-        Iterator iter = keys.iterator();
-        while (iter.hasNext()) {
-
-            Key k = (Key) iter.next();
-            pr.info(k.getKey());
-        }
-
-        //as class info is specified, need to set the property names we don't want
-        notRequired.add("ac");
-        notRequired.add("name");
-        notRequired.add("class");
-
-        //get a DAO so some work can be done!!
-        try {
-
-            dao = dataSource.getDAO();
-        } catch (DataSourceException de) {
-
-            String msg = "intact helper: There was a problem accessing a data store";
-            throw new IntactException(msg, de);
-
-        }
+    public IntactHelper(DAOSource source, String user, String password,
+                        PersistenceType type) throws IntactException {
+        initialize(source, user, password, type);
     }
 
     /**
@@ -245,9 +186,7 @@ public class IntactHelper implements SearchI, Externalizable {
      * @return boolean true if valid details, false if not (including a null username).
      */
     public boolean isUserVerified(String user, String password) {
-
-        if (dao != null) return dao.isUserValid(user, password);
-        return false;
+        return dao.isUserValid(user, password);
     }
 
     /**
@@ -261,12 +200,10 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException if the store was unable to be closed.
      */
     public void closeStore() throws IntactException {
-
         try {
-
             dao.close();
-        } catch (Exception de) {
-
+        }
+        catch (DataSourceException de) {
             throw new IntactException("failed to close data source!", de);
         }
     }
@@ -276,11 +213,7 @@ public class IntactHelper implements SearchI, Externalizable {
      * or if there is no valid connection to the datastore.
      */
     public boolean isInTransaction() {
-
-        if (dao != null) {
-            return dao.isActive();
-        }
-        return false;
+        return dao.isActive();
     }
 
     /**
@@ -313,7 +246,8 @@ public class IntactHelper implements SearchI, Externalizable {
         }
         try {
             dao.begin(txType);
-        } catch (Exception e) {
+        }
+        catch (TransactionException e) {
             throw new IntactException("unable to start an intact transaction!", e);
         }
     }
@@ -335,10 +269,10 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException thrown usually if there is no transaction in progress
      */
     public void finishTransaction() throws IntactException {
-
         try {
             dao.commit();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IntactException("unable to complete an intact transaction!", e);
         }
     }
@@ -351,10 +285,10 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException thrown usually if a transaction is not in progress
      */
     public void undoTransaction() throws IntactException {
-
         try {
             dao.rollback();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IntactException("unable to undo an intact transaction!", e);
         }
     }
@@ -397,14 +331,14 @@ public class IntactHelper implements SearchI, Externalizable {
 
         try {
 
-            if (dao == null) connect();
+//            if (dao == null) connect();
 
             //just to be safe, restrict write access..
-            synchronized (this) {
+//            synchronized (this) {
 
                 dao.makePersistent(objects);
 
-            }
+//            }
 
         } catch (CreateException ce) {
 
@@ -430,16 +364,16 @@ public class IntactHelper implements SearchI, Externalizable {
 
         try {
 
-            if (dao == null) connect();
+//            if (dao == null) connect();
 
             //just to be safe, restrict write access..
-            synchronized (this) {
+//            synchronized (this) {
 
                 dao.remove(obj);
 
-            }
+//            }
 
-        } catch (Exception de) {
+        } catch (TransactionException de) {
 
             String msg = "intact helper: failed to delete object of type " + obj.getClass().getName();
             throw new IntactException(msg, de);
@@ -459,18 +393,18 @@ public class IntactHelper implements SearchI, Externalizable {
 
         try {
 
-            if (dao == null) connect();
+//            if (dao == null) connect();
 
             //just to be safe, restrict write access..
-            synchronized (this) {
+//            synchronized (this) {
 
                 dao.create(obj);
 
-            }
-        } catch (Exception de) {
-            de.printStackTrace();
+//            }
+        } catch (CreateException ce) {
+            ce.printStackTrace();
             String msg = "intact helper: single object creation failed for class " + obj.getClass().getName();
-            throw new IntactException(msg, de);
+            throw new IntactException(msg, ce);
 
         }
 
@@ -497,10 +431,10 @@ public class IntactHelper implements SearchI, Externalizable {
      * @param obj the object to update.
      * @exception IntactException - thrown if a problem arises during the update
      */
-     public void forceUpdate(Object obj) throws IntactException {
-        // Force the update
-        update(obj, true);
-    }
+//     public void forceUpdate(Object obj) throws IntactException {
+//        // Force the update
+//        update(obj, true);
+//    }
 
     /**
      * Cancels the update for the given object.
@@ -603,20 +537,15 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public Iterator iterSearch(String objectType, String searchParam, String searchValue)
             throws IntactException {
-        Iterator result = null;
         try {
+            return dao.iteratorFind(objectType, searchParam, searchValue);
 
-            result = dao.iteratorFind(objectType, searchParam, searchValue);
-
-        } catch (SearchException se) {
-
+        }
+        catch (SearchException se) {
             //return to action servlet witha forward to error page command
             String msg = "intact helper: query by Iterator failed.. \n";
             throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
-
         }
-        return result;
-
     }
 
     /**
@@ -630,16 +559,12 @@ public class IntactHelper implements SearchI, Externalizable {
      * @throws IntactException
      */
     public Iterator getColumnData(String type, String[] cols) throws IntactException {
-
-        Iterator result = null;
-
         try {
-            result = dao.findColumnValues(type, cols);
-            return result;
-        } catch (SearchException se) {
+            return dao.findColumnValues(type, cols);
+        }
+        catch (SearchException se) {
             throw new IntactException("failed to get column data!", se);
         }
-
     }
 
     /**
@@ -652,13 +577,10 @@ public class IntactHelper implements SearchI, Externalizable {
      * @throws IntactException
      */
     public Collection searchBySQL(String type, String sqlString) throws IntactException {
-
-        Collection result = new ArrayList();
-
         try {
-            result = dao.findBySQL(type, sqlString);
-            return result;
-        } catch (SearchException se) {
+            return dao.findBySQL(type, sqlString);
+        }
+        catch (SearchException se) {
             throw new IntactException("failed to execute SQL string " + sqlString, se);
         }
     }
@@ -688,39 +610,35 @@ public class IntactHelper implements SearchI, Externalizable {
     public Collection search(String objectType, String searchParam, String searchValue) throws IntactException {
 
         //set up variables used during searching..
-        Collection resultList = new ArrayList();
+//        Collection resultList = new ArrayList();
 
         /* get a Data Access Object (ie a connection) for the data source
         * NB assumed pooling is managed within the persistence layer..
         */
 
-        if (null == dao) connect();
+//        if (null == dao) connect();
 
         //now retrieve an object...
         try {
 
             long timer = System.currentTimeMillis();
 
-            resultList = dao.find(objectType, searchParam, searchValue);
+            Collection resultList = dao.find(objectType, searchParam, searchValue);
 
             long tmp = System.currentTimeMillis();
             timer = tmp - timer;
             pr.info("**************************************************");
             pr.info("intact helper: time spent in DAO find (ms): " + timer);
             pr.info("**************************************************");
-
-            if (resultList.isEmpty()) {
-
-                return new ArrayList();
-            }
-        } catch (SearchException se) {
+            return resultList;
+        }
+        catch (SearchException se) {
             se.printStackTrace();
             //return to action servlet witha forward to error page command
             String msg = "intact helper: unable to perform search operation.. \n";
             throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
 
         }
-        return resultList;
     }
 
     /**
@@ -737,9 +655,9 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException - thrown if problems are encountered during the search process
      */
     public Collection search(Class searchClass, String searchParam, String searchValue) throws IntactException {
-        if (null == dao) {
-            connect();
-        }
+//        if (null == dao) {
+//            connect();
+//        }
         //now retrieve an object...
         try {
             return dao.find(searchClass, searchParam, searchValue);
@@ -844,62 +762,6 @@ public class IntactHelper implements SearchI, Externalizable {
         }
         return results;
     }
-
-    /**
-     * Searches for splice objects by primaryId.
-     * @param primaryId Primary Id to search for proteins.
-     * @return a collection of splice proteins for <code>primaryId</code> or an
-     * empty collection if none are found.
-     * @exception IntactException if there is more than single protein returned from
-     * the search or an error ocurred in searching.
-     *
-     * <b>This method is a temporary method added to get the splice proteins.
-     * This will be removed shortly once the necessary changes are performed to
-     * get all the splice proteins. Only the editor uses this method</b>
-     *
-     * THIS METHOD is NO LONGER needed.
-     */
-//    public Collection getSpliceProteinsByXref(String primaryId)
-//            throws IntactException {
-//        // The results to return.
-//        Collection results = new ArrayList();
-//
-//        // Proteins retrieved via xrefs.
-//        Collection proteins = getObjectsByXref(Protein.class, primaryId);
-//
-//        // Empty if no protein is found for the primary id.
-//        if (proteins.isEmpty()) {
-//            // An empty collection if no proteins found.
-//            return results;
-//        }
-//        if (proteins.size() > 1) {
-//            return getObjectsByXref(Protein.class, primaryId);
-//        }
-//        // The primary protein.
-//        Protein protein = (Protein) proteins.iterator().next();
-//
-//        // Add the 'primary' protein.
-//        results.add(protein);
-//
-//        // All splice proteins have 'this' protein as the primary id.
-//        Collection spProteins = search(Xref.class.getName(), "primaryId",
-//                protein.getAc());
-//
-//        // The iso-form to check for splice or not.
-//        CvXrefQualifier isoForm = (CvXrefQualifier) getObjectByLabel(
-//                CvXrefQualifier.class, "isoform-parent");
-//
-//        // Loop through proteins collection; only add the splice proteins.
-//        for (Iterator iterator = spProteins.iterator(); iterator.hasNext();) {
-//            Xref xref = (Xref) iterator.next();
-//            // Filter out proteins which aren't iso-forms.
-//            if (xref.getCvXrefQualifier().equals(isoForm)) {
-//                results.addAll(search(Protein.class.getName(), "ac",
-//                        xref.getParentAc()));
-//            }
-//        }
-//        return results;
-//    }
 
     /** Searches for a unique Object by classname and Xref.
      *  Currently this searches only by primaryId.
@@ -1348,19 +1210,19 @@ public class IntactHelper implements SearchI, Externalizable {
     public void deleteAllElements(Collection aCollection) throws IntactException {
         try {
 
-            if (dao == null) connect();
+//            if (dao == null) connect();
 
             //just to be safe, restrict write access..
-            synchronized (this) {
+//            synchronized (this) {
                 for (Iterator i = aCollection.iterator(); i.hasNext();) {
                     dao.remove(i.next());
                 }
-            }
+//            }
 
-        } catch (Exception de) {
-
+        }
+        catch (TransactionException te) {
             String msg = "intact helper: error deleting collection elements";
-            throw new IntactException(msg, de);
+            throw new IntactException(msg, te);
 
         }
     }
@@ -1802,6 +1664,14 @@ return partialGraph;
         return institution;
     }
 
+    public int getCountByQuery(Query query) {
+        return dao.getCountByQuery(query);
+    }
+
+    public Collection getCollectionByQuery(Query query) {
+        return dao.getCollectionByQuery(query);
+    }
+
     /**
      * Returns the real object wrapped around the proxy for given object of
      * IntactObjectProxy type.
@@ -1882,49 +1752,72 @@ return partialGraph;
 
     //---------------- private helper methods ------------------------------------
 
+    private void initialize(DAOSource source, String user, String password,
+                            PersistenceType type) throws IntactException {
+        dataSource = source;
+
+        if (source == null) {
+            //couldn't get a mapping from the context, so can't search!!
+            String msg = "intact helper: unable to search for any objects - data source required";
+            throw new IntactException(msg);
+        }
+
+        //set up a logger
+        pr = dataSource.getLogger();
+
+        //get a DAO using the supplied user details
+        try {
+            dao = dataSource.getDAO(user, password, type);
+        }
+        catch (DataSourceException dse) {
+            String msg = "intact helper: There was a problem accessing a data store";
+            throw new IntactException(msg, dse);
+        }
+    }
+
     /**
      * tries to get a connection if a DAO has (somehow!) not been
      * set.
      *
      * @exception IntactException thrown if obtaining a DAO failed
      */
-    private void connect() throws IntactException {
-
-        try {
-            if (user != null) {
-
-                //try to create using given user details
-                dao = dataSource.getDAO(user, password);
-            } else {
-
-                //create as default user
-                dao = dataSource.getDAO();
-            }
-        } catch (DataSourceException de) {
-            String msg = "failed to create a DAO when it was (somehow!) originally null";
-            throw new IntactException(msg, de);
-        }
-    }
+//    private void connect() throws IntactException {
+//
+//        try {
+//            if (user != null) {
+//
+//                //try to create using given user details
+//                dao = dataSource.getODMGDAO(user, password);
+//            } else {
+//
+//                //create as default user
+//                dao = dataSource.getODMGDAO();
+//            }
+//        } catch (DataSourceException de) {
+//            String msg = "failed to create a DAO when it was (somehow!) originally null";
+//            throw new IntactException(msg, de);
+//        }
+//    }
 
     private void update(Object obj, boolean force) throws IntactException {
 
         try {
 
-            if (dao == null) connect();
+//            if (dao == null) connect();
 
             //just to be safe, restrict write access..
-            synchronized (this) {
+//            synchronized (this) {
                 if (force) {
                     ((ObjectBridgeDAO) dao).forceUpdate(obj);
                 }
                 else {
                     dao.update(obj);
                 }
-            }
-        } catch (Exception de) {
-            de.printStackTrace();
+//            }
+        } catch (UpdateException ue) {
+            ue.printStackTrace();
             String msg = "intact helper: failed to perform update on class " + obj.getClass().getName();
-            throw new IntactException(msg, de);
+            throw new IntactException(msg, ue);
 
         }
 
