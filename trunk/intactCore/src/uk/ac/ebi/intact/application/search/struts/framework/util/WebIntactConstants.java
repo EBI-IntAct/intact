@@ -163,4 +163,16 @@ public interface WebIntactConstants {
      * The bean to display short labels when the user is adding a new CV obj.
      */
     public static final String SHORT_LABEL_BEAN = "labelBean";
+
+    /**
+     * The name of the file containing the java to XML mapping
+     */
+    public static final String XML_MAPPING_FILE = "xmlMappingFile";
+
+    /**
+     * The name of the file containing the XSL stylesheet
+     */
+    public static final String XSL_FILE = "xslFile";
+
+
 }

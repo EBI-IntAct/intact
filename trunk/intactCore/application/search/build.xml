@@ -5,7 +5,7 @@
      Version: $Id$
 -->
 
-<project name="cvedit" basedir="." default="compile">
+<project name="search" basedir="." default="compile">
     <property name="project.title" value="search"/>
     <property name="project.version" value="1.0"/>
 
@@ -94,10 +94,11 @@
             </fileset>
         </copy>
 
-        <!-- Copy cvedit property files -->
+        <!-- Copy search property files and XML mapping file-->
         <copy todir="${dest.dir}/config">
             <fileset dir="WEB-INF/config">
                 <include name="*.properties"/>
+                <include name="*.xml"/>
             </fileset>
         </copy>
 
@@ -116,7 +117,7 @@
 
         <!-- Only compile search sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            includes="**/application/search/**" debug="on">
+            includes="**/application/search/**" debug="on" source="1.4">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -139,7 +140,8 @@
 		   <fileset dir="${basedir}">
 				<include name="*.jsp"/>
 				<include name="*.jpg"/>
-	        	<include name="*.css"/>
+	        		<include name="*.css"/>
+				<include name="*.xsl"/>
 	  			<include name="WEB-INF/struts-config.xml"/>
 	  			<include name="WEB-INF/tld/**"/>
 	   		</fileset>
@@ -163,7 +165,7 @@
 				<include name="pgjdbc2.jar"/>
 			</lib>
 
-            <!-- cvedit specific classes -->
+            <!-- search specific classes -->
   			<classes dir="${dest.dir}"/>
 		</war>
     </target>

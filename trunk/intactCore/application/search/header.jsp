@@ -67,7 +67,7 @@
                <td bgcolor="#ffeeaa" align="right" valign="bottom">
                <table border="0" cellspacing="7" cellpadding="0">
                <tr>
-               <td align="right" valign="bottom" nowrap>Version: 0.1 (20/11/2002)</td>
+               <td align="right" valign="bottom" nowrap>Version: 0.2 (28/11/2002)</td>
                </tr>
                </table>
                </td>
