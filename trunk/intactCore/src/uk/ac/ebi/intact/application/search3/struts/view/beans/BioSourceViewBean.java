@@ -23,14 +23,12 @@ import java.util.List;
  */
 
 /**
- * This class provides JSP view information for a particular AnnotatedObject. Its main purpose is to
- * provide very simple beans for display in an initial search result page. Currenty the types that
- * may be displayed with this bean are
+ * This class provides JSP view information for a particular BioSource Object. It is used in the BioSource View
  */
 public class BioSourceViewBean extends AbstractViewBean {
 
     /**
-     * The AnnotatedObject (currently BioSource, CvObjects)
+     * The BioSource Object
      */
     private final BioSource obj;
 
@@ -81,6 +79,7 @@ public class BioSourceViewBean extends AbstractViewBean {
         annotationFilters = new ArrayList();
         annotationFilters.add("remark");
         annotationFilters.add("uniprot-dr-export");
+        annotationFilters.add("uniprot-cc-export");
     }
 
 
