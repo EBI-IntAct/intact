@@ -279,7 +279,7 @@
             <param name="war.file" value="${war.file}"/>
         </antcall>
 
-        <antcall target="gen-context-file" />
+        <antcall target="gen-context-file"/>
 
     </target>
 
@@ -305,7 +305,7 @@
 
     <target name="war-postgres" if="postgres">
         <!-- Load postgres properties. -->
-        <property file="${intact.root}/config/postgres.properties" />
+        <property file="${intact.root}/config/postgres.properties"/>
 
         <echo message="Building a war for postgres ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
@@ -325,7 +325,7 @@
 
     <target name="war-oracle" description="Builds a war file for oracle" if="oracle">
         <!-- Load oracle properties. -->
-        <property file="${intact.root}/config/oracle.properties" />
+        <property file="${intact.root}/config/oracle.properties"/>
 
         <echo message="Building a war for oracle ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
@@ -386,7 +386,7 @@
     <target name="payg-ora" depends="compile"
         description="Runs utility to create PAYG tables for Oracle database">
         <java classname="uk.ac.ebi.intact.application.predict.util.PredictOra"
-            fork="true" maxmemory="512m">
+            fork="true" maxmemory="1024m">
             <classpath refid="project.run.class.path"/>
         </java>
     </target>
@@ -401,8 +401,8 @@
 
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${dist.dir}/${predict-context-file}"
-              todir="${webapps.dir}"
-              overwrite="yes"/>
+            todir="${webapps.dir}"
+            overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -443,16 +443,16 @@
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-              file="${intact.context.dir}/${predict-context-file}"
-              overwrite="true" />
+            file="${intact.context.dir}/${predict-context-file}"
+            overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${predict-context-file}"
-                 token="[WAR.FILE.NAME]"
-                 value="${war.file}" />
+            token="[WAR.FILE.NAME]"
+            value="${war.file}"/>
         <replace file="${dist.dir}/${predict-context-file}"
-                 token="[server.name]"
-                 value="${server.name}" />
+            token="[server.name]"
+            value="${server.name}"/>
     </target>
 
 </project>
