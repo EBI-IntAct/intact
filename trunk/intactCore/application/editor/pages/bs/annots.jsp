@@ -16,16 +16,12 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
-<jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
-
 <style type="text/css">
     <%@ include file="/layouts/styles/editor.css" %>
 </style>
 
 <%-- The list of topics --%>
-<c:set var="view" value="${user.view}"/>
-<c:set var="topiclist" value="${view.editTopicMenu}"/>
+<c:set var="topiclist" value="${user.view.editTopicMenu}"/>
 
 <h3>Annotations</h3>
 

@@ -28,7 +28,9 @@
             <th class="tableCellHeader" width="10%">
                 <bean:message key="label.shortlabel"/>
             </th>
-            <th class="tableCellHeader" width="10%">Pubmed Id</th>
+            <th class="tableCellHeader" width="10%">
+                <bean:message key="label.pubmedid"/>
+            </th>
             <th class="tableCellHeader" width="10%">
                 <bean:message key="label.ac"/>
             </th>
