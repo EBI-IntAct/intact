@@ -9,8 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 import java.util.Map;
 import java.util.HashMap;
 
-import uk.ac.ebi.intact.application.editor.struts.viewx.*;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentROViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.cv.CvROViewBean;
 import uk.ac.ebi.intact.model.*;
