@@ -1099,7 +1099,7 @@ public class IntactHelper implements SearchI, Serializable {
 
         // get the Xref from the database
         Collection xrefs = this.search(Xref.class.getName(), "primaryId", aPrimaryId);
-        Collection results = new Vector();
+        Collection results = new ArrayList();
 
         // add all referenced objects of the searched class
         for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
@@ -1131,6 +1131,100 @@ public class IntactHelper implements SearchI, Serializable {
             return it.next();
         }
     }
+
+
+    /**
+     * Search for objects by any alias with the specified name.
+     *
+     * @param clazz the class filter.
+     *              All objects in the returned collection will be instance of that class.
+     * @param aliasName the name of the alias to look for.
+     * @return the collection of objects of type <code>clazz</code> who have an alias
+     *         named <code>aliasName</code>
+     * @throws IntactException when an error occurs when searching.
+     * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
+     * @see uk.ac.ebi.intact.model.Alias
+     */
+    public Collection getObjectsByAlias( Class clazz,
+                                         String aliasName) throws IntactException {
+
+        if ( aliasName == null || "".equals(aliasName) )
+            throw new IllegalArgumentException( "You have requested a search by alias, but the specified alias name is null." );
+
+        // get the Alias from the database
+        Collection aliases = search( Alias.class.getName(), "name", aliasName );
+        Collection results = new ArrayList();
+
+        // add all referenced objects of the searched class
+        for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
+            Alias alias = (Alias) iterator.next();
+            results.addAll( search( clazz.getName(), "ac", alias.getParentAc() ) );
+        }
+        return results;
+    }
+
+    /**
+     * Search for objects by any alias with the specified name.
+     *
+     * @param clazz the class filter.
+     *              All objects in the returned collection will be instance of that class.
+     * @param aliasName the name of the alias to look for.
+     * @param aliasTypeShortLabel the shortLabel of the alias type we are interrested in.
+     * @return the collection of objects of type <code>clazz</code> who have an alias
+     *         named <code>aliasName</code>
+     * @throws IntactException When the requested aliasType is not found or an error occurs when searching.
+     * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
+     * @see uk.ac.ebi.intact.model.Alias
+     */
+    public Collection getObjectsByAlias( Class clazz,
+                                         String aliasName,
+                                         String aliasTypeShortLabel) throws IntactException {
+
+        if ( aliasName == null || "".equals(aliasName) )
+            throw new IllegalArgumentException( "You have requested a search by alias, but the specified alias name is null." );
+
+        if (aliasTypeShortLabel == null)
+            throw new IllegalArgumentException( "You have requested a search by alias ("+ aliasName +
+                    ") but the specified alias type is null." );
+
+        CvAliasType cvAliasType = (CvAliasType) getObjectByLabel( CvAliasType.class, aliasTypeShortLabel);
+        if (cvAliasType == null)
+            throw new IntactException( "The requested CvAliasType ("+ aliasTypeShortLabel +") could not be found in the database." );
+
+        return getObjectsByAlias( clazz, aliasName, cvAliasType );
+    }
+
+    /**
+     * Search for objects by any alias with the specified name.
+     *
+     * @param clazz the class filter.
+     *              All objects in the returned collection will be instance of that class.
+     * @param aliasName the name of the alias to look for.
+     * @param cvAliasType the type of the alias we are interrested in.
+     * @return the collection of objects of type <code>clazz</code> who have an alias
+     *         named <code>aliasName</code>
+     * @throws IntactException When the requested aliasType is not found or an error occurs when searching.
+     * @throws IllegalArgumentException if the name of the Alias is not specified or empty.
+     * @see uk.ac.ebi.intact.model.Alias
+     */
+    public Collection getObjectsByAlias( Class clazz,
+                                         String aliasName,
+                                         CvAliasType cvAliasType) throws IntactException {
+
+        // get the Xref from the database
+        Collection aliases = this.search(Alias.class.getName(), "name", aliasName);
+        Collection results = new ArrayList();
+
+        // add all referenced objects of the searched class
+        for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
+            Alias alias = (Alias) iterator.next();
+            if ( ! alias.getCvAliasType().equals(cvAliasType) )
+                continue; // we use only aliases mathing with the requested CvAliasType
+            results.addAll(this.search(clazz.getName(), "ac", alias.getParentAc()));
+        }
+        return results;
+    }
+
 
     /** Return an Object by classname and shortLabel.
      *  For efficiency, classes which are subclasses of CvObject are cached
