@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.servlet;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
-import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
+import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
 import javax.servlet.ServletException;

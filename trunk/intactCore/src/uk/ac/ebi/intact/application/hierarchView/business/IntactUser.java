@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
+import uk.ac.ebi.intact.util.Chrono;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import java.util.HashMap;
