@@ -33,7 +33,7 @@ public class ProteinParticipantPersister {
 
         final ProteinInteractorTag proteinInteractor = proteinParticipant.getProteinInteractor();
 
-        final BioSource bioSource = OrganismChecker.getBioSource( proteinInteractor.getOrganism().getTaxId() );
+        final BioSource bioSource = OrganismChecker.getBioSource( proteinInteractor.getOrganism() );
         final String proteinId = proteinInteractor.getUniprotXref().getId();
         final ProteinHolder proteinHolder = ProteinInteractorChecker.getProtein( proteinId, bioSource );
         final CvComponentRole role = RoleChecker.getCvComponentRole( proteinParticipant.getRole() );
