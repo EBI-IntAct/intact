@@ -6,6 +6,10 @@ shortlabel: gene-name-synonym
 term: Gene name synonym
 definition: A synonym for a gene name.
 
+shortlabel: go-synonym
+term: Synonym as used in GO DAGedit-formatted files
+definition: Synonym as used in GO DAGedit-formatted files.
+
 shortlabel: isoform-synonym
 term: Isoform synonym
 definition: A synonym for a protein isoform.
