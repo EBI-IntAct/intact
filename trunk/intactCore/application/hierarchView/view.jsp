@@ -4,7 +4,7 @@
 <%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.*,
-                 uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF" %>
+                 uk.ac.ebi.intact.application.hierarchView.business.IntactUserI" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.graph.*" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.Constants" %>
@@ -22,9 +22,8 @@
 
 <head>
 
-    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-    <META HTTP-EQUIV="Expires" CONTENT="-1">
-
+    <META HTTP-EQUIV="Expires" CONTENT="-1" />
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache" />
 
     <title>
        <bean:message key="hierarchView.view.title"/>
@@ -58,20 +57,19 @@
    /**
     * Retreive data from the session
     */
-   IntactUserIF user = (IntactUserIF) session.getAttribute (Constants.USER_KEY);
+   IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
 
 
    String AC           = user.getAC();
    String depth        = user.getDepth();
    Boolean depthLimit  = new Boolean(user.getHasNoDepthLimit());
-   String noDepthLimit = "null";
+   String noDepthLimit = "";
    if (null != depthLimit) {
      noDepthLimit = depthLimit.toString();
    }
 
    Collection keys       = user.getKeys();
    String methodLabel    = user.getMethodLabel();
-   String methodClass    = user.getMethodClass();
    String behaviour      = user.getBehaviour();
    InteractionNetwork in = user.getInteractionNetwork();
 
@@ -193,20 +191,11 @@
 <%
 
 // Write a link to display the GO term list for the selected AC number
-if (AC != null)
-{
-%>
-<a href="/hierarchView/hierarchy.jsp" target="frameHierarchy"> Display the source element list for the current AC number </a> <br>
-<%
-
+if (in != null) {
+ %>
+    <a href="/hierarchView/hierarchy.jsp" target="frameHierarchy"> Display the source element list for the current AC number </a> <br>
+ <%
 }
-
-   /**
-   * Apply an highlighting if AC != null, keys != null and behaviour != null
-   */
-   if ((null != AC) && (null != keys) && (behaviour != null) && (null != in)) {
-       HighlightProteins.perform (methodClass, behaviour, session, in) ;
-   }
 %>
 
     <!-- Displays the interaction network if the picture has been generated
@@ -278,17 +267,7 @@ if (AC != null)
 		  <td align="left">
 		  <br>
 
-		  <%
-
-              // Search the list of protein to highlight
-               HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(methodClass);
-               String htmlCode = null;
-               if (null != highlightmentSource) {
-                  htmlCode = highlightmentSource.getHtmlCodeOption(session);
-               }
-               out.println(htmlCode);
-
-		  %>
+            <hierarchView:displayHighlightOptions/>
 
 		  </td>
 		</tr>
