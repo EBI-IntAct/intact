@@ -51,8 +51,9 @@
         <!-- Common jar files. -->
         <pathelement path="${root.lib.dir}/junit.jar"/>
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
-        <pathelement path="${root.lib.dir}/struts.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
+        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
+        <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
     </path>
 
     <!-- =================================================================== -->
@@ -146,29 +147,49 @@
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
 
+        <!-- Create local directories to copy common files. -->
+        <mkdir dir="${basedir}/layouts/styles"/>
+        <mkdir dir="${basedir}/images"/>
+
+        <!-- Common layouts -->
+        <copy todir="${basedir}/layouts">
+            <fileset dir="${intact.app.dir}/layouts"/>
+        </copy>
+        <!-- Common images -->
+        <copy todir="${basedir}/images">
+            <fileset dir="${intact.app.dir}/images"/>
+        </copy>
+        <!-- Common jsp files -->
+        <copy todir="${basedir}/pages">
+            <fileset dir="${intact.app.dir}/pages"/>
+        </copy>
+
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
 
         <!-- Copy struts standard tld files -->
         <copy todir="${tld.dir}">
             <fileset dir="${intact.app.dir}/tld">
-                <include name="struts-bean.tld"/>
-                <include name="struts-html.tld"/>
+                <include name="*.tld"/>
             </fileset>
         </copy>
 
-		<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
-		   <fileset dir="${basedir}">
-				<include name="*.jsp"/>
-				<include name="*.jpg"/>
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${basedir}">
+                <include name="*.jsp"/>
+                <include name="*.jpg"/>
                 <include name="*.css"/>
-				<include name="*.xsl"/>
-	  			<include name="WEB-INF/struts-config.xml"/>
+                <include name="*.xsl"/>
+                <include name="WEB-INF/struts-config.xml"/>
+                <include name="WEB-INF/tiles-defs.xml"/>
                 <include name="${tld.dir}/**"/>
-	   		</fileset>
+                <include name="images/*"/>
+                <include name="pages/**"/>
+                <include name="layouts/**"/>
+            </fileset>
 
-			<!-- Include cvedit specific jar files. -->
-			<lib dir="${lib.dir}">
+            <!-- Include cvedit specific jar files. -->
+            <lib dir="${lib.dir}">
                 <!-- Avoid NFS temp files (occationally) -->
                 <include name="*.jar"/>
             </lib>
@@ -179,16 +200,16 @@
             <!-- Include common jar files for struts. -->
             <lib dir="${intact.app.dir}/lib" />
 
-			<!-- Include common jar files from intact core. -->
-			<lib dir="${root.lib.dir}">
-				<include name="jakarta-ojb-0.9.7.jar"/>
-				<include name="log4j-1.2.5.jar"/>
+            <!-- Include common jar files from intact core. -->
+            <lib dir="${root.lib.dir}">
+                <include name="jakarta-ojb-0.9.7.jar"/>
+                <include name="log4j-1.2.5.jar"/>
                 <include name="${db}"/>
-			</lib>
+            </lib>
 
             <!-- search specific classes -->
-  			<classes dir="${dest.dir}"/>
-		</war>
+              <classes dir="${dest.dir}"/>
+        </war>
     </target>
 
     <!-- =================================================================== -->
