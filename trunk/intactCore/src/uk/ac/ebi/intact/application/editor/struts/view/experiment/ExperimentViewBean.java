@@ -14,13 +14,14 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentExcept
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvIdentification;
-import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Experiment edit view bean.
@@ -44,6 +45,17 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * The experiment identification.
      */
     private String myIdent;
+
+    /**
+     * The collection of Interactions. Transient as it is only valid for the
+     * current display.
+     */
+    private transient List myInteractions = new ArrayList();
+
+    /**
+     * Holds Interaction to not yet added. Only valid for the current session.
+     */
+    private transient List myInteractionsToHold = new ArrayList();
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
@@ -214,5 +226,26 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     public void setIdent(String identification) {
         myIdent = identification;
+    }
+
+    /**
+     * Adds an Interaction bean to hold if the new interaction doesn't
+     * already exists in the interaction hold collection and in the
+     * current interaction collection for this interaction.
+     * @param ints a collection of <code>Interaction</code> to add.
+     *
+     * <pre>
+     * pre:  forall(obj : Object | obj.oclIsTypeOf(Interaction))
+     * </pre>
+     */
+    public void addInteractionToHold(Collection ints) {
+        for (Iterator iter = ints.iterator(); iter.hasNext();) {
+            InteractionBean expbean = new InteractionBean((Interaction) iter.next());
+            // Avoid duplicates.
+            if (!myInteractionsToHold.contains(expbean)
+                    && !myInteractions.contains(expbean)) {
+                myInteractionsToHold.add(expbean);
+            }
+        }
     }
 }
