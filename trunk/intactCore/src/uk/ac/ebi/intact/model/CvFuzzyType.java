@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-
 /**
  * <p>
  * Represents types of &quot;fuzzy&quot; Range start and end positions. Examples are
@@ -191,9 +190,28 @@ public class CvFuzzyType extends CvObject implements Editable {
      * @exception NullPointerException thrown if either parameters are not specified
      */
     public CvFuzzyType(Institution owner, String shortLabel) {
-
         //super call sets up a valid CvObject
         super(owner, shortLabel);
     }
 
+    /**
+     * @return true if this current type is of c_terminal type.
+     */
+    public final boolean isCTerminal() {
+        return getShortLabel().equals(C_TERMINAL);
+    }
+
+    /**
+     * @return true if this current type is of n_terminal type.
+     */
+    public final boolean isNTerminal() {
+        return getShortLabel().equals(N_TERMINAL);
+    }
+
+    /**
+     * @return true if this current type is of undetermined type.
+     */
+    public final boolean isUndetermined() {
+        return getShortLabel().equals(UNDETERMINED);
+    }
 }
