@@ -13,8 +13,11 @@ import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * An action to handle Interaction specific events.
@@ -23,6 +26,16 @@ import javax.servlet.http.HttpServletRequest;
  * @version $Id$
  */
 public class InteractionSubmitAction extends SubmitFormAction {
+
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+            throws Exception {
+        // Update the bean with form values.
+        getIntactUser(request).getView().updateFromForm((DynaActionForm) form);
+        return super.execute(mapping, form, request, response);
+    }
 
     // Override the super method to handle the event for pressing the tax id.
     protected ActionForward handle(ActionMapping mapping,

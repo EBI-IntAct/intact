@@ -47,15 +47,15 @@ public class FillExperimentFormAction extends FillCvFormAction {
         }
         else {
             // Preserve existing values of the form - only for editing.
-            if (isPropertyNullOrEmpty(dynaForm, "organism")) {
+//            if (isPropertyNullOrEmpty(dynaForm, "organism")) {
                 dynaForm.set("organism", view.getOrganism());
-            }
-            if (isPropertyNullOrEmpty(dynaForm, "inter")) {
+//            }
+//            if (isPropertyNullOrEmpty(dynaForm, "inter")) {
                 dynaForm.set("inter", view.getSelectedInter());
-            }
-            if (isPropertyNullOrEmpty(dynaForm, "ident")) {
+//            }
+//            if (isPropertyNullOrEmpty(dynaForm, "ident")) {
                 dynaForm.set("ident", view.getSelectedIdent());
-            }
+//            }
         }
         return mapping.findForward(FORWARD_SUCCESS);
     }
