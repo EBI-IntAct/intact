@@ -331,7 +331,7 @@
       />
       <forward
         name="delete"
-        path="/do/delete"
+        path="/do/int/delete"
         redirect="false"
       />
       <forward
@@ -720,6 +720,18 @@
       />
     </action>
     <action
+      path="/int/delete"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionDeleteAction"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="experiment"
+        path="/do/exp/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
       path="/int/submit"
       type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionDispatchAction"
       name="intForm"
@@ -967,17 +979,7 @@
     >
       <exception
         key="error.invalid.user"
-        type="uk.ac.ebi.intact.business.IntactException"
-        path="login.error.layout"
-      />
-      <exception
-        key="error.datasource"
-        type="uk.ac.ebi.intact.persistence.DataSourceException"
-        path="login.error.layout"
-      />
-      <exception
-        key="error.init.menu"
-        type="uk.ac.ebi.intact.persistence.SearchException"
+        type="uk.ac.ebi.intact.application.editor.exception.AuthenticateException"
         path="login.error.layout"
       />
       <forward
