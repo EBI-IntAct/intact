@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action.biosrc;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
-import uk.ac.ebi.intact.application.editor.struts.viewx.BioSourceViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
