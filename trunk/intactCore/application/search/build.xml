@@ -21,6 +21,14 @@
     <!-- Intact application location. -->
     <property name="intact.app.dir" value=".."/>
 
+    <!-- Context path for search -->
+    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
+    <property name="search-context-file" value="search-context.xml"/>
+
+    <property environment="env"/>
+    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir" value="${tomcat.home}/webapps"/>
+
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
@@ -273,6 +281,10 @@
         <ant dir=".." inheritAll="false" target="deploy">
             <property name="war" value="search/${dist.dir}/${war.file}"/>
         </ant>
+
+        <!-- Copy context files in the Tomcat's webapps directory -->
+        <copy file="${intact.context.dir}/${search-context-file}"
+              todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -283,6 +295,9 @@
         <ant dir=".." inheritAll="false" target="undeploy">
             <property name="war" value="search"/>
         </ant>
+
+        <!-- Delete context files from the Tomcat's webapps directory -->
+        <delete file="${webapps.dir}/${search-context-file}" quiet="true"/>
     </target>
 
     <!-- =================================================================== -->

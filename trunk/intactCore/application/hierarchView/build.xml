@@ -18,8 +18,11 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
     <!-- Intact application location. -->
-    <property name="intact.app.dir"     value=".."/>
+    <property name="intact.app.dir" value=".."/>
+
+    <!-- context path for hierarchView store in the application level -->
     <property name="intact.context.dir" value="${intact.app.dir}/context"/>
+    <property name="hv-context-file"    value="hierarchView-context.xml"/>
 
     <property name="commons.pages.dir"   value="${intact.app.dir}/pages"/>
     <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
@@ -40,9 +43,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
-
-    <property name="hv-context-file" value="${intact.context.dir}/hierarchView-context.xml"/>
-
     <!-- Web service related properties. -->
     <property name="ws.dir" value="ws"/>
     <property name="ws.wsdd.dir" value="ws/wsdd"/>
@@ -53,9 +53,9 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
     <!-- Properties related to Tulip server -->
     <property name="ws.tulip.server.pkg"
-        value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"/>
+              value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"/>
     <property name="ws.tulip.server.dir"
-        value="uk/ac/ebi/intact/application/hierarchView/business/tulip/webService"/>
+              value="uk/ac/ebi/intact/application/hierarchView/business/tulip/webService"/>
     <property name="ws.tulip.jar.name" value="tulipService.jar"/>
     <property name="ws.tulip.jar" value="${ws.dir}/${ws.tulip.jar.name}"/>
     <property name="ws.props.file" value="WebService.properties"/>
@@ -64,15 +64,16 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
     <!-- Properties related to Tulip client -->
     <property name="ws.tulip.client.pkg"
-        value="uk.ac.ebi.intact.application.hierarchView.business.tulip.client"/>
+              value="uk.ac.ebi.intact.application.hierarchView.business.tulip.client"/>
     <property name="ws.tulip.client.dir"
-        value="uk/ac/ebi/intact/application/hierarchView/business/tulip/client"/>
+              value="uk/ac/ebi/intact/application/hierarchView/business/tulip/client"/>
 
     <property name="ws.session.type" value="Application"/>
 
     <!-- We need this flag because deploy targets need to know where to deploy. -->
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir" value="${tomcat.home}/webapps"/>
     <property name="java.opts"   value="${env.JAVA_OPTS}"/>
 
     <property name="webService.properties.filename"   value="${config.dir}/WebService.properties"/>
@@ -348,7 +349,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     -->
     <target name="run-once" unless="tomcat.present">
         <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
-        <available file="${tomcat.home}/webapps/axis/WEB-INF/web.xml" property="axis.present"/>
+        <available file="${webapps.dir}/axis/WEB-INF/web.xml" property="axis.present"/>
     </target>
 
     <!-- =================================================================== -->
@@ -637,7 +638,8 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         </ant>
 
         <!-- Copy context files in the Tomcat's webapps directory -->
-        <copy file="${hv-context-file}" todir="${tomcat.home}/webapps" overwrite="yes"/>
+        <copy file="${intact.context.dir}/${hv-context-file}"
+              todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -648,6 +650,9 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <ant dir=".." inheritAll="false" target="undeploy">
             <property name="war" value="hierarchView"/>
         </ant>
+
+        <!-- Delete context files from the Tomcat's webapps directory -->
+        <delete file="${webapps.dir}/${hv-context-file}" quiet="true"/>
     </target>
 
     <!-- =================================================================== -->
