@@ -2,6 +2,8 @@
                  uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
 <%@ page language="java" %>
 
+<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
+
 <!--
    - Copyright (c) 2002 The European Bioinformatics Institute, and others.
    - All rights reserved. Please see the file LICENSE
@@ -20,7 +22,8 @@
       <tr>
              <td>
                    <!-- displays the interaction network title -->
-                   Existing highlight source for the central protein.
+                   Existing highlight source for the central protein(s).
+                   <intact:documentation section="hierarchView.PPIN.highlight" />
              </td>
       </tr>
 

@@ -19,6 +19,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
 
 <%
 
@@ -52,6 +53,7 @@
           <th>
              <div align="left">
                 <strong><bean:message key="sidebar.search.section.title"/></strong>
+                <intact:documentation section="hierarchView.display" />
              </div>
           </th>
         </tr>

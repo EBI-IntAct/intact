@@ -17,6 +17,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
 
 <%
     /**
@@ -62,12 +63,14 @@
         <tr>
             <td>
                 <%= centerItem %> <bean:message key="sidebar.click.center.title"/>
+                <intact:documentation section="hierarchView.PPIN.center" />
             </td>
         </tr>
 
         <tr>
             <td>
                 <%= addItem %> <bean:message key="sidebar.click.add.title"/>
+                <intact:documentation section="hierarchView.PPIN.add" />
             </td>
         </tr>
     </table>

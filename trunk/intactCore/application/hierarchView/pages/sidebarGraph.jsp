@@ -20,6 +20,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact"%>
 
 <%
     /**
@@ -49,6 +50,7 @@
              <div align="left">
                 <strong><bean:message key="sidebar.graph.section.title"/></strong>
              </div>
+             <intact:documentation section="hierarchView.PPIN.expand" />
           </th>
         </tr>
 
@@ -75,6 +77,7 @@
                 <%
                     }
                 %>
+
             </td>
         </tr>
     </table>
