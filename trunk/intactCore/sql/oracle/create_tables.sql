@@ -964,7 +964,8 @@ set term on
 
 PROMPT Creating table "IA_PAYG"
 CREATE TABLE IA_PAYG(
-      NID                 VARCHAR2(20) NOT NULL CONSTRAINT PK_PAYG PRIMARY KEY
+      NID                 VARCHAR2(20) NOT NULL 
+    , SPECIES             VARCHAR2(30) CONSTRAINT FK_PAYG_SPECIES REFERENCES IA_BIOSOURCE(TAXID)
     , BAIT                INTEGER
     , PREY                INTEGER
     , INDEGREE            NUMBER(6)
@@ -973,10 +974,19 @@ CREATE TABLE IA_PAYG(
     , ESEEN               INTEGER
     , ECONF               INTEGER
     , REALLY_USED_AS_BAIT CHAR(1)
-    , SPECIES             VARCHAR2(30) CONSTRAINT FK_PAYG_SPECIES REFERENCES IA_BIOSOURCE(TAXID)
 )
 TABLESPACE &&intactMainTablespace
 PCTFREE    15
+;
+
+
+PROMPT Creating composite primary Key on 'IA_PAYG'
+ALTER TABLE IA_PAYG
+ ADD (CONSTRAINT     PK_IA_PAYG
+        PRIMARY KEY  (NID, SPECIES)
+        USING INDEX
+        TABLESPACE   &&intactIndexTablespace
+     )
 ;
 
 
