@@ -265,10 +265,11 @@ public class IntactHelper implements SearchI, Externalizable {
      * Wrapper for uk.ac.ebi.intact.persistence#DAO(Object)
      * @param obj the object to check for.
      * @return <code>true</code> if <code>obj</code> is persisted or it has non
-     * null primary key value (shouldn't do it).
+     * null primary key value (shouldn't do it). False is also returned if
+     * <code>obj</code> is null.
      */
     public boolean isPersistent(Object obj) {
-        return dao.isPersistent(obj);
+        return (obj != null) ? dao.isPersistent(obj) : false;
     }
 
     /**
