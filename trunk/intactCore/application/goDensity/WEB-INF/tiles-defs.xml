@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+ <!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<!--
+    Tiles definitions for the template application.
+    Author: Samuel Kerrien (skerrien@ebi.ac.uk)
+
+    Sidebar layout :
+    _________________
+    |   IntAct      |
+    |    logo       |
+    |_______________|
+    |   Search      |
+    |    form       |
+    |_______________|
+    |    Links      |
+    |    menu       |
+    |_______________|
+
+
+    Main layout :
+     __________________________________________
+    |       |                                 |
+    |       |           header                |
+    | side  |_________________________________|
+    | bar   |                                 |
+    |       |                                 |
+    |       |           content               |
+    |       |         (see below)             |
+    |       |                                 |
+    |       |                                 |
+    |       |_________________________________|
+    |       |           footer                |
+    |_______|_________________________________|
+
+ -->
+
+
+
+<tiles-definitions>
+
+    <!-- =============== Menu Links ====================================== -->
+
+    <!-- Menu links for the search page. -->
+    <definition name="goDensity.menu.links" path="/layouts/menu.jsp">
+        <put name="title" value="Links"/>
+        <putList name="items">
+            <item value="goDensity" link="/goDensity"/>
+            <item value="hierarchView" link=""/>
+<!--            <item value="cellular component" link="/goDensity/children.do?goId1=GO:0005575&goId2=GO:0005575"/>-->
+<!--            <item value="molecular function" link="/goDensity/children.do?goId1=GO:0003674&goId2=GO:0003674"/>-->
+        </putList>
+    </definition>
+
+    <!-- =============== Sidebars ====================================== -->
+
+    <!-- Sidebar for the search page -->
+    <definition name="goDensity.sidebar.layout" path="/layouts/sidebarLayout.jsp">
+        <put name="input-dialog" value="/pages/sidebarInput.jsp"/>
+        <put name="menu"         value="goDensity.menu.links"/>
+    </definition>
+
+    <!-- =============== Definitions related to pages ================= -->
+
+    <!-- The header layout. -->
+    <definition name="header.layout" path="/layouts/headerLayout.jsp">
+        <put name="header.title" value="IntAct goDensity"/>
+    </definition>
+
+    <!-- Template page description  -->
+    <definition name="template.layout" path="/layouts/intactLayout.jsp">
+        <put name="title"   value="IntAct - goDensity"/>
+        <put name="sidebar" value="goDensity.sidebar.layout"/>
+        <put name="header"  value="header.layout"/>
+        <put name="footer"  value="/pages/footer.jsp"/>
+    </definition>
+
+    <!-- Entry page layout -->
+    <definition name="goDensity.layout" extends="template.layout">
+        <put name="content" value="/pages/goInput.jsp"/>
+    </definition>
+
+    <!--Access granted layout -->
+    <definition name="success.layout" extends="template.layout">
+        <put name="content" value="/pages/success.jsp"/>
+    </definition>
+
+    <!-- Access denied layout -->
+    <definition name="accessDenied.layout" extends="template.layout">
+        <put name="content" value="/pages/accessDenied.jsp"/>
+    </definition>
+
+    <definition name="goDensity.error.layout" extends="template.layout">
+        <put name="sidebar" value="goDensity.sidebar.layout"/>
+        <put name="header"  value="header.layout"/>
+        <put name="content" value="/pages/error.jsp"/>
+    </definition>
+
+</tiles-definitions>
