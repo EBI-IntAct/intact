@@ -122,15 +122,19 @@ public class ProteinSearchAction extends AbstractEditorAction {
         }
         // Search found any results?
         if (proteins.isEmpty()) {
+            // The error to display on the web page.
+            ActionErrors errors = new ActionErrors();
             // Log the error if we have one.
             Exception exp = user.getProteinParseException();
             if (exp != null) {
-                LOGGER.info(exp);
+                LOGGER.error(exp);
+                errors.add("int.prot.search",
+                        new ActionError("error.int.protein.search.empty.parse", param));
             }
-            // The error to display on the web page.
-            ActionErrors errors = new ActionErrors();
-            errors.add("int.prot.search",
-                    new ActionError("error.int.protein.search.empty", param));
+            else {
+                errors.add("int.prot.search",
+                        new ActionError("error.int.protein.search.empty", param));
+            }
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
