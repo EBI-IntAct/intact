@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-    <!--
-        ANT build configuration file for intactCore module.
-        Authors: Henning Hermjakob (hhe@ebi.ac.uk), Sugath Mudali (smudali@ebi.ac.uk).
-        Version: $Id$
-    -->
+<!--
+    ANT build configuration file for intactCore module.
+    Authors: Henning Hermjakob (hhe@ebi.ac.uk), Sugath Mudali (smudali@ebi.ac.uk).
+    Version: $Id$
+-->
 
-    <project name="intact-core" basedir="." default="project">
+<project name="intact-core" basedir="." default="project">
     <property name="project.title" value="Intact Core"/>
     <property name="project.version" value="0.1.0"/>
 
-    <property name="src.dir"  value="src"/>
+    <property name="src.dir" value="src"/>
     <property name="dest.dir" value="classes"/>
     <property name="jdoc.dir" value="doc/api"/>
     <property name="config.dir" value="config"/>
@@ -20,12 +20,12 @@
 
     <!-- Repository/OJB file properties -->
     <property name="rep.template.file" value="${template.dir}/repository_database.template"/>
-    <property name="rep.dest.file"     value="${config.dir}/repository_database.xml"/>
-<!--<property name="ojb.template.file" value="${template.dir}/OJB.template"/>
+    <property name="rep.dest.file" value="${config.dir}/repository_database.xml"/>
+    <!--<property name="ojb.template.file" value="${template.dir}/OJB.template"/>
     <property name="ojb.dest.file"     value="${config.dir}/OJB.properties"/>
     -->
-    <property name="ora.props.file"    value="${config.dir}/oracle.properties"/>
-    <property name="pg.props.file"     value="${config.dir}/postgres.properties"/>
+    <property name="ora.props.file" value="${config.dir}/oracle.properties"/>
+    <property name="pg.props.file" value="${config.dir}/postgres.properties"/>
 
     <!-- Oracle various properties file -->
     <property name="ora.props.file.d002" value="${config.dir}/oracle-d002.properties"/>
@@ -55,7 +55,7 @@
         <fileset dir="lib">
             <include name="**/*.jar"/>
         </fileset>
-        <pathelement path ="${dest.dir}"/>
+        <pathelement path="${dest.dir}"/>
     </path>
 
     <!-- javadoc classpath. -->
@@ -94,7 +94,7 @@
     <target name="set-target-env" description="Sets the target environment">
         <!-- Delete existing environment files. -->
         <delete file="${rep.dest.file}" quiet="true"/>
-<!--         <delete file="${ojb.dest.file}" quiet="true"/>   -->
+        <!--         <delete file="${ojb.dest.file}" quiet="true"/>   -->
         <antcall target="${target.env}"/>
     </target>
 
@@ -145,7 +145,7 @@
     <!-- Remove 'dest' and docs directories of editor module for clean build -->
     <target name="clean-editor"
         description="Prepare editor module for a clean build">
-        <ant dir="${app.dir}/editor" inheritAll="false" target="clean" />
+        <ant dir="${app.dir}/editor" inheritAll="false" target="clean"/>
     </target>
 
     <!-- =================================================================== -->
@@ -153,7 +153,7 @@
     <!-- Remove 'dest' and docs directories of search module for clean build -->
     <target name="clean-search"
         description="Prepare search module for a clean build">
-        <ant dir="${app.dir}/search2" inheritAll="false" target="clean" />
+        <ant dir="${app.dir}/search2" inheritAll="false" target="clean"/>
     </target>
 
     <!-- =================================================================== -->
@@ -161,7 +161,7 @@
     <!-- Remove 'dest' and docs directories of search module for clean build -->
     <target name="clean-dataConversion"
         description="Prepare dataConversion module for a clean build">
-        <ant dir="${app.dir}/dataConversion" inheritAll="false" target="clean" />
+        <ant dir="${app.dir}/dataConversion" inheritAll="false" target="clean"/>
     </target>
 
     <!-- =================================================================== -->
@@ -171,7 +171,7 @@
     -->
     <target name="clean-hv"
         description="Prepare hierarchView module for a clean build">
-        <ant dir="${app.dir}/hierarchView" inheritAll="false" target="clean" />
+        <ant dir="${app.dir}/hierarchView" inheritAll="false" target="clean"/>
     </target>
 
     <!-- =================================================================== -->
@@ -179,7 +179,7 @@
     <!-- Remove 'dest' and docs directories of intact module for clean build -->
     <target name="clean-intact"
         description="Prepare intact module for a clean build">
-        <ant dir="${app.dir}/intact" inheritAll="false" target="clean" />
+        <ant dir="${app.dir}/intact" inheritAll="false" target="clean"/>
     </target>
 
     <!-- =================================================================== -->
@@ -188,8 +188,8 @@
     <target name="copySynchronMappings">
         <echo message="This target to be moved to synchron package - avoid using it"/>
 
-        <copy todir="${dest.dir}/uk/ac/ebi/intact/${app.dir}/synchron" >
-            <fileset dir="${config.dir}" >
+        <copy todir="${dest.dir}/uk/ac/ebi/intact/${app.dir}/synchron">
+            <fileset dir="${config.dir}">
                 <include name="**/*.xml"/>
             </fileset>
         </copy>
@@ -214,12 +214,12 @@
 
 
         <condition property="postgres.jdbc.driver.missing">
-          <not>
-              <available file="lib/${postgresql.jar}"/>
-          </not>
+            <not>
+                <available file="lib/${postgresql.jar}"/>
+            </not>
         </condition>
 
-          <fail if="postgres.jdbc.driver.missing">
+        <fail if="postgres.jdbc.driver.missing">
               Unable to find your postgres jdbc driver!
               see /config/jdbc.properties file for the format.
         </fail>
@@ -229,31 +229,31 @@
         <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
 
         <replace file="${rep.dest.file}" propertyfile="${pg.props.file}">
-            <replacefilter token="@DBMS_NAME@"       value="PostgreSQL" />
-            <replacefilter token="@DRIVER_NAME@"     value="org.postgresql.jdbc2.optional.PoolingDataSource"/>
+            <replacefilter token="@DBMS_NAME@" value="PostgreSQL"/>
+            <replacefilter token="@DRIVER_NAME@" value="${postgres.driver.classname}"/>
             <replacefilter token="@URL_SUBPROTOCOL@" property="subprotocol"/>
-            <replacefilter token="@URL_DBALIAS@"     property="dbalias"/>
-            <replacefilter token="@USER_NAME@"       property="username"/>
-            <replacefilter token="@USER_PASSWD@"     property="password"/>
-            <replacefilter token="@AUTO_COMMIT@"     value="0"/>
+            <replacefilter token="@URL_DBALIAS@" property="dbalias"/>
+            <replacefilter token="@USER_NAME@" property="username"/>
+            <replacefilter token="@USER_PASSWD@" property="password"/>
+            <replacefilter token="@AUTO_COMMIT@" value="0"/>
         </replace>
 
         <!-- Copy the template to config directory -->
-<!--        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/> -->
+        <!--        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/> -->
 
         <!-- Set the postgres sequence manager -->
 
         <!-- Copy the template to config directory -->
- <!--        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
+        <!--        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
 
-        <replace file="${ojb.dest.file}">
-            <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.PostgresSequenceManager" />
-        </replace>
+            <replace file="${ojb.dest.file}">
+                <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.PostgresSequenceManager" />
+            </replace>
 
-        <replace file="${ojb.dest.file}">
-            <replacefilter token="[CACHEIMPLEMENTATION]" value="${ojb.ObjectCacheClass}"/>
-        </replace>
-        -->
+            <replace file="${ojb.dest.file}">
+                <replacefilter token="[CACHEIMPLEMENTATION]" value="${ojb.ObjectCacheClass}"/>
+            </replace>
+            -->
     </target>
 
     <!-- =================================================================== -->
@@ -267,19 +267,18 @@
         </condition>
 
 
-
         <fail if="oracle.property.missing">
               Unable to find ${ora.props.file} file;
               see template/oracle.template file for the format.
         </fail>
 
         <condition property="oracle.jdbc.driver.missing">
-          <not>
-              <available file="lib/${oracle.jar}"/>
-          </not>
+            <not>
+                <available file="lib/${oracle.jar}"/>
+            </not>
         </condition>
 
-          <fail if="oracle.jdbc.driver.missing">
+        <fail if="oracle.jdbc.driver.missing">
              Unable to find your oracle jdbc driver !
               see /config/jdbc.properties file for the format.
         </fail>
@@ -288,26 +287,26 @@
         <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
 
         <replace file="${rep.dest.file}" propertyfile="${ora.props.file}">
-            <replacefilter token="@DBMS_NAME@"       value="Oracle" />
-            <replacefilter token="@DRIVER_NAME@"     value="oracle.jdbc.pool.OracleConnectionCacheImpl"/>
+            <replacefilter token="@DBMS_NAME@" value="Oracle"/>
+            <replacefilter token="@DRIVER_NAME@" value="${oracle.driver.classname}"/>
             <replacefilter token="@URL_SUBPROTOCOL@" property="subprotocol"/>
-            <replacefilter token="@URL_DBALIAS@"     property="dbalias"/>
-            <replacefilter token="@USER_NAME@"       property="username"/>
-            <replacefilter token="@USER_PASSWD@"     property="password"/>
-            <replacefilter token="@AUTO_COMMIT@"     value="1"/>
+            <replacefilter token="@URL_DBALIAS@" property="dbalias"/>
+            <replacefilter token="@USER_NAME@" property="username"/>
+            <replacefilter token="@USER_PASSWD@" property="password"/>
+            <replacefilter token="@AUTO_COMMIT@" value="1"/>
         </replace>
 
         <!-- Copy the template to config directory -->
- <!--       <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
+        <!--       <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
 
-        <replace file="${ojb.dest.file}">
-            <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.OracleSequenceManager"/>
-        </replace>
+            <replace file="${ojb.dest.file}">
+                <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.OracleSequenceManager"/>
+            </replace>
 
-        <replace file="${ojb.dest.file}">
-            <replacefilter token="[CACHEIMPLEMENTATION]" value="${ojb.ObjectCacheClass}"/>
-        </replace>
-        -->
+            <replace file="${ojb.dest.file}">
+                <replacefilter token="[CACHEIMPLEMENTATION]" value="${ojb.ObjectCacheClass}"/>
+            </replace>
+            -->
     </target>
 
     <!-- =================================================================== -->
@@ -340,31 +339,31 @@
     <target name="jar-core"
         description="Creates the Intact core jar file in the distribution directory">
 
-	<echo message=
-            "Building core JAR - NOTE: This will first remove any compiled core classes
- before recompiling..."/>
+        <echo message=
+                "Building core JAR - NOTE: This will first remove any compiled core classes
+        before recompiling..."/>
 
         <!-- Delete the class directory. -->
         <delete dir="${dest.dir}"/>
 
         <!-- Just compile without copying config files to the class dir; exclude tests. -->
-        <mkdir dir="${dest.dir}" />
+        <mkdir dir="${dest.dir}"/>
         <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
             source="1.4" excludes="${non.core.files}, **/test/**">
             <classpath refid="project.class.path"/>
         </javac>
 
-        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${dist.dir}"/>
 
         <!-- Delete the existing jar file. -->
         <delete file="${dist.dir}/${intact.core.jar}" quiet="true"/>
 
-        <jar destfile="${dist.dir}/${intact.core.jar}" basedir="${basedir}/${dest.dir}" />
+        <jar destfile="${dist.dir}/${intact.core.jar}" basedir="${basedir}/${dest.dir}"/>
 
-	<!-- now copy the config files back to the classes directory, to put it back
-		to a 'compiled' state
-	-->
-	<antcall target="copyConfigFiles"/>
+        <!-- now copy the config files back to the classes directory, to put it back
+            to a 'compiled' state
+        -->
+        <antcall target="copyConfigFiles"/>
 
     </target>
 
@@ -376,7 +375,7 @@
 
         <echo message=
             "DEPRECATED; PLEASE USE compile-all or compile-core INSTEAD"/>
-        <mkdir dir="${dest.dir}" />
+        <mkdir dir="${dest.dir}"/>
 
         <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
             source="1.4" excludes="${non.core.files}">
@@ -391,7 +390,7 @@
 
     <!-- Compiles only the Intact core files. -->
     <target name="compile-core" description="Compiles the Intact core source files">
-        <mkdir dir="${dest.dir}" />
+        <mkdir dir="${dest.dir}"/>
 
         <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
             source="1.4" excludes="${non.core.files}">
@@ -405,7 +404,7 @@
     <!-- =================================================================== -->
 
     <!-- Compiles the hierarchView module. -->
-    <target name="compile-hv"  depends="compile-core"
+    <target name="compile-hv" depends="compile-core"
         description="Compiles the hierarchView module">
         <ant dir="${app.dir}/hierarchView" inheritAll="false" target="compile"/>
     </target>
@@ -420,7 +419,7 @@
     </target>
 
     <!-- =================================================================== -->
-<!-- Compiles the synchron module. -->
+    <!-- Compiles the synchron module. -->
     <target name="compile-synchron" depends="compile-core"
         description="Compiles the synchron module">
 
@@ -429,7 +428,7 @@
 
     <!-- =================================================================== -->
 
-	<!-- Compiles the search module. -->
+    <!-- Compiles the search module. -->
     <target name="compile-search" depends="compile-core"
         description="Compiles the search module">
 
@@ -438,7 +437,7 @@
 
     <!-- =================================================================== -->
 
-	<!-- Compiles the search module. -->
+    <!-- Compiles the search module. -->
     <target name="compile-dataConversion" depends="compile-core"
         description="Compiles the data conversion module">
 
@@ -467,7 +466,7 @@
 
         <!-- Start with a fresh directory. -->
         <delete dir="${jdoc.dir}" quiet="true"/>
-        <mkdir dir="${jdoc.dir}" />
+        <mkdir dir="${jdoc.dir}"/>
 
         <javadoc destdir="${jdoc.dir}" author="true" version="true" use="true"
             windowtitle="Intact core API Documentation"
@@ -476,7 +475,7 @@
 
             <!-- Exclude javadoc for test packages. -->
             <packageset dir="${src.dir}">
-                <exclude name="**/test/**" />
+                <exclude name="**/test/**"/>
             </packageset>
             <classpath refid="javadoc.class.path"/>
             <tag name="intact.todo" description="To do:"/>
@@ -490,9 +489,9 @@
 
     <!-- =================================================================== -->
 
-	<!-- JUnit Targets -->
+    <!-- JUnit Targets -->
 
-<!-- individual package tests using junit task. -->
+    <!-- individual package tests using junit task. -->
 
 
     <!-- util package test target. -->
@@ -503,7 +502,7 @@
         </junit>
     </target>
 
-	<!-- model package test target. -->
+    <!-- model package test target. -->
     <target name="model-test" depends="compile-core" description="Runs model JUnit tests">
         <junit printsummary="withOutAndErr">
             <test name="uk.ac.ebi.intact.model.test.AllJUnitTests"/>
@@ -511,8 +510,8 @@
         </junit>
     </target>
 
-	<!-- business package (ie helper) test target. -->
-	<target name="helper-test" depends="compile-core" description="Runs model JUnit tests">
+    <!-- business package (ie helper) test target. -->
+    <target name="helper-test" depends="compile-core" description="Runs model JUnit tests">
         <junit printsummary="withOutAndErr">
             <test name="uk.ac.ebi.intact.business.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
@@ -520,47 +519,37 @@
     </target>
 
     <!-- =================================================================== -->
- 
+
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
     <!-- There is one target for each set of package tests -->
 
-	<!-- model target -->
+    <!-- model target -->
     <target name="test-model-stdout" depends="compile-core"
-            description="Runs JUnit directly with output directed to stdout">
+        description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value="uk.ac.ebi.intact.model.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </java>
     </target>
 
-	<!-- helper target -->
-	<target name="test-helper-stdout" depends="compile-core"
-            description="Runs JUnit directly with output directed to stdout">
+    <!-- helper target -->
+    <target name="test-helper-stdout" depends="compile-core"
+        description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value="uk.ac.ebi.intact.business.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </java>
     </target>
 
-	<!-- util target -->
-	<target name="test-util-stdout" depends="compile-core"
-            description="Runs JUnit directly with output directed to stdout">
+    <!-- util target -->
+    <target name="test-util-stdout" depends="compile-core"
+        description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </java>
     </target>
 
-    <!-- Runs the unit tester for a package. The package to run must be given
-         as -Dtest.package="......."
-    -->
-    <target name="test-package-stdout" depends="compile-core"
-            description="Runs JUnit directly with output directed to stdout">
-        <java classname="junit.textui.TestRunner" fork="true">
-            <arg value="${test.package}.test.AllJUnitTests"/>
-            <classpath refid="project.class.path"/>
-        </java>
-    </target>
 
 
 
@@ -569,8 +558,8 @@
     <!-- An alias for for all junit-tests -->
     <target name="test-all">
         <antcall target="test-model-stdout"/>
-	  <antcall target="test-helper-stdout"/>
-	  <antcall target="test-util-stdout"/>
+        <antcall target="test-helper-stdout"/>
+        <antcall target="test-util-stdout"/>
     </target>
 
     <!-- =================================================================== -->
