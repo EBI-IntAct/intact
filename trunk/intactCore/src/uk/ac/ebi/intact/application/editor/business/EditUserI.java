@@ -243,32 +243,6 @@ public interface EditUserI extends IntactUserI, Serializable {
     public void updateSearchCache(AnnotatedObject annotobj);
 
     /**
-     * Returns a unique short label.
-     * @param shortlabel the new short label.
-     * @return a unique short label as a <code>String</code> instance. This
-     * could be <code>shortlabel</code> if it is unique or current object's
-     * AC for otherwise.
-     * @exception SearchException for problems with searching the database.
-     *
-     * @see #getUniqueShortLabel(String, String)
-     */
-//    public String getUniqueShortLabel(String shortlabel) throws SearchException;
-
-    /**
-     * Returns a unique short label.
-     * @param shortlabel the new short label.
-     * @param extAc the external ac to be used if <code>shortlabel</code> is not
-     * unique.
-     * @return a unique short label as a <code>String</code> instance.
-     * @exception SearchException for problems with searching the database.
-     *
-     * @see uk.ac.ebi.intact.util.GoTools#getUniqueShortLabel(
-            * uk.ac.ebi.intact.business.IntactHelper, Class, String, String, String)
-     */
-//    public String getUniqueShortLabel(String shortlabel, String extAc)
-//            throws SearchException;
-
-    /**
      * Check for duplicity of short label for the current edit object.
      * @param shortlabel the short label to check for duplicity.
      * @return true if <code>shortlabel</code> already exists (for the current edit object)
