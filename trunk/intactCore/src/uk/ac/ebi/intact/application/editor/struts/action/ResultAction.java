@@ -54,6 +54,9 @@ public class ResultAction extends AbstractEditorAction {
         String ac = request.getParameter("ac");
         // The class name to search.
         String className = request.getParameter("searchClass");
+        // This should override any previous topic (may be same but it could
+        // be diffrent (avoid class cast exception).
+        user.setSelectedTopic(className);
 
         LOGGER.info("AC: " + ac + " class: " + className);
 
