@@ -190,6 +190,11 @@ b) type ant start-tomcat (once)- if this fails, simply go to your tomcat bin dir
 c) to start a web application, open a web browser and type
 
 	http://<hostname>:8080/<webapp-name>
+	or
+ 	http://<hostname>:8080/intact/<webapp-name>
+
+	Example:
+	http://localhost:8080/intact/search
 
 Note that from the search application it is also possible to generate a graph of selected items - but to use this facility
 you should have installed the components for hierarchView (ie Tulip and axis). Note that Tulip is a C++ application and
