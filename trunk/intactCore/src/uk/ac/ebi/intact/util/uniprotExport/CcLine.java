@@ -75,8 +75,6 @@ public class CcLine implements Comparable {
             int score = lovercaseGene1.compareTo( lovercaseGene2 );
 
             if( score == 0 ) {
-
-            } else {
                 score = gene1.compareTo( gene2 );
             }
 
