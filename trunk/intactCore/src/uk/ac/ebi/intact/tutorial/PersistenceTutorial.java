@@ -1,50 +1,79 @@
+/*
+* Copyright (c) 2002 The European Bioinformatics Institute, and others.
+* All rights reserved. Please see the file LICENSE
+* in the root directory of this distribution.
+*/
+
+
 package uk.ac.ebi.intact.tutorial;
 
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
-import uk.ac.ebi.intact.util.UpdateProteins;
+import uk.ac.ebi.intact.util.*;
 
 import java.util.*;
+import java.sql.SQLException;
+
+import org.apache.ojb.broker.accesslayer.LookupException;
 
 /**
- * @author Anja Friedrichsen (afrie@ebi.ac.uk)
- * @version $Id$
+ * This class gives an overview how to create,
+ * update and delete objects in the IntAct database
+ *
+ * @author Anja Friedrichsen
+ * @version $id$
  */
 public class PersistenceTutorial {
 
-    IntactHelper helper;
-    Institution owner;
-    BioSource organism;
-    Experiment experiment;
-    Interaction interaction;
-    Component component1;
-    Component component2;
-    Component component3;
+    private IntactHelper helper;
+    private Institution owner;
+    private BioSource organism;
+    private Experiment experiment;
+    private Interaction interaction;
+    private Component component1;
+    private Component component2;
+    private Component component3;
 
-    // create an Institution
-    private Institution createInstitution(String shortlabel) throws IntactException {
-        owner = new Institution(shortlabel);
-        helper.create(owner);
-//      owner = helper.getInstitution();
-        return owner;
+    public PersistenceTutorial(IntactHelper helper) {
+        this.helper = helper;
     }
 
-    // create a BioSource
+    /**
+     * creates a BioSource
+     *
+     * @param owner  institution which owns the BioSource
+     * @param shortLabel string that identifies the BiSource
+     * @param taxID  NCBI taxID
+     * @return
+     * @throws IntactException
+     */
     private BioSource createBioSource(Institution owner, String shortLabel, String taxID) throws IntactException {
         organism = new BioSource(owner, shortLabel, taxID);
         helper.create(organism);
         return organism;
     }
 
-    // create an Experiment
+    /**
+     * creates an Experiment
+     *
+     * @param owner institution that owns that experiment
+     * @param shortLabel  string that identifies the experiment
+     * @param organism  organism of the experimental data
+     * @throws IntactException
+     */
     private void createExperiment(Institution owner, String shortLabel, BioSource organism) throws IntactException {
         experiment = new Experiment(owner, shortLabel, organism);
         helper.create(experiment);
     }
 
-    // create an Interaction
+    /**
+     * creates an interaction
+     *
+     * @param experiment evidence for that interaction
+     * @param shortLabel identifier of that interaction
+     * @param owner institution which owns the interaction
+     * @throws IntactException
+     */
     private void createInteraction(Experiment experiment, String shortLabel, Institution owner) throws IntactException {
         Collection experiments = new ArrayList();
         experiments.add(experiment);
@@ -54,7 +83,14 @@ public class PersistenceTutorial {
         helper.create(interaction);
     }
 
-    // create Interactors
+    /**
+     *  creates interactions
+     *
+     * @param owner
+     * @param organism
+     * @param interaction
+     * @throws IntactException
+     */
     private void createInteractors(Institution owner, BioSource organism, Interaction interaction) throws IntactException {
         Protein protein1 = new ProteinImpl(owner, organism, "protein1");
         Protein protein2 = new ProteinImpl(owner, organism, "protein2");
@@ -78,9 +114,12 @@ public class PersistenceTutorial {
         helper.create(component3);
     }
 
-    // update the interaction
+    /**
+     * updates the interaction
+     *
+     * @throws IntactException
+     */
     private void updateInteraction() throws IntactException {
-
         // add the components to the existing interaction
         interaction.addComponent(component1);
         interaction.addComponent(component2);
@@ -90,22 +129,36 @@ public class PersistenceTutorial {
         helper.update(interaction);
     }
 
-    private void updateProtein(String proteinAc) throws UpdateProteinsI.UpdateException{
+    /**
+     * updates IntAct with proteins from other databases like UniProt
+     *
+     * @param proteinAc
+     * @throws UpdateProteinsI.UpdateException
+     *
+     */
+    private void importProtein(String proteinAc) throws UpdateProteinsI.UpdateException {
         UpdateProteinsI proteinFactory = new UpdateProteins(helper);
         proteinFactory.insertSPTrProteins(proteinAc);
     }
 
-    // create an institution, a bioSource, an experiment, an interaction and interactors
-    // update the interaction
+
+    /**
+     * creates an institution, a bioSource, an experiment, an interaction and interactors
+     * updates the interaction and
+     * imports a protein from UniProt
+     *
+     * @throws UpdateProteinsI.UpdateException
+     *
+     */
     private void insertData() throws UpdateProteinsI.UpdateException {
         try {
-            owner = createInstitution("ebi");
+            owner = helper.getInstitution();
             organism = createBioSource(owner, "drosophila", "7215");
             createExperiment(owner, "tutorial", organism);
             createInteraction(experiment, "interaction", owner);
             createInteractors(owner, organism, interaction);
             updateInteraction();
-            updateProtein("P21181");
+            importProtein("P21181");
 
         } catch (IntactException ie) {
 
@@ -117,7 +170,12 @@ public class PersistenceTutorial {
         }
     }
 
-    // delete the experiment
+    /**
+     * deletes an experiment specified by the shortlabel
+     *
+     * @param shortlabel
+     * @throws IntactException
+     */
     private void deleteExperiment(String shortlabel) throws IntactException {
         Collection experiments = helper.search(Experiment.class.getName(), "shortlabel", shortlabel);
         for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
@@ -126,7 +184,12 @@ public class PersistenceTutorial {
         }
     }
 
-    // delete the interaction
+    /**
+     * deletes an interaction specified by the shortlabel
+     *
+     * @param shortlabel
+     * @throws IntactException
+     */
     private void deleteInteraction(String shortlabel) throws IntactException {
         Collection interactions = helper.search(Interaction.class.getName(), "shortlabel", shortlabel);
         for (Iterator iterator = interactions.iterator(); iterator.hasNext();) {
@@ -135,7 +198,13 @@ public class PersistenceTutorial {
         }
     }
 
-    // delete the interactors
+
+    /**
+     * delete a interactor (or more) specified by the shortlabel
+     *
+     * @param shortlabel
+     * @throws IntactException
+     */
     private void deleteInteractor(String shortlabel) throws IntactException {
         Collection interactors = helper.search(Interactor.class.getName(), "shortlabel", shortlabel);
         for (Iterator iterator = interactors.iterator(); iterator.hasNext();) {
@@ -144,26 +213,55 @@ public class PersistenceTutorial {
         }
     }
 
-    // delete the experiment, the interaction and all proteins
+    /**
+     * deletes the experiment 'tutorial', the interaction 'interaction' and
+     * the proteins where the shortlabel starts with 'protein'
+     *
+     * @throws IntactException
+     */
     private void deleteData() throws IntactException {
         deleteExperiment("tutorial");
         deleteInteraction("interaction");
         deleteInteractor("protein*");
     }
 
-
+    /**
+     * inserts the data and deletes it right after
+     *
+     * @param args
+     * @throws IntactException
+     * @throws UpdateProteinsI.UpdateException
+     *
+     */
     public static void main(String[] args) throws IntactException, UpdateProteinsI.UpdateException {
 
-        PersistenceTutorial tutorial = new PersistenceTutorial();
+        IntactHelper helper = null;
+
         try {
-            tutorial.helper = new IntactHelper();
+            helper = new IntactHelper();
+
+            // get database information
+            String user = helper.getDbUserName();
+            String dbName = helper.getDbName();
+            System.out.println("User " + user + " is connected to database: " + dbName + ".");
+
+            PersistenceTutorial tutorial = new PersistenceTutorial( helper );
+
             //insert data
             tutorial.insertData();
+
             // and delete the data again
             tutorial.deleteData();
-        } finally {
-            tutorial.helper.closeStore();
-        }
 
+        } catch (LookupException lupe) {
+            lupe.printStackTrace();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+
+            if( helper != null ) {
+                helper.closeStore();
+            }
+        }
     }
 }
