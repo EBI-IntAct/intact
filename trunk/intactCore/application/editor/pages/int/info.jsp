@@ -79,7 +79,7 @@
 
 <table width="50%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
-        <th class="tableCellHeader">kD</th>
+        <th class="tableCellHeader">Kd</th>
         <th class="tableCellHeader">
             <a href="javascript:showInteraction('CvInteractionType', 2)">
                 <bean:message key="int.label.cvtype"/>
