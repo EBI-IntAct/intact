@@ -115,7 +115,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         }
         else {
             // Prepare for Interactions for display.
-            makeInteractionBeans(exp.getInteractions());
+            makeInteractionRows(exp.getInteractions());
         }
     }
 
@@ -164,8 +164,9 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
             // 2. Now add the interaction as real objects.
             for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
-                Interaction intact = (Interaction) iter.next();
-                exp.addInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
+                InteractionRowData row = (InteractionRowData) iter.next();
+                exp.addInteraction((Interaction) IntactHelper.getRealIntactObject(
+                        row.getInteraction()));
             }
             // --------------------------------------------------------------------
         }
@@ -261,24 +262,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 //        }
     }
 
-    // Null for any of these values will throw an exception.
-//    public void validate(EditUserI user) throws ValidationException,
-//            SearchException {
-//        System.out.println("In the validation");
-//        super.validate(user);
-//        System.out.println("In the validation, after calling super");
-//        if (myOrganism == null) {
-//            System.out.println("My Organism is NULL");
-//            throw new ExperimentException("exp.biosrc", "error.exp.biosrc");
-//        }
-//        else if (myInter == null) {
-//            throw new ExperimentException("exp.inter", "error.exp.inter");
-//        }
-//        else if (myIdent == null) {
-//            throw new ExperimentException("exp.ident", "error.exp.ident");
-//        }
-//    }
-
     /**
      * Override to provide the menus for this view.
      * @return a map of menus for this view. It consists of common menus for
@@ -330,7 +313,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public void addInteraction(Interaction inter) {
         // Add to the view.
-        myInteractions.add(inter);
+        myInteractions.add(new InteractionRowData(inter));
     }
 
     /**
@@ -346,7 +329,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Add to the container to delete interactions.
         myInteractionsToDel.add(inter);
         // Remove from the view as well.
-        myInteractions.remove(inter);
+        myInteractions.remove(new InteractionRowData(inter));
     }
 
     /**
@@ -361,11 +344,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public void addInteractionToHold(Collection ints) {
         for (Iterator iter = ints.iterator(); iter.hasNext();) {
-            Interaction inter = (Interaction) iter.next();
+            InteractionSearchRowData row = new InteractionSearchRowData((Interaction) iter.next());
             // Avoid duplicates.
-            if (!myInteractionsToHold.contains(inter)
-                    && !myInteractions.contains(inter)) {
-                myInteractionsToHold.add(inter);
+            if (!myInteractionsToHold.contains(row)
+                    && !myInteractions.contains(row)) {
+                myInteractionsToHold.add(row);
             }
         }
     }
@@ -376,7 +359,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      *
      * <pre>
      * post: return != null
-     * post: return->forall(obj : Object | obj.oclIsTypeOf(Interaction))
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(InteractionRowData))
      * </pre>
      */
     public List getInteractions() {
@@ -388,7 +371,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      *
      * <pre>
      * post: return != null
-     * post: return->forall(obj : Object | obj.oclIsTypeOf(Interaction))
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(InteractionSearchRowData))
      * </pre>
      */
     public List getHoldInteractions() {
@@ -412,7 +395,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public void hideInteractionToHold(Interaction inter) {
-        myInteractionsToHold.remove(inter);
+        myInteractionsToHold.remove(new InteractionSearchRowData(inter));
     }
 
     /**
@@ -449,6 +432,46 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         return getAc() != null;
     }
 
+    /**
+     * Updates the a row for given interaction. A new row is created if this
+     * doesn't exist.
+     * @param interaction the interaction to update or add.
+     */
+    public void updateInteractionRow(Interaction interaction) {
+        List exps = extractExpShortLabels(interaction.getExperiments());
+        
+        // If the current experiment is not in the list, we can ignore
+        if (!exps.contains(getShortLabel())) {
+            return;
+        }
+        // The current experiment is part of the given interaction.
+        
+        // Create a dummy row data for comparision.
+        InteractionRowData dummy = new InteractionRowData(interaction);
+        
+        // Compare with the existing rows.
+        if (myInteractions.contains(dummy)) {
+            int pos = myInteractions.indexOf(dummy);
+            myInteractions.remove(pos);
+        }
+        myInteractions.add(dummy);
+    }
+    
+    /**
+     * Deletes the row matching the given ac.
+     * @param ac the AC to delete the interaction row.
+     */
+    public void deleteInteractionRow(String ac) {
+        // Create a dummy row data for comparision.
+        InteractionRowData dummy = new InteractionRowData(ac);
+        
+        // Compare with the existing rows.
+        if (myInteractions.contains(dummy)) {
+            int pos = myInteractions.indexOf(dummy);
+            myInteractions.remove(pos);
+        }
+    }
+    
     // Helper methods
 
     private void loadMenus() throws IntactException {
@@ -481,10 +504,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         }
     }
 
-    private void makeInteractionBeans(Collection ints) {
+    private void makeInteractionRows(Collection ints) {
         for (Iterator iter = ints.iterator(); iter.hasNext();) {
-            Interaction interaction = (Interaction) iter.next();
-            myInteractions.add(interaction);
+            Interaction inter = (Interaction) iter.next();
+            InteractionRowData row = new InteractionRowData(inter);
+            myInteractions.add(row);
         }
     }
 
@@ -504,5 +528,13 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
         // Clear any previous interactions.
         myInteractions.clear();
+    }
+    
+    private List extractExpShortLabels(Collection exps) {
+        List list = new ArrayList();
+        for (Iterator iter = exps.iterator(); iter.hasNext(); ) {
+            list.add(((Experiment) iter.next()).getShortLabel());
+        }
+        return list;
     }
 }

@@ -61,8 +61,7 @@
     %>
 
     <display:table width="100%" name="ints" pagesize="<%=pageSize%>"
-        requestURI="<%=uri%>"
-        decorator="uk.ac.ebi.intact.application.editor.struts.view.experiment.IntDisplayWrapper">
+        requestURI="<%=uri%>">
         <display:column property="action" title="Action" />
         <display:column property="shortLabel" title="Short Label"/>
         <display:column property="ac" title="Ac" />

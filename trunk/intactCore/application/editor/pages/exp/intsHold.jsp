@@ -1,5 +1,3 @@
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean"%>
-
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -15,26 +13,27 @@
 <%@ page language="java"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
 
 <jsp:useBean id="user" scope="session"
     beanName="uk.ac.ebi.intact.application.editor.business.EditUser"
     type="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
+<%-- The current view --%>
+<bean:define id="view" name="user" property="view"
+    type="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean"/>
+
 <%-- Only display the table if the interactions less (<) the allowed limit --%>
-<c:if test="${user.view.numberOfInteractions lt service.interactionLimit}">
+<c:if test="${view.numberOfInteractions lt service.interactionLimit}">
 
     <h3>Interactions not yet added to the Experiment</h3>
 
-    <c:if test="${user.view.holdInteractionCount gt 0 and empty noDisplayInts}">
+    <c:if test="${view.holdInteractionCount gt 0 and empty noDisplayInts}">
+        <%-- Store in the page scope for the display library to access it --%>
+        <bean:define id="ints" name="view" property="holdInteractions" type="java.util.List"/>
 
-        <%
-            ExperimentViewBean view = (ExperimentViewBean) user.getView();
-            pageContext.setAttribute("ints", view.getHoldInteractions());
-        %>
-
-        <display:table width="100%" name="ints"
-            decorator="uk.ac.ebi.intact.application.editor.struts.view.experiment.IntHoldDisplayWrapper">
+        <display:table width="100%" name="ints">
             <display:column property="action" title="Action" />
             <display:column property="shortLabel" title="Short Label" sort="true"/>
             <display:column property="ac" title="Ac" />
