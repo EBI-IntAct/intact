@@ -61,6 +61,8 @@ public class SimpleViewBean extends AbstractViewBean {
     private String intactType;
 
 
+
+
     /**
      * The bean constructor requires an AnnotatedObject to wrap, plus beans on
      * the context path to the search application and the help link. The object itself
@@ -96,6 +98,29 @@ public class SimpleViewBean extends AbstractViewBean {
         return "protein.single.view";
     }
 
+    // TODO reimplement this method
+    public String getHelpUrl() {
+       String helpUrl = this.getHelpLink();
+
+
+        if (Protein.class.isAssignableFrom(obj.getClass())) {
+                  return helpUrl + "Interactor";
+                } else {
+                    if (Experiment.class.isAssignableFrom(obj.getClass())) {
+                         return helpUrl + "Experiment";
+                    } else {
+                        if (Interaction.class.isAssignableFrom(obj.getClass())) {
+                             return helpUrl + "Interaction";
+                        } else {
+                            if (CvObject.class.isAssignableFrom(obj.getClass())) {
+                                return helpUrl + "cvs";
+                            }
+                        }
+                    }
+                }
+        return helpUrl; 
+    }
+
     /**
      * This is left over from the earlier version - will be removed.
      * It does nothing here.
@@ -129,6 +154,11 @@ public class SimpleViewBean extends AbstractViewBean {
     public String getObjDescription() {
         if(obj.getFullName() != null) return obj.getFullName();
         return "-";
+    }
+
+     public String getNumberOfInteractions(Protein aProtein) {
+             Set componentSet = new HashSet(aProtein.getActiveInstances());
+              return Integer.toString(componentSet.size());
     }
 
 
@@ -189,6 +219,39 @@ public class SimpleViewBean extends AbstractViewBean {
      */
     public AnnotatedObject getObject() {
         return obj;
+    }
+
+     public String getGeneNames(Protein protein) {
+
+        //populate on first request
+        Set nameSet = new HashSet();    //useful because sometimes they are repeated!! (eg GIOT)
+        StringBuffer geneNames = new StringBuffer();
+
+        //the gene names are obtained from the Aliases for the Protein
+        //which are of type 'gene name'...
+        Collection aliases = protein.getAliases();
+        for (Iterator it = aliases.iterator(); it.hasNext();) {
+            Alias alias = (Alias) it.next();
+
+            //NB check the type String in this!!
+            if (alias.getCvAliasType().getShortLabel().equals("gene-name")) {
+                //don't know how many gene names there are - also
+                //there may be more aliases than gene names, so we can't
+                //tell here if we are done or not
+                nameSet.add(alias.getName());
+            }
+        }
+        //now convert to a String - if there are any names....
+        if (nameSet.size() > 0) {
+            for(Iterator it = nameSet.iterator(); it.hasNext();) {
+                geneNames.append(it.next());
+                if(it.hasNext()) geneNames.append(",");
+            }
+        }
+        else
+            geneNames.append("-");
+
+        return geneNames.toString();
     }
 
     /**
