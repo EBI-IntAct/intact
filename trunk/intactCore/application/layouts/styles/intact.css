@@ -55,3 +55,9 @@ td.tableCell {
   text-align: left;
   vertical-align: top;
 }
+td.tableErrorCell {
+  font-family: verdana, tahoma, arial, helvetica;
+  text-align: left;
+  vertical-align: top;
+  color: red;
+}
