@@ -7,14 +7,14 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search.struts.controller;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import uk.ac.ebi.intact.application.search.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.search.exception.InvalidLoginException;
 import uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.search.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search.business.IntactUserImpl;
 import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.business.*;
 
@@ -42,7 +42,7 @@ public class WelcomeAction extends IntactBaseAction {
      * already been completed.
      *
      * @param mapping The ActionMapping used to select this instance
-     * @param actionForm The optional ActionForm bean for this request (if any)
+     * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      *
@@ -90,6 +90,10 @@ public class WelcomeAction extends IntactBaseAction {
         // Save the user. For the moment, create a new session.
         HttpSession session = request.getSession(false);
         session.setAttribute(WebIntactConstants.INTACT_USER, user);
+
+        // The map to hold intact view beans; tree map to maintain the order.
+        Map idToView = new TreeMap();
+        session.setAttribute(WebIntactConstants.FORWARD_MATCHES, idToView);
 
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }
