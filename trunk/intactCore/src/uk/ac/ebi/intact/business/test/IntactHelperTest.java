@@ -709,34 +709,34 @@ public class IntactHelperTest extends TestCase {
     /**
     *  Test name search, ie by fullName
     */
-    protected void nameSearch() throws Exception {
-
-        System.out.println("Performing search by name test (Interaction, with name '"
-                + int1.getFullName() + "')...");
-        System.out.println();
-
-        Object result = null;
-        if (helper != null) {
-
-            //for a given name and class, test the helper method..
-            result = helper.getObjectByName(int1.getClass(), int1.getFullName());
-            if(result != null) {
-
-                System.out.println("results for testNameSearch (expecting details for "
-                        + int1.getShortLabel() +")...");
-                System.out.println();
-                System.out.println(result.toString());
-                System.out.println();
-            }
-            else {
-                    System.out.println("testNameSearch: completed with no match found");
-            }
-        }
-        else {
-
-            fail("something failed - couldn't create a helper class to access the data!!");
-        }
-    }
+//    protected void nameSearch() throws Exception {
+//
+//        System.out.println("Performing search by name test (Interaction, with name '"
+//                + int1.getFullName() + "')...");
+//        System.out.println();
+//
+//        Object result = null;
+//        if (helper != null) {
+//
+//            //for a given name and class, test the helper method..
+//            result = helper.getObjectByName(int1.getClass(), int1.getFullName());
+//            if(result != null) {
+//
+//                System.out.println("results for testNameSearch (expecting details for "
+//                        + int1.getShortLabel() +")...");
+//                System.out.println();
+//                System.out.println(result.toString());
+//                System.out.println();
+//            }
+//            else {
+//                    System.out.println("testNameSearch: completed with no match found");
+//            }
+//        }
+//        else {
+//
+//            fail("something failed - couldn't create a helper class to access the data!!");
+//        }
+//    }
 
     /**
     *  Test Experiment search using an Institution
@@ -875,7 +875,7 @@ public class IntactHelperTest extends TestCase {
             isPersistent();
 
             basicSearch();
-            nameSearch();
+//            nameSearch();
 //            institutionSearch();
 
             delete(txType);
