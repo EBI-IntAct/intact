@@ -1,7 +1,6 @@
 <!--
-        Context configuration for hierarchView
-        version : $Id$
+      Template of the context configuration for hierarchView
+      version : $Id$
   -->
 
-<Context path="/intact/hierarchView" docBase="app-dir/hierarchView.war">
-</Context>
+<Context path="/intact/hierarchView" docBase="app-dir/[WAR.FILE.NAME]" />
