@@ -93,6 +93,8 @@
     </c:if>
 </c:if>
 
+<h2><html:errors/></h2>
+
 <h3><%=viewbean.getTopic()%></h3>
 
 <hr size=2>
@@ -117,14 +119,16 @@ Accession Number: <b><c:out value="${viewbean.ac}" /></b>
 
 <!-- Adds a new comment. This will invoke addComment action. -->
 <html:form action="/addComment">
-    <table class="table" width="90%" border="0" cellspacing="1" cellpadding="2">
+    <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
         <th width="15%" class="tableCellHeader">Topic</th>
         <th width="85%" class="tableCellHeader">Description</th>
     </tr>
     <tr class="tableRowOdd">
         <td class="tableCell" align="left" valign="top">
-            <html:text property="topic" size="15"/>
+            <html:select property="topic">
+                <html:options property="topicNames" />
+            </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:textarea property="text" rows="3" cols="80"/>
@@ -178,7 +182,9 @@ Accession Number: <b><c:out value="${viewbean.ac}" /></b>
     </tr>
     <tr class="tableRowOdd">
         <td class="tableCell" align="left" valign="top">
-            <html:text property="database" size="9"/>
+            <html:select property="database">
+                <html:options property="dbNames" />
+            </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:text property="primaryId" size="20"/>
