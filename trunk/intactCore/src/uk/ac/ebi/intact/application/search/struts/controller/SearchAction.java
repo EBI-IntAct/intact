@@ -71,11 +71,11 @@ public class SearchAction extends IntactBaseAction {
         HttpSession session = super.getSession(request);
 
        //make sure the view is in a consistent state by clearing the
-       //set of previously expanded items...
-       Set oldItems = (Set)session.getAttribute(SearchConstants.EXPANDED_AC_SET);
+       //map of previously expanded items...
+       Map oldItems = (Map)session.getAttribute(SearchConstants.VIEW_MODE_MAP);
        if (oldItems == null) {
            //first request - set up cache
-           session.setAttribute(SearchConstants.EXPANDED_AC_SET, new HashSet());
+           session.setAttribute(SearchConstants.VIEW_MODE_MAP, new HashMap());
        }
        else oldItems.clear();
 
