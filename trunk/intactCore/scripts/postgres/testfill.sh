@@ -49,6 +49,15 @@ then
     exit 1
 fi
 
+# add plpgsql in case it's not already done
+createlang -d $2 plpgsql
+
+psql -d $2 -f sql/postgres/create_xref_trigger.sql
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
 psql -U $DBUSER -d $2 -f sql/postgres/create_dummy.sql
 if [ $? != 0 ]
 then
