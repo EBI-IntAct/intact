@@ -369,12 +369,12 @@ public class InteractionViewBean extends AbstractEditViewBean {
         for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
             ProteinBean pb = (ProteinBean) iter.next();
             if (!pb.getEditState().equals(AbstractEditBean.VIEW)) {
-                throw new InteractionException("error.int.sanity.exp");
+                throw new InteractionException("error.int.sanity.unsaved.prot");
             }
         }
         // Any missing experiments (check 7).
         if (myExperiments.size() == 0) {
-            throw new InteractionException("error.int.sanity.unsaved.prot");
+            throw new InteractionException("error.int.sanity.exp");
         }
     }
 
