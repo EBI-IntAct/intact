@@ -48,20 +48,19 @@ public class ExperimentHoldAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        EditForm theForm = (EditForm) form;
+        EditForm theform = (EditForm) form;
 
         // The current view of the edit session.
-        EditUserI user = super.getIntactUser(request);
-        InteractionViewBean view = (InteractionViewBean) user.getView();
+        InteractionViewBean view =
+                (InteractionViewBean) getIntactUser(request).getView();
 
         // The bean associated with the current action.
-        int index = theForm.getIndex();
-        ExperimentBean expbean = view.getHoldExperiment(index);
+        ExperimentBean expbean = (ExperimentBean) theform.getSelectedBean();
 
         // We must have the experiment bean.
         assert expbean != null;
 
-        if (theForm.buttonPressed("Add")) {
+        if (theform.buttonPressed("Add")) {
             // Avoid duplicates.
             if (view.experimentExists(expbean)) {
                 ActionErrors errors = new ActionErrors();

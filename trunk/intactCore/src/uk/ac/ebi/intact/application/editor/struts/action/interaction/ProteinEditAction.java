@@ -47,24 +47,23 @@ public class ProteinEditAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        EditForm theForm = (EditForm) form;
+        EditForm theform = (EditForm) form;
 
         // The current view of the edit session.
         InteractionViewBean viewbean =
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // The bean associated with the current action.
-        int index = theForm.getIndex();
-        ProteinBean pb = viewbean.getProtein(index);
+        ProteinBean pb = (ProteinBean) theform.getSelectedBean();
 
         // We must have the protein bean.
         assert pb != null;
 
-        if (theForm.editPressed()) {
+        if (theform.editPressed()) {
             // Must save this bean.
             pb.setEditState(EditBean.SAVE);
         }
-        else if (theForm.savePressed()) {
+        else if (theform.savePressed()) {
             if (viewbean.hasDuplicates(pb)) {
                 ActionErrors errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR,
@@ -85,9 +84,9 @@ public class ProteinEditAction extends AbstractEditorAction {
                 pb.setEditState(EditBean.VIEW);
 //            }
         }
-        else if (theForm.deletePressed()) {
+        else if (theform.deletePressed()) {
             // Delete is pressed.
-            viewbean.delProtein(pb, index);
+            viewbean.delProtein(pb, theform.getIndex());
         }
         else {
             // Unknown operation; should never get here.
