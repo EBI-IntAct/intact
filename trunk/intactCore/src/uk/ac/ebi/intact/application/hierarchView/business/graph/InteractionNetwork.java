@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClie
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.simpleGraph.*;
+import uk.ac.ebi.intact.util.Chrono;
 
 import java.rmi.RemoteException;
 import java.awt.Color;
