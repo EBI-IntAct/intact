@@ -33,16 +33,16 @@ import uk.ac.ebi.intact.simpleGraph.*;
  * @author Chris Lewington
  */
 
-public class IntactHelper implements SearchI, Serializable {
+public class IntactHelper implements SearchI, Externalizable {
 
     //initialise variables used for persistence
-    DAO dao = null;
-    DAOSource dataSource = null;
-    Map classInfo = null;
+    private DAO dao = null;
+    private DAOSource dataSource = null;
+    private Map classInfo = null;
 
     //used to cache user details if supplied
-    String user;
-    String password;
+    private String user;
+    private String password;
 
     /**
      * used internally to manage transaction creation
@@ -92,9 +92,35 @@ public class IntactHelper implements SearchI, Serializable {
 
     //a set containing intact properties we are NOT interested in when retirving relations
     //NB this is a result of making the design decision to use Java Bean Introspection
-    Set notRequired = new HashSet();
+    private Set notRequired = new HashSet();
 
-    Logger pr = null;
+    //Logger is not serializable - but transient on its own doesn't work!
+    private transient Logger pr = null;
+
+    /**
+     * Method required for writing to disk via Serializable. Needed because
+     * basic serialization does not work due to the use of the Log4J logger.
+     * @param out The object output stream.
+     * @throws IOException thrown if there were problems writing to disk.
+     */
+    public void writeExternal(ObjectOutput out) throws IOException {
+        pr = null;
+        out.writeObject(this);
+    }
+
+    /**
+     * Used for serialization via Externalizable. Needed because basic serialization
+     * does not work with the Log4J logger.
+     * @param in The object input stream.
+     * @throws IOException Thrwon if there were problems reading from disk.
+     * @throws ClassNotFoundException thrown if the class definition needed to create
+     * an instance is not available.
+     */
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        in.readObject();
+        if(dataSource != null) pr = dataSource.getLogger();
+
+    }
 
     public Logger getLogger() {
             return pr;
@@ -689,29 +715,6 @@ public class IntactHelper implements SearchI, Serializable {
             throw new IntactException("failed to get column data!", se);
         }
 
-    }
-
-    /**
-     * Gets the underlying JDBC connection. This is a 'useful method' rather than
-     * a good practice one as it returns the underlying DB connection (and assumes there is one).
-     * No guarantees - if you screw up the Connection you are in trouble!.
-     *
-     * @return Connection a JDBC Connection, or null if the DAO you are using is not
-     * an OJB one.
-     * @throws IntactException thrown if there was a problem getting the connection
-     */
-    public Connection getJDBCConnection() throws IntactException {
-
-        if(dao instanceof ObjectBridgeDAO)
-        {
-            try {
-                return ((ObjectBridgeDAO)dao).getJDBCConnection();
-            }
-            catch(LookupException le) {
-                   throw new IntactException("Failed to get JDBC Connection!", le);
-            }
-        }
-        return null;
     }
 
     /**
@@ -1494,7 +1497,10 @@ public class IntactHelper implements SearchI, Serializable {
 
     /**
      *  Search for Experiments given an Institution. Assumed this is unlikely to be unique.
-     * Usage restriction: the Institution must have, at least, its AC defined.
+     * Note: If the Institution AC is not set, a search will first be carried out for it
+     * using its shortLabel - thus only Institutions that are persistent will provide
+     * a non-empty search result. If more than one Institution is returned,
+     * the first one's AC will be used.
      *
      * @param institution the institution to search with
      *
@@ -1505,7 +1511,17 @@ public class IntactHelper implements SearchI, Serializable {
      */
     public Collection getExperimentsByInstitution(Institution institution) throws IntactException {
 
-        return(this.search(Experiment.class.getName(), "owner_ac", institution.getAc()));
+        String ownerAc = institution.getAc();
+        if(ownerAc == null) {
+            //get it first via shortLabel
+            Collection tmpResults = this.search(Institution.class.getName(), "shortLabel", institution.getShortLabel());
+            if(!tmpResults.isEmpty()) {
+                //take the first one
+                Institution inst = (Institution)tmpResults.iterator().next();
+                ownerAc = inst.getAc();
+            }
+        }
+        return(this.search(Experiment.class.getName(), "owner_ac", ownerAc));
     }
 
     /**
@@ -1797,6 +1813,30 @@ public class IntactHelper implements SearchI, Serializable {
 
         return results;
     }
+
+    /**
+         * Gets the underlying JDBC connection. This is a 'useful method' rather than
+         * a good practice one as it returns the underlying DB connection (and assumes there is one).
+         * No guarantees - if you screw up the Connection you are in trouble!.
+         *
+         * @return Connection a JDBC Connection, or null if the DAO you are using is not
+         * an OJB one.
+         * @throws IntactException thrown if there was a problem getting the connection
+         */
+        public Connection getJDBCConnection() throws IntactException {
+
+            if(dao instanceof ObjectBridgeDAO)
+            {
+                try {
+                    return ((ObjectBridgeDAO)dao).getJDBCConnection();
+                }
+                catch(LookupException le) {
+                       throw new IntactException("Failed to get JDBC Connection!", le);
+                }
+            }
+            return null;
+        }
+
 
     //---------------- private helper methods ------------------------------------
 
