@@ -56,7 +56,7 @@ public class BioSourceFactory {
 
 
     public BioSourceFactory( IntactHelper helper, Institution institution ) {
-          this( helper, institution, DEFAULT_CACHE_SIZE);
+        this( helper, institution, DEFAULT_CACHE_SIZE);
     }
 
 
@@ -68,7 +68,7 @@ public class BioSourceFactory {
         this.helper = helper;
         this.institution = institution;
 
-       URL url = null;
+        URL url = null;
         try {
             url = new URL( NEWT_URL );
         } catch (MalformedURLException e) {
@@ -141,6 +141,7 @@ public class BioSourceFactory {
                         // it exists, try to update it.
                         BioSource intactBs = (BioSource) bioSources.iterator().next();
                         newBioSource = updateBioSource( intactBs, validBioSource );
+                        break;
 
                     default:
                         throw new IntactException("More than one BioSource with this taxId found: " + aTaxId);
@@ -159,9 +160,9 @@ public class BioSourceFactory {
 
         // Return valid BioSource and update cache
         /* The bioSourceCache will also contain associations from obsolete taxIds
-           to valid BioSource objects to avoid looking up the same obsolete Id
-           over and over again.
-        */
+         * to valid BioSource objects to avoid looking up the same obsolete Id
+         * over and over again.
+         */
         bioSourceCache.put( aTaxId, newBioSource );
 
         return newBioSource;
@@ -212,7 +213,7 @@ public class BioSourceFactory {
 
         // the taxId can be different in obsoleteness case.
         BioSource bioSource = new BioSource(institution,
-                response.getShortLabel().toLowerCase(), "" + response.getTaxId());
+                                            response.getShortLabel().toLowerCase(), "" + response.getTaxId());
         bioSource.setFullName ( response.getFullName() );
 
         return bioSource;
