@@ -5,9 +5,11 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.persister;
 
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ExpressedInChecker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.OrganismChecker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ProteinInteractorChecker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.RoleChecker;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExpressedInTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinHolder;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinInteractorTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinParticipantTag;
@@ -50,5 +52,13 @@ public class ProteinParticipantPersister {
                                                    protein,
                                                    role );
         helper.create( component );
+
+        // add expressedIn if it is available.
+        ExpressedInTag expressedIn = proteinParticipant.getExpressedIn();
+        if( null != expressedIn ) {
+            BioSource bs = ExpressedInChecker.getBioSource( expressedIn.getBioSourceShortlabel() );
+            component.setExpressedIn( bs );
+            helper.update( component );
+        }
     }
 }

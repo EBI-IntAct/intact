@@ -50,6 +50,10 @@ public class ReadOnlyHashMap implements Map {
         return new ReadOnlySet( map.keySet() );
     }
 
+    public Set entrySet() {
+        return new ReadOnlySet( map.entrySet() );
+    }
+
     public Collection values() {
         return new ReadOnlyCollection( map.values() );
     }
@@ -59,10 +63,6 @@ public class ReadOnlyHashMap implements Map {
     // NON SUPPORTED METHODS
 
     public void clear() {
-        throw new UnsupportedOperationException( "That Map is for read only use." );
-    }
-
-    public Set entrySet() {
         throw new UnsupportedOperationException( "That Map is for read only use." );
     }
 

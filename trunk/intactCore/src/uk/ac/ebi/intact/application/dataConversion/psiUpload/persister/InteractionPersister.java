@@ -115,7 +115,7 @@ public final class InteractionPersister {
         }
 
         /**
-         * KNOWN BUG 1 (might occur only if therre is several experiment in one simgle PSI <entry>)
+         * KNOWN BUG 1 (might occur only if there are several experiment in one simgle PSI <entry>)
          * -----------
          * TODO fix it !
          * It's nice to know if the interaction already exist but this is a but too simple.
@@ -206,6 +206,7 @@ public final class InteractionPersister {
                 interaction.addAnnotation( annotation );
             }
 
+            // TODO clean that thing. Right now we are most of the time stuffing the author confidence as annotation 
             // Confidence data
             final ConfidenceTag confidence = interactionTag.getConfidence();
             if( confidence != null ) {
@@ -412,11 +413,11 @@ public final class InteractionPersister {
      * It checks as well if the generated shortlabel as already been associated to an other Interaction.
      *
      * @param psiInteraction The interaction we are investigating on.
-     * @param experiments Collection in which after processing we have all ExperimentWrapper (shortlabel +
-     *                    experimentDescription) in which the interaction hasn't been created yet.
-     * @param bait the label for the bait (could be gene name or SPTR entry AC)
-     * @param prey the label for the prey (could be gene name or SPTR entry AC)
-     * @param helper data access
+     * @param experiments    Collection in which after processing we have all ExperimentWrapper (shortlabel +
+     *                       experimentDescription) in which the interaction hasn't been created yet.
+     * @param bait           the label for the bait (could be gene name or SPTR entry AC)
+     * @param prey           the label for the prey (could be gene name or SPTR entry AC)
+     * @param helper         data access
      */
     private static void createInteractionShortLabels( final InteractionTag psiInteraction,
                                                       final Collection experiments,

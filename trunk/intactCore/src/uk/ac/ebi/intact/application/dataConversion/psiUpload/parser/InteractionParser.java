@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * That class .
@@ -25,6 +26,8 @@ import java.util.Collection;
  * @version $Id$
  */
 public class InteractionParser {
+
+    private final static boolean DEBUG = CommandLineOptions.getInstance().isDebugEnabled();
 
     private ExperimentListParser experimentList;
     private ParticipantListParser interactorList;
@@ -109,7 +112,40 @@ public class InteractionParser {
         localExperiments.addAll( experimentList.getExperiments().values() );
 
 
-        // process all eventual participants (minimum:2, maximum:-)
+        // get eventual annotations - has to be done before participant as we can have some annotation
+        //                            related to expressedIn.
+        // CAUTION - MAY NOT BE THERE
+        final Element annotationElement = DOMUtil.getFirstElement( root, "attributeList" );
+        Collection annotations = null;
+        Collection expressedInAnnotations = null;
+        if( annotationElement != null ) {
+            final NodeList someAttributes = annotationElement.getElementsByTagName( "attribute" );
+            final int count = someAttributes.getLength();
+            annotations = new ArrayList( count );
+            expressedInAnnotations = new ArrayList( count );
+
+            for ( i = 0; i < count; i++ ) {
+                final Node entryNode = someAttributes.item( i );
+                final AnnotationTag annotation = AnnotationParser.process( (Element) entryNode );
+                // only add annotation with text
+                if( annotation.hasText() ) {
+                    if( Constants.EXPRESSED_IN.equalsIgnoreCase( annotation.getType() ) ) {
+                        // that's an 'expressedIn' ... keep it separately
+                        try {
+                            expressedInAnnotations.add( new ExpressedInTag( annotation ) );
+                        } catch ( IllegalArgumentException e ) {
+                            MessageHolder.getInstance().addParserMessage( new Message( root, e.getMessage() ) );
+                        }
+                    } else {
+                        // that's a regular annotation
+                        annotations.add( annotation );
+                    }
+                }
+            } // attributes
+        }
+
+
+        // process all eventual participants ( minimum:2, maximum:- )
         final Element participantsList = DOMUtil.getFirstElement( root, "participantList" );
         final NodeList allParticipants = participantsList.getElementsByTagName( "proteinParticipant" );
         final int participantCount = allParticipants.getLength();
@@ -127,7 +163,8 @@ public class InteractionParser {
                 // nothing to be done, the tag is not mandatory.
             }
 
-            final String id;
+            // will carry the identifier of the protein interactor.
+            String id = null;
 
             if( proteinRefElement != null ) {
                 id = proteinRefElement.getAttribute( "ref" );
@@ -147,6 +184,7 @@ public class InteractionParser {
                 final LabelValueBean lvb = proteinInteractor.process();
                 if( lvb != null ) {
                     interactor = (ProteinInteractorTag) lvb.getValue();
+                    id = lvb.getLabel();
                 }
             }
 
@@ -163,8 +201,19 @@ public class InteractionParser {
             final Element roleElement = DOMUtil.getFirstElement( participantElement, "role" );
             final String role = DOMUtil.getSimpleElementText( roleElement );
 
+            // Search if there is an expressedIn related to the current interactor
+            ExpressedInTag expressedIn = null;
+            if( null != expressedInAnnotations ) {
+                for ( Iterator iterator = expressedInAnnotations.iterator(); iterator.hasNext() && null == expressedIn; ) {
+                    ExpressedInTag tmp = (ExpressedInTag) iterator.next();
+                    if( tmp.getProteinInteractorID().equals( id ) ) {
+                        expressedIn = tmp;
+                    }
+                }
+            }
+
             try {
-                participants.add( new ProteinParticipantTag( interactor, role ) );
+                participants.add( new ProteinParticipantTag( interactor, role, expressedIn ) );
             } catch ( IllegalArgumentException e ) {
                 MessageHolder.getInstance().addParserMessage( new Message( root, e.getMessage() ) );
             }
@@ -182,30 +231,12 @@ public class InteractionParser {
             // default value in such case.
             if( CommandLineOptions.getInstance().hasDefaultInteractionType() ) {
                 final String defaultInteractionType = CommandLineOptions.getInstance().getDefaultInteractionType();
-//                System.err.println( "Give a default interactionType: " + defaultInteractionType );
+                if( DEBUG ) {
+                    System.err.println( "Give a default interactionType: " + defaultInteractionType );
+                }
                 final XrefTag type = new XrefTag( XrefTag.PRIMARY_REF, defaultInteractionType, "psi-mi" );
                 interactionType = new InteractionTypeTag( type );
             }
-        }
-
-
-        // get eventual annotations
-        // CAUTION - MAY NOT BE THERE
-        final Element annotationElement = DOMUtil.getFirstElement( root, "attributeList" );
-        Collection annotations = null;
-        if( annotationElement != null ) {
-            final NodeList someAttributes = annotationElement.getElementsByTagName( "attribute" );
-            final int count = someAttributes.getLength();
-            annotations = new ArrayList( count );
-
-            for ( i = 0; i < count; i++ ) {
-                final Node entryNode = someAttributes.item( i );
-                final AnnotationTag annotation = AnnotationParser.process( (Element) entryNode );
-                // only add annotation with text
-                if( annotation.hasText() ) {
-                    annotations.add( annotation );
-                }
-            } // attributes
         }
 
 

@@ -5,12 +5,12 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.HostOrganismTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.CellTypeTag;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.HostOrganismTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.TissueTag;
-import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.util.BioSourceFactory;
 
 /**
  * That class .

@@ -47,7 +47,10 @@ public class CellTypeParser {
         final Element cellTypeXref = DOMUtil.getFirstElement( element, "xref" );
 
         // Look at either primaryRef and secondaryRef
-        final XrefTag xref = XrefParser.getXrefByDb( cellTypeXref, Constants.PSI_DB_SHORTLABEL );
+        XrefTag xref = null;
+        if( null != cellTypeXref ) {
+            xref = XrefParser.getXrefByDb( cellTypeXref, Constants.PSI_DB_SHORTLABEL );
+        }
 
         CellTypeTag cellType = null;
         try {

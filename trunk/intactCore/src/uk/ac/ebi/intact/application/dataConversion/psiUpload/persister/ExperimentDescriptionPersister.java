@@ -6,9 +6,9 @@
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.persister;
 
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.*;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.AnnotationTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExperimentDescriptionTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.AnnotationTag;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -118,11 +118,11 @@ public class ExperimentDescriptionPersister {
         for ( Iterator iterator = secondaryPubmedXrefs.iterator(); iterator.hasNext(); ) {
             XrefTag xrefTag = (XrefTag) iterator.next();
             Xref seeAlsoXref = new Xref( helper.getInstitution(),
-                                  XrefChecker.getCvDatabase( xrefTag.getDb() ),
-                                  xrefTag.getId(),
-                                  xrefTag.getSecondary(),
-                                  xrefTag.getVersion(),
-                                  ControlledVocabularyRepository.getSeeAlsoXrefQualifier() );
+                                         XrefChecker.getCvDatabase( xrefTag.getDb() ),
+                                         xrefTag.getId(),
+                                         xrefTag.getSecondary(),
+                                         xrefTag.getVersion(),
+                                         ControlledVocabularyRepository.getSeeAlsoXrefQualifier() );
 
             experiment.addXref( seeAlsoXref );
             helper.create( seeAlsoXref );
@@ -186,12 +186,13 @@ public class ExperimentDescriptionPersister {
             throws IntactException {
 
         final String text = annotationTag.getText();
+
         Collection annotations = helper.search( Annotation.class.getName(), "annotationText", text );
         Annotation annotation = null;
 
         if( annotations != null ) {
             for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && annotation == null; ) {
-                Annotation anAnnotation = (Annotation) annotations.iterator().next();
+                Annotation anAnnotation = (Annotation) iterator.next();
                 if( annotationTag.getType().equals( anAnnotation.getCvTopic().getShortLabel() ) ) {
                     annotation = anAnnotation;
                 }

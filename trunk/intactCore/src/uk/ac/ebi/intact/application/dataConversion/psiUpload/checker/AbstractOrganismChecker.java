@@ -6,22 +6,22 @@
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.checker;
 
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.CellTypeTag;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.TissueTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.Constants;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.TissueTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.CvCellType;
 import uk.ac.ebi.intact.model.CvTissue;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.CvCellType;
 import uk.ac.ebi.intact.util.BioSourceFactory;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * That class .
@@ -44,10 +44,9 @@ public abstract class AbstractOrganismChecker {
     /**
      * Build a unique String that describe the conbination {taxid, cellType, tissue}.
      *
-     * @param taxid the taxid of an organism.
+     * @param taxid    the taxid of an organism.
      * @param cellType the cell Type of an organism.
-     * @param tissue the tissue of an organism.
-     *
+     * @param tissue   the tissue of an organism.
      * @return the unique key.
      */
     private static String buildID( final String taxid,
@@ -58,8 +57,10 @@ public abstract class AbstractOrganismChecker {
         sb.append( taxid );
 
         if( null != cellType ) {
-            sb.append( '#' );
-            sb.append( cellType.getPsiDefinition().getId() );
+            if( null != cellType.getPsiDefinition() ) {
+                sb.append( '#' );
+                sb.append( cellType.getPsiDefinition().getId() );
+            }
         }
 
         if( null != tissue ) {
@@ -79,6 +80,8 @@ public abstract class AbstractOrganismChecker {
         final String cacheId = buildID( taxid, cellType, tissue );
         BioSource bioSource = (BioSource) cache.get( cacheId );
 
+        // TODO enhance here because in case there is no mapping for an ID we will keep searching for it. Once is enough.
+
         if( bioSource == null ) {
             if( null == tissue && null == cellType ) {
 
@@ -90,16 +93,30 @@ public abstract class AbstractOrganismChecker {
                         MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find BioSource for " +
                                                                                     "the taxid: " + taxid ) );
                     } else {
-                        System.out.println( "Found BioSource by taxid " + taxid +
-                                            ". Shortlabel is " + bioSource.getShortLabel() );
+
+                        StringBuffer sb = new StringBuffer( 128 );
+                        sb.append( "Found BioSource by taxid " ).append( taxid );
+                        sb.append( ". Shortlabel is " ).append( bioSource.getShortLabel() );
+
+                        if( null != bioSource.getCvCellType() ) {
+                            sb.append( ", Celltype shortlabel: " ).append( bioSource.getCvCellType().getShortLabel() );
+                        } else {
+                            sb.append( ", No CellType" );
+                        }
+
+                        if( null != bioSource.getCvTissue() ) {
+                            sb.append( ", Tissue shortlabel: " ).append( bioSource.getCvTissue().getShortLabel() );
+                        } else {
+                            sb.append( ", No Tissue" );
+                        }
+
+                        System.out.println( sb.toString() );
                     }
                 } catch ( IntactException e ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "An error occured while searching for " +
                                                                                 "BioSource having the taxid: " + taxid ) );
                     e.printStackTrace();
                 }
-
-                cache.put( cacheId, bioSource );
 
             } else {
 
@@ -109,7 +126,7 @@ public abstract class AbstractOrganismChecker {
                 } catch ( IntactException e ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find BioSource for " +
                                                                                 "the taxid: " + taxid + " in IntAct. " +
-                                                                                "Error was: " + e.getMessage()) );
+                                                                                "Error was: " + e.getMessage() ) );
                 }
 
                 // Now try to find the one that has the same Tissue and CellType.
@@ -126,13 +143,16 @@ public abstract class AbstractOrganismChecker {
                     StringBuffer sb = new StringBuffer( 128 );
 
                     sb.append( "Could not find in IntAct the BioSource having the following caracteristics: " );
-                    sb.append( "taxid: ").append( taxid );
-                    sb.append( ", CellType: ").append( cellType );
-                    sb.append( ", Tissue: ").append( tissue );
+                    sb.append( "taxid: " ).append( taxid );
+                    sb.append( ", CellType: " ).append( cellType );
+                    sb.append( ", Tissue: " ).append( tissue );
 
                     MessageHolder.getInstance().addCheckerMessage( new Message( sb.toString() ) );
                 }
             }
+
+            // cache the result of the search.
+            cache.put( cacheId, bioSource );
         }
 
         return bioSource;
@@ -144,8 +164,7 @@ public abstract class AbstractOrganismChecker {
      * The comparison is based on the PSI ID first and if it doesn't exists, we check the shortlabel.
      *
      * @param bioSource the BioSource for which we want to know if it has the CvTissue.
-     * @param tissue the Description of the CvTissue we are looking for in the BioSource.
-     *
+     * @param tissue    the Description of the CvTissue we are looking for in the BioSource.
      * @return true if the BioSource has the given CvTissue.
      */
     private static boolean hasTissue( BioSource bioSource, TissueTag tissue ) {
@@ -163,10 +182,10 @@ public abstract class AbstractOrganismChecker {
             for ( Iterator iterator = bsTissue.getXrefs().iterator(); iterator.hasNext() && null == intactId; ) {
                 Xref xref = (Xref) iterator.next();
                 if( Constants.PSI_DB_SHORTLABEL.equals( xref.getCvDatabase().getShortLabel() ) ) {
-                     if( ControlledVocabularyRepository.getPrimaryXrefQualifier().equals(  xref.getCvXrefQualifier() ) ) {
-                         // found it !
-                         intactId = xref.getPrimaryId(); // PSI ID
-                     }
+                    if( ControlledVocabularyRepository.getPrimaryXrefQualifier().equals( xref.getCvXrefQualifier() ) ) {
+                        // found it !
+                        intactId = xref.getPrimaryId(); // PSI ID
+                    }
                 }
             } // xrefs
 
@@ -200,49 +219,83 @@ public abstract class AbstractOrganismChecker {
      * The comparison is based on the PSI ID first and if it doesn't exists, we check the shortlabel.
      *
      * @param bioSource the BioSource for which we want to know if it has the CvCellType.
-     * @param cellType the Description of the CvCellType we are looking for in the BioSource.
-     *
+     * @param cellType  the Description of the CvCellType we are looking for in the BioSource.
      * @return true if the BioSource has the given CvCellType.
      */
     private static boolean hasCellType( BioSource bioSource, CellTypeTag cellType ) {
+
         boolean answer = false;
 
         CvCellType bsCellType = bioSource.getCvCellType();
+
         if( bsCellType == null && cellType == null ) {
+
             answer = true;
+
         } else if( bsCellType != null && cellType != null ) {
             // we'll check first the PSI-MI definition and if not present, go for the shortlabel.
-            String psiId = cellType.getPsiDefinition().getId();
+
+            // TODO temporarily, we check also the shortlabel of the cellType, that should disappear when we have
+            // TODO proper ID as Xref in PSI.
 
             String intactId = null;
-            for ( Iterator iterator = bsCellType.getXrefs().iterator(); iterator.hasNext() && null == intactId; ) {
-                Xref xref = (Xref) iterator.next();
-                if( Constants.PSI_DB_SHORTLABEL.equals( xref.getCvDatabase().getShortLabel() ) ) {
-                     if( ControlledVocabularyRepository.getPrimaryXrefQualifier().equals(  xref.getCvXrefQualifier() ) ) {
-                         // found it !
-                         intactId = xref.getPrimaryId();
-                     }
+            String psiId = null;
+
+            if( cellType.getShortlabel() != null ) {
+
+                if( cellType.getShortlabel().equalsIgnoreCase( bsCellType.getShortLabel() ) ) {
+                    answer = true;
                 }
-            } // xrefs
 
-            // as there is not yet PSI Xrefs for CvCellType, we may have to rely on the shortlabel.
-            if( intactId == null ) {
+            } else if( null != cellType.getPsiDefinition() ) {
 
-                // check on shortlabel.
-                if( cellType.getShortlabel() != null ) {
+                psiId = cellType.getPsiDefinition().getId();
 
-                    if( cellType.getShortlabel().equalsIgnoreCase( bsCellType.getShortLabel() ) ) {
-                        answer = true;
+                for ( Iterator iterator = bsCellType.getXrefs().iterator(); iterator.hasNext() && null == intactId; ) {
+                    Xref xref = (Xref) iterator.next();
+                    if( Constants.PSI_DB_SHORTLABEL.equals( xref.getCvDatabase().getShortLabel() ) ) {
+                        if( ControlledVocabularyRepository.getPrimaryXrefQualifier().equals( xref.getCvXrefQualifier() ) ) {
+                            // found it !
+                            intactId = xref.getPrimaryId();
+                        }
                     }
-                }
-
-            } else {
+                } // xrefs
 
                 // we found a PSI Xref ... check if it matches.
                 if( psiId.equalsIgnoreCase( intactId ) ) {
                     answer = true;
                 }
             }
+
+//            if( null != cellType.getPsiDefinition() ) {
+//
+//                psiId = cellType.getPsiDefinition().getId();
+//
+//                for ( Iterator iterator = bsCellType.getXrefs().iterator(); iterator.hasNext() && null == intactId; ) {
+//                    Xref xref = (Xref) iterator.next();
+//                    if( Constants.PSI_DB_SHORTLABEL.equals( xref.getCvDatabase().getShortLabel() ) ) {
+//                        if( ControlledVocabularyRepository.getPrimaryXrefQualifier().equals( xref.getCvXrefQualifier() ) ) {
+//                            // found it !
+//                            intactId = xref.getPrimaryId();
+//                        }
+//                    }
+//                } // xrefs
+//
+//                // we found a PSI Xref ... check if it matches.
+//                if( psiId.equalsIgnoreCase( intactId ) ) {
+//                    answer = true;
+//                }
+//
+//            } else {
+//
+//                // check on shortlabel.
+//                if( cellType.getShortlabel() != null ) {
+//
+//                    if( cellType.getShortlabel().equalsIgnoreCase( bsCellType.getShortLabel() ) ) {
+//                        answer = true;
+//                    }
+//                }
+//            }
         }
 
         return answer;
