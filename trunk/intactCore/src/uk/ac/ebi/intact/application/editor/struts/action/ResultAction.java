@@ -59,7 +59,7 @@ public class ResultAction extends AbstractEditorAction {
         LOGGER.info("AC: " + ac + " class: " + className);
 
         // Check the lock.
-        LockManager lmr = getLockManager();
+        LockManager lmr = LockManager.getInstance();
 
         // Try to acuire the lock.
         if (!lmr.acquire(ac, user.getUserName())) {
@@ -74,7 +74,7 @@ public class ResultAction extends AbstractEditorAction {
         AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
                         Class.forName("uk.ac.ebi.intact.model." + className), ac);
         // The object we are editing presently.
-        user.updateView(annobj);
+        user.setView(annobj);
 
         LOGGER.info("Numner of annotations: " + annobj.getAnnotations().size());
         LOGGER.info("Number of xrefs: " + annobj.getXrefs().size());

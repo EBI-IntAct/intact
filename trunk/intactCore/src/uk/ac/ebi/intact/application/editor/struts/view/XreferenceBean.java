@@ -25,12 +25,13 @@ import java.io.Serializable;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class XreferenceBean extends AbstractEditKeyBean implements Serializable {
+public class XreferenceBean extends AbstractEditBean {
 
     /**
-     * Reference to the Xref object this instance is created with.
+     * Reference to the Xref object this instance is created with. Transient as
+     * it can be created using values in the bean.
      */
-    private Xref myXref;
+    private transient Xref myXref;
 
     /**
      * The database name.
@@ -69,25 +70,87 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
      * instance of this class.
      */
     public XreferenceBean(Xref xref) {
-        initialize(xref);
+        myXref = xref;
+        myDatabaseName = xref.getCvDatabase().getShortLabel();
+        myPrimaryId = xref.getPrimaryId();
+        mySecondaryId = xref.getSecondaryId();
+        myReleaseNumber = xref.getDbRelease();
+
+        myReferenceQualifer = "";
+        CvXrefQualifier qualifier = xref.getCvXrefQualifier();
+        if (qualifier != null) {
+            myReferenceQualifer = qualifier.getShortLabel();
+        }
+    }
+
+    // Override Object's equals method.
+
+    /**
+     * Compares <code>obj</code> with this object according to
+     * Java's equals() contract.
+     * @param obj the object to compare.
+     * @return true only if <code>obj</code> is an instance of this class
+     * and all non transient fields are equal to given object's non tranient
+     * fields. For all other instances, false is returned.
+     */
+    public boolean equals(Object obj) {
+        // Identical to this?
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof XreferenceBean)) {
+            return false;
+        }
+        // Can safely cast it.
+        XreferenceBean other = (XreferenceBean) obj;
+
+        // Compare tdatabase, primary & secondary id, release number and
+        // reference qualifier.
+        if (!equals(myDatabaseName, other.myDatabaseName)) {
+            return false;
+        }
+        if (!equals(myPrimaryId, other.myPrimaryId)) {
+            return false;
+        }
+        if (!equals(mySecondaryId, other.mySecondaryId)) {
+            return false;
+        }
+        if (!equals(myReleaseNumber, other.myReleaseNumber)) {
+            return false;
+        }
+        return equals(myReferenceQualifer, other.myReferenceQualifer);
     }
 
     /**
-     * Instantiates with given xref and key.
-     * @param xref the underlying <code>Xref</code> object.
-     * @param key the key to assigned to this bean.
+     * Updates the internal xref with the new values from the form.
+     * @param user the user instance to search for a cv database and xref qualifier.
+     * @throws SearchException for errors in searching the database.
      */
-    public XreferenceBean(Xref xref, long key) {
-        super(key);
-        initialize(xref);
+    public Xref getXref(EditUserI user) throws SearchException {
+        CvDatabase db = (CvDatabase) user.getObjectByLabel(
+                CvDatabase.class, myDatabaseName);
+        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
+                CvXrefQualifier.class, myReferenceQualifer);
+        if (myXref == null) {
+            myXref = new Xref(user.getInstitution(), db, getPrimaryId(),
+                    getSecondaryId(), getReleaseNumber(), xqual);
+        }
+        else {
+            myXref.setCvDatabase(db);
+            myXref.setPrimaryId(myPrimaryId);
+            myXref.setSecondaryId(mySecondaryId);
+            myXref.setDbRelease(myReleaseNumber);
+            myXref.setCvXrefQualifier(xqual);
+        }
+        return myXref;
     }
 
     /**
      * Returns the reference to the Xref object this instance is created with.
      */
-    public Xref getXref() {
-        return myXref;
-    }
+//    public Xref getXref() {
+//        return myXref;
+//    }
 
     /**
      * Return the database name.
@@ -234,53 +297,16 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
         myReferenceQualifer = refQualifier;
     }
 
-    /**
-     * Updates the internal xref with the new values from the form.
-     * @param user the user instance to search for a cv database and xref qualifier.
-     * @throws SearchException for errors in searching the database.
-     */
-    public void update(EditUserI user) throws SearchException {
-        CvDatabase db = (CvDatabase) user.getObjectByLabel(
-                CvDatabase.class, myDatabaseName);
-        myXref.setCvDatabase(db);
-        myXref.setPrimaryId(myPrimaryId);
-        myXref.setSecondaryId(mySecondaryId);
-        myXref.setDbRelease(myReleaseNumber);
-        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
-                CvXrefQualifier.class, myReferenceQualifer);
-        myXref.setCvXrefQualifier(xqual);
-    }
 
     /**
      * Resets fields to blanks, so the addXref form doesn't display
      * previous values. Calls the super reset to reset the internal key.
      */
     public void reset() {
-        super.reset();
         myDatabaseName = "";
         myPrimaryId = "";
         mySecondaryId = "";
         myReleaseNumber = "";
         myReferenceQualifer = "";
-    }
-
-    // Helper methods
-
-    /**
-     * Intialize the member variables using the given Xref object.
-     * @param xref <code>Xref</code> object to populate this bean.
-     */
-    private void initialize(Xref xref) {
-        myXref = xref;
-        myDatabaseName = xref.getCvDatabase().getShortLabel();
-        myPrimaryId = xref.getPrimaryId();
-        mySecondaryId = xref.getSecondaryId();
-        myReleaseNumber = xref.getDbRelease();
-
-        myReferenceQualifer = "";
-        CvXrefQualifier qualifier = xref.getCvXrefQualifier();
-        if (qualifier != null) {
-            myReferenceQualifer = qualifier.getShortLabel();
-        }
     }
 }

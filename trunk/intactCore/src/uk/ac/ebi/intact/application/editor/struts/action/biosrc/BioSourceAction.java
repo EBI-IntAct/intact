@@ -163,7 +163,7 @@ public class BioSourceAction extends SubmitFormAction {
             // Found a BioSource with similar tax id; is it as same as the
             // current record?
             BioSourceViewBean view = (BioSourceViewBean) user.getView();
-            String currentAc = view.getAnnotatedObject().getAc();
+            String currentAc = view.getAc();
             // Check for null here as it could be null for a new biosource.
             if (currentAc != null) {
                 String resultAc = ((BioSource) results.iterator().next()).getAc();

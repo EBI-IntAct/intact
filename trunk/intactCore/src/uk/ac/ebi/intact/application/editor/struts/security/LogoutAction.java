@@ -70,7 +70,7 @@ public class LogoutAction extends AbstractEditorAction {
             }
         }
         // Remove any locks held by the user.
-        user.releaseLock(getLockManager());
+        user.releaseLock();
 
         // Session is no longer valid.
         session.invalidate();

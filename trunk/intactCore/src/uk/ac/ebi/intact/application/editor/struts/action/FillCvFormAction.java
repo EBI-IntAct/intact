@@ -51,7 +51,7 @@ public class FillCvFormAction extends AbstractEditorAction {
         resetAddXref(dynaform);
 
         // Fill the form with values from the bean.
-        dynaform.set("ac", view.getAc());
+        dynaform.set("ac", view.getAcLink());
         dynaform.set("shortLabel", view.getShortLabel());
         dynaform.set("fullName", view.getFullName());
 

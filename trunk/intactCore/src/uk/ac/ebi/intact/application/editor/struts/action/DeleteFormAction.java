@@ -77,8 +77,10 @@ public class DeleteFormAction extends AbstractEditorAction {
         }
         finally {
             // Release the lock.
-            user.releaseLock(getLockManager());
+            user.releaseLock();
         }
+        // Remove this current bean from the recent lists.
+        user.getView().removeFromRecentList(user);
         // Back to the search page.
         return mapping.findForward(SEARCH);
     }

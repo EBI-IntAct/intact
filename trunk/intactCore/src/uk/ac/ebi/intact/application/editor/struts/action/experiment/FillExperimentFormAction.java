@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBea
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * Populates experiment form for display.

@@ -6,7 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.cv;
 
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.Institution;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * The CV edit view bean. Currently, this class does not provide any additional
@@ -17,4 +24,47 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
  * @version $Id$
  */
 public class CvViewBean extends AbstractEditViewBean {
+
+    // Implements abstract methods
+
+    protected void updateAnnotatedObject(EditUserI user) throws SearchException {
+        // The current CV object.
+        CvObject cvobj = (CvObject) getAnnotatedObject();
+
+        // Have we set the annotated object for the view?
+        if (cvobj == null) {
+            if (getAc() == null) {
+                // Not persisted; create a new cv object.
+                try {
+                    Constructor ctr = getEditClass().getDeclaredConstructor(
+                            new Class[]{Institution.class, String.class});
+                    cvobj = (CvObject) ctr.newInstance(
+                            new Object[]{user.getInstitution(), getShortLabel()});
+                }
+                catch (NoSuchMethodException ne) {
+                    // Shouldn't happen.
+                    throw new SearchException(ne.getMessage());
+                }
+                catch (SecurityException se) {
+                    throw new SearchException(se.getMessage());
+                }
+                catch (InstantiationException ie) {
+                    throw new SearchException(ie.getMessage());
+                }
+                catch (IllegalAccessException le) {
+                    throw new SearchException(le.getMessage());
+                }
+                catch (InvocationTargetException te) {
+                    throw new SearchException(te.getMessage());
+                }
+            }
+            else {
+                // Read it from the peristent system and update it.
+                cvobj = (CvObject) user.getObjectByAc(getEditClass(), getAc());
+                cvobj.setShortLabel(getShortLabel());
+            }
+            // Set the current cv obj as the annotated object.
+            setAnnotatedObject(cvobj);
+        }
+    }
 }

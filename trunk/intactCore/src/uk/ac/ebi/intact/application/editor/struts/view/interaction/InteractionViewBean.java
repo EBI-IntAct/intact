@@ -19,10 +19,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Interaction edit view bean.
@@ -88,9 +85,17 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     private transient Collection myProteinsToUpdate = new ArrayList();
 
-    public void setAnnotatedObject(Interaction intact) {
-        super.setAnnotatedObject(intact);
+    /**
+     * Constructs with the Intact helper.
+     * @param helper the Intact helper.
+     */
+//    public InteractionViewBean(IntactHelper helper) {
+//        super(helper);
+//    }
 
+    public void setAnnotatedObject(AnnotatedObject annobj) {
+        super.setAnnotatedObject(annobj);
+        Interaction intact = (Interaction) annobj;
         myKD = intact.getKD();
 
         // Only set the short labels if the interaction has non null values.
@@ -116,32 +121,93 @@ public class InteractionViewBean extends AbstractEditViewBean {
         makeProteinBeans(intact.getComponents());
     }
 
-    // Override the super method to update the current Interaction.
-    public void update(EditUserI user) throws IntactException, SearchException {
-        super.update(user);
-        // Get the objects using their short label.
-        BioSource biosource = (BioSource) user.getObjectByLabel(
-                BioSource.class, myOrganism);
+    // Implements abstract methods
+
+    protected void updateAnnotatedObject(EditUserI user) throws SearchException {
+        // The cv interaction type for the interaction.
         CvInteractionType type = (CvInteractionType) user.getObjectByLabel(
                 CvInteractionType.class, myInteractionType);
 
-        // The current Interaction object we want to update
+        // The current Interaction.
         Interaction intact = (Interaction) getAnnotatedObject();
+
+        // Have we set the annotated object for the view?
+        if (intact == null) {
+            if (getAc() == null) {
+                // Not persisted. Create a new Interaction.
+                intact = new Interaction(getExperimentsToAdd(), Collections.EMPTY_LIST,
+                        type, getShortLabel(), user.getInstitution());
+            }
+            else {
+                // Read it from the peristent system first and then update it.
+                intact = (Interaction) user.getObjectByAc(getEditClass(), getAc());
+                intact.setShortLabel(getShortLabel());
+                intact.setCvInteractionType(type);
+
+                // Add experiments.
+                for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
+                    Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+                    intact.addExperiment(exp);
+                }
+            }
+            // Set the current interaction as the annotated object.
+            setAnnotatedObject(intact);
+        }
+        // Get the objects using their short label.
+        BioSource biosource = (BioSource) user.getObjectByLabel(
+                BioSource.class, myOrganism);
         intact.setBioSource(biosource);
-        intact.setCvInteractionType(type);
         intact.setKD(myKD);
 
-        // Create experiments and add them to CV object.
-        for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
-            intact.addExperiment(exp);
-        }
-        // Delete experiments and remove them from CV object.
+        // Delete experiments.
         for (Iterator iter = getExperimentsToDel().iterator(); iter.hasNext();) {
             Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
             intact.removeExperiment(exp);
         }
+
+        // Delete proteins and remove it from the interaction.
+        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
+            Component comp = ((ProteinBean) iter.next()).getComponent(user);
+            // No need to delete from persistent storage if the link to this
+            // Protein is not persisted.
+            if (comp != null) {
+                intact.removeComponent(comp);
+            }
+        }
+        // Update proteins.
+        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
+            ProteinBean pb = (ProteinBean) iter.next();
+            Component comp = pb.getComponent(user);
+            intact.addComponent(comp);
+        }
     }
+
+    // Override the super method to update the current Interaction.
+//    public void updateXXX(EditUserI user) throws SearchException {
+//        super.updateXXX(user);
+//        // Get the objects using their short label.
+//        BioSource biosource = (BioSource) user.getObjectByLabel(
+//                BioSource.class, myOrganism);
+//        CvInteractionType type = (CvInteractionType) user.getObjectByLabel(
+//                CvInteractionType.class, myInteractionType);
+//
+//        // The current Interaction object we want to update
+//        Interaction intact = (Interaction) getAnnotatedObject();
+//        intact.setBioSource(biosource);
+//        intact.setCvInteractionType(type);
+//        intact.setKD(myKD);
+//
+//        // Create experiments and add them to CV object.
+//        for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
+//            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+//            intact.addExperiment(exp);
+//        }
+//        // Delete experiments and remove them from CV object.
+//        for (Iterator iter = getExperimentsToDel().iterator(); iter.hasNext();) {
+//            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+//            intact.removeExperiment(exp);
+//        }
+//    }
 
     // Override the super method to this bean's info.
 //    public void persist(EditUserI user) throws IntactException, SearchException {
@@ -199,6 +265,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
     // recent interaction list.
     public void addToRecentList(EditUserI user) {
         user.addToCurrentInteraction((Interaction) getAnnotatedObject());
+    }
+
+    // Override to remove the current interaction from the recent list.
+    public void removeFromRecentList(EditUserI user) {
+        user.removeFromCurrentInteraction((Interaction) getAnnotatedObject());
     }
 
     /**

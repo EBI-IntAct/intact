@@ -9,19 +9,17 @@ package uk.ac.ebi.intact.application.editor.business;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.accesslayer.LookupException;
+import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
+import uk.ac.ebi.intact.application.commons.search.SearchHelper;
+import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
-import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
-import uk.ac.ebi.intact.application.commons.search.SearchHelper;
-import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.business.IntactException;
@@ -32,9 +30,11 @@ import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.util.*;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.ServletContext;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.*;
@@ -52,50 +52,26 @@ import java.util.*;
  */
 public class EditUser implements EditUserI, HttpSessionBindingListener {
 
-    // Beginning of Inner classes
-
-    // ------------------------------------------------------------------------
+    /**
+     * Reference to the Intact Helper. This is transient as it is reconstructed
+     * using the data source.
+     */
+    private transient IntactHelper myHelper;
 
     /**
-     * Inner class to generate unique ids to use primary keys for CommentBean
-     * class.
+     * The data source; need this to create a helper.
      */
-    private static class UniqueID {
-
-        /**
-         * The initial value. All the unique ids are based on this value for any
-         * (all) user(s).
-         */
-        private static long theirCurrentTime = System.currentTimeMillis();
-
-        /**
-         * Returns a unique id using the initial seed value.
-         */
-        private static synchronized long get() {
-            return theirCurrentTime++;
-        }
-    }
-
-    // ------------------------------------------------------------------------
-
-    // End of Inner classes
-
-    // End of static data
+    private DAOSource myDAOSource;
 
     /**
-     * Reference to the Intact Helper.
+     * The session start time. This info is reset at deserialization.
      */
-    private IntactHelper myHelper;
+    private transient Date mySessionStartTime;
 
     /**
-     * The session start time.
+     * The session end time. This info is reset at deserialization.
      */
-    private Date mySessionStartTime;
-
-    /**
-     * The session end time.
-     */
-    private Date mySessionEndTime;
+    private transient Date mySessionEndTime;
 
     /**
      * Maintains the edit state; it used when inserting the header dynamically.
@@ -105,34 +81,29 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private boolean myEditState;
 
     /**
-     * The topic selected by the user; transient as it is valid for the
-     * current session only.
+     * The topic selected by the user.
      */
-    private transient String mySelectedTopic;
+    private String mySelectedTopic;
 
     /**
-     * The current view of the user. Not saving the state of the view yet.
+     * The current view of the user.
      */
-    private transient AbstractEditViewBean myEditView;
+    private AbstractEditViewBean myEditView;
 
     /**
-     * Holds the last search results. No need to save search results.
+     * Holds the last search results.
      */
-    private transient Collection mySearchCache = new ArrayList();
+    private Collection mySearchCache = new ArrayList();
 
     /**
      * The factory to create various views; e.g., CV, BioSource. The factory lasts
-     * only for a session, hence it is transient.
+     * only for a session, hence it is transient. One factory per user.
      */
     private transient EditViewBeanFactory myViewFactory;
 
     /**
-     * The factory to create various menus.
-     */
-    private transient EditorMenuFactory myMenuFactory;
-
-    /**
-     * The institution; transient as it is already persistent on the database.
+     * The institution; transient as it will be retrieved from the persistent
+     * system if not set.
      */
     private transient Institution myInstitution;
 
@@ -173,16 +144,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private transient Set myCurrentInteractions = new HashSet();
 
-    // Static Methods.
-
-    /**
-     * Returns the unique id based on the current time; the ids are unique
-     * for a session.
-     */
-    public static long getId() {
-        return UniqueID.get();
-    }
-
     // Constructors.
 
     /**
@@ -201,30 +162,51 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     public EditUser(String mapping, String dsClass, String user,
                     String password) throws DataSourceException, IntactException {
-        DAOSource ds = DAOFactory.getDAOSource(dsClass);
+        myDAOSource = DAOFactory.getDAOSource(dsClass);
 
         // Pass config details to data source - don't need fast keys as only
         // accessed once
         Map fileMap = new HashMap();
         fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
-        ds.setConfig(fileMap);
+        myDAOSource.setConfig(fileMap);
 
-        // Initialize the helper.
-        myHelper = new IntactHelper(ds, user, password);
+        // Save the user info in the DS for us to access them later.
+        myDAOSource.setUser(user);
+        myDAOSource.setPassword(password);
 
         // Initialize the object.
         initialize();
     }
 
     /**
-     * This constructor is used by Seralization test class.
-     * @param helper the Intact helper
-     * @throws IntactException for errors in accessing the persistent system.
+     * This constructor for Seralization test class. The user and password is set
+     * to null. This is equivalent to calling
+     * {@link EditUser(String, String, String, String)} with null values for
+     * user and password.
+     * @param mapping the name of the mapping file.
+     * @param dsClass the class name of the Data Source.
+     * @throws DataSourceException for error in getting the data source; this
+     * could be due to the errors in repository files.
+     * @throws IntactException for errors in creating IntactHelper.
+     *
      * @see uk.ac.ebi.intact.application.editor.test.SessionSerializationTest
      */
-    public EditUser(IntactHelper helper) throws IntactException {
-        myHelper = helper;
-        initialize();
+    public EditUser(String mapping, String dsClass) throws IntactException,
+            DataSourceException {
+        this(mapping, dsClass, null, null);
+    }
+
+    // Methods to handle special serialization issues.
+
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+        in.defaultReadObject();
+        try {
+            initialize();
+        }
+        catch (IntactException ie) {
+            throw new IOException(ie.getMessage());
+        }
     }
 
     // Implements HttpSessionBindingListener
@@ -233,27 +215,51 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * Will call this method when an object is bound to a session.
      * Starts the user view.
      */
-    public void valueBound(HttpSessionBindingEvent event) {
-        // Create the factories.
-        myViewFactory = new EditViewBeanFactory();
-        myMenuFactory = new EditorMenuFactory(myHelper);
-    }
+    public void valueBound(HttpSessionBindingEvent event) {}
 
     /**
      * Will call this method when an object is unbound from a session. This
      * method sets the logout time.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
-        ServletContext ctx = event.getSession().getServletContext();
-        LockManager lmr = (LockManager) ctx.getAttribute(EditorConstants.LOCK_MGR);
         // Release any locks.
-        releaseLock(lmr);
+        releaseLock();
         try {
             logoff();
         }
         catch (IntactException ie) {
             // Just ignore this exception. Where to log this?
         }
+    }
+
+    // Override Objects's equal method.
+
+    /**
+     * Compares <code>obj</code> with this object according to
+     * Java's equals() contract. Delegates the task to
+     * {@link
+     * uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean#equals(Object)
+     * }.
+     * @param obj the object to compare.
+     * @return true only if <code>obj</code> is an instance of this class
+     * and its wrapped view equals to this object's view. For all
+     * other instances, false is returned.
+     */
+    public boolean equals(Object obj) {
+        // Identical to this?
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof EditUser)) {
+            return false;
+        }
+        // Can cast it safely.
+        EditUser other = (EditUser) obj;
+        if (myEditView != null) {
+            return myEditView.equals(other.myEditView);
+        }
+        // Other's view must be null.
+        return other.myEditView == null;
     }
 
     // Implementation of IntactUserI interface.
@@ -295,17 +301,21 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditView;
     }
 
-    public String getCurrentViewClass() {
-        // The object we are editing at the moment.
-        AnnotatedObject editObject = myEditView.getAnnotatedObject();
-        // The class name of the current edit object.
-        String className = editObject.getClass().getName();
-        // Strip the package name from the class name.
-        return className.substring(className.lastIndexOf('.') + 1);
+    public void setView(Class clazz) {
+        // Start editing the object.
+        this.startEditing();
+        // Get the new view for the new edit object.
+        myEditView = myViewFactory.factory(clazz);
+        setSelectedTopic();
     }
 
-    public void setSelectedTopic(String topic) {
-        mySelectedTopic = topic;
+    public void setView(AnnotatedObject annot) {
+        // Start editing the object.
+        this.startEditing();
+        // Get the new view for the new edit object.
+        myEditView = myViewFactory.factory(annot.getClass());
+        myEditView.setAnnotatedObject(annot);
+        setSelectedTopic();
     }
 
     public String getSelectedTopic() {
@@ -356,7 +366,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void delete(Object object) throws IntactException {
-        myHelper.delete(object);
+        // Only delete if it is persistent.
+        if (isPersistent(object)) {
+            myHelper.delete(object);
+        }
     }
 
     public void persist() throws IntactException, SearchException {
@@ -366,9 +379,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void delete() throws IntactException {
         myEditView.clear();
         // Remove this from the experiment list.
-        if (myEditView.getClass().isAssignableFrom(ExperimentViewBean.class)) {
-            removeFromCurrentExperiment((Experiment) myEditView.getAnnotatedObject());
-        }
+//        if (myEditView.getClass().isAssignableFrom(ExperimentViewBean.class)) {
+//            removeFromCurrentExperiment((Experiment) myEditView.getAnnotatedObject());
+//        }
         delete(myEditView.getAnnotatedObject());
     }
 
@@ -378,19 +391,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public boolean isPersistent(Object obj) {
-        return myHelper.isPersistent(obj);
+        if (obj != null) {
+            return myHelper.isPersistent(obj);
+        }
+        return false;
     }
 
     public boolean isPersistent() {
         return isPersistent(myEditView.getAnnotatedObject());
-    }
-
-    public void updateView(AnnotatedObject annot) {
-        // Start editing the object.
-        this.startEditing();
-        // Get the new view for the new edit object.
-        myEditView = myViewFactory.factory(annot);
-        myEditView.setMenuFactory(myMenuFactory);
     }
 
     public Object getObjectByLabel(String className, String label)
@@ -450,7 +458,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public Collection search1(String objectType, String searchParam,
-                             String searchValue) throws SearchException {
+                              String searchValue) throws SearchException {
         // Retrieve an object...
         try {
             return myHelper.search(objectType, searchParam, searchValue);
@@ -466,20 +474,20 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myLastQuery;
     }
 
-    public void addToSearchCache(Collection results, LockManager lmr) {
+    public void addToSearchCache(Collection results) {
         // Clear previous results.
         mySearchCache.clear();
 
         // Wrap as ResultsBeans for tag library to display.
         for (Iterator iter = results.iterator(); iter.hasNext();) {
-            mySearchCache.add(new ResultBean((AnnotatedObject) iter.next(), lmr));
+            mySearchCache.add(new ResultBean((AnnotatedObject) iter.next()));
         }
     }
 
-    public void updateSearchCache(LockManager lmr) {
+    public void updateSearchCache(ResultBean rb) {
         // Clear previous results.
         mySearchCache.clear();
-        mySearchCache.add(new ResultBean(myEditView.getAnnotatedObject(), lmr));
+        mySearchCache.add(rb);
     }
 
     public Collection lookup(String className, String value) throws SearchException {
@@ -504,16 +512,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public String getUniqueShortLabel(String shortlabel) throws SearchException {
-        AnnotatedObject annobj = myEditView.getAnnotatedObject();
-        return this.getUniqueShortLabel(shortlabel, annobj.getAc());
+        return this.getUniqueShortLabel(shortlabel, myEditView.getAc());
     }
 
     public String getUniqueShortLabel(String shortlabel, String extAc)
             throws SearchException {
-        AnnotatedObject annobj = myEditView.getAnnotatedObject();
         try {
-            return GoTools.getUniqueShortLabel(myHelper, annobj.getClass(),
-                    annobj, shortlabel, extAc);
+            return GoTools.getUniqueShortLabel(myHelper, myEditView.getEditClass(),
+                    myEditView.getAc(), shortlabel, extAc);
         }
         catch (IntactException ie) {
             String msg = "Failed to get a unique short label for " + extAc;
@@ -522,9 +528,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public boolean duplicateShortLabel(String label) throws SearchException {
-        // The object we are editing at the moment.
-        AnnotatedObject annobj = myEditView.getAnnotatedObject();
-        Class clazz = annobj.getClass();
+        // The class of the object we are editing at the moment.
+        Class clazz = myEditView.getEditClass();
 
         // Holds the result from the search.
         Collection results = search1(clazz.getName(), "shortLabel", label);
@@ -536,7 +541,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         if (results.size() == 1) {
             // Found an object with similar short label; is it as same as the
             // current record?
-            String currentAc = annobj.getAc();
+            String currentAc = myEditView.getAc();
             // ac is null until a record is persisted; current ac is null
             // for a new object.
             if (currentAc != null) {
@@ -553,12 +558,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public List getExistingShortLabels() throws SearchException {
-        // The object we are editing at the moment.
-        AnnotatedObject editObject = myEditView.getAnnotatedObject();
         // The current edit object's short label.
-        String editLabel = editObject.getShortLabel();
+        String editLabel = myEditView.getShortLabel();
         // The class name of the current edit object.
-        String className = editObject.getClass().getName();
+        String className = myEditView.getClass().getName();
 
         // The list to return.
         List list = new ArrayList();
@@ -681,10 +684,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return xref;
     }
 
-    public void releaseLock(LockManager lmr) {
+    public void releaseLock() {
         // Release any locks the user is holding.
         if (myEditView != null) {
-            lmr.release(myEditView.getAcNoLink());
+            LockManager.getInstance().release(myEditView.getAc());
         }
     }
 
@@ -695,6 +698,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * @throws IntactException for errors in accessing the persistent system.
      */
     private void initialize() throws IntactException {
+        // Construct the the helper.
+        myHelper = new IntactHelper(myDAOSource);
+
         // A dummy read to ensure that a connection is made as a valid user.
         myHelper.search("uk.ac.ebi.intact.model.Institution", "ac", "*");
 
@@ -707,6 +713,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         // Record the time started.
         mySessionStartTime = Calendar.getInstance().getTime();
+
+        // Create the factories.
+        myViewFactory = new EditViewBeanFactory(myHelper);
     }
 
     /**
@@ -719,6 +728,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             mySearchHelper = new SearchHelper(logger);
         }
         return mySearchHelper;
+    }
+
+    private void setSelectedTopic() {
+        // The class name of the current edit object.
+        String className = myEditView.getEditClass().getName();
+        // Strip the package name from the class name.
+        mySelectedTopic = className.substring(className.lastIndexOf('.') + 1);
     }
 
     /**

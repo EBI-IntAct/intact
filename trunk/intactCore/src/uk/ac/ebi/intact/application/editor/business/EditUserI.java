@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
@@ -32,8 +33,7 @@ import java.util.Set;
  */
 public interface EditUserI extends IntactUserI, Serializable {
 
-    // Get/Set methods for topic selected.
-    public void setSelectedTopic(String topic);
+    // Getter for topic selected.
     public String getSelectedTopic();
 
     /**
@@ -110,13 +110,13 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @param annot the <code>AnnotatedObject</code> to set as the current
      * object the user is working presently.
      */
-    public void updateView(AnnotatedObject annot);
+    public void setView(AnnotatedObject annot);
 
     /**
-     * Returns the class name of the current view.
-     * @return the class name of the current view without the package prefix.
+     * Set this class as the editor is editing at the moment.
+     * @param clazz the class to set as the editing class.
      */
-    public String getCurrentViewClass();
+    public void setView(Class clazz);
 
     // Search methods
 
@@ -210,20 +210,18 @@ public interface EditUserI extends IntactUserI, Serializable {
      * Caches the last search result. Each object of <code>results</code> is
      * wrapped as a <code>ResultBean</code>.
      * @param results a collection of result beans from the search.
-     * @param lmr the lock manager to assign to each bean.
      *
      * <pre>
      * pre: results->forall(obj: Object | obj.oclIsTypeOf(ResultBean))
      * </pre>
      */
-    public void addToSearchCache(Collection results, LockManager lmr);
+    public void addToSearchCache(Collection results);
 
     /**
-     * Updates the search cache with the current edit object; this is required
-     * to reflect changes to current edit object's short label.
-     * @param lmr the lock manager to set for the current edit object.
+     * Clears existing search cache and replace it with given bean.
+     * @param rb the result bean to set in the search cache.
      */
-    public void updateSearchCache(LockManager lmr);
+    public void updateSearchCache(ResultBean rb);
 
     /**
      * Returns a unique short label.
@@ -246,8 +244,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @exception SearchException for problems with searching the database.
      *
      * @see uk.ac.ebi.intact.util.GoTools#getUniqueShortLabel(
-            * uk.ac.ebi.intact.business.IntactHelper, Class,
-            * uk.ac.ebi.intact.model.AnnotatedObject, String, String)
+            * uk.ac.ebi.intact.business.IntactHelper, Class, String, String, String)
      */
     public String getUniqueShortLabel(String shortlabel, String extAc)
             throws SearchException;
@@ -391,8 +388,7 @@ public interface EditUserI extends IntactUserI, Serializable {
     public Xref getXref(XreferenceBean xb) throws SearchException;
 
     /**
-     * Releases the lock using given lock manager.
-     * @param lmr the lock manager to release the current edit object.
+     * Releases the lock held by the user.
      */
-    public void releaseLock(LockManager lmr);
+    public void releaseLock();
 }

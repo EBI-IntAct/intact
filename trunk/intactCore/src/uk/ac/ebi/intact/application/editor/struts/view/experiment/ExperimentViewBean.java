@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.ArrayList;
@@ -69,10 +70,19 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     private transient List myInteractionsToHold = new ArrayList();
 
+    /**
+     * Constructs with the Intact helper.
+     * @param helper the Intact helper.
+     */
+//    public ExperimentViewBean(IntactHelper helper) {
+//        super(helper);
+//    }
+
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    public void setAnnotatedObject(Experiment exp) {
-        super.setAnnotatedObject(exp);
+    public void setAnnotatedObject(AnnotatedObject annobj) {
+        super.setAnnotatedObject(annobj);
+        Experiment exp = (Experiment) annobj;
         // Only set the short labels if the experiment has the objects.
         BioSource biosrc = exp.getBioSource();
         if (biosrc != null) {
@@ -102,12 +112,9 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         makeInteractionBeans(exp.getInteractions());
     }
 
-    // Override the super method to update the current Experiment.
-    public void update(EditUserI user) throws IntactException, SearchException {
-        super.update(user);
-        // The current Experiment object we want to update
-        Experiment exp = (Experiment) getAnnotatedObject();
+    // Implements abstract methods
 
+    protected void updateAnnotatedObject(EditUserI user) throws SearchException {
         // Get the objects using their short label.
         BioSource biosource = (BioSource) user.getObjectByLabel(
                 BioSource.class, myOrganism);
@@ -116,10 +123,27 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         CvIdentification ident = (CvIdentification) user.getObjectByLabel(
                 CvIdentification.class, myIdent);
 
-        // Update the experiment object.
-        exp.setBioSource(biosource);
+        // The current experiment.
+        Experiment exp = (Experiment) getAnnotatedObject();
+
+        // Have we set the annotated object for the view?
+        if (exp == null) {
+            if (getAc() == null) {
+                // Can't read from the persistent system. Create a new Experiment.
+                exp = new Experiment(user.getInstitution(), getShortLabel(), biosource);
+            }
+            else {
+                // Read it from the peristent system first and then update it.
+                exp = (Experiment) user.getObjectByAc(getEditClass(), getAc());
+                exp.setShortLabel(getShortLabel());
+                exp.setBioSource(biosource);
+            }
+            // Set the current experiment as the annotated object.
+            setAnnotatedObject(exp);
+        }
         exp.setCvInteraction(interaction);
         exp.setCvIdentification(ident);
+        exp.setFullName(getFullName());
 
         // Add interaction to the experiment.
         for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
@@ -132,6 +156,37 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             intact.removeExperiment(exp);
         }
     }
+
+    // Override the super method to update the current Experiment.
+//    public void updateXXX(EditUserI user) throws SearchException {
+//        super.updateXXX(user);
+//        // The current Experiment object we want to update
+//        Experiment exp = (Experiment) getAnnotatedObject();
+//
+//        // Get the objects using their short label.
+//        BioSource biosource = (BioSource) user.getObjectByLabel(
+//                BioSource.class, myOrganism);
+//        CvInteraction interaction = (CvInteraction) user.getObjectByLabel(
+//                CvInteraction.class, myInter);
+//        CvIdentification ident = (CvIdentification) user.getObjectByLabel(
+//                CvIdentification.class, myIdent);
+//
+//        // Update the experiment object.
+//        exp.setBioSource(biosource);
+//        exp.setCvInteraction(interaction);
+//        exp.setCvIdentification(ident);
+//
+//        // Add interaction to the experiment.
+//        for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
+//            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
+//            intact.addExperiment(exp);
+//        }
+//        // Delete interactions from the experiment.
+//        for (Iterator iter = getInteractionsToDel().iterator(); iter.hasNext();) {
+//            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
+//            intact.removeExperiment(exp);
+//        }
+//    }
 
     // Override the super method to this bean's info.
 //    public void persist(EditUserI user) throws IntactException, SearchException {
@@ -173,6 +228,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     // recent experiment list.
     public void addToRecentList(EditUserI user) {
         user.addToCurrentExperiment((Experiment) getAnnotatedObject());
+    }
+
+    // Override to remove the current experiment from the recent list.
+    public void removeFromRecentList(EditUserI user) {
+        user.removeFromCurrentExperiment((Experiment) getAnnotatedObject());
     }
 
     // Ovverride to provide Experiment layout.
@@ -419,7 +479,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     private void makeInteractionBeans(Collection ints) {
         myInteractions.clear();
         for (Iterator iter = ints.iterator(); iter.hasNext();) {
-            Interaction interaction  = (Interaction) iter.next();
+            Interaction interaction = (Interaction) iter.next();
             myInteractions.add(new InteractionBean(interaction));
         }
     }
