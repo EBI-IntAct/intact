@@ -3,7 +3,7 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.util ;
+package uk.ac.ebi.intact.util;
 
 import gnu.regexp.RE;
 import gnu.regexp.REMatch;
@@ -40,24 +40,33 @@ import java.util.*;
  *
  * (2) for each <i>SPTREntry</i>
  *
- *    (2.1) From the Accession number, retreive from IntAct all <i>Protein</i> with that AC as
+ *    (2.1)
+ *          a)
+ *          From the Accession number, retreive from IntAct all <i>Protein</i> with that AC as
  *          a SPTR <i>Xref</i>. We can find several instance of Protein in case they are link
  *          to different <i>BioSource</i>. Lets call that set of Protein: PROTEINS.
  *          Note: an SPTREntry can contains several AC so we check in IntAct for all of them.
  *
- *    (2.2) The user can give a taxid 'filter' (lets call it t) in order to update/create only
- *          protein related to that taxid. In an SPTREntry, there is 1..n specified organism
- *          (i.e. taxid). So if the taxid parameter t is null, we keep all taxid found in the
- *          SPTREntry, else we will work only with t if it is present in the SPTREntry.
+ *          b)
+ *          From PROTEINS, we retreive from IntAct all <i>Splice Variant</i> (ie. <code>Protein</code>)
+ *          with the AC of a retreived proteins (in PROTEINS) and having a CvXrefQualifier equals to
+ *          <i>isoform-parent</i>. We can find several instance of Splice Variant per master Protein
+ *          in case in case we have multiple <i>BioSource</i>. Lets call that set of Protein:
+ *          SPLICE-VARIANTS.
+ *
+ *    (2.2) The user can give a taxid 'filter' (lets call it t) in order to retrieve only
+ *          protein related to that taxid (beware that behind the scene, all protein are
+ *          update/create). In an SPTREntry, there is 1..n specified organism (i.e. taxid).
+ *          So if the taxid parameter t is null, we give back to the user all proteins created
+ *          or updated, if a valid taxid is given by the user, we filter the set of proteins.
  *          If it is not found, the procedure fails.
  *
- *    (2.3) For each taxid (lets call it TAXID)
+ *    (2.3) For each taxid of the SPTREntry (lets call it TAXID)
  *
- *       (2.3.1) Get up-to-date informations about the organism from Newt.
+ *       (2.3.1) Get up-to-date information about the organism from Newt.
  *               If that organism is already existing inIntAct as a BioSource, we check if an
- *               update is needed.
- *               We take also into account that a taxid can be obsolete and in such a case we
- *               update IntAct data.
+ *               update is needed. We take also into account that a taxid can be obsolete and
+ *               in such a case we update IntAct data accordingly.
  *
  *       (2.3.2)
  *                 a) If a Protein from PROTEINS (cf. 2.1) has TAXID as BioSource,
@@ -68,12 +77,18 @@ import java.util.*;
  *                 c) If a Protein from PROTEINS has a taxid not found in the SPTREntry, we display
  *                    a warning message.
  *
- *      TODO: DOCUMENT HERE HOW ARE HANDLED THE SPLICE VARIANT
+ *                 d) If a Protein from SPLICE-VARIANTS (cf. 2.1) has TAXID as BioSource,
+ *                    we update its data from the SPTREntry.
+ *
+ *                 e) If no Protein from SPLICE-VARIANTS has TAXID as BioSource, we create a new Protein.
+ *
+ *                 f) If a Protein from SPLICE-VARIANTS has a taxid not found in the SPTREntry,
+ *                    we display a warning message.
  *
  *   The update and creation process (2.3.2 a and b) includes a check of the following Xref :
  *   SPTR, GO, SGD, INTERPRO, FLYBASE.
  *
- *   CAUTION: Be aware that no checks have been done about the ownership of updated objects.
+ *   BEWARE that no checks have been done about the ownership of updated objects.
  *
  * </pre>
  * </p>
@@ -121,138 +136,152 @@ public class UpdateProteins extends UpdateProteinsI {
     private Collection proteins;
 
 
-    public UpdateProteins (IntactHelper helper) throws UpdateException{
-        super (helper);
+    public UpdateProteins( IntactHelper helper ) throws UpdateException {
+        super( helper );
     }
 
-    public int getProteinCreatedCount () {
+    public UpdateProteins( IntactHelper helper, boolean setOutput ) throws UpdateException {
+        super( helper, setOutput );
+    }
+
+    public int getProteinCreatedCount() {
         return proteinCreated;
     }
 
-    public int getProteinUpdatedCount () {
+    public int getProteinUpdatedCount() {
         return proteinUpdated;
     }
 
-    public int getProteinUpToDateCount () {
+    public int getProteinUpToDateCount() {
         return proteinUpToDate;
     }
 
-    public int getProteinCount () {
+    public int getProteinCount() {
         return proteinTotal;
     }
 
-    public int getProteinSkippedCount () {
-        return (proteinTotal - (proteinCreated + proteinUpdated + proteinUpToDate));
+    public int getProteinSkippedCount() {
+        return ( proteinTotal - ( proteinCreated + proteinUpdated + proteinUpToDate ) );
     }
 
-    public int getSpliceVariantCreatedCount () {
+    public int getSpliceVariantCreatedCount() {
         return spliceVariantCreated;
     }
 
-    public int getSpliceVariantUpdatedCount () {
+    public int getSpliceVariantUpdatedCount() {
         return spliceVariantUpdated;
     }
 
-    public int getSpliceVariantUpToDateCount () {
+    public int getSpliceVariantUpToDateCount() {
         return spliceVariantUpToDate;
     }
 
-    public int getSpliceVariantCount () {
+    public int getSpliceVariantCount() {
         return spliceVariantTotal;
     }
 
-    public int getSpliceVariantProteinCount () {
+    public int getSpliceVariantProteinCount() {
         return spliceVariantTotal;
     }
 
-    public int getSpliceVariantSkippedCount () {
-        return (spliceVariantTotal - (spliceVariantCreated + spliceVariantUpdated + spliceVariantUpToDate));
+    public int getSpliceVariantSkippedCount() {
+        return ( spliceVariantTotal - ( spliceVariantCreated + spliceVariantUpdated + spliceVariantUpToDate ) );
     }
 
-    public int getEntryCount () {
+    public int getEntryCount() {
         return entryCount;
     }
 
-    public int getEntryProcessededCount () {
+    public int getEntryProcessededCount() {
         return entryCount - entrySkipped;
     }
 
-    public int getEntrySkippedCount () {
+    public int getEntrySkippedCount() {
         return entrySkipped;
     }
 
-    public void setDebugOnScreen (boolean debug) {
+    public void setDebugOnScreen( boolean debug ) {
         this.debugOnScreen = debug;
     }
 
-    public void init () {
+    private void reset() {
 
-        proteins = new ArrayList();
+        if( proteins == null ){
+            proteins = new ArrayList();
+        } else {
+            proteins.clear();
+        }
 
-        proteinTotal          = 0;
-        proteinCreated        = 0;
-        proteinUpdated        = 0;
+        proteinTotal = 0;
+        proteinCreated = 0;
+        proteinUpdated = 0;
 
-        spliceVariantTotal    = 0;
-        spliceVariantCreated  = 0;
-        spliceVariantUpdated  = 0;
+        spliceVariantTotal = 0;
+        spliceVariantCreated = 0;
+        spliceVariantUpdated = 0;
         spliceVariantUpToDate = 0;
 
-        proteinUpToDate       = 0;
-        entryCount            = 0;
-        entrySkipped          = 0;
+        proteinUpToDate = 0;
+        entryCount = 0;
+        entrySkipped = 0;
     }
 
-    public final String getUrl(String sptrAC) {
+    public final String getUrl( String sptrAC ) {
 
         // example: http://srs.ebi.ac.uk/srs7bin/cgi-bin/wgetz?-e+[SWALL-acc:P12345]+-vn+2+-ascii
         String url = "http://srs.ebi.ac.uk/srs7bin/cgi-bin/wgetz?-e+[SWALL-acc:"
-                + sptrAC + "]+-vn+2+-ascii" ;
+                + sptrAC + "]+-vn+2+-ascii";
 
-        return url ;
+        return url;
     }
 
     // TODO: the server might be busy, create a retry method ...
 
     public String getAnEntry( String anUrl ) {
-        BufferedReader br = null ;
+        BufferedReader br = null;
         StringBuffer sb = null;
         URL u = null;
 
         final String isProxySet = System.getProperty( "proxySet" );
-        final String proxyHost  = System.getProperty( "proxyHost" );
-        final String proxyPort  = System.getProperty( "proxyPort" );
-        logger.debug ( "Uses: proxySet="+ isProxySet +", proxyHost="+ proxyHost +", proxyPort="+ proxyPort );
+        final String proxyHost = System.getProperty( "proxyHost" );
+        final String proxyPort = System.getProperty( "proxyPort" );
+        logger.debug( "Uses: proxySet=" + isProxySet + ", proxyHost=" + proxyHost + ", proxyPort=" + proxyPort );
 
         try {
-            u = new URL (anUrl) ;
+            u = new URL( anUrl );
         } catch( Exception e ) {
-            logger.error ("Please supply URL to getAnEntry() method ...") ;
-            logger.error ("If the URL returns html file, this program won't parse it.") ;
+            logger.error( "Please supply URL to getAnEntry() method ..." );
+            logger.error( "If the URL returns html file, this program won't parse it." );
         }
 
+        InputStream in = null;
         try {
-            InputStream in = u.openStream() ;
-            InputStreamReader isr = new InputStreamReader(in) ;
-            br = new BufferedReader(isr) ;
-            String line ;
+            in = u.openStream();
+            InputStreamReader isr = new InputStreamReader( in );
+            br = new BufferedReader( isr );
+            String line;
 
-            sb = new StringBuffer (4096);
-            String lineSeparator = System.getProperty ("line.separator");
+            sb = new StringBuffer( 4096 );
+            String lineSeparator = System.getProperty( "line.separator" );
 
-            while ((line = br.readLine()) != null ) {
-                sb.append (line).append (lineSeparator) ;
+            while( ( line = br.readLine() ) != null ) {
+                sb.append( line ).append( lineSeparator );
             }
 
             in.close();
 
             return sb.toString();
-        }
-        catch (MalformedURLException e) {
-            logger.error (e);
-        }
-        catch (IOException e) {
-            logger.error (e);
+        } catch( MalformedURLException e ) {
+            logger.error( e );
+        } catch( IOException e ) {
+            logger.error( e );
+        } finally {
+            if( in != null ) {
+                try {
+                    in.close();
+                } catch( Exception e ) {
+                }
+            }
         }
 
         return null;
@@ -265,36 +294,36 @@ public class UpdateProteins extends UpdateProteinsI {
      *@param pattern A string as a pattern.
      *@return A list of matched pattern.
      */
-    public REMatch[] match (String textin, String pattern ) {
-        REMatch[] allMatches = null ;
+    public REMatch[] match( String textin, String pattern ) {
+        REMatch[] allMatches = null;
         try {
-            RE magic = new RE ( pattern );
-            allMatches = magic.getAllMatches ( textin );
-        } catch (Exception e_RE) {
-            e_RE.printStackTrace() ;
+            RE magic = new RE( pattern );
+            allMatches = magic.getAllMatches( textin );
+        } catch( Exception e_RE ) {
+            e_RE.printStackTrace();
         }
 
-        return allMatches ;
+        return allMatches;
     }
 
     private boolean isSpliceVariant( Protein protein ) {
 
-        if ( protein == null ) {
+        if( protein == null ) {
             return false;
         }
 
         Collection xrefs = protein.getXrefs();
-        if ( xrefs == null ) {
+        if( xrefs == null ) {
             return false;
         }
 
-        for ( Iterator iterator = xrefs.iterator (); iterator.hasNext (); ) {
-            Xref xref = (Xref) iterator.next ();
+        for( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            Xref xref = (Xref) iterator.next();
             CvXrefQualifier qualifier = xref.getCvXrefQualifier();
-            if ( qualifier == null ) {
+            if( qualifier == null ) {
                 continue; // skip it
             }
-            if ( qualifier.equals( isoFormParentXrefQualifier ) )
+            if( qualifier.equals( isoFormParentXrefQualifier ) )
                 return true;
         }
 
@@ -312,7 +341,7 @@ public class UpdateProteins extends UpdateProteinsI {
      * @param taxid the taxid filter (can be null)
      * @return An collection of Intact protein or null if an error occur.
      */
-    private Collection getProteinsFromSPTrAC (SPTREntry sptrEntry, String taxid, IntactHelper helper)
+    private Collection getProteinsFromSPTrAC( SPTREntry sptrEntry, String taxid, IntactHelper helper )
             throws SPTRException {
 
         String spAC[] = sptrEntry.getAccessionNumbers();
@@ -324,22 +353,22 @@ public class UpdateProteins extends UpdateProteinsI {
                 String ac = spAC[ i ];
                 tmp = helper.getObjectsByXref( Protein.class, ac );
 
-                    if( tmp != null ) {
-                        for (Iterator iterator = tmp.iterator(); iterator.hasNext();) {
-                            Protein p = (Protein) iterator.next();
-                            // keep the protein only if the taxid is the same OR if no taxid is specified
-                            if (taxid == null || p.getBioSource().getTaxId().equals( taxid )) {
-                                if ( ! isSpliceVariant( p ) ) {
-                                    // insert only non splice variant
-                                    proteins.add( p );
-                                }
+                if( tmp != null ) {
+                    for( Iterator iterator = tmp.iterator(); iterator.hasNext(); ) {
+                        Protein p = (Protein) iterator.next();
+                        // keep the protein only if the taxid is the same OR if no taxid is specified
+                        if( taxid == null || p.getBioSource().getTaxId().equals( taxid ) ) {
+                            if( !isSpliceVariant( p ) ) {
+                                // insert only non splice variant
+                                proteins.add( p );
                             }
                         }
                     }
+                }
             }
-        } catch (IntactException e) {
+        } catch( IntactException e ) {
             // multiple object found for that criteria
-            logger.error ("error when retreiving Proteins from AC: " + spAC[ i ], e);
+            logger.error( "error when retreiving Proteins from AC: " + spAC[ i ], e );
             return null;
         }
 
@@ -367,15 +396,15 @@ public class UpdateProteins extends UpdateProteinsI {
      * @param helper    The database access
      * @return the created splice variants
      */
-    private Collection getSpliceVariantFromSPTrAC ( SPTREntry sptrEntry,
-                                                    Collection masters,
-                                                    String taxid,
-                                                    IntactHelper helper )
+    private Collection getSpliceVariantFromSPTrAC( SPTREntry sptrEntry,
+                                                   Collection masters,
+                                                   String taxid,
+                                                   IntactHelper helper )
             throws SPTRException {
 
-        if ( masters == null ) {
+        if( masters == null ) {
             masters = getProteinsFromSPTrAC( sptrEntry, taxid, helper );
-            if ( masters == null ) return null;
+            if( masters == null ) return null;
         }
 
         Collection spliceVariants = new HashSet(); // we want a distinct set of Protein
@@ -383,24 +412,24 @@ public class UpdateProteins extends UpdateProteinsI {
         // need that reference to ac out of the loop in order to have it available if an exception is raised.
         String ac = null;
         try {
-            for ( Iterator iterator = masters.iterator (); iterator.hasNext (); ) {
-                Protein protein = (Protein) iterator.next ();
+            for( Iterator iterator = masters.iterator(); iterator.hasNext(); ) {
+                Protein protein = (Protein) iterator.next();
                 ac = protein.getAc();
 
                 // All splice proteins have 'this' protein as the primary id.
                 Collection proteins = helper.search( Xref.class.getName(), "primaryId", ac );
 
                 // Loop through proteins collection; only add the splice proteins.
-                for (Iterator iterator2 = proteins.iterator(); iterator2.hasNext();) {
+                for( Iterator iterator2 = proteins.iterator(); iterator2.hasNext(); ) {
                     Xref xref = (Xref) iterator2.next();
-                    if (xref.getCvXrefQualifier().equals( isoFormParentXrefQualifier )) {
+                    if( xref.getCvXrefQualifier().equals( isoFormParentXrefQualifier ) ) {
                         spliceVariants.addAll( helper.search( Protein.class.getName(), "ac", xref.getParentAc() ) );
                     }
                 }
             }
-        } catch (IntactException e) {
+        } catch( IntactException e ) {
             // multiple object found for that criteria
-            logger.error ("error when retreiving splice variants (Protein) from AC: " + ac, e);
+            logger.error( "error when retreiving splice variants (Protein) from AC: " + ac, e );
             return null;
         }
 
@@ -417,45 +446,47 @@ public class UpdateProteins extends UpdateProteinsI {
      * @param update If true, update existing Protein objects according to the retrieved data.
      *               else, skip existing Protein objects.
      */
-    private void createProteinFromSPTrEntry (final SPTREntry sptrEntry,
+    private void createProteinFromSPTrEntry( final SPTREntry sptrEntry,
                                              final String taxid,
-                                             final boolean update) throws SPTRException {
+                                             final boolean update ) throws SPTRException {
 
         Protein protein = null;
         int i;
 
+        logger.info( "TaxId Filter given: " + ( taxid == null ? "-" : taxid ) );
+        logger.info( "Update flag: " + update );
+
+
         try {
             // according to the SPTR entry, get the corresponding proteins in IntAct
-            Collection proteins = getProteinsFromSPTrAC( sptrEntry, taxid, helper );
-            if (proteins == null) {
-                logger.error  ("An error occured when trying to get IntAct protein, exit update");
-                writeEntry2file ();
-                return ;
-            }
-            else
-            {
-                if ( logger.isInfoEnabled() ) {
-                    logger.info( "proteins found for that entry  ("+ proteins.size() +"):" );
-                    for ( Iterator iteratorX = proteins.iterator (); iteratorX.hasNext (); ) {
-                        Protein p = (Protein) iteratorX.next ();
+            // TODO: we don't activate the taxid filter here
+            Collection proteins = getProteinsFromSPTrAC( sptrEntry, null, helper );
+            if( proteins == null ) {
+                logger.error( "An error occured when trying to get IntAct protein, exit update" );
+                writeEntry2file();
+                return;
+            } else {
+                if( logger.isInfoEnabled() ) {
+                    logger.info( "proteins found for that entry  (" + proteins.size() + "):" );
+                    for( Iterator iteratorX = proteins.iterator(); iteratorX.hasNext(); ) {
+                        Protein p = (Protein) iteratorX.next();
                         logger.info( p.getAc() + " " + p.getShortLabel() + " " + p.getBioSource().getShortLabel() );
                     }
                 }
             }
 
             // according to the SPTR entry, get the corresponding splice variant in IntAct
-            Collection spliceVariants = getSpliceVariantFromSPTrAC (sptrEntry, proteins, taxid, helper);
-            if (spliceVariants == null) {
-                logger.error  ("An error occured when trying to get IntAct splice variants, exit update");
-                writeEntry2file ();
-                return ;
-            }
-            else
-            {
-                if ( logger.isInfoEnabled() ) {
-                    logger.info( "Splice variant found for that entry  ("+ spliceVariants.size() +"):" );
-                    for ( Iterator iteratorX = spliceVariants.iterator (); iteratorX.hasNext (); ) {
-                        Protein p = (Protein) iteratorX.next ();
+            // TODO: we don't activate the taxid filter here
+            Collection spliceVariants = getSpliceVariantFromSPTrAC( sptrEntry, proteins, null, helper );
+            if( spliceVariants == null ) {
+                logger.error( "An error occured when trying to get IntAct splice variants, exit update" );
+                writeEntry2file();
+                return;
+            } else {
+                if( logger.isInfoEnabled() ) {
+                    logger.info( "Splice variant found for that entry  (" + spliceVariants.size() + "):" );
+                    for( Iterator iteratorX = spliceVariants.iterator(); iteratorX.hasNext(); ) {
+                        Protein p = (Protein) iteratorX.next();
                         logger.info( p.getAc() + " " + p.getShortLabel() + " " + p.getBioSource().getShortLabel() );
                     }
                 }
@@ -466,22 +497,10 @@ public class UpdateProteins extends UpdateProteinsI {
              */
             int organismCount = sptrEntry.getOrganismNames().length;
             ArrayList taxids = new ArrayList( organismCount );
-            if (taxid == null) {
-                // user didn't give a taxid filter, so keep all taxids from the SPTR Entry
-                for (i = 0; i < organismCount; i++) {
-                    String organism   = sptrEntry.getOrganismNames()[ i ];
-                    String entryTaxid = sptrEntry.getNCBITaxonomyID( organism );
-                    taxids.add ( entryTaxid );
-                }
-            } else {
-                // apply the filter and keep only the one specified if existing in the Entry
-                for (i = 0; i < organismCount; i++) {
-                    String organism   = sptrEntry.getOrganismNames()[ i ];
-                    String entryTaxid = sptrEntry.getNCBITaxonomyID ( organism );
-                    if (taxid.equals( entryTaxid ))
-                        taxids.add ( entryTaxid );
-                    else logger.info ("SKIP: sptrTaxid=" + entryTaxid);
-                }
+            for( i = 0; i < organismCount; i++ ) {
+                String organism = sptrEntry.getOrganismNames()[ i ];
+                String entryTaxid = sptrEntry.getNCBITaxonomyID( organism );
+                taxids.add( entryTaxid );
             }
 
             Collection masters = new HashSet(); // to store the proteins which might be a master of a splice variant.
@@ -491,23 +510,26 @@ public class UpdateProteins extends UpdateProteinsI {
              */
             int taxidCount = taxids.size();
             boolean generateProteinShortlabelUsingBiosource = false;
-            if ( taxidCount > 1 ) {
-               generateProteinShortlabelUsingBiosource = true;
+            if( taxidCount > 1 ) {
+                generateProteinShortlabelUsingBiosource = true;
             }
-            for (i = 0; i < taxidCount; i++) {
+
+            logger.info ( "generateProteinShortlabelUsingBiosource = " + generateProteinShortlabelUsingBiosource );
+
+            for( i = 0; i < taxidCount; i++ ) {
 
                 proteinTotal++;
 
                 // for each taxid the user want to process
                 String sptrTaxid = (String) taxids.get( i );
-                logger.info ("\tPROCESS: sptrTaxid=" + sptrTaxid);
+                logger.info( "Prossessing: sptrTaxid=" + sptrTaxid );
 
                 // get a valid Biosource from either Intact or Newt
                 BioSource bioSource = bioSourceFactory.getValidBioSource( sptrTaxid );
 
                 protein = null;
                 // look for a protein in the set which has that taxid
-                for (Iterator iterator = proteins.iterator(); iterator.hasNext() && protein == null;) {
+                for( Iterator iterator = proteins.iterator(); iterator.hasNext() && protein == null; ) {
                     Protein tmp = (Protein) iterator.next();
                     BioSource bs = tmp.getBioSource();
 
@@ -517,32 +539,36 @@ public class UpdateProteins extends UpdateProteinsI {
                     * the loop and so that protein is not removed from the collection.
                     */
                     // TODO: to solve this, we could check all existing BioSource an update if needed.
-                    if (bs != null && bs.getTaxId().equals( sptrTaxid )) {
+                    if( bs != null && bs.getTaxId().equals( sptrTaxid ) ) {
                         // found ... remove it from the collection
                         protein = tmp;
-                        // the fact to call .remove( o )
+                        // BEWARE: the fact to call .remove( o ) would raise an exception if an other object is read
+                        // from the iterator.
                         proteins.remove( tmp );
                     }
                 } // for, protein selection according to bioSource
 
 
-                if (protein == null) {
+                if( protein == null ) {
                     // didn't found an existing one so create a new one
-                    logger.info ("No existing protein for that taxid, create a new one");
+                    logger.info( "No existing protein for that taxid (" + sptrTaxid + "), create a new one" );
 
-                    if ( localTransactionControl ){
+                    if( localTransactionControl ) {
                         helper.startTransaction( BusinessConstants.OBJECT_TX );
                     }
-                    if ( ( protein = createNewProtein (sptrEntry, bioSource, generateProteinShortlabelUsingBiosource) ) != null ) {
-                        logger.info ("creation sucessfully done");
+
+                    logger.info( "Call createProtein with parameter BioSource.taxId=" + bioSource.getTaxId() );
+
+                    if( ( protein = createNewProtein( sptrEntry, bioSource, generateProteinShortlabelUsingBiosource ) ) != null ) {
+                        logger.info( "creation sucessfully done: " + protein.getShortLabel() );
 
                         // Keep that reference as existing protein for that Entry and taxid.
                         masters.add( protein );
                     }
-                    if ( localTransactionControl ){
+                    if( localTransactionControl ) {
                         helper.finishTransaction();
                     }
-                    logger.info ("Transaction complete");
+                    logger.info( "Transaction complete" );
 
                 } else {
 
@@ -554,28 +580,31 @@ public class UpdateProteins extends UpdateProteinsI {
                         * We are doing the update of the existing protein only if the
                         * user request it we only update its content if needed
                         */
-                        logger.info ("A protein exists for that taxid, try to update");
+                        logger.info( "A protein exists for that taxid (" + sptrTaxid + "), try to update" );
 
-                        if (localTransactionControl){
+                        if( localTransactionControl ) {
                             helper.startTransaction( BusinessConstants.OBJECT_TX );
                         }
-                        if (updateExistingProtein (protein, sptrEntry, bioSource, generateProteinShortlabelUsingBiosource)) {
-                            logger.info ("update sucessfully done");
+                        if( updateExistingProtein( protein, sptrEntry, bioSource, generateProteinShortlabelUsingBiosource ) ) {
+                            logger.info( "update sucessfully done" );
                         }
-                        if (localTransactionControl) {
+                        if( localTransactionControl ) {
                             helper.finishTransaction();
-                            logger.info ("Transaction complete");
+                            logger.info( "Transaction complete" );
                         }
+                    } else {
+                        // Store the protein in the list we'll return
+                        this.proteins.add( protein );
                     }
                 }
 
 
                 // retrieve the comments of that entry
-                SPTRComment[] comments =  sptrEntry.getComments( Factory.COMMENT_ALTERNATIVE_SPLICING );
+                SPTRComment[] comments = sptrEntry.getComments( Factory.COMMENT_ALTERNATIVE_SPLICING );
 
-                for ( int j = 0; j < comments.length; j++ ) {
+                for( int j = 0; j < comments.length; j++ ) {
                     SPTRComment comment = comments[ j ];
-                    if ( ! (comment instanceof AlternativeSplicingAdapter ) ) {
+                    if( !( comment instanceof AlternativeSplicingAdapter ) ) {
                         logger.error( "Looking for Comment type: " + AlternativeSplicingAdapter.class.getName() );
                         logger.error( "Could not handle comment type: " + comment.getClass().getName() );
                         logger.error( "SKIP IT." );
@@ -586,7 +615,7 @@ public class UpdateProteins extends UpdateProteinsI {
                     Isoform[] isoForms = asa.getIsoforms();
 
                     // for each comment, browse its isoforms ...
-                    for ( int ii = 0; ii < isoForms.length; ii++ ) {
+                    for( int ii = 0; ii < isoForms.length; ii++ ) {
                         Isoform isoForm = isoForms[ ii ];
 
                         spliceVariantTotal++;
@@ -603,8 +632,8 @@ public class UpdateProteins extends UpdateProteinsI {
 
                             // Search for an existing splice variant in the IntAct database
                             Protein spliceVariant = null;
-                            for ( Iterator iterator = spliceVariants.iterator (); iterator.hasNext (); ) {
-                                Protein sv = (Protein) iterator.next ();
+                            for( Iterator iterator = spliceVariants.iterator(); iterator.hasNext(); ) {
+                                Protein sv = (Protein) iterator.next();
 
                                 /* How to spot and select the right splice variant ?
                                  * -----------------------------------------------
@@ -619,7 +648,7 @@ public class UpdateProteins extends UpdateProteinsI {
                                  *     isoform id: P21181-1
                                  */
 
-                                if ( sv.getShortLabel().toLowerCase().startsWith( id.toLowerCase() )
+                                if( sv.getShortLabel().toLowerCase().startsWith( id.toLowerCase() )
                                         &&
                                         sv.getBioSource().equals( bioSource ) ) {
                                     // this isoform is already there for that bioSource... so update it.
@@ -628,7 +657,7 @@ public class UpdateProteins extends UpdateProteinsI {
                                 }
                             }
 
-                            if ( spliceVariant != null ) {
+                            if( spliceVariant != null ) {
                                 // ... update it.
 
                                 if( update ) {
@@ -638,23 +667,23 @@ public class UpdateProteins extends UpdateProteinsI {
 
                                     // get the original protein from the collected data
                                     Protein master = null;
-                                    for ( Iterator iterator = masters.iterator (); iterator.hasNext (); ) {
-                                        master = (Protein) iterator.next ();
-                                        if ( master.getBioSource().equals( bioSource ) ) break; // found it
+                                    for( Iterator iterator = masters.iterator(); iterator.hasNext(); ) {
+                                        master = (Protein) iterator.next();
+                                        if( master.getBioSource().equals( bioSource ) ) break; // found it
                                     }
 
-                                    if (master == null) {
+                                    if( master == null ) {
                                         // error.
-                                        logger.debug ( "No master protein exists for that splice variant: " + id );
+                                        logger.debug( "No master protein exists for that splice variant: " + id );
                                     }
 
                                     /**
                                      * We are doing the update of the existing protein only if the
                                      * user request it we only update its content if needed
                                      */
-                                    logger.info ("A splice variant exists for that taxid, try to update");
+                                    logger.info( "A splice variant exists for that taxid (" + sptrTaxid + "), try to update" );
 
-                                    if (localTransactionControl){
+                                    if( localTransactionControl ) {
                                         /**
                                          * We want here to use a database transaction (NOT ONJECT) because
                                          * the creation of a splice variant can involves the creation of
@@ -668,14 +697,17 @@ public class UpdateProteins extends UpdateProteinsI {
                                          */
                                         helper.startTransaction( BusinessConstants.JDBC_TX );
                                     }
-                                    if ( updateExistingSpliceVariant( isoForm, id, spliceVariant, master, sptrEntry,
-                                                                      bioSource, generateProteinShortlabelUsingBiosource ) ) {
-                                        logger.info ("update sucessfully done");
+                                    if( updateExistingSpliceVariant( isoForm, id, spliceVariant, master, sptrEntry,
+                                                                     bioSource, generateProteinShortlabelUsingBiosource ) ) {
+                                        logger.info( "update sucessfully done" );
                                     }
-                                    if (localTransactionControl) {
+                                    if( localTransactionControl ) {
                                         helper.finishTransaction();
-                                        logger.info ("Transaction complete");
+                                        logger.info( "Transaction complete" );
                                     }
+                                } else {
+                                    // Store the splice variant in the list we'll return
+                                    this.proteins.add( protein );
                                 }
 
                                 // remove that splice variant from the collection.
@@ -685,41 +717,39 @@ public class UpdateProteins extends UpdateProteinsI {
 
                                 // get the original protein from the collected data
                                 Protein master = null;
-                                logger.info ( "Look for master of: " + id );
-                                for ( Iterator iterator = masters.iterator (); iterator.hasNext (); ) {
-                                    master = (Protein) iterator.next ();
-                                    if ( master.getBioSource().equals( bioSource ) ) {
-                                        logger.info ( "Found(" + master.getShortLabel() + ")" );
+                                logger.info( "Look for master of: " + id );
+                                for( Iterator iterator = masters.iterator(); iterator.hasNext(); ) {
+                                    master = (Protein) iterator.next();
+                                    if( master.getBioSource().equals( bioSource ) ) {
+                                        logger.info( "Found(" + master.getShortLabel() + ")" );
                                         break; // found it
                                     }
                                 }
-                                if ( master == null ){
+                                if( master == null ) {
                                     // Shouldn't happen, we have found the splice variant from the masters.
-                                    System.out.println ( "Didn't found a master protein for " + id );
+                                    System.out.println( "Didn't found a master protein for " + id );
                                 }
 
                                 /**
                                  * We didn't find a Protein related to that isoform ... create it.
                                  * doesn't found so create a new one
                                  */
-                                logger.info ("No existing protein for that taxid, create a new one");
+                                logger.info( "No existing protein for that taxid (" + sptrTaxid + "), create a new one" );
 
-                                if (localTransactionControl){
+                                if( localTransactionControl ) {
                                     /**
                                      * See remarks about database transaction above.
                                      */
                                     helper.startTransaction( BusinessConstants.JDBC_TX );
                                 }
-                                if ( ( spliceVariant = createNewSpliceVariant( isoForm, id, master, sptrEntry, bioSource,
-                                                                               generateProteinShortlabelUsingBiosource ) ) != null ) {
-                                    logger.info ("creation sucessfully done");
-
-
+                                if( ( spliceVariant = createNewSpliceVariant( isoForm, id, master, sptrEntry, bioSource,
+                                                                              generateProteinShortlabelUsingBiosource ) ) != null ) {
+                                    logger.info( "creation sucessfully done" );
                                 }
-                                if (localTransactionControl){
+                                if( localTransactionControl ) {
                                     helper.finishTransaction();
                                 }
-                                logger.info ("Transaction complete");
+                                logger.info( "Transaction complete" );
                             }
 
                         } // for ids
@@ -731,66 +761,69 @@ public class UpdateProteins extends UpdateProteinsI {
             * Check if the protein list is empty, if not, that means we have in IntAct some
             * proteins linked with a BioSource which is not recorded in the current SPTR Entry
             */
-            if (false == proteins.isEmpty()) {
+            if( false == proteins.isEmpty() ) {
 
-                logger.error ("The following association's <protein,taxid> list has been found in IntAct but not in SPTR:");
-                for (Iterator iterator = proteins.iterator(); iterator.hasNext();) {
+                logger.error( "The following association's <protein,taxid> list has been found in IntAct but not in SPTR:" );
+                for( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
                     Protein p = (Protein) iterator.next();
                     BioSource bs = p.getBioSource();
 
-                    logger.error ("\t intactAC=" + p.getAc() + " taxid=" + (bs == null ? "none" : bs.getTaxId()) );
+                    logger.error( "\t intactAC=" + p.getAc() +
+                                  " shortlabel:"+ p.getShortLabel() +
+                                  " taxid=" + ( bs == null ? "none" : bs.getTaxId() ) );
                 }
             }
-        } catch (IntactException ie) {
-            logger.error (ie.getRootCause(), ie);
+        } catch( IntactException ie ) {
+            logger.error( ie.getRootCause(), ie );
 
             writeEntry2file();
 
             // Try to rollback
-            if (helper.isInTransaction()) {
-                logger.error ("Try to undo transaction.");
+            if( helper.isInTransaction() ) {
+                logger.error( "Try to undo transaction." );
                 try {
                     // try to undo the transaction
                     helper.undoTransaction();
-                } catch (IntactException ie2) {
-                    logger.error ("Could not undo the current transaction");
+                } catch( IntactException ie2 ) {
+                    logger.error( "Could not undo the current transaction" );
                 }
             }
         }
 
     } // createProteinFromSPTrEntry
 
-    public void addNewXref (AnnotatedObject current, final Xref xref)  {
+    public boolean addNewXref( AnnotatedObject current, final Xref xref ) {
         // Make sure the xref does not yet exist in the object
-        Collection xrefs = current.getXrefs();
-        for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
-            Xref anXref = (Xref) iterator.next();
-            if (anXref.equals( xref )) {
-                return; // already in, exit
-            }
+        if( current.getXrefs().contains( xref ) ) {
+            logger.info( "SKIPPED: [" + xref + "] already exists" );
+            return false; // quit
         }
 
         // add the xref to the AnnotatedObject
-        current.addXref ( xref );
+        current.addXref( xref );
 
         // That test is done to avoid to record in the database an Xref
         // which is already linked to that AnnotatedObject.
-        if (xref.getParentAc() == current.getAc()) {
+        if( xref.getParentAc() == current.getAc() ) {
             try {
                 helper.create( xref );
-            } catch (Exception e_xref) {
-                logger.error ("Error when creating an Xref for protein " + current, e_xref);
+                logger.info( "CREATED: [" + xref + "]" );
+            } catch( Exception e_xref ) {
+                logger.error( "Error while creating an Xref for protein " + current, e_xref );
+                return false;
             }
         }
+
+        return true;
     }
 
-    public void addNewAlias( AnnotatedObject current, Alias alias )  {
+    public void addNewAlias( AnnotatedObject current, Alias alias ) {
         // Make sure the alias does not yet exist in the object
         Collection aliases = current.getAliases();
-        for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
+        for( Iterator iterator = aliases.iterator(); iterator.hasNext(); ) {
             Alias anAlias = (Alias) iterator.next();
-            if (anAlias.equals( alias )) {
-                logger.info( alias.getName() + " already in" );
+            if( anAlias.equals( alias ) ) {
+                logger.info( "SKIPPED: [" + alias + "] already exists" );
                 return; // already in, exit
             }
         }
@@ -800,14 +833,12 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // That test is done to avoid to record in the database an Alias
         // which is already linked to that AnnotatedObject.
-        if (alias.getParentAc() == current.getAc()) {
+        if( alias.getParentAc() == current.getAc() ) {
             try {
                 helper.create( alias );
-                logger.info ("ADD new Alias[name: " + alias.getName() +
-                             " type: " + alias.getCvAliasType().getShortLabel() + "]" +
-                             ", to: " + current.getShortLabel() );
-            } catch ( Exception e_alias ) {
-                logger.error ("Error when creating an Alias for protein " + current, e_alias);
+                logger.info( "CREATED: [" + alias + "]" );
+            } catch( Exception e_alias ) {
+                logger.error( "Error when creating an Alias for protein " + current, e_alias );
             }
         }
     }
@@ -820,9 +851,10 @@ public class UpdateProteins extends UpdateProteinsI {
      * @param current the annotated object to which we want to add an Annotation.
      * @param annotation the annotation to add the Annotated object
      */
-    public void addNewAnnotation ( AnnotatedObject current, final Annotation annotation ) {
+    public void addNewAnnotation( AnnotatedObject current, final Annotation annotation ) {
 
         // TODO: what if an annotation is already existing ... should we use a single one ?
+        // TODO: YES ! we should search dor it first and reuse existing Annotation
 
         // Make sure the alias does not yet exist in the object
         Collection annotations = current.getAnnotations();
@@ -834,15 +866,13 @@ public class UpdateProteins extends UpdateProteinsI {
         }
 
         // add the alias to the AnnotatedObject
-        current.addAnnotation ( annotation );
+        current.addAnnotation( annotation );
 
         try {
             helper.create( annotation );
-            logger.info ("ADD new Annotation[topic: " + annotation.getCvTopic().getShortLabel() +
-                         " text: " + annotation.getAnnotationText() + "]" +
-                         ", to: " + current.getShortLabel() );
-        } catch ( Exception e_alias ) {
-            logger.error ("Error when creating an Annotation for protein " + current, e_alias);
+            logger.info( "ADD " + annotation + " to: " + current.getShortLabel() );
+        } catch( Exception e_alias ) {
+            logger.error( "Error when creating an Annotation for protein " + current, e_alias );
         }
     }
 
@@ -857,51 +887,56 @@ public class UpdateProteins extends UpdateProteinsI {
      * @return true if the protein has been updated, else false.
      * @throws SPTRException
      */
-    private boolean updateXref (final SPTREntry sptrEntry,
+    private boolean updateXref( final SPTREntry sptrEntry,
                                 Protein protein,
                                 final String database,
-                                final CvDatabase cvDatabase) throws SPTRException{
+                                final CvDatabase cvDatabase ) throws SPTRException {
+
+        // TODO: in order to remove the old Xrefs (ie. those who disapeared from the Entry)
+        // TODO: we could flag those who have been created or are up-to-date ... the rest
+        // TODO: is to be deleted
 
         boolean needUpdate = false;
 
         // create existing GO Xrefs
-        SPTRCrossReference cr[] = sptrEntry.getCrossReferences (database);
+        SPTRCrossReference cr[] = sptrEntry.getCrossReferences( database );
+        logger.info( "Look in the entry for Xref of type: " + database + " (" + cr.length + " found)" );
 
-        for (int i = 0; i < cr.length; i++) {
-            SPTRCrossReference sptrXref = cr[i];
+
+        for( int i = 0; i < cr.length; i++ ) {
+            SPTRCrossReference sptrXref = cr[ i ];
             String ac = sptrXref.getAccessionNumber();
-            String id = sptrXref.getPropertyValue(SPTRCrossReference.PROPERTY_DESCRIPTION);
+            String id = sptrXref.getPropertyValue( SPTRCrossReference.PROPERTY_DESCRIPTION );
 
-            Xref xref = new Xref ( myInstitution,
-                                   cvDatabase,
-                                   ac,
-                                   id, null, null) ;
+            logger.info( "XREF[" + i + "] - id: " + ac + "  desc: " + id );
 
-            Collection xrefs = protein.getXrefs();
-            if (! xrefs.contains(xref)) {
-                // link the Xref to the protein and record it in the database
-                addNewXref (protein, xref);
-                logger.info ("CREATE "+ database +" Xref[AC: " + ac + ", Id: " + id + "]");
-                needUpdate = true;
-            } else {
-                logger.info ("SKIP: "+ database +" Xref[AC: " + ac + ", Id: " + id + "] already exists");
-            }
+            Xref xref = new Xref( myInstitution,
+                                  cvDatabase,
+                                  ac,
+                                  id, null, null );
+
+            /**
+             * Watch out here - if we use ||, as soon as the function returns true once
+             *                  it's never called again because || optimize the statement.
+             *                  Using | is the solution
+             */
+            needUpdate = needUpdate | addNewXref( protein, xref );
         }
 
         return needUpdate;
     }
 
-    private boolean isAliasAlreadyExisting( Collection aliases, String name, CvAliasType aliasType) {
+    private boolean isAliasAlreadyExisting( Collection aliases, String name, CvAliasType aliasType ) {
 
         /* TODO: the lowercase name is temporary, it should be removed later.
         *       Currently, all name of alias are stored in lozercase in the db.
         */
         String lowerCaseName = name.toLowerCase();
 
-        for ( Iterator iterator = aliases.iterator(); iterator.hasNext(); ) {
-            Alias alias = (Alias) iterator.next ();
+        for( Iterator iterator = aliases.iterator(); iterator.hasNext(); ) {
+            Alias alias = (Alias) iterator.next();
 
-            if ( alias.getName().equals( lowerCaseName ) && alias.getCvAliasType().equals( aliasType ) )
+            if( alias.getName().equals( lowerCaseName ) && alias.getCvAliasType().equals( aliasType ) )
                 return true;
         }
         return false;
@@ -915,8 +950,8 @@ public class UpdateProteins extends UpdateProteinsI {
      * @return true if the protein has been updated, else false.
      * @throws SPTRException
      */
-    private boolean updateAliases ( final SPTREntry sptrEntry,
-                                    Protein protein ) throws SPTRException{
+    private boolean updateAliases( final SPTREntry sptrEntry,
+                                   Protein protein ) throws SPTRException {
 
         boolean needUpdate = false;
         Collection aliases = protein.getAliases();
@@ -926,42 +961,42 @@ public class UpdateProteins extends UpdateProteinsI {
 
         Alias alias = null;
 
-        for (int i=0; i<genes.length; i++) {
+        for( int i = 0; i < genes.length; i++ ) {
 
-            if ( ! isAliasAlreadyExisting( aliases, genes[i][0], geneNameAliasType ) ) {
+            if( !isAliasAlreadyExisting( aliases, genes[ i ][ 0 ], geneNameAliasType ) ) {
                 alias = new Alias( myInstitution,
                                    protein,
                                    geneNameAliasType, // gene-name
-                                   genes[i][0] );
+                                   genes[ i ][ 0 ] );
 
                 // link the Xref to the protein and record it in the database
-                addNewAlias ( protein, alias );
-                logger.info ("ADD new Alias[name: " + alias.getName() +
+                addNewAlias( protein, alias );
+                logger.info( "ADD new Alias[name: " + alias.getName() +
                              " type: " + geneNameAliasType.getShortLabel() + "]" +
                              ", to: " + protein.getShortLabel() );
                 needUpdate = true;
             } else {
-                logger.info ("SKIP Alias[name: " + genes[i][0] +
+                logger.info( "SKIP Alias[name: " + genes[ i ][ 0 ] +
                              " type: " + geneNameAliasType.getShortLabel() + "]" +
                              ", for: " + protein.getShortLabel() );
             }
 
-            for (int ii=1; ii<genes[i].length; ii++) {
+            for( int ii = 1; ii < genes[ i ].length; ii++ ) {
 
-                if ( ! isAliasAlreadyExisting( aliases, genes[i][ii], geneNameSynonymAliasType ) ) {
+                if( !isAliasAlreadyExisting( aliases, genes[ i ][ ii ], geneNameSynonymAliasType ) ) {
                     alias = new Alias( myInstitution,
                                        protein,
                                        geneNameSynonymAliasType, // gene-name-synonym
-                                       genes[i][ii] );
+                                       genes[ i ][ ii ] );
 
                     // link the Xref to the protein and record it in the database
-                    addNewAlias ( protein, alias );
-                    logger.info ("ADD new Alias[name: " + alias.getName() +
+                    addNewAlias( protein, alias );
+                    logger.info( "ADD new Alias[name: " + alias.getName() +
                                  " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
                                  ", to: " + protein.getShortLabel() );
                     needUpdate = true;
                 } else {
-                    logger.info ("SKIP Alias[name: " + genes[i][ii] +
+                    logger.info( "SKIP Alias[name: " + genes[ i ][ ii ] +
                                  " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
                                  ", for: " + protein.getShortLabel() );
                 }
@@ -971,33 +1006,35 @@ public class UpdateProteins extends UpdateProteinsI {
         return needUpdate;
     } // updateAliases
 
-    private String generateProteinShortLabel(SPTREntry sptrEntry,
-                                             BioSource bioSource,
-                                             boolean generateProteinShortlabelUsingBiosource) throws SPTRException {
+    private String generateProteinShortLabel( SPTREntry sptrEntry,
+                                              BioSource bioSource,
+                                              boolean generateProteinShortlabelUsingBiosource ) throws SPTRException {
         String shortlabel = null;
 
-        if ( generateProteinShortlabelUsingBiosource ) {
+        if( generateProteinShortlabelUsingBiosource ) {
 
             String[][] genes = sptrEntry.getGenes();
 
-            if( genes.length > 0 && genes[0].length > 0 ) // if there is at least one gene
-              shortlabel = genes[0][0];
+            if( genes.length > 0 && genes[ 0 ].length > 0 ) // if there is at least one gene
+                shortlabel = genes[ 0 ][ 0 ];
 
             if( shortlabel == null ) {
-                System.err.println ( "WARNING: could not generate the Shortlabel, no gene name available. Using the AC." );
+                System.err.println( "WARNING: could not generate the Shortlabel, no gene name available. Using the AC." );
                 shortlabel = sptrEntry.getID().toLowerCase();
             } else {
                 // check if the ID contains already _specie (TREMBL)
                 int index = shortlabel.indexOf( '_' );
-                if ( index != -1 ) {
+                if( index != -1 ) {
+                    logger.info( "Remove existing _${specie} from " + shortlabel );
                     shortlabel = shortlabel.substring( 0, index );
+                    logger.info( "Result: " + shortlabel );
                 }
 
                 // Concatenate Biosource to the gene name !
-                if ( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals("") ) {
+                if( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals( "" ) ) {
                     shortlabel = shortlabel + "_" + bioSource.getShortLabel();
                 } else {
-                    System.err.println ( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
+                    System.err.println( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
                     shortlabel = shortlabel + "_" + bioSource.getTaxId();
                 }
             }
@@ -1020,133 +1057,144 @@ public class UpdateProteins extends UpdateProteinsI {
      * @throws SPTRException
      * @throws IntactException
      */
-    private boolean updateExistingProtein (Protein protein,
+    private boolean updateExistingProtein( Protein protein,
                                            SPTREntry sptrEntry,
                                            BioSource bioSource,
-                                           boolean generateProteinShortlabelUsingBiosource)
+                                           boolean generateProteinShortlabelUsingBiosource )
             throws SPTRException,
             IntactException {
 
         boolean needUpdate = false;
 
         // get the protein info we need
-        String fullName    = sptrEntry.getProteinName();
-        String shortLabel  = generateProteinShortLabel( sptrEntry, bioSource, generateProteinShortlabelUsingBiosource);
-        String proteinAC[] = sptrEntry.getAccessionNumbers();
-        String sequence    = sptrEntry.getSequence();
-        String crc64       = sptrEntry.getCRC64();
+        String fullName = sptrEntry.getProteinName();
+        String shortLabel = generateProteinShortLabel( sptrEntry, bioSource, generateProteinShortlabelUsingBiosource );
+        String sequence = sptrEntry.getSequence();
+        String crc64 = sptrEntry.getCRC64();
 
-        if (!protein.getFullName().equals(fullName)) {
-            protein.setFullName (fullName);
+        if( !protein.getFullName().equals( fullName ) ) {
+            protein.setFullName( fullName );
             needUpdate = true;
         }
 
-        if (!protein.getShortLabel().equals(shortLabel)) {
-            protein.setShortLabel (shortLabel);
+        if( !protein.getShortLabel().equals( shortLabel ) ) {
+            protein.setShortLabel( shortLabel );
             needUpdate = true;
         }
 
-        if (!protein.getSequence().equals(sequence)) {
-            protein.setSequence (helper, sequence);
+        if( !protein.getSequence().equals( sequence ) ) {
+            protein.setSequence( helper, sequence );
             needUpdate = true;
         }
 
-        if (!protein.getCrc64().equals(crc64)) {
-            protein.setCrc64 (crc64);
+        if( !protein.getCrc64().equals( crc64 ) ) {
+            protein.setCrc64( crc64 );
             needUpdate = true;
         }
 
         // check bioSource
         boolean needBiosourceUpdate = false;
         BioSource _biosource = protein.getBioSource();
-        if (! _biosource.getTaxId().equals (bioSource.getTaxId())) {
+        if( !_biosource.getTaxId().equals( bioSource.getTaxId() ) ) {
             needBiosourceUpdate = true;
         }
 
-        if (! _biosource.getFullName().equals (bioSource.getFullName())) {
+        if( !_biosource.getFullName().equals( bioSource.getFullName() ) ) {
             needBiosourceUpdate = true;
         }
 
-        if (needBiosourceUpdate) {
-            protein.setBioSource (bioSource);
+        if( needBiosourceUpdate ) {
+            protein.setBioSource( bioSource );
             needUpdate = true;
         }
 
-        // TODO: the update od the cross reference and the alias should also:
+        // TODO: the update of the cross reference and the alias should also:
         // TODO   o Delete Xref that are no longer in the Entry
         // TODO   o Delete Alias that are no longer in the Entry
 
-        /*
-        * false || false -> false
-        * false || true -> true
-        * true || false -> true
-        * true || true -> true
-        */
-        needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
-        needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
-        needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_INTERPRO, interproDatabase);
-        needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_FLYBASE, flybaseDatabase);
+        /**
+         * false || false -> false
+         * false || true -> true
+         * true || false -> true
+         * true || true -> true
+         */
+        needUpdate = needUpdate | updateXref( sptrEntry, protein, Factory.XREF_SGD, sgdDatabase );
+        needUpdate = needUpdate | updateXref( sptrEntry, protein, Factory.XREF_GO, goDatabase );
+        needUpdate = needUpdate | updateXref( sptrEntry, protein, Factory.XREF_INTERPRO, interproDatabase );
+        needUpdate = needUpdate | updateXref( sptrEntry, protein, Factory.XREF_FLYBASE, flybaseDatabase );
 
         // update SPTR Xrefs
-
-        for ( int i = 0; i < proteinAC.length; i++ ) {
-            String ac = proteinAC[ i ];
-
-            // The first AC is primary, all others are secondaty
-            CvXrefQualifier xrefQualifier;
-            if ( i == 0 ) xrefQualifier = identityXrefQualifier;
-            else xrefQualifier = secondaryXrefQualifier;
-
-            Xref sptrXref = new Xref ( myInstitution,
-                                       sptrDatabase,
-                                       ac,
-                                       shortLabel, null, null) ;
-
-            sptrXref.setCvXrefQualifier( xrefQualifier );
-
-            // check Xrefs
-            Collection xrefs = protein.getXrefs();
-            if (! xrefs.contains(sptrXref)) {
-                // link the Xref to the protein and record it in the database
-                addNewXref (protein, sptrXref);
-                needUpdate = true;
-
-                logger.info ("CREATE SPTR Xref[spAC: " + ac + ", spId: " + shortLabel + "]");
-            } else {
-                logger.info ("SKIP: SPTR Xref[spAC: " + ac + ", spId: " + shortLabel + "] already exists");
-            }
-        }
+        needUpdate = needUpdate | updateSptrXref( sptrEntry, protein );
 
         // check on aliases
-        needUpdate = needUpdate || updateAliases( sptrEntry, protein );
+        needUpdate = needUpdate | updateAliases( sptrEntry, protein );
 
         // keep that protein
-        proteins.add(protein);
+        proteins.add( protein );
 
-        if (needUpdate == true) {
+        if( needUpdate == true ) {
             // update databse
             try {
                 /**
                  * If the object is proxied, the update will throw an Exception: ClassNotPersistenceCapableException
                  * So we use the IntactHelper to get the realObject.
                  */
-                helper.update ( IntactHelper.getRealIntactObject( protein ) );
+                helper.update( IntactHelper.getRealIntactObject( protein ) );
 
-                if (debugOnScreen) System.out.print (" pU");
+                if( debugOnScreen ) System.out.print( " pU" );
                 proteinUpdated++;
                 return true;
-            } catch (IntactException ie) {
-                logger.error (protein, ie);
+            } catch( IntactException ie ) {
+                logger.error( protein, ie );
                 throw ie;
             }
         } else {
-            logger.info ("That protein was up-to-date");
-            if (debugOnScreen) System.out.print (" p-");
+            logger.info( "That protein was up-to-date" );
+            if( debugOnScreen ) System.out.print( " p-" );
             proteinUpToDate++;
         }
 
         return false;
     } // updateExistingProtein
+
+    /**
+     * Update (create them if not exist) SPTR Cross references to the given protein
+     *
+     * @param sptrEntry the entry in which we'll find the primary ID of the Xrefs
+     * @param protein the protein to update
+     *
+     * @return true if at least one Xref as been added, else false.
+     * @throws SPTRException
+     */
+    private boolean updateSptrXref( SPTREntry sptrEntry, Protein protein ) throws SPTRException {
+
+        boolean updated = false;
+        String proteinAC[] = sptrEntry.getAccessionNumbers();
+        String shortLabel = protein.getShortLabel();
+
+        for( int i = 0; i < proteinAC.length; i++ ) {
+            String ac = proteinAC[ i ];
+
+            // The first AC is primary, all others are secondary
+            CvXrefQualifier xrefQualifier;
+            if( i == 0 ) {
+                xrefQualifier = identityXrefQualifier;
+            } else {
+                xrefQualifier = secondaryXrefQualifier;
+            }
+
+            Xref sptrXref = new Xref( myInstitution,
+                                      sptrDatabase,
+                                      ac,
+                                      shortLabel, null, null );
+
+            sptrXref.setCvXrefQualifier( xrefQualifier );
+            updated = updated | addNewXref( protein, sptrXref );
+            ;
+        }
+
+        return updated;
+    }
 
 
     /**
@@ -1158,9 +1206,9 @@ public class UpdateProteins extends UpdateProteinsI {
      * @throws SPTRException
      * @throws IntactException
      */
-    private Protein createNewProtein (SPTREntry sptrEntry,
+    private Protein createNewProtein( SPTREntry sptrEntry,
                                       BioSource bioSource,
-                                      boolean generateProteinShortlabelUsingBiosource)
+                                      boolean generateProteinShortlabelUsingBiosource )
             throws SPTRException,
             IntactException {
 
@@ -1169,68 +1217,41 @@ public class UpdateProteins extends UpdateProteinsI {
          * eg. cdc42 are known in human, mouse, bovine and dog
          * we shoold have the labels: cdc42_human, cdc42_mouse ...
          */
-        String shortLabel = generateProteinShortLabel( sptrEntry, bioSource, generateProteinShortlabelUsingBiosource);
+        String shortLabel = generateProteinShortLabel( sptrEntry, bioSource, generateProteinShortlabelUsingBiosource );
 
-        Protein protein = new ProteinImpl (myInstitution, bioSource, shortLabel);
+        Protein protein = new ProteinImpl( myInstitution, bioSource, shortLabel );
 
         // get the protein info we need
         helper.create( protein );
 
-        String fullName    = sptrEntry.getProteinName();
-        String proteinAC[] = sptrEntry.getAccessionNumbers();
-        String sequence    = sptrEntry.getSequence();
-        String crc64       = sptrEntry.getCRC64();
+        String fullName = sptrEntry.getProteinName();
+        String sequence = sptrEntry.getSequence();
+        String crc64 = sptrEntry.getCRC64();
 
-        protein.setFullName ( fullName );
-        protein.setSequence ( helper, sequence );
-        protein.setCrc64 ( crc64 );
+        protein.setFullName( fullName );
+        protein.setSequence( helper, sequence );
+        protein.setCrc64( crc64 );
 
-        updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
-        updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
-        updateXref (sptrEntry, protein, Factory.XREF_INTERPRO, interproDatabase);
-        updateXref (sptrEntry, protein, Factory.XREF_FLYBASE, flybaseDatabase);
+        updateXref( sptrEntry, protein, Factory.XREF_SGD, sgdDatabase );
+        updateXref( sptrEntry, protein, Factory.XREF_GO, goDatabase );
+        updateXref( sptrEntry, protein, Factory.XREF_INTERPRO, interproDatabase );
+        updateXref( sptrEntry, protein, Factory.XREF_FLYBASE, flybaseDatabase );
 
-        for ( int i = 0; i < proteinAC.length; i++ ) {
-            String ac = proteinAC[ i ];
-
-            // The first AC is primary, all others are secondaty
-            CvXrefQualifier xrefQualifier;
-            if ( i == 0 ) xrefQualifier = identityXrefQualifier;
-            else xrefQualifier = secondaryXrefQualifier;
-
-            Xref sptrXref = new Xref ( myInstitution,
-                                       sptrDatabase,
-                                       ac,
-                                       shortLabel, null, null) ;
-
-            sptrXref.setCvXrefQualifier( xrefQualifier );
-
-            addNewXref (protein, sptrXref);
-            logger.info ("CREATE SPTR Xref[spAC: " + ac + ", spId: " + shortLabel + "]");
-        }
-
-        // create a SPTR Xref
-        Xref sptrXref = new Xref ( myInstitution,
-                                   sptrDatabase,
-                                   proteinAC[0],
-                                   shortLabel, null, null) ;
-
-        addNewXref( protein, sptrXref );
-        logger.info ("created SPTR Xref[spAC: " + proteinAC[ 0 ] + ", spId: " + shortLabel + "]");
+        updateSptrXref( sptrEntry, protein );
 
         // create Aliases
         String[][] genes = sptrEntry.getGenes();
         Alias alias = null;
-        for ( int i=0; i<genes.length; i++ ) {
+        for( int i = 0; i < genes.length; i++ ) {
 
             alias = new Alias( myInstitution,
                                protein,
-                               geneNameAliasType,  // gene-name
-                               genes[i][ 0 ] );
+                               geneNameAliasType, // gene-name
+                               genes[ i ][ 0 ] );
 
             addNewAlias( protein, alias );
 
-            for ( int ii=1; ii<genes[ i ].length; ii++ ) {
+            for( int ii = 1; ii < genes[ i ].length; ii++ ) {
 
                 alias = new Alias( myInstitution,
                                    protein,
@@ -1244,19 +1265,19 @@ public class UpdateProteins extends UpdateProteinsI {
         // update database
         try {
             // Only update if the protein exists in the DB.
-            if (helper.isPersistent(protein)) {
-                helper.update (protein);
+            if( helper.isPersistent( protein ) ) {
+                helper.update( protein );
             }
             // keep that protein
-            proteins.add(protein);
+            proteins.add( protein );
 
-            logger.info ("protein updated: " + protein);
-            if (debugOnScreen) System.out.print(" pC");
+            logger.info( "protein updated: " + protein );
+            if( debugOnScreen ) System.out.print( " pC" );
 
             proteinCreated++;
             return protein;
-        } catch (IntactException e) {
-            logger.error (protein, e);
+        } catch( IntactException e ) {
+            logger.error( protein, e );
             throw e;
         }
 
@@ -1276,55 +1297,55 @@ public class UpdateProteins extends UpdateProteinsI {
      * @throws SPTRException
      * @throws IntactException
      */
-    private boolean updateExistingSpliceVariant (Isoform isoform,
+    private boolean updateExistingSpliceVariant( Isoform isoform,
                                                  String isoId,
                                                  Protein spliceVariant,
                                                  Protein master,
                                                  SPTREntry sptrEntry,
                                                  BioSource bioSource,
-                                                 boolean generateProteinShortlabelUsingBiosource)
+                                                 boolean generateProteinShortlabelUsingBiosource )
             throws SPTRException,
             IntactException {
 
         boolean needUpdate = false;
 
-        if ( master == null ) {
-            logger.error ( "the master protein is null ... can't do that" );
+        if( master == null ) {
+            logger.error( "the master protein is null ... can't do that" );
             return false;
         }
 
         // get the spliceVariant info we need
-        String fullName    = sptrEntry.getProteinName();
-        String shortLabel  = isoId;
+        String fullName = sptrEntry.getProteinName();
+        String shortLabel = isoId;
 
         if( generateProteinShortlabelUsingBiosource ) {
-            if ( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals("") ) {
+            if( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals( "" ) ) {
                 shortLabel = shortLabel + "_" + bioSource.getShortLabel();
             } else {
-                System.err.println ( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
+                System.err.println( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
                 shortLabel = shortLabel + "_" + bioSource.getTaxId();
             }
         }
         shortLabel = shortLabel.toLowerCase();
 
         String sequence = null;
-        String crc64    = null;
+        String crc64 = null;
         try {
             sequence = sptrEntry.getAlternativeSequence( isoform );
-            if ( sequence != null )
+            if( sequence != null )
                 crc64 = Crc64.getCrc64( sequence );
-        } catch ( FeatureException e ) {
+        } catch( FeatureException e ) {
             logger.error( "Could not get the Alternative splice variant sequence from SPTREntry.", e );
             return false;
         }
 
-        if ( ! spliceVariant.getFullName().equals( fullName )) {
-            spliceVariant.setFullName ( fullName );
+        if( !spliceVariant.getFullName().equals( fullName ) ) {
+            spliceVariant.setFullName( fullName );
             needUpdate = true;
         }
 
-        if ( ! spliceVariant.getShortLabel().equals( shortLabel )) {
-            spliceVariant.setShortLabel ( shortLabel );
+        if( !spliceVariant.getShortLabel().equals( shortLabel ) ) {
+            spliceVariant.setShortLabel( shortLabel );
             needUpdate = true;
         }
 
@@ -1332,19 +1353,20 @@ public class UpdateProteins extends UpdateProteinsI {
          * The CRC64 is updated only if the sequence is so.
          */
         String _sequence = spliceVariant.getSequence();
-        if ( _sequence == null ) {
-            if ( sequence != null && ( false == "".equals( sequence ) ) ) {
-                spliceVariant.setSequence ( helper, sequence );
-                spliceVariant.setCrc64 ( crc64 );
+        if( _sequence == null ) {
+            if( sequence != null && ( false == "".equals( sequence ) ) ) {
+                spliceVariant.setSequence( helper, sequence );
+                spliceVariant.setCrc64( crc64 );
                 needUpdate = true;
             }
-        } else if ( ! spliceVariant.getSequence().equals( sequence )) {
-            spliceVariant.setSequence ( helper, sequence );
-            spliceVariant.setCrc64 ( crc64 );
-            needUpdate = true;
-        }
+        } else
+            if( !spliceVariant.getSequence().equals( sequence ) ) {
+                spliceVariant.setSequence( helper, sequence );
+                spliceVariant.setCrc64( crc64 );
+                needUpdate = true;
+            }
 
-        if ( ! spliceVariant.getBioSource().equals( bioSource )) {
+        if( !spliceVariant.getBioSource().equals( bioSource ) ) {
             spliceVariant.setBioSource( bioSource );
             needUpdate = true;
         }
@@ -1353,44 +1375,46 @@ public class UpdateProteins extends UpdateProteinsI {
         // TODO count only the new reference of XREF (isoform-parent).
         Collection xrefs = spliceVariant.getXrefs();
         Xref isoformXref = null;
-        for ( Iterator iterator = xrefs.iterator (); iterator.hasNext (); ) {
-            isoformXref = (Xref) iterator.next ();
-            if ( isoformXref.getCvXrefQualifier().equals( isoFormParentXrefQualifier )) break; // found it.
+        for( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            isoformXref = (Xref) iterator.next();
+            if( isoformXref.getCvXrefQualifier().equals( isoFormParentXrefQualifier ) ) break; // found it.
         }
-        if ( isoformXref == null) {
+        if( isoformXref == null ) {
             // error ... but create it.
-            isoformXref = new Xref ( myInstitution,
-                                     sptrDatabase,   // TODO: check if that's right !
-                                     master.getAc(), // primaryId
-                                     master.getShortLabel(), // secondaryId
-                                     null, isoFormParentXrefQualifier) ;
-            addNewXref( spliceVariant, isoformXref );
-            needUpdate = true;
+            isoformXref = new Xref( myInstitution,
+                                    sptrDatabase, // TODO: check if that's right !
+                                    master.getAc(), // primaryId
+                                    master.getShortLabel(), // secondaryId
+                                    null, isoFormParentXrefQualifier );
+            needUpdate = needUpdate | addNewXref( spliceVariant, isoformXref );
         } else {
             // check for update
-            if ( ! isoformXref.getPrimaryId().equals( master.getAc() ) ){
+            if( !isoformXref.getPrimaryId().equals( master.getAc() ) ) {
                 // TODO odd, should not happen, so warn the user
                 isoformXref.setPrimaryId( master.getAc() );
                 needUpdate = true;
             }
 
-            if ( ! isoformXref.getSecondaryId().equals( master.getShortLabel() ) ){
+            if( !isoformXref.getSecondaryId().equals( master.getShortLabel() ) ) {
                 // TODO odd, should not happen, so warn the user
                 isoformXref.setSecondaryId( master.getShortLabel() );
                 needUpdate = true;
             }
         }
 
+        // update SPTR Xrefs.
+        needUpdate = needUpdate | updateSptrXref( sptrEntry, spliceVariant );
+
         // check for aliases ... that we could update as Alias.
         Collection aliases = spliceVariant.getAliases();
         String[] isoSynonyms = isoform.getSynonyms();
-        for ( int i = 0; i < isoSynonyms.length; i++ ) {
+        for( int i = 0; i < isoSynonyms.length; i++ ) {
             String isoSynonym = isoSynonyms[ i ];
 
             boolean found = false;
-            for ( Iterator iterator = aliases.iterator (); iterator.hasNext (); ) {
-                Alias alias = (Alias) iterator.next ();
-                if ( alias.getCvAliasType().equals( isoformSynonym )
+            for( Iterator iterator = aliases.iterator(); iterator.hasNext(); ) {
+                Alias alias = (Alias) iterator.next();
+                if( alias.getCvAliasType().equals( isoformSynonym )
                         &&
                         alias.getName().equalsIgnoreCase( isoSynonym ) ) { // stored lowercase in the database !
                     found = true;
@@ -1398,7 +1422,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 }
             }
 
-            if ( found == false ) {
+            if( found == false ) {
                 // create a new alias
                 Alias alias = new Alias( myInstitution, spliceVariant, isoformSynonym, isoSynonym );
                 addNewAlias( spliceVariant, alias );
@@ -1408,15 +1432,15 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // check for the note ... that we could update as an Annotation.
         String note = isoform.getNote();
-        if ( (note != null ) && (! note.trim().equals( "" ) ) ) {
+        if( ( note != null ) && ( !note.trim().equals( "" ) ) ) {
             Collection annotations = spliceVariant.getAnnotations();
             Annotation annotation = null;
-            for ( Iterator iterator = annotations.iterator (); iterator.hasNext (); ) {
-                annotation = (Annotation) iterator.next ();
-                if ( annotation.getCvTopic().equals( isoformComment )) break; // found it.
+            for( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
+                annotation = (Annotation) iterator.next();
+                if( annotation.getCvTopic().equals( isoformComment ) ) break; // found it.
             }
 
-            if ( annotation == null ) {
+            if( annotation == null ) {
                 // create it
                 annotation = new Annotation( myInstitution, isoformComment );
                 annotation.setAnnotationText( isoform.getNote() );
@@ -1425,7 +1449,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 needUpdate = true;
             } else {
                 // try to update it.
-                if ( ! annotation.getAnnotationText( ).equals( isoform.getNote() ) ) {
+                if( !annotation.getAnnotationText().equals( isoform.getNote() ) ) {
                     annotation.setAnnotationText( isoform.getNote() );
                     needUpdate = true;
                 }
@@ -1435,25 +1459,25 @@ public class UpdateProteins extends UpdateProteinsI {
         // keep that spliceVariant
         proteins.add( spliceVariant );
 
-        if (needUpdate == true) {
+        if( needUpdate == true ) {
             // update databse
             try {
                 /**
                  * If the object is proxied, the update will throw an Exception: ClassNotPersistenceCapableException
                  * So we use the IntactHelper to get the realObject.
                  */
-                helper.update ( IntactHelper.getRealIntactObject( spliceVariant ) );
+                helper.update( IntactHelper.getRealIntactObject( spliceVariant ) );
 
-                if (debugOnScreen) System.out.print (" svU");
+                if( debugOnScreen ) System.out.print( " svU" );
                 spliceVariantUpdated++;
                 return true;
-            } catch (IntactException ie) {
+            } catch( IntactException ie ) {
                 logger.error( spliceVariant, ie );
                 throw ie;
             }
         } else {
-            logger.info ("That splice variant was up-to-date");
-            if (debugOnScreen) System.out.print (" sv-");
+            logger.info( "That splice variant was up-to-date" );
+            if( debugOnScreen ) System.out.print( " sv-" );
             spliceVariantUpToDate++;
         }
 
@@ -1475,22 +1499,22 @@ public class UpdateProteins extends UpdateProteinsI {
      * @throws SPTRException
      * @throws IntactException
      */
-    private Protein createNewSpliceVariant (Isoform isoform,
+    private Protein createNewSpliceVariant( Isoform isoform,
                                             String isoId,
                                             Protein master,
                                             SPTREntry sptrEntry,
                                             BioSource bioSource,
-                                            boolean generateProteinShortlabelUsingBiosource)
+                                            boolean generateProteinShortlabelUsingBiosource )
             throws SPTRException, IntactException {
 
 
         String shortLabel = isoId;
 
         if( generateProteinShortlabelUsingBiosource ) {
-            if ( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals("") ) {
+            if( bioSource.getShortLabel() != null && !bioSource.getShortLabel().equals( "" ) ) {
                 shortLabel = shortLabel + "_" + bioSource.getShortLabel();
             } else {
-                System.err.println ( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
+                System.err.println( "WARNING: generate the shortlabel using taxid since the shortlabel doesn't exists." );
                 shortLabel = shortLabel + "_" + bioSource.getTaxId();
             }
         }
@@ -1502,37 +1526,40 @@ public class UpdateProteins extends UpdateProteinsI {
 
         String fullName = sptrEntry.getProteinName();
 
-        if ( master == null ) {
-            logger.error ( " The given master is null, EXIT " );
+        if( master == null ) {
+            logger.error( " The given master is null, EXIT " );
             return null;
         }
 
-        String sequence    = null;
+        String sequence = null;
         String crc64 = null;
         try {
             sequence = sptrEntry.getAlternativeSequence( isoform );
-            if ( sequence != null )
+            if( sequence != null )
                 crc64 = Crc64.getCrc64( sequence );
-        } catch ( FeatureException e ) {
+        } catch( FeatureException e ) {
             logger.error( "Could not get the Alternative splice variant sequence from SPTREntry.", e );
             return null;
         }
 
-        spliceVariant.setFullName ( fullName );
-        spliceVariant.setSequence ( helper, sequence );
-        spliceVariant.setCrc64    ( crc64 );
+        spliceVariant.setFullName( fullName );
+        spliceVariant.setSequence( helper, sequence );
+        spliceVariant.setCrc64( crc64 );
 
         // check the only single Xref (isoform-parent), which references the master spliceVariant ...
-        Xref isoformXref = new Xref ( myInstitution,
-                                      sptrDatabase,           // TODO: check if that's right !
-                                      master.getAc(),         // primaryId
-                                      master.getShortLabel(), // secondaryId
-                                      null, isoFormParentXrefQualifier) ;
+        Xref isoformXref = new Xref( myInstitution,
+                                     sptrDatabase, // TODO: check if that's right !
+                                     master.getAc(), // primaryId
+                                     master.getShortLabel(), // secondaryId
+                                     null, isoFormParentXrefQualifier );
         addNewXref( spliceVariant, isoformXref );
+
+        // Add SPTR xref (as it is done for a master protein.)
+        updateSptrXref( sptrEntry, spliceVariant );
 
         // Add existing synonyms ... as Alias.
         String[] isoSynonyms = isoform.getSynonyms();
-        for ( int i = 0; i < isoSynonyms.length; i++ ) {
+        for( int i = 0; i < isoSynonyms.length; i++ ) {
             String isoSynonym = isoSynonyms[ i ];
             Alias alias = new Alias( myInstitution, spliceVariant, isoformSynonym, isoSynonym );
             addNewAlias( spliceVariant, alias );
@@ -1540,7 +1567,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // Add existing note ... as an Annotation.
         String note = isoform.getNote();
-        if ( (note != null ) && (! note.trim().equals( "" ) ) ) {
+        if( ( note != null ) && ( !note.trim().equals( "" ) ) ) {
             Annotation annotation = new Annotation( myInstitution, isoformComment );
             annotation.setAnnotationText( isoform.getNote() );
             addNewAnnotation( spliceVariant, annotation );
@@ -1548,55 +1575,101 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // update database
         try {
-            helper.update ( spliceVariant );
+            helper.update( spliceVariant );
 
             // keep that spliceVariant
             proteins.add( spliceVariant );
 
-            logger.info ("spliceVariant updated: " + spliceVariant);
-            if (debugOnScreen) System.out.print(" svC");
+            logger.info( "spliceVariant updated: " + spliceVariant );
+            if( debugOnScreen ) System.out.print( " svC" );
 
             spliceVariantCreated++;
             return spliceVariant;
-        } catch (IntactException e) {
-            logger.error (spliceVariant, e);
+        } catch( IntactException e ) {
+            logger.error( spliceVariant, e );
             throw e;
         }
     } // createNewSpliceVariant
 
 
-    public Collection insertSPTrProteins (String proteinAc) {
+    public Collection insertSPTrProteins( String proteinAc ) {
 
-        if ( proteinAc == null || proteinAc.trim().equals( "" ) ) {
+        if( proteinAc == null || proteinAc.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "The protein AC MUST not be null or empty." );
         }
 
         int index = proteinAc.indexOf( "-" ); // search for splice variant (eg: P123456-1)
-        if ( index != -1 ) {
+        if( index != -1 ) {
             proteinAc = proteinAc.substring( 0, index ); // will return P123456.
         }
 
         String url = getUrl( proteinAc );
         int i = insertSPTrProteinsFromURL( url, null, true );
-        if (debugOnScreen) System.out.println( i + " proteins created/updated." );
+        if( debugOnScreen ) System.out.println( i + " proteins created/updated." );
 
         return proteins;
     }
 
-    public Collection insertSPTrProteins (String proteinAc, String taxId, boolean update) {
+    /**
+     * Filter a set of Proteins based on their biosource's taxid.
+     *
+     * @param c the collection to filter out.
+     * @param taxid the taxid on which we base the filter.
+     *              ie. we'll keep all proteins having that taxid
+     * @return a set of proteins where all have the given taxid
+     */
+    private Collection filterOnTaxid ( Collection c, String taxid ) {
 
-        if ( proteinAc == null || proteinAc.trim().equals( "" ) ) {
+            Collection filteredProtein = new ArrayList();
+
+            for( Iterator iterator = c.iterator(); iterator.hasNext(); ) {
+                Protein protein = (Protein) iterator.next();
+                if( protein.getBioSource().getTaxId().equals( taxid ) ) {
+                    filteredProtein.add( protein );
+                }
+            }
+
+            return filteredProtein;
+    }
+
+    public Collection insertSPTrProteins( String proteinAc, String taxId, boolean update ) {
+
+        if( proteinAc == null || proteinAc.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "The protein AC MUST not be null or empty." );
         }
 
         int index = proteinAc.indexOf( "-" ); // search for splice variant (eg: P123456-1)
-        if ( index != -1 ) {
+        if( index != -1 ) {
             proteinAc = proteinAc.substring( 0, index ); // will return P123456.
         }
 
         String url = getUrl( proteinAc );
         int i = insertSPTrProteinsFromURL( url, taxId, update );
-        if (debugOnScreen) System.out.println( i + " proteins created/updated." );
+        if( debugOnScreen ) System.out.println( i + " proteins created/updated." );
+
+
+        // TODO: could be nice to have a method like getProteins() and getProtein( String taxid )
+        // to allow multiple post call to insert.
+        if( taxId != null ){
+            // filter out using the given taxid before to return the collection.
+            Collection c = filterOnTaxid( proteins,  taxId ) ;
+            if( logger.isInfoEnabled() ) {
+                logger.info ( "Protein selected after filtering ("+ c.size() +"):" );
+                for( Iterator iterator = c.iterator(); iterator.hasNext(); ) {
+                    Protein protein = (Protein) iterator.next();
+                    logger.info( "\t" + protein.getShortLabel() );
+                }
+            }
+            return c;
+        }
+
+        if( logger.isInfoEnabled() ) {
+            logger.info ( "Protein created/updated ("+ proteins.size() +"):" );
+            for( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
+                Protein protein = (Protein) iterator.next();
+                logger.info( "\t" + protein.getShortLabel() );
+            }
+        }
 
         return proteins;
     }
@@ -1616,7 +1689,7 @@ public class UpdateProteins extends UpdateProteinsI {
         // Search for the protein or create it
         Collection newProteins = helper.getObjectsByXref( Protein.class, anAc );
 
-        if (localTransactionControl){
+        if( localTransactionControl ) {
             helper.startTransaction( BusinessConstants.OBJECT_TX );
         }
 
@@ -1629,30 +1702,30 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // Filter for exactly one entry with appropriate taxId
         Protein targetProtein = null;
-        for ( Iterator i = newProteins.iterator(); i.hasNext(); ){
+        for( Iterator i = newProteins.iterator(); i.hasNext(); ) {
             Protein tmpProtein = (Protein) i.next();
-            if ( tmpProtein.getBioSource().getTaxId().equals( validBioSource.getTaxId() ) ){
-                if ( null == targetProtein ){
+            if( tmpProtein.getBioSource().getTaxId().equals( validBioSource.getTaxId() ) ) {
+                if( null == targetProtein ) {
                     targetProtein = tmpProtein;
                 } else {
-                    throw new IntactException("More than one Protein with AC "
-                                              + anAc
-                                              + " and taxid "
-                                              + aTaxId
-                                              + " found.");
+                    throw new IntactException( "More than one Protein with AC "
+                                               + anAc
+                                               + " and taxid "
+                                               + aTaxId
+                                               + " found." );
                 }
             }
         }
 
-        if ( null == targetProtein ) {
+        if( null == targetProtein ) {
             // No appropriate protein found, create it.
 
             // Create new Protein
             targetProtein = new ProteinImpl( myInstitution, validBioSource, anAc );
-            helper.create ( targetProtein );
+            helper.create( targetProtein );
 
             // Create new Xref if a DB has been given
-            if (null != aDatabase) {
+            if( null != aDatabase ) {
                 Xref newXref = new Xref( myInstitution, aDatabase, anAc, null, null, null );
                 newXref.setOwner( myInstitution );
                 newXref.setCvDatabase( aDatabase );
@@ -1662,7 +1735,7 @@ public class UpdateProteins extends UpdateProteinsI {
             }
         }
 
-        if (localTransactionControl){
+        if( localTransactionControl ) {
             helper.finishTransaction();
         }
 
@@ -1670,49 +1743,49 @@ public class UpdateProteins extends UpdateProteinsI {
     }
 
 
-    public int insertSPTrProteinsFromURL ( String sourceUrl, String taxid, boolean update ) {
+    public int insertSPTrProteinsFromURL( String sourceUrl, String taxid, boolean update ) {
 
-        logger.info ("update from URL: " + sourceUrl);
-        if (debugOnScreen) System.out.println ("update from URL: " + sourceUrl);
+        logger.info( "update from URL: " + sourceUrl );
+        if( debugOnScreen ) System.out.println( "update from URL: " + sourceUrl );
 
-        if (sourceUrl == null) return 0;
+        if( sourceUrl == null ) return 0;
 
         /**
          * Init() has to be called in order to have the statistics properly initialized
          * as well as to keep track of all updated/created proteins.
          */
-        init ();
+        reset();
 
         // check the taxid parameter validity
         try {
-            if ( taxid != null ) {
-                String newTaxid = bioSourceFactory.getUpToDateTaxid ( taxid );
-                if ( newTaxid == null ) {
-                    logger.error ("Could not find an up-to-date taxid for " + taxid + " abort update procedure.");
+            if( taxid != null ) {
+                String newTaxid = bioSourceFactory.getUpToDateTaxid( taxid );
+                if( newTaxid == null ) {
+                    logger.error( "Could not find an up-to-date taxid for " + taxid + " abort update procedure." );
                     return getProteinCreatedCount() + getProteinUpdatedCount() +
-                            getSpliceVariantCreatedCount() + getSpliceVariantUpdatedCount();
+                           getSpliceVariantCreatedCount() + getSpliceVariantUpdatedCount();
                 }
             }
-        } catch (IntactException ie) {
+        } catch( IntactException ie ) {
             String msg = "Could not find an up-to-date taxid for " + taxid + " abort update procedure.";
-            logger.error (msg, ie);
+            logger.error( msg, ie );
             return getProteinCreatedCount() + getProteinUpdatedCount() +
                     getSpliceVariantCreatedCount() + getSpliceVariantUpdatedCount();
         }
 
 
         try {
-            URL url = new URL ( sourceUrl );
+            URL url = new URL( sourceUrl );
 
             // parse it with YASP
-            if (debugOnScreen) {
-                System.out.print ( "Parsing..." );
+            if( debugOnScreen ) {
+                System.out.print( "Parsing..." );
                 System.out.flush();
             }
 
             entryIterator = YASP.parseAll( url );
 
-            if (debugOnScreen) System.out.println ( "done" );
+            if( debugOnScreen ) System.out.println( "done" );
 
             /**
              * C A U T I O N
@@ -1723,18 +1796,18 @@ public class UpdateProteins extends UpdateProteinsI {
              * So, calling twice .hasNext() without processing in between would
              * make you miss an element.
              */
-            while (entryIterator.hasNext()) {
+            while( entryIterator.hasNext() ) {
 
                 entryCount++;
 
                 // Check if there is any exception remaining in the Entry before to use it
-                if (entryIterator.hadException()) {
+                if( entryIterator.hadException() ) {
                     Exception originalException = entryIterator.getException().getOriginalException();
 
-                    if (originalException != null) {
+                    if( originalException != null ) {
                         originalException.printStackTrace();
                     } else {
-                        logger.error (entryIterator.getException());
+                        logger.error( entryIterator.getException() );
                         entryIterator.getException().printStackTrace();
                     }
 
@@ -1747,37 +1820,37 @@ public class UpdateProteins extends UpdateProteinsI {
                 // get the SPTREntry
                 SPTREntry sptrEntry = (SPTREntry) entryIterator.next();
 
-                if (sptrEntry == null) {
-                    logger.error("\n\nSPTR entry is NULL ... skip it");
+                if( sptrEntry == null ) {
+                    logger.error( "\n\nSPTR entry is NULL ... skip it" );
 
                     entrySkipped++;
                     continue;
                 }
 
-                if (debugOnScreen) System.out.print("(" + sptrEntry.getID() + ":");
+                if( debugOnScreen ) System.out.print( "(" + sptrEntry.getID() + ":" );
 
-                createProteinFromSPTrEntry (sptrEntry, taxid, update);
+                createProteinFromSPTrEntry( sptrEntry, taxid, update );
 
-                if (debugOnScreen) System.out.println(")");
+                if( debugOnScreen ) System.out.println( ")" );
 
                 // Display some statistics every 500 entries processed.
-                if (entryCount % 500 == 0) {
+                if( entryCount % 500 == 0 ) {
                     printStats();
                 }
             }
 
-        } catch (YASPException e) {
+        } catch( YASPException e ) {
             e.printStackTrace();
-            logger.error (e.getOriginalException());
+            logger.error( e.getOriginalException() );
 
-        } catch (MalformedURLException e) {
+        } catch( MalformedURLException e ) {
             e.printStackTrace();
-            logger.error ("URL error: " + sourceUrl, e);
-            logger.error ("Please provide a valid URL");
+            logger.error( "URL error: " + sourceUrl, e );
+            logger.error( "Please provide a valid URL" );
 
-        } catch (Exception e) {
+        } catch( Exception e ) {
             e.printStackTrace();
-            logger.error ( "Error while processing an SPTREntry", e);
+            logger.error( "Error while processing an SPTREntry", e );
         }
 
         closeFile(); // try to close the bad entries repository if it exists
@@ -1785,61 +1858,59 @@ public class UpdateProteins extends UpdateProteinsI {
         printStats();
 
         return getProteinCreatedCount() + getProteinUpdatedCount() +
-               getSpliceVariantCreatedCount() + getSpliceVariantUpdatedCount() ;
+               getSpliceVariantCreatedCount() + getSpliceVariantUpdatedCount();
     }
 
     private void printStats() {
         // in log file
-        logger.info ("Protein created:    " + getProteinCreatedCount());
-        logger.info ("Protein updated:    " + getProteinUpdatedCount());
-        logger.info ("Protein up-to-date: " + getProteinUpToDateCount());
-        logger.info ("Protein skipped:    " + getProteinSkippedCount());
+        logger.info( "Protein created:    " + getProteinCreatedCount() );
+        logger.info( "Protein updated:    " + getProteinUpdatedCount() );
+        logger.info( "Protein up-to-date: " + getProteinUpToDateCount() );
+        logger.info( "Protein skipped:    " + getProteinSkippedCount() );
 
-        logger.info ("Splice variant created:    " + getSpliceVariantCreatedCount());
-        logger.info ("Splice variant updated:    " + getSpliceVariantUpdatedCount());
-        logger.info ("Splice variant up-to-date: " + getSpliceVariantUpToDateCount());
-        logger.info ("Splice variant skipped:    " + getSpliceVariantSkippedCount());
+        logger.info( "Splice variant created:    " + getSpliceVariantCreatedCount() );
+        logger.info( "Splice variant updated:    " + getSpliceVariantUpdatedCount() );
+        logger.info( "Splice variant up-to-date: " + getSpliceVariantUpToDateCount() );
+        logger.info( "Splice variant skipped:    " + getSpliceVariantSkippedCount() );
 
-        logger.info ("Entry processed:    " + getEntryProcessededCount());
-        logger.info ("Entry skipped:      " + getEntrySkippedCount());
+        logger.info( "Entry processed:    " + getEntryProcessededCount() );
+        logger.info( "Entry skipped:      " + getEntrySkippedCount() );
 
         // on STDOUT
-        if (debugOnScreen) System.out.println ("Protein created:    " + getProteinCreatedCount());
-        if (debugOnScreen) System.out.println ("Protein updated:    " + getProteinUpdatedCount());
-        if (debugOnScreen) System.out.println ("Protein up-to-date: " + getProteinUpToDateCount());
-        if (debugOnScreen) System.out.println ("Protein skipped:    " + getProteinSkippedCount());
+        if( debugOnScreen ) System.out.println( "Protein created:    " + getProteinCreatedCount() );
+        if( debugOnScreen ) System.out.println( "Protein updated:    " + getProteinUpdatedCount() );
+        if( debugOnScreen ) System.out.println( "Protein up-to-date: " + getProteinUpToDateCount() );
+        if( debugOnScreen ) System.out.println( "Protein skipped:    " + getProteinSkippedCount() );
 
-        if (debugOnScreen) System.out.println ("Splice variant created:    " + getSpliceVariantCreatedCount());
-        if (debugOnScreen) System.out.println ("Splice variant updated:    " + getSpliceVariantUpdatedCount());
-        if (debugOnScreen) System.out.println ("Splice variant up-to-date: " + getSpliceVariantUpToDateCount());
-        if (debugOnScreen) System.out.println ("Splice variant skipped:    " + getSpliceVariantSkippedCount());
+        if( debugOnScreen ) System.out.println( "Splice variant created:    " + getSpliceVariantCreatedCount() );
+        if( debugOnScreen ) System.out.println( "Splice variant updated:    " + getSpliceVariantUpdatedCount() );
+        if( debugOnScreen ) System.out.println( "Splice variant up-to-date: " + getSpliceVariantUpToDateCount() );
+        if( debugOnScreen ) System.out.println( "Splice variant skipped:    " + getSpliceVariantSkippedCount() );
 
-        if (debugOnScreen) System.out.println ("Entry processed:    " + getEntryProcessededCount());
-        if (debugOnScreen) System.out.println ("Entry skipped:      " + getEntrySkippedCount());
+        if( debugOnScreen ) System.out.println( "Entry processed:    " + getEntryProcessededCount() );
+        if( debugOnScreen ) System.out.println( "Entry skipped:      " + getEntrySkippedCount() );
     }
-
-
 
 
     /**
      * Write the content of an Entry in a file for later on processing
      */
-    private void writeEntry2file () {
+    private void writeEntry2file() {
 
-        if (file == null) {
+        if( file == null ) {
             // make a generic output byte stream
             try {
                 // Get today's date and current time
                 Date date = new Date();
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd@HH.mm");
-                String time = formatter.format(date);
+                SimpleDateFormat formatter = new SimpleDateFormat( "yyyy.MM.dd@HH.mm" );
+                String time = formatter.format( date );
 
                 filename = ENTRY_OUTPUT_FILE + "-" + time;
-                file = new FileOutputStream(filename);
+                file = new FileOutputStream( filename );
                 // attach BufferedOutputStream to buffer it
-                buffer = new BufferedOutputStream(file, 4096);
+                buffer = new BufferedOutputStream( file, 4096 );
 
-            } catch (FileNotFoundException e) {
+            } catch( FileNotFoundException e ) {
                 e.printStackTrace();
                 return;
             }
@@ -1848,40 +1919,40 @@ public class UpdateProteins extends UpdateProteinsI {
         // write the entry in the file
         try {
             String entry = entryIterator.getOriginal();
-            if (entry != null) {
-                buffer.write(entry.getBytes());
-                logger.error ("\nEntry written in the file");
+            if( entry != null ) {
+                buffer.write( entry.getBytes() );
+                logger.error( "\nEntry written in the file" );
             } else {
-                logger.error ("Couldn't write the entry in the file");
+                logger.error( "Couldn't write the entry in the file" );
             }
-        } catch (IOException e) {
-            logger.error ("An error occur when trying to save an entry which cause a processing problem", e);
+        } catch( IOException e ) {
+            logger.error( "An error occur when trying to save an entry which cause a processing problem", e );
         }
     }
 
 
-    private void closeFile () {
+    private void closeFile() {
 
-        if (buffer != null) {
+        if( buffer != null ) {
             try {
                 buffer.close();
-            } catch (IOException e) {
-                logger.error ("Error when trying to close faulty entry file", e);
+            } catch( IOException e ) {
+                logger.error( "Error when trying to close faulty entry file", e );
             }
         }
 
-        if (file != null ) {
+        if( file != null ) {
             try {
                 file.close();
-            } catch (IOException e) {
-                logger.error ("Error when trying to close faulty entry file", e);
+            } catch( IOException e ) {
+                logger.error( "Error when trying to close faulty entry file", e );
             }
         }
 
     }
 
 
-    public String getErrorFileName () {
+    public String getErrorFileName() {
         return filename;
     }
 
@@ -1906,7 +1977,7 @@ public class UpdateProteins extends UpdateProteinsI {
      * proteins of an entire complex.
      * @param aLocalTransactionControl New value for localTransactionControl
      */
-    public void setLocalTransactionControl(boolean aLocalTransactionControl) {
+    public void setLocalTransactionControl( boolean aLocalTransactionControl ) {
         localTransactionControl = aLocalTransactionControl;
     }
 
@@ -1918,65 +1989,65 @@ public class UpdateProteins extends UpdateProteinsI {
      * ./scripts/javaRun.sh UpdateProteins file:///homes/user/mySPTRfile.txl
      *
      */
-    public static void main(String[] args) throws Exception {
+    public static void main( String[] args ) throws Exception {
 
         IntactHelper helper = null;
 
         try {
             String url = null;
 
-            if (args.length >= 1) {
-                url = args[0];
+            if( args.length >= 1 ) {
+                url = args[ 0 ];
             } else {
-                System.out.println("Usage: javaRun.sh UpdateProteins <URL>");
-                System.exit(1);
+                System.out.println( "Usage: javaRun.sh UpdateProteins <URL>" );
+                System.exit( 1 );
             }
 
             try {
                 helper = new IntactHelper();
-                System.out.println("Helper created (User: "+helper.getDbUserName()+ " " +
-                                   "Database: "+helper.getDbName()+")");
+                System.out.println( "Helper created (User: " + helper.getDbUserName() + " " +
+                                    "Database: " + helper.getDbName() + ")" );
 
-            } catch (IntactException e) {
-                System.out.println("Root cause: " + e.getRootCause());
+            } catch( IntactException e ) {
+                System.out.println( "Root cause: " + e.getRootCause() );
                 e.printStackTrace();
-                System.exit (1);
+                System.exit( 1 );
             }
 
 
-            UpdateProteinsI update = new UpdateProteins (helper);
+            UpdateProteinsI update = new UpdateProteins( helper );
             Chrono chrono = new Chrono();
             chrono.start();
 
-            update.setDebugOnScreen (true);
-            int nb = update.insertSPTrProteinsFromURL (url, null, true);
+            update.setDebugOnScreen( true );
+            int nb = update.insertSPTrProteinsFromURL( url, null, true );
 
             chrono.stop();
-            System.out.println("Time elapsed: " + chrono);
-            System.out.println("Entries error in : " + update.getErrorFileName());
+            System.out.println( "Time elapsed: " + chrono );
+            System.out.println( "Entries error in : " + update.getErrorFileName() );
 
-            System.out.println (nb + " protein updated/created");
+            System.out.println( nb + " protein updated/created" );
 
-        } catch (OutOfMemoryError aome ) {
+        } catch( OutOfMemoryError aome ) {
 
             aome.printStackTrace();
 
-            System.err.println ( "" );
-            System.err.println ( "UpdateProteins ran out of memory." );
-            System.err.println ( "Please run it again and change the JVM configuration." );
-            System.err.println ( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" );
-            System.err.println ( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" );
-            System.err.println ( "      amount of memory that the JVM is allowed to allocate." );
-            System.err.println ( "      eg. java -Xms128m -Xmx512m <className>" );
-            System.err.println ( "      you can set it up in scripts/javaRun.sh" );
+            System.err.println( "" );
+            System.err.println( "UpdateProteins ran out of memory." );
+            System.err.println( "Please run it again and change the JVM configuration." );
+            System.err.println( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" );
+            System.err.println( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" );
+            System.err.println( "      amount of memory that the JVM is allowed to allocate." );
+            System.err.println( "      eg. java -Xms128m -Xmx512m <className>" );
+            System.err.println( "      you can set it up in scripts/javaRun.sh" );
 
-            System.exit (1);
+            System.exit( 1 );
 
-        } catch (Exception e ) {
+        } catch( Exception e ) {
             e.printStackTrace();
-            System.exit (1);
+            System.exit( 1 );
         } finally {
-            if (helper != null) helper.closeStore();
+            if( helper != null ) helper.closeStore();
         }
 
         System.exit( 0 );
