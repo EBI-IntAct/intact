@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.model.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 import org.apache.commons.cli.*;
@@ -405,51 +406,69 @@ public class InsertComplexMerck {
 
         // TODO: REFACTOR THIS TO USE THE BeanReader
 
-        BufferedReader file = new BufferedReader( new FileReader( filename ) );
-        String line;
-        int lineCount = 0;
+        FileReader fr       = null;
+        BufferedReader file = null;
+        try {
+            fr = new FileReader( filename );
+            file = new BufferedReader( fr );
 
-        System.out.print("Lines processed: ");
+            String line;
+            int lineCount = 0;
 
-        while (null != (line = file.readLine())) {
+            System.out.print("Lines processed: ");
 
-            if ( line.trim().equals("") ) continue; // skip blank line
+            while (null != (line = file.readLine())) {
 
-            // Tokenize lines
-            StringTokenizer st = new StringTokenizer( line );
-            ArrayList preys = new ArrayList();
-            preys.add( st.nextToken() );
-            String baitAC = st.nextToken();
-            String experimentLabel = st.nextToken();
+                if ( line.trim().equals("") ) continue; // skip blank line
 
-            // Read the remainder of the line
-            StringBuffer comment = new StringBuffer();
-            while (st.hasMoreTokens()) {
-                comment.append(st.nextToken());
-                comment.append(" ");
+                // Tokenize lines
+                StringTokenizer st = new StringTokenizer( line );
+                ArrayList preys = new ArrayList();
+                preys.add( st.nextToken() );
+                String baitAC = st.nextToken();
+                String experimentLabel = st.nextToken();
+
+                // Read the remainder of the line
+                StringBuffer comment = new StringBuffer();
+                while (st.hasMoreTokens()) {
+                    comment.append(st.nextToken());
+                    comment.append(" ");
+                }
+
+                // Insert results into database
+                try {
+                    insertComplex( baitAC, preys, experimentLabel, "remark", comment.toString() );
+                }
+                catch (Exception ie) {
+                    ie.printStackTrace();
+                    System.err.println();
+                    System.err.println( "Error while processing input line lineCount: " );
+                    System.err.println( line );
+                    System.err.println( ie.getMessage() );
+                }
+
+                // Progress report
+                if ((++lineCount % 1) == 0) {
+                    System.out.print(lineCount + " ");
+                }
+                else {
+                    System.out.println(".");
+                }
             }
-
-            // Insert results into database
-            try {
-                insertComplex( baitAC, preys, experimentLabel, "remark", comment.toString() );
+            System.out.println( NEW_LINE );
+        } finally {
+            // close opened streams.
+            if(file != null) {
+                try {
+                    file.close();
+                } catch( IOException ioe) {}
             }
-            catch (Exception ie) {
-                ie.printStackTrace();
-                System.err.println();
-                System.err.println( "Error while processing input line lineCount: " );
-                System.err.println( line );
-                System.err.println( ie.getMessage() );
-            }
-
-            // Progress report
-            if ((++lineCount % 1) == 0) {
-                System.out.print(lineCount + " ");
-            }
-            else {
-                System.out.println(".");
+            if( fr != null ){
+                try {
+                    fr.close();
+                } catch( IOException ioe) {}
             }
         }
-        System.out.println( NEW_LINE );
     }
 
     /**
@@ -520,22 +539,22 @@ public class InsertComplexMerck {
         Option helpOpt = new Option( "help", "print this message" );
 
         Option filenameOpt = OptionBuilder.withArgName( "filename" )
-                                          .hasArg()
-                                          .withDescription( "use given buildfile" )
-                                          .create( "file" );
+                .hasArg()
+                .withDescription( "use given buildfile" )
+                .create( "file" );
         filenameOpt.setRequired( true );
 
         Option taxidOpt = OptionBuilder.withArgName( "biosource.taxid" )
-                                       .hasArg()
-                                       .withDescription( "taxId of the BioSource to link to that Complex" )
-                                       .create( "taxId" );
+                .hasArg()
+                .withDescription( "taxId of the BioSource to link to that Complex" )
+                .create( "taxId" );
         taxidOpt.setRequired( true );
 
         Option interactionTypeOpt = OptionBuilder.withArgName( "CvInteractionType.shortLabel" )
-                                                 .hasArg()
-                                                 .withDescription ( "Shortlabel of the existing " +
-                                                                    "CvInteractionType to link to that Complex" )
-                                                 .create( "interactionType" );
+                .hasArg()
+                .withDescription ( "Shortlabel of the existing " +
+                                   "CvInteractionType to link to that Complex" )
+                .create( "interactionType" );
         // Not mandatory.
         // interactionTypeOpt.setRequired( true );
 
