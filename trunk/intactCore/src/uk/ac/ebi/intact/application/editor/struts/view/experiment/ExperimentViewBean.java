@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentException;
@@ -16,6 +17,11 @@ import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.tiles.ComponentContext;
 
 import java.util.Map;
+import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Experiment edit view bean.
@@ -119,6 +125,42 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         return map;
     }
 
+    /**
+     * The organism menu list.
+     * @return the organism menu consisting of organism short labels. The first
+     * item in the menu may contain '---Select---' if the current organism is
+     * not set.
+     * @throws SearchException for errors in generating menus.
+     */
+    public List getOrganismMenu() throws SearchException {
+        int mode = (myOrganism == null) ? 1 : 0;
+        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISMS, mode);
+    }
+
+    /**
+     * The interaction menu list.
+     * @return the interaction menu consisting of interaction short labels.
+     * The first item in the menu may contain '---Select---' if the current
+     * interaction is not set.
+     * @throws SearchException for errors in generating menus.
+     */
+    public List getInteractionMenu() throws SearchException {
+        int mode = (myInteraction == null) ? 1 : 0;
+        return getMenuFactory().getMenu(EditorMenuFactory.INTERACTIONS, mode);
+    }
+
+    /**
+     * The idetification menu list.
+     * @return the idetification menu consisting of idetification short labels.
+     * The first item in the menu may contain '---Select---' if the current
+     * idetification is not set.
+     * @throws SearchException for errors in generating menus.
+     */
+    public List getIdentificationMenu() throws SearchException {
+        int mode = (myIdentification == null) ? 1 : 0;
+        return getMenuFactory().getMenu(EditorMenuFactory.IDENTIFICATIONS, mode);
+    }
+
     // Getter/Setter methods for Organism.
     public String getOrganism() {
         return myOrganism;
@@ -144,5 +186,49 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     public void setIdentification(String identification) {
         myIdentification = identification;
+    }
+
+    public String getSelectedInteraction() {
+        if (myInteraction == null) {
+            return "";
+        }
+        // The interaction menu.
+        List list;
+        try {
+            list = (List) getEditorMenus().get(EditorMenuFactory.INTERACTIONS);
+        }
+        catch (SearchException e) {
+            e.printStackTrace();
+            return "";
+        }
+        // Get the normalize version of the interaction list.
+        List normalList = normalize(list);
+        // The position where the current interaction ocurrs.
+        int pos = normalList.indexOf(myInteraction);
+//        System.out.println("pos is " + pos + " Interaction is " + myInteraction);
+        if (pos != -1) {
+//            String s = (String) list.get(pos);
+//            System.out.println("Found " + s);
+            return (String) list.get(pos);
+        }
+//        System.out.println("NOT FOUND");
+        return "";
+    }
+
+    private List normalize(List list) {
+        List newList = new ArrayList();
+        Pattern pat = Pattern.compile("\\.+");
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            String listItem = iter.next().toString();
+            Matcher match = pat.matcher(listItem);
+            if (match.find()) {
+                newList.add(match.replaceAll(""));
+            }
+            else {
+                // No need to do any replacements.
+                newList.add(listItem);
+            }
+        }
+        return newList;
     }
 }
