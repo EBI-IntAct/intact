@@ -5,8 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.ArrayList;
-
 /**
  * <p>
  * Represents a location on a sequence.
@@ -311,6 +309,31 @@ public class Range extends BasicObjectImpl {
         return result;
     }
 
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+
+        // Saves the from type as a short label
+        String fromType = "";
+
+        // Set the fuzzy type first as they are used in set range methods.
+        if (fromCvFuzzyType != null) {
+            fromType = fromCvFuzzyType.getShortLabel();
+        }
+        sb.append(getRange(fromType, fromIntervalStart, fromIntervalEnd));
+
+        sb.append("-");
+
+        // Saves the to type as a short label
+        String toType = "";
+
+        if (toCvFuzzyType != null) {
+            toType = toCvFuzzyType.getShortLabel();
+        }
+        sb.append(getRange(toType, toIntervalStart, toIntervalEnd));
+        return sb.toString();
+    }
+
+
     /**
      * Returns a cloned version of the current object.
      * @return a cloned version of the current Range. The fuzzy types
@@ -347,7 +370,45 @@ public class Range extends BasicObjectImpl {
         return true;
     }
 
+    /**
+     * Sets the bean's from range
+     */
+    private String getRange(String type, int start, int end) {
+        // The rage to return.
+        String result;
 
+        // The value for display (fuzzy).
+        String dispLabel = CvFuzzyType.Converter.getInstance().getDisplayValue(type);
+
+        // Single type?
+        if (isSingleType(type)) {
+            result = dispLabel;
+        }
+        // Range type?
+        else if (type.equals(CvFuzzyType.RANGE)) {
+            result = start + dispLabel + end;
+        }
+        // No fuzzy type?
+        else if (type.length() == 0) {
+            result = dispLabel + start;
+        }
+        else {
+            // >, <, c or n
+            result = dispLabel + start;
+        }
+        return result;
+    }
+
+    /**
+     * @param type the CvFuzzy label to compare
+     * @return true if <code>type</code> is of Untermined or C or N terminal types.
+     * False is returned for all other instances.
+     */
+    private boolean isSingleType(String type) {
+        return type.equals(CvFuzzyType.UNDETERMINED)
+                || type.equals(CvFuzzyType.C_TERMINAL)
+                || type.equals(CvFuzzyType.N_TERMINAL);
+    }
 } // end Range
 
 
