@@ -16,12 +16,12 @@
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <%
-    String info = user.getLastSearchQuery();
+    String info = user.getSearchQuery();
 %>
 
 <h1>Search Results: No Matches!</h1>
 
-<h2>Sorry - could not find any <%= user.getLastSearchClass() %>
+<h2>Sorry - could not find any <%= user.getSearchClass() %>
   by trying to match <%= info.substring(info.indexOf('=') + 1) %> with: </h2>
 <ul>
   <li>AC,
