@@ -11,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
-import uk.ac.ebi.intact.util.NewtServerProxy;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -33,9 +32,15 @@ public class EditorService {
     private ResourceBundle myTopics;
 
     /**
-     * Reference to Newt proxy server instance.
+     * The topics already sorted in an alphebetical order;
+     * cached to save recompuation.
      */
-    private NewtServerProxy myNewtServer;
+    private List myTopicsCache = new ArrayList();
+
+    /**
+     * Reference to Newt proxy server URL.
+     */
+    private URL myNewtServerUrl;
 
     /**
      * Construts with the resource file.
@@ -43,9 +48,10 @@ public class EditorService {
      * @exception MissingResourceException thrown when the resource file is
      * not found.
      * @exception EmptyTopicsException thrown for an empty resource file.
+     * @exception MalformedURLException thrown for incorrect Newt URL property.
      */
     public EditorService(String name) throws MissingResourceException,
-            EmptyTopicsException {
+            EmptyTopicsException, MalformedURLException {
         myResources = ResourceBundle.getBundle(name);
         myTopics = ResourceBundle.getBundle(myResources.getString("topics"));
         // Must have Intact Types to edit.
@@ -53,24 +59,11 @@ public class EditorService {
             throw new EmptyTopicsException(
                     "Editor topic resource file can't be empty");
         }
-    }
+        myNewtServerUrl = new URL(myResources.getString("newt.server.url"));
 
-    /**
-     * Loads editor topic properties from a resources file.
-     * @param name the name of the Intact types resource file.
-     * @exception MissingResourceException thrown when the resource file is
-     * not found.
-     * @exception EmptyTopicsException thrown for an empty resource file.
-     */
-    public void loadTopicProperties(String name)
-            throws MissingResourceException, EmptyTopicsException {
-        myTopics = ResourceBundle.getBundle(name);
-        // We must have Intact Types to search for; in other words, resource
-        // bundle can't be empty.
-        if (!myTopics.getKeys().hasMoreElements()) {
-            throw new EmptyTopicsException(
-                    "Editor topic resource file can't be empty");
-        }
+        // Cache the topics after sorting them.
+        CollectionUtils.addAll(myTopicsCache, myTopics.getKeys());
+        Collections.sort(myTopicsCache);
     }
 
     /**
@@ -84,26 +77,18 @@ public class EditorService {
 
     /**
      * Returns a collection of Intact types.
-     * @return an <code>ArrayList</code> of Intact types. The list sorted in
+     * @return an <code>ArrayList</code> of Intact types. The list sorted on an
      * alphabetical order.
      */
     public Collection getIntactTypes() {
-        // The collection to return.
-        List types = new ArrayList();
-        CollectionUtils.addAll(types, myTopics.getKeys());
-        Collections.sort(types);
-        return types;
+        return myTopicsCache;
     }
 
     /**
      * Returns reference to the Newt server proxy.
-     * @exception MalformedURLException thrown for incorrect URL property.
+     * @return URL to the new Newt server proxy; null for an invalid URL.
      */
-    public NewtServerProxy getNewtServer() throws MalformedURLException {
-        if (myNewtServer == null) {
-            URL url = new URL(myResources.getString("newt.server.url"));
-            myNewtServer = new NewtServerProxy(url);
-        }
-        return myNewtServer;
+    public URL getNewtServerUrl() {
+        return myNewtServerUrl;
     }
 }
