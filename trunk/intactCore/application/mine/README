@@ -12,12 +12,19 @@ WEB-INF/config  : Configuration/Property files for the application.
 dist/           : Where the WAR file is created.
 
 INSTALLATION
-    edit repository.xml and OJB.properties in the intact root directory
-    (intactCore/config) to suit your requirements (oracle vs postgres etc).
-    Instead of editing these files manually, you may just run ant set-target-env
-    from intactCore directory. The target environment is specified in the
-    build.properties file (intactCore directory). 'search' has been tested
-    under Oracle 8.1.6 and PostGres 7.2 (local and remote).
+    Please read the README in the intactCore directory to find how to configure
+    the database access. We assume that if you are trying to install MiNe, the
+    basic configuration has been done before and work.
+
+DATA
+    MiNe application relies on some precalculated data (namely in the table
+    IA_INTERACTIONS). In order to have that application working, you have to
+    fill that table. A script is dedicated to that task:
+
+        config/runMineFill.sh
+
+    Please run that script if you want to initialise or refresh the content of
+    that table.
 
 BUILD
     ant war
@@ -55,4 +62,4 @@ NOTES
         WEB-INF/classes - mine class files.
 
 COMMENTS
-    Send any comments/feedback to groscurt@ebi.ac.uk, hhe@ebi.ac.uk
+    Send any comments/feedbacks to skerrien@ebi.ac.uk, groscurt@ebi.ac.uk, hhe@ebi.ac.uk
