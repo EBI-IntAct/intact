@@ -8,10 +8,12 @@ package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.model.*;
 
 
+import java.net.URL;
 import java.io.*;
 import java.util.*;
 
@@ -131,10 +133,10 @@ public class GoTools {
         else {
             if (deleteold) {
                 // Delete all old data
-                helper.deleteAllElements(current.getXref());
-                current.getXref().removeAll(current.getXref());
-                helper.deleteAllElements(current.getAnnotation());
-                current.getAnnotation().removeAll(current.getAnnotation());
+                helper.deleteAllElements(current.getXrefs());
+                current.getXrefs().removeAll(current.getXrefs());
+                helper.deleteAllElements(current.getAnnotations());
+                current.getAnnotations().removeAll(current.getAnnotations());
             }
         }
 
@@ -187,7 +189,7 @@ public class GoTools {
                     (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go"),
                     ((Vector) definition.get("goid")).elementAt(0).toString(),
                     null, null, null);
-            if (! current.getXref().contains(xref)){
+            if (! current.getXrefs().contains(xref)){
 		current.addXref(xref);
 		helper.create(xref);
 	    }
@@ -207,7 +209,7 @@ public class GoTools {
                             null,
                             (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class,
                                     "go-definition-ref"));
-                    if (! current.getXref().contains(xref)){
+                    if (! current.getXrefs().contains(xref)){
 			current.addXref(xref);
 			helper.create(xref);
 		    }
@@ -275,7 +277,7 @@ public class GoTools {
             throws Exception {
 
         // initialisation
-//        Vector goRecord;
+        Vector goRecord;
         BufferedReader in = new BufferedReader(new FileReader(sourceFile));
 
         System.err.println("Reading GO DAG lines: ");
@@ -368,7 +370,7 @@ public class GoTools {
         buf.append("\n");
 
         // Write GO id
-        Collection xref = current.getXref();
+        Collection xref = current.getXrefs();
         for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
             Xref x = (Xref) iterator.next();
             if (x.getCvDatabase().getShortLabel().equals("go")) {
@@ -379,7 +381,7 @@ public class GoTools {
         }
 
         // Write all comments in GO format
-        Collection annotation = current.getAnnotation();
+        Collection annotation = current.getAnnotations();
         for (Iterator iterator = annotation.iterator(); iterator.hasNext();) {
             Annotation a = (Annotation) iterator.next();
 
@@ -389,7 +391,7 @@ public class GoTools {
         }
 
         // Write definition references
-        xref = current.getXref();
+        xref = current.getXrefs();
         for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
             Xref x = (Xref) iterator.next();
             if (x.getCvDatabase().getShortLabel().equals("pubmed")) {
