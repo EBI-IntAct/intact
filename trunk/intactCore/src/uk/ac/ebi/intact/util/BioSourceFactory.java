@@ -210,12 +210,10 @@ public class BioSourceFactory {
             return null;
         }
 
-        BioSource bioSource = new BioSource();
         // the taxId can be different in obsoleteness case.
-        bioSource.setTaxId ( "" + response.getTaxId() );
+        BioSource bioSource = new BioSource(institution,
+                response.getShortLabel().toLowerCase(), "" + response.getTaxId());
         bioSource.setFullName ( response.getFullName() );
-        bioSource.setShortLabel ( response.getShortLabel().toLowerCase() );
-        bioSource.setOwner ( institution );
 
         return bioSource;
     }
