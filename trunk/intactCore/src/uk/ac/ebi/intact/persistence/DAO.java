@@ -193,6 +193,26 @@ public interface DAO {
      * Note that at present this only performs very simple "single" text queries - and
      * may be updated later..
      *
+     * @param type - the persistent object type to be searched as a Class instance.
+     * @param col - the parameter to be searched through - NB assumed to be a DB column name
+     * @param val - the value to be used for the search (all items for the type returned if null)
+     *
+     * @return a collection containing the search results
+     *
+     * @exception SearchException - thrown if there were problems during the search process itself
+     */
+     public Collection find(Class type, String col, String val) throws SearchException;
+
+    /**
+     * <p>This method performs a simple search based on the object type to search over,
+     * the parameter name and the search value. This method will begin a new transaction
+     * and commit it before returning if it is not called from within the caller's
+     * own transaction
+     * </p>
+     *
+     * Note that at present this only performs very simple "single" text queries - and
+     * may be updated later..
+     *
      * @param type - the persistent object type to be searched
      * @param col - the parameter to be searched through - NB assumed to be a DB column name
      * @param val - the value to be used for the search (all items for the type returned if null)
