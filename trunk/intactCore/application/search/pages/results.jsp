@@ -9,7 +9,8 @@
 
 <%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants,
                  uk.ac.ebi.intact.application.search.business.IntactServiceIF,
-                 uk.ac.ebi.intact.application.search.struts.view.IntactViewBean"%>
+                 uk.ac.ebi.intact.application.search.struts.view.BasicObjectViewBean,
+                 uk.ac.ebi.intact.application.search.struts.view.AbstractViewBean"%>
 
 <%@ page import="javax.xml.transform.stream.StreamResult"%>
 
@@ -69,11 +70,17 @@
         for (var i = 0; i < form.elements.length; i++) {
             // Only interested in 'checkbox' fields.
             if (form.elements[i].type == "checkbox") {
-                // Only porcess if they are checked.
+                // Only process if they are checked.
+                //TODO: This should handle multiple checkboxes....
                 if (form.elements[i].checked) {
                     var name = form.elements[i].name;
                     // Remove the table identifer from name to get ac.
-                    ac = name.split("_")[2];
+                    if(ac == null) {
+                        ac = name.split("_")[2];
+                    }
+                    else {
+                        ac = ac + "," + (name.split("_")[2]);
+                    }
                 }
             }
         }
@@ -138,20 +145,48 @@
 
     if(session.getAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN) != null) {
         //only have a single object to show..
-        IntactViewBean bean = (IntactViewBean)session.getAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN);
+        BasicObjectViewBean bean = (BasicObjectViewBean)session.getAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN);
         bean.transform("0", result);
     }
     else {
 
-        // The collection of beans to process.
+        //Need to display either:
+        // 1) A Protein Partner view;
+        // 2) An Experiment view (different map);
+        // 3) A 'partner view Experiment link' (a filter on the Experiment beans)
+        Map partnerBeanMap = (Map)session.getAttribute(SearchConstants.PARTNER_BEAN_MAP);
         Map idToView = (Map) session.getAttribute(SearchConstants.FORWARD_MATCHES);
+        Set beanFilter = (Set)session.getAttribute(SearchConstants.BEAN_FILTER);
 
-        // Process each bean.
-        for (Iterator it = idToView.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry entry = (Map.Entry) it.next();
-            IntactViewBean bean = (IntactViewBean) entry.getValue();
-            String id = (String) entry.getKey();
-            bean.transform(id, result);
+        //simplest first..
+        if((beanFilter != null) & (!beanFilter.isEmpty()) & (idToView != null)){
+            //do 2) above....
+            for(Iterator it = beanFilter.iterator(); it.hasNext();) {
+                String id = (String)it.next();
+                AbstractViewBean bean = (AbstractViewBean)idToView.get(id);
+                bean.transform(id, result);
+            }
+        }
+        else {
+            //check the more complex views...
+            Map displayItems = null;
+            if((partnerBeanMap != null) & (!partnerBeanMap.isEmpty())&
+                    (beanFilter != null) & (beanFilter.isEmpty())) {
+                //do 1) above...
+                displayItems = partnerBeanMap;
+            }
+            else {
+                //do 3) above...
+                displayItems = idToView;
+            }
+
+            // Process every bean in the Map.
+            for (Iterator it = displayItems.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry entry = (Map.Entry) it.next();
+                AbstractViewBean bean = (AbstractViewBean) entry.getValue();
+                String id = (String) entry.getKey();
+                bean.transform(id, result);
+            }
             %>
 <hr size=2>
         <%
