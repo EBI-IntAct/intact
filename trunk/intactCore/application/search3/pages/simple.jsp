@@ -30,14 +30,15 @@ to identify the source page of the request to the Action classes.
 <%@ page autoFlush="true" %>
 
 <%-- Intact classes needed --%>
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants,
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.SimpleViewBean,
                  uk.ac.ebi.intact.model.Experiment,
                  uk.ac.ebi.intact.model.Interaction,
                  uk.ac.ebi.intact.model.Protein,
                  uk.ac.ebi.intact.model.CvObject,
-                 uk.ac.ebi.intact.business.IntactException"%>
+                 uk.ac.ebi.intact.business.IntactException,
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
 
 <%-- Standard Java classes --%>
 <%@ page import="java.util.*"%>
@@ -67,13 +68,15 @@ to identify the source page of the request to the Action classes.
     //get the maximum size beans from the context for later use
     Map sizeMap = (Map)session.getServletContext().getAttribute(SearchConstants.MAX_ITEMS_MAP);
 
+
+
 %>
 <%-- The javascript for the button bars.... --%>
 <%@ include file="jscript.html" %>
 <!-- top line info -->
-<h3>Search Results for
-    <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
-</h3>
+    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
+     <br/>
+
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
 </span><span class="smalltext">)<br></span></p>
@@ -81,61 +84,13 @@ to identify the source page of the request to the Action classes.
 <%-- Firstly need to check that we have at least one set of results that we can display,
 because if not then we should NOT display the message below..
 --%>
-<%
-    //go through the partitioned list and check to see if at least one of the sublists
-    //is valid for display, by checking the types against corresponding max values....
 
-    boolean areValidItems = false;  //used to flag if we have something to display
-    Collection notDisplayed = new ArrayList();  //used to hold the lists that are too big for display
-    for(Iterator it = partitionList.iterator(); it.hasNext();) {
-
-        List listToCheck = (List)it.next();
-        SimpleViewBean item = (SimpleViewBean)listToCheck.iterator().next();
-        String listType = item.getIntactType();
-
-        //NB the 'size' here is obtained from the context map of types to max sizes
-        //NOTE that they are String representations of ints in the map as they are used
-        //mainly for display - need to convert to an int to use it in code...
-        String mapValue = (String)sizeMap.get(listType);
-        if(mapValue == null) throw new IntactException("Unknown display type ('"
-            + listType + "') for initial search view!");
-
-        int maxSizeForType = Integer.parseInt(mapValue);
-        if(listToCheck.size() > maxSizeForType) {
-
-            //cache it ready for removal from the display list
-            notDisplayed.add(listToCheck);
-%>
-
-        <%-- this gets displayed INSTEAD if the result set was 'too big' --%>
-        </span></big></big></big><span class="largetext">Your search matched more than
-        <%= maxSizeForType + " " + listType + "s"%>, please refine your search.</span>
-        <br style="color: rgb(255, 0, 0); font-weight: bold;">
-        <br>
-
-<%
-        }
-        else areValidItems = true;  //only need ONE in range to show a 'friendly' message
-
-
-    } //ends List loop
-
-    //now need to remove the sublists that are too large from the list of displayable items..
-    partitionList.removeAll(notDisplayed);
-%>
-
-<%
-    if(areValidItems)  {
-
-        //display the 'friendly' message at the top of the page..
-%>
-<p>
     <span class="largetext">Please click on any name to view more detail.</span>
   <span class="smalltext"> <br> </span>
 
 </p>
 <%
-    }
+
 %>
 
 
@@ -286,31 +241,68 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             %>
 
             <!-- checkbox -->
-            <td align="right" >
-                <input name="<%= bean.getObjAc()%>" type="checkbox" class="text" >
+            <td align="right" style="vertical-align: top;" >
+                <input name="<%= bean.getObjAc()%>" type="checkbox" class="td.righttop" >
             </td>
             <%
                 }
-            %>
+            %>          
 
-            <%-- name (ie Intact shortlabel), and linked to a suitable view -
+
+          <%
+          if((Protein.class.isAssignableFrom(bean.getObject().getClass()))) { %>
+
+               <%-- name (ie Intact shortlabel), and linked to a suitable view -
                 need to set a value in the request to identify this JSP, so that the struts
                 Action classes know what to do with eg Protein search requests..
             --%>
+
             <td nowrap="nowrap" style="vertical-align: top;">
-               <a href="<%= searchURL + "&" + SearchConstants.PAGE_SOURCE + "=simple"%>">
+               <a href="<%= searchURL + "&" + SearchConstants.PAGE_SOURCE + "=partner" + "&filter=ac"%>">
                    <b><span style="color: rgb(255, 0, 0);"><%=bean.getObjIntactName()%></span></b></a><br>
             </td>
 
-            <!-- AC, not linked -->
-            <td nowrap="nowrap" class="lefttop"><%= bean.getObjAc() %>
+            <!-- Ac linked to single view -->
+
+              <td nowrap="nowrap" style="vertical-align: top;">
+               <a href="<%= searchURL + "&" + SearchConstants.PAGE_SOURCE + "=single"+ "&filter=ac" %>">
+                  <%= bean.getObjAc() %></a><br>
             </td>
-          <%
-          if((Protein.class.isAssignableFrom(bean.getObject().getClass()))) { %>
+
+
+
+
                <!-- Gene Name (not linked)  -->
            <td class="lefttop" rowspan="1" colspan="1">
-              <%= bean.getGeneNames((Protein)bean.getObject())%><br>
+                  <% Collection somePartnerGeneNames = bean.getGeneNames((Protein)bean.getObject());
+                       for (Iterator iterator =  somePartnerGeneNames.iterator(); iterator.hasNext();) {
+                           String aGeneName =  (String) iterator.next();    %>
+                            <%=aGeneName%><br>
+                  <%     } %>
             </td>
+
+          <% } else { %>
+
+                <%-- name (ie Intact shortlabel), and linked to a suitable view -
+                need to set a value in the request to identify this JSP, so that the struts
+                Action classes know what to do with eg Protein search requests..
+            --%>
+
+            <td nowrap="nowrap" style="vertical-align: top;">
+               <a href="<%= searchURL + "&filter=ac" %>">
+                   <b><span style="color: rgb(255, 0, 0);"><%=bean.getObjIntactName()%></span></b></a><br>
+            </td>
+
+            <!-- Ac linked to single view -->
+
+              <td nowrap="nowrap" style="vertical-align: top;">
+               <a href="<%= searchURL + "&filter=ac" %>"><%= bean.getObjAc() %></a><br>
+            </td>
+
+
+
+
+
 
           <% } %>
             <!-- Description (ie full name - or a dash if there isn't one), not linked -->
@@ -353,14 +345,6 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 
 </table>
 <br>
-
-<%-- processed one item type - now need its bottom button bar and line seperator..
-NB don't want one for CvObjects
---%>
-<!-- same buttons as at the top of the page -->
-<!-- <%// @ include file="buttonBar.html" %> -->
-
-<!-- line seperator -->
 
 <%
 
