@@ -1,16 +1,36 @@
 package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 
-import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
-import uk.ac.ebi.intact.application.hierarchView.struts.LabelValueBean;
+// JDK
+import java.util.*;
+import java.util.Map.Entry;
+import java.io.*;
+import java.sql.*;
+import java.util.zip.*;
+import java.net.MalformedURLException;
+import java.lang.String;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.Collection;
-import java.util.Vector;
-import java.util.ArrayList;
+// Intact
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.Utilities;
+import uk.ac.ebi.intact.business.*;
+import uk.ac.ebi.intact.simpleGraph.*;
+import uk.ac.ebi.intact.persistence.*;
+import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 
-import java.lang.String;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
+import uk.ac.ebi.intact.application.hierarchView.struts.LabelValueBean;
+
+//OJB
+import org.apache.ojb.broker.*;
+import org.apache.ojb.broker.util.logging.*;
+import org.apache.ojb.broker.accesslayer.*;
+import org.apache.ojb.broker.query.*;
+import org.apache.ojb.broker.util.*;
+
+
 
   /**
    * Interface allowing to wrap an highlightment source.
@@ -25,7 +45,83 @@ public class GoHighlightmentSource
    * separator of keys, use to create and parse key string.
    */
   private static char KEY_SEPARATOR = ',';
+  private String ATTRIBUTE_OPTION_CHILDREN = "CHILDREN";
+  private String PROMPT_OPTION_CHILDREN = "With children of the selected GO term";
   
+/**
+   * Return the html code for specific options of the source to integrate int the highlighting form.
+   * if the method return null, the source hasn't options.
+   *
+   * @return the html code for specific options of the source.
+   */
+  public String getHtmlCodeOption(HttpSession aSession) {
+
+    String htmlCode;
+    String check = (String)  aSession.getAttribute (ATTRIBUTE_OPTION_CHILDREN);
+
+    if (check == null) {
+      check = "";  
+    }
+
+    htmlCode = "<INPUT TYPE=\"checkbox\" NAME=\"" + 
+                ATTRIBUTE_OPTION_CHILDREN +"\" " + 
+                check + " VALUE=\"checked\">" +
+                PROMPT_OPTION_CHILDREN;
+
+    return htmlCode;
+  }
+
+
+/**
+   * Return a set of keys corresponding to the source and finding in the IntAct database.
+   * if the method send back no keys, the given parameter have not keys for the source.
+   *
+   * @param aProteinAC : a protein identifier (AC)
+   * @return a set of keys (this keys are a String)
+   */
+  public Collection getKeysFromIntAct (String aProteinAC) throws Exception {
+
+    Collection result;
+    Iterator iterator;
+    DAOSource dataSource;
+    Collection listGOTerm = new ArrayList();
+    String goTerm;
+    
+    dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
+
+    // set the config details, ie repository file for OJB in this case
+    Map config = new HashMap();
+    /*
+     *  TO BE STORED LATER IN A PROPERTY FILE !!!!!
+     */
+    config.put("mappingfile", "config/repository.xml");
+    dataSource.setConfig(config);
+    
+    IntactHelper ih = new IntactHelper(dataSource);
+    result = ih.search ("uk.ac.ebi.intact.model.Protein","ac", aProteinAC);
+    
+    // recup object
+    if (result.isEmpty()) return null;
+  
+    iterator = result.iterator();
+    uk.ac.ebi.intact.model.Interactor interactor = (uk.ac.ebi.intact.model.Interactor) iterator.next();
+    
+    // get Xref collection
+    Collection xRef = interactor.getXref();
+    Iterator xRefIterator = xRef.iterator() ;
+    int cptXRef = 0;
+    
+    while (xRefIterator.hasNext() ) {
+      Xref xref = (Xref) xRefIterator.next();
+      
+      if (((String) xref.getCvDatabase().getShortLabel()).equals("GO"))
+	listGOTerm.add((String) xref.getPrimaryId());            
+    }
+
+    return listGOTerm;	
+    
+  } // getKeysFromIntAct
+
 
   /**
    * Create a set of protein we must highlight in the graph given in parameter.
@@ -37,27 +133,47 @@ public class GoHighlightmentSource
    * @param aGraph the graph we want to highlight
    * @return a set of node to highlight
    */
-  public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) {
-    Collection proteins = new Vector ();
-    
+  public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) throws Exception{
+    Collection nodeList = new Vector ();
+    String keys         = (String)  aSession.getAttribute (Constants.ATTRIBUTE_KEYS);
+
     // Read source option in the session
+    String  check = (String)  aSession.getAttribute (ATTRIBUTE_OPTION_CHILDREN); 
 
-
-    /* Example */
-    ArrayList listOfProtein = (ArrayList) aGraph.getOrderedNodes();
-    int size                = listOfProtein.size();
-
+    ArrayList listOfNode = (ArrayList) aGraph.getOrderedNodes();
+    int size                = listOfNode.size();
     for (int i=0 ; i<size ; i++)
       {
-	if (i%2 == 0)
+	Node node = (Node) listOfNode.get(i);
+	
+	String ac = (String) node.getAc();
+	
+	// Search all GoTerm for this ac number
+	Collection listGOTerm = this.getKeysFromIntAct(ac);
+	
+	if (listGOTerm!= null && !listGOTerm.isEmpty())
 	  {
-	    Protein protein = (Protein) listOfProtein.get(i);
-	    
-	    proteins.add(protein);
-	  }
-      }
+	    String goTerm;
+	    Iterator list = listGOTerm.iterator();
 
-    return proteins;
+	    while (list.hasNext())
+	      {
+		goTerm = new String();
+		goTerm = (String) list.next();
+	      
+		if (keys.equals(goTerm)) 
+		  {
+		    nodeList.add(node);
+		    break;
+		  }
+		if ((check != null) && (check.equals("checked"))) {
+		  // goterm.isChildrenOf(keys)?? -> if it'OK nodeList.add(node) et break
+		}
+	      }
+	  }	
+      }
+    
+    return nodeList;
   } // proteinToHightlight
 
 
@@ -70,8 +186,13 @@ public class GoHighlightmentSource
    * @param aSession session in which we have to save the parameter
    */
   public void parseRequest (HttpServletRequest aRequest, HttpSession aSession) {
+    
+    String[] result = (String[]) aRequest.getParameterValues(ATTRIBUTE_OPTION_CHILDREN);
 
-
+    if (result != null) {
+    aSession.setAttribute(ATTRIBUTE_OPTION_CHILDREN,result[0]);
+    }
+    
   }
 
 
@@ -82,21 +203,29 @@ public class GoHighlightmentSource
    * @param aProteinAC : a protein identifier (AC)
    * @return a set of URL pointing on the highlightment source
    */
-  public Collection getUrl (String aProteinAC) {
+  public Collection getUrl (String aProteinAC) throws Exception{
     Collection urls = new Vector();
-
+    
     // Search in Intact data Base all Go term for the AC accession number 
     // Enter in urls all adress int interpro for each Go term
-
-
-    // populate the Collection
-    urls.add (new LabelValueBean("GO:0030447", "http://holbein:8080/interpro/DisplayGoTerm?id=GO:0030447&format=simple"));
-    urls.add (new LabelValueBean("GO:0008450", "http://holbein:8080/interpro/DisplayGoTerm?id=GO:0008450&format=simple"));
-    urls.add (new LabelValueBean("GO:0007275", "http://holbein:8080/interpro/DisplayGoTerm?id=GO:0007275&format=simple"));
-
+    
+    String goTerm;
+    
+    Collection listGOTerm = this.getKeysFromIntAct(aProteinAC);
+    
+    if (listGOTerm !=null && !listGOTerm.isEmpty())
+      {
+	Iterator list = listGOTerm.iterator();
+	while (list.hasNext())
+	  {
+	    goTerm = new String();
+	    goTerm = (String) list.next();
+	    urls.add (new LabelValueBean(goTerm, "http://holbein:8080/interpro/DisplayGoTerm?id=" + goTerm + "&format=simple"));
+	  }
+      }
     return urls;
   } // getUrl
-
+  
 
   /**
    * Generate a key string for a particular selectable item of the highlightment source.
