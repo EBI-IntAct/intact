@@ -69,12 +69,27 @@ public interface EditorConstants {
     public static final String FORWARD_REFRESH = "refresh";
 
     /**
+     * The form to display the results from a search.
+     */
+    public static final String FORM_RESULTS = "resultForm";
+
+    /**
+     * The name of the cv info form.
+     */
+    public static final String FORM_INFO = "cvinfoForm";
+
+    /**
      * The name of the Xref edit form.
      */
-    public static final String XREF_EDIT_FORM = "xrefEditForm";
+    public static final String FORM_XREF_EDIT = "xrefEditForm";
 
     /**
      * The name of the Comment (annotation) edit form.
      */
-    public static final String COMMENT_EDIT_FORM = "commentEditForm";
+    public static final String FORM_COMMENT_EDIT = "commentEditForm";
+
+    /**
+     * The name of the BioSource form.
+     */
+    public static final String FORM_BIOSOURCE = "bioSourceForm";
 }
