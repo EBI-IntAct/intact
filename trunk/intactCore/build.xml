@@ -183,7 +183,7 @@
             <replacefilter token="@DRIVER_NAME@" value="oracle.jdbc.pool.OracleConnectionCacheImpl"/>
             <replacefilter token="@URL_SUBPROTOCOL@" value="oracle:thin:@vodka.ebi.ac.uk:1521"/>
             <replacefilter token="@URL_DBALIAS@" value="IDEV"/>
-            <replacefilter token="@USER_NAME@" property="user"/>
+            <replacefilter token="@USER_NAME@" value="ops$$${env.USER}"/>
             <replacefilter token="@USER_PASSWD@" property="password"/>
         </replace>
         <!-- Copy the template to config directory -->
@@ -324,11 +324,11 @@
 
         <javadoc destdir="${jdoc.dir}" author="true" version="true" use="true"
             windowtitle="Intact core API Documentation"
-            doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;h1&gt;"
-            bottom="&lt;i&gt;Chris Lewington EMBL-EBI 2002&lt;i&gt;" source="1.4">
+            doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
+            bottom="&lt;i&gt;Chris Lewington EMBL-EBI 2002 - clewing@ebi.ac.uk&lt;/i&gt;" source="1.4">
 
             <!-- Exclude javadoc for test packages. -->
-            <packageset dir="${src.dir}" defaultexcludes="yes">
+            <packageset dir="${src.dir}">
                 <exclude name="**/test/**" />
             </packageset>
             <classpath refid="javadoc.class.path"/>
