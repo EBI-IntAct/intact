@@ -142,7 +142,7 @@
                             <dd/>The number of units of this interactor which participate in
                             the interaction. The default is one.
                             <dt/>expressedIn
-                            <dd/>A <a href="#BioSource">BioSource</a> object which describes
+                            <dd/>A <a href="#BioSource">BioSource </a> object which describes
                             the biological system in which the protein has been
                             expressed. <br/>
                             Example: If a human protein has been expresed in E.coli,
@@ -237,15 +237,15 @@
                     <blockquote>
                         The short label is a short, concise name to identify an
                         object. Short labels for proteins are
-                        usually gene names, short labels for experiments are usually
+                        usually Swiss-Prot IDs, short labels for experiments are usually
                         the names of the first author of the publication. Short labels
                         will normally be stable, but they may change, e.g. when the
                         gene name of a protein is changed by the relevant nomenclature
                         body, e.g. HUGO. Short labels are not guaranteed to be unique,
                         e.g. if two proteins have the same primary gene name. They are
-                        guaranteed to be unique for controlled vocabulary terms within each controlled vocabulary.
+                        guaranteed to be unique for controlled vocabulary terms within each controlled vocabulary. All shortLables are in lowercase.
                         <br/>
-                        Example: GOT2.
+                        Example: got2_yeast.
                     </blockquote>
 
                 </section>
@@ -310,7 +310,7 @@
 
         <section title="IntAct applications" name="IntAct-applications">
 
-            Here comes the IntAct application documentation.
+            IntAct provides a number of applications. Depending on the installation you are using, some modules described here may not be available, or additional modules not described in this manual might be available.
 
 
             <section title="Search" name="search">
@@ -330,10 +330,10 @@
                         The search application currently allows a text-based search by entering
                         a text string into the search text box. It is possible to obtain information
                         on experiments, protein interactions and the proteins themselves, with
-                        various views used to display the data. Intact uses the concept of short
-                        label which is intended to provide a way of 'more memorable identification'
-                        compared to a standard Accession Number (AC), although searches by AC are
-                        obviously allowed. For example a particular Experiment may have an AC of
+                        various views used to display the data. Intact uses the concept of <a href="#AnnotatedObject.shortLabel"> short
+                        label </a> which is intended to provide a way of 'more memorable identification'
+                        compared to an <a href="#AnnotatedObject.ac"> accession number (ac) </a> , although searches by ac are
+                        obviously allowed. For example a particular Experiment may have an ac of
                         EBI-14, but its short label is 'gavin' indicating a more meaningful reference
                         to the physical experiment which the entry represents. Basic points on
                         usage:
@@ -351,8 +351,7 @@
                                 <li>
                                     currently searches progress in a certain order: proteins, then interactions,
                                     then experiments. At a lower level, specific attributes are searched by
-                                    AC, short label, Xref primary ID and finally full name. This algorithm
-                                    may change as the intact project matures.</li>
+                                    AC, short label, Xref primary ID and finally full name. </li>
 
                                 <li>
                                     Note that whilst CvObject details can be displayed via the click of a link,
@@ -479,8 +478,7 @@
                             to define the meaning of the term 'bait').</p>
                         <p>Since the items displayed for a search result include many items not
                             actually queried for, the items that matched the oringinal search string
-                            are highlighted in <b><i>bold italic</i></b> - there is even a helpful
-                            little message at the top of the results page to remind you of this. Specifically
+                            are highlighted in <b><i>bold italic</i></b>. Specifically
                             the *short labels* of the matching items are highlighted, since these are
                             always displayed in every view.</p>
                         <p>Where a protein (for example) might actually occur more than once in
@@ -527,6 +525,17 @@
             <section title="Editor" name="editor">
 
 
+                <section title="Overview" name="editor.overview">
+
+                    <blockquote>
+                        The editor is a web based tool to edit objects in the IntAct database. <br/><br/>
+                        <b>Note:</b> Any IntAct type name
+                        beginning with Cv is referred to as Cv type from here onwards.
+                    </blockquote>
+
+                </section> <!-- Overview -->
+
+
                 <section title="Availability" name="editor.availability">
 
                     <blockquote>
@@ -536,25 +545,6 @@
                     </blockquote>
 
                 </section>
-
-
-                <section title="Overview" name="editor.overview">
-
-                    <blockquote>
-                        The editor is a web based tool to edit IntAct database.
-                        Presently, it supports following IntAct objects: CvTopic, CvCellCycle,
-                        CvDatabase, CvTissue, CvModificationType, CvCellType, Protein,
-                        CvComponentRole, CvFeatureType, CvCompartment, CvProductRole,
-                        CvFeatureIdentification, CvInteraction, BioSource, NucleicAcid,
-                        CvAliasType, SmallMolecule, CvProteinForm, CvInteractionType,
-                        Experiment, Complex, CvReferenceQualifier, CvXrefQualifier,
-                        CvEvidenceType, CvIdentification, Interaction, CvDevelopmentalStage
-                        <br/><br/>
-                        <b>Note:</b> Any IntAct type name
-                        beginning with Cv is referred to as Cv type from here onwards.
-                    </blockquote>
-
-                </section> <!-- Overview -->
 
 
                 <section title="Access" name="editor.access">
@@ -622,7 +612,7 @@
                         <br/>
                         You can accept the default search value (*) by simply clicking on the
                         search button. This may take some time depending on the database size as
-                        it retrieves all records for given IntAct type. However, you can also
+                        it retrieves all records for a given IntAct type. However, you can also
                         use more restrictive filtering such as EBI-3* to restrieve a subset of
                         records. The following screen provides an example to this.<br/>
                         <br/>
@@ -634,7 +624,7 @@
                         matching records. Click on the AC link to edit individual entry.
                         Alternatively, you can enter the short label directly in the search box
                         and it will take you to the edit screen if a matching record wasn't
-                        found for given short label and type as shown below.<br/>
+                        found for a given short label and type as shown below.<br/>
                         <br/>
                         <img src="./images/editor/editor-search-error.jpg" title=""
                              alt="No Mtach" width="1044" height="200"/>
@@ -642,7 +632,7 @@
                         <br/>
                         <img src="./images/editor/warning.gif" title=""
                              alt="" width="40" height="40" align="left"/>
-                        The search is carried out against the value in the drop down list. So, ensure that you
+                        The search is carried out against the object type selected in the drop down list. So, ensure that you
                         correctly select the type first before the search.
                     </blockquote>
 
@@ -678,7 +668,7 @@
                                  alt="Incorrect short label" width="416" height="130"/>
                             <br/>
                             <br/>
-                            Submitting the form without entering a syntaxically invalid short label
+                            Submitting the form without entering a syntactically invalid short label
                             results in a server side validation. The error response from the server
                             is shown under the short label as shown below.<br/>
                             <br/>
@@ -692,11 +682,11 @@
                             enabled to accept Javascript for it to work (no dialog window if
                             Javascript is not enabled). This is the preferred validation as it saves
                             extra step in communication with the server. Alternatively, the other
-                            validation is not dependent on Javascript and hence guranteed to work on
+                            validation is not dependent on Javascript and hence works on
                             any browser. However, it is slow since it involves a round trip to the
                             server.<br/>
                             <br/>
-                            For a short label to be valid it must be syntaxically correct and
+                            For a short label to be valid it must be syntactically correct and
                             unique (i.e, no simlar label for the current edit type exists in the
                             database). All the existing short lables for the current edit types are
                             shown along with an error message for a non unique short label entry. <br/>
@@ -721,7 +711,7 @@
                                  alt="Annotation error" width="1046" height="108"/>
                             <br/>
                             <br/>
-                            The editing an annotation is similar to adding a new Annotation except
+                            The editing of an annotation is similar to adding a new Annotation except
                             for topic and description are already set to their existing values. The
                             screen snapshot given below shows two annotations with one in the
                             editing mode.<br/>
@@ -740,7 +730,7 @@
                         <blockquote>
                             Similar to Annotations, Crossreferences are added by clicking on the
                             Add button in the Crossreference section. The database drop list
-                            consists of short labels for CvDatbase itsm from the IntAct database and
+                            consists of short labels for CvDatabase items from the IntAct database and
                             the reference qualifier consists of short labels for CvXrefQualifier.<br/>
                             <br/>
                             <img src="./images/editor/editor-new-xref.jpg" title=""
@@ -749,11 +739,11 @@
                             <br/>
                             As with annotations, the values from drop down lists must be selected
                             prior to adding a crossreference. Editing an existing Crossreference
-                            similar to adding a new one except for existing values are shown instead
+                            is similar to adding a new one except for existing values are shown instead
                             of empty values.<br/>
                             <br/>
                             Any changes to the form are not saved until the form is submitted. So
-                            for a new IntAct type, a record is created on the database until the
+                            for a new IntAct type, a record is not created on the database until the
                             Submit button is clicked and the server reports no errors.<br/>
                             <br/>
                             Editing an existing record is similar to the above except the form is
@@ -780,7 +770,7 @@
 
                         <blockquote>
                             The biosource editor uses the Newt server to auto-complete the short
-                            label and the full name.<br/><br/>
+                            label and the full name from a given NCBI taxid.<br/><br/>
                             <img src="./images/editor/editor-new-bs.jpg" title=""
                                  alt="Biosource editor" width="636" height="70"/>
                         </blockquote>
@@ -795,8 +785,12 @@
                                  alt="New Experiment" width="895" height="75"/>
                             <br/>
                             <br/>
-                            All the above three fields must contain values for a valid Experiment.
-                            Need to add more here...
+                            The Host Organism is the organism the experiment has been performed in. Example: If the interaction of Human proteins expressed in E.coli has been studied in Yeast, the Host Organism would be Yeast. 
+ <br/>
+                            The Interaction Detection describes the method which has been used to detect the interaction, e.g. yeast two hybrid. 
+<br/>
+The Participant Detection describes the method which has been used to detect the participants (proteins) involved in the interaction, e.g. peptide mass fingerprinting.
+                            
                         </blockquote>
 
                     </section> <!-- Experiment -->
@@ -821,7 +815,7 @@
                                 <br/>
                                 <br/>
                                 Select Add button to add an experiment or Hide to remove from the
-                                collection. Duplcate experiments not allowed.
+                                collection. Duplicate experiments are not allowed.
                             </blockquote>
 
                         </section> <!-- Experiments -->
@@ -829,18 +823,19 @@
                         <section title="Proteins" name="editor.int.proteins">
 
                             <blockquote>
-                                This section lists all the Proteins participated in the cirrent
+                                This section lists all the Proteins participating in the current
                                 Interaction. For a new Interaction, this section is empty. To add a
-                                Protein, you must search for existing Proteins first by provide
+                                Protein, you must search for existing Proteins first by providing 
                                 appropriate values for search fields. Only the most specific value
                                 is taken into consideration if multiple values are provided for search.
                                 Since IntAct AC is the most specific, other search values are ignored
                                 if a value was specified for IntAct AC.<br/>
+If a search is performed by Swiss-Prot accession number (SP AC), and no matching protein is found, the editor will access an external server, by default the EBI SRS server, to retrieve the corresponding protein,
                                 <br/>
                                 <img src="./images/editor/editor-int-prot.jpg" title=""
                                      alt="Adding Proteins" width="1026" height="298"/><br/>
                                 <br/>
-                                The orange colour bar on the left Protein identfies as new Proteins not
+                                The orange colour bar on the left identfies new Proteins as not
                                 yet added to the Interaction. The first Protein is already part of the
                                 Interaction and hence for absence of color bar next to it. These
                                 'color coded' Proteins do not form part of the current Interaction until
@@ -880,7 +875,7 @@
                         <br/>
 
                         <b>Do I need JavaScript to run the Editor?</b><br/>
-                        No but it helps a lot. For example, some validations such as short
+                        No, but it helps a lot. For example, some validations such as short
                         label syntax are faster as they are peformed via JavaScript. Also, the
                         links to pop up windows wouldn't work when JavaScript is not enabled.
                         However, the overall functionality of the Editor shouldn't be affected
@@ -897,12 +892,7 @@
                             my session expires?</b><br/>
                         No. Once your session expires you need to login again and this in turn
                         will start a new session.<br/><br/>
-
-                        <b>I get an error stack trace for some
-                            IntAct types.</b><br/>
-                        Not to worry because these types are not implemented yet. This
-                        exception shouldn't appear at all once we have implemented all the
-                        IntAct types.<br/><br/>
+                        
 
                         <b>Sometimes I get an error when Enter
                             key is pressed for a search string in the sidebar.<br/>
@@ -924,16 +914,6 @@
                         Either Newt server is not accessible or down. There is no way to get
                         around this problem; you need to access the Newt server to do the
                         auto-completion.<br/><br/>
-
-                        <b>Not allowed to save an experiment as
-                            it fails with validation errors for drop down lists.</b><br/>
-                        Those drop down lists must contain at least a single item for an
-                        Experiment to save. Ensure that host organism, interaction detection and
-                        participant detection have at least one value in each one of them. If
-                        not then use the editor to create values for these (BioSource,
-                        CvInteraction and CvIndetification) and return to the Experiment editor.
-                        In summary, if you are caught in this situation you need to leave the
-                        Experiment editor, create proper entries and then return to it later.<br/><br/>
 
                         <b>The parameter to search for Proteins
                             given as short label is ignored when a value is provided for IntactAc in
@@ -965,15 +945,14 @@
             <section title="hierarchView" name="hierarchView">
 
                 <blockquote>
-                    HierarchView is a web based application which aims to give the user some basic features
-                    in order to visualize the data contained in his IntAct node.
+                    HierarchView is a web based application which visualises interaction networks contained in IntAct.
                     <br/><br/>
                     This includes :
                     <ul>
-                        <li> Query interface: to select the set of Interactor from which the interaction network is built, </li>
+                        <li> Query interface: to select the set of Interactors from which the interaction network is built, </li>
                         <li> Visualising an interaction network as a two dimensional graph, </li>
                         <li> Visualisation of a protein's context (using Search application), </li>
-                        <li> Performing action by clicking on a protein of the displayed network, </li>
+                        <li> Performing action by clicking on a protein of the displayed network, to</li>
                         <ul>
                             <li> Center the view, </li>
                             <li> Extend the view, </li>
@@ -985,24 +964,11 @@
                 </blockquote>
 
 
-                <section title="Availability" name="hierarchView.availability">
-
-                    <blockquote>
-                        The application to visualize protein interaction network is available if
-                        you can fulfill the software dependencies requirement such as
-                        <a href="http://www.tulip-software.org/" target="_blank">Tulip</a>
-                        which allows to perform the graphical rendering.
-                        However, if those dependencies are sorted out, the user just need a read access
-                        to the database to use it.
-                    </blockquote>
-
-                </section>
-
 
                 <section title="Graphical user interface" name="hierarchView.GUI">
 
                     <blockquote>
-                        The graphical user interface is integrates:
+                        The graphical user interface integrates:
                         <p>
                             <u>a sidebar</u>
                             <blockquote>
@@ -1016,7 +982,7 @@
                                     This includes:
                                     <ul>
                                         <li> on the top, the query interface. </li>
-                                        <li> on the bottom, a set of IntAct related link. </li>
+                                        <li> on the bottom, a set of IntAct related links. </li>
                                     </ul>
                                 </p>
                                 <p>
@@ -1036,21 +1002,20 @@
                             <u>a content frame</u>
                             <blockquote>
                                 <p>
-                                    <u>PPIN header</u>: it specifies from which protein(s) is built the current interaction network
+                                    <u>header</u>: specifies from which protein(s) the current interaction network is built 
                                     as well as the number of nodes and edges. If needed, the selected GO term used for the
-                                    highlightis displayed.
+                                    highlight is displayed.
                                 </p>
                                 <p>
-                                    <u>PPIN content</u>: a clickable image representing the requested interaction network.
+                                    <u>protein interaction network</u>: a clickable image representing the requested interaction network.
                                 </p>
                                 <p>
-                                    <u>highlight top</u>: a list of GO terms related to the set of proteins from which the
-                                    current interaction network has been generated.
+                                    <u>highlight top panel</u>: a list of all GO terms associated with proteins in the currently displayed interaction network.
                                 </p>
                                 <p>
-                                    <u>highlight bottom</u>: After selecting one of the GO term displayed in the top right frame,
+                                    <u>highlight bottom panel</u>: After selecting one of the GO term displayed in the top right frame,
                                     the related GO hierarchy is displayed, allowing the user to perform a highlight by
-                                    selecting on the GO term of the hierarchy.
+                                    selecting the GO term of the hierarchy.
                                 </p>
                             </blockquote>
                         </p>
@@ -1073,14 +1038,14 @@
                 <section title="What is an interaction network ?" name="hierarchView.PPIN">
 
                     <blockquote>
-                        It is a graphical way of representing an protein protein interaction network as
+                        It is a graphical way of representing a protein protein interaction network as
                         a two dimensional graph structure. Within that graph, the nodes represent proteins
-                        and the edges a physical interaction.
+                        and the edges represent interactions.
                         <br/>
                         <br/>
                         The entry point of an interaction network is an <b>Interactor</b> (either <b>Protein</b>
                         or <b>Interaction</b>) around which we will look for all Interactors within a specified
-                        threshold called depth. A depth 1 would be all direct Interactor of the selected protein.
+                        threshold called depth. A depth 1 would be all direct Interactors of the selected protein.
                     </blockquote>
 
                 </section> <!-- What is an interaction network ? -->
@@ -1113,11 +1078,11 @@
                     <section title="Add a further interaction network" name="hierarchView.PPIN.add">
 
                         <blockquote>
-                            When adding a interaction network, a new one is generated according to the user's wishes
+                            When adding an interaction network, a new one is generated according to the user's wishes
                             and then fusionned to the current one to display them alltogether.
                             <br/>
                             <br/>
-                            There is two ways of doing it:
+                            There are two ways of adding additional interactors the the displayed interaction network:
                             <ul>
                                 <li>
                                     Type in the <i>Interactor</i> form either a protein short label or AC and click
@@ -1146,7 +1111,7 @@
                             <br/>
                             <br/>
                             Bear in mind that it would have had the same effect to type the short label or accession
-                            number of the protein in the <i>Interactor</i> form and clicked on the <i>search</i>
+                            number of the protein in the <i>Interactor</i> form and click on the <i>search</i>
                             button.
                         </blockquote>
 
@@ -1160,7 +1125,7 @@
                             interaction network has been set relatively low. Nevertheless you can increase that
                             parameter in order to expand the current interaction network by clicking the <i>expand</i>
                             button in the sidebar. Bear in mind that there is a minimum and maximum depth, this
-                            implies the <i>expand</i> (<i>contract</i>) button to disapear when the maximum (minimum)
+                            implies the <i>expand</i> (<i>contract</i>) button  disapears when the maximum (minimum)
                             depth is reached.
                         </blockquote>
 
@@ -1174,13 +1139,13 @@
                             the related GO hierarchy appears in the bottom right frame (powered by
                             <a href="http://www.ebi.ac.uk/ego" target="_blank">QuickGo</a>).
                             If a single GO term is found, the hierarchy is displayed automaticaly.
-                            Now You can select one of the displayed GO term of the hierarchy in order to highlight
+                            Now you can select one of the displayed GO term of the hierarchy in order to highlight
                             in the interaction network all proteins annotated with that GO term in IntAct.
-                            These proteins will appear with a different color label.
+                            These proteins will appear with a differently colored label. 
                             <br/>
                             <br/>
                             In the displayed hierarchy, the lower GO term is the more specific, and the higher you go,
-                            the most generic the GO terms become. Bear in mind that when selecting a GO term in the
+                            the more generic the GO terms become. Bear in mind that when selecting a GO term in the
                             displayed hierarchy the highlight is done with a set of GO terms including the selected one
                             and all its children (i.e. until the most specific).
                             <br/>
