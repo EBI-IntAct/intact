@@ -5,7 +5,7 @@ CLASSPATH=classes/:$CLASSPATH
 
 #if cygwin used (ie on a Windows machine), make sure the paths
 #are converted from Unix to run correctly with the windows JVM
-if $cygwin; then
+if [ $CYGWIN ] ; then
 CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
 
 fi
