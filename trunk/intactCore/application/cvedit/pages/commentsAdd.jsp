@@ -26,7 +26,7 @@
     </tr>
     <tr class="tableRowOdd">
         <td class="tableCell" align="left" valign="bottom">
-            <html:submit>
+            <html:submit titleKey="annotations.button.add.titleKey">
                 <bean:message key="button.add"/>
             </html:submit>
         </td>

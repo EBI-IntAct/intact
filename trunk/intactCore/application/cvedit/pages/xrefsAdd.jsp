@@ -29,7 +29,7 @@
     </tr>
     <tr class="tableRowOdd">
         <td class="tableCell" align="right" valign="top">
-            <html:submit>
+            <html:submit titleKey="xrefs.button.add.titleKey">
                 <bean:message key="button.add"/>
             </html:submit>
         </td>

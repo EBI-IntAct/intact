@@ -53,20 +53,23 @@
                     <td class="tableCell">
                         <nested:equal name="<%=CvEditConstants.COMMENT_EDIT_FORM%>"
                             property="editState" value="<%=EditBean.VIEW%>">
-                            <html:submit indexed="true" property="cmd">
+                            <html:submit indexed="true" property="cmd"
+                                titleKey="annotations.button.edit.titleKey">
                                 <bean:message key="button.edit"/>
                             </html:submit>
                         </nested:equal>
 
                         <nested:equal property="editState" value="<%=EditBean.SAVE%>">
-                            <html:submit indexed="true" property="cmd">
+                            <html:submit indexed="true" property="cmd"
+                                titleKey="annotations.button.save.titleKey">
                                 <bean:message key="button.save"/>
                             </html:submit>
                         </nested:equal>
                     </td>
 
                     <td class="tableCell">
-                        <html:submit indexed="true" property="cmd">
+                        <html:submit indexed="true" property="cmd"
+                            titleKey="annotations.button.delete.titleKey">
                             <bean:message key="button.delete"/>
                         </html:submit>
                     </td>

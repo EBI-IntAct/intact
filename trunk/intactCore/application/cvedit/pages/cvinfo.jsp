@@ -18,7 +18,7 @@
         </tr>
         <tr class="tableRowEven">
             <td class="tableCell">
-                <html:submit>
+                <html:submit titleKey="cvinfo.buton.save.titleKey">
                     <bean:message key="button.save"/>
                 </html:submit>
             </td>

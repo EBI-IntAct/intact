@@ -55,21 +55,24 @@
                     <td class="tableCell">
                         <nested:equal name="<%=CvEditConstants.XREF_EDIT_FORM%>"
                             property="editState" value="<%=EditBean.VIEW%>">
-                            <html:submit indexed="true" property="cmd">
+                            <html:submit indexed="true" property="cmd"
+                                titleKey="xrefs.button.edit.titleKey">
                                 <bean:message key="button.edit"/>
                             </html:submit>
                         </nested:equal>
 
                         <nested:equal name="<%=CvEditConstants.XREF_EDIT_FORM%>"
                             property="editState" value="<%=EditBean.SAVE%>">
-                            <html:submit indexed="true" property="cmd">
+                            <html:submit indexed="true" property="cmd"
+                                titleKey="xrefs.button.save.titleKey">
                                 <bean:message key="button.save"/>
                             </html:submit>
                         </nested:equal>
                     </td>
 
                     <td class="tableCell">
-                        <html:submit indexed="true" property="cmd">
+                        <html:submit indexed="true" property="cmd"
+                                titleKey="xrefs.button.delete.titleKey">
                             <bean:message key="button.delete"/>
                         </html:submit>
                     </td>
