@@ -126,16 +126,6 @@
                     <var-value>${menu-pat}</var-value>
                 </var>
             </field>
-
-            <!-- Must be a valid item (short label) from drop down list -->
-            <field property="interactionType" depends="required, mask">
-                <msg name="mask" key="error.int.cvtype"/>
-                <arg0 key="int.label.cvtype"/>
-                <var>
-                    <var-name>mask</var-name>
-                    <var-value>${menu-pat}</var-value>
-                </var>
-            </field>
         </form>
 
     </formset>
