@@ -31,10 +31,11 @@
                 tr.Experiment {background-color: rgb(255, 255, 102)}
                 tr.Interaction {background-color: rgb(255, 255, 204)}
                 tr.Protein {background-color: rgb(255, 255, 51)}
+                tr.CvObject {background-color: rgb(255, 255, 102)}
             </xsl:comment>
         </style>
 
-        <table cellpadding="1" cellspacing="0" border="0" width="100%">
+        <table cellpadding="1" cellspacing="0" border="1" width="100%">
             <xsl:call-template name="draw-table-headings"/>
             <xsl:apply-templates/>
         </table>
@@ -42,7 +43,7 @@
 
     <!--
     ****************************************************************************
-    ** Template for experiment attribute.
+    ** Template for experiment.
     *************************************************************************-->
     <xsl:template match="Experiment">
         <tr class="Experiment">
@@ -64,11 +65,18 @@
         <xsl:if test="CvIdentification/@shortLabel | CvInteraction/@shortLabel | bioSource">
             <tr class="Experiment">
                 <td colspan="2">
-                    <xsl:value-of select="CvInteraction/@shortLabel"/>
-                </td>
+                    <xsl:call-template name="draw_cv_link">
+                        <xsl:with-param name="cv" select="CvInteraction/@shortLabel"/>
+                        <xsl:with-param name="type" select="'CvInteraction'"/>
+                    </xsl:call-template>
+               </td>
                 <td>
-                    <xsl:value-of select="CvIdentification/@shortLabel"/>
+                    <xsl:call-template name="draw_cv_link">
+                        <xsl:with-param name="cv" select="CvIdentification/@shortLabel"/>
+                        <xsl:with-param name="type" select="'CvIdentification'"/>
+                    </xsl:call-template>
                 </td>
+
                 <td colspan="2">
                     <xsl:value-of select="BioSource/@shortLabel"/>
                 </td>
@@ -78,7 +86,10 @@
         <xsl:for-each select="annotations/Annotation">
             <tr class="Experiment">
                 <td colspan="2">
-                    <xsl:value-of select="CvTopic/@shortLabel"/>
+                    <xsl:call-template name="draw_cv_link">
+                        <xsl:with-param name="cv" select="CvTopic/@shortLabel"/>
+                        <xsl:with-param name="type" select="'CvTopic'"/>
+                    </xsl:call-template>
                 </td>
 
                 <td colspan="3">
@@ -190,7 +201,8 @@
                 <xsl:value-of select="@ac"/>
             </td>
             <td>
-                <xsl:value-of select="@shortLabel"/>[<xsl:value-of select="substring(../CvComponentRole/@shortLabel, 1, 1)"/>]
+                <xsl:value-of select="@shortLabel"/>[
+                <xsl:value-of select="substring(../CvComponentRole/@shortLabel, 1, 1)"/>]
             </td>
 
             <td colspan="2">
@@ -232,6 +244,103 @@
     </xsl:template>
 
     <!--
+        ****************************************************************************
+        ** Template for CvObjects.
+        *************************************************************************-->
+    <xsl:template match="CvAliasType | CvCellCycle | CvCellType | CvCompartment |
+    CvComponentRole | CvDagObject | CvDatabase | CvDevelopmentalStage | CvEvidenceType |
+CvFeatureIdentification | CvFeatureType | CvIndentification | CvInteractionType |
+CvJournal | CvModificationType | CvProductRole | CvProteinForm | CvReferenceQualifier |
+CvTissue | CvTopic | CvXrefQualifier">
+
+        <xsl:call-template name="cv_common"/>
+
+    </xsl:template>
+
+    <!--
+        ****************************************************************************
+        ** Template for Cv DAG objects (currently onlly CvInteraction extends
+        the cvDagObject abstract class).
+        *************************************************************************-->
+    <xsl:template match="CvInteraction">
+
+        <!-- do standard CvObject stuff first -->
+        <xsl:call-template name="cv_common"/>
+
+        <!-- now display the parent and child terms of the DAG object -->
+        <tr>
+            <td>Parent terms:</td>
+            <td>
+                <xsl:for-each select="child::parents">
+                    <xsl:call-template name="draw_cv_link">
+                        <xsl:with-param name="cv" select="@shortLabel"/>
+                    </xsl:call-template>
+                    <!-- Avoid printing  ',' for the last protein -->
+                    <xsl:if test="not(position()=last())">, </xsl:if>
+                </xsl:for-each>
+            </td>
+        </tr>
+        <tr>
+            <td>Child terms:</td>
+            <!-- unfortunate that plural of child is children - not generated!! -->
+            <td>
+                <xsl:for-each select="child::childs">
+                    <xsl:call-template name="draw_cv_link">
+                        <xsl:with-param name="cv" select="@shortLabel"/>
+                    </xsl:call-template>
+                    <!-- Avoid printing  ',' for the last protein -->
+                    <xsl:if test="not(position()=last())">, </xsl:if>
+                    <!-- Avoid printing  ',' for the last protein -->
+                    <xsl:if test="not(position()=last())">, </xsl:if>
+                </xsl:for-each>
+            </td>
+        </tr>
+
+    </xsl:template>
+
+
+    <!--
+        ****************************************************************************
+        ** Template for common CvObject data.
+        *************************************************************************-->
+    <xsl:template name="cv_common">
+        <tr class="CvObject">
+            <td colspan="2">
+                <b>Controlled vocabulary term</b>
+            </td>
+            <td>
+                <xsl:value-of select="@ac"/>
+            </td>
+            <td>
+                <xsl:value-of select="@shortLabel"/>
+            </td>
+
+            <td>
+                <xsl:value-of select="@fullName"/>
+            </td>
+        </tr>
+
+        <xsl:for-each select="annotations/Annotation">
+            <tr class="CvObject">
+                <td colspan="2">
+                    <xsl:value-of select="CvTopic/@shortLabel"/>
+                </td>
+
+                <td colspan="3">
+                    <xsl:value-of select="@annotationText"/>
+                </td>
+            </tr>
+        </xsl:for-each>
+
+        <xsl:for-each select="xrefs/Xref">
+            <tr class="CvObject">
+                <xsl:call-template name="draw-xrefs"/>
+            </tr>
+        </xsl:for-each>
+    </xsl:template>
+
+
+    <!--
     ****************************************************************************
     ** Template for AC attribute.
     *************************************************************************-->
@@ -244,6 +353,19 @@
         <td>
             <a href="{$link}"><xsl:value-of select="$ac"/></a>
         </td>
+    </xsl:template>
+
+    <!--
+    ****************************************************************************
+    ** Template for drawing a cv link (short label).
+    *************************************************************************-->
+    <xsl:template name="draw_cv_link">
+        <xsl:param name="cv"/>
+        <xsl:param name="type"/>
+        <xsl:variable name="link">
+            <xsl:value-of select="concat($searchLink, $cv, '&amp;', 'searchClass=', $type)"/>
+        </xsl:variable>
+            <a href="{$link}"><xsl:value-of select="$cv"/></a>
     </xsl:template>
 
     <!--
@@ -283,7 +405,7 @@
             <xsl:variable name="ac">
                 <xsl:value-of select="@ac"/>
             </xsl:variable>
-            <xsl:value-of select="concat($tableName, '_X', $ac)"/>
+            <xsl:value-of select="concat($tableName, '_', $ac)"/>
         </xsl:variable>
         <input name="{$cbName}" type="checkbox"></input>
     </xsl:template>
@@ -297,9 +419,9 @@
         <tr>
             <td width="2%"></td>
             <td width="10%"></td>
+            <td width="15%"></td>
             <td width="10%"></td>
-            <td width="30%"></td>
-            <td width="48%"></td>
+            <td width="63%"></td>
         </tr>
     </xsl:template>
 
