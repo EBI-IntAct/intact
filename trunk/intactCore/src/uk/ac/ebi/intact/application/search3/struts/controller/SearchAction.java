@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchValidator;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
@@ -173,6 +174,12 @@ public class SearchAction extends IntactBaseAction {
                 return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
             }
 
+            /**  if (!SearchValidator.isValid(searchValue)) {
+             return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
+             }
+
+             **/
+
             SearchHelper searchHelper = new SearchHelper(logger);
 
             // if it's a binary request first look for this one
@@ -299,17 +306,20 @@ public class SearchAction extends IntactBaseAction {
                                      String searchValue, IntactUserIF user) throws IntactException {
 
         ResultWrapper result = null;
-        if (searchClass == null || searchClass.length() == 0) {
+        if (SearchValidator.isSearchable(searchClass)) {
+            result = helper.searchFast(searchValue, searchClass);
+        } else if (searchClass == null || searchClass.length() == 0) {
             // this is a initial request, so we don?t know how big is the result set
             // in that case searchFast, get the result from searchFast
             result = helper.searchFast(searchValue);
-        } else {
 
+        } else {
             // this is a normal request from the servlet, we know the class, we know the value.
             Collection temp = new ArrayList();
             temp.addAll(helper.doLookup(searchClass, searchValue, user));
             result = new ResultWrapper(temp, SearchConstants.MAXIMUM_RESULT_SIZE);
         }
+
 
         return result;
     }
