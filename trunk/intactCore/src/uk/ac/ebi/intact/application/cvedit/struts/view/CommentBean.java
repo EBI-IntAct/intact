@@ -80,6 +80,14 @@ public class CommentBean extends EditBean implements Serializable {
     }
 
     /**
+     * Sets the topic.
+     * @param topic the new topic as a <code>String</code>.
+     */
+    public void setTopic(String topic) {
+        myTopic = topic;
+    }
+
+    /**
      * Returns the annotated text.
      * @return description as a <code>String</code>.
      */
