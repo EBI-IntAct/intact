@@ -99,34 +99,13 @@ public class Xref extends BasicObjectImpl {
 
         //super call sets creation time data
         super(anOwner);
-        if(aDatabase == null) throw new NullPointerException("valid Xref must have non-null database details!");
-        if(aPrimaryId == null) throw new NullPointerException("valid Xref must have a primary ID!");
 
+        setPrimaryId(aPrimaryId);
+        setSecondaryId(aSecondaryId);
+        setCvDatabase(aDatabase);
 
-        if (aPrimaryId != null && aPrimaryId.length() > 30) {
-            aPrimaryId = aPrimaryId.substring(0,30);
-        }
-
-        if (aPrimaryId != null && aPrimaryId.length() > 30) {
-            aPrimaryId = aPrimaryId.substring(0,30);
-        }
-
-        this.primaryId = aPrimaryId;
-
-
-        if (aSecondaryId != null && aSecondaryId.length() > 30) {
-            aSecondaryId = aSecondaryId.substring(0,30);
-        }
-        this.cvDatabase = aDatabase;
-
-        if (aSecondaryId != null && aSecondaryId.length() > 30) {
-            aSecondaryId = aSecondaryId.substring(0,30);
-        }
-        this.cvDatabase = aDatabase;
-
-        this.secondaryId = aSecondaryId;
-        this.dbRelease = aDatabaseRelease;
-        this.cvXrefQualifier = aCvXrefQualifier;
+        setDbRelease(aDatabaseRelease);
+        setCvXrefQualifier(aCvXrefQualifier);
     }
 
 
@@ -136,24 +115,40 @@ public class Xref extends BasicObjectImpl {
     public String getPrimaryId() {
         return primaryId;
     }
-    public void setPrimaryId(String primaryId) {
-        this.primaryId = primaryId;
+
+    public void setPrimaryId(String aPrimaryId) {
+        if(aPrimaryId == null) throw new NullPointerException("valid Xref must have a primary ID!");
+
+
+        if (aPrimaryId != null && aPrimaryId.length() > 30) {
+            aPrimaryId = aPrimaryId.substring(0,30);
+        }
+        this.primaryId = aPrimaryId;
     }
+
     public String getSecondaryId() {
         return secondaryId;
     }
-    public void setSecondaryId(String secondaryId) {
-        this.secondaryId = secondaryId;
+
+    public void setSecondaryId(String aSecondaryId) {
+        if (aSecondaryId != null && aSecondaryId.length() > 30) {
+            aSecondaryId = aSecondaryId.substring(0,30);
+        }
+        this.secondaryId = aSecondaryId;
     }
+
     public String getDbRelease() {
         return dbRelease;
     }
-    public void setDbRelease(String dbRelease) {
-        this.dbRelease = dbRelease;
+
+    public void setDbRelease(String aDbRelease) {
+        this.dbRelease = aDbRelease;
     }
+
     public String getParentAc() {
         return parentAc;
     }
+
     public void setParentAc(String parentAc) {
         this.parentAc = parentAc;
     }
@@ -173,6 +168,7 @@ public class Xref extends BasicObjectImpl {
     }
 
     public void setCvDatabase(CvDatabase cvDatabase) {
+        if(cvDatabase == null) throw new NullPointerException("valid Xref must have non-null database details!");
         this.cvDatabase = cvDatabase;
     }
 
@@ -181,6 +177,7 @@ public class Xref extends BasicObjectImpl {
     public String getCvXrefQualifierAc() {
         return cvXrefQualifierAc;
     }
+
     public void setCvXrefQualifierAc(String ac) {
         this.cvXrefQualifierAc = ac;
     }
@@ -188,6 +185,7 @@ public class Xref extends BasicObjectImpl {
     public String getCvDatabaseAc() {
         return cvDatabaseAc;
     }
+
     public void setCvDatabaseAc(String ac) {
         this.cvDatabaseAc = ac;
     }
