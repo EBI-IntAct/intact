@@ -38,7 +38,7 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
      * Returns the only instance of Intact Service instance.
      * @return only instance of the <code>EditorService</code> class.
      */
-    protected EditorService getIntactService() {
+    protected EditorService getService() {
         EditorService service = (EditorService)
                 getApplicationObject(EditorConstants.EDITOR_SERVICE);
         return service;
