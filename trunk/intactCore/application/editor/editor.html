@@ -104,35 +104,34 @@ creating a new CvDatabase record. <br>
 The current edit type is appended to the main heading (CvDatabase) as
 shown above. All the drop down list items (topic, database and&nbsp;
 reference qualifier) are shown as short labels.&nbsp; Except for the
-short label other fields are optional. The user must select 'Save'
+short label, all other fields are optional. The user must select 'Save'
 button to validate the short label. All short labels should be one to
 twenty characters from the character set blank, 0..9, a-z, : (colon) and
--(dash). A&nbsp; dialog box similar to the following will&nbsp; appear
-for an syntaxically invalid short label.<br>
+-(dash). A&nbsp; dialog box similar to the following will appear for a
+failure to adhere to this syntax.<br>
 <br>
 <img src="images/editor-label-client-error.jpg" title=""
  alt="Incorrect short label" style="width: 416px; height: 130px;"><br>
 <br>
-Submitting&nbsp; the form without entering a syntaxically invalid short
-label results in a server side validation. The error response from the
-server is shown under the short label. The following screenshot
-illustrates this.<br>
+Submitting the form without entering a syntaxically invalid short label
+results in a server side validation. The error response from the server
+is shown under the short label as shown below.<br>
 <br>
 <img src="images/editor-label-server-error.jpg" title=""
  alt="Short label server validation"
  style="width: 1038px; height: 136px;"><br>
 <br>
-&nbsp;Although both validations are similar in nature, they server two
+&nbsp;Although both validations are similar in nature, they serve two
 different purposes. The first validation is performed on the client side
 (browser) and hence faster of the two. However, the browser must be
 enabled to accept Javascript for it to work (no dialog window if
 Javascript is not enabled). This is the preferred validation as it saves
-extra load in communication with the server. Alternatively, the other
+extra step in communication with the server. Alternatively, the other
 validation is not dependent on Javascript and hence guranteed to work on
-any browser. However, since it involves around a round trip to the
-server, it is slower.<br>
+any browser. However, it is slow since it involves a round trip to the
+server.<br>
 <br>
-For a short label to be valid it must be syntactically correct and
+For a short label to be valid it must be syntaxically correct and
 unique (i.e, no simlar label for the current edit type exists in the
 database). All the existing short lables for the current edit types are
 shown along with an error message for a non unique short label entry. <br>
@@ -219,10 +218,10 @@ collection. Duplcate experiments not allowed.<br>
 This section lists all the Proteins participated in the cirrent
 Interaction. For a new Interaction, this section is empty. To add a
 Protein, you must search for existing Proteins first by provide
-appropriate values for search fields.&nbsp; Only the most specific
-value is taken into consideration if multiple values are provided for
-search. Since IntAct AC is the most specific, other search values are
-ignored if a value was specified for IntAct AC.<br>
+appropriate values for search fields.&nbsp; Only the most specific value
+is taken into consideration if multiple values are provided for search.
+Since IntAct AC is the most specific, other search values are ignored
+if a value was specified for IntAct AC.<br>
 <br>
 <img src="images/editor-int-prot.jpg" title="" alt="Adding Proteins"
  style="width: 1026px; height: 298px;"><br>
@@ -260,10 +259,10 @@ run on thin clients (see the next question about JavaScript).<br>
 <span style="font-weight: bold;">Do I need JavaScript to run the Editor?</span><br
  style="font-weight: bold;">
 No but it helps a lot. For example, some validations such as short
-label syntax are faster as they are peformed via JavaScript. The links
-to pop up windows wouldn't work when JavaScript is not enabled. However,
-the overall functionality of the Editor shouldn't be affected if
-JavaScript is not enabled.<br>
+label syntax are faster as they are peformed via JavaScript. Also, the
+links to pop up windows wouldn't work when JavaScript is not enabled.
+However, the overall functionality of the Editor shouldn't be affected
+if JavaScript is not enabled.<br>
 <br>
 <span style="font-weight: bold;">Do I need to logout when I am finished?</span><br>
 There is no need to logout because your session will timeout if it has
@@ -276,14 +275,14 @@ my session expires?</span><br>
 No. Once your session expires you need to login again and this in turn
 will start a new session.<br>
 <br>
-<span style="font-weight: bold;">I get an exception stack trace for
-some IntAct types.</span><br>
+<span style="font-weight: bold;">I get an error stack trace for some
+IntAct types.</span><br>
 Not to worry because these types are not implemented yet. This
 exception shouldn't appear at all once we have implemented all the
 IntAct types.<br>
 <br>
-<span style="font-weight: bold;">Sometimes I get an exception when
-Enter key is pressed for a search string in the sidebar.<br>
+<span style="font-weight: bold;">Sometimes I get an error when Enter
+key is pressed for a search string in the sidebar.<br>
 </span>This behaviour was observed with Explorer and Konqueror but not
 with Mozilla. The simple solution is to click on Search button instead.<br>
 <br>
