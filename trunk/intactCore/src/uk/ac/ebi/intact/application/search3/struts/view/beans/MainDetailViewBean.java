@@ -69,6 +69,18 @@ public class MainDetailViewBean extends AbstractViewBean {
     private String bioSourceName;
 
     /**
+     * List of Annotation topics which should be filtered on. The values
+     * are set in the bean's constructor.
+     */
+    private List annotationFilters;
+
+    /**
+     * Holds a list of Annotations that may be publicly displayed, ie a filtered
+     * list removing those to be excluded (currently rrmakrs and uiprot exports)
+     */
+    private Collection annotationsForDisplay = new ArrayList();
+
+    /**
      * Map of retrieved DB URLs already retrieved from the DB. This
      * is basically a cache to avoid recomputation every time a CvDatabase URL
      * is requested.
@@ -121,7 +133,13 @@ public class MainDetailViewBean extends AbstractViewBean {
             setInteractionPage(1);
         }
         else interactionList = obj.getInteractions();
+
+        //now set up the Annotation filter list
+        annotationFilters = new ArrayList();
+        annotationFilters.add("remark");
+        annotationFilters.add("uniprot-dr-export");
     }
+
 
     //---------------- basic abstract methods that need implementing --------------
 
@@ -224,12 +242,52 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Provides the actual Annotation list of the wrapped object. Clients can use
      * this method to gain access to Annotation data for display.
+     * Note: this method filters out those Annotations which are not for public view; currently
+     * these are 'remark' and 'uniprot-dr-export' Annotations.
      *
      * @return Collection the list of Annotation objects for the wrapped instance.
      */
-    public Collection getAnnotations() {
-        return obj.getAnnotations();
+    public Collection getFilteredAnnotations() {
+
+        if (annotationsForDisplay.isEmpty()) {
+            //set on first call
+            for (Iterator it = obj.getAnnotations().iterator(); it.hasNext();) {
+                Annotation annotation = (Annotation) it.next();
+
+                //run through the filter
+                if ((annotationFilters.contains(annotation.getCvTopic().getShortLabel())))
+                    continue;   //ignore these
+
+                annotationsForDisplay.add(annotation);
+            }
+        }
+
+        return annotationsForDisplay;
     }
+
+    /**
+     * Convenience method to provide a filtered list of Annotations for a given
+     * Interaction. Useful in JSP display to apply the same filters of the wrapped
+     * Experiment to one of its Interactions.
+     * @return Collection the filtered List of Annotations (empty if there are none)
+     */
+    public Collection getFilteredAnnotations(Interaction interaction) {
+
+        Collection filteredAnnots = new ArrayList();
+
+        for (Iterator it = interaction.getAnnotations().iterator(); it.hasNext();) {
+            Annotation annotation = (Annotation) it.next();
+
+            //run through the filter
+            if ((annotationFilters.contains(annotation.getCvTopic().getShortLabel())))
+                continue;   //ignore these
+
+            filteredAnnots.add(annotation);
+        }
+
+        return filteredAnnots;
+    }
+
 
     /**
      * Filters the Annotations for the 'comment' ones only. This is useful for JSPs

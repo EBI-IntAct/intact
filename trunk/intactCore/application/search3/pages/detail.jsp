@@ -270,7 +270,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 <%
                     if(highlightList.contains(bean.getObjIntactName())) {
                 %>
-                    <span style="color: rgb(255, 0, 0);"><b><%= bean.getObjIntactName()%></b></span>
+                    <b><span style="color: rgb(255, 0, 0);"><%= bean.getObjIntactName()%></span></b>
                 <%
                     }
                     else {
@@ -321,7 +321,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
         <!-- Experiment Annotation row  -->
         <%
-            Collection annotations = bean.getAnnotations();
+            Collection annotations = bean.getFilteredAnnotations();
             Collection xrefs = bean.getXrefs();
             int rowCount = 0;
 
@@ -344,12 +344,12 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <%
 
             //skip any remarks - should not be not publicly visible
-            Collection expRemarks = new ArrayList();
-            for(Iterator it5 = annotations.iterator(); it5.hasNext();) {
-                Annotation annotation = (Annotation)it5.next();
-                if(annotation.getCvTopic().getShortLabel().equals("remark")) expRemarks.add(annotation);
-            }
-            annotations.removeAll(expRemarks);
+            //Collection expRemarks = new ArrayList();
+            //for(Iterator it5 = annotations.iterator(); it5.hasNext();) {
+                //Annotation annotation = (Annotation)it5.next();
+                //if(annotation.getCvTopic().getShortLabel().equals("remark")) expRemarks.add(annotation);
+            //}
+            //annotations.removeAll(expRemarks);
 
             rowCount = 0;
             for(Iterator iter = annotations.iterator(); iter.hasNext();) {
@@ -565,14 +565,15 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
         <%-- NB: THERE MAY BE ANNOTATION AND XREF BLOCKS AT THIS POINT AS WELL... --%>
         <%
-                Collection intAnnots = interaction.getAnnotations();
+                Collection intAnnots = bean.getFilteredAnnotations(interaction);
+                //Collection intAnnots = interaction.getAnnotations();
                 //skip remarks - should not be not publicly visible
-                Collection remarks = new ArrayList();
-                for(Iterator it4 = intAnnots.iterator(); it4.hasNext();) {
-                    Annotation annotation = (Annotation)it4.next();
-                    if(annotation.getCvTopic().getShortLabel().equals("remark")) remarks.add(annotation);
-                }
-                intAnnots.removeAll(remarks);
+                //Collection remarks = new ArrayList();
+                //for(Iterator it4 = intAnnots.iterator(); it4.hasNext();) {
+                    //Annotation annotation = (Annotation)it4.next();
+                    //if(annotation.getCvTopic().getShortLabel().equals("remark")) remarks.add(annotation);
+                //}
+                //intAnnots.removeAll(remarks);
 
                 Collection intXrefs = interaction.getXrefs();
         %>
@@ -897,7 +898,6 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 link 2: Xref link for the feature (or rather, one primary ID link for each Feature Xref)
                 text2: detected by <link 3: CvfeatureDetection (!!)>, interacts with <above again, but
                 for the Feature that is 'linked to'>
-                TODO: The Range needs to be obtained from the view bean (it may have many!!..)
             --%>
             <td style="vertical-align: top;" rowspan="1" colspan="6">
 
@@ -1023,9 +1023,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 </td>
 
 
-                <%-- feature type info, plus search link
-                    NB TODO: The feature type shortlabel must have its FIRST WORD in UPPERCASE
-                --%>
+                <%-- feature type info, plus search link --%>
                 <td style="vertical-align: top;" rowspan="1" colspan="6">
 
                     <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
@@ -1217,9 +1215,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 </td>
 
 
-                <%-- feature type info, plus search link
-                    NB TODO: The feature type shortlabel must have its FIRST WORD in UPPERCASE
-                --%>
+                <%-- feature type info, plus search link --%>
                 <td style="vertical-align: top;" rowspan="1" colspan="6">
 
                     <a href="<%= singleFeature.getCvFeatureTypeSearchURL() %>">
