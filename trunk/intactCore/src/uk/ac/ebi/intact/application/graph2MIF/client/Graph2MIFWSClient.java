@@ -5,22 +5,22 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.graph2MIF.client;
 
-import org.apache.axis.client.*;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.commons.cli.*;
+import uk.ac.ebi.intact.application.graph2MIF.GraphNotConvertableException;
+import uk.ac.ebi.intact.application.graph2MIF.MIFSerializeException;
+import uk.ac.ebi.intact.application.graph2MIF.NoGraphRetrievedException;
+import uk.ac.ebi.intact.application.graph2MIF.NoInteractorFoundException;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.util.PropertyLoader;
 
-import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.Properties;
-
-import org.apache.commons.cli.*;
-import uk.ac.ebi.intact.util.PropertyLoader;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.application.graph2MIF.GraphNotConvertableException;
-import uk.ac.ebi.intact.application.graph2MIF.NoGraphRetrievedException;
-import uk.ac.ebi.intact.application.graph2MIF.MIFSerializeException;
-import uk.ac.ebi.intact.application.graph2MIF.NoInteractorFoundException;
-import uk.ac.ebi.intact.persistence.DataSourceException;
 
 /**
  * Graph2MIFWSClient

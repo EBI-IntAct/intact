@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.graph2MIF.client;
 
 import org.apache.commons.cli.*;
+import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
@@ -20,6 +21,7 @@ import uk.ac.ebi.intact.simpleGraph.Graph;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.util.Collection;
 
 /**
@@ -40,6 +42,14 @@ public class Graph2MIFConsole {
     //Contructor creates the IntactHelper
     public Graph2MIFConsole() throws IntactException, DataSourceException {
         helper = new IntactHelper();
+        try {
+            System.out.println ( "Using DB:   " + helper.getDbName() );
+            System.out.println ( "Using user: " + helper.getDbUserName() );
+        } catch ( LookupException e ) {
+            e.printStackTrace ();
+        } catch ( SQLException e ) {
+            e.printStackTrace ();
+        }
     }
 
     /**
@@ -158,7 +168,7 @@ public class Graph2MIFConsole {
         // retrieve Graph
         graph = getInteractionNetwork(ac, depth); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
         //convert graph to DOM Object
-        Graph2MIF convert = new Graph2MIF(strictmif);
+        Graph2FoldedMIF convert = new Graph2FoldedMIF(strictmif);
         Document mifDOM = null;
         mifDOM = convert.getMIF(graph); // GraphNotConvertableException possible
         // serialize the DOMObject

@@ -8,10 +8,6 @@ package uk.ac.ebi.intact.application.graph2MIF;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.application.graph2MIF.GraphNotConvertableException;
-import uk.ac.ebi.intact.application.graph2MIF.NoGraphRetrievedException;
-import uk.ac.ebi.intact.application.graph2MIF.NoInteractorFoundException;
-import uk.ac.ebi.intact.application.graph2MIF.MIFSerializeException;
 
 
 /**
