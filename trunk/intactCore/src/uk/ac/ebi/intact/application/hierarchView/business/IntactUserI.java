@@ -39,12 +39,14 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener {
     public String  getBehaviour();
     public ImageBean getImageBean();
     public Collection getKeys();
+    public String getSelectedKey ();
     public InteractionNetwork getInteractionNetwork();
     public boolean InteractionNetworkReadyToBeDisplayed();
     public boolean InteractionNetworkReadyToBeHighlighted();
     public IntactHelper getHelper ();
     public String getSourceURL ();
     public boolean hasSourceUrlToDisplay();
+    public String getSearchUrl ();
 
     public void setAC (String AC);
     public void increaseDepth();
@@ -55,6 +57,8 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener {
     public void setBehaviour (String behaviour);
     public void setImageBean (ImageBean imageBean);
     public void setKeys (Collection keys);
+    public void setSelectedKey (String key);
+
     public void setInteractionNetwork (InteractionNetwork in);
 
     public void setSourceURL(String url);
@@ -115,4 +119,6 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener {
      * @return the value associated to the name
      */
     public Object getHighlightOption (String name);
+
+    public void setCurrentDepth(int i);
 }

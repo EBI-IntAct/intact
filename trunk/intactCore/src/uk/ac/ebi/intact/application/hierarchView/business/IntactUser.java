@@ -71,6 +71,7 @@ public class IntactUser implements IntactUserI {
      * The highlightment of the current interaction network is done according to these keys.
      */
     private Collection keys;
+    private String selectedKey;
 
     /**
      * URL describes the link to the highlight source in the case the user has selected
@@ -164,6 +165,10 @@ public class IntactUser implements IntactUserI {
         return keys;
     }
 
+    public String getSelectedKey() {
+        return selectedKey;
+    }
+
     public IntactHelper getHelper () {
         return intactHelper;
     }
@@ -225,6 +230,10 @@ public class IntactUser implements IntactUserI {
         this.keys = keys;
     }
 
+    public void setSelectedKey(String key) {
+        selectedKey = key;
+    }
+
     public void setSourceURL(String sourceURL) {
         this.sourceURL = sourceURL;
     }
@@ -263,6 +272,9 @@ public class IntactUser implements IntactUserI {
         // build a helper for use throughout a session
         this.intactHelper = new IntactHelper (dataSource);
         logger.info ("IntactHelper created.");
+
+        // TODO: Load all properties files
+
     }
 
     /**
@@ -305,8 +317,9 @@ public class IntactUser implements IntactUserI {
         interactionNetwork = null;
         imageBean = null;
         keys = null;
+        selectedKey = null;
         highlightOptions = new HashMap();
-        sourceURL = null;
+        //sourceURL = null;
         logger.info ("User's data set to default");
     }
 
@@ -369,6 +382,13 @@ public class IntactUser implements IntactUserI {
         return highlightOptions.get (name);
     }
 
+    public void setCurrentDepth(int depth) {
+        if (depth > maximalDepth || depth < minimalDepth)
+            currentDepth = defaultDepth;
+        else
+            currentDepth = depth;
+    }
+
 
     // Implements HttpSessionBindingListener
 
@@ -391,5 +411,26 @@ public class IntactUser implements IntactUserI {
             //failed to close the store - not sure what to do here yet....
             logger.error ("error when closing the IntactHelper store", ie);
         }
+    }
+
+
+    public String getSearchUrl () {
+        String searchURL = null;
+
+        // read the Search.properties file
+        Properties properties = PropertyLoader.load (StrutsConstants.SEARCH_PROPERTY_FILE);
+
+        if (null != properties) {
+            String url = properties.getProperty ("search.url");
+            String queryParameter = properties.getProperty ("search.parameter.query.name");
+            String classParameter = properties.getProperty ("search.parameter.class.name");
+            String classValue     = properties.getProperty ("search.parameter.class.value");
+
+            searchURL = url + "?" + queryParameter + "=" + AC + "&" +
+                        classParameter + "=" + classValue;
+        }
+
+        logger.info ("search URL = " + searchURL);
+        return searchURL;
     }
 }
