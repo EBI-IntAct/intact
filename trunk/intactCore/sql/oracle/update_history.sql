@@ -90,3 +90,166 @@ end;
 /
 
 
+
+
+
+
+
+/* From 2004-03-15 to 2004-06-14 - Extension of the schema: Feature */
+
+/* This is a table where we store which features are linked to a component. */
+
+PROMPT Creating table "IA_Feature"
+CREATE TABLE IA_Feature
+(         ac                    VARCHAR2(30)    NOT NULL
+                                                CONSTRAINT pk_Feature
+                                                PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+        , deprecated            NUMBER(1)       DEFAULT  0       NOT NULL
+        , created               DATE            DEFAULT  SYSDATE NOT NULL
+        , updated               DATE            DEFAULT  SYSDATE NOT NULL
+        , timestamp             DATE            DEFAULT  SYSDATE NOT NULL
+        , userstamp             VARCHAR2(30)    DEFAULT  USER    NOT NULL
+        , component_ac          VARCHAR2(30)    NOT NULL CONSTRAINT fk_Feature$component REFERENCES IA_Component(ac) ON DELETE CASCADE
+        , linkedfeature_ac      VARCHAR2(30)    NOT NULL CONSTRAINT fk_Feature$feature REFERENCES IA_Feature(ac)
+        , identification_ac     VARCHAR2(30)    CONSTRAINT fk_Feature$identification_ac REFERENCES IA_ControlledVocab(ac)
+        , featureType_ac        VARCHAR2(30)    CONSTRAINT fk_Feature$featureType_ac REFERENCES IA_ControlledVocab(ac)
+        , shortLabel            VARCHAR2(20)
+        , fullName              VARCHAR2(250)
+)
+TABLESPACE &&intactMainTablespace
+;
+
+CREATE INDEX i_Feature$component_ac on IA_Feature(component_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_Feature$linkedfeature_ac on IA_Feature(linkedfeature_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_Feature$identification_ac on IA_Feature(identification_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_Feature$featureType_ac on IA_Feature(featureType_ac) TABLESPACE &&intactIndexTablespace;
+
+set term off
+    COMMENT ON TABLE IA_Feature IS
+    'Feature. Define a set of Ranges.';
+    COMMENT ON COLUMN IA_Feature.ac IS
+    'Unique, auto-generated accession number.';
+    COMMENT ON COLUMN IA_Feature.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_Feature.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_Feature.timestamp IS
+    'Date of the last update of the column.';
+    COMMENT ON COLUMN IA_Feature.userstamp IS
+    'Database user who has performed the last update of the column.';
+    COMMENT ON COLUMN IA_Feature.fullName IS
+    'The full name of the object. ';
+    COMMENT ON COLUMN IA_Feature.shortlabel IS
+    'The Shortlabel of the object. ';
+    COMMENT ON COLUMN IA_Feature.component_ac IS
+    'the component to which relates that feature.';
+    COMMENT ON COLUMN IA_Feature.linkedfeature_ac IS
+    'The feature that bind the one we are describing.';
+set term on
+
+
+
+/* This is a table where we store where is situated an interaction at the protein sequence level. */
+
+PROMPT Creating table "IA_Range"
+CREATE TABLE IA_Range
+(         ac                    VARCHAR2(30)    NOT NULL
+                                                CONSTRAINT pk_Range
+                                                PRIMARY KEY USING INDEX TABLESPACE INTACT_IDX
+        , deprecated            NUMBER(1)       DEFAULT  0       NOT NULL
+        , created               DATE            DEFAULT  SYSDATE NOT NULL
+        , updated               DATE            DEFAULT  SYSDATE NOT NULL
+        , timestamp             DATE            DEFAULT  SYSDATE NOT NULL
+        , userstamp             VARCHAR2(30)    DEFAULT  USER    NOT NULL
+        , undetermined          CHAR            NOT NULL CHECK ( undetermined IN ('N','Y') )
+        , link                  CHAR            NOT NULL CHECK ( link IN ('N','Y') )
+        , feature_ac            VARCHAR2(30)    NOT NULL CONSTRAINT fk_Range$feature REFERENCES IA_Feature(ac) ON DELETE CASCADE
+        , fromIntervalStart     NUMBER(5)
+        , fromIntervalEnd       NUMBER(5)
+        , fromFuzzyType_ac      VARCHAR2(30)    CONSTRAINT fk_Range$fromFuzzyType_ac REFERENCES IA_ControlledVocab(ac)
+        , toIntervalStart       NUMBER(5)
+        , toIntervalEnd         NUMBER(5)
+        , toFuzzyType_ac        VARCHAR2(30)    CONSTRAINT fk_Range$toFuzzyType_ac REFERENCES IA_ControlledVocab(ac)
+        , sequence              VARCHAR(100)
+)
+TABLESPACE INTACT_TAB
+;
+
+CREATE INDEX i_Range$fromFuzzyType_ac on IA_Range(fromFuzzyType_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_Range$toFuzzyType_ac on IA_Range(toFuzzyType_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_Range$feature_ac on IA_Range(feature_ac) TABLESPACE &&intactIndexTablespace;
+
+set term off
+    COMMENT ON TABLE IA_Range IS
+    'Range. Represents a location on a sequence.';
+    COMMENT ON COLUMN IA_Range.ac IS
+    'Unique, auto-generated accession number.';
+    COMMENT ON COLUMN IA_Range.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_Range.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_Range.timestamp IS
+    'Date of the last update of the column.';
+    COMMENT ON COLUMN IA_Range.userstamp IS
+    'Database user who has performed the last update of the column.';
+    COMMENT ON COLUMN IA_Range.fromIntervalStart IS
+    'Lower bound of the interval start.';
+    COMMENT ON COLUMN IA_Range.fromIntervalEnd IS
+    'Higher bound of the interval start. Can be equal to the lower bound.';
+    COMMENT ON COLUMN IA_Range.fromFuzzyType_ac IS
+    'Defines a type of fuzzy range (before, after ...).';
+    COMMENT ON COLUMN IA_Range.toIntervalStart IS
+    'Lower bound of the interval end.';
+    COMMENT ON COLUMN IA_Range.toIntervalEnd IS
+    'Higher bound of the interval end. Can be equal to the lower bound';
+    COMMENT ON COLUMN IA_Range.toFuzzyType_ac IS
+    'Defines a type of fuzzy range (before, after ...).';
+    COMMENT ON COLUMN IA_Range.sequence IS
+    'The first 100 amino acid of the protein sequence that binds.';
+    COMMENT ON COLUMN IA_Range.undetermined IS
+    'Answer the question: does that range defines boundaries on the sequence?';
+    COMMENT ON COLUMN IA_Range.link IS
+    'Answer the question: does that range (from and to) are related to different location of the sequence that are interacting together ?';
+set term on
+
+
+/* Indirection table in which we stores which feature is linked to which annotations. */
+
+PROMPT Creating table "IA_Feature2Annot"
+CREATE TABLE IA_Feature2Annot
+(       feature_ac              VARCHAR2(30)    NOT NULL CONSTRAINT fk_Feature2Annot$feature REFERENCES IA_Feature(ac) ON DELETE CASCADE
+     ,  annotation_ac           VARCHAR2(30)    NOT NULL CONSTRAINT fk_Feature2Annot$annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
+     ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
+     ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
+     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
+     ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
+     ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
+)
+TABLESPACE &&intactMainTablespace
+;
+
+PROMPT Creating composite primary Key on 'IA_Feature2Annot'
+ALTER TABLE IA_Feature2Annot
+ ADD (CONSTRAINT     pk_Feature2Annot
+        PRIMARY KEY  (feature_ac, annotation_ac)
+        USING INDEX
+        TABLESPACE   &&intactIndexTablespace
+     )
+;
+
+set term off
+    COMMENT ON TABLE IA_Feature2Annot IS
+    'Feature2Annot. Link table from Annotation to Feature.';
+    COMMENT ON COLUMN IA_Feature2Annot.feature_ac IS
+    'Refers to a Feature to which the Annotation is linked.';
+    COMMENT ON COLUMN IA_Feature2Annot.annotation_ac IS
+    'Refers to the annotation object linked to the Feature.';
+    COMMENT ON COLUMN IA_Feature2Annot.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_Feature2Annot.userstamp IS
+    'Database user who has performed the last update of the column.';
+    COMMENT ON COLUMN IA_Feature2Annot.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_Feature2Annot.timestamp IS
+    'Date of the last update of the column.';
+set term on
