@@ -6,22 +6,17 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.apache.struts.action.ActionServlet;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
+import uk.ac.ebi.intact.application.editor.event.EventListener;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.struts.action.ActionServlet;
-
-import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.util.LockManager;
-import uk.ac.ebi.intact.application.editor.event.EventListener;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * This is Intact editor specific action servlet class. This class is
