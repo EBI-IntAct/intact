@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
 
 import javax.servlet.http.HttpSessionBindingListener;
 import java.util.Collection;
@@ -38,6 +39,11 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener {
     public ImageBean getImageBean();
     public Collection getKeys();
     public String getSelectedKey ();
+
+    public void setClickBehaviour (ClickBehaviourForm form);
+    public boolean clickBehaviourIsAdd ();
+    public boolean clickBehaviourIsCenter ();
+
     public InteractionNetwork getInteractionNetwork();
     public boolean InteractionNetworkReadyToBeDisplayed();
     public boolean InteractionNetworkReadyToBeHighlighted();
