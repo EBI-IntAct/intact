@@ -37,6 +37,6 @@ public class SetUpBioSourceAction  extends AbstractEditorAction {
         DynaActionForm dynaForm = (DynaActionForm) form;
         dynaForm.set("taxId", view.getTaxId());
 
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(EditorConstants.FORWARD_EDITOR);
     }
 }

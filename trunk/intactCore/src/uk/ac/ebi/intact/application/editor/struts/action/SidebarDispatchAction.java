@@ -17,7 +17,8 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
+//import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 
@@ -82,12 +83,12 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         LOGGER.info("search action: topic is " + topic);
 
         // The class name associated with the topic.
-        String classname = super.getIntactService().getClassName(topic);
+        String classname = getIntactService().getClassName(topic);
 
         // Holds the result from the search.
         Collection results = null;
 
-        try {
+//        try {
             // Try searching as it is.
             results = user.lookup(classname, searchString, true);
             if (results.isEmpty()) {
@@ -100,18 +101,18 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
                     results = user.lookup(classname, searchString.toLowerCase(), true);
                 }
             }
-        }
-        catch (SearchException ie) {
-            // Something failed during search...
-            LOGGER.info(ie);
-            // The errors to report back.
-            // Error with updating.
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search", ie.getNestedMessage()));
-            super.saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
+//        }
+//        catch (SearchException ie) {
+//            // Something failed during search...
+//            LOGGER.info(ie);
+//            // The errors to report back.
+//            // Error with updating.
+//            ActionErrors errors = new ActionErrors();
+//            errors.add(AbstractEditorAction.EDITOR_ERROR,
+//                    new ActionError("error.search", ie.getMessage()));
+//            super.saveErrors(request, errors);
+//            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
+//        }
         if (results.isEmpty()) {
             // No matches found - forward to a suitable page
             LOGGER.info("No matches were found for the specified search criteria");
@@ -185,7 +186,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             LOGGER.info(se);
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search", se.getNestedMessage()));
+                    new ActionError("error.search", se.getMessage()));
             super.saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }

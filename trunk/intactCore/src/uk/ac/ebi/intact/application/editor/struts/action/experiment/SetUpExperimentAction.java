@@ -38,6 +38,6 @@ public class SetUpExperimentAction  extends AbstractEditorAction {
         dynaForm.set("interaction", view.getInteraction());
         dynaForm.set("identification", view.getIdentification());
 
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(EditorConstants.FORWARD_EDITOR);
     }
 }

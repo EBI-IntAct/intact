@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import org.apache.struts.action.*;
 
@@ -61,22 +61,10 @@ public class EditorInfoAction extends AbstractEditorAction {
         // Validate the short label.
         if (!validateShortLabel(user, formlabel, request)) {
             // Display the errors in the input page.
-            return mapping.findForward(EditorConstants.FORWARD_INPUT);
+            return inputForward(mapping);
         }
-        // Holds the unique short label.
-        String newlabel = null;
-        try {
-            newlabel = user.getUniqueShortLabel(formlabel);
-        }
-        catch (SearchException se) {
-            LOGGER.info(se);
-            // The errors to report back.
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search", se.getMessage()));
-            super.saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
+        String newlabel = user.getUniqueShortLabel(formlabel);
+
         // Update the view with new values.
         viewbean.setShortLabel(newlabel);
         viewbean.setFullName((String) theForm.get("fullName"));
@@ -90,28 +78,18 @@ public class EditorInfoAction extends AbstractEditorAction {
      * @param label the label to validate.
      * @param request the Http request to save errors
      * @return true if <code>label</code> doesn't exist in the database.
+     * @exception SearchException for errors in acccessing the database.
      */
-    private boolean validateShortLabel(EditUserI user, String label,
-                                       HttpServletRequest request) {
+    private boolean validateShortLabel(EditUserI user,
+                                       String label,
+                                       HttpServletRequest request)
+            throws SearchException {
         // The object we are editing at the moment.
         AnnotatedObject annobj = user.getView().getAnnotatedObject();
         Class clazz = annobj.getClass();
 
         // Holds the result from the search.
-        Collection results = null;
-
-        try {
-            results = user.search(clazz.getName(), "shortLabel", label);
-        }
-        catch (SearchException se) {
-            // Can't query the database.
-            LOGGER.info(se);
-            ActionErrors errors = new ActionErrors();
-            errors.add("cvinfo", new ActionError("error.search",
-                    "Unable to search the database to check for unique tax ids"));
-            saveErrors(request, errors);
-            return false;
-        }
+        Collection results = user.search(clazz.getName(), "shortLabel", label);
         if (results.isEmpty()) {
             // Don't have this short label on the database.
             return true;
