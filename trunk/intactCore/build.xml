@@ -35,7 +35,7 @@
     <property environment="env"/>
 
     <!-- The build properties. -->
-    <property resource="config/build.properties"/>
+    <property file="config/build.properties"/>
 
     <!-- Project classpath. -->
     <path id="project.class.path">
