@@ -76,10 +76,15 @@
 
     <!-- =============== Definitions related to pages ================= -->
 
+    <!-- Institution header -->
+    <definition name="ebi.header.layout" path="/layouts/ebiHeaderLayout.jsp">
+        <put name="title"  value="IntAct - Control Vocabulary Editor"/>
+    </definition>
+
     <!-- Login page description  -->
     <definition name="login.layout" path="/layouts/intactLayout.jsp">
-        <put name="title"  value="IntAct - Control Vocabulary Editor"/>
 <!--        <put name="stylesheet" value="layouts/styles/cvedit.css"/>-->
+        <put name="institution.header" value="ebi.header.layout"/>
         <put name="sidebar" value="login.sidebar.layout"/>
         <put name="header" value="header.layout"/>
         <put name="footer" value="/pages/footer.jsp"/>
