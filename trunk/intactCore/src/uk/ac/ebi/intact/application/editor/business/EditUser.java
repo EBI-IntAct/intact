@@ -670,7 +670,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // The result to return.
         try {
             Class clazz = Class.forName(className);
-            return helper.doLookupSimple(clazz, value, max);
+            ResultWrapper rw = helper.doLookupSimple(clazz, value, max);
+            // Cache the search query.
+            mySearchCriteria = (CriteriaBean) helper.getSearchCritera().iterator().next();
+            return rw;
         }
         catch (ClassNotFoundException e) {
             // This is an internal error. Log it.
