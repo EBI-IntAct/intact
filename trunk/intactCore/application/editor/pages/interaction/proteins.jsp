@@ -193,7 +193,7 @@
                             <nested:select property="role">
                                 <nested:options name="rolelist_" />
                             </nested:select>
-                            <html:errors property="protein.role"/>
+<%--                            <html:errors property="protein.role"/>--%>
                         </td>
                         <td class="tableCell">
                             <nested:text size="5" property="stoichiometry"/>
@@ -206,15 +206,15 @@
                 </tr>
 
                 <%-- Error for Protein is displayed in a separate row. --%>
-                <nested:equal property="editState" value="<%=errorState%>">
-                    <nested:notEmpty property="error">
-                        <tr>
-                            <td class="tableErrorCell" colspan="4">
-                                <nested:write property="error"/>
-                            </td>
-                        </tr>
-                    </nested:notEmpty>
-                </nested:equal>
+<%--                <nested:equal property="editState" value="<%=errorState%>">--%>
+<%--                    <nested:notEmpty property="error">--%>
+<%--                        <tr>--%>
+<%--                            <td class="tableErrorCell" colspan="4">--%>
+<%--                                <nested:write property="error"/>--%>
+<%--                            </td>--%>
+<%--                        </tr>--%>
+<%--                    </nested:notEmpty>--%>
+<%--                </nested:equal>--%>
 
             </nested:iterate>
         </table>
