@@ -968,13 +968,16 @@ public class DRLineExport {
         if( export ) {
             // That protein is eligible for export.
             // The ID will be still unique even if it already exists.
-            log( "Protein exported to Swiss-Prot" );
 
             if( null != masterUniprotID ) {
+                log( "As the protein is a splice variant, we export the Swiss-Prot AC of its master." );
                 selectedUniprotID = masterUniprotID;
             } else {
                 selectedUniprotID = uniprotID;
             }
+
+            log( "Protein exported to Swiss-Prot (AC: " + selectedUniprotID + ")" );
+
         } else {
 
             log( "Protein NOT exported to Swiss-Prot" );
@@ -1116,7 +1119,7 @@ public class DRLineExport {
         StringBuffer sb = new StringBuffer();
 
         sb.append( uniprotID ).append( '\t' );
-        sb.append( "Intact" ).append( '\t' );
+        sb.append( "IntAct" ).append( '\t' );
         sb.append( uniprotID ).append( '\t' );
         sb.append( '-' );
 
