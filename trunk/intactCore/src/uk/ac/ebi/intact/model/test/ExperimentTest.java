@@ -87,6 +87,13 @@ public class ExperimentTest extends TestCase {
         // Make a copy.
         Experiment copy = (Experiment) orig.clone();
 
+        // No AC.
+        assertNull(copy.getAc());
+
+        // Time stamps are different.
+        assertFalse(orig.getCreated().equals(copy.getCreated()));
+        assertFalse(orig.getUpdated().equals(copy.getUpdated()));
+
         // Short label must have "-x".
         assertTrue(copy.getShortLabel().endsWith("-x"));
         assertEquals(orig.getShortLabel() + "-x", copy.getShortLabel());
@@ -124,7 +131,17 @@ public class ExperimentTest extends TestCase {
         IntactHelper helper = myTestHelper.getHelper();
         Experiment orig = (Experiment) helper.getObjectByLabel(Experiment.class,
                 "gavin");
+
+        // Make a copy.
         Experiment copy = (Experiment) orig.clone();
+
+        // No AC.
+        assertNull(copy.getAc());
+
+        // Time stamps are different.
+        assertFalse(orig.getCreated().equals(copy.getCreated()));
+        assertFalse(orig.getUpdated().equals(copy.getUpdated()));
+
         // Short label must have "-x".
         assertTrue(copy.getShortLabel().endsWith("-x"));
         assertEquals(orig.getShortLabel() + "-x", copy.getShortLabel());
