@@ -20,12 +20,25 @@ public class Wrapper extends TableDecorator {
      * @return the link for the result page; clicking on this link, the
      * user will be taken into the edit page.
      */
-    public String getLink() {
+    public String getSearchLink() {
+        ResultBean bean = (ResultBean) getObject();
+        String className = bean.getClassName();
+        int lastPos = className.lastIndexOf('.');
+        String type = className.substring(lastPos + 1);
+        return "<a href=\"" + "javascript:show('" + type + "', " + "'"
+                + bean.getShortLabel() + "')\"" + ">" + bean.getAc() + "</a>";
+    }
+
+    /**
+     * @return the link for the result page; clicking on this link, the
+     * user will be taken into the edit page.
+     */
+    public String getEditorLink() {
         ResultBean bean = (ResultBean) getObject();
         String ac = bean.getAc();
         String className = bean.getClassName();
         int lastPos = className.lastIndexOf('.');
         return "<a href=results?ac=" + ac + "&searchClass="
-                + className.substring(lastPos + 1) + ">" + ac + "</a>";
+                + className.substring(lastPos + 1) + ">" + bean.getShortLabel() + "</a>";
     }
 }
