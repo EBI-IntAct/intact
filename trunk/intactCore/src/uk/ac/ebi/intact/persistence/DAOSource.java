@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.persistence;
 
 import java.util.*;
 
-import org.apache.ojb.broker.util.logging.*;
+import org.apache.log4j.Logger;
 
 /**
  *  <p>This interface defines the functionality usually provided by
@@ -46,7 +46,7 @@ public interface DAOSource {
     /**
      * Used to define a password which overrides any default supplied via config data.
      * Should typically be used in conjunction with the setUser method for consistency.
-     * @param passowrd the password to be used for persistent store connection.
+     * @param password the password to be used for persistent store connection.
      */
     public void setPassword(String password);
 
@@ -103,9 +103,9 @@ public interface DAOSource {
     /**
      *  allows a logging destination to be specified
      *
-     * @param p A <code>PrintWriter</code> for logging output
+     * @param logger A log4j <code>Logger</code> for logging output
      */
-    public void setLogger(Logger l);
+    public void setLogger(Logger logger);
 
     /**
      *   Returns the log destination being used for this data source

@@ -9,8 +9,9 @@ import java.util.*;
 import java.io.*;
 
 import org.apache.ojb.broker.*;
-import org.apache.ojb.broker.metadata.*;
-import org.apache.ojb.broker.util.logging.*;
+// import org.apache.ojb.broker.metadata.*;
+
+import org.apache.log4j.Logger;
 
 import uk.ac.ebi.intact.model.Constants;
 
@@ -43,7 +44,7 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
         //just set up a logger
         try {
 //            logger = LoggerFactory.getLogger(Class.forName("org.apache.ojb.broker.util.logging.Log4jLoggerImpl"));
-            logger = LoggerFactory.getLogger(OJB_LOGGER_NAME);
+            logger = Logger.getLogger(OJB_LOGGER_NAME);
 
         }
         catch(Exception ce) {
@@ -95,7 +96,7 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
     /**
      * Used to define a password which overrides any default supplied via config data.
      * Should typically be used in conjunction with the setUser method for consistency.
-     * @param passowrd the password to be used for persistent store connection.
+     * @param password the password to be used for persistent store connection.
      */
     public void setPassword(String password) {
 
@@ -216,7 +217,7 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
         return false;
     }
 
-    public void setLogger(org.apache.ojb.broker.util.logging.Logger l) {
+    public void setLogger(Logger l) {
 
         this.logger = l;
     }
@@ -224,7 +225,6 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
     public Logger getLogger() {
 
         return logger;
-
     }
 
 

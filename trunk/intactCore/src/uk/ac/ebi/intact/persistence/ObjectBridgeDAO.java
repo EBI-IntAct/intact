@@ -12,7 +12,6 @@ import java.io.*;
 
 import org.apache.ojb.broker.*;
 import org.apache.ojb.broker.accesslayer.OJBIterator;
-import org.apache.ojb.broker.util.logging.*;
 import org.apache.ojb.broker.query.*;
 import org.apache.ojb.broker.util.configuration.impl.*;
 import org.apache.ojb.broker.util.configuration.*;
@@ -21,6 +20,8 @@ import org.apache.ojb.broker.metadata.*;
 //ODMG
 import org.odmg.*;
 import org.apache.ojb.odmg.*;
+
+import org.apache.log4j.Logger;
 
 /**
  *  <p>This class provides an ObjectBridge-specific Data Access Object, which
@@ -102,12 +103,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         user = broker.getPBKey().getUser();
         password = broker.getPBKey().getPassword();
 
-
-
-
+        // set up the logging facilities
         try {
-//            logger = LoggerFactory.getLogger(Class.forName("org.apache.ojb.broker.util.logging.Log4jLoggerImpl"));
-            logger = LoggerFactory.getLogger(OJB_LOGGER_NAME);
+            logger = Logger.getLogger(OJB_LOGGER_NAME);
         }
         catch(Exception c) {
 
@@ -163,7 +161,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         broker.clearCache();
     }
 
-    public void setLogger(org.apache.ojb.broker.util.logging.Logger p) {
+    public void setLogger(Logger p) {
 
         logger = p;
     }
@@ -323,7 +321,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 tx = null;
             }
             else {
-
                 //error - trying to close a non-existent TX
                 throw new TransactionException("error during commit - no transaction exists!");
             }
@@ -332,11 +329,16 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         }
         catch(org.odmg.TransactionAbortedException tae) {
 
+            logger.error (tae.getCause());
+            logger.error (tae.getMessage(), tae);
+
             //couldn't commit for some reason - do something
             String msg = "transaction commit failed";
             throw new TransactionException(msg, tae);
         }
         catch(org.odmg.TransactionNotInProgressException tne) {
+            logger.error (tne.getCause());
+            logger.error (tne.getMessage(), tne);
 
             //method called outside a transaction - do something
             String msg = "transaction commit failed";

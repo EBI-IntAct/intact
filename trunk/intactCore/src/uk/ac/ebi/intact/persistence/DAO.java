@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.persistence;
 
 import org.apache.ojb.broker.PersistenceBrokerException;
 
+import org.apache.log4j.Logger;
+
 import java.util.Collection;
 
 /**
@@ -230,7 +232,7 @@ public interface DAO {
      *
      * @param p A <code>PrintWriter</code> for logging output
      */
-    public void setLogger(org.apache.ojb.broker.util.logging.Logger p);
+    public void setLogger(Logger p);
 
     /**
      *  adds a class to a set of classes that should be cached. Note that this is
