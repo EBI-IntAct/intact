@@ -147,8 +147,7 @@ public class MineDatabaseFill {
         }
         set.close();
         // the existing data is truncated
-        System.out.println( "Truncate existing table" );
-        stm.executeUpdate( "TRUNCATE TABLE " + INTERACTION_TABLE );
+        stm.executeUpdate( "DELETE FROM " + INTERACTION_TABLE );
 
         // the inserSTM is a statement to insert the MINE relevant data
         PreparedStatement insertDataStatement = con
