@@ -47,50 +47,52 @@ public abstract class AbstractEditViewBean {
     private String myFullName;
 
     /**
-     * The annotations to display.
+     * The annotations to display. Transient as it is only valid for the
+     * current display.
      */
-    private ArrayList myAnnotations = new ArrayList();
+    private transient List myAnnotations = new ArrayList();
 
     /**
-     * The Xreferences to display.
+     * The Xreferences to display. Transient as it is only valid for the
+     * current display.
      */
-    private ArrayList myXrefs = new ArrayList();
+    private transient List myXrefs = new ArrayList();
 
     /**
      * Holds annotations to add. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient Collection myAnnotsToAdd = new ArrayList();
+    private transient List myAnnotsToAdd = new ArrayList();
 
     /**
      * Holds annotations to del. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient Collection myAnnotsToDel = new ArrayList();
+    private transient List myAnnotsToDel = new ArrayList();
 
     /**
      * Holds annotations to update. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient Collection myAnnotsToUpdate = new ArrayList();
+    private transient List myAnnotsToUpdate = new ArrayList();
 
     /**
      * Holds xrefs to add. This collection is cleared once the user commits
      * the transaction.
      */
-    private transient Collection myXrefsToAdd = new ArrayList();
+    private transient List myXrefsToAdd = new ArrayList();
 
     /**
      * Holds xrefs to del. This collection is cleared once the user commits
      * the transaction.
      */
-    private transient Collection myXrefsToDel = new ArrayList();
+    private transient List myXrefsToDel = new ArrayList();
 
     /**
      * Holds xrefs to update. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient Collection myXrefsToUpdate = new ArrayList();
+    private transient List myXrefsToUpdate = new ArrayList();
 
     /**
      * The factory to create various menus.
@@ -98,22 +100,22 @@ public abstract class AbstractEditViewBean {
     private transient EditorMenuFactory myMenuFactory;
 
     /**
-     * Set attributes using values from an Annotated Object. A coarse-grained
-     * method to avoid multiple method calls.
-     * @param annot the <code>AnnotatedObject</code> to set attributes of this
-     * class.
+     * Construts an instance using an Annotated object.
+     * @param annot <code>AnnotatedObject</code> object to construct this
+     * instance from.
      */
     public void setAnnotatedObject(AnnotatedObject annot) {
         myAnnotObject = annot;
-        this.setShortLabel(annot.getShortLabel());
-        this.setFullName(annot.getFullName());
+        setShortLabel(annot.getShortLabel());
+        setFullName(annot.getFullName());
+
+        // Clear any left overs from previous transaction.
+        clearTransactions();
 
         // Cache the annotations and xrefs here to save it from loading
         // multiple times with each invocation to getAnnotations()
         // or getXrefs() methods.
-        myAnnotations.clear();
         makeCommentBeans(annot.getAnnotation());
-        myXrefs.clear();
         makeXrefBeans(annot.getXref());
     }
 
@@ -211,7 +213,7 @@ public abstract class AbstractEditViewBean {
      */
     public void addAnnotation(Annotation annotation) {
         CommentBean cb = new CommentBean(annotation);
-        // Annotation to add.
+        // Add to the container to add an Annotation.
         myAnnotsToAdd.add(cb);
         // Add to the view as well.
         myAnnotations.add(cb);
@@ -386,17 +388,6 @@ public abstract class AbstractEditViewBean {
     }
 
     /**
-     * Fills the basic information for a CV object with current values.
-     * @param form the form to fill data.
-     */
-    public void fillCvInfo(DynaBean form) {
-        // Fill the form with current values.
-        form.set("ac", getAc());
-        form.set("shortLabel", getShortLabel());
-        form.set("fullName", getFullName());
-    }
-
-    /**
      * Populates the given bean with editor specific info. Override this
      * method to provide editor specific behaviour. Currently, this method
      * is empty.
@@ -489,12 +480,13 @@ public abstract class AbstractEditViewBean {
 
     /**
      * Validates the data in the view bean.
+     * @param user handler to the user to access the DB.
      * @throws ValidationException thrown when this bean contains invalid data.
      * For example, an experiment must contain non null values for organism,
      * interaction and identification. Currently this method is empty as no
      * validations are preformed.
      */
-    public void validate() throws ValidationException {
+    public void validate(EditUserI user) throws ValidationException {
         // Need to override by the subclass.
     }
 
@@ -514,6 +506,7 @@ public abstract class AbstractEditViewBean {
      * @param annotations a collection of <code>Annotation</code> objects.
      */
     private void makeCommentBeans(Collection annotations) {
+        myAnnotations.clear();
         for (Iterator iter = annotations.iterator(); iter.hasNext();) {
             Annotation annot = (Annotation) iter.next();
             myAnnotations.add(new CommentBean(annot));
@@ -526,6 +519,7 @@ public abstract class AbstractEditViewBean {
      * @param xrefs a collection of <code>Xref</code> objects.
      */
     private void makeXrefBeans(Collection xrefs) {
+        myXrefs.clear();
         for (Iterator iter = xrefs.iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
             myXrefs.add(new XreferenceBean(xref));
