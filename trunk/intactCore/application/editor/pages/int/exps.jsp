@@ -7,8 +7,7 @@
   -->
 
 <%--
-  - Presents Experiments information for an Interaction. The form name is hard
-  - coded (intExpForm).
+  - Presents Experiments information for an Interaction.
   --%>
 
 <%@ page language="java"%>
@@ -23,15 +22,23 @@
 
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
-            <th class="tableCellHeader" width="10%">Action</th>
-            <th class="tableCellHeader" width="10%">Short Label</th>
+            <th class="tableCellHeader" width="10%">
+                <bean:message key="label.action"/>
+            </th>
+            <th class="tableCellHeader" width="10%">
+                <bean:message key="label.shortlabel"/>
+            </th>
             <th class="tableCellHeader" width="10%">Pubmed Id</th>
-            <th class="tableCellHeader" width="10%">IntAct AC</th>
-            <th class="tableCellHeader" width="60%">Full Name</th>
+            <th class="tableCellHeader" width="10%">
+                <bean:message key="label.ac"/>
+            </th>
+            <th class="tableCellHeader" width="60%">
+                <bean:message key="label.fullname"/>
+            </th>
         </tr>
         <%-- To calculate row or even row --%>
         <c:set var="row"/>
-        <c:forEach var="experiments" items="${intForm.map.exps}">
+        <c:forEach var="exp" items="${intForm.map.exps}">
             <%-- Different styles for even or odd rows --%>
             <c:choose>
                 <c:when test="${row % 2 == 0}">
@@ -50,15 +57,16 @@
                 </td>
 
                 <td class="tableCell">
-                    <bean:write name="experiments" property="shortLabelLink" filter="false"/>
+                    <bean:write name="exp" property="shortLabelLink" filter="false"/>
                 </td>
                 <td class="tableCell">
+                    <bean:write name="exp" property="pubMedLink" filter="false"/>
                 </td>
                 <td class="tableCell">
-                    <bean:write name="experiments" property="ac"/>
+                    <bean:write name="exp" property="ac"/>
                 </td>
                 <td class="tableCell">
-                    <bean:write name="experiments" property="fullName"/>
+                    <bean:write name="exp" property="fullName"/>
                 </td>
             </tr>
         </c:forEach>
