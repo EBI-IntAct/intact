@@ -79,7 +79,7 @@
 
         <!-- Form for entering tax id data -->
         <form-bean name="bioSourceForm"
-            type="org.apache.struts.action.DynaActionForm">
+            type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="taxId" type="java.lang.String"/>
         </form-bean>
 
