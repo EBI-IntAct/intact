@@ -772,7 +772,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                 logger.info("search class may be unique by criteria other than PK - trying local cache...");
 
-                Object obj = cache.get(searchClass + "-" + col);
+                Object obj = cache.get(searchClass + "-" + col + "-" + val);
 
                 if(obj != null) {
 
@@ -835,7 +835,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //some problem - expecting a unique result...
                 throw new SearchException("search error - expecting a unique result but got more than one");
             }
-            cache.put(searchClass + "-" + col, obj);
+            cache.put(searchClass + "-" + col + "-" + val, obj);
         }
 
         return results;
