@@ -24,6 +24,9 @@
 
 <jsp:include page="../js.jsp" />
 
+<%-- Include javascript for show user functionality --%>
+<jsp:include page="../misc/user_js.jsp"/>
+
 <html:form action="/expDispatch" onsubmit="return validateExpForm(this)">
     <html:hidden property="intac" />
     <html:hidden property="anchor" />
