@@ -11,9 +11,6 @@ import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
-import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.persistence.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -88,24 +85,6 @@ public abstract class IntactBaseAction extends Action {
     }
 
     /**
-     * Removes the obsolete form bean.
-     * @param mapping the ActionMapping used to select this instance.
-     * @param request the HTTP request we are processing.
-     */
-    protected void removeFormBean(ActionMapping mapping,
-                                  HttpServletRequest request) {
-       // Remove the obsolete form bean
-       if (mapping.getAttribute() != null) {
-           if ("request".equals(mapping.getScope())) {
-               request.removeAttribute(mapping.getAttribute());
-           } else {
-              HttpSession session = request.getSession();
-              session.removeAttribute(mapping.getAttribute());
-           }
-       }
-    }
-
-    /**
      * Returns the session from given request. No new session is created.
      * @param request the request to get the session from.
      * @return session associated with given request. Null is returned if there
@@ -132,30 +111,21 @@ public abstract class IntactBaseAction extends Action {
     }
 
     /**
-     * Returns a CV view bean for JSP to display. This method tries to
-     * reuse an existing bean without creating a new bean for each call.
-     * If there is no existing bean found in a session object, then
-     * a new bean is created.
-     *
-     * @param session the session object to retrieve an instance of
-     * the view bean.
-     *
-     * @return a CV view object; a new object if there is no existing
-     * bean found in <code>session</code>.
-     *
-     * <pre>
-     * post: return != null
-     * </pre>
+     * Removes the obsolete form bean.
+     * @param mapping the ActionMapping used to select this instance.
+     * @param request the HTTP request we are processing.
      */
-    protected CvViewBean getViewBean(HttpSession session) {
-        // Reuse an existing bean without creating a new bean for each call.
-        CvViewBean viewbean = (CvViewBean) session.getAttribute(
-            WebIntactConstants.VIEW_BEAN);
-        // Create a new bean if it doesn't exist.
-        if (viewbean == null) {
-            viewbean = new CvViewBean();
-        }
-        return viewbean;
+    protected void removeFormBean(ActionMapping mapping,
+                                  HttpServletRequest request) {
+       // Remove the obsolete form bean
+       if (mapping.getAttribute() != null) {
+           if ("request".equals(mapping.getScope())) {
+               request.removeAttribute(mapping.getAttribute());
+           } else {
+              HttpSession session = request.getSession();
+              session.removeAttribute(mapping.getAttribute());
+           }
+       }
     }
 
     /**
