@@ -5,10 +5,6 @@
 <html>
 	<head><title><bean:message key="main.heading"/></title>
 
-<META HTTP-EQUIV="Expires" CONTENT="-1">
-<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache">
-
    <link rel=stylesheet href="./site.css" type="text/css">
 	</head>
 <!-- vlink="#85917C" link="#42593C"  -->
