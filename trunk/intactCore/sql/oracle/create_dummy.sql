@@ -138,6 +138,24 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
          FROM Institution
         WHERE shortLabel='EBI';
 
+INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
+       SELECT 'EBI-' || Intact_ac.nextval,
+	      'uk.ac.ebi.intact.model.CvTopic',
+	      'GO description',
+	      'Description imported from GO formatted CV',
+	      ac
+         FROM Institution
+        WHERE shortLabel='EBI';
+
+INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
+       SELECT 'EBI-' || Intact_ac.nextval,
+	      'uk.ac.ebi.intact.model.CvTopic',
+	      'GO comment',
+	      'Comment imported from GO formatted CV',
+	      ac
+         FROM Institution
+        WHERE shortLabel='EBI';
+
 INSERT INTO Annotation (ac, topic_ac, owner_ac, description)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      cv.ac,

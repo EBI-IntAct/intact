@@ -24,7 +24,7 @@ SET DOC OFF
 PROMPT ... Institution
 CREATE TABLE Institution
 (
-    shortLabel		VARCHAR2 (10),
+    shortLabel		VARCHAR2(20),
     owner_ac		VARCHAR2(30)
 						CONSTRAINT fk_Institution$owner
 						REFERENCES Institution(ac),
@@ -73,7 +73,7 @@ PROMPT ... ControlledVocab
 CREATE TABLE ControlledVocab
 (
 	objClass		VARCHAR2(255)	,
-	shortLabel		VARCHAR2(10),
+	shortLabel		VARCHAR2(20),
 	fullName		VARCHAR2(70),
 	owner_ac		VARCHAR2(30)
 						CONSTRAINT fk_ControlledVocab$owner
@@ -232,7 +232,7 @@ CREATE TABLE Interactor
 	interactionType_ac	VARCHAR2(30)	CONSTRAINT fk_Interactor$interactionType
 						REFERENCES ControlledVocab(ac),
 	/* Colums belonging to AnnotatedObject */
-	shortLabel		VARCHAR2(10),
+	shortLabel		VARCHAR2(20),
 	fullName		VARCHAR2(50),
 	/* Colums belonging to BasicObject */
 	ac			VARCHAR2(30)	NOT NULL
@@ -410,7 +410,7 @@ CREATE TABLE Experiment
 						REFERENCES ControlledVocab(ac),
 	relatedExperiment_ac    VARCHAR2(30)    CONSTRAINT fk_Experiment$relatedExp
 						REFERENCES Experiment(ac),
-	shortLabel		VARCHAR2(10),
+	shortLabel		VARCHAR2(20),
 	fullName		VARCHAR2(50),
 	ac			VARCHAR2(30)	NOT NULL
 						CONSTRAINT pk_Experiment
