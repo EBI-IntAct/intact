@@ -108,7 +108,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
     // Override to provide Experiment help tag.
     public String getHelpTag() {
-        return "editor.experiment";
+        return "editor.int.features";
     }
 
     // Override to provide set feature from the form.
