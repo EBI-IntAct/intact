@@ -117,29 +117,28 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     int maxPages;
 
-
-
     /**
      * The bean constructor requires an Experiment to wrap, plus beans on
      * the context path to the search application and the help link.
-     * @param obj The Experiment whose beans are to be displayed
-     * @param link The link to the help pages
-     * @param searchURL The general URL to be used for searching (can be filled in later).
+     *
+     * @param obj         The Experiment whose beans are to be displayed
+     * @param link        The link to the help pages
+     * @param searchURL   The general URL to be used for searching (can be filled in later).
      * @param contextPath The path to the search application.
-     * @exception NullPointerException thrown if the object to wrap is null
-     * @exception IllegalArgumentException thrown if the parameter is not an Experiment
+     * @throws NullPointerException     thrown if the object to wrap is null
+     * @throws IllegalArgumentException thrown if the parameter is not an Experiment
      */
     public MainDetailViewBean(Experiment obj, String link, String searchURL, String contextPath) {
         super(link, contextPath);
-        if(obj == null) throw new NullPointerException("MainDetailViewBean: can't display null object!");
-        if(!(obj instanceof Experiment))
+        if (obj == null) throw new NullPointerException("MainDetailViewBean: can't display null object!");
+        if (!(obj instanceof Experiment))
             throw new IllegalArgumentException("MainDetailViewBean: Wrong object passed to view bean: type is " + obj.getClass().getName());
         this.searchURL = searchURL;
         this.obj = obj;
         dbUrls = new HashMap();
 
         //now calculate the largest page size possible (only for large Experiments)
-        if(obj.getInteractions().size() > Constants.MAX_PAGE_SIZE) {
+        if (obj.getInteractions().size() > Constants.MAX_PAGE_SIZE) {
 
             // calculate the maximum number of pages (either size/page size, or
             //size/page size + 1 if it does not divide exactly)
@@ -147,13 +146,14 @@ public class MainDetailViewBean extends AbstractViewBean {
             if (obj.getInteractions().size() % Constants.MAX_PAGE_SIZE > 0) maxPages++;
             //set the initial page of Interactions
             setInteractionPage(1);
-        }
-        else interactionList = obj.getInteractions();
+        } else
+            interactionList = obj.getInteractions();
 
         //now set up the Annotation filter list
         annotationFilters = new ArrayList();
         annotationFilters.add("remark");
         annotationFilters.add("uniprot-dr-export");
+        annotationFilters.add("uniprot-cc-export");
     }
 
 
@@ -182,13 +182,15 @@ public class MainDetailViewBean extends AbstractViewBean {
      * This is left over from the earlier version - will be removed.
      * It does nothing here.
      */
-    public void getHTML(java.io.Writer writer) {};
+    public void getHTML(java.io.Writer writer) {
+    };
 
     //--------------------- useful stuff ---------------------------------------------
 
     /**
      * Used to tell the bean whether or not it is to be used for a 'full' Experiment
      * view or simply an 'Interaction context' view.
+     *
      * @param interaction The Interaction for which the context is required
      */
     public void setWrappedInteraction(Interaction interaction) {
@@ -199,12 +201,16 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Determines whether the bean is currentlly set to render a full Experiment
      * view or an 'Interaction context@ view.
+     *
      * @return true for a Interaction context view, false otherwise.
      */
-    public boolean isInteractionView() { return interactionView;}
+    public boolean isInteractionView() {
+        return interactionView;
+    }
 
     /**
      * The intact name for an object is its shortLabel. Required in all view types.
+     *
      * @return String the object's Intact name.
      */
     public String getObjIntactName() {
@@ -213,6 +219,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     /**
      * The AnnotatedObject's AC. Required in all view types.
+     *
      * @return String the AC of the wrapped object.
      */
     public String getObjAc() {
@@ -222,6 +229,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * This is currently assumed to be the AnnotatedObject's full name.
      * Required by all view types.
+     *
      * @return String a description of the AnnotatedObject, or a "-" if there is none.
      */
     public String getObjDescription() {
@@ -230,43 +238,44 @@ public class MainDetailViewBean extends AbstractViewBean {
     }
 
 
+    /**
+     * Provides direct access to the wrapped Experiment itself.
+     *
+     * @return Experiment The reference to the wrapped object.
+     */
+    public Experiment getObject() {
+        return obj;
+    }
 
     /**
-         * Provides direct access to the wrapped Experiment itself.
-         * @return Experiment The reference to the wrapped object.
-         */
-        public Experiment getObject() {
-            return obj;
+     * Provides the basic Intact type of the wrapped Experiment (ie no java
+     * package beans). NOTE: only the INTERFACE types are provided as these are
+     * the only ones of interest in the model - display pages are not interested
+     * in objects of type XXXImpl.
+     *
+     * @return String The intact type of the wrapped Experiment
+     */
+    public String getIntactType() {
+
+        if (intactType == null) {
+            //set on first call
+            String className = obj.getClass().getName();
+            String basicType = className.substring(className.lastIndexOf(".") + 1);
+
+            //now check for 'Impl' and ignore it...
+            intactType = ((basicType.indexOf("Impl") == -1) ?
+                    basicType : basicType.substring(0, basicType.indexOf("Impl")));
         }
+        return intactType;
 
-        /**
-         * Provides the basic Intact type of the wrapped Experiment (ie no java
-         * package beans). NOTE: only the INTERFACE types are provided as these are
-         * the only ones of interest in the model - display pages are not interested
-         * in objects of type XXXImpl.
-         * @return String The intact type of the wrapped Experiment
-         */
-        public String getIntactType() {
-
-            if(intactType == null) {
-                //set on first call
-                String className = obj.getClass().getName();
-                String basicType = className.substring(className.lastIndexOf(".") + 1);
-
-                //now check for 'Impl' and ignore it...
-                intactType = ((basicType.indexOf("Impl") == -1) ?
-                basicType : basicType.substring(0, basicType.indexOf("Impl")));
-            }
-            return intactType;
-
-        }
+    }
 
     public String getBioSourceName() {
 
-        if(bioSourceName == null) {
+        if (bioSourceName == null) {
             //set on fiirst call
             bioSourceName = obj.getBioSource().getFullName();
-            if(bioSourceName == null) bioSourceName = "";   //may not have one, and can't use null in JSPs
+            if (bioSourceName == null) bioSourceName = "-";   //may not have one, and can't use null in JSPs
 
         }
         return bioSourceName;
@@ -302,6 +311,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Convenience method to provide a filtered list of Annotations for a given
      * Interaction. Useful in JSP display to apply the same filters of the wrapped
      * Experiment to one of its Interactions.
+     *
      * @return Collection the filtered List of Annotations (empty if there are none)
      */
     public Collection getFilteredAnnotations(Interaction interaction) {
@@ -325,14 +335,15 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Filters the Annotations for the 'comment' ones only. This is useful for JSPs
      * wishing to display Annotations in certain orders.
+     *
      * @param annots a Collection of Annotations to filter
      * @return Collection a list of the 'comment' Annotations, or empty if there are none.
      */
     public Collection getComments(Collection annots) {
         Collection comments = new ArrayList();
-        for(Iterator it = annots.iterator(); it.hasNext();) {
-            Annotation annot = (Annotation)it.next();
-            if(annot.getCvTopic().getShortLabel().equals("comment")) comments.add(annot);
+        for (Iterator it = annots.iterator(); it.hasNext();) {
+            Annotation annot = (Annotation) it.next();
+            if (annot.getCvTopic().getShortLabel().equals("comment")) comments.add(annot);
         }
         return comments;
     }
@@ -341,6 +352,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Convenience method for obtaining the wrapped object's xrefs. Useful for clients
      * to use in conjunction with other methods on this view bean to provide suitably
      * formatted Xref data.
+     *
      * @return Collection the list of xrefs for the wrapped object.
      */
     public Collection getXrefs() {
@@ -349,6 +361,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     /**
      * Convenience method for obtaining the uniprot ID for a given Protein.
+     *
      * @param protein The protein we want the uniprot ID for
      * @return String the uniprot ID of the Protein, or '-' if none found.
      */
@@ -356,9 +369,9 @@ public class MainDetailViewBean extends AbstractViewBean {
 
         String uniprotLabel = "-";  //default for display
         Collection xrefs = protein.getXrefs();
-        for(Iterator it = xrefs.iterator(); it.hasNext();) {
-            Xref xref = (Xref)it.next();
-            if(xref.getCvDatabase().getShortLabel().equals("uniprot")) {
+        for (Iterator it = xrefs.iterator(); it.hasNext();) {
+            Xref xref = (Xref) it.next();
+            if (xref.getCvDatabase().getShortLabel().equals("uniprot")) {
                 uniprotLabel = xref.getPrimaryId();
                 break;  //done
             }
@@ -369,23 +382,24 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     /**
      * Provides the Interactions for the wrapped Experiment.
-     * <p>
+     * <p/>
      * NOTE: For Experiments that have a large number of Interactions, this method will
      * provide a page of the total list, as set by the
      * {@link MainDetailViewBean#setInteractionPage} method. If the Interaction list is small
      * enough then the complete list is returned in any case.
      * </p>
+     *
      * @return Collection a list of Interactions - either all of them or a chunk (of
-     * pre-defined size).
+     *         pre-defined size).
      */
     public Collection getInteractions() {
 
         Collection result = new ArrayList();
         //first check for an 'Interaction context' view - if so then return that one only
-        if(isInteractionView()) {
+        if (isInteractionView()) {
             result.add(wrappedInteraction);
-        }
-        else result = interactionList;
+        } else
+            result = interactionList;
 
         return result;
     }
@@ -397,15 +411,16 @@ public class MainDetailViewBean extends AbstractViewBean {
      * of the actual full Interaction list of the large Experiment - that is, the largest
      * index will be (max size/page size), or (max size/page size) + 1 if it does not
      * divide without remainder.
+     *
      * @param page The page number to be used.
-     * @exception IndexOutOfBoundsException thrown is the index is out of range
+     * @throws IndexOutOfBoundsException thrown is the index is out of range
      */
     public void setInteractionPage(int page) {
 
-        if(page > maxPages)
+        if (page > maxPages)
             throw new IndexOutOfBoundsException("interaction page number too large! Got: "
                     + page + " Max: " + maxPages);
-        if(page < 1) throw new IndexOutOfBoundsException("interaction page number < 1!");
+        if (page < 1) throw new IndexOutOfBoundsException("interaction page number < 1!");
 
         //now need to work out the actual start index from the page number itself, as follows:
         //  index of first Interaction in sublist = (page size)*(page number - 1)
@@ -413,14 +428,13 @@ public class MainDetailViewBean extends AbstractViewBean {
 
         //The 'toIndex' has to be the smallest of either a 'page size' offset from the
         //startIndex, or the last index (ie size) of the whole List (ie if we are at the end)
-        int toIndex  = Math.min( fromIndex + Constants.MAX_PAGE_SIZE,
-                              obj.getInteractions().size());
+        int toIndex = Math.min(fromIndex + Constants.MAX_PAGE_SIZE,
+                obj.getInteractions().size());
 
         //'fromIndex' inclusive, 'toIndex' exclusive for subList method!
-        if(List.class.isAssignableFrom(obj.getInteractions().getClass()) ) {
-            interactionList = ( (List) obj.getInteractions()).subList(fromIndex, toIndex);
-        }
-        else {
+        if (List.class.isAssignableFrom(obj.getInteractions().getClass())) {
+            interactionList = ((List) obj.getInteractions()).subList(fromIndex, toIndex);
+        } else {
             // copy the collection in a List
             List tmpList = new ArrayList(obj.getInteractions());
             interactionList = tmpList.subList(fromIndex, toIndex);
@@ -431,6 +445,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Can be useful for a JSP to find out how many pages can be displayed for the
      * warpped Experiment.
+     *
      * @return int The page number of the last possible page for display.
      */
     public int getMaxPage() {
@@ -441,9 +456,10 @@ public class MainDetailViewBean extends AbstractViewBean {
      * This method provides beans of all the Features for an Interaction which are linked
      * to other Features. Feature view beans, rather than the Features themselves, are provided
      * to allow JSPs an easier display method.
+     *
      * @param interaction The Interaction we want the linked Features for
      * @return Collection a List of FeatureViewBeans providing a view on each linked
-     * Feature of the Interaction.
+     *         Feature of the Interaction.
      */
     public Collection getLinkedFeatures(Interaction interaction) {
 
@@ -456,13 +472,13 @@ public class MainDetailViewBean extends AbstractViewBean {
         Collection components = interaction.getComponents();
         Component component = null;
         Feature feature = null;
-        for(Iterator it = components.iterator(); it.hasNext();) {
-            component = (Component)it.next();
+        for (Iterator it = components.iterator(); it.hasNext();) {
+            component = (Component) it.next();
             Collection features = component.getBindingDomains();
-            for(Iterator it1 = features.iterator(); it1.hasNext();) {
-                feature = (Feature)it1.next();
-                if(feature.getBoundDomain() != null) linkedFeatures.add(
-                        new FeatureViewBean(feature, getHelpLink(), searchURL, this.getContextPath()));
+            for (Iterator it1 = features.iterator(); it1.hasNext();) {
+                feature = (Feature) it1.next();
+                if (feature.getBoundDomain() != null)
+                    linkedFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL, this.getContextPath()));
             }
         }
         return linkedFeatures;
@@ -470,6 +486,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     /**
      * Provides a List of view beans for unlinked Features of an Interaction.
+     *
      * @param interaction The Interaction we want the single Feature information for.
      * @return Collection a List of FeatureViewBeans for the INteraction's unlinked Features.
      */
@@ -483,13 +500,13 @@ public class MainDetailViewBean extends AbstractViewBean {
         Collection components = interaction.getComponents();
         Component component = null;
         Feature feature = null;
-        for(Iterator it = components.iterator(); it.hasNext();) {
-            component = (Component)it.next();
+        for (Iterator it = components.iterator(); it.hasNext();) {
+            component = (Component) it.next();
             Collection features = component.getBindingDomains();
-            for(Iterator it1 = features.iterator(); it1.hasNext();) {
-                feature = (Feature)it1.next();
-                if(feature.getBoundDomain() == null) singleFeatures.add(
-                        new FeatureViewBean(feature, getHelpLink(), searchURL, this.getContextPath()));
+            for (Iterator it1 = features.iterator(); it1.hasNext();) {
+                feature = (Feature) it1.next();
+                if (feature.getBoundDomain() == null)
+                    singleFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL, this.getContextPath()));
             }
         }
         return singleFeatures;
@@ -499,34 +516,42 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Convenience method to obtain all of the Proteins for a given Interaction.
      * Note that this method will only return the Proteins, NOT complexes
      * that might be a Component's Interactor.
+     *
      * @param interaction The Interaction we want the Proteins for
      * @return Collection a List of the Interaction's Proteins, or empty if none found
      */
     public Collection getProteins(Interaction interaction) {
+
+        // sort here with Collections.sort() with the Protein Comparator as
+        // so that we get in that the baits before the preys
+        
         Collection results = new ArrayList();
-        for(Iterator it = interaction.getComponents().iterator(); it.hasNext();) {
-            Component comp = (Component)it.next();
+        for (Iterator it = interaction.getComponents().iterator(); it.hasNext();) {
+            Component comp = (Component) it.next();
             Interactor interactor = comp.getInteractor();
-            if(interactor instanceof Protein) results.add(interactor);
+            if (interactor instanceof Protein) results.add(interactor);
         }
 
         return results;
     }
 
+  
+
     /**
      * Provides the Component that holds a Protein for a given Interaction. Assumes that
      * a Protein only appears ONCE as a Component of an Interaction.
-     * @param protein The Protein we are interested in
+     *
+     * @param protein     The Protein we are interested in
      * @param interaction The Interaction for which the Protein is of relevance
      * @return Component the Component of the Interaction which holds the Protein,
-     * or null if it is not present.
+     *         or null if it is not present.
      */
     public Component getComponent(Protein protein, Interaction interaction) {
 
         //go through the Components holding the Protein and pull out the Interaction match...
-        for(Iterator it = protein.getActiveInstances().iterator(); it.hasNext();) {
-            Component comp = (Component)it.next();
-            if(comp.getInteraction().equals(interaction)) return comp;
+        for (Iterator it = protein.getActiveInstances().iterator(); it.hasNext();) {
+            Component comp = (Component) it.next();
+            if (comp.getInteraction().equals(interaction)) return comp;
         }
 
         return null;
@@ -535,6 +560,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     /**
      * Provides a comma-separated list of gene names for the specified Protein.
+     *
      * @param protein the Protein we want the gene names for
      * @return String a list of gene names.
      */
@@ -560,12 +586,11 @@ public class MainDetailViewBean extends AbstractViewBean {
         }
         //now convert to a String - if there are any names....
         if (nameSet.size() > 0) {
-            for(Iterator it = nameSet.iterator(); it.hasNext();) {
+            for (Iterator it = nameSet.iterator(); it.hasNext();) {
                 geneNames.append(it.next());
-                if(it.hasNext()) geneNames.append(",");
+                if (it.hasNext()) geneNames.append(",");
             }
-        }
-        else
+        } else
             geneNames.append("-");
 
         return geneNames.toString();
@@ -573,11 +598,12 @@ public class MainDetailViewBean extends AbstractViewBean {
 
 
 
-     //------------------------ useful URL generators ------------------------------
+    //------------------------ useful URL generators ------------------------------
 
     /**
      * Provides a String representation of a URL to access the CV related to the Xref
      * (ie the Cv beans describing the Xref's database).
+     *
      * @param xref The Xref for which the URL is required
      * @return String a String representation of a URL link for the Xref beans (CvDatabase)
      */
@@ -590,6 +616,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Provides a String representation of a URL to access the CV qualifier
      * info related to the Xref
      * (ie the Cv beans describing the Xref's qualifier info).
+     *
      * @param xref The Xref for which the URL is required
      * @return String a String representation of a URL link for the Xref beans (CvXrefQualifier)
      */
@@ -603,9 +630,10 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Provides a String representation of a URL to provide acces to an Xrefs'
      * database (curently via AC). The URL is at present stored via an
      * Annotation for the Xref in the Intact DB itself.
+     *
      * @param xref The Xref for which the DB URL is required
      * @return String a String representation of a DB URL link for the Xref, or a '-'
-     * if there is no stored URL link for this Xref
+     *         if there is no stored URL link for this Xref
      */
     public String getPrimaryIdURL(Xref xref) {
 
@@ -640,6 +668,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     /**
      * Provides a serahc URL for the Uniprot databse entry of the specified Protein.
+     *
      * @param protein The Protein we are interested in
      * @return String a uniprot search URL for the Protein, or '-' if none found
      */
@@ -647,9 +676,9 @@ public class MainDetailViewBean extends AbstractViewBean {
 
         Collection xrefs = protein.getXrefs();
         String uniprotURL = "-";
-        for(Iterator it = xrefs.iterator(); it.hasNext();) {
-            Xref xref = (Xref)it.next();
-            if(xref.getCvDatabase().getShortLabel().equals("uniprot")) {
+        for (Iterator it = xrefs.iterator(); it.hasNext();) {
+            Xref xref = (Xref) it.next();
+            if (xref.getCvDatabase().getShortLabel().equals("uniprot")) {
                 uniprotURL = this.getPrimaryIdURL(xref);
                 break;  //done
             }
@@ -659,10 +688,10 @@ public class MainDetailViewBean extends AbstractViewBean {
     }
 
 
-
     /**
      * Provides a String representation of a URL to perform a search on
      * this Experiment's beans (curently via AC)
+     *
      * @return String a String representation of a search URL link for the wrapped Experiment
      */
     public String getObjSearchURL() {
@@ -678,12 +707,13 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Provides a String representation of a URL to perform a search on
      * CvInteraction
+     *
      * @return String a String representation of a search URL link for CvInteraction, or "-"
-     * if there is No CvInteraction defined for the object.
+     *         if there is No CvInteraction defined for the object.
      */
     public String getCvInteractionSearchURL() {
 
-        if(obj.getCvInteraction() == null) return "-";
+        if (obj.getCvInteraction() == null) return "-";
         if (cvInteractionSearchURL == "") {
             //set it on the first call
             //get the CvInteraction object and pull out its AC
@@ -696,12 +726,13 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Provides a String representation of a URL to perform a search on
      * CvIdentification (Experiments only)
+     *
      * @return String a String representation of a search URL link for CvIdentification, or
-     * "-" if there is NO CvIdentification specified for the object.
+     *         "-" if there is NO CvIdentification specified for the object.
      */
     public String getCvIdentificationSearchURL() {
 
-        if(obj.getCvIdentification() == null) return "-";
+        if (obj.getCvIdentification() == null) return "-";
         if (cvIdentificationSearchURL == "") {
             //set it on the first call
             //get the CvIdentification object and pull out its AC
@@ -714,20 +745,22 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Provides a String representation of a URL to perform a search on
      * CvInteractionType (Interactions only)
+     *
      * @return String a String representation of a search URL link for CvInteractionType, or
-     * "-" if there is NO CvInteractionType specified for the interaction.
+     *         "-" if there is NO CvInteractionType specified for the interaction.
      */
     public String getCvInteractionTypeSearchURL(Interaction interaction) {
 
-        if(interaction.getCvInteractionType() == null) return "-";
+        if (interaction.getCvInteractionType() == null) return "-";
         return searchURL + interaction.getCvInteractionType().getAc()
-                    + "&amp;searchClass=CvInteractionType";
+                + "&amp;searchClass=CvInteractionType";
 
     }
 
     /**
      * Provides a String representation of a URL to perform a search on
      * BioSource.
+     *
      * @return String a String representation of a search URL link for BioSource.
      */
     public String getBioSourceSearchURL() {
@@ -747,6 +780,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Convenience method to provide a String representation of a URL to perform a search on
      * CvTopic for a particular Annotation
+     *
      * @param annot The Annotation we want a search URL for
      * @return String a String representation of a search URL link for CvInteraction.
      */
@@ -758,6 +792,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Convenience method to provide a String representation of a URL to perform a search on
      * CvComponentRole for a particular Protein/Interaction pair
+     *
      * @param comp The Component role we want a search URL for
      * @return String a String representation of a search URL link for CvComponentRole.
      */
@@ -770,6 +805,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Convenience method to provide a String representation of a URL to perform a search on
      * Protein. This method will provide a Protein 'detail' view.
+     *
      * @param prot The Protein we want a search URL for
      * @return String a String representation of a search URL link for Protein.
      */
@@ -781,6 +817,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     /**
      * Convenience method to provide a String representation of a URL to perform a search on
      * Protein. This method will provide a Protein 'partners' view.
+     *
      * @param prot The Protein we want a search URL for
      * @return String a String representation of a search URL link for Protein.
      */
@@ -790,6 +827,4 @@ public class MainDetailViewBean extends AbstractViewBean {
     }
 
 
-
 }
-

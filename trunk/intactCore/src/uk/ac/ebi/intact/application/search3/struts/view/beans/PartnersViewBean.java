@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
-import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 
 import java.util.*;
 
@@ -80,7 +79,7 @@ public class PartnersViewBean extends AbstractViewBean {
      * Assumed a List of these, as that is what is in the single Protein view. BUT the 'summary' web
      * page only has ONE gene name. NEEDS TO BE CLARIFIED
      */
-    private StringBuffer geneNames;
+    private Collection geneNames;
 
     /**
      * A String representation of the number of Interactions this Protein takes part in.
@@ -200,11 +199,11 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return String al list of gene names as a String.
      */
-    public String getGeneNames() {
-
+    public Collection getGeneNames() {
         //populate on first request
         if (geneNames == null) {
-            geneNames = new StringBuffer();
+            this.geneNames = new ArrayList();
+            //geneNames = new StringBuffer();
             //the gene names are obtained from the Aliases for the Protein
             //which are of type 'gene name'...
             Collection aliases = protein.getAliases();
@@ -216,17 +215,17 @@ public class PartnersViewBean extends AbstractViewBean {
                     //don't know how many gene names there are - also
                     //there may be more aliases than gene names, so we can't
                     //tell here if we are done or not, so add comma anyway
-                    geneNames.append(alias.getName() + ",");
+                    //geneNames.append(alias.getName() + ",");
+                    geneNames.add(alias.getName());
                 }
             }
             //now strip off trailing comma - if there are any names....
-            if (geneNames.length() > 0)
-                geneNames.deleteCharAt(geneNames.lastIndexOf(","));
-            else
-                geneNames.append("-");
+            if (geneNames.size() == 0) {
+                geneNames.add("-");
+            }
+            return geneNames;
         }
-
-        return geneNames.toString();
+        return geneNames;
     }
 
 
@@ -239,116 +238,56 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return String a String representing the number of Interactions for this Protein.
      */
-    public String getNumberOfInteractions1() {
-
-
-        //presumably we don't want to count homodimers more than once here...
-        this.participationInteractions = new HashSet();
-        //set on first call
-        int countInteractions = 0;
-        if (numberOfInteractions == null) {
-
-            if (partner != null) {
-
-                Set componentSet1 = new HashSet(protein.getActiveInstances());
-                Set componentInteractions = new HashSet();
-
-                for (Iterator iterator = componentSet1.iterator(); iterator.hasNext();) {
-                    Component component = (Component) iterator.next();
-
-                    componentInteractions.add(component.getInteraction());
-                }
-
-                Set componentSet2 = new HashSet(partner.getActiveInstances());
-
-                for (Iterator iterator = componentSet2.iterator(); iterator.hasNext();) {
-                    Component component2 = (Component) iterator.next();
-                    Interaction component2Interaction = component2.getInteraction();
-
-                    if (componentInteractions.contains(component2Interaction)) {
-                        participationInteractions.add(component2Interaction);
-                        countInteractions++;
-                    }
-                }
-
-                numberOfInteractions = Integer.toString(countInteractions);
-
-            } else {
-
-                //just add the components into a Set and work out its size - this will
-                //take care of any repeats, and there will then be a 1:1 relation between the
-                //Components in the Set and the Protein's Interactions...
-                Set componentSet = new HashSet(protein.getActiveInstances());
-                numberOfInteractions = Integer.toString(componentSet.size());
-
-            }
-        }
-        return numberOfInteractions;
-    }
-
     public String getNumberOfInteractions() {
 
 
         //presumably we don't want to count homodimers more than once here...
-        this.participationInteractions = new HashSet();
+
         //set on first call
-        int countInteractions = 0;
         if (numberOfInteractions == null) {
-
             if (partner != null) {
-
-                Set componentSet1 = new HashSet(protein.getActiveInstances());
-                Set componentInteractions = new HashSet();
-
-                for (Iterator iterator = componentSet1.iterator(); iterator.hasNext();) {
-                    Component component = (Component) iterator.next();
-
-                    componentInteractions.add(component.getInteraction());
+                  if (participationInteractions == null) {
+                    this.setParticipationInteractions();
                 }
-
-                Set componentSet2 = new HashSet(partner.getActiveInstances());
-
-                for (Iterator iterator = componentSet2.iterator(); iterator.hasNext();) {
-                    Component component2 = (Component) iterator.next();
-                    Interaction component2Interaction = component2.getInteraction();
-
-                    if (componentInteractions.contains(component2Interaction)) {
-                        participationInteractions.add(component2Interaction);
-                        countInteractions++;
-                    }
-
-                }
-
-                numberOfInteractions = Integer.toString(countInteractions);
+                numberOfInteractions = Integer.toString(this.participationInteractions.size());
 
             } else {
-
                 //just add the components into a Set and work out its size - this will
                 //take care of any repeats, and there will then be a 1:1 relation between the
                 //Components in the Set and the Protein's Interactions...
                 Set componentSet = new HashSet(protein.getActiveInstances());
                 numberOfInteractions = Integer.toString(componentSet.size());
-
             }
         }
         return numberOfInteractions;
     }
-    /**
-     public String getNumberOfInteractions() {
 
+    public void setParticipationInteractions() {
+        this.participationInteractions = new HashSet();
+        //set on first call
+        if (partner != null) {
 
-     //presumably we don't want to count homodimers more than once here...
+            Set componentSet1 = new HashSet(protein.getActiveInstances());
+            Set componentInteractions = new HashSet();
 
-     //set on first call
+            for (Iterator iterator = componentSet1.iterator(); iterator.hasNext();) {
+                Component component = (Component) iterator.next();
+                componentInteractions.add(component.getInteraction());
+            }
 
-     if (numberOfInteractions == null) {
-     Set componentSet = new HashSet(protein.getActiveInstances());
-     numberOfInteractions = Integer.toString(componentSet.size());
-     }
+            Set componentSet2 = new HashSet(partner.getActiveInstances());
 
-     return numberOfInteractions;
-     }
-     **/
+            for (Iterator iterator = componentSet2.iterator(); iterator.hasNext();) {
+                Component component2 = (Component) iterator.next();
+                Interaction component2Interaction = component2.getInteraction();
+
+                if (componentInteractions.contains(component2Interaction)) {
+                    participationInteractions.add(component2Interaction);
+                }
+            }
+        }
+
+    }
 
     /**
      * Returns a fully populated URL to perform a search for all this Protein's Interactions. ISSUE:
@@ -364,6 +303,7 @@ public class PartnersViewBean extends AbstractViewBean {
         //TBD
         //set on first call
         if (interactionSearchURL == null) {
+
             if (partner == null) {
                 //just add the components into a Set and work out its size - this will
                 //take care of any repeats, and there will then be a 1:1 relation between the
@@ -375,18 +315,16 @@ public class PartnersViewBean extends AbstractViewBean {
                 Set componentSet = new HashSet(protein.getActiveInstances());
                 for (Iterator it = componentSet.iterator(); it.hasNext();) {
                     Component comp = (Component) it.next();
-                    sb.append(comp.getInteraction().getAc());                
+                    sb.append(comp.getInteraction().getAc());
                     if (it.hasNext()) sb.append(",");
                 }
-                interactionSearchURL = searchURL + sb.toString();
+                return interactionSearchURL = searchURL + sb.toString();
 
             } else {
                 // this protein got a partner in the view and we only want the interactions
-                // in which the protein and the partner involved
-                // if we don't looked for the paticaptionInteraction let's do this now
+                // in which the protein and the partner involved               
                 if (participationInteractions == null) {
-                    // this can be done a little bit more elegant
-                    this.getNumberOfInteractions();
+                    this.setParticipationInteractions();
                 }
                 StringBuffer sb = new StringBuffer();
                 for (Iterator it = participationInteractions.iterator(); it.hasNext();) {
