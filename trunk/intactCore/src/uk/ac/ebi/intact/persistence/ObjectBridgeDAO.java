@@ -970,12 +970,12 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             searchClass = Class.forName(type);
             //should now call getConcreteClasses to obtain the concrete
             //Class instances we should build if necessary....
-//            System.out.println("search: requested for Class" + searchClass.getName());
+            //System.out.println("search: requested for Class " + searchClass.getName());
             Collection classesToSearch = getConcreteClasses(searchClass);
-//            System.out.println("search: Concrete classes found:");
-//            for (Iterator iter = classesToSearch.iterator(); iter.hasNext();) {
-//                System.out.println(((Class) iter.next()).getName());
-//            }
+            //System.out.println("search: Concrete classes found:");
+            //for (Iterator iter = classesToSearch.iterator(); iter.hasNext();) {
+                //System.out.println(((Class) iter.next()).getName());
+           //}
 
             Criteria crit = null;
 
@@ -1005,10 +1005,56 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             logger.info("criteria built OK");
             //now build a query for each search class...
-            Collection queries = new ArrayList();
+            Collection queries = new ArrayList(classesToSearch.size());
+            Class clazz = null;
+            String concreteType = null;
+            Criteria typeCriteria = null;
+            Criteria queryCriteria = null;
             for (Iterator it = classesToSearch.iterator(); it.hasNext();) {
                 //query = new QueryByCriteria(searchClass, crit);
-                queries.add(new QueryByCriteria((Class) it.next(), crit));
+                 clazz = (Class)it.next();
+                //each type to search may be different - get the info and use it
+                concreteType = clazz.getName();
+                //System.out.println("concrete type to be searched: " + concreteType);
+                queryCriteria = new Criteria(); //holds all the search criteria
+                if (val != null) queryCriteria.addEqualTo(col, val);
+                //check to see if the table holds multiple object types,
+                //and add an extra criteria if so
+                if( isTypeNeeded( concreteType ) ) {
+                    typeCriteria = new Criteria();
+                    //add the type info, then add the value info if it was given
+                    typeCriteria.addEqualTo(ClassDescriptor.OJB_CONCRETE_CLASS, concreteType);
+                    // this works!! if (val != null) typeCriteria.addEqualTo(col, val);
+
+                    //BUT for 'older' data the classname in the DB may not
+                    //have the 'Impl' at the end, so we need to check for those
+                    //too....
+
+                    // TODO: NullPointerException can occur here !
+                    // TODO: If a concrete class don't have Impl as suffix, it fails.
+                    int index = concreteType.indexOf("Impl");
+                    if( index != -1 ) {
+                        String oldType = concreteType.substring( 0, index );
+                        //System.out.println("old type name: " + oldType);
+                        Criteria oldTypeCriteria = new Criteria();
+                        oldTypeCriteria.addEqualTo(ClassDescriptor.OJB_CONCRETE_CLASS, oldType);
+                        typeCriteria.addOrCriteria(oldTypeCriteria);
+                    }
+
+
+
+                    //now add the type info to the query criteria
+                    queryCriteria.addAndCriteria(typeCriteria);
+                    //System.out.println("Query built for " + concreteType + ":");
+                    //Query dummy = new QueryByCriteria(clazz, typeCriteria);
+                    Query dummy = new QueryByCriteria(clazz, queryCriteria);
+                    //printQuery(dummy);  //debug
+                    queries.add(dummy);
+                }
+                else {
+                    //normal query
+                    queries.add(new QueryByCriteria(clazz, crit));
+                }
             }
             logger.info("query by criteria built OK: " + type + " " + col + " " + val);
 
@@ -1026,6 +1072,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 localTx = true;
                 broker.beginTransaction();
             }
+
             for (Iterator queryIt = queries.iterator(); queryIt.hasNext();) {
                 results.addAll(broker.getCollectionByQuery((Query) queryIt.next()));
             }
@@ -1827,5 +1874,55 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      */
     private boolean isJDBCTransaction() {
         return transactionType == BusinessConstants.JDBC_TX;
+    }
+
+    /**
+     * Used as part of the query building process to ensure that only queries are built
+     * for matching types. For '*' searches, OJB loads all rows and otherwise ignores
+     * types (particularly for proxy generation) - this is incorrect behaviour for tables
+     * that have more than one object mapped to them. Doing this check refines the query
+     * and thus also stops OJB from loading all rows of a multi-mapped table.
+     * @return true if the class to be searched is in a multi-mapped table, false otherwise.
+     */
+    private boolean isTypeNeeded(String classToFind) {
+
+        ClassDescriptor cld = broker.getDescriptorRepository().getDescriptorFor(classToFind);
+        if(cld == null) return false;
+
+        // check if there is an attribute which tells us which concrete class is to be instantiated
+        FieldDescriptor concreteClassFD = cld.getFieldDescriptorByName(ClassDescriptor.OJB_CONCRETE_CLASS);
+
+        //case where the class to search is a single object to table map -
+        //in this case the descriptor will have no OJB concrete class field declared
+        if (concreteClassFD == null)
+            return false;
+        return true;
+
+    }
+
+    private void printQuery(Query query) {
+
+        System.out.println("Query details:");
+        System.out.println("Class: " + query.getSearchClass().getName());
+        System.out.println("Attribute: " + query.getRequestedAttribute());
+        System.out.println("Query Criteria: ");
+        printCriteria(query.getCriteria());
+        System.out.println();
+
+    }
+
+    private void printCriteria(Criteria crit) {
+        System.out.println("Criteria:");
+        for(Enumeration enum = crit.getElements(); enum.hasMoreElements();) {
+            Object elem = enum.nextElement();
+            if(elem instanceof Criteria) {
+                //sub-criteria - print them..
+                System.out.println("nested criteria:");
+                printCriteria((Criteria)elem);
+            }
+            else {
+                System.out.println(elem);
+            }
+        }
     }
 }

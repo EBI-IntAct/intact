@@ -3,9 +3,10 @@ package uk.ac.ebi.intact.persistence;
 import org.apache.ojb.broker.accesslayer.RowReaderDefaultImpl;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.metadata.FieldDescriptor;
+import org.apache.ojb.broker.metadata.DescriptorRepository;
 import org.apache.ojb.broker.PersistenceBrokerException;
 
-import java.util.Map;
+import java.util.*;
 import java.lang.reflect.Constructor;
 
 /**
@@ -35,10 +36,49 @@ public class IntactRowReaderImpl extends RowReaderDefaultImpl {
         Object result = null;
         FieldDescriptor fmd = null;
         Constructor noArgConstructor = null;
+        Collection extentDescriptors = new ArrayList();
+        ClassDescriptor extentDesc = null;
         try
         {
             // 1. create an empty Object
             Class c = cld.getClassOfObject();
+            //System.out.println("class used in reader: " + c.getName());
+            extentDescriptors = getExtentDescriptors(c);
+            //NB sometimes the class descriptor is an interface -
+            //then we should use the class descriptor of the extent class instead....
+            //if(c.isInterface()) {
+                //System.out.println("found interface of type " + c.getName());
+                //Collection extents = cld.getExtentClasses();
+                //need the class descriptors of them....
+                //NB with our current descriptor all interfaces only have a single
+                //extent (ie the implementation)
+//                for(Iterator it = extents.iterator(); it.hasNext();) {
+//                    Class extentClass = (Class)it.next();
+//                    extentDesc = DescriptorRepository.getDefaultInstance().getDescriptorFor(extentClass);
+//                    extentDescriptors.add(extentDesc);
+//                }
+
+           // }
+            if(!extentDescriptors.isEmpty()) {
+                //use it instead - BUT....
+                //An issue here:
+                //1) we only need this now because Experiments have a Collection
+                //of interfaces and we need proxies for the contents, so we expect
+                //only a single extent descriptor. So far this is the case, since the
+                //only interfaces we have in the model are only declared to have a single
+                //extent (ie their implementation, which could be a proxy - hence
+                //this solution!). If we ever define interfaces with more than one
+                //extent class then this will become an issue, since we can only
+                //materialize a single object here!!
+                //
+                //IMPORTANT - this is ONLY an issue when interfaces with multiple
+                //extents are accessed OUTSIDE THE SEARCH METHOD - in search it is already
+                //handled, but for non-search ones we have no control.
+                cld = (ClassDescriptor)extentDescriptors.iterator().next();
+                c = cld.getClassOfObject();
+                //System.out.println("extent used: " + cld.getClassNameOfObject());
+
+            }
 
             //use this method to get all constructors (not just public ones)
             Constructor[] constructors = c.getDeclaredConstructors();
@@ -68,9 +108,42 @@ public class IntactRowReaderImpl extends RowReaderDefaultImpl {
         catch(Exception ex)
         {
             System.out.println("failed to create object " + cld.getClassNameOfObject() +
-                    "via private constructor call");
+                    " via private constructor call");
             throw new PersistenceBrokerException("Unable to build object instance :"+cld.getClassOfObject(),ex);
         }
+    }
+
+    /**
+     * Retrieves the concrete class descriptors for classes which
+     * are originally interfaces (or abstract). This makes sure that only
+     * cocnrete classes are searched for.
+     * @param clazz The class to drill down
+     * @return Collection the collection of concrete class descriptors - empty
+     * if none found.
+     */
+    private Collection getExtentDescriptors(Class clazz) {
+
+        Collection result = new ArrayList();
+        ClassDescriptor extentDesc = null;
+        if(!clazz.isInterface()) {
+            extentDesc = DescriptorRepository.getDefaultInstance().getDescriptorFor(clazz);
+            result.add(extentDesc);
+            //System.out.println("Adding concrete descriptor for " + clazz.getName());
+            return result;
+        }
+        //System.out.println("found interface of type " + clazz.getName());
+        extentDesc = DescriptorRepository.getDefaultInstance().getDescriptorFor(clazz);
+        Collection extents = extentDesc.getExtentClasses();
+
+        //need the class descriptors of them....
+        //NB with our current descriptor all interfaces only have a single
+        //extent (ie the implementation)
+        for(Iterator it = extents.iterator(); it.hasNext();) {
+            Class extentClass = (Class)it.next();
+            result.addAll(getExtentDescriptors(extentClass));
+        }
+        return result;
+
     }
 
 }
