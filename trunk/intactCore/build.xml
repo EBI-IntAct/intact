@@ -290,6 +290,14 @@
     </target>
 
     <!-- =================================================================== -->
+<!-- Compiles the synchron module. -->
+    <target name="compile-synchron" depends="compile-core"
+        description="Compiles the synchron module">
+
+        <ant dir="application/synchron" inheritAll="false" target="compile"/>
+    </target>
+
+    <!-- =================================================================== -->
 
 	<!-- Compiles the search module. -->
     <target name="compile-search" depends="compile-core"
@@ -302,7 +310,7 @@
 
     <!-- Compiles all the sources. -->
     <target name="compile-all" description="Compiles all the sources for Intact"
-        depends="compile-core, compile-hv, compile-cvedit, compile-search">
+        depends="compile-core, compile-hv, compile-cvedit, compile-search, compile-synchron">
     </target>
 
     <!-- =================================================================== -->
