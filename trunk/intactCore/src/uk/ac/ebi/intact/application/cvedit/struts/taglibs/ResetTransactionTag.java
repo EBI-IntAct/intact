@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.cvedit.struts.taglibs;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
-import uk.ac.ebi.intact.persistence.TransactionException;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.JspException;
@@ -45,8 +45,8 @@ public class ResetTransactionTag extends TagSupport {
             super.pageContext.getServletContext().log(" Transaction= " + user.isActive());
             user.rollback();
         }
-        catch (TransactionException te) {
-            throw new JspException(te.toString());
+        catch (IntactException ie) {
+            throw new JspException(ie.toString());
         }
         return EVAL_PAGE;
     }
