@@ -39,12 +39,12 @@
 
     <!-- ========== Form Bean Definitions =================================== -->
     <form-beans>
-
         <!-- The sidebar form -->
         <form-bean name="sidebarForm"
             type="org.apache.struts.action.DynaActionForm">
             <form-property name="searchString" type="java.lang.String" initial="*"/>
             <form-property name="searchClass" type="java.lang.String"/>
+            <form-property name="binary" type="java.lang.String"/>
             <form-property name="selectedChunk" type="java.lang.String" initial="-1"/>
         </form-bean>
 
@@ -87,7 +87,17 @@
             <forward name="sessionLost" path="/do/welcome"/>
             <forward name="tooLarge" path="/do/tooLarge"/>
             <forward name="dispatcher" path="/do/dispatcher"/>
+            <forward name="binary" path="binary.layout"/>
+            <forward name="pairwise" path="pairwise.layout"/>
         </action>
+
+          <!-- Process when user accesses search via a pairwise query -->
+        <action path="/pairwise"
+            type="uk.ac.ebi.intact.application.search3.struts.controller.WelcomeAction"
+            scope="request">
+            <forward name="success" path="/do/search"/>
+        </action>
+
 
 
         <!-- Decide accordingly to the data retreived and the parameters given by the user,
@@ -106,6 +116,7 @@
             <forward name="binary" path="/do/binary"/>
             <forward name="details" path="/do/details"/>
             <forward name="simple" path="/do/simple"/>
+            <forward name="binaryProtein" path="/do/binaryProtein"/>
         </action>
 
 
@@ -131,7 +142,7 @@
             <forward name="results" path="match.layout"/>
             <!-- used for BioSource -->
             <forward name="cvObject" path="cvObject.layout"/>
-            <!-- used for CvObjects -->
+            <!-- used for CvObjects -->                      
             <forward name="bioSource" path="bioSource.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
         </action>
@@ -143,7 +154,6 @@
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="results" path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
-
             <!-- new path to the partners JSP -->
             <forward name="partners" path="partners.layout"/>
         </action>
@@ -160,7 +170,15 @@
             <forward name="simpleResults" path="simple.layout"/>
         </action>
 
-        <action path="/tooLarge"
+        <!-- Jan 2005 : new view for request from ihop  -->
+        <action path="/binaryProtein"
+            type="uk.ac.ebi.intact.application.search3.struts.controller.BinaryProteinAction"
+            scope="session">
+           <forward name="noMatch" path="no.match.layout"/>
+           <forward name="results" path="simple.layout"/>
+        </action>
+
+         <action path="/tooLarge"
             type="uk.ac.ebi.intact.application.search3.struts.controller.TooLargeAction"
             scope="session">
             <forward name="results" path="too.large.layout"/>
