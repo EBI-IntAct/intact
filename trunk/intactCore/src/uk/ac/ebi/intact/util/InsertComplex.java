@@ -31,10 +31,10 @@ import org.apache.log4j.Logger;
  *
  * @author Henning Hermjakob, hhe@ebi.ac.uk
  */
-public class InsertComplex {
+public final class InsertComplex {
 
-    public static final String NEW_LINE = System.getProperty("line.separator");
-    private final static org.apache.log4j.Logger logger = Logger.getLogger("InsertComplex");
+    public static final String NEW_LINE = System.getProperty( "line.separator" );
+    private final static org.apache.log4j.Logger logger = Logger.getLogger( "InsertComplex" );
 
     private IntactHelper helper;
     private UpdateProteins proteinFactory;
@@ -72,17 +72,15 @@ public class InsertComplex {
             proteinFactory.setLocalTransactionControl( false );
 
             //set up newt access...
-            URL newtUrl = new URL("http://www.ebi.ac.uk/newt/display");
-            newtServer = new NewtServerProxy(newtUrl);
-        }
-        catch (IntactException ie) {
+            URL newtUrl = new URL( "http://www.ebi.ac.uk/newt/display" );
+            newtServer = new NewtServerProxy( newtUrl );
+        } catch( IntactException ie ) {
 
             //something failed with type map or datasource...
             String msg = "unable to create intact helper class";
-            System.err.println(msg);
+            System.err.println( msg );
             ie.printStackTrace();
-        }
-        catch (UpdateProteinsI.UpdateException e) {
+        } catch( UpdateProteinsI.UpdateException e ) {
             //something failed with type map or datasource...
             String msg = "unable to create protein factory";
             logger.error( msg );
@@ -93,11 +91,11 @@ public class InsertComplex {
     /**
      * Close the database connexion if it has been opened.
      */
-    public void closeHelper() {
+    public final void closeHelper() {
         try {
-            if (helper != null) helper.closeStore();
-        } catch ( IntactException e ) {
-            e.printStackTrace ();
+            if( helper != null ) helper.closeStore();
+        } catch( IntactException e ) {
+            e.printStackTrace();
         }
     }
 
@@ -110,70 +108,67 @@ public class InsertComplex {
      * @param role Role of the protein in the interaction.
      * @throws Exception
      */
-    public void insertComponent(Interaction act,
-                                String spAc,
-                                CvComponentRole role) throws Exception {
+    public final void insertComponent( Interaction act,
+                                 String spAc,
+                                 CvComponentRole role ) throws Exception {
 
-       // Component comp = new Component();
-       // comp.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
-       // comp.setInteraction(act);
+        // Component comp = new Component();
+        // comp.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
+        // comp.setInteraction(act);
 
         Collection proteins = null;
 
         // The relevant proteins might already have been created for the current complex.
-        if (createdProteins.containsKey(spAc)) {
-            proteins = (Collection) createdProteins.get(spAc);
-        }
-        else {
-            proteins = helper.getObjectsByXref(Protein.class, spAc);
+        if( createdProteins.containsKey( spAc ) ) {
+            proteins = (Collection) createdProteins.get( spAc );
+        } else {
+            proteins = helper.getObjectsByXref( Protein.class, spAc );
 
-            if (0 == proteins.size()) {
+            if( 0 == proteins.size() ) {
                 // * If the protein does not exist, create it
-                System.err.print("P");
+                System.err.print( "P" );
 
                 // if it is an sptr protein, create a full protein object
-                proteins.addAll(proteinFactory.insertSPTrProteins(spAc));
+                proteins.addAll( proteinFactory.insertSPTrProteins( spAc ) );
 
                 // if it looks like an sgd protein, create it with an xref to sgd
-                if ((0 == proteins.size()) && (spAc.substring(0, 1).equals("S"))) {
+                if( ( 0 == proteins.size() ) && ( spAc.substring( 0, 1 ).equals( "S" ) ) ) {
                     proteins.add(
-                            proteinFactory.insertSimpleProtein(spAc,
-                                    (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sgd"),
-                                    bioSource.getTaxId()));
+                            proteinFactory.insertSimpleProtein( spAc,
+                                                                (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sgd" ),
+                                                                bioSource.getTaxId() ) );
                 }
-            }
-            else {
-                System.err.print("p");
+            } else {
+                System.err.print( "p" );
             }
 
             // Save the created proteins for further use
-            createdProteins.put(spAc, proteins);
+            createdProteins.put( spAc, proteins );
         }
         Protein targetProtein = null;
 
         // Filter for the correct protein
-        for (Iterator i = proteins.iterator(); i.hasNext();) {
+        for( Iterator i = proteins.iterator(); i.hasNext(); ) {
             Protein tmp = (Protein) i.next();
 
-            if (tmp.getBioSource().getTaxId().equals( bioSource.getTaxId())) {
-                if (null == targetProtein) {
+            if( tmp.getBioSource().getTaxId().equals( bioSource.getTaxId() ) ) {
+                if( null == targetProtein ) {
                     targetProtein = tmp;
-                }
-                else {
-                    throw new IntactException("More than one target protein found for: " + spAc);
+                } else {
+                    throw new IntactException( "More than one target protein found for: " + spAc );
                 }
             }
         }
 
-        if (null == targetProtein) {
-            throw new IntactException("No target protein found for: " + spAc);
+        if( null == targetProtein ) {
+            throw new IntactException( "No target protein found for: " + spAc );
         }
 
         //now build the Component.....
         Component comp = new Component( owner, act, targetProtein, role );
 
-       // comp.setInteractor(targetProtein);
-       // comp.setCvComponentRole(role);
+        // comp.setInteractor(targetProtein);
+        // comp.setCvComponentRole(role);
         helper.create( comp );
     }
 
@@ -188,45 +183,44 @@ public class InsertComplex {
     private Experiment getExperiment( String experimentLabel ) throws IntactException {
 
         // Get experiment from the local node
-        logger.debug("looking for an Experiment in the DB with label "
-                + experimentLabel + " ....");
-        Experiment ex = (Experiment) helper.getObjectByLabel(Experiment.class, experimentLabel);
-        if (null == ex) {
+        logger.debug( "looking for an Experiment in the DB with label "
+                      + experimentLabel + " ...." );
+        Experiment ex = (Experiment) helper.getObjectByLabel( Experiment.class, experimentLabel );
+        if( null == ex ) {
             // create it - NB under the new model the Experiment needs
             //a non-null owner, shortLabel and BioSource....
-            logger.debug("no Experiment found with label " +
-                    experimentLabel + ": creating a new one...");
+            logger.debug( "no Experiment found with label " +
+                          experimentLabel + ": creating a new one..." );
             ex = new Experiment( owner, experimentLabel, bioSource );
             //NB as this is already in a TX scope the Experiment will not be persisted yet!!
-            helper.create(ex);
-            logger.debug("checking it was persisted.....");
-            Experiment dummy = (Experiment) helper.getObjectByLabel(Experiment.class, experimentLabel);
-            if (dummy == null) logger.debug("Error: new Experiment not created; may be nested TX problem...");
+            helper.create( ex );
+            logger.debug( "checking it was persisted....." );
+            Experiment dummy = (Experiment) helper.getObjectByLabel( Experiment.class, experimentLabel );
+            if( dummy == null ) logger.debug( "Error: new Experiment not created; may be nested TX problem..." );
         }
         //Experiments in the DB SHOULD have a BioSource - but just in case
         //they don't.....
-        if(ex.getBioSource() == null) {
-            logger.debug("Oops, an Experiment in the DB does not have a BioSource!");
-            logger.debug("Setting one for it now....");
-            if(bioSource != null) {
-                ex.setBioSource(bioSource);
-                logger.debug("BioSource must already be a valid persistent one -");
-                logger.debug("Using details as follows..");
-                logger.debug("TaxId: " + bioSource.getTaxId());
-                logger.debug("AC: " + bioSource.getAc());
-            }
-            else {
-                logger.debug("ERROR! Don't have a valid BioSource to set in an Experiment");
-                throw new IntactException("failed to add BioSource to Experiment - no bioSource!");
+        if( ex.getBioSource() == null ) {
+            logger.debug( "Oops, an Experiment in the DB does not have a BioSource!" );
+            logger.debug( "Setting one for it now...." );
+            if( bioSource != null ) {
+                ex.setBioSource( bioSource );
+                logger.debug( "BioSource must already be a valid persistent one -" );
+                logger.debug( "Using details as follows.." );
+                logger.debug( "TaxId: " + bioSource.getTaxId() );
+                logger.debug( "AC: " + bioSource.getAc() );
+            } else {
+                logger.debug( "ERROR! Don't have a valid BioSource to set in an Experiment" );
+                throw new IntactException( "failed to add BioSource to Experiment - no bioSource!" );
             }
 
             //persist the change (assumes TX started outside this method..)
-            helper.update(ex);
-            logger.debug("update called on Experiment - BioSource added (but not yet persistent)..");
+            helper.update( ex );
+            logger.debug( "update called on Experiment - BioSource added (but not yet persistent).." );
         }
-        logger.debug("Experiment used has shortLabel " + ex.getShortLabel()
-                + " and BioSource with Label: "
-                + ex.getBioSource().getShortLabel());
+        logger.debug( "Experiment used has shortLabel " + ex.getShortLabel()
+                      + " and BioSource with Label: "
+                      + ex.getBioSource().getShortLabel() );
 
         return ex;
     }
@@ -238,19 +232,18 @@ public class InsertComplex {
      * @param typeLabel The label used to find the Interaction type (may be null)
      * @return CvInteractionType the CV data if found, null otherwise
      */
-    private CvInteractionType getInteractionType(String typeLabel) {
+    private CvInteractionType getInteractionType( String typeLabel ) {
 
         CvInteractionType cvType = null;
-        if (typeLabel != null) {
+        if( typeLabel != null ) {
             try {
                 cvType = (CvInteractionType) helper.getObjectByLabel(
-                CvInteractionType.class, typeLabel);
-                if (cvType == null) {
+                        CvInteractionType.class, typeLabel );
+                if( cvType == null ) {
                     // TODO: Problem if type is unknown - do what??
-                    logger.debug(typeLabel + " is not known as a CvInteractionType shortLabel." );
+                    logger.debug( typeLabel + " is not known as a CvInteractionType shortLabel." );
                 }
-            }
-            catch ( IntactException ie ) {
+            } catch( IntactException ie ) {
                 // this is not mandatory, skip it.
             }
         }
@@ -270,12 +263,12 @@ public class InsertComplex {
      * @param experiment The Experiment that the Complex belongs to
      * @throws Exception
      */
-    public void insertComplex(String interactionNumber,
-                              String bait,
-                              Vector preys,
-                              String actLabel,
-                              Experiment experiment,
-                              String interactionTypeLabel) throws Exception {
+    public final void insertComplex( String interactionNumber,
+                               String bait,
+                               Vector preys,
+                               String actLabel,
+                               Experiment experiment,
+                               String interactionTypeLabel ) throws Exception {
 
         // Get Interaction
         // The label is the first two letters of the experiment label plus the interaction number
@@ -283,42 +276,42 @@ public class InsertComplex {
         //Interaction act = (Interaction) helper.getObjectByLabel(Interaction.class, actLabel);
         //if (null == act) {
 
-            Collection experiments = new ArrayList();
-            //Experiment experiment = getExperiment(experimentLabel);
-            experiments.add( experiment );
+        Collection experiments = new ArrayList();
+        //Experiment experiment = getExperiment(experimentLabel);
+        experiments.add( experiment );
 
-            // if requested, try to set the CvInteractionType.
-            CvInteractionType cvInteractionType = getInteractionType( interactionTypeLabel );
+        // if requested, try to set the CvInteractionType.
+        CvInteractionType cvInteractionType = getInteractionType( interactionTypeLabel );
 
-            //got our data - now build the new Interaction (with an empty component Collection)
-            //get the info needed to create a new Interaction and build one...
-            Interaction act = new InteractionImpl( experiments, new ArrayList(), cvInteractionType, actLabel, owner );
-            helper.create( act );
+        //got our data - now build the new Interaction (with an empty component Collection)
+        //get the info needed to create a new Interaction and build one...
+        Interaction act = new InteractionImpl( experiments, new ArrayList(), cvInteractionType, actLabel, owner );
+        helper.create( act );
 
-            // Initialise list of proteins created
-            createdProteins = new HashMap();
+        // Initialise list of proteins created
+        createdProteins = new HashMap();
 
-            // add bait
-            insertComponent(act, bait, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "bait"));
+        // add bait
+        insertComponent( act, bait, (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "bait" ) );
 
-            CvComponentRole role = (CvComponentRole) helper.getObjectByLabel ( CvComponentRole.class, "prey" );
-            // add preys
-            for (int i = 0; i < preys.size(); i++) {
-                String prey = (String) preys.elementAt( i );
-                insertComponent( act, prey, role );
-            }
+        CvComponentRole role = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "prey" );
+        // add preys
+        for( int i = 0; i < preys.size(); i++ ) {
+            String prey = (String) preys.elementAt( i );
+            insertComponent( act, prey, role );
+        }
 
-            // link interaction to experiment
-            experiment.addInteraction( act );
+        // link interaction to experiment
+        experiment.addInteraction( act );
 
-            // No need to do an update here because we have created a new Interaction.
-            // In fact, it is an error to do so because you can only update objects that
-            // are already in the DB.
+        // No need to do an update here because we have created a new Interaction.
+        // In fact, it is an error to do so because you can only update objects that
+        // are already in the DB.
 //            helper.update(act);
-            System.err.print( "C" );
+        System.err.print( "C" );
         //}
         //else {
-            //System.err.print("c");
+        //System.err.print("c");
         //}
         // Only update if the object exists in the database. Since
         // the transaction is outside this method, do nothing for creation as it
@@ -342,11 +335,11 @@ public class InsertComplex {
      *                        interactions.
      * @throws Exception
      */
-    public void insert( String filename, String taxId, String interactionType ) throws Exception {
+    public final void insert( String filename, String taxId, String interactionType ) throws Exception {
 
         //makes sense to get the Institution here - avoids a call
         //to the DB for every line processed...
-        owner = (Institution) helper.getObjectByLabel(Institution.class, "EBI");
+        owner = (Institution) helper.getObjectByLabel( Institution.class, "EBI" );
 
         // TODO: this block below could be replaced by the BioSourceFactory !!!!!!!
 
@@ -355,134 +348,146 @@ public class InsertComplex {
         //is processed so do it here....
         NewtServerProxy.NewtResponse response = null;
         try {
-            System.out.println("Attempting to get BioSource info from Newt server.....");
-            response = newtServer.query(Integer.parseInt(taxId));
-        }
-        catch(NewtServerProxy.TaxIdNotFoundException txe) {
-            logger.debug("Error - failed to find BioSource with Tax ID " + taxId);
-            throw new Exception("failed to get BioSource - cannot proceed with data loading!");
-        }
-        catch(IOException ioe) {
-            logger.debug("IO Error - failed to access newt server to obtain BioSource");
-            throw new Exception("IO Error trying to get BioSource - cannot proceed with data loading!");
+            System.out.println( "Attempting to get BioSource info from Newt server....." );
+            response = newtServer.query( Integer.parseInt( taxId ) );
+        } catch( NewtServerProxy.TaxIdNotFoundException txe ) {
+            logger.debug( "Error - failed to find BioSource with Tax ID " + taxId );
+            throw new Exception( "failed to get BioSource - cannot proceed with data loading!" );
+        } catch( IOException ioe ) {
+            logger.debug( "IO Error - failed to access newt server to obtain BioSource" );
+            throw new Exception( "IO Error trying to get BioSource - cannot proceed with data loading!" );
         }
         String bioLabel = null;
-        if(response == null) throw new Exception("No response from Newt server!!");
-        if(response.hasShortLabel()) {
+        if( response == null ) throw new Exception( "No response from Newt server!!" );
+        if( response.hasShortLabel() ) {
             bioLabel = response.getShortLabel();
-        }
-        else {
-            throw new Exception("Error - need a BioSource with a short label: tax ID "
-                    + taxId + " does not have one!");
+        } else {
+            throw new Exception( "Error - need a BioSource with a short label: tax ID "
+                                 + taxId + " does not have one!" );
         }
         String bioName = response.getFullName();
 
         //check the DB to see if it's already there (and a consistent one!)-
         //if not it will need persisting....
-        bioSource = helper.getBioSourceByTaxId(taxId);
-        if((bioSource == null) || (bioSource.getOwner() == null) ||
-                (bioSource.getTaxId() == null)) {
+        bioSource = helper.getBioSourceByTaxId( taxId );
+        if( ( bioSource == null ) || ( bioSource.getOwner() == null ) ||
+                ( bioSource.getTaxId() == null ) ) {
 
-            logger.debug("No BioSource with TaxId "
-                    + taxId + " exists yet - creating a new one..");
+            logger.debug( "No BioSource with TaxId "
+                          + taxId + " exists yet - creating a new one.." );
             try {
                 //have either no object or an invalid state - make a new one
                 //(provided the TaxId hasn't already been used - it must be
                 //unique..)
-                bioSource = new BioSource(owner, bioLabel, taxId);
-                logger.debug("new BioSource created, with shortLabel "
-                        + bioSource.getShortLabel()
-                        + " and taxId " + bioSource.getTaxId());
-                bioSource.setFullName(bioName);   //set for good measure...
+                bioSource = new BioSource( owner, bioLabel, taxId );
+                logger.debug( "new BioSource created, with shortLabel "
+                              + bioSource.getShortLabel()
+                              + " and taxId " + bioSource.getTaxId() );
+                bioSource.setFullName( bioName );   //set for good measure...
 
                 //first make sure there is a BioSource that is persistent....
                 //NB this must be done in a seperate TX as it is needed later...
-                helper.startTransaction(BusinessConstants.OBJECT_TX);
+                helper.startTransaction( BusinessConstants.OBJECT_TX );
                 helper.create( bioSource );
                 helper.finishTransaction();
-            }
-            catch (Exception ie) {
+            } catch( Exception ie ) {
                 ie.printStackTrace();
                 System.err.println();
-                System.err.println("Error persisting the BioSource for the data! (maybe taxId exists?)");
-                System.err.println(ie.getMessage());
+                System.err.println( "Error persisting the BioSource for the data! (maybe taxId exists?)" );
+                System.err.println( ie.getMessage() );
             }
         }
-        logger.debug("BioSource Details:");
-        logger.debug("Short Label: " + bioSource.getShortLabel());
-        logger.debug("Tax Id: " + bioSource.getTaxId());
-        logger.debug("AC: " + bioSource.getAc());
+        logger.debug( "BioSource Details:" );
+        logger.debug( "Short Label: " + bioSource.getShortLabel() );
+        logger.debug( "Tax Id: " + bioSource.getTaxId() );
+        logger.debug( "AC: " + bioSource.getAc() );
 
         // Parse input file line by line
 
-        BufferedReader file = new BufferedReader( new FileReader( filename ) );
-        String line;
-        int lineCount = 0;
+        FileReader fr = null;
+        BufferedReader file = null;
+        try {
+            fr = new FileReader( filename );
+            file = new BufferedReader( fr );
+            String line;
+            int lineCount = 0;
 
-        System.out.print("Lines processed: ");
+            System.out.print( "Lines processed: " );
 
-        while ( null != (line = file.readLine()) ) {
+            while( null != ( line = file.readLine() ) ) {
 
-            // Tokenize lines
-            StringTokenizer st = new StringTokenizer(line);
-            String interactionNumber = st.nextToken();
-            String bait = st.nextToken();
-            Vector preys = new Vector();
+                // Tokenize lines
+                StringTokenizer st = new StringTokenizer( line );
+                String interactionNumber = st.nextToken();
+                String bait = st.nextToken();
+                Vector preys = new Vector();
 
-            while ( st.hasMoreTokens() ) {
-                preys.add(st.nextToken());
+                while( st.hasMoreTokens() ) {
+                    preys.add( st.nextToken() );
+                }
+
+                // remove last element from preys vector, it is the experiment identifier.
+                String experimentLabel = (String) preys.lastElement();
+                preys.removeElement( preys.lastElement() );
+
+                //Process the Complex data...
+
+                //first see if we need to create an Interaction at all - if so
+                //then we need some transactions but if not, just print the
+                //legend to say the Complex already exists.....
+                String actLabel = experimentLabel.substring( 0, 2 ) + "-" + interactionNumber;
+                Interaction interaction = (Interaction) helper.getObjectByLabel( Interaction.class, actLabel );
+                if( interaction == null ) {
+
+                    //Doesn't already exist - so need to do some Transactions...
+                    Experiment experiment = null;
+                    try {
+                        //must persist the Experiment first (if necessary) as the Complexes
+                        //need it to be 'fully' defined before they can be persisted
+                        //(due to the Experiment now needing to have a BioSource defined..)
+                        helper.startTransaction( BusinessConstants.OBJECT_TX );
+                        experiment = getExperiment( experimentLabel );
+                        helper.finishTransaction();
+
+                        //now do the Complexes....
+                        helper.startTransaction( BusinessConstants.OBJECT_TX );
+                        insertComplex( interactionNumber, bait, preys, actLabel, experiment, interactionType );
+                        helper.finishTransaction();
+
+                    } catch( Exception ie ) {
+                        ie.printStackTrace();
+                        System.err.println();
+                        System.err.println( "Error while processing input line: " );
+                        System.err.println( line );
+                        System.err.println( ie.getMessage() );
+                    }
+                } else {
+                    System.err.print( "c" );
+                }
+
+                // Progress report
+                if( ( ++lineCount % 1 ) == 0 ) {
+                    System.out.print( lineCount + " " );
+                } else {
+                    System.out.println( "." );
+                }
             }
-
-            // remove last element from preys vector, it is the experiment identifier.
-            String experimentLabel = (String) preys.lastElement();
-            preys.removeElement( preys.lastElement() );
-
-            //Process the Complex data...
-
-           //first see if we need to create an Interaction at all - if so
-           //then we need some transactions but if not, just print the
-           //legend to say the Complex already exists.....
-           String actLabel = experimentLabel.substring(0, 2) + "-" + interactionNumber;
-           Interaction interaction = (Interaction) helper.getObjectByLabel(Interaction.class, actLabel);
-           if(interaction == null) {
-
-               //Doesn't already exist - so need to do some Transactions...
-               Experiment experiment = null;
+            System.out.println( NEW_LINE );
+        } finally {
+            // close opened streams.
+            if( file != null ) {
                 try {
-                    //must persist the Experiment first (if necessary) as the Complexes
-                    //need it to be 'fully' defined before they can be persisted
-                    //(due to the Experiment now needing to have a BioSource defined..)
-                    helper.startTransaction(BusinessConstants.OBJECT_TX);
-                    experiment = getExperiment( experimentLabel );
-                    helper.finishTransaction();
-
-                    //now do the Complexes....
-                    helper.startTransaction(BusinessConstants.OBJECT_TX);
-                    insertComplex(interactionNumber, bait, preys, actLabel, experiment, interactionType );
-                    helper.finishTransaction();
-
-                }
-                catch (Exception ie) {
-                    ie.printStackTrace();
-                    System.err.println();
-                    System.err.println("Error while processing input line: ");
-                    System.err.println(line);
-                    System.err.println(ie.getMessage());
+                    file.close();
+                } catch( IOException ioe ) {
                 }
             }
-            else {
-                System.err.print("c");
-            }
-
-            // Progress report
-            if ((++lineCount % 1) == 0) {
-                System.out.print(lineCount + " ");
-            }
-            else {
-                System.out.println(".");
+            if( fr != null ) {
+                try {
+                    fr.close();
+                } catch( IOException ioe ) {
+                }
             }
         }
-        System.out.println( NEW_LINE );
     }
 
     private static void displayUsage( Options options ) {
@@ -494,14 +499,13 @@ public class InsertComplex {
                              options );
     }
 
-    private static void displayLegend( ){
+    private static void displayLegend() {
         System.out.println( "Legend:" );
         System.out.println( "C: new Complex created." );
         System.out.println( "c: Complex already existing." );
         System.out.println( "P: new Protein created." );
         System.out.println( "p: Protein already existing." );
     }
-
 
 
     /**
@@ -512,33 +516,33 @@ public class InsertComplex {
      * proteins.
      * @throws Exception for any errors.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main( String[] args ) throws Exception {
 
         /* Usage: InsertComplex -file <filename>
-         *                      -taxid <biosource.taxid>
-         *                      [-interactionType <CvInteractionType.shortLabel>]
-         */
+        *                      -taxid <biosource.taxid>
+        *                      [-interactionType <CvInteractionType.shortLabel>]
+        */
 
         // create Option objects
         Option helpOpt = new Option( "help", "print this message" );
 
         Option filenameOpt = OptionBuilder.withArgName( "filename" )
-                                          .hasArg()
-                                          .withDescription( "use given buildfile" )
-                                          .create( "file" );
+                .hasArg()
+                .withDescription( "use given buildfile" )
+                .create( "file" );
         filenameOpt.setRequired( true );
 
         Option taxidOpt = OptionBuilder.withArgName( "biosource.taxid" )
-                                       .hasArg()
-                                       .withDescription( "taxId of the BioSource to link to that Complex" )
-                                       .create( "taxId" );
+                .hasArg()
+                .withDescription( "taxId of the BioSource to link to that Complex" )
+                .create( "taxId" );
         taxidOpt.setRequired( true );
 
         Option interactionTypeOpt = OptionBuilder.withArgName( "CvInteractionType.shortLabel" )
-                                                 .hasArg()
-                                                 .withDescription ( "Shortlabel of the existing " +
-                                                                    "CvInteractionType to link to that Complex" )
-                                                 .create( "interactionType" );
+                .hasArg()
+                .withDescription( "Shortlabel of the existing " +
+                                  "CvInteractionType to link to that Complex" )
+                .create( "interactionType" );
         // Not mandatory.
         // interactionTypeOpt.setRequired( true );
 
@@ -561,31 +565,30 @@ public class InsertComplex {
             }
 
             // These argument are mandatory.
-            String filename        = line.getOptionValue( "file" );
-            String taxid           = line.getOptionValue( "taxId" );
+            String filename = line.getOptionValue( "file" );
+            String taxid = line.getOptionValue( "taxId" );
             String interactionType = line.getOptionValue( "interactionType" );
 
             try {
                 HttpProxyManager.setup();
-            } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
-                proxyConfigurationNotFound.printStackTrace ();
+            } catch( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
+                proxyConfigurationNotFound.printStackTrace();
             }
 
-            displayLegend( );
+            displayLegend();
 
             InsertComplex tool = new InsertComplex();
             tool.insert( filename, taxid, interactionType );
             tool.closeHelper();
             System.exit( 0 );
-        }
-        catch( ParseException exp ) {
+        } catch( ParseException exp ) {
             // Oops, something went wrong
 
-            displayUsage(options);
+            displayUsage( options );
 
             System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
             System.exit( 1 );
-        } catch (Exception e) {
+        } catch( Exception e ) {
             e.printStackTrace();
             System.exit( 1 );
         }
