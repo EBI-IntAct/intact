@@ -34,13 +34,14 @@ public class DocumentationTag extends TagSupport {
     public static final int ERROR         = 4;
     public static final int SERVER_ERROR  = 5;
 
+    private static final String DEFAULT_TITLE = "<b><font color=\"red\">[?]</font></a></b>";
+
     private static final String PAGE      = "/intact/displayDoc.jsp";
-    private static final String URL_BEGIN = "<b><a name=\"#\" onClick=\"w=window.open('";
+    private static final String URL_BEGIN = "<a name=\"#\" onClick=\"w=window.open('";
     private static final String URL_MID   = PAGE + "?section=";
     private static final String URL_END   = "', 'helpwindow', " +
                                             "'width=800,height=500,toolbar=no,directories=no,menu bar=no,scrollbars=yes,resizable=yes');"+
-                                            "w.focus();\">"+
-                                            "<font color=\"red\">[?]</font></a></b>";
+                                            "w.focus();\">";
     private static final String PROTOCOL  = "http://";
     private static final String PORT_SEPARATOR = ":";
 
@@ -50,6 +51,12 @@ public class DocumentationTag extends TagSupport {
      */
     private String section;
 
+    /**
+     * The title attribute; defaults to the DEFAULT_TITLE if none
+     * specified.
+     */
+    private String title = DEFAULT_TITLE;
+
     public String getSection() {
         return section;
     }
@@ -58,7 +65,13 @@ public class DocumentationTag extends TagSupport {
         this.section = section;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
+    public String getTitle() {
+        return this.title;
+    }
 
     /**
      * Skip the body content.
@@ -102,6 +115,7 @@ public class DocumentationTag extends TagSupport {
             sb.append (URL_MID);
             if (section != null) sb.append (section);
             sb.append (URL_END);
+            sb.append(this.title);
 
             try {
                 pageContext.getOut().write (sb.toString());
