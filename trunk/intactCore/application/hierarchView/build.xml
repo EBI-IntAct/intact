@@ -18,7 +18,8 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
     <!-- Intact application location. -->
-    <property name="intact.app.dir" value=".."/>
+    <property name="intact.app.dir"     value=".."/>
+    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
 
     <property name="commons.pages.dir"   value="${intact.app.dir}/pages"/>
     <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
@@ -38,6 +39,9 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
+
+
+    <property name="hv-context-file" value="${intact.context.dir}/hierarchView-context.xml"/>
 
     <!-- Web service related properties. -->
     <property name="ws.dir" value="ws"/>
@@ -133,7 +137,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <condition property="interpro.hostname.notCustomized">
             <contains string="${highlightment.source.GO.hostname}" substring="[HOSTNAME]"/>
         </condition>
-        <echo message="    highlightment.source.GO.hostname = ${highlightment.source.GO.hostname}"/>
+        <echo message="    highlightment.source.GO.hostname = ${highlightment.source.GO.applicationPath}"/>
 
        <echo message="${search.properties.filename} :"/>
 
@@ -631,6 +635,9 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <ant dir=".." inheritAll="false" target="deploy">
             <property name="war" value="hierarchView/${dist.dir}/${war.file}"/>
         </ant>
+
+        <!-- Copy context files in the Tomcat's webapps directory -->
+        <copy file="${hv-context-file}" todir="${tomcat.home}/webapps" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
