@@ -91,26 +91,7 @@ public class Experiment extends AnnotatedObject implements Editable {
 
     }
 
-    /**
-     * Copy constructor for the Experiment object.
-     * Create a new Experiment holding the identical data than the one given in parameter.
-     * @param experiment the Experiment co copy
-     */
-    public Experiment ( Experiment experiment) {
 
-        this( experiment.getOwner(), experiment.getShortLabel(),
-                experiment.getBioSource() );
-        setAc(experiment.getAc());
-        setAnnotation( experiment.getAnnotation() );
-        setCurator( experiment.getCurator() );
-        setCvIdentification( experiment.getCvIdentification() );
-        setEvidence( experiment.getEvidence() );
-        setFullName( experiment.getFullName() );
-        setInteraction( experiment.getInteraction() );
-        setReference( experiment.getReference() );
-        setRelatedExperiment( experiment.getRelatedExperiment() );
-        setXref( experiment.getXref() );
-    }
 
 
     ///////////////////////////////////////
