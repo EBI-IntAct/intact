@@ -21,11 +21,6 @@ public interface WebIntactConstants {
         "uk.ac.ebi.intact.struts.service.IntactService";
 
     /**
-     * The key to store an Intact Service object.
-     */
-    public static final String AVAILABLE_TOPICS = "topics";
-
-    /**
      * The key to success action.
      */
     public static final String FORWARD_SUCCESS = "success";
