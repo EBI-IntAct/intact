@@ -11,7 +11,7 @@ import java.io.IOException;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
-import uk.ac.ebi.intact.application.editor.struts.viewx.interaction.ProteinEditForm;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinEditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.model.Constants;
@@ -90,14 +90,6 @@ public class LoginAction extends AbstractEditorAction {
         LOGGER.info("Created a new session");
         // Need to access the user later.
         session.setAttribute(EditorConstants.INTACT_USER, user);
-
-        // Set the forms for the session (basicially recyling the forms here).
-        // All these forms are declared in session scope in the struts
-        // config file.
-        session.setAttribute(EditorConstants.FORM_COMMENT_EDIT, new EditForm());
-        session.setAttribute(EditorConstants.FORM_XREF_EDIT, new EditForm());
-        session.setAttribute("proteinEditForm", new ProteinEditForm());
-
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
     }
 }
