@@ -1026,7 +1026,7 @@ PROMPT Creating table "IA_Range"
 CREATE TABLE IA_Range
 (         ac                    VARCHAR2(30)    NOT NULL
                                                 CONSTRAINT pk_Range
-                                                PRIMARY KEY USING INDEX TABLESPACE INTACT_IDX
+                                                PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
         , deprecated            NUMBER(1)       DEFAULT  0       NOT NULL
         , created               DATE            DEFAULT  SYSDATE NOT NULL
         , updated               DATE            DEFAULT  SYSDATE NOT NULL
@@ -1043,7 +1043,7 @@ CREATE TABLE IA_Range
         , toFuzzyType_ac        VARCHAR2(30)    CONSTRAINT fk_Range$toFuzzyType_ac REFERENCES IA_ControlledVocab(ac)
         , sequence              VARCHAR(100)
 )
-TABLESPACE INTACT_TAB
+TABLESPACE &&intactMainTablespace
 ;
 
 CREATE INDEX i_Range$fromFuzzyType_ac on IA_Range(fromFuzzyType_ac) TABLESPACE &&intactIndexTablespace;
