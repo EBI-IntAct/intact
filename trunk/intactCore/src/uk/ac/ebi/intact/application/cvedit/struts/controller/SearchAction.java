@@ -34,26 +34,26 @@ import uk.ac.ebi.intact.persistence.SearchException;
 
 public class SearchAction extends IntactBaseAction {
 
-   /**
-    * Process the specified HTTP request, and create the corresponding
-    * HTTP response (or forward to another web component that will create
-    * it). Return an ActionForward instance describing where and how
-    * control should be forwarded, or null if the response has
-    * already been completed.
-    *
-    * @param mapping - The <code>ActionMapping</code> used to select this instance
-    * @param form - The optional <code>ActionForm</code> bean for this request (if any)
-    * @param request - The HTTP request we are processing
-    * @param response - The HTTP response we are creating
-    *
-    * @return - represents a destination to which the controller servlet,
-    * <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
-    * or HttpServletResponse.sendRedirect() to, as a result of processing
-    * activities of an <code>Action</code> class
+    /**
+     * Process the specified HTTP request, and create the corresponding
+     * HTTP response (or forward to another web component that will create
+     * it). Return an ActionForward instance describing where and how
+     * control should be forwarded, or null if the response has
+     * already been completed.
+     *
+     * @param mapping - The <code>ActionMapping</code> used to select this instance
+     * @param form - The optional <code>ActionForm</code> bean for this request (if any)
+     * @param request - The HTTP request we are processing
+     * @param response - The HTTP response we are creating
+     *
+     * @return - represents a destination to which the controller servlet,
+     * <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
+     * or HttpServletResponse.sendRedirect() to, as a result of processing
+     * activities of an <code>Action</code> class
     */
-    public ActionForward perform (ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response) {
+   public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         // Clear any previous errors.
         super.clearErrors();
 
@@ -143,17 +143,13 @@ public class SearchAction extends IntactBaseAction {
         // If we retrieved one object then we can go strainght to edit page.
         if (results.size() == 1) {
             // Found a single match only; save it to determine which page to
-            // return from edit.jsp; for example, results jsp or search jsp.
+            // return from edit page; for example, results or search page.
             session.setAttribute(WebIntactConstants.SINGLE_MATCH, Boolean.TRUE);
 
             // The object to edit.
             CvObject cvobj = (CvObject) results.iterator().next();
             user.setCurrentEditObject(cvobj);
 
-            CvViewBean viewbean = super.getViewBean(session);
-            viewbean.initialise(cvobj);
-            viewbean.setTopic(topic);
-            session.setAttribute(WebIntactConstants.VIEW_BEAN, viewbean);
             // Straight to the edit jsp.
             return mapping.findForward(WebIntactConstants.FORWARD_EDIT);
         }
