@@ -12,9 +12,6 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.io.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -48,25 +45,76 @@ public class CCLineExport extends LineExport {
         }
     }
 
+    private class CcLine implements Comparable {
+
+        private final String ccLine;
+        private final String geneName;
+
+        public CcLine( String ccLine, String geneName ) {
+
+            if( geneName == null ) {
+
+            }
+
+            this.ccLine = ccLine;
+            this.geneName = geneName;
+        }
+
+        public String getCcLine() {
+            return ccLine;
+        }
+
+        public String getGeneName() {
+            return geneName;
+        }
+
+        public int compareTo( Object o ) {
+            CcLine cc2 = null;
+            cc2 = (CcLine) o;
+
+            final String gene1 = getGeneName();
+            final String gene2 = cc2.getGeneName();
+
+            // the current string comes first if it's before in the alphabetical order
+
+            if( gene1 == null ) {
+                System.out.println( this );
+            }
+
+            if( gene1.equals( "Self" ) ) {
+
+                return -1;
+
+            } else if( gene2.equals( "Self" ) ) {
+
+                return 1;
+
+            } else {
+
+                return gene1.compareTo( gene2 );
+            }
+        }
+
+
+        public String toString() {
+            return "CcLine{" +
+                   "ccLine='" + ccLine + "'" +
+                   ", geneName='" + geneName + "'" +
+                   "}";
+        }
+    }
+
 
     ///////////////////////////////
     // Instance variables
 
     private IntactHelper helper;
 
-    private static final String INTERATION_FROM_PROTEIN = "select interaction_ac " +
-                                                          "from ia_component " +
-                                                          "where interactor_ac = ?";
-    private PreparedStatement interactionSelect = null;
-
     /**
      * Storage of the CC lines per protein.
      * Structure: Map( ProteinAC, Collection( CCLine ) )
      */
     private Map ccLines = new HashMap( 4096 );
-
-    // in order to avoid repetive, yet, unuseful SQL query, we cache the interactions' ac to which a protien is linked.
-    private Map proteinInteractionsCache = new HashMap();
 
     /**
      * Store Interaction's AC of those that have been already processed.
@@ -113,34 +161,7 @@ public class CCLineExport extends LineExport {
         return negative;
     }
 
-    /**
-     * get the stochiometry of the two components.
-     * It creates an arrays of size two and the first element is the stochiometry of the protein given in parameter.
-     * If both interactor
-     *
-     * @param interaction
-     * @param protein
-     * @return
-     */
-    private float[] getStoichiometry( Interaction interaction, Protein protein ) {
-
-        float[] sto = new float[ 2 ];
-
-        Iterator iterator = interaction.getComponents().iterator();
-        Component component1 = (Component) iterator.next();
-        Component component2 = (Component) iterator.next();
-
-        if( protein.equals( component1.getInteractor() ) ) {
-            sto[ 0 ] = component1.getStoichiometry();
-            sto[ 1 ] = component2.getStoichiometry();
-        } else {
-            //
-            sto[ 1 ] = component1.getStoichiometry();
-            sto[ 0 ] = component2.getStoichiometry();
-        }
-
-        return sto;
-    }
+    private Collection spliceVariants = new ArrayList( 16 );
 
     /**
      * retreives using the provided helper a Protein based on its Xref (uniprot, identity).
@@ -157,105 +178,101 @@ public class CCLineExport extends LineExport {
                                                        identityXrefQualifier,
                                                        uniprotID );
 
-        // TODO we might have to add the splice variant to that collection later
-        // (ie. iterate over proteins and search by Xref for the AC)
-
-        if( proteins == null ) {
-            throw new IntactException( "Could not retreive data from the helper (received: null) using the ID: " +
-                                       uniprotID + ". Abort." );
-        }
-
         if( proteins.size() == 0 ) {
             throw new IntactException( "the ID " + uniprotID + " didn't returned the expected number of proteins: " +
                                        proteins.size() + ". Abort." );
         }
+
+        spliceVariants.clear();
+
+        // now from that try to get splice variants (if any)
+        for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
+            Protein protein = (Protein) iterator.next();
+
+            String ac = protein.getAc();
+            Collection sv = helper.getObjectsByXref( Protein.class,
+                                                     intactDatabase,
+                                                     isoformParentQualifier,
+                                                     ac );
+
+            spliceVariants.addAll( sv );
+        }
+
+        proteins.addAll( spliceVariants );
 
         return proteins;
     }
 
     private void flushCCLine( String id ) throws IOException {
 
-        Collection cc4protein = (Collection) ccLines.get( id );
+        List cc4protein = (List) ccLines.remove( id );
 
         if( null != cc4protein && !cc4protein.isEmpty() ) {
-            // write the content in the output file.
+
+            // the the CC lines
+            Collections.sort( cc4protein );
 
             StringBuffer sb = new StringBuffer( 128 * cc4protein.size() );
+
             sb.append( "AC" ).append( "   " ).append( id );
             sb.append( NEW_LINE );
 
+            sb.append( "CC   -!- INTERACTION:" );
+            sb.append( NEW_LINE );
+
             for ( Iterator iterator = cc4protein.iterator(); iterator.hasNext(); ) {
-                String cc = (String) iterator.next();
+                CcLine ccLine = (CcLine) iterator.next();
 
-                sb.append( cc );
-
-            } // all CCs
+                sb.append( ccLine.getCcLine() );
+            }
 
             sb.append( "//" );
             sb.append( NEW_LINE );
 
-            // D E B U G
             String ccs = sb.toString();
+
+            // D E B U G
             System.out.println( ccs );
+
+            // write the content in the output file.
             writer.write( ccs );
             writer.flush();
 
             // clean the cache.
-            ccLines.remove( id );
+//            ccLines.remove( id );
         }
     }
 
     /**
      * create the output of a CC line for a set of exportable interactions.
      *
-     * @param uniprotID1           the uniprot AC of the protein to which that CC lines will be attached.
-     * @param uniprotID2           the uniprot AC of the protein which interacts with the protein to which that CC
-     *                             lines will be attached.
-     * @param eligibleInteractions interactions for which we have to generate a CC line content (1 per interaction).
+     * @param uniprotID1      the uniprot AC of the protein to which that CC lines will be attached.
+     * @param uniprotID2      the uniprot AC of the protein which interacts with the protein to which that CC
+     *                        lines will be attached.
+     * @param experimentCount count of distinct experimental support for that CC line.
      */
-    private void createCCLine( String uniprotID1, String uniprotID2, Collection eligibleInteractions ) {
+    private void createCCLine( String uniprotID1, Protein protein1,
+                               String uniprotID2, Protein protein2,
+                               int experimentCount ) {
 
-        for ( Iterator iterator = eligibleInteractions.iterator(); iterator.hasNext(); ) {
-            ExportableInteraction exportableInteraction = (ExportableInteraction) iterator.next();
+        // produce the CC lines for the 1st protein
+        CcLine cc1 = formatCCLines( uniprotID1, protein1, uniprotID2, protein2, experimentCount );
+        List cc4protein1 = (List) ccLines.get( uniprotID1 );
+        if( null == cc4protein1 ) {
+            cc4protein1 = new ArrayList();
+            ccLines.put( uniprotID1, cc4protein1 );
+        }
+        cc4protein1.add( cc1 );
 
-            // get the protein 1 and 2 from the interaction
-            Interaction interaction = exportableInteraction.getInteraction();
-            Iterator iterator2 = interaction.getComponents().iterator();
-
-            Component component1 = (Component) iterator2.next();
-            Protein protein1 = (Protein) component1.getInteractor();
-
-            Component component2 = (Component) iterator2.next();
-            Protein protein2 = (Protein) component2.getInteractor();
-
-            // check if protein1 is related to uniprotID1
-            String uniprotID = getUniprotID( protein1 );
-            if( !uniprotID.equals( uniprotID1 ) ) {
-                // then just reverse the reference of the proteins
-                Protein tmp = protein1;
-                protein1 = protein2;
-                protein2 = tmp;
+        // produce the CC lines for the 2nd protein
+        if( !uniprotID1.equals( uniprotID2 ) ) {
+            CcLine cc2 = formatCCLines( uniprotID2, protein2, uniprotID1, protein1, experimentCount );
+            List cc4protein2 = (List) ccLines.get( uniprotID2 );
+            if( null == cc4protein2 ) {
+                cc4protein2 = new ArrayList();
+                ccLines.put( uniprotID2, cc4protein2 );
             }
-
-            // produce the CC lines for the 1st protein
-            String cc1 = createCCLines( uniprotID1, protein1, uniprotID2, protein2, exportableInteraction );
-            Collection cc4protein1 = (Collection) ccLines.get( uniprotID1 );
-            if( null == cc4protein1 ) {
-                cc4protein1 = new ArrayList();
-                ccLines.put( uniprotID1, cc4protein1 );
-            }
-            cc4protein1.add( cc1 );
-
-            // produce the CC lines for the 2nd protein
-            if( !uniprotID1.equals( uniprotID2 ) ) {
-                String cc2 = createCCLines( uniprotID2, protein2, uniprotID1, protein1, exportableInteraction );
-                Collection cc4protein2 = (Collection) ccLines.get( uniprotID2 );
-                if( null == cc4protein2 ) {
-                    cc4protein2 = new ArrayList();
-                    ccLines.put( uniprotID2, cc4protein2 );
-                }
-                cc4protein2.add( cc2 );
-            }
+            cc4protein2.add( cc2 );
         }
     }
 
@@ -265,85 +282,48 @@ public class CCLineExport extends LineExport {
      * protein1 is the entry in which that CC content will appear.
      * <p/>
      * <pre>
-     *          <font color=gray>ID   RAC1_HUMAN     STANDARD;      PRT;   192 AA.</font>
-     *          <font color=gray>AC   P15154; O95501; Q9BTB4;</font>
-     *          CC   -!- INTERACTION: IntAct=EBI-00011, EBI-00012;
-     *          CC       Type=aggregation; Experimental=multiple;
-     *          CC       Participants=P15154:self[1], Q14185:DOCK180[1];
-     *          <font color=gray>DR   IntAct; P15154, -.</font>
-     *          //
-     * <p/>
-     *          <font color=gray>ID   RB6A_HUMAN     STANDARD;      PRT;   208 AA.</font>
-     *          <font color=gray>AC   P20340; Q9UBE4;</font>
-     *          <font color=gray>DE   Ras-related protein Rab-6A (Rab-6).</font>
-     *          <font color=gray>GN   RAB6A OR RAB6.</font>
-     *          <font color=gray>CC   -!- SUBUNIT: Isoform 1 interacts with RAB6KIFL but not isoform 2.</font>
-     *          CC   -!- INTERACTION: IntAct=EBI-00014, EBI-32323;
-     *          CC       Type=aggregation; Experimental=multiple;
-     *          CC       Participants=P20340-1:self[1], O95235:RAB6KIFL[1];
-     *          CC       Note=Activated by bound GTP;
-     *          CC   -!- INTERACTION: IntAct=EBI-00015, EBI-323222;
-     *          CC       Type=aggregation; Experimental=multiple;
-     *          CC       Participants=P20340-2:self[1], O95235:RAB6KIFL[1];
-     *          CC       NEGATIVE=true;
-     *          <font color=gray>DR   IntAct; P20340, -.</font>
+     *          <font color=gray>ID   X_HUMAN     STANDARD;      PRT;   208 AA.</font>
+     *          <font color=gray>AC   P45594</font>
+     *          <font color=gray>DE   blablabla.</font>
+     *          <font color=gray>GN   X OR Y.</font>
+     *          CC   -!- INTERACTION:
+     *          CC       Self; Experiments=1; AC=EBI-307456,EBI-307456;
+     *          CC       P10981:tsr; Experiments=4; AC=EBI-307456,EBI-234567;
+     *          CC       P01232:rr44; Experiments=3; AC=EBI-307456,EBI-237;
+     *          <font color=gray>DR   IntAct; P45594, -.</font>
      * </pre>
      *
-     * @param protein1
-     * @param protein2
-     * @param exportableInteraction
-     * @return
+     * @param uniprotID1      uniprot ID of the protein in which we will export that CC line
+     * @param protein1        IntAct associated protein
+     * @param uniprotID2      uniprot ID of the protein with which interacts protein 1
+     * @param protein2        IntAct associated protein
+     * @param experimentCount count of distinct experimental support
+     * @return a CCLine
      */
-    private String createCCLines( String uniprotID1, Protein protein1,
+    private CcLine formatCCLines( String uniprotID1, Protein protein1,
                                   String uniprotID2, Protein protein2,
-                                  ExportableInteraction exportableInteraction ) {
+                                  int experimentCount ) {
 
-        StringBuffer buffer = new StringBuffer( 256 ); // average size is 160 char (without NEGATIVE, CAUTION, NOTES)
+        StringBuffer buffer = new StringBuffer( 128 ); // average size is 160 char (without NEGATIVE, CAUTION, NOTES)
 
-        buffer.append( "CC   -!- INTERACTION: IntAct=" ).append( protein1.getAc() );
-        buffer.append( ',' ).append( ' ' ).append( protein2.getAc() ).append( ';' );
-        buffer.append( NEW_LINE );
-
-        Interaction interaction = exportableInteraction.getInteraction();
-        int experimentalSupportCount = exportableInteraction.getExperimentalSupportCount();
-
-        buffer.append( "CC       Type=" ).append( interaction.getCvInteractionType().getShortLabel() ).append( ';' );
-        buffer.append( " Experimental=" ).append( ( experimentalSupportCount > 1 ? "multiple" : "one" ) ).append( ';' );
-        buffer.append( NEW_LINE );
-
-        buffer.append( "CC       Participants=" );
-        float[] stoichio = getStoichiometry( interaction, protein1 );
-        buffer.append( uniprotID1 ).append( ':' ).append( "self" ).append( '[' ).append( stoichio[ 0 ] ).append( ']' );
-        buffer.append( ',' ).append( ' ' );
+        buffer.append( "CC       " );
 
         String geneName = null;
-        if( !uniprotID1.equals( uniprotID2 ) ) {
-            stoichio = getStoichiometry( interaction, protein2 );
-            geneName = getGeneName( protein2 );
+        if( uniprotID1.equals( uniprotID2 ) ) {
+
+            geneName = "Self";
+            buffer.append( geneName );
+
         } else {
-            geneName = "self";
+
+            // A gene must be there ... it must have been checked before.
+            geneName = getGeneName( protein2 );
+            buffer.append( uniprotID2 ).append( ':' ).append( geneName );
         }
 
-        buffer.append( uniprotID2 ).append( ':' ).append( geneName ).append( '[' ).append( stoichio[ 1 ] ).append( ']' );
-        buffer.append( ';' );
+        buffer.append( ';' ).append( ' ' ).append( "Experiments=" ).append( experimentCount ).append( ';' ).append( ' ' );
+        buffer.append( "AC=" ).append( protein1.getAc() ).append( ',' ).append( protein2.getAc() );
         buffer.append( NEW_LINE );
-
-        // generated Note(s) if any
-        Collection notes = getCCnote( interaction );
-        if( null != notes ) {
-            for ( Iterator iterator = notes.iterator(); iterator.hasNext(); ) {
-                String note = (String) iterator.next();
-
-                buffer.append( "CC       Note=" ).append( note ).append( ';' );
-                buffer.append( NEW_LINE );
-            }
-        }
-
-        // generates the NEGATIVE flag if needed
-        if( isNegative( interaction ) ) {
-            buffer.append( "CC       NEGATIVE=true;" );
-            buffer.append( NEW_LINE );
-        }
 
         // generated warning message if the two protein are from different organism
         if( !protein1.getBioSource().equals( protein2.getBioSource() ) ) {
@@ -351,9 +331,9 @@ public class CCLineExport extends LineExport {
             buffer.append( NEW_LINE );
         }
 
-        // System.out.println( "\t\t\t\t" + buffer.toString() );
+        System.out.println( "\t\t\t\t" + buffer.toString() );
 
-        return buffer.toString();
+        return new CcLine( buffer.toString(), geneName );
     }
 
     /**
@@ -398,29 +378,32 @@ public class CCLineExport extends LineExport {
      * @return Collection( ExportableInteraction ) or can be null if no interaction have been found to
      *         be eligible for CC export
      */
-    private Collection getEligibleInteractions( List interactions ) {
+    private int getEligibleExperimentCount( List interactions ) {
 
-        // interaction that will be found eligible.
-        Collection eligibleInteractions = null;
+        Collection eligibleExperiments = new HashSet();
 
-        // select an eligible interaction
-        final int count = interactions.size();
-        for ( int i = 0; i < count; i++ ) {
+        final int interactionCount = interactions.size();
+        for ( int i = 0; i < interactionCount; i++ ) {
 
             Interaction interaction = (Interaction) interactions.get( i );
 
             log( "\t\t\t\t Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc() );
 
+            if( isNegative( interaction ) ) {
+
+                log( "\t\t\t\t\t That interaction or at least one of its experiments is negative, skip it." );
+                continue; // skip that interaction
+            }
+
             Collection experiments = interaction.getExperiments();
-            int experimentalSupportCount = 0;
 
             int expCount = experiments.size();
             log( "\t\t\t\t\t interaction related to " + expCount + " experiment" + ( expCount > 1 ? "s" : "" ) + "." );
 
-            boolean export = false;
-
             for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext(); ) {
                 Experiment experiment = (Experiment) iterator2.next();
+
+                boolean experimentExport = false;
                 log( "\t\t\t\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc() );
 
                 ExperimentStatus experimentStatus = getExperimentExportStatus( experiment, "\t\t\t" );
@@ -433,8 +416,7 @@ public class CCLineExport extends LineExport {
                     // This overwrite the setting of the CvInteraction concerning the export.
                     log( "\t\t\t\t\t\t\t All interaction of that experiment will be exported." );
 
-                    export = true;
-                    experimentalSupportCount++;
+                    experimentExport = true;
 
                 } else if( experimentStatus.isLargeScale() ) {
 
@@ -478,9 +460,7 @@ public class CCLineExport extends LineExport {
                         * lower and hence is dominant on the method's one.
                         */
 
-                        export = true;
-                        experimentalSupportCount++;
-
+                        experimentExport = true;
                         log( "\t\t\t that interaction is eligible for export in the context of a large scale experiment" );
 
                     } else {
@@ -505,17 +485,16 @@ public class CCLineExport extends LineExport {
 
                     if( methodStatus.doExport() ) {
 
-                        export = true;
-                        experimentalSupportCount++;
+                        experimentExport = true;
 
                     } else if( methodStatus.doNotExport() ) {
 
-                        export = export || false;
+                        // do nothing
 
                     } else if( methodStatus.isNotSpecified() ) {
 
                         // we should never get in here but just in case...
-                        export = export || false;
+                        // do nothing
 
                     } else if( methodStatus.isConditionalExport() ) {
 
@@ -546,9 +525,9 @@ public class CCLineExport extends LineExport {
                             }
                         }
 
-                        log( "Looking for other interaction that support that method in other experiemnts..." );
+                        log( "\t\t\t\t\tLooking for other interaction that support that method in other experiemnts..." );
 
-                        for ( int j = 0; j < count && !enoughExperimentFound; j++ ) {
+                        for ( int j = 0; j < interactionCount && !enoughExperimentFound; j++ ) {
 
                             if( i == j ) {
                                 continue;
@@ -589,97 +568,24 @@ public class CCLineExport extends LineExport {
                         } // j
 
                         if( enoughExperimentFound ) {
-                            export = true;
-                            experimentalSupportCount++;
+                            log( "\t\t\t\t\t\t Enough experiemnt found" );
+                            experimentExport = true;
+                        } else {
+                            log( "\t\t\t\t\t\t Not enough experiemnt found" );
                         }
 
                     } // conditional status
                 } // experiment status not specified
-            } // i's experiments
 
-            if( export ) {
-                // eligible for CC export
-                if( null == eligibleInteractions ) {
-                    eligibleInteractions = new ArrayList();
+                if( experimentExport ) {
+                    eligibleExperiments.add( experiment );
                 }
 
-                eligibleInteractions.add( new ExportableInteraction( interaction, experimentalSupportCount ) );
-            }
+            } // i's experiments
 
         } // i
 
-        return eligibleInteractions; // can be null if no interaction have been found to be eligible for CC export
-    }
-
-    /**
-     * From a collection of Proteins, retreive from the database a collection of interaction AC.
-     *
-     * @param proteins a set of IntAct proteins
-     * @return a collection of interaction AC.
-     */
-    private Collection getInteractionsAC( Collection proteins ) throws SQLException, IntactException {
-
-        // TODO TEST if it is faster to use the getActiveInstance(components) instead of an SQL query.
-
-        if( interactionSelect == null ) {
-            Connection connection = helper.getJDBCConnection();
-            interactionSelect = connection.prepareStatement( INTERATION_FROM_PROTEIN );
-        }
-
-        Collection allInteractionACs = new ArrayList();
-
-        for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
-            Protein protein = (Protein) iterator.next();
-
-            String ac = protein.getAc();
-            Collection interactionACs = (Collection) proteinInteractionsCache.get( ac );
-
-            if( null == interactionACs ) {
-                // we don't have it in cache
-
-                interactionSelect.setString( 1, ac );
-                ResultSet resultSet = interactionSelect.executeQuery();
-
-                interactionACs = new ArrayList( 4 );
-                while ( resultSet.next() ) {
-                    interactionACs.add( resultSet.getString( 1 ) );
-                }
-
-                resultSet.close();
-
-                // cache it
-                proteinInteractionsCache.put( ac, interactionACs );
-            }
-
-            allInteractionACs.addAll( interactionACs );
-        }
-
-        return allInteractionACs;
-    }
-
-    /**
-     * Gives a Collection of IntAct Interaction from the given collection of interaction AC.
-     *
-     * @param interactionsAC a collection of interaciton ACs.
-     * @return a collection of Interaction object. Can be empty.
-     * @see uk.ac.ebi.intact.model.Interaction
-     */
-    private ArrayList getRealInteractions( Collection interactionsAC ) throws IntactException {
-
-        ArrayList realInteractions = new ArrayList( interactionsAC.size() );
-
-        for ( Iterator iterator = interactionsAC.iterator(); iterator.hasNext(); ) {
-            String ac = (String) iterator.next();
-
-            Collection i = helper.search( Interaction.class.getName(), "ac", ac );
-            if( null == i || i.size() != 1 ) {
-                throw new IntactException( "Could not retreive interaction having the AC: " + ac );
-            }
-
-            realInteractions.add( i.iterator().next() );
-        }
-
-        return realInteractions;
+        return eligibleExperiments.size();
     }
 
     /**
@@ -714,198 +620,208 @@ public class CCLineExport extends LineExport {
 
         int count = uniprotIDs.size();
         int idProcessed = 0;
-        int eligibleInteractionsCount = 0;
-        int percentEligibleInteraction;
         int percentProteinProcessed;
+        List potentiallyEligibleInteraction = new ArrayList( 16 );
 
         // iterate over the Uniprot ID of the protein that have been selected for DR export.
         for ( Iterator iteratorUniprotId = uniprotIDs.iterator(); iteratorUniprotId.hasNext(); ) {
 
             String uniprotID_1 = (String) iteratorUniprotId.next();
+
             idProcessed++;
+
             log( NEW_LINE + "Protein selected: " + uniprotID_1 );
 
             percentProteinProcessed = (int) ( ( (float) idProcessed / (float) count ) * 100 );
             log( "Protein processed: " + percentProteinProcessed + "% (" + idProcessed + " out of " + count + ")" );
-
-            int interactionProcessed = alreadyProcessedInteraction.size();
-            if( interactionProcessed > 0 ) {
-                percentEligibleInteraction = (int) ( ( (float) eligibleInteractionsCount / (float) interactionProcessed ) * 100 );
-            } else {
-                percentEligibleInteraction = 0;
-            }
-            log( "Eligible interaction: " + percentEligibleInteraction + "%  (" + eligibleInteractionsCount + " out of " + interactionProcessed + ")" );
+            log( "Interaction processed: " + alreadyProcessedInteraction.size() );
 
             // get the protein's interactions
             Collection proteinSet_1 = getProteinFromIntact( helper, uniprotID_1 ); // might be enough to go through SQL
-            Collection interactionsP1 = getInteractionsAC( proteinSet_1 );
-            Collection realInteractionP1 = getRealInteractions( interactionsP1 );
 
-            Collection proteinSet_2 = null;
-            String uniprotID_2 = null;
+            for ( Iterator iteratorP = proteinSet_1.iterator(); iteratorP.hasNext(); ) {
+                Protein protein1 = (Protein) iteratorP.next();
 
-            // while( collection not empty )
-            //     take the first interaction
-            //     get 2 sets of proteins (interaction partner)
-            //     get from the interaction set all interaction that have both interactor (remove them)
-            //     run algo
+                if( getGeneName( protein1 ) == null ) {
 
-            log( "\t" + uniprotID_1 + " has " + realInteractionP1.size() + " interaction(s)." );
+                    System.err.println( protein1.getShortLabel() + " has no gene name." );
+                    continue;
+                }
 
-            while ( !realInteractionP1.isEmpty() ) {
+                Collection interactionP1 = getInteractions( protein1 );
 
-                Iterator iterator = realInteractionP1.iterator();
-                Interaction interaction = (Interaction) iterator.next();
+                Protein protein2 = null;
+                String uniprotID_2 = null;
 
-                log( NEW_LINE + "\t Process interaction : " + interaction.getShortLabel() + " (" + interaction.getAc() + ")" );
+                // while( collection not empty )
+                //     take the first interaction
+                //     get 2 sets of proteins (interaction partner)
+                //     get from the interaction set all interaction that have both interactor (remove them)
+                //     run algo
 
-                // Let's say we process P1 and P2, the subset of the interactions of P1 if then stored in
-                // the cache of already processed interactions. There is no reason why those interaction
-                // would be processed again since they are binary, hence specific to P1 and P2
-                // So when we process P2 and load again those same interactions from the DB, we can skip them.
-                if( alreadyProcessedInteraction.contains( interaction.getAc() ) ) {
+                log( "\t" + uniprotID_1 + "(" + protein1.getBioSource().getShortLabel() + ")" + " has " + interactionP1.size() + " interaction(s)." );
 
-                    log( "\t\t That interaction has been processed already ... skip it." );
-                    iterator.remove(); // remove it.
 
-                } else {
+                while ( !interactionP1.isEmpty() ) {
 
-                    alreadyProcessedInteraction.add( interaction.getAc() );
+                    Iterator iterator = interactionP1.iterator(); // can't be ouside the loop
+                    Interaction interaction = (Interaction) iterator.next();
 
-                    // if that interaction has not exactly 2 interactors, it is not taken into account
-                    if( interaction.getComponents().size() != 2 ) {
+                    log( NEW_LINE + "\t Process interaction : " + interaction.getShortLabel() + " (" + interaction.getAc() + ")" );
 
-                        // TODO find out if (getComponents().size() == 1 && stochiometry == 2) is valid too.
+                    // Let's say we process P1 and P2, the subset of the interactions of P1 if then stored in
+                    // the cache of already processed interactions. There is no reason why those interaction
+                    // would be processed again since they are binary, hence specific to P1 and P2
+                    // So when we process P2 and load again those same interactions from the DB, we can skip them.
+                    if( alreadyProcessedInteraction.contains( interaction.getAc() ) ) {
 
-                        log( "\t\t Interaction has not exactly 2 interactors (" + interaction.getComponents().size() +
-                             "), we don't export it." );
-                        iterator.remove();
+                        log( "\t\t That interaction has been processed already ... skip it." );
+                        iterator.remove(); // remove it.
 
                     } else {
+                        alreadyProcessedInteraction.add( interaction.getAc() );
 
-                        log( "\t\t Interaction has exactly 2 interactors." );
+                        if( false == isBinary( interaction ) ) {
 
-                        // now get the other protein ( other than uniprotID_1 )
+                            iterator.remove();
 
-                        /**
-                         * Uniprot ID -> Collection(Protein) (ie. all species + splice variants)
-                         *
-                         * in the interaction, for each component, if the protein is part of the collection, take the protein
-                         * attached to the other component. If still the same, that means that we have the same protein
-                         * interacting as self. could be SV+P or different species though
-                         */
+                        } else {
 
-                        // we know that interaction.getComponents().size() == 2 we assume that they carry only Protein
-                        log( "\t\t Check what is the partner of " + uniprotID_1 );
-                        Iterator iterator1 = interaction.getComponents().iterator();
+                            Component component1 = null;
+                            Component component2 = null;
 
-                        Component component1 = (Component) iterator1.next();
-                        Protein p1 = (Protein) component1.getInteractor();
-                        log( "\t\t 1st Partner found: " + getUniprotID( p1 ) + " (" + p1.getBioSource().getShortLabel() + ")" );
+                            if( interaction.getComponents().size() == 1 ) {
+                                Iterator iteratorC = interaction.getComponents().iterator();
+                                component2 = component1 = (Component) iteratorC.next();
+                            } else {
+                                // must be 2
+                                Iterator iteratorC = interaction.getComponents().iterator();
+                                component1 = (Component) iteratorC.next();
+                                component2 = (Component) iteratorC.next();
+                            }
 
-                        Component component2 = (Component) iterator1.next();
-                        Protein p2 = (Protein) component2.getInteractor();
-                        log( "\t\t 2nd Partner found: " + getUniprotID( p2 ) + " (" + p2.getBioSource().getShortLabel() + ")" );
+                            log( "\t\t Interaction has exactly 2 interactors." );
 
-                        if( proteinSet_1.contains( p1 ) ) {
+                            // now get the other protein ( other than uniprotID_1 )
 
-                            if( proteinSet_1.contains( p2 ) ) {
+                            /**
+                             * Uniprot ID -> Collection(Protein) (ie. all species + splice variants)
+                             *
+                             * in the interaction, for each component, if the protein is part of the collection, take the protein
+                             * attached to the other component. If still the same, that means that we have the same protein
+                             * interacting as self. could be SV+P or different species though
+                             */
 
-                                log( "\t\t\t That's the same protein !!" );
-                                // same protein interacting together (could be different species though)
-                                proteinSet_2 = proteinSet_1; // beware: same collection reference !!
-                                uniprotID_2 = uniprotID_1;
+                            // we assume that they carry only Protein
+                            log( "\t\t Check what is the partner of " + uniprotID_1 );
+
+                            Protein p1 = (Protein) component1.getInteractor();
+                            log( "\t\t 1st Partner found: " + p1.getShortLabel() );
+
+                            Protein p2 = (Protein) component2.getInteractor();
+                            log( "\t\t 2nd Partner found: " + p2.getShortLabel() );
+
+                            if( protein1.equals( p1 ) ) {
+                                protein2 = p2;
+                            } else {
+                                protein2 = p1;
+                            }
+
+                            if( getGeneName( protein2 ) == null ) {
+
+                                System.err.println( protein2.getShortLabel() + " has no gene name, skip that interaction." );
+                                iterator.remove(); // remove it.
+                                continue;
+                            }
+
+                            uniprotID_2 = getUniprotID( protein2 );
+
+                            // We don't take into account interactions that involve proteins not eligible for DR export.
+                            if( !uniprotIDs.contains( uniprotID_2 ) ) {
+
+                                log( "\n\t\t " + uniprotID_2 + " was not eligible for DR export, that interaction is not taken into account." );
+                                iterator.remove();
 
                             } else {
 
-                                // different proteins interacting together
-                                // get the set of IntAct proteins
-                                uniprotID_2 = getUniprotID( p2 );
-                                proteinSet_2 = getProteinFromIntact( helper, uniprotID_2 );
-                            }
+                                log( "\n\t\t Look for interactions amongst " + protein1.getShortLabel() + " and " + protein2.getShortLabel() + "." );
 
-                        } else {
-                            // p2 must be in proteinSet_1
-                            Protein tmp = p1;
-                            p1 = p2;
-                            p2 = tmp;
+                                // extract all interactions have partner in protein1 and proteins2
+                                potentiallyEligibleInteraction.clear();
 
-                            uniprotID_2 = getUniprotID( p2 );
-                            proteinSet_2 = getProteinFromIntact( helper, uniprotID_2 );
-                        }
+                                // add the current one
+                                potentiallyEligibleInteraction.add( interaction );
+                                iterator.remove();
+                                log( "\t\t Add the current one: " + interaction.getShortLabel() + "(" + interaction.getAc() + ")" );
 
-                        System.out.print( "\t\t\tProtein set1 (" + uniprotID_1 + "): " );
-                        for ( Iterator iterator2 = proteinSet_1.iterator(); iterator2.hasNext(); ) {
-                            Protein protein = (Protein) iterator2.next();
-                            System.out.print( protein.getShortLabel() + ", " );
-                        }
+                                for ( Iterator iterator2 = interactionP1.iterator(); iterator2.hasNext(); ) {
+                                    Interaction interaction1 = (Interaction) iterator2.next();
 
-                        System.out.print( "\n\t\t\tProtein set2: (" + uniprotID_2 + "): " );
-                        for ( Iterator iterator2 = proteinSet_2.iterator(); iterator2.hasNext(); ) {
-                            Protein protein = (Protein) iterator2.next();
-                            System.out.print( protein.getShortLabel() );
-                        }
+                                    if( alreadyProcessedInteraction.contains( interaction1.getAc() ) ) {
 
+                                        log( "\t\t That interaction " + interaction1.getShortLabel() + "(" +
+                                             interaction1.getAc() + ") has been processed already ... skip it." );
+                                        iterator2.remove(); // remove it.
 
-                        // We don't take into account interactions that involve proteins not eligible for DR export.
-                        if( !uniprotIDs.contains( uniprotID_2 ) ) {
+                                    } else {
 
-                            log( "\n\t\t " + uniprotID_2 +
-                                 " was not eligible for DR export, that interaction is not taken into account." );
-                            iterator.remove();
+                                        if( !isBinary( interaction1 ) ) {
 
-                        } else {
+                                            alreadyProcessedInteraction.add( interaction1.getAc() );
+                                            iterator2.remove(); // remove using the local iterator
 
-                            log( "\n\t\t Look for interactions amongst " + uniprotID_1 + " and " + uniprotID_2 + "." );
+                                        } else {
 
-                            // extract all interactions have partner in protein1 and proteins2
-                            List potentiallyEligibleInteraction = new ArrayList( realInteractionP1.size() );
-                            // add the current one
-                            potentiallyEligibleInteraction.add( interaction );
-                            iterator.remove();
-                            log( "\t\t Add the current one: " + interaction.getShortLabel() + "(" + interaction.getAc() + ")" );
+                                            Component c1 = null;
+                                            Component c2 = null;
 
-                            for ( Iterator iterator2 = realInteractionP1.iterator(); iterator2.hasNext(); ) {
-                                Interaction interaction1 = (Interaction) iterator2.next();
+                                            if( interaction1.getComponents().size() == 1 ) {
+                                                Iterator iteratorC = interaction1.getComponents().iterator();
+                                                c2 = c1 = (Component) iteratorC.next(); // same component, hence interactor
+                                            } else {
+                                                // must be 2
+                                                Iterator iteratorC = interaction1.getComponents().iterator();
+                                                c1 = (Component) iteratorC.next();
+                                                c2 = (Component) iteratorC.next();
+                                            }
 
-                                Iterator iterator3 = interaction1.getComponents().iterator();
-                                Component c1 = (Component) iterator3.next();
-                                Component c2 = (Component) iterator3.next();
+                                            Protein p1_ = (Protein) c1.getInteractor();
+                                            Protein p2_ = (Protein) c2.getInteractor();
 
-                                Protein p1_ = (Protein) c1.getInteractor();
-                                Protein p2_ = (Protein) c2.getInteractor();
+                                            boolean normal = protein1.equals( p1_ ) && protein2.equals( p2_ );
+                                            boolean reverse = protein1.equals( p2_ ) && protein2.equals( p1_ );
 
-                                if( ( proteinSet_1.contains( p1_ ) && proteinSet_2.contains( p2_ ) )
-                                    ||
-                                    ( proteinSet_1.contains( p2_ ) && proteinSet_2.contains( p1_ ) ) ) {
+                                            if( normal || reverse ) {
 
-                                    // select that interaction
-                                    potentiallyEligibleInteraction.add( interaction1 );
-                                    iterator2.remove();
+                                                alreadyProcessedInteraction.add( interaction1.getAc() );
 
-                                    // TODO Check why we have duplicated interaction added here !!!
+                                                // select that interaction
+                                                potentiallyEligibleInteraction.add( interaction1 );
+                                                iterator2.remove();
 
-                                    log( "\t\t Add: " + interaction.getShortLabel() + "(" + interaction.getAc() + ")" );
+                                                log( "\t\t Add: " + interaction1.getShortLabel() + "(" + interaction1.getAc() + ")" );
+                                            }
+                                        } // else
+                                    } // else
+                                } // selection of the interactions
+
+                                log( "\t\t\t They have " + potentiallyEligibleInteraction.size() + " interaction(s) in common" );
+
+                                // run the algo
+                                int experimentCount = getEligibleExperimentCount( potentiallyEligibleInteraction );
+
+                                if( experimentCount > 0 ) {
+
+                                    createCCLine( uniprotID_1, protein1,
+                                                  uniprotID_2, protein2,
+                                                  experimentCount );
                                 }
-                            } // selection of the interactions
 
-                            log( "\t\t\t " + uniprotID_1 + " and " + uniprotID_2 + " have " + potentiallyEligibleInteraction.size() +
-                                 " interaction(s) in common" );
-
-                            // run the algo
-                            Collection eligibleInteractions = getEligibleInteractions( potentiallyEligibleInteraction );
-
-                            if( eligibleInteractions != null ) {
-
-                                eligibleInteractionsCount += eligibleInteractions.size();
-                                createCCLine( uniprotID_1, uniprotID_2, eligibleInteractions );
-
-                            }
-
-                        } // else (uniprotID2 is eligible for DR export)
-                    } // else (interaction has exactly 2 interactor, hence is binary)
-                } // else (interaction hasn't been processed yet)
-            } // while there is interactions
+                            } // else (uniprotID2 is eligible for DR export)
+                        } // else (interaction is binary)
+                    } // else (interaction hasn't been processed yet)
+                } // while there is interactions
+            } // proteins associated to UniprotID_1
 
             // write the CC content of protein still designated by index 'i' as its processing is finished.
             flushCCLine( uniprotID_1 );
@@ -917,6 +833,7 @@ public class CCLineExport extends LineExport {
                 writer.close();
                 System.out.println( "Output file closed." );
             } catch ( IOException e ) {
+                System.err.println( "Could not close the output file." );
             }
         }
     }
@@ -981,10 +898,7 @@ public class CCLineExport extends LineExport {
         // create Option objects
         Option helpOpt = new Option( "help", "print this message" );
 
-        Option drExportOpt = OptionBuilder.withArgName( "drExportFilename" )
-                .hasArg()
-                .withDescription( "DR export output file." )
-                .create( "drExport" );
+        Option drExportOpt = OptionBuilder.withArgName( "drExportFilename" ).hasArg().withDescription( "DR export output file." ).create( "drExport" );
         drExportOpt.setRequired( true );
 
         Option debugOpt = OptionBuilder.withDescription( "Shows verbose output." ).create( "debug" );
