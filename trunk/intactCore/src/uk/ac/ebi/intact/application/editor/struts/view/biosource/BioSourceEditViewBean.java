@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -7,10 +7,10 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.biosource;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.business.IntactException;
+import org.apache.commons.beanutils.DynaBean;
 
 /**
  * BioSource edit view bean.
@@ -27,7 +27,6 @@ public class BioSourceEditViewBean extends AbstractEditViewBean {
 
     // Override the super method to set the tax id.
     public void setAnnotatedObject(BioSource biosrc) {
-        System.out.println("In biosource editor " + biosrc.getShortLabel());
         super.setAnnotatedObject(biosrc);
         setTaxId(biosrc.getTaxId());
     }
@@ -40,15 +39,17 @@ public class BioSourceEditViewBean extends AbstractEditViewBean {
         super.persist(user);
     }
 
-    // Override to provide the editory type.
-    public String getEditorType() {
-        return EditViewBeanFactory.BIOSRC_EDITOR;
+    // Implement the abstract methods.
+
+    public void populateEditorSpecificInfo(DynaBean dynaBean) {
+        dynaBean.set("taxId", getTaxId());
     }
 
     // Getter/Setter methods for tax id.
     public String getTaxId() {
         return myTaxId;
     }
+
     public void setTaxId(String taxid) {
         myTaxId = taxid;
     }
