@@ -43,6 +43,9 @@ public class PartnersViewBean extends AbstractViewBean {
      */
     private Protein protein;
 
+    /**
+     * The partner Protein which interaction with the protein
+     */
     private Protein partner;
 
     /**
@@ -86,6 +89,9 @@ public class PartnersViewBean extends AbstractViewBean {
      */
     private String numberOfInteractions;
 
+    /**
+     *
+     */
     private Set participationInteractions;
 
 
@@ -210,12 +216,7 @@ public class PartnersViewBean extends AbstractViewBean {
             for (Iterator it = aliases.iterator(); it.hasNext();) {
                 Alias alias = (Alias) it.next();
 
-                //NB check the type String in this!!
                 if (alias.getCvAliasType().getShortLabel().equals("gene-name")) {
-                    //don't know how many gene names there are - also
-                    //there may be more aliases than gene names, so we can't
-                    //tell here if we are done or not, so add comma anyway
-                    //geneNames.append(alias.getName() + ",");
                     geneNames.add(alias.getName());
                 }
             }
@@ -240,23 +241,26 @@ public class PartnersViewBean extends AbstractViewBean {
      */
     public String getNumberOfInteractions() {
 
-
-        //presumably we don't want to count homodimers more than once here...
-
         //set on first call
         if (numberOfInteractions == null) {
             if (partner != null) {
-                  if (participationInteractions == null) {
+                if (participationInteractions == null) {
                     this.setParticipationInteractions();
                 }
                 numberOfInteractions = Integer.toString(this.participationInteractions.size());
 
             } else {
-                //just add the components into a Set and work out its size - this will
-                //take care of any repeats, and there will then be a 1:1 relation between the
-                //Components in the Set and the Protein's Interactions...
-                Set componentSet = new HashSet(protein.getActiveInstances());
-                numberOfInteractions = Integer.toString(componentSet.size());
+
+                Collection someComponents = protein.getActiveInstances();
+                Collection uniqueInteractions = new HashSet();
+
+                for (Iterator iterator = someComponents.iterator(); iterator.hasNext();) {
+                    Component aComponent = (Component) iterator.next();
+                    Interaction anInteraction = aComponent.getInteraction();
+                    uniqueInteractions.add(anInteraction);
+
+                }
+                numberOfInteractions = Integer.toString(uniqueInteractions.size());
             }
         }
         return numberOfInteractions;
@@ -268,11 +272,11 @@ public class PartnersViewBean extends AbstractViewBean {
         if (partner != null) {
 
             Set componentSet1 = new HashSet(protein.getActiveInstances());
-            Set componentInteractions = new HashSet();
+            Set component1Interactions = new HashSet();
 
             for (Iterator iterator = componentSet1.iterator(); iterator.hasNext();) {
                 Component component = (Component) iterator.next();
-                componentInteractions.add(component.getInteraction());
+                component1Interactions.add(component.getInteraction());
             }
 
             Set componentSet2 = new HashSet(partner.getActiveInstances());
@@ -281,12 +285,11 @@ public class PartnersViewBean extends AbstractViewBean {
                 Component component2 = (Component) iterator.next();
                 Interaction component2Interaction = component2.getInteraction();
 
-                if (componentInteractions.contains(component2Interaction)) {
+                if (component1Interactions.contains(component2Interaction)) {
                     participationInteractions.add(component2Interaction);
                 }
             }
         }
-
     }
 
     /**
@@ -300,23 +303,27 @@ public class PartnersViewBean extends AbstractViewBean {
      *         Protein's Interactions
      */
     public String getInteractionsSearchURL() {
-        //TBD
+
         //set on first call
         if (interactionSearchURL == null) {
 
             if (partner == null) {
-                //just add the components into a Set and work out its size - this will
-                //take care of any repeats, and there will then be a 1:1 relation between the
-                //Components in the Set and the Protein's Interactions. Then get all the Interactions'
-                //ACs and build a search string, then finally build the URL iitself to point to the
-                //'simple' main page....
 
                 StringBuffer sb = new StringBuffer();
                 Set componentSet = new HashSet(protein.getActiveInstances());
+                Set interactionSet = new HashSet();
+
                 for (Iterator it = componentSet.iterator(); it.hasNext();) {
-                    Component comp = (Component) it.next();
-                    sb.append(comp.getInteraction().getAc());
-                    if (it.hasNext()) sb.append(",");
+                    Component aComponent = (Component) it.next();
+                    Interaction anInteraction = aComponent.getInteraction();
+                    interactionSet.add(anInteraction);
+                }
+
+                for (Iterator iterator = interactionSet.iterator(); iterator.hasNext();) {
+                    Interaction anInteraction = (Interaction) iterator.next();
+                    sb.append(anInteraction.getAc());
+                    if (iterator.hasNext()) sb.append(",");
+
                 }
                 return interactionSearchURL = searchURL + sb.toString();
 
@@ -353,20 +360,15 @@ public class PartnersViewBean extends AbstractViewBean {
         if (interactionPartners == null) {
 
             interactionPartners = new HashSet();
-            //Need to track when an Interaction has been done - reason is
-            //because a Protein may appear more than once in an Interaction's
-            //Component list (eg for homodimers). In those cases when the Interaction
-            //has been checked we don't want to do it again...
+            //Need to track when an Interaction has been done
             List doneInteractions = new ArrayList();
 
-            //get the Protein's Components (ie its 'active instances') and hence
-            //from those obtain the Interactions and then the interaction partners
-            //themselves....
             Collection componentList = protein.getActiveInstances();
             for (Iterator it = componentList.iterator(); it.hasNext();) {
 
                 Component component = (Component) it.next();
                 Interaction interaction = component.getInteraction();
+
                 if (!doneInteractions.contains(interaction)) {
 
                     //now get the Interaction's list of Components, as they contain
@@ -377,40 +379,49 @@ public class PartnersViewBean extends AbstractViewBean {
                         Interactor partner = comp.getInteractor();
 
                         //check to see if the Protein interacts with itself (homodimer)-
-                        //if the Component's stoichiometry is >= 2 then it does, otherwise
-                        //don't add the Protein into the list of partners..
-                        //(using a Set ensures we don't add it more than once)
-                        if ((partner.equals(protein)) & (comp.getStoichiometry() >= 2)) {
-                            interactionPartners.add(this);
-                            continue;
+
+                        if (interactionCompList.size() == 2) {
+                            Iterator iterator4 = interactionCompList.iterator();
+                            Component component1 = (Component) iterator4.next();
+                            Component component2 = (Component) iterator4.next();
+
+                            if (component1.getStoichiometry() == 1 &&
+                                    component2.getStoichiometry() == 1) {
+                                interactionPartners.add(this);
+
+                            }
+                        } else if (interactionCompList.size() == 1) {
+                            Iterator iterator5 = interactionCompList.iterator();
+                            Component component1 = (Component) iterator5.next();
+                            if (component1.getStoichiometry() == 2) {
+                                //  interactionPartners.add(this);
+                                interactionPartners.add(this);
+                            }
                         }
-                        //add a view bean for the partner (provided it
-                        //isn't the Protein itself) and carry on....
+
                         if (!partner.equals(protein)) {
-                            //   interactionPartners.add(new PartnersViewBean((Protein) partner,
-                            //           getHelpLink(), searchURL, getContextPath()));
                             interactionPartners.add(new PartnersViewBean((Protein) partner, protein,
                                     getHelpLink(), searchURL, getContextPath()));
                         }
+
                     }
-
                     //record that we've checked the Interaction
-                    doneInteractions.add(interaction);
-                }
 
+                }
             }
         }
 
         return interactionPartners;
-
     }
+
 
     /**
      * Provides this Protein's Uniprot AC (ie its Xref to Uniprot).
      *
      * @return String the Protein's Uniprot AC.
      */
-    public String getUniprotAc() {
+    public String getUniprotAc
+            () {
 
         //the Uniprot AC is the primaryID from an Xref whose database is 'uniprot'..
         if (uniprotAc == null) {
@@ -428,7 +439,8 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return String the usable Uniprot URL
      */
-    public String getUniprotURL() {
+    public String getUniprotURL
+            () {
 
         //set on first call
         if (uniprotURL == null) {
@@ -461,7 +473,8 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return String a String representation of a search URL link for Protein
      */
-    public String getProteinSearchURL() {
+    public String getProteinSearchURL
+            () {
 
         if (protSearchURL == null) {
             //set it on the first call
@@ -476,7 +489,8 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return String a String representation of a search URL link for Protein.
      */
-    public String getProteinPartnerURL() {
+    public String getProteinPartnerURL
+            () {
 
         return getProteinSearchURL() + "&amp;source=simple";
     }
@@ -488,7 +502,8 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return String a String representation of a search URL link
      */
-    public String getSimpleSearchURL() {
+    public String getSimpleSearchURL
+            () {
 
         return searchURL + protein.getAc();
     }
@@ -503,7 +518,9 @@ public class PartnersViewBean extends AbstractViewBean {
      * @param obj The bean we want to check
      * @return boolean true if the beans are equal, false otherwise.
      */
-    public boolean equals(Object obj) {
+    public boolean equals
+            (Object
+            obj) {
 
         if (obj == null) return false;
         if (!(obj instanceof PartnersViewBean)) return false;
@@ -516,7 +533,8 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return int the bean's hashcode (ie the Protein's)
      */
-    public int hashCode() {
+    public int hashCode
+            () {
         return this.getMainProtein().hashCode();
     }
 
@@ -529,7 +547,8 @@ public class PartnersViewBean extends AbstractViewBean {
      *
      * @return Xref The Uniprot Xref for the Protein, or null if there isn't one
      */
-    private Xref getUniprotXref() {
+    private Xref getUniprotXref
+            () {
 
         Collection xrefs = protein.getXrefs();
         for (Iterator it = xrefs.iterator(); it.hasNext();) {
