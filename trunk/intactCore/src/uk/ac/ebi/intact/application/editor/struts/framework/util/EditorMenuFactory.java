@@ -7,9 +7,9 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 
 import java.util.*;
 
@@ -246,7 +246,8 @@ public class EditorMenuFactory {
             v = AnnotatedObject.getMenuList(clazz, myHelper, true);
         }
         catch (IntactException ie) {
-            throw new SearchException("Search failed: " + ie.getNestedMessage());
+            throw new SearchException("Failed to get menu list for "
+                    + clazz.getName());
         }
         // Guard against the null pointer.
         if ((v == null) || v.isEmpty()) {
