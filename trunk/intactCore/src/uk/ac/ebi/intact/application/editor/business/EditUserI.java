@@ -436,5 +436,5 @@ public interface EditUserI extends IntactUserI, Serializable {
      * Allows access to Intact helper.
      * @return IntactHelper instance assigned to the current user.
      */
-    public IntactHelper getIntactHelper();
+    public IntactHelper getIntactHelper() throws IntactException;
 }
