@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>uk.ac.ebi.intact.synchron package: how to add new attributes</title>
+
+</head>
+<body bgcolor="white">
+
+
+The following table describes what has to be done when adding a new attribute in the object model to be used with synchron package.
+It includes what has to be done in:
+<ul>
+<li>the object model
+<li>the OJB mapping configuration file (repository_usr.xml)
+<li>the Castor mapping configuration file (dbIoMapping.xml)
+</ul>
+
+
+<table border="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<tr align="center" BGCOLOR="#CCCCFF" >
+    <td>type of the attribute</td>
+    <td>the object model</td>
+    <td>repository_usr.xml</td>
+    <td>dbIoMapping.xml</td>
+</tr>
+<tr valign="top">
+    <td>object</td>
+    <td>add a <b>getter</b> and a <b>setter</b> method for the attribute, named get[nameOfTheAttribute] or set[nameOfTheAttribute]</td>
+    <td>add the <b>field descriptor</b>: <br>
+        <pre>
+&lt;field-descriptor id=""
+   name=""
+   column=""
+   jdbc-type=""
+   nullable=""
+/&gt;
+         </pre>
+    </td>
+    <td>add the <b>field descriptor</b>:
+        <pre>
+&lt;field name="Ac" type="">
+   &lt;xml name="Ac" node="attribute"/&gt;
+&lt;/field&gt;
+        </pre>
+        the name in xml tag is usefull to avoid castor to split the name with the character '-'
+    </td>
+</tr>
+<tr valign="top">
+    <td>BasicObject</td>
+    <td>in addition to the getter and setter methods (same rules have to be applied)
+        a <b>new attribute</b> has to be created for each BasicObject attribute of type String,
+        that will contain the accession number of the BasicObject. The name of
+        this attribute has to be the same followed by "Ac". The rules for adding this attribute
+        are the same (getter + setter + mapping files)</td>
+    <td>In addition to the field descriptor for the "Ac" field, a <b>reference descriptor</b> has to be created
+        as following:
+        <pre>
+&lt;reference-descriptor
+    name="owner"
+    class-ref="uk.ac.ebi.intact.model.Institution"
+    &gt;
+    &lt;foreignkey field-id-ref="2"/&gt;
+&lt;/reference-descriptor&gt;
+        </pre>
+    </td>
+    <td>only the field descriptor for the "Ac" field is needed</td>
+</tr>
+<tr valign="top">
+    <td>Collection for 1-to-n relation</td>
+    <td>Just add the <b>getter</b> and the <b>setter</b> with appropriate name</td>
+    <td>A collection descriptor has to be added:
+        <pre>
+&lt;collection-descriptor
+   proxy=""
+   name=""
+   element-class-ref=""
+&gt;
+   &lt;inverse-foreignkey field-id-ref=""/&gt;
+&lt;/collection-descriptor&gt;
+        </pre>
+    </td>
+    <td>nothing to add here as only the accession number in referenced object is needed</td>
+</tr>
+<tr valign="top">
+    <td>Collection for m-to-n relation</td>
+    <td>idem</td>
+    <td><b>collection description</b>:
+        <pre>
+&lt;collection-descriptor
+   proxy=""
+   name=""
+   element-class-ref=""
+   indirection-table=""
+&gt;
+   &lt;fk-pointing-to-this-class column=""/&gt;
+   &lt;fk-pointing-to-element-class column=""/&gt;
+&lt;/collection-descriptor&gt;
+        </pre>
+    </td>
+    <td>Add a <b>field descriptor</b> for the collection:
+        <pre>
+&lt;field name=""
+     type=""
+     required=""
+     collection="collection"
+     set-method=""
+     get-method=""&gt;
+     &lt;bind-xml auto-naming="deriveByClass" node="element" /&gt;
+&lt;/field&gt;
+        </pre>
+    </td>
+</tr>
+</table>
+
+
+<address>
+<!-- hhmts start -->
+Last modified: Wed Oct 16 15:24:14 GMT 2002
+<!-- hhmts end -->
+by Arnaud Ceol, aceol@ebi.ac.uk
+</address>
+</body>
+</html>
