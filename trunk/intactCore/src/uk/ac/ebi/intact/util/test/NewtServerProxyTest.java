@@ -45,7 +45,8 @@ public class NewtServerProxyTest extends TestCase {
     }
 
     private void getNewResponse() throws IOException {
-        URL url = new URL("http://www.ebi.ac.uk/newt/display");
+//        URL url = new URL("http://www.ebi.ac.uk/newt/display");
+        URL url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display");
         // The server to connect to.
         NewtServerProxy server = new NewtServerProxy(url);
         NewtServerProxy.NewtResponse response = null;
@@ -92,14 +93,26 @@ public class NewtServerProxyTest extends TestCase {
             assertTrue(true);
         }
 
-        // Test: There is null response for this taxid.
+        // Test: For obsolete tax id
         try {
             response = server.query(38081);
-            // We shouldn't get here as there is no response.
-            fail();
+            assertEquals(response.getTaxId(), 4754);
+            assertEquals(response.getShortLabel(), "PNECA");
+            assertEquals(response.getFullName(), "Pneumocystis carinii");
         }
         catch (NewtServerProxy.TaxIdNotFoundException ex) {
-            assertTrue(true);
+            fail();
+        }
+
+        // Test: another test for obsolete tax id.
+        try {
+            response = server.query(5072);
+            assertEquals(response.getTaxId(), 162425);
+            assertEquals(response.getShortLabel(), "EMENI");
+            assertEquals(response.getFullName(), "Emericella nidulans");
+        }
+        catch (NewtServerProxy.TaxIdNotFoundException ex) {
+            fail();
         }
 
         // Test: wrong URL.

@@ -32,10 +32,12 @@ public class NewtServerProxy {
     // Inner Classes
     // ------------------------------------------------------------------------
     public static class NewtResponse {
+        private int myTaxId;
         private String myShortLabel;
         private String myFullName;
 
-        private NewtResponse(String shortLabel, String fullName) {
+        private NewtResponse(String taxid, String shortLabel, String fullName) {
+            myTaxId = Integer.parseInt(taxid);
             myShortLabel= shortLabel;
             myFullName = fullName;
         }
@@ -46,6 +48,11 @@ public class NewtServerProxy {
         }
 
         // Only getter methods.
+
+        public int getTaxId() {
+            return myTaxId;
+        }
+
         public String getShortLabel() {
             return myShortLabel;
         }
@@ -109,17 +116,14 @@ public class NewtServerProxy {
             TaxIdNotFoundException {
         // Query the Newt server.
         String response = getNewtResponse(SEARCH_PREFIX + taxid + "\r\n");
-        // Response can be null for some tax id (e.g., 38081).
-        if (response == null) {
-           throw new TaxIdNotFoundException(taxid);
-        }
         // Parse the newt response.
         Matcher matcher = REG_EXP.matcher(response);
         if (!matcher.matches()) {
             throw new TaxIdNotFoundException(taxid);
         }
         // Values from newt stored in
-        NewtResponse newtRes = new NewtResponse(matcher.group(2), matcher.group(3));
+        NewtResponse newtRes = new NewtResponse(matcher.group(1),
+                matcher.group(2), matcher.group(3));
         return newtRes;
     }
 
