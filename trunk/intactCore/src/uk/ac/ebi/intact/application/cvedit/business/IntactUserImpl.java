@@ -280,11 +280,11 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public void refreshList() throws SearchException {
         Class clazz = myEditCvObject.getClass();
+        // Has the current edit type got a list?
         if (!theirNameToType.containsValue(clazz)) {
             return;
         }
-        // Valid type; must update the list. First get the name of the list to
-        // update.
+        // Valid type; must update the list. First get the name of the list.
         for (Iterator iter = theirNameToType.entrySet().iterator();
              iter.hasNext();) {
             Map.Entry entry = (Map.Entry) iter.next();
@@ -425,16 +425,21 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         // The collection to return.
         Collection list = new ArrayList();
 
-        // Interested in all the records for 'clazz'.
-        Collection results = search(clazz.getName(), "ac", "*");
-
-        if (results.isEmpty()) {
+        Vector v = null;
+        try {
+            v = CvObject.getMenuList(clazz, myHelper, true);
+        }
+        catch (IntactException ie) {
+            throw new SearchException("Search failed: " + ie.getNestedMessage());
+        }
+        // Guard against the null pointer.
+        if ((v == null) || v.isEmpty()) {
             // Special list when we don't have any names.
             list.add(theirEmptyListItem);
             return list;
         }
-        for (Iterator iter = results.iterator(); iter.hasNext();) {
-            list.add(((CvObject) iter.next()).getShortLabel());
+        for (Iterator iter = v.iterator(); iter.hasNext();) {
+            list.add(iter.next());
         }
         return list;
     }
@@ -452,7 +457,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     /**
      * Returns the collection for given list name.
-     * @param name the name of the list to return the list.
+     * @param name the name of the list; e.g., topic, database etc.
      * @return the list for <code>name</code>. If the current editable object is
      * as same as <code>name/code>'s class, then the cuurent editable's name (short
      * label) wouldn't be included. For example, if the short label for a CvTopic is
