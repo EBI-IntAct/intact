@@ -51,16 +51,18 @@ public class CvViewBean {
     private Collection myXrefs = new ArrayList();
 
     /**
-     * Holds the transaction (add/delete) for annotations. This set is cleared
-     * once the user commits the transaction.
+     * Holds the transaction (add/delete) for annotations. This collection
+     * is cleared once the user commits the transaction. No need to save
+     * annotations in a transaction.
      */
-    private Set myAnnotTransactions = new HashSet();
+    private transient Collection myAnnotTransactions = new ArrayList();
 
     /**
-     * Holds the transaction (add/delete) for xrefs. This set is cleared
-     * once the user commits the transaction.
+     * Holds the transaction (add/delete) for xrefs. This collection
+     * cleared once the user commits the transaction. No need to save
+     * xrefs in a transaction.
      */
-    private Set myXrefTransactions = new HashSet();
+    private transient Collection myXrefTransactions = new ArrayList();
 
     /**
      * Set attributes using values from CvObject. A coarse-grained method to
@@ -83,8 +85,7 @@ public class CvViewBean {
 
     /**
      * Sets the selected topic.
-     *
-     * @param topic the selected topic.
+      * @param topic the selected topic.
      */
     public void setTopic(String topic) {
         mySelectedTopic = topic;
@@ -99,7 +100,6 @@ public class CvViewBean {
 
     /**
      * Sets the accession number.
-     *
      * @param ac the accession number; shouldn't be null.
      */
     public void setAc(String ac) {
@@ -115,7 +115,6 @@ public class CvViewBean {
 
     /**
      * Sets ther short label.
-     *
      * @param shortLabel the short label to set
      */
     public void setShortLabel(String shortLabel) {
@@ -170,7 +169,15 @@ public class CvViewBean {
     public void delAnnotation(long key, Annotation annotation) {
         CommentBean cb =
                 TransactionalCommentBean.createCommentBeanDel(key, annotation);
-        myAnnotTransactions.add(cb);
+        if (myAnnotTransactions.contains(cb)) {
+            // We are removing an annotation that was added during the current
+            // transaction.
+            myAnnotTransactions.remove(cb);
+        }
+        else {
+            // Deleting an annotation that already exists on the persistent sys.
+            myAnnotTransactions.add(cb);
+        }
         // Remove from the view as well.
         myAnnotations.remove(cb);
     }
@@ -268,7 +275,15 @@ public class CvViewBean {
     public void delXref(long key, Xref xref) {
         XreferenceBean xb =
                 TransactionalXrefBean.createXrefBeanDel(key, xref);
-        myXrefTransactions.add(xb);
+        if (myXrefTransactions.contains(xref)) {
+            // We are removing a xref that was added during the current
+            // transaction.
+            myXrefTransactions.remove(xref);
+        }
+        else {
+            // Deleting a xref that already exists on the persistent system.
+            myXrefTransactions.add(xref);
+        }
         // Remove from the view as well.
         myXrefs.remove(xb);
     }
@@ -330,7 +345,8 @@ public class CvViewBean {
      * Returns an empty collection. This is to stop display tag library from
      * throwing an exception when there are no rows to display for a high page
      * number (only happens when we have two tables with different rows on
-     * a single page).
+     * a single page). <b>This has to be an insatace method not static for
+     * JSPs</b>.
      *
      * <pre>
      * post: return->isEmpty
@@ -346,6 +362,8 @@ public class CvViewBean {
     public String toString() {
         return "ac: " + getAc() + " short label: " + getShortLabel();
     }
+
+    // Helper Methods
 
     /**
      * Creates a collection of <code>CommentBean</code> created from given
