@@ -60,12 +60,6 @@ import java.io.IOException;
 public class LoginAction extends AbstractEditorAction {
 
     /**
-     * Used as a key to identify a datasource class - its value
-     * is defined in the web.xml file as a servlet context parameter
-     */
-    private static final String theirDSKey = "datasource";
-
-    /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
      * Return an <code>ActionForward</code> instance describing where and how
@@ -92,11 +86,8 @@ public class LoginAction extends AbstractEditorAction {
         // Save the context to avoid repeat calls.
         ServletContext ctx = super.getServlet().getServletContext();
 
-        // Name of the data source.
-        String ds = ctx.getInitParameter(theirDSKey);
-
         // Create an instance of EditorService.
-        EditUserI user = new EditUser(ds, username, password);
+        EditUserI user = new EditUser(username, password);
 
         // Invalidate any previous sessions.
         HttpSession session = request.getSession(false);
