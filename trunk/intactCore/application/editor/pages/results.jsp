@@ -1,5 +1,4 @@
-<%@ page import="org.apache.commons.beanutils.DynaBean,
-                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%>
+<%@ page import="org.apache.commons.beanutils.DynaBean"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -21,13 +20,17 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-    <%
-        // Fill with form data for this page to display.
-        String formName = EditorConstants.FORM_RESULTS;
-        DynaBean dynaBean = (DynaBean) session.getAttribute(formName);
-        user.populateSearchResult(dynaBean);
-        pageContext.setAttribute(formName, dynaBean);
-    %>
+<%-- Class wide declarations. --%>
+<%!
+    String formName = "resultForm";
+%>
+
+<%-- Fill the form before the display --%>
+<%
+    DynaBean form = user.getDynaBean(formName, request);
+    user.fillSearchResult(form);
+    request.setAttribute(formName, form);
+%>
 
 Search class: <c:out value="${user.lastSearchClass}"/>
 &nbsp;Query: <c:out value="${user.lastSearchQuery}"/>
