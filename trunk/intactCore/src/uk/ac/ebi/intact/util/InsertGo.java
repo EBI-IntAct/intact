@@ -75,7 +75,6 @@ public class InsertGo {
         // Set cached classes
         helper.addCachedClass(CvDatabase.class);
         helper.addCachedClass(Institution.class);
-        helper.addCachedClass(Institution.class);
         helper.addCachedClass(Protein.class);
 
     }
@@ -131,11 +130,7 @@ public class InsertGo {
             protein.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
             protein.setShortLabel(shortLabel);
             dao.create(protein);
-            addNewXref(protein,
-                       new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                                (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR"),
-                                spAc,
-                                null, null));
+            addNewXref(protein, spXref);
         } else {
             // set the short label in any case
             protein.setShortLabel(shortLabel);
@@ -160,6 +155,7 @@ public class InsertGo {
                              (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "GO"),
                              goAc,
                              goTerm, null));
+        dao.update(protein);
         return protein;
     }
 
