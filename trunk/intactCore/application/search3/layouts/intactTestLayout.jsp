@@ -23,6 +23,11 @@
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
+
+    <!-- IntAct dynamic application should not be indexed by search engines -->
+    <meta name='robots' content='noindex,nofollow,noarchive'>
+
+    
     <title><tiles:getAsString name="title"/></title>
     <!-- Don't put the base tag here; let the browser sort out the URLs -->
     <link rel="stylesheet" type="text/css"
