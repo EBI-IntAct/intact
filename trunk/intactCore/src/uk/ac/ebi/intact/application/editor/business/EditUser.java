@@ -371,20 +371,21 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditView = view;
     }
 
-    public void setView(Object obj) {
+    public void setView(Class clazz) {
         // Start editing the object.
         startEditing();
-        // Check for annotated object.
-        if (AnnotatedObject.class.isAssignableFrom(obj.getClass())) {
-            // View based on the class for given edit object.
-            myEditView = myViewFactory.factory(IntactHelper.getRealClassName(obj));
-        }
-        else {
-            // The new view based on the class type.
-            myEditView = myViewFactory.factory((Class) obj);
-        }
-        // Resets the view.
-        myEditView.reset(obj);
+        // The new view based on the class type.
+        myEditView = myViewFactory.factory(clazz);
+        myEditView.reset();
+    }
+
+    public void setView(AnnotatedObject annobj) {
+        // Start editing the object.
+        startEditing();
+        // View based on the class for given edit object.
+        myEditView = myViewFactory.factory(IntactHelper.getRealClassName(annobj));
+        // Resets the view with the new annotated object.
+        myEditView.reset(annobj);
     }
 
     public void setClonedView(AnnotatedObject obj) {
@@ -431,8 +432,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void delete(IntactHelper helper) throws IntactException {
-        // Clear the view.
-        myEditView.clear();
         AnnotatedObject annobj = myEditView.getAnnotatedObject();
         if (!helper.isPersistent(annobj)) {
             return;
@@ -445,11 +444,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Don't want xrefs; tied to an annotated object. Delete them explicitly
         helper.deleteAllElements(annobj.getXrefs());
         annobj.getXrefs().clear();
+
+        // Reset the view.
+        myEditView.reset();
     }
 
     public void cancelEdit() {
         endEditing();
-        myEditView.clearTransactions();
+        myEditView.reset();
     }
 
     public ResultWrapper getSPTRProteins(String pid, int max) throws IntactException {

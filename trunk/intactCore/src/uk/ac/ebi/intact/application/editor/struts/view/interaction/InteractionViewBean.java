@@ -114,21 +114,23 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     private transient Map myMenus = new HashMap();
 
-    // Override the super method to initialize this class specific resetting.
-    protected void reset(Class clazz) {
-        super.reset(clazz);
+    // Override super method to clear experiments and componets.
+    public void reset() {
+        super.reset();
+
         // Set fields to null.
         setKD(Float.valueOf("1.0"));
         setOrganism(null);
         setInteractionType(null);
         setSourceExperimentAc(null);
+        myFeatureSorter = null;
 
         // Reset components and experiments
         myExperiments.clear();
         myComponents.clear();
     }
 
-    protected void reset(AnnotatedObject annobj) {
+    public void reset(AnnotatedObject annobj) {
         super.reset(annobj);
 
         // Must be an Interaction; can cast it safely.
@@ -237,17 +239,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
     // Override to remove the current interaction from the recent list.
     public void removeFromRecentList(EditUserI user) {
         user.removeFromCurrentInteraction((Interaction) getAnnotatedObject());
-    }
-
-    // Override super method to clear experiments and componets.
-    public void clear() {
-        super.clear();
-
-        Interaction intact = (Interaction) getAnnotatedObject();
-        // Experiments involved in this interaction.
-        intact.getExperiments().clear();
-        // Components.
-        intact.getComponents().clear();
     }
 
     // Override to provide Experiment layout.

@@ -86,16 +86,23 @@ public interface EditUserI extends IntactUserI, Serializable {
     public void setView(AbstractEditViewBean view);
 
     /**
-     * Sets the view using given object.
-     * @param obj either an Annotated object or a Class. The class type is used
-     * when creating a view for a new object. For an existing object,
-     * AnnotatedObject is used.
+     * Sets the current view for given class. This method is only used in when
+     * creating a new object. For editing an existing object, please use
+     * {@link #setView(uk.ac.ebi.intact.model.AnnotatedObject)} method.
+     * @param clazz The class type is used when creating a view for a new object.
      */
-    public void setView(Object obj);
+    public void setView(Class clazz);
+
+    /**
+     * Sets the current view with given Annotated object. For creating a new
+     * object, please use {@link #setView(Class)} method.
+     * @param annobj the annotated object to set as the current view.
+     */
+    public void setView(AnnotatedObject annobj);
 
     /**
      * Sets the view as a cloned object. This is different to
-     * {@link #setView(Object)}, for example a cloned object needs to set all
+     * {@link #setView(AnnotatedObject)}. For example a cloned object needs to set all
      * the annotations as new annotations to add for the persistence to work
      * correctly (these annotations need to be created first).
      * @param obj the cloned object.

@@ -44,8 +44,8 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     private transient Map myMenus = new HashMap();
 
     // Override the super method to initialize this class specific resetting.
-    protected void reset(Class clazz) {
-        super.reset(clazz);
+    public void reset() {
+        super.reset();
         // Set fields to null.
         setTaxId(null);
         setCellType(null);
@@ -53,7 +53,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     // Override the super method to set the tax id.
-    protected void reset(AnnotatedObject annobj) {
+    public void reset(AnnotatedObject annobj) {
         super.reset(annobj);
 
         // Must be a BioSource.

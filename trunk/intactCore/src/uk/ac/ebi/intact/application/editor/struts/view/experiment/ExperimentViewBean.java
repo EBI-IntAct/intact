@@ -74,13 +74,16 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     private transient Map myMenus = new HashMap();
 
-    // Override the super method to initialize this class specific resetting.
-    protected void reset(Class clazz) {
-        super.reset(clazz);
+    // Override the super method to clear this object.
+    public void reset() {
+        super.reset();
         // Set fields to null.
         setOrganism(null);
         setInter(null);
         setIdent(null);
+
+        myHasLargeInts = false;
+        myLargeInts = 0;
 
         // Clear previous interactions.
         myInteractions.clear();
@@ -88,7 +91,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    protected void reset(AnnotatedObject annobj) {
+    public void reset(AnnotatedObject annobj) {
         super.reset(annobj);
 
         // Must be an experiment.
@@ -275,15 +278,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 //            throw new ExperimentException("exp.ident", "error.exp.ident");
 //        }
 //    }
-
-    // Override the super method to clear this object.
-    public void clear() {
-        super.clear();
-        // Clear of any references to this object.
-        myOrganism = null;
-        myInter = null;
-        myIdent = null;
-    }
 
     /**
      * Override to provide the menus for this view.
