@@ -18,7 +18,7 @@
 <tr>
     <td>
         Please send any questions or suggestions to
-            <a href="mailto:Intact-developers@lists.sourceforge.net">Intact-developers@lists.sourceforge.net</a>
+            <a href="mailto:intact-help@ebi.ac.uk">intact-help@ebi.ac.uk</a>
         </br>
         Last modified: <i><%@ include file="../last-modified.txt" %></i>
     </td>
