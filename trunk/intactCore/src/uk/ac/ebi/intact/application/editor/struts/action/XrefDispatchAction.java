@@ -6,10 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
+import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
@@ -173,6 +170,16 @@ public class XrefDispatchAction extends AbstractEditorAction {
 
         // Handler to the EditUserI.
         EditUserI user = getIntactUser(request);
+
+        // Try to to set the secondary id for a go primary id.
+        ActionErrors errors = xb.setSecondaryIdFromGo(user);
+
+        // Non null error indicates errors.
+        if (errors != null) {
+            saveErrors(request, errors);
+            // Display the errors in the input page.
+            return mapping.getInputForward();
+        }
 
         // The current view of the edit session.
         AbstractEditViewBean view = user.getView();
