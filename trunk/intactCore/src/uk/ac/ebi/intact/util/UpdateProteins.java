@@ -1051,6 +1051,16 @@ public class UpdateProteins extends UpdateProteinsI {
         return needUpdate;
     }
 
+
+    /**
+     * Answers the question: "Does that collection of Alias contain already an Alias having such name and such type ?"
+     *
+     * @param aliases the collection of Alias.
+     * @param name the name of the alias we look for.
+     * @param aliasType the type of the alias we look for.
+     *
+     * @return true if that collection contains an alias having the given name and type.
+     */
     private boolean isAliasAlreadyExisting( Collection aliases, String name, CvAliasType aliasType ) {
 
         /* TODO: the lowercase name is temporary, it should be removed later.
@@ -1068,16 +1078,19 @@ public class UpdateProteins extends UpdateProteinsI {
         return false;
     }
 
+
     /**
-     * update all Xref specific to a database.
-     * That procedure is used when creating and updating a Protein Xref.
+     * create/update Aliases for a protein with gene-name, gene-name synonyms, ORF name.
      *
      * @param protein The protein to update
      * @return true if the protein has been updated, else false.
+     *
      * @throws SPTRException
      */
     private boolean updateAliases( final SPTREntry sptrEntry,
                                    Protein protein ) throws SPTRException {
+
+        // TODO remove 'deprecated' aliases.
 
         boolean needUpdate = false;
         Collection aliases = protein.getAliases();
@@ -1087,13 +1100,17 @@ public class UpdateProteins extends UpdateProteinsI {
 
         for ( int i = 0; i < genes.length; i++ ) {
 
-            if( !isAliasAlreadyExisting( aliases, genes[ i ].getName(), geneNameAliasType ) ) {
+            String geneName = genes[ i ].getName();
+
+            System.out.println( "geneName: " + geneName );
+
+            if( !isAliasAlreadyExisting( aliases, geneName, geneNameAliasType ) ) {
                 alias = new Alias( myInstitution,
                                    protein,
                                    geneNameAliasType, // gene-name
-                                   genes[ i ].getName() );
+                                   geneName );
 
-                // link the Xref to the protein and record it in the database
+                // link the Alias to the protein and persist it in the database
                 addNewAlias( protein, alias );
                 if( logger != null ) {
                     logger.info( "ADD new Alias[name: " + alias.getName() +
@@ -1103,23 +1120,29 @@ public class UpdateProteins extends UpdateProteinsI {
                 needUpdate = true;
             } else {
                 if( logger != null ) {
-                    logger.info( "SKIP Alias[name: " + genes[ i ].getName() +
+                    logger.info( "SKIP Alias[name: " + geneName +
                              " type: " + geneNameAliasType.getShortLabel() + "]" +
                              ", for: " + protein.getShortLabel() );
                 }
-            }
+            } // Gene names
 
 
             // create/update synonyms
-            for ( int ii = 1; ii < genes[ i ].getSynonyms().length; ii++ ) {
+            String[] synonyms = genes[ i ].getSynonyms();
+            System.out.println( "#Syn: " + synonyms.length );
+            for ( int ii = 0; ii < synonyms.length; ii++ ) {
 
-                if( !isAliasAlreadyExisting( aliases, genes[ i ].getSynonyms()[ ii ], geneNameSynonymAliasType ) ) {
+                String syn = synonyms[ ii ];
+
+                System.out.println( "Syn: " + syn );
+
+                if( !isAliasAlreadyExisting( aliases, syn, geneNameSynonymAliasType ) ) {
                     alias = new Alias( myInstitution,
                                        protein,
                                        geneNameSynonymAliasType, // gene-name-synonym
-                                       genes[ i ].getSynonyms()[ ii ] );
+                                       syn );
 
-                    // link the Xref to the protein and record it in the database
+                    // link the Alias to the protein and persist it in the database
                     addNewAlias( protein, alias );
                     if( logger != null ) {
                         logger.info( "ADD new Alias[name: " + alias.getName() +
@@ -1129,16 +1152,83 @@ public class UpdateProteins extends UpdateProteinsI {
                     needUpdate = true;
                 } else {
                     if( logger != null ) {
-                        logger.info( "SKIP Alias[name: " + genes[ i ].getSynonyms()[ ii ] +
+                        logger.info( "SKIP Alias[name: " + syn +
                                  " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
                                  ", for: " + protein.getShortLabel() );
                     }
                 }
-            }
-        }
+            } // Gene name synonyms
+
+
+            // create/update locus names
+            String[] locus = genes[ i ].getLocusNames();
+            System.out.println( "#Locus: " + locus.length );
+            for ( int ii = 0; ii < locus.length; ii++ ) {
+
+                String locusName = locus[ ii ];
+
+                System.out.println( "locusName: " + locusName );
+
+                if( !isAliasAlreadyExisting( aliases, locusName, locusNameAliasType ) ) {
+                    alias = new Alias( myInstitution,
+                                       protein,
+                                       locusNameAliasType, // locus-name
+                                       locusName );
+
+                    // link the Alias to the protein and persist it in the database
+                    addNewAlias( protein, alias );
+                    if( logger != null ) {
+                        logger.info( "ADD new Alias[name: " + alias.getName() +
+                                 " type: " + locusNameAliasType.getShortLabel() + "]" +
+                                 ", to: " + protein.getShortLabel() );
+                    }
+                    needUpdate = true;
+                } else {
+                    if( logger != null ) {
+                        logger.info( "SKIP Alias[name: " + locusName +
+                                 " type: " + locusNameAliasType.getShortLabel() + "]" +
+                                 ", for: " + protein.getShortLabel() );
+                    }
+                }
+            } // Locus names
+
+
+            // create/update ORF names
+            String[] ORFs = genes[ i ].getORFNames();
+            System.out.println( "#ORF: " + ORFs.length );
+            for ( int ii = 0; ii < ORFs.length; ii++ ) {
+
+                String orfName = ORFs[ ii ];
+
+                System.out.println( "ORF: " + orfName );
+
+                if( !isAliasAlreadyExisting( aliases, orfName, orfNameAliasType ) ) {
+                    alias = new Alias( myInstitution,
+                                       protein,
+                                       orfNameAliasType, // orf-name
+                                       orfName );
+
+                    // link the Alias to the protein and persist it in the database
+                    addNewAlias( protein, alias );
+                    if( logger != null ) {
+                        logger.info( "ADD new Alias[name: " + alias.getName() +
+                                 " type: " + orfNameAliasType.getShortLabel() + "]" +
+                                 ", to: " + protein.getShortLabel() );
+                    }
+                    needUpdate = true;
+                } else {
+                    if( logger != null ) {
+                        logger.info( "SKIP Alias[name: " + orfName +
+                                 " type: " + orfNameAliasType.getShortLabel() + "]" +
+                                 ", for: " + protein.getShortLabel() );
+                    }
+                }
+            } // ORFs
+        } // Genes
 
         return needUpdate;
     } // updateAliases
+
 
     private String generateProteinShortLabel( SPTREntry sptrEntry,
                                               BioSource bioSource,
