@@ -433,7 +433,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
              //4) commit
              //
              logger.debug("doing update - searching for old data...");
-             broker.removeFromCache(obj);
              dummy = broker.getObjectByIdentity(new Identity(obj));
              if(dummy == null) {
                  logger.debug("unable to update " + obj.getClass().getName() + " : no object exists in store; creating it...");
@@ -851,8 +850,30 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             }
             //build a normal Criteria query, if class is cached locally or not (
             //if found locally, would have returned by here)
-            crit = new Criteria();
-            crit.addEqualTo(col, val);
+            if(val.indexOf('*') != -1) {
+
+                //search value contains a wildcard - check to see if 'like' or
+                //a full wildacrd search is needed
+                if(val.equals("*")) {
+
+                //wildcard search - setting a null criteria should,
+                    //according to OJB, result in all records retrieved (!)
+                    logger.info("wildcard search requested - using null criteria to get all matches..");
+                }
+                else {
+
+                    //must be a 'like' query...
+                    logger.info("search criteria: looking for " + col + " 'like' " + val);
+                    crit = new Criteria();
+                    crit.addLike(col, val);
+                }
+            }
+            else {
+
+                //fully specified search value
+                crit = new Criteria();
+                crit.addEqualTo(col, val);
+            }
             logger.info("criteria built OK");
             query = new QueryByCriteria(searchClass, crit);
             logger.info("query by criteria built OK: " + type + " " + col + " " + val);
