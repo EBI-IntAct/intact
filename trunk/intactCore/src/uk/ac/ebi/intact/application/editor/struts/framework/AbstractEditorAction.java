@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.struts.view.XrefEditForm;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -200,8 +201,17 @@ public abstract class AbstractEditorAction extends Action {
      */
     protected EditForm getEditForm(HttpSession session, String formName) {
         if (session.getAttribute(formName) == null) {
-//            LOGGER.info("Created a new " + formName);
-            session.setAttribute(formName, new EditForm());
+            // The new form.
+            EditForm form = null;
+            // Special form form xref editing.
+            if (formName.equals("xrefEditForm")) {
+                form = new XrefEditForm();
+            }
+            else {
+                form = new EditForm();
+            }
+            session.setAttribute(formName, form);
+            return form;
         }
         return (EditForm) session.getAttribute(formName);
     }
