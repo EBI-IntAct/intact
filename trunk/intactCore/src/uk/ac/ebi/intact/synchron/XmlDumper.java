@@ -227,7 +227,6 @@ public class XmlDumper {
         Criteria criteria = new Criteria();
         ObjectSet container = new ObjectSet();
         Iterator iterator;
-        //Criteria criteriaUpdated = new Criteria();
 
         //build "where" part of the query
         criteria.addLike("ac", "%" + properties.getProperty("ownerPrefix")+"%");
@@ -249,6 +248,24 @@ public class XmlDumper {
         System.out.println("[XmlDumper] selected data");
 
         broker.commitTransaction();
+
+        // idem for Institutions
+        criteria.addLike("ac", "%" + properties.getProperty("ownerPrefix")+"%");
+        criteria.addOrderByAscending("ac");
+        if( !release ) {
+            criteria.addGreaterThan("updated",dateOfLastFile);
+        }
+
+        //Collect institutions
+        query =	QueryFactory.newQuery(Institution.class,criteria,true);
+
+        broker.beginTransaction();
+
+        result.addAll(broker.getCollectionByQuery(query));
+
+        broker.commitTransaction();
+
+
 
         //put collected objects in a container
         iterator =result.iterator() ;
