@@ -12,14 +12,19 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
     /**
      * The option the user can use to add the hostname in the file path
      */
-    private static final String HOSTNAME_FLAG = "$hostname";
+    private static final String HOSTNAME_FLAG  = "$hostname";
+    private static final String USERTNAME_FLAG = "$username";
 
     private static String hostname;
     private static String username;
 
     static {
 
-        // try to get the hostname
+        /*
+         * Try to get some information for eventual later use.
+         */
+
+        // hostname
         try {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
@@ -27,17 +32,41 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
             hostname="noHostnameFound";
         }
 
-        // get the username
+        // username
         Properties props = System.getProperties();
         username = props.getProperty("user.name");
     }
 
+    // ----------------------------------------------------------- private method
 
-    // ----------------------------------------------------------- instance variable
-    private boolean fileNameCustomized = false;
+    /**
+     * Replace all occurence of a string pattern by a replacement string and return the
+     * result string.
+     *
+     * @param inputStr the string to search an replace in
+     * @param patternStr the pattern string to replace
+     * @param replacementStr the replacement string
+     * @return the result string
+     */
+    private String replace (String inputStr, String patternStr, String replacementStr){
+        int patternLength = patternStr.length();
+        int inputLength   = inputStr.length();
+        int indexOfFlag = inputStr.indexOf (patternStr, 0);
 
+        while (indexOfFlag > -1) {
+            inputStr = inputStr.substring (0, indexOfFlag) +
+                       replacementStr +
+                       inputStr.substring(indexOfFlag + patternLength, inputLength);
+            /*
+             * Search for any other match after the current replacement
+             * We don't take into account overlapping match
+             */
+            indexOfFlag = inputStr.indexOf(patternStr, indexOfFlag + patternLength);
+        }
 
-    // ----------------------------------------------------------- public method
+        return inputStr;
+    }
+
 
     /**
      * Apply a set of customisation on the filename. That modification is done only once.
@@ -46,29 +75,14 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
      * @return the customised filename.
      */
     private String customizeFilename (String filename) {
-        // we customize the filename only once
-        if (fileNameCustomized == false) {
-            fileNameCustomized = true;
-
-            // look for the $hostname flag and replace it by the proper value if it exists
-            int indexOfFlag = fileName.indexOf(HOSTNAME_FLAG);
-            if (indexOfFlag > -1) {
-                filename = filename.substring(0, indexOfFlag) +
-                        hostname +
-                        filename.substring(indexOfFlag + HOSTNAME_FLAG.length(), filename.length());
-            }
-
-            /* Add at the end the username.
-             * In case Tomcat run an intact application, all log files are created.
-             * if several instance of Tomcat runs on the same computer, you can get file
-             * right access conflicts ...adding the username should prevent troubles.
-             */
-            filename += "_" + username;
-        }
+        filename = replace (filename, HOSTNAME_FLAG,  hostname);
+        filename = replace (filename, USERTNAME_FLAG, username);
 
         return filename;
     }
 
+
+    // ----------------------------------------------------------- public method
 
     /**
      * Over definition of that method inherited from FileAppender.
