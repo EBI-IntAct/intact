@@ -16,13 +16,12 @@
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
 <html:form action="/interaction/protein/search">
-    <table width="100%" border="0" cellspacing="1" cellpadding="2">
+    <table width="50%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="10%">Action</th>
             <th class="tableCellHeader" width="10%">Short Label</th>
             <th class="tableCellHeader" width="10%">SP AC</th>
             <th class="tableCellHeader" width="10%">IntAct AC</th>
-            <th class="tableCellHeader" width="60%">Full Text</th>
         </tr>
         <tr class="tableRowEven">
             <td class="tableCell">
@@ -38,9 +37,6 @@
             </td>
             <td class="tableCell">
                 <html:text property="ac" size="10" maxlength="16"/>
-            </td>
-            <td class="tableCell">
-                <html:text property="fullName" size="20" maxlength="30"/>
             </td>
         </tr>
 

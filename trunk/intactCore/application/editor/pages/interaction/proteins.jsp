@@ -39,6 +39,11 @@
         vertical-align: top;
         background-color: #ff8c00
     }
+
+    td.proteinErrorCell {
+        color: white;
+        background-color: red
+    }
 </style>
 
 <%-- Class wide declarations. --%>
@@ -47,6 +52,7 @@
     String viewState = EditBean.VIEW;
     String saveState = EditBean.SAVE;
     String saveNewState = ProteinBean.SAVE_NEW;
+    String errorState = ProteinBean.ERROR;
 %>
 
 <h3>Proteins</h3>
@@ -56,6 +62,7 @@
     <html:form action="/interaction/protein/edit">
         <table width="100%" border="0" cellspacing="1" cellpadding="2">
             <tr class="tableRowHeader">
+                <th class="tableCellHeader" width="2%" rowspan="2"></th>
                 <th class="tableCellHeader" width="10%" rowspan="2">Action</th>
                 <th class="tableCellHeader" width="10%">Short Label</th>
                 <th class="tableCellHeader" width="10%">SP AC</th>
@@ -80,15 +87,33 @@
                     </c:otherwise>
                 </c:choose>
 
+                    <%-- Fill with appropriate color --%>
+                    <nested:equal property="editState" value="<%=viewState%>">
+                        <td class="tableCell" rowspan="2"/>
+                    </nested:equal>
+
+                    <nested:equal property="editState" value="<%=saveState%>">
+                        <td class="proteinEditCell" rowspan="2"/>
+                    </nested:equal>
+
+                    <nested:equal property="editState" value="<%=saveNewState%>">
+                        <td class="proteinEditCell" rowspan="2"/>
+                    </nested:equal>
+
+                    <nested:equal property="editState" value="<%=errorState%>">
+                        <td class="proteinErrorCell" rowspan="2"/>
+                    </nested:equal>
+
+                   <%-- Delete button: common to all --%>
                     <td class="tableCell">
                         <html:submit indexed="true" property="cmd"
-                            titleKey="annotations.button.delete.titleKey">
+                            titleKey="int.proteins.button.delete.titleKey">
                             <bean:message key="button.delete"/>
                         </html:submit>
                     </td>
 
                     <td class="tableCell">
-                        <nested:write property="shortLabel"/>
+                        <nested:write property="shortLabelLink" filter="false"/>
                     </td>
                     <td class="tableCell">
                         <nested:write property="spAc"/>
@@ -118,24 +143,17 @@
                     <td class="tableCell">
                         <nested:equal property="editState" value="<%=viewState%>">
                             <html:submit indexed="true" property="cmd"
-                                titleKey="annotations.button.edit.titleKey">
+                                titleKey="int.proteins.button.edit.titleKey">
                                 <bean:message key="button.edit"/>
                             </html:submit>
                         </nested:equal>
 
-                        <nested:equal property="editState" value="<%=saveState%>">
+                        <nested:notEqual property="editState" value="<%=viewState%>">
                             <html:submit indexed="true" property="cmd"
-                                titleKey="annotations.button.save.titleKey">
+                                titleKey="int.proteins.button.save.titleKey">
                                 <bean:message key="button.save"/>
                             </html:submit>
-                        </nested:equal>
-
-                        <nested:equal property="editState" value="<%=saveNewState%>">
-                            <html:submit indexed="true" property="cmd"
-                                titleKey="annotations.button.save.titleKey">
-                                <bean:message key="button.save"/>
-                            </html:submit>
-                        </nested:equal>
+                        </nested:notEqual>
                     </td>
 
                     <%-- Data --%>
@@ -149,24 +167,35 @@
                     </nested:equal>
 
                     <nested:equal property="editState" value="<%=saveState%>">
-                        <td class="proteinEditCell">
+                        <td class="tableCell">
                             <nested:select property="role">
                                 <nested:options name="rolelist" />
                             </nested:select>
                         </td>
-                        <td class="proteinEditCell">
+                        <td class="tableCell">
                             <nested:text size="5" property="stoichiometry"/>
                         </td>
                     </nested:equal>
 
                     <nested:equal property="editState" value="<%=saveNewState%>">
-                        <td class="proteinEditCell">
+                        <td class="tableCell">
+                            <nested:select property="role">
+                                <nested:options name="rolelist_" />
+                            </nested:select>
+                        </td>
+                        <td class="tableCell">
+                            <nested:text size="5" property="stoichiometry"/>
+                        </td>
+                    </nested:equal>
+
+                    <nested:equal property="editState" value="<%=errorState%>">
+                        <td class="tableCell">
                             <nested:select property="role">
                                 <nested:options name="rolelist_" />
                             </nested:select>
                             <html:errors property="protein.role"/>
                         </td>
-                        <td class="proteinEditCell">
+                        <td class="tableCell">
                             <nested:text size="5" property="stoichiometry"/>
                         </td>
                     </nested:equal>
