@@ -219,6 +219,11 @@
 
     </action-mappings>
 
+    <!-- ========== Message Resources Definitions =========================== -->
+
+    <message-resources
+        parameter="uk.ac.ebi.intact.application.cvedit.ApplicationResources"/>
+
     <!-- ========== Plug Ins Configuration ================================== -->
 
     <!--
