@@ -525,19 +525,21 @@ public class PsiDataBuilder implements DataBuilder {
         }
         //Now do the Interaction's Xrefs...
         try {
+            //every interaction has an Intact primary Xref - any other
+            //Xrefs it has are generated as secondary ones.
+            //NB this call generates an xref Element with a primary Intact ref
+            //as a child (it is processed differently to other Xrefs as the
+            //Intact one does not exist in data and we use the Interaction
+            //details to build it)...
+            Element psiXref = doIntactXref(interaction);
             Collection xrefs = interaction.getXrefs();
-            Element psiXref = null;
-            if(xrefs.isEmpty()) {
-                //Feb 25th 2003: At this point we have no external Xrefs
-                //for Interaactions, so for PSI generation we include
-                //an element which simply refers to the Intact DB. This is to overcome
-                //the fact that our data does not yet include this information. When it
-                //has been added this special operation should not be needed.
-                psiXref = doIntactXref(interaction);
-            }
-            else {
-                //referenced in more than just Intact - do them all
-                psiXref = doXrefCollection(xrefs, "intact");
+            Element secondaryRef = null;
+            if(!xrefs.isEmpty()) {
+                //put all the others in as secondary refs...
+                for(Iterator it = xrefs.iterator(); it.hasNext();) {
+                    secondaryRef = procSecondaryRef((Xref)it.next());
+                    psiXref.appendChild(secondaryRef);
+                }
             }
             psiInteraction.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
