@@ -30,7 +30,6 @@ public abstract class UpdateProteinsI {
     protected static Logger logger = Logger.getLogger( "updateProtein" );
 
     private final static String CV_TOPIC_SEARCH_URL_ASCII = "search-url-ascii";
-    public static final String SRS_URL = "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-noSession+-e+([uniprot-acc:${ac}]|[uniprot-isoid:${ac}])+-ascii";
 
 
     public static class UpdateException extends Exception {
@@ -107,7 +106,7 @@ public abstract class UpdateProteinsI {
                 HttpProxyManager.setup( null );
             }
 
-        } catch( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
+        } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
             proxyConfigurationNotFound.printStackTrace();
         }
     }
@@ -192,7 +191,7 @@ public abstract class UpdateProteinsI {
                 if( searchedAnnotation != null ) {
                     srsUrl = searchedAnnotation.getAnnotationText();
                     if( logger != null ) {
-                        logger.info( "Found SRS URL in the Uniprot CvDatabase: " + srsUrl );
+                        logger.info( "Found UniProt URL in the Uniprot CvDatabase: " + srsUrl );
                     }
                 } else {
                     String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
@@ -203,7 +202,7 @@ public abstract class UpdateProteinsI {
                     throw new UpdateException( msg );
                 }
             } else {
-                String msg = "No Annotation in the UNIPROT database, could not get the SRS URL.";
+                String msg = "No Annotation in the UNIPROT database, could not get the UniProt URL.";
                 if( logger != null ) {
                     logger.error( msg );
                 }
@@ -229,15 +228,13 @@ public abstract class UpdateProteinsI {
             orfNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "orf-name" );
             locusNameAliasType = (CvAliasType) getCvObject( CvAliasType.class, "locus-name" );
 
-        } catch( IntactException e ) {
+        } catch ( IntactException e ) {
             if( logger != null ) {
                 logger.error( e );
             }
             throw new UpdateException( "Couldn't find needed object in IntAct, cause: " + e.getMessage() );
         }
-
     }
-
 
     /**
      * Get a CvObject based on its class name and its shortlabel.
@@ -278,7 +275,6 @@ public abstract class UpdateProteinsI {
         return parsingExceptions;
     }
 
-
     /**
      * Set the updateprotein logger and those of 3rd party tools.
      *
@@ -288,7 +284,6 @@ public abstract class UpdateProteinsI {
         logger = aLogger;
         bioSourceFactory.setLogger( aLogger );
     }
-
 
     /**
      * Inserts zero or more proteins created from SPTR entries which are retrieved from a Stream.
@@ -423,7 +418,6 @@ public abstract class UpdateProteinsI {
      */
     public abstract int getProteinSkippedCount();
 
-
     /**
      * Gives the count of created splice variant
      *
@@ -460,7 +454,6 @@ public abstract class UpdateProteinsI {
      * @return
      */
     public abstract int getSpliceVariantSkippedCount();
-
 
     /**
      * Gives the number of entry found in the given URL
@@ -518,7 +511,6 @@ public abstract class UpdateProteinsI {
      * @param localTransactionControl New value for localTransactionControl
      */
     public abstract void setLocalTransactionControl( boolean localTransactionControl );
-
 
     /**
      * Update all protein found in the provided collection.
