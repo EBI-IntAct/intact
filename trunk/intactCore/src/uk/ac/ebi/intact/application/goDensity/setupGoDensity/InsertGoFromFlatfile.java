@@ -6,10 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.goDensity.setupGoDensity;
 
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.util.GoTools;
-import uk.ac.ebi.intact.model.CvGoNode;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.util.Date;
 
@@ -39,8 +37,10 @@ public class InsertGoFromFlatfile {
             System.out.println(args[0] + " will be imported now.");
 
             IntactHelper helper = new IntactHelper();
-            GoTools.insertGoDag(CvGoNode.class, helper, args[0]);
-
+//            GoTools.insertGoDag(CvGoNode.class, helper, args[0]);
+            System.out.println("THIS class called a method which no longer available "
+                    + " in GoTools class - not sure of GoIdDatabase??");
+            System.out.println("NO Execution had taken place!!!!");
             System.out.println(args[0] + " was successfully imported");
             System.out.println(new Date());
         } catch (IntactException e) {
