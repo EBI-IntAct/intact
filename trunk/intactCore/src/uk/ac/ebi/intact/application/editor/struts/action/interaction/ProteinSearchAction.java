@@ -134,12 +134,13 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // The number of Proteins retrieved from the search.
         int psize = proteins.size();
 
-        // Just an arbitrary number for the moment.
-        if (psize > 10) {
+        // The protein search limit.
+        String protlimit = getService().getResource("protein.search.limit");
+        if (psize > Integer.parseInt(protlimit)) {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.protein.search.many",
-                            Integer.toString(psize), param, "10"));
+                            Integer.toString(psize), param, protlimit));
             saveErrors(request, errors);
             return mapping.findForward(FORWARD_FAILURE);
         }
