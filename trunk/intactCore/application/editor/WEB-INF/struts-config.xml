@@ -68,13 +68,6 @@
         path="login.error.layout"
         type="uk.ac.ebi.intact.application.editor.exception.SessionExpiredException"/>
 
-    <!-- Failure to search the database -->
-    <exception
-        handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-        type="uk.ac.ebi.intact.application.editor.exception.SearchException"
-        key="dummy.key"
-        path="/do/cv/fill/form"/>
-
     <!-- Uses the input for validation exceptions -->
     <exception
         handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
