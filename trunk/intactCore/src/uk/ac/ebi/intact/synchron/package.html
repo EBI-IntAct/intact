@@ -6,18 +6,11 @@
 </head>
 <body bgcolor="white">
 
-This package provides a capability for nodes to exchange data entries.
+This package provides a capability for different IntAct servers (nodes) to exchange data entries.
 <p>
 The package uses both Castor and OJB object-relational mapping tool to provide
-an object view of a backend oracle database: OJB provides the capability to map the persistent entries contains in the database
-into java Objects, and Castor the one to map the Objects into a XML file. The package contains the following
-classes:
-
-<ul>
-<li>Classe for dumping data entries from database into a XML file
-<li>Classe for loading data entries contain in a XML file to the database
-<li>Classe for collecting the XML files from others Intact nodes
-</ul>
+an object view of a backend relational database: OJB provides the capability to map the persistent entries contains in the database
+into java Objects, and Castor the one to map the Objects into a XML file.
 
 
 <h3>Configuration and mapping files requirements</h3>
@@ -25,11 +18,14 @@ classes:
 This package requires the configuration and mapping files for Castor and OJB, and the file Properties.pro containing
 the name of the directories where the XML files have to be downloaded and from where they can be uploaded, and the prefix
 used for the node (those three files should be placed into the config directory).
+About the node prefix: this prefix is used to identify which of the nodes described in the database (table intactnode)
+is the local one, and to recognize data entries that have been created by this node, as their accession number start with
+this prefix (e.g. EBI for the EBI local node).
 
 <h3>Dumping data: class XmlDumper</h3>
 
-This executable class fetches into the database all data entries which ac is prefixed by the node's prefix using OJB
-interface and dump it into a XML file using Castor.
+This executable class fetches in the database all data entries which ac is prefixed by the node's prefix using OJB and
+dump it into a XML file using Castor.
 
 
 <h3>Loading data: class XmlLoader</h3>
@@ -40,7 +36,7 @@ the database with OJB.
 
 <h3>Collecting files: class Collector</h3>
 
-This class collects the XML files provided by the others Intact nodes (those that are not set as rejected by the node).
+This class collects the XML files provided by the other Intact nodes (those that are not set as rejected by the node).
 
 
 <h2>Package Specification</h2>
