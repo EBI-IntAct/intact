@@ -573,10 +573,6 @@ Please see separate
 
                     <blockquote>
                         The editor is a web based tool to edit objects in the IntAct database.
-                        <br/>
-                        <br/>
-                        <b>Note:</b> Any IntAct type name
-                        beginning with Cv is referred to as Cv type from here onwards.
                     </blockquote>
 
                 </section> <!-- Overview -->
@@ -586,8 +582,7 @@ Please see separate
 
                     <blockquote>
                         The application to edit IntAct database is only available for
-                        users with the write access to it. Hence, Editor application
-                        is not available to public access.
+                        users with <b>write</b> access to it.
                     </blockquote>
 
                 </section>
@@ -600,16 +595,20 @@ Please see separate
                         editor is installed. The general format to access the editor takes the
                         form of:
                         <br/>
-                        http://server/intact/editor, where the server part may contain the port
-                        depending upon the configuration of the web server.
+                        http://server/intact[test|prod]/editor, where the server part may contain a port
+                        depending upon the configuration of the web server. For example,
+                        http://www.ebi.ac.uk/interpro/internal-tools/intacttest/editor
+                        is the URL to access the internal EBI test editor. The purpose of the test version
+                        is for testing and is shown in different color scheme to distinguish
+                        it from the production version. All the figures in this document refers to the
+                        color scheme of the production editor.
                         <br/>
                         <br/>
                         To use the editor, you must have a valid account to access the Intact
                         database. The user is presented with a login screen as shown below:
                         <br/>
                         <br/>
-                        <img src="./images/editor/editor-login.jpg" title=""
-                            alt="Login Screen" width="1055" height="292"/>
+                        <img src="./images/editor/login.png" title="" alt="Login Screen"/>
                         <br/>
                         <br/>
                         <br/>
@@ -617,8 +616,18 @@ Please see separate
                         display:
                         <br/>
                         <br/>
-                        <img src="./images/editor/editor-login-error.jpg" title=""
-                            alt="Login error" width="1050" height="316"/>
+                        <img src="./images/editor/login-error.png" title="" alt="Login error"/>
+                        <br/>
+                        <br/>
+                        The user is presented with the following screen after a successful login:
+                        <br/>
+                        <br/>
+                        <img src="./images/editor/login-success.png" title="" alt="Login Success"/>
+                        <br/>
+                        <br/>
+                        In the bottom left corner of the above screen, shows the login name (smudali)
+                        and the database (zpro) the editor is using. The footer shows the last modified
+                        date (usually, the build date).
                     </blockquote>
 
                 </section> <!-- Access -->
@@ -632,14 +641,12 @@ Please see separate
                         first.
                         <br/>
                         <br/>
-                        <img src="./images/editor/editor-types.jpg" title=""
-                            alt="IntAct Types" width="772" height="459"/>
+                        <img src="./images/editor/types.png" title="" alt="IntAct Types"/>
                         <br/>
                         <br/>
                         <img src="./images/editor/warning.gif" title=""
                             alt="" width="40" height="40" align="left"/>
-                        The IntAct type list defaults to the first item (e.g., BioSource) if a type wasn't selected.
-                        <br/>
+                        The IntAct type list defaults to the first item (i.e., Experiment) if a type wasn't selected.
                         <br/>
                         <br/>
                     </blockquote>
@@ -650,47 +657,57 @@ Please see separate
                 <section title="Search" name="editor.search">
 
                     <blockquote>
-                        The user must select the type to edit from the drop down list (defaults
-                        to the first item in the list if none specified).
+                        The user must select the type to edit from the drop down list.
+                        The input field next to the Search button accepts the search criteria.
                         <br/>
-                        <br/>
-                        The input field under the drop down list accepts the search criteria.
-                        The search is performed first on accession number (ac), and then on
-                        name, primary id and full name respectively. So, it is faster to
-                        search by an accession number than by a name.
-                        <br/>
-                        <br/>
-                        <img src="./images/editor/editor-sidebar.jpg" title=""
-                            alt="IntAct Types" width="1055" height="350"/>
-                        <br/>
+                        The search is performed in the following order:
+                        <ol><li>accession number (ac)</li>
+                        <li>short label</li><li>primary id</li><li>full name</li>
+                        </ol>
+                        <img src="./images/editor/idea.gif" title=""
+                            alt="" width="40" height="40" align="left"/>
+                        So, it is faster to search by an accession number than by a shortlabel.
                         <br/>
                         <br/>
                         You can accept the default search value (*) by simply clicking on the
-                        search button. This may take some time depending on the database size as
-                        it retrieves all records for a given IntAct type. However, you can also
-                        use more restrictive filtering such as EBI-3* to restrieve a subset of
-                        records. The following screen provides an example to this.
+                        search button. This pratice is discouraged <b>strongly</b> as it may retrieve a large number
+                        of records from the database for some types (i.e., Interaction). Instead, you should
+                        use more restrictive filtering such as EBI-3* to retrieve a subset of
+                        records.
                         <br/>
                         <br/>
-                        <img src="./images/editor/editor-results.jpg" title=""
-                            alt="Results page" width="1055" height="370"/>
-                        <br/>
-                        <br/>
-                        An appropriate message is displayed if a search fails to find any
-                        matching records. Click on the AC link to edit individual entry.
-                        Alternatively, you can enter the name directly in the search box
-                        and it will take you to the edit screen if a matching record wasn't
-                        found for a given name and type as shown below.
-                        <br/>
-                        <br/>
-                        <img src="./images/editor/editor-search-error.jpg" title=""
-                            alt="No Mtach" width="1044" height="200"/>
-                        <br/>
-                        <br/>
-                        <img src="./images/editor/warning.gif" title=""
+                        <img src="./images/editor/idea.gif" title=""
                             alt="" width="40" height="40" align="left"/>
-                        The search is carried out against the object type selected in the drop down list. So, ensure that you
-                        correctly select the type first before the search.
+                        Fo faster response, always prefer a restrictive search criteria.
+                        <br/>
+                        <br/>
+                        <br/>
+                        An example for a successful search:
+                        <br/>
+                        <img src="./images/editor/results.png" title="" alt="Results page"/>
+                        The 'AC link' (see above) links the editor with the search application. The following
+                        figure shows the result of clicking on EBI-39 link.
+                        <br/>
+                        <br/>
+                        <img src="./images/editor/search-link.png" title="Result of clicking on EBI-39 link"
+                            alt="Search Link"/>
+                        <br/>
+                        <br/>
+                        The 'shortlabel link', takes you to the appropriate edit screen. In this example,
+                        'go' entry will be opened in the CV editor (see below, Cv Editors, for more on CV editor).
+                        <br/>
+                        <br/>
+                        <img src="./images/editor/idea.gif" title=""
+                            alt="" width="40" height="40" align="left"/>
+                        Alternatively, you can go to the edit screen by searching for EBI-39 or 'go' alone.
+                        <br/>
+                        <br/>
+                        A message will be displayed if a search fails to find any matching records.
+                        <br/>
+                        <br/>
+                        <img src="./images/editor/search-error.png" title="" alt="No Match"/>
+                        <br/>
+                        <br/>
                     </blockquote>
 
                 </section> <!-- Search -->
@@ -705,8 +722,7 @@ Please see separate
                         creating a new CvDatabase record.
                         <br/>
                         <br/>
-                        <img src="./images/editor/editor-new-cv.jpg" title=""
-                            alt="New CvDatabase" width="1054" height="506"/>
+                        <img src="./images/editor/new-cv.png" title="" alt="New CvDatabase"/>
                         <br/>
                         <br/>
                     </blockquote>
@@ -715,26 +731,36 @@ Please see separate
 
                         <blockquote>
                             The current edit type is appended to the main heading (CvDatabase) as
-                            shown above. All the drop down list items (topic, database and
-                            reference qualifier) are shown as names. Except for the
-                            name, all other fields are optional. The user must select 'Save'
-                            button to validate the name. All names should be one to
+                            shown above.  All the drop down list items (topic, database and
+                            reference qualifier) are shown in their shortlabels. Except for the
+                            shortlabel, all other fields are optional. To distinguish between
+                            required and optional fields, required fields are shown in a different
+                            background colour. These fields are validated when the user selects
+                            a button (i.e., Add Annotation, Save etc) on the page.
+                            <br/>
+                            All shortlabels should be one to
                             twenty characters from the character set blank, 0..9, a-z, : (colon) and
                             -(dash). A dialog box similar to the following will appear for a
-                            failure to adhere to this syntax.
+                            failure to adhere to this syntax. Short labels are unique for all the editors apart for
+                            the Feature editor. The editor by default computes a unique shortlabel from a given
+                            value. For example, if 'abc' arleay exists on the database, giving 'abc' as
+                            a short label defaults to abc-1.
+                            <b>ADD THE link to the curation manual</b>
                             <br/>
                             <br/>
-                            <img src="./images/editor/editor-label-client-error.jpg" title=""
-                                alt="Incorrect name" width="416" height="130"/>
+                            <img src="./images/editor/shortlabel-client-error.png" title=""
+                                 alt="Incorrect shortlabel"/>
                             <br/>
                             <br/>
-                            Submitting the form without entering a syntactically invalid name
-                            results in a server side validation. The error response from the server
-                            is shown under the name as shown below.
+                            Submitting the form without entering a syntactically valid name
+                            could result in a server side validation if JavaScript is disabled in the client
+                            browser. The error response from the server
+                            is shown under the shortlabel (Note: this error only
+                            appears if Javascript is disabled in the browser).
                             <br/>
                             <br/>
-                            <img src="./images/editor/editor-label-server-error.jpg" title=""
-                                alt="name server validation" width="1038" height="136"/>
+                            <img src="./images/editor/shortlabel-server-error.png" title=""
+                                alt="Shortlabel server validation"/>
                             <br/>
                             <br/>
                             Although both validations are similar in nature, they serve two
@@ -742,20 +768,18 @@ Please see separate
                             (browser) and hence faster of the two. However, the browser must be
                             enabled to accept Javascript for it to work (no dialog window if
                             Javascript is not enabled). This is the preferred validation as it saves
-                            extra step in communication with the server. Alternatively, the other
+                            extra step in communicating with the server. Alternatively, the other
                             validation is not dependent on Javascript and hence works on
-                            any browser. However, it is slow since it involves a round trip to the
-                            server.
+                            any browser.
                             <br/>
                             <br/>
-                            For a name to be valid it must be syntactically correct and
-                            unique (i.e, no simlar label for the current edit type exists in the
-                            database). All the existing short lables for the current edit types are
-                            shown along with an error message for a non unique name entry.
+                            <img src="./images/editor/warning.gif" title=""
+                                alt="" width="40" height="40" align="left"/>
+                            However, some editor components such as Experiment and
+                            Interaction editors rely on Javascript and they wouldn't work correctly
+                            if Javascript is disabled.
                             <br/>
                             <br/>
-                            <img src="./images/editor/editor-label-dup-error.jpg" title=""
-                                alt="Duplicate label" width="1041" height="182"/>
                         </blockquote>
 
                     </section> <!-- Names -->
@@ -764,25 +788,37 @@ Please see separate
                     <section title="Annotations" name="editor.annotations">
 
                         <blockquote>
-                            Annotations are added by clicking on the Add button in the Annotation
+                            Annotations are added by clicking on the Add Annotation button in the Annotation
                             section. Associated with each Annotation is a topic which is one of
                             CvTopics available in the database. An error message is displayed when
-                            trying to add an annotation without selecting an appropriate type from
-                            the drop down lists.
+                            adding an annotation without selecting a type from
+                            the drop down list first.
                             <br/>
                             <br/>
-                            <img src="./images/editor/editor-annot-error.jpg" title=""
-                                alt="Annotation error" width="1046" height="108"/>
+                            <img src="./images/editor/annotation-error.png" title="" alt="Annotation error"/>
                             <br/>
                             <br/>
                             The editing of an annotation is similar to adding a new Annotation except
                             for topic and description are already set to their existing values. The
-                            screen snapshot given below shows two annotations with one in the
-                            editing mode.
+                            annotations in the editing mode are shown in a different color to distinguish
+                            them from non editing annotations.
                             <br/>
                             <br/>
-                            <img src="./images/editor/editor-annot-edit.jpg" title=""
-                                alt="Editing an Annotation" width="884" height="152"/>
+                            <img src="./images/editor/edit-annotation.png" title="" alt="Editing an Annotation"/>
+                            <br/>
+                            <br/>
+                            <img src="./images/editor/warning.gif" title=""
+                                alt="" width="40" height="40" align="left"/>
+                            You cannot save the form if an annotation is in 'edit' mode. In this case, you
+                            must either save or delete it first.
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <img src="./images/editor/idea.gif" title=""
+                                alt="" width="40" height="40" align="left"/>
+                            Edit one annotation at a time as there is no way to save a group of
+                            annotations in a single button click.
                             <br/>
                             <br/>
                         </blockquote>
@@ -794,13 +830,13 @@ Please see separate
 
                         <blockquote>
                             Similar to Annotations, Crossreferences are added by clicking on the
-                            Add button in the Crossreference section. The database drop list
+                            Add Crossreference button in the Crossreference section. The database drop list
                             consists of names for CvDatabase items from the IntAct database and
                             the reference qualifier consists of names for CvXrefQualifier.
                             <br/>
                             <br/>
-                            <img src="./images/editor/editor-new-xref.jpg" title=""
-                                alt="New Xref" width="854" height="80"/>
+                            <img src="./images/editor/add-xref.png" title="Adding a new Xref"
+                                alt="New Xref"/>
                             <br/>
                             <br/>
                             As with annotations, the values from drop down lists must be selected
@@ -809,9 +845,18 @@ Please see separate
                             of empty values.
                             <br/>
                             <br/>
+                            <img src="./images/editor/warning.gif" title=""
+                                alt="" width="40" height="40" align="left"/>
                             Any changes to the form are not saved until the form is submitted. So
                             for a new IntAct type, a record is not created on the database until the
-                            Submit button is clicked and the server reports no errors.
+                            Submit or Save &amp; Continue button is clicked and the server reports no errors.
+                            <br/>
+                            <br/>
+                            <img src="./images/editor/idea.gif" title=""
+                                alt="" width="40" height="40" align="left"/>
+                            Save your work periodically by selecting Save &amp; Continue. This avoids the
+                            danger of loosing your data due to an extended period of inactivity (session
+                            timing out).
                             <br/>
                             <br/>
                             Editing an existing record is similar to the above except the form is
@@ -819,8 +864,10 @@ Please see separate
                             name already have their existing values.
                             <br/>
                             <br/>
-                            <img src="./images/editor/editor-edit-cv.jpg" title=""
-                                alt="Editing an existing CV object" width="1054" height="594"/>
+                            <img src="./images/editor/edit-cv.png" title="Editing an existing entry"
+                                alt="Editing an existing CV object"/>
+                            <br/>
+                            <br/>
                         </blockquote>
 
                     </section> <!-- Crossreferences -->
@@ -831,8 +878,8 @@ Please see separate
                 <section title="Other Editors" name="editor.other.editors">
 
                     <blockquote>
-                        Since Cv editor layout is common to all other editors, only the
-                        differences are shown for other editors.
+                        Since Cv editor layout is common to all the other editors, only the
+                        differences are shown for them.
                     </blockquote>
 
                     <section title="BioSource" name="editor.biosource">
@@ -842,8 +889,8 @@ Please see separate
                             label and the full name from a given NCBI taxid.
                             <br/>
                             <br/>
-                            <img src="./images/editor/editor-new-bs.jpg" title=""
-                                alt="Biosource editor" width="636" height="70"/>
+                            <img src="./images/editor/new-biosrc.png" title="New BioSource"
+                                alt="Biosource editor"/>
                         </blockquote>
 
                     </section> <!-- BioSource -->
@@ -852,16 +899,13 @@ Please see separate
                     <section title="Experiment" name="editor.experiment">
 
                         <blockquote>
-                            <img src="./images/editor/editor-new-exp.jpg" title=""
-                                alt="New Experiment" width="895" height="75"/>
+                            <img src="./images/editor/new-exp.png" title=""
+                                alt="New Experiment"/>
                             <br/>
                             <br/>
                             The Host Organism is the organism the experiment has been performed in. Example: If the interaction of Human proteins expressed in E.coli has been studied in Yeast, the Host Organism would be Yeast.
-                            <br/>
                             The Interaction Detection describes the method which has been used to detect the interaction, e.g. yeast two hybrid.
-                            <br/>
                             The Participant Detection describes the method which has been used to detect the participants (proteins) involved in the interaction, e.g. peptide mass fingerprinting.
-
                         </blockquote>
 
                     </section> <!-- Experiment -->
@@ -870,8 +914,8 @@ Please see separate
                     <section title="Interaction" name="editor.interaction">
 
                         <blockquote>
-                            <img src="./images/editor/editor-int.jpg" title=""
-                                alt="Interaction Editor" width="1026" height="586"/>
+                            <img src="./images/editor/interaction.jpg" title="Interaction Editor"
+                                alt="Interaction Editor"/>
                         </blockquote>
 
                         <section title="Experiments" name="editor.int.experiments">
@@ -882,8 +926,8 @@ Please see separate
                                 Interaction as shown below.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/editor-int-exp.jpg" title=""
-                                    alt="Experiments not yet added" width="1026" height="196"/>
+                                <img src="./images/editor/int-exp.png" title=""
+                                    alt="Experiments not yet added"/>
                                 <br/>
                                 <br/>
                                 Select Add button to add an experiment or Hide to remove from the
@@ -903,31 +947,115 @@ Please see separate
                                 Since IntAct AC is the most specific, other search values are ignored
                                 if a value was specified for IntAct AC.
                                 <br/>
-                                If a search is performed by UniProt accession number (SP AC), and no matching protein is found, the editor will access an external server, by default the EBI SRS server, to retrieve the corresponding protein,
+                                If a search is performed by UniProt accession number (SP AC),
+                                and no matching protein is found, the editor will access an external server
+                                (by default the EBI SRS server), to retrieve the corresponding protein.
                                 <br/>
-                                <img src="./images/editor/editor-int-prot.jpg" title=""
-                                    alt="Adding Proteins" width="1026" height="298"/>
+                                <br/>
+                                <img src="./images/editor/int-protein.png" title="" alt="Adding Proteins"/>
                                 <br/>
                                 <br/>
-                                The orange colour bar on the left identfies new Proteins as not
+                                The orange colour bar on the left identfies new Proteins not
                                 yet added to the Interaction. The first Protein is already part of the
-                                Interaction and hence for absence of color bar next to it. These
+                                Interaction and hence for absence of the color bar next to it. These
                                 'color coded' Proteins do not form part of the current Interaction until
-                                the user save them by selecting 'Save' button.
+                                the user save them either by selecting 'Save' or 'Save &amp; Continue' button.
                                 <br/>
                                 <br/>
                                 Any errors in adding Proteins are shown red colour as shown below.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/editor-int-prot-error.jpg" title=""
-                                    alt="Error in adding Proteins" width="1028" height="294"/>
+                                <img src="./images/editor/int-protein-error.png" title=""
+                                    alt="Error in adding Proteins"/>
                                 <br/>
                                 <br/>
-                                It is an error to add two identical Proteins with similar role. As
-                                illustrated in the above example, Protein ABD1 already exists as a bait
-                                of the Interaction and adding ABD1 again as a bait caused the
-                                above error. The only alternative in this instance is to assign a
-                                different role (other than bait) for the new Protein.
+
+                                This section lists all the Features participating in the current
+                                Interaction. A Feature can be added or edited by selecting 'Add Feature'
+                                and 'Edit Feature' button respectively. The 'Edit Feature' only appears
+                                if there is a Feature attached to the Protein.
+                                <br/>
+                                <img src="./images/editor/int-feature.png" title="" alt="Adding Features"/>
+                                <br/>
+                                <br/>
+                            </blockquote>
+
+                        </section> <!-- Proteins -->
+
+                        <section title="Features" name="editor.int.features">
+
+                            <blockquote>
+                                <img src="./images/editor/new-feature.png" title="Feature Editor"
+                                    alt="Feature Editor"/>
+                            </blockquote>
+
+                            <blockquote>
+                                A Feature must contain at least a single Range and hence Ranges section is shown
+                                in 'required field' colour. The following figure shows a Feature with
+                                multiple Ranges.
+                                <br/>
+                                <img src="./images/editor/add-ranges.png" title="" alt="Adding Ranges"/>
+                                <br/>
+                                <br/>
+                                The 'Create Undefined Feature' button provides an easier way to create a Feature
+                                with an undefined range. The following figure shows the result of selecting this
+                                button.
+                                <br/>
+                                <br/>
+                                <img src="./images/editor/feature-undefined.png" title="Undefined Feature"
+                                    alt="Undefined Feature"/>
+                                <br/>
+                                <br/>
+                                <img src="./images/editor/warning.gif" title=""
+                                    alt="" width="40" height="40" align="left"/>
+                                However, you still need to select the CvFeatureType before submitting the form.
+                                <br/>
+                                <br/>
+                                <br/>
+                                <img src="./images/editor/feature-type-error.png" title="" alt="Missing CvFeatureType"/>
+                                <br/>
+                                <br/>
+                                The 'Mutation' button switches the current view between Mutation/Normal
+                                Feature editor.
+                                <br/>
+                                <br/>
+                                <img src="./images/editor/mutation-button.png" title=""
+                                    alt="Mutation Button"/>
+                                <br/>
+                                <br/>
+                                <img src="./images/editor/warning.gif" title=""
+                                    alt="" width="40" height="40" align="left"/>
+                                You can switch back to the Normal Feature editor at anytime (or vice versa) but you
+                                will lose data enetered in the form.
+                                <br/>
+                                <br/>
+                                <br/>
+                                The mutation editor as a result of switching from Normal to Mutation mode.
+                                <br/>
+                                <br/>
+                                <img src="./images/editor/hotspot-editor.png" title="" alt="Hotspot Editor"/>
+                                <br/>
+                                <br/>
+                                See the curartion manual for the format for hotspots. Any errors in adding hotspot entries
+                                are shown in red with an error message.
+                                <br/>
+                                <br/>
+                                <img src="./images/editor/hotspot-error.png" title="" alt="Hotspot Error"/>
+                                <br/>
+                                <br/>
+                                <img src="./images/editor/warning.gif" title=""
+                                    alt="" width="40" height="40" align="left"/>
+                                There is no 'Save &amp; Continue' button. You need to save the data by selecting the
+                                'Submit' button.
+                                <br/>
+                                <br/>
+                                <br/>
+                                <img src="./images/editor/idea.gif" title=""
+                                    alt="" width="40" height="40" align="left"/>
+                                The CvFeatureType defaults to hotspot. Ensure that the entire entry for hotspot
+                                is complete before you select the 'Submit' button.
+                                <br/>
+                                <br/>
                             </blockquote>
 
                         </section> <!-- Proteins -->
@@ -941,9 +1069,9 @@ Please see separate
                     <blockquote>
                         <b>What browsers Editor supports?
                             <br/>
-                        </b>It has been tested using Mozilla (1.4a), Explorer (6.0) and
-                        Konqueror (2.1.1 or above). With the Konqueror it has been noted that
-                        pop up windows do not get the focus (need to bring them manually). Also,
+                        </b>It has been tested using Mozilla (1.4 or above), Explorer (6.0),
+                        Konqueror (2.1.1 or above) and firefox (1.0 or above). With the Konqueror it has been
+                        noted that pop up windows do not get the focus (need to bring them manually). Also,
                         the footer is almost at the top when a page does not contain much
                         information.
                         <br/>
@@ -958,11 +1086,17 @@ Please see separate
 
                         <b>Do I need JavaScript to run the Editor?</b>
                         <br/>
-                        No, but it helps a lot. For example, some validations such as short
-                        label syntax are faster as they are peformed via JavaScript. Also, the
-                        links to pop up windows wouldn't work when JavaScript is not enabled.
-                        However, the overall functionality of the Editor shouldn't be affected
-                        if JavaScript is not enabled.
+                        Yes. Some editors such as Experiment or Interaction wouldn't work if
+                        Javascript is disabled. Links to search application wouldn't
+                        work as well.
+                        <br/>
+                        <br/>
+
+                        <b>I get a strange error with dispatchXXX not found?</b>
+                        <br/>
+                        This happens if you have disabled Javascript. Some forms use Javascript
+                        to store values for the server to check. When Javascript is disabled, the server
+                        throws an error as it can't find the parameter dispatchXXX.
                         <br/>
                         <br/>
 
@@ -992,21 +1126,7 @@ Please see separate
                         <br/>
                         <br/>
 
-                        <b>After entering 'abc' as a name,
-                            I pressed Save and it accepted 'abc' as the name. Now I entered
-                            'ab%' and the form is submitted without any complaints. I thought
-                            'ab%' is an invalid name and the expected error message didn't
-                            appear. What is happening?</b>
-                        <br/>
-                        As far as the system is concerned it remembers the value associated
-                        with the last 'Save' action. Since you pressed 'Save' after 'abc' but
-                        not after 'ab%', it has already assigned 'abc' as the name. In a
-                        nut shell, it is not even aware of 'ab%' because it hasn't seen it.
-                        <br/>
-                        <br/>
-
-                        <b>It hangs for a tax id in BioSource
-                            editor.</b>
+                        <b>It hangs for a tax id in BioSource editor.</b>
                         <br/>
                         Either Newt server is not accessible or down. There is no way to get
                         around this problem; you need to access the Newt server to do the
@@ -1019,7 +1139,7 @@ Please see separate
                             the Interaction editor.</b>
                         <br/>
                         By default, IntAct AC is the most specific and it is followed by SP AC
-                        and finally the name. Given two values for  name and
+                        and finally the shortlabel. Given two values for  name and
                         IntAct AC, the latter is always given the priority.
                         <br/>
                         <br/>
@@ -1029,6 +1149,12 @@ Please see separate
                         <br/>
                         Not at the moment. We may add this behaviour later.
                         <br/>
+                        <br/>
+
+                        <b>The focus seems to be lost (can't enter or select an iterm in the editor).</b>
+                        <br/>
+                        This is most likely due to the search popup having the focus. Close the search
+                        popup window to regain the focus.
                     </blockquote>
 
                 </section> <!-- FAQ -->
