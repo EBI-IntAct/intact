@@ -13,21 +13,24 @@
     <property name="dist.dir" value="dist"/>
     <property name="war.file" value="intact.war"/>
 
-    <!-- This project specific paths. -->
+    <property environment="env"/>
+    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir" value="${tomcat.home}/webapps"/>
 
     <!-- =================================================================== -->
 
     <!-- Remove 'dest' and docs directories for clean build -->
+
     <target name="clean" description="Prepare for clean build">
         <!-- Delete directories first -->
-        <delete dir="${dest.dir}"/>
-        <delete dir="${docs.dir}"/>
+        <delete dir="${dist.dir}"/>
     </target>
 
     <!-- =================================================================== -->
-    <!-- Builds a war file. -->
-    <target name="war" description="Builds a war file">
 
+    <!-- Builds a war file. -->
+
+    <target name="war" description="Builds a war file">
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}"/>
@@ -50,15 +53,18 @@
     <!-- =================================================================== -->
 
     <!-- Deploys the war file on the Tomcat server. -->
+
     <target name="deploy" description="Deploys the WAR file on the Tomcat server">
-        <ant dir=".." inheritAll="false" target="deploy">
-            <property name="war" value="intact/${dist.dir}/${war.file}"/>
-        </ant>
+        <!-- Copy the war file in the webapps dir. -->
+        <copy file="${dist.dir}/${war.file}" todir="${webapps.dir}" overwrite="yes"/>
+
+        <echo message="Please start Tomcat to take effect (ant start-tomcat)"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Undeploys the war file from the Tomcat server. -->
+
     <target name="undeploy"
         description="Undeploys the WAR file from the Tomcat server">
         <ant dir=".." inheritAll="false" target="undeploy">
