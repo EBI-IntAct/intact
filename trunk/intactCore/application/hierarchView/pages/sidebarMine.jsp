@@ -40,6 +40,7 @@
           <th colspan="2">
              <div align="left">
                 <strong><bean:message key="sidebar.mine.section.title"/></strong>
+                <intact:documentation section="mine" />
              </div>
           </th>
         </tr>
