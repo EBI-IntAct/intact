@@ -34,7 +34,7 @@ public class BusinessConstants {
     /**
      * used to identify an object-level transaction. Used by DAOs etc.
      */
-        public static final int OBJ_TX = 1;
+        public static final int OBJECT_TX = 1;
 
 
 }
