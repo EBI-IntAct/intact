@@ -33,11 +33,31 @@ import java.sql.SQLException;
 
 /**
  * That class allows to convert a PSI XML file into Intact data.
- * That processing is done in 3 steps
+ * <pre>
+ * That processing is done in 3 steps:
+ *      (1) Parsing of the PSI XML file using DOM and materialisation as an immutable (read-only) and defensive
+ *          object model (defensive in the sense that it doesn't allow the user to create rubbish data),
+ *      (2) Checking if all the required Intact object are present in the database (CVs, Proteins, Biosources...)
+ *          The proteins are created/updated during that phase.
+ *      (3) Making the Experiments and Interactions persistent.
+ * <p/>
  * Features:
- *      - PSI XML parsing using the DOM API.
- *      -
- * 
+ *      - Use the DOM XML API for parsing the data (that's not the fastest but this can be changed if need's be),
+ *      - Use of <a href="http://jakarta.apache.org/commons/cli/introduction.html">commons-cli</a> to parse the
+ *        command line options,
+ *      - Test suite for some part of the API (eg. parsing, model)
+ *      - A couple of options are available:
+ *          > Halt of the processing after Parsing (<b>-upToParsing</b>)
+ *          > Halt of the processing after Checking (<b>-upToChecking</b>)
+ *            hence no interaction or experiment created,
+ *          > Auto assign default biosource (<b>-useTaxidWhenMissing</b>)
+ *          > Auto assign interaction type for an Interaction (<b>-useInteractionTypeWhenMissing</b>)
+ *          > Reuse of existing proteins instead of doing unnecessary (and slow) update (<b>-reuseExistingProtein</b>)
+ *            Not requesting that option forces the update of all proteins,
+ *          > Display progress bar during long tasks like protein update and interaction creation (<b>-gui</b>),
+ *          > Debug mode that give more verbose (<b>-debug</b>)
+ * </pre>
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -48,8 +68,9 @@ public class PsiDataLoader {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp( "PsiDataLoader " +
                              "-file <filename> " +
-                             "[-taxId <biosource.taxId>] " +
-                             "[-useInteractionTypeWhenMissing] " +
+                             "[-useTaxidWhenMissing <biosource.taxId>] " +
+                             "[-useInteractionTypeWhenMissing <MI term>] " +
+                             "[-reuseExistingProtein] " +
                              "[-upToParsing] " +
                              "[-upToChecking] " +
                              "[-gui] " +
@@ -61,9 +82,9 @@ public class PsiDataLoader {
      * D E M O
      * <p/>
      * -file  E:\Programs\cygwin\home\Samuel\intactCore\psi\Lehner_2003.v3.xml -useInteractionTypeWhenMissing MI:0191 -useTaxidWhenMissing 9606
-     *
+     * <p/>
      * TODO:
-     *      (1) show time to check and persist
+     * (1) show time to check and persist
      *
      * @param args
      */
@@ -166,17 +187,19 @@ public class PsiDataLoader {
         }
 
         myOptions.setReuseExistingProtein( reuseProtein );
-        myOptions.setDebugEnabled( debugEnabled ) ;
-        myOptions.setGuiEnabled( guiEnabled ) ;
+        myOptions.setDebugEnabled( debugEnabled );
+        myOptions.setGuiEnabled( guiEnabled );
 
-        System.out.println( "File: " + filename );
-        System.out.println( "default taxid: " + defaultTaxid );
-        System.out.println( "default InteractionType: " + defaultInteractionType );
-        System.out.println( "ReuseProtein: " + reuseProtein );
-        System.out.println( "Process up to parsing: " + processUpToParsing );
-        System.out.println( "Process up to checking: " + processUpToChecking );
-        System.out.println( "Debug mode: " + ( debugEnabled ? "enabled" : "disabled" ) );
-        System.out.println( "GUI mode: " + ( guiEnabled ? "enabled" : "disabled" ) );
+        if( debugEnabled ) {
+            System.out.println( "File: " + filename );
+            System.out.println( "default taxid: " + defaultTaxid );
+            System.out.println( "default InteractionType: " + defaultInteractionType );
+            System.out.println( "ReuseProtein: " + reuseProtein );
+            System.out.println( "Process up to parsing: " + processUpToParsing );
+            System.out.println( "Process up to checking: " + processUpToChecking );
+            System.out.println( "Debug mode: " + ( debugEnabled ? "enabled" : "disabled" ) );
+            System.out.println( "GUI mode: " + ( guiEnabled ? "enabled" : "disabled" ) );
+        }
 
         System.out.println( "Uploading file: " + filename );
 
@@ -212,6 +235,7 @@ public class PsiDataLoader {
                     System.err.println( "abort." );
                 }
                 re.printStackTrace();
+                System.exit( 1 );
             }
 
             chrono.stop();
@@ -252,7 +276,7 @@ public class PsiDataLoader {
                             System.out.println( "You are about to write data in a produciton environment, " +
                                                 "do you really want to proceed:" );
                             int ch;
-                            System.out.print( "[yes/no] >" );
+                            System.out.print( "[yes/no]:" );
                             System.out.flush();
                             StringBuffer sb = new StringBuffer();
                             while ( ( ch = System.in.read() ) != 10 ) {
@@ -261,7 +285,7 @@ public class PsiDataLoader {
 
                             String input = sb.toString();
 
-                            if( !"yes".equals( input.toLowerCase() ) ) {
+                            if( !"yes".equals( input.trim().toLowerCase() ) ) {
                                 System.out.println( "Abort procedure." );
                                 System.exit( 0 );
                             }
