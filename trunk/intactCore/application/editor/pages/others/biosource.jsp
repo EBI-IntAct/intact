@@ -13,14 +13,13 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
 <%-- Class wide declarations. --%>
 <%!
     String formName = "bioSourceForm";
 %>
 
-<html:form action="/biosource/info">
+<html:form action="/biosource/info" onsubmit="return validateBioSourceForm(this)">
     <table width="50%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="30%">Action</th>
@@ -37,16 +36,6 @@
                     size="10" maxlength="16"/>
             </td>
         </tr>
-
-        <%-- Prints all the error messages relevant to this page only. --%>
-        <logic:messagesPresent>
-            <tr class="tableRowOdd">
-                <td class="tableErrorCell" colspan="2">
-                    <%-- Filter out other error messages. --%>
-                    <html:errors property="biosource"/>
-                </td>
-            </tr>
-        </logic:messagesPresent>
-
     </table>
 </html:form>
+<html:javascript formName="bioSourceForm"/>
