@@ -29,6 +29,13 @@ import java.util.*;
  */
 public final class ProteinInteractorChecker {
 
+    private static class AmbiguousBioSourceException extends Exception {
+
+        public AmbiguousBioSourceException( String message ) {
+            super( message );
+        }
+    }
+
     private final static boolean DEBUG = CommandLineOptions.getInstance().isDebugEnabled();
 
 
@@ -51,10 +58,26 @@ public final class ProteinInteractorChecker {
         return (ProteinHolder) cache.get( buildID( id, bioSource.getTaxId() ) );
     }
 
+    /**
+     * Build an identifier for the cache
+     *
+     * @param id uniprot id
+     * @param taxid taxid of the biosource (can be null)
+     * @return a unique identifier for the given protein and taxid.
+     */
     private static String buildID( final String id,
                                    final String taxid ) {
-        return id + '#' + taxid;
+        String cacheId = null;
+
+        if(null == taxid){
+            cacheId = id;
+        } else {
+            cacheId = id + '#' + taxid;
+        }
+
+        return cacheId;
     }
+
 
     /**
      * Answer the question: is that protein a Splice Variant ?
@@ -67,11 +90,23 @@ public final class ProteinInteractorChecker {
         return ( label.indexOf( '-' ) != -1 );
     }
 
+
+    /**
+     * Remove from a collection of Protein all those that are not related to the given taxid.
+     *
+     * @param proteins the collection of protein to filter out.
+     * @param taxid the taxid that the returned protein must have (can be null - in which case there is no filtering).
+     * @return a new collection of proteins.
+     */
     private static Collection filterByTaxid( final Collection proteins,
                                              final String taxid ) {
 
-        if( proteins == null ) {
-            throw new IllegalArgumentException( "The Collection to filter has to be not null." );
+        if( taxid == null ) {
+            if(DEBUG) {
+                System.out.println( "No taxid specified, returns identical collection" );
+            }
+
+            return proteins;
         }
 
         Collection filteredProteins = new ArrayList( proteins.size() );
@@ -94,20 +129,18 @@ public final class ProteinInteractorChecker {
      * (2) a splice varaint, we send back the splice variant and its master protein.
      *
      * @param id     the id of the object we are looking for (must not be null)
-     * @param taxid  the taxid filter (must not be null)
+     * @param taxid  the taxid filter (can be null)
      * @param helper the access to the Intact database.
+     *
      * @return the objects that holds either [protein, -] or [protein, spliceVariant] or null if not found.
      */
     private static ProteinHolder getIntactProtein( final String id,
                                                    final String taxid,
-                                                   final IntactHelper helper ) {
+                                                   final IntactHelper helper )
+            throws AmbiguousBioSourceException {
 
         if( id == null ) {
             throw new IllegalArgumentException( "the protein ID must not be null" );
-        }
-
-        if( taxid == null ) {
-            throw new IllegalArgumentException( "the taxid of the protein must not be null" );
         }
 
         ProteinHolder result = null;
@@ -129,18 +162,39 @@ public final class ProteinInteractorChecker {
 
             Protein protein = null;
             try {
-                // TODO find why this could returns several proteins
+
+                // search all protein having the uniprot Xref for that ID (it doesn't retreive the splice variant).
                 Collection proteins = helper.getObjectsByXref( Protein.class, proteinId );
                 if( proteins != null ) {
+
+                    if( null == taxid ) {
+                        // no filtering will be possible, so we have to check if there is ambiguity on
+                        // which protien to pick up.
+                        if( hasMultipleBioSource( proteins ) ) {
+                            StringBuffer sb = new StringBuffer( 64 );
+                            sb.append( "The uniprot id: " ).append( id );
+                            sb.append( " describes proteins related to multiple Biosources: " );
+                            for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
+                                Protein protein1 = (Protein) iterator.next();
+                                BioSource biosource = protein1.getBioSource();
+                                sb.append( biosource.getShortLabel() ).append( '(' );
+                                sb.append( biosource.getTaxId() ).append( ')' ).append( ' ' );
+                            }
+                            sb.append( '.' ).append( "You need to specify a specific taxid." );
+                            throw new AmbiguousBioSourceException( sb.toString() );
+                        }
+                    }
+
                     Collection filteredProteins = filterByTaxid( proteins, taxid );
+
                     if( filteredProteins.size() == 1 ) {
                         protein = (Protein) filteredProteins.iterator().next();
                     } else {
-                        if( DEBUG ) {
-                            System.out.println( "Search By Xref(" + proteinId + ") returned " + proteins.size() + " elements" );
-                            System.out.println( "After filtering on taxid(" + taxid + "): " + filteredProteins.size() +
-                                                " proteins remaining" );
-                        }
+                        StringBuffer sb = new StringBuffer( 64 );
+                        sb.append( "Search By Xref(" + proteinId + ") returned " + proteins.size() + " elements" );
+                        sb.append( "After filtering on taxid(" + taxid + "): " + filteredProteins.size() +
+                                   " proteins remaining" );
+                        throw new AmbiguousBioSourceException( sb.toString() );
                     }
                 }
             } catch ( IntactException e ) {
@@ -150,7 +204,7 @@ public final class ProteinInteractorChecker {
 
             if( protein == null ) {
                 if( DEBUG ) {
-                    System.out.println( "Could not found the master protein" );
+                    System.out.println( "Could not found the master protein ("+ proteinId +")" );
                 }
                 return null;
             }
@@ -178,24 +232,7 @@ public final class ProteinInteractorChecker {
                     System.out.println( spliceVariants.size() + " splice variants found" );
                 }
 
-                if( DEBUG ) {
-                    System.out.println( "Before filering:" );
-                    for ( Iterator iterator = spliceVariants.iterator(); iterator.hasNext(); ) {
-                        Protein p = (Protein) iterator.next();
-                        System.out.println( p.getShortLabel() + "  -->  " + p.getBioSource().getTaxId() );
-                    }
-                }
-
                 Collection filtered = filterByTaxid( spliceVariants, taxid );
-
-                if( DEBUG ) {
-                    System.out.println( "after filering, before shortlabel selection (" + id.toLowerCase() + "):" );
-                    for ( Iterator iterator = spliceVariants.iterator(); iterator.hasNext(); ) {
-                        Protein p = (Protein) iterator.next();
-                        System.out.println( p.getShortLabel() + "  -->  " + p.getBioSource().getTaxId() );
-                    }
-                }
-
                 for ( Iterator iterator = filtered.iterator(); iterator.hasNext(); ) {
                     final Protein sv = (Protein) iterator.next();
 
@@ -231,44 +268,48 @@ public final class ProteinInteractorChecker {
 
         } else {
 
+            // This is not a splice variant but a protein ID.
+
             if( DEBUG ) {
                 System.out.println( "This is a Protein ID" );
             }
 
-            // the ID is a protein's one.
             Protein protein = null;
             try {
                 Collection proteins = helper.getObjectsByXref( Protein.class, id );
 
-                if( DEBUG ) {
-                    System.out.println( "Before filering:" );
-                    for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
-                        Protein p = (Protein) iterator.next();
-                        System.out.println( p.getShortLabel() + "  -->  " + p.getBioSource().getTaxId() );
-                    }
-                }
+                if( null == taxid ) {
 
-                Collection tmp = filterByTaxid( proteins, taxid );
-
-                if( DEBUG ) {
-                    System.out.println( "after filering" );
-                    for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
-                        Protein p = (Protein) iterator.next();
-                        if( DEBUG ) {
-                            System.out.println( p.getShortLabel() + "  -->  " + p.getBioSource().getTaxId() );
+                    // no filtering will be possible, so we have to check if there is ambiguity on
+                    // which protien to pick up.
+                    if( hasMultipleBioSource( proteins ) ) {
+                        StringBuffer sb = new StringBuffer( 64 );
+                        sb.append( "The uniprot id: " ).append( id );
+                        sb.append( " describes proteins related to multiple Biosources: " );
+                        for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
+                            Protein protein1 = (Protein) iterator.next();
+                            BioSource biosource = protein1.getBioSource();
+                            sb.append( biosource.getShortLabel() ).append( '(' );
+                            sb.append( biosource.getTaxId() ).append( ')' ).append( ' ' );
                         }
+                        sb.append( '.' ).append( "You need to specify a specific taxid." );
+                        throw new AmbiguousBioSourceException( sb.toString() );
                     }
                 }
 
-                if( tmp != null && !tmp.isEmpty() ) {
-                    protein = (Protein) tmp.iterator().next();
+                Collection filteredProteins = filterByTaxid( proteins, taxid );
+
+                if( filteredProteins.size() == 1 ) {
+                    protein = (Protein) filteredProteins.iterator().next();
                     if( DEBUG ) {
                         System.out.println( "Found: " + protein );
                     }
                 } else {
-                    if( DEBUG ) {
-                        System.out.println( "Cound not find protein for id: " + id + " taxid:" + taxid );
-                    }
+                    StringBuffer sb = new StringBuffer( 64 );
+                    sb.append( "Search By Xref(" + id + ") returned " + proteins.size() + " elements" );
+                    sb.append( "After filtering on taxid(" + taxid + "): " + filteredProteins.size() +
+                               " proteins remaining" );
+                    throw new AmbiguousBioSourceException( sb.toString() );
                 }
 
             } catch ( IntactException e ) {
@@ -292,6 +333,34 @@ public final class ProteinInteractorChecker {
         return result;
     }
 
+    /**
+     * Check if the set of proteins is related to more than one biosource.
+     *
+     * @param proteins
+     * @return true if more than one distinct biosource found, else false.
+     */
+    private static boolean hasMultipleBioSource( final Collection proteins ) {
+         Set biosources = new HashSet();
+
+        for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
+            Protein protein = (Protein) iterator.next();
+            BioSource bioSource = protein.getBioSource();
+            if( null != bioSource ){
+                biosources.add( bioSource );
+            }
+        }
+
+        boolean answer;
+
+        if( biosources.size() > 1 ) {
+            answer = true;
+        } else {
+            answer = false;
+        }
+
+        return answer;
+    }
+
 
     /**
      * @param proteinInteractor
@@ -305,8 +374,11 @@ public final class ProteinInteractorChecker {
                               final BioSourceFactory bioSourceFactory ) {
 
         final OrganismTag organism = proteinInteractor.getOrganism();
-        final String taxId = organism.getTaxId();
-        OrganismChecker.check( organism, bioSourceFactory );
+        String taxId = null;
+        if( organism != null ) {
+            taxId = organism.getTaxId();
+            OrganismChecker.check( organism, helper, bioSourceFactory );
+        }
 
         final XrefTag uniprotDef = proteinInteractor.getUniprotXref();
         XrefChecker.check( uniprotDef, helper );
@@ -360,38 +432,55 @@ public final class ProteinInteractorChecker {
 
         if( !cache.keySet().contains( cacheId ) ) {
 
-            // TODO cache:  key -> [protein, spliceVariant] or [protein, null]
+            // cache:  [uniprotID, taxid] -> [protein, spliceVariant] or [protein, null]
 
             String source = null;
             ProteinHolder result = null;
 
-
-            if( CommandLineOptions.getInstance().reuseProtein() ) {
+            // WARNING:
+            // if we ask for reuse of protein, and let's say a Protein A is already in IntAct but the entry
+            // in SRS has now 2 proteins (A and B). If no taxid is specified and reuseProtein requested, we might
+            // happily take A instead of throwing an error because of the existence of B that make the case ambiguous.
+            // Hence, reuse protein must be used only if taxid is not null !
+            if( CommandLineOptions.getInstance().reuseProtein() && taxId != null ) {
                 // check if the proteins are in IntAct
                 source = "IntAct";
 
                 if( DEBUG ) {
                     System.out.println( "Searching in Intact..." );
                 }
-                result = getIntactProtein( uniprotId, taxId, helper );
+
+                // taxid is not null here so no exception can be thrown.
+                try {
+                    result = getIntactProtein( uniprotId, taxId, helper );
+                } catch ( AmbiguousBioSourceException e ) {
+                    // we should never get here ! but just in case ...
+                    MessageHolder.getInstance().addCheckerMessage( new Message( e.getMessage() ) );
+                    System.out.println( e.getMessage() );
+                }
             }
 
+            // retreived by ID having different taxid
 
-            if( result == null ) { // always null if user requested force update.
+            if( result == null ) { // always null if taxId == null or no reuseProtein requested.
                 // Update database
                 if( DEBUG ) {
                     System.out.println( "Protein not found in intact, updating..." );
                 }
                 source = "UpdateProteins";
-                Collection tmp = null;
-                tmp = proteinFactory.insertSPTrProteins( uniprotId, organism.getTaxId(), true );
+                Collection tmp = proteinFactory.insertSPTrProteins( uniprotId, taxId, true ); // taxId can be null !
 
                 if( DEBUG ) {
                     System.out.println( tmp.size() + " Protein created/updated." );
                 }
 
                 // search against updated database
-                result = getIntactProtein( uniprotId, taxId, helper );
+                try {
+                    result = getIntactProtein( uniprotId, taxId, helper );
+                } catch ( AmbiguousBioSourceException e ) {
+                    MessageHolder.getInstance().addCheckerMessage( new Message( e.getMessage() ) );
+                    System.out.println( e.getMessage() );
+                }
             }
 
 
