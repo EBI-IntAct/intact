@@ -13,15 +13,15 @@
 <%@ page language="java"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
-<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <span class="header">
     <tiles:getAsString name="header.title"/>
 </span>
 
 <div style="text-align: right;">
-    <editor:helpLink tag="toc" title="Help Topics"/>
-    <editor:helpLink tag="faq" title="FAQ"/>
+    <intact:documentation section="editor" title="Help Topics"/>
+    <intact:documentation section="editor.faq" title="FAQ"/>
     <br>
 </div>
 <hr>
