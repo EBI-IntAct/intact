@@ -200,7 +200,7 @@
         <action path="/biosource/taxid"
             type="uk.ac.ebi.intact.application.editor.struts.action.biosource.TaxIdAction"
             name="bioSourceForm"
-            scope="request"
+            scope="session"
             input="edit.layout">
         </action>
 
@@ -215,7 +215,7 @@
         <action path="/comment/edit"
             name="commentEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommentEditAction"
-            scope="request">
+            scope="session">
         </action>
 
         <!-- Adds a new xref. -->
@@ -229,7 +229,7 @@
         <action path="/xref/edit"
             name="xrefEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefEditAction"
-            scope="request">
+            scope="session">
         </action>
 
     </action-mappings>
