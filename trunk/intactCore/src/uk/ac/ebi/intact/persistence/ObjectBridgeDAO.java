@@ -551,10 +551,24 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         broker.removeFromCache(obj);
     }
 
+    public void forceUpdate(Object obj) throws UpdateException {
+        update(obj, true);
+    }
+
     /**
      * @see uk.ac.ebi.intact.persistence.DAO#update(Object)
      */
     public void update(Object obj) throws UpdateException {
+        update(obj, false);
+    }
+
+    /**
+     * Does the update here.
+     * @param obj the object to update.
+     * @param force true if update is to be forced.
+     * @throws UpdateException
+     */
+    private void update(Object obj, boolean force) throws UpdateException {
         if (!isPersistent(obj)) {
             throw new UpdateException();
         }
@@ -670,6 +684,12 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     logger.error("failed to update field " + fields[i].getName(), e);
                 }
             }
+            // Force the update if the flag is true. This is because OJB doesn't
+            // mark the object as dirty if a collection's size is unchanged.
+            if (force) {
+                ((TransactionImpl) odmg.currentTransaction()).markDirty(dummy);
+            }
+
             // No need to anything here for ODMG transactions as it is already
             // locked for write before the update.
             if (localTx) {
