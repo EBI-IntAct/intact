@@ -33,36 +33,29 @@ public class CvViewBean extends AbstractEditViewBean {
 
         // Have we set the annotated object for the view?
         if (cvobj == null) {
-            if (getAc() == null) {
-                // Not persisted; create a new cv object.
-                try {
-                    Constructor ctr = getEditClass().getDeclaredConstructor(
-                            new Class[]{Institution.class, String.class});
-                    cvobj = (CvObject) ctr.newInstance(
-                            new Object[]{user.getInstitution(), getShortLabel()});
-                }
-                catch (NoSuchMethodException ne) {
-                    // Shouldn't happen.
-                    throw new SearchException(ne.getMessage());
-                }
-                catch (SecurityException se) {
-                    throw new SearchException(se.getMessage());
-                }
-                catch (InstantiationException ie) {
-                    throw new SearchException(ie.getMessage());
-                }
-                catch (IllegalAccessException le) {
-                    throw new SearchException(le.getMessage());
-                }
-                catch (InvocationTargetException te) {
-                    throw new SearchException(te.getMessage());
-                }
+            // Not persisted; create a new cv object.
+            try {
+                Constructor ctr = getEditClass().getDeclaredConstructor(
+                        new Class[]{Institution.class, String.class});
+                cvobj = (CvObject) ctr.newInstance(
+                        new Object[]{user.getInstitution(), getShortLabel()});
             }
-            else {
-                // Read it from the peristent system and update it.
-                cvobj = (CvObject) user.getObjectByAc(getEditClass(), getAc());
+            catch (NoSuchMethodException ne) {
+                // Shouldn't happen.
+                throw new SearchException(ne.getMessage());
             }
-            // Set the current cv obj as the annotated object.
+            catch (SecurityException se) {
+                throw new SearchException(se.getMessage());
+            }
+            catch (InstantiationException ie) {
+                throw new SearchException(ie.getMessage());
+            }
+            catch (IllegalAccessException le) {
+                throw new SearchException(le.getMessage());
+            }
+            catch (InvocationTargetException te) {
+                throw new SearchException(te.getMessage());
+            }
             setAnnotatedObject(cvobj);
         }
     }

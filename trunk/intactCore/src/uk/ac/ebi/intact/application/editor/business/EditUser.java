@@ -303,7 +303,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         startEditing();
         // Get the new view for the new edit object.
         myEditView = myViewFactory.factory(clazz);
-        myEditView.setAnnotatedClass(clazz);
+        myEditView.reset(clazz);
         setSelectedTopic();
     }
 
@@ -312,7 +312,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         startEditing();
         // Get the new view for the new edit object.
         myEditView = myViewFactory.factory(annot.getClass());
-        myEditView.setAnnotatedObject(annot);
+        myEditView.reset(annot);
         setSelectedTopic();
     }
 
@@ -698,7 +698,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public void releaseLock() {
         // Release any locks the user is holding.
-        if (myEditView != null) {
+        if (myEditView.getAc() != null) {
             System.out.println("Just about to release the lock: " + myEditView.getAc());
             LockManager.getInstance().release(myEditView.getAc());
         }
