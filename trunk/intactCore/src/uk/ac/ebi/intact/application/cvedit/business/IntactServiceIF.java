@@ -6,6 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.cvedit.business;
 
+import java.util.Collection;
+
 /**
  * The business interface for the Web Intact application. This defines
  * methods that a client (servlet) may call on the application.
@@ -22,9 +24,14 @@ public interface IntactServiceIF {
 
     /**
      * Returns the class name associated with the give topic.
-     *
      * @param topic the topic to search in the Intact types resource.
      * @return the classname saved under <code>topic</code>.
      */
     public String getClassName(String topic);
+
+    /**
+     * Returns a collection of Intact types.
+     * @return an <code>ArrayList</code> of Intact types.
+     */
+    public Collection getIntactTypes();
 }
