@@ -59,6 +59,23 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     // End of Inner classes
 
+    // Static data
+
+    /**
+     * The name of the topic list.
+     */
+    private static final String theirTopicNames = "TopicNames";
+
+    /**
+     * The name of the database list.
+     */
+    private static final String theirDBNames = "DatabaseNames";
+
+    /**
+     * The name of qualifier list.
+     */
+    private static final String theirQualifierNames = "QualifierNames";
+
     /**
      * An empty list only contains this item.
      */
@@ -68,6 +85,8 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      * Maps: List Name -> List type. Common to all the users and it is immutable.
      */
     private static final Map theirNameToType = new HashMap();
+
+    // End of static data
 
     /**
      * The user ID.
@@ -113,9 +132,9 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     // Fill the maps with list names and their associated classes.
     static {
-        theirNameToType.put(IntactUserIF.TOPIC_NAMES, CvTopic.class);
-        theirNameToType.put(IntactUserIF.DB_NAMES, CvDatabase.class);
-        theirNameToType.put(IntactUserIF.QUALIFIER_NAMES, CvXrefQualifier.class);
+        theirNameToType.put(theirTopicNames, CvTopic.class);
+        theirNameToType.put(theirDBNames, CvDatabase.class);
+        theirNameToType.put(theirQualifierNames, CvXrefQualifier.class);
     }
 
     // Static Methods.
@@ -188,7 +207,12 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      * method sets the logout time.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
-        myEndTime = Calendar.getInstance().getTime();
+        try {
+            logoff();
+        }
+        catch (IntactException ie) {
+            // Just ignore this exception. Where to log this?
+        }
     }
 
     // Implementation of IntactUserIF interface.
@@ -215,16 +239,6 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         return (Institution) getObjectByLabel(Institution.class, "EBI");
     }
 
-    public Collection getList(String name) {
-        return (Collection) myNameToItems.get(name);
-    }
-
-    public boolean isListEmpty(String name) {
-        Collection list = getList(name);
-        Iterator iter = list.iterator();
-        return ((String) iter.next()).equals(theirEmptyListItem) && !iter.hasNext();
-    }
-
     public void updateList(Class clazz) throws SearchException {
         if (!theirNameToType.containsValue(clazz)) {
             return;
@@ -241,6 +255,43 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
                 myNameToItems.put(name, makeList((Class) entry.getValue()));
             }
         }
+    }
+
+    public Collection getTopicList() {
+//        // The topic list.
+//        Collection list = (Collection) myNameToItems.get(theirTopicNames);
+//
+//        // The class of the current edit object.
+//        Class clazz = myEditCvObject.getClass();
+//
+//        // Remove the short label from the list (only for CvTopics).
+//        if (clazz.equals(CvTopic.class)) {
+//            // The short label of the CV object we are editing at the moment.
+//            String label = myEditCvObject.getShortLabel();
+//
+//            // New collection because we are modifying the list.
+//            Collection topics = new ArrayList(list);
+//
+//            // Remove the short label from the drop down list.
+//            topics.remove(label);
+//            return topics;
+//        }
+//        // No modifcations to the list; jsut return the cache list.
+//        return list;
+        //return getList((Collection) myNameToItems.get(theirTopicNames));
+        return getList(theirTopicNames);
+    }
+
+    public Collection getDatabaseList() {
+        return getList(theirDBNames);
+    }
+
+    public Collection getQualifierList() {
+        return getList(theirQualifierNames);
+    }
+
+    public boolean isQualifierListEmpty() {
+        return isListEmpty(theirQualifierNames);
     }
 
     public void begin() throws IntactException {
@@ -308,6 +359,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     }
 
     public void logoff() throws IntactException {
+        myEndTime = Calendar.getInstance().getTime();
         myHelper.closeStore();
     }
 
@@ -345,6 +397,47 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         for (Iterator iter = results.iterator(); iter.hasNext();) {
             list.add(((CvObject) iter.next()).getShortLabel());
         }
+        return list;
+    }
+
+    /**
+     * Returns <code>true</code> only if the list for given name contains
+     * a single item and that item equals to the empty list item identifier.
+     * @param name the name of the list.
+     */
+    private boolean isListEmpty(String name) {
+        Collection list = (Collection) myNameToItems.get(name);
+        Iterator iter = list.iterator();
+        return (iter.next()).equals(theirEmptyListItem) && !iter.hasNext();
+    }
+
+    /**
+     * Returns the collection for given list name.
+     * @param name the name of the list to return the list.
+     * @return the list for <code>name</code>. If the current editable object is
+     * as same as <code>name/code>'s class, then the cuurent editable's name (short
+     * label) wouldn't be included. For example, if the short label for a CvTopic is
+     * Function, then the list wouldn't have 'Function' if the current editable object
+     * is of CvTopic and its short label is 'Function'.
+     */
+    private Collection getList(String name) {
+        Collection list = (Collection) myNameToItems.get(name);
+        Class clazz = (Class) theirNameToType.get(name);
+
+        // Remove the short label only when the current editable object's
+        // class and the given class match.
+        if (myEditCvObject.getClass().equals(clazz)) {
+            // The short label of the CV object we are editing at the moment.
+            String label = myEditCvObject.getShortLabel();
+
+            // New collection because we are modifying the list.
+            Collection topics = new ArrayList(list);
+
+            // Remove the short label from the drop down list.
+            topics.remove(label);
+            return topics;
+        }
+        // No modifcations to the list; just return the cache list.
         return list;
     }
 }

@@ -25,21 +25,6 @@ import java.io.Serializable;
 public interface IntactUserIF extends Serializable {
 
     /**
-     * The name of the topic list.
-     */
-    public static final String TOPIC_NAMES = "TopicNames";
-
-    /**
-     * The name of the database list.
-     */
-    public static final String DB_NAMES = "DatabaseNames";
-
-    /**
-     * The name of qualifier list.
-     */
-    public static final String QUALIFIER_NAMES = "QualifierNames";
-
-    /**
      * Return the view of what the user sees on the screen.
      */
     public CvViewBean getView();
@@ -70,35 +55,6 @@ public interface IntactUserIF extends Serializable {
     public Institution getInstitution() throws SearchException;
 
     /**
-     * Returns the list for given list name. Lists are cached to provide
-     * efficient list constructions.
-     *
-     * @param name the name of the list.
-     *
-     * <pre>
-     * pre: name.equals(TOPIC_NAMES) or name.equals(DB_NAMES) or
-     *      name.equals(QUALIFIER_NAMES)
-     * post: return != null
-     * post: return.notEmpty
-     * post: return->forall(obj : Object | obj.oclIsTypeOf(String))
-     * </pre>
-     */
-    public Collection getList(String name);
-
-    /**
-     * Returns <code>true</code> only if the list for given name contains
-     * a single item and that item equals to the empty list item identifier.
-     *
-     * @param name the name of the list.
-     *
-     * <pre>
-     * pre: name.equals(TOPIC_NAMES) or name.equals(DB_NAMES) or
-     *      name.equals(QUALIFIER_NAMES)
-     * </pre>
-     */
-    public boolean isListEmpty(String name);
-
-    /**
      * Update lists for given name. This involves contruction of a new list
      * by retrieveing matching records from the persistent system. No action
      * is taken if <code>clazz</code> is not of valid list type.
@@ -110,6 +66,34 @@ public interface IntactUserIF extends Serializable {
      * to update the list.
      */
     public void updateList(Class clazz) throws SearchException;
+
+    /**
+     * Returns a list of topic names.
+     * @return a list of topic names (short labels) to display as a drop
+     *  down list from the edit page. If the current editing object is of
+     *  CvTopic then the returned list doesn't include it.
+     */
+    public Collection getTopicList();
+
+    /**
+     * Returns a list of database names.
+     * @return a list of database names (short labels) to display as a drop
+     *  down list from the edit page.
+     */
+    public Collection getDatabaseList();
+
+    /**
+     * Returns a list of qualifier names.
+     * @return a list of qualifier names (short labels) to display as a drop
+     *  down list from the edit page.
+     */
+    public Collection getQualifierList();
+
+    /**
+     * Returns true if there are no qualifier names.
+     * @return true if there are no qualifier names or else true is returned.
+     */
+    public boolean isQualifierListEmpty();
 
     // Transaction Methods
 
