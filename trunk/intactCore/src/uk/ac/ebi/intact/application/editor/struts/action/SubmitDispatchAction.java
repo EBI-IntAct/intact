@@ -16,8 +16,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -124,10 +123,13 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         // The bean to extract the values.
         CommentBean cb = (CommentBean) dynaform.get("annotation");
 
-        // Bean is wrapped around this annotation.
-        Annotation annot = cb.getAnnotation(user);
+        // The topic for the annotation.
+        CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class,
+                cb.getTopic());
+        Annotation annot = new Annotation(user.getInstitution(), cvtopic);
+        annot.setAnnotationText(cb.getDescription());
 
-        // Add the bean to the view; need to create a new bean.
+        // Add the bean to the view; new bean is wrapped around the annotation.
         user.getView().addAnnotation(new CommentBean(annot));
 
         return mapping.getInputForward();
@@ -170,10 +172,16 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
             // Display the errors in the input page.
             return mapping.getInputForward();
         }
+        CvDatabase db = (CvDatabase) user.getObjectByLabel(
+                CvDatabase.class, xb.getDatabase());
+        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
+                CvXrefQualifier.class, xb.getQualifier());
+        Xref xref = new Xref(user.getInstitution(), db, xb.getPrimaryId(),
+                xb.getSecondaryId(), xb.getReleaseNumber(), xqual);
         // Bean is wrapped around this xref
-        Xref xref = xb.getXref(user);
+//        Xref xref = xb.getXref(user);
 
-        // Add the bean to the view; need to create a new bean.
+        // Add the bean to the view; new bean is wrapped around the xref.
         user.getView().addXref(new XreferenceBean(xref));
 
         return mapping.getInputForward();
