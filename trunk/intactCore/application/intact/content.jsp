@@ -85,6 +85,7 @@
                         <span class="pbold"><a name="document"></a>Documentation:</span>
                         <ul>
                           <li class="greenboldsmalllist"><span class="text"> <a href="doc/html/documentation.html">User manual</a></span></li>
+                          <li class="greenboldsmalllist"><span class="text"> <a target="_blank" href="doc/html/curation/IntActAnnotationRules.pdf">Curation manual</a></span></li>
                           <li class="greenboldsmalllist"><span class="text"> <a href="doc/html/tutorial/index.html">IntAct API tutorial</a></span></li>
                           <li class="greenboldsmalllist"><span class="text">Data model (<a href="http://intact.sourceforge.net/uml/intactCore.gif">UML class diagram</a>, <a href="http://intact.sourceforge.net/doc/api/index.html">Javadoc</a>)</span></li>
                           <li class="greenboldsmalllist"><span class="text"><a href="http://intact.sourceforge.net/doc/">Implementation overview</a></span><br>
@@ -140,14 +141,14 @@
                             </span>
                           </li>
 
-                          <li class="greenboldsmalllist"><b>Binary search</b>
+                          <li class="greenboldsmalllist"><b>Known partners of a protein</b>
                               <span class="text">
                               <br>
                               <p>
                               http://www.ebi.ac.uk/intact/search/do/search?searchString=<b><font color="blue">&lt;protein&gt;</font></b>
                               </p>
-                              <b><font color="blue">&lt;protein&gt;</font></b> being either the AC, shortlabel, alias
-                              or Xref (eg. UniProt ID) of a Protein.
+                              <b><font color="blue">&lt;protein&gt;</font></b> should be either the AC, shortlabel,
+                              alias or Xref (eg. UniProt ID) of a Protein.
                               <br>
                               Wildcards are supported.
                               <br>
@@ -155,23 +156,24 @@
                               </span>
                           </li>
 
-                          <li class="greenboldsmalllist"><b>Interaction(s) involved given a set of proteins</b>
+                          <li class="greenboldsmalllist"><b>Binary interactions</b>
                               <span class="text">
                               <br>
                               <p>
                               http://www.ebi.ac.uk/intact/search/do/search?binary=<b><font color="red">&lt;protein1&gt;</font></b>,<b><font color="blue">&lt;protein2&gt;</font></b>
                               </p>
-                              Giving two proteins will display all interactions in which those two proteins are involved in.
+                              This URL will give you all the binary interactions for two given proteins contained within IntAct.
+                              There are cases when <b><font color="red">&lt;protein1&gt;</font></b> and <b><font color="blue">&lt;protein2&gt;</font></b>
+                              will be the same, for example in the case of  a homodimer or when an interaction is
+                              demonstrated between different modified forms of the same protein (e.g. Flag-tagged and
+                              wild-type).
                               <br>
-                              <b><font color="red">&lt;protein1&gt;</font></b> and
-                              <b><font color="blue">&lt;protein2&gt;</font></b> being either the AC, shortlabel, alias or
-                              Xref (eg. UniProt ID) of a Protein.
+                              <b><font color="red">&lt;protein1&gt;</font></b> and <b><font color="blue">&lt;protein2&gt;</font></b>
+                              should be either the AC, shortlabel, alias or Xref (eg. UniProt ID) of a Protein.
                               <br>
-                              Wildcards are supported.
+                              Wildcards are supported but we encourage you to give a specific protein descriptor.
                               </span>
                           </li>
-
-
 
                         </ul>
                         <div align="right"><a href="#a0"><img src="http://www.ebi.ac.uk/Information/images/arrow_up2.gif" border="0" height="21" width="19"></a>
