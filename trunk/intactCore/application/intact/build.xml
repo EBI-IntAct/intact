@@ -7,10 +7,10 @@
 
 <project name="intact" basedir="." default="war">
 
-    <property name="project.title"   value="intact"/>
+    <property name="project.title" value="intact"/>
     <property name="project.version" value="1.0"/>
 
-    <property name="intact.root"  value="../.."/>
+    <property name="intact.root" value="../.."/>
     <property name="root.src.dir" value="${intact.root}/src"/>
     <property name="root.lib.dir" value="${intact.root}/lib"/>
 
@@ -33,22 +33,22 @@
     <property name="webapps.dir" value="${tomcat.home}/webapps"/>
    
     <!-- Documentation related -->
-    <property name="doc.dir"    value="doc"/>
-    <property name="xml.dir"    value="${doc.dir}/xml"/>
-    <property name="xsl.dir"    value="${doc.dir}/xsl"/>
-    <property name="css.dir"    value="${doc.dir}/css"/>
-    <property name="html.dir"   value="${doc.dir}/html"/>
+    <property name="doc.dir" value="doc"/>
+    <property name="xml.dir" value="${doc.dir}/xml"/>
+    <property name="xsl.dir" value="${doc.dir}/xsl"/>
+    <property name="css.dir" value="${doc.dir}/css"/>
+    <property name="html.dir" value="${doc.dir}/html"/>
     <property name="images.dir" value="${doc.dir}/images"/>
-    <property name="lib.dir"    value="${doc.dir}/lib"/>
+    <property name="lib.dir" value="${doc.dir}/lib"/>
 
-	<!-- include project specific additional documentation -->
-	<property name="misc.dir"  value="${doc.dir}/misc"/>
+    <!-- include project specific additional documentation -->
+    <property name="misc.dir" value="${doc.dir}/misc"/>
 
-    <property name="xml.documentation"   value="${xml.dir}/intact.xml"/>
-    <property name="xsl.tableOfContent"  value="${xsl.dir}/contents.xsl"/>
-    <property name="xsl.content"         value="${xsl.dir}/contentonly.xsl"/>
+    <property name="xml.documentation" value="${xml.dir}/intact.xml"/>
+    <property name="xsl.tableOfContent" value="${xsl.dir}/contents.xsl"/>
+    <property name="xsl.content" value="${xsl.dir}/contentonly.xsl"/>
     <property name="html.tableOfContent" value="${html.dir}/tableOfContent.html"/>
-    <property name="html.content"        value="${html.dir}/documentation.html"/>
+    <property name="html.content" value="${html.dir}/documentation.html"/>
 
 
 
@@ -78,7 +78,7 @@
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="compile" description="Compile the source tree and copy the configuration files">
 
-        <mkdir dir="${dest.dir}" />
+        <mkdir dir="${dest.dir}"/>
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             includes="**/intact/util/DocumentationIntegrityChecker*"
@@ -100,14 +100,14 @@
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
 
         <!-- misc.dir transfered to html for additional documentation -->
-        <copy todir="${html.dir}">
+        <copy overwrite="true" todir="${html.dir}">
             <fileset dir="${misc.dir}"/>
         </copy>
 
         <!-- html.dir is created in the build-doc target -->
-        <copy file="${css.dir}/stylesheet.css" todir="${html.dir}" />
+        <copy overwrite="true" file="${css.dir}/stylesheet.css" todir="${html.dir}"/>
 
-        <copy todir="${html.dir}/images">
+        <copy overwrite="true" todir="${html.dir}/images">
             <fileset dir="${images.dir}"/>
         </copy>
 
@@ -126,7 +126,7 @@
                 <include name="images/**"/> 
 
                 <!-- static publications -->
-                <include name="publications/**"/> 
+                <include name="publications/**"/>
             </fileset>
         </war>
 
@@ -141,16 +141,16 @@
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-              file="${intact.context.dir}/${intact-context-file}"
-              overwrite="true" />
+            file="${intact.context.dir}/${intact-context-file}"
+            overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${intact-context-file}"
-                 token="[WAR.FILE.NAME]"
-                 value="${war.file}" />
+            token="[WAR.FILE.NAME]"
+            value="${war.file}"/>
         <replace file="${dist.dir}/${intact-context-file}"
-                 token="[server.name]"
-                 value="${server.name}" />
+            token="[server.name]"
+            value="${server.name}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -158,16 +158,16 @@
     <!-- Check documentation integrity by verifying if a section name is used only once. -->
 
     <target name="check-doc" depends="compile"
-            description="Check documentation integrity (section's name uniqueness)">
+        description="Check documentation integrity (section's name uniqueness)">
 
         <echo message="Checking documentation integrity ..."/>
 
         <java classname="uk.ac.ebi.intact.util.DocumentationIntegrityChecker"
-              fork="yes"
-              failonerror="true">
+            fork="yes"
+            failonerror="true">
             <arg line="${xml.documentation}"/>
             <classpath>
-              <pathelement path="${dest.dir}"/>
+                <pathelement path="${dest.dir}"/>
             </classpath>
         </java>
 
@@ -180,7 +180,7 @@
     <!-- Build static pages for IntAct documentation. -->
 
     <target name="build-doc" depends="check-doc"
-            description="Build static pages for IntAct documentation">
+        description="Build static pages for IntAct documentation">
 
         <mkdir dir="${html.dir}"/>
 
