@@ -24,7 +24,7 @@
 	version of this dtd. This will help to avoid versions conflicts.
   -->
 <!ATTLIST descriptor-repository
-	version (0.9.1) #REQUIRED
+	version (0.9.6) #REQUIRED
 	isolation-level (read-uncommitted | read-committed | repeatable-read |
 	                 serializable | optimistic) "read-uncommitted"
 >
@@ -34,8 +34,11 @@
 	connection for the repository. All class-descriptor elements that do not
 	specify their own jdbc-connection-descriptor will use the default jdbc
 	connection.
+	
+	A connection-pool element may be used to define connection pool 
+	properties for the specified JDBC connection.
   -->
-<!ELEMENT jdbc-connection-descriptor EMPTY>
+<!ELEMENT jdbc-connection-descriptor (connection-pool?)>
 <!--
 	The platform attribute is used to define the specific RDBMS Platform.
 	This attribute corresponds to a
@@ -58,7 +61,8 @@
 	platform (Db2 | Hsqldb | Informix | MsAccess | MsSQLServer |
 	          MySQL | Oracle | PostgreSQL | Sybase | Sapdb) "Hsqldb"
 	jdbc-level (1.0 | 2.0 | 3.0) "1.0"
-
+	eager-release (true | false) "false"
+	
 	jndi-datasource-name CDATA #IMPLIED
 
 	driver CDATA #IMPLIED
@@ -71,6 +75,73 @@
 >
 
 <!--
+	The connection-pool element specifies the connection pooling
+	parameter.
+-->
+<!ELEMENT connection-pool EMPTY>
+<!--
+	maxActive
+	maximum number of connections that can be borrowed from the
+	pool at one time. When non-positive, there is no limit.
+	
+	maxIdle
+	controls the maximum number of connections that can sit idle in the
+	pool at any time. When non-positive, there is no limit
+	
+	maxWait
+	max time block to get connection instance from pool, after that exception is thrown.
+	When non-positive, block till last judgement
+	
+	whenExhaustedAction
+	0 - fail when pool is exhausted
+	1 - block when pool is exhausted
+	2 - grow when pool is exhausted
+	
+	
+	testOnBorrow
+	The pool will attempt to validate each object before it is returned from the pool
+	
+	testOnReturn
+	The pool will attempt to validate each object before it is returned to the pool
+	
+	testWhileIdle
+	Indicates whether or not idle objects should be validated.
+	Objects that fail to validate will be dropped from the pool
+	
+	timeBetweenEvictionRunsMillis
+	indicates how long the eviction thread should sleep before "runs" of examining
+	idle objects. When non-positive, no eviction thread will be launched.
+	
+	minEvictableIdleTimeMillis
+	specifies the minimum amount of time that a connection may sit idle
+	in the pool before it is eligable for eviction due to idle time.
+	When non-positive, no connection will be dropped from the pool due
+	to idle time alone (depends on timeBetweenEvictionRunsMillis > 0)
+	
+	numTestsPerEvictionRun
+	The number of connections to examine during each run of the
+	idle object evictor thread (if any)
+	
+	connectionFactory
+	The name of the connection factory implementation that should be
+	used. If not set, default CF is used.
+-->
+<!ATTLIST connection-pool
+    maxActive                       CDATA #IMPLIED
+    maxIdle                         CDATA #IMPLIED
+    maxWait                         CDATA #IMPLIED
+    minEvictableIdleTimeMillis      CDATA #IMPLIED
+    numTestsPerEvictionRun          CDATA #IMPLIED
+    testOnBorrow                    (true|false) #IMPLIED
+    testOnReturn                    (true|false) #IMPLIED
+    testWhileIdle                   (true|false) #IMPLIED
+    timeBetweenEvictionRunsMillis   CDATA #IMPLIED
+    whenExhaustedAction             (0|1|2) #IMPLIED
+	connectionFactory				CDATA #IMPLIED
+>
+
+
+<!--
 	For interfaces or abstract classes a class-descriptor holds a sequence of
 	extent-class elements.
 
@@ -80,15 +151,17 @@
 	reference-descriptor elements.
 	Collections or arrays attributes that contain other persistent entity
 	classes are specified by collection-descriptor elements
-	If no jdbc-connection-descriptor is specified, the default jdbc connection
-	is used for this class.
+
 	Concrete base classes, may specify a sequence of extent-class elements,
 	naming the derived classes.
+	
+	A class-descriptor may contain user defined custom attribute elements. 
+	
   -->
 <!ELEMENT class-descriptor
-	(extent-class+ |
-	(jdbc-connection-descriptor?, extent-class*, field-descriptor+,
-	 reference-descriptor*, collection-descriptor*))>
+	((extent-class+, attribute*) |
+	(extent-class*, field-descriptor+,
+	 reference-descriptor*, collection-descriptor*, attribute*))>
 
 <!--
 	The class attribute contains the full qualified name of the specified class.
@@ -145,8 +218,10 @@
 <!--
   A field descriptor contains mapping info for a primitive typed
   attribute of a persistent class.
+  
+  A field descriptor may contain custom attribute elements.
   -->
-<!ELEMENT field-descriptor EMPTY>
+<!ELEMENT field-descriptor (attribute*)>
 <!--
 	The id attribute must contain a unique number identifying the decriptor.
 	The numbers for the attributes of a class must correspond to the order
@@ -217,6 +292,20 @@
 	length CDATA #IMPLIED
 	precision CDATA #IMPLIED
 	scale CDATA #IMPLIED
+>
+
+<!--
+  An attribute element allows arbitrary name/value pairs to
+  be represented in the repository.
+  -->
+<!ELEMENT attribute EMPTY>
+<!--
+	The attribute-name identifies the name of the attribute.
+	The attribute-value identifies the value of the attribute.
+-->
+<!ATTLIST attribute
+	attribute-name CDATA #REQUIRED
+	attribute-value CDATA #REQUIRED
 >
 
 <!--
