@@ -45,8 +45,7 @@ public class NewtServerProxyTest extends TestCase {
     }
 
     private void getNewResponse() throws IOException {
-//        URL url = new URL("http://www.ebi.ac.uk/newt/display");
-        URL url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display");
+        URL url = new URL("http://www.ebi.ac.uk/newt/display");
         // The server to connect to.
         NewtServerProxy server = new NewtServerProxy(url);
         NewtServerProxy.NewtResponse response = null;
