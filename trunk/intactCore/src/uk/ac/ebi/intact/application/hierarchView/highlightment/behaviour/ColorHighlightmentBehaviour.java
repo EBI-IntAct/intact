@@ -5,15 +5,14 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Properties;
-
-import org.apache.log4j.Logger;
 
 /**
  * Behaviour class allowing to change the color of highlighted proteins.

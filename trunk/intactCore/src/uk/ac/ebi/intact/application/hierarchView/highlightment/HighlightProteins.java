@@ -5,18 +5,17 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.highlightment;
 
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
-import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-import uk.ac.ebi.intact.application.hierarchView.business.image.DrawGraph;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.business.image.DrawGraph;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour.HighlightmentBehaviour;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
-
-import org.apache.log4j.Logger;
 
 
 /**

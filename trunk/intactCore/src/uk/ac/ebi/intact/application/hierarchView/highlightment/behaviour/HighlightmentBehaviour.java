@@ -5,15 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
 import java.util.Collection;
 import java.util.Iterator;
-
-import org.apache.log4j.Logger;
 
 
 /**

@@ -1,16 +1,15 @@
 package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 
 
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.log4j.Logger;
 
 
 /**

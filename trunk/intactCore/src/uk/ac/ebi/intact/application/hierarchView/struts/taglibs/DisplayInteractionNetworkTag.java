@@ -5,21 +5,21 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.HighlightProteins;
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.util.Properties;
 import java.util.ArrayList;
-
-import org.apache.log4j.Logger;
+import java.util.Properties;
 
 /**
  * That class allows to display in the browser the current interaction network
@@ -97,9 +97,9 @@ public class DisplayInteractionNetworkTag extends TagSupport {
 
                 ArrayList criterias = network.getCriteria();
                 int max = criterias.size();
-                StringBuffer sb = new StringBuffer (256);
+                StringBuffer sb = new StringBuffer( 256 );
                 for (int i = 0; i < max; i++) {
-                    sb.append ( ( (String[]) criterias.get(i) )[0] ).append(',');
+                    sb.append ( ( (CriteriaBean) criterias.get(i) ).getQuery() ).append(',');
                 }
 
                 String queryString = sb.toString();
@@ -131,12 +131,12 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                         + "  </center>"
                         + "</p>";
 
-                pageContext.getOut().write (msg);
+                pageContext.getOut().write( msg );
             }
 
         } catch (Exception ioe) {
-            logger.error("could not display interaction network", ioe);
-            throw new JspException ("Error: could not display interaction network.");
+            logger.error( "could not display interaction network", ioe );
+            throw new JspException( "Error: could not display interaction network.", ioe );
         }
 
         return EVAL_PAGE; // the rest of the calling JSP is evaluated
