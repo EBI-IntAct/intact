@@ -28,7 +28,6 @@ import uk.ac.ebi.intact.application.mine.business.graph.model.EdgeObject;
 import uk.ac.ebi.intact.application.mine.business.graph.model.MineData;
 import uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey;
 import uk.ac.ebi.intact.application.mine.business.graph.model.SearchObject;
-import uk.ac.ebi.intact.application.mine.business.graph.model.ShortestPathHelper;
 
 /**
  * The <tt>MineHelper</tt> provides all methods to coordinate between the web
@@ -37,7 +36,7 @@ import uk.ac.ebi.intact.application.mine.business.graph.model.ShortestPathHelper
  * 
  * @author Andreas Groscurth
  */
-public class MineHelper implements ShortestPathHelper {
+public class MineHelper {
     private IntactUserI intactUser;
 
     /**
