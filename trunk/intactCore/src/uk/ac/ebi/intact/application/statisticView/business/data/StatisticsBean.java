@@ -65,7 +65,7 @@ public final class StatisticsBean {
      *
      * @return Timestamp the timestamp of the last line in the Statistics table or null if no data found.
      */
-    public final Timestamp getLastTimestamp () {
+    public final Timestamp getLastTimestamp () throws NoDataException {
 
         final IntactStatistics item = getLastRow ();
         if ( item != null ) {
@@ -82,7 +82,7 @@ public final class StatisticsBean {
      *
      * @return Collection which contains the latest data of the Statistics table
      */
-    public final IntactStatistics getLastRow () {
+    public final IntactStatistics getLastRow () throws NoDataException {
 
         final int size = statistics.size ();
         if ( size > 0 ) {
@@ -90,7 +90,7 @@ public final class StatisticsBean {
             return (IntactStatistics) statistics.get ( size - 1 );
         } else {
             logger.info ( "No data found" );
-            return null;
+            throw new NoDataException ( );
         }
     }
 
@@ -100,7 +100,7 @@ public final class StatisticsBean {
      *
      * @return Collection which contains the latest data of the Statistics table
      */
-    public final IntactStatistics getFirstRow () {
+    public final IntactStatistics getFirstRow () throws NoDataException {
 
         final int size = statistics.size ();
         if ( size > 0 ) {
@@ -108,13 +108,13 @@ public final class StatisticsBean {
             return (IntactStatistics) statistics.get ( 0 );
         } else {
             logger.info ( "No data found" );
-            return null;
+            throw new NoDataException ( );
         }
     }
 
 
 
-    public final String getMoreRecentStatisticsDate () throws IntactException {
+    public final String getMoreRecentStatisticsDate () throws IntactException, NoDataException {
 
         final Timestamp timestamp = getLastTimestamp ();
         if ( timestamp == null ) {
