@@ -10,21 +10,6 @@ T O   D O
   Yes. Both the DOMConfigurator and the PropertyConfigurator support automatic reloading
   through the configureAndWatch APIs. See the API documentation for more details.
 
-- InGO integration
-  - InGO modifications :
-    - Url creation :
-       - david has modified inGO in that way :
-         http://localhost/ingo/ego/DisplayGoTerm?selected=GO:0005635,GO:0005637&intact=true&format=contentonly
-         the intact parameter allows to use a dedicated JSP page which remove all internal link !
-       - we still have to integrate two parameters in order to target back properly to hierarchView :
-         - application URL (on which inGO concatenate a list of GO terms)
-         - frame name
-
-  - I have to do :
-    - IDEA : could be possible to display in one time all go terms of the selected protein
-      example : http://web7-node1.ebi.ac.uk:8100/ingo/ego/DisplayGoTerm?id=GO:0005840&selected=GO:0003735,GO:0005622,GO:0019843,GO:0006412,GO:0005840&viz=graph
-      here the selected one is GO:0005840 and others are : GO:0003735,GO:0005622,GO:0019843,GO:0006412,GO:0005840
-
 + Look for solving Oracle driver problem
   + contact dbinns (no idea)
   - forwarded to dba ... waiting from 10.02.2003
@@ -79,14 +64,6 @@ WAIT FOR INTEGRATION IN BORDEAUX ...
 
 - add logging facilities in the web service
 
-- Add some Graph properties :
-  - Color of highlighted and non highlighted proteins
-  - Color of selected (the one given in the form) and non selected proteins
-  - Cventually boldness of them all
-
-
-
-
 
 
 
@@ -95,6 +72,30 @@ WAIT FOR INTEGRATION IN BORDEAUX ...
 ====================================
               D O N E
 ====================================
+
++ Selected protein have a bold label
+
++ InGO integration
+  + InGO modifications :
+    + Url creation :
+       + david has modified inGO in that way :
+         http://localhost/ingo/ego/DisplayGoTerm?selected=GO:0005635,GO:0005637&intact=true&format=contentonly
+         the intact parameter allows to use a dedicated JSP page which remove all internal link !
+       + we still have to integrate two parameters in order to target back properly to hierarchView :
+         + application URL (on which inGO concatenate a list of GO terms)
+         + frame name
+
+
+(18.03.2003)
+Fix the IntactAppender in order to avoid to add n time the username at the end of the logging filename.
+So, give a second parameter: $username which is replaced by the current username.
+The user is free to use it.
+
+(17.03.2003)
+
+
+(14.03.2003)
++ finish to implements the new hierarchView layout (intact common to all apps)
 
 (28.02.2003)
 + in order to support the host name in the logging file path, write our own log4j appender
