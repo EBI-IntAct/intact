@@ -65,7 +65,7 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
         // Add at the end the date of creation
         // in case Tomcat run an intact part, all log files are created.
         // if several instance of Tomcat runs ... you get file right access conflict ...
-        // adding that time should prevent troubles.
+        // adding that it should prevent troubles.
         fileName += "_" + username;
 
         super.setFile (fileName,
