@@ -65,13 +65,16 @@
                         attributes of the Experiment are the
                         <dl>
                             <dt/>
-                            <a href="#BioSource">BioSource</a>
+                            <a name="Experiment.bioSource"></a>
+                            <a href="#BioSource">Host</a>
                             <dd/>The biological system in which the interaction took place in the experiment.
-                            <dt/>identificationMethod
+                            <dt/><a name="Experiment.cvIdentification"></a>
+                                 Participant identification method
                             <dd/>The experimental method by which the molecules participating in the
                             interaction have been detected.
                             <br/>Example: Mass spectrometry.
-                            <dt/>interactionMethod
+                            <dt/><a name="Experiment.cvInteraction"></a>
+                                 Interaction identification method
                             <dd/>The experimental method by which the interaction has been detected.
                             <br/>
                             Example: yeast two hybrid.
@@ -95,11 +98,13 @@
                         with more than two Interactors, for example determined by "TAP" experiments.
                         The attributes of an Interaction are
                         <dl>
-                            <dt/>CvInteractionType
+                            <dt/><a name="Interaction.cvInteractionType"></a>
+                                 Interaction type
                             <dd/>A description of the type of interaction.
                             <br/>
                             Example: association.
-                            <dt/>kD
+                            <dt/><a name="Interaction.kD"></a>
+                                 kD
                             <dd/>The dissociation constant.
                         </dl>
                     </blockquote>
@@ -114,7 +119,8 @@
                         only direct attribute of an Interactor is
                         <dl>
                             <dt/>
-                            <a href="#BioSource">BioSource</a>
+                            <a name="Interactor.bioSource"></a>
+                            <a href="#BioSource">Source</a>
                             <dd/>The biological system in which the interactor normally is
                             found. For a human protein, the BioSource would be "Human",
                             even if it has been expressed in E.coli in a particular
@@ -122,9 +128,11 @@
                         </dl>
                         If the Interactor is a Protein, it additionally has the attributes
                         <dl>
-                            <dt/>sequence
+                            <dt/><a name="Protein.sequence"></a>
+                                 sequence
                             <dd/>The amino acid sequence of the protein.
-                            <dt/>crc64
+                            <dt/><a name="Protein.crc64"></a>
+                                 crc64
                             <dd/>The CRC64 checksum for the amino acid sequence. This
                             checksum is used to quickly detect if the amino acid sequence
                             has changed, for example during an update process. It is also
@@ -201,8 +209,8 @@
                             <dd/>The NCBI tax id, see the
                             <a href="http://www.ncbi.nlm.nih.gov/Taxonomy/">NCBI taxonomy server</a> or the
                             <a href="http://www.ebi.ac.uk/newt/index.html">NEWT taxonomy server</a>.
-                            <dt/>shortLabel
-                            <dd/>The shortLabel is the Swiss-Prot OS code, where available.
+                            <dt/>name
+                            <dd/>The name is the Swiss-Prot OS code, where available.
                             <dt/>fullName
                             <dd/>The full name is the scientific name of the species.
                         </dl>
@@ -252,18 +260,18 @@
 
                 </section>
 
-                <section title="shortLabel" name="AnnotatedObject.shortLabel">
+                <section title="name" name="AnnotatedObject.shortLabel">
 
                     <blockquote>
-                        The short label is a short, concise name to identify an
-                        object. Short labels for proteins are
-                        usually Swiss-Prot IDs, short labels for experiments are usually
-                        the names of the first author of the publication. Short labels
+                        The name is a short, concise name to identify an
+                        object. Names for proteins are
+                        usually Swiss-Prot IDs, names for experiments are usually
+                        the names of the first author of the publication. Names
                         will normally be stable, but they may change, e.g. when the
                         gene name of a protein is changed by the relevant nomenclature
-                        body, e.g. HUGO. Short labels are not guaranteed to be unique,
+                        body, e.g. HUGO. Names are not guaranteed to be unique,
                         e.g. if two proteins have the same primary gene name. They are
-                        guaranteed to be unique for controlled vocabulary terms within each controlled vocabulary. All shortLables are in lowercase.
+                        guaranteed to be unique for controlled vocabulary terms within each controlled vocabulary. All names are in lowercase.
                         <br/>
                         Example: got2_yeast.
                     </blockquote>
@@ -283,7 +291,18 @@
                 <section title="Xref" name="AnnotatedObject.Xref">
 
                     <blockquote>
-                        Crossreferences to other databases.
+                        Crossreferences to other databases. A crossreference has the following attributes: 
+                        <dl>
+                            <dt/>Name
+                            <dd/>The name of the external database.
+                            <dt/>Primary id
+                            <dd/>The primary id or accession number of the object in the external database.
+                            <dt/>Secondary id
+                            <dd/>The secondary id of the object in the external database.
+                            <dt/><a name="Xref.cvXrefType"></a>
+                                 Crossreference type
+                            <dd/>The type of crossreference.
+                        </dl>
                     </blockquote>
 
                 </section>
@@ -347,7 +366,7 @@
                         compared to an
                         <a href="#AnnotatedObject.ac"> accession number (ac) </a> , although searches by ac are
                         obviously allowed. For example a particular Experiment may have an ac of
-                        EBI-14, but its short label is 'gavin' indicating a more meaningful reference
+                        EBI-14, but its name is 'gavin' indicating a more meaningful reference
                         to the physical experiment which the entry represents. Basic points on
                         usage:
 
@@ -364,7 +383,7 @@
                                 <li>
                                     currently searches progress in a certain order: proteins, then interactions,
                                     then experiments. At a lower level, specific attributes are searched by
-                                    AC, short label, Xref primary ID and finally full name. </li>
+                                    AC, name, Xref primary ID and finally full name. </li>
 
                                 <li>
                                     Note that whilst CvObject details can be displayed via the click of a link,
@@ -454,16 +473,16 @@
 
                             <tr>
                                 <td>
-                                    <u>shortLabel1</u> [
+                                    <u>label1</u> [
                                     <u>b</u>],
-                                    <u>shortLabel2</u> [
+                                    <u>label2</u> [
                                     <u>p</u>],
                                 </td>
 
                                 <td>
-                                    <u>shortLabel3</u> [
+                                    <u>label3</u> [
                                     <u>p</u>],
-                                    <u>shortLabel4</u> [p],
+                                    <u>label4</u> [p],
                                 </td>
 
                                 <td>......................................</td>
@@ -489,16 +508,16 @@
 
                             <tr>
                                 <td>
-                                    <u>shortLabel5</u> [
+                                    <u>label5</u> [
                                     <u>b</u>],
-                                    <u>shortLabel6</u> [
+                                    <u>label6</u> [
                                     <u>p</u>],
                                 </td>
 
                                 <td>
-                                    <u>shortLabel7</u> [
+                                    <u>label7</u> [
                                     <u>p</u>],
-                                    <u>shortLabel8</u> [
+                                    <u>label8</u> [
                                     <u>p</u>],
                                 </td>
 
@@ -511,7 +530,7 @@
                         <p>
                             <a NAME="ResultsExample"></a>Searching for interactions, proteins or
                             experiments typically results in the same view - a table detailing all
-                            the interactions for a particular experiment, with the short labels listed
+                            the interactions for a particular experiment, with the names listed
                             of the proteins involved in the interactions. An example result screen
                             is shown below:
                         </p>
@@ -529,7 +548,7 @@
                         <p>
                             <a NAME="ExampleCvView"></a>If for example in the above screen you click
                             on 'SPTR', this will display the controlled vocabulary information for
-                            the database identified with a short label of 'SPTR'. The screen looks
+                            the database identified with a name of 'SPTR'. The screen looks
                             like this:
                         </p>
                         <p>
@@ -537,8 +556,8 @@
                         </p>
                         <br/>
                         <p>
-                            <a NAME="ShortLabelHelp"></a>Protein short labels are links you can
-                            click to get a view of the protein details. Also each protein short label
+                            <a NAME="ShortLabelHelp"></a>Protein names are links you can
+                            click to get a view of the protein details. Also each protein name
                             has a term in brackets (eg '[p]') which denotes the role that the protein
                             plays in the interaction. These terms have tooltips associated with them
                             to display the role name, and also the term is a clickable link from which
@@ -552,7 +571,7 @@
                             <b>
                                 <i>bold italic</i>
                             </b>. Specifically
-                            the *short labels* of the matching items are highlighted, since these are
+                            the *names* of the matching items are highlighted, since these are
                             always displayed in every view.
                         </p>
                         <p>Where a protein (for example) might actually occur more than once in
@@ -680,8 +699,8 @@
                         <br/>
                         The input field under the drop down list accepts the search criteria.
                         The search is performed first on accession number (ac), and then on
-                        short label, primary id and full name respectively. So, it is faster to
-                        search by an accession number than by a short label.
+                        name, primary id and full name respectively. So, it is faster to
+                        search by an accession number than by a name.
                         <br/>
                         <br/>
                         <img src="./images/editor/editor-sidebar.jpg" title=""
@@ -702,9 +721,9 @@
                         <br/>
                         An appropriate message is displayed if a search fails to find any
                         matching records. Click on the AC link to edit individual entry.
-                        Alternatively, you can enter the short label directly in the search box
+                        Alternatively, you can enter the name directly in the search box
                         and it will take you to the edit screen if a matching record wasn't
-                        found for a given short label and type as shown below.
+                        found for a given name and type as shown below.
                         <br/>
                         <br/>
                         <img src="./images/editor/editor-search-error.jpg" title=""
@@ -735,30 +754,30 @@
                         <br/>
                     </blockquote>
 
-                    <section title="Short Labels" name="editor.short.labels">
+                    <section title="Names" name="editor.short.labels">
 
                         <blockquote>
                             The current edit type is appended to the main heading (CvDatabase) as
                             shown above. All the drop down list items (topic, database and
-                            reference qualifier) are shown as short labels. Except for the
-                            short label, all other fields are optional. The user must select 'Save'
-                            button to validate the short label. All short labels should be one to
+                            reference qualifier) are shown as names. Except for the
+                            name, all other fields are optional. The user must select 'Save'
+                            button to validate the name. All names should be one to
                             twenty characters from the character set blank, 0..9, a-z, : (colon) and
                             -(dash). A dialog box similar to the following will appear for a
                             failure to adhere to this syntax.
                             <br/>
                             <br/>
                             <img src="./images/editor/editor-label-client-error.jpg" title=""
-                                alt="Incorrect short label" width="416" height="130"/>
+                                alt="Incorrect name" width="416" height="130"/>
                             <br/>
                             <br/>
-                            Submitting the form without entering a syntactically invalid short label
+                            Submitting the form without entering a syntactically invalid name
                             results in a server side validation. The error response from the server
-                            is shown under the short label as shown below.
+                            is shown under the name as shown below.
                             <br/>
                             <br/>
                             <img src="./images/editor/editor-label-server-error.jpg" title=""
-                                alt="Short label server validation" width="1038" height="136"/>
+                                alt="name server validation" width="1038" height="136"/>
                             <br/>
                             <br/>
                             Although both validations are similar in nature, they serve two
@@ -772,17 +791,17 @@
                             server.
                             <br/>
                             <br/>
-                            For a short label to be valid it must be syntactically correct and
+                            For a name to be valid it must be syntactically correct and
                             unique (i.e, no simlar label for the current edit type exists in the
                             database). All the existing short lables for the current edit types are
-                            shown along with an error message for a non unique short label entry.
+                            shown along with an error message for a non unique name entry.
                             <br/>
                             <br/>
                             <img src="./images/editor/editor-label-dup-error.jpg" title=""
                                 alt="Duplicate label" width="1041" height="182"/>
                         </blockquote>
 
-                    </section> <!-- Short Labels -->
+                    </section> <!-- Names -->
 
 
                     <section title="Annotations" name="editor.annotations">
@@ -819,8 +838,8 @@
                         <blockquote>
                             Similar to Annotations, Crossreferences are added by clicking on the
                             Add button in the Crossreference section. The database drop list
-                            consists of short labels for CvDatabase items from the IntAct database and
-                            the reference qualifier consists of short labels for CvXrefQualifier.
+                            consists of names for CvDatabase items from the IntAct database and
+                            the reference qualifier consists of names for CvXrefQualifier.
                             <br/>
                             <br/>
                             <img src="./images/editor/editor-new-xref.jpg" title=""
@@ -839,7 +858,7 @@
                             <br/>
                             <br/>
                             Editing an existing record is similar to the above except the form is
-                            populated with existing data. As shown below, the short label and full
+                            populated with existing data. As shown below, the name and full
                             name already have their existing values.
                             <br/>
                             <br/>
@@ -1016,15 +1035,15 @@
                         <br/>
                         <br/>
 
-                        <b>After entering 'abc' as a short label,
-                            I pressed Save and it accepted 'abc' as the short label. Now I entered
+                        <b>After entering 'abc' as a name,
+                            I pressed Save and it accepted 'abc' as the name. Now I entered
                             'ab%' and the form is submitted without any complaints. I thought
-                            'ab%' is an invalid short label and the expected error message didn't
+                            'ab%' is an invalid name and the expected error message didn't
                             appear. What is happening?</b>
                         <br/>
                         As far as the system is concerned it remembers the value associated
                         with the last 'Save' action. Since you pressed 'Save' after 'abc' but
-                        not after 'ab%', it has already assigned 'abc' as the short label. In a
+                        not after 'ab%', it has already assigned 'abc' as the name. In a
                         nut shell, it is not even aware of 'ab%' because it hasn't seen it.
                         <br/>
                         <br/>
@@ -1039,11 +1058,11 @@
                         <br/>
 
                         <b>The parameter to search for Proteins
-                            given as short label is ignored when a value is provided for IntactAc in
+                            given as name is ignored when a value is provided for IntactAc in
                             the Interaction editor.</b>
                         <br/>
                         By default, IntAct AC is the most specific and it is followed by SP AC
-                        and finally the short label. Given two values for  short label and
+                        and finally the name. Given two values for  name and
                         IntAct AC, the latter is always given the priority.
                         <br/>
                         <br/>
@@ -1178,7 +1197,7 @@
 
                     <blockquote>
                         Type in the
-                        <i>Interactor</i> form either a protein short label or accession number and
+                        <i>Interactor</i> form either a protein name or accession number and
                         click the
                         <i>search</i> button to display the related interaction network. You are free
                         to type a comma separated list of proteins in order to display all of them in one go.
@@ -1212,7 +1231,7 @@
                             <ul>
                                 <li>
                                     Type in the
-                                    <i>Interactor</i> form either a protein short label or AC and click
+                                    <i>Interactor</i> form either a protein name or AC and click
                                     the
                                     <i>add</i> button. You are free to type a comma separated list of
                                     protein in order to display all of them in one go.
@@ -1239,7 +1258,7 @@
                             network will be reloaded as the interaction network of the selected protein.
                             <br/>
                             <br/>
-                            Bear in mind that it would have had the same effect to type the short label or accession
+                            Bear in mind that it would have had the same effect to type the name or accession
                             number of the protein in the
                             <i>Interactor</i> form and click on the
                             <i>search</i>
