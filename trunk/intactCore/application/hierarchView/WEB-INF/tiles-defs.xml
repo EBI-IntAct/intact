@@ -144,6 +144,6 @@
 
     <!-- ===== Definition of the forward page to the search application === -->
 
-    <definition name="search.result.layout" path="../pages/forwardToSearch.jsp"/>
+    <definition name="search.result.layout" path="/pages/forwardToSearch.jsp"/>
 
 </tiles-definitions>

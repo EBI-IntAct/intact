@@ -19,7 +19,6 @@
 <html:html>
 
 <head>
-<%--    <html:base target="_top"/>--%>
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
@@ -33,7 +32,7 @@
     String searchUrl = user.getSearchUrl();
     if (searchUrl != null) {
 %>
-    <META HTTP-EQUIV="REFRESH" CONTENT="0; URL=<%= searchUrl %>">
+       <META HTTP-EQUIV="REFRESH" CONTENT="0; URL=<%= searchUrl %>">
 <%
     }
 %>
@@ -46,34 +45,38 @@
     if (searchUrl != null) {
 %>
 
-<blockquote>
-    <blockquote>
         <blockquote>
-            <table>
-              <tr>
-                <td>
-                    <img src="../images/clockT.gif" border="0">
-                </td>
-                <td>
-                    <strong>
-                        <font color="#000080">
-                            Your request give multiple results, please wait whilst your query is forwarded to the search application.
-                            If the screen is not refreshed, please click <a href="<%= searchUrl %>" target="_top">here</a>.
-                        </font>
-                    </strong>
-                </td>
-              <tr>
-            </table>
+            <blockquote>
+                <blockquote>
+                    <table>
+                      <tr>
+                        <td>
+                            <img src="<%=request.getContextPath()%>/images/clockT.gif" border="0">
+                        </td>
+                        <td>
+                            <strong>
+                                <font color="#000080">
+                                    Your request give multiple results, please wait whilst your query is
+                                    forwarded to the search application.
+                                    <br>
+                                    If the screen is not refreshed, please click
+                                    <a href="<%= searchUrl %>" target="_top">here</a>.
+                                </font>
+                            </strong>
+                        </td>
+                      <tr>
+                    </table>
+                </blockquote>
+            </blockquote>
         </blockquote>
-    </blockquote>
-</blockquote>
 
 <%
     } else {
 %>
-    <%-- no URL for search, error message --%>
-    The search access is not properly configured, please warn your administrator.<br>
-    click <a href="/hierarchView" target="_top">here</a> to go to the hierarchView home page.
+        <%-- no URL for search, error message --%>
+        The search access is not properly configured, please warn your administrator.<br>
+        click <a href="<%=request.getContextPath()%>" target="_top">here</a> to go to the
+        hierarchView home page.
 <%
     }
 %>
