@@ -6,10 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search.struts.controller;
 
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,17 +17,15 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.*;
 
-//Castor classes needed for XML operations
-import org.exolab.castor.xml.*;
-import org.exolab.castor.mapping.Mapping;
-import org.exolab.castor.mapping.MappingException;
-
 import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.application.search.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search.business.IntactUserIF;
+//import uk.ac.ebi.intact.application.search.struts.view.SearchForm;
 import uk.ac.ebi.intact.application.search.struts.view.IntactViewBean;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.business.IntactException;
+
+import uk.ac.ebi.intact.util.*;
 
 /**
  * This class provides the actions required for the search page
@@ -68,19 +63,31 @@ public class SearchAction extends IntactBaseAction {
         super.clearErrors();
 
         DynaActionForm dyForm = (DynaActionForm) form;
-        String searchValue = (String) dyForm.get("searchString");
+        String searchValue = ((String) dyForm.get("searchString")).toUpperCase();
+//        SearchForm theForm = (SearchForm) form;
+//        String searchValue = theForm.getSearchString();
 
         // Session to access various session objects.
         HttpSession session = super.getSession(request);
+
+       //make sure the view is in a consistent state by clearing the
+       //set of previously expanded items...
+       Set oldItems = (Set)session.getAttribute(SearchConstants.EXPANDED_AC_SET);
+       if (oldItems == null) {
+           //first request - set up cache
+           session.setAttribute(SearchConstants.EXPANDED_AC_SET, new HashSet());
+       }
+       else oldItems.clear();
 
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(session);
 
         // The type of search object selected by the user.
         //NB need to change the "user" I/F so it is not CV specific...
-        String searchClass = (String) dyForm.get("searchClass");
+        //String searchClass = theForm.getClassName();
+       String searchClass = (String) dyForm.get("searchClass");
 
-        // The class name associated with the topic.
+        // The class name associated with the search request.
         String classname = super.getIntactService().getClassName(searchClass);
 
         //now need to try searches based on AC, label or name (only
@@ -88,34 +95,31 @@ public class SearchAction extends IntactBaseAction {
         //NB obviously can't distinguish between a zero return and a search
         //with garbage input using this approach...
 
-        //set up the Cator XML mapping resources...
-        Mapping xmlMapping = new Mapping(getClass().getClassLoader());
-        String mappingFile = servlet.getServletContext().getInitParameter(
-                SearchConstants.XML_MAPPING_FILE);
-        super.log("setting up XML marshalling resources - using mapping file " + mappingFile);
-        try {
-            xmlMapping.loadMapping(getClass().getResource(mappingFile));
-        }
-        catch (Exception e) {
-            super.log("Search [ERROR] unable to load XML mapping file" + mappingFile);
-            super.log(ExceptionUtils.getStackTrace(e));
-        }
+       //get or create (if necessary) an XML builder via the Session
+       XmlBuilder builder = (XmlBuilder)session.getAttribute(SearchConstants.XML_BUILDER);
+       if(builder == null) {
+           //create one and save in session, making sure the builder reuses
+           //the current user's helper so the DB access cocnfiguration is correct
+           try {
+               builder = new XmlBuilder(user.getHelper());
+               session.setAttribute(SearchConstants.XML_BUILDER, builder);
+           }
+           catch(IntactException ie) {
+
+               //build and forward error....
+               super.log(ExceptionUtils.getStackTrace(ie));
+                // The errors to report back.
+                super.addError("error.search", ie.getMessage());
+                super.saveErrors(request);
+                return mapping.findForward(SearchConstants.FORWARD_FAILURE);
+           }
+       }
+
 
        // The stylesheet for the transformation.
        String xslname = session.getServletContext().getInitParameter(SearchConstants.XSL_FILE);
        String xslfile = session.getServletContext().getRealPath(xslname);
 
-        //define the XML to be written to a String so we can store it simply in the view bean...
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        DocumentBuilder db = null;
-        try {
-           db = dbf.newDocumentBuilder();
-        }
-        catch (ParserConfigurationException pce) {
-            super.log("Search [ERROR] unable to create a document builder");
-            super.log(ExceptionUtils.getStackTrace(pce));
-        }
         // Holds the result from the search.
         Collection results = null;
 
@@ -127,7 +131,7 @@ public class SearchAction extends IntactBaseAction {
         try {
             //try searching first using all uppercase, then all lower case if it returns nothing...
             //NB this would be better done at the DB level, but keep it here for now
-            String upperCaseValue = searchValue.toUpperCase();
+            String upperCaseValue = searchValue;
             results = doLookup(classname, upperCaseValue, user);
             if (results.isEmpty()) {
 
@@ -165,10 +169,10 @@ public class SearchAction extends IntactBaseAction {
                 // The object to display.
                 Object obj = results.iterator().next();
                 //set up a viewbean to hold the results for display
-                IntactViewBean bean = new IntactViewBean(obj, xslfile);
+                IntactViewBean bean = new IntactViewBean(obj, xslfile, builder);
                 idToView.put("0", bean);
-                marshall(bean, xmlMapping, db);
-                bean.addStatusNodes();
+                bean.createXml();
+
             }
             else {
                 // Found multiple results.
@@ -179,12 +183,11 @@ public class SearchAction extends IntactBaseAction {
 
                 // Store the view beans in a map.
                 for (Iterator iter = results.iterator(); iter.hasNext(); ++counter) {
-                    // Construct a view bean for each search resul.
-                    IntactViewBean bean = new IntactViewBean(iter.next(), xslfile);
+                    // Construct a view bean for each search result.
+                    IntactViewBean bean = new IntactViewBean(iter.next(), xslfile, builder);
                     // Collect the results together...
                     idToView.put(Integer.toString(counter), bean);
-                    marshall(bean, xmlMapping, db);
-                    bean.addStatusNodes();
+                    bean.createXml();
                     super.log("object marshalled - now building view bean...");
                 }
             }
@@ -207,33 +210,17 @@ public class SearchAction extends IntactBaseAction {
             super.saveErrors(request);
             return mapping.findForward(SearchConstants.FORWARD_FAILURE);
         }
+       catch (ParserConfigurationException pe) {
+            // Unable to create a transformer for given stylesheet.
+            super.log(ExceptionUtils.getStackTrace(pe));
+            // The errors to report back.
+            super.addError("error.search", pe.getMessage());
+            super.saveErrors(request);
+            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
+        }
     }
 
     // Helper methods.
-
-    /**
-     * Helper method to marshal an object.
-     * @param bean the bean to marshall.
-     * @param mapping the XML mapping file.
-     * @param db the builder to create a Document node.
-     */
-    private void marshall(IntactViewBean bean, Mapping mapping, DocumentBuilder db) {
-        try {
-            bean.marshall(mapping, db);
-        }
-        catch (MappingException me){
-            super.log("Search [ERROR] unable to initialise the XML marshaller");
-            super.log(ExceptionUtils.getStackTrace(me));
-        }
-        catch (MarshalException e){
-            super.log("SearchAction [ERROR] failed to marshal results into XML format!");
-            super.log(ExceptionUtils.getStackTrace(e));
-        }
-        catch (ValidationException ve){
-            super.log("SearchAction [ERROR] marshalling failed - validation problem...");
-            super.log(ExceptionUtils.getStackTrace(ve));
-        }
-    }
 
     /**
      * utility method to handle the logic for lookup, ie trying AC, label etc.
