@@ -44,20 +44,4 @@ public class ObjectBridgeQueryFactory {
         crit.addLike(param, sqlValue);
         return QueryFactory.newQuery(clazz, crit);
     }
-    
-    /**
-     * Returns a query to build menus
-     * @param clazz the class to construct menus. Eg., CvTopic.class
-     * @return a query to build menus. The menus are sorted in ascending order.
-     */
-    public Query getMenuBuildQuery(Class clazz) {
-        Criteria crit = new Criteria();
-        // Need all records for given class.
-        crit.addLike("ac", "%");
-        ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
-        // Limit to shortlabel
-        query.setAttributes(new String[] {"shortLabel"});
-        query.addOrderByAscending("shortLabel");
-        return query;
-    }
 }
