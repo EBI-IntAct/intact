@@ -42,15 +42,15 @@
       type="uk.ac.ebi.intact.application.editor.struts.view.sequence.SequenceActionForm"
     />
 
-       <!-- The sidebar form -->
-    <form-bean name="sidebarForm"
-        type="org.apache.struts.action.DynaActionForm">
-        <form-property name="topic" type="java.lang.String"/>
-        <form-property name="searchString" initial="*" type="java.lang.String"/>
-    </form-bean>
+   <!-- The sidebar form -->
+<form-bean name="sidebarForm"
+    type="org.apache.struts.action.DynaActionForm">
+    <form-property name="topic" type="java.lang.String"/>
+    <form-property name="searchString" initial="*" type="java.lang.String"/>
+</form-bean>
 
-    <!-- For /results action -->
-    <form-bean name="dummyForm" type="org.apache.struts.action.DynaActionForm"/>
+<!-- For /results action -->
+<form-bean name="dummyForm" type="org.apache.struts.action.DynaActionForm"/>
 
   </form-beans>
 
@@ -90,16 +90,16 @@
 </global-exceptions>
 
   <!-- ========== Global Forward Definitions =================================== -->
-      <global-forwards>
-        <!-- Need this global forward from the index.jsp -->
-        <forward name="login" path="/do/welcome"/>
+  <global-forwards>
+    <!-- Need this global forward from the index.jsp -->
+    <forward name="login" path="/do/welcome"/>
 
-        <forward name="failure" path="error.layout"/>
-        <!-- Fill the form with search results -->
-        <forward name="result" path="/do/showResults"/>
-        <!-- Back to the search page. -->
-        <forward name="search" path="search.layout"/>
-    </global-forwards>
+    <forward name="failure" path="error.layout"/>
+    <!-- Fill the form with search results -->
+    <forward name="result" path="/do/showResults"/>
+    <!-- Back to the search page. -->
+    <forward name="search" path="search.layout"/>
+</global-forwards>
 
   <!-- ========== Action Mapping Definitions =================================== -->
    <action-mappings>
@@ -132,12 +132,7 @@
     >
       <forward
         name="success"
-        path="/do/display"
-        redirect="false"
-      />
-      <forward
-        name="interaction"
-        path="/do/int/fill/form"
+        path="edit.layout"
         redirect="false"
       />
     </action>
@@ -453,6 +448,40 @@
       <forward
         name="success"
         path="/do/int/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/seq/dispatch"
+      type="uk.ac.ebi.intact.application.editor.struts.action.sequence.SequenceSubmitAction"
+      name="seqForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="submit"
+        path="/do/seq/submit"
+        redirect="false"
+      />
+      <forward
+        name="cancel"
+        path="/do/cancel"
+        redirect="false"
+      />
+      <forward
+        name="delete"
+        path="/do/delete"
+        redirect="false"
+      />
+      <forward
+        name="annotation"
+        path="/do/seq/annot/submit"
+        redirect="false"
+      />
+      <forward
+        name="xref"
+        path="/do/seq/xref/submit"
         redirect="false"
       />
     </action>

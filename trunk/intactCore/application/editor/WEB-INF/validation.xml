@@ -17,7 +17,7 @@
                      depends="mask">
                   <msg
                     name="mask"
-                    key="error.exp.biosrc"/>
+                    key="error.biosrc"/>
 
                   <arg0 key="expForm.organism"/>
                   <var>
@@ -224,6 +224,32 @@
               </field>
       </form>
       <form name="seqForm">
+              <field property="sequence"
+                     depends="mask">
+                  <msg
+                    name="mask"
+                    key="error.seq.sequence.mask"/>
+
+                  <arg0
+                    key="seq.sequence.label"
+                  />
+                  <var>
+                    <var-name>mask</var-name>
+                    <var-value>^[A-Z]*$</var-value>
+                  </var>
+              </field>
+              <field property="organism"
+                     depends="mask">
+                  <msg
+                    name="mask"
+                    key="error.biosrc"/>
+
+                  <arg0 key="seqForm.organism"/>
+                  <var>
+                    <var-name>mask</var-name>
+                    <var-value>${menu-pat}</var-value>
+                  </var>
+              </field>
               <field property="shortLabel"
                      depends="required,mask,maxlength">
                   <msg
