@@ -6,9 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.business;
 
 import org.apache.log4j.Logger;
-import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.ojb.broker.VirtualProxy;
-
+import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
 import uk.ac.ebi.intact.persistence.*;
@@ -1106,9 +1105,13 @@ public class IntactHelper implements SearchI, Externalizable {
         return relatedObjects;
     }
 
-    /** Searches for objects by classname and Xref.
-     *  Currently this searches only by primaryId.
-     *  Should search by database and primaryId.
+    /**
+     * Searches for objects by classname and Xref (primaryId).
+     *
+     * @param clazz the class we are looking for
+     * @param aPrimaryId the primaryId of the Xref
+     *
+     * @return a Collection of object of type clazz for which a Xref having the given primaryId has been found.
      */
     public Collection getObjectsByXref(Class clazz,
                                        String aPrimaryId) throws IntactException {
@@ -1121,6 +1124,37 @@ public class IntactHelper implements SearchI, Externalizable {
         for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
             Xref xref = (Xref) iterator.next();
             results.addAll(this.search(clazz.getName(), "ac", xref.getParentAc()));
+        }
+        return results;
+    }
+
+    /**
+     * Searches for objects by classname and Xref.
+     *
+     * @param clazz the class we are looking for
+     * @param database the CvDatase of the Xref that links back to the object of type clazz
+     * @param aPrimaryId the primaryId of the Xref
+     *
+     * @return a Collection of object of type clazz for which a Xref having the given primaryId
+     *         and CvDatabase has been found.
+     */
+    public Collection getObjectsByXref( Class clazz,
+                                        CvDatabase database,
+                                        String aPrimaryId ) throws IntactException {
+
+        // get the Xref from the database
+        Collection xrefs = this.search( Xref.class.getName(), "primaryId", aPrimaryId );
+        Collection results = new ArrayList();
+
+        // add all referenced objects of the searched class
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            Xref xref = (Xref) iterator.next();
+            // if the CvDatabase are the same (null or not), we add the parent.
+            if( ( null != database && database.equals( xref.getCvDatabase() ) )
+                ||
+                ( null == database && null == xref.getCvDatabase() ) ) {
+                results.addAll( this.search( clazz.getName(), "ac", xref.getParentAc() ) );
+            }
         }
         return results;
     }
@@ -1430,24 +1464,24 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
-     *  Searches for a BioSource given a tax ID. Only a single BioSource is found
+     * Searches for a BioSource given a tax ID. Only a single BioSource is found
      * for given tax id and null values for cell type and tissue.
+     *
      * @param taxId The tax ID to search on - should be unique
      * @return BioSource The matching BioSource object, or null if none found (for the
-     * combination of tax id, cell and tissue)
-     * @exception IntactException thrown if there was a search problem.
-     *
+     *         combination of tax id, cell and tissue)
+     * @throws IntactException thrown if there was a search problem.
      */
-    public BioSource getBioSourceByTaxId(String taxId) throws IntactException {
+    public BioSource getBioSourceByTaxId( String taxId ) throws IntactException {
 
         //List of biosurce objects for given tax id
-        Collection results = search(BioSource.class.getName(), "taxId", taxId);
+        Collection results = search( BioSource.class.getName(), "taxId", taxId );
 
         // Get the biosource with null values for cell type and tisse
         //  (there is only one of them exists).
-        for (Iterator iter = results.iterator(); iter.hasNext(); )  {
+        for ( Iterator iter = results.iterator(); iter.hasNext(); ) {
             BioSource biosrc = (BioSource) iter.next();
-            if ((biosrc.getCvCellType() == null) && (biosrc.getCvTissue() == null)) {
+            if( ( biosrc.getCvCellType() == null ) && ( biosrc.getCvTissue() == null ) ) {
                 return biosrc;
             }
         }
