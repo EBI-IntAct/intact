@@ -33,51 +33,79 @@ import java.util.*;
  * @author Andreas Groscurth
  */
 public class MineDatabaseFill {
+
     // MiNe relevant database table
-    private static final String INTERACTION_TABLE = "groscurt.ia_interactions";
+    private static final String INTERACTION_TABLE = "ia_interactions";
+
+
     // SQL statement to select all interactors from a specific interaction
-    private static final String SELECT_INTERACTOR = "SELECT C.interactor_ac, C.role, I.objclass "
-            + "FROM ia_component C, ia_interactor I WHERE C.interaction_ac=? AND C.interactor_ac = I.ac";
+    private static final String SELECT_INTERACTOR = "SELECT C.interactor_ac, C.role, I.objclass " +
+                                                    "FROM ia_component C, ia_interactor I " +
+                                                    "WHERE C.interaction_ac=? AND C.interactor_ac = I.ac";
+
     // SQL statement to select the taxid for an interactor
-    private static final String SELECT_TAXID = "SELECT B.taxid FROM ia_biosource B, "
-            + "ia_interactor I WHERE B.ac = I.biosource_ac AND I.ac=?";
+    private static final String SELECT_TAXID = "SELECT B.taxid " +
+                                               "FROM ia_biosource B, ia_interactor I " +
+                                               "WHERE B.ac = I.biosource_ac AND I.ac=?";
+
     // SQL statement to insert data in the MiNe database table
-    private static final String INSERT_QUERY = "INSERT INTO "
-            + INTERACTION_TABLE + " VALUES(" + "?, ?, ?, ?,1, null)";
+    private static final String INSERT_QUERY = "INSERT INTO " + INTERACTION_TABLE +
+                                               " VALUES(" + "?, ?, ?, ?,1, null)";
+
     // SQL statement to select all interactions
-    private static final String SELECT_INTERACTIONS = "SELECT ac FROM ia_interactor WHERE objclass LIKE "
-            + "'%Interaction%'";
+    private static final String SELECT_INTERACTIONS = "SELECT ac " +
+                                                      "FROM ia_interactor " +
+                                                      "WHERE objclass LIKE '%Interaction%'";
+
     // SQL statement to select all negativ annotated interactions
-    private static final String DELETE_NEGATIV_ANNOTATION = "SELECT I.ac FROM ia_interactor I, "
-            + "ia_annotation A, ia_int2annot I2A, ia_controlledvocab CV WHERE I.objclass like "
-            + "'%Interaction%' AND  I.ac = I2A.interactor_ac AND I2A.annotation_ac = A.ac AND "
-            + "CV.ac = A.topic_ac AND CV.shortlabel = 'negative'";
+    private static final String DELETE_NEGATIV_ANNOTATION = "SELECT I.ac " +
+                                                            "FROM ia_interactor I, ia_annotation A, ia_int2annot I2A, ia_controlledvocab CV " +
+                                                            "WHERE I.objclass like '%Interaction%' AND  " +
+                                                            "      I.ac = I2A.interactor_ac AND " +
+                                                            "      I2A.annotation_ac = A.ac AND " +
+                                                            "      CV.ac = A.topic_ac AND " +
+                                                            "      CV.shortlabel = 'negative'";
+
     // SQL statement to select all interactions in a negativ experiment
-    private static final String DELETE_NEGATIV_EXPERIMENTS = "SELECT I2E.interaction_ac FROM ia_int2exp I2E, "
-            + "ia_experiment E, ia_annotation A, ia_exp2annot E2A, ia_controlledvocab CV WHERE "
-            + "I2E.experiment_ac = E.ac AND E.ac = E2A.experiment_ac AND "
-            + "E2A.annotation_ac = A.ac AND CV.ac = A.topic_ac AND "
-            + "CV.shortlabel = 'negative'";
+    private static final String DELETE_NEGATIV_EXPERIMENTS = "SELECT I2E.interaction_ac " +
+                                                             "FROM ia_int2exp I2E, ia_experiment E, ia_annotation A, ia_exp2annot E2A, ia_controlledvocab CV " +
+                                                             "WHERE I2E.experiment_ac = E.ac AND " +
+                                                             "      E.ac = E2A.experiment_ac AND " +
+                                                             "      E2A.annotation_ac = A.ac AND " +
+                                                             "      CV.ac = A.topic_ac AND " +
+                                                             "      CV.shortlabel = 'negative'";
+
     // SQL statement to delete interactions from the MiNe database table
-    private static final String DELETE_FROM_TABLE = "DELETE FROM "
-            + INTERACTION_TABLE + " WHERE interaction_ac=?";
+    private static final String DELETE_FROM_TABLE = "DELETE FROM " + INTERACTION_TABLE + " " +
+                                                    "WHERE interaction_ac=?";
+
     // SQL statement to get the accession number for a bait
-    private static final String SELECT_BAIT_ID = "SELECT ac FROM ia_controlledvocab WHERE shortlabel='bait'";
+    private static final String SELECT_BAIT_ID = "SELECT ac FROM ia_controlledvocab " +
+                                                 "WHERE shortlabel='bait'";
+
     // SQL statement to select all proteins for a given interactor to get the
     // connecting network
-    private static final String SELECT_PROT = "SELECT protein1_ac,protein2_ac FROM "
-            + INTERACTION_TABLE
-            + " WHERE protein1_ac=? OR protein2_ac=? AND taxid=? AND graphid IS NULL";
+    private static final String SELECT_PROT = "SELECT protein1_ac,protein2_ac " +
+                                              "FROM " + INTERACTION_TABLE +
+                                              " WHERE (protein1_ac=? OR protein2_ac=?) AND " +
+                                              "       taxid=? AND " +
+                                              "       graphid IS NULL";
+
     // SQL statement to update the table for the minimal connecting network
-    private static final String UPDATE_GRAPHID = "UPDATE " + INTERACTION_TABLE
-            + " SET graphID=? WHERE protein1_ac=? OR protein2_ac=? "
-            + "AND taxid=? AND graphid IS NULL";
+    private static final String UPDATE_GRAPHID = "UPDATE " + INTERACTION_TABLE +
+                                                 " SET graphID=? " +
+                                                 "WHERE (protein1_ac=? OR protein2_ac=?) AND " +
+                                                 "      taxid=? AND " +
+                                                 "      graphid IS NULL";
+
     // the graphid is initialised with 0 because with every call of the
     // setGraphBio method
     // graphid is increased before something else happenes
     private static int graphid = 0;
+
     // stores the EBI accession number for the shortlabel 'bait'
     private static String bait_id;
+
     // stores all accession numbers of a connecting network which are already
     // procceeded
     private static Collection proccessedAcs = new HashSet();
