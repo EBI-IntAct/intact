@@ -11,13 +11,16 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.ValidationException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
+import uk.ac.ebi.intact.persistence.SearchException;
 
 import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.beanutils.DynaBean;
+import org.apache.struts.tiles.ComponentContext;
 
 /**
  * This super bean encapsulates behaviour for a common editing session. This
@@ -90,6 +93,11 @@ public abstract class AbstractEditViewBean {
     private transient Collection myXrefsToUpdate = new ArrayList();
 
     /**
+     * The factory to create various menus.
+     */
+    private transient EditorMenuFactory myMenuFactory;
+
+    /**
      * Set attributes using values from an Annotated Object. A coarse-grained
      * method to avoid multiple method calls.
      * @param annot the <code>AnnotatedObject</code> to set attributes of this
@@ -107,6 +115,14 @@ public abstract class AbstractEditViewBean {
         makeCommentBeans(annot.getAnnotation());
         myXrefs.clear();
         makeXrefBeans(annot.getXref());
+    }
+
+    /**
+     * Sets the menu factory to create menus.
+     * @param factory the factory to create menus.
+     */
+    public void setMenuFactory(EditorMenuFactory factory) {
+        myMenuFactory = factory;
     }
 
     /**
@@ -370,6 +386,82 @@ public abstract class AbstractEditViewBean {
     }
 
     /**
+     * Fills the basic information for a CV object with current values.
+     * @param form the form to fill data.
+     */
+    public void fillCvInfo(DynaBean form) {
+        // Fill the form with current values.
+        form.set("ac", getAc());
+        form.set("shortLabel", getShortLabel());
+        form.set("fullName", getFullName());
+    }
+
+    /**
+     * Populates the given bean with editor specific info. Override this
+     * method to provide editor specific behaviour. Currently, this method
+     * is empty.
+     * @param form the form to fill data.
+     */
+    public void fillEditorSpecificInfo(DynaBean form) {
+        // Empty
+    }
+
+    /**
+     * Returns the edit menu for annotations.
+     * @return the edit menu for annotations
+     * @throws SearchException thrown for failures with database access.
+     */
+    public List getEditAnnotationMenus() throws SearchException {
+        return getAnnotationMenus(0);
+    }
+
+    /**
+     * Returns the add menu for annotations.
+     * @return the add menu for annotations
+     * @throws SearchException thrown for failures with database access.
+     */
+    public List getAddAnnotationMenus() throws SearchException {
+        return getAnnotationMenus(1);
+    }
+
+    /**
+     * Returns the edit menu for xrefs.
+     * @return the edit menu for xrefs.
+     * @throws SearchException thrown for failures with database access.
+     */
+    public Map getEditXrefMenus() throws SearchException {
+        return getXrefMenus(0);
+    }
+
+    /**
+     * Returns the add menu for xrefs.
+     * @return the add menu for xrefs
+     * @throws SearchException thrown for failures with database access.
+     */
+    public Map getAddXrefMenus() throws SearchException {
+        return getXrefMenus(1);
+    }
+
+    /**
+     * Returns the editor specific menus. All the editors must override this
+     * method to provide its own implementation.
+     * @return the editor specific menus.
+     * @throws SearchException thrown for failures with database access.
+     */
+    public Map getEditorMenus() throws SearchException {
+        return null;
+    }
+
+    /**
+     * Removes the current object from the menu list. This will only succeed
+     * if the current edit object is of menu type. For example, this method will
+     * succeed for CvTopic as it is considered as a menu type.
+     */
+    public void removeMenu() {
+        myMenuFactory.removeMenu(myAnnotObject.getClass());
+    }
+
+    /**
      * Populates given form with annotations
      * @param form the form to poplulate.
      */
@@ -386,18 +478,33 @@ public abstract class AbstractEditViewBean {
     }
 
     /**
-     * Populate the given bean ac, short label and fullname of this object.
-     * @param dynaBean the bean to set the above values.
+     * Sets the layout in given context. This method is currently empty as
+     * the layout defaults to cv layout. Override this method to provide editor
+     * specific layout.
+     * @param context the Tiles context to set the layout.
      */
-    public void populate(DynaBean dynaBean) {
-        dynaBean.set("ac", getAc());
-        dynaBean.set("shortLabel", getShortLabel());
-        dynaBean.set("fullName", getFullName());
+    public void setLayout(ComponentContext context) {
+        // Empty
     }
 
-    // Abstract methods
+    /**
+     * Validates the data in the view bean.
+     * @throws ValidationException thrown when this bean contains invalid data.
+     * For example, an experiment must contain non null values for organism,
+     * interaction and identification. Currently this method is empty as no
+     * validations are preformed.
+     */
+    public void validate() throws ValidationException {
+        // Need to override by the subclass.
+    }
 
-    public abstract void populateEditorSpecificInfo(DynaBean dynaBean);
+    /**
+     * Allows access to menu factory.
+     * @return the menu factory for sub classes to create menus.
+     */
+    protected EditorMenuFactory getMenuFactory() {
+        return myMenuFactory;
+    }
 
     // Helper Methods
 
@@ -566,16 +673,55 @@ public abstract class AbstractEditViewBean {
         xref.setSecondaryId(xb.getSecondaryId());
         xref.setDbRelease(xb.getReleaseNumber());
 
-        String qualifier = xb.getQualifier();
-        // Check for null pointer.
-        if (xref.getCvXrefQualifier() != null) {
-            // Only update the quailier if they differ.
-            if (!qualifier.equals(xref.getCvXrefQualifier().getShortLabel())) {
-                CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
-                        CvXrefQualifier.class, qualifier);
-                xref.setCvXrefQualifier(xqual);
-            }
-        }
+        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
+                CvXrefQualifier.class, xb.getQualifier());
+        xref.setCvXrefQualifier(xqual);
+
         return xref;
+    }
+
+    private List getAnnotationMenus(int mode) throws SearchException {
+        return getMenu(EditorMenuFactory.TOPICS,
+                myAnnotObject.getShortLabel(), mode);
+    }
+
+    private Map getXrefMenus(int mode) throws SearchException {
+        Map map = new HashMap();
+        String name;
+        // The short label to remove from the list.
+        String label = myAnnotObject.getShortLabel();
+
+        // The database menu.
+        name = EditorMenuFactory.DATABASES;
+        map.put(name, getMenu(name, label, mode));
+
+        // The qualifier menu.
+        name = EditorMenuFactory.QUALIFIERS;
+        map.put(name, getMenu(name, label, mode));
+        return map;
+    }
+
+    /**
+     * Returns a menu for <code>name</code> without <code>label</code>; the menu
+     * type is dependent on the <code>mode</code>
+     * @param name the name of the menu to get.
+     * @param label the label to strip off from the returning menu.
+     * @param mode 0 for edit or 1 for add.
+     * @return menu for <code>name</code> without <code>label</code> if applicable.
+     * @throws SearchException for database search error when constructing the
+     * menu.
+     */
+    private List getMenu(String name, String label, int mode)
+            throws SearchException {
+        List list;
+        if (myMenuFactory.isMenuType(myAnnotObject.getClass())) {
+            // Remove my short label to avoid circular reference.
+            list = new ArrayList(myMenuFactory.getMenu(name, mode));
+            list.remove(label);
+        }
+        else {
+            list = myMenuFactory.getMenu(name, mode);
+        }
+        return list;
     }
 }
