@@ -32,7 +32,12 @@ public class SanityChecker {
 
     //holds the accumulated results of the test executions
     private StringBuffer expCheck;
+    private StringBuffer expCheckNoPubmed;
+    private StringBuffer expCheckNoPubmedWithPrimaryReference;
     private StringBuffer interactionCheck;
+    private StringBuffer interactionWithNoBaitCheck;
+    private StringBuffer interactionWithNoPreyCheck;
+    private StringBuffer interactionWithNeitherPreyNorBaitCheck;
     private StringBuffer singleProteinCheck;
     private StringBuffer noProteinCheck;
 
@@ -60,7 +65,17 @@ public class SanityChecker {
         //initialize buffers that will accumulate the test results..
         expCheck = new StringBuffer("Experiments with no Interactions" +
                 "\n" + "------------------------------------------------" + NEW_LINE);
+        expCheckNoPubmed = new StringBuffer("Experiments with no pubmed id" +
+                "\n" + "------------------------------------------------" + NEW_LINE);
+        expCheckNoPubmedWithPrimaryReference = new StringBuffer("Experiments with no pubmed id (with 'primary-reference' as qualifier)" +
+                "\n" + "------------------------------------------------" + NEW_LINE);
         interactionCheck = new StringBuffer("Interactions with no Experiment" +
+                "\n" + "------------------------------------------------" + NEW_LINE);
+        interactionWithNoBaitCheck = new StringBuffer("Interactions with no bait" +
+                "\n" + "------------------------------------------------" + NEW_LINE);
+        interactionWithNoPreyCheck = new StringBuffer("Interactions with no prey" +
+                "\n" + "------------------------------------------------" + NEW_LINE);
+        interactionWithNeitherPreyNorBaitCheck = new StringBuffer("Interactions with neither prey nor Bait" +
                 "\n" + "------------------------------------------------" + NEW_LINE);
         singleProteinCheck = new StringBuffer("Interactions with only One Protein" +
                 "\n" + "------------------------------------------------" + NEW_LINE);
@@ -112,6 +127,46 @@ public class SanityChecker {
     }
 
     /**
+     * Performs checks on Experiments.
+     * @throws IntactException Thrown if there was a Helper problem
+     * @throws SQLException Thrown if there was a DB access problem
+     */
+    public void checkExperimentsPubmedIds() throws IntactException, SQLException  {
+
+        //check 1 and 2
+        for(Iterator it = experiments.iterator(); it.hasNext();) {
+            Experiment exp = (Experiment)it.next();
+            int pubmedCount = 0;
+            int pubmedPrimaryCount = 0;
+            Collection Xrefs = exp.getXrefs();
+            for ( Iterator iterator = Xrefs.iterator (); iterator.hasNext (); ) {
+                Xref xref = (Xref) iterator.next ();
+                if (xref.getCvDatabase().getShortLabel().equals("pubmed")) {
+                    pubmedCount++;
+                    if (xref.getCvXrefQualifier().getShortLabel().equals("primary-reference")) {
+                        pubmedPrimaryCount++;
+                    }
+                }
+            }
+
+            if(pubmedCount == 0) {
+                    //record it.....
+                    getUserInfo(expCheckNoPubmed, exp);
+            }
+
+            if (pubmedPrimaryCount != 1) {
+                //record it.....
+                getUserInfo(expCheckNoPubmedWithPrimaryReference, exp);
+            }
+        }
+
+        writeResults(expCheckNoPubmed);
+        writeResults(expCheckNoPubmedWithPrimaryReference);
+        writer.println();
+
+    }
+
+    /**
     * Performs Interaction checks.
     * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
     */
@@ -128,6 +183,60 @@ public class SanityChecker {
         }
         //now dump the results...
         writeResults(interactionCheck);
+        writer.println();
+
+    }
+
+    /**
+    * Performs Interaction checks.
+    * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
+    */
+    public void checkInteractionsBaitAndPrey() throws IntactException, SQLException  {
+
+        //check 7
+        for (Iterator it = interactions.iterator(); it.hasNext();) {
+            Interaction interaction = (Interaction) it.next();
+
+            Collection components = interaction.getComponents();
+            int preyCount    = 0,
+                baitCount    = 0,
+                neutralCount = 0;
+            for ( Iterator iterator = components.iterator (); iterator.hasNext (); ) {
+                Component component = (Component) iterator.next ();
+                //record it.....
+
+                if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "bait" )) {
+                    baitCount++;
+                }
+                if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "prey" )) {
+                    preyCount++;
+                }
+                if (component.getCvComponentRole().getShortLabel().equalsIgnoreCase( "neutral" )) {
+                    neutralCount++;
+                }
+            }
+
+            // TODO: we have to consider Components as 3 distinct groups: bait-prey, agent-target and neutral
+            // TODO: we are not allowed to mix categories,
+            // TODO: if you have a bait you must have at least one prey
+            // TODO: if you have a target you must have at least one agent ----- NOT DONE YET
+            // TODO: else you must have at least 2 neutral components
+            if ( preyCount == 0 && baitCount == 0 ) {
+                if ( neutralCount <= 1 ) {
+                    getUserInfo(interactionWithNeitherPreyNorBaitCheck, interaction);
+                }
+            } else {
+                if (baitCount == 0) {
+                    getUserInfo(interactionWithNoBaitCheck, interaction);
+                } else if (preyCount == 0) {
+                    getUserInfo(interactionWithNoPreyCheck, interaction);
+                }
+            }
+        }
+        //now dump the results...
+        writeResults(interactionWithNeitherPreyNorBaitCheck);
+        writeResults(interactionWithNoBaitCheck);
+        writeResults(interactionWithNoPreyCheck);
         writer.println();
 
     }
@@ -283,7 +392,9 @@ public class SanityChecker {
             long start = System.currentTimeMillis();
             //do checks here.....
             checker.checkExperiments();
+            checker.checkExperimentsPubmedIds();
             checker.checkInteractions();
+            checker.checkInteractionsBaitAndPrey();
             checker.checkProteins();
 
             long end = System.currentTimeMillis();
