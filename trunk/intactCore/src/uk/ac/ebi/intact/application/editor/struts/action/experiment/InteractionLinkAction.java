@@ -70,7 +70,8 @@ public class InteractionLinkAction extends SubmitDispatchAction {
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.lock", intAc, lmr.getOwner(intAc)));
             saveErrors(request, errors);
-            return mapping.findForward(FAILURE);
+            // Show the errors in the input page.
+            return mapping.getInputForward();
         }
         // Set the interaction as the new view.
         user.setView(inter);
