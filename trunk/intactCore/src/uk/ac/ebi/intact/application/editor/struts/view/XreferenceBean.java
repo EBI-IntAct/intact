@@ -6,24 +6,18 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view;
 
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.util.GoServerProxy;
 
-import java.io.Serializable;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import java.io.Serializable;
 
 /**
  * Bean to store data for x'references.
@@ -32,16 +26,6 @@ import org.apache.struts.action.ActionError;
  * @version $Id$
  */
 public class XreferenceBean extends AbstractEditKeyBean implements Serializable {
-
-    /**
-     * The pattern to replace the ac.
-     */
-    private static Pattern ourSearchUrlPat = Pattern.compile("\\$\\{ac\\}");
-
-    /**
-     * The helper to get the primary id link.
-     */
-    private XrefHelper myXrefHelper = new XrefHelper();
 
     /**
      * Reference to the Xref object this instance is created with.
@@ -139,7 +123,7 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
         }
 
         // The primary id link.
-        String link = myXrefHelper.getPrimaryIdLink(myXref);
+        String link = XrefHelper.getPrimaryIdLink(myXref);
 
         // javascipt to display the link is only for a valid link.
         if (link.startsWith("http://")) {
