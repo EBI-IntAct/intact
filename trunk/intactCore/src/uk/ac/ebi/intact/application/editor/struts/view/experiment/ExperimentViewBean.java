@@ -65,7 +65,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     private transient List myInteractionsToHold = new ArrayList();
 
     // Override the super method to initialize this class specific resetting.
-    public void reset(Class clazz) {
+    protected void reset(Class clazz) {
         super.reset(clazz);
         // Set fields to null.
         setOrganism(null);
@@ -81,7 +81,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    public void reset(AnnotatedObject annobj) {
+    protected void reset(AnnotatedObject annobj) {
         super.reset(annobj);
 
         // Must be an experiment.
@@ -131,6 +131,18 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         }
         exp.setCvInteraction(interaction);
         exp.setCvIdentification(ident);
+
+        // --------------------------------------------------------------------
+        // Need this fix to get around the proxies.
+        // 1. Clear all the interaction proxies first.
+        exp.getInteractions().clear();
+
+        // 2. Now add the interaction as real objects.
+        for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
+            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
+            exp.addInteraction(intact);
+        }
+        // --------------------------------------------------------------------
 
         // Add interaction to the experiment.
         for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
@@ -421,6 +433,14 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         myInteractionsToDel.clear();
         myInteractionsToHold.clear();
         clearInteractionToHold();
+    }
+
+    /**
+     * Returns the number of
+     * @return
+     */
+    public int getNumberOfInteractions() {
+        return myInteractions.size();
     }
 
     // Helper methods
