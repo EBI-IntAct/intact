@@ -654,7 +654,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public String getHelpTag() {
-        return myEditView.getHelpTag();
+        if (myEditView != null) {
+            return myEditView.getHelpTag();
+        }
+        return null;
     }
 
     public void addToCurrentExperiment(Experiment exp) {
