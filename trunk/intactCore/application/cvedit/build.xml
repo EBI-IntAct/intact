@@ -35,6 +35,9 @@
     <property name="dest.dir" value="WEB-INF/classes"/>
     <property name="docs.dir" value="doc/api"/>
 
+    <!-- cvedit package root. -->
+    <property name="cvedit.pkg.root" value="uk/ac/ebi/intact/application/cvedit"/>
+
     <!-- Contains jar files required for testing. -->
     <property name="test.lib.dir" value="test/lib"/>
     <!-- Holds misc files required for testing. -->
@@ -120,7 +123,7 @@
     <!-- =================================================================== -->
 
     <!-- Copy configuration files. -->
-    <target name="cpConfigFiles">
+    <target name="cp-config-files">
         <!-- Copy repository files -->
         <copy todir="${dest.dir}/config">
             <fileset dir="${root.config.dir}">
@@ -129,8 +132,8 @@
             </fileset>
         </copy>
 
-        <!-- Copy cvedit property files -->
-        <copy todir="${dest.dir}/config">
+        <!-- Copy cvedit property files to the cvedit pkg root -->
+        <copy todir="${dest.dir}/${cvedit.pkg.root}">
             <fileset dir="WEB-INF/config">
                 <include name="*.properties"/>
             </fileset>
@@ -159,7 +162,7 @@
         </javac>
 
         <!-- Copy configuration files -->
-        <antcall target="cpConfigFiles"/>
+        <antcall target="cp-config-files"/>
     </target>
 
     <!-- =================================================================== -->
@@ -179,7 +182,7 @@
         </javac>
 
         <!-- Copy configuration files -->
-        <antcall target="cpConfigFiles"/>
+        <antcall target="cp-config-files"/>
     </target>
 
     <!-- =================================================================== -->
