@@ -210,7 +210,7 @@ public class XmlLoader
                         checkPersistence( o, m, o.getClass().getMethod( "set" + m.getName().substring(3) , parameters) );
                     }
                 } catch ( NoSuchMethodException nsme) {
-                    System.out.println("setter or getter not found for field: " +  m.getName().substring(3) + "Ac");
+                    System.out.println("setter or getter not found for field: " +  m.getName().substring(3) + "Ac in class " + o.getClass().getName());
                 }
             } // end for basic objects
             // for Institution
@@ -273,7 +273,7 @@ public class XmlLoader
                     }
 
                 } catch ( NoSuchMethodException nsme) {
-                    System.out.println("setter or getter not found for field: " +  m.getName().substring(3) + "Ac");
+                    System.out.println("setter or getter not found for Collection: " +  m.getName().substring(3) + " in class " + o.getClass().getName());
                 }
             } // end for collection
         }
