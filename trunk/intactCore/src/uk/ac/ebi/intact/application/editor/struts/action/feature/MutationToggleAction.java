@@ -36,17 +36,36 @@ public class MutationToggleAction extends AbstractEditorAction {
         // The current view.
         FeatureViewBean view = (FeatureViewBean) user.getView();
 
+        if (view.isInMutationMode()) {
+            // Going from Mutation -> Normal mode.
+
+            // Reset the short label (was set to a dummy default value) and the
+            // feature type was set to hotspot
+            view.setShortLabel("");
+            view.setCvFeatureType(null);
+        }
+        else {
+            // Going from Normal -> Mutation editor.
+
+            // Set this dummy value to get through the validation.
+            view.setShortLabel("xyz");
+
+            // Preset the CvFeature type.
+            CvFeatureType featureType = (CvFeatureType) user.getObjectByLabel(
+                    CvFeatureType.class, "hotspot");
+
+            // We shouldn't be getting a null object. But.... just in case.
+            if (featureType != null) {
+                view.setCvFeatureType("hotspot");
+            }
+        }
+        // Reset full name and identification as they are common to both.
+        view.setFullName("");
+        view.setCvFeatureIdentification(null);
+
         // Toggle between modes.
         view.toggleEditMode();
 
-        // Preset the CvFeature type.
-        CvFeatureType featureType = (CvFeatureType) user.getObjectByLabel(
-                CvFeatureType.class, "hotspot");
-
-        // We shouldn't be getting a null object. But.... just in case.
-        if (featureType != null) {
-            view.setCvFeatureType("hotspot");
-        }
         // Update the form and display.
         return mapping.findForward(SUCCESS);
     }
