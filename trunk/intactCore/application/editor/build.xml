@@ -54,7 +54,6 @@
         <pathelement path="${root.jar.file}"/>
 
         <!-- Common jar files. -->
-<!--        <pathelement path="${root.lib.dir}/junit.jar"/>-->
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
@@ -146,7 +145,7 @@
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.4"
             includes="**/application/editor/**,
-                      **/application/commons/**"
+                      **/application/commons/**, **/html/**"
             excludes="**/test/**">
             <classpath refid="project.class.path"/>
         </javac>
@@ -168,7 +167,7 @@
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.4"
             includes="**/application/editor/**,
-                      **/application/commons/**">
+                      **/application/commons/**, **/html/**">
             <classpath refid="project.test.class.path"/>
         </javac>
 
@@ -199,7 +198,10 @@
 
         <!-- Common layouts -->
         <copy todir="${basedir}/layouts">
-            <fileset dir="${intact.app.dir}/layouts"/>
+            <fileset dir="${intact.app.dir}/layouts">
+            <!-- Don't need any frame lauyouts for this application -->
+            <exclude name="*Frame.jsp"/>
+        </fileset>
         </copy>
         <!-- Common images -->
         <copy todir="${basedir}/images">
@@ -207,7 +209,10 @@
         </copy>
         <!-- Common jsp files -->
         <copy todir="${basedir}/pages">
-            <fileset dir="${intact.app.dir}/pages"/>
+            <fileset dir="${intact.app.dir}/pages">
+                <!-- Don't need error frame JSP for this application -->
+                <exclude name="errorFrame.jsp"/>
+            </fileset>
         </copy>
 
         <!-- Delete the war file or else it will keep the old one -->
@@ -217,6 +222,8 @@
         <copy todir="${tld.dir}">
             <fileset dir="${intact.app.dir}/tld">
                 <include name="*.tld"/>
+                <!-- Don't need intact.tld for this application -->
+                <exclude name="intact.tld"/>
             </fileset>
         </copy>
 
