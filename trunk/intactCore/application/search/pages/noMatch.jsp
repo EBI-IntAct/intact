@@ -1,6 +1,7 @@
 <%@ page language="java" %>
 
-<%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants"%>
+<%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants,
+                 uk.ac.ebi.intact.application.search.struts.controller.SearchAction"%>
  <%--
    /**
     * no matches page.
@@ -13,13 +14,25 @@
 
 <%
     String info = (String)session.getAttribute(SearchConstants.SEARCH_CRITERIA);
+    String[] searchList = SearchAction.SEARCH_ORDER;
+    StringBuffer sb =  new StringBuffer(searchList[0]);
+    int size = searchList.length;
+    for (int i = 1; i < size; i++) {
+        if (i < (size - 1)) {
+            sb.append(", ");
+        }
+        else {
+            sb.append(" or ");
+        }
+        sb.append(searchList[i]);
+    }
 %>
 
 <h1>Search Results: No Matches!!</h1>
 <!-- a line to separate the header -->
 <hr size=2>
 
-<h2>Sorry - could not find any <%= session.getAttribute(SearchConstants.SEARCH_TYPE) %>
+<h2>Sorry - could not find any <%= sb.toString()%>
   by trying to match <%= info.substring(info.indexOf('=') + 1) %> with: </h2>
   <ul>
       <li>AC,

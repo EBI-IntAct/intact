@@ -1,86 +1,69 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE taglib
-  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
-  "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+          PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+                 "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
 
 <taglib>
 
-    <tlibversion>1.0</tlibversion>
+    <tlibversion>0.1</tlibversion>
     <jspversion>1.1</jspversion>
-    <shortname>Application Tag Library</shortname>
+    <shortname>IntAct Tags Library</shortname>
     <info>
-        This tag library contains classes for manipulating Intact data
-        in order to facilitate display on web pages.
+                This library contains commons tags for IntAct web applications.
     </info>
 
+    <!--
+          The 3 following tags are supposed to be used in order to display properly
+          Struts ActionErrors when you develop your web application with frames.
+          Indeed, the current state of Struts just allows to store ActionErrors in
+          the page context and so, if you decide to display the current set of errors
+          in a page which is not in that scope (i.e. an other frame), the errors have
+          vanished when you try to display them.
+
+          To fix that problem, you can do as follow :
+
+          (1) In the page context, call the tag <intact:saveErrors/> to save them
+
+          (2) In the page supposed to display your errors, call :
+
+                 <intact:restoreErrors/>   to grab eventual errors from the session
+                                           and copy them in the page request.
+
+                 <html:errors/>            or whatever to display your errors.
+
+                 <intact:clearErrors/>     to clear existing errors
+                                           (it avoids to make them persistent).
+      -->
+
     <tag>
-        <name>checkLogon</name>
-        <tagclass>uk.ac.ebi.intact.struts.tags.CheckLogonTag</tagclass>
+        <name>saveErrors</name>
+        <tagclass>uk.ac.ebi.intact.application.commons.struts.taglibs.SaveErrorsTag</tagclass>
         <bodycontent>empty</bodycontent>
         <info>
-          Validate that there is a currently logged on user, by checking for
-          the existence of a session-scope bean under the specified name.
-          If there is no such bean, forward control to the specified page,
-          which will typically be a logon form.
-
-          name - Name of the session-scope bean to check for [user]
-          page - Context-relative path to the logon page [/logon.jsp]
-        </info>
-        <attribute>
-            <name>name</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-          <name>page</name>
-          <required>false</required>
-          <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-
-    <tag>
-        <name>listIntactTypes</name>
-        <tagclass>uk.ac.ebi.intact.application.search.struts.taglibs.IntactTypesListerTag</tagclass>
-        <bodycontent>JSP</bodycontent>
-        <info>
-            Compiles the Control Vocabulary list and display it as a list.
-        </info>
-        <attribute>
-            <name>resource</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-
-    <tag>
-        <name>resetTransaction</name>
-        <tagclass>uk.ac.ebi.intact.application.search.struts.taglibs.ResetTransactionTag</tagclass>
-        <bodycontent>JSP</bodycontent>
-        <info>
-            Resets a transaction if it has already been started.
+                Save in the session scope any ActionErrors available in the request scope.
         </info>
     </tag>
 
     <tag>
-        <name>beginTransaction</name>
-        <tagclass>uk.ac.ebi.intact.application.search.struts.taglibs.BeginTransactionTag</tagclass>
-        <bodycontent>JSP</bodycontent>
+        <name>restoreErrors</name>
+        <tagclass>uk.ac.ebi.intact.application.commons.struts.taglibs.RestoreErrorsTag</tagclass>
+        <bodycontent>empty</bodycontent>
         <info>
-            Begins a new transaction.
+                Restore in the request scope any errors saved in the session scope via
+                the tag saveErrors.
         </info>
     </tag>
 
     <tag>
-        <name>createNameList</name>
-        <tagclass>uk.ac.ebi.intact.application.search.struts.taglibs.CreateNameListTag</tagclass>
-        <bodycontent>JSP</bodycontent>
+        <name>clearErrors</name>
+        <tagclass>uk.ac.ebi.intact.application.commons.struts.taglibs.ClearErrorsTag</tagclass>
+        <bodycontent>empty</bodycontent>
         <info>
-            Creates a name list for given name and stores it in a request.
+                Clear from the request scope (in pageRequest) any errors collected by struts.
         </info>
-        <attribute>
-            <name>name</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
     </tag>
+
 </taglib>
+
+
+

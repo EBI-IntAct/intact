@@ -126,7 +126,7 @@
         <!-- Only compile search sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             includes="**/application/search/**,
-                      **/application/commons/**"
+                      **/application/commons/**, **/html/**"
             debug="on" source="1.4">
             <classpath refid="project.class.path"/>
         </javac>

@@ -141,16 +141,23 @@
         IntactViewBean bean = (IntactViewBean) entry.getValue();
         String id = (String) entry.getKey();
         bean.transform(id, result);
+        %>
+<hr size=2>
+        <%
     }
 %>
     <!-- The footer table. -->
     <table cellpadding="1" cellspacing="0" border="1" width="100%">
         <tr>
             <td align="center">
-                <html:submit property="action"
-                    onclick="return checkAC(this.form, 'Please select an AC to View')">
-                    <bean:message key="results.button.expand.contract"/>
-                </html:submit>
+                <%
+                    if (request.getAttribute(SearchConstants.PROTEIN_VIEW_BUTTON) != null) {
+                %>
+                        <html:submit property="action"
+                            value="<%=(String) request.getAttribute(SearchConstants.PROTEIN_VIEW_BUTTON)%>"/>
+                <%
+                    }
+                %>
                 <html:button property="action"
                     onclick="writeToWindow(
                         this.form, 'Please select an AC to display the graph')">
