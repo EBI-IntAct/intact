@@ -11,7 +11,12 @@ import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
-import uk.ac.ebi.intact.application.graph2MIF.*;
+import uk.ac.ebi.intact.application.graph2MIF.conversion.Graph2FoldedMIF;
+import uk.ac.ebi.intact.application.graph2MIF.exception.GraphNotConvertableException;
+import uk.ac.ebi.intact.application.graph2MIF.exception.MIFSerializeException;
+import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException;
+import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
+import uk.ac.ebi.intact.application.graph2MIF.GraphFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Constants;
@@ -151,10 +156,10 @@ public class Graph2MIFConsole {
      * @param depth Integer of the depth the graph should be expanded
      * @return String including a XML-Document in PSI-MIF-Format
      * @exception IntactException thrown if search for interactor failed
-     * @exception GraphNotConvertableException thrown if Graph failed requirements of MIF.
-     * @exception uk.ac.ebi.intact.application.graph2MIF.NoGraphRetrievedException thrown if DOM-Object could not be serialized
-     * @exception uk.ac.ebi.intact.application.graph2MIF.MIFSerializeException thrown if IntactHelper could not be created
-     * @exception uk.ac.ebi.intact.application.graph2MIF.NoInteractorFoundException thrown if no Interactor found for ac
+     * @exception uk.ac.ebi.intact.application.graph2MIF.exception.GraphNotConvertableException thrown if Graph failed requirements of MIF.
+     * @exception uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException thrown if DOM-Object could not be serialized
+     * @exception uk.ac.ebi.intact.application.graph2MIF.exception.MIFSerializeException thrown if IntactHelper could not be created
+     * @exception uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException thrown if no Interactor found for ac
      */
     private String getMIF(String ac, Integer depth, Boolean strictmif)
             throws IntactException,
@@ -166,7 +171,7 @@ public class Graph2MIFConsole {
         String mif = "";
         Graph graph = new Graph();
         // retrieve Graph
-        graph = getInteractionNetwork(ac, depth); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
+        graph = GraphFactory.getGraph(ac, depth); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
         //convert graph to DOM Object
         Graph2FoldedMIF convert = new Graph2FoldedMIF(strictmif);
         Document mifDOM = null;
@@ -184,44 +189,6 @@ public class Graph2MIFConsole {
         mif = w.toString();
         //return the PSI-MIF-XML
         return mif;
-    }
-
-
-    /**
-     * getInteractionNetwork retrieves a interactionnetwork (graph) from a given ac and depth
-     * @param ac String ac in IntAct
-     * @param depth Integer of the depth the graph should be expanded
-     * @return graph of the ac with given depth
-     * @exception IntactException thrown if search for interactor failed
-     * @exception NoGraphRetrievedException thrown if DOM-Object could not be serialized
-     * @exception NoInteractorFoundException thrown if no Interactor found for ac
-     */
-    private Graph getInteractionNetwork(String ac, Integer depth) throws IntactException, NoInteractorFoundException, NoGraphRetrievedException {
-        //for graph retrieval a interactor is necessary. So get the interactor of given ac.
-        Collection interactors = null;
-        try {
-            interactors = helper.search(Interactor.class.getName(), "ac", ac); //SNU66,
-        } catch (IntactException e) {
-            System.err.println("msg:" + e.getMessage());
-            throw new IntactException();
-        }
-        Interactor interactor = null;
-        try {
-            interactor = (Interactor) interactors.toArray()[0]; // just take the 1st element - there should be no 2nd if searche for an ac !
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("msg:" + e.getMessage());
-            throw new NoInteractorFoundException();
-        }
-        // retrieve the graph with interactor as root element and given depth
-        Graph graph = new Graph();
-        try {
-            graph = helper.subGraph(interactor, depth.intValue(), null, Constants.EXPANSION_BAITPREY, graph);
-        } catch (IntactException e) {
-            System.err.println("msg:" + e.getMessage());
-            throw new NoGraphRetrievedException();
-        }
-        //return this graph
-        return graph;
     }
 
     /**
