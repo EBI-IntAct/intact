@@ -644,19 +644,19 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         jdbc-type="VARCHAR"
         />
 
-    <field-descriptor id="6"
+    <field-descriptor id="5"
         name="taxId"
         column="taxId"
         jdbc-type="VARCHAR"
         />
 
-    <field-descriptor id="7"
+    <field-descriptor id="6"
         name="created"
         column="created"
         jdbc-type="TIMESTAMP"
         nullable="false"
         />
-    <field-descriptor id="8"
+    <field-descriptor id="7"
         name="updated"
         column="updated"
         jdbc-type="TIMESTAMP"
@@ -664,13 +664,13 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         />
 
    <!-- controlled vocab fields for tissue and celltype -->
-    <field-descriptor id="9"
+    <field-descriptor id="8"
         name="cvTissueAc"
         column="tissue_ac"
         jdbc-type="VARCHAR"
         />
 
-    <field-descriptor id="10"
+    <field-descriptor id="9"
         name="cvCellTypeAc"
         column="celltype_ac"
         jdbc-type="VARCHAR"
@@ -689,14 +689,14 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         name="cvTissue"
         class-ref="uk.ac.ebi.intact.model.CvTissue"
         >
-        <foreignkey field-id-ref="9"/>
+        <foreignkey field-id-ref="8"/>
     </reference-descriptor>
 
     <reference-descriptor
         name="cvCellType"
         class-ref="uk.ac.ebi.intact.model.CvCellType"
         >
-        <foreignkey field-id-ref="10"/>
+        <foreignkey field-id-ref="9"/>
     </reference-descriptor>
 
     <collection-descriptor
