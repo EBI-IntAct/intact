@@ -247,7 +247,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
                 goTermInfo        = (String[]) list.next();
                 goTerm            = goTermInfo[0];
                 goTermDescription = goTermInfo[1];
-                String url = hostname + "/ingo/ego/DisplayGoTerm?selected=" + goTerm + "&intact=true&format=contentonly";
+                String url = hostname + "/ego/DisplayGoTerm?selected=" + goTerm + "&intact=true&format=contentonly";
 
                 // http://web7-node1.ebi.ac.uk:8110/ingo/ego/DisplayGoTerm?selected=GO:0005635,GO:0005637&intact=true&format=contentonly
 

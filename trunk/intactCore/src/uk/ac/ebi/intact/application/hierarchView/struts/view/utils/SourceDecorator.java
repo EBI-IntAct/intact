@@ -54,15 +54,15 @@ public class SourceDecorator extends Decorator {
         String sourceLink = lvb.getValue();
 
         // convert my URL string in UTF-8 format (= become %3d, ...)
-        String encodedUrl = null;
-        try {
-            encodedUrl = URLEncoder.encode (sourceLink, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // 'UTF-8' is supported so, should not happen
-            e.printStackTrace();
-        }
+//        String encodedUrl = null;
+//        try {
+//            encodedUrl = URLEncoder.encode (sourceLink, "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+////             'UTF-8' is supported so, should not happen
+//            e.printStackTrace();
+//        }
 
-        return "<a href=\"/hierarchView/displaySourceContent.do?url=" + encodedUrl + "\">" + sourceName + "</a>";
+        return "<a href=\"" + sourceLink + "\" target=\"selectedSourcetFrame\">" + sourceName + "</a>";
     }
 
     /**
