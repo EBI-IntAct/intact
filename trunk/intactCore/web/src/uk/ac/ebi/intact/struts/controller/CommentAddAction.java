@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -10,23 +10,26 @@ import uk.ac.ebi.intact.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.struts.view.CommentBean;
 import uk.ac.ebi.intact.struts.view.CommentAddForm;
+import uk.ac.ebi.intact.struts.view.CvViewBean;
 import uk.ac.ebi.intact.struts.service.IntactService;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.persistence.TransactionException;
+import uk.ac.ebi.intact.persistence.CreateException;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
- * The action class is called when the user adds a new comment (annotation).
+ * The action class is called when the user adds a new comment (annotation) to
+ * the edit.jsp.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -56,80 +59,67 @@ public class CommentAddAction extends IntactBaseAction {
         // Need the form to get data entered by the user.
         CommentAddForm theForm = (CommentAddForm) form;
 
-        // The annotation collection.
-        Collection beans = (Collection) super.getSessionObject(request,
-            WebIntactConstants.ANNOTATIONS);
-
-        // The topic and the text selected/entered by the user.
-        String topic = theForm.getTopic();
-        String text = theForm.getText();
-
-        // The bean for 'topic'.
-        CommentBean bean = findByTopic(topic, beans);
-
-
         // Handler to the IntactService.
         IntactService service = super.getIntactService();
 
-        // The Intact Helper to search the database.
-        IntactHelper helper = null;
+        // The new annotation to add to database.
+        Annotation annot = null;
+
+        // The error container.
+        ActionErrors errors = null;
+
         try {
-            helper = service.getIntactHelper();
+            // The Intact Helper to search the database.
+            IntactHelper helper = service.getIntactHelper();
+
+            // The current CV object we are editing.
+            CvViewBean viewbean = (CvViewBean) super.getSessionObject(
+                request, "viewbean");
+            CvObject cvobj = viewbean.getCvObject();
+
+            // Get the topic object for the new annotation.
+            CvTopic cvtopic = (CvTopic) helper.getObjectByLabel(
+                CvTopic.class, theForm.getTopic());
+
+            annot = new Annotation();
+            annot.setAnnotationText(theForm.getText());
+            annot.setCvTopic(cvtopic);
+            annot.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
+            service.getDAO().create(annot);
+
+            // Add this new annotation to the cv object and update it.
+            cvobj.addAnnotation(annot);
+            helper.update(cvobj);
         }
         catch (IntactException ie) {
             // Can't create a helper class.
-            ActionErrors errors = new ActionErrors();
-            errors.add("no.ds", new ActionError("error.no.datasource"));
+            errors = new ActionErrors();
+            errors.add(super.INTACT_ERROR, new ActionError("error.datasource"));
+        }
+        catch (DataSourceException dse) {
+            // Can't acquire the DAO instance to create.
+            errors = new ActionErrors();
+            errors.add(super.INTACT_ERROR, new ActionError("error.dao"));
+        }
+        catch (CreateException ce) {
+            // Unable to create an annotation.
+            errors = new ActionErrors();
+            errors.add(super.INTACT_ERROR, new ActionError("error.create",
+                "an Annotation object"));
+        }
+        if (errors != null && !errors.empty()) {
             super.saveErrors(request, errors);
             return (mapping.findForward(WebIntactConstants.FORWARD_FAILURE));
         }
-        // Add to the existing comment if we have the topic.
-        if (bean != null) {
-            bean.addText(text);
-            Annotation annot = bean.getAnnotation();
-            annot.setAnnotationText(bean.getText());
-            try {
-                 helper.update(annot);
-            }
-            catch (IntactException ie) {
-                // Error in updating the annotation object.
-                ActionErrors errors = new ActionErrors();
-                errors.add("update.error", new ActionError("error.update"));
-                super.saveErrors(request, errors);
-                return (mapping.findForward(WebIntactConstants.FORWARD_FAILURE));
-            }
-        }
-        else {
-            // New topic to add.
-            Annotation annot = new Annotation();
-            annot.setAnnotationText(text);
-            // There is no need to create a topic as it must exist on the
-            // database but for the moment just create one.
-            CvTopic cvtopic = new CvTopic();
-            cvtopic.setShortLabel(topic);
-            cvtopic.setAc("EBI-XXX");
 
-            annot.setCvTopic(cvtopic);
+        // The annotation collection for display.
+        Collection beans = (Collection) super.getSessionObject(request,
+            WebIntactConstants.ANNOTATIONS);
+        // We need to update on the screen as well.
+        beans.add(new CommentBean(annot));
 
-            // Add to the collection.
-            bean = new CommentBean(annot);
-            beans.add(bean);
-        }
         theForm.reset();
 
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
-    }
-
-    // Return a bean from the given collection for matching topic. Null is
-    // returned if no matching bean found in the collection.
-    private CommentBean findByTopic(String topic, Collection collection) {
-        for (Iterator iter = collection.iterator(); iter.hasNext();) {
-            CommentBean bean = (CommentBean) iter.next();
-            if (bean.getTopic().equals(topic)) {
-                return bean;
-            }
-        }
-        // New topic.
-        return null;
     }
 }
