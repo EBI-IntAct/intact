@@ -198,8 +198,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
             //get a DAO so some work can be done!!
             dao = dataSource.getDAO();
-        }
-        catch (DataSourceException de) {
+        } catch (DataSourceException de) {
 
             String msg = "intact helper: There was a problem accessing a data store";
             throw new IntactException(msg, de);
@@ -239,8 +238,7 @@ public class IntactHelper implements SearchI, Externalizable {
         try {
 
             dao = dataSource.getDAO(user, password);
-        }
-        catch (DataSourceException de) {
+        } catch (DataSourceException de) {
 
             String msg = "intact helper: There was a problem accessing a data store";
             throw new IntactException(msg, de);
@@ -293,8 +291,7 @@ public class IntactHelper implements SearchI, Externalizable {
         try {
 
             dao = dataSource.getDAO();
-        }
-        catch (DataSourceException de) {
+        } catch (DataSourceException de) {
 
             String msg = "intact helper: There was a problem accessing a data store";
             throw new IntactException(msg, de);
@@ -331,8 +328,7 @@ public class IntactHelper implements SearchI, Externalizable {
         try {
 
             dao.close();
-        }
-        catch (Exception de) {
+        } catch (Exception de) {
 
             throw new IntactException("failed to close data source!", de);
         }
@@ -381,8 +377,7 @@ public class IntactHelper implements SearchI, Externalizable {
         }
         try {
             dao.begin(txType);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new IntactException("unable to start an intact transaction!", e);
         }
     }
@@ -407,8 +402,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
         try {
             dao.commit();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new IntactException("unable to complete an intact transaction!", e);
         }
     }
@@ -424,8 +418,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
         try {
             dao.rollback();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new IntactException("unable to undo an intact transaction!", e);
         }
     }
@@ -477,14 +470,12 @@ public class IntactHelper implements SearchI, Externalizable {
 
             }
 
-        }
-        catch (CreateException ce) {
+        } catch (CreateException ce) {
 
             String msg = "intact helper: object creation failed.. \n";
             throw new IntactException(msg, ce);
 
-        }
-        catch (TransactionException te) {
+        } catch (TransactionException te) {
 
             String msg = "intact helper: transaction problem during object creation.. \n";
             throw new IntactException(msg, te);
@@ -525,10 +516,9 @@ public class IntactHelper implements SearchI, Externalizable {
 
             }
 
-        }
-        catch (Exception de) {
+        } catch (Exception de) {
 
-            String msg = "intact helper: could not close data source connection properly";
+            String msg = "intact helper: failed to delete object of type " + obj.getClass().getName();
             throw new IntactException(msg, de);
 
         }
@@ -554,8 +544,7 @@ public class IntactHelper implements SearchI, Externalizable {
                 dao.create(obj);
 
             }
-        }
-        catch (Exception de) {
+        } catch (Exception de) {
             de.printStackTrace();
             String msg = "intact helper: single object creation failed for class " + obj.getClass().getName();
             throw new IntactException(msg, de);
@@ -584,10 +573,9 @@ public class IntactHelper implements SearchI, Externalizable {
                 dao.update(obj);
 
             }
-        }
-        catch (Exception de) {
+        } catch (Exception de) {
             de.printStackTrace();
-            String msg = "intact helper: could not close data source connection properly";
+            String msg = "intact helper: failed to perform update on class " + obj.getClass().getName();
             throw new IntactException(msg, de);
 
         }
@@ -651,8 +639,7 @@ public class IntactHelper implements SearchI, Externalizable {
             fieldsToSearch = classToSearch.getFields();
 
             if (matchSubString) {
-            }
-            else {
+            } else {
 
                 //standard search - need to check all fields...
                 for (int i = 0; i < fieldsToSearch.length; i++) {
@@ -668,8 +655,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
                 //to get the list to return, must order the collection by "relevance"...
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
             //probablky a ClassNotFoundException
             throw new IntactException("error - possible class not found for " + objectType, e);
@@ -702,8 +688,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
             result = dao.iteratorFind(objectType, searchParam, searchValue);
 
-        }
-        catch (SearchException se) {
+        } catch (SearchException se) {
 
             //return to action servlet witha forward to error page command
             String msg = "intact helper: query by Iterator failed.. \n";
@@ -731,8 +716,7 @@ public class IntactHelper implements SearchI, Externalizable {
         try {
             result = dao.findColumnValues(type, cols);
             return result;
-        }
-        catch (SearchException se) {
+        } catch (SearchException se) {
             throw new IntactException("failed to get column data!", se);
         }
 
@@ -754,8 +738,7 @@ public class IntactHelper implements SearchI, Externalizable {
         try {
             result = dao.findBySQL(type, sqlString);
             return result;
-        }
-        catch (SearchException se) {
+        } catch (SearchException se) {
             throw new IntactException("failed to execute SQL string " + sqlString, se);
         }
     }
@@ -811,8 +794,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
                 return new ArrayList();
             }
-        }
-        catch (SearchException se) {
+        } catch (SearchException se) {
             se.printStackTrace();
             //return to action servlet witha forward to error page command
             String msg = "intact helper: unable to perform search operation.. \n";
@@ -894,8 +876,7 @@ public class IntactHelper implements SearchI, Externalizable {
                 return new ArrayList();
             }
 
-        }
-        catch (SearchException se) {
+        } catch (SearchException se) {
 
             //return to action servlet witha forward to error page command
             String msg = "intact helper: unable to perform search operation.. \n";
@@ -964,8 +945,7 @@ public class IntactHelper implements SearchI, Externalizable {
                     getterMethod = propsInfo[i].getReadMethod();
                     methodResult = getterMethod.invoke(base, null);
 
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
 
                     String msg = "error- unable to access getter methof for property" + propName;
                     throw new IntactException(msg, e);
@@ -989,8 +969,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
                         relations.add(it.next());
                     }
-                }
-                else {
+                } else {
 
                     relations.add(methodResult);
                 }
@@ -1001,16 +980,14 @@ public class IntactHelper implements SearchI, Externalizable {
 
             pr.info("intact helper: done prop processing for object " + base.getClass().getName());
 
-        }
-        else {
+        } else {
 
             pr.info("intact helper: no pre-loaded reflection info - starting reflection...");
             //no reflection data - have to use reflection directly
             try {
 
                 relations = reflect(base);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
 
                 //something went wrong during reflection...
                 String msg = "intact helper: unable to get relations - failed retrieval";
@@ -1081,8 +1058,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
                 //need to handle collection result here too....TBD
 
-            }
-            catch (NoSuchMethodException nme) {
+            } catch (NoSuchMethodException nme) {
 
                 //method does not exist in this object - do something
                 String msg1 = "Failed search: java NoSuchMethod exception thrown during reflection... \n";
@@ -1090,8 +1066,7 @@ public class IntactHelper implements SearchI, Externalizable {
                 String msg3 = "method Name: " + methodName;
                 String msg = msg1 + msg2 + msg3;
                 throw new Exception(msg);
-            }
-            catch (SecurityException se) {
+            } catch (SecurityException se) {
 
                 //not allowed to invoke it - do something
                 String msg1 = "Failed search: java Security exception thrown during refelction \n";
@@ -1099,8 +1074,7 @@ public class IntactHelper implements SearchI, Externalizable {
                 String msg3 = "method Name: " + methodName;
                 String msg = msg1 + msg2 + msg3;
                 throw new Exception(msg);
-            }
-            catch (IllegalArgumentException iae) {
+            } catch (IllegalArgumentException iae) {
 
                 //class does not specify such a method - do something
                 String msg1 = "Failed search: java IllegalArgument exception thrown during reflection \n";
@@ -1108,8 +1082,7 @@ public class IntactHelper implements SearchI, Externalizable {
                 String msg3 = "method Name: " + methodName;
                 String msg = msg1 + msg2 + msg3;
                 throw new Exception(msg);
-            }
-            catch (IllegalAccessException ae) {
+            } catch (IllegalAccessException ae) {
 
                 //method is not accessible (eg for security reasons) - do something
                 String msg1 = "Failed search: java IllegalAccess exception thrown during reflection \n";
@@ -1117,8 +1090,7 @@ public class IntactHelper implements SearchI, Externalizable {
                 String msg3 = "method Name: " + methodName;
                 String msg = msg1 + msg2 + msg3;
                 throw new Exception(msg);
-            }
-            catch (InvocationTargetException te) {
+            } catch (InvocationTargetException te) {
 
                 //method threw an exception - do something
                 String msg1 = "Failed search: java InvocationTarget exception thronw during reflection \n";
@@ -1220,8 +1192,7 @@ public class IntactHelper implements SearchI, Externalizable {
         if (results.size() > 1) {
             throw new IntactException("error - more than one result returned with query by "
                     + aPrimaryId + " ");
-        }
-        else {
+        } else {
             if (results.isEmpty()) {
                 return null;
             }
@@ -1358,8 +1329,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
         if (resultList.isEmpty()) {
             result = null;
-        }
-        else {
+        } else {
             Iterator i = resultList.iterator();
             result = i.next();
             if (i.hasNext()) {
@@ -1391,8 +1361,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
         if (resultList.isEmpty()) {
             result = null;
-        }
-        else {
+        } else {
             Iterator i = resultList.iterator();
             result = i.next();
             if (i.hasNext()) {
@@ -1427,8 +1396,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
         if (resultList.isEmpty()) {
             result = null;
-        }
-        else {
+        } else {
             Iterator i = resultList.iterator();
             result = i.next();
             if (i.hasNext()) {
@@ -1537,8 +1505,7 @@ public class IntactHelper implements SearchI, Externalizable {
         resultList = this.search(Experiment.class.getName(), "bioSource_ac", bioAc);
         if (resultList.isEmpty()) {
             result = null;
-        }
-        else {
+        } else {
             Iterator i = resultList.iterator();
             result = (Experiment) i.next();
             if (i.hasNext()) {
@@ -1659,8 +1626,7 @@ public class IntactHelper implements SearchI, Externalizable {
                 }
             }
 
-        }
-        catch (Exception de) {
+        } catch (Exception de) {
 
             String msg = "intact helper: error deleting collection elements";
             throw new IntactException(msg, de);
@@ -1703,8 +1669,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
         if (startNode instanceof Interaction) {
             graph = subGraphPartial((Interaction) startNode, graphDepth, experiments, complexExpansion, graph);
-        }
-        else if (startNode instanceof Interactor) {
+        } else if (startNode instanceof Interactor) {
             graph = subGraphPartial(startNode, graphDepth, experiments, complexExpansion, graph);
         }
         return graph;
@@ -1729,8 +1694,7 @@ public class IntactHelper implements SearchI, Externalizable {
         */
         if (partialGraph.isVisited(startNode)) {
             return partialGraph;
-        }
-        else {
+        } else {
             partialGraph.addVisited(startNode);
         }
 
@@ -1780,8 +1744,7 @@ public class IntactHelper implements SearchI, Externalizable {
         */
         if (partialGraph.isVisited(current)) {
             return partialGraph;
-        }
-        else {
+        } else {
             partialGraph.addVisited(current);
         }
 
@@ -1812,8 +1775,7 @@ public class IntactHelper implements SearchI, Externalizable {
                         if (i.hasNext()) {
                             baits.add(i.next());
                         }
-                    }
-                    else {
+                    } else {
                         baits = new ArrayList(1);
                         baits.add(bait);
                     }
@@ -1923,8 +1885,7 @@ public class IntactHelper implements SearchI, Externalizable {
         if (dao instanceof ObjectBridgeDAO) {
             try {
                 return ((ObjectBridgeDAO) dao).getJDBCConnection();
-            }
-            catch (LookupException le) {
+            } catch (LookupException le) {
                 throw new IntactException("Failed to get JDBC Connection!", le);
             }
         }
@@ -2018,14 +1979,12 @@ public class IntactHelper implements SearchI, Externalizable {
 
                 this.create(institution);
 
-            }
-            else {
+            } else {
                 // return the object found
                 institution = (Institution) result.iterator().next();
             }
 
-        }
-        else {
+        } else {
             throw new IntactException("Unable to read the properties from " + INSTITUTION_CONFIG_FILE);
         }
 
@@ -2059,8 +2018,7 @@ public class IntactHelper implements SearchI, Externalizable {
 
         if (obj instanceof VirtualProxy) {
             name = ((IntactObjectProxy) obj).getRealClassName();
-        }
-        else {
+        } else {
             name = obj.getClass();
         }
 
@@ -2126,14 +2084,12 @@ public class IntactHelper implements SearchI, Externalizable {
 
                 //try to create using given user details
                 dao = dataSource.getDAO(user, password);
-            }
-            else {
+            } else {
 
                 //create as default user
                 dao = dataSource.getDAO();
             }
-        }
-        catch (DataSourceException de) {
+        } catch (DataSourceException de) {
             String msg = "failed to create a DAO when it was (somehow!) originally null";
             throw new IntactException(msg, de);
         }
