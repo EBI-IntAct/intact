@@ -113,6 +113,9 @@ public class CvAddAction extends IntactBaseAction {
                 super.saveErrors(request);
                 return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
             }
+            // Set the new object as the current edit object.
+            user.setCurrentEditObject(cvobj);
+
             // Need to set the new CV object in a view bean to display on the
             // screen for it to display.
             CvViewBean viewbean = super.getViewBean(session);
