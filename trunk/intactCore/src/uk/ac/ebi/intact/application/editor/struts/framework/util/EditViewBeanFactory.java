@@ -31,14 +31,14 @@ public class EditViewBeanFactory {
     private Map nameToView = new HashMap();
 
     /**
-     * BioSource editor is stored under this key.
-     */
-    private static final String BIOSRC_EDITOR = "biosource";
-
-    /**
      * CV editor is stored under this key.
      */
-    private static final String CV_EDITOR = "cv";
+    public static final String CV_EDITOR = "0";
+
+    /**
+     * BioSource editor is stored under this key.
+     */
+    public static final String BIOSRC_EDITOR = "1";
 
     /**
      * Factory method to return an instance of an Edit view bean.
@@ -52,12 +52,10 @@ public class EditViewBeanFactory {
         AbstractEditViewBean viewbean;
         if (annot.getClass().equals(BioSource.class)) {
             viewbean = getBioSourceEditor((BioSource) annot);
-//            System.out.println("Returning a biosource instance");
         }
         else {
             // Assume it is an CV object.
             viewbean = getCvEditor((CvObject) annot);
-//            System.out.println("Returning a cv instance");
         }
         return viewbean;
     }
