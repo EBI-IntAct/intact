@@ -7,7 +7,6 @@
 package uk.ac.ebi.intact.application.editor.struts.action.feature;
 
 import org.apache.struts.action.*;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
@@ -114,9 +113,6 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // The parent view of the current view.
         InteractionViewBean intView = view.getParentView();
 
-        // The interaction we are going back to.
-        user.setView(intView);
-
         // Update individual Features if in mutation mode.
         if (view.isInMutationMode()) {
             // features variable can never be null when in mutation mode. At least
@@ -131,6 +127,9 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         }
         // Turn off mutation mode (or else you will get mutation screen again)
         view.turnOffMutationMode();
+
+        // The interaction we are going back to.
+        user.setView(intView);
 
         // Return to the interaction editor.
         return mapping.findForward(INT);

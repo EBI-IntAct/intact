@@ -82,7 +82,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         Feature feature = fb.getFeature();
 
         // Set the new object as the current edit object.
-        user.setView(feature);
+        user.setViewFeature(feature);
 
         // The feature view bean.
         FeatureViewBean featureView = (FeatureViewBean) user.getView();
@@ -120,7 +120,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         user.setSelectedTopic("Feature");
 
         // Set the new object as the current edit object.
-        user.setView(Feature.class);
+        user.setViewFeature();
 
         // The feature view bean.
         FeatureViewBean featureView = (FeatureViewBean) user.getView();

@@ -67,11 +67,14 @@ public class InteractionDeleteAction extends DeleteFormAction {
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
         // No further processing if not returning back to exp.
+//        if (!user.hasSourceToGoBack()) {
+//            return forward;
+//        }
         if (!view.isSourceFromAnExperiment()) {
             return forward;
         }
         // The AC of the experiment.
-        String ac = view.getSourceExperimentAc();
+        String ac = (String) user.getSourceToReturn().getValue();
 
         // The intact helper to access the persistent layer.
         IntactHelper helper = user.getIntactHelper();
@@ -79,7 +82,7 @@ public class InteractionDeleteAction extends DeleteFormAction {
             // Remove it from the cache first.
             helper.removeFromCache(helper.getObjectByAc(Experiment.class, ac));
             // Sets the destination experiment to return to.
-            setDestinationExperiment(request, helper);
+            setDestinationView(request, helper);
             // Back to the experiment editor.
             forward = mapping.findForward(EXP);
         }

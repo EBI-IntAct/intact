@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.editor.event.LogoutEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.IntactException;
@@ -23,6 +24,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
@@ -180,12 +182,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private Collection mySearchCache = new ArrayList();
 
     /**
-     * The factory to create various views; e.g., CV, BioSource. The factory lasts
-     * only for a session, hence it is transient. One factory per user.
-     */
-    private transient EditViewBeanFactory myViewFactory;
-
-    /**
      * The name of the current user.
      */
     private String myUserName;
@@ -307,7 +303,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * method sets the logout time.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
-        getLogger().info("User is about to unbound");
+//        getLogger().info("User is about to unbound");
         ServletContext ctx = event.getSession().getServletContext();
         LockManager lm = (LockManager) ctx.getAttribute(EditorConstants.LOCK_MGR);
 
@@ -317,10 +313,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         listener.notifyObservers(new LogoutEvent(getUserName()));
 
         // Not an error, just a logging statemet to see values are unbound or not
-        getLogger().error("User unbound: " + getUserName());
+//        getLogger().error("User unbound: " + getUserName());
 
         // Release all the locks held by this user.
         lm.releaseAllLocks(getUserName());
+
+        // Release the current view back to the pool.
+        releaseView();
     }
 
     // Override Objects's equal method.
@@ -367,31 +366,57 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditView;
     }
 
-    public void setView(AbstractEditViewBean view) {
+    public void setView(InteractionViewBean view) {
+        // Return the view back to the pool.
+        releaseView();
         myEditView = view;
     }
 
     public void setView(Class clazz) {
         // Start editing the object.
         startEditing();
+        // Return the view back to the pool.
+        releaseView();
         // The new view based on the class type.
-        myEditView = myViewFactory.factory(clazz);
-        myEditView.reset();
+        myEditView = EditViewBeanFactory.getInstance().borrowObject(clazz);
+        myEditView.reset(clazz);
     }
 
     public void setView(AnnotatedObject annobj) {
         // Start editing the object.
         startEditing();
+        // Return the view back to the pool.
+        releaseView();
         // View based on the class for given edit object.
-        myEditView = myViewFactory.factory(IntactHelper.getRealClassName(annobj));
+        myEditView = EditViewBeanFactory.getInstance().borrowObject(
+                IntactHelper.getRealClassName(annobj));
         // Resets the view with the new annotated object.
         myEditView.reset(annobj);
     }
 
     public void setClonedView(AnnotatedObject obj) {
         startEditing();
-        myEditView = myViewFactory.factory(IntactHelper.getRealClassName(obj));
+        // Return the view back to the pool.
+        releaseView();
+        myEditView = EditViewBeanFactory.getInstance().borrowObject(
+                IntactHelper.getRealClassName(obj));
         myEditView.resetClonedObject(obj, this);
+    }
+
+    public void setViewFeature() {
+        // Start editing the object.
+        startEditing();
+        // We are not releasing the view to preserve the existing interaction view
+        myEditView = EditViewBeanFactory.getInstance().borrowObject(Feature.class);
+        myEditView.reset(Feature.class);
+    }
+
+    public void setViewFeature(Feature feature) {
+        // Start editing the object.
+        startEditing();
+        // We are not releasing the view to preserve the existing interaction view
+        myEditView = EditViewBeanFactory.getInstance().borrowObject(Feature.class);
+        myEditView.reset(feature);
     }
 
     public String getSelectedTopic() {
@@ -445,13 +470,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         helper.deleteAllElements(annobj.getXrefs());
         annobj.getXrefs().clear();
 
-        // Reset the view.
-        myEditView.reset();
+        // Return the view back to the pool.
+        releaseView();
     }
 
     public void cancelEdit() {
         endEditing();
-        myEditView.reset();
+        // Return the view back to the pool.
+        releaseView();
     }
 
     public ResultWrapper getSPTRProteins(String pid, int max) throws IntactException {
@@ -665,8 +691,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         catch (UpdateProteinsI.UpdateException e) {
             throw new IntactException("Unable to create the Protein factory");
         }
-        // Create the factories.
-        myViewFactory = new EditViewBeanFactory();
     }
 
     /**
@@ -682,6 +706,12 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     private Logger getLogger() {
         return Logger.getLogger(EditorConstants.LOGGER);
+    }
+
+    private void releaseView() {
+        if (myEditView != null) {
+            EditViewBeanFactory.getInstance().returnObject(myEditView);
+        }
     }
 
     /**

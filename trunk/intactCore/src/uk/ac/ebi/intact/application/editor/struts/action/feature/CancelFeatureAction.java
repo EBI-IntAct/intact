@@ -60,9 +60,6 @@ public class CancelFeatureAction extends AbstractEditorAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // Cancel the current edit session.
-        user.cancelEdit();
-
         // The current view.
         FeatureViewBean view = (FeatureViewBean) user.getView();
 

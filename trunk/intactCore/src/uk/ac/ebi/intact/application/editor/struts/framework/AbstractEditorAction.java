@@ -21,7 +21,6 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -257,7 +256,6 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         user.updateSearchCache(annobj);
     }
 
-
     /**
      * Sets the destination interaction to edit. As a pre requisite
      * the existing view must be of Feature type.
@@ -277,34 +275,8 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         // The interaction view to get the AC and the source exp (if any).
         InteractionViewBean intView = ((FeatureViewBean) user.getView()).getParentView();
 
-        // The AC of the interaction to go back to.
-        String ac = intView.getAc();
-
-        // The source experiment (where the experiment came from).
-        String sourceExpAc = intView.getSourceExperimentAc();
-
-        // The helper to access to object for given ac.
-        IntactHelper helper = new IntactHelper();
-
-        // The interaction we have been editing.
-        Interaction interaction;
-        try {
-            interaction = (Interaction) helper.getObjectByAc(Interaction.class, ac);
-        }
-        finally {
-            helper.closeStore();
-        }
-        // Set the topic.
-        user.setSelectedTopic(EditorService.getTopic(Interaction.class));
-
-        // The interaction we going back to.
-        user.setView(interaction);
-
-        // The previous setView resets the source experiment, so this step must
-        // done after.
-        if (sourceExpAc != null) {
-            intView.setSourceExperimentAc(sourceExpAc);
-        }
+        // The interaction we are going back to.
+        user.setView(intView);
     }
 
     /**

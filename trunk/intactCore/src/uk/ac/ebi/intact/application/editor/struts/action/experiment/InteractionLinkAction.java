@@ -90,6 +90,7 @@ public class InteractionLinkAction extends CommonDispatchAction {
         user.setView(inter);
 
         // Set the experiment AC, so we can come back to this experiment again.
+        System.out.println("Just about to set the source exp: " + expAc);
         ((InteractionViewBean) user.getView()).setSourceExperimentAc(expAc);
 
         // Update the form.

@@ -178,15 +178,10 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Override to provide the menus for this view.
-     * @return a map of menus for this view. It consists of common menus for
-     * annotation/xref, cell (add) and tissue (add).
+     * Override to load the menus for this view.
      * @throws IntactException for errors in accessing the persistent system.
      */
-    public Map getMenus() throws IntactException {
-        if (!myMenus.isEmpty()) {
-            return myMenus;
-        }
+    public void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
@@ -207,6 +202,14 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         finally {
             helper.closeStore();
         }
+        System.out.println("BS Menus loaded");
+    }
+
+    /**
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref, cell (add) and tissue (add).
+     */
+    public Map getMenus() {
         return myMenus;
     }
 

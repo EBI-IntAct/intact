@@ -279,17 +279,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 //        }
 //    }
 
-    /**
-     * Override to provide the menus for this view.
-     * @return a map of menus for this view. It consists of common menus for
-     * annotation/xref, organism (add or edit), CV interaction (add or edit) and
-     * CV identification (add or edit).
-     * @throws IntactException for errors in accessing the persistent system.
-     */
-    public Map getMenus() throws IntactException {
-        if (!myMenus.isEmpty()) {
-            return myMenus;
-        }
+    public void loadMenus() throws IntactException {
         // Handler to the menu factory.
         EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
@@ -317,6 +307,15 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         finally {
             helper.closeStore();
         }
+    }
+
+    /**
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref, organism (add or edit), CV interaction (add or edit) and
+     * CV identification (add or edit).
+     */
+    public Map getMenus() {
         return myMenus;
     }
 

@@ -296,16 +296,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
     }
 
-    /**
-     * Override to provide the menus for this view.
-     * @return a map of menus for this view. It consists of common menus for
-     * annotation/xref, organism (add), interaction type and role (add & edit).
-     * @throws IntactException for errors in accessing the persistent system.
-     */
-    public Map getMenus() throws IntactException {
-        if (!myMenus.isEmpty()) {
-            return myMenus;
-        }
+    public void loadMenus() throws IntactException {
         // Holds the menu name.
         String name;
 
@@ -342,7 +333,14 @@ public class InteractionViewBean extends AbstractEditViewBean {
         name = EditorMenuFactory.ROLE;
         menu = (List) myMenus.get(name);
         myMenus.put(name + "_", menuFactory.convertToAddMenu(name, menu));
+    }
 
+    /**
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref, organism (add), interaction type and role (add & edit).
+     */
+    public Map getMenus() {
         return myMenus;
     }
 
