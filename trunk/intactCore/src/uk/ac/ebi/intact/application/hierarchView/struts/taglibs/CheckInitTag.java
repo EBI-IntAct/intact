@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
  */
 public class CheckInitTag  extends TagSupport {
 
-    // LOGGER
     private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     // Name of the page we forward to in case of error

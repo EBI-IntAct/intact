@@ -42,9 +42,6 @@ public class IntactUser implements HttpSessionBindingListener {
 
     private IntactHelper intactHelper;
 
-    public IntactHelper getIntactHelper() {
-        return intactHelper;
-    }
 
 
     /**
@@ -130,7 +127,7 @@ public class IntactUser implements HttpSessionBindingListener {
                                         Collection experiments,
                                         int complexExpansion) throws IntactException {
 
-        logger.info("Starting graph generation (" + startNode + ", depth=" + graphDepth);
+        logger.info("Starting graph generation (" + startNode.getAc() + ", depth=" + graphDepth);
         InteractionNetwork in = new InteractionNetwork ();
         Graph graph = in;
 
@@ -140,7 +137,8 @@ public class IntactUser implements HttpSessionBindingListener {
                                        complexExpansion,
 			                           graph);
 
-        logger.info("Graph generation complete");
+        logger.info("Graph generation complete\n" + graph);
+
         return (InteractionNetwork) graph;
     } // subGraph
 

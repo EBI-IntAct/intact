@@ -23,11 +23,16 @@ import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.simpleGraph.Node;
 import uk.ac.ebi.intact.simpleGraph.NodeI;
 
-import java.awt.*;
+import java.rmi.RemoteException;
+import java.awt.Color;
 import java.util.*;
+
+import org.apache.log4j.Logger;
+
 
 public class InteractionNetwork extends Graph {
 
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /*********************************************************************** StrutsConstants */
     private static int DEFAULT_COLOR_NODE_RED   = 0;
@@ -289,19 +294,17 @@ public class InteractionNetwork extends Graph {
         ProteinCoordinate[] result;
         TulipClient client  = new TulipClient();
 
-        // Call Tulip Web Service
-        // if (!client.isReady()) throw new IOException ("Unable to create Tulip Web service");
-
-        // get coordinates
+        // Call Tulip Web Service : get
         try {
             result = client.getComputedTlpContent(dataTlp);
-        } catch (Exception e) {
+        } catch (RemoteException e) {
             throw e;
         }
 
         if (null == result) {
             // throw new IOException ("Tulip send back no data.");
             String[] errors = client.getErrorMessages (true);
+            logger.warn (errors.length + " error(s) returned by the Tulip web service");
             return errors;
         } else {
             // update protein coordinates
@@ -318,10 +321,11 @@ public class InteractionNetwork extends Graph {
                 protein.put (Constants.ATTRIBUTE_COORDINATE_X, x);
                 protein.put (Constants.ATTRIBUTE_COORDINATE_Y, y);
             } // for
+
+            logger.info ("Protein coordinates updated");
         } // else
 
         return null;
-
     } //importDataToImage
 
 } // InteractionNetwork
