@@ -1,106 +1,96 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE struts-config PUBLIC
- 	"-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
-	"http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
 
-<!--
-    Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
-    All rights reserved. Please see the file LICENSE in the root directory of
-    this distribution.
-
-     The Struts configuration file for the editor.
-     Version: $Id$
-     Author: Sugath Mudali (smudali@ebi.ac.uk)
--->
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
 
 <struts-config>
 
-    <!-- ========== Form Bean Definitions =================================== -->
-    <form-beans>
+  <!-- ========== Data Sources Definitions =================================== -->
+  <!--
+    Define your Struts data sources in a file called struts-data-sources.xml and place
+    it in your merge directory.
+  -->
 
-        <!-- logon form bean -->
-        <form-bean name="loginForm"
-            type="org.apache.struts.validator.DynaValidatorForm">
-            <form-property name="username" type="java.lang.String"/>
-            <form-property name="password" type="java.lang.String"/>
+  <!-- ========== Form Bean Definitions =================================== -->
+  <form-beans>
 
-            <!-- These two fields are only set when accessing an editor page
-                 directly. It is important to keep property names as they appear
-                 in ResultAction & LoginAction classes, loginInput.jsp.
-            -->
-            <form-property name="ac" type="java.lang.String"/>
-            <form-property name="type" type="java.lang.String"/>
-        </form-bean>
+    <form-bean
+      name="expForm"
+      type="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm"
+    />
+    <form-bean
+      name="loginForm"
+      type="uk.ac.ebi.intact.application.editor.struts.security.LoginForm"
+    />
+    <form-bean
+      name="featureForm"
+      type="uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm"
+    />
+    <form-bean
+      name="intForm"
+      type="uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm"
+    />
+    <form-bean
+      name="cvForm"
+      type="uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm"
+    />
+    <form-bean
+      name="bsForm"
+      type="uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionForm"
+    />
+    <form-bean
+      name="seqForm"
+      type="uk.ac.ebi.intact.application.editor.struts.view.sequence.SequenceActionForm"
+    />
 
-        <!-- The sidebar form -->
-        <form-bean name="sidebarForm"
-            type="org.apache.struts.action.DynaActionForm">
-            <form-property name="topic" type="java.lang.String"/>
-            <form-property name="searchString" initial="*" type="java.lang.String"/>
-        </form-bean>
+       <!-- The sidebar form -->
+    <form-bean name="sidebarForm"
+        type="org.apache.struts.action.DynaActionForm">
+        <form-property name="topic" type="java.lang.String"/>
+        <form-property name="searchString" initial="*" type="java.lang.String"/>
+    </form-bean>
 
-        <!-- For /results action -->
-        <form-bean name="dummyForm" type="org.apache.struts.action.DynaActionForm"/>
+    <!-- For /results action -->
+    <form-bean name="dummyForm" type="org.apache.struts.action.DynaActionForm"/>
 
-        <!-- Form for a CV object -->
-        <form-bean name="cvForm"
-            type="uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm"/>
+  </form-beans>
 
-        <!-- Form for an Experiment -->
-        <form-bean name="expForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm"/>
+  <!-- ========== Global Exceptions Definitions =================================== -->
+  <global-exceptions>
+    <!-- IntAct internal error -->
+    <exception
+        handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+        key="error.intact"
+        path="error.layout"
+        type="uk.ac.ebi.intact.business.IntactException"/>
 
-        <!-- Form for a BioSource -->
-        <form-bean name="bsForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionForm"/>
+    <exception
+        key="error.session.expired"
+        path="login.error.layout"
+        type="uk.ac.ebi.intact.application.editor.exception.SessionExpiredException"/>
 
-        <!-- Form for an Interaction -->
-        <form-bean name="intForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm"/>
+    <!-- Failure to search the database -->
+    <exception
+        handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+        type="uk.ac.ebi.intact.application.editor.exception.SearchException"
+        key="dummy.key"
+        path="/do/cv/fill/form"/>
 
-        <!-- Form for a Feature -->
-        <form-bean name="featureForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm"/>
-    </form-beans>
+    <!-- Uses the input for validation exceptions -->
+    <exception
+        handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+        type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
+        key="dummy.key"/>
 
-    <!-- ========== Global Exceptions ======================================= -->
+    <!-- Any other exception -->
+    <exception
+        handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+        key="error.intact"
+        path="error.layout"
+        type="java.lang.Exception"/>
+</global-exceptions>
 
-    <global-exceptions>
-        <!-- IntAct internal error -->
-        <exception
-            handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-            key="error.intact"
-            path="error.layout"
-            type="uk.ac.ebi.intact.business.IntactException"/>
-
-        <exception
-            key="error.session.expired"
-            path="login.error.layout"
-            type="uk.ac.ebi.intact.application.editor.exception.SessionExpiredException"/>
-
-        <!-- Failure to search the database -->
-        <exception
-            handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-            type="uk.ac.ebi.intact.application.editor.exception.SearchException"
-            key="dummy.key"
-            path="/do/cv/fill/form"/>
-
-        <!-- Uses the input for validation exceptions -->
-        <exception
-            handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-            type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
-            key="dummy.key"/>
-
-        <!-- Any other exception -->
-        <exception
-            handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-            key="error.intact"
-            path="error.layout"
-            type="java.lang.Exception"/>
-    </global-exceptions>
-
-    <!-- ========== Global Forward Definitions ============================== -->
-    <global-forwards>
+  <!-- ========== Global Forward Definitions =================================== -->
+      <global-forwards>
         <!-- Need this global forward from the index.jsp -->
         <forward name="login" path="/do/welcome"/>
 
@@ -111,725 +101,994 @@
         <forward name="search" path="search.layout"/>
     </global-forwards>
 
-    <!-- ========== Action Mapping Definitions ============================== -->
-    <action-mappings>
-
-        <!-- This action is responsible for which editor to choose. -->
-        <action path="/choose"
-            type="uk.ac.ebi.intact.application.editor.struts.action.EditorChoiceAction"
-            scope="request">
-            <forward name="cv" path="/do/cv/fill/form"/>
-            <forward name="exp" path="/do/exp/fill/form"/>
-            <forward name="biosrc" path="/do/bs/fill/form"/>
-            <forward name="int" path="/do/int/fill/form"/>
-        </action>
-
-        <!-- The starting point for the application; display the login layout. -->
-        <action path="/welcome"
-            type="org.apache.struts.actions.ForwardAction"
-            parameter="login.layout">
-        </action>
-
-        <!-- Process a user logout -->
-        <action path="/logout"
-            type="uk.ac.ebi.intact.application.editor.struts.security.LogoutAction">
-            <forward name="success" path="/do/welcome"/>
-        </action>
-
-        <!-- Process a user logon. -->
-        <action path="/login"
-            type="uk.ac.ebi.intact.application.editor.struts.security.LoginAction"
-            name="loginForm"
-            scope="request"
-            input="login.error.layout">
-            <!-- Invalid user -->
-            <exception key="error.invalid.user"
-                type="uk.ac.ebi.intact.business.IntactException"
-                path="login.error.layout"/>
-            <!-- Can't connect to the datasource -->
-            <exception key="error.datasource"
-                type="uk.ac.ebi.intact.persistence.DataSourceException"
-                path="login.error.layout"/>
-            <!-- Unable to load menus from database -->
-            <exception key="error.init.menu"
-                type="uk.ac.ebi.intact.persistence.SearchException"
-                path="login.error.layout"/>
-            <!-- Successful login; present the search page. -->
-            <forward name="success" path="search.layout"/>
-
-            <!-- Redirect to processing the query (already selected what to edit)
-                 This will only happen when accessing an editor page directly.
-            -->
-            <forward name="redirect" path="/do/secure/edit"/>
-        </action>
-
-        <!-- This action is called by tiles when displaying the header. The
-             header is changed for editing a CV object. No forward is associated
-             with this action.
-        -->
-        <action path="/tiles/headerSwitch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.util.HeaderSwitchAction">
-        </action>
-
-        <action path="/tiles/editorSwitch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.util.EditorSwitchAction">
-        </action>
-
-        <!-- Process an action for the sidebar. -->
-        <action path="/sidebar"
-            name="sidebarForm"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SidebarDispatchAction"
-            scope="request"
-            parameter="dispatch">
-            <!-- Multiple results found; global action -->
-
-            <!-- Single item found for the search -->
-            <forward name="single" path="/do/choose"/>
-            <!-- Select the appropriate editor for the new record. -->
-            <forward name="create" path="/do/choose"/>
-        </action>
-
-        <!-- Fill the form with search results for the JSP to display. -->
-        <action path="/showResults"
-            type="org.apache.struts.actions.ForwardAction"
-            parameter="match.layout">
-        </action>
-
-        <!-- Process when a user selects an Editor object from a search result. -->
-        <action path="/secure/edit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.ResultAction"
-            name="dummyForm"
-            scope="request">
-            <!-- Select the appropriate editor based on the selected topic. -->
-            <forward name="success" path="/do/choose"/>
-        </action>
-
-        <!-- This action is responsible for which editor to choose. -->
-        <action path="/choose"
-            type="uk.ac.ebi.intact.application.editor.struts.action.EditorChoiceAction"
-            scope="request">
-            <forward name="cv" path="/do/cv/fill/form"/>
-            <forward name="exp" path="/do/exp/fill/form"/>
-            <forward name="biosrc" path="/do/bs/fill/form"/>
-            <forward name="int" path="/do/int/fill/form"/>
-        </action>
-
-        <!-- ==================== Actions for setting up editors ========== -->
-
-        <!-- This action fills the cv form. -->
-        <action path="/cv/fill/form"
-            type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
-            name="cvForm"
-            validate="false"
-            scope="session">
-            <forward name="success" path="edit.layout"/>
-        </action>
-
-        <!-- This action fills the exp form. -->
-        <action path="/exp/fill/form"
-            type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
-            name="expForm"
-            validate="false"
-            scope="session">
-            <forward name="success" path="edit.layout"/>
-        </action>
-
-        <!-- Populates the biosource form. -->
-        <action path="/bs/fill/form"
-            type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
-            name="bsForm"
-            validate="false"
-            scope="session">
-            <forward name="success" path="edit.layout"/>
-        </action>
-
-        <!-- This action fills the Interaction form. -->
-        <action path="/int/fill/form"
-            type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
-            name="intForm"
-            validate="false"
-            scope="session">
-            <forward name="success" path="edit.layout"/>
-        </action>
-
-        <!-- This action fills the Feature form. -->
-        <action path="/feature/fill/form"
-            type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
-            name="featureForm"
-            validate="false"
-            scope="session">
-            <forward name="success" path="edit.layout"/>
-        </action>
-
-        <!-- ============= Actions related to CV editor =================== -->
-
-        <!-- Responsible for dispatching action events dependent on the various
-             submit buttons (submit, cancel, delete, add annotation/xref) on the
-             CV editor.
-        -->
-        <action path="/cvDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
-            name="cvForm"
-            validate="false"
-            scope="session">
-
-            <forward name="submit" path="/do/cv/submit"/>
-            <forward name="cancel" path="/do/cancel"/>
-            <forward name="delete" path="/do/delete"/>
-            <forward name="annotation" path="/do/cv/annot/submit"/>
-            <forward name="xref" path="/do/cv/xref/submit"/>
-        </action>
-
-        <!-- Action to handle when the Submit/Cancel/Delete button is pressed -->
-        <action path="/cv/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction"
-            name="cvForm"
-            input="edit.layout"
-            validate="true"
-            scope="session"
-            parameter="dispatch">
-            <forward name="success" path="edit.layout"/>
-
-            <!-- Back to the results page as we got here from a search result (global) -->
-            <!-- Back to the search page  (global) -->
-        </action>
-
-        <!-- Action to handle when a button (edit/save/delete) related to annotation
-             is activated
-        -->
-        <action path="/cv/annot/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
-            name="cvForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" />
-
-        <!-- Action to handle when a button (edit/save/delete) related to xref
-             is activated
-        -->
-        <action path="/cv/xref/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
-            name="cvForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" />
-
-        <!-- ============= Actions related to Experiment editor =========== -->
-
-        <!-- Responsible for dispatching action events dependent on the various
-             submit buttons (submit, cancel, delete, add annotation/xref) on the
-             Experiment editor.
-        -->
-        <action path="/expDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
-            name="expForm"
-            validate="false"
-            scope="session">
-
-            <forward name="submit" path="/do/exp/submit"/>
-            <forward name="cancel" path="/do/cancel"/>
-            <forward name="delete" path="/do/delete"/>
-            <forward name="annotation" path="/do/exp/annot/submit"/>
-            <forward name="xref" path="/do/exp/xref/submit"/>
-            <forward name="interaction" path="/do/interaction"/>
-            <forward name="exp.int.hold" path="/do/exp/int/hold"/>
-            <forward name="exp.int.search" path="/do/exp/int/search"/>
-        </action>
-
-        <!-- Action to handle when the Submit button is pressed.
-             Note the same action as CV is used here. It is because there are
-             no actions specific to the Experiment editor.
-             -->
-        <action path="/exp/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction"
-            name="expForm"
-            input="edit.layout"
-            validate="true"
-            scope="session"
-            parameter="dispatch">
-            <forward name="success" path="edit.layout"/>
-            <!-- Reload with cloned data -->
-            <forward name="reload" path="/do/exp/fill/form"/>
-
-            <!-- Back to the results page as we got here from a search result (global) -->
-        </action>
-
-        <!-- Action to handle when a button (edit/save/delete) related to annotation
-             is activated
-        -->
-        <action path="/exp/annot/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
-            name="expForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" />
-
-        <!-- Action to handle when a button (edit/save/delete) related to xref
-             is activated
-        -->
-        <action path="/exp/xref/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
-            name="expForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" />
-
-        <!-- Action to handle when an interaction is deleted/edited from the Experiment.
-        -->
-        <action path="/interaction"
-            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionAction"
-            name="expForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" >
-            <forward name="editInt" path="/do/int/link"/>
-        </action>
-
-        <!-- Links an Interaction from an Experiment. The validate must be set to
-             true for the form to be validated before saving the current experiment.
-        -->
-        <action path="/int/link"
-            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionLinkAction"
-            name="expForm"
-            input="edit.layout"
-            validate="true"
-            scope="session" >
-            <forward name="success" path="/do/int/fill/form"/>
-        </action>
-
-        <!-- Action to handle when an experiment is added to an Interaction
-             hidden from the current view.
-        -->
-        <action path="/exp/int/hold"
-            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionHoldAction"
-            name="expForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" >
-        </action>
-
-        <!-- Action to handle when an interaction is added to the experiment or
-             hidden from the current view.
-        -->
-        <action path="/exp/int/search"
-            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionDispatchAction"
-            name="expForm"
-            input="edit.layout"
-            validate="false"
-            scope="session"
-            parameter="dispatch">
-        </action>
-
-        <!-- ============= Actions related to BioSource editor ============ -->
-
-        <!-- Responsible for dispatching action events dependent on the various
-             submit buttons (submit, cancel, delete, add annotation/xref) on the
-             BioSource editor.
-        -->
-        <action path="/bsDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
-            name="bsForm"
-            validate="false"
-            scope="session">
-
-            <forward name="submit" path="/do/bs/submit"/>
-            <forward name="cancel" path="/do/cancel"/>
-            <forward name="delete" path="/do/delete"/>
-            <forward name="annotation" path="/do/bs/annot/submit"/>
-            <forward name="xref" path="/do/bs/xref/submit"/>
-            <forward name="taxid" path="/do/bs/taxid"/>
-        </action>
-
-        <!-- Action to handle when the Submit/Cancel/Delete button is pressed -->
-        <action path="/bs/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction"
-            name="bsForm"
-            input="edit.layout"
-            validate="true"
-            scope="session"
-            parameter="dispatch">
-            <forward name="success" path="edit.layout"/>
-            <!-- Back to the results page as we got here from a search result (global) -->
-            <!-- Back to the search page  (global) -->
-        </action>
-
-        <!-- Action to handle when a button (edit/save/delete) related to annotation
-             is activated
-        -->
-        <action path="/bs/annot/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
-            name="bsForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" />
-
-        <!-- Action to handle when a button (edit/save/delete) related to xref
-             is activated
-        -->
-        <action path="/bs/xref/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
-            name="bsForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" />
-
-        <!-- Action to handle when a tax id is entered. validate is set to false
-             to stop validating short label as well (short label is set via
-             newt server).
-        -->
-        <action path="/bs/taxid"
-            type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceAction"
-            name="bsForm"
-            input="edit.layout"
-            validate="false"
-            scope="session">
-        </action>
-
-        <!-- ============= Actions related to Interaction editor ============ -->
-
-        <!-- Responsible for dispatching action events dependent on the various
-             submit buttons (submit, cancel, delete, add annotation/xref) on the
-             Interaction editor.
-        -->
-        <action path="/intDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
-            name="intForm"
-            validate="false"
-            scope="session">
-
-            <forward name="submit" path="/do/int/submit"/>
-            <forward name="cancel" path="/do/int/cancel"/>
-            <forward name="delete" path="/do/delete"/>
-
-            <forward name="annotation" path="/do/int/annot/submit"/>
-            <forward name="xref" path="/do/int/xref/submit"/>
-
-            <forward name="int.exp.del" path="/do/int/exp/del"/>
-            <forward name="int.exp.hold" path="/do/int/exp/hold"/>
-            <forward name="int.exp.search" path="/do/int/exp/search"/>
-
-            <forward name="int.prot" path="/do/int/prot"/>
-            <forward name="int.prot.search" path="/do/int/prot/search"/>
-
-            <!-- Action to handle edit/delete of a Feature -->
-            <forward name="int.feature" path="/do/int/feature"/>
-
-            <!-- Action to handle link/unlink a Feature -->
-            <forward name="int.feature.link" path="/do/int/feature/link"/>
-
-        </action>
-
-        <!-- Action to handle when an Interaction is Submitted -->
-        <action path="/int/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.SubmitButtonAction"
-            name="intForm"
-            input="edit.layout"
-            validate="true"
-            scope="session"
-            parameter="dispatch">
-            <!-- Reload with cloned data -->
-            <forward name="reload" path="/do/int/fill/form"/>
-            <!-- Back to the edit page via a display -->
-            <forward name="success" path="/do/display"/>
-            <!-- Back to the results page as we got here from a search result (global) -->
-            <!-- Back to the experiment editor (where we came from) -->
-            <forward name="experiment" path="/do/exp/fill/form"/>
-        </action>
-
-        <!--
-             Action to handle when an Interaction is cancelled.
-        -->
-        <action path="/int/cancel"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionCancelAction"
-            name="intForm"
-            validate="false"
-            scope="session">
-            <!-- Back to the results page as we got here from a search result (global) -->
-            <!-- Back to the experiment editor (Interaction editor) -->
-            <forward name="experiment" path="/do/exp/fill/form"/>
-        </action>
-
-        <!-- Action to handle when a button (edit/save/delete) related to annotation
-             is activated
-        -->
-        <action path="/int/annot/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
-            name="intForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" />
-
-        <!-- Action to handle when a button (edit/save/delete) related to xref
-             is activated
-        -->
-        <action path="/int/xref/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
-            name="intForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" />
-
-        <!-- Action to handle when an experiment is deleted from an Interaction.
-        -->
-        <action path="/int/exp/del"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentAction"
-            name="intForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" >
-        </action>
-
-        <!-- Action to handle when an experiment is added to or hidden from the hold area.
-        -->
-        <action path="/int/exp/hold"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentHoldAction"
-            name="intForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" >
-        </action>
-
-        <!-- Action to handle when an experiment is added to or deleted from an Interaction.
-        -->
-        <action path="/int/exp/search"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentDispatchAction"
-            name="intForm"
-            input="edit.layout"
-            validate="false"
-            scope="session"
-            parameter="dispatch">
-        </action>
-
-        <!-- Action to handle when a Protein is saved/deleted or edited. -->
-        <action path="/int/prot"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinDispatchAction"
-            name="intForm"
-            input="edit.layout"
-            validate="true"
-            scope="session"
-            parameter="dispatchProtein">
-        </action>
-
-        <!-- Action to handle for the Protein search. -->
-        <action path="/int/prot/search"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinSearchAction"
-            name="intForm"
-            input="edit.layout"
-            validate="false"
-            scope="session">
-        </action>
-
-        <!-- Action to handle add/edit/delete of a Feature. -->
-        <action path="/int/feature"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FeatureDispatchAction"
-            name="intForm"
-            input="edit.layout"
-            validate="true"
-            scope="session"
-            parameter="dispatchFeature">
-            <!-- Linking to the feature editor -->
-            <forward name="success" path="/do/feature/fill/form"/>
-        </action>
-
-        <!-- Action to handle link/unlink of a Feature. -->
-        <action path="/int/feature/link"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FeatureLinkAction"
-            name="intForm"
-            input="edit.layout"
-            validate="true"
-            scope="session"
-            parameter="dispatch">
-        </action>
-
-        <!-- ============= Actions related to the Feature editor ============ -->
-
-        <!-- Responsible for dispatching action events dependent on the various
-             submit buttons (submit, cancel, delete, add annotation/xref) on the
-             Feature editor.
-        -->
-        <action path="/featureDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
-            name="featureForm"
-            validate="false"
-            scope="session">
-
-            <forward name="submit" path="/do/feature/submit"/>
-            <forward name="cancel" path="/do/feature/cancel"/>
-
-            <!-- Toggle between Mutation and Normal feature editor -->
-            <forward name="feature.mutation" path="/do/feature/mutation"/>
-
-            <!-- Cloning a undetermined feature -->
-            <forward name="feature.undetermined.clone" path="/do/feature/undetermined/clone"/>
-
-            <!-- Changing an existing range (edit/save/delete) -->
-            <forward name="feature.range" path="/do/feature/range"/>
-
-            <!-- Adding a new range to the feature -->
-            <forward name="feature.range.new" path="/do/feature/range/new"/>
-
-            <!-- Adding an Xref -->
-            <forward name="xref" path="/do/feature/xref/submit"/>
-        </action>
-
-        <!-- Action to handle when the Submit/Save & Continue button is pressed -->
-        <action path="/feature/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureSubmitAction"
-            name="featureForm"
-            input="edit.layout"
-            validate="true"
-            scope="session"
-            parameter="dispatch">
-            <!-- A success for Save/Continue -->
-            <forward name="success" path="/do/display"/>
-            <forward name="interaction" path="/do/int/fill/form"/>
-        </action>
-
-        <!--
-             Handles the user toggles between Normal / Mutation button.
-        -->
-        <action path="/feature/mutation"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.MutationToggleAction"
-            name="featureForm"
-            validate="false"
-            scope="session">
-            <!-- Reset the form again -->
-            <forward name="success" path="/do/feature/fill/form"/>
-        </action>
-
-        <!--
-             Handles when the Cancel button is selected from the Feature editor.
-             If cancelling a new feature it may be deleted as well (the Feature
-             needs to be persistent to add any ranges to it).
-        -->
-        <action path="/feature/cancel"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.CancelFeatureAction"
-            name="featureForm"
-            validate="false"
-            scope="session">
-            <!-- Back to the interaction editor -->
-            <forward name="interaction" path="/do/int/fill/form"/>
-            <!-- Need to delete this feature -->
-            <forward name="delete" path="/do/feature/delete"/>
-        </action>
-
-        <!--
-             This is only called from feature/cancel action path for cancelling
-             a new Feature.
-        -->
-        <action path="/feature/delete"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.DeleteFeatureAction"
-            name="featureForm"
-            validate="false"
-            scope="session">
-            <!-- Back to the interaction editor -->
-            <forward name="success" path="/do/int/fill/form"/>
-        </action>
-
-        <!-- Action to handle when a button (edit/save/delete) related to xref
-             is activated
-        -->
-        <action path="/feature/xref/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
-            name="featureForm"
-            input="edit.layout"
-            validate="false"
-            scope="session" />
-
-        <!-- Action to handle when cloning a feature for given AC -->
-        <action path="/feature/undetermined/clone"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.UndeterminedCloneAction"
-            name="featureForm"
-            validate="false"
-            scope="session">
-            <forward name="success" path="edit.layout"/>
-        </action>
-
-        <!-- Action to handle for adding a new range -->
-        <action path="/feature/range/new"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureNewRangeAction"
-            name="featureForm"
-            input="edit.layout"
-            validate="true"
-            scope="session">
-        </action>
-
-        <!-- Action to handle when a Feature is saved/deleted or edited. -->
-        <action path="/feature/range"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.RangeDispatchAction"
-            name="featureForm"
-            input="edit.layout"
-            validate="true"
-            scope="session">
-        </action>
-
-        <!-- ========== Common actions shared by various editors ========== -->
-
-        <!-- Action to handle when the current edit is cancelled. -->
-        <action path="/cancel"
-            type="uk.ac.ebi.intact.application.editor.struts.action.CancelFormAction"
-            validate="false"
-            scope="session">
-            <!-- Back to the results page as we got here from a search result (global) -->
-        </action>
-
-        <!-- Action to handle when the current edit record is deleted. -->
-        <action path="/delete"
-            type="uk.ac.ebi.intact.application.editor.struts.action.DeleteFormAction"
-            validate="false"
-            scope="session">
-            <!-- Back to the search page  (global) -->
-            <!-- error goes to the global error action -->
-            <!-- Back to the experiment editor (Interaction editor) -->
-            <forward name="experiment" path="/do/exp/fill/form"/>
-        </action>
-
-        <!-- This common action is for displaying the editor when clicked on
-             next link (from the tab entries above a table)
-        -->
-        <action path="/next"
-            type="org.apache.struts.actions.ForwardAction"
-            parameter="edit.layout">
-        </action>
-
-        <!-- This common action is for displaying the current edit page.
-             Need this separate action to distinguish between input and success
-             actions.
-        -->
-        <action path="/display"
-            type="org.apache.struts.actions.ForwardAction"
-            parameter="edit.layout">
-        </action>
-
-        <!-- ============================================================== -->
-
-        <!-- Displays current users logged into on the system. -->
-        <action path="/show/users"
-            type="org.apache.struts.actions.ForwardAction"
-            parameter="user.layout">
-        </action>
-
-    </action-mappings>
-
-    <!-- ========== Message Resources Definitions =========================== -->
-
-    <message-resources
-        parameter="uk.ac.ebi.intact.application.editor.MessageResources"/>
-
-    <!-- ========== Plug Ins Configuration ================================== -->
-
-    <!--
-        Add multiple validator resource files by setting the pathnames property
-        with a comma delimitted list of resource files to load.
-    -->
-    <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
-        <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,
-            /WEB-INF/validation.xml"/>
-    </plug-in>
-
-    <plug-in className="org.apache.struts.tiles.TilesPlugin">
-        <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
-        <set-property property="moduleAware" value="true"/>
-    </plug-in>
+  <!-- ========== Action Mapping Definitions =================================== -->
+   <action-mappings>
+    <action
+      path="/bs/taxid"
+      type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceAction"
+      name="bsForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/tiles/headerSwitch"
+      type="uk.ac.ebi.intact.application.editor.struts.action.util.HeaderSwitchAction"
+      unknown="false"
+      validate="true"
+    >
+    </action>
+    <action
+      path="/seq/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.sequence.SequenceDispatchAction"
+      name="seqForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="success"
+        path="/do/display"
+        redirect="false"
+      />
+      <forward
+        name="interaction"
+        path="/do/int/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/cv/xref/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
+      name="cvForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/exp/xref/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
+      name="expForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/bs/xref/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
+      name="bsForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/int/xref/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
+      name="intForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/feature/xref/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
+      name="featureForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/seq/xref/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
+      name="seqForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/exp/dispatch"
+      type="uk.ac.ebi.intact.application.editor.struts.action.experiment.ExperimentSubmitAction"
+      name="expForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="submit"
+        path="/do/exp/submit"
+        redirect="false"
+      />
+      <forward
+        name="cancel"
+        path="/do/cancel"
+        redirect="false"
+      />
+      <forward
+        name="delete"
+        path="/do/delete"
+        redirect="false"
+      />
+      <forward
+        name="annotation"
+        path="/do/exp/annot/submit"
+        redirect="false"
+      />
+      <forward
+        name="xref"
+        path="/do/exp/xref/submit"
+        redirect="false"
+      />
+      <forward
+        name="interaction"
+        path="/do/interaction"
+        redirect="false"
+      />
+      <forward
+        name="exp.int.hold"
+        path="/do/exp/int/hold"
+        redirect="false"
+      />
+      <forward
+        name="exp.int.search"
+        path="/do/exp/int/search"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/feature/dispatch"
+      type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureSubmitAction"
+      name="featureForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="submit"
+        path="/do/feature/submit"
+        redirect="false"
+      />
+      <forward
+        name="cancel"
+        path="/do/feature/cancel"
+        redirect="false"
+      />
+      <forward
+        name="xref"
+        path="/do/feature/xref/submit"
+        redirect="false"
+      />
+      <forward
+        name="feature.mutation"
+        path="/do/feature/mutation"
+        redirect="false"
+      />
+      <forward
+        name="feature.undetermined.clone"
+        path="/do/feature/undetermined/clone"
+        redirect="false"
+      />
+      <forward
+        name="feature.range"
+        path="/do/feature/range"
+        redirect="false"
+      />
+      <forward
+        name="feature.range.new"
+        path="/do/feature/range/new"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/int/cancel"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionCancelAction"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="experiment"
+        path="/do/exp/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/int/exp/del"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentAction"
+      name="intForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/int/dispatch"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionSubmitAction"
+      name="intForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="submit"
+        path="/do/int/submit"
+        redirect="false"
+      />
+      <forward
+        name="cancel"
+        path="/do/int/cancel"
+        redirect="false"
+      />
+      <forward
+        name="delete"
+        path="/do/delete"
+        redirect="false"
+      />
+      <forward
+        name="annotation"
+        path="/do/int/annot/submit"
+        redirect="false"
+      />
+      <forward
+        name="xref"
+        path="/do/int/xref/submit"
+        redirect="false"
+      />
+      <forward
+        name="int.exp.del"
+        path="/do/int/exp/del"
+        redirect="false"
+      />
+      <forward
+        name="int.exp.hold"
+        path="/do/int/exp/hold"
+        redirect="false"
+      />
+      <forward
+        name="int.exp.search"
+        path="/do/int/exp/search"
+        redirect="false"
+      />
+      <forward
+        name="int.prot"
+        path="/do/int/prot"
+        redirect="false"
+      />
+      <forward
+        name="int.prot.search"
+        path="/do/int/prot/search"
+        redirect="false"
+      />
+      <forward
+        name="int.feature"
+        path="/do/int/feature"
+        redirect="false"
+      />
+      <forward
+        name="int.feature.link"
+        path="/do/int/feature/link"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/feature/mutation"
+      type="uk.ac.ebi.intact.application.editor.struts.action.feature.MutationToggleAction"
+      name="featureForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="/do/feature/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/int/prot"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinDispatchAction"
+      name="intForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatchProtein"
+      unknown="false"
+      validate="true"
+    >
+    </action>
+    <action
+      path="/feature/range"
+      type="uk.ac.ebi.intact.application.editor.struts.action.feature.RangeDispatchAction"
+      name="featureForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="true"
+    >
+    </action>
+    <action
+      path="/feature/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureDispatchAction"
+      name="featureForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+      <forward
+        name="interaction"
+        path="/do/int/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/int/link"
+      type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionLinkAction"
+      name="expForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="success"
+        path="/do/int/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/exp/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.experiment.ExperimentDispatchAction"
+      name="expForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+      <forward
+        name="reload"
+        path="/do/exp/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/int/feature/link"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FeatureLinkAction"
+      name="intForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="true"
+    >
+    </action>
+    <action
+      path="/feature/range/new"
+      type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureNewRangeAction"
+      name="featureForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="true"
+    >
+    </action>
+    <action
+      path="/bs/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceDispatchAction"
+      name="bsForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/exp/int/hold"
+      type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionHoldAction"
+      name="expForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/int/exp/hold"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentHoldAction"
+      name="intForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/bs/dispatch"
+      type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceSubmitAction"
+      name="bsForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="submit"
+        path="/do/bs/submit"
+        redirect="false"
+      />
+      <forward
+        name="cancel"
+        path="/do/cancel"
+        redirect="false"
+      />
+      <forward
+        name="delete"
+        path="/do/delete"
+        redirect="false"
+      />
+      <forward
+        name="annotation"
+        path="/do/bs/annot/submit"
+        redirect="false"
+      />
+      <forward
+        name="xref"
+        path="/do/bs/xref/submit"
+        redirect="false"
+      />
+      <forward
+        name="taxid"
+        path="/do/bs/taxid"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/secure/edit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.ResultAction"
+      name="dummyForm"
+      scope="request"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="/do/choose"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/int/prot/search"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinSearchAction"
+      name="intForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/tiles/editorSwitch"
+      type="uk.ac.ebi.intact.application.editor.struts.action.util.EditorSwitchAction"
+      unknown="false"
+      validate="true"
+    >
+    </action>
+    <action
+      path="/logout"
+      type="uk.ac.ebi.intact.application.editor.struts.security.LogoutAction"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="/do/welcome"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/feature/cancel"
+      type="uk.ac.ebi.intact.application.editor.struts.action.feature.CancelFeatureAction"
+      name="featureForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="interaction"
+        path="/do/int/fill/form"
+        redirect="false"
+      />
+      <forward
+        name="delete"
+        path="/do/feature/delete"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/int/exp/search"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentDispatchAction"
+      name="intForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/choose"
+      type="uk.ac.ebi.intact.application.editor.struts.action.EditorChoiceAction"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="cv"
+        path="/do/cv/fill/form"
+        redirect="false"
+      />
+      <forward
+        name="exp"
+        path="/do/exp/fill/form"
+        redirect="false"
+      />
+      <forward
+        name="bs"
+        path="/do/bs/fill/form"
+        redirect="false"
+      />
+      <forward
+        name="int"
+        path="/do/int/fill/form"
+        redirect="false"
+      />
+      <forward
+        name="seq"
+        path="/do/seq/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/feature/delete"
+      type="uk.ac.ebi.intact.application.editor.struts.action.feature.DeleteFeatureAction"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="/do/int/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/int/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionDispatchAction"
+      name="intForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="success"
+        path="/do/display"
+        redirect="false"
+      />
+      <forward
+        name="experiment"
+        path="/do/exp/fill/form"
+        redirect="false"
+      />
+      <forward
+        name="reload"
+        path="/do/int/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/sidebar"
+      type="uk.ac.ebi.intact.application.editor.struts.action.SidebarDispatchAction"
+      name="sidebarForm"
+      scope="request"
+      parameter="dispatch"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="single"
+        path="/do/choose"
+        redirect="false"
+      />
+      <forward
+        name="create"
+        path="/do/choose"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/feature/undetermined/clone"
+      type="uk.ac.ebi.intact.application.editor.struts.action.feature.UndeterminedCloneAction"
+      name="featureForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/cv/fill/form"
+      type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
+      name="cvForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/exp/fill/form"
+      type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
+      name="expForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/bs/fill/form"
+      type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
+      name="bsForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/int/fill/form"
+      type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
+      name="intForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/feature/fill/form"
+      type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
+      name="featureForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/seq/fill/form"
+      type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
+      name="seqForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/exp/int/search"
+      type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionDispatchAction"
+      name="expForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/cv/annot/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
+      name="cvForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/exp/annot/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
+      name="expForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/bs/annot/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
+      name="bsForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/int/annot/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
+      name="intForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/seq/annot/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
+      name="seqForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+    </action>
+    <action
+      path="/cv/submit"
+      type="uk.ac.ebi.intact.application.editor.struts.action.cv.CvDispatchAction"
+      name="cvForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatch"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="success"
+        path="edit.layout"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/int/feature"
+      type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FeatureDispatchAction"
+      name="intForm"
+      scope="session"
+      input="edit.layout"
+      parameter="dispatchFeature"
+      unknown="false"
+      validate="true"
+    >
+      <forward
+        name="success"
+        path="/do/feature/fill/form"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/login"
+      type="uk.ac.ebi.intact.application.editor.struts.security.LoginAction"
+      name="loginForm"
+      scope="request"
+      input="login.error.layout"
+      unknown="false"
+      validate="true"
+    >
+      <exception
+        key="error.invalid.user"
+        type="uk.ac.ebi.intact.business.IntactException"
+        path="login.error.layout"
+      />
+      <exception
+        key="error.datasource"
+        type="uk.ac.ebi.intact.persistence.DataSourceException"
+        path="login.error.layout"
+      />
+      <exception
+        key="error.init.menu"
+        type="uk.ac.ebi.intact.persistence.SearchException"
+        path="login.error.layout"
+      />
+      <forward
+        name="success"
+        path="search.layout"
+        redirect="false"
+      />
+      <forward
+        name="redirect"
+        path="/do/secure/edit"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/interaction"
+      type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionAction"
+      name="expForm"
+      scope="session"
+      input="edit.layout"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="editInt"
+        path="/do/int/link"
+        redirect="false"
+      />
+    </action>
+    <action
+      path="/cv/dispatch"
+      type="uk.ac.ebi.intact.application.editor.struts.action.cv.CvSubmitAction"
+      name="cvForm"
+      scope="session"
+      unknown="false"
+      validate="false"
+    >
+      <forward
+        name="submit"
+        path="/do/cv/submit"
+        redirect="false"
+      />
+      <forward
+        name="cancel"
+        path="/do/cancel"
+        redirect="false"
+      />
+      <forward
+        name="delete"
+        path="/do/delete"
+        redirect="false"
+      />
+      <forward
+        name="annotation"
+        path="/do/cv/annot/submit"
+        redirect="false"
+      />
+      <forward
+        name="xref"
+        path="/do/cv/xref/submit"
+        redirect="false"
+      />
+    </action>
+
+   <!-- The starting point for the application; display the login layout. -->
+<action path="/welcome"
+    type="org.apache.struts.actions.ForwardAction"
+    parameter="login.layout">
+</action>
+
+<!-- Fill the form with search results for the JSP to display. -->
+<action path="/showResults"
+    type="org.apache.struts.actions.ForwardAction"
+    parameter="match.layout">
+</action>
+
+<!-- This common action is for displaying the editor when clicked on
+     next link (from the tab entries above a table)
+-->
+<action path="/next"
+    type="org.apache.struts.actions.ForwardAction"
+    parameter="edit.layout">
+</action>
+
+<!-- This common action is for displaying the current edit page.
+     Need this separate action to distinguish between input and success
+     actions.
+-->
+<action path="/display"
+    type="org.apache.struts.actions.ForwardAction"
+    parameter="edit.layout">
+</action>
+
+<!-- ============================================================== -->
+
+<!-- Displays current users logged into on the system. -->
+<action path="/show/users"
+    type="org.apache.struts.actions.ForwardAction"
+    parameter="user.layout">
+</action>
+
+<!-- ========== Common actions shared by various editors ========== -->
+
+<!-- Action to handle when the current edit is cancelled. -->
+<action path="/cancel"
+    type="uk.ac.ebi.intact.application.editor.struts.action.CancelFormAction"
+    validate="false"
+    scope="session">
+    <!-- Back to the results page as we got here from a search result (global) -->
+</action>
+
+<!-- Action to handle when the current edit record is deleted. -->
+<action path="/delete"
+    type="uk.ac.ebi.intact.application.editor.struts.action.DeleteFormAction"
+    validate="false"
+    scope="session">
+    <!-- Back to the search page  (global) -->
+    <!-- error goes to the global error action -->
+    <!-- Back to the experiment editor (Interaction editor) -->
+    <forward name="experiment" path="/do/exp/fill/form"/>
+</action>
+
+  </action-mappings>
+
+   <!-- Define your Struts controller in a file called struts-controller.xml and place it in your merge directory. -->
+
+  <message-resources
+    parameter="uk.ac.ebi.intact.application.editor.MessageResources"/>
+
+  <!--
+    Add multiple validator resource files by setting the pathnames property
+    with a comma delimitted list of resource files to load.
+-->
+<plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+    <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,
+        /WEB-INF/validation.xml"/>
+</plug-in>
+
+<plug-in className="org.apache.struts.tiles.TilesPlugin">
+    <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
+    <set-property property="moduleAware" value="true"/>
+</plug-in>
 
 </struts-config>
