@@ -10,9 +10,8 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
-import uk.ac.ebi.intact.util.Assert;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.persistence.TransactionException;
+import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
@@ -57,7 +56,7 @@ public class XrefDelAction extends IntactBaseAction {
         XreferenceBean bean = findByAc(request.getParameter("ac"), collection);
 
         // null if the bean wasn't found. this is not expected to happen.
-        Assert.assert(bean != null, "Unable to find the xref bean to delete");
+        assert bean != null;
 
         // Remove it from the collection.
         collection.remove(bean);
@@ -75,12 +74,12 @@ public class XrefDelAction extends IntactBaseAction {
             user.delete(bean.getXref());
             super.log("Transaction after xref delete: " + user.isActive());
         }
-        catch (TransactionException te) {
+        catch (IntactException ie) {
             // Log the stack trace.
-            super.log(ExceptionUtils.getStackTrace(te));
+            super.log(ExceptionUtils.getStackTrace(ie));
             // Clear any previous errors.
             super.clearErrors();
-            super.addError("error.transaction", te.getMessage());
+            super.addError("error.transaction", ie.getMessage());
             super.saveErrors(request);
             return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
         }
