@@ -27,7 +27,7 @@ then
    exit 1
 fi
 
-./scripts/postgres/test/go_initdb.sh $1 $2
+./scripts/postgres/test/go_initdb.sh $1 $2 data/controlledVocab
 
 ######################################################################################
 # Download starts here
