@@ -734,7 +734,8 @@ public class HtmlBuilder {
                             String searchClass,
                             String text) throws IOException {
 
-        rs.write("<nobr>");
+        //This nobr adds too many....
+        //rs.write("<nobr>");
         // TODO: don't hard code the application path !! Try to give it in the constructor.
         rs.write("<a href=\"/intact/search/do/search?searchString=");
         rs.write(target);
@@ -758,7 +759,8 @@ public class HtmlBuilder {
             rs.write("</i></b>");
         }
         rs.write("</a>");
-        rs.write("</nobr>");
+        //this nobr adds too many..
+        //rs.write("</nobr>");
 
     }
 
