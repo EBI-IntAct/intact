@@ -86,8 +86,8 @@ public class DagNodeUtils {
      *
      * @param in Go Dag format input source
      * @param aParent The node to which new nodes will be added.
-     * @throws java.io.IOException
-     * @throws org.apache.regexp.RESyntaxException
+     * @throws java.io.IOException for errors reading the input file
+     * @throws IntactException for errors in dealing with the persistence layer.
      */
     public DagNode addNodes(BufferedReader in,DagNode aParent, int count)
             throws IOException, IntactException {
