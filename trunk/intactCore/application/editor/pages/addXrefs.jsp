@@ -27,6 +27,12 @@
 <c:set var="dblist" value="${view.addDatabaseMenu}"/>
 <c:set var="qlist" value="${menus['Qualifier']}"/>
 
+<%-- Service handler to get the default xref qualifier --%>
+<jsp:useBean id="service" scope="application"
+    class="uk.ac.ebi.intact.application.editor.business.EditorService"/>
+<bean:define id="defXrefQualifier" name="service" property="defaultXrefQualifier"
+    type="java.lang.String"/>
+
 <%-- The anchor name for this page --%>
 <a name="xref"/>
 
@@ -81,8 +87,7 @@
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="newXref.qualifier"
-                value="<%=user.getView().getDefaultXrefQualifier()%>">
+            <html:select property="newXref.qualifier" value="<%=defXrefQualifier%>">
                 <html:options name="qlist" />
             </html:select>
         </td>
