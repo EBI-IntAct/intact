@@ -41,18 +41,6 @@
 
     <!-- =================================================================== -->
 
-    <!-- Listener for starting ans stopping the web application,
-         allows to stop the web service properly
-         That class implements ServletContextListener so has the following methods
-            public void contextInitialized (ServletContextEvent event);
-            public void contextDestroyed (ServletContextEvent event);
-      -->
-    <listener>
-        <listener-class>uk.ac.ebi.intact.application.hierarchView.business.tulip.WebServiceManager</listener-class>
-    </listener>
-
-    <!-- =================================================================== -->
-
     <!-- Init servlet for the logging facilities -->
     <servlet>
       <servlet-name>logging-init</servlet-name>
@@ -81,7 +69,7 @@
 
         <init-param>
             <param-name>config</param-name>
-            <param-value>/WEB-INF/config/struts-config.xml</param-value>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
         </init-param>
 
         <init-param>
@@ -131,7 +119,7 @@
          HttpSession.getMaxInactiveInterval().
       -->
     <session-config>
-      <session-timeout>15</session-timeout>    <!-- 15 minutes -->
+      <session-timeout>20</session-timeout>    <!-- 20 minutes -->
     </session-config>
 
     <!-- =================================================================== -->
