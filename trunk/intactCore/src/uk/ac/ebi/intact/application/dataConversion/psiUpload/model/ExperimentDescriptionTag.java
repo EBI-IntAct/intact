@@ -297,7 +297,7 @@ public final class ExperimentDescriptionTag {
             final XrefTag bibref = (XrefTag) iterator.next();
             buf.append( bibref );
         }
-        
+
         buf.append( ",annotations=" );
         if( annotations.size() == 0 ) {
             buf.append( "none" );

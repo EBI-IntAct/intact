@@ -38,14 +38,19 @@ public class CellTypeTag {
 
     public CellTypeTag( final XrefTag psiDefinition, final String shortlabel ) {
 
-        if( psiDefinition == null ) {
-            throw new IllegalArgumentException( "You must give a non null psi definition for a cellType" );
+        if( shortlabel == null || shortlabel.trim().equals( "" ) ) {
+            throw new IllegalArgumentException( "You must give a non null/empty shortlabel for a cellType" );
         }
 
-        if( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
-            throw new IllegalArgumentException( "You must give a psi-mi Xref, not " + psiDefinition.getDb() +
-                                                " for a cellType" );
-        }
+        // TODO re-activate this when we will have PSI id for cell Type
+//        if( psiDefinition == null ) {
+//            throw new IllegalArgumentException( "You must give a non null psi definition for a cellType" );
+//        }
+
+//        if( !Constants.PSI_DB_SHORTLABEL.equals( psiDefinition.getDb() ) ) {
+//            throw new IllegalArgumentException( "You must give a psi-mi Xref, not " + psiDefinition.getDb() +
+//                                                " for a cellType" );
+//        }
 
         this.psiDefinition = psiDefinition;
         this.shortlabel = shortlabel;

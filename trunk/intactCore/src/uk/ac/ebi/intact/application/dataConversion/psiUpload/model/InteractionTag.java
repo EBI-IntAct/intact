@@ -151,7 +151,7 @@ public final class InteractionTag {
             Object o = (Object) iterator.next();
             if( !( o instanceof ProteinParticipantTag ) ) {
                 throw new IllegalArgumentException( "The participants collection added to the interaction doesn't " +
-                                                    "contains only ProteinParticipantTag." );
+                                                    "contains only ProteinParticipantTag: " + o.getClass().getName() + "." );
             }
         }
 
@@ -167,7 +167,7 @@ public final class InteractionTag {
                 Object o = (Object) iterator.next();
                 if( !( o instanceof XrefTag ) ) {
                     throw new IllegalArgumentException( "The annotation collection added to the interaction doesn't " +
-                                                        "contains only XrefTag." );
+                                                        "contains only XrefTag: " + o.getClass().getName() + "." );
                 }
             }
             this.xrefs = new ReadOnlyCollection( xrefs );
@@ -181,7 +181,7 @@ public final class InteractionTag {
                 Object o = (Object) iterator.next();
                 if( !( o instanceof AnnotationTag ) ) {
                     throw new IllegalArgumentException( "The annotation collection added to the interaction doesn't " +
-                                                        "contains only AnnotationTag." );
+                                                        "contains only AnnotationTag: " + o.getClass().getName() + "." );
                 }
             }
             this.annotations = new ReadOnlyCollection( annotations );
@@ -191,7 +191,7 @@ public final class InteractionTag {
         this.fullname = fullname;
         this.experiments = new ReadOnlyCollection( experiments );
         this.interactionType = interactionType;
-        this.participants = participants;
+        this.participants = new ReadOnlyCollection( participants );
         this.confidence = confidence;
     }
 

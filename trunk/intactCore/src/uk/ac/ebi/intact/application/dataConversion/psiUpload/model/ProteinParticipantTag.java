@@ -47,13 +47,15 @@ public final class ProteinParticipantTag {
 
     private final ProteinInteractorTag proteinInteractor;
     private final String role;
+    private final ExpressedInTag expressedIn;
 
 
     ///////////////////////////
     // Constructors
 
     public ProteinParticipantTag( final ProteinInteractorTag proteinInteractor,
-                                  final String role ) {
+                                  final String role,
+                                  final ExpressedInTag expressedIn ) {
 
         if( proteinInteractor == null ) {
             throw new IllegalArgumentException( "You must give a non null proteinInteractor for a proteinParticipant" );
@@ -65,6 +67,7 @@ public final class ProteinParticipantTag {
 
         this.proteinInteractor = proteinInteractor;
         this.role = role;
+        this.expressedIn = expressedIn;
     }
 
 
@@ -79,11 +82,15 @@ public final class ProteinParticipantTag {
         return role;
     }
 
+    public ExpressedInTag getExpressedIn() {
+        return expressedIn;
+    }
+
 
     ////////////////////////
     // Equality
 
-    public boolean equals( final Object o ) {
+    public boolean equals( Object o ) {
         if( this == o ) {
             return true;
         }
@@ -93,6 +100,9 @@ public final class ProteinParticipantTag {
 
         final ProteinParticipantTag proteinParticipantTag = (ProteinParticipantTag) o;
 
+        if( expressedIn != null ? !expressedIn.equals( proteinParticipantTag.expressedIn ) : proteinParticipantTag.expressedIn != null ) {
+            return false;
+        }
         if( !proteinInteractor.equals( proteinParticipantTag.proteinInteractor ) ) {
             return false;
         }
@@ -107,15 +117,16 @@ public final class ProteinParticipantTag {
         int result;
         result = proteinInteractor.hashCode();
         result = 29 * result + role.hashCode();
+        result = 29 * result + ( expressedIn != null ? expressedIn.hashCode() : 0 );
         return result;
     }
 
+
     public String toString() {
-        final StringBuffer buf = new StringBuffer();
-        buf.append( "ProteinParticipantTag" );
-        buf.append( "{proteinInteractor=" ).append( proteinInteractor );
-        buf.append( ",role=" ).append( role );
-        buf.append( '}' );
-        return buf.toString();
+        return "ProteinParticipantTag{" +
+               "expressedIn=" + expressedIn +
+               ", proteinInteractor=" + proteinInteractor +
+               ", role='" + role + "'" +
+               "}";
     }
 }
