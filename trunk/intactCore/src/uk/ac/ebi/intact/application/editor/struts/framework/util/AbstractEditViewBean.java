@@ -317,8 +317,7 @@ public abstract class AbstractEditViewBean {
         myAnnotObject.setFullName(getFullName());
 
         // Don't care whether annotated object exists or not because we don't
-        // need an AC in the annotation table. Can#t mark the parent object
-        // for create or else the annotation not created.
+        // need an AC in the annotation table.
 
         // Create annotations and add them to CV object.
         for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
@@ -338,7 +337,10 @@ public abstract class AbstractEditViewBean {
         for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
             CommentBean cb = (CommentBean) iter.next();
             cb.update(user);
+            user.update(cb.getAnnotation());
         }
+        // Xref has a parent_ac column which is not a foreign key. So, the parent needs
+        // to be persistent before we can create the Xrefs.
         if (!user.isPersistent(myAnnotObject)) {
             user.create(myAnnotObject);
         }
@@ -359,6 +361,7 @@ public abstract class AbstractEditViewBean {
         for (Iterator iter = getXrefsToUpdate().iterator(); iter.hasNext();) {
             XreferenceBean xb = (XreferenceBean) iter.next();
             xb.update(user);
+            user.update(xb.getXref());
         }
         // Update the cv object only for an object already persisted.
         if (user.isPersistent(myAnnotObject)) {
