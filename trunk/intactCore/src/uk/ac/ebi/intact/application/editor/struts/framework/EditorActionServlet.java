@@ -40,7 +40,7 @@ public class EditorActionServlet extends ActionServlet {
         try {
             // Load resources.
             service.loadTopicProperties(ctx.getInitParameter("topics"));
-            service.loadNewtProperties(ctx.getInitParameter("newt"));
+            service.initNewtServer(ctx.getInitParameter("newt"));
         }
         catch (MissingResourceException mre) {
             // Unable to find the resource file.
