@@ -5,4 +5,10 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
  
 <web-app>
+
+    <!-- The Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>    
+
 </web-app>
