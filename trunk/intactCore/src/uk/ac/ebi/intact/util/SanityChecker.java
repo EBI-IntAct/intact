@@ -4,15 +4,15 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
+import javax.mail.MessagingException;
 import java.io.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Utility class to perform some sanity checks on the DB. Mainly for use by curators.
- * A report of anomolies detected (as per the list of checks) is sent via email to
+ * A allUsersReport of anomolies detected (as per the list of checks) is sent via email to
  * the appropriate people.
  *
  * @author Chris Lewington
@@ -20,12 +20,72 @@ import java.util.Iterator;
  */
 public class SanityChecker {
 
+    private static final String NEW_LINE = System.getProperty( "line.separator" );
+
+    public static final String TIME;
+
     /**
-     * TODO additional checks
-     * 	    a) an annotation should only have 1 annotation concerning uniprot-dr-export
-     *      b) an experiment could have 1..n annotation concerning uniprot-dr-export
-     *      c) is there annotations with same text and topic ? Could cause bug with OJB data loading.
+     * Mapping user -> mail adress
+     * Map( lowercase(username), email )
      */
+    private static Map usersEmails = new HashMap();
+
+    /**
+     * List of admin mail adress
+     */
+    private static Collection adminsEmails = new HashSet();
+
+    /**
+     * Configuration file from which we get the lists of curators and admins.
+     */
+    public static final String SANITY_CHECK_CONFIG_FILE = "/config/sanityCheck.properties";
+
+    /**
+     * Prefix of the curator key from the properties file.
+     */
+    public static final String CURATOR = "curator.";
+
+    /**
+     * Prefix of the admin key from the properties file.
+     */
+    public static final String ADMIN = "admin.";
+
+    static {
+        Properties props = PropertyLoader.load( SANITY_CHECK_CONFIG_FILE );
+        if (props != null) {
+            int index;
+            for( Iterator iterator = props.keySet().iterator(); iterator.hasNext(); ) {
+                String key = (String) iterator.next();
+
+
+
+                index = key.indexOf( CURATOR );
+                if( index != -1 ) {
+                    String userstamp = key.substring( index + CURATOR.length() );
+                    String curatorMail = (String) props.get( key );
+//                    System.out.println( "Curator: " + userstamp + " ---> " + curatorMail );
+                    usersEmails.put( userstamp, curatorMail );
+                } else {
+                    // is it an admin then ?
+                    index = key.indexOf( "admin." );
+                    if( index != -1 ) {
+                        // store it
+                        String adminMail = (String) props.get( key );
+//                        System.out.println( "Admin: " + adminMail );
+                        adminsEmails.add( adminMail );
+                    }
+                }
+            } // keys
+        } else {
+
+            System.err.println ("Unable to open the properties file: " + SANITY_CHECK_CONFIG_FILE );
+        }
+
+        // format the current time
+        java.util.Date date = new java.util.Date();
+        SimpleDateFormat formatter = new SimpleDateFormat( "yyyy.MM.dd@HH.mm" );
+        TIME = formatter.format( date );
+    }
 
 
     /**
@@ -51,7 +111,7 @@ public class SanityChecker {
                 try {
                     helper.closeStore();
                     System.out.println( "Connexion to the database closed." );
-                } catch ( IntactException e ) {
+                } catch( IntactException e ) {
                     System.err.println( "Could not close the connexion to the database." );
                     e.printStackTrace();
                 }
@@ -59,15 +119,86 @@ public class SanityChecker {
         }
     }
 
+    /**
+     * Describes a Report topic.
+     */
+    private class ReportTopic {
 
-    private static final String NEW_LINE = System.getProperty( "line.separator" );
+        private String title;
 
-    public static final String SEPARATOR = NEW_LINE +
-                                           "------------------------------------------------------------------------" +
-                                           NEW_LINE;
+        public ReportTopic( String title ) {
 
-    //Keep the helper at object level - may need it for other tests later
-    private PrintWriter writer;
+            if( title == null ) {
+                this.title = "";
+            } else {
+                this.title = title;
+            }
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        /**
+         * @return the title line underlined.
+         */
+        public String getUnderlinedTitle() {
+
+            StringBuffer sb = new StringBuffer( ( title.length() * 2 ) + 2 );
+            sb.append( title ).append( NEW_LINE );
+            for( int i = 0; i < title.length() ; i++ ) {
+                sb.append( '-' );
+            }
+
+            return sb.toString();
+        }
+    }
+
+
+    /**
+     * Report topics
+     */
+
+    //
+    // B I O S O U R C E
+    //
+    public final ReportTopic BIOSOURCE_WITH_NO_TAXID = new ReportTopic( "BioSource having no taxId set" );
+
+    //
+    // E X P E R I M E N T S
+    //
+    public final ReportTopic EXPERIMENT_WITHOUT_INTERACTIONS = new ReportTopic( "Experiments with no Interactions" );
+    public final ReportTopic EXPERIMENT_WITHOUT_PUBMED = new ReportTopic( "Experiments with no pubmed id" );
+    public final ReportTopic EXPERIMENT_WITHOUT_PUBMED_PRIMARY_REFERENCE = new ReportTopic( "Experiments with no pubmed id (with 'primary-reference' as qualifier)" );
+    public final ReportTopic EXPERIMENT_WITHOUT_ORGANISM = new ReportTopic( "Experiments with no organism" );
+    public final ReportTopic EXPERIMENT_WITHOUT_CVIDENTIFICATION = new ReportTopic( "Experiments with no CvIdentification" );
+    public final ReportTopic EXPERIMENT_WITHOUT_CVINTERACTION = new ReportTopic( "Experiments with no CvInteraction" );
+
+    //
+    // I N T E R A C T I O  N S
+    //
+    public final ReportTopic INTERACTION_WITH_NO_EXPERIMENT = new ReportTopic( "Interactions with no Experiment" );
+    public final ReportTopic INTERACTION_WITH_NO_CVINTERACTIONTYPE = new ReportTopic( "Interactions with no CvInteractionType" );
+    public final ReportTopic INTERACTION_WITH_NO_ORGANISM = new ReportTopic( "Interactions with no Organism" );
+    public final ReportTopic INTERACTION_WITH_NO_CATEGORIES = new ReportTopic( "Interactions with no categories (bait-prey, target-agent, neutral, complex, self, unspecified)" );
+    public final ReportTopic INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES = new ReportTopic( "Interactions with mixed categories (bait-prey, target-agent, neutral, complex, self, unspecified)" );
+    public final ReportTopic INTERACTION_WITH_NO_BAIT = new ReportTopic( "Interactions with no bait" );
+    public final ReportTopic INTERACTION_WITH_NO_PREY = new ReportTopic( "Interactions with no prey" );
+    public final ReportTopic INTERACTION_WITH_NO_TARGET = new ReportTopic( "Interactions with no target" );
+    public final ReportTopic INTERACTION_WITH_NO_AGENT = new ReportTopic( "Interactions with no agent" );
+    public final ReportTopic INTERACTION_WITH_ONLY_ONE_NEUTRAL = new ReportTopic( "Interactions with only one neutral component" );
+    public final ReportTopic INTERACTION_WITH_PROTEIN_COUNT_LOWER_THAN_2 = new ReportTopic( "Interactions with less than 2 proteins (Role = complex)" );
+    public final ReportTopic INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2 = new ReportTopic( "Interactions with protein having their role set to self and its stoichiometry lower than 2.0" );
+    public final ReportTopic INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN = new ReportTopic( "Interactions with more than one protein having their role set to self" );
+    public final ReportTopic SINGLE_PROTEIN_CHECK = new ReportTopic( "Interactions with only One Protein" );
+    public final ReportTopic NO_PROTEIN_CHECK = new ReportTopic( "Interactions with No Components" );
+
+    //
+    // P R O T E I N S
+    //
+    public final ReportTopic PROTEIN_WITH_NO_UNIPROT_IDENTITY = new ReportTopic( "proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot)" );
+    public final ReportTopic PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY = new ReportTopic( "proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot)" );
+
 
     //Holds the statements for finding userstamps in various tables
     private PreparedStatement experimentStatement;
@@ -75,41 +206,17 @@ public class SanityChecker {
     private PreparedStatement proteinStatement;
     private PreparedStatement bioSourceStatement;
 
-    //holds the accumulated results of the test executions
-    private StringBuffer experimentWithoutInteractions;
-    private StringBuffer expCheckNoPubmed;
-    private StringBuffer expCheckNoPubmedWithPrimaryReference;
+    /**
+     * Contains individual errors of curators
+     * as Map( user, Map( topic, Collection( message ) ) )
+     */
+    private Map allUsersReport = new HashMap();
 
-    private StringBuffer experimentWithoutOrganism;
-    private StringBuffer experimentWithoutCvIdentification;
-    private StringBuffer experimentWithoutCvInteraction;
-
-
-    private StringBuffer interactionWithNoExperimentCheck;
-    private StringBuffer interactionWithNoOrganismCheck;
-    private StringBuffer interactionWithNoCvInteractionTypeCheck;
-
-    private StringBuffer interactionWithMixedComponentCategoriesCheck;
-    private StringBuffer interactionWithNoCategoriesCheck;
-
-    private StringBuffer interactionWithNoBaitCheck;
-    private StringBuffer interactionWithNoPreyCheck;
-
-    private StringBuffer interactionWithNoTargetCheck;
-    private StringBuffer interactionWithNoAgentCheck;
-    private StringBuffer interactionWithOnlyOneNeutralCheck;
-
-    private StringBuffer interactionWithProteinCountLowerThan2;
-
-    private StringBuffer interactionWithSelfProteinAndStoichiometryLowerThan2;
-    private StringBuffer interactionWithMoreThan2SelfProtein;
-
-    private StringBuffer bioSourceWithNoTaxId;
-
-    private StringBuffer singleProteinCheck;
-    private StringBuffer noProteinCheck;
-    private StringBuffer proteinWithNoUniprotIdentity;
-    private StringBuffer proteinWithMoreThanOneUniprotIdentity;
+    /**
+     * Contains all error for admin
+     * as Map( Topic, Collection(Message) )
+     */
+    private Map adminReport = new HashMap();
 
     //The Experiments and Interactions - may be used in more than one test
     private CvDatabase uniprot;
@@ -117,14 +224,14 @@ public class SanityChecker {
 
     // for annotations at the experiment level.
     private CvTopic onHoldCvTopic;
+    private IntactHelper helper;
 
-
-    public SanityChecker( IntactHelper helper, PrintWriter writer ) throws IntactException, SQLException {
-        this.writer = writer;
+    public SanityChecker( IntactHelper helper ) throws IntactException, SQLException {
 
         //set up statements to get user info...
         //NB remember the Connection belongs to the helper - don't close it anywhere but
         //let the helper do it at the end!!
+        this.helper = helper;
         Connection conn = helper.getJDBCConnection();
         bioSourceStatement = conn.prepareStatement( "SELECT userstamp, timestamp FROM ia_biosource WHERE ac=?" );
         proteinStatement = conn.prepareStatement( "SELECT userstamp, timestamp FROM ia_interactor WHERE ac=?" );
@@ -146,164 +253,49 @@ public class SanityChecker {
         if( uniprot == null ) {
             throw new RuntimeException( "Your IntAct node doesn't contain the required: CvTopic( on-hold )." );
         }
-
-        String msg = null;
-
-        //initialize buffers that will accumulate the test results..
-
-        //
-        // B I O S O U R C E
-        //
-        bioSourceWithNoTaxId = new StringBuffer( "BioSource having no taxId set" + SEPARATOR );
-
-
-        //
-        // E X P E R I M E N T S
-        //
-        msg = "Experiments with no Interactions" + SEPARATOR;
-        experimentWithoutInteractions = new StringBuffer( msg );
-
-        msg = "Experiments with no pubmed id" + SEPARATOR;
-        expCheckNoPubmed = new StringBuffer( msg );
-
-        msg = "Experiments with no pubmed id (with 'primary-reference' as qualifier)" + SEPARATOR;
-        expCheckNoPubmedWithPrimaryReference = new StringBuffer( msg );
-
-        msg = "Experiments with no Organism)" + SEPARATOR;
-        experimentWithoutOrganism = new StringBuffer( msg );
-
-        msg = "Experiments with no CvIdentification)" + SEPARATOR;
-        experimentWithoutCvIdentification = new StringBuffer( msg );
-
-        msg = "Experiments with no CvInteraction)" + SEPARATOR;
-        experimentWithoutCvInteraction = new StringBuffer( msg );
-
-
-        //
-        // I N T E R A C T I O  N S
-        //
-        msg = "Interactions with no Experiment" + SEPARATOR;
-        interactionWithNoExperimentCheck = new StringBuffer( msg );
-
-        msg = "Interactions with no CvInteractionType" + SEPARATOR;
-        interactionWithNoCvInteractionTypeCheck = new StringBuffer( msg );
-
-        msg = "Interactions with no Organism" + SEPARATOR;
-        interactionWithNoOrganismCheck = new StringBuffer( msg );
-
-        msg = "Interactions with no categories (bait-prey, target-agent, neutral, complex, self, unspecified)" + SEPARATOR;
-        interactionWithNoCategoriesCheck = new StringBuffer( msg );
-
-        msg = "Interactions with mixed categories (bait-prey, target-agent, neutral, complex, self, unspecified)" + SEPARATOR;
-        interactionWithMixedComponentCategoriesCheck = new StringBuffer( msg );
-
-        msg = "Interactions with no bait" + SEPARATOR;
-        interactionWithNoBaitCheck = new StringBuffer( msg );
-
-        msg = "Interactions with no prey" + SEPARATOR;
-        interactionWithNoPreyCheck = new StringBuffer( msg );
-
-        msg = "Interactions with no target" + SEPARATOR;
-        interactionWithNoTargetCheck = new StringBuffer( msg );
-
-        msg = "Interactions with no agent" + SEPARATOR;
-        interactionWithNoAgentCheck = new StringBuffer( msg );
-
-        msg = "Interactions with only one neutral component" + SEPARATOR;
-        interactionWithOnlyOneNeutralCheck = new StringBuffer( msg );
-
-        msg = "Interactions with less than 2 proteins (Role = complex)" + SEPARATOR;
-        interactionWithProteinCountLowerThan2 = new StringBuffer();
-
-        msg = "Interactions with protein having their role set to self and its stoichiometry lower than 2.0" + SEPARATOR;
-        interactionWithSelfProteinAndStoichiometryLowerThan2 = new StringBuffer( msg );
-
-        msg = "Interactions with more than one protein having their role set to self" + SEPARATOR;
-        interactionWithMoreThan2SelfProtein = new StringBuffer( msg );
-
-        msg = "Interactions with only One Protein" + SEPARATOR;
-        singleProteinCheck = new StringBuffer( msg );
-
-        msg = "Interactions with No Components" + SEPARATOR;
-        noProteinCheck = new StringBuffer( msg );
-
-
-        //
-        // P R O T E I N S
-        //
-        msg = "proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot)" + SEPARATOR;
-        proteinWithNoUniprotIdentity = new StringBuffer( msg );
-
-        msg = "proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot)" + SEPARATOR;
-        proteinWithMoreThanOneUniprotIdentity = new StringBuffer( msg );
     }
 
-    /*--------------------- Work Methods ------------------------------------------------
-    *
-    * Checks We have so far:
-    * -----------------------
-    *
-    *   1.  Any Experiment lacking a PubMed ID
-    *   2.  Any PubMed ID in Experiment DBXref without qualifier=Primary-reference
-    *   3.  Any Interaction containing a bait but not a prey protein
-    *   4.  Any Interaction containing a prey but not a bait protein
-    *   5.  Any interaction with no protein attached
-    *   6.  Any interaction with 1 protein attached, stoichiometry=1
-    *   7.  Any Interaction missing a link to an Experiment
-    *   8.  Any experiment with no Interaction linked to it
-    *   9.  Any interaction missing CvInteractionType
-    *   10. Any interaction missing Organism
-    *   11. Any experiment missing Organism
-    *   12. Any experiment missing CvInteraction
-    *   13. Any experiment missing CvIdentification
-    *   14. Any proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot)
-    *   15. Any BioSource with a NULL or empty taxid.
-    *   16. Any proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot)
-    *
-    * TODO: We could check if some Xrefs are orphan (check is the parent_ac is found in IA_INTERACTOR, IA_EXPERIMENT, IA_CONTROLLEDVOCAB)
-    *
-    * To perform these checks we need to enhance the Helper/persistence code to
-    * handle more complex queries, ie to be able to build Criteria and Query objects
-    * probably used in OJB (easiest to do). This is going to be needed anyway so
-    * that we can handle more complex search queries later....
-    *
-    */
+    /*
+     *
+     * Checks We have so far:
+     * -----------------------
+     *
+     *   1.  Any Experiment lacking a PubMed ID
+     *   2.  Any PubMed ID in Experiment DBXref without qualifier=Primary-reference
+     *   3.  Any Interaction containing a bait but not a prey protein
+     *   4.  Any Interaction containing a prey but not a bait protein
+     *   5.  Any interaction with no protein attached
+     *   6.  Any interaction with 1 protein attached, stoichiometry=1
+     *   7.  Any Interaction missing a link to an Experiment
+     *   8.  Any experiment with no Interaction linked to it
+     *   9.  Any interaction missing CvInteractionType
+     *   10. Any interaction missing Organism
+     *   11. Any experiment missing Organism
+     *   12. Any experiment missing CvInteraction
+     *   13. Any experiment missing CvIdentification
+     *   14. Any proteins with no Xref with XrefQualifier(identity) and CvDatabase(uniprot)
+     *   15. Any BioSource with a NULL or empty taxid.
+     *   16. Any proteins with more than one Xref with XrefQualifier(identity) and CvDatabase(uniprot)
+     *
+     * To perform these checks we need to enhance the Helper/persistence code to
+     * handle more complex queries, ie to be able to build Criteria and Query objects
+     * probably used in OJB (easiest to do). This is going to be needed anyway so
+     * that we can handle more complex search queries later....
+     *
+     */
 
     public void checkBioSource( Collection bioSources ) throws IntactException, SQLException {
 
-        int bioSourceWithNoTaxIdCount = 0;
-
         System.out.println( "Checking on BioSource (rule 15) ..." );
 
-        for ( Iterator it = bioSources.iterator(); it.hasNext(); ) {
+        for( Iterator it = bioSources.iterator(); it.hasNext(); ) {
             BioSource bioSource = (BioSource) it.next();
 
             //check 15
             if( bioSource.getTaxId() == null || "".equals( bioSource.getTaxId() ) ) {
-                getUserInfo( bioSourceWithNoTaxId, bioSource );
-                bioSourceWithNoTaxIdCount++;
+                addMessage( BIOSOURCE_WITH_NO_TAXID, bioSource );
             }
         }
-
-        if( bioSourceWithNoTaxIdCount > 0 ) {
-            writeResults( bioSourceWithNoTaxId );
-            writer.println();
-        }
-    }
-
-    private boolean isExperimentOnHold( Experiment experiment ) {
-
-        boolean onHold = false;
-
-        for ( Iterator iterator = experiment.getAnnotations().iterator(); iterator.hasNext() && !onHold; ) {
-            Annotation annotation = (Annotation) iterator.next();
-
-            if( onHoldCvTopic.equals( annotation.getCvTopic() ) ) {
-                onHold = true;
-            }
-        }
-
-        return onHold;
     }
 
     /**
@@ -314,14 +306,9 @@ public class SanityChecker {
      */
     public void checkExperiments( Collection experiments ) throws IntactException, SQLException {
 
-        int experimentWithoutInteractionsCount = 0,
-                experimentWithoutOrganismCount = 0,
-                experimentWithoutCvInteractionCount = 0,
-                experimentWithoutCvIdentificationCount = 0;
-
         System.out.println( "Checking on Experiment (rules 8, 11, 12, 13) ..." );
 
-        for ( Iterator it = experiments.iterator(); it.hasNext(); ) {
+        for( Iterator it = experiments.iterator(); it.hasNext(); ) {
             Experiment exp = (Experiment) it.next();
 
             if( !isExperimentOnHold( exp ) ) {
@@ -329,50 +316,25 @@ public class SanityChecker {
                 //check 8
                 if( exp.getInteractions().size() < 1 ) {
                     //record it.....
-                    getUserInfo( experimentWithoutInteractions, exp );
-                    experimentWithoutInteractionsCount++;
+                    addMessage( EXPERIMENT_WITHOUT_INTERACTIONS, exp );
                 }
 
                 //check 11
                 if( exp.getBioSource() == null ) {
-                    getUserInfo( experimentWithoutOrganism, exp );
-                    experimentWithoutOrganismCount++;
+                    addMessage( EXPERIMENT_WITHOUT_ORGANISM, exp );
                 }
 
                 //check 12
                 if( exp.getCvInteraction() == null ) {
-                    getUserInfo( experimentWithoutCvInteraction, exp );
-                    experimentWithoutCvInteractionCount++;
+                    addMessage( EXPERIMENT_WITHOUT_CVINTERACTION, exp );
                 }
 
                 //check 13
                 if( exp.getCvIdentification() == null ) {
-                    getUserInfo( experimentWithoutCvIdentification, exp );
-                    experimentWithoutCvIdentificationCount++;
+                    addMessage( EXPERIMENT_WITHOUT_CVIDENTIFICATION, exp );
                 }
             } // if
         } // for
-
-        // Write report
-        if( experimentWithoutInteractionsCount > 0 ) {
-            writeResults( experimentWithoutInteractions );
-            writer.println();
-        }
-
-        if( experimentWithoutOrganismCount > 0 ) {
-            writeResults( experimentWithoutOrganism );
-            writer.println();
-        }
-
-        if( experimentWithoutCvInteractionCount > 0 ) {
-            writeResults( experimentWithoutCvInteraction );
-            writer.println();
-        }
-
-        if( experimentWithoutCvIdentificationCount > 0 ) {
-            writeResults( experimentWithoutCvIdentification );
-            writer.println();
-        }
     }
 
     /**
@@ -383,20 +345,17 @@ public class SanityChecker {
      */
     public void checkExperimentsPubmedIds( Collection experiments ) throws IntactException, SQLException {
 
-        int expCheckNoPubmedCount = 0,
-                expCheckNoPubmedWithPrimaryReferenceCount = 0;
-
         System.out.println( "Checking on Experiment and their pubmed IDs (rules 1 and 2) ..." );
 
         //check 1 and 2
-        for ( Iterator it = experiments.iterator(); it.hasNext(); ) {
+        for( Iterator it = experiments.iterator(); it.hasNext(); ) {
             Experiment exp = (Experiment) it.next();
 
             if( !isExperimentOnHold( exp ) ) {
                 int pubmedCount = 0;
                 int pubmedPrimaryCount = 0;
                 Collection Xrefs = exp.getXrefs();
-                for ( Iterator iterator = Xrefs.iterator(); iterator.hasNext(); ) {
+                for( Iterator iterator = Xrefs.iterator(); iterator.hasNext(); ) {
                     Xref xref = (Xref) iterator.next();
                     if( xref.getCvDatabase().getShortLabel().equals( "pubmed" ) ) {
                         pubmedCount++;
@@ -408,27 +367,15 @@ public class SanityChecker {
 
                 if( pubmedCount == 0 ) {
                     //record it.....
-                    getUserInfo( expCheckNoPubmed, exp );
-                    expCheckNoPubmedCount++;
+                    addMessage( EXPERIMENT_WITHOUT_PUBMED, exp );
                 }
 
                 if( pubmedPrimaryCount < 1 ) {
                     //record it.....
-                    getUserInfo( expCheckNoPubmedWithPrimaryReference, exp );
-                    expCheckNoPubmedWithPrimaryReferenceCount++;
+                    addMessage( EXPERIMENT_WITHOUT_PUBMED_PRIMARY_REFERENCE, exp );
                 }
             } // if not on hold
         } // for
-
-        if( expCheckNoPubmedCount > 0 ) {
-            writeResults( expCheckNoPubmed );
-            writer.println();
-        }
-
-        if( expCheckNoPubmedWithPrimaryReferenceCount > 0 ) {
-            writeResults( expCheckNoPubmedWithPrimaryReference );
-            writer.println();
-        }
     }
 
     /**
@@ -439,45 +386,26 @@ public class SanityChecker {
      */
     public void checkInteractions( Collection interactions ) throws IntactException, SQLException {
 
-        int interactionWithNoExperimentCheckCount = 0,
-                interactionWithNoCvInteractionTypeCheckCount = 0,
-                interactionWithNoOrganismCheckCount = 0;
-
         System.out.println( "Checking on Interactions (rule 7) ..." );
 
-        for ( Iterator it = interactions.iterator(); it.hasNext(); ) {
+        for( Iterator it = interactions.iterator(); it.hasNext(); ) {
             Interaction interaction = (Interaction) it.next();
 
             //check 7
             if( interaction.getExperiments().size() < 1 ) {
                 //record it.....
-                getUserInfo( interactionWithNoExperimentCheck, interaction );
+                addMessage( INTERACTION_WITH_NO_EXPERIMENT, interaction );
             }
 
             //check 9
             if( interaction.getCvInteractionType() == null ) {
-                getUserInfo( interactionWithNoCvInteractionTypeCheck, interaction );
+                addMessage( INTERACTION_WITH_NO_CVINTERACTIONTYPE, interaction );
             }
 
             //check 10
             if( interaction.getBioSource() == null ) {
-                getUserInfo( interactionWithNoOrganismCheck, interaction );
+                addMessage( INTERACTION_WITH_NO_ORGANISM, interaction );
             }
-        }
-        //now dump the results...
-        if( interactionWithNoExperimentCheckCount > 0 ) {
-            writeResults( interactionWithNoExperimentCheck );
-            writer.println();
-        }
-
-        if( interactionWithNoCvInteractionTypeCheckCount > 0 ) {
-            writeResults( interactionWithNoCvInteractionTypeCheck );
-            writer.println();
-        }
-
-        if( interactionWithNoOrganismCheckCount > 0 ) {
-            writeResults( interactionWithNoOrganismCheck );
-            writer.println();
         }
     }
 
@@ -489,21 +417,10 @@ public class SanityChecker {
      */
     public void checkInteractionsBaitAndPrey( Collection interactions ) throws IntactException, SQLException {
 
-        int interactionWithNoCategoriesCheckCount = 0,
-                interactionWithMixedComponentCategoriesCheckCount = 0,
-                interactionWithNoAgentCheckCount = 0,
-                interactionWithNoTargetCheckCount = 0,
-                interactionWithNoBaitCheckCount = 0,
-                interactionWithNoPreyCheckCount = 0,
-                interactionWithOnlyOneNeutralCheckCount = 0,
-                interactionWithMoreThan2SelfProteinCount = 0,
-                interactionWithSelfProteinAndStoichiometryLowerThan2Count = 0,
-                interactionWithProteinCountLowerThan2Count = 0;
-
         System.out.println( "Checking on Interactions (rule 6) ..." );
 
         //check 7
-        for ( Iterator it = interactions.iterator(); it.hasNext(); ) {
+        for( Iterator it = interactions.iterator(); it.hasNext(); ) {
             Interaction interaction = (Interaction) it.next();
 
             Collection components = interaction.getComponents();
@@ -518,7 +435,7 @@ public class SanityChecker {
             float selfStoichiometry = 0;
             float neutralStoichiometry = 0;
 
-            for ( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
+            for( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
                 Component component = (Component) iterator.next();
                 //record it.....
 
@@ -563,11 +480,10 @@ public class SanityChecker {
 
             int categoryCount = baitPrey + targetAgent + neutral + self + complex + unspecified;
 
-            switch ( categoryCount ) {
+            switch( categoryCount ) {
                 case 0:
                     // none of those categories
-                    getUserInfo( interactionWithNoCategoriesCheck, interaction );
-                    interactionWithNoCategoriesCheckCount++;
+                    addMessage( INTERACTION_WITH_NO_CATEGORIES, interaction );
                     break;
 
                 case 1:
@@ -575,48 +491,40 @@ public class SanityChecker {
                     if( baitPrey == 1 ) {
                         // bait-prey
                         if( baitCount == 0 ) {
-                            getUserInfo( interactionWithNoBaitCheck, interaction );
-                            interactionWithNoBaitCheckCount++;
+                            addMessage( INTERACTION_WITH_NO_BAIT, interaction );
                         } else if( preyCount == 0 ) {
-                            getUserInfo( interactionWithNoPreyCheck, interaction );
-                            interactionWithNoPreyCheckCount++;
+                            addMessage( INTERACTION_WITH_NO_PREY, interaction );
                         }
 
                     } else if( targetAgent == 1 ) {
                         // target-agent
                         if( targetCount == 0 ) {
-                            getUserInfo( interactionWithNoTargetCheck, interaction );
-                            interactionWithNoTargetCheckCount++;
+                            addMessage( INTERACTION_WITH_NO_TARGET, interaction );
                         } else if( agentCount == 0 ) {
-                            getUserInfo( interactionWithNoAgentCheck, interaction );
-                            interactionWithNoAgentCheckCount++;
+                            addMessage( INTERACTION_WITH_NO_AGENT, interaction );
                         }
 
                     } else if( self == 1 ) {
                         // it has to be > 1
                         if( selfCount > 1 ) {
-                            getUserInfo( interactionWithMoreThan2SelfProtein, interaction );
-                            interactionWithMoreThan2SelfProteinCount++;
+                            addMessage( INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN, interaction );
                         } else { // = 1
                             if( selfStoichiometry < 2F ) {
-                                getUserInfo( interactionWithSelfProteinAndStoichiometryLowerThan2, interaction );
-                                interactionWithSelfProteinAndStoichiometryLowerThan2Count++;
+                                addMessage( INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2, interaction );
                             }
                         }
 
                     } else if( complex == 1 ) {
                         // it has to be > 1
                         if( complexCount < 2 ) {
-                            getUserInfo( interactionWithProteinCountLowerThan2, interaction );
-                            interactionWithProteinCountLowerThan2Count++;
+                            addMessage( INTERACTION_WITH_PROTEIN_COUNT_LOWER_THAN_2, interaction );
                         }
 
                     } else {
                         // neutral
                         if( neutralCount == 1 ) {
                             if( neutralStoichiometry < 2 ) {
-                                getUserInfo( interactionWithOnlyOneNeutralCheck, interaction );
-                                interactionWithOnlyOneNeutralCheckCount++;
+                                addMessage( INTERACTION_WITH_ONLY_ONE_NEUTRAL, interaction );
                             }
                         }
                     }
@@ -624,63 +532,11 @@ public class SanityChecker {
 
                 default:
                     // > 1 : mixed up categories !
-                    getUserInfo( interactionWithMixedComponentCategoriesCheck, interaction );
-                    interactionWithMixedComponentCategoriesCheckCount++;
+                    addMessage( INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES, interaction );
 
             } // switch
 
             // What about self or the unknown category ?
-        }
-
-        //now dump the results...
-        if( interactionWithNoCategoriesCheckCount > 0 ) {
-            writeResults( interactionWithNoCategoriesCheck );
-            writer.println();
-        }
-
-        if( interactionWithMixedComponentCategoriesCheckCount > 0 ) {
-            writeResults( interactionWithMixedComponentCategoriesCheck );
-            writer.println();
-        }
-
-        if( interactionWithNoAgentCheckCount > 0 ) {
-            writeResults( interactionWithNoAgentCheck );
-            writer.println();
-        }
-
-        if( interactionWithNoTargetCheckCount > 0 ) {
-            writeResults( interactionWithNoTargetCheck );
-            writer.println();
-        }
-
-        if( interactionWithNoBaitCheckCount > 0 ) {
-            writeResults( interactionWithNoBaitCheck );
-            writer.println();
-        }
-
-        if( interactionWithNoPreyCheckCount > 0 ) {
-            writeResults( interactionWithNoPreyCheck );
-            writer.println();
-        }
-
-        if( interactionWithOnlyOneNeutralCheckCount > 0 ) {
-            writeResults( interactionWithOnlyOneNeutralCheck );
-            writer.println();
-        }
-
-        if( interactionWithMoreThan2SelfProteinCount > 0 ) {
-            writeResults( interactionWithMoreThan2SelfProtein );
-            writer.println();
-        }
-
-        if( interactionWithSelfProteinAndStoichiometryLowerThan2Count > 0 ) {
-            writeResults( interactionWithSelfProteinAndStoichiometryLowerThan2 );
-            writer.println();
-        }
-
-        if( interactionWithProteinCountLowerThan2Count > 0 ) {
-            writeResults( interactionWithProteinCountLowerThan2 );
-            writer.println();
         }
     }
 
@@ -692,13 +548,10 @@ public class SanityChecker {
      */
     public void checkComponentOfInteractions( Collection interactions ) throws IntactException, SQLException {
 
-        int singleProteinCheckCount = 0,
-                noProteinCheckCount = 0;
-
         System.out.println( "Checking on Components (rules 5 and 6) ..." );
 
         //checks 5 and 6 (easier if done together)
-        for ( Iterator it = interactions.iterator(); it.hasNext(); ) {
+        for( Iterator it = interactions.iterator(); it.hasNext(); ) {
 
             Interaction interaction = (Interaction) it.next();
             Collection components = interaction.getComponents();
@@ -717,7 +570,7 @@ public class SanityChecker {
                     return;
                 }
 
-                for ( Iterator iter = components.iterator(); iter.hasNext(); ) {
+                for( Iterator iter = components.iterator(); iter.hasNext(); ) {
                     Component comp = (Component) iter.next();
                     Interactor interactor = comp.getInteractor();
                     if( interactor.equals( proteinToCheck ) ) {
@@ -728,42 +581,27 @@ public class SanityChecker {
                 //now compare the count and the original - if they are the
                 //same then we have found one that needs to be flagged..
                 if( matchCount == originalSize ) {
-                    getUserInfo( singleProteinCheck, interaction );
-                    singleProteinCheckCount++;
+                    addMessage( SINGLE_PROTEIN_CHECK, interaction );
                 }
 
             } else {
                 //Interaction has no Components!! This is in fact test 5...
-                getUserInfo( noProteinCheck, interaction );
-                noProteinCheckCount++;
+                addMessage( NO_PROTEIN_CHECK, interaction );
             }
-        }
-
-        if( singleProteinCheckCount > 0 ) {
-            writeResults( singleProteinCheck );
-            writer.println();
-        }
-
-        if( noProteinCheckCount > 0 ) {
-            writeResults( noProteinCheck );
-            writer.println();
         }
     }
 
     public void checkProteins( Collection proteins ) throws SQLException {
 
-        int proteinWithNoUniprotIdentityCount = 0,
-                proteinWithMoreThanOneUniprotIdentityCount = 0;
-
         System.out.println( "Checking on Proteins (rules 14 and 16) ..." );
 
         //checks 14
-        for ( Iterator it = proteins.iterator(); it.hasNext(); ) {
+        for( Iterator it = proteins.iterator(); it.hasNext(); ) {
             Protein protein = (Protein) it.next();
 
             Collection xrefs = protein.getXrefs();
             int count = 0;
-            for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            for( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
                 Xref xref = (Xref) iterator.next();
 
                 if( uniprot.equals( xref.getCvDatabase() ) && identity.equals( xref.getCvXrefQualifier() ) ) {
@@ -772,23 +610,11 @@ public class SanityChecker {
             } // xrefs
 
             if( count == 0 ) {
-                getUserInfo( proteinWithNoUniprotIdentity, protein );
-                proteinWithNoUniprotIdentityCount++;
+                addMessage( PROTEIN_WITH_NO_UNIPROT_IDENTITY, protein );
             } else if( count > 1 ) {
-                getUserInfo( proteinWithMoreThanOneUniprotIdentity, protein );
-                proteinWithMoreThanOneUniprotIdentityCount++;
+                addMessage( PROTEIN_WITH_MORE_THAN_ONE_UNIPROT_IDENTITY, protein );
             }
         } // proteins
-
-        if( proteinWithNoUniprotIdentityCount > 0 ) {
-            writeResults( proteinWithNoUniprotIdentity );
-            writer.println();
-        }
-
-        if( proteinWithMoreThanOneUniprotIdentityCount > 0 ) {
-            writeResults( proteinWithMoreThanOneUniprotIdentity );
-            writer.println();
-        }
     }
 
     /**
@@ -809,7 +635,7 @@ public class SanityChecker {
             if( bioSourceStatement != null ) {
                 bioSourceStatement.close();
             }
-        } catch ( SQLException se ) {
+        } catch( SQLException se ) {
             System.out.println( "failed to close statement!!" );
             se.printStackTrace();
         }
@@ -818,15 +644,35 @@ public class SanityChecker {
     //--------------------------- private methods ------------------------------------------
 
     /**
+     * Check if an Experiment as been annotated as on-hold.
+     *
+     * @param experiment the experiment to be checked
+     * @return true if the experiment is on-hold, else false.
+     */
+    private boolean isExperimentOnHold( Experiment experiment ) {
+
+        boolean onHold = false;
+
+        for( Iterator iterator = experiment.getAnnotations().iterator(); iterator.hasNext() && !onHold; ) {
+            Annotation annotation = (Annotation) iterator.next();
+
+            if( onHoldCvTopic.equals( annotation.getCvTopic() ) ) {
+                onHold = true;
+            }
+        }
+
+        return onHold;
+    }
+
+    /**
      * Helper method to obtain userstamp info from a given record, and
      * then if it has any to append the details to a result buffer.
      *
-     * @param buf The result buffer we want the info put into (may want more than one
-     *            result displayed for a single Intact type)
-     * @param obj The Intact object that user info is required for.
+     * @param topic the type of error we have dicovered for the given AnnotatedObject.
+     * @param obj   The Intact object that user info is required for.
      * @throws SQLException thrown if there were DB problems
      */
-    private void getUserInfo( StringBuffer buf, IntactObject obj ) throws SQLException {
+    private void addMessage( ReportTopic topic, AnnotatedObject obj ) throws SQLException {
 
         String user = null;
         Timestamp date = null;
@@ -849,59 +695,226 @@ public class SanityChecker {
             results = bioSourceStatement.executeQuery();
         }
 
-        //Connection conn = null;
-        //stmt = conn.prepareStatement(sql);
         if( results.next() ) {
             user = results.getString( "userstamp" );
             date = results.getTimestamp( "timestamp" );
         }
 
-        buf.append( "AC: " + obj.getAc() + "\t" + " User: " + user + "\t" + "When: " + date + NEW_LINE );
-    }
+        results.close();
 
-    /**
-     * Handles dumping results to a file. If no results were found
-     * then an apporpiate message is printed instead.
-     *
-     * @param buf The data to be dumped to the file
-     */
-    private void writeResults( StringBuffer buf ) {
+        // Build users report
+        String userMessageReport = "AC: " + obj.getAc() +
+                                   "\t Shortlabel: " + obj.getShortLabel() +
+                                   "\t When: " + date;
 
-        writer.println( buf );
-        if( buf.indexOf( "User" ) == -1 ) {
-            //none found - write useful message
-            writer.println( "No matches for this test." );
-            writer.println();
+        if( user != null && !( user.trim().length() == 0 ) ) {
+
+            // add new message to the user
+            Map userReport = (Map) allUsersReport.get( user );
+            if( userReport == null ) {
+                userReport = new HashMap();
+            }
+
+            Collection topicMessages = (Collection) userReport.get( topic );
+            if( topicMessages == null ) {
+                topicMessages = new ArrayList();
+
+                // add the messages to the topic
+                userReport.put( topic, topicMessages );
+            }
+
+            // add the message to the topic
+            topicMessages.add( userMessageReport );
+
+            // add the user's messages
+            allUsersReport.put( user, userReport );
+        } else {
+
+            System.err.println( "No user found for object: " + userMessageReport );
         }
 
+
+        // build admin admin report
+        String adminMessageReport = "AC: " + obj.getAc() +
+                                    "\t Shortlabel: " + obj.getShortLabel() +
+                                    "\t User: " + user +
+                                    "\t When: " + date;
+
+        Collection topicMessages = (Collection) adminReport.get( topic );
+        if( topicMessages == null ) {
+            topicMessages = new ArrayList();
+
+            // add the messages to the topic
+            adminReport.put( topic, topicMessages );
+        }
+
+        // add the message to the topic
+        topicMessages.add( adminMessageReport );
+    }
+
+
+
+    /**
+     * post emails to the curators (their individual errors) and to the administrator (global list of errors)
+     *
+     * @throws MessagingException
+     */
+    public void postEmails() throws MessagingException {
+
+        MailSender mailer = new MailSender();
+
+        // send individual mail to curators
+        for( Iterator iterator = allUsersReport.keySet().iterator(); iterator.hasNext(); ) {
+            String user = (String) iterator.next();
+
+            Map reportMessages = (Map) allUsersReport.get( user );
+            StringBuffer fullReport = new StringBuffer( 256 );
+            int errorCount = 0;
+
+            for( Iterator iterator1 = reportMessages.keySet().iterator(); iterator1.hasNext(); ) {
+                ReportTopic topic = (ReportTopic) iterator1.next();
+
+                fullReport.append( topic.getUnderlinedTitle() ).append( NEW_LINE );
+                Collection messages = (Collection) reportMessages.get( topic );
+
+                // write individual messages of that topic.
+                for( Iterator iterator2 = messages.iterator(); iterator2.hasNext(); ) {
+                    String message = (String) iterator2.next();
+
+                    fullReport.append( message ).append( NEW_LINE );
+                    errorCount++;
+                } // messages in the topic
+
+                fullReport.append( NEW_LINE );
+            } // topics
+
+            // don't send mail to curator if no errors
+            if( errorCount > 0 ) {
+
+//                System.out.println( "Send individual report to "+ user + "( "+ email + )" );
+                String email = (String) usersEmails.get( user.toLowerCase() );
+                String[] recipients = new String[ 1 ];
+                recipients[ 0 ] = email;
+
+                // send mail
+                mailer.postMail( recipients,
+                                 "SANITY CHECK - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
+                                 fullReport.toString(),
+                                 "skerrien@ebi.ac.uk" );
+            }
+        } // users
+
+        // send summary of all individual mail to admin
+        StringBuffer fullReport = new StringBuffer( 256 );
+        int errorCount = 0;
+        if( adminReport.isEmpty() ) {
+
+        } else {
+            for( Iterator iterator = adminReport.keySet().iterator(); iterator.hasNext(); ) {
+                ReportTopic topic = (ReportTopic) iterator.next();
+
+                Collection messages = (Collection) adminReport.get( topic );
+                fullReport.append( topic.getUnderlinedTitle() ).append( NEW_LINE );
+                for( Iterator iterator1 = messages.iterator(); iterator1.hasNext(); ) {
+                    String message = (String) iterator1.next();
+                    fullReport.append( message ).append( NEW_LINE );
+                    errorCount++;
+                } // messages
+
+                fullReport.append( NEW_LINE );
+            } // topics
+
+            String[] recipients = new String[ adminsEmails.size() ];
+            int i = 0;
+            for( Iterator iterator = adminsEmails.iterator(); iterator.hasNext(); ) {
+                String email = (String) iterator.next();
+                recipients[ i++ ] = email;
+            }
+
+            // always send mail to admin, even if no errors
+            mailer.postMail( recipients,
+                             "SANITY CHECK (ADMIN) - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
+                             fullReport.toString(),
+                             "skerrien@ebi.ac.uk" );
+        }
+    }
+
+    private String getFullReportOutput() {
+
+        StringBuffer fullReport = new StringBuffer( 256 );
+
+        for( Iterator iterator = adminReport.keySet().iterator(); iterator.hasNext(); ) {
+            ReportTopic topic = (ReportTopic) iterator.next();
+
+            Collection messages = (Collection) adminReport.get( topic );
+            fullReport.append( topic.getUnderlinedTitle() ).append( NEW_LINE );
+            for( Iterator iterator1 = messages.iterator(); iterator1.hasNext(); ) {
+                String message = (String) iterator1.next();
+                fullReport.append( message ).append( NEW_LINE );
+            } // messages
+
+            fullReport.append( NEW_LINE );
+        } // topics
+
+        return fullReport.toString();
+    }
+
+    public void test() throws SQLException, IntactException {
+
+        Institution ebi = new Institution( "EBI" );
+
+        BioSource bioSource = new BioSource( ebi, "yeast", "xxxx" );
+
+        BioSource sam = helper.getBioSourceByName( "panpa" );
+        addMessage( BIOSOURCE_WITH_NO_TAXID, sam );
+
+        BioSource jyotis = helper.getBioSourceByName( "mouse-thymus" );
+        addMessage( BIOSOURCE_WITH_NO_TAXID, jyotis );
+
+
+        Experiment exp = new Experiment( ebi, "myExp", bioSource);
+        addMessage( INTERACTION_WITH_NO_BAIT, exp );
+
+            try {
+
+                postEmails();
+
+            } catch( MessagingException e ) {
+                // show error ...
+                e.printStackTrace();
+
+                // ... and save the full report on hard disk instead.
+                String filename = null;
+
+                    filename = "sanityCheck-" + TIME + ".txt";
+
+                    System.out.println( "Usage: javaRun.sh SanityChecker <filename>" );
+                    System.out.println( "<filename> automatically set to: " + filename );
+
+                File file = new File( filename );
+                System.out.println( "results filename: " + filename );
+                System.out.println( "Output will be written in: " + file.getAbsolutePath() );
+                PrintWriter out = null;
+                try {
+                    out = new PrintWriter( new BufferedWriter( new FileWriter( file ) ) );
+                } catch( IOException e1 ) {
+                    e1.printStackTrace();
+                }
+
+                out.write( getFullReportOutput() );
+                out.flush();
+                out.close();
+            }
+
+        System.exit( 1 );
     }
 
     public static void main( String[] args ) throws Exception {
 
         IntactHelper helper = null;
-        PrintWriter out = null;
         SanityChecker checker = null;
 
         try {
-
-            String filename = null;
-            if( args.length != 1 ) {
-
-                java.util.Date date = new java.util.Date();
-                SimpleDateFormat formatter = new SimpleDateFormat( "yyyy.MM.dd@HH.mm" );
-                String time = formatter.format( date );
-                filename = "sanityCheck-" + time + ".txt";
-
-                System.out.println( "Usage: javaRun.sh SanityChecker <filename>" );
-                System.out.println( "<filename> automatically set to: " + filename );
-            } else {
-                filename = args[ 0 ];
-            }
-
-            File file = new File( filename );
-            System.out.println( "Output will be written in: " + file.getAbsolutePath() );
-            out = new PrintWriter( new BufferedWriter( new FileWriter( file ) ) );
-
             helper = new IntactHelper();
 
             // Install termination hook, that allows to close cleanly the db connexion if the user hits CTRL+C.
@@ -909,12 +922,10 @@ public class SanityChecker {
 
             System.out.println( "Helper created (User: " + helper.getDbUserName() + " " +
                                 "Database: " + helper.getDbName() + ")" );
-            System.out.println( "results filename: " + filename );
-            out.println( "Checks against Database " + helper.getDbName() );
-            out.println( "----------------------------------" );
-            out.println();
             System.out.print( "checking data integrity..." );
-            checker = new SanityChecker( helper, out );
+            checker = new SanityChecker( helper );
+
+            checker.test();
 
             long start = System.currentTimeMillis();
             //do checks here.....
@@ -952,21 +963,54 @@ public class SanityChecker {
             System.out.println();
             System.out.println( "Total time to perform checks: " + total / 1000 + "s" );
 
-        } catch ( IntactException e ) {
+            // try to send emails
+            try {
 
-            System.out.println( "Root cause: " + e.getRootCause() );
+                checker.postEmails();
+
+            } catch( MessagingException e ) {
+                // show error ...
+                e.printStackTrace();
+
+                // ... and save the full report on hard disk instead.
+                String filename = null;
+                if( args.length != 1 ) {
+
+                    filename = "sanityCheck-" + TIME + ".txt";
+
+                    System.out.println( "Usage: javaRun.sh SanityChecker <filename>" );
+                    System.out.println( "<filename> automatically set to: " + filename );
+                } else {
+                    filename = args[ 0 ];
+                }
+
+                File file = new File( filename );
+                System.out.println( "results filename: " + filename );
+                System.out.println( "Output will be written in: " + file.getAbsolutePath() );
+                PrintWriter out = new PrintWriter( new BufferedWriter( new FileWriter( file ) ) );
+
+                out.println( "Checks against Database " + helper.getDbName() );
+                out.println( "----------------------------------" );
+                out.println();
+
+                out.write( checker.getFullReportOutput() );
+                out.flush();
+                out.close();
+            }
+
+        } catch( IntactException e ) {
+
             e.printStackTrace();
+            if( e.getRootCause() != null ) {
+                e.getRootCause().printStackTrace( );
+            }
             System.exit( 1 );
-        } catch ( EOFException fe ) {
-
-            System.err.println( "End of stream" );
-            System.exit( 1 );
-        } catch ( SQLException sqe ) {
+        } catch( SQLException sqe ) {
 
             System.out.println( "DB error!" );
             sqe.printStackTrace();
             System.exit( 1 );
-        } catch ( OutOfMemoryError aome ) {
+        } catch( OutOfMemoryError aome ) {
 
             aome.printStackTrace();
             System.err.println( "" );
@@ -975,10 +1019,10 @@ public class SanityChecker {
             System.err.println( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" );
             System.err.println( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" );
             System.err.println( "      amount of memory (heap size) that the JVM is allowed to allocate." );
-            System.err.println( "      eg. java -Xms128m -Xmx576m <className>" );
+            System.err.println( "      eg. java -Xms128m -Xmx640m <className>" );
 
             System.exit( 1 );
-        } catch ( Exception e ) {
+        } catch( Exception e ) {
 
             e.printStackTrace();
             System.exit( 1 );
@@ -986,9 +1030,6 @@ public class SanityChecker {
 
             if( checker != null ) {
                 checker.cleanUp();
-            }
-            if( out != null ) {
-                out.close();
             }
         }
 
