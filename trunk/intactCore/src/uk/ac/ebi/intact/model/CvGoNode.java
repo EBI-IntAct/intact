@@ -65,7 +65,9 @@ public class CvGoNode extends CvDagObject implements Editable {
      */
     public String getGoId() {
         Collection someXrefs = this.getXref();
-        assert someXrefs.size() == 1 : "error: a CvGoNode can only have one specific Xref";
+        if (someXrefs.size() != 1) {
+            System.out.println("warning: a CvGoNode can only have one specific Xref");
+        }
         Xref xref = (Xref) someXrefs.iterator().next();
         return xref.getPrimaryId();
     }
@@ -93,6 +95,7 @@ public class CvGoNode extends CvDagObject implements Editable {
             interactors.addAll(helper.getObjectsByXref(Interactor.class, this.getGoId()));
         } catch (IntactException e) {
             System.out.println("error: getObjectByXref failed = " + e);
+            System.exit(0);
         }
         return interactors; // Collection of Interactors
     }
