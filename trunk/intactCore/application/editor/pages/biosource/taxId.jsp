@@ -1,3 +1,5 @@
+<%@ page import="org.apache.commons.beanutils.DynaBean,
+                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -13,6 +15,17 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
+<jsp:useBean id="user" scope="session"
+    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+
+    <%
+        // Fill with form data for this page to display.
+        String formName = EditorConstants.FORM_BIOSOURCE;
+        DynaBean form = user.createForm(formName, request);
+        user.getView().populateEditorSpecificInfo(form);
+        pageContext.setAttribute(formName, form);
+    %>
+
 <html:form action="/biosource/taxid">
     <table width="40%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
@@ -26,7 +39,8 @@
                 </html:submit>
             </td>
             <td class="tableCell">
-                <html:text property="taxId" name="bioSourceForm" size="10" maxlength="16"/>
+                <html:text property="taxId"  size="10" maxlength="16"
+                    name="<%=EditorConstants.FORM_BIOSOURCE%>"/>
             </td>
         </tr>
     </table>

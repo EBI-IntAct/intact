@@ -12,7 +12,8 @@
 
 <%@ page language="java"%>
 <%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
-                 uk.ac.ebi.intact.application.editor.struts.view.EditBean"%>
+                 uk.ac.ebi.intact.application.editor.struts.view.EditBean,
+                 uk.ac.ebi.intact.application.editor.struts.view.EditForm"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -25,6 +26,13 @@
 <c:set var="viewbean" value="${user.view}"/>
 <c:set var="dblist" value="${user.databaseList}"/>
 <c:set var="qlist" value="${user.qualifierList}"/>
+
+    <%
+        // Fill with form data for this page to display.
+        EditForm form = new EditForm();
+        user.getView().populateXrefs(form);
+        pageContext.setAttribute(EditorConstants.FORM_XREF_EDIT, form);
+    %>
 
 <h3>Crossreferences</h3>
 
@@ -42,7 +50,7 @@
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
-            <nested:iterate name="<%=EditorConstants.XREF_EDIT_FORM%>" property="items">
+            <nested:iterate name="<%=EditorConstants.FORM_XREF_EDIT%>" property="items">
                 <!-- Different styles for even or odd rows -->
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
@@ -59,7 +67,7 @@
                          Delete is visible regardless of the state.
                      --%>
                     <td class="tableCell">
-                        <nested:equal name="<%=EditorConstants.XREF_EDIT_FORM%>"
+                        <nested:equal name="<%=EditorConstants.FORM_XREF_EDIT%>"
                             property="editState" value="<%=EditBean.VIEW%>">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="xrefs.button.edit.titleKey">
@@ -67,7 +75,7 @@
                             </html:submit>
                         </nested:equal>
 
-                        <nested:equal name="<%=EditorConstants.XREF_EDIT_FORM%>"
+                        <nested:equal name="<%=EditorConstants.FORM_XREF_EDIT%>"
                             property="editState" value="<%=EditBean.SAVE%>">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="xrefs.button.save.titleKey">
@@ -84,7 +92,7 @@
                     </td>
 
                     <%-- In view mode --%>
-                    <nested:equal name="<%=EditorConstants.XREF_EDIT_FORM%>"
+                    <nested:equal name="<%=EditorConstants.FORM_XREF_EDIT%>"
                         property="editState" value="<%=EditBean.VIEW%>">
                         <td class="tableCell">
                             <nested:write property="database"/>
@@ -104,7 +112,7 @@
                     </nested:equal>
 
                     <%-- In save mode --%>
-                    <nested:equal name="<%=EditorConstants.XREF_EDIT_FORM%>"
+                    <nested:equal name="<%=EditorConstants.FORM_XREF_EDIT%>"
                         property="editState" value="<%=EditBean.SAVE%>">
                         <td class="tableCell">
                             <nested:select property="database">

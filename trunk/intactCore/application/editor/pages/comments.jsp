@@ -12,7 +12,8 @@
 
 <%@ page language="java"%>
 <%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
-                 uk.ac.ebi.intact.application.editor.struts.view.EditBean"%>
+                 uk.ac.ebi.intact.application.editor.struts.view.EditBean,
+                 uk.ac.ebi.intact.application.editor.struts.view.EditForm"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -27,6 +28,13 @@
 <%-- Set the drop down lists --%>
 <c:set var="topiclist" value="${user.topicList}"/>
 
+    <%
+        // Fill with form data for this page to display.
+        EditForm form = new EditForm();
+        user.getView().populateAnnotations(form);
+        pageContext.setAttribute(EditorConstants.FORM_COMMENT_EDIT, form);
+    %>
+
 <h3>Annotations</h3>
 
 <c:if test="${not empty viewbean.annotations}">
@@ -40,7 +48,7 @@
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
-            <nested:iterate name="<%=EditorConstants.COMMENT_EDIT_FORM%>"
+            <nested:iterate name="<%=EditorConstants.FORM_COMMENT_EDIT%>"
                 property="items">
                 <!-- Different styles for even or odd rows -->
                 <c:choose>
@@ -57,7 +65,7 @@
                          Delete is visible regardless of the state.
                      --%>
                     <td class="tableCell">
-                        <nested:equal name="<%=EditorConstants.COMMENT_EDIT_FORM%>"
+                        <nested:equal name="<%=EditorConstants.FORM_COMMENT_EDIT%>"
                             property="editState" value="<%=EditBean.VIEW%>">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="annotations.button.edit.titleKey">
@@ -80,7 +88,7 @@
                         </html:submit>
                     </td>
 
-                    <nested:equal name="<%=EditorConstants.COMMENT_EDIT_FORM%>"
+                    <nested:equal name="<%=EditorConstants.FORM_COMMENT_EDIT%>"
                         property="editState" value="<%=EditBean.VIEW%>">
                         <td class="tableCell">
                             <nested:write property="topic"/>
