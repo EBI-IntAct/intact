@@ -16,8 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -29,7 +27,7 @@ import uk.ac.ebi.intact.application.mine.business.MineException;
 import uk.ac.ebi.intact.application.mine.business.graph.GraphHelper;
 import uk.ac.ebi.intact.application.mine.business.graph.MineHelper;
 import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
-import uk.ac.ebi.intact.application.mine.struts.view.ErrorForm;
+import uk.ac.ebi.intact.application.mine.struts.view.ErrorBean;
 
 /**
  * This class provides the action to start the Dijkstra algorithm to find the
@@ -65,7 +63,6 @@ public class DisplayAction extends Action {
                 .getAttribute( Constants.SEARCH );
 
         MessageResources mr = getResources( request );
-        ActionErrors myErrors = new ActionErrors();
 
         // if no user is in the current session an excepion is thrown
         // because up to now a user should have been created and e.g.
@@ -87,9 +84,8 @@ public class DisplayAction extends Action {
             networks = helper.getNetworkMap( searchFor );
         }
         catch ( SQLException e1 ) {
-            ErrorForm ef = new ErrorForm( mr
-                    .getMessage( "displayAction.noNetworkMap" ) );
-            request.setAttribute( Constants.ERROR, ef );
+            request.setAttribute( Constants.ERROR, new ErrorBean(
+                    "displayAction.noNetworkMap" ) );
             return mapping.findForward( Constants.ERROR );
         }
         Integer graphid;
@@ -123,10 +119,9 @@ public class DisplayAction extends Action {
                     gd = graphHelper.getGraph( graphid );
                 }
                 catch ( SQLException e ) {
-                    ErrorForm ef = new ErrorForm( mr.getMessage(
-                            "displayAction.noGraph", Integer.toString( graphid
-                                    .intValue() ) ) );
-                    request.setAttribute( Constants.ERROR, ef );
+                    request.setAttribute( Constants.ERROR, new ErrorBean( mr
+                            .getMessage( "displayAction.noGraph", Integer
+                                    .toString( graphid.intValue() ) ) ) );
                     return mapping.findForward( Constants.ERROR );
                 }
                 try {
@@ -138,9 +133,9 @@ public class DisplayAction extends Action {
                     String searchString = search.toString();
                     searchString = searchString.substring( 1, searchString
                             .length() - 1 );
-                    ErrorForm ef = new ErrorForm( mr.getMessage(
-                            "displayAction.noMiNe", searchString ) );
-                    request.setAttribute( Constants.ERROR, ef );
+                    request.setAttribute( Constants.ERROR,
+                            new ErrorBean( mr.getMessage(
+                                    "displayAction.noMiNe", searchString ) ) );
                     return mapping.findForward( Constants.ERROR );
                 }
             }
@@ -163,12 +158,8 @@ public class DisplayAction extends Action {
             Constants.LOGGER.warn( "no connecting network found" );
             String singletons = user.getSingletons().toString();
             singletons = singletons.substring( 1, singletons.length() - 1 );
-            if ( !myErrors.isEmpty() ) {
-                myErrors.clear();
-            }
-            myErrors.add( "Error", new ActionError( mr.getMessage(
-                    "displayAction.noNetwork", singletons ) ) );
-            saveErrors( request, myErrors );
+            request.setAttribute( Constants.ERROR, new ErrorBean( mr
+                    .getMessage( "displayAction.noNetwork", singletons ) ) );
             return mapping.findForward( Constants.ERROR );
         }
         // forward to the result page
