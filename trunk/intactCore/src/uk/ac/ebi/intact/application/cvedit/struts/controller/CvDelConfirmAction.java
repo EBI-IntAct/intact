@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseForm;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
-import uk.ac.ebi.intact.persistence.TransactionException;
+import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,23 +49,39 @@ public class CvDelConfirmAction extends IntactBaseAction {
         // Determine the action taken by the user.
         IntactBaseForm theForm = (IntactBaseForm) form;
 
-        if (theForm.isSubmitted()) {
-            // Handler to the Intact User.
-            IntactUserIF user = super.getIntactUser(request);
+        // Handler to the Intact User.
+        IntactUserIF user = super.getIntactUser(request);
 
+        if (theForm.isSubmitted()) {
             // Try to delete the object we are editing at the moment..
             try {
                 user.delete(user.getCurrentEditObject());
             }
-            catch (TransactionException te) {
-                super.addError("error.delete", te.getMessage());
+            catch (IntactException ie) {
+                super.addError("error.delete", ie.getMessage());
+                super.saveErrors(request);
+                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            }
+            // Commit the transaction.
+            try {
+                user.commit();
+            }
+            catch (IntactException ie) {
+                // Unable to create an annotation.
+                super.addError("error.transaction.commit", ie.getNestedMessage());
                 super.saveErrors(request);
                 return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
             }
             // Delete successful; back to the results or search.
             return mapping.findForward(super.fwdResultsOrSearch(request));
         }
-        // Assume it is a cancel action; back to the editing.
+        // Cancel the delete; rollback changes and back to editing.
+        try {
+            user.rollback();
+        }
+        catch (IntactException ie1) {
+            // Just ignore it.
+        }
         return mapping.findForward(WebIntactConstants.FORWARD_EDIT);
     }
 }
