@@ -126,9 +126,10 @@ public class Prediction {
         return list;
     }
 
-    public static void main(String[] args) throws IntactException {
-        Prediction pred = new Prediction();
+    public static void main(String[] args) {
+        Prediction pred = null;
         try {
+            pred = new Prediction();
             System.out.println("Preparing tables...");
             pred.PrepareTables();           // Prepare Tables
             ArrayList species_list = pred.getSpeciesTypes();
@@ -138,7 +139,21 @@ public class Prediction {
                 System.out.println("Performing Pay-As-You-Go Strategy for Taxonomic ID: " + species);
                 pred.doPayAsYouGo(species);         //Perform Pay-As-You-Go algorithm on the interaction network for each species
             }
-
+            // Drop temp tables.
+            pred.dropTables();
+        }
+        catch (SQLException sqle) {
+            while (sqle != null) {
+                System.err.println("**** SQLException ****");
+                System.err.println("** SQLState: " + sqle.getSQLState());
+                System.err.println("** Message: " + sqle.getMessage());
+                System.err.println("** Error Code: " + sqle.getErrorCode());
+                System.err.println("***********");
+                sqle = sqle.getNextException();
+            }
+        }
+        catch (IntactException ie) {
+            ie.printStackTrace();
         }
         finally {
             // Close the connection regardless.
@@ -146,7 +161,7 @@ public class Prediction {
         }
     } //end main
 
-    private void PrepareTables() throws IntactException {
+    private void PrepareTables() throws IntactException, SQLException {
         Statement S = null;
         try {
             //Create current_edge table
@@ -185,14 +200,6 @@ public class Prediction {
             } //end while
             R.close();
         }
-        catch (SQLException E) {
-            E.printStackTrace();
-            System.out.println("ERROR throws from here!!!!");
-            System.out.println("SQLException:\t" + E.getMessage());
-            System.out.println("SQLState:\t" + E.getSQLState());
-            System.out.println("VendorError:\t" + E.getErrorCode());
-            System.exit(0);
-        } // end catch
         finally {
             if (S != null) {
                 try {
@@ -204,7 +211,25 @@ public class Prediction {
         }
     }// end Prepare Tables
 
-    private void fillCurrentEdgesTable() throws IntactException {
+    private void dropTables() throws IntactException, SQLException {
+        Statement S = null;
+        try {
+            S = getConnection().createStatement();
+            S.executeUpdate("drop table current_edge;");
+            S.executeUpdate("drop table temp_node;");
+        }
+        finally {
+            if (S != null) {
+                try {
+                    S.close();
+                }
+                catch (SQLException e) {
+                }
+            }
+        }
+    }
+
+    private void fillCurrentEdgesTable() throws IntactException, SQLException {
 
         String bait = "";
 
@@ -248,11 +273,6 @@ public class Prediction {
                 }
             }
         }
-        catch (SQLException E) {
-            System.out.println("SQLException:\t" + E.getMessage());
-            System.out.println("SQLState:\t" + E.getSQLState());
-            System.out.println("VendorError:\t" + E.getErrorCode());
-        } // end catch
         finally {
             if (S != null) {
                 try {
@@ -264,7 +284,7 @@ public class Prediction {
         }
     } // end fill_current_edge_table
 
-    private ArrayList getSpeciesTypes() throws IntactException {
+    private ArrayList getSpeciesTypes() throws IntactException, SQLException {
         ArrayList speciesList = new ArrayList();
         Statement S = null;
 
@@ -275,11 +295,6 @@ public class Prediction {
                 speciesList.add(R.getString(1));
             }
         }
-        catch (SQLException E) {
-            System.out.println("SQLException: " + E.getMessage());
-            System.out.println("SQLState:     " + E.getSQLState());
-            System.out.println("VendorError:  " + E.getErrorCode());
-        } // end try/catch connection
         finally {
             if (S != null) {
                 try {
@@ -293,7 +308,7 @@ public class Prediction {
 
     }// end get_species_types
 
-    private void doPayAsYouGo(String species) throws IntactException {
+    private void doPayAsYouGo(String species) throws IntactException, SQLException {
         String nextbait = getNextNode(species);
         // while we have uncovered node
         for (int counter = 1; !nextbait.equals(""); counter++) {
@@ -302,7 +317,7 @@ public class Prediction {
         }
     }
 
-    private String getNextNode(String species) throws IntactException {
+    private String getNextNode(String species) throws IntactException, SQLException {
         // selecting the next bait but only from one species
         Statement S = null;
         int in = 0, out = 0;
@@ -347,11 +362,6 @@ public class Prediction {
                 R.close();
             } // end if nid = 0
         }
-        catch (SQLException E) {
-            System.out.println("SQLException:\t" + E.getMessage());
-            System.out.println("SQLState:\t" + E.getSQLState());
-            System.out.println("VendorError:\t" + E.getErrorCode());
-        } // end try
         finally {
             if (S != null) {
                 try {
@@ -366,7 +376,7 @@ public class Prediction {
     } // end getNextNode
 
     private void virtualPullOut(String ID, int step, String species)
-            throws IntactException {
+            throws IntactException, SQLException {
         Statement S = null;
         try {
             // determine k & deltaK
@@ -442,11 +452,6 @@ public class Prediction {
                     + nConfirm + " where nID=\'" + ID + "\' and species =\'"
                     + species + "\';");
         }
-        catch (SQLException E) {
-            System.out.println("SQLException:\t" + E.getMessage());
-            System.out.println("SQLState:\t" + E.getSQLState());
-            System.out.println("VendorError:\t" + E.getErrorCode());
-        } // end try
         finally {
             if (S != null) {
                 try {
