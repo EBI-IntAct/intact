@@ -1,7 +1,8 @@
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
-import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.util.ProteinUtils;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean;
 import uk.ac.ebi.intact.model.Protein;
 

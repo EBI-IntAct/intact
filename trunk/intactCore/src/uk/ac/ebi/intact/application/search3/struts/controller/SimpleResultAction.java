@@ -1,8 +1,9 @@
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.SimpleViewBean;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
