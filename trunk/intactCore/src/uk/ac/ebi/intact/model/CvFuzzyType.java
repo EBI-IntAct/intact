@@ -13,6 +13,26 @@ package uk.ac.ebi.intact.model;
 public class CvFuzzyType extends CvObject implements Editable {
 
     /**
+     * The constant name for <.
+     */
+    public static final String LESS_THAN = "less-than";
+
+    /**
+     * The constant for >.
+     */
+    public static final String GREATER_THAN = "greater-than";
+
+    /**
+     * The constant for fuzzy.
+     */
+    public static final String FUZZY = "fuzzy";
+
+    /**
+     * The constant for undetermined.
+     */
+    public static final String UNDETERMINED = "undetermined";
+    
+    /**
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
