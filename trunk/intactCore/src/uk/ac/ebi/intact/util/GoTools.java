@@ -61,7 +61,7 @@ public class GoTools {
             searchResult = (AnnotatedObject) helper.getObjectByLabel(targetClass, label);
             if ((null == searchResult)
                     ||
-                    (current == searchResult)) {
+                    (current.getAc().equals(searchResult.getAc()))) {
                 // No object has label, or only the current object.
                 // Therefore, if label is assigned to current, it will still be unique.
                 return label;
@@ -77,7 +77,7 @@ public class GoTools {
         searchResult = (AnnotatedObject) helper.getObjectByLabel(targetClass, label);
         if ((null == searchResult)
                 ||
-                (current == searchResult)) {
+                (current.getAc().equals(searchResult.getAc()))) {
             // No object has label, or only the current object.
             // Therefore, if label is assigned to current, it will still be unique.
             return label;
