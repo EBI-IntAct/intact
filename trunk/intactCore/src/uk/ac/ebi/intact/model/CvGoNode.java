@@ -91,13 +91,12 @@ public class CvGoNode extends CvDagObject {
     /**
      * @return Collection of Interactors, which were associated with this GO term / id
      */
-    public Collection getInteractors(IntactHelper helper) {
+    public Collection getInteractors(IntactHelper helper) throws IntactException {
         Collection interactors = new ArrayList();
         try {
             interactors.addAll(helper.getObjectsByXref(Interactor.class, this.getGoId()));
         } catch (IntactException e) {
-            System.out.println("error: getObjectByXref failed = " + e);
-            System.exit(0);
+            throw e;
         }
         return interactors; // Collection of Interactors
     }
