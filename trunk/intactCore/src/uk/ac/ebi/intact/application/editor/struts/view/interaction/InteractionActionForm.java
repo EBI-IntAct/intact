@@ -203,8 +203,21 @@ public class InteractionActionForm extends EditorActionForm {
         //        }
         Logger.getLogger(EditorConstants.LOGGER)
                 .debug("Setting the components");
+        // Clear previous components.
+//        myComponents.clear();
+//        // Create new components or form will share the objects with the bean.
+//        for (Iterator iter = comps.iterator(); iter.hasNext();) {
+//            ComponentBean cb = (ComponentBean) iter.next();
+//            myComponents.add(cb);
+//            myComponents.
+//        }
         myComponents = new ArrayList(comps);
-
+//        for (Iterator iterator = myComponents.iterator(); iterator.hasNext();) {
+//            ComponentBean cb = (ComponentBean) iterator.next();
+//            for (Iterator iter1 = cb.getFeatures().iterator(); iter1.hasNext();) {
+//                System.out.println("Feature: " + ((FeatureBean) iter1.next()).getAc());
+//            }
+//        }
     }
 
     public List getComponents() {
@@ -282,20 +295,29 @@ public class InteractionActionForm extends EditorActionForm {
     }
 
     /**
-     * Returns an array that contains ACs of two selected features. This method
-     * asseumns that {@link #validate(ActionMapping, HttpServletRequest)}has
-     * been called prior to calling this method because it returns the first two
-     * selected features (even when the user has incorrcetly selected more than
-     * two features).
+     * Returns an array that contains two selected (checkboxes) Feature beans.
+     * This method assumes that {@link #validate(ActionMapping, HttpServletRequest)}
+     * has been called prior to calling this method because it returns the first
+     * two selected features (even when the user has incorrcetly selected more
+     * than two features).
      * 
-     * @return an array containing ACs of two selected features.
+     * @return an array containing two selected features beans. The array contains
+     * null items if none were selected.
+     *
+     * @see #validate(ActionMapping, HttpServletRequest)
+     *
+     * <pre>
+     * pre: validate(ActionMapping, HttpServletRequest)
+     * <pre>
      */
-    public FeatureBean[] getFeatureACsForLink() {
-        // The two ACs to return.
+    public FeatureBean[] getFeaturesForLink() {
+        // The two feature beans to return.
         FeatureBean[] fbs = new FeatureBean[2];
 
+        // For array indexing.
         int idx = 0;
-        // Get the feature ACs for two linked items.
+
+        // Loop through components until we found two items.
         for (Iterator iter0 = getComponents().iterator(); iter0.hasNext()
                 && fbs[1] == null;) {
             ComponentBean compBean = (ComponentBean) iter0.next();
@@ -310,6 +332,31 @@ public class InteractionActionForm extends EditorActionForm {
             }
         }
         return fbs;
+    }
+
+    /**
+     * Returns the selected feature for selecting a checkbox. This method
+     * asseumns that {@link #validate(ActionMapping, HttpServletRequest)}has
+     * been called prior to calling this method because it returns the first
+     * selected feature (even when the user has incorrcetly selected more than
+     * one feature).
+     *
+     * @return the selected feature or null if none was selected.
+     */
+    public FeatureBean getFeatureForUnlink() {
+        // Loop till we found the selected feature.
+        for (Iterator iter0 = getComponents().iterator(); iter0.hasNext();) {
+            ComponentBean compBean = (ComponentBean) iter0.next();
+            for (Iterator iter1 = compBean.getFeatures().iterator();
+                 iter1.hasNext();) {
+                FeatureBean fb = (FeatureBean) iter1.next();
+                if (fb.isLinked()) {
+                    return fb;
+                }
+            }
+        }
+        // None found so far, return null.
+        return null;
     }
 
     /**
@@ -401,26 +448,13 @@ public class InteractionActionForm extends EditorActionForm {
                     .getAttribute(Globals.MESSAGES_KEY));
 
             // Trap errors for linking two features.
-            if (dispatch.equals(msgres
-                    .getMessage("int.proteins.button.feature.link"))) {
+            if (dispatch.equals(msgres.getMessage(
+                    "int.proteins.button.feature.link"))) {
                 errors = validateLinkTwoFeatures();
-                //                int count = 0;
-                //                for (Iterator iter0 = getComponents().iterator();
-                // iter0.hasNext();) {
-                //                    ComponentBean cb = (ComponentBean) iter0.next();
-                //                    for (Iterator iter1 =
-                // cb.getFeatures().iterator();iter1.hasNext();) {
-                //                        FeatureBean fb = (FeatureBean) iter1.next();
-                //                        if (fb.isLinked()) {
-                //                            ++count;
-                //                        }
-                //                    }
-                //                }
-                //                if (count != 2) {
-                //                    errors = new ActionErrors();
-                //                    errors.add("feature.link",
-                //                            new ActionError("error.int.feature.link"));
-                //                }
+            }
+            else if (dispatch.equals(msgres.getMessage(
+                    "int.proteins.button.feature.unlink"))) {
+                errors = validateUnlinkFeature();
             }
         }
         return errors;
@@ -450,6 +484,34 @@ public class InteractionActionForm extends EditorActionForm {
             errors = new ActionErrors();
             errors.add("feature.link",
                     new ActionError("error.int.feature.link"));
+        }
+        return errors;
+    }
+
+    /**
+     * Validates the form for when Unlink Selected Feature button was selected.
+     *
+     * @return errors if a single feature wasn't selected. A null is returned
+     * if there no errors.
+     */
+    private ActionErrors validateUnlinkFeature() {
+        ActionErrors errors = null;
+        int count = 0;
+        for (Iterator iter0 = getComponents().iterator(); iter0.hasNext()
+                && count <= 1;) {
+            ComponentBean cb = (ComponentBean) iter0.next();
+            for (Iterator iter1 = cb.getFeatures().iterator(); iter1.hasNext()
+                    && count <= 1;) {
+                FeatureBean fb = (FeatureBean) iter1.next();
+                if (fb.isLinked()) {
+                    ++count;
+                }
+            }
+        }
+        if (count != 1) {
+            errors = new ActionErrors();
+            errors.add("feature.link",
+                    new ActionError("error.int.feature.unlink"));
         }
         return errors;
     }

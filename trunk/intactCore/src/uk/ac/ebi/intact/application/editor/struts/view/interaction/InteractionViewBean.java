@@ -93,9 +93,14 @@ public class InteractionViewBean extends AbstractEditViewBean {
     private String mySourceExperimentAc;
 
     /**
-     * Maps: From Feature AC -> Dest feature AC
+     * Keeps a track of features to link
      */
-    private Map myFeatureFromAcToDestAc = new HashMap();
+    private Set myLinkFeatures = new HashSet();
+
+    /**
+     * Keeps a track of features to unlink
+     */
+    private Set myUnlinkFeatures = new HashSet();
 
     // Override the super method to initialize this class specific resetting.
     protected void reset(Class clazz) {
@@ -105,13 +110,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         setOrganism(null);
         setInteractionType(null);
         setSourceExperimentAc(null);
-//
-//        // Clear any left overs from previous transaction.
-//        clearTransactions();
-//
-//        // Clear experiments and proteins.
-//        makeExperimentBeans(Collections.EMPTY_LIST);
-//        makeProteinBeans(Collections.EMPTY_LIST);
     }
 
     protected void reset(AnnotatedObject annobj) {
@@ -122,23 +120,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Reset the current interaction with the argument interaction.
         resetInteraction(intact);
-
-//        setKD(intact.getKD());
-//
-//        // Only set the short labels if the interaction has non null values.
-//        BioSource biosrc = intact.getBioSource();
-//        setOrganism(biosrc != null ? biosrc.getShortLabel() : null);
-//
-//        CvInteractionType inter = intact.getCvInteractionType();
-//        setInteractionType(inter != null
-//                ? intact.getCvInteractionType().getShortLabel() : null);
-
-        // Clear any left overs from previous transaction.
-//        clearTransactions();
-
-        // Set the source experiment to null to indicate that this bean
-        // is not constructed within an experiment.
-//        setSourceExperimentAc(null);
 
         // Prepare for Proteins and Experiments for display.
         makeExperimentBeans(intact.getExperiments());
@@ -163,50 +144,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
             addProteinToUpdate(cb);
         }
     }
-
-    /**
-     * Returns the Component, for given protein AC belongs. The search is limited
-     * to the current interaction and comparision is based on the AC of a
-     * Component's interactor.
-     * @param proteinAc the AC of the protein to get the component.
-     * @return the Component where given protein AC belongs. <code>null</code>
-     * is returned if no component exists for <code>proteinAc</code>.
-     */
-//    public Component getComponent(String proteinAc) {
-//        // The current Interaction.
-//        Interaction intact = (Interaction) getAnnotatedObject();
-//
-//        for (Iterator iter = intact.getComponents().iterator(); iter.hasNext();) {
-//            Component comp = (Component) iter.next();
-//            // Comparision is on the AC.
-//            if (comp.getInteractor().getAc().equals(proteinAc)) {
-//                return comp;
-//            }
-//        }
-//        return null;
-//    }
-
-    /**
-     * Returns the Component, the given protein AC belongs. The search is limited
-     * to the current interaction and comparision is based on the AC of a
-     * Component's interactor.
-     * @param proteinAc the AC of the protein to get the component.
-     * @return the Component where given protein AC belongs. <code>null</code>
-     * is returned if no component exists for <code>proteinAc</code>.
-     */
-//    public Component getComponent(String proteinAc) {
-//        // The current Interaction.
-//        Interaction intact = (Interaction) getAnnotatedObject();
-//
-//        for (Iterator iter = intact.getComponents().iterator(); iter.hasNext();) {
-//            Component comp = (Component) iter.next();
-//            // Comparision is on the AC.
-//            if (comp.getInteractor().getAc().equals(proteinAc)) {
-//                return comp;
-//            }
-//        }
-//        return null;
-//    }
 
     // Implements abstract methods
 
@@ -234,13 +171,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         else {
             // Update the existing interaction.
             intact.setCvInteractionType(type);
-
-            // Add experiments.
-//            for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-//                Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
-//                intact.addExperiment(exp);
-////                user.getHelper().removeFromCache(exp);
-//            }
         }
         // Get the objects using their short label.
         BioSource biosource = (BioSource) user.getObjectByLabel(
@@ -675,21 +605,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return myComponents;
     }
 
-    /**
-     * Returns a <code>ComponentBean</code> at given location.
-     * @param index the position to return <code>ComponentBean</code>.
-     * @return <code>ComponentBean</code> at <code>index</code>.
-     *
-     * <pre>
-     * pre: index >=0 and index < myComponents->size
-     * post: return != null
-     * post: return = myComponents->at(index)
-     * </pre>
-     */
-//    public ComponentBean getProtein(int index) {
-//        return (ComponentBean) myComponents.get(index);
-//    }
-
     // Override super to add extra.
     public void clearTransactions() {
         super.clearTransactions();
@@ -766,6 +681,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
         assert comp != null;
 
         comp.saveFeature(feature);
+
+        // Update this component for it to persist correctly.
+        addProteinToUpdate(comp);
     }
 
     public void deleteFeature(Feature feature) {
@@ -793,8 +711,58 @@ public class InteractionViewBean extends AbstractEditViewBean {
         addProteinToUpdate(comp);
     }
 
-    public void addFeatureLink(String fromAc, String toAc) {
-        myFeatureFromAcToDestAc.put(fromAc, toAc);
+    /**
+     * Adds to the Set that maintains which Features to be linked.
+     * @param fb1 the Feature bean to add the link to. This bean
+     * replaces any previous similar feature (i.e, no duplicates).
+     * @param fb2 other Feature bean to link.
+     */
+    public void addFeatureLink(FeatureBean fb1, FeatureBean fb2) {
+        // Update the screen beans.
+        fb1.setBoundDomain(fb2.getShortLabel());
+        fb2.setBoundDomain(fb1.getShortLabel());
+
+        // Make sure to set the linked beans to false (or else they will
+        // display as checked).
+        fb1.setLinked(false);
+        fb2.setLinked(false);
+
+        // We only add one bean because its bound domain has the short label
+        // of the other bean (ie., short label of fb2).
+        myLinkFeatures.add(fb1);
+    }
+
+    /**
+     * Adds to the Set that maintains which Features to be unlinked.
+     * @param fb the Feature bean to remove the link. This bean
+     * replaces any previous similar feature (i.e, no duplicates).
+     * @throws SearchException for errors in accessing Feature instance
+     * wrapped around the bean.
+     */
+    public void addFeatureToUnlink(FeatureBean fb, EditUserI user)
+            throws SearchException {
+        // The Features to unlink. Need to access the updated feature.
+        // This is important when a feature is linked but not yet persisted.
+        Feature srcFeature = fb.getFeature(user);
+        Feature toFeature = srcFeature.getBoundDomain();
+
+        // The destination feature as a bean.
+        FeatureBean toFb = getFeatureBean(toFeature);
+        // This bean must exist.
+        assert toFb != null;
+
+        // Update the screen beans.
+        fb.setBoundDomain("");
+        toFb.setBoundDomain("");
+
+        // Make sure to set the linked beans to false (or else they will
+        // display as checked).
+        fb.setLinked(false);
+        toFb.setLinked(false);
+
+        // Add to the set to update the database later.
+        myUnlinkFeatures.add(fb);
+        myUnlinkFeatures.add(toFb);
     }
 
     // Helper methods
@@ -876,13 +844,31 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Update components.
         for (Iterator iter1 = myComponentsToUpdate.iterator(); iter1.hasNext();) {
             ComponentBean cb = (ComponentBean) iter1.next();
-            // Delete features if there are any features to delete.
-            for (Iterator iter2 = cb.getFeaturesToDelete().iterator(); iter2.hasNext();) {
-                Feature feature = (Feature) iter2.next();
-                user.delete(feature);
-            }
             cb.setInteraction((Interaction) getAnnotatedObject());
             Component comp = cb.getComponent(user);
+            // Delete features if there are any features to delete.
+            for (Iterator iter2 = cb.getFeaturesToDelete().iterator(); iter2.hasNext();) {
+                Feature feature = ((FeatureBean) iter2.next()).getFeature(user);
+                // Remove from the component.
+                comp.removeBindingDomain(feature);
+
+                // Remove any links if this feature is linked to another feature.
+                if (feature.getBoundDomain() != null) {
+                    Feature toFeature = feature.getBoundDomain();
+                    // Disconnect the links between two features.
+                    System.out.println("Disconnecting bound domains");
+                    feature.setBoundDomain(null);
+                    toFeature.setBoundDomain(null);
+                }
+                user.delete(feature);
+            }
+            // Add features
+            for (Iterator iter2 = cb.getFeaturesToAdd().iterator(); iter2.hasNext();) {
+                Feature feature = ((FeatureBean) iter2.next()).getFeature(user);
+                // Add to the component.
+                comp.addBindingDomain(feature);
+                // No need to create the Feature because it has already been persisted.
+            }
             intact.addComponent(comp);
             if (user.isPersistent(comp)) {
                 user.update(comp);
@@ -891,17 +877,58 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 user.create(comp);
             }
         }
+        // Keeps a track of Features to update. This avoids many updates to the
+        // same feature.
+        Set featuresToUpdate = new HashSet();
 
         // Update any features to link.
-        for (Iterator iter = myFeatureFromAcToDestAc.keySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Feature srcFeature = (Feature) user.getObjectByAc(Feature.class,
-                    (String) entry.getKey());
-            Feature toFeature = (Feature) user.getObjectByAc(Feature.class,
-                    (String) entry.getValue());
+        for (Iterator iter = myLinkFeatures.iterator(); iter.hasNext();) {
+            // The feature bean to link.
+            FeatureBean fb = (FeatureBean) iter.next();
+
+            // The bound domain can be empty if this link was later unlinked
+            // before it was persisted.
+            if (fb.getBoundDomain().length() == 0) {
+                // Already unliked, carry on with the next.
+                continue;
+            }
+
+            // The Feature objets to link together. Use 'user' to get changes
+            // to bound domain.
+            Feature srcFeature = fb.getFeature(user);
+            Feature toFeature = (Feature) user.getObjectByLabel(
+                    Feature.class, fb.getBoundDomain());
+
+            // Sets the links.
             srcFeature.setBoundDomain(toFeature);
+            toFeature.setBoundDomain(srcFeature);
+
+            // Update features.
+            featuresToUpdate.add(srcFeature);
+            featuresToUpdate.add(toFeature);
+//            user.update(srcFeature);
+//            user.update(toFeature);
         }
 
+        // Update any features to unlink.
+        for (Iterator iter = myUnlinkFeatures.iterator(); iter.hasNext();) {
+            // The Feature to unlink.
+            Feature feature = ((FeatureBean) iter.next()).getFeature();
+
+            // Set the bound domian to null.
+            feature.setBoundDomain(null);
+
+            // Update features.
+            featuresToUpdate.add(feature);
+//            user.update(feature);
+        }
+        // Do the real updates to the features which require update.
+        for (Iterator iter = featuresToUpdate.iterator(); iter.hasNext();) {
+            Feature feature = (Feature) iter.next();
+            System.out.println("Updating feature: " + feature.getAc());
+            user.update(feature);
+//            user.update(iter.next());
+        }
         // No need to test whether this 'intact' persistent or not because we
         // know it has been already persisted by persist() call.
         user.update(intact);
@@ -925,6 +952,27 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Set the source experiment to null to indicate that this bean
         // is not constructed within an experiment.
         setSourceExperimentAc(null);
+    }
+
+    /**
+     * Returns the Feature bean for given Feature.
+     * @param feature the Feature to get the matching bean.
+     * @return the matching Feature bean for <code>feature</code> or null
+     * if none found.
+     */
+    private FeatureBean getFeatureBean(Feature feature) {
+        // Wrap it around a bean, so we can do the search containers.
+        FeatureBean fb = new FeatureBean(feature);
+
+        // Look in the componets.
+        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
+            List features = ((ComponentBean) iter.next()).getFeatures();
+            if (features.contains(fb)) {
+                return (FeatureBean) features.get(features.indexOf(fb));
+            }
+        }
+        // Not found the bean, return null.
+        return null;
     }
 
     // Static Inner Class -----------------------------------------------------

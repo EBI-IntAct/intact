@@ -203,6 +203,10 @@ public class FeatureBean implements Serializable {
         return mySelected;
     }
 
+    public Feature getFeature() {
+        return myFeature;
+    }
+
     /**
      * Updates the internal Feature with the new values from the form.
      *
@@ -250,9 +254,10 @@ public class FeatureBean implements Serializable {
      * Overrides the hashcode method.
      * @return the hascode of the AC is returned.
      */
-//    public int hashCode() {
-//        return myAc.hashCode();
-//    }
+    public int hashCode() {
+//        System.out.println("Called feature bean's hashcode");
+        return myFeature.getAc().hashCode();
+    }
 
     /**
      * Compares <code>obj</code> with this object according to

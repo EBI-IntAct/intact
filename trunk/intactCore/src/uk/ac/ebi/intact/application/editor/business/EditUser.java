@@ -308,6 +308,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditView;
     }
 
+    public void setView(AbstractEditViewBean view) {
+        myEditView = view;
+    }
+
     public void setView(Object obj) {
         // Start editing the object.
         startEditing();

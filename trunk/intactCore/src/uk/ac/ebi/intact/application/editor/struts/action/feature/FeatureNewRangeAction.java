@@ -47,6 +47,15 @@ public class FeatureNewRangeAction extends AbstractEditorAction {
         // The current view of the edit session.
         FeatureViewBean view = (FeatureViewBean) user.getView();
 
+        // The feature must exist before adding a new range.
+        if (view.getAnnotatedObject() == null) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("feature.range.interval",
+                    new ActionError("error.feature.range.nullfeature"));
+            saveErrors(request, errors);
+            // Feature must exist. Display the error in the input page.
+            return mapping.getInputForward();
+        }
         // Can we create a Range instance from the user input? validate
         // method only confirms ranges are valid.
         RangeBean rb = featureForm.getNewRange();
@@ -56,7 +65,7 @@ public class FeatureNewRangeAction extends AbstractEditorAction {
 
         // Capture the interval errors in creating a range.
         try {
-            range = rb.getRange((Feature) view.getAnnotatedObject(), user);
+            range = rb.makeRange((Feature) view.getAnnotatedObject(), user);
         }
         catch (IllegalArgumentException iae) {
             ActionErrors errors = new ActionErrors();
