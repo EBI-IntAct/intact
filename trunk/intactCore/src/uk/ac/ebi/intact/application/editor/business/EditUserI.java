@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -19,6 +19,8 @@ import java.io.Serializable;
 
 import org.apache.commons.beanutils.DynaBean;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Provides methods specific to a user editing an Annotated object.
  *
@@ -30,7 +32,7 @@ public interface EditUserI extends Serializable {
     /**
      * An empty list only contains this item.
      */
-    public static final String EMPTY_LIST_ITEM = "---";
+//    public static final String EMPTY_LIST_ITEM = "---";
 
     /**
      * Retturns the user name.
@@ -40,7 +42,6 @@ public interface EditUserI extends Serializable {
 
     // Get/Set methods for topic selected.
     public void setSelectedTopic(String topic);
-
     public String getSelectedTopic();
 
     /**
@@ -58,45 +59,6 @@ public interface EditUserI extends Serializable {
     public boolean isEditing();
 
     // Methods releated to drop down lists
-
-    /**
-     * Returns a list of topic names.
-     * @return a list of topic names (short labels) to display as a drop
-     *  down list from the edit page. If the current editing object is of
-     *  CvTopic then the returned list doesn't include it.
-     */
-    public Collection getTopicList();
-
-    /**
-     * Returns a list of database names.
-     * @return a list of database names (short labels) to display as a drop
-     *  down list from the edit page.
-     */
-    public Collection getDatabaseList();
-
-    /**
-     * Returns a list of qualifier names.
-     * @return a list of qualifier names (short labels) to display as a drop
-     *  down list from the edit page.
-     */
-    public Collection getQualifierList();
-
-    /**
-     * Returns true if there are no qualifier names.
-     * @return true if there are no qualifier names or else true is returned.
-     */
-    public boolean isQualifierListEmpty();
-
-    /**
-     * Refresh the drop down list for the current CV edit object. This involves
-     * contruction of a new list by retrieveing matching records from the
-     * persistent system. No action is taken if the current edit object
-     * is not involved with drop down lists.
-     *
-     * @exception SearchException for errors in searching the persistent system
-     * to update the list.
-     */
-    public void refreshList() throws SearchException;
 
     // Transaction Methods
 
@@ -130,6 +92,20 @@ public interface EditUserI extends Serializable {
      * object the user is working presently.
      */
     public void updateView(AnnotatedObject annot);
+
+    // Methods to create forms.
+
+    /**
+     * Returns a DynaBean form constructed using given form name and Http request.
+     * @param formName the name of the form.
+     * @param request Http to extract the information to construct the form.
+     * @return the DynaBean form; the form specification must be defined in the
+     * struts configuration file under <code>name</code>. A cached form is
+     * returned if a form exists in the local cache saved under
+     * <code>formName</code>. A null form is retured for any errors (such
+     * as unable to construct an instance).
+     */
+    public DynaBean getDynaBean(String formName, HttpServletRequest request);
 
     // Search methods
 
@@ -259,7 +235,7 @@ public interface EditUserI extends Serializable {
      * Popluate the given form with search result.
      * @param dynaForm the form to populate.
      */
-    public void populateSearchResult(DynaBean dynaForm);
+    public void fillSearchResult(DynaBean dynaForm);
 
     // Session methods
 
