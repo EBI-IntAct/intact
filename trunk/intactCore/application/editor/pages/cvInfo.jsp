@@ -83,7 +83,7 @@
                 <bean:write property="ac" name="<%=formName%>"/>
             </td>
             <td class="tableCell">
-                <html:text property="shortLabel"  size="15" maxlength="20"
+                <html:text property="shortLabel"  size="20" maxlength="20"
                     name="<%=formName%>"/>
             </td>
             <td class="tableCell">

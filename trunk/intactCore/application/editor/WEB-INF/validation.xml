@@ -22,7 +22,7 @@
 
                 <var>
                     <var-name>maxlength</var-name>
-                    <var-value>15</var-value>
+                    <var-value>20</var-value>
                 </var>
             </field>
         </form>
