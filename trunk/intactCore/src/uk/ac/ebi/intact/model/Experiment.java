@@ -33,7 +33,7 @@ public class Experiment extends AnnotatedObject implements Editable {
     /**
      *
      */
-    public Collection interaction = new Vector();
+    public Collection interaction = new ArrayList();
     /**
      * One experiment should group all interactions from a publication
      * which have been performed under the same conditions.
