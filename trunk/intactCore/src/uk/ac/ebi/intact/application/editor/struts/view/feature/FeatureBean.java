@@ -9,8 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
-import uk.ac.ebi.intact.model.CvFeatureIdentification;
-import uk.ac.ebi.intact.model.CvFeatureType;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
 
@@ -203,32 +201,11 @@ public class FeatureBean extends AbstractEditKeyBean {
      * @param user the user instance to search database.
      * @throws IllegalArgumentException
      * @throws SearchException for errors in searching the database.
-     * @throws IllegalArgumentException for errors in creating ranges.
      */
-    public Feature getFeature(EditUserI user) throws SearchException,
-        IllegalArgumentException {
+    public Feature getFeature(EditUserI user) throws SearchException {
+        // Need to update the short label because cloning an interaction also
+        // clones a Feature (changes it shortlabel).
         myFeature.setShortLabel(getShortLabel());
-        myFeature.setFullName(getFullName());
-        CvFeatureType type = (CvFeatureType) user.getObjectByLabel(
-                CvFeatureType.class, getType());
-        myFeature.setCvFeatureType(type);
-        
-        // Set the cv ident.
-        CvFeatureIdentification ident = null;
-        if (getDetection().length() != 0) {
-            ident = (CvFeatureIdentification) user.getObjectByLabel(
-                    CvFeatureIdentification.class, getDetection());
-        }
-        myFeature.setCvFeatureIdentification(ident);
-
-        // Clear previous reanges and update with new ranges.
-        myFeature.getRanges().clear();
-        
-        // Update the ranges.
-        for (Iterator iterator = myRanges.iterator(); iterator.hasNext();) {
-            RangeBean rangeBean = (RangeBean) iterator.next();
-            myFeature.addRange(rangeBean.getRange(user));
-        }
         // Set the bound domain if it isn't empty.
         if (hasBoundDomain()) {
             Feature boumdDomain = (Feature) user.getObjectByLabel(
@@ -245,63 +222,7 @@ public class FeatureBean extends AbstractEditKeyBean {
                 + " Range: " + getRanges();
     }
 
-    // Override Objects's hashCode and equals method.
-
-//    /**
-//     * Overrides the hashcode method.
-//     * @return the hascode of the AC is returned.
-//     */
-//    public int hashCode() {
-//        return myFeature.getAc() != null ? myFeature.getAc().hashCode()
-//                : myFeature.hashCode();
-//    }
-
-//    /**
-//     * Compares <code>obj</code> with this object according to
-//     * Java's equals() contract. Only returns <tt>true</tt> if the ac
-//     * for both objects match.
-//     * @param obj the object to compare.
-//     */
-//    public boolean equals(Object obj) {
-//        // Identical to this?
-//        if (obj == this) {
-//            return true;
-//        }
-//        if ((obj != null) && (getClass() == obj.getClass())) {
-//            // Can safely cast it.
-//            FeatureBean other = (FeatureBean) obj;
-//            if (myFeature.getAc() != null) {
-//                // Check for AC if the Feature has an AC
-//               return myFeature.getAc().equals(other.myFeature.getAc());
-//            }
-//            // No AC, compare Feature directly.
-//            return myFeature.equals(other.myFeature);
-//        }
-//        return false;
-//    }
-
-//    /**
-//     * Makes a clone of this object apart for the Feature instance this object
-//     * is wrapped around.
-//     *
-//     * @return a cloned version of the current instance. A null
-//     */
-//    public Object clone() throws CloneNotSupportedException {
-//        FeatureBean copy = (FeatureBean) super.clone();
-//
-//        // Clone range beans.
-//        copy.myRanges = new ArrayList(myRanges.size());
-//        for (Iterator iter = myRanges.iterator(); iter.hasNext();) {
-//            copy.myRanges.add(((RangeBean) iter.next()).clone());
-//        }
-//        return copy;
-//    }
-
     // Write methods. Only visible within this package.
-
-//    void setShortLabel(String label) {
-//        myShortLabel = label;
-//    }
 
     void setFullName(String fullname) {
         myFullName = fullname;
