@@ -59,7 +59,6 @@
             <html:select property="newRange.link" name="featureForm" styleClass="inputRequired">
                 <html:options name="boolean_menu"/>
             </html:select>
-            <br/><html:errors property="feature.type"/>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:select property="newRange.undetermined" name="featureForm">
@@ -70,4 +69,4 @@
 </table>
 
 <%-- Display errors for invalid range intervals --%>
-<html:errors property="feature.range.interval"/>
+<html:errors property="new.range"/>

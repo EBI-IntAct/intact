@@ -486,7 +486,7 @@
             scope="session">
 
             <forward name="submit" path="/do/int/submit"/>
-            <forward name="cancel" path="/do/cancel"/>
+            <forward name="cancel" path="/do/int/cancel"/>
             <forward name="delete" path="/do/delete"/>
 
             <forward name="annotation" path="/do/int/annot/submit"/>
@@ -519,6 +519,19 @@
             <forward name="success" path="/do/int/fill/form"/>
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the experiment editor (where we came from) -->
+            <forward name="experiment" path="/do/exp/fill/form"/>
+        </action>
+
+        <!--
+             Action to handle when an Interaction is cancelled.
+        -->
+        <action path="/int/cancel"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionCancelAction"
+            name="intForm"
+            validate="false"
+            scope="session">
+            <!-- Back to the results page as we got here from a search result (global) -->
+            <!-- Back to the experiment editor (Interaction editor) -->
             <forward name="experiment" path="/do/exp/fill/form"/>
         </action>
 
@@ -581,13 +594,12 @@
             name="intForm"
             input="/do/int/fill/form"
             validate="true"
-            scope="session"
-            parameter="dispatch">
+            scope="session">
             <forward name="success" path="/do/int/fill/form"/>
             <forward name="failure" path="/do/int/fill/form"/>
 
             <!-- Link to the feature editor (adding) -->
-            <forward name="feature" path="/do/feature/fill/form"/>
+            <forward name="feature" path="/do/int/add/feature"/>
         </action>
 
         <!-- Action to handle for the Protein search. -->
@@ -601,19 +613,16 @@
             <forward name="failure" path="/do/int/fill/form"/>
         </action>
 
-        <!--
-             Action to refresh componets section of the Interaction editor.
-             This action saves time in updating the entire editor (only used by
-             submit feature action at the moment). 
-        -->
-<!--        <action path="/int/refresh/comp"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ComponentRefreshAction"
+        <!-- Action to add a new Feature. -->
+        <action path="/int/add/feature"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.AddFeatureAction"
             name="intForm"
-            validate="false"
-            scope="session">
-            <forward name="success" path="edit.layout"/>
+            validate="true"
+            scope="session"
+            parameter="dispatchFeature">
+            <forward name="success" path="/do/feature/fill/form"/>
         </action>
--->
+
         <!-- Action to handle edit/delete of a Feature. -->
         <action path="/int/feature"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FeatureDispatchAction"
@@ -621,12 +630,9 @@
             input="edit.layout"
             validate="true"
             scope="session"
-            parameter="dispatch">
-<!--            <forward name="success" path="edit.layout"/>-->
-<!--            <forward name="failure" path="/do/int/fill/form"/>-->
-
+            parameter="dispatchFeature">
             <!-- Linking to the feature editor -->
-            <forward name="feature" path="/do/feature/fill/form"/>
+            <forward name="success" path="/do/feature/fill/form"/>
         </action>
 
         <!-- Action to handle link/unlink of a Feature. -->
@@ -652,7 +658,7 @@
 
             <forward name="submit" path="/do/feature/submit"/>
             <forward name="cancel" path="/do/feature/cancel"/>
-            <forward name="delete" path="/do/delete"/>
+            <forward name="delete" path="/do/feature/delete"/>
 
             <!-- Pressed on Auto Complete button -->
             <forward name="feature.autocomplete" path="/do/feature/autocomplete"/>
@@ -680,22 +686,35 @@
             parameter="dispatch">
             <!-- A success for Save/Continue -->
             <forward name="success" path="edit.layout"/>
-            <!-- Update the components of the interaction editor -->
-<!--            <forward name="interaction" path="/do/int/refresh/comp"/>
--->            <forward name="interaction" path="/do/int/fill/form"/>
+            <forward name="interaction" path="/do/int/fill/form"/>
         </action>
 
         <!--
-             Action to handle when the Cancel button is selected from the
-             Feature editor.
+             Handles when the Cancel button is selected from the Feature editor.
+             If cancelling a new feature it may be deleted as well (the Feature
+             needs to be persistent to add any ranges to it).
         -->
         <action path="/feature/cancel"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.CancelFormAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.CancelFeatureAction"
             name="featureForm"
             validate="false"
             scope="session">
             <!-- Back to the interaction editor -->
             <forward name="interaction" path="/do/int/fill/form"/>
+            <!-- Need to delete this feature -->
+            <forward name="delete" path="/do/feature/delete"/>
+        </action>
+
+        <!--
+             Handles when the Delete button is selected from the Feature editor.
+        -->
+        <action path="/feature/delete"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.DeleteFeatureAction"
+            name="featureForm"
+            validate="false"
+            scope="session">
+            <!-- Back to the interaction editor -->
+            <forward name="success" path="/do/int/fill/form"/>
         </action>
 
         <!-- Action to handle when a button (edit/save/delete) related to xref
@@ -734,7 +753,10 @@
             name="featureForm"
             input="/do/feature/fill/form"
             validate="true"
-            scope="session">
+            scope="session"
+            parameter="dispatch">
+            <!-- A success for Save/Continue -->
+            <forward name="success" path="edit.layout"/>
         </action>
 
         <!-- Action to handle when a Feature is saved/deleted or edited. -->
@@ -755,10 +777,11 @@
             validate="false"
             scope="session">
             <!-- Back to the results page as we got here from a search result (global) -->
+
             <!-- Back to the experiment editor (Interaction editor) -->
-            <forward name="experiment" path="/do/exp/fill/form"/>
+<!--            <forward name="experiment" path="/do/exp/fill/form"/>-->
             <!-- Back to the interaction editor (Feature editor) -->
-            <forward name="interaction" path="/do/int/fill/form"/>
+<!--            <forward name="interaction" path="/do/int/fill/form"/>-->
         </action>
 
         <!-- Action to handle when the current edit record is deleted. -->
@@ -771,7 +794,7 @@
             <!-- Back to the experiment editor (Interaction editor) -->
             <forward name="experiment" path="/do/exp/fill/form"/>
             <!-- Back to the interaction editor (Feature editor) -->
-            <forward name="interaction" path="/do/int/fill/form"/>
+<!--            <forward name="interaction" path="/do/int/fill/form"/>-->
         </action>
 
         <!-- This common action is for displaying the editor when clicked on

@@ -36,15 +36,19 @@
 %>
 
 <%-- Need this to set the dispatch feature flag --%>
-<html:hidden property="dispatchFeature" />
+<html:hidden property="dispatchFeature" value='error' />
 
 <script language="JavaScript" type="text/javascript">
     // Set the hidden feature dispatch field when the user clicks on Edit/Delete Feature.
     function setFeatureDispatch(label) {
+        //window.alert(label)
         if (label == 'edit') {
-            //window.alert('I am here');
             document.forms[0].dispatchFeature.value='<%=msgres.getMessage(
                     "int.proteins.button.feature.edit")%>';
+        }
+        else if (label == 'add') {
+            document.forms[0].dispatchFeature.value='<%=msgres.getMessage(
+                    "int.proteins.button.feature.add")%>';
         }
         else {
             document.forms[0].dispatchFeature.value='<%=msgres.getMessage(
@@ -83,10 +87,8 @@
             <th class="tableCellHeader">ExpressedIn</th>
         </tr>
 
-<%--        <nested:nest property="proteins">--%>
         <%-- To calculate row or even row --%>
         <c:set var="row"/>
-<%--        <c:forEach var="proteins" items="${intForm.proteins}">--%>
         <nested:iterate name="intForm" property="components">
             <%-- Different styles for even or odd rows --%>
             <c:choose>
@@ -135,19 +137,19 @@
                 </td>
 
                 <td class="tableCell">
-                    <bean:write name="components" property="shortLabelLink" filter="false"/>
+                    <nested:write property="shortLabelLink" filter="false"/>
                 </td>
                 <td class="tableCell">
-                    <bean:write name="components" property="spAc"/>
+                    <nested:write property="spAc"/>
                 </td>
                 <td class="tableCell">
-                    <bean:write name="components" property="ac"/>
+                    <nested:write property="ac"/>
                 </td>
                 <td class="tableCell" rowspan="2">
-                    <bean:write name="components" property="organism"/>
+                    <nested:write property="organism"/>
                 </td>
                 <td class="tableCell" rowspan="2">
-                    <bean:write name="components" property="fullName"/>
+                    <nested:write property="fullName"/>
                 </td>
             </tr>
 
@@ -186,13 +188,13 @@
                 <%-- Data --%>
                 <c:if test="${edit}">
                     <td class="tableCell">
-                        <bean:write name="components" property="role"/>
+                        <nested:write property="role"/>
                     </td>
                     <td class="tableCell">
-                        <bean:write name="components" property="stoichiometry"/>
+                        <nested:write property="stoichiometry"/>
                     </td>
                     <td class="tableCell">
-                        <bean:write name="components" property="expressedIn"/>
+                        <nested:write property="expressedIn"/>
                     </td>
                 </c:if>
 
@@ -266,7 +268,7 @@
             </c:choose>
                <%-- Add feature button: common to all --%>
                 <td class="tableCell">
-                    <html:submit indexed="true" property="protCmd"
+                    <html:submit indexed="true" property="protCmd" onclick="setFeatureDispatch('add');"
                         titleKey="int.proteins.button.feature.add.titleKey">
                         <bean:message key="int.proteins.button.feature.add"/>
                     </html:submit>
@@ -276,29 +278,21 @@
                 <td class="tableCell"  colspan="5"/>
                 </tr>
 
+
             <%-- Loop though ranges for each component --%>
             <nested:iterate property="features">
-                <!-- Increment row by 1 -->
-                <c:set var="row" value="${row + 1}"/>
 
                 <%-- ==============================================================
                      Start of the fourth row. Prints Ranges for each component.
                      ==============================================================
                 --%>
-                <c:choose>
-                    <c:when test="${row % 2 == 0}">
-                        <tr class="tableRowEven">
-                    </c:when>
-                    <c:otherwise>
-                        <tr class="tableRowOdd">
-                    </c:otherwise>
-                </c:choose>
+                <tr class="tableFeatureRow">
 
-                <%-- Empty cells for error/link boxes --%>
-                <td class="tableCell" rowspan="2"/>
-                <td class="tableCell" rowspan="2">
-                    <nested:checkbox property="linked"/>
-                </td>
+                    <%-- Empty cells for error/link boxes --%>
+                    <td class="tableCell" rowspan="2"/>
+                    <td class="tableCell" rowspan="2">
+                        <nested:checkbox property="linked"/>
+                    </td>
 
                    <%-- Edit feature button --%>
                     <td class="tableCell" rowspan="2">
@@ -309,52 +303,45 @@
                         </nested:submit>
 
                         <%-- Feature delete button --%>
-                        <nested:submit property="featureCmd"  onclick="setFeatureDispatch('delete');"
+                        <nested:submit property="featureCmd" onclick="setFeatureDispatch('delete');"
                             titleKey="int.proteins.button.feature.delete.titleKey">
                             <bean:message key="int.proteins.button.feature.delete"/>
                         </nested:submit>
                     </td>
                     <td class="tableCell">
-                        <c:out value="${features.shortLabel}"/>
+                        <nested:write property="shortLabel"/>
                     </td>
                     <td class="tableCell">
-                        <c:out value="${features.ac}"/>
+                        <nested:write property="ac"/>
                     </td>
                     <td class="tableCell" rowspan="2">
-                        <c:out value="${features.ranges}"/>
+                        <nested:write property="ranges"/>
                     </td>
                     <td class="tableCell" rowspan="2">
-                        <c:out value="${features.boundDomain}"/>
+                        <nested:write property="boundDomain"/>
                     </td>
                     <td class="tableCell" rowspan="2">
-                        <c:out value="${features.fullName}"/>
+                        <nested:write property="fullName"/>
                     </td>
-                    </tr>
+                </tr>
 
-                    <%-- ==============================================================
-                         Start of the fifth row. This row prints feature type and detection
-                         ==============================================================
-                    --%>
-                    <c:choose>
-                        <c:when test="${row % 2 == 0}">
-                            <tr class="tableRowEven">
-                        </c:when>
-                        <c:otherwise>
-                            <tr class="tableRowOdd">
-                        </c:otherwise>
-                    </c:choose>
+                <%-- ==============================================================
+                     Start of the fifth row. This row prints feature type and detection
+                     ==============================================================
+                --%>
+                <tr class="tableFeatureRow">
 
-                            <td class="tableCell">
-                                <c:out value="${features.type}"/>
-                            </td>
-                            <td class="tableCell">
-                                <c:out value="${features.detection}"/>
-                            </td>
-                        </tr>
-                </nested:iterate>
+                    <td class="tableCell">
+                        <nested:write property="type"/>
+                    </td>
+                    <td class="tableCell">
+                        <nested:write property="detection"/>
+                    </td>
+                </tr>
+            </nested:iterate>
             <!-- Increment row by 1 -->
             <c:set var="row" value="${row + 1}"/>
-            </nested:iterate>
+        </nested:iterate>
     </table>
 </c:if>
 <html:errors property="int.prot.role"/>

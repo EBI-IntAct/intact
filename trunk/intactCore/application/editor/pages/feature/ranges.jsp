@@ -112,9 +112,11 @@
                 <c:if test="${save}">
                     <td class="tableCell">
                         <html:text name="ranges" size="10" property="fromRange" indexed="true"/>
+                        <br/><html:errors property="edit.fromRange"/>
                     </td>
                     <td class="tableCell">
                         <html:text name="ranges" size="10" property="toRange" indexed="true"/>
+                        <br/><html:errors property="edit.toRange"/>
                     </td>
                     <td class="tableCell">
                         <html:select name="ranges" property="link" indexed="true">
@@ -128,9 +130,20 @@
                     </td>
                 </c:if>
             </tr>
-            <!-- Increment row by 1 -->
+
+            <%-- Display error in a different row if it exists --%>
+            <html:messages id="error" property="edit.range">
+                <tr class="tableRowEven">
+                    <td class="tableErrorCell" colspan="6">
+                        <bean:write name="error" filter="false"/>
+                    </td>
+                </tr>
+            </html:messages>
+
+            <%-- Increment row by 1 --%>
             <c:set var="row" value="${row + 1}"/>
         </c:forEach>
     </table>
 </c:if>
-
+<html:errors property="feature.range.unsaved"/>
+<html:errors property="feature.range.exists"/>
