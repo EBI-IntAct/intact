@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -188,19 +189,43 @@ public abstract class AbstractEditViewBean {
 
     /**
      * Adds an annotation.
-     * @param annotation the annotation to add.
+     * @param cb the bean to add.
      *
      * <pre>
      * post: myAnnotsToAdd = myAnnotsToAdd@pre + 1
      * post: myAnnotations = myAnnotations@pre + 1
      * </pre>
      */
-    public void addAnnotation(Annotation annotation) {
-        CommentBean cb = new CommentBean(annotation);
+    public void addAnnotation(CommentBean cb) {
         // Add to the container to add an Annotation.
         myAnnotsToAdd.add(cb);
         // Add to the view as well.
         myAnnotations.add(cb);
+    }
+
+    /**
+     * @param cb the bean to check for existence in the list of new annotations.
+     * @return true if <code>cb</code> exists in the list of new annotations;
+     * false is returned for all other instances.
+     */
+    public boolean isNewAnnotation(CommentBean cb) {
+        return myAnnotsToAdd.contains(cb);
+    }
+
+    /**
+     * Removes the given bean from the list of annotations to add and also from
+     * the view as well.
+     * @param cb the bean to remove.
+     *
+     * <pre>
+     * post: myAnnotsToAdd = myAnnotsToAdd@pre - 1
+     * post: myAnnotations = myAnnotations@pre - 1
+     * </pre>
+     */
+    public void removeNewAnnotation(CommentBean cb) {
+        myAnnotsToAdd.remove(cb);
+        // Remove from the view.
+        myAnnotations.remove(cb);
     }
 
     /**
@@ -245,19 +270,43 @@ public abstract class AbstractEditViewBean {
 
     /**
      * Adds an xref.
-     * @param xref the xref to add.
+     * @param xb the bean to add.
      *
      * <pre>
      * post: myXrefsToAdd = myXrefsToAdd@pre + 1
      * post: myXrefs = myXrefs@pre + 1
      * </pre>
      */
-    public void addXref(Xref xref) {
-        XreferenceBean xb = new XreferenceBean(xref);
+    public void addXref(XreferenceBean xb) {
         // Xref to add.
         myXrefsToAdd.add(xb);
         // Add to the view as well.
         myXrefs.add(xb);
+    }
+
+    /**
+     * @param xb the bean to check for existence in the list of new xrefs.
+     * @return true if <code>xb</code> exists in the list of new xrefs;
+     * false is returned for all other instances.
+     */
+    public boolean isNewXref(XreferenceBean xb) {
+        return myXrefsToAdd.contains(xb);
+    }
+
+    /**
+     * Removes the given bean from the list of xrefs to add and also from
+     * the view as well.
+     * @param xb the bean to remove.
+     *
+     * <pre>
+     * post: myXrefsToAdd = myXrefsToAdd@pre - 1
+     * post: myXrefs = myXrefs@pre - 1
+     * </pre>
+     */
+    public void removeNewXref(XreferenceBean xb) {
+        myXrefsToAdd.remove(xb);
+        // Remove from the view.
+        myXrefs.remove(xb);
     }
 
     /**
@@ -485,6 +534,15 @@ public abstract class AbstractEditViewBean {
 //            if ((myShortLabel == null) || SL_RE.matcher(myShortLabel).find()) {
             throw new ShortLabelException();
         }
+    }
+
+    /**
+     * Updates the internal data from given form.
+     * @param dynaform the form to update the internal data.
+     */
+    public void updateFromForm(DynaActionForm dynaform) {
+        setShortLabel((String) dynaform.get("shortLabel"));
+        setFullName((String) dynaform.get("fullName"));
     }
 
     /**

@@ -33,9 +33,9 @@
 
 <h3>Proteins</h3>
 
-<c:if test="${not empty intProtEditForm.proteins}">
+<c:if test="${not empty intForm.map.proteins}">
 
-    <html:form action="/interaction/protein/edit">
+<%--    <html:form action="/interaction/protein/edit">--%>
         <table width="100%" border="0" cellspacing="1" cellpadding="2">
             <tr class="tableRowHeader">
                 <th class="tableCellHeader" width="2%" rowspan="2"></th>
@@ -52,7 +52,7 @@
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
-            <c:forEach var="proteins" items="${intProtEditForm.proteins}">
+            <c:forEach var="proteins" items="${intForm.map.proteins}">
                 <%-- Different styles for even or odd rows --%>
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
@@ -90,9 +90,9 @@
 
                    <%-- Delete button: common to all --%>
                     <td class="tableCell">
-                        <html:submit indexed="true" property="cmd"
+                        <html:submit indexed="true" property="protCmd"
                             titleKey="int.proteins.button.delete.titleKey">
-                            <bean:message key="button.delete"/>
+                            <bean:message key="int.proteins.button.delete"/>
                         </html:submit>
                     </td>
 
@@ -128,16 +128,16 @@
                     <%-- Buttons --%>
                     <td class="tableCell">
                         <c:if test="${edit}">
-                            <html:submit indexed="true" property="cmd"
+                            <html:submit indexed="true" property="protCmd"
                                 titleKey="int.proteins.button.edit.titleKey">
-                                <bean:message key="button.edit"/>
+                                <bean:message key="int.proteins.button.edit"/>
                             </html:submit>
                         </c:if>
 
                         <c:if test="${notEdit}">
-                            <html:submit indexed="true" property="cmd"
+                            <html:submit indexed="true" property="protCmd"
                                 titleKey="int.proteins.button.save.titleKey">
-                                <bean:message key="button.save"/>
+                                <bean:message key="int.proteins.button.save"/>
                             </html:submit>
                         </c:if>
                     </td>
@@ -191,5 +191,5 @@
                 </tr>
             </c:forEach>
         </table>
-    </html:form>
+<%--    </html:form>--%>
 </c:if>

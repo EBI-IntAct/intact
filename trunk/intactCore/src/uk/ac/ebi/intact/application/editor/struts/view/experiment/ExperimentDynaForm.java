@@ -6,20 +6,21 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
-import org.apache.struts.action.*;
-import org.apache.struts.validator.DynaValidatorForm;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMapping;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.view.cv.CvDynaForm;
 
 import javax.servlet.http.HttpServletRequest;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-
 /**
- * The form to edit bio experiment data.
+ * The form to validate experiment data.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class ExperimentDynaForm extends DynaValidatorForm {
+public class ExperimentDynaForm extends CvDynaForm {
 
     /**
      * Validate the properties that have been set from the HTTP request.
@@ -32,21 +33,30 @@ public class ExperimentDynaForm extends DynaValidatorForm {
      */
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
-        ActionErrors errors = new ActionErrors();
+        ActionErrors errors = super.validate(mapping, request);
+
+        // Only proceed if super method does not find any errors.
+        if ((errors != null) && !errors.isEmpty()) {
+            return errors;
+        }
+        // Validate experiment specific fields.
         String organism = (String) get("organism");
         String interaction = (String) get("inter");
         String identification = (String) get("ident");
 
         // Must select from the drop down list.
         if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.exp.biosrc"));
         }
         else if (interaction.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.exp.inter"));
         }
         else if (identification.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.exp.ident"));
         }

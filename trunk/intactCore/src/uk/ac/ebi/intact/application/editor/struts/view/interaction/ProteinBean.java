@@ -8,11 +8,10 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
+import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.model.*;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
 import java.util.Iterator;
 
 /**
@@ -21,7 +20,7 @@ import java.util.Iterator;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class ProteinBean extends EditBean implements Serializable {
+public class ProteinBean extends AbstractEditBean implements Serializable {
 
     // Class Data
 
@@ -75,8 +74,7 @@ public class ProteinBean extends EditBean implements Serializable {
     private float myStoichiometry = 1.0f;
 
     /**
-     * The organism. Empty if there is no biosource. This is necessary to
-     * prevent Null pointer exception in validate method of ProteinEditForm.
+     * The organism.
      */
     private String myOrganism;
 
