@@ -17,7 +17,6 @@
     <property name="root.dist.dir" value="${intact.root}/dist"/>
 
     <!--<property name="root.util.dir" value="${root.src.dir}/uk/ac/ebi/intact/util"/>-->
-
     <!-- Intact application location for the shared common pages -->
     <property name="intact.app.dir" value=".."/>
 
@@ -69,8 +68,8 @@
     <path id="project.class.path">
 
         <!-- JFreeChart -->
-        <pathelement path="${lib.dir}/jcommon-0.8.8.jar"/>
-        <pathelement path="${lib.dir}/jfreechart-0.9.13.jar"/>
+        <pathelement path="${lib.dir}/jcommon-1.0.0-pre2.jar"/>
+        <pathelement path="${lib.dir}/jfreechart-1.0.0-pre2.jar"/>
 
         <!-- Intact core at root. -->
         <pathelement path="${root.dest.dir}"/>
@@ -78,6 +77,7 @@
         <pathelement path="${dest.dir}"/>
 
         <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
+        <pathelement path="${root.lib.dir}/junit.jar"/>
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
@@ -92,7 +92,7 @@
     -->
     <target name="prepare">
         <tstamp/>
-        <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+        <available file="${root.lib.file}" type="file" property="intact.jar.present"/>
         <!-- This target is called to display messages if tomcat is not present. -->
         <ant dir=".." inheritAll="false" target="check-tomcat"/>
     </target>
@@ -144,8 +144,7 @@
         <delete>
             <fileset dir="${pages.dir}">
                 <!-- Do not remove our specific files -->
-                <exclude name="statView.jsp"/>
-                <exclude name="sidebarFilter.jsp"/>
+                <exclude name="*.jsp"/>
             </fileset>
         </delete>
 
