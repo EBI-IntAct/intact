@@ -25,15 +25,21 @@
 <jsp:useBean id="service" scope="application"
     class="uk.ac.ebi.intact.application.editor.business.EditorService"/>
 
+<%-- The current view --%>
+<bean:define id="view" name="user" property="view"
+    type="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean"/>
+
+<%-- Number of interactions for the current experiment and the max allowed --%>
+<bean:define id="numInts" name="view" property="numberOfInteractions"/>
+<bean:define id="maxInts" name="service" property="interactionLimit"/>
+
 <h3>Interactions</h3>
 
 <%-- Check the limit --%>
-<c:if test="${user.view.numberOfInteractions gt service.interactionLimit}">
+<c:if test="${numInts gt maxInts}">
     <div class="warning">
-        <bean:message key="message.ints.limit.exceed"
-            arg0='<%=Integer.toString(
-                    ((ExperimentViewBean) user.getView()).getNumberOfInteractions())%>'
-            arg1='<%=service.getResource("exp.interaction.limit")%>'/>
+        <bean:message key="message.ints.limit.exceed" arg0="<%=numInts.toString()%>"
+            arg1="<%=maxInts.toString()%>"/>
     </div>
     <%-- Set a flag to not to display any interactions --%>
     <c:set var="noDisplayInts" value="yes"/>
@@ -42,17 +48,20 @@
 <%-- Don't display an empty table if there are no interactions to display or too
      many interactions to display.
 --%>
-<c:if test="${user.view.interactionCount gt 0 and empty noDisplayInts}">
+<c:if test="${numInts gt 0 and empty noDisplayInts}">
+    <%-- Store in the page scope for the display library to access it --%>
+    <bean:define id="ints" name="view" property="interactions"
+        type="java.util.List"/>
+    <%-- Number of ints allowed to display per page --%>
+    <bean:define id="pageSize" name="service" property="interactionPageLimit"
+        type="java.lang.String"/>
 
     <%
-        ExperimentViewBean view = (ExperimentViewBean) user.getView();
-        pageContext.setAttribute("ints", view.getInteractions());
         String uri = request.getContextPath() + "/do/result?ac="
                 + view.getAc() + "&searchClass=Experiment";
     %>
 
-    <display:table width="100%" name="ints"
-        pagesize="<%=service.getResource(\"exp.interaction.page.limit\")%>"
+    <display:table width="100%" name="ints" pagesize="<%=pageSize%>"
         requestURI="<%=uri%>"
         decorator="uk.ac.ebi.intact.application.editor.struts.view.experiment.IntDisplayWrapper">
         <display:column property="action" title="Action" />
