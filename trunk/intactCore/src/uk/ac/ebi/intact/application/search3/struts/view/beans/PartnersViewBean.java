@@ -7,6 +7,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import uk.ac.ebi.intact.application.search3.util.ProteinUtils;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
 
@@ -90,9 +91,22 @@ public class PartnersViewBean extends AbstractViewBean {
     private String numberOfInteractions;
 
     /**
-     *
+     * if true, the bean will only show self interaction. if false (default), the been will show all
+     * interactions.
      */
-    private Set participationInteractions;
+    private boolean selfInteraction = false;
+    /**
+     * Filter to provide filtering on GeneNames
+     */
+    private static ArrayList geneNameFilter = new ArrayList();
+
+    // nested implementation for providing the gene filter
+    static {
+        geneNameFilter.add("gene-name");
+        geneNameFilter.add("gene-name-synonym");
+        geneNameFilter.add("orf-name");
+        geneNameFilter.add("locus-name");
+    }
 
 
     /**
@@ -100,16 +114,33 @@ public class PartnersViewBean extends AbstractViewBean {
      * application, a general searchURL and the help link.
      *
      * @param prot        The Protein whose beans are to be displayed
-     * @param link        The link to the help pages
+     * @param helpLink    The link to the help pages
      * @param searchURL   The general URL to be used for searching (can be filled in later).
      * @param contextPath The path to the search application.
      */
-    public PartnersViewBean(Protein prot, String link, String searchURL, String contextPath) {
-        super(link, contextPath);
+    public PartnersViewBean(Protein prot, String helpLink, String searchURL, String contextPath) {
+        super(helpLink, contextPath);
         protein = prot;
         this.searchURL = searchURL;
+    }
 
 
+    /**
+     * The bean constructor requires a Protein to wrap, plus beans on the context path to the search
+     * application, a general searchURL and the help link.
+     *
+     * @param prot            The Protein whose beans are to be displayed
+     * @param selfInteraction define if we limit the bean to self interactions.
+     * @param helpLink        The link to the help pages
+     * @param searchURL       The general URL to be used for searching (can be filled in later).
+     * @param contextPath     The path to the search application.
+     */
+    public PartnersViewBean(Protein prot, boolean selfInteraction, String helpLink,
+                            String searchURL, String contextPath) {
+        super(helpLink, contextPath);
+        protein = prot;
+        this.searchURL = searchURL;
+        this.selfInteraction = selfInteraction;
     }
 
     /**
@@ -117,20 +148,19 @@ public class PartnersViewBean extends AbstractViewBean {
      * application, a general searchURL and the help link.
      *
      * @param prot        The Protein whose beans are to be displayed
-     * @param link        The link to the help pages
+     * @param helpLink    The link to the help pages
      * @param searchURL   The general URL to be used for searching (can be filled in later).
      * @param contextPath The path to the search application.
      */
-    public PartnersViewBean(Protein prot, Protein partner, String link, String searchURL,
+    public PartnersViewBean(Protein prot, Protein partner, String helpLink, String searchURL,
                             String contextPath) {
-        super(link, contextPath);
+        super(helpLink, contextPath);
         protein = prot;
         this.partner = partner;
         this.searchURL = searchURL;
 
     }
 
-    //---------------- basic abstract implementations ----------------
     /**
      * This is left over from the earlier version - will be removed. It does nothing here.
      */
@@ -163,8 +193,6 @@ public class PartnersViewBean extends AbstractViewBean {
         setHighlightMap(set);
     }
 
-    //------------------- the more useful stuff ----------------------------------
-
     /**
      * Basic accessor, provided in case anything ever needs access to the wrapped object.
      *
@@ -174,6 +202,11 @@ public class PartnersViewBean extends AbstractViewBean {
         return protein;
     }
 
+    /**
+     * Returns the partner protein of this PartnerViewBean
+     *
+     * @return Protein the Partner Protein instance wrapped by this view bean
+     */
     public Protein getPartner() {
         return partner;
     }
@@ -181,7 +214,7 @@ public class PartnersViewBean extends AbstractViewBean {
     /**
      * NB In the overview webpage mockup, this is hyperlinked to search with the shortLabel.
      *
-     * @return
+     * @return String of the shortlabel of the protein from the 1 partner
      */
     public String getIntactName() {
         return protein.getShortLabel();
@@ -190,7 +223,7 @@ public class PartnersViewBean extends AbstractViewBean {
     /**
      * NB in the overview mockup page, this is hyperlinked to provide the single Protein view.
      *
-     * @return
+     * @return String representation of the ac from the 1 partner
      */
     public String getAc() {
         return protein.getAc();
@@ -208,7 +241,7 @@ public class PartnersViewBean extends AbstractViewBean {
     public Collection getGeneNames() {
         //populate on first request
         if (geneNames == null) {
-            this.geneNames = new ArrayList();
+            this.geneNames = new HashSet();
             //geneNames = new StringBuffer();
             //the gene names are obtained from the Aliases for the Protein
             //which are of type 'gene name'...
@@ -216,15 +249,15 @@ public class PartnersViewBean extends AbstractViewBean {
             for (Iterator it = aliases.iterator(); it.hasNext();) {
                 Alias alias = (Alias) it.next();
 
-                if (alias.getCvAliasType().getShortLabel().equals("gene-name")) {
+                if (geneNameFilter.contains(alias.getCvAliasType().getShortLabel())) {
                     geneNames.add(alias.getName());
                 }
             }
             //now strip off trailing comma - if there are any names....
-            if (geneNames.size() == 0) {
+            if (geneNames.isEmpty()) {
                 geneNames.add("-");
             }
-            return geneNames;
+
         }
         return geneNames;
     }
@@ -243,54 +276,29 @@ public class PartnersViewBean extends AbstractViewBean {
 
         //set on first call
         if (numberOfInteractions == null) {
+
             if (partner != null) {
-                if (participationInteractions == null) {
-                    this.setParticipationInteractions();
+                if (partner.equals(protein)) {
+                    // here only count the binary Interactions
+                    numberOfInteractions = ProteinUtils.getSelfInteractions(protein)
+                            .size() +
+                            "";
                 }
-                numberOfInteractions = Integer.toString(this.participationInteractions.size());
-
-            } else {
-
-                Collection someComponents = protein.getActiveInstances();
-                Collection uniqueInteractions = new HashSet();
-
-                for (Iterator iterator = someComponents.iterator(); iterator.hasNext();) {
-                    Component aComponent = (Component) iterator.next();
-                    Interaction anInteraction = aComponent.getInteraction();
-                    uniqueInteractions.add(anInteraction);
-
+                else {
+                    // protein and partner are different
+                    numberOfInteractions = ProteinUtils.getNnaryInteractions(partner, protein)
+                            .size() +
+                            "";
                 }
-                numberOfInteractions = Integer.toString(uniqueInteractions.size());
+            }
+            else {
+                // no interaction partner
+                numberOfInteractions = ProteinUtils.getNnaryInteractions(protein).size() + "";
             }
         }
         return numberOfInteractions;
     }
 
-    public void setParticipationInteractions() {
-        this.participationInteractions = new HashSet();
-        //set on first call
-        if (partner != null) {
-
-            Set componentSet1 = new HashSet(protein.getActiveInstances());
-            Set component1Interactions = new HashSet();
-
-            for (Iterator iterator = componentSet1.iterator(); iterator.hasNext();) {
-                Component component = (Component) iterator.next();
-                component1Interactions.add(component.getInteraction());
-            }
-
-            Set componentSet2 = new HashSet(partner.getActiveInstances());
-
-            for (Iterator iterator = componentSet2.iterator(); iterator.hasNext();) {
-                Component component2 = (Component) iterator.next();
-                Interaction component2Interaction = component2.getInteraction();
-
-                if (component1Interactions.contains(component2Interaction)) {
-                    participationInteractions.add(component2Interaction);
-                }
-            }
-        }
-    }
 
     /**
      * Returns a fully populated URL to perform a search for all this Protein's Interactions. ISSUE:
@@ -304,43 +312,33 @@ public class PartnersViewBean extends AbstractViewBean {
      */
     public String getInteractionsSearchURL() {
 
-        //set on first call
-        if (interactionSearchURL == null) {
+        Collection interactions = null;
 
-            if (partner == null) {
+        if (partner != null) {
 
-                StringBuffer sb = new StringBuffer();
-                Set componentSet = new HashSet(protein.getActiveInstances());
-                Set interactionSet = new HashSet();
+            if (partner.equals(protein)) {
+                // here only count the binary Interactions
+                interactions = ProteinUtils.getSelfInteractions(protein);
 
-                for (Iterator it = componentSet.iterator(); it.hasNext();) {
-                    Component aComponent = (Component) it.next();
-                    Interaction anInteraction = aComponent.getInteraction();
-                    interactionSet.add(anInteraction);
-                }
-
-                for (Iterator iterator = interactionSet.iterator(); iterator.hasNext();) {
-                    Interaction anInteraction = (Interaction) iterator.next();
-                    sb.append(anInteraction.getAc());
-                    if (iterator.hasNext()) sb.append(",");
-
-                }
-                return interactionSearchURL = searchURL + sb.toString();
-
-            } else {
-                // this protein got a partner in the view and we only want the interactions
-                // in which the protein and the partner involved               
-                if (participationInteractions == null) {
-                    this.setParticipationInteractions();
-                }
-                StringBuffer sb = new StringBuffer();
-                for (Iterator it = participationInteractions.iterator(); it.hasNext();) {
-                    Interaction anInteraction = (Interaction) it.next();
-                    sb.append(anInteraction.getAc());
-                    if (it.hasNext()) sb.append(",");
-                }
-                interactionSearchURL = searchURL + sb.toString();
             }
+            else {
+                // protein and partner are different
+                interactions = ProteinUtils.getNnaryInteractions(partner, protein);
+            }
+
+        }
+        else {
+            // no interaction partner
+            interactions = ProteinUtils.getNnaryInteractions(protein);
+        }
+
+        // now create the URL-based searchquery
+        StringBuffer sb = new StringBuffer();
+        for (Iterator it = interactions.iterator(); it.hasNext();) {
+            Interaction anInteraction = (Interaction) it.next();
+            sb.append(anInteraction.getAc());
+            if (it.hasNext()) sb.append(",");
+            interactionSearchURL = searchURL + sb.toString();
         }
         return interactionSearchURL;
     }
@@ -354,64 +352,59 @@ public class PartnersViewBean extends AbstractViewBean {
      * @return Set a Set of SummaryViewBeans for each interaction partner, or empty if there are
      *         none.
      */
-    public Set getInteractionPartners() {
+    public Collection getInteractionPartners() {
 
-        //populate on first request
-        if (interactionPartners == null) {
+        Collection interactions = null;
+        if (partner == null) {
 
-            interactionPartners = new HashSet();
-            //Need to track when an Interaction has been done
-            List doneInteractions = new ArrayList();
+            // this protein got no partner in the view, just grab all interactions
+            // and that's it
+            interactions = ProteinUtils.getNnaryInteractions(protein);
+            //TODO unefficent, find better way for that
 
-            Collection componentList = protein.getActiveInstances();
-            for (Iterator it = componentList.iterator(); it.hasNext();) {
+            interactionPartners = new HashSet(interactions.size());
+            if (selfInteraction) {
+                interactionPartners.add(new PartnersViewBean(protein, protein, getHelpLink(), searchURL,
+                                                             getContextPath()));
+            }
+            else {
+                boolean hasNoSelfInteraction = ProteinUtils.getSelfInteractions(protein).isEmpty();
 
-                Component component = (Component) it.next();
-                Interaction interaction = component.getInteraction();
+                for (Iterator iterator = interactions.iterator(); iterator.hasNext();) {
+                    Interaction anInteraction = (Interaction) iterator.next();
+                    Collection someComponents = anInteraction.getComponents();
 
-                if (!doneInteractions.contains(interaction)) {
+                    for (Iterator iterator1 = someComponents.iterator(); iterator1.hasNext();) {
+                        Component aComponent = (Component) iterator1.next();
+                        Interactor anInteractor = aComponent.getInteractor();
 
-                    //now get the Interaction's list of Components, as they contain
-                    //the Protein's interaction partners (as well as the Protein itself)....
-                    Collection interactionCompList = interaction.getComponents();
-                    for (Iterator iter = interactionCompList.iterator(); iter.hasNext();) {
-                        Component comp = (Component) iter.next();
-                        Interactor partner = comp.getInteractor();
-
-                        //check to see if the Protein interacts with itself (homodimer)-
-
-                        if (interactionCompList.size() == 2) {
-                            Iterator iterator4 = interactionCompList.iterator();
-                            Component component1 = (Component) iterator4.next();
-                            Component component2 = (Component) iterator4.next();
-
-                            if (component1.getStoichiometry() == 1 &&
-                                    component2.getStoichiometry() == 1) {
-                                interactionPartners.add(this);
-
-                            }
-                        } else if (interactionCompList.size() == 1) {
-                            Iterator iterator5 = interactionCompList.iterator();
-                            Component component1 = (Component) iterator5.next();
-                            if (component1.getStoichiometry() == 2) {
-                                //  interactionPartners.add(this);
-                                interactionPartners.add(this);
+                        //TODO this can write much clearer and easier
+                        if (hasNoSelfInteraction) {
+                            if (!protein.equals(anInteractor)) {
+                                interactionPartners.add(new PartnersViewBean((Protein) anInteractor, protein, getHelpLink(), searchURL,
+                                                                             getContextPath()));
                             }
                         }
-
-                        if (!partner.equals(protein)) {
-                            interactionPartners.add(new PartnersViewBean((Protein) partner, protein,
-                                    getHelpLink(), searchURL, getContextPath()));
+                        else {
+                            // we got a self interaction here
+                            interactionPartners.add(new PartnersViewBean((Protein) anInteractor, protein, getHelpLink(), searchURL,
+                                                                         getContextPath()));
                         }
-
                     }
-                    //record that we've checked the Interaction
-
                 }
             }
+
+        }
+        else {
+            // we should never arrive here (look assert)
+        }
+
+        if (interactionPartners == null) {
+            interactionPartners = Collections.EMPTY_SET;
         }
 
         return interactionPartners;
+
     }
 
 
@@ -476,11 +469,9 @@ public class PartnersViewBean extends AbstractViewBean {
     public String getProteinSearchURL
             () {
 
-        if (protSearchURL == null) {
-            //set it on the first call
-            protSearchURL = getSimpleSearchURL() + "&amp;searchClass=Protein";
-        }
-        return protSearchURL;
+        return getSimpleSearchURL() + "&amp;searchClass=Protein&amp;view=single" +
+                "&filter=ac";
+
     }
 
     /**
@@ -492,7 +483,10 @@ public class PartnersViewBean extends AbstractViewBean {
     public String getProteinPartnerURL
             () {
 
-        return getProteinSearchURL() + "&amp;source=simple";
+        protSearchURL = getSimpleSearchURL() + "&amp;searchClass=Protein&amp;view=partner" +
+                "&filter=ac";
+
+        return protSearchURL;
     }
 
 
@@ -505,10 +499,8 @@ public class PartnersViewBean extends AbstractViewBean {
     public String getSimpleSearchURL
             () {
 
-        return searchURL + protein.getAc();
+        return searchURL + protein.getAc() + "&filter=ac";
     }
-
-    //-------------------------- equals/hashcode -------------------------------
 
     /**
      * Have to override this because we accumulate 'partner' viewbeans and even though they are held
@@ -538,10 +530,6 @@ public class PartnersViewBean extends AbstractViewBean {
         return this.getMainProtein().hashCode();
     }
 
-
-
-    //-------------------------- private helper methods -----------------------------
-
     /**
      * Returns the Uniprot Xref associated with this Protein.
      *
@@ -560,5 +548,4 @@ public class PartnersViewBean extends AbstractViewBean {
         }
         return null;
     }
-
 }
