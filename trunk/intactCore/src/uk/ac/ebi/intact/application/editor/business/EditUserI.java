@@ -256,15 +256,4 @@ public interface EditUserI extends Serializable {
     public Date loginTime();
 
     public Date logoffTime();
-
-    /**
-     * Returns the read only view.
-     * @param clazz the Class to return the view for.
-     * @param shortLabel the short label to search the database for.
-     * @return the read only view for <code>shortLabel</code> of
-     * <code>clazz</code>.
-     * @throws SearchException for errors in searching the database.
-     */
-    public AbstractROViewBean getReadOnlyView(Class clazz, String shortLabel)
-            throws SearchException;
 }
