@@ -66,12 +66,12 @@
     </tr>
     <tr class="tableRowEven">
         <td class="tableCell" align="left" valign="top">
-            <html:select property="organism" name="expForm" style="color: black; background-color: antiquewhite">
+            <html:select property="organism" name="expForm" styleClass="inputRequired">
                 <html:options name="organismmenu"/>
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:select property="inter" name="expForm" style="color: black; background-color: pink">
+            <html:select property="inter" name="expForm" styleClass="inputRequired">
                 <html:options name="intermenu"/>
             </html:select>
         </td>
