@@ -13,7 +13,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class CvAliasType extends CvObject {
+public class CvAliasType extends CvObject implements Editable {
 
     /**
      * This constructor should <b>not</b> be used as it could
