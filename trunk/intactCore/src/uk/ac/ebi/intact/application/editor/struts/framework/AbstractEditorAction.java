@@ -157,43 +157,6 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
     }
 
     /**
-     * Returns the course of action based on the last search result. If the
-     * last search produced multiple entries then this method returns the
-     * path to multiple results page. For a single result, the method
-     * returns the path to the search page.
-     *
-     * @param user the user to determine where to go.
-     *
-     * <pre>
-     * post: return = EditorConstants.FORWARD_SEARCH or
-     *                EditorConstants.FORWARD_RESULTS
-     * post: return <> Undefined
-     * </pre>
-     */
-    protected String getForwardAction(EditUserI user) {
-        return user.hasSingleSearchResult() ? SEARCH : RESULT;
-    }
-
-    /**
-     * Identicial to {@link #getForwardAction(EditUserI)} with user
-     * retrieved from <code>request</code>.
-     *
-     * @param request the HTTP request to extract the user.
-     * @exception SessionExpiredException if the session has expired.
-     * @see #getForwardAction(EditUserI)
-     *
-     * <pre>
-     * post: return = EditorConstants.FORWARD_SEARCH or
-     *                EditorConstants.FORWARD_RESULTS
-     * post: return <> Undefined
-     * </pre>
-     */
-    protected String getForwardAction(HttpServletRequest request)
-            throws SessionExpiredException {
-        return this.getForwardAction(this.getIntactUser(request));
-    }
-
-    /**
      * Returns true if errors in stored in the request
      * @param request Http request to search errors for.
      * @return true if strut's error is found in <code>request</code> and
