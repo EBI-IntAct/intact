@@ -27,10 +27,11 @@ alter table ia_biosource add ( celltype_ac VARCHAR2(30) CONSTRAINT
 fk_Biosource$celltype REFERENCES IA_ControlledVocab(ac) )
 ;
 
+/* Taxid is not anymore unique */
+alter table ia_payg drop CONSTRAINT FK_PAYG_SPECIES;
+alter table ia_biosource drop constraint uq_BioSource$taxId;
 
-
-alter table ia_biosource_audit
-add (tissue_ac VARCHAR2(30))
+alter table ia_biosource_audit add (tissue_ac VARCHAR2(30))
 ;
 
 
