@@ -6,12 +6,13 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.util;
 
+import org.apache.commons.collections.LRUMap;
+
 import java.net.URL;
 import java.net.URLConnection;
 import java.io.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.util.HashMap;
 
 /**
  * The proxy to the Newt server. An example for the use of this class:
@@ -30,29 +31,41 @@ import java.util.HashMap;
  */
 public class NewtServerProxy {
 
+    public static final int MAX_CACHED_ITEM = 200;
+
     // Inner Classes
     // ------------------------------------------------------------------------
-    private static class NewtCache {
-        private HashMap cache = new HashMap ();
+    private static class NewtLRUCache {
+        /**
+         * The cache which hold a maximum number of NewtResponse.
+         */
+        private LRUMap lru = null;
+
+        public NewtLRUCache () {
+              this (MAX_CACHED_ITEM);
+        }
+
+        public NewtLRUCache (int size) {
+            if (size > 0) lru = new LRUMap (size);
+            else throw new IllegalArgumentException("The cache size must be positive!");
+        }
 
         public void clear () {
-            cache.clear();
+            lru.clear();
         }
 
         public void store (int taxid, NewtResponse response) {
-            cache.put (taxid+"", response);
+            lru.put (taxid+"", response);
         }
 
         public NewtResponse get (int taxid) {
-            return (NewtResponse) cache.get (taxid+"");
+            return (NewtResponse) lru.get (taxid+"");
         }
 
         public int size() {
-            return cache.size();
+            return lru.size();
         }
-    } // NewtCache
-
-
+    } // NewtLRUCache
 
 
     public static class NewtResponse {
@@ -93,6 +106,7 @@ public class NewtServerProxy {
         }
     }
 
+
     // Exception class for when a tax id is not found.
     public static class TaxIdNotFoundException extends Exception {
         public TaxIdNotFoundException(int taxid) {
@@ -104,10 +118,14 @@ public class NewtServerProxy {
 
     // Class Data
 
-    private NewtCache cache = null;
+    private NewtLRUCache cache = null;
 
     public void enableCaching () {
-        cache = new NewtCache();
+        cache = new NewtLRUCache();
+    }
+
+    public void enableCaching (int maxElement) {
+        cache = new NewtLRUCache(maxElement);
     }
 
     public void disableCaching () {
@@ -171,6 +189,7 @@ public class NewtServerProxy {
 
         if (response == null) {
             System.out.println("... Response from Newt("+ taxid +") is NULL ...");
+            throw new TaxIdNotFoundException ( taxid );
         }
 
         Matcher matcher = REG_EXP.matcher(response);
