@@ -62,11 +62,7 @@ public class SetUpInteractionAction  extends AbstractEditorAction {
                 getEditForm(session, EditorConstants.FORM_INTERACTION_PROT);
         // Populate with proteins.
         protForm.setItems(view.getProteins());
-//        String protFormName = EditorConstants.FORM_INTERACTION_PROT;
-//        EditForm protForm = user.getEditForm(protFormName);
-//        protForm.setItems(view.getProteins());
-//        request.setAttribute(protFormName, protForm);
 
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(EditorConstants.FORWARD_EDITOR);
     }
 }

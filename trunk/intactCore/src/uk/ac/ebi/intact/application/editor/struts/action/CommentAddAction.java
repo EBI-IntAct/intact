@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactException;
 
 import org.apache.struts.action.*;
 
@@ -53,34 +52,31 @@ public class CommentAddAction extends AbstractEditorAction {
         DynaActionForm theForm = (DynaActionForm) form;
 
         // The topic for the annotation.
-        CvTopic cvtopic = null;
-
-        // The owner of the object we are editing.
-        Institution owner = null;
+//        CvTopic cvtopic = null;
 
         // Handler to the Intact User.
         EditUserI user = super.getIntactUser(request);
 
+        // The owner of the object we are editing.
+        Institution owner = user.getInstitution();
+
         // The topic selected by the user.
         String topic = (String) theForm.get("topic");
 
-        try {
+//        try {
             // Get the topic object for the new annotation.
-            cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class, topic);
-
-            // The owner of the object we are editing.
-            owner = user.getInstitution();
-        }
-        catch (IntactException ie) {
-            // Can't query the database.
-            LOGGER.info(ie);
-            // The errors to report back.
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search", ie.getMessage()));
-            saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
+        CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class, topic);
+//        }
+//        catch (IntactException ie) {
+//            // Can't query the database.
+//            LOGGER.info(ie);
+//            // The errors to report back.
+//            ActionErrors errors = new ActionErrors();
+//            errors.add(AbstractEditorAction.EDITOR_ERROR,
+//                    new ActionError("error.search", ie.getMessage()));
+//            saveErrors(request, errors);
+//            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
+//        }
         // The new annotation to add to database.
         Annotation annot = new Annotation();
         annot.setAnnotationText((String) theForm.get("description"));

@@ -12,12 +12,11 @@ import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import org.apache.struts.action.*;
 
@@ -69,8 +68,7 @@ public class BioSourceAction extends AbstractEditorAction {
 
         // Validate the tax id; it should be unique.
         if (!validateTaxId(user, taxid, request)) {
-//            return new ActionForward(mapping.getInput());
-            return mapping.findForward(EditorConstants.FORWARD_INPUT);
+            return inputForward(mapping);
         }
         // To report errors.
         ActionErrors errors;
@@ -82,40 +80,13 @@ public class BioSourceAction extends AbstractEditorAction {
         // The service instance to access newt server properties.
         EditorService service = super.getService();
 
-        // Handler to the Newt server.
-        NewtServerProxy newtServer = service.getNewtServer();
+        // The response from the Newt server.
+        NewtServerProxy.NewtResponse newtResponse =
+                getNewtResponse(service, taxid, request);
 
-        // Query the server.
-        NewtServerProxy.NewtResponse newtResponse = null;
-        try {
-            newtResponse = newtServer.query(Integer.parseInt(taxid));
-        }
-        catch (IOException ioe) {
-            // Error in communcating with the server.
-            errors = new ActionErrors();
-            errors.add("biosource",
-                    new ActionError("error.newt.connection", ioe.getMessage()));
-            saveErrors(request, errors);
-//            return new ActionForward(mapping.getInput());
-            return mapping.findForward(EditorConstants.FORWARD_INPUT);
-        }
-        catch (SearchException se) {
-            errors = new ActionErrors();
-            errors.add("cvinfo", new ActionError("error.newt.search", taxid));
-            saveErrors(request, errors);
-            // Restore (on screen) back to the bean's tax id.
-            theForm.set("taxId", bioview.getTaxId());
-            return mapping.findForward(EditorConstants.FORWARD_INPUT);
-//            return new ActionForward(mapping.getInput());
-        }
-        catch (NumberFormatException nfe) {
-            errors = new ActionErrors();
-            errors.add("biosource", new ActionError("error.newt.input", taxid));
-            saveErrors(request, errors);
-            // Restore (on screen) back to the bean's tax id.
-            theForm.set("taxId", bioview.getTaxId());
-//            return new ActionForward(mapping.getInput());
-            return mapping.findForward(EditorConstants.FORWARD_INPUT);
+        // Any errors?
+        if (hasErrors(request)) {
+            return inputForward(mapping);
         }
         // Values from newt.
         String newtLabel = newtResponse.getShortLabel();
@@ -147,21 +118,10 @@ public class BioSourceAction extends AbstractEditorAction {
             bioview.addXrefToUpdate(taxXref);
         }
         else {
-            try {
-                // We don't have an xref for tax id yet; create xref with data
-                // from the form.
-                Xref xref = createTaxXref(user, taxid, newtLabel);
-                bioview.addXref(xref);
-            }
-            catch (IntactException ie) {
-                // Duplicate databases?
-                LOGGER.info(ie);
-                errors = new ActionErrors();
-                errors.add(AbstractEditorAction.EDITOR_ERROR,
-                        new ActionError("error.search", ie.getNestedMessage()));
-                saveErrors(request, errors);
-                return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-            }
+            // We don't have an xref for tax id yet; create xref with data
+            // from the form.
+            Xref xref = createTaxXref(user, taxid, newtLabel);
+            bioview.addXref(xref);
         }
         // Set the view with the new inputs.
         bioview.setShortLabel(newtLabel);
@@ -178,23 +138,14 @@ public class BioSourceAction extends AbstractEditorAction {
      * @param request the HTTP request to save errors
      * @return <code>false</code> if the search fails or a BioSource
      * instance found  with the same <code>taxid</code>.
+     * @exception SearchException for errors in acccessing the database.
      */
-    private boolean validateTaxId(EditUserI user, String taxid,
-                                  HttpServletRequest request) {
+    private boolean validateTaxId(EditUserI user,
+                                  String taxid,
+                                  HttpServletRequest request)
+            throws SearchException {
         // Holds the results from the search.
-        Collection results;
-        try {
-            results = user.search(BioSource.class.getName(), "taxId", taxid);
-        }
-        catch (SearchException se) {
-            // Can't query the database.
-            LOGGER.info(se);
-            ActionErrors errors = new ActionErrors();
-            errors.add("cvinfo", new ActionError("error.search",
-                    "Unable to search the database to check for unique tax ids"));
-            saveErrors(request, errors);
-            return false;
-        }
+        Collection results = user.search(BioSource.class.getName(), "taxId", taxid);
         if (results.isEmpty()) {
             // Don't have this tax id on the database.
             return true;
@@ -218,6 +169,40 @@ public class BioSourceAction extends AbstractEditorAction {
         return false;
     }
 
+    private NewtServerProxy.NewtResponse getNewtResponse(EditorService service,
+                                                         String taxid,
+                                                         HttpServletRequest request) {
+        // Handler to the Newt server.
+        NewtServerProxy newtServer = service.getNewtServer();
+
+        // To report errors.
+        ActionErrors errors;
+
+        // Query the server.
+        NewtServerProxy.NewtResponse newtResponse = null;
+        try {
+            newtResponse = newtServer.query(Integer.parseInt(taxid));
+        }
+        catch (IOException ioe) {
+            // Error in communcating with the server.
+            errors = new ActionErrors();
+            errors.add("biosource",
+                    new ActionError("error.newt.connection", ioe.getMessage()));
+            saveErrors(request, errors);
+        }
+        catch (NewtServerProxy.TaxIdNotFoundException ex) {
+            errors = new ActionErrors();
+            errors.add("cvinfo", new ActionError("error.newt.search", taxid));
+            saveErrors(request, errors);
+        }
+        catch (NumberFormatException nfe) {
+            errors = new ActionErrors();
+            errors.add("biosource", new ActionError("error.newt.input", taxid));
+            saveErrors(request, errors);
+        }
+        return newtResponse;
+    }
+
     /**
      * Returns a unique short label.
      * @param name the scientific nsme returned by the Newt server.
@@ -227,7 +212,7 @@ public class BioSourceAction extends AbstractEditorAction {
      * unique short label.
      * @return tax id if the computed short label is empty; otherwise
      * it could be either new computed label or the tax id.
-     * @throws uk.ac.ebi.intact.persistence.SearchException
+     * @throws SearchException for errors in searching the database.
      */
     private String getUniqueShortLabel(String name, String taxid, EditUserI user)
             throws SearchException {
@@ -243,7 +228,7 @@ public class BioSourceAction extends AbstractEditorAction {
     }
 
     private Xref createTaxXref(EditUserI user, String taxid, String label)
-            throws IntactException {
+            throws SearchException {
         // The owner of the object we are editing.
         Institution owner = user.getInstitution();
 

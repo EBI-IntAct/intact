@@ -71,6 +71,7 @@ public class SetUpEditorAction  extends AbstractEditorAction {
         if (topic.equals("Interaction")) {
             return mapping.findForward("interaction");
         }
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        // Strainght to the editor.
+        return mapping.findForward(EditorConstants.FORWARD_EDITOR);
     }
 }

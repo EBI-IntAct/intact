@@ -10,7 +10,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,33 +59,11 @@ public class ResultAction extends AbstractEditorAction {
         // The short label to search
         String shortLabel = request.getParameter("shortLabel");
 
-        // The selected Annotated object.
-        AnnotatedObject annobj = null;
+        LOGGER.info("Label: " + shortLabel + " class: " + className);
 
-        try {
-            // Needs the class object for the topic.
-            Class clazz = Class.forName(className);
-            LOGGER.info("Label: " + shortLabel + " class: " + clazz.getName());
-            annobj = (AnnotatedObject) user.getObjectByLabel(clazz, shortLabel);
-        }
-        catch (ClassNotFoundException cnfe) {
-            LOGGER.info(cnfe);
-            // The errors to report back.
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.class", cnfe.getMessage()));
-            saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
-        catch (IntactException ie) {
-            LOGGER.info(ie);
-            // The errors to report back.
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search", ie.getMessage()));
-            saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
+        // The selected Annotated object.
+        AnnotatedObject annobj =
+                (AnnotatedObject) user.getObjectByLabel(className, shortLabel);
         // The object we are editing presently.
         user.updateView(annobj);
 

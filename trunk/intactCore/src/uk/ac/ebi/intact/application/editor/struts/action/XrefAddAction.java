@@ -52,36 +52,35 @@ public class XrefAddAction extends AbstractEditorAction {
         // Handler to the EditUserI.
         EditUserI user = super.getIntactUser(request);
 
-        // The new xref to add to the current cv object.
-        Xref xref = null;
-
         // The drop down list items.
         String database = (String) theForm.get("database");
         String qualifier = (String) theForm.get("qualifier");
 
-        try {
-            // The owner of the object we are editing.
-            Institution owner = user.getInstitution();
+//        try {
+        // The owner of the object we are editing.
+        Institution owner = user.getInstitution();
 
-            // The database the new xref belong to.
-            CvDatabase db = (CvDatabase) user.getObjectByLabel(
-                    CvDatabase.class, database);
+        // The database the new xref belong to.
+        CvDatabase db = (CvDatabase) user.getObjectByLabel(
+                CvDatabase.class, database);
 
-            // The CV xref qualifier.
-            CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
-                        CvXrefQualifier.class, qualifier);
-            xref = new Xref(owner, db, (String) theForm.get("primaryId"),
-                    (String) theForm.get("secondaryId"),
-                    (String) theForm.get("releaseNumber"), xqual);
-        }
-        catch (IntactException ie) {
-            // Error in accessing the database.
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search", ie.getMessage()));
-            saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
+        // The CV xref qualifier.
+        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
+                CvXrefQualifier.class, qualifier);
+
+        // The new xref to add to the current cv object.
+        Xref xref = new Xref(owner, db, (String) theForm.get("primaryId"),
+                (String) theForm.get("secondaryId"),
+                (String) theForm.get("releaseNumber"), xqual);
+//        }
+//        catch (IntactException ie) {
+//            // Error in accessing the database.
+//            ActionErrors errors = new ActionErrors();
+//            errors.add(AbstractEditorAction.EDITOR_ERROR,
+//                    new ActionError("error.search", ie.getMessage()));
+//            saveErrors(request, errors);
+//            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
+//        }
         // Add the annotation to the view.
         AbstractEditViewBean viewbean = user.getView();
         viewbean.addXref(xref);
