@@ -25,7 +25,7 @@
         <%-- Error messages --%>
         <html:messages id="error">
             <tr class="tableRowEven">
-                <td class="tableErrorCell"><bean:write name="error"/></td>
+                <td class="tableErrorCell"><bean:write name="error" filter="false"/></td>
             </tr>
         </html:messages>
 
