@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * The action class to search a Protein.
@@ -51,34 +52,32 @@ public class ProteinSearchAction extends AbstractEditorAction {
             throws Exception {
         DynaActionForm theForm = (DynaActionForm) form;
 
-        // The search parameter.
-        String searchParam = getSearchParam(theForm);
-
-        // The search value.
-        String searchValue = (String) theForm.get(searchParam);
-        if (searchValue.length() == 0) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("int.protein.search",
-                    new ActionError("error.int.protein.search.input"));
-            saveErrors(request, errors);
-            return new ActionForward(mapping.getInput());
-        }
         // Handler to the current user.
         EditUserI user = super.getIntactUser(request);
-//        log("Searching for: " + searchParam + " and value: " + searchValue);
+
+        String searchParam = (String) theForm.get("param");
+        String searchValue = (String) theForm.get("value");
 
         // The collection to hold proteins.
         Collection proteins;
+
         try {
-            proteins = user.search(Protein.class.getName(), searchParam,
-                    searchValue);
+            if (searchParam.equals("spAc")) {
+                Protein prot = user.getProteinByXref(searchValue);
+                proteins = new ArrayList();
+                proteins.add(prot);
+            }
+            else {
+                proteins = user.search(Protein.class.getName(), searchParam,
+                        searchValue);
+            }
         }
         catch (SearchException se) {
             ActionErrors errors = new ActionErrors();
             errors.add("int.protein.search",
                     new ActionError("error.search", se.getMessage()));
             saveErrors(request, errors);
-            return new ActionForward(mapping.getInput());
+            return inputForward(mapping);
         }
         // Search found any results?
         if (proteins.isEmpty()) {
@@ -86,7 +85,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
             errors.add("int.protein.search",
                     new ActionError("error.int.protein.search.empty", searchParam));
             saveErrors(request, errors);
-            return new ActionForward(mapping.getInput());
+            return inputForward(mapping);
         }
         // The number of Proteins retrieved from the search.
         int psize = proteins.size();
@@ -108,25 +107,5 @@ public class ProteinSearchAction extends AbstractEditorAction {
         }
 
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
-    }
-
-    /**
-     * Returns the search parameter.
-     * @param form the form to get search parameter values.
-     * @return the search parameter; the most sepecific search
-     * is preferred over the least specific one. For example, 'ac' is preferred
-     * over any other value.
-     */
-    private String getSearchParam(DynaActionForm form) {
-        if (((String) form.get("ac")).length() != 0) {
-            return "ac";
-        }
-        if (((String) form.get("spAc")).length() != 0) {
-            return "spAc";
-        }
-        if (((String) form.get("shortLabel")).length() != 0) {
-            return "shortLabel";
-        }
-        return "fullName";
     }
 }
