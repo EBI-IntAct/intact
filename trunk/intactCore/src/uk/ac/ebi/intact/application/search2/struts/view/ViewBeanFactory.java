@@ -18,18 +18,14 @@ package uk.ac.ebi.intact.application.search2.struts.view;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search2.business.Constants;
-import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
-import uk.ac.ebi.intact.application.search2.struts.view.details.DetailsViewBean;
-import uk.ac.ebi.intact.application.search2.struts.view.details.InteractionDetailsViewBean;
-import uk.ac.ebi.intact.application.search2.struts.view.details.ProteinDetailsViewBean;
+
+import uk.ac.ebi.intact.application.search2.struts.view.details.*;
 import uk.ac.ebi.intact.application.search2.struts.view.single.ExperimentSingleViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.InteractionSingleViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.ProteinSingleViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.SingleViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.chunked.ExperimentChunkedSingleViewBean;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.proxy.InteractionProxy;
-import uk.ac.ebi.intact.model.proxy.ProteinProxy;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -72,7 +68,7 @@ public class ViewBeanFactory {
     // add a new view bean.
     static {
         // Details view beans.
-        ourBeanToDetailsView.put ( Experiment.class, DetailsViewBean.class );
+        ourBeanToDetailsView.put ( Experiment.class, ExperimentDetailsViewBean.class );
 //        ourBeanToDetailsView.put ( Interaction.class, InteractionDetailsViewBean.class );
 //        ourBeanToDetailsView.put ( Protein.class, ProteinDetailsViewBean.class );
 //        ourBeanToDetailsView.put ( InteractionProxy.class, InteractionDetailsViewBean.class );
@@ -103,7 +99,7 @@ public class ViewBeanFactory {
 //        ourBeanToBinaryView.put ( ProteinProxy.class, BinaryDetailsViewBean.class );
         ourBeanToBinaryView.put ( ProteinImpl.class, BinaryDetailsViewBean.class );
 
-        // chunked view
+        // chunked single view
         ourBeanToChunkedView.put( Experiment.class, ExperimentChunkedSingleViewBean.class );
     }
 
@@ -152,12 +148,22 @@ public class ViewBeanFactory {
     /**
      * Returns the appropriate view bean for given <code>Collection<code> object.
      * @param objects the <code>Collection</code> of objects to return the view for.
+     * Note that for Experiment detail views some Experiments may require a tabbed view
+     * and so a different bean will be returned (ie ExperimentDetailsViewBean).
      * @param link the link to help page.
+     * @param contextPath
      * @return the appropriate view for <code>object</code>; null is
-     * returned if there is no mapping or an error in creating an
-     * instance of the view.
+     * returned if there is no mapping, an error in creating an
+     * instance of the view or if the object collection is empty or null.
      */
-    public AbstractViewBean getDetailsViewBean ( Collection objects, String link, String contextPath ) {
+    public AbstractViewBean getDetailsViewBean ( Collection objects, String link,
+                                                 String contextPath) {
+
+
+        if((objects.isEmpty()) || (objects == null)) {
+            logger.info("ViewBeanFactory: detail view requested for null/empty Collection!");
+            return null;
+        }
 
         Object firstItem = objects.iterator().next ();
         Class objsClass = firstItem.getClass ();
@@ -165,9 +171,9 @@ public class ViewBeanFactory {
         logger.info ( objsClass );
 
         Class clazz = (Class) ourBeanToDetailsView.get ( objsClass );
-        return getViewBean( clazz, objects, link, contextPath );
-    }
 
+        return getViewBean( clazz, objects, link, contextPath);
+    }
 
     /**
      * Returns the appropriate view bean for given basic object.
@@ -180,22 +186,32 @@ public class ViewBeanFactory {
      */
     public AbstractViewBean getSingleViewBean ( AnnotatedObject object, String link, String contextPath ) {
 
+        if(object == null) {
+            logger.info("ViewBeanFactory: single view requested for null object!");
+            return null;
+        }
         logger.info ( object.getClass () );
         Class beanClass = (Class) ourBeanToSingleItemView.get ( object.getClass () );
-
-        return getViewBean( beanClass, object, link, contextPath );
+        return getViewBean( beanClass, object, link, contextPath);
     }
 
 
     /**
-     *
+     * Builds a tabbed view for a single result. NB this could be refactored
+     * by using a User object as a parameter instead, to avoid needing a special
+     * method.
      * @param object
      * @param link
      * @param contextPath
      * @return
      */
-    public AbstractViewBean getChunkedSingleViewBean ( AnnotatedObject object, String link, String contextPath, int maxChunk, int selectedChunk ) {
-
+    public AbstractViewBean getChunkedSingleViewBean ( AnnotatedObject object,
+                                                       String link, String contextPath,
+                                                       int maxChunk, int selectedChunk ) {
+        if(object == null) {
+            logger.info("ViewBeanFactory: chunk view requested for null object!");
+            return null;
+        }
         logger.info ( object.getClass () );
         Class beanClass = (Class) ourBeanToChunkedView.get ( object.getClass () );
 
@@ -205,7 +221,9 @@ public class ViewBeanFactory {
     /**
      * Returns the appropriate view bean for given object.
      * The object can be either a <code>Collection</code> or an
-     * <code>AnnotatedObject</code>.
+     * <code>AnnotatedObject</code>. NB This chould be refactored using a
+     * User object to avoid the need for a seperate special method for a single
+     * tabbed view.
      *
      * @param beanClazz the type of the bean which will wrap the object to display
      * @param objectToWrap the object to display
@@ -221,13 +239,17 @@ public class ViewBeanFactory {
      * @return
      */
     private AbstractViewBean getViewBean ( Class beanClazz,
-                                           AnnotatedObject objectToWrap,
+                                           Object objectToWrap,
                                            String link,
                                            String contextPath,
                                            int maxChunk,
                                            int selectedChunk ) {
 
         if (beanClazz == null) {
+            return null;
+        }
+        if(objectToWrap == null) {
+            logger.info("ViewBeanFactory: null object to be tab viewed! ViewBean Class " + beanClazz);
             return null;
         }
 
@@ -283,7 +305,7 @@ public class ViewBeanFactory {
      * @param beanClazz the type of the bean which will wrap the object to display
      * @param objectToWrap the object to display
      * @param link the link to help page.
-     *
+     * @param contextPath the context path for the help page
      * @return the appropriate view for <code>object</code>; null is
      * returned if there is no mapping or an error in creating an
      * instance of the view.
@@ -291,9 +313,13 @@ public class ViewBeanFactory {
     private AbstractViewBean getViewBean ( Class beanClazz,
                                            Object objectToWrap,
                                            String link,
-                                           String contextPath ) {
+                                           String contextPath) {
 
         if (beanClazz == null) {
+            return null;
+        }
+        if(objectToWrap == null) {
+            logger.info("ViewBeanFactory: view requested for null object! ViewBean Class " + beanClazz);
             return null;
         }
 
@@ -321,9 +347,9 @@ public class ViewBeanFactory {
 
             Constructor constructor = beanClazz.getConstructor (
                     new Class[]{ classToWrap, String.class, String.class } );
-
-            return (AbstractViewBean) constructor.newInstance (
+                return (AbstractViewBean) constructor.newInstance (
                     new Object[]{ objectToWrap, link, contextPath } );
+
         } catch ( InstantiationException e ) {
             e.printStackTrace ();
         } catch ( IllegalAccessException e ) {
