@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.taglibs;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.JspException;
