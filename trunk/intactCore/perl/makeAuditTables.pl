@@ -9,12 +9,12 @@
 #              script before running the first. The name of the script is defaulted as:
 #              dropAuditTables.sql and in the same directory as the first script.
 #
-# Usage:       auditTable.pl -login <username/password> 
-#                            -db <DB_name> 
-#                            -dest <destination of the script, e.g. path/filename >
-#                            -tablename <table1> [-tablename <table2> ...]
-#                            -storagesizeFactor <real number -- 1.5 means the audit- 
-#                             table's initial size is 1.5 times of that of master table.>
+# Usage:       makeAuditTables.pl -login <username/password> 
+#                                 -db <DB_name> 
+#                                 -dest <destination of the script, e.g. path/filename >
+#                                 -tablename <table1> [-tablename <table2> ...]
+#                                 -storagesizeFactor <real number -- 1.5 means the audit- 
+#                                  table's initial size is 1.5 times of that of master table.>
 #              (the '-tablename' is optional, if null, All master tables in the 
 #                  specified db will be audited.
 #              (the '-storagesizeFactor' is optional, if null set default value 1)
@@ -146,9 +146,10 @@ foreach my $sTableName ( @aMasterTabNames ) {
   my $sBadTable = uc $sSchema .".". $sTableName ;
   die "\nSorry, the table $sBadTable doesn't exist." unless ( $nStartSize ) ;
 
-  $nStartSize  = $nStartSize / 1024 ;
-  $nIncrement  = $nIncrement / 1024 ;
-  my $sStorage = qq{STORAGE (INITIAL $nStartSize NEXT $nIncrement) PARALLEL}; 
+  $nStartSize  = $nStartSize / 1024 if $nStartSize ;
+  $nIncrement  = $nIncrement / 1024 if $nIncrement ;
+  my $sStorage = qq{STORAGE (INITIAL $nStartSize NEXT $nIncrement) PARALLEL} if $nIncrement ;
+  $sStorage = qq{STORAGE (INITIAL $nStartSize)} if ! $nIncrement ;
 
   $hHASH_t{ 'auditTABname'} = $sTableName . "_Audit" ;
   $hHASH_t{ 'tablebody'}    = \@aColDetails ;
@@ -230,11 +231,13 @@ $dbh -> disconnect if $dbh ;
 sub headerCreate {
 
 my @aTableNames = @_ ;
-my $sTabList ;
-$sSchema = uc $sSchema .".". uc $sDB ;
+my $sTabList = "" ;
+$sSchema = uc $sDB .".". uc $sSchema ;
 
-foreach ( @aTableNames ) {  
-  $sTabList .= "\t\t" . $_ . "\n" ;  
+if (@aTableNames) {
+  foreach ( @aTableNames ) {  
+    $sTabList .= "\t\t" . $_ . "\n" ;  
+  }
 }
 
 my $sHeader = qq{
@@ -242,12 +245,15 @@ SET DOC OFF
 /*****************************************************************************
 Description: This script creates row-level audit tables and relevant triggers
              for database $sSchema
-             
+
+             This is a machine-generated script by program\n\t     $sDir/$0, 
+             which should be run every time after the Integr8 db schema has been changed. 
+
 Usage:       sqlplus username/password \@$sDestination (filename only, not dir)
 
 Note:        The audit-table name and trigger name are identical.  
 
-Requiment    The following audit-table(s) may already exist, drop them first.
+Requirement  The following audit-table(s) may already exist, drop them first.
              (they can be dropped by running dropAuditTables.sql)
  
 $sTabList
