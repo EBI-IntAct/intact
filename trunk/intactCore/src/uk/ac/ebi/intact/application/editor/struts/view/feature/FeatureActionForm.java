@@ -6,23 +6,19 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The action form for the Feature editor.
@@ -174,70 +170,49 @@ public class FeatureActionForm extends EditorActionForm {
         myMutationState = state;
     }
 
-    /**
-     * Validate the properties that have been set from the HTTP request.
-     *
-     * @param mapping the mapping used to select this instance
-     * @param request the servlet request we are processing
-     * @return <tt>ActionErrors</tt> object that contains validation errors. If
-     *         no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
-     *         object is returned.
-     */
-    public ActionErrors validate(ActionMapping mapping,
-                                 HttpServletRequest request) {
-        ActionErrors errors = super.validate(mapping, request);
+    // Validate Methods
 
-        // Only proceed if super method does not find any errors.
-        if ((errors != null) && !errors.isEmpty()) {
+    public ActionErrors validateAddRange() {
+        return getNewRange().validate("new");
+    }
+
+    public ActionErrors validateSaveRange() {
+        return getSelectedRange().validate("edit");
+    }
+
+    public ActionErrors validateSubmit() {
+        // Look for unsaved xrefs.
+        ActionErrors errors = super.validateUnsavedXref();
+        if (errors != null) {
             return errors;
         }
-        // The dispatch parameter to find out which button was pressed.
-        String dispatch = getDispatch();
-
-        // No errors if the form wasn't dispatched.
-        if (dispatch == null) {
-            return null;
+        // Do the mutation specific validation in mutation mode.
+        if (myMutationState) {
+            // Check the full name for Feature mutations.
+            errors = validateMutations();
         }
-        // Message resources to access button labels.
-        MessageResources msgres =
-                ((MessageResources) request.getAttribute(Globals.MESSAGES_KEY));
-
-        // Trap errors for adding a new range.
-        if (dispatch.equals(msgres.getMessage("feature.range.button.add"))) {
-            // Validate from and to ranges.
-            errors = getNewRange().validate("new");
-        }
-        // Trap errors for saving a range
-        else if (dispatch.equals(msgres.getMessage("feature.range.button.save"))) {
-            // Validate from and to ranges.
-            errors = getSelectedRange().validate("edit");
-        }
-        // Trap errors for Saving/Submitting the feature.
-        else if (dispatch.equals(msgres.getMessage("button.submit"))
-                || dispatch.equals(msgres.getMessage("button.save.continue"))) {
-            // Do the mutation specific validation in mutation mode.
-            if (myMutationState) {
-                // Check the full name for Feature mutations.
-                errors = validateMutations();
+        else {
+            // Must have ranges.
+            if (myRanges.isEmpty()) {
+                errors = new ActionErrors();
+                errors.add("feature.range.empty",
+                        new ActionError("error.feature.range.empty"));
             }
             else {
-                // Must have ranges.
-                if (myRanges.isEmpty()) {
-                    errors = new ActionErrors();
-                    errors.add("feature.range.empty",
-                            new ActionError("error.feature.range.empty"));
-                }
-                else {
-                    // Check for unsaved ranges.
-                    errors = checkUnsavedRanges();
-                }
+                // Check for unsaved ranges.
+                errors = checkUnsavedRanges();
             }
         }
         return errors;
     }
 
+    // Override the super method
+    public ActionErrors validateSaveAndContinue() {
+        return validateSubmit();
+    }
+
     /**
-     * This method is pulrely for testing hte validation of mutations.
+     * This method is purely for testing hte validation of mutations.
      * @param fullname
      * @param featureSep
      * @param rangeSep
