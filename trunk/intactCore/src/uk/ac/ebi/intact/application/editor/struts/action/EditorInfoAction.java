@@ -17,6 +17,7 @@ import org.apache.struts.action.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Action class when the use presses Save button to save short label and full
@@ -113,8 +114,64 @@ public class EditorInfoAction extends AbstractEditorAction {
         }
         // Found more than one entry with the same short label.
         ActionErrors errors = new ActionErrors();
-        errors.add("cvinfo.label", new ActionError("error.cvinfo.label", label));
+        errors.add(ActionErrors.GLOBAL_ERROR,
+                new ActionError("error.cvinfo.label", label));
         saveErrors(request, errors);
+
+        ActionMessages messages = new ActionMessages();
+        messages.add(ActionMessages.GLOBAL_MESSAGE,
+                new ActionMessage("message.existing.labels", getExistingLabels(user)));
+        saveMessages(request, messages);
         return false;
+    }
+
+    /**
+     * Returns a list of existing short labels.
+     * @param user to search the database.
+     * @return a String object consisting of short labels of current object type
+     * minus the short label of the current edit object.
+     * @throws SearchException for errors in search the database for short labels.
+     */
+    private String getExistingLabels(EditUserI user) throws SearchException {
+        // The object we are editing at the moment.
+        AnnotatedObject editObject = user.getView().getAnnotatedObject();
+        // The current edit object's short label.
+        String editLabel = editObject.getShortLabel();
+        // The class name of the current edit object.
+        String className = editObject.getClass().getName();
+        // Strip the package name from the class name.
+        String topic = className.substring(className.lastIndexOf('.') + 1);
+
+        // The buffer to construct existing labels.
+        StringBuffer sb = new StringBuffer();
+
+        // The counter to count line length.
+        int lineLength = 0;
+        // Flag to indicate processing of the first item.
+        boolean first = true;
+        // Search the database.
+        Collection results = user.search(className, "shortLabel", "*");
+        for (Iterator iter = results.iterator(); iter.hasNext();) {
+            // Avoid this object's own short label.
+            String label = ((AnnotatedObject) iter.next()).getShortLabel();
+            if (label.equals(editLabel)) {
+                continue;
+            }
+            if (first) {
+                first = false;
+            }
+            else {
+                sb.append(", ");
+            }
+            sb.append("<a href=\"" + "javascript:show('" + topic + "', '"
+                    + label + "')\"" + ">" + label + "</a>");
+            lineLength += label.length();
+            if (lineLength > 80) {
+                sb.append("<br/>");
+                first = true;
+                lineLength = label.length();
+            }
+        }
+        return sb.toString();
     }
 }
