@@ -90,7 +90,9 @@ public class DisplayAction extends Action {
                 // the key stores the taxid and graphid for the current search
                 key = (NetworkKey) iter.next();
                 search = (Collection) networks.get(key);
+                
                 Constants.LOGGER.warn("start with " + key);
+                
                 // if the current search ac are in a graph in the database
                 if (key != Constants.DUMMY_KEY) {
                     // the wrapper class which stores the graph and the

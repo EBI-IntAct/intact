@@ -246,7 +246,7 @@ public class MineHelper {
         Map bioMap = new Hashtable();
 
         String query = "SELECT * FROM ia_interactions WHERE bac='"
-                + key.getBioSource() + "' AND graphID=" + key.getGraphID();
+                + key.getBioSourceTaxID() + "' AND graphID=" + key.getGraphID();
         set = stm.executeQuery(query);
         graph = new IncidenceListGraph();
         while (set.next()) {

@@ -41,6 +41,7 @@ import uk.ac.ebi.intact.model.Interactor;
 public class SearchAction extends Action {
     private static final String[] SEARCHES = { "Protein", "Interaction",
             "Experiment" };
+    private static final String PROTEIN_PARAMETER = "on";
 
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
@@ -75,7 +76,7 @@ public class SearchAction extends Action {
                 values = (String[]) parameters.get(key);
                 // if a checkbox with a protein was checked the protein ac
                 // number is the key and stored in the list
-                if ("on".equals(values[0])) {
+                if (PROTEIN_PARAMETER.equals(values[0])) {
                     // the ac is added to the notSearch collection
                     // because its sure that its a protein
                     notSearchAc.add(key.toString().trim());
@@ -105,6 +106,7 @@ public class SearchAction extends Action {
 
             String searchPhrase;
             AmbiguousBean ab;
+            // collection stores the final ac to use for the dijkstra algorithm
             Collection mineSearchAc = new HashSet();
 
             // the search helper provides the search for the ac numbers

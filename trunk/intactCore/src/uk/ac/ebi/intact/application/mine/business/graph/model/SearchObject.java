@@ -34,7 +34,7 @@ public class SearchObject {
 
     /**
      * Returns the bitid of the object. <br>
-     * Its used as a flag to avoid to many searches in a graph
+     * Its used as a flag to avoid too many searches in a graph
      * 
      * @return Returns the bitid
      */

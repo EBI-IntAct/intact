@@ -1,6 +1,5 @@
 package uk.ac.ebi.intact.application.mine.business.graph.model;
 
-import java.io.Serializable;
 
 /*
  * Created on 08.04.2004
@@ -14,7 +13,7 @@ import java.io.Serializable;
  * 
  * @author Andreas Groscurth
  */
-public interface EdgeElement extends Serializable {
+public interface EdgeElement {
 	/**
 	 * Returns the weight of the edge
 	 * 
