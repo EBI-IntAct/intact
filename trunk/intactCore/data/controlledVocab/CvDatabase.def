@@ -1,39 +1,9 @@
-shortlabel: flybase
-term: FlyBase - A Database of the Drosophila Genome
-search-url: http://flybase.net/cgi-bin/fbannq.html?acc=${ac}
-url: http://fbserver.gen.cam.ac.uk:7081/
-
-shortlabel: go
-term: Gene Ontology
-url: http://www.geneontology.org/
-definition: The Gene Ontology.
-search-url: http://www.ebi.ac.uk/ego/DisplayGoTerm?id=${ac}
-
-shortlabel: intact
-term: IntAct molecular InterAction database
-url: http://www.ebi.ac.uk/intact/
-search-url: http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=${ac}
-
-shortlabel: interpro
-term: InterPro
-search-url: http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=${ac}
-url: http://www.ebi.ac.uk/interpro
-definition: InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
-
-shortlabel: newt
-term: New EBI Web Taxonomy
-search-url: http://www.ebi.ac.uk/newt/display?search=${ac}
-url: http://www.ebi.ac.uk/newt/index.html
-definition: NEWT is the taxonomy database maintained by the Swiss-Prot group. It integrates taxonomy data compiled in the NCBI database and data specific to the Swiss-Prot protein knowledgebase. 
-
-shortlabel: pdb
-term: Protein Data Bank
-
-shortlabel: psi-mi
-term: Proteomics Standards Initiative - Molecular Interaction XML format CVs
-definition: The HUPO Proteomics Standards Initiative has developed controlled vocabularies for protein interaction data. These CVs are fully integrated into IntAct, therefore no search-url is given, only the URL of the PSI documentation.
-url: http://psidev.sf.net/mi/xml/doc/user/index.html
-url: http://psidev.sf.net/mi/controlledVocab/psi-mi.dag.html
+shortlabel: uniprot
+term: UniProt protein sequence database
+search-url: http://www.ebi.uniprot.org/entry/${ac}
+search-url-ascii: http://www.ebi.uniprot.org/entry/${ac}?format=text&ascii
+url: http://www.uniprot.org/
+definition: The UniProt protein sequence database.
 
 shortlabel: pubmed
 term: PubMed
@@ -46,10 +16,63 @@ term: Saccharomyces Genome Database
 url: http://genome-www.stanford.edu/Saccharomyces/
 search-url: http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=${ac}
 
-shortlabel: uniprot
-term: UniProt protein sequence database
-search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+([uniprot-acc:${ac}]|[uniprot-isoid:${ac}])+-view+SwissEntry
-search-url-ascii: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+([uniprot-acc:${ac}]|[uniprot-isoid:${ac}])+-vn+2+-ascii
-url: http://www.uniprot.org/
-definition: The UniProt protein sequence database.
+shortlabel: go
+term: Gene Ontology
+url: http://www.geneontology.org/
+definition: The Gene Ontology.
+search-url: http://www.ebi.ac.uk/ego/DisplayGoTerm?id=${ac}
 
+shortlabel: newt
+term: New EBI Web Taxonomy
+search-url: http://www.ebi.ac.uk/newt/display?search=${ac}
+url: http://www.ebi.ac.uk/newt/index.html
+definition: NEWT is the taxonomy database maintained by the Swiss-Prot group. It integrates taxonomy data compiled in the NCBI database and data specific to the Swiss-Prot protein knowledgebase. 
+
+shortlabel: interpro
+term: InterPro
+search-url: http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=${ac}
+url: http://www.ebi.ac.uk/interpro
+definition: InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
+
+shortlabel: intact
+term: IntAct molecular InterAction database
+url: http://www.ebi.ac.uk/intact/
+search-url: http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=${ac}
+
+shortlabel: pdb
+term: Protein Data Bank
+
+shortlabel: cabri
+term: CABRI cell lines catalogue
+url: http://www.cabri.org/
+search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[libs%3d{dsmz_mutz%20ecacc_cell%20iclc%20CABI_BACT%20CIP_BACT%20CABI_YEAST%20DSMZ_PLANT_CELL}-id:${ac}]+-e
+definition: The CABRI cell lines catalogue crossreferences are normally used in BioSource objects.
+example: The primary id is the full CABRI ac, e.g.  ECACC 84121901.
+remark: If links are established to any CABRI libraries in addition to the following ones, the search-url needs to be updated. DSMZ_MUTZ, ECACC_CELL, ICLC (Human); CABI_BACT (Bacteria); CIP_BACT (Bacteria); CABI_YEAST (Yeast); DSMZ_PLANT_CELL (Plant).
+
+shortlabel: psi-mi
+term: Proteomics Standards Initiative - Molecular Interaction XML format CVs
+definition: The HUPO Proteomics Standards Initiative has developed controlled vocabularies for protein interaction data. These CVs are fully integrated into IntAct, therefore no search-url is given, only the URL of the PSI documentation.
+url: http://psidev.sf.net/mi/xml/doc/user/index.html
+url: http://psidev.sf.net/mi/controlledVocab/psi-mi.dag.html
+
+shortlabel: flybase
+term: FlyBase - A Database of the Drosophila Genome
+search-url: http://flybase.net/cgi-bin/fbannq.html?acc=${ac}
+url: http://fbserver.gen.cam.ac.uk:7081/
+
+shortlabel: reactome
+term: Reactome - a knowledgebase of biological processes
+url: http://www.reactome.org/
+search-url: http://www.reactome.org/cgi-bin/search?SUBMIT=1&QUERY_CLASS=DatabaseIdentifier&QUERY=SWALL:${ac}
+
+shortlabel: omim
+term: Online Mendelian Inheritance in Man
+url: http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM
+search-url: http://www.ncbi.nlm.nih.gov/entrez/dispomim.cgi?id=${ac}
+comment: The primary id given in the crossreference needs to be the OMIM number, e.g. 605420.
+
+shortlabel: huge
+term: A Database of Human Unidentified Gene-Encoded Large Proteins Analyzed by Kazusa Human cDNA Project
+search-url: http://www.kazusa.or.jp/huge/gfpage/${ac}
+url: http://www.kazusa.or.jp/huge/
