@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,7 +79,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
 
         String searchString = (String) theForm.get("searchString");
 
-        super.log("search action: topic is " + topic);
+        LOGGER.info("search action: topic is " + topic);
 
         // The class name associated with the topic.
         String classname = super.getIntactService().getClassName(topic);
@@ -104,7 +103,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         }
         catch (SearchException ie) {
             // Something failed during search...
-            super.log(ExceptionUtils.getStackTrace(ie));
+            LOGGER.info(ie);
             // The errors to report back.
             // Error with updating.
             ActionErrors errors = new ActionErrors();
@@ -115,7 +114,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         }
         if (results.isEmpty()) {
             // No matches found - forward to a suitable page
-            super.log("No matches were found for the specified search criteria");
+            LOGGER.info("No matches were found for the specified search criteria");
             return mapping.findForward(EditorConstants.FORWARD_NO_MATCHES);
         }
         // If we retrieved one object then we can go strainght to edit page.
@@ -183,7 +182,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         }
         catch (SearchException se) {
             // Can't query the database.
-            super.log(ExceptionUtils.getStackTrace(se));
+            LOGGER.info(se);
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,
                     new ActionError("error.search", se.getNestedMessage()));
@@ -221,7 +220,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
                 // error is reported via the main exception (ie1).
             }
             // Log the stack trace.
-            super.log(ExceptionUtils.getStackTrace(ie1));
+            LOGGER.info(ie1);
             // Error with creating the new CV object changes.
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -56,7 +56,7 @@ public class LogoutAction extends AbstractEditorAction {
         session.removeAttribute(EditorConstants.INTACT_USER);
 
         if (user != null) {
-            super.log("User " + user.getUser() + " logged off at " +
+            LOGGER.info("User " + user.getUser() + " logged off at " +
                     user.logoffTime());
             // Close the connection to the persistent storage.
             try {
@@ -65,7 +65,7 @@ public class LogoutAction extends AbstractEditorAction {
             catch (IntactException ie) {
                 // Problems with logging off. Just log the errors as there
                 // is little point in informing the user.
-                super.log(ExceptionUtils.getStackTrace(ie));
+                LOGGER.info(ExceptionUtils.getStackTrace(ie));
             }
         }
         // Session is no longer valid.

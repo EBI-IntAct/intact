@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -20,7 +20,6 @@ import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import org.apache.struts.action.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -152,7 +151,7 @@ public class BioSourceAction extends AbstractEditorAction {
             }
             catch (DuplicateLabelException se) {
                 // Duplicate databases?
-                log(ExceptionUtils.getStackTrace(se));
+                LOGGER.info(se);
                 errors = new ActionErrors();
                 errors.add(AbstractEditorAction.EDITOR_ERROR,
                         new ActionError("error.search", se.getNestedMessage()));
@@ -185,7 +184,7 @@ public class BioSourceAction extends AbstractEditorAction {
         }
         catch (SearchException se) {
             // Can't query the database.
-            log(ExceptionUtils.getStackTrace(se));
+            LOGGER.info(se);
             ActionErrors errors = new ActionErrors();
             errors.add("cvinfo", new ActionError("error.search",
                     "Unable to search the database to check for unique tax ids"));

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.struts.actions.LookupDispatchAction;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,11 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
  * @version $id$$
  */
 public abstract class AbstractEditorDispatchAction extends LookupDispatchAction {
+
+    /**
+     * The logger for Editor. Allow access from the subclasses.
+     */
+    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
 
     /**
      * Returns the only instance of Intact Service instance.
@@ -75,15 +81,6 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction 
             throw new SessionExpiredException();
         }
         return user;
-    }
-
-    /**
-     * Convenience method that logs for agiven message.
-     * @param message string that describes the error or exception
-     */
-    protected void log(String message) {
-        if (super.servlet.getDebug() >= 1)
-            super.servlet.log(message);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -101,7 +100,7 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
                 // error is reported via the main exception (ie1).
             }
             // Log the stack trace.
-            log(ExceptionUtils.getStackTrace(ie1));
+            LOGGER.info(ie1);
             // Error with updating.
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,
@@ -162,7 +161,7 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
                 // error is reported via the main exception (ie1).
             }
             // Log the stack trace.
-            log(ExceptionUtils.getStackTrace(ie1));
+            LOGGER.info(ie1);
             // Error with deleting the object.
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,
@@ -209,6 +208,4 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
         // Either search or results.
         return mapping.findForward(getForwardAction(user));
     }
-
-    // Helper methods
 }
