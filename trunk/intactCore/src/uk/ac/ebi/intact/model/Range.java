@@ -131,6 +131,35 @@ public class Range extends BasicObjectImpl {
     private String toCvFuzzyTypeAc;  //get rid of this later with OJB 'anonymous'
 
 
+    /**
+     * Sets the bean's from range
+     */
+    public static String getRange(String type, int start, int end) {
+        // The rage to return.
+        String result;
+
+        // The value for display (fuzzy).
+        String dispLabel = CvFuzzyType.Converter.getInstance().getDisplayValue(type);
+
+        // Single type?
+        if (CvFuzzyType.isSingleType(type)) {
+            result = dispLabel;
+        }
+        // Range type?
+        else if (type.equals(CvFuzzyType.RANGE)) {
+            result = start + dispLabel + end;
+        }
+        // No fuzzy type?
+        else if (type.length() == 0) {
+            result = dispLabel + start;
+        }
+        else {
+            // >, <, c or n
+            result = dispLabel + start;
+        }
+        return result;
+    }
+
     //--------------------------- constructors --------------------------------------
     /**
      * This constructor should <b>not</b> be used as it could
@@ -207,12 +236,24 @@ public class Range extends BasicObjectImpl {
         toIntervalEnd = posTo;
     }
 
-    public boolean isUndertermined() {
+    public boolean isUndetermined() {
         return charToBoolean(undetermined);
     }
 
-    public void setUndetermined(boolean val) {
-        undetermined = booleanToChar(val);
+    /**
+     * Undetermined is true only both fuzzy types are of UNDETERMINED type. For
+     * all other instances, it is false.
+     */
+    public void setUndetermined() {
+        // Set only when we have fuzzy types.
+        if ((fromCvFuzzyType != null) && (toCvFuzzyType != null)) {
+            undetermined = booleanToChar(fromCvFuzzyType.getShortLabel().equals(
+                    CvFuzzyType.UNDETERMINED) && toCvFuzzyType.getShortLabel().equals(
+                            CvFuzzyType.UNDETERMINED));
+        }
+        else {
+            undetermined = booleanToChar(false);
+        }
     }
 
     public boolean isLinked() {
@@ -378,46 +419,6 @@ public class Range extends BasicObjectImpl {
     private boolean charToBoolean(String st) {
         if(st.equals("N")) return false;
         return true;
-    }
-
-    /**
-     * Sets the bean's from range
-     */
-    private String getRange(String type, int start, int end) {
-        // The rage to return.
-        String result;
-
-        // The value for display (fuzzy).
-        String dispLabel = CvFuzzyType.Converter.getInstance().getDisplayValue(type);
-
-        // Single type?
-        if (isSingleType(type)) {
-            result = dispLabel;
-        }
-        // Range type?
-        else if (type.equals(CvFuzzyType.RANGE)) {
-            result = start + dispLabel + end;
-        }
-        // No fuzzy type?
-        else if (type.length() == 0) {
-            result = dispLabel + start;
-        }
-        else {
-            // >, <, c or n
-            result = dispLabel + start;
-        }
-        return result;
-    }
-
-    /**
-     * @param type the CvFuzzy label to compare
-     * @return true if <code>type</code> is of Untermined or C or N terminal types.
-     * False is returned for all other instances.
-     */
-    private boolean isSingleType(String type) {
-        return type.equals(CvFuzzyType.UNDETERMINED)
-                || type.equals(CvFuzzyType.C_TERMINAL)
-                || type.equals(CvFuzzyType.N_TERMINAL);
     }
 } // end Range
 
