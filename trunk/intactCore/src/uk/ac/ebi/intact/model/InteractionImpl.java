@@ -305,17 +305,19 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         // Not copying any experiments.
         copy.experiments = Collections.EMPTY_LIST;
 
-        // New components, will contain same number of componets.
-        copy.components = (List) ((ArrayList) components).clone();
+        // New components, will contain same number of componets. Can't use
+        // clone here as components are OJB list proxies if an interation
+        // is loaded from the database.
+        copy.components = new ArrayList(components.size());
 
         // Make deep copies.
-        for (int i = 0; i < components.size(); i++) {
-            Component comp = (Component) ((List) components).get(i);
+        for (Iterator iter = components.iterator(); iter.hasNext();) {
+            Component comp = (Component) iter.next();
             // The cloned component.
             Component copyComp = (Component) comp.clone();
             // Set the interactor as the current cloned interactions.
             copyComp.setInteractionForClone(copy);
-            ((List) copy.components).set(i, copyComp);
+            copy.components.add(copyComp);
         }
         return copy;
     }
