@@ -26,7 +26,8 @@
 
 <c:if test="${not empty featureForm.ranges}">
 
-    <table width="100%" border="0" cellspacing="1" cellpadding="2">
+    <%-- The table id is for testing purposes --%>
+    <table width="100%" border="0" cellspacing="1" cellpadding="2" id="ranges">
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="2%"></th>
             <th class="tableCellHeader" width="10%" colspan="2">

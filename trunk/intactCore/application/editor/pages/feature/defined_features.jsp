@@ -20,7 +20,8 @@
 
 <c:set var="feature" value="${user.view.definedFeature}"/>
 
-<table width="100%" border="0" cellspacing="1" cellpadding="2">
+<%-- The table id is for testing purposes --%>
+<table width="100%" border="0" cellspacing="1" cellpadding="2" id="defined.features">
     <tr class="tableRowHeader">
         <th class="tableCellHeader" width="20%">
             <bean:message key="label.action"/>
