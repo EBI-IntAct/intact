@@ -2017,41 +2017,6 @@ public class IntactHelper implements SearchI, Externalizable {
         return name;
     }
 
-
-    /**
-     *
-     */
-    private static HashMap menuList = new HashMap();
-
-    /** Return a Vector of all shortLabels of the class, e.g. for menus.
-     *
-     * @param helper Database access object
-     * @param forceUpdate If true, an update of the list is forced.
-     *
-     * @return Vector of Strings. Each string one shortlabel.
-     */
-    public static Vector getMenuList(Class targetClass, IntactHelper helper, boolean forceUpdate)
-            throws IntactException {
-        Vector _menuList = (Vector) menuList.get( targetClass );
-
-        if (( _menuList == null) || forceUpdate) {
-            // get all elements of the class
-            Collection allElements = helper.search( targetClass.getName(), "ac", "*" );
-
-            // create the collection
-            _menuList = new Vector( allElements.size() );
-
-            // save all shortLabels
-            for (Iterator i = allElements.iterator(); i.hasNext();) {
-                _menuList.add(((AnnotatedObject) i.next()).getShortLabel());
-            }
-
-            // cache it
-            menuList.put( targetClass, _menuList);
-        }
-        return _menuList;
-    }
-
     //---------------- private helper methods ------------------------------------
 
     /**
