@@ -15,7 +15,17 @@ package uk.ac.ebi.intact.application.editor.exception.validation;
  */
 public class ExperimentException extends ValidationException {
 
+    /**
+     * Default constructor. Uses the default message and filter keys.
+     */
     public ExperimentException() {
-        super("error.exp.validation", "exp.validation");
+        this("error.exp.validation");
+    }
+    /**
+     * Construst with given message key
+     * @param mkey the message key.
+     */
+    public ExperimentException(String mkey) {
+        super(mkey, "exp.validation");
     }
 }
