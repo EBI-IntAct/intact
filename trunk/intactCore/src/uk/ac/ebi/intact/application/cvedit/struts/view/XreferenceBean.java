@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.cvedit.struts.view;
 
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl;
 
 import java.io.Serializable;
 
@@ -19,11 +18,6 @@ import java.io.Serializable;
  * @version $Id$
  */
 public class XreferenceBean extends EditBean implements Serializable {
-
-    /**
-     * The unique identifier for this bean.
-     */
-    private long myKey;
 
     /**
      * Reference to the Xref object this instance is created with.
@@ -62,7 +56,6 @@ public class XreferenceBean extends EditBean implements Serializable {
      * instance of this class.
      */
     public XreferenceBean(Xref xref) {
-        myKey = IntactUserImpl.getId();
         myXref = xref;
         myDatabaseName = xref.cvDatabase.getShortLabel();
         myPrimaryId = xref.getPrimaryId();
@@ -74,13 +67,6 @@ public class XreferenceBean extends EditBean implements Serializable {
         if (qualifier != null) {
             myReferenceQualifer = qualifier.getShortLabel();
         }
-    }
-
-    /**
-     * Return the key for this object.
-     */
-    public long getKey() {
-        return myKey;
     }
 
     /**
@@ -183,7 +169,8 @@ public class XreferenceBean extends EditBean implements Serializable {
         }
         // Allow for slice comparision.
         if ((obj != null) && (obj instanceof XreferenceBean)) {
-            return myKey == ((XreferenceBean) obj).getKey();
+            XreferenceBean other = (XreferenceBean) obj;
+            return myXref.getAc().equals(other.myXref.getAc());
         }
         return false;
     }
