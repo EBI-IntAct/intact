@@ -1,6 +1,7 @@
 <%@ page language="java" %>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.*" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource" %>
@@ -20,7 +21,7 @@
 
 <head>
 
-    <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
     <META HTTP-EQUIV="Expires" CONTENT="-1">
 
 
@@ -68,7 +69,7 @@
      noDepthLimit = depthLimit.toString();
    }
 
-   ImageBean imageBean   = (ImageBean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_IMAGE_BEAN); 
+   ImageBean imageBean   = (ImageBean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_IMAGE_BEAN);
 
   // String keys           = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_KEYS);
    Collection keys       = (Collection)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_KEYS);
@@ -83,18 +84,18 @@
       debug = properties.getProperty ("application.debug");
    } else {
       debug = "disable";
-   } 
+   }
 
 
    /**
     * get the data to display in the highlightment form
-    */   
+    */
    String fieldAC     = (null == AC ? "" : AC);
    String fieldDepth  = (null == depth ? "" : depth);
    String fieldMethod = (null == methodLabel ? "" : methodLabel);
 
    if (null == keys) {
-      // don't refresh the right frame if the user try to highlight. 
+      // don't refresh the right frame if the user try to highlight.
 %>
     <script language="JavaScript">
      <!--
@@ -110,12 +111,12 @@
 
 <center>
 
- 
+
  <html:form action="/visualize" target="_self" focus="AC">
 
     <table width =" 50%" cellspacing =" 0" cellpadding =" 4" border="1" bordercolor ="#999999"   bgcolor ="#cee3f7" >
-      <tr bgcolor="#a5bace"> 
-	<td width="100%" align ="center" valign =" top"> 
+      <tr bgcolor="#a5bace">
+	<td width="100%" align ="center" valign =" top">
 	  <!-- Insert your title here -->
 
 	    <font class="tableTitle">
@@ -147,7 +148,7 @@
 		    <td align="left">
 		      <html:text property="depth" size="6" maxlength="5" value="<%= fieldDepth %>"/>
 		      <br>
-		      <html:checkbox property="hasNoDepthLimit"/> 
+		      <html:checkbox property="hasNoDepthLimit"/>
 		      <bean:message key="hierarchView.view.visualizeForm.noDepthLimit.prompt"/>
 		    </td>
 		  </tr>
@@ -158,7 +159,7 @@
 		    </td>
 		    <td align="left">
 
-		    <%		
+		    <%
 			/**
 			 * get a collection of highlightment sources.
 			 */
@@ -194,25 +195,25 @@
       </tr>
     </table>
 
- 
+
 
  </html:form>
-</center> 
+</center>
 <hr>
 
 
 
- <% if (debug.equalsIgnoreCase ("enable")) { %> 
+ <% if (debug.equalsIgnoreCase ("enable")) { %>
 
     <p align="left">
 
       AC = <%= AC %><br>
       depth = <%= depth %><br>
       noDepthLimit = <%= noDepthLimit %><br>
-      keys = <%= keys%><br> 
+      keys = <%= keys%><br>
       methodLabel = <%= methodLabel %><br>
       methodClass = <%= methodClass %><br>
-      behaviour = <%= behaviour %><br> 
+      behaviour = <%= behaviour %><br>
 
     </p>
 
@@ -220,7 +221,7 @@
 
 
 
-<% 
+<%
 
 // Write a link to display the GO term list for the selected AC number
 if (AC != null)
@@ -236,48 +237,20 @@ if (AC != null)
    */
    if ((null != AC) && (null != keys) && (behaviour != null) && (null != in)) {
        HighlightProteins hp = new HighlightProteins(methodClass, behaviour, session, in);
-
-       imageBean = (ImageBean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_IMAGE_BEAN);
    }
-
-
-    /**
-     *  Display only the picture if an AC is in the session
-     */
-    if ((null != AC) && (null != imageBean)) { 
-    
-       // Display the HTML code map
-       out.println(imageBean.getMapCode());
-
-       // read the ApplicationResource.proterties file
-       String mapName = null;
-       String format = null;
-
-       Properties propertiesBusiness = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
-
-       if (null != propertiesBusiness) {
-	  mapName = propertiesBusiness.getProperty ("hierarchView.image.map.name");
-	  format = propertiesBusiness.getProperty ("hierarchView.image.format.name");
-       }
-       
 %>
 
-       <p align="left">
-	 <center>          
-             <img src="/hierarchView/GenerateImage?format=<%= format %>" USEMAP="#<%= mapName %>" border ="0">
-           <br>
-	 </center>
-       </p>
-
-<% 
-     } // end of the displaying of the image
+    <!-- Displays the interaction network if the picture has been generated
+         and stored in the session.
+      -->
+    <hierarchView:displayInteractionNetwork/>
 
 
-
+<%
     /**
-     *  Display only that form if an AC is in the session and the user have already requested an highlighting 
+     *  Display only that form if an AC is in the session and the user have already requested an highlighting
      */
-    if (null != AC && keys != null && null != in) { 
+    if (null != AC && keys != null && null != in) {
 
 %>
 
@@ -286,8 +259,8 @@ if (AC != null)
      <html:form action="/highlightment">
 
     <table width ="50%" cellspacing ="0" cellpadding ="4" border="1" bordercolor ="#999999"   bgcolor ="#cee3f7" >
-      <tr bgcolor="#a5bace"> 
-	<td width="100%" align ="center" valign ="top"> 
+      <tr bgcolor="#a5bace">
+	<td width="100%" align ="center" valign ="top">
 	  <!-- Insert your title here -->
 
 	    <font class="tableTitle">
@@ -329,9 +302,9 @@ if (AC != null)
 		<tr>
 		  <!-- Highlightment option available for the selected method -->
 		  <td align="right">
-		 
+
 		     <bean:message key="hierarchView.view.highlightmentForm.options.prompt"/>
-		      
+
 		  </td>
 		  <td align="left">
 		  <br>
@@ -349,7 +322,7 @@ if (AC != null)
 		  //   <input type="text" name="option">
 		   //   <!--html:text name="option" property="" size="6" maxlength="5"/-->
 		  %>
-		   
+
 		  </td>
 		</tr>
 
@@ -366,8 +339,8 @@ if (AC != null)
 		  </td>
 		</tr>
 
-	      </table> 
-  
+	      </table>
+
 	    <!-- End of table body-->
 	</td>
       </tr>
@@ -376,7 +349,7 @@ if (AC != null)
      </html:form>
     </center>
 
-<% 
+<%
    } // end - displaying of the highlightment form
 %>
 
