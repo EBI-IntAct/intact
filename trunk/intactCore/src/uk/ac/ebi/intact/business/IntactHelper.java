@@ -311,6 +311,15 @@ public class IntactHelper implements SearchI, Serializable {
     }
 
     /**
+     * Locks the given object for <b>write</b> access.
+     * <b>{@link #startTransaction()} must be called to prior to this method.</b>
+     * @param cvobj the object to lock for <b>write</b> access.
+     */
+    public void lock(CvObject cvobj) {
+        dao.lock(cvobj);
+    }
+
+    /**
      * ends a busines transaction. This method should be used if it is required
      * to manage business transactionas across multiple operations (eg for
      * performing a number of creates/deletes in one unit of work).
