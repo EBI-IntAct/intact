@@ -92,6 +92,7 @@ begin
       dbms_output.put_line (chr(9)||chr(9)||');');
       dbms_output.put_line ('end;        ');
       dbms_output.put_line ('/           ');
+      dbms_output.put_line ('show error');
       dbms_output.put_line (chr(10));
       dbms_output.put_line (chr(10));
 
