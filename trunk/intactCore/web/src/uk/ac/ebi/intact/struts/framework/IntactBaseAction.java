@@ -24,6 +24,9 @@ import javax.servlet.http.HttpSession;
  */
 public abstract class IntactBaseAction extends Action {
 
+    /** The global Intact error key. */
+    public static final String INTACT_ERROR = "IntactError";
+
     /**
      * Returns the IntactService instance.
      * @return only instance of the IntactService class.
