@@ -63,7 +63,7 @@ definition: Citation database of the National Library of Medicine, US.
 search-url: http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=${ac}&dopt=Abstract
 definition_reference: PMID:INTACT
 
-term: reactome: Reactome - a knowledgebase of biological processes
+term: reactome-protein: Reactome - a knowledgebase of biological processes
 url: http://www.reactome.org/
 search-url: http://www.reactome.org/cgi-bin/search?SUBMIT=1&QUERY_CLASS=DatabaseIdentifier&QUERY=SWALL:${ac}
 definition_reference: PMID:INTACT
