@@ -130,10 +130,10 @@ public abstract class CvDagObject extends CvObject {
 
         StringBuffer currentTerm = new StringBuffer();
         for (int i = 0; i<currentDepth; i++) {
-            currentTerm.append(' ');
+            currentTerm.append('.');
         }
         currentTerm.append(current.getShortLabel());
-        menuList.add(currentTerm);
+        menuList.add(currentTerm.toString());
         for (Iterator iterator = current.child.iterator(); iterator.hasNext();) {
             menuList = getMenuList(currentDepth+1, menuList, (CvDagObject) iterator.next());
         }
