@@ -433,9 +433,6 @@ public abstract class AbstractEditViewBean {
         if (user.isPersistent(myAnnotObject)) {
             user.update(myAnnotObject);
         }
-        // Need to rebuild the menu again as the short label may have been
-        // changed. Remove it from cache.
-        removeMenu();
     }
 
     /**
@@ -739,19 +736,15 @@ public abstract class AbstractEditViewBean {
      * @throws SearchException for database search error when constructing the
      * menu.
      */
-    private List getMenu(String name, String label, int mode)
-            throws SearchException {
-        List list;
-        // Only need to remove the current label for editing an existing object.
-        if (myMenuFactory.isMenuType(myAnnotObject.getClass()) && (mode == 0)) {
+    private List getMenu(String name, String label, int mode) throws SearchException {
+        // Remove the current label from menus (to stop recursive calls to db)!
+        if (myMenuFactory.isMenuType(myAnnotObject.getClass())) {
             // Remove my short label to avoid circular reference. We create a
             // new list so the remove method wouldn't affect the original list.
-            list = new ArrayList(myMenuFactory.getMenu(name, mode));
+            List list = new ArrayList(myMenuFactory.getMenu(name, mode));
             list.remove(label);
+            return list;
         }
-        else {
-            list = myMenuFactory.getMenu(name, mode);
-        }
-        return list;
+        return myMenuFactory.getMenu(name, mode);
     }
 }
