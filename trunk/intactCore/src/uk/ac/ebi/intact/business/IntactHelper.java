@@ -5,65 +5,27 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.business;
 
-import java.beans.PropertyDescriptor;
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.VirtualProxy;
 import org.apache.ojb.broker.accesslayer.LookupException;
-
-import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.BasicObject;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Constants;
-import uk.ac.ebi.intact.model.CvAliasType;
-import uk.ac.ebi.intact.model.CvComponentRole;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvInteractionType;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
-import uk.ac.ebi.intact.persistence.CreateException;
-import uk.ac.ebi.intact.persistence.DAO;
-import uk.ac.ebi.intact.persistence.DAOFactory;
-import uk.ac.ebi.intact.persistence.DAOSource;
-import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.persistence.ObjectBridgeDAO;
-import uk.ac.ebi.intact.persistence.SearchException;
-import uk.ac.ebi.intact.persistence.TransactionException;
+import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Edge;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.util.Key;
 import uk.ac.ebi.intact.util.PropertyLoader;
+
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
 
 
 /**
@@ -91,27 +53,8 @@ public class IntactHelper implements SearchI, Externalizable {
     private String user;
     private String password;
 
-    /**
-     * used internally to manage transaction creation
-     */
-//    private boolean isInTransaction;
-
-    /** cache to be used for caching by shortLabel.
-     *  shortLabel is not a primary key, therefore the caching
-     *  by OJB does not work.
-     */
-    //private HashMap cache = new HashMap();
-
-    /* determines which classes are to be cached.
-     *
-
-    private HashSet cachedClasses = new HashSet();
-    */
-
     public void addCachedClass(Class clazz) {
-
         if (dao != null) {
-
             dao.addCachedClass(clazz);
         }
     }
@@ -130,12 +73,6 @@ public class IntactHelper implements SearchI, Externalizable {
     public void removeFromCache(Object obj) {
         dao.removeFromCache(obj);
     }
-
-    /*
-    public boolean isCachedClass(Class clazz) {
-        return cachedClasses.contains(clazz);
-    }
-    */
 
     //a set containing intact properties we are NOT interested in when retirving relations
     //NB this is a result of making the design decision to use Java Bean Introspection
@@ -185,31 +122,6 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public IntactHelper(DAOSource source) throws IntactException {
         this(source, source.getUser(), source.getPassword());
-//
-//        dataSource = source;
-//
-//        if (source == null) {
-//
-//            //couldn't get a mapping from the context, so can't search!!
-//            String msg = "intact helper: unable to search for any objects - data source required";
-//            throw new IntactException(msg);
-//
-//        }
-//
-//        //set up a logger
-//        pr = dataSource.getLogger();
-//
-//        //get a DAO so some work can be done!!
-//        try {
-//
-//            dao = dataSource.getDAO();
-//        }
-//        catch (DataSourceException de) {
-//
-//            String msg = "intact helper: There was a problem accessing a data store";
-//            throw new IntactException(msg, de);
-//
-//        }
     }
 
     /**
@@ -219,14 +131,8 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      */
     public IntactHelper() throws IntactException {
-
         try {
             DAOSource dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
-
-            //set the config details, ie repository file for OJB in this case
-//            Map config = new HashMap();
-//            config.put("mappingfile", "config/repository.xml");
-//            dataSource.setConfig(config);
 
             //set up a logger
             pr = dataSource.getLogger();
@@ -237,7 +143,6 @@ public class IntactHelper implements SearchI, Externalizable {
 
             String msg = "intact helper: There was a problem accessing a data store";
             throw new IntactException(msg, de);
-
         }
     }
 
@@ -251,15 +156,12 @@ public class IntactHelper implements SearchI, Externalizable {
      * @param password - the user's password (null values allowed)
      */
     public IntactHelper(DAOSource source, String user, String password) throws IntactException {
-
         dataSource = source;
 
         if (source == null) {
-
             //couldn't get a mapping from the context, so can't search!!
             String msg = "intact helper: unable to search for any objects - data source required";
             throw new IntactException(msg);
-
         }
 
         //set up a logger
@@ -404,7 +306,6 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException thrown usually if a transaction is already running
      */
     public void startTransaction(int transactionType) throws IntactException {
-
         // The default transaction type is JDBC.
         int txType = BusinessConstants.JDBC_TX;
         if (transactionType == BusinessConstants.OBJECT_TX) {
@@ -514,19 +415,6 @@ public class IntactHelper implements SearchI, Externalizable {
 
             String msg = "intact helper: transaction problem during object creation.. \n";
             throw new IntactException(msg, te);
-
-//        } finally {
-//
-//            //make sure the connection gets closed - but this actually happens in the commit of org.apache.ojb....
-//            try {
-//
-//                // dao.close();
-//            } catch (Exception de) {
-//
-//                String msg = "intact helper: could not close data source connection properly";
-//                throw new IntactException(msg, de);
-//
-//            }
         }
     }
 
@@ -832,24 +720,6 @@ public class IntactHelper implements SearchI, Externalizable {
             throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
 
         }
-//        finally {
-//
-//            //done with the connection, so close it
-//            try {
-//
-//                //debug
-//                pr.info("intact helper: doing final dao close in search...");
-//                //      dao.close();
-//                pr.info("intact helper: connection closed OK after search...");
-//            } catch (Exception de) {
-//
-//                String msg = "intact helper: could not close data source connection properly";
-//                throw new IntactException(msg, de);
-//
-//            }
-//        }
-
-
         return resultList;
     }
 
@@ -880,290 +750,6 @@ public class IntactHelper implements SearchI, Externalizable {
             String msg = "intact helper: unable to perform search operation.. \n";
             throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
         }
-    }
-
-    /**
-     *  Enables searching by example. This means it is possible to search for matches
-     * to a "partial" object where a subset of its fields are complete. Note that unless the
-     * field(s) completed in the example are unique, it is possible that there may be more than one
-     * match.
-     * <p>
-     * NOTES ON USAGE:
-     * <ul>
-     * <li> if a partial object contains any reference objects, at least one of those references must be "complete" (ie have its primary key field set)
-     * <li> if a partial object contains a non-empty Collection, at least one Collection element must be "complete"
-     * <li> when creating an example search object, subclasses of BasicObject MUST have their
-     * created/updated fields set to null. This is because those fields must be non-null in DB tables,
-     * and the BasicObject constructor currently sets those fields to the current Date by default. This
-     * therefore means that any search example constructed in such a way will not match any DB data as these
-     * fields will not match.
-     * </ul>
-     * </p>
-     *
-     * @deprecated This should not be used with the new model, as applications should
-     * not use no-arg constructors.
-     * @param obj - the partial object to search on
-     *
-     * @return Collection - the results of the search (empty Collection if no matches found)
-     *
-     * @exception IntactException - thrown if problems are encountered during the search process
-     */
-    public Collection search(Object obj) throws IntactException {
-
-        //set up variables used during searching..
-        Collection resultList = new ArrayList();
-
-        /* get a Data Access Object (ie a connection) for the data source
-        * NB assumed pooling is managed within the persistence layer..
-        */
-        if (null == dao) connect();
-
-        //now do the search...
-        try {
-
-            long timer = System.currentTimeMillis();
-
-            resultList = dao.find(obj);
-
-            long tmp = System.currentTimeMillis();
-            timer = tmp - timer;
-            pr.info("**************************************************");
-            pr.info("intact helper: time spent in DAO find (ms): " + timer);
-            pr.info("**************************************************");
-
-            if (resultList.isEmpty()) {
-
-                return new ArrayList();
-            }
-
-        } catch (SearchException se) {
-
-            //return to action servlet witha forward to error page command
-            String msg = "intact helper: unable to perform search operation.. \n";
-            throw new IntactException(msg, se);
-
-        }
-        return resultList;
-    }
-
-
-    /**
-     *  This method obtains the nearest neighbours (ie the next level of related
-     * objects) to a given intact object. Usage of this method will primarily be
-     * within a lazy loading environment, since its function is to provide a level
-     * of optimisation in that respect.
-     *
-     * @param base - the object whose relations we are interested in (as an intact Base object)
-     *
-     * @return Collection - a collection of the nearest neighbours to the given object
-     *
-     */
-    public Collection getRelations(BasicObject base) throws IntactException {
-
-        Collection relations = new ArrayList();
-
-        if (base == null) {
-
-            //no parent - throw exception
-            String msg = "error - no parent object specified, so can't retrieve relations!";
-            throw new IntactException(msg);
-        }
-
-        pr.info("intact helper: in getRelations, non-null root object..");
-
-//        Method targetMethod = null;
-
-        //holds return value of invoked method
-        Object methodResult = null;
-        Method getterMethod = null;
-
-
-        if (classInfo != null) {
-
-            pr.info("intact helper: got pre-loaded reflection info...");
-
-            String className = base.getClass().getName();
-            Key infoKey = new Key(className);
-            PropertyDescriptor[] propsInfo = (PropertyDescriptor[]) classInfo.get(infoKey);
-
-            pr.info("intact helper: got pre-loaded property descriptors - processing...");
-
-            //for every property descriptor, run its get method
-            for (int i = 0; i < propsInfo.length; i++) {
-
-                String propName = propsInfo[i].getName();
-
-                if (notRequired.contains(propName)) {
-
-                    //don't want this property (ie not declared in the class, but a parent)
-                    continue;
-                }
-                pr.info("intact helper: property descriptor is " + propName);
-
-                try {
-
-                    getterMethod = propsInfo[i].getReadMethod();
-                    methodResult = getterMethod.invoke(base, null);
-
-                } catch (Exception e) {
-
-                    String msg = "error- unable to access getter methof for property" + propName;
-                    throw new IntactException(msg, e);
-                }
-
-                if ((getterMethod == null) || (methodResult == null)) {
-
-                    //can't get the property for some reason - skip
-                    continue;
-                }
-
-                pr.info("intact helper: result of get method:");
-                pr.info(methodResult.toString());
-
-                //NB if a Collection is the method result, get all its members
-                //(any lazy loading is hidden here with OJB!!
-                if (Collection.class.isAssignableFrom(methodResult.getClass())) {
-
-                    Iterator it = ((Collection) methodResult).iterator();
-                    while (it.hasNext()) {
-
-                        relations.add(it.next());
-                    }
-                } else {
-
-                    relations.add(methodResult);
-                }
-
-                pr.info("intact helper: done iteration " + i + " of prop descriptor processing...");
-
-            }
-
-            pr.info("intact helper: done prop processing for object " + base.getClass().getName());
-
-        } else {
-
-            pr.info("intact helper: no pre-loaded reflection info - starting reflection...");
-            //no reflection data - have to use reflection directly
-            try {
-
-                relations = reflect(base);
-            } catch (Exception e) {
-
-                //something went wrong during reflection...
-                String msg = "intact helper: unable to get relations - failed retrieval";
-                throw new IntactException(msg, e);
-
-            }
-        }
-
-        return relations;
-
-    }
-
-
-    /**
-     *  this private method uses reflection to retrieve the next level
-     * down of related objects to a root object.
-     *
-     * @param rootObj - the root object to check
-     *
-     * @return Collection - a collection of the objects related to the root, or null
-     * if the return type of the executed method is void
-     *
-     * @exception Exception - thrown if errors occur during the refelction process
-     *
-     */
-    private Collection reflect(Object rootObj) throws Exception {
-
-        if (rootObj == null) {
-
-            //no parent - throw exception
-            String msg = "error - no parent object specified, so can't retrieve relations!";
-            throw new Exception(msg);
-        }
-
-        pr.info("intact helper: in reflect method, non-null root object..");
-
-        Method targetMethod = null;
-        Collection relatedObjects = new ArrayList();
-
-        //holds return value of invoked method
-        Object methodResult = null;
-
-        pr.info("intact helper: no pre-loaded reflection info - starting reflection...");
-
-        Field[] fields = null;
-        fields = rootObj.getClass().getDeclaredFields();
-
-        for (int i = 0; i < fields.length; i++) {
-
-//            Class fieldType = fields[i].getType();
-
-            //NB can't use the Field 'get' method as the field is declared private...
-
-            //some tedious case conversion, needed due to the above to find a valid method..
-            StringBuffer buf = new StringBuffer(fields[i].getName());
-            char ch = Character.toUpperCase(buf.charAt(0));
-            buf.setCharAt(0, ch);
-
-            String methodName = "get" + buf.toString();
-
-            try {
-
-                //should generalise this later if more ops required...
-                //zero-param method to be called - returns null if method return type is void
-                targetMethod = rootObj.getClass().getMethod(methodName, null);
-                methodResult = targetMethod.invoke(rootObj, null);
-                relatedObjects.add(methodResult);
-
-                //need to handle collection result here too....TBD
-
-            } catch (NoSuchMethodException nme) {
-
-                //method does not exist in this object - do something
-                String msg1 = "Failed search: java NoSuchMethod exception thrown during reflection... \n";
-                String msg2 = "Object Type: " + rootObj.getClass().getName() + "\n";
-                String msg3 = "method Name: " + methodName;
-                String msg = msg1 + msg2 + msg3;
-                throw new Exception(msg);
-            } catch (SecurityException se) {
-
-                //not allowed to invoke it - do something
-                String msg1 = "Failed search: java Security exception thrown during refelction \n";
-                String msg2 = "Object Type: " + rootObj.getClass().getName() + "\n";
-                String msg3 = "method Name: " + methodName;
-                String msg = msg1 + msg2 + msg3;
-                throw new Exception(msg);
-            } catch (IllegalArgumentException iae) {
-
-                //class does not specify such a method - do something
-                String msg1 = "Failed search: java IllegalArgument exception thrown during reflection \n";
-                String msg2 = "Object Type: " + rootObj.getClass().getName() + "\n";
-                String msg3 = "method Name: " + methodName;
-                String msg = msg1 + msg2 + msg3;
-                throw new Exception(msg);
-            } catch (IllegalAccessException ae) {
-
-                //method is not accessible (eg for security reasons) - do something
-                String msg1 = "Failed search: java IllegalAccess exception thrown during reflection \n";
-                String msg2 = "Object Type: " + rootObj.getClass().getName() + "\n";
-                String msg3 = "method Name: " + methodName;
-                String msg = msg1 + msg2 + msg3;
-                throw new Exception(msg);
-            } catch (InvocationTargetException te) {
-
-                //method threw an exception - do something
-                String msg1 = "Failed search: java InvocationTarget exception thronw during reflection \n";
-                String msg2 = "Object Type: " + rootObj.getClass().getName() + "\n";
-                String msg3 = "method Name: " + methodName;
-                String msg = msg1 + msg2 + msg3;
-                throw new Exception(msg);
-            }
-
-        }
-
-        pr.info("intact helper: leaving doRelations...");
-        return relatedObjects;
     }
 
     /**
