@@ -8,15 +8,19 @@ package uk.ac.ebi.intact.application.editor.struts.view;
 
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.GoServerProxy;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * Bean to store data for x'references.
@@ -139,10 +143,17 @@ public class XreferenceBean extends AbstractEditKeyBean {
         // The primary id link.
         String link = XrefHelper.getPrimaryIdLink(myXref);
 
-        // javascipt to display the link is only for a valid link.
+        // javascipt to display the link.
         if (link.startsWith("http://")) {
-            return "<a href=\"" + "javascript:showXrefPId('" + link + "')\"" + ">"
-                    + myPrimaryId + "</a>";
+            try {
+                return "<a href=\"" + "javascript:showXrefPId('"
+                        + URLEncoder.encode(link, "UTF-8") + "')\"" + ">"
+                        + myPrimaryId + "</a>";
+            }
+            catch (UnsupportedEncodingException uee) {
+                // This shouldn't happen as we know the encoding.
+                Logger.getLogger(EditorConstants.LOGGER).info(uee);
+            }
         }
         return link;
     }
