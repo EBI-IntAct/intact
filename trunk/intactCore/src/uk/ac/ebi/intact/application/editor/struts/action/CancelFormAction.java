@@ -53,15 +53,6 @@ public class CancelFormAction extends AbstractEditorAction {
         // Release the lock.
         user.releaseLock();
 
-        // Check and see if we have to go to the experiment page (only
-        // applicable for an Interaction editor.
-//        if (returnToExperiment(request)) {
-//            // Sets the destination experiment to return to.
-//            setDestinationExperiment(request);
-//
-//            // Back to the experiment editor.
-//            return mapping.findForward(EXP);
-//        }
         // Update the search cache to display the current object.
         AnnotatedObject annobj = user.getView().getAnnotatedObject();
         if ((annobj != null) && (annobj.getAc() != null)) {

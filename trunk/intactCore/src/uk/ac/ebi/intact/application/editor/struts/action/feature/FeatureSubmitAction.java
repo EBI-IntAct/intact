@@ -101,7 +101,7 @@ public class FeatureSubmitAction extends CommonDispatchAction {
         view.getParentView().saveFeature(feature);
 
         // Update the existing defined feature.
-//        view.updateDefinedFeature();
+        view.refreshDefinedFeature();
 
         return forward;
     }

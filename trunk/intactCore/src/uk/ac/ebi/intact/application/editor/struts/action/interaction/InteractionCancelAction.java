@@ -58,6 +58,7 @@ public class InteractionCancelAction extends CancelFormAction {
             // Back to the experiment editor.
             return mapping.findForward(EXP);
         }
+        // As a result of accessing an Interaction through the search.
         return super.execute(mapping, form, request, response);
     }
 }

@@ -50,11 +50,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
     private Component myComponent;
 
     /**
-     * The AC of the source interaction (to know where to go back).
-     */
-//    private String mySourceInteractionAc;
-
-    /**
      * The list of defined features.
      */
     private List myDefinedFeatures = new ArrayList();
@@ -277,32 +272,11 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Removes a range for given position.
-     * @param pos the position in the current Range collection.
-     *
-     * <pre>
-     * post: myRangesToDel = myRangesToDel@pre - 1
-     * post: myRanges = myRanges@pre - 1
-     * </pre>
+     * Removes a range for given bean.
+     * @param rb the bean to remove the range for. The key in the bean identifies
+     * the range to delete.
      */
-//    public void delRange(int pos) {
-//        // Remove from the view as well; need the index because we need to
-//        // remove a specific bean (not just any bean which returns true for
-//        // equals method).
-//        RangeBean rb = (RangeBean) myRanges.remove(pos);
-//
-//        // Add to the container to delete the range.
-//        myRangesToDel.add(rb);
-//
-//        // Remove from the view as well.
-//        myRanges.remove(rb);
-//    }
     public void delRange(RangeBean rb) {
-        // Remove from the view as well; need the index because we need to
-        // remove a specific bean (not just any bean which returns true for
-        // equals method).
-//        RangeBean rb = (RangeBean) myRanges.remove(pos);
-
         // Add to the container to delete the range.
         myRangesToDel.add(rb);
 
@@ -389,34 +363,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Updates the defined feature for the current the feature. Assume this
-     * feature is at the second position of the defined feature list (the
-     * first position is the default feature). For a new feature (ie., only
-     * one feature exists), a new bean is simply added. As a pre-requisite
-     * there should be a Feature associated with the view (i.e.
-     * {@link #getAnnotatedObject()} must not return null).
-     */
-//    public void updateDefinedFeature() {
-//        // The current feature.
-//        Feature feature = (Feature) getAnnotatedObject();
-//
-//        if (myDefinedFeatures.size() == 1) {
-//            // No need to update. It is a new feature. Add it.
-//            myDefinedFeatures.add(new DefinedFeatureBean(feature));
-//            return;
-//        }
-//        // Assume position 1 is for existing defined feature.
-//        if (DefinedFeatureBean.class.isAssignableFrom(
-//                myDefinedFeatures.get(1).getClass())) {
-//            myDefinedFeatures.remove(1);
-//            myDefinedFeatures.add(1, new DefinedFeatureBean(feature));
-//        }
-//        else {
-//            System.out.println("Multiple defined features; need to address this issue");
-//        }
-//    }
-
-    /**
      * Updates the defined feature for the current the feature with given range.
      * Assume this feature is at the second position of the defined feature
      * list (the first position is the default feature).
@@ -449,7 +395,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Refersh the defined feature with existing ranges. No action taken if there
+     * Refersh the existing defined feature. No action taken if there
      * is no existing defined feature.
      */
     public void refreshDefinedFeature() {
@@ -462,9 +408,13 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
         DefinedFeatureBean dfb = (DefinedFeatureBean) myDefinedFeatures.get(1);
 
+        // Update shortlabel and fullname.
+        dfb.setShortLabel(getShortLabel());
+        dfb.setFullName(getFullName());
+
         // Clear existing ranges.
         dfb.resetRanges();
-        // Add ranges (this is updated).
+        // Add the updated ranges.
         for (Iterator iter = myRanges.iterator(); iter.hasNext();) {
             dfb.addRange((RangeBean) iter.next());
         }
@@ -484,7 +434,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
         super.reset(clazz);
 
         setParentView(null);
-//        setParent(null);
         setCvFeatureType(null);
         setCvFeatureIdentification(null);
 
