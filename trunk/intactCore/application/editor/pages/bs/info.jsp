@@ -84,7 +84,8 @@
     </tr>
     <tr class="tableRowEven">
         <td class="tableCell">
-            <html:submit property="dispatch" titleKey="biosource.button.taxid.titleKey">
+            <html:submit property="dispatch" onclick="skipValidation();"
+                titleKey="biosource.button.taxid.titleKey">
                 <bean:message key="biosource.button.taxid"/>
             </html:submit>
         </td>
