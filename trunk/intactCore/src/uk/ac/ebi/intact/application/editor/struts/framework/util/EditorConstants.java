@@ -69,4 +69,9 @@ public interface EditorConstants {
      * The key to access the login status.
      */
     public static final String LOGGED_IN = "login";
+
+    /**
+     * The key to accss the event listener.
+     */
+    public static final String EVENT_LISTENER = "listener";
 }

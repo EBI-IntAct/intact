@@ -9,8 +9,11 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
@@ -53,6 +56,8 @@ public class DeleteFormAction extends AbstractEditorAction {
             // Back to the search page.
             return mapping.findForward(SEARCH);
         }
+        // The current view.
+        AbstractEditViewBean view = user.getView();
 
         try {
             // Begin the transaction.
@@ -81,10 +86,10 @@ public class DeleteFormAction extends AbstractEditorAction {
         }
         finally {
             // Release the lock.
-            user.releaseLock();
+            getLockManager().release(view.getAc());
         }
         // Remove this current bean from the recent lists.
-        user.getView().removeFromRecentList(user);
+        view.removeFromRecentList(user);
 
         // The next forward action.
         ActionForward forward;

@@ -196,7 +196,7 @@ public class LockManager {
     /**
      * Obtains a lock.
      *
-     * @param id    the id to obtain the lock for.
+     * @param id the id to obtain the lock for.
      * @param owner the onwer of the lock.
      * @return true if a lock was acquired successfully; false is returned for
      *         all other instances.
@@ -232,11 +232,17 @@ public class LockManager {
     }
 
     /**
-     * Removes given lock.
+     * Removes a lock for given id.
      *
-     * @param id the id for the lock.
+     * @param id the id for the lock. This could be null if the method is called
+     * on a newly created object. Since there is lock associated with a new
+     * object, this method simply returns for a null argument.
      */
     public void release(String id) {
+        // Check for null id.
+        if (id == null) {
+            return;
+        }
         // The lock to remove.
         LockObject lock = null;
         try {
@@ -277,6 +283,49 @@ public class LockManager {
      */
     public void releaseAllLocks(String owner) {
         // Holds locks to release; to avoid concurrent modification ex.
+        List locks = getLocks(owner);
+
+//        try {
+//            myRWLock.readLock().acquire();
+//            for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
+//                LockObject lock = (LockObject) iter.next();
+//                if (lock.getOwner().equals(owner)) {
+//                    locks.add(lock);
+//                }
+//            }
+//        }
+//        catch (InterruptedException ie) {
+//            ourLogger.info(ie);
+//        }
+//        finally {
+//            myRWLock.readLock().release();
+//        }
+        try {
+            // Need to get the write lock to remove.
+            myRWLock.writeLock().acquire();
+            // Iterate through the temp locks and remove one by one from the cache.
+            for (Iterator iter = locks.iterator(); iter.hasNext();) {
+                myLocks.remove(iter.next());
+            }
+        }
+        catch (InterruptedException ie) {
+            ourLogger.info(ie);
+        }
+        finally {
+            myRWLock.writeLock().release();
+        }
+    }
+
+    /**
+     * Returns a list locks held by given user
+     *
+     * @param owner the onwer to get the locks for.
+     * @return a list of locks held by <code>owner</code>. None of the lock objects
+     *         are cloned because LockObjects are immutable. The list can be empty
+     *         if <code>owner</code> has no locks.
+     */
+    public List getLocks(String owner) {
+        // The locks to return.
         List locks = new ArrayList();
 
         try {
@@ -294,20 +343,7 @@ public class LockManager {
         finally {
             myRWLock.readLock().release();
         }
-        try {
-            // Need to get the write lock to remove.
-            myRWLock.writeLock().acquire();
-            // Iterate through the temp locks and remove one by one from the cache.
-            for (Iterator iter = locks.iterator(); iter.hasNext();) {
-                myLocks.remove(iter.next());
-            }
-        }
-        catch (InterruptedException ie) {
-            ourLogger.info(ie);
-        }
-        finally {
-            myRWLock.writeLock().release();
-        }
+        return locks;
     }
 
     /**

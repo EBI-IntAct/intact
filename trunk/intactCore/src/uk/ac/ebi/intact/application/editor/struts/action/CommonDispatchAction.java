@@ -11,8 +11,11 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 
@@ -151,7 +154,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         AnnotatedObjectImpl copy = (AnnotatedObjectImpl) orig.clone();
 
         // Release the lock first.
-        user.releaseLock();
+        getLockManager().release(view.getAc());
 
         // Now, set the view as the cloned object.
         user.setClonedView(copy);
@@ -355,7 +358,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         finally {
             // Release the lock only for submit.
             if (submit) {
-                user.releaseLock();
+                getLockManager().release(view.getAc());
             }
         }
         // Clear any left overs from previous transaction.

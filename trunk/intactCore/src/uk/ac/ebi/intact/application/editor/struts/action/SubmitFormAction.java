@@ -44,11 +44,11 @@ public class SubmitFormAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        LOGGER.debug("At the beginning of SubmitFormAction");
-        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-            String para = (String) e.nextElement();
-            LOGGER.debug("parameter: " + para + " - " + request.getParameter(para));
-        }
+//        LOGGER.debug("At the beginning of SubmitFormAction");
+//        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+//            String para = (String) e.nextElement();
+//            LOGGER.debug("parameter: " + para + " - " + request.getParameter(para));
+//        }
         // Cast the form.
         EditorActionForm editorForm = (EditorActionForm) form;
 

@@ -90,15 +90,9 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             // The ac of the object about to edit.
             String ac = annobj.getAc();
 
-            // Check the lock.
-            LockManager lmr = LockManager.getInstance();
-
             // Try to acuire the lock.
-            if (!lmr.acquire(ac, user.getUserName())) {
-                ActionErrors errors = new ActionErrors();
-                // The owner of the lock (not the current user).
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                        new ActionError("error.lock", ac, lmr.getOwner(ac)));
+            ActionErrors errors = acquire(ac, user.getUserName());
+            if (errors != null) {
                 saveErrors(request, errors);
                 return mapping.findForward(FAILURE);
             }

@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.IntactObject;
 
@@ -66,18 +65,12 @@ public class ResultAction extends AbstractEditorAction {
 
         LOGGER.info("AC: " + ac + " class: " + type);
 
-        // Check the lock.
-        LockManager lmr = LockManager.getInstance();
-
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // Try to acuire the lock.
-        if (!lmr.acquire(ac, user.getUserName())) {
-            ActionErrors errors = new ActionErrors();
-            // The owner of the lock (not the current user).
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.lock", ac, lmr.getOwner(ac)));
+        // Try to acquire the lock.
+        ActionErrors errors = acquire(ac, user.getUserName());
+        if (errors != null) {
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }

@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.application.editor.event.EventListener;
 
 /**
  * This is Intact editor specific action servlet class. This class is
@@ -58,6 +59,7 @@ public class EditorActionServlet extends ActionServlet {
         ctx.setAttribute(EditorConstants.EDITOR_SERVICE, service);
         ctx.setAttribute(EditorConstants.EDITOR_TOPICS, service.getIntactTypes());
         ctx.setAttribute(EditorConstants.LOCK_MGR, LockManager.getInstance());
+        ctx.setAttribute(EditorConstants.EVENT_LISTENER, EventListener.getInstance());
 
         // Resource bundle to access the message resources to set keys.
         ResourceBundle msgres = ResourceBundle.getBundle(
