@@ -77,15 +77,15 @@
                 </c:if>
 
                 <c:if test="${save}">
-                    <td class="proteinEditCell" rowspan="2"/>
+                    <td class="editCell" rowspan="2"/>
                 </c:if>
 
                 <c:if test="${saveNew}">
-                    <td class="proteinEditCell" rowspan="2"/>
+                    <td class="editCell" rowspan="2"/>
                 </c:if>
 
                 <c:if test="${error}">
-                    <td class="proteinErrorCell" rowspan="2"/>
+                    <td class="errorCell" rowspan="2"/>
                 </c:if>
 
                    <%-- Delete button: common to all --%>
