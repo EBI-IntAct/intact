@@ -133,7 +133,7 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'uk.ac.ebi.intact.model.CvTopic',
 	      'Definition',
-	      'Definition of an annotation topic',
+	      'Definition of the controlled vocabulary term',
 	      ac
          FROM Institution
         WHERE shortLabel='EBI';
@@ -141,17 +141,8 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'uk.ac.ebi.intact.model.CvTopic',
-	      'GO description',
-	      'Description imported from GO formatted CV',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
-       SELECT 'EBI-' || Intact_ac.nextval,
-	      'uk.ac.ebi.intact.model.CvTopic',
-	      'GO comment',
-	      'Comment imported from GO formatted CV',
+	      'Comment',
+	      'Comment for public view',
 	      ac
          FROM Institution
         WHERE shortLabel='EBI';
@@ -171,6 +162,24 @@ INSERT INTO cvobject2annot (annotation_ac, cvobject_ac)
          FROM Annotation a, ControlledVocab cv
         WHERE a.description='Describes the biological function of the Object.'
           AND cv.shortLabel='Function';
+
+INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
+       SELECT 'EBI-' || Intact_ac.nextval,
+	      'uk.ac.ebi.intact.model.CvXrefQualifier',
+	      'GO-definition-ref',
+	      'GO definition reference',
+	      ac
+         FROM Institution
+        WHERE shortLabel='EBI';
+
+INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
+       SELECT 'EBI-' || Intact_ac.nextval,
+	      'uk.ac.ebi.intact.model.CvXrefQualifier',
+	      'Identical',
+	      'Reference to the identical object in another database',
+	      ac
+         FROM Institution
+        WHERE shortLabel='EBI';
 
 commit;
 exit;
