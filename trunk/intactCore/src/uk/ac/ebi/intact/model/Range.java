@@ -54,29 +54,29 @@ public class Range extends BasicObjectImpl {
     //------------ attributes ------------------------------------
 
     /**
-     * Sequence size limit for this class
+     * Sequence size limit for this class. Set to a default value.
      */
-    public static final int MAX_SEQ_SIZE = 100;
+    private static int ourMaxSeqSize = 100;
 
     /**
      * TODO Comments
      */
-    private int fromIntervalStart = 0;
+    private int fromIntervalStart;
 
     /**
      * TODO Comments
      */
-    private int fromIntervalEnd = 0;
+    private int fromIntervalEnd;
 
     /**
      * TODO Comments
      */
-    private int toIntervalStart = 0;
+    private int toIntervalStart;
 
     /**
      * TODO Comments
      */
-    private int toIntervalEnd = 0;
+    private int toIntervalEnd;
 
     /**
      * <p>
@@ -87,7 +87,7 @@ public class Range extends BasicObjectImpl {
      *
      */
     //NOTE: We will assume a maximum size of 100 characters for this
-    private String sequence = "";
+    private String sequence;
 
     /**
      * TODO Comments
@@ -160,6 +160,22 @@ public class Range extends BasicObjectImpl {
         return result;
     }
 
+    /**
+     * @return returns the maximum sequence size.
+     */
+    public static int getMaxSequenceSize() {
+        return ourMaxSeqSize;
+    }
+
+    /**
+     * Sets the maximum sequence size. <b>This method is only used by the unit
+     * tester for this class</b>.
+     * @param max the new sequence value.
+     */
+    public static void setMaxSequenceSize(int max) {
+        ourMaxSeqSize = max;
+    }
+
     //--------------------------- constructors --------------------------------------
     /**
      * This constructor should <b>not</b> be used as it could
@@ -227,6 +243,14 @@ public class Range extends BasicObjectImpl {
     public int getFromIntervalStart() {
         return fromIntervalStart;
     }
+
+    /**
+     * Sets the starting from interval. Please call {@link #setSequenceRaw(String)}
+     * after calling this method as the sequence to set is determined by this value.
+     * @param posFrom
+     *
+     * @see #setFromCvFuzzyType(CvFuzzyType)
+     */
     public void setFromIntervalStart(int posFrom) {
         fromIntervalStart = posFrom;
     }
@@ -282,7 +306,12 @@ public class Range extends BasicObjectImpl {
         return fromCvFuzzyType;
     }
 
-
+    /**
+     * Sets the from fuzzy type. The user must ensure that {@link #setSequenceRaw(String)}
+     * method is called <b>after</b> calling this method because the sequence
+     * to set is determined by this type.
+     * @param type the fuzzy type to set.
+     */
     public void setFromCvFuzzyType(CvFuzzyType type) {
         fromCvFuzzyType = type;
     }
@@ -303,10 +332,40 @@ public class Range extends BasicObjectImpl {
         //don't allow default empty String to be replaced by null. Check size also
         //to avoid unnecessary DB call for a seq that is too big...
         if(seq != null) {
-            if(seq.length() > Range.MAX_SEQ_SIZE)
+            if(seq.length() > getMaxSequenceSize())
                 throw new IllegalArgumentException("Sequence too big! Max allowed: "
-                        + Range.MAX_SEQ_SIZE);
-            this.sequence = seq;
+                        + getMaxSequenceSize());
+        }
+        this.sequence = seq;
+    }
+
+    /**
+     * Sets the sequence using a raw string. The internal sequence is set using
+     * the from fuzzy type and from start values.
+     *
+     * </p>
+     * The logic in setting the sequence as follows (x refers to max seq size):
+     * 1. For C-terminals, the sequence is set to last x bytes.
+     * 2. For N-terminals and undetermined types, the first x bytes are set.
+     * 3. Fo all other types, x bytes starting from from interval start is used.
+     *
+     * @param sequence the raw sequence (generally this string is the full sequence).
+     */
+    public void setSequenceRaw(String sequence) {
+        // Get the sequence from start if there is no fuzzy type.
+        if (fromCvFuzzyType == null) {
+            setSequence(getSequenceStartingFrom(sequence, fromIntervalStart));
+            return;
+        }
+        // Truncate according to type.
+        if (fromCvFuzzyType.isCTerminal()) {
+            setSequence(getLastSequence(sequence));
+        }
+        else if (fromCvFuzzyType.isNTerminal() || fromCvFuzzyType.isUndetermined()) {
+            setSequence(getFirstSequence(sequence));
+        }
+        else {
+            setSequence(getSequenceStartingFrom(sequence, fromIntervalStart));
         }
     }
 
@@ -416,6 +475,70 @@ public class Range extends BasicObjectImpl {
 
     //---------------- private utility methods -----------------------
 
+    /**
+     * A helper method to return the last sequence.
+     * @param sequence the full sequence
+     * @return the last {@link #getMaxSequenceSize()} characters of the sequence; could be
+     * null if <code>sequence</code> is empty or null.
+     */
+    private static String getLastSequence(String sequence) {
+        return getSequence(sequence, 0, false);
+    }
+
+    /**
+     * A helper method to return the first sequence.
+     * @param sequence the full sequence
+     * @return the first {@link #getMaxSequenceSize()} characters of the sequence;
+     * could be null if <code>sequence</code> is empty or null.
+     */
+    private static String getFirstSequence(String sequence) {
+        return getSequence(sequence, 0, true);
+    }
+
+    /**
+     * A helper method to return the sequence starting at given index.
+     * @param sequence the full sequence
+     * @param start the starting number for the sequence to return.
+     * @return the sequence starting at <code>start</code> with max of
+     * {@link #getMaxSequenceSize()} characters of the sequence; could be
+     * null if <code>sequence</code> is empty or null.
+     */
+    private static String getSequenceStartingFrom(String sequence, int start) {
+        return getSequence(sequence, start, true);
+    }
+
+    /**
+     * Constructs a sequence.
+     * @param sequence the full sequence
+     * @param start the starting number for the sequence to return.
+     * @param first true if we want to start the sequence from 0.
+     * @return the sequence constructed using given parameters. This sequence
+     * contains a maximum of {@link #getMaxSequenceSize()} characters.
+     */
+    private static String getSequence(String sequence, int start, boolean first) {
+        String seq = null;
+        if ((sequence == null) || (sequence.length() < start)) {
+            return seq;
+        }
+        if (sequence.length() <= getMaxSequenceSize()) {
+            if (start == 0) {
+                seq = sequence;
+            }
+            else {
+                seq = sequence.substring(start);
+            }
+            return seq;
+        }
+        // full sequence is greater than the required length.
+        if (first) {
+            seq = sequence.substring(start, start + getMaxSequenceSize());
+        }
+        // returning the last 'size' characters
+        else {
+            seq = sequence.substring(sequence.length() - getMaxSequenceSize());
+        }
+        return seq;
+    }
 
     /**
      * Simple converter.
