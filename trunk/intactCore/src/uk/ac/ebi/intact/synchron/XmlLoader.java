@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.synchron;
 
 // JDK
@@ -26,12 +31,15 @@ import org.apache.ojb.*;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.ObjectSet;
 
+
 /**
  * Purpose : extracts data objects from an XML file, inserts
  * new data entries in the local database and update already
  * existing data entries.
  * For all references to non availables data entries,
  * a zombie object is created
+ *
+ * @author Antje Mueller, Arnaud Ceol
  */
 public class XmlLoader
  {
@@ -64,8 +72,8 @@ public class XmlLoader
         try {
             mapping.loadMapping( getClass().getResource( MappingFile ) );
         } catch(Exception e) {
-            System.out.println("[ERROR] Was not possible to load the mappingfile");
-              e.printStackTrace(System.out);
+            System.out.println("[XmlLoader] [ERROR] Was not possible to load the mappingfile");
+            e.printStackTrace(System.out);
             throw e;
         }
 
@@ -74,7 +82,7 @@ public class XmlLoader
             unmarshaller = new Unmarshaller(ObjectSet.class);
             unmarshaller.setMapping(mapping);
         } catch (Exception e){
-            System.out.println("[ERROR] Was not possible to get the unmarshaller");
+            System.out.println("[XmlLoader] [ERROR] Was not possible to get the unmarshaller");
             throw e;
         }
 
@@ -99,7 +107,7 @@ public class XmlLoader
         try {
             reader = new FileReader(xmlFileName);
         } catch (FileNotFoundException e) {
-            System.out.println("[ERROR] Was not possible to open the file: " + xmlFileName + " for loading");
+            System.out.println("[XmlLoader] [ERROR] Was not possible to open the file: " + xmlFileName + " for loading");
             throw e;
         }
 
@@ -109,7 +117,7 @@ public class XmlLoader
         try {
             objectSet = (ObjectSet) unmarshaller.unmarshal(reader);
         } catch (MarshalException e) {
-            System.out.println("[ERROR] Was not possible to unmarshal the file: " + xmlFileName);
+            System.out.println("[XmlLoader] [ERROR] Was not possible to unmarshal the file: " + xmlFileName);
             throw e;
         }
 
@@ -120,16 +128,13 @@ public class XmlLoader
             while (iterator.hasNext())
             {
                 Object o = iterator.next();
-                System.out.println("[Loader: try to store object of class: " + o.getClass().getName() + "]");
                 checkForeignKey(o);
                 updateDb(o);
             }
-            System.out.println("commitTransaction");
             broker.commitTransaction();
-            System.out.println("commit done" );
         } catch (Exception e) {
             broker.abortTransaction();
-            System.out.println("[ERROR] errors during loading the file: " + xmlFileName + ": no entry has been added");
+            System.out.println("[XmlLoader] [ERROR] errors during loading the file: " + xmlFileName + ": no entry has been added");
             throw e;
         }
     }
@@ -145,7 +150,6 @@ public class XmlLoader
     {
         if(IntactNode.class.isInstance(o)){
             Criteria criteria = new Criteria();
-
             criteria.addLike("ac",((IntactNode)o).getAc());
             Query query =	QueryFactory.newQuery(IntactNode.class,criteria);
 
@@ -158,7 +162,7 @@ public class XmlLoader
                 ((IntactNode)o).setRejected(intactNode.getRejected());
             }
         }
-        System.out.println("[store object with ac= " + ((BasicObject)o).getAc() + "]");
+        System.out.println("[XmlLoader] store object with ac= " + ((BasicObject)o).getAc());
         broker.store(o);
     }
 
@@ -172,80 +176,110 @@ public class XmlLoader
      */
     private void checkForeignKey(Object o) throws Exception
     {
-        Field fields[] = (o.getClass()).getFields();
+        java.lang.reflect.Method getters1[] = o.getClass().getDeclaredMethods();
+        java.lang.reflect.Method getters2[] = o.getClass().getMethods();
 
-        for (int i=0; i < java.lang.reflect.Array.getLength(fields); i++)
+        ArrayList getters = new ArrayList();
+        for (int k = 0; k < java.lang.reflect.Array.getLength(getters1); k++) {
+            getters.add( getters1[k] );
+        }
+        for (int k = 0; k < java.lang.reflect.Array.getLength(getters2); k++) {
+            getters.add( getters2[k] );
+        }
+
+        for (int i=0; i < getters.size(); i++)
         {
             // if the field's value is a BasicObject
+            // or an Institution
             // check if it is persistent in db, else
             // create a zombie of type of the field
             // if it does not already exist
-            Field f = (Field)fields[i] ;
-            if ( BasicObject.class ==  (f.getType()).getSuperclass() && f.get(o) != null)
+            java.lang.reflect.Method m = (java.lang.reflect.Method)getters.get(i) ;
+
+            // fields we are interested in are of type BasicObject or Institution
+            // for a field of type BasicObject, we look at the associated field of type String
+            // for an Institution we look at the "ownerAc" field
+            if ( m.getName().startsWith("get") && (BasicObject.class).isAssignableFrom(m.getReturnType()))
             {
-                Field acField=null;
-//                for (int j=0; j< java.lang.reflect.Array.getLength(fields); j++)
-//                {
-//                    if ( ((Field)fields[j]).getName() == f.getName() + "Ac")
-//                    {
-//                        acField = (Field)fields[j];
-//                    }
-//                }
-//                System.out.println("checkPersistence for field: " +  f.getName() + "Ac");
-//                System.out.println("checkPersistence for ac field: " +  o.getClass().getField(f.getName() + "Ac"));
-                checkPersistence(o, f);
-            }
+                // Does the Ac field exist?
+                try {
+                    // is the Ac null?
+                    if ( (  (o.getClass().getMethod(m.getName() + "Ac", null)).invoke(o, null) != null) )
+                    {
+                        Class parameters[] = {m.getReturnType()};
+                        checkPersistence( o, m, o.getClass().getMethod( "set" + m.getName().substring(3) , parameters) );
+                    }
+                } catch ( NoSuchMethodException nsme) {
+                    System.out.println("setter or getter not found for field: " +  m.getName().substring(3) + "Ac");
+                }
+            } // end for basic objects
+            // for Institution
+            if (m.getName().equalsIgnoreCase("getOwner"))
+            {
+                // is the ownerAc field empty?
+                if ( (o.getClass().getMethod("getOwnerAc", null)).invoke(o, null) != null)
+                {
+                    Class classes[] =  {Institution.class};
+                    checkPersistence(o, o.getClass().getMethod("getOwner", null), o.getClass().getMethod("setOwner", classes));
+                }
+            } // end for Institution
+
             // if the field contains a Vector,
             // check all the objects it contains
-//            else if ( AbstractCollection.class
-//                    .isInstance(((Field)fields[i]).getType()))
-            else if ( Collection.class == f.getType() && f.get(o) != null)
+            else if ( Collection.class == m.getReturnType() && m.invoke(o, null) != null)
             {
-                Collection col = new Vector();
+                try {
+                    Collection col = new Vector();
 
-                Iterator it =  ((AbstractCollection)((Field)fields[i]).get(o)).iterator();
-                while (it.hasNext()) {
-                    Object value = it.next();
-                    Criteria c = new Criteria();
+                    Iterator it =  ((AbstractCollection)(m.invoke(o, null))).iterator();
 
-                    c.addLike("ac", ((BasicObject)value).getAc());
+                    while (it.hasNext()) {
+                        Object value = it.next();
+                        Criteria c = new Criteria();
 
-                    Class classe=value.getClass();
+                        c.addLike("ac", ((BasicObject)value).getAc());
 
-                    Query q =  new QueryByCriteria(classe, c);
-                    Collection res;
-                    res =  broker.getCollectionByQuery(q);
+                        Class classe=value.getClass();
 
-                    if (res.size() == 0)
-                    {   // the data entry is not persistent
-                        // add a zombie
-                        Object zombie = value.getClass().newInstance();
-                        ((BasicObject)zombie).setAc(((BasicObject)value).getAc());
-                        broker.store(zombie);
-                        col.add(zombie);
-                    } else {
-                        col.add(res.toArray()[0]);
+                        Query q =  new QueryByCriteria(classe, c);
+                        Collection res;
+                        res =  broker.getCollectionByQuery(q);
+
+                        if (res.size() == 0)
+                        {   // the data entry is not persistent
+                            // add a zombie
+                            Object zombie = value.getClass().newInstance();
+                            ((BasicObject)zombie).setAc(((BasicObject)value).getAc());
+                            broker.store(zombie);
+                            col.add(zombie);
+                        } else {
+                            col.add(res.toArray()[0]);
+                        }
                     }
-                }
-                f.set(o, col);
-                CollectionDescriptor des= broker.getClassDescriptor(o.getClass()).getCollectionDescriptorByName(f.getName());
-//                Iterator itCollect = des.iterator();
-//                while (itCollect.hasNext()) {
-//                    System.out.println(" a collection descriptor found: " + ((CollectionDescriptor)itCollect.next()).getAttributeName());
-//                }
-//                    System.out.println("No CollectionDescriptors");
-              //  System.out.println("[Loader: looking for M to N relation for Collection: " + f.getName() +"]");
-                if(des != null)
-                {
-                    if (broker.getClassDescriptor(o.getClass()).getCollectionDescriptorByName(f.getName()).isMtoNRelation())
+
+                    Class parametersType[] = {Collection.class};
+                    Object parameters[] = {col};
+                    o.getClass().getMethod( "set" + m.getName().substring(3) , parametersType).invoke(o, parameters);
+
+                    String fieldName = m.getName().substring(3,3).toLowerCase() + m.getName().substring(4);
+                    CollectionDescriptor des= broker.getClassDescriptor(o.getClass())
+                            .getCollectionDescriptorByName(fieldName);
+                    if(des != null)
                     {
-                       // System.out.println("[Loader: found M to N relation for field " + f.getName() + "in object of type " + o.getClass() + "]");
-                        synchronizeMtoNrelation(o, f, col);
+                        if (broker.getClassDescriptor(o.getClass()).getCollectionDescriptorByName(fieldName).isMtoNRelation())
+                        {
+                            synchronizeMtoNrelation(o, m, col);
+                        }
                     }
+
+                } catch ( NoSuchMethodException nsme) {
+                    System.out.println("setter or getter not found for field: " +  m.getName().substring(3) + "Ac");
                 }
-            }
+            } // end for collection
         }
     }
+
+
 
     /**
      * For m to n relationship, we need to keep all information already described in
@@ -262,7 +296,6 @@ public class XmlLoader
 
         if (persistentObject != null)
         {
-//            System.out.println("[Loader: For this object: synchronize M to N relationship described by th Collection: "+f.getName()+" ]");
             Collection persistentCollection = (Collection) f.get(persistentObject);
             Iterator it = persistentCollection.iterator();
             while(it.hasNext())
@@ -277,9 +310,40 @@ public class XmlLoader
     }
 
 
+   /**
+    * For m to n relationship, we need to keep all information already described in
+    * te local database and that could get lost during the update of an object
+    */
+   private void synchronizeMtoNrelation(Object newObject, java.lang.reflect.Method getter, Collection newCollection) throws Exception
+   {
+       // get Object o in local database
+       Criteria criteria = new Criteria();
+       criteria.addLike("ac", ((BasicObject)newObject).getAc());
+       Query q =  new QueryByCriteria(newObject.getClass(), criteria);
+
+       Object persistentObject =broker.getObjectByQuery(q);
+
+       if (persistentObject != null)
+       {
+           Collection persistentCollection = (Collection) getter.invoke(persistentObject, null);
+           Iterator it = persistentCollection.iterator();
+           while(it.hasNext())
+           {
+               Object o = it.next();
+               if(!newCollection.contains(o))
+               {
+                   newCollection.add(o);
+               }
+           }
+       }
+   }
+
     /**
      * check if the data entry represented by the object is persistent in the database,
      * else add a zombie
+     *
+     * this method should not be used as most of fields are private or protected
+     * use  checkPersistence(Object o, java.lang.reflect.Method getter, java.lang.reflect.Method setter) instead
      */
     private void checkPersistence(Object o, Field f) throws Exception
     {
@@ -299,16 +363,18 @@ public class XmlLoader
             Object zombie = f.getType().newInstance();
             if (ac != null && ac != "")
             {
-                ((BasicObject)zombie).setAc(ac);
-            }
-            else
-            {
-                ((BasicObject)zombie).setAc("zombie");
+                if (BasicObject.class == (f.getType()).getSuperclass())
+                {
+                    ((BasicObject)zombie).setAc(ac);
+                }
+                else // an Institution
+                {
+                    ((Institution)zombie).setAc(ac);
+                }
             }
 
             // the name "Zombie" is given to the new object
             // it makes easy to identifie zombie objects in the database
-            //((BasicObject)zombie).setName("Zombie");
             f.set(o, zombie);
 
             Class[] parameters = {String.class};
@@ -320,10 +386,67 @@ public class XmlLoader
         }
     }
 
+    /**
+     * check if the data entry represented by the object is persistent in the database,
+     * else add a zombie
+     */
+    private void checkPersistence(Object o, java.lang.reflect.Method getter, java.lang.reflect.Method setter) throws Exception
+    {
+        Object value = getter.invoke(o, null);
+
+        String ac = (String)((o.getClass().getMethod(getter.getName() + "Ac", null)).invoke(o, null))  ;
+
+        if (ac == null) ac = "";
+
+        Criteria c = new Criteria();
+        c.addLike("ac", ac);
+
+        Collection res;
+        // check if the entry is persistent in the database
+        try
+        {
+            res=  broker.getCollectionByQuery(new QueryByCriteria(getter.getReturnType(), c));
+        }
+        catch  (Exception e)
+        {
+            res = new Vector();
+        }
+
+        if (res.size() == 0)
+        {   // the data entry is not persistent
+            // add a zombie
+            Object zombie = getter.getReturnType().newInstance();
+            if (ac != null && ac != "")
+            {
+                if (BasicObject.class == (getter.getReturnType().getSuperclass()))
+                {
+                    ((BasicObject)zombie).setAc(ac);
+                }
+                else // an Institution
+                {
+                    ((Institution)zombie).setAc(ac);
+                }
+            }
+
+            // the name "Zombie" is given to the new object
+            // it makes easy to identifie zombie objects in the database
+            getter.invoke(o, null);
+
+            Class[] parameters = {String.class};
+            Object[] parametersValues = {ac};
+            (o.getClass().getMethod(getter.getName() + "Ac", parameters)).invoke(o, parametersValues);
+            broker.store(zombie);
+        }  else {
+            Object parameter[] =  {res.toArray()[0]};
+            setter.invoke(o,  parameter);
+        }
+    }
+
 
 
     /**
-     * 1,2,1,2, it's just a test
+     * initialisation method that should only be used
+     * for loading files independantly from the Collector
      */
     private void init() throws Exception
     {
