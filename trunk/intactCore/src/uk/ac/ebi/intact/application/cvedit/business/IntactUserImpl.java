@@ -41,7 +41,8 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     private static class UniqueID {
 
         /**
-         * The initial value.
+         * The initial value. All the unique ids are based on this value for any
+         * (all) user(s).
          */
         private static long theirCurrentTime = System.currentTimeMillis();
 
