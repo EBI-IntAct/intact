@@ -17,8 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Sets up the editor form type using the selected editor topic. The common forms
- * for all the topics (such as annotations, xrefs) are populated.
+ * Fills the form with values for ac, short label and full name.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -40,6 +39,6 @@ public class FillCvFormAction  extends AbstractEditorAction {
         dynaform.set("fullName", view.getFullName());
 
         // Straight to the editor.
-        return mapping.findForward("success");
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }
