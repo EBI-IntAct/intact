@@ -36,7 +36,7 @@ public class ClearErrorsTag extends TagSupport {
     }
 
     /**
-     * Clear Struts any Struts errors stored in the pageContext.
+     * Clear any Struts errors stored in the pageContext.
      */
     public int doEndTag() throws JspException {
 
@@ -47,6 +47,6 @@ public class ClearErrorsTag extends TagSupport {
             pageContext.removeAttribute(Globals.ERROR_KEY);
         }
 
-        return SKIP_BODY;
+        return EVAL_PAGE;
     }
 }
