@@ -104,7 +104,7 @@
 
         <!-- Form for editing a Protein -->
         <form-bean name="proteinEditForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.EditForm"/>
+            type="uk.ac.ebi.intact.application.editor.struts.viewx.interaction.ProteinEditForm"/>
 
         <!-- Form to search for a Protein -->
         <form-bean name="proteinSearchForm"
@@ -112,7 +112,7 @@
             <form-property name="shortLabel" type="java.lang.String"/>
             <form-property name="spAc" type="java.lang.String"/>
             <form-property name="ac" type="java.lang.String"/>
-            <form-property name="fullText" type="java.lang.String"/>
+            <form-property name="fullName" type="java.lang.String"/>
         </form-bean>
     </form-beans>
 
@@ -270,6 +270,8 @@
         <action path="/interaction/protein/edit"
             type="uk.ac.ebi.intact.application.editor.struts.actionx.interaction.ProteinEditAction"
             name="proteinEditForm"
+            validate="true"
+            input="edit.layout"
             scope="session">
         </action>
 
@@ -277,7 +279,7 @@
         <action path="/interaction/protein/search"
             type="uk.ac.ebi.intact.application.editor.struts.actionx.interaction.ProteinSearchAction"
             name="proteinSearchForm"
-            input="/pages/extra/proteinSearch.jsp"
+            input="edit.layout"
             scope="request">
         </action>
 
