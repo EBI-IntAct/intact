@@ -16,13 +16,12 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Xref;
 
-import java.util.*;
 import java.io.Serializable;
+import java.util.*;
 
 /**
  * This super bean encapsulates behaviour for a common editing session. This
@@ -38,12 +37,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      * the accession number.
      */
     private transient AnnotatedObject myAnnotObject;
-
-    /**
-     * The AC of the current edit object. Could be null if it is not persisted
-     * yet (newly created object).
-     */
-    private String myAc;
 
     /**
      * The class we are editing.
@@ -134,8 +127,8 @@ public abstract class AbstractEditViewBean implements Serializable {
         // Can safely cast it.
         AbstractEditViewBean other = (AbstractEditViewBean) obj;
 
-        // AC must match if it exists
-        if (!equals(myAc, other.myAc)) {
+        // Annotated object must match if it exists
+        if (!equals(myAnnotObject, other.myAnnotObject)) {
             return false;
         }
         // Edit clas smust match; no need to check for null as edit class must
@@ -181,10 +174,25 @@ public abstract class AbstractEditViewBean implements Serializable {
         return true;
     }
 
+    /**
+     * Sets the current edit class. This method is called when creating a new
+     * annotated object (only the class or the type is known).
+     * @param clazz
+     */
     public void setAnnotatedClass(Class clazz) {
         myEditClass = clazz;
+
+        // Set them to null as they may have previous values.
+        myAnnotObject = null;
+        setShortLabel(null);
+        setFullName(null);
+
         // Clear any left overs from previous transaction.
         clearTransactions();
+
+        // Clear annotations and xrefs.
+        makeCommentBeans(Collections.EMPTY_LIST);
+        makeXrefBeans(Collections.EMPTY_LIST);
     }
 
     /**
@@ -194,7 +202,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     public void setAnnotatedObject(AnnotatedObject annot) {
         myAnnotObject = annot;
-        myAc = annot.getAc();
         myEditClass = annot.getClass();
         setShortLabel(annot.getShortLabel());
         setFullName(annot.getFullName());
@@ -218,19 +225,12 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * Returns the Annotated object. Must have set the AnnotatedObject by calling
-     * {@link #update(EditUserI)} prior to this method.
+     * Returns the Annotated object. Could be null if
+     * {@link #update(EditUserI)} wasn't called prior to this method for a new
+     * edit object.
      * @return <code>AnnotatedObject</code> this instace is wrapped around.
-     *
-     * <pre>
-     * pre: update(user)
-     * </pre>
      */
     public AnnotatedObject getAnnotatedObject() {
-        if (myAnnotObject == null) {
-            throw new IllegalStateException("Annotated Object not set; must "
-                    + "call update(user) method prior to calling this method");
-        }
         return myAnnotObject;
     }
 
@@ -264,10 +264,14 @@ public abstract class AbstractEditViewBean implements Serializable {
 
     /**
      * Returns accession number.
-     * @return the accession number as a <code>String</code> instance.
+     * @return the accession number as a <code>String</code> instance; null if
+     * the current view is not persisted.
      */
     public String getAc() {
-        return myAc;
+        if (myAnnotObject != null) {
+            return myAnnotObject.getAc();
+        }
+        return null;
     }
 
     /**
