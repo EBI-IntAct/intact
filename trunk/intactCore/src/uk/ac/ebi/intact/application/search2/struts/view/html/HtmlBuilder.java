@@ -965,7 +965,6 @@ public class HtmlBuilder {
                 endTable( ex );
 
                 rs.flush();
-                System.out.println ( "FLUSH IT !" );
 
                 beginTable( ex );
                 count = 0;
