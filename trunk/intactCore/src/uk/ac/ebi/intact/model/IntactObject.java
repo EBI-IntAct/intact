@@ -33,9 +33,11 @@ public abstract class IntactObject implements Serializable {
 
 
     /**
-     * The unique accession number of an object.
+     * The unique accession number of an object. This is
+     * defined as protected to allow concrete subclasses to generate
+     * copies if required.
      */
-    private String ac;
+    protected String ac;
 
     /**
      * Creation date of an object.
