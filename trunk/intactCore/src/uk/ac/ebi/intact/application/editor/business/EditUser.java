@@ -640,9 +640,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void fillSearchResult(DynaBean dynaForm) {
-        for (Iterator iterator = mySearchCache.iterator(); iterator.hasNext();) {
-            ResultBean resultBean = (ResultBean) iterator.next();
-        }
         dynaForm.set("items", mySearchCache);
     }
 
@@ -687,17 +684,12 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public Annotation getAnnotation(CommentBean cb) throws SearchException {
-        // The owner of the object we are editing.
-        Institution owner = getInstitution();
-
         // The topic for the new annotation.
         CvTopic cvtopic = (CvTopic) getObjectByLabel(CvTopic.class, cb.getTopic());
 
         // The new annotation to return.
-        Annotation annot = new Annotation();
+        Annotation annot = new Annotation(getInstitution(), cvtopic);
         annot.setAnnotationText(cb.getDescription());
-        annot.setCvTopic(cvtopic);
-        annot.setOwner(owner);
         return annot;
     }
 
