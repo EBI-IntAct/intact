@@ -8,9 +8,10 @@
 --%>
 
 <hr>
+<span class="footer">
 <table width="100%">
 <tr>
-    <td class="tableCell">
+    <td>
         Please send any questions or suggestions to
             <a href="mailto:intact-dev@ebi.ac.uk">intact-dev@ebi.ac.uk</a>
         </br><i>Last modified:</i> <last:lastModified/>
@@ -20,3 +21,4 @@
     </td>
 </tr>
 </table>
+</span>
