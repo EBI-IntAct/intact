@@ -24,6 +24,7 @@ import uk.ac.ebi.intact.application.mine.business.IntactUserI;
 import uk.ac.ebi.intact.application.mine.business.graph.MineHelper;
 import uk.ac.ebi.intact.application.mine.business.graph.model.MineData;
 import uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey;
+import uk.ac.ebi.intact.application.mine.business.graph.model.ShortestPathHelper;
 import uk.ac.ebi.intact.application.mine.struts.view.ErrorForm;
 
 /**
@@ -77,12 +78,13 @@ public class DisplayAction extends Action {
 
             Constants.LOGGER.info("start minehelper");
 
-            MineHelper helper = new MineHelper(user);
+            ShortestPathHelper helper = new MineHelper(user);
             // the network map maps the wrapper class containing
             // the biosource taxid and the graphid to a collection
             // of search acnr.
             Map networks = helper.getNetworkMap(searchFor);
-
+            Constants.LOGGER.info("found the different graphs to search in");
+            
             NetworkKey key;
             MineData md;
             Collection search = null;
@@ -107,7 +109,8 @@ public class DisplayAction extends Action {
                     }
 
                     // the shortest path is computed
-                    Collection path = helper.mine(md, search);
+                    Constants.LOGGER.info("searching for the minimal network for " + search);
+                    Collection path = helper.getMine(md, search);
                     // if no path could be found the search values are
                     // added to the singleton collection of the user
                     if (path.size() == 0) {
@@ -125,6 +128,7 @@ public class DisplayAction extends Action {
             // if no paths could been found the application is forwarded
             // to the error page
             if (user.getPaths().size() == 0) {
+                Constants.LOGGER.warn("no connecting network found");
                 String singletons = user.getSingletons().toString();
                 singletons = singletons.substring(1, singletons.length() - 1);
 

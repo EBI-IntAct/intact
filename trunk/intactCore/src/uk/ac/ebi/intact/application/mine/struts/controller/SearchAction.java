@@ -59,7 +59,7 @@ public class SearchAction extends Action {
                 // clear all former found paths and singletons
                 user.clearAll();
             }
-            Constants.LOGGER.info("created user");
+            Constants.LOGGER.info("start searching");
 
             // a collection of ac nr which are needed to search for
             Collection searchAc = new HashSet();
@@ -93,6 +93,7 @@ public class SearchAction extends Action {
 
             //TODO: FORWARD TO AMBIGUOUS PAGE !!!!!!
             if ((searchAc.size() + notSearchAc.size()) > Constants.MAX_SEARCH_NUMBER) {
+                Constants.LOGGER.warn("too many searches");
                 request.setAttribute(Constants.ERROR, new ErrorForm(
                         "The number of selected proteins " + "is greater than "
                                 + Constants.MAX_SEARCH_NUMBER
@@ -137,6 +138,8 @@ public class SearchAction extends Action {
             // if the results are ambiguous the application is forwarded to a
             // special page to display all search results.
             if (ambiguous) {
+                Constants.LOGGER
+                        .info("found an ambiguous result - forward to the ambiguous page");
                 // because we want also the information of the proteins
                 // which were not used in the first search - the informations
                 // are now fetched
@@ -155,6 +158,7 @@ public class SearchAction extends Action {
                 mineSearchAc.addAll(notSearchAc);
             }
 
+            Constants.LOGGER.info("forward to the algorithm");
             request.setAttribute(Constants.SEARCH, mineSearchAc);
             return mapping.findForward(Constants.SUCCESS);
         }
