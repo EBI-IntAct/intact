@@ -230,6 +230,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * method sets the logout time.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
+        Logger.getLogger(EditorConstants.LOGGER).info("User is about to unbound");
         try {
             logoff();
         }
@@ -594,6 +595,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public void logoff() throws IntactException {
         mySessionEndTime = Calendar.getInstance().getTime();
+        Logger.getLogger(EditorConstants.LOGGER).info("User is logging of at: " + mySessionEndTime);
         // Release all the locks held by this user.
         LockManager.getInstance().releaseAllLocks(getUserName());
         myHelper.closeStore();
