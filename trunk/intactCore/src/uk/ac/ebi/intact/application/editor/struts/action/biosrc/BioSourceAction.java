@@ -81,12 +81,7 @@ public class BioSourceAction extends SubmitFormAction {
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
-
-        // Validate the tax id; it should be unique.
-        if (!validateTaxId(user, taxid, request)) {
-            return mapping.findForward(FAILURE);
-        }
-        // This shouldn't crash the application as we had
+        // This shouldn't cause a class cast exception as we had
         // already created the correct editor view bean.
         BioSourceViewBean bioview = (BioSourceViewBean) user.getView();
 
@@ -137,48 +132,6 @@ public class BioSourceAction extends SubmitFormAction {
         bioview.setTaxId(taxid);
 
         return mapping.findForward(SUCCESS);
-    }
-
-    /**
-     * Validates the tax id.
-     * @param user the handler to user to search the database.
-     * @param taxid the tax id to search in the database for.
-     * @param request the HTTP request to save errors
-     * @return <code>false</code> if the search fails or a BioSource
-     * instance found  with the same <code>taxid</code>.
-     * @exception SearchException for errors in acccessing the database.
-     */
-    private boolean validateTaxId(EditUserI user,
-                                  String taxid,
-                                  HttpServletRequest request)
-            throws SearchException {
-        // Holds the results from the search.
-        Collection results = user.search1(BioSource.class.getName(), "taxId", taxid);
-        if (results.isEmpty()) {
-            // Don't have this tax id on the database.
-            return true;
-        }
-        // If we found a single record then it must be the current record.
-        if (results.size() == 1) {
-            // Found a BioSource with similar tax id; is it as same as the
-            // current record?
-            BioSourceViewBean view = (BioSourceViewBean) user.getView();
-            String currentAc = view.getAc();
-            // Check for null here as it could be null for a new biosource.
-            if (currentAc != null) {
-                String resultAc = ((BioSource) results.iterator().next()).getAc();
-                if (currentAc.equals(resultAc)) {
-                    // We have retrieved the same record from the DB.
-                    return true;
-                }
-            }
-        }
-        // Found a tax id which belongs to another biosource.
-        ActionErrors errors = new ActionErrors();
-        errors.add(ActionErrors.GLOBAL_ERROR,
-                new ActionError("error.newt.taxid", taxid));
-        saveErrors(request, errors);
-        return false;
     }
 
     private NewtServerProxy.NewtResponse getNewtResponse(EditUserI user,
