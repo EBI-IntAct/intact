@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -84,7 +83,8 @@ public class BioSourceAction extends AbstractEditorAction {
         if (url == null) {
             // Error in communcating with the server.
             errors = new ActionErrors();
-            errors.add("biosource", new ActionError("error.newt.url"));
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.newt.url"));
             saveErrors(request, errors);
             return inputForward(mapping);
         }
@@ -110,7 +110,8 @@ public class BioSourceAction extends AbstractEditorAction {
         // Validate the scientific name.
         if (newtName.length() == 0) {
             errors = new ActionErrors();
-            errors.add("cvinfo", new ActionError("error.newt.name", taxid));
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.newt.name", taxid));
             // Display the error and continue on.
             saveErrors(request, errors);
         }
@@ -173,7 +174,8 @@ public class BioSourceAction extends AbstractEditorAction {
         }
         // Found a tax id which belongs to another biosource.
         ActionErrors errors = new ActionErrors();
-        errors.add("cvinfo", new ActionError("error.newt.taxid", taxid));
+        errors.add(ActionErrors.GLOBAL_ERROR,
+                new ActionError("error.newt.taxid", taxid));
         saveErrors(request, errors);
         return false;
     }
@@ -196,18 +198,14 @@ public class BioSourceAction extends AbstractEditorAction {
         catch (IOException ioe) {
             // Error in communcating with the server.
             errors = new ActionErrors();
-            errors.add("biosource",
+            errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.newt.connection", ioe.getMessage()));
             saveErrors(request, errors);
         }
         catch (NewtServerProxy.TaxIdNotFoundException ex) {
             errors = new ActionErrors();
-            errors.add("cvinfo", new ActionError("error.newt.search", taxid));
-            saveErrors(request, errors);
-        }
-        catch (NumberFormatException nfe) {
-            errors = new ActionErrors();
-            errors.add("biosource", new ActionError("error.newt.input", taxid));
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.newt.search", taxid));
             saveErrors(request, errors);
         }
         return newtResponse;
