@@ -36,9 +36,9 @@
 
     <tr class="tableRowEven">
         <td class="tableCell">
-            <html:submit titleKey="feature.clone.button.titleKey"
+            <html:submit titleKey="feature.undetermined.clone.button.titleKey"
                 property="dispatch" onclick="skipValidation();">
-                <bean:message key="feature.clone.button"/>
+                <bean:message key="feature.undetermined.clone.button"/>
             </html:submit>
         </td>
         <td class="tableCell">
