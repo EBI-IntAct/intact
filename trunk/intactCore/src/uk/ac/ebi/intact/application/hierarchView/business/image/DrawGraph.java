@@ -636,7 +636,8 @@ public class DrawGraph {
                 RenderingHints.VALUE_ANTIALIAS_OFF);
 
         // Write the map
-        mapCode.append("<AREA SHAPE=\"RECT\" HREF=\"/hierarchView/click.do?AC=" + protein.getAc() +
+        // TODO : get the contextPath in the runtime
+        mapCode.append("<AREA SHAPE=\"RECT\" HREF=\"/intact/hierarchView/click.do?AC=" + protein.getAc() +
                 " \" COORDS=" + (int)x1 + "," + (int)y1 + "," + x2 + "," + y2 + ">");
 
         // Write label
