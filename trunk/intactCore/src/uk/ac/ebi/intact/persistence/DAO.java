@@ -331,6 +331,15 @@ public interface DAO {
      public void update(Object obj) throws UpdateException;
 
     /**
+     * It is as same as {@link #update(Object)} method but this forces update when
+     * a collection doesn't change (e.g., Annotations). This method is mainly for
+     * the editor.
+     * @param obj the object to update
+     * @throws UpdateException for any errors in updating.
+     */
+     public void forceUpdate(Object obj) throws UpdateException;
+
+    /**
      *  allows a logging destination to be specified
      *
      * @param p A <code>PrintWriter</code> for logging output
