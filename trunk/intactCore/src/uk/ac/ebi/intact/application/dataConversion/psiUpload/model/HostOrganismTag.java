@@ -119,13 +119,13 @@ public final class HostOrganismTag {
         if( null == tissue ) {
             buf.append( '-' );
         } else {
-            buf.append( tissue.getPsiDefinition().getId() );
+            buf.append( tissue );
         }
         buf.append( ", cellType=" );
         if( null == cellType ) {
             buf.append( '-' );
         } else {
-            buf.append( cellType.toString() );
+            buf.append( cellType );
         }
         buf.append( '}' );
         return buf.toString();
