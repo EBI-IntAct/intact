@@ -51,10 +51,10 @@ public class FillExperimentFormAction extends FillCvFormAction {
                 dynaForm.set("organism", view.getOrganism());
 //            }
 //            if (isPropertyNullOrEmpty(dynaForm, "inter")) {
-                dynaForm.set("inter", view.getSelectedInter());
+                dynaForm.set("inter", view.getInter());
 //            }
 //            if (isPropertyNullOrEmpty(dynaForm, "ident")) {
-                dynaForm.set("ident", view.getSelectedIdent());
+                dynaForm.set("ident", view.getIdent());
 //            }
         }
         return mapping.findForward(FORWARD_SUCCESS);

@@ -61,8 +61,7 @@ public class FillInteractionFormAction extends FillCvFormAction {
         else {
             dynaform.set("kD", view.getKD());
             dynaform.set("organism", view.getOrganism());
-            // Special case this is a dag menu object.
-            dynaform.set("interactionType", view.getSelectedInterationType());
+            dynaform.set("interactionType", view.getInteractionType());
         }
         // Populate with the experiments for the interaction.
         List exps = view.getExperiments();
