@@ -1083,17 +1083,17 @@ public class UpdateProteins extends UpdateProteinsI {
         Collection aliases = protein.getAliases();
         // gene[i][0]: gene name
         // gene[i][1 ...]: synomyms of the gene's name
-        String[][] genes = sptrEntry.getGenes();
+        Gene[] genes = sptrEntry.getGenes();
 
         Alias alias = null;
 
         for ( int i = 0; i < genes.length; i++ ) {
 
-            if( !isAliasAlreadyExisting( aliases, genes[ i ][ 0 ], geneNameAliasType ) ) {
+            if( !isAliasAlreadyExisting( aliases, genes[ i ].getName(), geneNameAliasType ) ) {
                 alias = new Alias( myInstitution,
                                    protein,
                                    geneNameAliasType, // gene-name
-                                   genes[ i ][ 0 ] );
+                                   genes[ i ].getName() );
 
                 // link the Xref to the protein and record it in the database
                 addNewAlias( protein, alias );
@@ -1105,19 +1105,19 @@ public class UpdateProteins extends UpdateProteinsI {
                 needUpdate = true;
             } else {
                 if( logger != null ) {
-                    logger.info( "SKIP Alias[name: " + genes[ i ][ 0 ] +
+                    logger.info( "SKIP Alias[name: " + genes[ i ].getName() +
                              " type: " + geneNameAliasType.getShortLabel() + "]" +
                              ", for: " + protein.getShortLabel() );
                 }
             }
 
-            for ( int ii = 1; ii < genes[ i ].length; ii++ ) {
+            for ( int ii = 1; ii < genes[ i ].getSynonyms().length; ii++ ) {
 
-                if( !isAliasAlreadyExisting( aliases, genes[ i ][ ii ], geneNameSynonymAliasType ) ) {
+                if( !isAliasAlreadyExisting( aliases, genes[ i ].getSynonyms()[ ii ], geneNameSynonymAliasType ) ) {
                     alias = new Alias( myInstitution,
                                        protein,
                                        geneNameSynonymAliasType, // gene-name-synonym
-                                       genes[ i ][ ii ] );
+                                       genes[ i ].getSynonyms()[ ii ] );
 
                     // link the Xref to the protein and record it in the database
                     addNewAlias( protein, alias );
@@ -1129,7 +1129,7 @@ public class UpdateProteins extends UpdateProteinsI {
                     needUpdate = true;
                 } else {
                     if( logger != null ) {
-                        logger.info( "SKIP Alias[name: " + genes[ i ][ ii ] +
+                        logger.info( "SKIP Alias[name: " + genes[ i ].getSynonyms()[ ii ] +
                                  " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
                                  ", for: " + protein.getShortLabel() );
                     }
@@ -1147,11 +1147,11 @@ public class UpdateProteins extends UpdateProteinsI {
 
         if( generateProteinShortlabelUsingBiosource ) {
 
-            String[][] genes = sptrEntry.getGenes();
+            Gene[] genes = sptrEntry.getGenes();
 
-            if( genes.length > 0 && genes[ 0 ].length > 0 ) // if there is at least one gene
+            if( genes.length > 0 && genes.length > 0 ) // if there is at least one gene
             {
-                shortlabel = genes[ 0 ][ 0 ];
+                shortlabel = genes[ 0 ].getName();
             }
 
             if( shortlabel == null ) {
@@ -1417,23 +1417,23 @@ public class UpdateProteins extends UpdateProteinsI {
         updateUniprotXref4Protein( sptrEntry, protein );
 
         // create Aliases
-        String[][] genes = sptrEntry.getGenes();
+        Gene[] genes = sptrEntry.getGenes();
         Alias alias = null;
         for ( int i = 0; i < genes.length; i++ ) {
 
             alias = new Alias( myInstitution,
                                protein,
                                geneNameAliasType, // gene-name
-                               genes[ i ][ 0 ] );
+                               genes[ i ].getName() );
 
             addNewAlias( protein, alias );
 
-            for ( int ii = 1; ii < genes[ i ].length; ii++ ) {
+            for ( int ii = 1; ii < genes.length; ii++ ) {
 
                 alias = new Alias( myInstitution,
                                    protein,
                                    geneNameSynonymAliasType, // gene-name-synonym
-                                   genes[ i ][ ii ] );
+                                   genes[ i ].getName() );
 
                 addNewAlias( protein, alias );
             }

@@ -5,25 +5,25 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.fileParsing.beans.GiotLineBean;
 import uk.ac.ebi.intact.util.fileParsing.BeanStreamReader;
 import uk.ac.ebi.intact.util.fileParsing.SerializationHelper;
+import uk.ac.ebi.intact.util.fileParsing.beans.GiotLineBean;
+import uk.ac.ebi.interfaces.sptr.Gene;
+import uk.ac.ebi.interfaces.sptr.SPTREntry;
+import uk.ac.ebi.sptr.flatfile.yasp.EntryIterator;
 import uk.ac.ebi.sptr.flatfile.yasp.YASP;
 import uk.ac.ebi.sptr.flatfile.yasp.YASPException;
-import uk.ac.ebi.sptr.flatfile.yasp.EntryIterator;
-import uk.ac.ebi.interfaces.sptr.SPTREntry;
 
-import java.util.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.Exception;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Insert of the Giot data in IntAct
@@ -457,8 +457,8 @@ public class InsertComplexGiot {
                 }
 
                 // do something
-                 String[][] genes = sptrEntry.getGenes();
-                 gnLine = genes[ 0 ][ 0 ];
+                 Gene[] genes = sptrEntry.getGenes();
+                 gnLine = genes[ 0 ].getName();
             }
 
         } catch (YASPException e) {
