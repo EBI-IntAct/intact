@@ -158,11 +158,14 @@
         //only have a single object to show..
         BasicObjectViewBean bean = (BasicObjectViewBean)session.getAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN);
         if(bean.getWrappedObject() instanceof Protein) {
-            //this means we are displaying a Protein with no Interactions - print
-            //a message first...
+            //this *could* mean we are displaying a Protein with no Interactions - print
+            //a message first in that case...
+            Protein protein = (Protein)bean.getWrappedObject();
+            if(protein.getActiveInstance().isEmpty()) {
             %>
-            <h2>This Protein is currently not attached to any Interactions:</h2>
+                <h2>This Protein is currently not attached to any Interactions:</h2>
             <%
+            }
         }
         bean.transform("0", result);
     }
