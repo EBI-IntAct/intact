@@ -90,7 +90,7 @@ my $interaction_sth = $dbh->prepare("INSERT INTO Interactor
                                             ( AC, shortLabel, owner_ac, objclass )
                                      VALUES (concat('$sPrefix-', Intact_ac.nextval),
                                              ?,?,
-                                             'uk.ac.ebi.intact.core.model.Interaction')"
+                                             'uk.ac.ebi.intact.model.Interaction')"
 				    );
 
 # Prepare statement for insertion of Proteins
@@ -99,7 +99,7 @@ my $sIns_i = $dbh -> prepare ( "INSERT INTO Interactor
                                 VALUES
                                 ( concat('$sPrefix-', Intact_ac.nextval),
                                   ?,?,
-                                  'uk.ac.ebi.intact.core.model.Protein')"
+                                  'uk.ac.ebi.intact.model.Protein')"
                               );
 
 # Prepare statement for insertion of Xrefs
@@ -114,7 +114,7 @@ my $xref_stm = $dbh->prepare ("insert into Xref
 
 # CvComponentRole
 my $sthCv = $dbh-> prepare("select shortLabel, ac from controlledVocab
-                              where ObjClass='uk.ac.ebi.intact.core.model.CvComponentRole'") ;
+                              where ObjClass='uk.ac.ebi.intact.model.CvComponentRole'") ;
 $sthCv -> execute() ;
 
 my %hRole ;
@@ -124,7 +124,7 @@ while (my ($sVocab, $sAC) = $sthCv -> fetchrow_array) {
 
 # CvDatabase
 $sthCv = $dbh-> prepare("select shortLabel, ac from controlledVocab
-                              where ObjClass='uk.ac.ebi.intact.core.model.CvDatabase'") ;
+                              where ObjClass='uk.ac.ebi.intact.model.CvDatabase'") ;
 $sthCv -> execute() ;
 
 my %hDatabase ;
