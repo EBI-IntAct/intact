@@ -78,10 +78,10 @@ instructions for anonymous download on the CVS pages. All of what follows assume
 
 b) You must then ensure that the configuration files are set correctly for you environment. A lot of
 this is automated for you, via the 'config/build.properties' file. Edit that file and uncomment the target environment
-that you have (ie currently for oracle or postgres). Note that for oracle you need to have a file in the config directory called
-'oracle.properties' containing your password (eg 'password=abcd'). In the 'template' directory you will find a file called
-'oracle.template' - edit this file to define your oracle password, then save it as 'oracle.properties' in the 'config' directory.
-The current Postgres configuration will soon be generalised to use the same mechanism as for Oracle.
+that you have (ie currently for oracle or postgres). Note that you need to have a file in the config directory called
+'oracle.properties' (respectivly 'postgres.properties') containing your password (eg 'password=abcd'), username...
+In the 'template' directory you will find a file called 'oracle.template' ('postgres.template') - edit this
+file to define database access, then save it as 'oracle.properties' ('postgres.properties') in the 'config' directory.
 
 In the intactCore directory, type
 
