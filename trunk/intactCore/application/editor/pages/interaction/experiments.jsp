@@ -77,14 +77,14 @@
             </nested:iterate>
 
             <%-- Prints all the error messages relevant to this page only. --%>
-            <logic:messagesPresent property="int.exp.add">
-                <tr class="tableRowOdd">
-                    <td class="tableErrorCell" colspan="5">
-                        <html:errors/>
-                    </td>
-                </tr>
-            </logic:messagesPresent>
-
+<%--            <logic:messagesPresent property="int.exp.add">--%>
+<%--                <tr class="tableRowOdd">--%>
+<%--                    <td class="tableErrorCell" colspan="5">--%>
+<%--                        <html:errors/>--%>
+<%--                    </td>--%>
+<%--                </tr>--%>
+<%--            </logic:messagesPresent>--%>
+<%----%>
         </table>
     </html:form>
 </c:if>

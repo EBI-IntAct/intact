@@ -51,14 +51,14 @@
         </tr>
 
         <%-- Prints all the error messages relevant to this page only. --%>
-        <logic:messagesPresent property="int.exp.search">
-            <tr class="tableRowOdd">
-                <td class="tableErrorCell" colspan="5">
+<%--        <logic:messagesPresent property="int.exp.search">--%>
+<%--            <tr class="tableRowOdd">--%>
+<%--                <td class="tableErrorCell" colspan="5">--%>
                     <%-- Filter out other error messages. --%>
-                    <html:errors/>
-                </td>
-            </tr>
-        </logic:messagesPresent>
-
+<%--                    <html:errors/>--%>
+<%--                </td>--%>
+<%--            </tr>--%>
+<%--        </logic:messagesPresent>--%>
+<%----%>
     </table>
 </html:form>
