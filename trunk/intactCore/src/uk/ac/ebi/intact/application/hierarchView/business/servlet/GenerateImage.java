@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
-import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
+//import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ConvertSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
@@ -95,12 +95,12 @@ public class GenerateImage extends HttpServlet {
                 Document document = imageBean.getDocument();
                 if (null != document) {
                     try {
-                        Chrono chrono = new Chrono ();
-                        chrono.start();
+//                        Chrono chrono = new Chrono ();
+//                        chrono.start();
                         byte[] imageData = convert.convert(document);
-                        chrono.stop();
-                        String msg = "Time for rasterizing the SVG DOM " + chrono;
-                        logger.info(msg);
+//                        chrono.stop();
+//                        String msg = "Time for rasterizing the SVG DOM " + chrono;
+//                        logger.info(msg);
 
                         logger.info ("SVG transcoding done");
 
