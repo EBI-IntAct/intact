@@ -1,5 +1,5 @@
 #!/bin/sh
- 
+
 CLASSPATH=`echo lib/*.jar | tr ' ' ':'`:$CLASSPATH
 CLASSPATH=classes/:$CLASSPATH
 
@@ -9,7 +9,7 @@ cygwin=false;
 
 case "`uname`" in
 
-CYGWIN*) cygwin=true 
+CYGWIN*) cygwin=true
          echo "running in a Windows JVM (from cygwin).." ;;
 *) echo "running in a Unix JVM..." ;;
 
@@ -20,7 +20,11 @@ CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
 
 fi
 
-java -classpath $CLASSPATH uk.ac.ebi.intact.util.$1 $2 $3 $4 $5
+if [ "$JAVA_HOME" ]; then
+    $JAVA_HOME/bin/java -classpath $CLASSPATH uk.ac.ebi.intact.util.$1 $2 $3 $4 $5
+else
+    echo Please set JAVA_HOME for this script to exceute
+fi
 
 # end
- 
+
