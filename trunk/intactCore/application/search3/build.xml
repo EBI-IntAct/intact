@@ -113,8 +113,12 @@
         <!-- layout commons files -->
         <delete>
              <fileset dir="${layouts.dir}">
-                 <!-- Do not remove search specific files -->
+                 <!-- Do not remove search specific files
+                 NB these are only needed because search now uses a different stylesheet
+                 to everything else in Intact
+                 -->
                  <exclude name="sidebar.jsp"/>
+                 <exclude name="sidebarLayout.jsp"/>
 		     <exclude name="${styles.dir}/intact.css"/>
 		</fileset>
         </delete>
@@ -127,6 +131,7 @@
                  <exclude name="warning.jsp"/>
                  <exclude name="results.jsp"/>
                  <exclude name="sidebarInput.jsp"/>
+                 <exclude name="footer.jsp"/>
 
                  <!-- these are the new JSPs and HTML files (for search mockups Aug 2004)-->
                  <exclude name="jscript.html"/>
