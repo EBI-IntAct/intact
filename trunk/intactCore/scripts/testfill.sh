@@ -1,10 +1,10 @@
 #!/bin/sh
 echo "Usage: testfill.sh user/pw database small|large"
 
-sqlplus $1@$2 @sql/oracle/drop_tables.sql
-sqlplus $1@$2 @sql/oracle/create_tables.sql
-sqlplus $1@$2 @sql/oracle/create_dummy.sql
-
+cd sql/oracle
+sqlplus $1@$2 @create_all.sql
+sqlplus $1@$2 @create_dummy.sql
+cd ../../
 
 if [ "$3" = "" ]
 then
