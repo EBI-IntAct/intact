@@ -61,3 +61,5 @@ CREATE OR REPLACE FUNCTION make_privs () RETURNS varchar AS '
 
     END;
 ' LANGUAGE 'plpgsql';                                                              
+
+select make_privs (); 
