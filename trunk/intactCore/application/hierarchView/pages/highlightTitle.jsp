@@ -15,19 +15,12 @@
    - @version $Id$
 -->
 
-<%
-   /**
-    * Retreive user's data from the session
-    */
-   IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
-%>
-
 <table border="0" cellspacing="3" cellpadding="3" width="100%">
 
       <tr>
              <td>
                    <!-- displays the interaction network title -->
-                   Existing highlight source for the protein AC: <%= user.getAC() %>.
+                   Existing highlight source for the central protein.
              </td>
       </tr>
 

@@ -25,16 +25,16 @@
      * Retreive user's data from the session
      */
     IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
-    String AC = null;
+    String queryString = null;
     String methodLabel = null;
     String fieldMethod = null;
 
     if (user != null) {
-        AC = user.getAC();
+        queryString = user.getQueryString();
         methodLabel = user.getMethodLabel();
         fieldMethod = (null == methodLabel ? "" : methodLabel);
     } else {
-        AC = "";
+        queryString = "";
         fieldMethod = "";
     }
 
@@ -54,7 +54,7 @@
 
         <tr>
             <td>
-                   <html:text property="AC" value="<%= AC %>" size="12"/>
+                   <html:text property="queryString" value="<%= queryString %>" size="12"/>
             </td>
 
         </tr>
