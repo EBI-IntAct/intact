@@ -11,9 +11,9 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.SearchException;
 import org.apache.struts.tiles.ComponentContext;
 
 import java.util.*;
@@ -111,7 +111,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     // Override the super method to this bean's info.
-    public void persist(EditUserI user) throws IntactException {
+    public void persist(EditUserI user) throws IntactException, SearchException {
         // The order is important! update super last as it does
         // the update of the object.
         Interaction intact = (Interaction) getAnnotatedObject();

@@ -10,10 +10,9 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.ValidationException;
 import uk.ac.ebi.intact.application.editor.exception.ExperimentValidationException;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.DuplicateLabelException;
-import uk.ac.ebi.intact.persistence.SearchException;
 import org.apache.struts.tiles.ComponentContext;
 
 import java.util.Map;
@@ -60,7 +59,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Override the super method to this bean's info.
-    public void persist(EditUserI user) throws IntactException {
+    public void persist(EditUserI user) throws IntactException, SearchException {
         // The order is important! update super last as it does
         // the update of the object.
         Experiment exp = (Experiment) getAnnotatedObject();
@@ -103,17 +102,10 @@ public class ExperimentViewBean extends AbstractEditViewBean {
                 throw new ExperimentValidationException();
             }
         }
-        catch (IntactException ie) {
+        catch (SearchException ie) {
             throw new ExperimentValidationException();
         }
     }
-
-    // Override to provide Experiment info.
-//    public void fillEditorSpecificInfo(DynaBean form) {
-//        form.set("organism", myOrganism);
-//        form.set("interaction", myInteraction);
-//        form.set("identification", myIdentification);
-//    }
 
     public Map getEditorMenus() throws SearchException {
         // The map to return.
