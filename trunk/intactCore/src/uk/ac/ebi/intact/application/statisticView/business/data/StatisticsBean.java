@@ -94,6 +94,26 @@ public final class StatisticsBean {
         }
     }
 
+
+    /**
+     * Retrieve the eldest data of the Statistics table
+     *
+     * @return Collection which contains the latest data of the Statistics table
+     */
+    public final IntactStatistics getFirstRow () {
+
+        final int size = statistics.size ();
+        if ( size > 0 ) {
+            logger.info ( "last row found" );
+            return (IntactStatistics) statistics.get ( 0 );
+        } else {
+            logger.info ( "No data found" );
+            return null;
+        }
+    }
+
+
+
     public final String getMoreRecentStatisticsDate () throws IntactException {
 
         final Timestamp timestamp = getLastTimestamp ();

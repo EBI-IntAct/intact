@@ -45,18 +45,22 @@ import uk.ac.ebi.intact.application.statisticView.business.data.StatisticsBean;
 import uk.ac.ebi.intact.application.statisticView.business.data.NoDataException;
 
 /**
+ * Construction of the Chart out of a IntactStatistics collection.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
 public final class ChartBuilder {
 
+    static final Logger logger = Logger.getLogger ( Constants.LOGGER_NAME );
+
+    /**
+     * Data to extract from the IntactStatistics
+     */
     public static final int PROTEIN_DATA = 0;
     public static final int COMPLEX_DATA = 1;
     public static final int EXPERIMENT_DATA = 2;
     public static final int TERM_DATA = 3;
-
-    static final Logger logger = Logger.getLogger ( Constants.LOGGER_NAME );
 
     private static void loadComplexData ( final XYSeries dataSeries,
                                           final Iterator iterator ) {
@@ -144,6 +148,7 @@ public final class ChartBuilder {
                     loadTermData ( dataSeries, iter );
                     break;
                 default :
+                    logger.error( "The requested type of data (" + type + ") doesn't exists." );
                     // error
             }
             while ( iter.hasNext () ) {
