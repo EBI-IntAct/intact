@@ -45,7 +45,10 @@ public class GoHighlightmentSource extends HighlightmentSource {
      */
     public String getHtmlCodeOption(HttpSession aSession) {
         String htmlCode;
-        String check = (String)  aSession.getAttribute (ATTRIBUTE_OPTION_CHILDREN);
+        IntactUserI user = (IntactUserI) aSession.getAttribute (uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY);
+        String check = (String) user.getHighlightOption (ATTRIBUTE_OPTION_CHILDREN);
+
+        //String check = (String)  aSession.getAttribute (ATTRIBUTE_OPTION_CHILDREN);
 
         if (check == null) {
             check = "";
