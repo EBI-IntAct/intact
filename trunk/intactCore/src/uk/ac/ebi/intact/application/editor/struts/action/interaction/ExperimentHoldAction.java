@@ -65,13 +65,16 @@ public class ExperimentHoldAction extends AbstractEditorAction {
             // Avoid duplicates.
             if (view.experimentExists(expbean)) {
                 ActionErrors errors = new ActionErrors();
-                errors.add("int.exp.add", new ActionError("error.int.exp.hold.add",
-                        expbean.getShortLabel()));
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                        new ActionError("error.int.exp.hold.add",
+                                expbean.getShortLabel()));
                 saveErrors(request, errors);
-                return mapping.findForward(EditorConstants.FORWARD_INPUT);
+                return mapping.getInputForward();
             }
-            // Wants to add the selected experiment to the Interaction.
-            view.addExperiment(expbean);
+            else {
+                // Wants to add the selected experiment to the Interaction.
+                view.addExperiment(expbean);
+            }
         }
         else {
             // Must have pressed 'Hide'.

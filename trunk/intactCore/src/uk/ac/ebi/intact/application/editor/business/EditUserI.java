@@ -138,13 +138,19 @@ public interface EditUserI extends Serializable {
             throws SearchException;
 
     /**
-     * Gets a Protein by xref.
+     * Gets SPTR Proteins via SRS.
      * @param pid the primary id to search for.
-     * @return <code>Protein</code> instance for <code>pid</code>.
-     * @throws SearchException thrown for a search failure or the search
-     * returned more than one Protein.
+     * @return collection of <code>Protein</code> instances for <code>pid</code>.
      */
-    public Protein getProteinByXref(String pid) throws SearchException;
+    public Collection getSPTRProteins(String pid);
+
+    /**
+     * Gets a collection of Proteins by xref.
+     * @param pid the primary id to search for.
+     * @return collection of <code>Protein</code> instances for <code>pid</code>.
+     * @throws SearchException thrown for a search failure.
+     */
+    public Collection getProteinsByXref(String pid) throws SearchException;
 
     /**
      * This method provides a means of searching intact objects, within the constraints

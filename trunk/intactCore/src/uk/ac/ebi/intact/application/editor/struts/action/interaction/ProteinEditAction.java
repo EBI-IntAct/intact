@@ -66,16 +66,24 @@ public class ProteinEditAction extends AbstractEditorAction {
         }
         else if (theForm.savePressed()) {
             if (viewbean.hasDuplicates(pb)) {
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                        new ActionError("error.int.protein.edit.dup",
+                                pb.getShortLabel(), pb.getRole()));
+                saveErrors(request, errors);
                 pb.setEditState(ProteinBean.ERROR);
-                pb.setError(pb.getShortLabel(), pb.getRole());
-                return inputForward(mapping);
+//                pb.setError(pb.getShortLabel(), pb.getRole());
+//                System.out.println("mapping is " + inputForward(mapping));
+                return mapping.getInputForward();
+//                return inputForward(mapping);
+//                return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
             }
-            else {
+//            else {
                 // The protein to update.
                 viewbean.addProteinToUpdate(pb);
                 // Back to the view mode.
                 pb.setEditState(EditBean.VIEW);
-            }
+//            }
         }
         else if (theForm.deletePressed()) {
             // Delete is pressed.
