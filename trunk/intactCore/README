@@ -5,19 +5,19 @@ DIRECTORIES
 ------------
 
 application/    : IntAct web applications, including JSPs etc
-classes/	    : compiled Java classes
+classes/	: compiled Java classes
 config/	        : configuration files
 data/           : data flat files for test purposes
-doc/		    : documentation
-ide/		    : project files of Java IDEs
-lib/		    : third-party libraries needed in addition to the standard JDK
+doc/		: documentation
+ide/		: project files of Java IDEs
+lib/		: third-party libraries needed in addition to the standard JDK
 perl/           : auxiliary perl scripts
-scripts/	    : auxiliary scripts, ant files, make files
+scripts/	: auxiliary scripts, ant files, make files
 specifications/ : specifications, mainly screen mockups, for IntAct applications
 sql/            : sql scripts for Oracle and Postgres
-src/		    : Java sources
+src/		: Java sources
 template/       : template files for configuration etc.
-uml/		    : UML modeling files
+uml/		: UML modeling files
 
 Other directories under intactCore not mentioned above are currently not relevant to installing/running intact.
 
@@ -57,7 +57,7 @@ There are more detailed notes for hierarchView in a README file in the directory
 The following environment variables should be set:
 
 $CATALINA_HOME - the home directory of your tomcat installation
-CATALINA_OPTS - should be set with your proxy setting (needed by protein loading, and so by search)
+$CATALINA_OPTS - should be set with your proxy setting (needed by protein loading, and so by search)
                 in the EBI, it would be set to '-DproxySet=true -DproxyHost=www-proxy.ebi.ac.uk -DproxyPort=8080'
 $JAVA_HOME - the home directory of your JDK
 $CLASSPATH should contains, at least, the current directory (i.e. : .).
@@ -69,7 +69,7 @@ All those variable settings could be done by sourcing one of the following scrip
   - scripts/setEnv.csh (for csh environment)
     type: source scripts/setEnv.csh
 
-Intact has been tested on both Linux (7.1 and 8.0) and Windows2000 running inside cygwin, and with both local and
+Intact has been tested on both Redhat Linux 7.1 and Windows2000 running inside cygwin, and with both local and
 remote postgres databases as well as a remote oracle DB. Thus intact is based around a linux/unix environment, but if you
 have Windows then everything can still be used provided you have cygwin installed.
 
@@ -95,7 +95,7 @@ generated. If not you should edit 'repository.xml' manually to set the DB URL, u
 the template in that file as a guide.
 
 c) As IntAct is using HTTP connexion to communicate with external resources (eg. SRS, ego, Newt...),
-   you could encounter some problems (ie. no connexion allowed) if your system runs behind an HTTP proxy.
+   you could encounter some problems (ie. no connection allowed) if your system runs behind an HTTP proxy.
    In order to go through you proxy server, you need to customize the file 'config/proxy.properties'
    by turning the proxy support on and specifying the hostname and port number of your proxy.
 
@@ -123,7 +123,7 @@ or
 	scripts/oracle/testfill.sh 'user/pwd' <dbname> small | medium | large (oracle)
 
 "small" is for minimal tests, will need < 5 minutes. "large" is full, real data from the Ho and Gavin experiments,
-will run > 1 hour.
+will run ca. 30 minutes.
 
 You should then check your database using an appropriate tool (eg pgaccess for postgres/linux) to make sure you have the
 intact tables and that they are populated.
@@ -143,9 +143,9 @@ Intact comes bundled with a number of web applications - currently we have:
 	- search:       The search application.
 	- editor:       Edit interface for IntAct objects.
 	- hierarchView: Graph visualisation.
-    - intact:       Contains only static documentation pages,
-                    but installation is the same as for normal
-                    web applications.
+    	- intact:       Contains only static documentation pages,
+                   	but installation is the same as for normal
+                    	web applications.
 
 There is also the 'synchron' application which is use to exchange data between intact sites - this is standalone
 and not web-based. As this application matures further details will be included about it in this file
