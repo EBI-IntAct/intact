@@ -5,6 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Represents a crossreference to another database.
  *
@@ -12,6 +16,12 @@ package uk.ac.ebi.intact.model;
  * @version $Id$
  */
 public class Xref extends BasicObjectImpl {
+
+    ///////////////////////////////////////
+    // Constamt
+
+    public static final int MAX_ID_LEN = 30;
+
 
     ///////////////////////////////////////
     //attributes
@@ -119,12 +129,22 @@ public class Xref extends BasicObjectImpl {
     }
 
     public void setPrimaryId( String aPrimaryId ) {
-        if( aPrimaryId == null ) throw new NullPointerException( "valid Xref must have a primary ID!" );
 
-
-        if( aPrimaryId != null && aPrimaryId.length() > 30 ) {
-            aPrimaryId = aPrimaryId.substring( 0, 30 );
+        if( aPrimaryId == null ) {
+            throw new NullPointerException( "valid Xref must have a primary ID!" );
         }
+
+        // delete leading and trailing spaces.
+        aPrimaryId = aPrimaryId.trim();
+
+        if( "".equals( aPrimaryId ) ) {
+            throw new IllegalArgumentException( "Must define a non empty primaryId for an Xref." );
+        }
+
+        if( aPrimaryId != null && aPrimaryId.length() > MAX_ID_LEN ) {
+            aPrimaryId = aPrimaryId.substring( 0, MAX_ID_LEN );
+        }
+
         this.primaryId = aPrimaryId;
     }
 
@@ -133,9 +153,16 @@ public class Xref extends BasicObjectImpl {
     }
 
     public void setSecondaryId( String aSecondaryId ) {
-        if( aSecondaryId != null && aSecondaryId.length() > 30 ) {
-            aSecondaryId = aSecondaryId.substring( 0, 30 );
+
+        if( aSecondaryId != null ) {
+            // delete leading and trailing spaces.
+            aSecondaryId = aSecondaryId.trim();
+
+            if( aSecondaryId.length() > MAX_ID_LEN ) {
+                aSecondaryId = aSecondaryId.substring( 0, MAX_ID_LEN );
+            }
         }
+
         this.secondaryId = aSecondaryId;
     }
 
@@ -191,6 +218,53 @@ public class Xref extends BasicObjectImpl {
 
     public void setCvDatabaseAc( String ac ) {
         this.cvDatabaseAc = ac;
+    }
+
+
+    ///////////////////////////////////////
+    // Utility method
+
+    /**
+     * checks that the given primaryId matched (if defined) the regular expression on the CvDatabase.
+     * <br>
+     * If no validation regexp is found, the primaryId is declared valid.
+     *
+     * @return true if the primaryId is valid or no regexp could be found in the CvDatabase annotations. Otherwise false.
+     */
+    public boolean hasValidPrimaryId() {
+
+        boolean valid = true;
+        boolean stop = false;
+
+        // until all annotation are checked or we find the validation rule
+        for( Iterator iterator = cvDatabase.getAnnotations().iterator(); iterator.hasNext() && false == stop; ) {
+            Annotation annotation = (Annotation) iterator.next();
+
+            if( CvTopic.XREF_VALIDATION_REGEXP.equals( annotation.getCvTopic().getShortLabel() ) ) {
+                String regexp = annotation.getAnnotationText();
+
+                try {
+                    // TODO escape special characters !!
+                    Pattern pattern = Pattern.compile( regexp );
+
+                    // validate the primaryId against that regular expression
+                    Matcher matcher = pattern.matcher( primaryId );
+                    if( false == matcher.matches() ) {
+                        valid = false;
+                    }
+
+                } catch ( Exception e ) {
+                    // if the RegExp engine thrown an Exception, that may happen if the format is wrong.
+                    // we just display it for debugging sake, but the Xref is declared valid.
+                    e.printStackTrace();
+                }
+
+                // whatever the outcome of the check is, we know that there is only one validation rule, so we can stop.
+                stop = true;
+            }
+        }
+
+        return valid;
     }
 
 
