@@ -11,8 +11,7 @@
   --%>
 
 <%@ page language="java"%>
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
-                 uk.ac.ebi.intact.application.editor.struts.view.EditBean,
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.view.EditBean,
                  uk.ac.ebi.intact.application.editor.struts.view.EditForm,
                  uk.ac.ebi.intact.application.editor.struts.viewx.interaction.InteractionViewBean,
                  uk.ac.ebi.intact.application.editor.struts.viewx.interaction.ProteinBean"%>
@@ -27,15 +26,9 @@
 
 <c:set var="viewbean" value="${user.view}"/>
 
-<%-- The menus needed to edit Proteins --%>
-<c:set var="menus" value="${viewbean.editProteinMenus}"/>
-<c:set var="rolelist" value="${menus['Roles']}"/>
-<c:set var="organismlist" value="${menus['Organisms']}"/>
-
-<%-- The menus needed to add Proteins --%>
-<c:set var="menus" value="${viewbean.addProteinMenus}"/>
-<c:set var="rolelist_" value="${menus['Roles']}"/>
-<c:set var="organismlist_" value="${menus['Organisms']}"/>
+<%-- The menus needed to edit/add Proteins --%>
+<c:set var="rolelist" value="${viewbean.editProteinRoleMenu}"/>
+<c:set var="rolelist_" value="${viewbean.addProteinRoleMenu}"/>
 
 <%-- Class wide declarations. --%>
 <%!
@@ -61,13 +54,13 @@
                 <th class="tableCellHeader" width="10%" rowspan="2">Action</th>
                 <th class="tableCellHeader" width="10%">Short Label</th>
                 <th class="tableCellHeader" width="10%">SP AC</th>
-                <th class="tableCellHeader" width="20%">IntAct AC</th>
-                <th class="tableCellHeader" width="50%" rowspan="2">Full Name</th>
+                <th class="tableCellHeader" width="10%">IntAct AC</th>
+                <th class="tableCellHeader" width="60%" rowspan="2">Full Name</th>
             </tr>
             <tr class="tableRowHeader">
                 <th class="tableCellHeader">Role*</th>
                 <th class="tableCellHeader">Stoichiometry</th>
-                <th class="tableCellHeader">Expressed in (organism)</th>
+                <th class="tableCellHeader">Organism</th>
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
@@ -148,9 +141,6 @@
                         <td class="tableCell">
                             <nested:write property="stoichiometry"/>
                         </td>
-                        <td class="tableCell">
-                            <nested:write property="organism"/>
-                        </td>
                     </nested:equal>
 
                     <nested:equal property="editState" value="<%=saveState%>">
@@ -161,11 +151,6 @@
                         </td>
                         <td class="tableCell">
                             <nested:text size="5" property="stoichiometry"/>
-                        </td>
-                        <td class="tableCell">
-                            <nested:select property="organism">
-                                <nested:options name="organismlist" />
-                            </nested:select>
                         </td>
                     </nested:equal>
 
@@ -179,14 +164,11 @@
                         <td class="tableCell">
                             <nested:text size="5" property="stoichiometry"/>
                         </td>
-                        <td class="tableCell">
-                            <nested:select property="organism">
-                                <nested:options name="organismlist_" />
-                            </nested:select>
-                            <html:errors property="protein.organism"/>
-                        </td>
                     </nested:equal>
 
+                    <td class="tableCell">
+                        <nested:write property="organism"/>
+                    </td>
                 </tr>
             </nested:iterate>
         </table>
