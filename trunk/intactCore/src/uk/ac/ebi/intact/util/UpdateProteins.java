@@ -69,7 +69,7 @@ import java.util.*;
  *                    a warning message.
  *
  *   The update and creation process (2.3.2 a and b) includes a check of the following Xref :
- *   SPTR, GO, SGD.
+ *   SPTR, GO, SGD, INTERPRO, FLYBASE.
  *
  *   CAUTION: Be aware that no checks have been done about the ownership of updated objects.
  *
@@ -367,11 +367,11 @@ public class UpdateProteins extends UpdateProteinsI {
      *              2.1.2 search for all Protein which have a Xref isoform-parent with that AC as a primary key.
      *              2.1.3 store the match in a collection spliceVariants
      *
-     * @param sptrEntry
-     * @param masters
-     * @param taxid
-     * @param helper
-     * @return
+     * @param sptrEntry The entry from which we will try to create the Proteins and splice variants
+     * @param masters   The master protein of the splice variant
+     * @param taxid     The organism we work on
+     * @param helper    The database access
+     * @return the created splice variants
      */
     private Collection getSpliceVariantFromSPTrAC ( SPTREntry sptrEntry,
                                                     Collection masters,
@@ -1013,6 +1013,7 @@ public class UpdateProteins extends UpdateProteinsI {
         needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
         needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
         needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_INTERPRO, interproDatabase);
+        needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_FLYBASE, flybaseDatabase);
 
         // update SPTR Xrefs
 
@@ -1089,20 +1090,21 @@ public class UpdateProteins extends UpdateProteinsI {
         Protein protein = new Protein (myInstitution, bioSource, shortLabel);
 
         // get the protein info we need
-        helper.create(protein);
+        helper.create( protein );
 
         String fullName    = sptrEntry.getProteinName();
         String proteinAC[] = sptrEntry.getAccessionNumbers();
         String sequence    = sptrEntry.getSequence();
         String crc64       = sptrEntry.getCRC64();
 
-        protein.setFullName (fullName);
-        protein.setSequence (helper, sequence);
-        protein.setCrc64 (crc64);
+        protein.setFullName ( fullName );
+        protein.setSequence ( helper, sequence );
+        protein.setCrc64 ( crc64 );
 
         updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
         updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
         updateXref (sptrEntry, protein, Factory.XREF_INTERPRO, interproDatabase);
+        updateXref (sptrEntry, protein, Factory.XREF_FLYBASE, flybaseDatabase);
 
         for ( int i = 0; i < proteinAC.length; i++ ) {
             String ac = proteinAC[ i ];
@@ -1378,8 +1380,7 @@ public class UpdateProteins extends UpdateProteinsI {
                                             Protein master,
                                             SPTREntry sptrEntry,
                                             BioSource bioSource)
-            throws SPTRException,
-            IntactException {
+            throws SPTRException, IntactException {
 
         Protein spliceVariant = new Protein( myInstitution, bioSource, isoId );
 
@@ -1453,8 +1454,35 @@ public class UpdateProteins extends UpdateProteinsI {
 
     public Collection insertSPTrProteins (String proteinAc) {
 
+        if ( proteinAc == null || proteinAc.trim().equals( "" ) ) {
+            throw new IllegalArgumentException( "The protein AC MUST not be null or empty." );
+        }
+
+        int index = proteinAc.indexOf( "-" ); // search for splice variant (eg: P123456-1)
+        if ( index != -1 ) {
+            proteinAc = proteinAc.substring( 0, index ); // will return P123456.
+        }
+
         String url = getUrl( proteinAc );
-        int i = insertSPTrProteins( url, null, true );
+        int i = insertSPTrProteinsFromURL( url, null, true );
+        if (debugOnScreen) System.out.println( i + " proteins created/updated." );
+
+        return proteins;
+    }
+
+    public Collection insertSPTrProteins (String proteinAc, String taxId, boolean update) {
+
+        if ( proteinAc == null || proteinAc.trim().equals( "" ) ) {
+            throw new IllegalArgumentException( "The protein AC MUST not be null or empty." );
+        }
+
+        int index = proteinAc.indexOf( "-" ); // search for splice variant (eg: P123456-1)
+        if ( index != -1 ) {
+            proteinAc = proteinAc.substring( 0, index ); // will return P123456.
+        }
+
+        String url = getUrl( proteinAc );
+        int i = insertSPTrProteinsFromURL( url, taxId, update );
         if (debugOnScreen) System.out.println( i + " proteins created/updated." );
 
         return proteins;
@@ -1469,29 +1497,29 @@ public class UpdateProteins extends UpdateProteinsI {
      * @param aTaxId The tax id the protein should have
      * @return the protein created or retrieved from the IntAct database
      */
-    public Protein insertSimpleProtein(String anAc, CvDatabase aDatabase, String aTaxId)
-            throws IntactException{
+    public Protein insertSimpleProtein( String anAc, CvDatabase aDatabase, String aTaxId )
+            throws IntactException {
 
         // Search for the protein or create it
-        Collection newProteins = helper.getObjectsByXref(Protein.class, anAc);
+        Collection newProteins = helper.getObjectsByXref( Protein.class, anAc );
 
         if (localTransactionControl){
-            helper.startTransaction(BusinessConstants.OBJECT_TX);
+            helper.startTransaction( BusinessConstants.OBJECT_TX );
         }
 
         // Get or create valid biosource from taxid
-        BioSource validBioSource = bioSourceFactory.getValidBioSource(aTaxId);
+        BioSource validBioSource = bioSourceFactory.getValidBioSource( aTaxId );
 
         /* If there were obsolete taxids in the db, they should now be updated.
-        * So we will only compare valid biosources.
-        */
+         * So we will only compare valid biosources.
+         */
 
         // Filter for exactly one entry with appropriate taxId
         Protein targetProtein = null;
-        for (Iterator i = newProteins.iterator(); i.hasNext();){
+        for ( Iterator i = newProteins.iterator(); i.hasNext(); ){
             Protein tmpProtein = (Protein) i.next();
-            if (tmpProtein.getBioSource().getTaxId().equals(validBioSource.getTaxId())){
-                if (null == targetProtein){
+            if ( tmpProtein.getBioSource().getTaxId().equals( validBioSource.getTaxId() ) ){
+                if ( null == targetProtein ){
                     targetProtein = tmpProtein;
                 } else {
                     throw new IntactException("More than one Protein with AC "
@@ -1503,13 +1531,12 @@ public class UpdateProteins extends UpdateProteinsI {
             }
         }
 
-        if (null == targetProtein) {
+        if ( null == targetProtein ) {
             // No appropriate protein found, create it.
 
             // Create new Protein
-            targetProtein = new Protein((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                                        validBioSource, anAc);
-            helper.create(targetProtein);
+            targetProtein = new Protein( myInstitution, validBioSource, anAc );
+            helper.create ( targetProtein );
 
             // Create new Xref if a DB has been given
             if (null != aDatabase) {
@@ -1530,9 +1557,7 @@ public class UpdateProteins extends UpdateProteinsI {
     }
 
 
-    public int insertSPTrProteins (String sourceUrl,
-                                   String taxid,
-                                   boolean update) {
+    public int insertSPTrProteinsFromURL ( String sourceUrl, String taxid, boolean update ) {
 
         logger.info ("update from URL: " + sourceUrl);
         if (debugOnScreen) System.out.println ("update from URL: " + sourceUrl);
@@ -1809,7 +1834,7 @@ public class UpdateProteins extends UpdateProteinsI {
             chrono.start();
 
             update.setDebugOnScreen (true);
-            int nb = update.insertSPTrProteins (url, null, true);
+            int nb = update.insertSPTrProteinsFromURL (url, null, true);
 
             chrono.stop();
             System.out.println("Time elapsed: " + chrono);
