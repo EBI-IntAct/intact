@@ -9,12 +9,15 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.tiles.ComponentContext;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.*;
 
@@ -71,12 +74,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
     private transient List myProteins = new ArrayList();
 
     /**
-     * Holds Proteins to add. This collection is cleared once the user
-     * commits the transaction.
-     */
-    private transient List myProteinsToAdd = new ArrayList();
-
-    /**
      * Holds Proteins to del. This collection is cleared once the user
      * commits the transaction.
      */
@@ -123,12 +120,32 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 CvInteractionType.class, myInteractionType);
 
         intact.setBioSource(biosource);
-        intact.setBioSourceAc(biosource.getAc());
         intact.setCvInteractionType(type);
-        intact.setCvInteractionTypeAc(type.getAc());
 
-        // Need to update Proteins here.
+        // Create experiments and add them to CV object.
+        for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
+            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+            intact.addExperiment(exp);
+        }
+        // Delete experiments and remove them from CV object.
+        for (Iterator iter = getExperimentsToDel().iterator(); iter.hasNext();) {
+            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+            intact.removeExperiment(exp);
+        }
 
+        // Delete proteins and remove it from the interaction.
+        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
+            Component comp = ((ProteinBean) iter.next()).getComponent();
+            user.delete(comp);
+            intact.removeComponent(comp);
+        }
+        // Update proteins.
+        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
+            ProteinBean pb = (ProteinBean) iter.next();
+            Component comp = pb.getComponent(user);//getUpdatedComponent(user, (ProteinBean) iter.next());
+            intact.addComponent(comp);
+            user.update(comp);
+        }
         super.persist(user);
     }
 
@@ -138,9 +155,22 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     // Null for any of these values will throw an exception.
-    public void validate() throws ValidationException {
-        if ((myOrganism == null) || (myInteractionType == null)) {
-//            throw new ExperimentException();
+    public void validate(EditUserI user) throws ValidationException,
+            SearchException {
+        super.validate(user);
+
+        if (myInteractionType == null) {
+            throw new InteractionException();
+        }
+        if (myOrganism == null) {
+            throw new InteractionException();
+        }
+        // Look for any unsaved or error proteins.
+        for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
+            ProteinBean pb = (ProteinBean) iter.next();
+            if (!pb.getEditState().equals(EditBean.VIEW)) {
+                throw new InteractionException();
+            }
         }
     }
 
@@ -169,7 +199,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @throws SearchException for errors in constructing the menu.
      */
     public List getAddProteinRoleMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.ROLES, 0);
+        return getMenuFactory().getMenu(EditorMenuFactory.ROLES, 1);
     }
 
     public void setKD(Float kd) {
@@ -253,7 +283,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public void addExperimentToHold(Collection exps) {
-        for (Iterator iter = exps.iterator(); iter.hasNext(); ) {
+        for (Iterator iter = exps.iterator(); iter.hasNext();) {
             ExperimentBean expbean = new ExperimentBean((Experiment) iter.next());
             // Avoid duplicates.
             if (!myExperimentsToHold.contains(expbean)) {
@@ -356,11 +386,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public void addProtein(Protein protein) {
-        ProteinBean pb = new ProteinBean(protein);
+//        ProteinBean pb = new ProteinBean(protein);
         // Protein to add.
-        myProteinsToAdd.add(pb);
+//        myProteinsToAdd.add(pb);
         // Add to the view as well.
-        myProteins.add(pb);
+        myProteins.add(new ProteinBean(protein));
     }
 
     /**
@@ -372,11 +402,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * post: myProteins = myProteins@pre - 1
      * </pre>
      */
-    public void delProtein(ProteinBean pb) {
+    public void delProtein(ProteinBean pb, int pos) {
         // Add to the container to delete proteins.
         myProteinsToDel.add(pb);
-        // Remove from the view as well.
-        myProteins.remove(pb);
+        // Remove from the view as well; need the index because we need to
+        // remove a specific bean (not just any bean which returns true for
+        // equals method).
+        myProteins.remove(pos);
     }
 
     /**
@@ -390,6 +422,25 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public void addProteinToUpdate(ProteinBean pb) {
         myProteinsToUpdate.add(pb);
+    }
+
+    /**
+     * True if given protein bean already exists among current saved proteins.
+     * @param pb the bean to compare.
+     * @return true if another 'saved' already exists.
+     */
+    public boolean hasDuplicates(ProteinBean pb) {
+        for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
+            ProteinBean bean = (ProteinBean) iter.next();
+            // Only consider committed proteins.
+            if (!bean.getEditState().equals(ProteinBean.VIEW)) {
+                continue;
+            }
+            if (bean.equals(pb)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -437,7 +488,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         myExperimentsToHold.clear();
 
         // Clear Proteins
-        myProteinsToAdd.clear();
+//        myProteinsToAdd.clear();
         myProteinsToDel.clear();
         myProteinsToUpdate.clear();
     }
@@ -459,4 +510,124 @@ public class InteractionViewBean extends AbstractEditViewBean {
             myExperiments.add(new ExperimentBean(exp));
         }
     }
+
+    /**
+     * Returns a collection of experiments to add.
+     * @return the collection of experiments to add to the current CV object.
+     * Empty if there are no experiments to add.
+     *
+     * <pre>
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(ExperimentBean)
+     * </pre>
+     */
+    private Collection getExperimentsToAdd() {
+        // Experiments common to both add and delete.
+        Collection common = CollectionUtils.intersection(
+                myExperimentsToAdd, myExperimentsToDel);
+        // All the experiments only found in experiments to add collection.
+        return CollectionUtils.subtract(myExperimentsToAdd, common);
+    }
+
+    /**
+     * Returns a collection of experiments to remove.
+     * @return the collection of experiments to remove from the current CV object.
+     * Could be empty if there are no experiments to delete.
+     *
+     * <pre>
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(ExperimentBean)
+     * </pre>
+     */
+    private Collection getExperimentsToDel() {
+        // Experiments common to both add and delete.
+        Collection common = CollectionUtils.intersection(
+                myExperimentsToAdd, myExperimentsToDel);
+        // All the experiments only found in experiments to delete collection.
+        return CollectionUtils.subtract(myExperimentsToDel, common);
+    }
+
+    /**
+     * Returns a collection of proteins to add.
+     * @return the collection of proteins to add to the current CV object.
+     * Empty if there are no proteins to add.
+     *
+     * <pre>
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(ProteinBean)
+     * </pre>
+     */
+//    private Collection getProteinsToAdd() {
+//        // Proteins common to both add and delete.
+//        Collection common = CollectionUtils.intersection(
+//                myProteinsToAdd, myProteinsToDel);
+//        // All the proteins only found in proteins to add collection.
+//        return CollectionUtils.subtract(myProteinsToAdd, common);
+//    }
+
+    /**
+     * Returns a collection of proteins to remove.
+     * @return the collection of proteins to remove from the current CV object.
+     * Could be empty if there are no proteins to delete.
+     *
+     * <pre>
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(ProteinBean)
+     * </pre>
+     */
+//    private Collection getProteinsToDel() {
+//        // Proteins common to both add and delete.
+//        Collection common = CollectionUtils.intersection(
+//                myProteinsToAdd, myProteinsToDel);
+//        // All the proteins only found in proteins to delete collection.
+//        return CollectionUtils.subtract(myProteinsToDel, common);
+//    }
+
+//    public Component getUpdatedComponent(EditUserI user, ProteinBean pb)
+//            throws SearchException {
+//        Component comp = pb.getComponent();
+//        String newrole = pb.getRole();
+//        if (newrole != null) {
+//            CvComponentRole role = (CvComponentRole) user.getObjectByLabel(
+//                    CvComponentRole.class, newrole);
+//            comp.setCvComponentRole(role);
+//        }
+//        comp.setStoichiometry(pb.getStoichiometry());
+//        String neworg = pb.getOrganism();
+//        if (neworg != null) {
+//            BioSource biosrc = (BioSource) user.getObjectByLabel(
+//                    BioSource.class, neworg);
+//            comp.getInteractor().setBioSource(biosrc);
+//        }
+//        return comp;
+//    }
+
+//    public Component getNewComponent(EditUserI user, ProteinBean pb)
+//            throws SearchException {
+//        Component comp = new Component();
+//        String newrole = pb.getRole();
+//        if (newrole != null) {
+//            CvComponentRole role = (CvComponentRole) user.getObjectByLabel(
+//                    CvComponentRole.class, newrole);
+//            comp.setCvComponentRole(role);
+//        }
+//        comp.setStoichiometry(pb.getStoichiometry());
+//        String neworg = pb.getOrganism();
+//        if (neworg != null) {
+//            BioSource biosrc = (BioSource) user.getObjectByLabel(
+//                    BioSource.class, neworg);
+//            comp.getInteractor().setBioSource(biosrc);
+//        }
+//        System.out.println("New component is (in InteractionView bean)");
+//        if (comp.getInteraction() != null) {
+//            System.out.println("Interaction(updated): " + comp.getInteraction().getShortLabel());
+//        }
+//        else {
+//            System.out.println("Interaction is null");
+//        }
+//        if (comp.getInteractor() != null) {
+//            System.out.println("Interactor(updated): " + comp.getInteractor().getShortLabel());
+//        }
+//        else {
+//            System.out.println("Interactor is null");
+//        }
+//        System.out.println("Role(updated): " + comp.getCvComponentRole().getShortLabel());
+//        return comp;
+//    }
 }

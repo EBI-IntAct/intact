@@ -35,24 +35,19 @@ public class InteractionDynaForm extends DynaValidatorForm {
         ActionErrors errors = new ActionErrors();
         String organism = ((String) get("organism")).trim();
         String interaction = ((String) get("interactionType")).trim();
-        String experiment = ((String) get("experiment")).trim();
 
         // Must select from the drop down list.
-        if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors.add("int.organism", new ActionError("error.dropdown.list"));
-        }
-        else if (interaction.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+        if (interaction.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors.add("int.interaction", new ActionError("error.dropdown.list"));
         }
-        else if (experiment.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors.add("int.experiment", new ActionError("error.dropdown.list"));
+        else if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            errors.add("int.organism", new ActionError("error.dropdown.list"));
         }
         if (errors.isEmpty()) {
             // No errors; set the trimmed values (no need to trim again in the
             // action class.
             set("organism", organism);
             set("interactionType", interaction);
-            set("experiment", experiment);
         }
         return errors;
     }
@@ -66,6 +61,5 @@ public class InteractionDynaForm extends DynaValidatorForm {
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         set("organism", EditorMenuFactory.SELECT_LIST_ITEM);
         set("interactionType", EditorMenuFactory.SELECT_LIST_ITEM);
-        set("experiment", EditorMenuFactory.SELECT_LIST_ITEM);
     }
 }
