@@ -81,12 +81,12 @@ PROMPT
 PROMPT
 PROMPT Creating audit tables ...
 PROMPT **********************************
-;;@create_audit_tables.sql
+@create_audit_tables.sql
 PROMPT
 PROMPT
 PROMPT Creating audit triggers ...
 PROMPT **********************************
-;;@create_audit_triggers.sql
+@create_audit_triggers.sql
 PROMPT
 PROMPT
 PROMPT Done !

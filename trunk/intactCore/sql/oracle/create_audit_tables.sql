@@ -43,21 +43,18 @@ begin
       dbms_output.put_line (' ');
 
       l_comma := '';
-      --dbms_output.put_line ('PROMPT Setting the primary key');
-      dbms_output.put_line ('ALTER TABLE '||r_tab.table_name||'_audit');
-      dbms_output.put_line ('ADD (CONSTRAINT     pk_'||r_tab.table_name||'_audit');
-      dbms_output.put_line (chr(9)||'PRIMARY KEY  (');
+
+      dbms_output.put_line ('CREATE INDEX i_'||r_tab.table_name||'_audit');
+      dbms_output.put_line ('ON '||r_tab.table_name||'_audit' );
+      dbms_output.put_line (chr(9)||'(');
       for r_cols in c_cols (r_tab.table_name) loop
          if r_cols.pk_col is not null then
             dbms_output.put_line (chr(9)||chr(9)||l_comma||r_cols.column_name);
             l_comma := ',';
          end if;
       end loop;
-      dbms_output.put_line (chr(9)||chr(9)||', updated');
-      dbms_output.put_line (')');
-      dbms_output.put_line ('USING INDEX                            ');
+      dbms_output.put_line (chr(9)||')');
       dbms_output.put_line ('TABLESPACE &intactIndexAuditTablespace ');
-      dbms_output.put_line ('     )');
       dbms_output.put_line ('/ ');
    end loop;
 end;
