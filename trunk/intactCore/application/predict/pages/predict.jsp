@@ -1,4 +1,5 @@
-<%@ page import="uk.ac.ebi.intact.application.predict.struts.framework.PredictConstants"%>
+<%@ page import="uk.ac.ebi.intact.application.predict.struts.framework.PredictConstants,
+                 uk.ac.ebi.intact.application.predict.business.PredictService"%>
 
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
@@ -15,6 +16,13 @@
 <%@ page language="java" %>
 
 <%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
+
+<%
+    // To Allow access to Editor Service.
+    PredictService service = (PredictService)
+            application.getAttribute(PredictConstants.SERVICE);
+%>
 
 <script language="JavaScript" type="text/javascript">
     // This is a global variable to setup a window.
@@ -37,14 +45,25 @@
     function showProtein(link) {
         makeNewWindow(link);
     }
+
+    // Will be invoked when the user selects on a link.
+    function show(topic, label) {
+        var link = "<%=service.getSearchURL(request)%>"
+            + "?searchString=" + label + "&searchClass=" + topic;
+        //    window.alert(link);
+        makeNewWindow(link);
+    }
+
 </script>
 
-<%--<html:errors/>--%>
+<h1>
+    Top 50 proteins predicted for
+    <c:out value="${user.specieLink}" escapeXml="false"/>
+    as the best candidates for the next round of pull-down experiments via
+    the Pay-As-You-Go Strategy
+</h1>
 
-<%--       <head>--%>
-<%--        <title> Pay-As-You-Go Prediction Algorithm - Top 50 Protein Targets </title>--%>
-<%--    	</head>--%>
-<h1>Top 50 proteins predicted as the best candidates for the next round of pull-down experiments via the Pay-As-You-Go Strategy</h1><hr>
+<hr/>
 
 <%
     String uri = request.getContextPath() + "/predict.do";
@@ -56,15 +75,3 @@
     <display:column property="shortLabelLink" title="Short Label" />
     <display:column property="fullName" title="Full Name" />
 </display:table>
-
-<%--	--%>
-<%--	   <logic:iterate name="PREDICTION" id="protein" type="uk.ac.ebi.intact.application.predict.struts.view.ResultBean" scope="request">--%>
-<%--			  <jsp:getProperty name="protein" property="rank"/>--%>
-<%--              <jsp:getProperty name="protein" property="shortLabelLink"/>--%>
-<%--              <jsp:getProperty name="protein" property="fullName"/>--%>
-<%--        		  <br>--%>
-<%--		   --%>
-<%----%>
-<%--    	   </logic:iterate>--%>
-	
-	
