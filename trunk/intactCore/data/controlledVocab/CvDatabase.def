@@ -1,22 +1,18 @@
-intact_ac: EBI-12
-shortlabel: SPTR
+shortlabel: sptr
 term: Swiss-Prot/TrEMBL protein sequence database
 definition: The Swiss-Prot/TrEMBL protein sequence database.
 url: http://www.ebi.ac.uk/swissprot/
 
-intact_ac: EBI-13
-shortlabel: PubMed
+shortlabel: pubmed
 term: PubMed
 definition: Citation database of the National Library of Medicine, US.
 url: http://www.ncbi.nlm.nih.gov/PubMed/
 
-intact_ac: EBI-14
-shortlabel: SGD
+shortlabel: sgd
 term: Saccharomyces Genome Database
 url: http://genome-www.stanford.edu/Saccharomyces/
 
-intact_ac: EBI-15
-shortlabel: GO
+shortlabel: go
 term: Gene Ontology
 url: http://www.geneontology.org/
 definition: The Gene Ontology.
