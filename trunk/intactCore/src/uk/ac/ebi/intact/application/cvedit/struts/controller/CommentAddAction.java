@@ -53,9 +53,6 @@ public class CommentAddAction extends IntactBaseAction {
         // Need the form to get data entered by the user.
         CommentAddForm theForm = (CommentAddForm) form;
 
-        // Clear any previous errors.
-        super.clearErrors();
-
         // The topic for the annotation.
         CvTopic cvtopic = null;
 
@@ -76,6 +73,9 @@ public class CommentAddAction extends IntactBaseAction {
         catch (SearchException se) {
             // Can't query the database.
             super.log(ExceptionUtils.getStackTrace(se));
+
+            // Clear any previous errors.
+            super.clearErrors();
             super.addError("error.search", se.getMessage());
             super.saveErrors(request);
             return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
@@ -86,34 +86,18 @@ public class CommentAddAction extends IntactBaseAction {
         annot.setCvTopic(cvtopic);
         annot.setOwner(owner);
 
-        // Create the annotation object on the database.
-        try {
-            super.log("Transaction before create: " + user.isActive());
-            user.create(annot);
-            super.log("Transaction after create: " + user.isActive());
-        }
-        catch (IntactException ce) {
-            // Unable to create an annotation; no nested message provided.
-            super.addError("error.create", ce.getMessage());
-            super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-        }
-        // Add this new annotation to the cv object and update it.
-        CvObject cvobj = user.getCurrentEditObject();
-        cvobj.addAnnotation(annot);
-        try {
-            user.update(cvobj);
-        }
-        catch (IntactException ce) {
-            super.addError("error.update", ce.getMessage());
-            super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-        }
-        // The annotation collection for display.
-        Collection beans = (Collection) super.getSessionObject(request,
-            WebIntactConstants.ANNOTATIONS);
-        // We need to update on the screen as well.
-        beans.add(new CommentBean(annot, user.isActive()));
+        // Wrapper to add to collections.
+        CommentBean cb = new CommentBean(annot);
+
+        // The new annotations to add when submit is pressed.
+        Collection addbeans = (Collection) super.getSessionObject(request,
+            WebIntactConstants.ANNOTS_TO_ADD);
+        addbeans.add(cb);
+
+        // Need to show this new annotation on screen as well.
+        Collection viewbeans = (Collection) super.getSessionObject(request,
+            WebIntactConstants.ANNOTS_TO_VIEW);
+        viewbeans.add(cb);
 
         theForm.reset();
 
