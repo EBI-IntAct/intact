@@ -182,7 +182,13 @@ public class ViewBeanFactory {
         try {
             Class classToWrap = null;
 
-            if ( objectToWrap instanceof AnnotatedObject ){
+            /* TODO: would be nice to get rid of it
+             * If an Experiment (ArrayList) is given, it's not automatically
+             * casted to AnnotatedObject (Collection) as required in the constructor
+             * of the Bean.
+             * So we get a NoSuchMethodException.
+             */
+            if ( objectToWrap instanceof AnnotatedObject ) {
                 classToWrap = AnnotatedObject.class;
             } else {
                 classToWrap = Collection.class;
