@@ -251,30 +251,32 @@ public class XmlBuilder implements Serializable {
                     //Currently this is BasicObject or Institution...
 
                     Collection searchResults = new ArrayList();
-                    //searchResults = helper.search("uk.ac.ebi.intact.model.BasicObject", "ac", (String)key);
-                    System.out.println("searching by Iterator....");
-                    Iterator iter = null;
-                    iter = helper.iterSearch("uk.ac.ebi.intact.model.BasicObject", "ac", (String)key);
-                    if(iter == null) {
-                         iter = helper.iterSearch("uk.ac.ebi.intact.model.Institution", "ac", (String)key);
+                    System.out.println("searching by Standard Collection...");
+                    searchResults = helper.search("uk.ac.ebi.intact.model.BasicObject", "ac", (String)key);
+//                    System.out.println("searching by Iterator....");
+//                    Iterator iter = null;
+//                    iter = helper.iterSearch("uk.ac.ebi.intact.model.BasicObject", "ac", (String)key);
+//                    if((iter == null) || (!iter.hasNext())) {
+//                         iter = helper.iterSearch("uk.ac.ebi.intact.model.Institution", "ac", (String)key);
+//                    }
+                    if(searchResults.isEmpty()) {
+
+                        //try Institution instead
+                        searchResults = helper.search("uk.ac.ebi.intact.model.Institution", "ac", (String)key);
                     }
-//                    if(searchResults.isEmpty()) {
-//
-//                        //try Institution instead
-//                        searchResults = helper.search("uk.ac.ebi.intact.model.Institution", "ac", (String)key);
-//                    }
-//                    if(searchResults.size() > 1) {
-//
-//                        //something odd - AC is supposed to be unique! Do something...
-//                    }
-                    //Object obj = searchResults.iterator().next();
-                    if(iter == null) {
-                        System.out.println("can't build any XML - no data found!!");
+                    if(searchResults.size() > 1) {
+
+                        //something odd - AC is supposed to be unique! Do something...
                         return dc;
                     }
+                    Object obj = searchResults.iterator().next();
+//                    if((iter == null) || (!iter.hasNext())) {
+//                        System.out.println("can't build any XML - no data found!!");
+//                        return dc;
+//                    }
 
                     //should only be one....
-                    Object obj = iter.next();
+                    //Object obj = iter.next();
 
                     //debug...
                     System.out.println("first item found: " + ((uk.ac.ebi.intact.model.BasicObject)obj).getAc());
@@ -294,16 +296,16 @@ public class XmlBuilder implements Serializable {
 
                     //need to close the data if for an odd reason more
                     //than one item returned from search...
-                    if(iter.hasNext()) {
-                        System.out.println("something odd - search found more than one match for an ac - closing data..");
-                         //debug...
-                        System.out.println("next item found: " + ((uk.ac.ebi.intact.model.BasicObject)iter.next()).getAc());
-                        System.out.println("type: " + obj.getClass().getName());
-
-                        System.out.println("XmlBuilder: closing Result set to release resources...");
-                        helper.closeData(iter);
-
-                    }
+//                    if(iter.hasNext()) {
+//                        System.out.println("something odd - search found more than one match for an ac - closing data..");
+//                         //debug...
+//                        System.out.println("next item found: " + ((uk.ac.ebi.intact.model.BasicObject)iter.next()).getAc());
+//                        System.out.println("type: " + obj.getClass().getName());
+//
+//                        System.out.println("XmlBuilder: closing Result set to release resources...");
+//                        helper.closeData(iter);
+//
+//                    }
                 }
 
                 //import the new Element into the current document so we can use it
