@@ -30,7 +30,7 @@
                         <li>IntAct release 1: IntAct data is now available in <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>, see the <a href="#download">download</a> section. Controlled vocabularies are available in GO DAG format. 
                         </li>
                         <li>20672 interactions have been imported from Giot et al, 2003. 
-The dataset contains extensive crosslinking to UniProt, GO, InterPro, and FlyBase. This data will soon also be available in XML format.
+The dataset contains extensive crosslinking to UniProt, GO, InterPro, and FlyBase.
                         </li>
                     </ul>
 
@@ -454,7 +454,7 @@ The IntAct release of February 1, 2004 contains:
                         </p>
 
                         <p>
-                            <a NAME="experiment.single.chunked.view"></a>An other example result screen when searching for an Experiment,
+                            <a NAME="experiment.single.chunked"></a>An other example result screen when searching for an Experiment,
                             this time there are too many interactions to display it in one go. So, the Experiment is splited in several pages
                             that you can reach using the index above the Experiment.
                             <br/>
