@@ -52,7 +52,7 @@
         <put name="title" value="Links"/>
         <putList name="items">
             <item value="IntAct Home" link="http://www.ebi.ac.uk/intact"/>
-            <item value="Home" link="/predict/start.do"/>
+            <item value="Home" link="/predict/welcome.do"/>
         </putList>
     </definition>
 
