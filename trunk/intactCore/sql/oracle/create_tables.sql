@@ -991,7 +991,6 @@ CREATE TABLE IA_Feature
 TABLESPACE &&intactMainTablespace
 ;
 
-CREATE INDEX i_Feature$parent_ac on IA_Feature(parent_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Feature$component_ac on IA_Feature(component_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Feature$linkedfeature_ac on IA_Feature(linkedfeature_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Feature$identification_ac on IA_Feature(identification_ac) TABLESPACE &&intactIndexTablespace;
@@ -1051,7 +1050,6 @@ CREATE TABLE IA_Range
 TABLESPACE &&intactMainTablespace
 ;
 
-CREATE INDEX i_Range$parent_ac on IA_Range(parent_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Range$fromFuzzyType_ac on IA_Range(fromFuzzyType_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Range$toFuzzyType_ac on IA_Range(toFuzzyType_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Range$feature_ac on IA_Range(feature_ac) TABLESPACE &&intactIndexTablespace;
