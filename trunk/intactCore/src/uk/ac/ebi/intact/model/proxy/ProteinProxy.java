@@ -94,22 +94,6 @@ public class ProteinProxy extends InteractorProxy implements Protein {
         realSubject().setCvProteinForm( cvProteinForm );
     }
 
-    public void setFeatures ( Collection someFeature ) {
-        realSubject().setFeatures( someFeature );
-    }
-
-    public Collection getFeatures () {
-        return realSubject().getFeatures();
-    }
-
-    public void addFeature ( Feature feature ) {
-        realSubject().addFeature( feature );
-    }
-
-    public void removeFeature ( Feature feature ) {
-        realSubject().removeFeature( feature );
-    }
-
     public void setModifications ( Collection someModification ) {
         realSubject().setModifications( someModification );
     }
