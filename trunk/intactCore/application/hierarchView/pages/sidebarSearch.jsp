@@ -25,16 +25,20 @@
      * Retreive user's data from the session
      */
     IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+    String AC = null;
+    String methodLabel = null;
+    String fieldMethod = null;
 
-    if (user == null) {
-        // no user in the session, don't display anything
-        return;
+    if (user != null) {
+        AC = user.getAC();
+        methodLabel = user.getMethodLabel();
+        fieldMethod = (null == methodLabel ? "" : methodLabel);
+    } else {
+        AC = "";
+        fieldMethod = "";
     }
 
-    String AC = user.getAC();
-    if (AC == null) AC = "";
 %>
-
 
 <!-- Search section -->
 <html:form action="/search" focus="AC">
@@ -56,9 +60,6 @@
         </tr>
 
 		    <%
-                String methodLabel    = user.getMethodLabel();
-                String fieldMethod = (null == methodLabel ? "" : methodLabel);
-
                 /**
                  * get a collection of highlightment sources.
                  */

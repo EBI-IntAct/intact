@@ -22,7 +22,7 @@
    IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
 %>
 
-<table border="0" cellspacing="3" cellpadding="3" width="100%" heigth="100%">
+<table border="0" cellspacing="3" cellpadding="3" width="100%">
 
       <tr>
              <td>
