@@ -90,7 +90,9 @@ public class DispatcherAction extends IntactBaseAction {
             return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
         }
 
-        if (results.size() == 1) {
+        if ((results.size() == 1) & (Protein.class.isAssignableFrom(resultItem.getClass()))) {
+            //only use the single view for Proteins - Interactions still need
+            //to be displayed in the context of an Experiment
             logger.info( "Dispatcher ask forward to SingleResultAction" );
             return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
         }
