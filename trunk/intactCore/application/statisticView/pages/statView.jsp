@@ -91,19 +91,19 @@ Database: <b><%= bean.getDatabaseName() %></b>.
 
     rows.add (new DisplayStatisticsBean ("Interactions",
                                         latest.getNumberOfInteractions(),
-                                        "Number of distinct interactions"));
+                                        "Number of binary interactions and complexes"));
 
     rows.add (new DisplayStatisticsBean ("Binary interactions",
                                         latest.getNumberOfBinaryInteractions(),
-                                        "Number of interactions involving two interactors"));
+                                        "Number of binary interactions, n-ary interactions expanded according to the \"spoke\" model"));
 
     rows.add (new DisplayStatisticsBean ("Experiments",
                                         latest.getNumberOfExperiments(),
-                                        "Distincts experiments"));
+                                        "Distinct experiments"));
 
     rows.add (new DisplayStatisticsBean ("Terms",
                                         latest.getNumberOfGoTerms(),
-                                        "Controlled vocabulary terms define possible choices for text attributes"));
+                                        "Controlled vocabulary terms"));
 
     request.setAttribute("statistics", rows);
 %>
@@ -131,88 +131,92 @@ Database: <b><%= bean.getDatabaseName() %></b>.
 
        <tr>
        <td valign="top" height="*">
-       <table width="100%" height="100%">
-       <tbody>
-       <tr>
-       <td valign="top" height="*">
 
-                <%
-                    String filename = ChartBuilder.generateXYChart( bean,
-                                                                    ChartBuilder.ALL_INTERACTIONS_DATA,
-                                                                    "IntAct Interactions","","",
-                                                                    session,
-                                                                    new PrintWriter( out ));
-                    String graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
-                %>
+        <table width="100%" height="100%">
+            <tr>
+            <td valign="top" height="*">
 
-                <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
-
-        </td>
-        <td valign="top" height="*">
-
-                <%
-                    filename = ChartBuilder.generateXYChart( bean,
-                                                             ChartBuilder.BINARY_INTERACTIONS_DATA,
-                                                             "IntAct binary interactions","","",
-                                                             session,
-                                                             new PrintWriter( out ));
-                    graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
-                %>
-
-                <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
-
-        </td>
-        </tr>
-
-        <tr>
-        <td colspan="2" valign="top" align="center" height="*">
-
-                <%
-                    filename = ChartBuilder.generateXYChart( bean,
-                                                            ChartBuilder.PROTEIN_DATA,
-                                                            "IntAct proteins","","",
+            <%
+            String filename = ChartBuilder.generateXYChart( bean,
+                                                            ChartBuilder.ALL_INTERACTIONS_DATA,
+                                                            "IntAct interactions","","",
                                                             session,
                                                             new PrintWriter( out ));
-                    graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
-                %>
+            String graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
+            %>
 
-                <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
+            <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
 
-        </td>
-        </tr>
+            </td>
+            </tr>
+            <tr>
+                <td valign="top" height="*">
 
-        <tr>
-        <td valign="top" height="*">
+                    <%
+                        filename = ChartBuilder.generateXYChart( bean,
+                                                                 ChartBuilder.BINARY_INTERACTIONS_DATA,
+                                                                 "IntAct binary interactions","","",
+                                                                 session,
+                                                                 new PrintWriter( out ));
+                        graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
+                    %>
 
-                <%
-                    filename = ChartBuilder.generateXYChart( bean,
-                                                            ChartBuilder.EXPERIMENT_DATA,
-                                                            "IntAct experiments","","",
-                                                            session,
-                                                            new PrintWriter( out ));
-                    graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
-                %>
+                    <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
 
-                <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
+                </td>
+            </tr>
 
-        </td>
-        <td valign="top" height="*">
+            <tr>
+                <td valign="top" height="*">
 
-                <%
-                    filename = ChartBuilder.generateXYChart( bean,
-                                                            ChartBuilder.TERM_DATA,
-                                                            "IntAct Controlled Vocabulary terms","","",
-                                                            session,
-                                                            new PrintWriter( out ));
-                    graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
-                %>
+                    <%
+                        filename = ChartBuilder.generateXYChart( bean,
+                                                                 ChartBuilder.EXPERIMENT_DATA,
+                                                                 "IntAct experiments","","",
+                                                                 session,
+                                                                 new PrintWriter( out ));
+                        graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
+                    %>
 
-                <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
+                    <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
 
-        </td>
-    </tr>
-    </tbody>
-</table>
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" height="*">
+
+                    <%
+                        filename = ChartBuilder.generateXYChart( bean,
+                                                                 ChartBuilder.PROTEIN_DATA,
+                                                                 "IntAct proteins","","",
+                                                                 session,
+                                                                 new PrintWriter( out ));
+                        graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
+                    %>
+
+                    <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
+
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" height="*">
+
+                    <%
+                        filename = ChartBuilder.generateXYChart( bean,
+                                                                 ChartBuilder.TERM_DATA,
+                                                                 "IntAct controlled vocabulary terms","","",
+                                                                 session,
+                                                                 new PrintWriter( out ));
+                        graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
+                    %>
+
+                    <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
+
+                </td>
+            </tr>
+        </table>
     </td>
     </tr>
 
