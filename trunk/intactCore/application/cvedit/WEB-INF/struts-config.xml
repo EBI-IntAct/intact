@@ -92,10 +92,10 @@
     <!-- ========== Action Mapping Definitions ============================== -->
     <action-mappings>
 
-        <!-- Process a user logout -->
+        <!-- The starting point for the application; display the login layout. -->
         <action path="/cv/welcome"
                 type="org.apache.struts.actions.ForwardAction"
-            parameter="login.layout">
+                parameter="login.layout">
         </action>
 
         <!-- Process a user logout -->
@@ -128,7 +128,7 @@
             <forward name="edit" path="/do/cv/edit/pre"/>
         </action>
 
-        <!-- When the user selects  -->
+        <!-- Populate the beans with data. -->
         <action path="/cv/results/pre"
                 type="uk.ac.ebi.intact.application.cvedit.struts.controller.ResultPreAction"
                 scope="request">
@@ -141,7 +141,7 @@
                 parameter="search.layout">
         </action>
 
-        <!-- Process a user selects CV object from a search result. -->
+        <!-- Process when a user selects CV object from a search result. -->
         <action path="/cv/results"
                 name="resultForm"
                 type="uk.ac.ebi.intact.application.cvedit.struts.controller.ResultAction"
@@ -149,14 +149,17 @@
             <forward name="success" path="/do/cv/edit/pre"/>
         </action>
 
-        <!-- When the user selects  -->
+        <!-- Pre-edit action; populate the beans. -->
         <action path="/cv/edit/pre"
                 type="uk.ac.ebi.intact.application.cvedit.struts.controller.CvEditPreAction"
                 scope="request">
         </action>
 
         <!-- Process selection of Submit, Cancel or Delete buttons from edit.jsp. We need
-             the dummyForm as JavaScript uses the hidden property.
+             the dummyForm as JavaScript uses the hidden property. dispatch property
+             contains the action to take (submit/cancel/delete). If we got to this from
+             a results page, then go to the results page back again else (i.e., if we got
+             here from a direct search) start a new search.
          -->
         <action path="/cv/edit"
                 type="uk.ac.ebi.intact.application.cvedit.struts.controller.CvEditDispatchAction"
@@ -169,7 +172,7 @@
 
         <!-- Actions relating to comments (annotations) -->
 
-        <!-- Adds a new comment or annotation. -->
+        <!-- Adds a new comment or annotation; updates the edit contents -->
         <action path="/cv/comment/add"
                 type="uk.ac.ebi.intact.application.cvedit.struts.controller.CommentAddAction"
                 name="commentAddForm"
