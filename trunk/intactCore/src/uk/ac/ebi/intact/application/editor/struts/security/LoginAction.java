@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.persistence.DataSourceException;
@@ -18,7 +19,11 @@ import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.business.IntactException;
 
 import org.apache.struts.action.*;
+import org.apache.struts.config.ModuleConfig;
+import org.apache.struts.config.FormBeanConfig;
+import org.apache.struts.Globals;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.beanutils.DynaBean;
 
 import javax.servlet.http.*;
 import javax.servlet.ServletException;
@@ -126,6 +131,39 @@ public class LoginAction extends AbstractEditorAction {
         // Need to access the user later.
         session.setAttribute(EditorConstants.INTACT_USER, user);
 
+        // Set the forms for the session (basicially recyling the forms here).
+        // All these forms are declared in session scope in the struts
+        // config file.
+        session.setAttribute(EditorConstants.FORM_RESULTS,
+                createForm(EditorConstants.FORM_RESULTS, request));
+        session.setAttribute(EditorConstants.FORM_INFO,
+                createForm(EditorConstants.FORM_INFO, request));
+        session.setAttribute(EditorConstants.FORM_BIOSOURCE,
+                createForm(EditorConstants.FORM_BIOSOURCE, request));
+
+        session.setAttribute(EditorConstants.FORM_COMMENT_EDIT, new EditForm());
+        session.setAttribute(EditorConstants.FORM_XREF_EDIT, new EditForm());
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+    }
+
+
+    /**
+     * Creates a new DynaBean.
+     * @param formName the name of the form configured in the struts
+     * configuration file.
+     * @param request the HTTP request to get the application configuration.
+     * @return new <code>DynaBean</code> instance.
+     * @throws InstantiationException errors in creating the bean
+     * @throws IllegalAccessException errors in creating the bean
+     */
+    private DynaBean createForm(String formName, HttpServletRequest request)
+            throws InstantiationException, IllegalAccessException {
+        // Fill the form to edit short label and full name.
+        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(
+            Globals.MODULE_KEY);
+        FormBeanConfig config = appConfig.findFormBeanConfig(formName);
+        DynaActionFormClass dynaClass =
+                DynaActionFormClass.createDynaActionFormClass(config);
+        return dynaClass.newInstance();
     }
 }
