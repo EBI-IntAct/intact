@@ -22,13 +22,13 @@ public class AllJUnitTests extends TestCase {
      *
      * @param name the name of the test.
      */
-    public AllJUnitTests(String name) {
-        super(name);
+    public AllJUnitTests( String name ) {
+        super( name );
     }
 
     /**
      * Returns a suite containing tests.
-     *
+     * <p/>
      * </br><b>OCL:</b>
      * <pre>
      * post: return != null
@@ -37,13 +37,24 @@ public class AllJUnitTests extends TestCase {
      */
     public static Test suite() {
         TestSuite suite = new TestSuite();
+
         // Add tests one by one.
-        suite.addTest(AnnotatedObjectTest.suite());
-        suite.addTest(EqualityTests.suite());
-        suite.addTest(ExperimentTest.suite());
-        suite.addTest(InteractionTest.suite());
-        suite.addTest(RangeTest.suite());
-        suite.addTest(CvFuzzyTypeTest.suite());
+        suite.addTest( InstitutionTest.suite() );
+        suite.addTest( XrefTest.suite() );
+        suite.addTest( AliasTest.suite() );
+        suite.addTest( AnnotationTest.suite() );
+        suite.addTest( CvFuzzyTypeTest.suite() );
+        suite.addTest( AnnotatedObjectTest.suite() );
+
+        // will be replaced by smaller test in dedicated files.
+//        suite.addTest( EqualityTests.suite() );
+
+        // not implemented yet, those tests are empty.
+//        suite.addTest(ProteinTest.suite());
+//        suite.addTest(RangeTest.suite());
+//        suite.addTest(ExperimentTest.suite());
+//        suite.addTest(InteractionTest.suite());
+
         return suite;
     }
 }
