@@ -29,7 +29,7 @@
 
 </head>
 
-<frameset cols="13%,*" border=0>
+<frameset cols="12%,*" border=0>
 
    <frame src="<tiles:getAsString name="sidebar"/>" name="sidebarFrame">
 
