@@ -225,10 +225,23 @@ public interface IntactUserIF extends Serializable {
     public String getLastSearchQuery();
 
     /**
+     * Sets the last search query.
+     * @param searchParam the search parameter; ex., ac, shortLabel
+     * @param searchValue the search query.
+     */
+    public void setLastSearchQuery(String searchParam, String searchValue);
+
+    /**
      * Returns the class name of the last search.
      * @return the class name of the last search as a <code>String</code>.
      */
     public String getLastSearchClass();
+
+    /**
+     * Sets the class name of the last search.
+     * @param classname class name of the last search as a <code>String</code>.
+     */
+    public void setLastSearchClass(String classname);
 
     /**
      * Returns the cached search result.

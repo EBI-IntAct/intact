@@ -362,11 +362,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public Collection search(String objectType, String searchParam,
                               String searchValue) throws SearchException {
-        // Cache the last search details.
-        this.myLastQuery = searchParam + "=" + searchValue;
-        this.myLastQueryClass = objectType;
-
-        //now retrieve an object...
+        // Retrieve an object...
         try {
             return myHelper.search(objectType, searchParam, searchValue);
         }
@@ -385,6 +381,14 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public String getLastSearchQuery() {
         return myLastQuery;
+    }
+
+    public void setLastSearchQuery(String searchParam, String searchValue) {
+        myLastQuery = searchParam + "=" + searchValue;
+    }
+
+    public void setLastSearchClass(String classname) {
+        myLastQueryClass = classname;
     }
 
     public String getLastSearchClass() {
