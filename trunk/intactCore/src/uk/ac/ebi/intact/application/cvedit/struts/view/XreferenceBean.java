@@ -62,21 +62,7 @@ public class XreferenceBean implements Serializable {
      * instance of this class.
      */
     public XreferenceBean(Xref xref) {
-        this(IntactUserImpl.getId(), xref);
-    }
-
-    /**
-     * Instantiate an object of this class from a Xref object using
-     * the supplied key as the primary key (i.e., new primary key is not created).
-     * <p>
-     * This constructor is visible to subclasses only.
-     *
-     * @param key the primary key for this new instance.
-     * @param xref the <code>Xref</code> object to construct an instance of
-     *  this class.
-     */
-    protected XreferenceBean(long key, Xref xref) {
-        myKey = key;
+        myKey = IntactUserImpl.getId();
         myXref = xref;
         myDatabaseName = xref.cvDatabase.getShortLabel();
         myPrimaryId = xref.getPrimaryId();
