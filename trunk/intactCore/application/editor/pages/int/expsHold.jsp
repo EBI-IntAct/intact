@@ -46,7 +46,7 @@
                 </c:otherwise>
             </c:choose>
 
-                <td class="experimentHoldCell"/>
+                <td class="editCell"/>
 
                 <td class="tableCell">
                     <html:submit indexed="true" property="expsholdCmd"
