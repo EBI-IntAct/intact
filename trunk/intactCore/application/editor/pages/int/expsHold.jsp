@@ -76,6 +76,7 @@
                     <bean:write name="exp" property="shortLabelLink" filter="false"/>
                 </td>
                 <td class="tableCell">
+                    <bean:write name="exp" property="pubMedLink" filter="false"/>
                 </td>
                 <td class="tableCell">
                     <bean:write name="exp" property="ac"/>
