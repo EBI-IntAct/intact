@@ -48,30 +48,29 @@ public class XrefEditAction extends AbstractEditorAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        EditForm theForm = (EditForm) form;
+        EditForm theform = (EditForm) form;
 
         // The current view of the edit session.
         EditUserI user = super.getIntactUser(request);
         AbstractEditViewBean viewbean = user.getView();
 
         // The bean associated with the current action.
-        int index = theForm.getIndex();
-        XreferenceBean xb = viewbean.getXref(index);
+        XreferenceBean xb = (XreferenceBean) theform.getSelectedBean();
 
         // We must have the bean.
         assert xb != null;
 
-        if (theForm.editPressed()) {
+        if (theform.editPressed()) {
             // Must save this bean.
             xb.setEditState(EditBean.SAVE);
         }
-        else if (theForm.savePressed()) {
+        else if (theform.savePressed()) {
             // Save button pressed. The xref to update.
             viewbean.addXrefToUpdate(xb);
             // Back to the view mode again.
             xb.setEditState(EditBean.VIEW);
         }
-        else if (theForm.deletePressed()) {
+        else if (theform.deletePressed()) {
             // Delete is pressed.
             viewbean.delXref(xb);
         }

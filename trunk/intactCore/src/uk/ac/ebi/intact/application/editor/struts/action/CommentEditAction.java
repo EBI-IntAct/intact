@@ -6,15 +6,15 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-
-import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,32 +50,13 @@ public class CommentEditAction extends AbstractEditorAction {
             throws Exception {
         EditForm editform = (EditForm) form;
 
-//        DynaActionForm dynaform = (DynaActionForm) form;
-        // The current view of the edit session.
-        EditUserI user = super.getIntactUser(request);
-        AbstractEditViewBean view = user.getView();
-
-//        CommentBean[] beans = (CommentBean[]) dynaform.get("comments");
-//        for (int i = 0; i < beans.length; i++) {
-//            CommentBean cb = beans[i];
-//            System.out.println("Processing bean " + cb.getTopic() + " and " + cb.getDescription());
-//            if (cb.savePressed()) {
-//                view.addAnnotationToUpdate(cb);
-//            }
-//            else if (cb.deletePressed()) {
-//                view.delAnnotation(cb);
-//            }
-//        }
-        // The bean associated with the current action.
-        int index = editform.getIndex();
-//        Object[] beans = editform.getItems();
-//        for (int i = 0; i < beans.length; i++) {
-//            System.out.println("BEAN: " + i + " - " + ((CommentBean) beans[i]).getTopic());
-//        }
-        CommentBean cb = view.getAnnotation(index);
+        CommentBean cb = (CommentBean) editform.getSelectedBean();
 
         // We must have the annotation bean.
         assert cb != null;
+
+        // The current view of the edit session.
+        AbstractEditViewBean view = getIntactUser(request).getView();
 
         if (editform.editPressed()) {
             // Must save this bean.
