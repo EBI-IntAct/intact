@@ -1,7 +1,6 @@
 <!--
-        Context configuration for editor
+        Template of the context configuration for editor
         version : $Id$
   -->
 
-<Context path="/intact/editor" docBase="app-dir/editor.war">
-</Context>
+<Context path="/intact/editor" docBase="app-dir/[WAR.FILE.NAME]" />
