@@ -20,23 +20,17 @@
         <param-value>/config/repository.xml</param-value>
     </context-param>
 
-    <!-- Location of the IntAct Editor resources. -->
-    <context-param>
-        <param-name>resources</param-name>
-        <param-value>uk.ac.ebi.intact.application.editor.EditorResources</param-value>
-    </context-param>
-
     <!-- This filter is to stop users accessing edit pages without login first -->
-   <filter>
+    <filter>
       <filter-name>Security Filter</filter-name>
       <filter-class>uk.ac.ebi.intact.application.editor.security.LoginCheckFilter</filter-class>
-   </filter>
+    </filter>
 
-   <!-- map all requests to the SecurityFilter, control what it does with configuration settings -->
-   <filter-mapping>
+    <!-- map all requests to the SecurityFilter, control what it does with configuration settings -->
+    <filter-mapping>
       <filter-name>Security Filter</filter-name>
       <url-pattern>/*</url-pattern>
-   </filter-mapping>
+    </filter-mapping>
 
     <!-- Action Servlet Configuration -->
     <servlet>
