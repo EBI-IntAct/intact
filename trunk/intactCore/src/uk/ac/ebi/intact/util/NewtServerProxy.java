@@ -10,6 +10,7 @@ import org.apache.commons.collections.LRUMap;
 
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.MalformedURLException;
 import java.io.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -152,6 +153,14 @@ public class NewtServerProxy {
      * The URL to connect to Newt server.
      */
     private URL myURL;
+
+    /**
+     * Deafult constructor. Uses the public newt url.
+     * @exception MalformedURLException for invalid URL. This should never happen.
+     */
+    public NewtServerProxy() throws MalformedURLException {
+        this(new URL("http://www.ebi.ac.uk/newt/display"));
+    }
 
     /**
      * Constructs an instance of this class using the URL to connect to the
