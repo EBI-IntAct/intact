@@ -66,11 +66,8 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Set the selected topic as other operation use it for various tasks.
         user.setSelectedTopic("Feature");
 
-        // The form.
-        InteractionActionForm intform = (InteractionActionForm) form;
-
         // The feature we are about to edit.
-        FeatureBean fb = intform.getSelectedFeature();
+        FeatureBean fb = intView.getSelectedFeature();
         Feature feature = fb.getFeature();
 
         // Unselect the bean or else it will be selected all the time.
@@ -85,34 +82,8 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Set the parent for the feature view.
         featureView.setParentView(intView);
 
-        // Set the interaction ac to come back.
-//        featureView.setSourceInteractionAc(intView.getAc());
-
         return forward;
     }
-//
-//    /**
-//     * Handles when Delete Protein button is pressed.
-//     */
-//    public ActionForward delete(ActionMapping mapping,
-//                                 ActionForm form,
-//                                 HttpServletRequest request,
-//                                 HttpServletResponse response)
-//            throws Exception {
-//        // Handler to the Intact User.
-//        EditUserI user = getIntactUser(request);
-//
-//        // The form.
-//        InteractionActionForm intform = (InteractionActionForm) form;
-//
-//        // The feature bean we are about to delete.
-//        FeatureBean bean = intform.getSelectedFeature();
-//
-//        // Delete the feature.
-//        ((InteractionViewBean) user.getView()).deleteFeature(bean);
-//
-//        return mapping.getInputForward();
-//     }
 
     /**
      * Handles when Adde Feature button is pressed.
@@ -149,9 +120,6 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Set the parent for the feature view.
         featureView.setParentView(intView);
 
-        // Set the interaction ac to come back.
-//        featureView.setSourceInteractionAc(intView.getAc());
-
         // The form.
         InteractionActionForm intform = (InteractionActionForm) form;
 
@@ -163,25 +131,4 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
         return mapping.findForward(SUCCESS);
     }
-
-    // Override the super method to get the anchor for dispatch feature.
-
-//    protected String getAnchor(HttpServletRequest request, EditorActionForm form) {
-//        String anchor = super.getAnchor(request, form);
-//
-//        if (anchor != null) {
-//            return anchor;
-//        }
-//        // Start searching feature dispatch.
-//        String dispatch = ((InteractionActionForm) form).getDispatchFeature();
-//
-//        // The map containing anchors.
-//        Map anchorMap = (Map) getApplicationObject(EditorConstants.ANCHOR_MAP);
-//
-//        // Now go for the non error anchor using the dispatch value.
-//        if (anchorMap.containsKey(dispatch)) {
-//            return (String) anchorMap.get(dispatch);
-//        }
-//        return null;
-//    }
 }
