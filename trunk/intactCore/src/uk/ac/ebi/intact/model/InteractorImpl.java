@@ -179,10 +179,11 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
         // possible cycle ...
         // if (!activeInstances.equals(interactor.activeInstances)) return false;
 
-        if( !bioSource.equals( interactor.getBioSource() ) ) {
-            return false;
+        if (bioSource != null) {
+            if( !bioSource.equals( interactor.getBioSource() ) ) {
+                return false;
+            }
         }
-
         return CollectionUtils.isEqualCollection( interactor.getProducts(), products );
     }
 
@@ -190,7 +191,9 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl implements Inte
 
         int code = 29 * super.hashCode();
 
-        code = 29 * code + bioSource.hashCode();
+        if (bioSource != null) {
+            code = 29 * code + bioSource.hashCode();
+        }
 
         // Can't take into account activeInstances since it happens that an object
         // references himself into that collection ... it would never ends.
