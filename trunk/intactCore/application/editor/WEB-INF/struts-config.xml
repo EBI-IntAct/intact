@@ -35,7 +35,7 @@
 
         <!-- Form bean for adding a comment (annotation) -->
         <form-bean name="commentAddForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.CommentAddDynaForm">
+            type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="topic" type="java.lang.String"/>
             <form-property name="description" type="java.lang.String"/>
         </form-bean>
@@ -58,7 +58,7 @@
 
         <!-- Form bean for adding a xref (cross reference) -->
         <form-bean name="xrefAddForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.XrefAddDynaForm">
+            type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="database" type="java.lang.String"/>
             <form-property name="primaryId" type="java.lang.String"/>
             <form-property name="secondaryId" type="java.lang.String"/>
@@ -393,8 +393,8 @@
 
         <!-- Edits or Deletes an existing annotation. -->
         <action path="/comment/edit"
-            name="commentEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommentEditAction"
+            name="commentEditForm"
             scope="session">
         </action>
 
