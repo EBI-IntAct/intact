@@ -16,22 +16,20 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/struts-nested.tld" prefix="nested"%>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
-<jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+<%--<jsp:useBean id="user" scope="session"--%>
+<%--    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>--%>
 
-<c:set var="viewbean" value="${user.view}"/>
+<%--<c:set var="viewbean" value="${user.view}"/>--%>
 
 <%-- Class wide declarations. --%>
 <%!
-    String formName = EditorConstants.FORM_INTERACTION_EXP;
+//    String formName = EditorConstants.FORM_INTERACTION_EXP;
 %>
 
 <h3>Experiments</h3>
 
-<c:if test="${not empty viewbean.experiments}">
+<c:if test="${not empty intExpForm.experiments}">
 
     <html:form action="/interaction/experiment">
         <table width="100%" border="0" cellspacing="1" cellpadding="2">
@@ -44,7 +42,7 @@
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
-            <nested:iterate name="<%=formName%>" property="items">
+            <c:forEach var="experiments" items="${intExpForm.experiments}">
                 <%-- Different styles for even or odd rows --%>
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
@@ -63,28 +61,18 @@
                     </td>
 
                     <td class="tableCell">
-                        <nested:write property="shortLabelLink" filter="false"/>
+                        <bean:write name="experiments" property="shortLabelLink" filter="false"/>
                     </td>
                     <td class="tableCell">
                     </td>
                     <td class="tableCell">
-                        <nested:write property="ac"/>
+                        <bean:write name="experiments" property="ac"/>
                     </td>
                     <td class="tableCell">
-                        <nested:write property="fullName"/>
+                        <bean:write name="experiments" property="fullName"/>
                     </td>
                 </tr>
-            </nested:iterate>
-
-            <%-- Prints all the error messages relevant to this page only. --%>
-<%--            <logic:messagesPresent property="int.exp.add">--%>
-<%--                <tr class="tableRowOdd">--%>
-<%--                    <td class="tableErrorCell" colspan="5">--%>
-<%--                        <html:errors/>--%>
-<%--                    </td>--%>
-<%--                </tr>--%>
-<%--            </logic:messagesPresent>--%>
-<%----%>
+            </c:forEach>
         </table>
     </html:form>
 </c:if>

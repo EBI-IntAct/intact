@@ -42,7 +42,7 @@
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
-            <c:forEach var="items" items="${commentEditForm.items}">
+            <c:forEach var="annotations" items="${commentEditForm.annotations}">
                 <!-- Different styles for even or odd rows -->
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
@@ -56,8 +56,8 @@
                 <!-- Increment row by 1 -->
                 <c:set var="row" value="${row + 1}"/>
 
-                <c:if test="${items.editState == 'editing'}" var="edit"/>
-                <c:if test="${items.editState == 'saving'}" var="save"/>
+                <c:if test="${annotations.editState == 'editing'}" var="edit"/>
+                <c:if test="${annotations.editState == 'saving'}" var="save"/>
 
                 <%-- Buttons; Edit or Save depending on the bean state;
                      Delete is visible regardless of the state.
@@ -87,21 +87,21 @@
 
                 <c:if test="${edit}">
                     <td class="tableCell">
-                        <bean:write name="items" property="topicLink" filter="false"/>
+                        <bean:write name="annotations" property="topicLink" filter="false"/>
                     </td>
                     <td class="tableCell">
-                        <bean:write name="items" property="description"/>
+                        <bean:write name="annotations" property="description"/>
                     </td>
                 </c:if>
 
                 <c:if test="${save}">
                     <td class="tableCell">
-                        <html:select name="items" property="topic" indexed="true">
+                        <html:select name="annotations" property="topic" indexed="true">
                             <html:options name="topiclist" />
                         </html:select>
                     </td>
                     <td class="tableCell">
-                        <html:textarea name="items" cols="70" rows="3" property="description" indexed="true"/>
+                        <html:textarea name="annotations" cols="70" rows="3" property="description" indexed="true"/>
                     </td>
                 </c:if>
             </tr>
