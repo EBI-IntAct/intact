@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
+import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+
 /**
  * The lock manager keeps a track of edit objects. It uses the AC as a unique
  * identifier for edit objects. Only a single instance of this class is used
@@ -64,6 +69,7 @@ public class LockManager {
          * Compares <code>obj</code> with this object according to
          * Java's equals() contract. Only returns <tt>true</tt> if the id for both
          * objects match.
+         *
          * @param obj the object to compare.
          */
         public boolean equals(Object obj) {
@@ -88,7 +94,17 @@ public class LockManager {
      */
     private static LockManager ourInstance = new LockManager();
 
+    /**
+     * The logger to log error messages.
+     */
+    private static Logger ourLogger = Logger.getLogger(EditorConstants.LOGGER);
+
     // Instance Data
+
+    /**
+     * The R/W lock.
+     */
+    private ReadWriteLock myRWLock = new WriterPreferenceReadWriteLock();
 
     /**
      * A list of object ids (ACs) which are in use.
@@ -100,7 +116,8 @@ public class LockManager {
     /**
      * Default constructor; make it private to stop it from instantiating.
      */
-    private LockManager() {}
+    private LockManager() {
+    }
 
     /**
      * @return the only instance of this class.
@@ -111,42 +128,64 @@ public class LockManager {
 
     /**
      * Checks the existence of given lock.
+     *
      * @param ac the id to check for the lock
      * @return true if a lock exists for <code>ac</code>; false is returned for
-     * all other instances.
+     *         all other instances.
      */
-    public synchronized boolean hasLock(String ac) {
-        for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
-            LockObject lo = (LockObject) iter.next();
-            if (lo.getId().equals(ac)) {
-                return true;
+    public boolean hasLock(String ac) {
+        try {
+            myRWLock.readLock().acquire();
+            for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
+                LockObject lo = (LockObject) iter.next();
+                if (lo.getId().equals(ac)) {
+                    return true;
+                }
             }
+        }
+        catch (InterruptedException ie) {
+            ourLogger.info(ie);
+        }
+        finally {
+            myRWLock.readLock().release();
         }
         return false;
     }
 
     /**
      * Returns the lock object for given id if it exists.
+     *
      * @param id the of the lock.
      * @return the lock object for <code>id</code> if a lock exists for it. Null
-     * is returned if there is no lock object.
+     *         is returned if there is no lock object.
      */
-    public synchronized LockObject getLock(String id) {
-        for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
-            LockObject lo = (LockObject) iter.next();
-            if (lo.getId().equals(id)) {
-                return lo;
+    public LockObject getLock(String id) {
+        try {
+            myRWLock.readLock().acquire();
+            for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
+                LockObject lo = (LockObject) iter.next();
+                if (lo.getId().equals(id)) {
+                    return lo;
+                }
             }
+        }
+        catch (InterruptedException ie) {
+            ourLogger.info(ie);
+        }
+        finally {
+            myRWLock.readLock().release();
         }
         return null;
     }
+
     /**
      * Returns the owner for given id if it exists.
+     *
      * @param id the of the lock.
      * @return the owner of <code>id</code> if there is an owner or an empty
-     * street is returned.
+     *         street is returned.
      */
-    public synchronized String getOwner(String id) {
+    public String getOwner(String id) {
         LockObject lock = getLock(id);
         if (lock != null) {
             return lock.getOwner();
@@ -156,12 +195,13 @@ public class LockManager {
 
     /**
      * Obtains a lock.
-     * @param id the id to obtain the lock for.
+     *
+     * @param id    the id to obtain the lock for.
      * @param owner the onwer of the lock.
      * @return true if a lock was acquired successfully; false is returned for
-     * all other instances.
+     *         all other instances.
      */
-    public synchronized boolean acquire(String id, String owner) {
+    public boolean acquire(String id, String owner) {
         // Get any existing lock.
         LockObject lo = getLock(id);
 
@@ -176,56 +216,118 @@ public class LockManager {
                 return false;
             }
         }
-        // There is no lock associated with the id; create a new lock.
-        myLocks.add(new LockObject(id, owner));
+        try {
+            // Need to lock with the write lock as we are changing locks collection.
+            myRWLock.writeLock().acquire();
+            // There is no lock associated with the id; create a new lock.
+            myLocks.add(new LockObject(id, owner));
+        }
+        catch (InterruptedException ie) {
+            ourLogger.info(ie);
+        }
+        finally {
+            myRWLock.writeLock().release();
+        }
         return true;
     }
 
     /**
      * Removes given lock.
+     *
      * @param id the id for the lock.
      */
-    public synchronized void release(String id) {
+    public void release(String id) {
         // The lock to remove.
         LockObject lock = null;
-        for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
-            LockObject lo = (LockObject) iter.next();
-            if (lo.getId().equals(id)) {
-                lock = lo;
-                break;
+        try {
+            myRWLock.readLock().acquire();
+            for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
+                LockObject lo = (LockObject) iter.next();
+                if (lo.getId().equals(id)) {
+                    lock = lo;
+                    break;
+                }
             }
         }
+        catch (InterruptedException ie) {
+            ourLogger.info(ie);
+        }
+        finally {
+            myRWLock.readLock().release();
+        }
         if (lock != null) {
-            myLocks.remove(lock);
+            try {
+                // Need to get the write lock to remove.
+                myRWLock.writeLock().acquire();
+                myLocks.remove(lock);
+            }
+            catch (InterruptedException ie) {
+                ourLogger.info(ie);
+            }
+            finally {
+                myRWLock.writeLock().release();
+            }
         }
     }
 
     /**
      * Release all the locks held by given owner.
+     *
      * @param owner the owner to release the locks for.
      */
-    public synchronized void releaseAllLocks(String owner) {
+    public void releaseAllLocks(String owner) {
         // Holds locks to release; to avoid concurrent modification ex.
         List locks = new ArrayList();
 
-        for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
-            LockObject lock = (LockObject) iter.next();
-            if (lock.getOwner().equals(owner)) {
-                locks.add(lock);
+        try {
+            myRWLock.readLock().acquire();
+            for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
+                LockObject lock = (LockObject) iter.next();
+                if (lock.getOwner().equals(owner)) {
+                    locks.add(lock);
+                }
             }
         }
-        // Iterate through the temp locks and remove one by one from the cache.
-        for (Iterator iter = locks.iterator(); iter.hasNext();) {
-            myLocks.remove(iter.next());
+        catch (InterruptedException ie) {
+            ourLogger.info(ie);
+        }
+        finally {
+            myRWLock.readLock().release();
+        }
+        try {
+            // Need to get the write lock to remove.
+            myRWLock.writeLock().acquire();
+            // Iterate through the temp locks and remove one by one from the cache.
+            for (Iterator iter = locks.iterator(); iter.hasNext();) {
+                myLocks.remove(iter.next());
+            }
+        }
+        catch (InterruptedException ie) {
+            ourLogger.info(ie);
+        }
+        finally {
+            myRWLock.writeLock().release();
         }
     }
 
     /**
      * Returns a clone of the current locks.
+     *
      * @return a  clone of the current locks. None of the lock objects
-     * are cloned because LockObjects are immutable.
+     *         are cloned because LockObjects are immutable.
      */
     public List getLocks() {
-        return (List) ((ArrayList) myLocks).clone();
+        List list = null;
+        try {
+            myRWLock.readLock().acquire();
+            list = (List) ((ArrayList) myLocks).clone();
+        }
+        catch (InterruptedException ie) {
+            ourLogger.info(ie);
+        }
+        finally {
+            myRWLock.readLock().release();
+        }
+        return list;
     }
 }
