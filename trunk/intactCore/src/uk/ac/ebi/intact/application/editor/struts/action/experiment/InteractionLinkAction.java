@@ -71,6 +71,9 @@ public class InteractionLinkAction extends SubmitDispatchAction {
             // Show the errors in the input page.
             return mapping.getInputForward();
         }
+        // Set the topic.
+        user.setSelectedTopic(getService().getTopic(Interaction.class));
+
         // Set the interaction as the new view.
         user.setView(inter);
 
