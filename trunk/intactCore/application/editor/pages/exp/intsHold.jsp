@@ -20,8 +20,8 @@
     <%@ include file="/layouts/styles/editor.css" %>
 </style>
 
-<%-- Only display the table if the interactions are within (<=) the allowed limit --%>
-<c:if test="${user.view.numberOfInteractions le service.interactionLimit}">
+<%-- Only display the table if the interactions less (<) the allowed limit --%>
+<c:if test="${user.view.numberOfInteractions lt service.interactionLimit}">
 
     <h3>Interactions not yet added to the Experiment</h3>
 
