@@ -18,6 +18,7 @@ The recommended way to act is this:
             - CREATE_TABLES.SQL : makes the main tables. 
             - CREATE_AUDIT_TABLES.SQL: makes audit tables that track changes on the main tables
             - CREATE_AUDIT_TRIGGERS.SQL : triggers that feed the audit tables
+            - CREATE_PRIVS.SQL : create user priviledges
             
 Once this is run you will have the necessary objects.
 
@@ -29,4 +30,5 @@ The other scripts should be run separately and are OPTIONAL :
     - CREATE_SYNS.SQL should be run by a DBA to make public synonyms for the IntAct system
 
 
-    - CREATE_PRIVS should be run after that by INTACT to grant privileges to these roles.
+    - CREATE_PRIVS is part of the testfill.sh script, but will only work if CREATE_ROLES and CREATE_SYNS
+      have been run before.

@@ -78,4 +78,4 @@ SET FEEDBACK ON;
 @&privilegeSpoolFile ;
 
 
---exit;
+exit;
