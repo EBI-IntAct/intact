@@ -12,8 +12,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,41 +52,11 @@ public class FillFormAction extends AbstractEditorAction {
         view.copyPropertiesTo(editorForm);
 
         // Reset annotation and xref forms.
-        resetAddAnnotation(editorForm);
-        resetAddXref(editorForm);
+        editorForm.resetNewAnnotation();
+        editorForm.resetNewXref();
 
         // Straight to the editor.
         return mapping.findForward(SUCCESS);
-    }
-
-    /**
-     * Resets the annotation add form.
-     * @param editorForm the form to get/set the bean.
-     */
-    private void resetAddAnnotation(EditorActionForm editorForm) {
-        CommentBean cb = editorForm.getNewAnnotation();
-        if (cb != null) {
-            // Resuse the existing bean.
-            cb.reset();
-        }
-        else {
-            editorForm.setNewAnnotation(new CommentBean());
-        }
-    }
-
-    /**
-     * Resets the xref add form.
-     * @param editorForm the form to get/set the bean.
-     */
-    private void resetAddXref(EditorActionForm editorForm) {
-        XreferenceBean xb = editorForm.getNewXref();
-        if (xb != null) {
-            // Resuse the existing bean.
-            xb.reset();
-        }
-        else {
-            editorForm.setNewXref(new XreferenceBean());
-        }
     }
 
     private String getAnchor(HttpServletRequest request, EditorActionForm form) {
