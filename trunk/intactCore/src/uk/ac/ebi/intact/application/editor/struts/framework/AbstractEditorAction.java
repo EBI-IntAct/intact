@@ -189,12 +189,48 @@ public abstract class AbstractEditorAction extends Action {
         return dynaClass.newInstance();
     }
 
+    /**
+     * Returns an edit form from a session object. The forms which require
+     * editing (e.g., annotations, xref and proteins in an interaction) are
+     * stored in a session.
+     * @param session the Http session to retrieve the form.
+     * @param formName the name of the form stored in <code>session</code>.
+     * @return an <code>EditForm</code> stored in <code>session</code>. A
+     * new form is created and stored in the session before returning it.
+     */
     protected EditForm getEditForm(HttpSession session, String formName) {
         if (session.getAttribute(formName) == null) {
-            LOGGER.info("Created a new " + formName);
+//            LOGGER.info("Created a new " + formName);
             session.setAttribute(formName, new EditForm());
         }
         return (EditForm) session.getAttribute(formName);
+    }
+
+    /**
+     * Returns true if errors in stored in the request
+     * @param request Http request to search errors for.
+     * @return true if strut's error is found in <code>request</code> and
+     * it is not null. For all instances, false is returned.
+     */
+    protected boolean hasErrors(HttpServletRequest request) {
+        ActionErrors errors =
+                (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
+        if (errors != null) {
+            // Empty menas no errors.
+            return !errors.isEmpty();
+        }
+        // No errors stored in the request.
+        return false;
+    }
+
+    /**
+     * Returns the forward for input.
+     * @param mapping the mapping to get forward action.
+     * @return forward action stored in <code>mapping</code> under
+     * {@link uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants#FORWARD_INPUT}.
+     */
+    protected ActionForward inputForward(ActionMapping mapping) {
+        return mapping.findForward(EditorConstants.FORWARD_INPUT);
     }
 
     // Helper Methods
