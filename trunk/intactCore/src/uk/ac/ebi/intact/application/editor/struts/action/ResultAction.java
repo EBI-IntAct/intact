@@ -46,9 +46,14 @@ public class ResultAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // Handler to the Intact User.
-        EditUserI user = getIntactUser(request);
-
+        // This check is for display tag library when a click on a link
+        // takes to the next page. Without this check, it will reset the view
+        // bean to the original state.
+        String page = request.getParameter("page");
+        if (page != null) {
+            // As a result of clicking on the page tag link.
+            return mapping.findForward(SUCCESS);
+        }
         // The ac to search
         String ac = request.getParameter("ac");
         // The class name to search.
@@ -58,6 +63,9 @@ public class ResultAction extends AbstractEditorAction {
 
         // Check the lock.
         LockManager lmr = LockManager.getInstance();
+
+        // Handler to the Intact User.
+        EditUserI user = getIntactUser(request);
 
         // Try to acuire the lock.
         if (!lmr.acquire(ac, user.getUserName())) {
