@@ -755,3 +755,55 @@ CREATE index i_Alias_parent_ac on IA_Alias(parent_ac);
     COMMENT ON COLUMN IA_Alias.userstamp IS
     'Database user who has performed the last update of the column.';
 
+/* Tables for predict (targets) application. */
+
+CREATE table IA_Payg(
+	  nID VARCHAR(20) NOT NULL
+        , bait INTEGER
+        , prey INTEGER
+        , indegree SMALLINT
+        , outdegree SMALLINT
+        , qdegree numeric
+        , eseen INTEGER
+        , econf INTEGER
+        , really_used_as_bait CHAR(1)
+	, species VARCHAR(20) NOT NULL CONSTRAINT fk_payg_species REFERENCES IA_BioSource(taxId)
+	, PRIMARY KEY (nID, species)
+);
+
+    COMMENT ON TABLE IA_Payg IS
+    'Table where the pay-as-you-go algorithm is executed for each species.';
+    COMMENT ON COLUMN IA_Payg.nID IS
+    'The Id for the node.';
+    COMMENT ON COLUMN IA_Payg.bait IS
+    'At what step no. the nID was used as a bait.';
+    COMMENT ON COLUMN IA_Payg.prey IS
+    'At what step no. the nID was first seen as prey.';
+    COMMENT ON COLUMN IA_Payg.indegree IS
+    'The number of times this nID has been seen as prey.';
+    COMMENT ON COLUMN IA_Payg.outdegree IS
+    'The number of prey associated with this nID.';
+    COMMENT ON COLUMN IA_Payg.qdegree IS
+    'Used as a tie-breaker in the event two or more nIDs have the same & highest indegree.';
+    COMMENT ON COLUMN IA_Payg.eseen IS
+    'Running totals of how many interactions have been seen.';
+    COMMENT ON COLUMN IA_Payg.econf IS
+    'Running totals of how many interactions have been confirmed.';
+    COMMENT ON COLUMN IA_Payg.really_used_as_bait IS
+    '.';
+    COMMENT ON COLUMN IA_Payg.species IS
+    'The tax id of the bio source.';
+
+/* The following two tables are needed to create ia_payg table. They are not used
+   once ia_payg is created.
+*/
+
+CREATE table current_edge(
+	nidA VARCHAR(20),
+	nidB VARCHAR(20),
+	seen INTEGER, conf INTEGER, species VARCHAR(20));
+
+CREATE table temp_node(
+	nid VARCHAR(20), species VARCHAR(20));
+
+
