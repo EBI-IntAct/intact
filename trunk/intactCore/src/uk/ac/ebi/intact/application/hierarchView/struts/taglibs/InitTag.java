@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 // intact
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.WebServiceManager;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.DataSourceException;
@@ -19,7 +18,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.util.Properties;
+
 
 
 /**
@@ -35,7 +34,7 @@ public class InitTag extends TagSupport {
      */
     public int doStartTag() throws JspTagException {
         // evaluate the tag's body content and any sub-tag
-        return EVAL_BODY_INCLUDE;
+        return SKIP_BODY;
     } // doStartTag
 
 
@@ -49,13 +48,15 @@ public class InitTag extends TagSupport {
         initDataSource ();
         initWebService ();
 
+        // TODO : forward to an error page in case of exception
+
         return EVAL_PAGE;
     } // doEndTag
 
 
 
     /**
-     *
+     * Create a datasource for the user and store it into the user's session.
      * @throws JspException
      */
     private void initDataSource () throws JspException {
@@ -105,55 +106,28 @@ public class InitTag extends TagSupport {
 
     /**
      * Deploy the Tulip web service in the running time.
+     * @throws JspException
      */
     private void initWebService () throws JspException {
 
-        // check if the web service has already been deployed
-        HttpSession session = pageContext.getSession();
+        // ServletContext allows to share data for every user.
+        ServletContext servletContext = pageContext.getServletContext();
+        WebServiceManager webServiceManager =
+                (WebServiceManager) servletContext.getAttribute (Constants.WEB_SERVICE_MANAGER);
 
-        Boolean isDeployed = (Boolean) session.getAttribute (Constants.IS_WEB_SERVICE_DEPLOYED);
-
-        if ((null == isDeployed) || (false == isDeployed.booleanValue() )) {
-
-            // The configuration file.
-            String configFile = uk.ac.ebi.intact.application.hierarchView.struts.Constants.WEB_SERVICE_PROPERTY_FILE;
-
-            System.out.println ("Loading web service's properties");
-            Properties props = PropertyLoader.load (configFile);
-
-            if (null != props) {
-                String deploymentFile = props.getProperty ("webService.deployment");
-                String undeploymentFile = props.getProperty ("webService.undeployment");
-
-                System.out.println ("Properties Loaded :" +
-                        "\nwebService.deployment = " + deploymentFile +
-                        "\nwebService.undeployment = " + undeploymentFile);
-
-                if ((null == deploymentFile) || (null == undeploymentFile)) {
-                    String msg = "Fatal error: init tag could not deploy the Tulip web service.";
-                    msg += "Main reason: unable to read properties file";
-
-                    throw new JspException (msg);
-                }
-
-                WebServiceManager WSmanager = new WebServiceManager ();
-                WSmanager.setDeploymentFile (deploymentFile);
-                WSmanager.setUndeploymentFile (undeploymentFile);
-
+        if (null == webServiceManager) {
                 try {
+                    WebServiceManager WSmanager = new WebServiceManager ();
                     WSmanager.deploy();
+                    // TODO : log it
                     System.out.println ("Tulip web service deployed successfully");
+                    servletContext.setAttribute (Constants.WEB_SERVICE_MANAGER, WSmanager);
                 } catch (Exception e) {
                     System.out.println (e.getMessage() + "\n" + e.toString());
                     throw new JspException ("Fatal error: init tag could not deploy the Tulip web service.");
                 }
-            } // if
-
-            // The Tulip web service has been deployed
-            session.setAttribute (Constants.IS_WEB_SERVICE_DEPLOYED, new Boolean(true));
         } else {
             System.out.println ("Web service already deployed ...");
-            // if is not deployed
         }
 
     } // initWebService

@@ -84,7 +84,7 @@ public final class Constants {
     /**
      * The name of the file containing the java to XML mapping
      */
-    public static final String IS_WEB_SERVICE_DEPLOYED = "webService.deployed";
+    public static final String WEB_SERVICE_MANAGER = "WebServiceManager";
 
 
 
