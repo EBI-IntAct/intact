@@ -114,7 +114,7 @@
                         To reference IntAct objects from outside, accession numbers should be used.
                         The format of the accession number is one or more uppercase letters, followed by a dash,
                         followed by a number.
-                        <br/> In regular expression syntax:	[A-Z]\-[0-9]+.
+                        <br/> In regular expression syntax:	[A-Z0-9]+\-[0-9]+
                         <br/> Example: EBI-15
                     </blockquote>
 
