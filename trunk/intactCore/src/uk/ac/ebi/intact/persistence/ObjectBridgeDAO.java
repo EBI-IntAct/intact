@@ -1081,18 +1081,18 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //try using broker TXs so Connections are released when commit called -
             //this is to avoid the oracle 'open cursors' problem. If connection
             //pooling is used, commit should just release the connection's resources..
-            boolean localTx = false;
-            if (!isActive()) {
-                localTx = true;
-                broker.beginTransaction();
-            }
+//            boolean localTx = false;
+//            if (!isActive()) {
+//                localTx = true;
+//                broker.beginTransaction();
+//            }
 
             for (Iterator queryIt = queries.iterator(); queryIt.hasNext();) {
                 results.addAll(broker.getCollectionByQuery((Query) queryIt.next()));
             }
-            if (localTx) {
-                broker.commitTransaction();
-            }
+//            if (localTx) {
+//                broker.commitTransaction();
+//            }
 
             tmp = System.currentTimeMillis();
             timer = tmp - timer;
