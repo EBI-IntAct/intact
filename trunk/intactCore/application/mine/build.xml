@@ -119,6 +119,7 @@
                  <exclude name="result.jsp"/>
                  <exclude name="start.jsp"/>
                  <exclude name="ambiguous.jsp"/>
+                 <exclude name="sidebarInput.jsp"/>
             </fileset>
         </delete>
 
