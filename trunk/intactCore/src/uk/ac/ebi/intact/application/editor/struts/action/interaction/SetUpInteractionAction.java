@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinEditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import org.apache.struts.action.*;
@@ -58,8 +59,11 @@ public class SetUpInteractionAction  extends AbstractEditorAction {
         request.setAttribute(expHoldFormName, expHoldForm);
 
         // The proteins edit form.
-        EditForm protForm =
-                getEditForm(session, EditorConstants.FORM_INTERACTION_PROT);
+        String protFormName = EditorConstants.FORM_INTERACTION_PROT;
+        if (session.getAttribute(protFormName) == null) {
+            session.setAttribute(protFormName, new ProteinEditForm());
+        }
+        EditForm protForm = (EditForm) session.getAttribute(protFormName);
         // Populate with proteins.
         protForm.setItems(view.getProteins());
 
