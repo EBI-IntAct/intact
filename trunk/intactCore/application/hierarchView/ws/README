@@ -44,7 +44,7 @@ By following the steps below, we will install the tulip web service on that mach
                          usually, <TOMCAT_PATH>/webapps/axis
 
 (2) Intall the web service
-    type 'ant install', it copy needed files on Axis.
+    type 'ant deploy', it copy needed files on Axis.
 
 (3) Restart Tomcat
     The web service is now ready to be started.

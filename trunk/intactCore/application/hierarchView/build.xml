@@ -672,7 +672,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
 
     <target name="stop-tomcat" description="Stop the Tomcat server" >
-        <antcall target="stop-ws" />
         <ant dir=".." inheritAll="false" target="stop-tomcat"/>
     </target>
 
