@@ -44,7 +44,7 @@ public class DagNodeUtils {
      * space, ;, space and all the chars upto the first space as the GO id.
      */
     private static final Pattern ourGoId14Regex =
-            Pattern.compile("\\s*@is_a@([^;]*) ; ([^;\\s]*)");
+            Pattern.compile("\\s*@is_a@([^;]*)[\\; ]*([^;\\s]*)");
 
     /**
      * The pattern to extract the go term and short label for V14 format.
@@ -154,7 +154,7 @@ public class DagNodeUtils {
                     String goTerm = null;
 
                     goIdMatch = ourGoId14Regex.matcher(termLine);
-                    while (goIdMatch.find()) {
+                    if (goIdMatch.find()) {
                         Matcher m = ourShortLabelGoTerm14Regx.matcher(goIdMatch.group(1));
                         // Store goterm
                         if (m.find()) {
@@ -175,7 +175,7 @@ public class DagNodeUtils {
                 }
                 else {
                     goIdMatch = ourGoIdRegex.matcher(termLine);
-                    while (goIdMatch.find()) {
+                    if (goIdMatch.find()) {
                         // The first Go id is the id of the current term,
                         //  subsequent ones are ids of additional Parents.
                         if (null == node.getGoId()) {

@@ -165,24 +165,31 @@ public class GoToolsTest extends TestCase {
         // Cache the definition.
         CvTopic definition = topic;
 
+        topic = (CvTopic) myHelper.getObjectByLabel(CvTopic.class, "submitted");
+        assertNotNull(topic);
+        assertEquals(topic.getFullName(), "Data submitted by author/s directly o IntAct.");
+        // One annotation.
+        assertEquals(topic.getAnnotations().size(), 1);
+        assertTrue(containsTopic(topic, definition));
+
         topic = (CvTopic) myHelper.getObjectByLabel(CvTopic.class, "url");
         assertNotNull(topic);
         assertEquals(topic.getFullName(), "URL/Web address");
-        // One annotation.
-        assertEquals(topic.getAnnotations().size(), 1);
+        // Three annotations.
+        assertEquals(topic.getAnnotations().size(), 3);
         assertTrue(containsTopic(topic, definition));
 
         topic = (CvTopic) myHelper.getObjectByLabel(CvTopic.class, "uniprot-dr-export");
         assertNotNull(topic);
         assertEquals(topic.getFullName(),
                 "Determines if the experiment is to be exported to UniProt DR lines.");
-        // Three annotations.
-        assertEquals(topic.getAnnotations().size(), 3);
+        // Two annotations.
+        assertEquals(topic.getAnnotations().size(), 2);
         // One is an definition.
         assertTrue(containsTopic(topic, definition));
-
-        // There are two comments.
-        assertEquals(countsTopic(topic, "comment"), 2);
+        // Other is a comment.
+        CvTopic comment = (CvTopic) myHelper.getObjectByLabel(CvTopic.class, "comment");
+        assertTrue(containsTopic(topic, comment));
     }
 
     private void doTestCvDatabaseDef() throws IntactException {
@@ -224,7 +231,7 @@ public class GoToolsTest extends TestCase {
     }
 
     private void doTestCvInteractionDef() throws IntactException {
-        // Cache topics
+        // Cache cvobjs
         CvTopic definition = (CvTopic) myHelper.getObjectByLabel(CvTopic.class,
                 "definition");
         CvTopic uniprot = (CvTopic) myHelper.getObjectByLabel(CvTopic.class,
@@ -233,6 +240,10 @@ public class GoToolsTest extends TestCase {
                 "pubmed");
         CvDatabase goid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
                 "psi-mi");
+        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "identity");
+        CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "go-definition-ref");
 
         // Temp objects.
         String shortlabel;
@@ -252,8 +263,8 @@ public class GoToolsTest extends TestCase {
         assertTrue(containsTopic(annobj, uniprot));
         assertTrue(containsTopic(annobj, definition));
         // Compare the primary id for the object
-        assertTrue(checkDBXref(annobj, pubmed, "7708014"));
-        assertTrue(checkDBXref(annobj, goid, "MI:0004"));
+        assertTrue(checkDBXref(annobj, pubmed, "7708014", godef));
+        assertTrue(checkDBXref(annobj, goid, "MI:0004", identity));
 
         shortlabel = "anti tag coimmunopre";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
@@ -269,8 +280,8 @@ public class GoToolsTest extends TestCase {
         assertTrue(containsTopic(annobj, uniprot));
         assertTrue(containsTopic(annobj, definition));
         // Compare the primary id for the object
-        assertTrue(checkDBXref(annobj, pubmed, "7708014"));
-        assertTrue(checkDBXref(annobj, goid, "MI:0007"));
+        assertTrue(checkDBXref(annobj, pubmed, "7708014", godef));
+        assertTrue(checkDBXref(annobj, goid, "MI:0007", identity));
 
         shortlabel = "beta galactosidase c";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
@@ -286,9 +297,9 @@ public class GoToolsTest extends TestCase {
         assertTrue(containsTopic(annobj, uniprot));
         assertTrue(containsTopic(annobj, definition));
         // Compare the primary id for the object
-        assertTrue(checkDBXref(annobj, pubmed, "9237989"));
-        assertTrue(checkDBXref(annobj, pubmed, "12042868"));
-        assertTrue(checkDBXref(annobj, goid, "MI:0010"));
+        assertTrue(checkDBXref(annobj, pubmed, "9237989", godef));
+        assertTrue(checkDBXref(annobj, pubmed, "12042868", godef));
+        assertTrue(checkDBXref(annobj, goid, "MI:0010", identity));
 
         shortlabel = "colocalization/visua";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
@@ -304,7 +315,7 @@ public class GoToolsTest extends TestCase {
         assertTrue(containsTopic(annobj, uniprot));
         assertTrue(containsTopic(annobj, definition));
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0023"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0023", identity));
 
         shortlabel = "phage display";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteraction.class,
@@ -320,9 +331,9 @@ public class GoToolsTest extends TestCase {
         assertTrue(containsTopic(annobj, uniprot));
         assertTrue(containsTopic(annobj, definition));
         // Compare the primary id for the object
-        assertTrue(checkDBXref(annobj, pubmed, "7708014"));
-        assertTrue(checkDBXref(annobj, pubmed, "10975452"));
-        assertTrue(checkDBXref(annobj, goid, "MI:0084"));
+        assertTrue(checkDBXref(annobj, pubmed, "7708014", godef));
+        assertTrue(checkDBXref(annobj, pubmed, "10975452", godef));
+        assertTrue(checkDBXref(annobj, goid, "MI:0084", identity));
     }
 
     private void doTestCvInteractionDag() throws IntactException {
@@ -370,6 +381,10 @@ public class GoToolsTest extends TestCase {
                 "pubmed");
         CvDatabase resid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
                 "resid");
+        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "identity");
+        CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "go-definition-ref");
 
         // Temp objects.
         String shortlabel;
@@ -384,9 +399,9 @@ public class GoToolsTest extends TestCase {
         // There is one definition
         assertEquals(annobj.getAnnotations().size(), 1);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0192"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0192", identity));
         for (int i = 41; i < 56; i++) {
-            assertTrue(checkDBXref(annobj, resid, "AA00" + i));
+            assertTrue(checkDBXref(annobj, resid, "AA00" + i, godef));
         }
 
         shortlabel = "aggregation";
@@ -402,7 +417,7 @@ public class GoToolsTest extends TestCase {
         // There is 1 xref.
         assertEquals(annobj.getXrefs().size(), 1);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0191"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0191", identity));
 
         shortlabel = "amidation reaction";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -415,11 +430,11 @@ public class GoToolsTest extends TestCase {
         // There are 21 xrefs.
         assertEquals(annobj.getXrefs().size(), 21);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0193"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0193", identity));
         for (int i = 81; i < 100; i++) {
-            assertTrue(checkDBXref(annobj, resid, "AA00" + i));
+            assertTrue(checkDBXref(annobj, resid, "AA00" + i, godef));
         }
-        assertTrue(checkDBXref(annobj, resid, "AA0100"));
+        assertTrue(checkDBXref(annobj, resid, "AA0100", godef));
 
         shortlabel = "cleavage";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -432,7 +447,7 @@ public class GoToolsTest extends TestCase {
         // There is one definition
         assertEquals(annobj.getAnnotations().size(), 1);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0194"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0194", identity));
         // There is 1 xref.
         assertEquals(annobj.getXrefs().size(), 1);
 
@@ -447,7 +462,7 @@ public class GoToolsTest extends TestCase {
         // There is one definition
         assertEquals(annobj.getAnnotations().size(), 1);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0195"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0195", identity));
         // There is 1 xref.
         assertEquals(annobj.getXrefs().size(), 1);
 
@@ -462,7 +477,7 @@ public class GoToolsTest extends TestCase {
         // There is one definition
         assertEquals(annobj.getAnnotations().size(), 1);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0196"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0196", identity));
         // There is 1 xref.
         assertEquals(annobj.getXrefs().size(), 1);
 
@@ -479,9 +494,9 @@ public class GoToolsTest extends TestCase {
         // There are 3 xrefs.
         assertEquals(annobj.getXrefs().size(), 3);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0197"));
-        assertTrue(checkDBXref(annobj, resid, "AA0055"));
-        assertTrue(checkDBXref(annobj, resid, "AA0056"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0197", identity));
+        assertTrue(checkDBXref(annobj, resid, "AA0055", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0056", godef));
 
         shortlabel = "defarnesylation reac";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -496,8 +511,8 @@ public class GoToolsTest extends TestCase {
         // There are 2 xrefs.
         assertEquals(annobj.getXrefs().size(), 2);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0198"));
-        assertTrue(checkDBXref(annobj, resid, "AA0102"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0198", identity));
+        assertTrue(checkDBXref(annobj, resid, "AA0102", godef));
 
         shortlabel = "deformylation reacti";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -512,8 +527,8 @@ public class GoToolsTest extends TestCase {
         // There are 2 xrefs.
         assertEquals(annobj.getXrefs().size(), 2);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0199"));
-        assertTrue(checkDBXref(annobj, resid, "AA0211"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0199", identity));
+        assertTrue(checkDBXref(annobj, resid, "AA0211", godef));
 
         shortlabel = "degeranylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -528,8 +543,8 @@ public class GoToolsTest extends TestCase {
         // There are 2 xrefs.
         assertEquals(annobj.getXrefs().size(), 2);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0200"));
-        assertTrue(checkDBXref(annobj, resid, "AA0104"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0200", identity));
+        assertTrue(checkDBXref(annobj, resid, "AA0104", godef));
 
         shortlabel = "demyristoylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -544,8 +559,8 @@ public class GoToolsTest extends TestCase {
         // There are 2 xrefs.
         assertEquals(annobj.getXrefs().size(), 2);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0201"));
-        assertTrue(checkDBXref(annobj, resid, "AA0078"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0201", identity));
+        assertTrue(checkDBXref(annobj, resid, "AA0078", godef));
 
         shortlabel = "depalmitoylation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -560,12 +575,12 @@ public class GoToolsTest extends TestCase {
         // There are 5 xrefs.
         assertEquals(annobj.getXrefs().size(), 6);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0202"));
-        assertTrue(checkDBXref(annobj, resid, "AA0106"));
-        assertTrue(checkDBXref(annobj, resid, "AA0060"));
-        assertTrue(checkDBXref(annobj, resid, "AA0077"));
-        assertTrue(checkDBXref(annobj, resid, "AA0079"));
-        assertTrue(checkDBXref(annobj, resid, "AA0080"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0202", identity));
+        assertTrue(checkDBXref(annobj, resid, "AA0106", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0060", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0077", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0079", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0080", godef));
 
         shortlabel = "dephosphorylation re";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -582,15 +597,15 @@ public class GoToolsTest extends TestCase {
         // There are 9 xrefs.
         assertEquals(annobj.getXrefs().size(), 9);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0203"));
-        assertTrue(checkDBXref(annobj, resid, "AA0033"));
-        assertTrue(checkDBXref(annobj, resid, "AA0034"));
-        assertTrue(checkDBXref(annobj, resid, "AA0035"));
-        assertTrue(checkDBXref(annobj, resid, "AA0036"));
-        assertTrue(checkDBXref(annobj, resid, "AA0037"));
-        assertTrue(checkDBXref(annobj, resid, "AA0038"));
-        assertTrue(checkDBXref(annobj, resid, "AA0039"));
-        assertTrue(checkDBXref(annobj, resid, "AA0222"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0203", identity));
+        assertTrue(checkDBXref(annobj, resid, "AA0033", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0034", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0035", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0036", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0037", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0038", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0039", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0222", godef));
 
         shortlabel = "deubiquitination rea";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -605,9 +620,9 @@ public class GoToolsTest extends TestCase {
         // There are 3 xrefs.
         assertEquals(annobj.getXrefs().size(), 3);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0204"));
-        assertTrue(checkDBXref(annobj, pubmed, "11583613"));
-        assertTrue(checkDBXref(annobj, resid, "AA0125"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0204", identity));
+        assertTrue(checkDBXref(annobj, pubmed, "11583613", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0125", godef));
 
         shortlabel = "disaggregation";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -622,7 +637,7 @@ public class GoToolsTest extends TestCase {
         // There is 1 xref.
         assertEquals(annobj.getXrefs().size(), 1);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0205"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0205", identity));
 
         shortlabel = "farnesylation reacti";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -637,8 +652,8 @@ public class GoToolsTest extends TestCase {
         // There are 2 xrefs.
         assertEquals(annobj.getXrefs().size(), 2);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0206"));
-        assertTrue(checkDBXref(annobj, resid, "AA0102"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0206", identity));
+        assertTrue(checkDBXref(annobj, resid, "AA0102", godef));
 
         shortlabel = "formylation reaction";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -655,10 +670,10 @@ public class GoToolsTest extends TestCase {
         // There are 3 xrefs.
         assertEquals(annobj.getXrefs().size(), 3);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0207"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0207", identity));
         // Check resid.
-        assertTrue(checkDBXref(annobj, resid, "AA0211"));
-        assertTrue(checkDBXref(annobj, resid, "AA0057"));
+        assertTrue(checkDBXref(annobj, resid, "AA0211", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0057", godef));
 
         shortlabel = "methylation reaction";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -673,12 +688,12 @@ public class GoToolsTest extends TestCase {
         // 18 xrefs
         assertEquals(annobj.getXrefs().size(), 19);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0213"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0213", identity));
         for (int i = 61; i < 77; i++) {
-            assertTrue(checkDBXref(annobj, resid, "AA00" + i));
+            assertTrue(checkDBXref(annobj, resid, "AA00" + i, godef));
         }
-        assertTrue(checkDBXref(annobj, resid, "AA0234"));
-        assertTrue(checkDBXref(annobj, resid, "AA0272"));
+        assertTrue(checkDBXref(annobj, resid, "AA0234", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0272", godef));
 
         shortlabel = "ubiquitination react";
         annobj = (AnnotatedObject) myHelper.getObjectByLabel(CvInteractionType.class,
@@ -695,9 +710,9 @@ public class GoToolsTest extends TestCase {
         // There are 3 xrefs.
         assertEquals(annobj.getXrefs().size(), 3);
         // go id
-        assertTrue(checkDBXref(annobj, goid, "MI:0220"));
-        assertTrue(checkDBXref(annobj, pubmed, "11583613"));
-        assertTrue(checkDBXref(annobj, resid, "AA0125"));
+        assertTrue(checkDBXref(annobj, goid, "MI:0220", identity));
+        assertTrue(checkDBXref(annobj, pubmed, "11583613", godef));
+        assertTrue(checkDBXref(annobj, resid, "AA0125", godef));
     }
 
     private void doTestCvInteractionTypeDag() throws IntactException {
@@ -765,6 +780,10 @@ public class GoToolsTest extends TestCase {
                 "pubmed");
         CvDatabase resid = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
                 "resid");
+        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "identity");
+        CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "go-definition-ref");
 
         String shortlabel = "3-methylthio-asparti";
         CvFeatureType cvfeature = (CvFeatureType) myHelper.getObjectByLabel(
@@ -781,9 +800,9 @@ public class GoToolsTest extends TestCase {
         // Three xrefs.
         assertEquals(cvfeature.getXrefs().size(), 3);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, pubmed, "11125103"));
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0161"));
-        assertTrue(checkDBXref(cvfeature, resid, "AA0232"));
+        assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0161", identity));
+        assertTrue(checkDBXref(cvfeature, resid, "AA0232", godef));
 
         shortlabel = "4-hydroxy-l-proline";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -800,9 +819,9 @@ public class GoToolsTest extends TestCase {
         // Three xrefs.
         assertEquals(cvfeature.getXrefs().size(), 3);
         // Compare the primary ids for the object
-        assertTrue(checkDBXref(cvfeature, pubmed, "11125103"));
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0149"));
-        assertTrue(checkDBXref(cvfeature, resid, "AA0030"));
+        assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0149", identity));
+        assertTrue(checkDBXref(cvfeature, resid, "AA0030", godef));
 
         shortlabel = "tau-phosphohistidine";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -819,9 +838,9 @@ public class GoToolsTest extends TestCase {
         // Three xrefs.
         assertEquals(cvfeature.getXrefs().size(), 3);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, pubmed, "11125103"));
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0174"));
-        assertTrue(checkDBXref(cvfeature, resid, "AA0035"));
+        assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0174", identity));
+        assertTrue(checkDBXref(cvfeature, resid, "AA0035", godef));
 
         shortlabel = "n-acetyl-l-arginine";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -838,9 +857,9 @@ public class GoToolsTest extends TestCase {
         // Three xrefs.
         assertEquals(cvfeature.getXrefs().size(), 3);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, pubmed, "11125103"));
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0123"));
-        assertTrue(checkDBXref(cvfeature, resid, "AA0354"));
+        assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0123", identity));
+        assertTrue(checkDBXref(cvfeature, resid, "AA0354", godef));
 
         shortlabel = "hypusine";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -857,9 +876,9 @@ public class GoToolsTest extends TestCase {
         // Three xrefs.
         assertEquals(cvfeature.getXrefs().size(), 3);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, pubmed, "11125103"));
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0187"));
-        assertTrue(checkDBXref(cvfeature, resid, "AA0116"));
+        assertTrue(checkDBXref(cvfeature, pubmed, "11125103", godef));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0187", identity));
+        assertTrue(checkDBXref(cvfeature, resid, "AA0116", godef));
 
         shortlabel = "his-tagged";
         cvfeature = (CvFeatureType) myHelper.getObjectByLabel(CvFeatureType.class,
@@ -876,7 +895,7 @@ public class GoToolsTest extends TestCase {
         // One xref.
         assertEquals(cvfeature.getXrefs().size(), 1);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0521"));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0521", identity));
     }
 
     private void doTestCvFeatureTypeDag() throws IntactException {
@@ -930,6 +949,10 @@ public class GoToolsTest extends TestCase {
                 "psi-mi");
         CvDatabase pubmed = (CvDatabase) myHelper.getObjectByLabel(CvDatabase.class,
                 "pubmed");
+        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "identity");
+        CvXrefQualifier godef = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "go-definition-ref");
 
         String shortlabel = "alanine scanning";
         CvFeatureIdentification cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(
@@ -946,7 +969,7 @@ public class GoToolsTest extends TestCase {
         // One xref.
         assertEquals(cvfeature.getXrefs().size(), 1);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0005"));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0005", identity));
 
         shortlabel = "complete sequence";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
@@ -963,7 +986,7 @@ public class GoToolsTest extends TestCase {
         // One xref.
         assertEquals(cvfeature.getXrefs().size(), 1);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0056"));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0056", identity));
 
         shortlabel = "epr";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
@@ -980,8 +1003,8 @@ public class GoToolsTest extends TestCase {
         // Two xrefs.
         assertEquals(cvfeature.getXrefs().size(), 2);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, pubmed, "11817959"));
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0042"));
+        assertTrue(checkDBXref(cvfeature, pubmed, "11817959", godef));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0042", identity));
 
         shortlabel = "protein staining";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
@@ -998,8 +1021,8 @@ public class GoToolsTest extends TestCase {
         // Two xrefs.
         assertEquals(cvfeature.getXrefs().size(), 2);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, pubmed, "12015990"));
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0094"));
+        assertTrue(checkDBXref(cvfeature, pubmed, "12015990", godef));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0094", identity));
 
         shortlabel = "western blot";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
@@ -1016,7 +1039,7 @@ public class GoToolsTest extends TestCase {
         // One xref.
         assertEquals(cvfeature.getXrefs().size(), 1);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0113"));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0113", identity));
 
         shortlabel = "x-ray";
         cvfeature = (CvFeatureIdentification) myHelper.getObjectByLabel(CvFeatureIdentification.class,
@@ -1033,7 +1056,7 @@ public class GoToolsTest extends TestCase {
         // One xref.
         assertEquals(cvfeature.getXrefs().size(), 1);
         // Compare the primary id for the object
-        assertTrue(checkDBXref(cvfeature, goid, "MI:0114"));
+        assertTrue(checkDBXref(cvfeature, goid, "MI:0114", identity));
     }
 
     private void doTestCvFeatureIdentificationDag() throws IntactException {
@@ -1108,20 +1131,12 @@ public class GoToolsTest extends TestCase {
         return count;
     }
 
-//    private boolean containsPrimaryId(AnnotatedObject annobj, String primaryId) {
-//        for (Iterator iter = annobj.getXrefs().iterator(); iter.hasNext();) {
-//            Xref xref = (Xref) iter.next();
-//            if (xref.getPrimaryId().equals(primaryId)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-    private boolean checkDBXref(AnnotatedObject annobj, CvDatabase db, String primaryId) {
+    private boolean checkDBXref(AnnotatedObject annobj, CvDatabase db,
+                                String primaryId, CvXrefQualifier xrefq) {
         for (Iterator iter = annobj.getXrefs().iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
-            if (xref.getCvDatabase().equals(db) && xref.getPrimaryId().equals(primaryId)) {
+            if (xref.getCvDatabase().equals(db) && xref.getPrimaryId().equals(
+                    primaryId) && xref.getCvXrefQualifier().equals(xrefq)) {
                 return true;
             }
         }
