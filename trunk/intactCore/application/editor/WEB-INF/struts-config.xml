@@ -309,6 +309,8 @@
             <!-- No match is found -->
             <forward name="noMatch" path="no.match.layout"/>
             <!-- Multiple results found; global action -->
+            <!-- Single item found for the search -->
+            <forward name="single" path="/do/choose"/>
             <!-- Select the appropriate editor for the new record. -->
             <forward name="created" path="/do/choose"/>
         </action>
@@ -448,7 +450,7 @@
              Experiment editor.
         -->
         <action path="/expDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.ExperimentSubmitAction"
             name="expForm"
             validate="false"
             scope="session">
