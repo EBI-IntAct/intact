@@ -32,13 +32,6 @@
     String formName = "experimentForm";
 %>
 
-<%-- Fill the form before the display --%>
-<%
-    DynaBean form = user.getDynaBean(formName, request);
-    user.getView().fillEditorSpecificInfo(form);
-    request.setAttribute(formName, form);
-%>
-
 <html:form action="/experiment/info">
     <table width="80%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
