@@ -173,9 +173,9 @@
                     <a href="<%= bean.getInteractionsSearchURL()%>"><%= bean.getNumberOfInteractions()%></a>
                 </td>
 
-                <!-- Uniprot AC, not linked -->               
+                <!-- Uniprot AC-->               
                  <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);">
-                    <a href="<%= bean.getUniprotAc()%>"><%= bean.getUniprotAc() %></a>
+                    <a href="<%= bean.getUniprotURL() %>"><%= bean.getUniprotAc() %></a>
                 </td>
 
                 <!-- gene name, not linked -->
