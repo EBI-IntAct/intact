@@ -10,7 +10,9 @@ import uk.ac.ebi.intact.application.search2.struts.view.AbstractViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.html.HtmlBuilderManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
@@ -56,25 +58,33 @@ public class SingleViewBean extends AbstractViewBean
         return this.wrappedObject;
     }
 
-    public String getHTML() {
-
-        String result = null;
+    public void getHTML( Writer writer ) {
 
         try {
-            result = HtmlBuilderManager.getInstance().getHtml(getWrappedObject(),
+            HtmlBuilderManager.getInstance().getHtml(writer, getWrappedObject(),
                     getHighlightMap(), getHelpLink());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
-            result = "Could not produce a view";
+            try {
+                writer.write( "Could not produce a view for a Protein" );
+            } catch ( IOException e1 ) {
+                e1.printStackTrace ();
+            }
         } catch (InvocationTargetException e) {
             e.printStackTrace();
-            result = "Could not produce a view";
+            try {
+                writer.write( "Could not produce a view for a Protein" );
+            } catch ( IOException e1 ) {
+                e1.printStackTrace ();
+            }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-            result = "Could not produce a view";
+            try {
+                writer.write( "Could not produce a view for a Protein" );
+            } catch ( IOException e1 ) {
+                e1.printStackTrace ();
+            }
         }
-
-        return result;
     }
 
     // Implements abstract method

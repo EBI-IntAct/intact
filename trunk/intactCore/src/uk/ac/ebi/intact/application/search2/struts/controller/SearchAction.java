@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstant
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.Protein;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -132,7 +133,7 @@ public class SearchAction extends IntactBaseAction {
 
             // Save the search parameters for results page to display.
             session.setAttribute( SearchConstants.SEARCH_CRITERIA,
-                                  user.getSearchCritera() + "=" + searchValue);
+                    user.getSearchCritera() + "=" + searchValue);
             super.log("found results - forwarding to relevant Action for processing...");
 
             for (Iterator iterator = results.iterator(); iterator.hasNext();) {
@@ -148,9 +149,15 @@ public class SearchAction extends IntactBaseAction {
 
             // dispatch to the relevant action
             if( ( results.size() == 1 ) && ( ! searchClass.equals("") ) ) {
+
                 System.out.println("Forward to linkSearchAction");
                 return mapping.findForward(SearchConstants.FORWARD_LINK_SEARCH_ACTION);
+//            } else if ( results.iterator().next().getClass().isAssignableFrom(Protein.class)) {
+//
+//                System.out.println("Forward to ComplexAction");
+//                return mapping.findForward(SearchConstants.FORWARD_PROTEIN_BINARY_ACTION);
             } else {
+
                 System.out.println("Forward to freeTextSearchAction");
                 return mapping.findForward(SearchConstants.FORWARD_FREE_TEXT_SEARCH_ACTION);
             }
@@ -265,25 +272,25 @@ public class SearchAction extends IntactBaseAction {
     }
 
     /**
-         * utility method to handle the logic for lookup, ie trying AC, label etc.
-         * Isolating it here allows us to change initial strategy if we want to.
-         * NB this will probably be refactored out into the IntactHelper class later on.
-         *
-         * @param className The class to search on (only comes from a link clink) - useful for optimizing
-         * search
-         * @param value the user-specified value
-         * @param user The object holding the IntactHelper for a given user/session
-         * (passed as a parameter to avoid using an instance variable, which may
-         *  cause thread problems).
-         *
-         * @return Collection the results of the search - an empty Collection if no results found
-         *
-         * @exception IntactException thrown if there were any search problems
-         */
-        private Collection doSearch(String className, String value, IntactUserIF user)
-                throws IntactException {
+     * utility method to handle the logic for lookup, ie trying AC, label etc.
+     * Isolating it here allows us to change initial strategy if we want to.
+     * NB this will probably be refactored out into the IntactHelper class later on.
+     *
+     * @param className The class to search on (only comes from a link clink) - useful for optimizing
+     * search
+     * @param value the user-specified value
+     * @param user The object holding the IntactHelper for a given user/session
+     * (passed as a parameter to avoid using an instance variable, which may
+     *  cause thread problems).
+     *
+     * @return Collection the results of the search - an empty Collection if no results found
+     *
+     * @exception IntactException thrown if there were any search problems
+     */
+    private Collection doSearch(String className, String value, IntactUserIF user)
+            throws IntactException {
 
-            Collection results = new ArrayList();
+        Collection results = new ArrayList();
 
 
         //try search on AC first...
@@ -316,6 +323,6 @@ public class SearchAction extends IntactBaseAction {
         }
 
         return results;
-        }
+    }
 
 }

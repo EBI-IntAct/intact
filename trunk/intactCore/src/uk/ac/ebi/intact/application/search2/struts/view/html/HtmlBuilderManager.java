@@ -15,10 +15,9 @@ in the root directory of this distribution.
  */
 package uk.ac.ebi.intact.application.search2.struts.view.html;
 
+import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -50,53 +49,44 @@ public class HtmlBuilderManager {
         return ourInstance;
     }
 
-    public String getHtml(AnnotatedObject object, Set highlights, String link)
+
+    public void getHtml(Writer writer, AnnotatedObject object, Set highlights, String link)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        Writer writer = new StringWriter(4096);
         HtmlBuilder builder = new HtmlBuilder(writer, highlights, link);
         this.buildHtml(builder, object, highlights);
-        try {
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                writer.close();
-            } catch (IOException e) {
-            }
-        }
-        return writer.toString();
     }
 
 
-    public String getHtml(Collection objects, Set highlights, String link)
+    public void getHtml(Writer writer, Collection objects, Set highlights, String link)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        Writer writer = new StringWriter(4096);
         HtmlBuilder builder = new HtmlBuilder(writer, highlights, link);
         for (Iterator iterator = objects.iterator(); iterator.hasNext();) {
-            AnnotatedObject  object = (AnnotatedObject) iterator.next();
-            this.buildHtml(builder, object, highlights);
+                AnnotatedObject  obj = (AnnotatedObject) iterator.next();
+                this.buildHtml(builder, obj, highlights);
         }
-        try {
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                writer.close();
-            } catch (IOException e) {
-            }
-        }
-        return writer.toString();
     }
 
-    public void buildHtml(HtmlBuilder builder, AnnotatedObject object, Set highlights)
+    public void getHtml(Writer writer,
+                        BinaryDetailsViewBean.BinaryData object,
+                        Set highlights,
+                        String link)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        HtmlBuilder builder = new HtmlBuilder(writer, highlights, link);
+        this.buildHtml(builder, object, highlights);
+
+    }
+
+
+    public void buildHtml(HtmlBuilder builder, Object object, Set highlights)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         // TODO use a proper logger
-        System.out.println ( object.getShortLabel() + "  " + object.getClass().getName() );
+        if (object.getClass().isAssignableFrom( AnnotatedObject.class ))
+            System.out.println ( ((AnnotatedObject) object).getShortLabel() + "  " +
+                                 object.getClass().getName() );
 
         try {
             Class[] paras = new Class[]{object.getClass()};

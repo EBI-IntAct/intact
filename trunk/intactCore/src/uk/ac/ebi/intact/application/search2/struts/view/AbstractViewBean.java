@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search2.struts.view;
 
 import java.io.Serializable;
+import java.io.Writer;
 import java.util.Set;
 
 /**
@@ -74,7 +75,7 @@ public abstract class AbstractViewBean implements Serializable {
     /**
      * Instructs the bean to create an HTML content for the object that it wraps.
      */
-    public abstract String getHTML();
+    public abstract void getHTML( Writer writer );
 
     public abstract void initHighlightMap();
 }

@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.application.search2.struts.view.AbstractViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.ViewBeanFactory;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -39,13 +40,13 @@ public class ExperimentSingleViewBean extends SingleViewBean {
         return true;
     }
 
-    public String getHTML() {
+    public void getHTML( Writer writer ) {
 
         Collection collection = new ArrayList(1);
         collection.add( getWrappedObject() );
         AbstractViewBean bean = ViewBeanFactory.getInstance().getViewBean(
                 collection, getHelpLink() );
         bean.initHighlightMap();
-        return bean.getHTML();
+        bean.getHTML( writer );
     }
 }
