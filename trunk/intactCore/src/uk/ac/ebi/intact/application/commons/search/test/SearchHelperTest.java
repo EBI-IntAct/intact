@@ -9,14 +9,13 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.log4j.Logger;
-import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.Criteria;
-import org.apache.ojb.broker.query.ReportQueryByCriteria;
+import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryFactory;
+import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
-import uk.ac.ebi.intact.application.commons.search.ResultIterator;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -187,46 +186,48 @@ public class SearchHelperTest extends TestCase {
 
         // within max size
         Query[] queries = getSearchQueries(InteractionImpl.class, "ga-*");
-        ResultIterator ri = searchHelper.searchByQuery(helper, queries, 20);
+        ResultWrapper rw = searchHelper.searchByQuery(queries, 20);
 
         // Not too large
-        assertFalse(ri.isTooLarge());
-        assertEquals(ri.getPossibleResultSize(), 8);
-        assertTrue(ri.isNonEmptyAndWithinBounds());
+        List results = rw.getResult();
+        assertEquals(results.size(), 8);
+        // Not too large
+        assertFalse(rw.isTooLarge());
+        assertEquals(rw.getPossibleResultSize(), 8);
 
-        for (Iterator iter = ri.getIterator(); iter.hasNext();) {
+        for (Iterator iter = results.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
             assertTrue(((String) row[1]).startsWith("ga-"));
         }
 
         // equals to max size
-        ri = searchHelper.searchByQuery(helper, queries, 8);
+        rw = searchHelper.searchByQuery(queries, 8);
+        results = rw.getResult();
+        assertEquals(results.size(), 8);
         // Not too large
-        assertFalse(ri.isTooLarge());
-        assertEquals(ri.getPossibleResultSize(), 8);
-        assertTrue(ri.isNonEmptyAndWithinBounds());
+        assertFalse(rw.isTooLarge());
+        assertEquals(rw.getPossibleResultSize(), 8);
 
-        for (Iterator iter = ri.getIterator(); iter.hasNext();) {
+        for (Iterator iter = results.iterator(); iter.hasNext();) {
             Object[] row = (Object[]) iter.next();
             assertTrue(((String) row[1]).startsWith("ga-"));
         }
 
         // greater than max size
-        ri = searchHelper.searchByQuery(helper, queries, 5);
+        rw = searchHelper.searchByQuery(queries, 5);
         // Too large
-        assertTrue(ri.isTooLarge());
-        assertEquals(ri.getPossibleResultSize(), 8);
-        // Out of bounds
-        assertFalse(ri.isNonEmptyAndWithinBounds());
+        results = rw.getResult();
+        assertTrue(results.isEmpty());
+        assertTrue(rw.isTooLarge());
+        assertEquals(rw.getPossibleResultSize(), 8);
 
         // No results
         queries = getSearchQueries(InteractionImpl.class, "xx-*");
-        ri = searchHelper.searchByQuery(helper, queries, 5);
+        rw = searchHelper.searchByQuery(queries, 5);
 
         // None found
-        assertTrue(ri.isEmpty());
-        assertEquals(ri.getPossibleResultSize(), 0);
-        assertFalse(ri.isNonEmptyAndWithinBounds());
+        assertTrue(rw.isEmpty());
+        assertEquals(rw.getPossibleResultSize(), 0);
     }
 
     private void doTestGetProteins() throws IntactException {

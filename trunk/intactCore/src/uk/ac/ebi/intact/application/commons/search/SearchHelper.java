@@ -173,33 +173,46 @@ public class SearchHelper implements SearchHelperI {
         }
     }
 
-    public ResultIterator searchByQuery(IntactHelper helper, Query[] queries, int max)
-            throws IntactException {
+    public ResultWrapper searchByQuery(Query[] queries, int max) throws IntactException {
         // The count returned by the query.
         Object rowCount;
 
         // The actual search count.
         int count = 0;
 
-        Iterator iter0 = helper.getIteratorByReportQuery(queries[0]);
-        rowCount = ((Object[]) iter0.next())[0];
+        // The helper to run the query against.
+        IntactHelper helper = new IntactHelper();
 
-        // Check for oracle
-        if (rowCount.getClass().isAssignableFrom(BigDecimal.class)) {
-            count =  ((BigDecimal) rowCount).intValue();
+        try {
+            Iterator iter0 = helper.getIteratorByReportQuery(queries[0]);
+            rowCount = ((Object[]) iter0.next())[0];
+
+            // Check for oracle
+            if (rowCount.getClass().isAssignableFrom(BigDecimal.class)) {
+                count =  ((BigDecimal) rowCount).intValue();
+            }
+            else {
+                // postgres driver returns Long. Could be a problem for another DB
+                // This may throw a classcast exception.
+                count =  ((Long) rowCount).intValue();
+            }
+            if ((count > 0) && (count <= max)) {
+                // Not empty and within the max limits. Do the search
+                // The result collection to set.
+                List results = new ArrayList();
+                for (Iterator iter = helper.getIteratorByReportQuery(queries[1]); iter.hasNext();) {
+                    results.add(iter.next());
+                }
+                return new ResultWrapper(results, max);
+            }
         }
-        else {
-            // postgres driver returns Long. Could be a problem for another DB
-            // This may throw a classcast exception.
-            count =  ((Long) rowCount).intValue();
-        }
-        if ((count > 0) || (count <= max)) {
-            // Not empty and within the max limits. Do the search
-            return new ResultIterator(
-                    helper.getIteratorByReportQuery(queries[1]), max, count);
+        finally {
+            if (helper != null) {
+                helper.closeStore();
+            }
         }
         // Either too large or none found (empty search).
-        return new ResultIterator(count, max);
+        return new ResultWrapper(count, max);
     }
 
 
