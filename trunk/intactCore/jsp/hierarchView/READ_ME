@@ -1,0 +1,5 @@
+Before start tomcat, you have to start a server X to manage the graph generation. 
+You have to do in the same terminale where you want to start tomcat :
+	- Xvfb :2.0 &
+	- setenv DIPLAY :2.0 (to give an adress in DIPLAY for the server X, DISPLAY is used by tomcat)
+	- echo $DISPLAY (to check if DIPLAY have a good value)
