@@ -102,9 +102,7 @@ public class XreferenceBean extends EditBean implements Serializable {
      * @return the database as a browsable link.
      */
     public String getDatabaseLink() {
-        String link = "<a href=\"" + "javascript:show('CvDatabase', "
-                + "'" + myDatabaseName + "')\"" + ">" + myDatabaseName + "</a>";
-        return link;
+        return getLink("CvDatabase", myDatabaseName);
     }
 
     /**
@@ -173,10 +171,7 @@ public class XreferenceBean extends EditBean implements Serializable {
      * @return the qualifier as a browsable link.
      */
     public String getQualifierLink() {
-        String link = "<a href=\"" + "javascript:show('CvXrefQualifier', " + "'"
-                + myReferenceQualifer + "')\"" + ">"
-                + myReferenceQualifer + "</a>";
-        return link;
+        return getLink("CvXrefQualifier", myReferenceQualifer);
     }
 
     /**
