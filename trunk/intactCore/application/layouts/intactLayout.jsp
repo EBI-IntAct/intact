@@ -6,25 +6,24 @@
     Intact default look & feel layout. It consists of a sidebar and a display
     area. The display area conatns the header, contents and the footer as
     shown below:
-    +-----------------+
-    | side | header   +
-    | bar  | contents +
-    |      | footer   +
-    |-----------------+
+    +---------------------+
+    | Organization header +
+    |---------------------+
+    | side | header       +
+    | bar  | contents     +
+    |      | footer       +
+    |---------------------+
 
     Author: Sugath Mudali (smudali@ebi.ac.uk)
     Version: $Id$
 --%>
 
 <html:html>
-
 <head>
-    <title><tiles:getAsString name="title"/></title>
-    <html:base/>
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
-    <link rel="stylesheet" type="text/css" href="styles/intact.css"/>
+    <tiles:insert attribute="institution.header"/>
 </head>
 
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0">
@@ -39,7 +38,7 @@
     <td valign="top" height="100%" width="*">
         <table width="100%" height="100%">
 
-            <%-- Header section --%>
+            <%-- Application Header section --%>
             <tr>
                 <td bgcolor="#ffeeaa" height="8%">
                     <tiles:insert attribute="header"/>
