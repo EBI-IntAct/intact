@@ -1291,7 +1291,7 @@ public class IntactHelper implements SearchI, Externalizable {
             Iterator i = resultList.iterator();
             result = i.next();
             if (i.hasNext()) {
-                IntactException ie = new DuplicateLabelException();
+                IntactException ie = new DuplicateLabelException( label, clazz.getName() );
                 throw(ie);
             }
         }
@@ -1323,7 +1323,7 @@ public class IntactHelper implements SearchI, Externalizable {
             Iterator i = resultList.iterator();
             result = i.next();
             if (i.hasNext()) {
-                IntactException ie = new DuplicateLabelException();
+                IntactException ie = new DuplicateLabelException( ac, clazz.getName() );
                 throw(ie);
             }
         }
