@@ -15,16 +15,29 @@ import uk.ac.ebi.intact.util.DRLineExport;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 
 public class DRLineExportTest extends TestCase {
 
+    private class TestableProtein extends ProteinImpl {
+
+        public TestableProtein( Institution owner, BioSource source, String shortLabel ) {
+            super( owner, source, shortLabel );
+        }
+
+        public TestableProtein( String ac, Institution owner, BioSource source, String shortLabel ) {
+            super( owner, source, shortLabel );
+            this.ac = ac;
+        }
+    }
+
     // needed controlled vocabulary (ie. the DRLineExport relies on it)
     private CvDatabase uniprot;
+    private CvDatabase intact;
     private CvTopic uniprotDrExport;
     private CvTopic negative;
     private CvTopic authorConfidence;
     private CvXrefQualifier identityCvXrefQualifier;
+    private CvXrefQualifier isoformParentXrefQualifier;
 
     private Institution institution;
 
@@ -36,6 +49,7 @@ public class DRLineExportTest extends TestCase {
     private Interaction interaction2b;
 
     private Protein protein1;
+    private Protein protein1SpliceVariant;
     private Protein protein2;
     private Protein protein3;
     private Protein protein4;
@@ -69,33 +83,42 @@ public class DRLineExportTest extends TestCase {
         authorConfidence = new CvTopic( institution, "author-confidence" );
         negative = new CvTopic( institution, "negative" );
         uniprot = new CvDatabase( institution, "uniprot" );
+        intact = new CvDatabase( institution, "intact" );
         identityCvXrefQualifier = new CvXrefQualifier( institution, "identity" );
+        isoformParentXrefQualifier = new CvXrefQualifier( institution, "isoform-parent" );
 
 
         // Create proteins
         BioSource bioSource = new BioSource( institution, "bio1", "1" );
         CvDatabase cvDatabase = new CvDatabase( institution, "oneOfMine" );
 
-        protein1 = new ProteinImpl( institution, bioSource, "PROT-1" );
-        protein1.addXref( new Xref( institution, uniprot, "PROT-1", null, null, identityCvXrefQualifier ) );
+        protein1 = new TestableProtein( "EBI-123", institution, bioSource, "PROT1_bio1" );
+        protein1.addXref( new Xref( institution, uniprot, "PROTEIN1", null, null, identityCvXrefQualifier ) );
         protein1.addXref( new Xref( institution, cvDatabase, "1laigvh", null, null, null ) );
         protein1.addXref( new Xref( institution, cvDatabase, "1slgn", null, null, null ) );
 
-        protein2 = new ProteinImpl( institution, bioSource, "PROT-2" );
+        protein1SpliceVariant = new TestableProtein( "EBI-123", institution, bioSource, "PROT1_bio1-1" );
+        protein1SpliceVariant.addXref( new Xref( institution, uniprot, "PROTEIN1-1", null, null, identityCvXrefQualifier ) );
+        // Link to its master protein
+        protein1SpliceVariant.addXref( new Xref( institution, intact, "EBI-123", "PROTEIN1", null, isoformParentXrefQualifier ) );
+        protein1SpliceVariant.addXref( new Xref( institution, cvDatabase, "1laigvh", null, null, null ) );
+        protein1SpliceVariant.addXref( new Xref( institution, cvDatabase, "1slgn", null, null, null ) );
+
+        protein2 = new ProteinImpl( institution, bioSource, "PROT2_bio1" );
         protein2.addXref( new Xref( institution, cvDatabase, "2qwerty", null, null, null ) );
-        protein2.addXref( new Xref( institution, uniprot, "PROT-2", null, null, identityCvXrefQualifier ) );
+        protein2.addXref( new Xref( institution, uniprot, "PROTEIN2", null, null, identityCvXrefQualifier ) );
         protein2.addXref( new Xref( institution, cvDatabase, "2zxcvb", null, null, null ) );
 
-        protein3 = new ProteinImpl( institution, bioSource, "PROT-3" );
+        protein3 = new ProteinImpl( institution, bioSource, "PROT3_bio1" );
         protein3.addXref( new Xref( institution, cvDatabase, "3asfdg", null, null, null ) );
         protein3.addXref( new Xref( institution, cvDatabase, "3ryuk", null, null, null ) );
-        protein3.addXref( new Xref( institution, uniprot, "PROT-3", null, null, identityCvXrefQualifier ) );
+        protein3.addXref( new Xref( institution, uniprot, "PROTEIN3", null, null, identityCvXrefQualifier ) );
         protein3.addXref( new Xref( institution, cvDatabase, "3lkjhgf", null, null, null ) );
 
-        protein4 = new ProteinImpl( institution, bioSource, "PROT-4" );
+        protein4 = new ProteinImpl( institution, bioSource, "PROT4_bio1" );
         protein4.addXref( new Xref( institution, cvDatabase, "4alklk", null, null, null ) );
         protein4.addXref( new Xref( institution, cvDatabase, "4pppp", null, null, null ) );
-        protein4.addXref( new Xref( institution, uniprot, "PROT-4", null, null, identityCvXrefQualifier ) );
+        protein4.addXref( new Xref( institution, uniprot, "PROTEIN4", null, null, identityCvXrefQualifier ) );
     }
 
 
@@ -283,7 +306,9 @@ public class DRLineExportTest extends TestCase {
             public void init( IntactHelper helper ) {
                 // provide the content of what should have been picked up from a Database.
                 this.uniprotDatabase = uniprot;
+                this.intactDatabase = intact;
                 this.identityXrefQualifier = identityCvXrefQualifier;
+                this.isoformParentQualifier = isoformParentXrefQualifier;
                 this.uniprotDR_Export = uniprotDrExport;
                 this.authorConfidenceTopic = authorConfidence;
                 this.negativeTopic = negative;
@@ -304,8 +329,11 @@ public class DRLineExportTest extends TestCase {
     }
 
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Check that all interaction linked to a protein are checked to decide if a protein is eligible
 
-    //////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////
     // (Test set 1) Handling of the status of an Experiment
 
     public void testGetExperimentExportStatus_Export() {
@@ -396,7 +424,7 @@ public class DRLineExportTest extends TestCase {
     }
 
 
-    //////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
     // (Test set 2) Handling of the status of a CvInteraction
 
     public void testGetCvInteractionExportStatus_Export() {
@@ -516,7 +544,7 @@ public class DRLineExportTest extends TestCase {
     }
 
 
-    //////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     // (Test set 3) Handling of the retrieval of a Protein Uniprot identity
 
     public void testGetUniprotID() {
@@ -525,7 +553,7 @@ public class DRLineExportTest extends TestCase {
 
         String id = exporter.getUniprotID( protein1 );
         assertNotNull( id );
-        assertEquals( "PROT-1", id );
+        assertEquals( "PROTEIN1", id );
     }
 
 
@@ -554,7 +582,7 @@ public class DRLineExportTest extends TestCase {
     }
 
 
-    //////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
     // (Test set 5) Handling of the protein eligibility based on the status of the Experiment
 
     public void testGetProteinEligibleForExport_NothingSpecified() {
@@ -566,10 +594,16 @@ public class DRLineExportTest extends TestCase {
         proteins.add( protein2 );
         proteins.add( protein3 );
 
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+        String uniprotID = null;
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 0, eligibleProteins.size() );
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNull( uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNull( uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNull( uniprotID );
     }
 
     public void testGetProteinEligibleForExport_ExperimentExportable() {
@@ -582,18 +616,19 @@ public class DRLineExportTest extends TestCase {
         annotation.setAnnotationText( "yes" );
         experiment.addAnnotation( annotation );
 
-        Collection proteins = new ArrayList();
-        proteins.add( protein1 );
-        proteins.add( protein2 );
-        proteins.add( protein3 );
+        String uniprotID = null;
 
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN1", uniprotID );
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 3, eligibleProteins.size() );
-        assertTrue( eligibleProteins.contains( "PROT-1" ) );
-        assertTrue( eligibleProteins.contains( "PROT-2" ) );
-        assertTrue( eligibleProteins.contains( "PROT-3" ) );
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN2", uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN3", uniprotID );
     }
 
     public void testGetProteinEligibleForExport_ExperimentNotExportable() {
@@ -606,15 +641,16 @@ public class DRLineExportTest extends TestCase {
         annotation.setAnnotationText( "no" );
         experiment.addAnnotation( annotation );
 
-        Collection proteins = new ArrayList();
-        proteins.add( protein1 );
-        proteins.add( protein2 );
-        proteins.add( protein3 );
+        String uniprotID = null;
 
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNull( uniprotID );
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 0, eligibleProteins.size() );
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNull( uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNull( uniprotID );
     }
 
     public void testGetProteinEligibleForExport_ExperimentNegative() {
@@ -626,15 +662,16 @@ public class DRLineExportTest extends TestCase {
         Annotation annotation = new Annotation( institution, negative );
         experiment.addAnnotation( annotation );
 
-        Collection proteins = new ArrayList();
-        proteins.add( protein1 );
-        proteins.add( protein2 );
-        proteins.add( protein3 );
+        String uniprotID = null;
 
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNull( uniprotID );
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 0, eligibleProteins.size() );
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNull( uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNull( uniprotID );
     }
 
     public void testGetProteinEligibleForExport_ExperimentLargeScale() {
@@ -660,21 +697,22 @@ public class DRLineExportTest extends TestCase {
         conf2.setAnnotationText( "CORe-2" );
         interaction3a.addAnnotation( conf2 );
 
-        Collection proteins = new ArrayList();
-        proteins.add( protein1 );
-        proteins.add( protein2 );
-        proteins.add( protein3 );
+        String uniprotID = null;
 
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNull( uniprotID );
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 2, eligibleProteins.size() );
-        assertTrue( eligibleProteins.contains( "PROT-2" ) );
-        assertTrue( eligibleProteins.contains( "PROT-3" ) );
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN2", uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN3", uniprotID );
     }
 
 
-    /////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
     // (Test set 6) Handling of the protein eligibility based on the status of the CvInteraction
 
     public void testGetProteinEligibleForExport_MethodExportable() {
@@ -691,18 +729,19 @@ public class DRLineExportTest extends TestCase {
 
         experiment.setCvInteraction( cvInteraction );
 
-        Collection proteins = new ArrayList();
-        proteins.add( protein1 );
-        proteins.add( protein2 );
-        proteins.add( protein3 );
+        String uniprotID = null;
 
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN1", uniprotID );
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 3, eligibleProteins.size() );
-        assertTrue( eligibleProteins.contains( "PROT-1" ) );
-        assertTrue( eligibleProteins.contains( "PROT-2" ) );
-        assertTrue( eligibleProteins.contains( "PROT-3" ) );
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN2", uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN3", uniprotID );
     }
 
     public void testGetProteinEligibleForExport_MethodDoNotExportable() {
@@ -719,15 +758,16 @@ public class DRLineExportTest extends TestCase {
 
         experiment.setCvInteraction( cvInteraction );
 
-        Collection proteins = new ArrayList();
-        proteins.add( protein1 );
-        proteins.add( protein2 );
-        proteins.add( protein3 );
+        String uniprotID = null;
 
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNull( uniprotID );
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 0, eligibleProteins.size() );
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNull( uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNull( uniprotID );
     }
 
     public void testGetProteinEligibleForExport_MethodConditional_DoNotExport() {
@@ -744,15 +784,16 @@ public class DRLineExportTest extends TestCase {
 
         experiment.setCvInteraction( cvInteraction );
 
-        Collection proteins = new ArrayList();
-        proteins.add( protein1 );
-        proteins.add( protein2 );
-        proteins.add( protein3 );
+        String uniprotID = null;
 
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNull( uniprotID );
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 0, eligibleProteins.size() );
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNull( uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNull( uniprotID );
     }
 
     public void testGetProteinEligibleForExport_MethodConditional_PartialExport() {
@@ -771,24 +812,25 @@ public class DRLineExportTest extends TestCase {
         experimentA.setCvInteraction( cvInteraction );
         experimentB.setCvInteraction( cvInteraction );
 
-        Collection proteins = new ArrayList();
-        proteins.add( protein1 );
-        proteins.add( protein2 );
-        proteins.add( protein3 );
-        proteins.add( protein4 );
+        String uniprotID = null;
 
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN1", uniprotID );
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 2, eligibleProteins.size() );
-        assertTrue( eligibleProteins.contains( "PROT-1" ) );
-        assertTrue( eligibleProteins.contains( "PROT-2" ) );
-//        assertTrue( eligibleProteins.contains( "PROT-3" ) );
-//        assertTrue( eligibleProteins.contains( "PROT-4" ) );
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN2", uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNull( uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein4, null );
+        assertNull( uniprotID );
     }
 
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
     // (Test set 7) Handling of the protein eligibility based on the interaction being annotated negative
 
     public void testGetProteinEligibleForExport_NegativeInteraction() {
@@ -805,13 +847,6 @@ public class DRLineExportTest extends TestCase {
         Annotation negativeAnnotation = new Annotation( institution, negative );
         interaction2a.addAnnotation( negativeAnnotation );
         interaction3a.addAnnotation( negativeAnnotation );
-
-        Collection proteins = new ArrayList();
-        proteins.add( protein1 );
-        proteins.add( protein2 );
-        proteins.add( protein3 );
-
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
 
         /**
          * Explanation of what should happen
@@ -834,14 +869,22 @@ public class DRLineExportTest extends TestCase {
          * export should contains P1 and P2.
          */
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 2, eligibleProteins.size() );
-        assertTrue( eligibleProteins.contains( "PROT-1" ) );
-        assertTrue( eligibleProteins.contains( "PROT-2" ) );
+        String uniprotID = null;
+
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN1", uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN2", uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNull( uniprotID );
     }
 
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
     // (Test set 8) Handling of the protein eligibility based on the experiment being annotated negative
 
     public void testGetProteinEligibleForExport_NegativeExperiment() {
@@ -860,14 +903,6 @@ public class DRLineExportTest extends TestCase {
 
         Annotation negativeAnnotation = new Annotation( institution, negative );
         experimentA.addAnnotation( negativeAnnotation );
-
-        Collection proteins = new ArrayList();
-        proteins.add( protein1 );
-        proteins.add( protein2 );
-        proteins.add( protein3 );
-        proteins.add( protein4 );
-
-        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
 
         /**
          * Explanation of what should happen
@@ -895,10 +930,21 @@ public class DRLineExportTest extends TestCase {
          * export should contains P1, P2 and P4.
          */
 
-        assertNotNull( eligibleProteins );
-        assertEquals( 3, eligibleProteins.size() );
-        assertTrue( eligibleProteins.contains( "PROT-1" ) );
-        assertTrue( eligibleProteins.contains( "PROT-2" ) );
-        assertTrue( eligibleProteins.contains( "PROT-4" ) );
+        String uniprotID = null;
+
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN1", uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN2", uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNull( uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein4, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN4", uniprotID );
     }
 }
