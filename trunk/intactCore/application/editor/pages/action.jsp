@@ -49,13 +49,18 @@
             <br/><bean:message key="button.submit.titleKey"/>
         </td>
 
-        <td align="center" bgcolor="palegreen">
-            <html:submit property="dispatch"
-                disabled="<%=disable.equals(Boolean.TRUE)%>">
-                <bean:message key="button.save.continue"/>
-            </html:submit>
-            <br/><bean:message key="button.save.continue.titleKey"/>
-        </td>
+        <%-- Save & Continue button if the view says so. All editors can be saved
+             apart from Mutation Feature editor.
+        --%>
+        <c:if test="${view.saveState}">
+            <td align="center" bgcolor="palegreen">
+                <html:submit property="dispatch"
+                    disabled="<%=disable.equals(Boolean.TRUE)%>">
+                    <bean:message key="button.save.continue"/>
+                </html:submit>
+                <br/><bean:message key="button.save.continue.titleKey"/>
+            </td>
+        </c:if>
 
         <%-- Clone button if the view says so --%>
         <c:if test="${view.cloneState}">
