@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -10,6 +10,7 @@ import java.util.*;
 
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpServletRequest;
 
 import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
@@ -18,7 +19,10 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorFormFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.util.GoTools;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.beanutils.DynaBean;
@@ -67,26 +71,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     // Static data
 
     /**
-     * The name of the topic list.
-     */
-    private static final String theirTopicNames = "TopicNames";
-
-    /**
-     * The name of the database list.
-     */
-    private static final String theirDBNames = "DatabaseNames";
-
-    /**
-     * The name of qualifier list.
-     */
-    private static final String theirQualifierNames = "QualifierNames";
-
-    /**
-     * Maps: List Name -> List type. Common to all the users and it is immutable.
-     */
-    private static final Map theirNameToType = new HashMap();
-
-    /**
      * Single result found with the last search.
      */
     private static final int theirSingleEntry = 0;
@@ -132,11 +116,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient String mySelectedTopic;
 
     /**
-     * Maps list name -> list of items. Made it transient
-     */
-    private transient Map myNameToItems = new HashMap();
-
-    /**
      * The current view of the user. Not saving the state of the view yet.
      */
     private transient AbstractEditViewBean myEditView;
@@ -158,6 +137,16 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient EditViewBeanFactory myViewFactory;
 
     /**
+     * The factory to create various form beans.
+     */
+    private transient EditorFormFactory myFormFactory;
+
+    /**
+     * The factory to create various menus.
+     */
+    private transient EditorMenuFactory myMenuFactory;
+
+    /**
      * Stores the last query result.
      */
     private String myLastQuery;
@@ -166,15 +155,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * Stores the class name of the last search.
      */
     private String myLastQueryClass;
-
-    // Static initializer.
-
-    // Fill the maps with list names and their associated classes.
-    static {
-        theirNameToType.put(theirTopicNames, CvTopic.class);
-        theirNameToType.put(theirDBNames, CvDatabase.class);
-        theirNameToType.put(theirQualifierNames, CvXrefQualifier.class);
-    }
 
     // Static Methods.
 
@@ -201,12 +181,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      *  could be due to the errors in repository files.
      * @exception IntactException for errors in creating IntactHelper; possibly
      * due to an invalid user.
-     * @exception SearchException for error in creating lists such as topics,
-     *  database names etc.
      */
     public EditUser(String mapping, String dsClass, String user,
-                    String password) throws DataSourceException, IntactException,
-            SearchException {
+                    String password) throws DataSourceException, IntactException {
         myUser = user;
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
@@ -218,13 +195,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Initialize the helper.
         myHelper = new IntactHelper(ds, user, password);
-
-        // Cache the list names.
-        for (Iterator iter = theirNameToType.entrySet().iterator();
-             iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            myNameToItems.put(entry.getKey(), makeList((Class) entry.getValue()));
-        }
         // Record the time started.
         mySessionStartTime = Calendar.getInstance().getTime();
     }
@@ -236,8 +206,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * Starts the user view.
      */
     public void valueBound(HttpSessionBindingEvent event) {
-        // Create the view factory.
+        // Create the factories.
         myViewFactory = new EditViewBeanFactory();
+        myFormFactory = new EditorFormFactory();
+        myMenuFactory = new EditorMenuFactory(myHelper);
     }
 
     /**
@@ -279,42 +251,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditState;
     }
 
-    public Collection getTopicList() {
-        return getList(theirTopicNames);
-    }
-
-    public Collection getDatabaseList() {
-        return getList(theirDBNames);
-    }
-
-    public Collection getQualifierList() {
-        return getList(theirQualifierNames);
-    }
-
-    public boolean isQualifierListEmpty() {
-        return isListEmpty(theirQualifierNames);
-    }
-
-    public void refreshList() throws SearchException {
-        Class clazz = myEditView.getAnnotatedObject().getClass();
-        // Has the current edit type got a list?
-        if (!theirNameToType.containsValue(clazz)) {
-            return;
-        }
-        // Valid type; must update the list. First get the name of the list.
-        for (Iterator iter = theirNameToType.entrySet().iterator();
-             iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            if (clazz.equals(entry.getValue())) {
-                // The list to update.
-                String name = (String) entry.getKey();
-                // Remove this from the existing map.
-                myNameToItems.remove(name);
-                myNameToItems.put(name, makeList((Class) entry.getValue()));
-            }
-        }
-    }
-
     public void begin() throws IntactException {
         myHelper.startTransaction();
     }
@@ -351,6 +287,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         this.startEditing();
         // Get the new view for the new edit object.
         myEditView = myViewFactory.factory(annot);
+        myEditView.setMenuFactory(myMenuFactory);
+    }
+
+    public DynaBean getDynaBean(String formName, HttpServletRequest request) {
+        return myFormFactory.getDynaBean(formName, request);
     }
 
     public Object getObjectByLabel(Class clazz, String label)
@@ -409,6 +350,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void addToSearchCache(AnnotatedObject anobj) {
+        if (mySearchCache.isEmpty()) {
+            return;
+        }
         // Only add to the cache list if they are of same type; the check
         // is made against the first element (assumes that rest are of same type).
         ResultBean rb = (ResultBean) mySearchCache.iterator().next();
@@ -446,7 +390,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
-    public void populateSearchResult(DynaBean dynaForm) {
+    public void fillSearchResult(DynaBean dynaForm) {
         dynaForm.set("items", mySearchCache);
     }
 
@@ -464,80 +408,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     // Helper methods.
-
-    /**
-     * This method creates a list for given class.
-     *
-     * @param clazz the class type to create the list.
-     *
-     * @return list made of short labels for given class type. A special
-     * list with <code>theirEmptyListItem</code> is returned if there
-     * are no items found for <code>clazz</code>.
-     */
-    private Collection makeList(Class clazz) throws SearchException {
-        // The collection to return.
-        Collection list = new ArrayList();
-
-        Vector v = null;
-        try {
-            v = CvObject.getMenuList(clazz, myHelper, true);
-        }
-        catch (IntactException ie) {
-            throw new SearchException("Search failed: " + ie.getNestedMessage());
-        }
-        // Guard against the null pointer.
-        if ((v == null) || v.isEmpty()) {
-            // Special list when we don't have any names.
-            list.add(EMPTY_LIST_ITEM);
-            return list;
-        }
-        for (Iterator iter = v.iterator(); iter.hasNext();) {
-            list.add(iter.next());
-        }
-        return list;
-    }
-
-    /**
-     * Returns <code>true</code> only if the list for given name contains
-     * a single item and that item equals to the empty list item identifier.
-     * @param name the name of the list.
-     */
-    private boolean isListEmpty(String name) {
-        Collection list = (Collection) myNameToItems.get(name);
-        Iterator iter = list.iterator();
-        return (iter.next()).equals(EMPTY_LIST_ITEM) && !iter.hasNext();
-    }
-
-    /**
-     * Returns the collection for given list name.
-     * @param name the name of the list; e.g., topic, database etc.
-     * @return the list for <code>name</code>. If the current editable object is
-     * as same as <code>name/code>'s class, then the cuurent editable's name (short
-     * label) wouldn't be included. For example, if the short label for a CvTopic is
-     * Function, then the list wouldn't have 'Function' if the current editable object
-     * is of CvTopic and its short label is 'Function'.
-     */
-    private Collection getList(String name) {
-        Collection list = (Collection) myNameToItems.get(name);
-        Class clazz = (Class) theirNameToType.get(name);
-
-        // Remove the short label only when the current editable object's
-        // class and the given class match.
-        AnnotatedObject annobj = myEditView.getAnnotatedObject();
-        if (annobj.getClass().equals(clazz)) {
-            // The short label of the CV object we are editing at the moment.
-            String label = annobj.getShortLabel();
-
-            // New collection because we are modifying the list.
-            Collection topics = new ArrayList(list);
-
-            // Remove the short label from the drop down list.
-            topics.remove(label);
-            return topics;
-        }
-        // No modifcations to the list; just return the cache list.
-        return list;
-    }
 
     /**
      * Starts the editing session.
