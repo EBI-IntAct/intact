@@ -12,8 +12,8 @@ import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.SearchException;
 
 import java.util.*;
 
@@ -342,7 +342,7 @@ public abstract class AbstractEditViewBean {
      * @param user handler to access the persistent method calls.
      * @exception IntactException for errors in updating the persistent system.
      */
-    public void persist(EditUserI user) throws IntactException {
+    public void persist(EditUserI user) throws IntactException, SearchException {
         // Update the cv info data.
         myAnnotObject.setShortLabel(getShortLabel());
         myAnnotObject.setFullName(getFullName());
@@ -634,7 +634,7 @@ public abstract class AbstractEditViewBean {
     }
 
     private Annotation updateAnnotation(EditUserI user, CommentBean cb)
-            throws IntactException {
+            throws SearchException {
         // Update with the new description.
         Annotation annot = cb.getAnnotation();
         annot.setAnnotationText(cb.getDescription());
@@ -650,7 +650,7 @@ public abstract class AbstractEditViewBean {
     }
 
     private Xref updateXref(EditUserI user, XreferenceBean xb)
-            throws IntactException {
+            throws SearchException {
         // The xref object to update
         Xref xref = xb.getXref();
 
