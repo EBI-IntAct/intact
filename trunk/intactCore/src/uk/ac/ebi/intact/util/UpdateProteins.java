@@ -1223,9 +1223,12 @@ public class UpdateProteins extends UpdateProteinsI {
 
         } catch (Exception e ) {
             e.printStackTrace();
+            System.exit (1);
         } finally {
             if (helper != null) helper.closeStore();
         }
+
+        System.exit( 0 );
     }
 
 }
