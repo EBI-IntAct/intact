@@ -98,9 +98,19 @@
 
         <tr>
             <td>
-                <html:submit titleKey="sidebar.search.button.submit.title">
+                <html:submit property="action" titleKey="sidebar.search.button.submit.title">
                     <bean:message key="sidebar.search.button.submit"/>
                 </html:submit>
+            <%
+                if (user.InteractionNetworkReadyToBeDisplayed()) {
+                    // display the Add button only if the user as already a network
+            %>
+                <html:submit property="action" titleKey="sidebar.search.button.add.title">
+                    <bean:message key="sidebar.search.button.add"/>
+                </html:submit>
+            <%
+                }
+            %>
             </td>
         </tr>
     </table>
