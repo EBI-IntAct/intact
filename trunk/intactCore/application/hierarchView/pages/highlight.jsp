@@ -29,7 +29,8 @@
                            <display:column property="label" title="ID" width="25%"/>
                            <display:column property="description" width="75%" />
 
-                           <display:setProperty name="basic.msg.empty_list" value="No source available for that protein" />
+                           <display:setProperty name="basic.msg.empty_list"
+                                                value="No source available for that interaction network" />
                    </display:table>
 
              </td>
