@@ -49,6 +49,7 @@ public abstract class UpdateProteinsI {
     protected static CvDatabase sgdDatabase;
     protected static CvDatabase goDatabase;
     protected static CvDatabase interproDatabase;
+    protected static CvDatabase flybaseDatabase;
 
     /**
      * Describe wether an Xref is related the primary SPTR AC (identityCrefQualifier)
@@ -153,6 +154,12 @@ public abstract class UpdateProteinsI {
                 throw new UpdateException ("Unable to find the interpro database in your IntAct node");
             }
 
+            flybaseDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "flybase");
+            if (flybaseDatabase == null) {
+                logger.error ("Unable to find the flybase database in your IntAct node");
+                throw new UpdateException ("Unable to find the flybase database in your IntAct node");
+            }
+
             identityXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class, "identity");
             if (identityXrefQualifier == null) {
                 logger.error ("Unable to find the identity CvXrefQualifier in your IntAct node");
@@ -210,7 +217,6 @@ public abstract class UpdateProteinsI {
      * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism,
      * unless the taxid parameter is not null.
      *
-     *
      * @param sourceUrl  The URL which delivers zero or more SPTR flat file formatted entries.
      * @param taxid      Of all entries retrieved from sourceURL, insert only those which have this
      *                   taxid.
@@ -219,9 +225,7 @@ public abstract class UpdateProteinsI {
      *                   else, skip existing Protein objects.
      * @return           The number of protein objects created.
      */
-    public abstract int insertSPTrProteins (String sourceUrl,
-                                            String taxid,
-                                            boolean update);
+    public abstract int insertSPTrProteinsFromURL ( String sourceUrl, String taxid, boolean update );
 
     /**
      * Inserts zero or more proteins created from SPTR entries which are retrieved from an SPTR Accession number.
@@ -234,15 +238,28 @@ public abstract class UpdateProteinsI {
     public abstract Collection insertSPTrProteins (String proteinAc);
 
     /**
+     * Inserts zero or more proteins created from SPTR entries which are retrieved from an SPTR Accession number.
+     * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
+     * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism.
+     *
+     * @param proteinAc SPTR Accession number of the protein to insert/update
+     * @param taxId     The tax id the protein should have
+     * @param update    If true, update existing Protein objects according to the retrieved data.
+     *                  else, skip existing Protein objects.
+     * @return          a set of created/updated protein.
+     */
+    public abstract Collection insertSPTrProteins (String proteinAc, String taxId, boolean update);
+
+    /**
      * Creates a simple Protein object for entries which are not in SPTR.
      * The Protein will more or less only contain the crossreference to the source database.
-     * @param anAc The primary identifier of the protein in the external database.
+     *
+     * @param anAc      The primary identifier of the protein in the external database.
      * @param aDatabase The database in which the protein is listed.
-     * @param aTaxId The tax id the protein should have
+     * @param aTaxId    The tax id the protein should have
      * @return the protein created or retrieved from the IntAct database
      */
-    public abstract Protein insertSimpleProtein (String anAc, CvDatabase aDatabase,
-                                                 String aTaxId)
+    public abstract Protein insertSimpleProtein ( String anAc, CvDatabase aDatabase, String aTaxId )
             throws IntactException;
 
     /**
