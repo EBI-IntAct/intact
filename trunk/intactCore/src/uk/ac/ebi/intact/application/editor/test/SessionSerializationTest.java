@@ -160,17 +160,17 @@ public class SessionSerializationTest extends TestCase  {
             exp.addAnnotation(annot2);
 
             // Database and Xref qualifier for Xrefs.
-            CvDatabase sptr = (CvDatabase) myHelper.getObjectByLabel(
-                    CvDatabase.class, "sptr");
+            CvDatabase uniprot = (CvDatabase) myHelper.getObjectByLabel(
+                    CvDatabase.class, "uniprot");
             CvXrefQualifier xqualifier = (CvXrefQualifier)
                     myHelper.getObjectByLabel(CvXrefQualifier.class, "identity");
 
             // Add a xref.
-            Xref xref1 = new Xref(inst, sptr, "aaa", "bbb", "xxx", xqualifier);
+            Xref xref1 = new Xref(inst, uniprot, "aaa", "bbb", "xxx", xqualifier);
             exp.addXref(xref1);
 
             // Add another xref.
-            Xref xref2 = new Xref(inst, sptr, "xxx", "yyy", "aaa", xqualifier);
+            Xref xref2 = new Xref(inst, uniprot, "xxx", "yyy", "aaa", xqualifier);
             exp.addXref(xref2);
 
             // Set this experiment as the current view.
@@ -457,7 +457,7 @@ public class SessionSerializationTest extends TestCase  {
             // Do a search.
             Collection results1 = myHelper.search(CvTopic.class.getName(), "ac", "*");
             // Set the search cache.
-            preUser.addToSearchCache(results1, null);
+            preUser.addToSearchCache( results1 );
             assertEquals(preUser.getSearchResult().size(), results1.size());
 
             // Seralize it.

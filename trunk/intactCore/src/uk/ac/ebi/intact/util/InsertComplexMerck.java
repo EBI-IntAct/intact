@@ -58,7 +58,7 @@ public class InsertComplexMerck {
      */
     private BioSource bioSource;
 
-    private CvDatabase sptr;
+    private CvDatabase uniprot;
     private CvDatabase pubmed;
     CvComponentRole bait, prey;
 
@@ -108,9 +108,9 @@ public class InsertComplexMerck {
             throw new IntactException ( "Could not find the Institution: EBI. Stop processing." );
         }
 
-        sptr = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sptr" );
-        if ( sptr == null ){
-            throw new IntactException ( "Could not find the CvDatabase: sptr. Stop processing." );
+        uniprot = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
+        if ( uniprot == null ){
+            throw new IntactException ( "Could not find the CvDatabase: uniprot. Stop processing." );
         }
 
         pubmed = (CvDatabase) helper.getObjectByLabel ( CvDatabase.class, "pubmed" );
@@ -195,7 +195,7 @@ public class InsertComplexMerck {
             // check for a SPTR cross reference qith the ac as promaryId
             for ( Iterator iterator = protein.getXrefs ().iterator (); iterator.hasNext (); ) {
                 Xref xref = (Xref) iterator.next ();
-                if ( xref.getCvDatabase().equals( sptr ) && xref.getPrimaryId().equals( ac ))
+                if ( xref.getCvDatabase().equals( uniprot ) && xref.getPrimaryId().equals( ac ))
                     return true;
             }
         }
@@ -230,7 +230,7 @@ public class InsertComplexMerck {
             if ( 0 == proteins.size() ) {
                 // * If the protein does not exist, create it
 
-                // if it is an sptr protein, create a full protein object
+                // if it is an uniprot protein, create a full protein object
                 proteins.addAll(proteinFactory.insertSPTrProteins( spAc, taxId, true ));
 
                 System.err.print("P");

@@ -30,7 +30,7 @@ public class ProteinExport {
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
-     * Export the protein's SPTR identifier to a flat file.
+     * Export the protein's UNIPROT identifier to a flat file.
      *
      * @param outputFile the path of the output file.
      * @param bioSourceShortLabel the biosource shortLabel to filter on. if <code>null</code>,
@@ -38,7 +38,7 @@ public class ProteinExport {
      * @throws IntactException if an IO error occurs. don't forget to check the nested exception.
      * @throws SearchException if an IntAct object can't be find.
      */
-    private void exportProteinSptrAC( final String outputFile, String bioSourceShortLabel )
+    private void exportProteinUniprotAC( final String outputFile, String bioSourceShortLabel )
             throws IntactException,
             SearchException {
         IntactHelper helper = new IntactHelper();
@@ -59,10 +59,10 @@ public class ProteinExport {
             }
         }
 
-        CvDatabase sptrDatabase = null;
-        sptrDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sptr" );
-        if ( sptrDatabase == null ) {
-            throw new SearchException( "Could not find the SPTR database in the current intact node." );
+        CvDatabase uniprotDatabase = null;
+        uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
+        if ( uniprotDatabase == null ) {
+            throw new SearchException( "Could not find the UNIPROT database in the current intact node." );
         }
 
         // collect proteins
@@ -91,30 +91,30 @@ public class ProteinExport {
         }
 
         // export found proteins
-        String sptrAc    = null;
+        String uniprotAc    = null;
         Collection xrefs = null;
         for ( Iterator iterator = proteins.iterator (); iterator.hasNext (); ) {
             Protein protein = (Protein) iterator.next ();
 
             xrefs = protein.getXrefs();
-            for ( Iterator iterator2 = xrefs.iterator (); iterator2.hasNext () && sptrAc == null; ) {
+            for ( Iterator iterator2 = xrefs.iterator (); iterator2.hasNext () && uniprotAc == null; ) {
                 Xref xref = (Xref) iterator2.next ();
-                if ( xref.getCvDatabase().equals( sptrDatabase ) ) {
-                   sptrAc = xref.getPrimaryId();
+                if ( xref.getCvDatabase().equals( uniprotDatabase ) ) {
+                   uniprotAc = xref.getPrimaryId();
                 }
             } // xrefs loop
 
-            if ( sptrAc != null ) {
-                // write the SPTR AC in the output file
+            if ( uniprotAc != null ) {
+                // write the UNIPROT AC in the output file
                 try {
-                    out.write( sptrAc + NEW_LINE );
+                    out.write( uniprotAc + NEW_LINE );
                 } catch ( IOException e ) {
                     throw new IntactException( "Could not write in the output file: " + outputFile, e );
                 }
 
-                sptrAc = null; // in order to make the second loop test valid.
+                uniprotAc = null; // in order to make the second loop test valid.
             } else {
-                System.out.println ( "no SPTR AC for protein " + protein );
+                System.out.println ( "no UNIPROT AC for protein " + protein );
             }
         } // proteins loop
 
@@ -147,7 +147,7 @@ public class ProteinExport {
 
         ProteinExport export = new ProteinExport();
         try {
-            export.exportProteinSptrAC( outputFilename, bioSource );
+            export.exportProteinUniprotAC( outputFilename, bioSource );
         } catch ( IntactException e ) {
             e.printStackTrace ();
             System.exit( 1 );

@@ -110,7 +110,7 @@ public class InsertGo {
         // TODO: why do we need that for ?
         Xref spXref = null;
         spXref = new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                          (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sptr"),
+                          (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "uniprot"),
                           spAc,
                           null, null, null);
 
