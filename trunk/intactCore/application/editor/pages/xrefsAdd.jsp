@@ -1,5 +1,4 @@
-<%@ page import="uk.ac.ebi.intact.application.editor.business.EditorService,
-                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%><!--
+<!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -16,6 +15,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
@@ -25,12 +25,6 @@
 <%-- Individual menu lists --%>
 <c:set var="dblist" value="${menus['DatabaseNames']}"/>
 <c:set var="qlist" value="${menus['QualifierNames']}"/>
-
-<%
-    // To Allow access to Editor Service.
-    EditorService service = (EditorService)
-            application.getAttribute(EditorConstants.EDITOR_SERVICE);
-%>
 
 <%-- Adds a new xreferece. This will invoke addXref action. --%>
 <html:form action="/xref/add">
@@ -43,7 +37,7 @@
             <th class="tableCellHeader">Release Number</th>
             <th class="tableCellHeader">Reference Qualifier</th>
             <th>
-                <a target="help" href="<%=service.getHelpLink("xrefs")%>">[?]</a>
+                <editor:helpLink tag="xrefs"/>
             </th>
         </tr>
         <tr class="tableRowOdd">

@@ -1,5 +1,4 @@
-<%@ page import="uk.ac.ebi.intact.application.editor.business.EditorService,
-                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%><!--
+<!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -15,18 +14,13 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <%-- The list of topics --%>
 <c:set var="topiclist" value="${user.view.addAnnotationMenus}"/>
-
-<%
-    // To Allow access to Editor Service.
-    EditorService service = (EditorService)
-            application.getAttribute(EditorConstants.EDITOR_SERVICE);
-%>
 
 <!-- Adds a new comment. This will invoke addComment action. -->
 <html:form action="/comment/add">
@@ -36,7 +30,7 @@
             <th class="tableCellHeader">Topic</th>
             <th class="tableCellHeader">Description</th>
             <th>
-                <a target="help" href="<%=service.getHelpLink("annotations")%>">[?]</a>
+                <editor:helpLink tag="annotations"/>
             </th>
         </tr>
         <tr class="tableRowOdd">
