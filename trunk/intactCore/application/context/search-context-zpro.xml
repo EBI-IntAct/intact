@@ -1,0 +1,6 @@
+<!--
+        Template of the context configuration for search
+        version : $Id$
+  -->
+
+<Context path="/intact/prod/search" docBase="app-dir/[WAR.FILE.NAME]" />
