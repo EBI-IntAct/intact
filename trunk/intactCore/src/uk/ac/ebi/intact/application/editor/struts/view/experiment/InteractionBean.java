@@ -64,20 +64,16 @@ public class InteractionBean extends AbstractEditBean implements Serializable {
 
     /**
      * Compares <code>obj</code> with this object according to
-     * Java's equals() contract. Only returns <tt>true</tt> if the short labels
-     * for both objects match.
+     * Java's equals() contract. Delegates the task to
+     * {@link uk.ac.ebi.intact.model.Interaction#equals(Object)}.
      * @param obj the object to compare.
+     * @return true only if <code>obj</code> is an instance of this class
+     * and its wrapped Interaction equals to this object's Interaction. For all
+     * other instances, false is returned.
      */
     public boolean equals(Object obj) {
-        // Identical to this?
-        if (obj == this) {
-            return true;
-        }
-        if ((obj != null) && (getClass() == obj.getClass())) {
-            // Can safely cast it.
-            InteractionBean other = (InteractionBean) obj;
-            return myInteraction.getShortLabel().equals(
-                    other.myInteraction.getShortLabel());
+        if (obj instanceof InteractionBean) {
+            return myInteraction.equals(((InteractionBean) obj).myInteraction);
         }
         return false;
     }
