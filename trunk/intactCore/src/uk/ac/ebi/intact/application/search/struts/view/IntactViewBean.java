@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.*;
 
 import org.w3c.dom.*;
+import org.w3c.dom.traversal.*;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -194,6 +195,25 @@ public class IntactViewBean implements Serializable {
         catch(ParserConfigurationException pe) {
             throw new IntactException(pe.getMessage(), pe);
         }
+    }
+
+    /**
+     * Given an AC, returns the Element of the DOM tree for it.
+     *
+     * @param ac The AC to check for
+     *
+     * @return Element the DOm Element with that AC, or null if not found
+     */
+    public Element getElement(String ac) {
+
+        NodeIterator nodeIter = ((DocumentTraversal)this.rootNode).createNodeIterator(this.rootNode.getDocumentElement(),
+                                                NodeFilter.SHOW_ALL, null, true);
+        Node n = null;
+        while((n = nodeIter.nextNode()) != null) {
+            Element elem = (Element)n;
+            if(elem.getAttribute("ac").equals(ac)) return elem;
+        }
+        return null;
     }
 
  }
