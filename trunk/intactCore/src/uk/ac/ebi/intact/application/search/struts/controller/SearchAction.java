@@ -68,10 +68,6 @@ public class SearchAction extends IntactBaseAction {
         // Clear any previous errors.
         super.clearErrors();
 
-        // Set up variables used during searching
-        //default the param to AC
-        String searchParam = "ac";
-
         SearchForm theForm = (SearchForm) form;
         String searchValue = theForm.getSearchString();
 
@@ -136,18 +132,18 @@ public class SearchAction extends IntactBaseAction {
             //try searching first using all uppercase, then all lower case if it returns nothing...
             //NB this would be better done at the DB level, but keep it here for now
             String upperCaseValue = theForm.getSearchString().toUpperCase();
-            results = doLookup(classname, searchParam, upperCaseValue, user);
+            results = doLookup(classname, upperCaseValue, user);
             if (results.isEmpty()) {
 
                 //now try all lower case....
                 String lowerCaseValue = theForm.getSearchString().toLowerCase();
-                results = doLookup(classname, searchParam, lowerCaseValue, user);
+                results = doLookup(classname, lowerCaseValue, user);
                 if(results.isEmpty()) {
                     //finished all current options, and still nothing - return a failure
                     super.log("No matches were found for the specified search criteria");
                     // Save the search parameters for results page to display.
                     session.setAttribute(SearchConstants.SEARCH_CRITERIA,
-                    searchParam + "=" + searchValue);
+                    user.getSearchCritera() + "=" + searchValue);
                     session.setAttribute(SearchConstants.SEARCH_TYPE, searchClass);
                     return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
                 }
@@ -164,13 +160,12 @@ public class SearchAction extends IntactBaseAction {
 
             // Save the search parameters for results page to display.
             session.setAttribute(SearchConstants.SEARCH_CRITERIA,
-                searchParam + "=" + searchValue);
+                user.getSearchCritera() + "=" + searchValue);
 
             // If we retrieved one object then we can go straight to edit page.
             if (results.size() == 1) {
                 // Found a single match only; save it to determine which page to
                 // return from edit.jsp; for example, results jsp or search jsp.
-//                session.setAttribute(SearchConstants.SINGLE_MATCH, Boolean.TRUE);
                 // The object to display.
                 Object obj = results.iterator().next();
                 //set up a viewbean to hold the results for display
@@ -182,7 +177,6 @@ public class SearchAction extends IntactBaseAction {
             else {
                 // Found multiple results.
                 super.log("multiple results - performing XML conversion...");
-//                session.setAttribute(SearchConstants.SINGLE_MATCH, Boolean.FALSE);
 
                 // The counter for view beans.
                 int counter = 0;
@@ -246,71 +240,52 @@ public class SearchAction extends IntactBaseAction {
     }
 
     /**
-         * utility method to handle the logic for lookup, ie trying AC, label etc.
-         * Isolating it here allows us to change initial strategy if we want to.
-         * NB this will probably be refactored out into the IntactHelper class later on.
-         *
-         * @param className the intact type to search on
-         * @param matchedParam the parameter which satisified the search, if results were non-empty
-         *    (ie the search parameter is set by this method if necessary)
-         * @param value the user-specified value
-         * @param user The object holding the IntactHelper for a given user/session
-         * (passed as a parameter to avoid using an instance variable, which may cause thread problems)
-         *
-         * @return Collection the results of the search - an empty Collection if no results found
-         *
-         * @exception IntactException thrown if there were any search problems
-         */
-        private Collection doLookup(String className, String matchedParam, String value, IntactUserIF user)
-           throws IntactException {
+     * utility method to handle the logic for lookup, ie trying AC, label etc.
+     * Isolating it here allows us to change initial strategy if we want to.
+     * NB this will probably be refactored out into the IntactHelper class later on.
+     *
+     * @param className the intact type to search on
+     * @param value the user-specified value
+     * @param user The object holding the IntactHelper for a given user/session
+     * (passed as a parameter to avoid using an instance variable, which may
+     *  cause thread problems).
+     *
+     * @return Collection the results of the search - an empty Collection if no results found
+     *
+     * @exception IntactException thrown if there were any search problems
+     */
+    private Collection doLookup(String className, String value, IntactUserIF user)
+        throws IntactException {
 
-            Collection results = new ArrayList();
+        Collection results = new ArrayList();
 
-            //try search on AC first...
-            results = user.search(className, "ac", value);
+        //try search on AC first...
+        results = user.search(className, "ac", value);
+        if (results.isEmpty()) {
+            // No matches found - try a search by label now...
+            super.log("now searching for class " + className + " with label " + value);
+            results = user.search(className, "shortLabel", value);
             if (results.isEmpty()) {
-                // No matches found - try a search by label now...
-                super.log("now searching for class " + className + " with label " + value);
-                results = user.search(className, "shortLabel", value);
+                //no match on label - try by xref....
+                super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
+                Collection xrefs = user.search(Xref.class.getName(), "primaryId", value);
+
+                //could get more than one xref, eg if the primary id is a wildcard search value -
+                //then need to go through each xref found and accumulate the results...
+                Iterator it = xrefs.iterator();
+                Collection partialResults = new ArrayList();
+                while (it.hasNext()) {
+                    partialResults = user.search(className, "ac", ((Xref) it.next()).getParentAc());
+                    results.addAll(partialResults);
+                }
+
                 if (results.isEmpty()) {
-                    //no match on label - try by xref....
-                    super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
-                    Collection xrefs = user.search(Xref.class.getName(), "primaryId", value);
-
-                    //could get more than one xref, eg if the primary id is a wildcard search value -
-                    //then need to go through each xref found and accumulate the results...
-                    Iterator it = xrefs.iterator();
-                    Collection partialResults = new ArrayList();
-                    while (it.hasNext()) {
-                        partialResults = user.search(className, "ac", ((Xref) it.next()).getParentAc());
-                        results.addAll(partialResults);
-                    }
-
-                    if (results.isEmpty()) {
-                        //no match by xref - try finally by name....
-                        super.log("no matches found using ac, shortlabel or xref - trying fullname...");
-                        results = user.search(className, "fullName", value);
-                        if (!results.isEmpty()) {
-                            //finished all current options - matched on name. If not, an empty collection goes back
-                            matchedParam = "name";
-                        }
-                    }
-                    else {
-                        //got a match on xref - save for later info
-                        matchedParam = "primary ID";
-                   }
-                }
-                else {
-                    //matched on a label - flag it for later info
-                    matchedParam = "label";
+                    //no match by xref - try finally by name....
+                    super.log("no matches found using ac, shortlabel or xref - trying fullname...");
+                    results = user.search(className, "fullName", value);
                 }
             }
-            else {
-                //got a match on AC - flag it
-                matchedParam = "ac";
-            }
-
-            return results;
         }
-
+        return results;
+    }
 }
