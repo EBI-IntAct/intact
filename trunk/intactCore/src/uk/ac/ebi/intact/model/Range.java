@@ -143,9 +143,12 @@ public class Range extends BasicObjectImpl {
     }
 
     /**
-     * Sets up a valid Range instance. Currently a valid Range must have at least
+     * Sets up a valid Range instance. Range is dependent on the feature and
+     * hence it cannot exist on its own. Currently a valid Range must have at least
      * the following defined:
      *
+     * @param owner the owner of this range.
+     * @param parent the parent of this range; must not be null and must have an AC.
      * @param fromStart The starting point of the 'from' interval for the Range.
      * @param fromEnd The end point of the 'from' interval.
      * @param toStart The starting point of the 'to' interval of the Range
@@ -159,9 +162,18 @@ public class Range extends BasicObjectImpl {
      * but '-3 to -8', '12 to 1' and  '5 to -7' are <b>not</b>.
      * </p>
      */
-    public Range (int fromStart, int fromEnd, int toStart, int toEnd, String seq) {
-
+    public Range (Institution owner, Feature parent, int fromStart, int fromEnd, int toStart, int toEnd, String seq) {
         //NB negative intervals are allowed!! This needs more sophisticated checking..
+        super(owner);
+
+        // Range must have a Feature.
+        if (parent == null) {
+            throw new NullPointerException("Parent can't be null");
+        }
+        if (parent.getAc() == null) {
+            throw new IllegalArgumentException("Parent feature must have an AC");
+        }
+        this.featureAc = parent.getAc();
 
         if (fromEnd < fromStart) throw new IllegalArgumentException ("End of 'from' interval must be bigger than the start!");
         if (toEnd < toStart) throw new IllegalArgumentException ("End of 'to' interval must be bigger than the start!");
@@ -176,9 +188,11 @@ public class Range extends BasicObjectImpl {
                         + Range.MAX_SEQ_SIZE);
             sequence = seq;
         }
-
+        this.fromIntervalStart = fromStart;
+        this.fromIntervalEnd = fromEnd;
+        this.toIntervalStart = toStart;
+        this.toIntervalEnd = toEnd;
     }
-
 
     //------------------------- public methods --------------------------------------
 
@@ -196,7 +210,7 @@ public class Range extends BasicObjectImpl {
     }
 
     public int getToIntervalStart() {
-        return fromIntervalStart;
+        return toIntervalStart;
     }
     public void setToIntervalStart(int posFrom) {
         toIntervalStart = posFrom;
@@ -244,7 +258,6 @@ public class Range extends BasicObjectImpl {
     /**
      * Equality for Ranges is currently based on equality for
      * <code>Modification</code>, position from and position to (ints).
-     * @see uk.ac.ebi.intact.model.Modification
      * @param o The object to check
      * @return true if the parameter equlas this object, false otherwise
      */
