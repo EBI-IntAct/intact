@@ -16,6 +16,7 @@
 <html:html>
 
 <head>
+     <html:base target="_top"/>
 </head>
 
 <body bgcolor="white">
