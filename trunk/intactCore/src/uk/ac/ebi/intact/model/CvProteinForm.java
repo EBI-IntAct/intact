@@ -18,29 +18,6 @@ public class CvProteinForm extends CvObject implements Editable {
      */
     protected static Vector menuList = null;
 
-   ///////////////////////////////////////
-   // associations
-
-/**
- * 
- */
-    public CvObject cvObject;
-
-
-   ///////////////////////////////////////
-   // access methods for associations
-
-    public CvObject getCvObject() {
-        return cvObject;
-    }
-
-    public void setCvObject(CvObject cvObject) {
-        if (this.cvObject != cvObject) {
-            this.cvObject = cvObject;
-            if (cvObject != null) cvObject.setCvProteinForm(this);  
-        }      
-    } 
-
 } // end CvProteinForm
 
 
