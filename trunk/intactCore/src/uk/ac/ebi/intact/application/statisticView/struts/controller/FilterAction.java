@@ -43,8 +43,7 @@ public final class FilterAction extends Action {
     public ActionForward execute (ActionMapping mapping,
                                   ActionForm form,
                                   HttpServletRequest request,
-                                  HttpServletResponse response)
-            throws IOException, ServletException {
+                                  HttpServletResponse response ) {
 
         String start = null;
         String stop = null;
