@@ -182,18 +182,13 @@
         <!--
             Edits an existing comment. Need this form to be in session or else
             each edit click will create a new form (causing null pointer
-            exception when getItems() is called.
+            exception when getItems() is called. This action also handles delete an
+            annotation as wel.
         -->
         <action path="/cv/comment/edit"
                 name="commentEditForm"
                 type="uk.ac.ebi.intact.application.cvedit.struts.controller.CommentEditAction"
                 scope="session">
-        </action>
-
-        <!-- Deletes an existing comment. -->
-        <action path="/cv/comment/del"
-                type="uk.ac.ebi.intact.application.cvedit.struts.controller.CommentDelAction"
-                scope="request">
         </action>
 
         <!-- Adds a new xref. -->
@@ -206,18 +201,13 @@
         <!--
             Edits an existing xref. Need this form to be in session or else
             each edit click will create a new form (causing null pointer
-            exception when getItems() is called.
+            exception when getItems() is called. This action also handles delete a
+            xreference as wel.
         -->
         <action path="/cv/xref/edit"
                 name="xrefEditForm"
                 type="uk.ac.ebi.intact.application.cvedit.struts.controller.XrefEditAction"
                 scope="session">
-        </action>
-
-        <!-- Deletes an existing xref. -->
-        <action path="/cv/xref/del"
-                type="uk.ac.ebi.intact.application.cvedit.struts.controller.XrefDelAction"
-                scope="request">
         </action>
 
     </action-mappings>
