@@ -17,35 +17,36 @@
   <script language="javascript"
  src="http://www.ebi.ac.uk/include/master.js"></script>
 </head>
-<body marginwidth="0" marginheight="0" leftmargin="0" topmargin="0"
- rightmargin="0" bottommargin="0" onload="EbiPreloadImages('services');">
-<table width="100%" border="0" cellspacing="0" cellpadding="0"
- class="tabletop">
+<body onload="EbiPreloadImages('services');" bottommargin="0"
+ rightmargin="0" topmargin="0" leftmargin="0" marginheight="0"
+ marginwidth="0">
+<table class="tabletop" border="0" cellpadding="0" cellspacing="0"
+ width="100%">
   <tbody>
     <tr>
-      <td width="270" height="85" align="right"><img
- src="http://www.ebi.ac.uk/services/images/ebi_banner_1.jpg" width="270"
- height="85"></td>
-      <td valign="top" align="right" width="100%">
-      <table border="0" cellspacing="0" cellpadding="0" class="tabletop"
- width="100%" height="85">
+      <td align="right" height="85" width="270"><img
+ src="http://www.ebi.ac.uk/services/images/ebi_banner_1.jpg" height="85"
+ width="270"></td>
+      <td align="right" valign="top" width="100%">
+      <table class="tabletop" border="0" cellpadding="0" cellspacing="0"
+ height="85" width="100%">
         <tbody>
           <tr>
-            <td valign="top" align="right" colspan="2"><input
- type="hidden" value="sr" name="ui">
-            <table border="0" cellspacing="0" cellpadding="0"
- height="28" class="tablehead">
+            <td colspan="2" align="right" valign="top"><input value="sr"
+ name="ui" type="hidden">
+            <table class="tablehead" border="0" cellpadding="0"
+ cellspacing="0" height="28">
               <tbody>
                 <tr>
                   <td class="tablehead" align="left" valign="bottom"><img
- src="http://www.ebi.ac.uk/services/images/top_corner.gif" width="28"
- height="28"></td>
+ src="http://www.ebi.ac.uk/services/images/top_corner.gif" height="28"
+ width="28"></td>
                   <form name="Text1293FORM"
  action="javascript:querySRS(document.forms[0].db[document.forms[0].db.selectedIndex].value, document.forms[0].qstr.value)"
- method="post"></form>
-                  <td align="center" valign="middle" class="small"
- nowrap="nowrap"><span class="smallwhite"><nobr>Get&nbsp;</nobr></span></td>
-                  <td align="center" valign="middle" class="small"><span
+ method="post">
+                  <td class="small" align="center" nowrap="nowrap"
+ valign="middle"><span class="smallwhite"><nobr>Get&nbsp;</nobr></span></td>
+                  <td class="small" align="center" valign="middle"><span
  class="small">
                   <select id="FormsComboBox2" name="db" class="small">
                   <option value="EMBL" selected="selected">Nucleotide
@@ -56,33 +57,33 @@ sequences</option>
                   <option value="MEDLINE">Literature</option>
                   </select>
                   </span></td>
-                  <td align="center" valign="middle" class="small"
- nowrap="nowrap"><span class="smallwhite">&nbsp;for&nbsp;</span></td>
-                  <td align="center" valign="middle" class="small"><span
+                  <td class="small" align="center" nowrap="nowrap"
+ valign="middle"><span class="smallwhite">&nbsp;for&nbsp;</span></td>
+                  <td class="small" align="center" valign="middle"><span
  class="small"><input id="FormsEditField3" maxlength="50" size="7"
  name="qstr" class="small"></span></td>
-                  <td align="center" valign="middle" class="small">&nbsp;</td>
-                  <td align="center" valign="middle" class="small"><span
- class="small"><input id="FormsButton3" type="submit" value="Go"
- name="FormsButton1" class="small"></span></td>
-                  <td align="center" valign="middle" class="small"
- width="10" nowrap="nowrap"><a href="#" class="small"
- onclick="openWindow('http://www.ebi.ac.uk/help/DBhelp/dbhelp_frame.html')"><nobr>&nbsp;?&nbsp;</nobr></a></td>
+                  <td class="small" align="center" valign="middle">&nbsp;</td>
+                  <td class="small" align="center" valign="middle"><span
+ class="small"><input id="FormsButton3" value="Go" name="FormsButton1"
+ class="small" type="submit"></span></td>
+                  <td class="small" align="center" nowrap="nowrap"
+ valign="middle" width="10"><a href="#" class="small"
+ onclick="openWindow('http://www.ebi.ac.uk/help/DBhelp/dbhelp_frame.html')"><nobr>&nbsp;?&nbsp;</nobr></a></td></form>
                   <form name="Text1295FORM"
  action="http://search.ebi.ac.uk/compass" method="get"
- onsubmit="if (document.Text1295FORM.scope.value=='') { alert('Please enter query.'); return false;}"></form>
-                  <td align="center" valign="middle" class="smallwhite"
- nowrap="nowrap"><span class="smallwhite"><nobr>&nbsp;Site search&nbsp;</nobr></span></td>
-                  <td align="center" valign="middle" class="small"><span
+ onsubmit="if (document.Text1295FORM.scope.value=='') { alert('Please enter query.'); return false;}">
+                  <td class="smallwhite" align="center" nowrap="nowrap"
+ valign="middle"><span class="smallwhite"><nobr>&nbsp;Site search&nbsp;</nobr></span></td>
+                  <td class="small" align="center" valign="middle"><span
  class="small"><input id="FormsEditField4" maxlength="50" size="7"
  name="scope" class="small"></span></td>
-                  <td align="center" valign="middle" class="small">&nbsp;</td>
-                  <td align="center" valign="middle" class="small"><span
- class="small"><input id="FormsButton2" type="submit" value="Go"
- name="FormsButton2" class="small"></span></td>
-                  <td align="center" valign="middle" class="small"
- nowrap="nowrap"><nobr><a href="#" class="small"
- onclick="openWindow('http://www.ebi.ac.uk/help/help/sitehelp_frame.html')">&nbsp;?&nbsp;</a></nobr></td>
+                  <td class="small" align="center" valign="middle">&nbsp;</td>
+                  <td class="small" align="center" valign="middle"><span
+ class="small"><input id="FormsButton2" value="Go" name="FormsButton2"
+ class="small" type="submit"></span></td>
+                  <td class="small" align="center" nowrap="nowrap"
+ valign="middle"><nobr><a href="#" class="small"
+ onclick="openWindow('http://www.ebi.ac.uk/help/help/sitehelp_frame.html')">&nbsp;?&nbsp;</a></nobr></td></form>
                 </tr>
               </tbody>
             </table>
@@ -90,11 +91,11 @@ sequences</option>
           </tr>
           <tr>
             <td align="left" valign="bottom"><img
- src="http://www.ebi.ac.uk/services/images/ebi_banner_2.jpg" width="169"
- height="29"></td>
+ src="http://www.ebi.ac.uk/services/images/ebi_banner_2.jpg" height="29"
+ width="169"></td>
             <td align="right" valign="top"><img
- src="http://www.ebi.ac.uk/services/images/thetopbar.gif" width="156"
- height="25" usemap="#Map" border="0"></td>
+ src="http://www.ebi.ac.uk/services/images/thetopbar.gif" usemap="#Map"
+ border="0" height="25" width="156"></td>
           </tr>
         </tbody>
       </table>
@@ -102,83 +103,77 @@ sequences</option>
     </tr>
     <tr>
       <td colspan="2"><img
- src="http://www.ebi.ac.uk/services/images/trans.gif" width="1"
- height="5"></td>
+ src="http://www.ebi.ac.uk/services/images/trans.gif" height="5"
+ width="1"></td>
     </tr>
   </tbody>
 </table>
-<table width="100%" border="0" cellspacing="0" cellpadding="0"
- class="tabletop">
+<table class="tabletop" border="0" cellpadding="0" cellspacing="0"
+ width="100%">
   <tbody>
     <tr>
       <td width="100%">
-      <table width="679" border="0" cellspacing="0" cellpadding="0">
+      <table border="0" cellpadding="0" cellspacing="0" width="679">
         <tbody>
           <tr>
-            <td width="97" height="18"><a href="http://www.ebi.ac.uk/"
+            <td height="18" width="97"><a href="http://www.ebi.ac.uk/"
  onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image8','','/services/images/home_o.gif',1)"><img
- name="Image8" border="0"
- src="http://www.ebi.ac.uk/services/images/home.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image8" src="http://www.ebi.ac.uk/services/images/home.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/Information/"
  onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image9','','/services/images/about_o.gif',1)"><img
- name="Image9" border="0"
- src="http://www.ebi.ac.uk/services/images/about.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image9" src="http://www.ebi.ac.uk/services/images/about.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/Groups/" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image10','','/services/images/research_o.gif',1)"><img
- name="Image10" border="0"
- src="http://www.ebi.ac.uk/services/images/research.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image10" src="http://www.ebi.ac.uk/services/images/research.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/services/" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image11','','/services/images/services_o.gif',1)"><img
- name="Image11" border="0"
- src="http://www.ebi.ac.uk/services/images/services.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image11" src="http://www.ebi.ac.uk/services/images/services.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/Tools/" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image12','','/services/images/utilities_o.gif',1)"><img
- name="Image12" border="0"
- src="http://www.ebi.ac.uk/services/images/utilities.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image12" src="http://www.ebi.ac.uk/services/images/utilities.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/Databases/" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image13','','/services/images/databases_o.gif',1)"><img
- name="Image13" border="0"
- src="http://www.ebi.ac.uk/services/images/databases_o.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image13"
+ src="http://www.ebi.ac.uk/services/images/databases_o.gif" border="0"
+ height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/FTP/" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image14','','/services/images/downloads_o.gif',1)"><img
- name="Image14" border="0"
- src="http://www.ebi.ac.uk/services/images/downloads.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image14" src="http://www.ebi.ac.uk/services/images/downloads.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/Submissions/"
  onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image15','','/services/images/submissions_o.gif',1)"><img
- name="Image15" border="0"
- src="http://www.ebi.ac.uk/services/images/submissions.gif" width="97"
- height="18"></a></td>
+ name="Image15"
+ src="http://www.ebi.ac.uk/services/images/submissions.gif" border="0"
+ height="18" width="97"></a></td>
           </tr>
         </tbody>
       </table>
       </td>
     </tr>
     <tr>
-      <td width="100%" height="5" class="tablehead">
-      <table width="100%" height="5" border="0" cellspacing="0"
- cellpadding="0">
+      <td class="tablehead" height="5" width="100%">
+      <table border="0" cellpadding="0" cellspacing="0" height="5"
+ width="100%">
         <tbody>
           <tr>
-            <td width="100%" height="20" align="center"><!-- InstanceBeginEditable name="topnav" -->
-<!-- TOP LINK HERE --> <nobr><a href="../Databases/index.html"
- class="white">EBI DATABASES</a></nobr><!-- TOP LINK HERE --><!-- InstanceEndEditable --> </td>
+            <td align="center" height="20" width="100%"><!-- InstanceBeginEditable name="topnav" --><!-- TOP LINK HERE -->
+            <nobr><a href="../Databases/index.html" class="white">EBI
+DATABASES</a></nobr><!-- TOP LINK HERE --><!-- InstanceEndEditable --> </td>
           </tr>
         </tbody>
       </table>
@@ -191,28 +186,27 @@ sequences</option>
     </tr>
   </tbody>
 </table>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tbody>
     <tr>
       <td colspan="6" class="tablebody" height="6"><img
- src="http://www.ebi.ac.uk/services/images/trans.gif" width="1"
- height="6"></td>
+ src="http://www.ebi.ac.uk/services/images/trans.gif" height="6"
+ width="1"></td>
     </tr>
     <tr>
-      <td class="tablebody" width="1%" height="20"><img
+      <td class="tablebody" height="20" width="1%"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="20"
  width="160"></td>
-      <td width="20" height="20" valign="top" align="left"
- bgcolor="#ffffff"><img
- src="http://www.ebi.ac.uk/services/images/corner.gif" width="20"
- height="20"></td>
+      <td align="left" bgcolor="#ffffff" height="20" valign="top"
+ width="20"><img src="http://www.ebi.ac.uk/services/images/corner.gif"
+ height="20" width="20"></td>
       <td>&nbsp;</td>
-      <td width="100%" colspan="3"><img
+      <td colspan="3" width="100%"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="1"
  width="1"></td>
     </tr>
     <tr>
-      <td width="160" valign="top" align="left"><!-- InstanceBeginEditable name="leftnav" -->
+      <td align="left" valign="top" width="160"><!-- InstanceBeginEditable name="leftnav" -->
       <table class="tablebody" border="0" cellpadding="4"
  cellspacing="0" width="160">
         <tbody>
@@ -288,16 +282,16 @@ sequences</option>
         </tbody>
       </table>
 <!-- InstanceEndEditable -->
-      <table width="160" height="100%" border="0" cellspacing="0"
- cellpadding="0">
+      <table border="0" cellpadding="0" cellspacing="0" height="100%"
+ width="160">
         <tbody>
           <tr>
-            <td class="tablebody" valign="top" width="140" height="20"><img
+            <td class="tablebody" height="20" valign="top" width="140"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="20"
  width="140"></td>
-            <td align="right" valign="top" width="20" height="20"><img
- src="http://www.ebi.ac.uk/services/images/right.gif" width="20"
- height="20"></td>
+            <td align="right" height="20" valign="top" width="20"><img
+ src="http://www.ebi.ac.uk/services/images/right.gif" height="20"
+ width="20"></td>
           </tr>
           <tr>
             <td colspan="2" bgcolor="#ffffff">&nbsp;</td>
@@ -307,7 +301,7 @@ sequences</option>
       </td>
       <td width="28">&nbsp;</td>
       <td align="left" valign="top" width="593">
-      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
         <tbody>
           <tr>
             <td valign="top"><!-- InstanceBeginEditable name="contents" -->
@@ -346,8 +340,8 @@ IntAct:</span>
                         <input name="searchString" size="16" type="text">
                         <input value="Search" title="Search IntAct"
  type="submit"> </span></li>
-                      <li class="greenboldsmalllist"><span class="text">
-Examples: </span>
+                      <li class="greenboldsmalllist"><span class="text">Examples:
+                        </span>
                         <ul>
                           <span class="text"> </span> <li><span
  class="text">Gene name: lsm7</span></li>
@@ -515,14 +509,14 @@ since summer 2003.</span></li>
                   <br>
 The following mailing lists have been set up:
                   <ul>
-                    <li class="greenboldsmalllist"><span class="text">
-intact-announce@lists.sourceforge.net <br>
+                    <li class="greenboldsmalllist"><span class="text">intact-announce@lists.sourceforge.net
+                      <br>
 General IntAct announcements. Low traffic. <a
  href="http://lists.sourceforge.net/lists/listinfo/intact-announce">Subscribe/unsubscribe</a>
 here.<br>
                       </span> </li>
-                    <li class="greenboldsmalllist"><span class="text">
-You might also want to submit a <a
+                    <li class="greenboldsmalllist"><span class="text">You
+might also want to submit a <a
  href="http://sourceforge.net/tracker/?group_id=62732">feature request
 or bug report</a>.</span> <br>
                     </li>
@@ -575,8 +569,8 @@ Text]</a> </span></li>
                   <span class="pbold"><a name="publications"></a>Related
 Publications:</span>
                   <ul>
-                    <li class="greenboldsmalllist"> <span class="text">
-The HUPO PSI Molecular Interaction Format - A community standard for
+                    <li class="greenboldsmalllist"> <span class="text">The
+HUPO PSI Molecular Interaction Format - A community standard for
 the representation of protein interaction data.<br>
 Henning Hermjakob, Luisa Montecchi-Palazzi, Gary Bader,
 J&eacute;r&ocirc;me Wojcik, Lukasz Salwinski, Arnaud Ceol, Susan Moore,
@@ -590,15 +584,15 @@ Eisenberg, Boris Steipe, Chris Hogue, Rolf Apweiler.<br>
 Nature Biotechnology 22, 2004: 177-183 [PubMed <a
  href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=14755292&amp;dopt=Abstract">14755292</a>]<br>
                       </span> </li>
-                    <li class="greenboldsmalllist"> <span class="text">
-The Proteomics Standards Initiative.<br>
+                    <li class="greenboldsmalllist"> <span class="text">The
+Proteomics Standards Initiative.<br>
 Sandra Orchard, Henning Hermjakob, Rolf Apweiler.<br>
 Proteomics 7, 2003. Pages: 1374-1376. <br>
                       <a
  href="http://www3.interscience.wiley.com/cgi-bin/abstract/104546402/START">http://www3.interscience.wiley.com/cgi-bin/abstract/104546402/START</a><br>
                       </span> </li>
-                    <li class="greenboldsmalllist"> <span class="text">
-Progress in establishing common standards for exchanging proteomics
+                    <li class="greenboldsmalllist"> <span class="text">Progress
+in establishing common standards for exchanging proteomics
 data:<br>
 The second meeting of the HUPO Proteomics Standards Initiative.<br>
 Sandra Orchard, Paul Kersey, Weimin Zhu, Luisa Montecchi-Palazzi,
@@ -608,8 +602,8 @@ Comparative and Functional Genomics Volume 4, Issue 2, 2003. Pages:
                       <a
  href="http://www3.interscience.wiley.com/cgi-bin/abstract/104087808/START">http://www3.interscience.wiley.com/cgi-bin/abstract/104087808/START</a>
                       </span> </li>
-                    <li class="greenboldsmalllist"> <span class="text">
-The HUPO Proteomics Standards Initiative meeting: towards common
+                    <li class="greenboldsmalllist"> <span class="text">The
+HUPO Proteomics Standards Initiative meeting: towards common
 standards for exchanging proteomics data<br>
 Sandra Orchard, Paul Kersey, Henning Hermjakob, Rolf Apweiler<br>
 Comparative and Functional Genomics Volume 4, Issue 1, 2003. Pages:
@@ -659,19 +653,18 @@ by Sourceforge.net</span></li>
             </table>
 <!-- InstanceEndEditable --></td>
             <td><img
- src="http://www.ebi.ac.uk/services/images/trans.gif" width="6"
- height="8"></td>
-            <td width="3"
- background="http://www.ebi.ac.uk/services/images/vert.gif"><img
+ src="http://www.ebi.ac.uk/services/images/trans.gif" height="8"
+ width="6"></td>
+            <td
+ background="http://www.ebi.ac.uk/services/images/vert.gif" width="3"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="3"
  width="3"></td>
             <td width="20"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="8"
  width="6"></td>
-            <td valign="top"><!-- InstanceBeginEditable name="rightnav" -->
-<!-- News column -->
-            <table border="0" cellpadding="0" cellspacing="0"
- width="140">
+            <td valign="top"><!-- InstanceBeginEditable name="rightnav" --><!-- News column -->
+            <table style="width: 123px; height: 999px;" border="0"
+ cellpadding="0" cellspacing="0">
               <tbody>
                 <tr>
                   <td class="tablehead"><img
@@ -699,12 +692,49 @@ by Sourceforge.net</span></li>
  width="1"></td>
                 </tr>
                 <tr>
-                  <td class="tablebody">&nbsp;</td>
-                  <td colspan="3" class="tablebody"> <img
- src="http://www.ebi.ac.uk/services/images/trans.gif" height="5"
- width="50"><br>
-<!-- News contents --> <span class="psmall"><br>
+                  <td class="tablebody"> <br>
+                  </td>
+                  <td colspan="3" class="tablebody"><!-- News contents -->
+                  <span class="psmall"><a
+ href="doc/html/statistics/index.html"><b>Current statistics</b></a></span><br>
+                  <br>
+                  <br>
+                  <span class="psmall">August 1, 2004: </span><br>
+                  <span class="psmall"><span
+ style="text-decoration: underline;"><span style="font-weight: bold;">New
+datasets</span></span>:<br>
+                  </span><span class="psmall">- Self-assembling
+protein microarrays:<br>
+                  <a
+ href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=15232106&amp;searchClass=Experiment">Ramachandra
+et al.</a><br>
+- RNA
+degradation:<br>
+                  <a
+ href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=15231747&amp;searchClass=Experiment">Lehner
+et al,</a><br>
+                  <a
+ href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=12821657&amp;searchClass=Experiment">Estevez
+et al,</a><br>
+                  <a
+ href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=12419256&amp;searchClass=Experiment">Raijmakers
+et al</a>.</span><br>
+                  <span class="psmall"><br>
+                  </span><a href="mine/"><span class="psmall"><span
+ style="text-decoration: underline;"><span style="font-weight: bold;">MiNe</span></span></span></a><span
+ class="psmall"> </span><span class="psmall">application computes
+minimal connecting network for a
+selected set
+of proteins.<br>
+                  <span style="text-decoration: underline;">example</span>:
+                  <a href="mine/display.jsp?AC=EBI-1389,EBI-1765">Q12277
+and Q08491</a><br>
                   </span><span class="psmall"><br>
+                  </span><span class="psmall"><span
+ style="text-decoration: underline;"><span style="font-weight: bold;">Next
+release</span></span> will be September 1, 2004. We expect the server
+to be down from 10:00-10:30AM British Summer Time.<br>
+                  <br>
                   </span><span class="psmall">July 1, 2004: <br>
                   <span style="text-decoration: underline;"><span
  style="font-weight: bold;">New datasets</span></span>:<br>
@@ -713,13 +743,7 @@ by Sourceforge.net</span></li>
  style="color: rgb(51, 51, 255);"><span class="psmall"> </span></a><a
  href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=12577067&amp;searchClass=Experiment">Blagoev
 et al</a>.<br>
-                  <br>
-                  <span class="psmall"><span
- style="text-decoration: underline;"><span style="font-weight: bold;">Next
-release</span></span> will be July 28, 2004, 3 work days early due to
-the <a href="http://www.iscb.org/ismbeccb2004/">ISMB conference</a>.&nbsp;
-We expect the server to be down from 10:00-10:30 British Summer Time.<br>
-                  <br>
+                  <span class="psmall"><br>
                   </span><span class="psmall">June 1, 2004: <br>
                   <span style="text-decoration: underline;"><span
  style="font-weight: bold;">New datasets</span></span>:<br>
@@ -738,10 +762,10 @@ et al</a>,<br>
  href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=14667819%20&amp;searchClass=Experiment">Lehner
 et al</a>.<span class="psmall"></span><br>
                   <span class="psmall"><br>
-May 1, 2004: <a href="doc/html/statistics/index.html"><b>Statistics</b></a>
-added.</span><br>
-                  <span class="psmall"><b><br>
-C. elegans interactome datasets added:</b><br>
+                  </span><span class="psmall"><span
+ style="text-decoration: underline;"><span style="font-weight: bold;">C.
+elegans interactome datasets added</span></span></span><span
+ class="psmall"><span style="font-weight: bold;">:</span><br>
                   </span><a
  href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=14704431%20&amp;searchClass=Experiment">Li
 et al and related publications</a>&nbsp; <span class="psmall">describe
@@ -757,9 +781,7 @@ code</span></span></a><span style="font-weight: bold;"> </span><span
                   </span></span><span class="psmall"><br>
                   </span> <span class="psmall"> March 1, 2004: <a
  href="targets/"><b>Targets</b></a> application to predict targets for
-pull-down experiments.<br>
-                  <br>
-                  </span> <span class="psmall"><br>
+pull-down experiments.</span><span class="psmall"><br>
                   </span>
                   <p> </p>
                   </td>
@@ -852,10 +874,10 @@ the information contained in <span class="psmall"><a
 <!-- InstanceEndEditable --></td>
           </tr>
           <tr>
-            <td width="500" class="tablebody"
- background="http://www.ebi.ac.uk/services/images/hor.gif" height="3"><img
- src="http://www.ebi.ac.uk/services/images/trans.gif" height="3"
- width="3"></td>
+            <td class="tablebody"
+ background="http://www.ebi.ac.uk/services/images/hor.gif" height="3"
+ width="500"><img src="http://www.ebi.ac.uk/services/images/trans.gif"
+ height="3" width="3"></td>
             <td colspan="2"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="1"
  width="1"></td>
