@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app
+  PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+  "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+    <description>
+        IntSeq is an application composed of two parts:
+            - the first one aims the user to retrieve an IntAct AC or a list of AC from
+              SRS on SPTr database.
+            - the second one aims to give the user a similarity comparison between
+              his sequence and all sequences in the IntAct database.
+    </description>
+
+  <!--  NB XML config files for the DB MUST be referred to here relative
+        to the WEB-INF/classes directory as that is where the class loader
+        will start to look. The leading "/" MUST be present if the config
+        files are in a sub-directory of WEB-INF/classes, otherwise
+        the class loader will only check in the package in which the servlet
+        instance resides (which may not be the same as the config file
+        location....). The exception to this rule seems to be the struts-config.xml
+        file....
+    -->
+    <context-param>
+        <param-name>mappingfile</param-name>
+        <param-value>/config/repository.xml</param-value>
+    </context-param>
+
+    <!-- Where configuration files are stored. -->
+    <context-param>
+        <param-name>configdir</param-name>
+        <param-value>/config/</param-value>
+    </context-param>
+
+    <!--  Class name of the data source object to be used    -->
+    <context-param>
+        <param-name>datasource</param-name>
+        <param-value>uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource</param-value>
+    </context-param>
+
+                <!-- =================================================================== -->
+    <!-- =============================== commands line configuration ==================================== -->
+
+    <!-- to make available the alignment -->
+    <context-param>
+        <param-name>fromPercentageIdentity</param-name>
+        <param-value>
+          40
+        </param-value>
+    </context-param>
+
+    <!-- to make available the alignment -->
+    <context-param>
+        <param-name>greatestEValue</param-name>
+        <param-value>
+          2
+        </param-value>
+    </context-param>
+
+    <!--  Path for an execution of the FormatDb command line in order to format the Intact database, before blast -->
+
+     <context-param>
+        <param-name>firstFormatIntact</param-name>
+        <param-value>
+            bsub -I /ebi/extserv/data1/appbin/linux-x86/wu-blast/wu-formatdb
+                                            -i /ebi/extserv/data1/idata/latest/blastdb/gpcrdbsup
+        </param-value>
+    </context-param>
+
+    <!-- other formatdb command for a ncbi blast:
+         bsub -I /ebi/extserv/data1/appbin/linux-x86/ncbi-blast/formatdb
+                                                -i /ebi/extserv/data1/idata/latest/blastdb/gpcrdbs -->
+
+
+
+    <!--  Path for an execution of the BlastP command line on IntAct file  -->
+    <context-param>
+        <param-name>firstBlastIntact</param-name>
+        <param-value>
+            bsub -I /ebi/extserv/data1/appbin/linux-x86/fasta/fasta34 /ebi/sp/misc1/tmp/shuet/intactblast/bank/seqSigHum.fasta -m 9
+        </param-value>
+    </context-param>
+
+
+    <!-- different blast commands:
+                    WU-Blast
+        bsub -I /ebi/extserv/data1/appbin/linux-x86/wu-blast/blastp
+                                            -d /ebi/sp/misc1/tmp/shuet/intactblast/bank/seqSigHum.fasta
+                                            -i /ebi/sp/misc1/tmp/shuet/fasta_files/one_seq_hum.fasta
+                                            -o /ebi/sp/misc1/tmp/shuet/blast_files/result_one_seq.blast
+
+                    NCBI
+          bsub -I /ebi/extserv/data1/appbin/linux-x86/ncbi-blast/blastall -p blastp
+                                            -d /ebi/sp/misc1/tmp/shuet/intactblast/bank/seqSigHum.fasta
+                                            -i /ebi/sp/misc1/tmp/shuet/fasta_files/one_seq_hum.fasta
+                                            -o /ebi/sp/misc1/tmp/shuet/blast_files/result_one_seq.blast
+                                            -m 7 (xml) or -m 9 (tab format)
+                                            -T T (HTML format)
+
+                    FASTA Program   !!! order very important
+         bsub -I /ebi/extserv/data1/appbin/linux-x86/fasta/fasta34 fasta_seq_query.file
+                                                                   "/ebi/sp/misc1/tmp/shuet/intactblast/bank/seqSigHum.fasta"
+                                                                   -O outputfile.blast
+                                                                   -m 7 or -m 9 (same as the ncbi-blast command)
+ -->
+
+
+    <!--  Command line which call SRS to retrieve entry corresponding to an old ID or ACC-NUM
+            chemin d'acces complet a la commande mais il faut etre connecte au serveur "fire" !!! -->
+    <context-param>
+        <param-name>firstSrsWithIntact</param-name>
+        <param-value>http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+[swall-alltext:</param-value>
+    </context-param>
+
+    <!--  Command line which call SRS to retrieve entry corresponding to an old ID or ACC-NUM
+            chemin d'acces complet a la commande mais il faut etre connecte au serveur "fire" !!! -->
+    <context-param>
+        <param-name>secondSrsWithIntact</param-name>
+        <param-value>http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+[swall-acc:</param-value>
+    </context-param>
+
+
+    <!-- GETZ COMMAND :
+                /ebi/services/pkgs/srs7/bin/osf_51a/getz '[sptrembl-alltext:    // pas d'accolade quand une seule banque
+                bsub -I -R srs -q your_groups_queue /ebi/srs/srs/bin/osf_51a/getz '[{sptrembl}-alltext:
+
+         WGETZ COMMAND:
+                http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[{sptrembl}-alltext:  (  other interesting field : acc   )
+                -->
+
+    <!--  Options with the previous SRS call : to retrieve the accession number and description fields  -->
+    <context-param>
+        <param-name>firstSrsOptionsIntact</param-name>
+        <param-value>]+-vn+3+-lv+20+-ascii</param-value>
+    </context-param>
+
+    <!--  Options with the previous SRS call : retrieve the sequence field -->
+    <context-param>
+        <param-name>secondSrsOptionsIntact</param-name>
+        <param-value>]+-f+seq+-ascii</param-value>
+    </context-param>
+
+
+    <!--    GETZ options:
+                    -e      //gives the full entries
+                    ]' -f "id acc des seq" >        // put the outputfile name at the end
+            WGETZ options:
+            ]+-f+acc%20des+-ascii
+            ]+-f+seq+-ascii
+                    ]+-vn+4+-ascii             // vn is for an internal use of wgetz and ascii display a nice output
+                    -->
+
+
+
+    <!-- =================================================================== -->
+<!-- =============================== Action Servlet Configuration ==================================== -->
+
+
+        <servlet>
+
+            <servlet-name>action</servlet-name>
+            <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+            <init-param>
+                <!-- The name of the Struts property file, '.properties' is automatically added -->
+                <param-name>application</param-name>
+                <param-value>/config/Struts</param-value>
+            </init-param>
+
+            <init-param>
+                <param-name>config</param-name>
+                <param-value>/WEB-INF/struts-config.xml</param-value>
+            </init-param>
+
+            <init-param>
+                <param-name>debug</param-name>
+                <param-value>2</param-value>
+            </init-param>
+
+            <init-param>
+                <param-name>detail</param-name>
+                <param-value>2</param-value>
+            </init-param>
+
+            <init-param>
+                <param-name>validate</param-name>
+                <param-value>true</param-value>
+            </init-param>
+
+            <load-on-startup>1</load-on-startup>
+
+        </servlet>
+
+
+        <!-- Action Servlet Mapping with servlets adding by Sophie on 03/02 and one welcome file "index.jsp"-->
+        <servlet-mapping>
+            <servlet-name>action</servlet-name>
+            <url-pattern>/do/*</url-pattern>
+        </servlet-mapping>
+
+        <!-- The Welcome File List --><!-- it's the first page where an user is sent when he uses the URL !-->
+        <welcome-file-list>
+            <welcome-file>init.jsp</welcome-file>
+        </welcome-file-list>
+
+        <!-- Struts tag library descriptor -->
+        <taglib>
+            <taglib-uri>
+                /WEB-INF/tld/intact.tld
+            </taglib-uri>
+            <taglib-location>
+                /WEB-INF/tld/intact.tld
+            </taglib-location>
+        </taglib>
+
+        <taglib>
+            <taglib-uri>
+                /WEB-INF/tld/struts-bean.tld
+            </taglib-uri>
+            <taglib-location>
+                /WEB-INF/tld/struts-bean.tld
+            </taglib-location>
+        </taglib>
+
+        <taglib>
+            <taglib-uri>
+                /WEB-INF/tld/struts-logic.tld
+            </taglib-uri>
+            <taglib-location>
+                /WEB-INF/tld/struts-logic.tld
+            </taglib-location>
+        </taglib>
+
+        <taglib>
+            <taglib-uri>
+                /WEB-INF/tld/struts-html.tld
+            </taglib-uri>
+            <taglib-location>
+                /WEB-INF/tld/struts-html.tld
+            </taglib-location>
+        </taglib>
+
+        <taglib>
+            <taglib-uri>
+                /WEB-INF/tld/struts-tiles.tld
+            </taglib-uri>
+            <taglib-location>
+                /WEB-INF/tld/struts-tiles.tld
+            </taglib-location>
+        </taglib>
+
+
+</web-app>
