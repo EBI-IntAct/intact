@@ -69,9 +69,6 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         FeatureBean fb = intView.getSelectedFeature();
         Feature feature = fb.getFeature();
 
-        // Unselect the bean or else it will be selected all the time.
-//        fb.unselect();
-
         // Set the new object as the current edit object.
         user.setView(feature);
 
@@ -127,6 +124,9 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
         // The component for the feature.
         featureView.setComponent(selectedComp.getComponent(user));
+
+        // Set the default short label to SP AC.
+        featureView.setDefaultShortLabel(selectedComp.getSpAc());
 
         return mapping.findForward(SUCCESS);
     }
