@@ -37,6 +37,13 @@ td.errorCell {
     font-weight: bold;
 }
 
+/* For displaying the Feature header */
+tr.tableFeatureRowHeader {
+    font-family: Arial, verdana, sans-serif;
+    color: #ffffff;
+    background-color: #B0C4DE;
+}
+
 /* For displaying Features */
 tr.tableFeatureRow {
     font-size: 8pt;
