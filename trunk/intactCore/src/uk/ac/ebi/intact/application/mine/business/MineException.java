@@ -25,19 +25,4 @@ public class MineException extends Exception {
     public MineException(String message) {
         super( message );
     }
-
-    /**
-     * @param cause
-     */
-    public MineException(Throwable cause) {
-        super( cause );
-    }
-
-    /**
-     * @param message
-     * @param cause
-     */
-    public MineException(String message, Throwable cause) {
-        super( message, cause );
-    }
 }
