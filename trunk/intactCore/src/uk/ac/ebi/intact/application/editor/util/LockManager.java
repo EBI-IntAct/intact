@@ -45,12 +45,10 @@ public class LockManager {
             myLockDate = new Date();
         }
 
-        private String getId() {
+        // Needed by admin/locks.jsp to display the id.
+        public String getId() {
             return myId;
         }
-
-        // These two methods are public as they are accessed from out side of
-        // this class.
 
         public String getOwner() {
             return myOwner;
@@ -220,5 +218,14 @@ public class LockManager {
         for (Iterator iter = locks.iterator(); iter.hasNext();) {
             myLocks.remove(iter.next());
         }
+    }
+
+    /**
+     * Returns a clone of the current locks.
+     * @return a  clone of the current locks. None of the lock objects
+     * are cloned because LockObjects are immutable.
+     */
+    public List getLocks() {
+        return (List) ((ArrayList) myLocks).clone();
     }
 }
