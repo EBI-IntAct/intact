@@ -6,6 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search.business;
 
+import java.util.Collection;
+
 /**
  * The business interface for the Web Intact application. This defines
  * methods that a client (servlet) may call on the application.
@@ -29,4 +31,10 @@ public interface IntactServiceIF {
      * @return the property associated with <code>key</code>
      */
     public String getHierarchViewProp(String key);
+
+    /**
+     * Returns a collection of Intact types.
+     * @return an <code>ArrayList</code> of Intact types.
+     */
+    public Collection getIntactTypes();
 }
