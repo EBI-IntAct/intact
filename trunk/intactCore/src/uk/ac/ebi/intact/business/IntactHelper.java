@@ -281,6 +281,25 @@ public class IntactHelper implements SearchI, Serializable {
     }
 
     /**
+     * opens the data source. This method should only be used if you want to
+     * explicitly manage the opening/clsoing yourself - in most cases you should
+     * leave this to the Helper class and the persistence layer.
+     *
+     * @exception thrown if the store was unable to be opened.
+     */
+    public void openStore() throws IntactException {
+
+        try {
+
+            dao.open();
+        }
+        catch(Exception de) {
+
+            throw new IntactException("failed to open data source!", de);
+        }
+    }
+
+    /**
      * @return boolean true if a client-initiated transaction is in progress, false if not
      * or if there is no valid connection to the datastore.
      */
