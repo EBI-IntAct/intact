@@ -111,6 +111,32 @@ public abstract class Interactor extends AnnotatedObject {
 
         return result + "]\n";
     }
+
+
+    public boolean equals (Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Interactor)) return false;
+        if (!super.equals(o)) return false;
+
+        final Interactor interactor = (Interactor) o;
+
+        if (!activeInstance.equals(interactor.activeInstance)) return false;
+        if (bioSource != null ? !bioSource.equals(interactor.bioSource) : interactor.bioSource != null) return false;
+        if (bioSourceAc != null ? !bioSourceAc.equals(interactor.bioSourceAc) : interactor.bioSourceAc != null) return false;
+        if (!product.equals(interactor.product)) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 29 * result + (bioSourceAc != null ? bioSourceAc.hashCode() : 0);
+        result = 29 * result + (bioSource != null ? bioSource.hashCode() : 0);
+        result = 29 * result + activeInstance.hashCode();
+        result = 29 * result + product.hashCode();
+        return result;
+    }
+
 } // end Interactor
 
 
