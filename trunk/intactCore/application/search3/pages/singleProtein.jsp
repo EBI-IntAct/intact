@@ -19,10 +19,11 @@
 <%@ page autoFlush="true" %>
 
 <!-- Mostly used by the javascript for HV -->
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants,
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.ProteinViewBean,
-                 uk.ac.ebi.intact.model.Xref"%>
+                 uk.ac.ebi.intact.model.Xref,
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
 
 <!-- Standard Java imports -->
 <%@ page import="java.util.*"%>
@@ -48,17 +49,16 @@
 
     //The view bean used to provide the data for this JSP. Could probably use
     //the jsp:useBean tag instead, but do it simply for now...
-    //ProteinViewBean bean = (ProteinViewBean)session.getAttribute(SearchConstants.VIEW_BEAN);
-    ProteinViewBean bean = (ProteinViewBean)request.getAttribute(SearchConstants.VIEW_BEAN);
+    ProteinViewBean bean = (ProteinViewBean)session.getAttribute(SearchConstants.VIEW_BEAN);
+    // ProteinViewBean bean = (ProteinViewBean)request.getAttribute(SearchConstants.VIEW_BEAN);
 %>
 
 
 <%-- The javascript for the button bars.... --%>
 <%@ include file="jscript.html" %>
 
-<h3>Search Results for
-    <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
-</h3>
+    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
+     <br/>
 
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
@@ -94,9 +94,8 @@ mockups, June 2004
                     rowspan="1" colspan="2">
                     <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>"
                         class="tdlink"
-                       target="new"><span style="color: rgb(102, 102, 204);">IntAct </span>name:</a>
-                    <a href="<%= bean.getProteinSearchURL() %>" class="tdlink" style="font-weight: bold;">
-                    <b><span style="color: rgb(255, 0, 0);"><%= bean.getProteinIntactName() %></span></b></a>
+                       target="new">IntAct name:</a>
+                    <b><span style="color: rgb(255, 0, 0);"><%= bean.getProteinIntactName() %></span></b>
                 </td>
 
                 <!-- AC:- NB this doesn't appear to need a hyperlink... -->
@@ -121,7 +120,7 @@ mockups, June 2004
                 </td>
 
                 <td class="lefttop" rowspan="1" colspan="4">
-                    <a href="<%= bean.getBioSearchURL()%>"><%= bean.getBioFullName()%></a>
+                    <a href="<%= bean.getBioSearchURL()%>"><%= bean. getBioSourceName()%></a>
                 </td>
             </tr>
 
@@ -141,7 +140,12 @@ mockups, June 2004
             <!-- Row 4: gene names row -->
             <tr bgcolor="white">
                 <td class="headerdarkmid">Gene name(s)<br></td>
-               <td class="lefttop" rowspan="1" colspan="4"><%= bean.getGeneNames() %></td>
+               <td class="lefttop" rowspan="1" colspan="4">
+                    <% Collection somePartnerGeneNames = bean.getGeneNames();
+                       for (Iterator iterator =  somePartnerGeneNames.iterator(); iterator.hasNext();) {
+                           String aGeneName =  (String) iterator.next(); %>
+                            <%=aGeneName%><br>
+                  <%   } %></td>
             </tr>
 
             <!-- Xrefs rows (xN)... -->
@@ -165,7 +169,7 @@ others are subsequent rows.
                 <!-- label + CvDatabase link for primary ID (assumes first Xref is primary)-->
                 <td class="headerdarkmid"
                 rowspan="<%= bean.getXrefs().size() %>" colspan="1">
-                   <a href="<%= bean.getHelpLink() + "XREF_HELP_SECTION"  %>" class="tdlink">Xref<br></a></td>
+                   <a href="<%= bean.getHelpLink() + "Xref.cvrefType"  %>" class="tdlink">Xref<br></a></td>
             <!--    <a href="<% //  bean.getCvDbURL(firstXref)%>" class="tdlink">Xref<br></a></td>  -->
 
         <!-- don't close the row tag here - it will be done in the Xref loop below

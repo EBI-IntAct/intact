@@ -12,25 +12,27 @@
 <%@ page buffer="none"    %>
 <%@ page autoFlush="true" %>
 
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants,
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.struts.controller.SearchAction,
                  java.util.Collection,
                  java.util.Iterator,
                  java.util.Map,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.SingleResultViewBean"%>
+                 uk.ac.ebi.intact.application.search3.struts.view.beans.SingleResultViewBean,
+                 uk.ac.ebi.intact.application.search3.struts.view.beans.TooLargeViewBean,
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
 
 
 <%
     String query = (String) session.getAttribute(SearchConstants.SEARCH_CRITERIA);
-    Collection singleResults =(Collection) request.getAttribute(SearchConstants.VIEW_BEAN);
+    TooLargeViewBean bean =(TooLargeViewBean) request.getAttribute(SearchConstants.VIEW_BEAN);
 
    %>
 
   <span class="smalltext"> </span>
 
-   <h3>Search Results for
-       <%=query %>
-   </h3>
+     <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
+     <br/>
+
 
      <span class="largetext">Sorry the query returns too many hits. No details will be
    displayed, please refine your query.<br></span>
@@ -54,10 +56,19 @@
             <td class="headerdarkmid">
                    <nobr>  <span class="whiteheadertext">Count</span>
             </td>
+
+              <%
+                 if(bean.isSelectable()) {
+        %>
+             <td class="headerdarkmid">
+                   <nobr>  <span class="whiteheadertext">&nbsp</span>
+            </td>
+
+            <% } %>
          </tr>
 
          <%  SingleResultViewBean singleResult;
-             for (Iterator iterator = singleResults.iterator(); iterator.hasNext();) {
+             for (Iterator iterator = bean.getSingleResults().iterator(); iterator.hasNext();) {
                singleResult = (SingleResultViewBean) iterator.next ();
           %>
                      <tr>
@@ -71,7 +82,26 @@
                         <td>
                             <%=singleResult.getCount() %>
                         </td>
+        <%
+                 if(bean.isSelectable()) {
+        %>
+
+        <% if(singleResult.isSearchable()) { %>
+                         <td>
+                         <a href="<%=singleResult.getSearchLink()%>"
+                         class="tdlink"><%=singleResult.getSearchName() %></a>
+                         </td>
+
+
+              <% } else { %>
+
+                             <td>
+                             &nbsp
+                            </td>
+
+                         <%} %>
+                <% } %>
                     </tr>
-         <%  }   %>
+         <%  } %>
     </tbody>
 </table>
