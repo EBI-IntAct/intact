@@ -70,11 +70,6 @@ public class ResultsAction extends IntactBaseAction {
         // The short label to search
         String shortLabel = (String) request.getParameter("shortLabel");
 
-        // Remove the current edit object from the cache to retrieve
-        // only the committed data; important to clear here because we get
-        // back to this page if the initial inquiry produced more one object.
-        user.removeFromCache(user.getCurrentEditObject());
-
         // The selected CV object.
         CvObject cvobj = null;
 
