@@ -384,7 +384,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Returns a collection <code>Xref</code> objects.
      *
      * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(Xref))
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(XreferenceBean))
      * </pre>
      */
     public List getXrefs() {
@@ -631,7 +631,7 @@ public abstract class AbstractEditViewBean implements Serializable {
         setFullName((String) dynaform.get("fullName"));
     }
 
-    // Dummy methods to be overriden by sub classes.
+    // Empty methods to be overriden by sub classes.
 
     /**
      * Persist any sub objects of the edited object. For example, proteins
@@ -659,6 +659,18 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     public void removeFromRecentList(EditUserI user) {}
 
+    /**
+     * Performs sanity check on a bean. Currently this method doesn't provide
+     * checks. Subclass must override this method to provide checks relevant to
+     * a view bean.
+     * @throws ValidationException if sanity check fails.
+     * @throws SearchException for errors in searching for objects in the
+     * persistent system.
+     */
+    public void sanityCheck(EditUserI user) throws ValidationException,
+            SearchException {
+    }
+
     // Protected Methods
 
     /**
@@ -672,9 +684,9 @@ public abstract class AbstractEditViewBean implements Serializable {
     // Abstract method
 
     /**
-     * Gathers values in the view bean and updates the existing AnnotatedObject if it exists
-     * or create a new annotated object for the view and sets the annotated
-     * object.
+     * Gathers values in the view bean and updates the existing AnnotatedObject
+     * if it exists or create a new annotated object for the view and sets the
+     * annotated object.
      * @param user to access the persistent system.
      * @throws SearchException for errors in searching the persistent system.
      *
