@@ -4,7 +4,7 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.application.editor.struts.viewx.interaction;
+package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
@@ -12,7 +12,6 @@ import org.apache.struts.action.ActionError;
 
 import javax.servlet.http.HttpServletRequest;
 
-import uk.ac.ebi.intact.application.editor.struts.viewx.interaction.ProteinBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 
