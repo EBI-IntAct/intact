@@ -190,8 +190,7 @@
                 <xsl:value-of select="@ac"/>
             </td>
             <td>
-                <xsl:value-of select="@shortLabel"/>[
-                <xsl:value-of select="substring(../CvComponentRole/@shortLabel, 1, 1)"/>]
+                <xsl:value-of select="@shortLabel"/>[<xsl:value-of select="substring(../CvComponentRole/@shortLabel, 1, 1)"/>]
             </td>
 
             <td colspan="2">
@@ -299,8 +298,8 @@
             <td width="2%"></td>
             <td width="10%"></td>
             <td width="10%"></td>
-            <td width="10%"></td>
-            <td width="68%"></td>
+            <td width="30%"></td>
+            <td width="48%"></td>
         </tr>
     </xsl:template>
 
