@@ -6,15 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletContext;
 
 /**
  * The action when the the user selects an entry from a list to edit an object.
@@ -57,6 +58,18 @@ public class ResultAction extends AbstractEditorAction {
 
         LOGGER.info("AC: " + ac + " class: " + className);
 
+        // Check the lock.
+        LockManager lmr = getLockManager();
+
+        // Try to acuire the lock.
+        if (!lmr.acquire(ac, user.getUserName())) {
+            ActionErrors errors = new ActionErrors();
+            // The owner of the lock (not the current user).
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.lock", ac, lmr.getOwner(ac)));
+            saveErrors(request, errors);
+            return mapping.findForward(FAILURE);
+        }
         // The selected Annotated object.
         AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
                         Class.forName("uk.ac.ebi.intact.model." + className), ac);

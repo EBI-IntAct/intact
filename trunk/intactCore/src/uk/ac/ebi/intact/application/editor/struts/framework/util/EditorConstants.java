@@ -44,4 +44,9 @@ public interface EditorConstants {
      * The default help link.
      */
     public static final String HELP_TITLE = "[?]";
+
+    /**
+     * The lock manager.
+     */
+    public static final String LOCK_MGR = "lmr";
 }

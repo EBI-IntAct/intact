@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2004 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -8,14 +8,16 @@ package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
-import org.apache.struts.action.*;
-import org.apache.struts.config.FormBeanConfig;
-import org.apache.struts.util.RequestUtils;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -35,26 +37,6 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
      * The logger for Editor. Allow access from the subclasses.
      */
     protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
-
-    /**
-     * The key to success action.
-     */
-//    protected static final String FORWARD_SUCCESS = "success";
-
-    /**
-     * The key to failure action.
-     */
-//    protected static final String FORWARD_FAILURE = "failure";
-
-    /**
-     * Forward to the search page.
-     */
-//    protected static final String FORWARD_SEARCH = "search";
-
-    /**
-     * Forward to the results page.
-     */
-//    protected static final String FORWARD_RESULTS = "results";
 
     // Class Methods
 
@@ -78,6 +60,16 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         EditorService service = (EditorService)
                 getApplicationObject(EditorConstants.EDITOR_SERVICE);
         return service;
+    }
+
+    /**
+     * Returns the single instance of the Lock manager.
+     * @return the lock manager stored in the application scope.
+     */
+    protected LockManager getLockManager() {
+        LockManager lmr = (LockManager) getApplicationObject(
+                EditorConstants.LOCK_MGR);
+        return lmr;
     }
 
     /**
@@ -202,25 +194,6 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
     }
 
     /**
-     * Returns a new DynaBean instance for given form name.
-     * @param formName the name of the form configured in the struts
-     * configuration file.
-     * @param request the HTTP request to get the application configuration.
-     * @return a <code>DynaBean</code> instance.
-     * @throws InstantiationException errors in creating the bean
-     * @throws IllegalAccessException errors in creating the bean
-     */
-//    protected DynaBean getDynaBean(HttpServletRequest request, String formName)
-//            throws InstantiationException, IllegalAccessException {
-//        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(
-//                Globals.MODULE_KEY);
-//        FormBeanConfig config = appConfig.findFormBeanConfig(formName);
-//        DynaActionFormClass dynaClass =
-//                DynaActionFormClass.createDynaActionFormClass(config);
-//        return dynaClass.newInstance();
-//    }
-
-    /**
      * Returns true if errors in stored in the request
      * @param request Http request to search errors for.
      * @return true if strut's error is found in <code>request</code> and
@@ -235,71 +208,6 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         }
         // No errors stored in the request.
         return false;
-    }
-
-    /**
-     * Returns the forward for input.
-     * @param mapping the mapping to get forward action.
-     * @return forward action stored in <code>mapping</code> under "input".
-     */
-//    protected ActionForward inputForward(ActionMapping mapping) {
-//        return mapping.findForward("input");
-//    }
-
-    /**
-     * Returns an action form.
-     * @param request the Http request to search for the form; the form is
-     * created and saved in given scope.
-     * @param mapping the mapping to get the scope for the form.
-     * @param name the name of the form.
-     * @return an ActionForm instance; this will be stored under given scope.
-     * @exception SessionExpiredException when a session expires.
-     */
-    protected ActionForm createActionForm(HttpServletRequest request,
-                                          ActionMapping mapping,
-                                          String name)
-            throws SessionExpiredException {
-        FormBeanConfig config = mapping.getModuleConfig().findFormBeanConfig(name);
-        if (config == null) {
-            return null;
-        }
-        ActionForm instance = null;
-
-        if ("request".equals(mapping.getScope())) {
-            instance = (ActionForm) request.getAttribute(name);
-        }
-        else {
-            instance = (ActionForm) getSession(request).getAttribute(name);
-        }
-        // Create and return a new form bean instance
-        if (instance == null) {
-            if (config.getDynamic()) {
-                try {
-                    DynaActionFormClass dynaClass =
-                            DynaActionFormClass.createDynaActionFormClass(config);
-                    instance = (ActionForm) dynaClass.newInstance();
-                }
-                catch (Throwable t) {
-                    return null;
-                }
-            }
-            else {
-                try {
-                    instance = (ActionForm) RequestUtils.applicationInstance(
-                            config.getType());
-                }
-                catch (Throwable t) {
-                    return null;
-                }
-            }
-        }
-        if ("request".equals(mapping.getScope())) {
-            request.setAttribute(name, instance);
-        }
-        else {
-            getSession(request).setAttribute(name, instance);
-        }
-        return instance;
     }
 
     /**

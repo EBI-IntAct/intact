@@ -7,6 +7,10 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view;
 
 import org.apache.taglibs.display.TableDecorator;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+
+import javax.servlet.ServletContext;
 
 /**
  * This class is a decorator for the display library.
@@ -40,5 +44,16 @@ public class Wrapper extends TableDecorator {
         int lastPos = className.lastIndexOf('.');
         return "<a href=result?ac=" + ac + "&searchClass="
                 + className.substring(lastPos + 1) + ">" + bean.getShortLabel() + "</a>";
+    }
+
+    /**
+     * @return the owner for the current bean. "---" is returned if the current
+     * bean is not locked.
+     */
+    public String getLockOwner() {
+        ServletContext ctx = getPageContext().getServletContext();
+        LockManager lmr = (LockManager) ctx.getAttribute(EditorConstants.LOCK_MGR);
+        ResultBean bean = (ResultBean) getObject();
+        return lmr.getOwner(bean.getAc());
     }
 }

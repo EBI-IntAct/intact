@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.GoServerProxy;
@@ -225,18 +226,20 @@ public interface EditUserI extends IntactUserI, Serializable {
      * Caches the last search result. Each object of <code>results</code> is
      * wrapped as a <code>ResultBean</code>.
      * @param results a collection of result beans from the search.
+     * @param lmr the lock manager to assign to each bean.
      *
      * <pre>
      * pre: results->forall(obj: Object | obj.oclIsTypeOf(ResultBean))
      * </pre>
      */
-    public void addToSearchCache(Collection results);
+    public void addToSearchCache(Collection results, LockManager lmr);
 
     /**
      * Updates the search cache with the current edit object; this is required
      * to reflect changes to current edit object's short label.
+     * @param lmr the lock manager to set for the current edit object.
      */
-    public void updateSearchCache();
+    public void updateSearchCache(LockManager lmr);
 
     /**
      * Returns a unique short label.
@@ -377,4 +380,6 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @exception SearchException for errors in searching the database.
      */
     public Xref getXref(XreferenceBean xb) throws SearchException;
+
+    public void releaseLock(LockManager lmr);
 }

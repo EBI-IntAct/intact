@@ -6,7 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view;
 
-import org.apache.commons.collections.Predicate;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import java.io.Serializable;
@@ -20,54 +20,24 @@ import java.io.Serializable;
 
 public class ResultBean implements Serializable {
 
-    // Static Inner class
-
-    // ------------------------------------------------------------------------
-    private static class ResultBeanPredicate implements Predicate {
-
-        /**
-         * The ac to filter out.
-         */
-        private String myFilterAc;
-
-        private ResultBeanPredicate(String ac) {
-            myFilterAc = ac;
-        }
-
-        /**
-         * Returns true if the input object matches this predicate.
-         * @param object the object to get the AC.
-         * @return  true if <code>object</code>'s AC does not match with the
-         * filter AC.
-         */
-        public boolean evaluate(Object object) {
-            return !myFilterAc.equals(((ResultBean) object).getAc());
-        }
-    }
-    // ------------------------------------------------------------------------
-
-    // End of inner classes.
-
     /**
      * Reference to CV object.
      */
     private AnnotatedObject myAnnotObject;
 
     /**
-     * Returns the predicate for this class.
-     * @param ac the AC number to filter.
-     * @return the <code>Predicate</code> for list operations.
+     * Handler to the lock manager.
      */
-    public static Predicate getPredicate(String ac) {
-        return new ResultBeanPredicate(ac);
-    }
+    private LockManager myLmr;
 
     /**
-     * Constructs with an Annotated object.
+     * Constructs with an Annotated object and the lock manager for it.
      * @param anobj the <code>AnnotatedObject</code> to extract information.
+     * @param lmr the lock manager for the bean.
      */
-    public ResultBean(AnnotatedObject anobj) {
+    public ResultBean(AnnotatedObject anobj, LockManager lmr) {
         myAnnotObject = anobj;
+        myLmr = lmr;
     }
 
     /**
@@ -103,17 +73,42 @@ public class ResultBean implements Serializable {
     }
 
     /**
-     * True if the given object and this object's annotated object are of safe type.
-     * @param obj the object to compare for type.
-     * @return true if <code>obj.getClass()</code> equals the class of the annotated
-     * object.
+     * @return the link for the result page; clicking on this link, the
+     * user will be taken into the edit page.
      */
-    public boolean isSameType(Object obj) {
-        // Same instance?
-        if (obj == this) {
-            return true;
-        }
-        return myAnnotObject.getClass() == obj.getClass();
+    public String getSearchLink() {
+        String className = getClassName();
+        int lastPos = className.lastIndexOf('.');
+        String type = className.substring(lastPos + 1);
+        return "<a href=\"" + "javascript:show('" + type + "', " + "'"
+                + getShortLabel() + "')\"" + ">" + getAc() + "</a>";
+    }
+
+    /**
+     * @return the link for the result page; clicking on this link, the
+     * user will be taken into the edit page.
+     */
+    public String getEditorLink() {
+        String className = getClassName();
+        int lastPos = className.lastIndexOf('.');
+        return "<a href=result?ac=" + getAc() + "&searchClass="
+                + className.substring(lastPos + 1) + ">" + getShortLabel() + "</a>";
+    }
+
+    /**
+     * @return the owner for the current bean. "---" is returned if the current
+     * bean is not locked.
+     */
+    public String getLockOwner() {
+        return myLmr.getOwner(getAc());
+    }
+
+    /**
+     * Get method for results.jsp
+     * @return true if this bean is locked or false is returned for otherwise.
+     */
+    public String getLocked() {
+        return myLmr.hasLock(getAc()) ? "true" : "false";
     }
 
     // Override Objects's equal method.
@@ -132,7 +127,7 @@ public class ResultBean implements Serializable {
         }
         if ((obj != null) && (getClass() == obj.getClass())) {
             // Can safely cast it.
-            return myAnnotObject.getAc().equals(((ResultBean) obj).getAc());
+            return getAc().equals(((ResultBean) obj).getAc());
         }
         return false;
     }

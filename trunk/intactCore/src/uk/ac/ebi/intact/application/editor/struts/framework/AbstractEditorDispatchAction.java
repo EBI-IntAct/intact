@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -41,6 +42,16 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
         EditorService service = (EditorService)
                 getApplicationObject(EditorConstants.EDITOR_SERVICE);
         return service;
+    }
+
+    /**
+     * Returns the single instance of the Lock manager.
+     * @return the lock manager stored in the application scope.
+     */
+    protected LockManager getLockManager() {
+        LockManager lmr = (LockManager) getApplicationObject(
+                EditorConstants.LOCK_MGR);
+        return lmr;
     }
 
     /**
@@ -102,8 +113,6 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
         // No errors stored in the request.
         return false;
     }
-
-    // Helper Methods
 
     /**
      * A convenient method to retrieve an application object from a session.
