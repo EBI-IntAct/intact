@@ -222,12 +222,6 @@ public interface EditUserI extends IntactUserI, Serializable {
     public String getSearchQuery();
 
     /**
-     * Returns the class name of the latest search.
-     * @return the class name of the latest search as a <code>String</code>.
-     */
-    public String getSearchClass();
-
-    /**
      * Caches the last search result. Each object of <code>results</code> is
      * wrapped as a <code>ResultBean</code>.
      * @param results a collection of result beans from the search.
@@ -237,14 +231,6 @@ public interface EditUserI extends IntactUserI, Serializable {
      * </pre>
      */
     public void addToSearchCache(Collection results);
-
-    /**
-     * Adds a new result item to the cache.
-     * @param cvobj the <code>AnnotatedObject</code> object to add to the cache if
-     * <code>cvobj</code> is of as same type as existing items in the search cache (
-     * avoid mixing diffrent types in the search cache).
-     */
-//    public void addToSearchCache(AnnotatedObject cvobj);
 
     /**
      * Updates the search cache with the current edit object; this is required
