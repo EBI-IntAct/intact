@@ -25,15 +25,40 @@
         <section title="Recent changes" name="new">
 
                 <blockquote>
-                    Changes in January 2004:
+                    Changes up to February 01, 2004:
                     <ul>
-                        <li>
-                            PSI MI XML formatted downloads are now available.
+                        <li>IntAct release 1: IntAct data is now available in <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>, see the <a href="#download">download</a> section. Controlled vocabularies are available in GO DAG format. 
+                        </li>
+                        <li>20672 interactions have been imported from Giot et al, 2003. 
+The dataset contains extensive crosslinking to UniProt, GO, InterPro, and FlyBase. This data will soon also be available in XML format.
                         </li>
                     </ul>
 
                 </blockquote>
         </section>
+
+
+        <section name="data" title="Data">
+           <section name="download" title="Download">
+            <blockquote> IntAct data is available in <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>. Each IntAct release is split into multiple XML files according to the pattern Species_name-[small | exeriment-name].xml. For example, s-cerevisiae_small.xml contains data on all small-scale experiments in S.cerevisiae stored in IntAct, s-cerevisiae_ho-2002.xml contains the data from the Ho et al, 2002 experiment. The current release is available at <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/">ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/</a>.
+            </blockquote>
+           </section>   <!-- end download -->
+           <section name="cvs" title="Controlled Vocabularies">
+            <blockquote>To ensure data consistency, IntAct makes intensive use of controlled vocabularies. All controlled vocabularies are available in Gene Ontology DAG-Edit format and HTML format. Some IntAct annotation of controlled vocabulary terms does not fit the GO DAG-Edit format, but as we want to export all available information, some comments might have to be filtered out from the *.def files before editing them in GO DAG-Edit. For an overview and download of IntAct controlled vocabularies, see <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/">ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/</a>.
+            </blockquote>
+           </section>   <!-- end cvs -->
+           <section name="statistics" title="Statistics">
+The IntAct release of February 1, 2004 contains:
+<table border="3">
+<tr><td>Object type</td><td>Number</td><td>Remarks</td></tr>
+<tr><td>Experiments</td><td>316</td><td></td></tr>
+<tr><td>Interactions (binary or n-ary)</td><td>22725</td><td></td></tr>
+<tr><td>Resulting binary interactions</td><td>29759</td><td></td></tr>
+<tr><td>Controlled vocabulary terms</td><td>181</td><td></td></tr>
+<tr><td>BioSources</td><td>56</td><td>Normally species, but may map to tissue, cell type etc.</td></tr>
+</table>
+           </section>   <!-- end statistics -->
+        </section>   <!-- end data -->
 
         <section title="IntAct data representation" name="core">
 
@@ -58,7 +83,7 @@
                     <a name="mainObjectsExample"></a>
                     Example (simplified): Representation of the Interleukin 2 receptor binding:
                     One interaction object represents the complex of the alpha, beta, and gamma
-                    chains which form the receptor. This interaction object is the used in the
+                    chains which form the receptor. This interaction object is then used in the
                     second interaction object, in which the binding of Interleukin 2 to the
                     receptor is represented. Both Interaction objects are linked to an experiment,
                     in which the Interaction has been determined.
@@ -393,8 +418,8 @@
                                 <li>
                                     upper or lower case strings are acceptable (but not mixed case) and will be matched if they
                                     exist. The exception to this is a search by alias (ie gene name, as defined in
-                                    Swisprot) - currently these
-                                    are stored as lower case and are searched for as such. This will become more sophisiticated
+                                    UniProt) - currently these
+                                    are stored as lower case and are searched for as such. This will become more sophisticated
                                     as the project matures.</li>
 
                                 <li>
@@ -482,7 +507,7 @@
                         <p>
                             <a NAME="ShortLabelHelp"></a>Protein names are links you can
                             click to get a view of the protein details. Also each protein name
-                            has a term in brackets (eg '[p]') which denotes the role that the protein
+                            has a term in superscript which denotes the role that the protein
                             plays in the interaction. These terms have tooltips associated with them
                             to display the role name, and also the term is a clickable link from which
                             you can view the full details of the controlled vocabulary term which presents
@@ -490,7 +515,7 @@
                             to define the meaning of the term 'bait').
                         </p>
                         <p>Since the items displayed for a search result include many items not
-                            actually queried for, the items that matched the oringinal search string
+                            actually queried for, the items that matched the original search string
                             are highlighted in
                             <b>
                                 <i>bold italic</i>
@@ -512,7 +537,7 @@
                                 <li>a reset button to uncheck any textboxes;</li>
 
                                 <li>
-                                    a graph button to display a graph of any selected proteins, which can be
+                                    a graph button to display a graph of any selected proteins or interactions, which can be
                                     chosen by clicking the appropriate checkboxes.</li>
                             </ul>
                         </ul>
@@ -1139,10 +1164,10 @@
 
                         <blockquote>
                             When adding an interaction network, a new one is generated according to the user's wishes
-                            and then fusionned to the current one to display them alltogether.
+                            and then merged with the current one.
                             <br/>
                             <br/>
-                            There are two ways of adding additional interactors the the displayed interaction network:
+                            There are two ways of adding additional interactors to the displayed interaction network:
                             <ul>
                                 <li>
                                     Type in the
@@ -1153,7 +1178,7 @@
                                 </li>
 
                                 <li>
-                                    If the protein of interrest is available in the current interaction network, you
+                                    If the protein of interest is available in the current interaction network, you
                                     can switch the mouse-click (sidebar) behaviour to
                                     <i>add a network</i> then click
                                     on the wanted protein.
@@ -1193,7 +1218,7 @@
                             button in the sidebar. Bear in mind that there is a minimum and maximum depth, this
                             implies the
                             <i>expand</i> (
-                            <i>contract</i>) button  disapears when the maximum (minimum)
+                            <i>contract</i>) button  disappears when the maximum (minimum)
                             depth is reached.
                         </blockquote>
 
@@ -1206,8 +1231,8 @@
                             proteins is displayed in the top right frame of hierarchView. By clicking on one of them,
                             the related GO hierarchy appears in the bottom right frame (powered by
                             <a href="http://www.ebi.ac.uk/ego" target="_blank">QuickGo</a>).
-                            If a single GO term is found, the hierarchy is displayed automaticaly.
-                            Now you can select one of the displayed GO term of the hierarchy in order to highlight
+                            If a single GO term is found, the hierarchy is displayed automatically.
+                            Now you can select one of the displayed GO terms of the hierarchy in order to highlight
                             in the interaction network all proteins annotated with that GO term in IntAct.
                             These proteins will appear with a differently colored label.
                             <br/>
@@ -1238,7 +1263,7 @@
                             After loading an interaction network, you can request to download its representation in
                             PSI MI XML format. To do so, you have to click on the <i>Download</i> button of the
                             <i>PSI-XML</i> section and a new window will appear in which the XML content will be
-                            displayed. After the data are fully loaded you can save that content on you hard disk.
+                            displayed. After the data are fully loaded you can save that content on your hard disk.
                             <br/>
                             <br/>
                             You can then, for instance, load the downloaded data in an external tool for further analysis.
@@ -1304,11 +1329,10 @@
                         starting with an interactor of
                         <pre>ac</pre> and expanded to depth of
                         <pre>depth</pre>.
-                        <pre>striftmif</pre> is a Boolean, when set to true, a graph will only converted to MIF, if
-                        thew result will follow the MIF requirements. Otherwise a exception is thrown. When set to false,
-                        any graph will return, even when it does not follow the requirements.
+                        <pre>striftmif</pre> is a Boolean. When set to true, a graph in PSI MI XML format will only be generated if the data allows to provide all required PSI MI attributes. Otherwise a exception is thrown. 
+When set to false, the generated graph will still be in PSI MI format, but might lack some mandatory elements.
                         <br/>
-                        The resulting graph will be returned in MIF as formated XML-String.
+                        The resulting graph will be returned in PSI MI XML as a formated XML-String.
                         <br/>
                     </blockquote>
 
@@ -1325,9 +1349,9 @@
                             <br/>
                             Just call:
                             <code>java uk.ac.ebi.intact.application.graph2MIF.Graph2MIFWSClient
-                                <i>ac</i>
-                                <i>depth</i>
-                                <i>(true|false)</i>
+                                <i>ac </i>
+                                <i>depth </i>
+                                <i>(true|false) </i>
                             </code>
                             to get a graph of IntAct as MIF. The result will be printed to <i>STDOUT</i>.
                             Have a look at the simple source code for getting an impression of how to write your own client.
@@ -1337,14 +1361,14 @@
 
                     <section name="graph2mif.usage.console" title="Example console client">
                         <blockquote>
-                            This client does not implemnt a WebService, it directly access the IntAct Database.
+                            This client does not implement a WebService, it directly accesses the IntAct Database.
                             The rest is mainly the same:
                             <code>java uk.ac.ebi.intact.application.graph2MIF.Graph2MIFClient
-                                <i>ac</i>
-                                <i>depth</i>
-                                <i>(true|false)</i>
+                                <i>ac </i>
+                                <i>depth </i>
+                                <i>(true|false) </i>
                             </code>
-                            to get a graph of IntAct as MIF. The result will be printed to <i>STDOUT</i>.
+                            to get a graph in PSI MI XML format. The result will be printed to <i>STDOUT</i>.
                             Have also a look at the simple source code for getting an impression of how to write your own client.
                         </blockquote>
                     </section>
@@ -1376,32 +1400,7 @@
                 Uncovering the interactome is one of the primary challenges in the post-genomic era. The topology information gained from the coverage of interaction space can shed light on the likely function and structure of proteins within the network (Vitkup et al, 2001). Here we present a list of the 'best baits' which give the highest return on experimental effort - i.e. those proteins which form 'hubs' in the interaction network. These lists are generated using the Pay-As-You-Go strategy (Lappe, M. Holm, L.(2004) Nature Biotechnology 22, pp 98 - 103) which detects and prioritises those proteins which have the highest likelihood of being hubs based on the current data within IntAct for various species. To illustrate the experimental effort which could be saved by using the strategy recommended here, take the Human interactome as an example. It is estimated that 50,000 experiments would be required to cover the entire human interactome following a purely random strategy for the selection of targets. The information gain here is close to linear for each experiment. This could be drastically reduced to less than 10,000 for 90% coverage of the entire human interactome by using the proteins listed here as baits. This would save years of experimental effort. This of course relies on the timely deposition of experimental data into the IntAct database in order that the Pay-As-You-Go algorithm should be fully uptodate and effective.
               </blockquote>
            </section>   <!-- end targets -->
-
-
-
         </section> <!-- applications -->
-
-        <section name="data" title="Data">
-           <section name="cvs" title="Controlled Vocabularies">
-            <blockquote>To ensure data consistency, IntAct makes intensive use of controlled vocabularies. All controlled vocabularies are available in Gene Ontology DAG-Edit format and HTML format, see the <a href="#download">download</a> section. Where the IntAct controlled vocabularies are identical to the <a href="http://psidev.sf.net/">PSI MI consortium</a> controlled vocabularies, only links to the PSI MI web site are given. Some IntAct annotation of controlled vocabulary terms does not fit the GO DAG-Edit format, but as we want to export all available information, some comments might have to be filtered out from the *.def files before editing them in GO DAG-Edit.
-            </blockquote>
-           </section>   <!-- end cvs -->
-           <section name="statistics" title="Statistics">
-<table border="1">
-<tr><td>Object type</td><td>Number</td><td>Remarks</td></tr>
-<tr><td>Experiment</td><td>316</td><td></td></tr>
-<tr><td>Interaction (binary or n-ary)</td><td>22725</td><td></td></tr>
-<tr><td>Resulting binary interaction</td><td>29759</td><td></td></tr>
-<tr><td>Controlled vocabulary term</td><td>181</td><td></td></tr>
-<tr><td>BioSource</td><td>56</td><td>Normally species, but may map to tissue, cell type etc.</td></tr>
-</table>
-           </section>   <!-- end statistics -->
-           <section name="download" title="Download">
-            <blockquote>
-IntAct data and controlled vocabularies are available from <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/">ftp://ftp.ebi.ac.uk/pub/databases/intact/</a>.
-            </blockquote>
-           </section>   <!-- end download -->
-        </section>   <!-- end data -->
  
     </division>
 
