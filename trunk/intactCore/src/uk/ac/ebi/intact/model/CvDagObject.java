@@ -63,7 +63,7 @@ public abstract class CvDagObject extends CvObject {
         if (removed) cvDagObject.removeChild(this);
     }
 
-    // Specific DAG methods
+    // * Specific DAG methods
     private Set ancestors(Set currentAncestors){
        for (Iterator i = this.getParents().iterator(); i.hasNext();) {
            CvDagObject current = (CvDagObject) i.next();
@@ -73,11 +73,17 @@ public abstract class CvDagObject extends CvObject {
         return currentAncestors;
     }
 
+    /**
+     * @return All ancestors of the current object. Each node is listed only once.
+     */
     public Set ancestors(){
         return this.ancestors(new HashSet());
     }
 
-
+    /**
+     * @param currentDepth Current depth in the tree. Translated into leading blanks.
+     * @return the current objects and all its descendents as an indented Tree.
+     */
     private String toIndentedTree(int currentDepth){
         StringBuffer currentTree = new StringBuffer();
         for (int i = 0; i<currentDepth; i++) {
@@ -107,6 +113,12 @@ public abstract class CvDagObject extends CvObject {
         }
     }
 
+    /**
+     *
+     * @param currentDepth The current depth in the DAG. Translated into leading blanks.
+     * @param aParent The current parent. All parents exept aParent are listed in the DAG line as additional parents.
+     * @return a single string containing the GO DAG flatfile representation of the current object and all its decendents.
+     */
     public String toGoDag(int currentDepth, CvDagObject aParent){
 
         StringBuffer currentTree = new StringBuffer();

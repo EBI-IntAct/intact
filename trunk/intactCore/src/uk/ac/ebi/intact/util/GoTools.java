@@ -208,8 +208,8 @@ public class GoTools {
             while (null != ( goRecord = readRecord(in))) {
 
                 // Progress report
-                if((++count % 1) == 0){
-                   System.err.println(count + " " + goRecord);
+                if((++count % 10 ) == 0){
+                   System.err.print(count + " ");
                 }
 
                 // Insert the definition
@@ -220,6 +220,8 @@ public class GoTools {
                     System.err.println("Error storing GO record " + (count - 1) + "\n" + e);
                 }
             }
+
+        System.err.println();
 
         return;
     }
@@ -238,7 +240,9 @@ public class GoTools {
         URL goServer = new URL(aSourceUrl);
         BufferedReader in = new BufferedReader(new InputStreamReader(goServer.openStream()));
 
-        DagNode.addNodes(in, null, aTargetClass, helper);
+        System.err.println("Reading GO DAG lines: ");
+        DagNode.addNodes(in, null, aTargetClass, helper, 0);
+        System.err.println("\nGO DAG read.");
 
         return;
     }
@@ -433,10 +437,13 @@ public class GoTools {
             } else if (args[0].equals("download")) {
 
                 // Write definitions
+                System.err.println("Writing GO definitons to " + args[2] + " ...");
                 writeGoDefinitions(targetClass, helper, args[2]);
 
                 // Write go dag format
+                System.err.println("Writing GO DAG to " + args[3] + " ...");
                 writeGoDag(targetClass, helper, args[3]);
+                System.err.println("Done.");
 
             } else
                 throw new IntactException("Invalid argument " + args[0] + "\n" + usage);
