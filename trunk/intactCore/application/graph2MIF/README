@@ -1,0 +1,85 @@
+$Id$
+**********************************************************************
+README for Graph2MIF (intactCore/application/Graph2MIF)
+**********************************************************************
+
+DIRECTORIES:
+/ (root)        : Graph2MIF.wsdd, build.xml
+WEB-INF/lib     : Library files for web. All the files in this location are
+                  included in the WAR file.
+WEB-INF/classes : Graph2MIF specific (non Intact core) class files.
+WEB-INF/config  : Configuration/Property files for the application.
+dist/           : Where the WAR file is created.
+doc/            : the API of the classes will be created here
+
+INSTALLATION
+    edit repository.xml and OJB.properties in the intact root directory
+    (intactCore/config) to suit your requirements (oracle vs postgres etc).
+    Instead of editing these files manually, you may just run ant set-target-env
+    from intactCore directory. The target environment is specified in the
+    build.properties file (intactCore directory). CvEdit has been tested
+    under Oracle 8.1.6 and PostGres 7.2 (local and remote).
+
+BUILD
+    ant war
+        prepares a WAR file to be deployed in a WEB container. The WAR file is
+        created in the dist/ directory.
+
+OTHER USEFUL COMMANDS
+    ant console
+	    compiles the console example Graph2MIFConsole to ../../classes, which 
+		can rerieve a MIF document and print it to STDOUT.
+	
+    ant run-console
+	    starts the console programm and retrieves a MIF Document of the interactor and depth
+		specified at the top of build.xml ( ${test-ac}, ${test-depth} & ${test-strictmif} )
+
+    ant wsclient
+	    compiles the example client Graph2MIFWSClient to ../../classes, which 
+		can rerieve a MIF document and print it to STDOUT.
+	
+    ant run-wsclient
+	    starts the client and retrieves a MIF Document of the interactor and depth
+		specified at the top of build.xml ( ${test-ac}, ${test-depth}, ${test-strictmif} )
+
+	ant clean
+		deletes temp-web and temp-doc. Also deletes the API-documentation.
+	
+	ant clean-all
+	    like clean - but also deletes the compiled clients.
+
+	ant doc
+	    creates API of all classes to ./doc
+    ant deploy (Tomcat specific)
+        deploys the WAR file in the dist/ location to the CATALINA_HOME/webapps. The
+        environment variable CATALINA_HOME must be set for this command to work
+        correctly.
+
+    ant undeploy (Tomcat specific)
+        reverses the effects of 'ant deploy' command. In addition to that, this
+        command also stops the WEB server (Tomcat) if it is running. As with
+        deploy command, the environment variable CATALINA_HOME must be set for
+        this command to work correctly. An error message, displayed when trying
+        to shutdown the WEB server if it is not running, can be safely ignored. In
+        addition to removing the WAR file, this command also removes the
+        expanded directory as well. For example, CATALINA_HOME/webapps/Graph2MIFWS
+        directory is removed in addition to CATALINA_HOME/webapps/Graph2MIFWS.war file.
+
+    ant undeploy war deploy (Tomcat specific)
+        runs all three targets in the specified order. Undeploys the last deployment,
+        creates a new war file and deploy it again.
+
+
+NOTES
+    The WAR file is being built using jar and class file from various locations.
+    Given below are locations where it looks for these files:
+        / (root)        - Graph2MIF.wsdd (will be proceeded to server-config.wsdd)
+        WEB-INF/        - web.xml
+        WEB-INF/lib     - all the jar files in this location.
+        ../../dist/     - intact-core.jar file.
+        ../../lib       - application common jar files (only a subset).
+		../../classes   - client will be compiled to this directory
+        WEB-INF/classes - Graph2MIF class files.
+
+COMMENTS
+    Send any comments/feedback to hmersch@ebi.ac.uk
