@@ -133,7 +133,7 @@ import java.util.*;
 public class UpdateProteins extends UpdateProteinsI {
 
     // TODO: ask when run in command line about an alternative location for the error file.
-    private static final String ENTRY_OUTPUT_FILE = "C:/intact_log/Entries.error";
+    private static final String ENTRY_OUTPUT_FILE = "/tmp/Entries.error";
 
     // to record entry error
     private String filename = null;
