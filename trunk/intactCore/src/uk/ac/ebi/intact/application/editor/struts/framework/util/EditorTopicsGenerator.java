@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Editable;
+import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.io.*;
 import java.lang.reflect.Modifier;
@@ -113,6 +115,9 @@ public class EditorTopicsGenerator {
                 // An abstract or an interface.
                 continue;
             }
+
+            classname = IntactHelper.getDisplayableClassName( classname );
+
             props.put(classname, fullname);
         }
         writeToProperties(props);
@@ -138,6 +143,7 @@ public class EditorTopicsGenerator {
     }
 
     /**
+     *
      * @param clazz the class object to check.
      * @return true if <code>clazz</code>is derived from
      * AnnotatedObject (super class); false is for otherwise.
@@ -150,7 +156,7 @@ public class EditorTopicsGenerator {
         // Loop till Object is reached or found AnnotatedObject in the
         // class hierarchy.
         while (!superclass.equals(Object.class)) {
-            if (superclass.equals(AnnotatedObject.class)) {
+            if (superclass.equals(AnnotatedObjectImpl.class)) {
                 // Found the annotated object as the super class.
                 superFound = true;
                 break;
