@@ -15,6 +15,8 @@ import uk.ac.ebi.intact.business.IntactException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
+import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.log4j.Logger;
 
@@ -128,64 +130,75 @@ public class GoHighlightmentSource extends HighlightmentSource {
      * @return a collection of node to highlight
      */
     public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) {
+
         Collection nodeList = new Vector ();
 
-        IntactUserI user = (IntactUserI) aSession.getAttribute(Constants.USER_KEY);
-        Collection keys   = user.getKeys();
+        IntactUserI user    = (IntactUserI) aSession.getAttribute(Constants.USER_KEY);
+        Collection children = user.getKeys();
+        String selectedGOTerm = user.getSelectedKey();
+
+        if (children.remove (selectedGOTerm)) {
+            logger.info (selectedGOTerm + " removed from children collection");
+        }
 
         // get source option
-        String  check = (String) user.getHighlightOption (ATTRIBUTE_OPTION_CHILDREN);
+        String check = (String) user.getHighlightOption (ATTRIBUTE_OPTION_CHILDREN);
+        boolean searchForChildren;
+        if (check != null) {
+            searchForChildren = check.equals ("checked");
+        } else {
+            searchForChildren = false;
+        }
+        logger.info ("Children option activated ? " + searchForChildren);
+        /**
+         *   T E S T
+         */
+        searchForChildren = true;
 
         ArrayList listOfNode = aGraph.getOrderedNodes();
         int size = listOfNode.size();
+        String[] goTermInfo = null;
+        String goTerm = null;
 
         for (int i=0 ; i<size ; i++) {
             Node node = (Node) listOfNode.get(i);
             String ac = node.getAc();
-
+            logger.info("Checking protein " + ac + " ...");
             // Search all GoTerm for this ac number
             Collection listGOTerm = this.getKeysFromIntAct (ac, aSession);
 
-            if (listGOTerm!= null && !listGOTerm.isEmpty()) {
-                String[] goTermInfo;
-                String goTerm;
+            if ((listGOTerm != null) && (listGOTerm.isEmpty() == false)) {
                 Iterator list = listGOTerm.iterator();
 
                 while (list.hasNext()) {
-                    Iterator it = keys.iterator();
-                    String selectedGOTerm = null;
-
-                    if (it.hasNext()) {
-                        selectedGOTerm = (String) it.next();
-                    }
-
-                    goTermInfo = new String[2];
-                    goTerm = new String();
                     goTermInfo = (String[]) list.next();
                     goTerm = goTermInfo[0];
 
+                    logger.info("    Checking if " + selectedGOTerm + ".equals(" + goTerm + ")");
                     if (selectedGOTerm.equals(goTerm)) {
                         nodeList.add(node);
+                        logger.info(ac + " added (got " + selectedGOTerm + ")");
                         break;
                     }
 
-                    if ((check != null) && (check.equals("checked"))) {
+                    if (searchForChildren == true) {
+                        Iterator it = children.iterator();
                         while (it.hasNext()) {
                             String newGOTerm = (String) it.next();
-
+                            logger.info("    Checking if children " + newGOTerm + ".equals(" + goTerm + ")");
                             if (newGOTerm.equals(goTerm)) {
                                 nodeList.add(node);
+                                logger.info(ac + " added (got " + selectedGOTerm + ")");
                                 break;
                             }
                         }
-                        // goterm.isChildrenOf(keys)?? -> if it'OK nodeList.add(node) et break
                     }
                 } // while
-            }
+            } // if
         } // for
 
         return nodeList;
-    } // proteinToHightlight
+    }
 
 
     /**
@@ -247,9 +260,18 @@ public class GoHighlightmentSource extends HighlightmentSource {
                 goTermInfo        = (String[]) list.next();
                 goTerm            = goTermInfo[0];
                 goTermDescription = goTermInfo[1];
-                String url = hostname + "/ego/DisplayGoTerm?selected=" + goTerm + "&intact=true&format=contentonly";
 
-                // http://web7-node1.ebi.ac.uk:8110/ingo/ego/DisplayGoTerm?selected=GO:0005635,GO:0005637&intact=true&format=contentonly
+                //aSession.getServletContext().getServerInfo();
+                String hierarchViewURL = null; // %24%7Bselected-children%7D%26clicked%3D%24%7Bid%7D
+                try {
+                    hierarchViewURL = URLEncoder.encode("http://holbein:8080/hierarchView/source.do?keys=${selected-children}&clicked=${id}", "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                String url = hostname + "/ingo/ego/DisplayGoTerm?selected=" + goTerm + "&intact=true&format=contentonly&url=" + hierarchViewURL + "&frame=_top"; //graphFrame";
+
+                // http://web7-node1.ebi.ac.uk:9170/ingo/ego/DisplayGoTerm?selected=GO:0005635,GO:0005622&intact=true&format=contentonly&url=http%3A%2F%2Fintact.com%2Fkeys%3D%24%7Bselected-children%7D%26clicked%3D%24%7Bid%7D&frame=framename
 
                 urls.add ( new LabelValueBean (goTerm, url, goTermDescription) );
             }
@@ -280,9 +302,8 @@ public class GoHighlightmentSource extends HighlightmentSource {
         }
 
         return  keys;
-    } // parseKeys
-
-} // GoHighlightmentSource
+    }
+}
 
 
 
