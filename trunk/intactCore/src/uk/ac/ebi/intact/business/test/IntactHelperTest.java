@@ -40,6 +40,7 @@ public class IntactHelperTest extends TestCase {
     private Protein prot1;
     private Protein prot2;
     private Protein prot3;
+    private Protein prot4;
     private Interaction int1;
     private Interaction int2;
     private Interaction int3;
@@ -51,8 +52,10 @@ public class IntactHelperTest extends TestCase {
     private Component comp4;
     private CvDatabase cvDb;
     private CvComponentRole compRole;
+    private CvTopic cvTopic;
     private Xref xref1;
     private Xref xref2;
+    private Annotation annot;
 
     public IntactHelperTest(String name) {
 
@@ -73,8 +76,8 @@ public class IntactHelperTest extends TestCase {
 
             helper = new IntactHelper(dataSource);
 
-            //now need to create specific info in the DB to use for the tests...
-            System.out.println("IntactHelper Test: building example test objects...");
+            //now need to create specific info to use for the tests...
+            System.out.println("IntactHelper Test: building example test objects (in memory)...");
 
             /*
             * simple scenario:
@@ -83,9 +86,6 @@ public class IntactHelperTest extends TestCase {
             * - create a BioSource
             * - link them all up (eg Components/Proteins/Interactions, Xrefs in Proteins,
             *    Experiment in Interaction etc)
-            * - persist everything
-            *
-            * two options: a) store and get back ACs, or b) set ACs artificially. Go for b) just now (if it works!)..
             */
             institution = new Institution("Boss");
 
@@ -109,6 +109,13 @@ public class IntactHelperTest extends TestCase {
             prot1 = new ProteinImpl(institution, bio1, "prot1");
             prot2 = new ProteinImpl(institution, bio1, "prot2");
             prot3 = new ProteinImpl(institution, bio1, "prot3");
+
+            //this one will be standalone and used for a persistence check..
+            prot4 = new ProteinImpl(institution, bio1, "prot4");
+
+            //An example annotation - used only for checking protein update
+            cvTopic = new CvTopic(institution, "test topic");
+            annot = new Annotation(institution, cvTopic);
 
             prot1.setFullName("test protein 1");
             prot1.setCrc64("dummy 1 crc64");
@@ -142,8 +149,8 @@ public class IntactHelperTest extends TestCase {
             //create some xrefs and link to proteins/interactions
             cvDb = new CvDatabase(institution, "testCvDb");
             cvDb.setFullName("dummy test cvdatabase");
-            xref1 = new Xref(institution, cvDb, "G0000000", "GAAAAAAA", "1.0", null);
-            xref2 = new Xref(institution, cvDb, "GEEEEEEE", "GGGGGGGG", "1.0", null);
+            xref1 = new Xref(institution, cvDb, "xref1", "GAAAAAAA", "1.0", null);
+            xref2 = new Xref(institution, cvDb, "xref2", "GGGGGGGG", "1.0", null);
 
             prot1.addXref(xref1);
             int1.addXref(xref2);
@@ -170,50 +177,6 @@ public class IntactHelperTest extends TestCase {
             int2.addComponent(comp4);
             int3.addComponent(comp4);
 
-            //store everything...
-            Collection persistList = new ArrayList();
-            persistList.add(institution);
-            persistList.add(bio1);
-            persistList.add(bio2);
-            persistList.add(exp1);
-            persistList.add(exp2);
-            persistList.add(cvDb);
-            persistList.add(compRole);
-            persistList.add(xref1);
-            persistList.add(xref2);
-            persistList.add(prot1);
-            persistList.add(prot2);
-            persistList.add(prot3);
-            persistList.add(int1);
-            persistList.add(int2);
-            persistList.add(int3);
-            persistList.add(comp1);
-            persistList.add(comp2);
-            persistList.add(comp3);
-            persistList.add(comp4);
-
-            System.out.println("saving examples to store (using JDBC TX)...");
-            helper.startTransaction(BusinessConstants.JDBC_TX);
-            helper.create(persistList);
-            helper.finishTransaction();
-            System.out.println("JDBC TX completed OK.");
-            System.out.println();
-
-            //now add some experiments and interactions and do an update
-            System.out.println("Attempting some updates (using a JDBC TX)...");
-            helper.startTransaction(BusinessConstants.JDBC_TX);
-            int2.addExperiment(exp2);
-            int3.addExperiment(exp2);
-            helper.update(int2);
-            helper.update(int3);
-            helper.finishTransaction();
-            System.out.println("Updates in a JDBC TX completed OK.");
-            System.out.println();
-
-            System.out.println("example test data successfully created - executing tests...");
-            System.out.println();
-
-
         }
         catch (Exception ie) {
 
@@ -236,13 +199,294 @@ public class IntactHelperTest extends TestCase {
         //need to clean out the example object data from the DB...
         try {
 
-            System.out.println("tests complete - removing test data...");
-            System.out.println("deleting test objects...");
-
-            //NB ORDER OF DELETION IS IMPORTANT!!...
+            System.out.println("tests complete - removing any remaining test data...");
             helper.delete(prot1);
             helper.delete(prot2);
             helper.delete(prot3);
+            helper.delete(prot4);
+            helper.delete(cvTopic);
+            helper.delete(annot);
+            helper.delete(int1);
+                        helper.delete(int2);
+            helper.delete(int3);
+
+            helper.delete(exp1);
+            helper.delete(exp2);
+
+            helper.delete(bio1);
+            helper.delete(bio2);
+
+            helper.delete(comp1);
+            helper.delete(comp2);
+            helper.delete(comp3);
+            helper.delete(comp4);
+
+            helper.delete(xref1);
+            helper.delete(xref2);
+
+            helper.delete(cvDb);
+            helper.delete(compRole);
+
+            helper.delete(institution);
+
+
+
+        }
+        catch(Exception e) {
+
+            fail("problem deleteing examples from data store - exception message: " + e.toString());
+        }
+        try{
+            helper.closeStore();
+        }
+        catch(IntactException e) {
+            System.out.println("unable to close store on test cleanup!");
+            e.printStackTrace();
+        }
+        helper = null;
+    }
+
+    //-------------------- persistence tests: create, update, delete etc ---------------
+
+    /**
+     * Tests object creation. All example objects constructed in the setUp method
+     * are passed to the helper.create method to be persisted, using a JDBC
+     * JDBC transaction (NB probably both types should be tested).
+     */
+    protected void create(int txType) {
+
+        try {
+            //store everything...
+            Collection persistList = new ArrayList();
+            persistList.add(institution);
+            persistList.add(bio1);
+            persistList.add(bio2);
+            persistList.add(exp1);
+            persistList.add(exp2);
+            persistList.add(cvDb);
+            persistList.add(compRole);
+            persistList.add(xref1);
+            persistList.add(xref2);
+            persistList.add(prot1);
+            persistList.add(prot2);
+            persistList.add(prot3);
+            persistList.add(prot4); //used later for persistence check
+            persistList.add(cvTopic);
+            persistList.add(annot);
+            persistList.add(int1);
+            persistList.add(int2);
+            persistList.add(int3);
+            persistList.add(comp1);
+            persistList.add(comp2);
+            persistList.add(comp3);
+            persistList.add(comp4);
+
+            System.out.println("Performing create test using "
+                    + this.getTxType(txType) + " transaction...");
+            helper.startTransaction(txType);
+            helper.create(persistList);
+            helper.finishTransaction();
+            System.out.println("Create transaction completed with no exceptions.");
+            System.out.println("performing searches for created objects...");
+
+            //now need to query for the objects to make sure they are there..
+            Collection results = null;
+            results = helper.search(institution.getClass().getName(), "shortLabel", "Boss");
+            if(results.size() != 1) System.out.println("create failed for institution! found "
+            + results.size() + " objects.");
+
+            results = helper.search(bio1.getClass().getName(), "shortLabel", "bio1");
+            if(results.size() != 1) System.out.println("create failed for biosource1! found "
+            + results.size() + " objects.");
+
+            results = helper.search(bio2.getClass().getName(), "shortLabel", "bio2");
+            if(results.size() != 1) System.out.println("create failed for biosource2! found "
+            + results.size() + " objects.");
+
+            results = helper.search(exp1.getClass().getName(), "shortLabel", "exp1");
+            if(results.size() != 1) System.out.println("create failed for exp1! found "
+            + results.size() + " objects.");
+
+            results = helper.search(exp2.getClass().getName(), "shortLabel", "exp2");
+            if(results.size() != 1) System.out.println("create failed for exp2! found "
+            + results.size() + " objects.");
+
+            results = helper.search(cvDb.getClass().getName(), "shortLabel", "testCvDb");
+            if(results.size() != 1) System.out.println("create failed for CvDb! found "
+            + results.size() + " objects.");
+
+            results = helper.search(compRole.getClass().getName(), "shortLabel", "role");
+            if(results.size() != 1) System.out.println("create failed for component role! found "
+            + results.size() + " objects.");
+
+            results = helper.search(xref1.getClass().getName(), "primaryId", "xref1");
+            if(results.size() != 1) System.out.println("create failed for xref1! found "
+            + results.size() + " objects.");
+
+            results = helper.search(xref2.getClass().getName(), "primaryId", "xref2");
+            if(results.size() != 1) System.out.println("create failed for xref2! found "
+            + results.size() + " objects.");
+
+            results = helper.search(prot1.getClass().getName(), "shortLabel", "prot1");
+            if(results.size() != 1) System.out.println("create failed for protein1! found "
+            + results.size() + " objects");
+
+            results = helper.search(prot2.getClass().getName(), "shortLabel", "prot2");
+            if(results.size() != 1) System.out.println("create failed for protein2! found "
+            + results.size() + " objects.");
+
+            results = helper.search(prot3.getClass().getName(), "shortLabel", "prot3");
+            if(results.size() != 1) System.out.println("create failed for protein3! found "
+            + results.size() + " objects.");
+
+            results = helper.search(prot4.getClass().getName(), "shortLabel", "prot4");
+            if(results.size() != 1) System.out.println("create failed for protein4! found "
+            + results.size() + " objects.");
+
+            results = helper.search(int1.getClass().getName(), "shortLabel", "int1");
+            if(results.size() != 1) System.out.println("create failed for interaction1! found "
+            + results.size() + " objects.");
+
+            results = helper.search(int2.getClass().getName(), "shortLabel", "int2");
+            if(results.size() != 1) System.out.println("create failed for interaction2! found "
+            + results.size() + " objects.");
+
+            results = helper.search(int3.getClass().getName(), "shortLabel", "int3");
+            if(results.size() != 1) System.out.println("create failed for interaction3! found "
+            + results.size() + " objects.");
+            System.out.println("create test completed.");
+            //components can be obtained from the interactions...
+            System.out.println();
+        }
+        catch(IntactException ie) {
+
+            //something failed with transaction or helper.create...
+            System.out.println("error running create test - create failed!");
+            ie.printStackTrace();
+            try{
+                helper.undoTransaction();
+            } catch(Exception e1) {
+                System.out.println("unable to undo transaction!!");
+                e1.printStackTrace();
+            }
+        }
+
+    }
+
+    /**
+     * Performs an update test (which often causes the most problems!). The test
+     * will be performed agiainst the most commonly modified Intact classes -
+     *  Interaction, Protein and Experiment. Note: This test is potentially huge
+     * since all fields of all classes could be updated - the current test focuses
+     * only on the classes mainly updated, and also on the parts of those classes
+     * most commonly changed (ie some of their Collections containing in particular
+     * Proxy objects).
+     * IMPORTANT!! It is only possible to update an object which
+     * a) is already persistent and b) has been modified with already persistent objects.
+     * In other words, OJB will NOT persist any non-persistent referenced objects as part
+     * of an update. This is because it does not support nested transactions.
+     * @param txType  The type of transaction to use for the test - usually JDBC,
+     * ODMG or 'method local'.
+     */
+    protected void update(int txType) {
+
+        try{
+            //now add some experiments and interactions and do an update
+            System.out.println("Performing update test using "
+                    + this.getTxType(txType) + " transaction...");
+
+            //local obj refs
+            Interaction interaction = null;
+            Protein protein = null;
+            Experiment exp = null;
+            Collection results = null;
+            boolean searchFailed = false; //used to print an appropriate message
+
+            System.out.println("Starting transaction...");
+            helper.startTransaction(txType);
+            //NB Have to search first (INSIDE the TX) to get the objects to update -
+            //This only seems to be an issue for ODMG....
+            results = helper.search(int2.getClass().getName(), "shortLabel", "int2");
+            if(!results.isEmpty()) {
+                System.out.println("updating Interaction with an Experiment...");
+                interaction = (Interaction) results.iterator().next();
+                interaction.addExperiment(exp2);
+                helper.update(interaction);
+                System.out.println("interaction update test threw no exceptions.");
+            }
+            else {
+                System.out.println("update test: no test interaction with label 'int2' in DB!");
+                searchFailed = true;
+            }
+
+            results = helper.search(prot1.getClass().getName(), "shortLabel", "prot1");
+            if(!results.isEmpty()) {
+                System.out.println("Updating a Protein with an Annotation....");
+                protein = (Protein) results.iterator().next();
+                protein.addAnnotation(annot);
+                helper.update(protein);
+                System.out.println("protein update test threw no exceptions.");
+            }
+            else {
+                System.out.println("update test: no test protein with label 'prot1' in DB!");
+                searchFailed = true;
+            }
+
+            results = helper.search(exp1.getClass().getName(), "shortLabel", "exp1");
+            if(!results.isEmpty()) {
+                System.out.println("Updating an Experiment with an Interaction....");
+                exp = (Experiment) results.iterator().next();
+                exp.addInteraction(interaction);
+                helper.update(exp);
+                System.out.println("experiment update test threw no exceptions.");
+            }
+            else {
+                System.out.println("update test: no test experiment with label 'exp1' in DB!");
+                searchFailed = true;
+            }
+
+            helper.finishTransaction();
+            if(searchFailed) {
+                System.out.println("failed to update properly - searching returned no test objects!");
+                System.out.println(" - perhaps test object creation did not work correctly?");
+            }
+            else {
+                 System.out.println("Update Transaction completed without exceptions.");
+            }
+            System.out.println();
+        }
+        catch(IntactException ie) {
+
+            //something failed with update
+            String msg = "error running test - update failed!";
+            System.out.println(msg);
+            ie.printStackTrace();
+            try{
+                helper.undoTransaction();
+            }
+            catch(Exception e1) {
+                System.out.println("unable to undo transaction!!");
+                e1.printStackTrace();
+            }
+        }
+
+    }
+
+    protected void delete(int txType) {
+
+        try {
+
+            System.out.println("Performing delete test...");
+            System.out.println("Performing delete test using "
+                    + this.getTxType(txType) + " transaction...");
+            //NB ORDER OF DELETION IS IMPORTANT!!...
+            helper.startTransaction(txType);
+            helper.delete(prot1);
+            helper.delete(prot2);
+            helper.delete(prot3);
+            helper.delete(prot4);
+            helper.delete(cvTopic);
+            helper.delete(annot);
             helper.delete(int1);
             helper.delete(int2);
             helper.delete(int3);
@@ -265,33 +509,111 @@ public class IntactHelperTest extends TestCase {
             helper.delete(compRole);
 
             helper.delete(institution);
+            helper.finishTransaction();
 
-            System.out.println("done - all example test objects removed successfully.");
+            System.out.println("Delete test completed successfully without exceptions.");
             System.out.println();
         }
-        catch(Exception e) {
+        catch(IntactException ie) {
 
-            fail("problem deleteing examples from data store - exception message: " + e.toString());
+            String msg = "error running test - delete failed!";
+            System.out.println(msg);
+            ie.printStackTrace();
+            try{
+                helper.undoTransaction();
+            }
+            catch(Exception e1) {
+                System.out.println("unable to undo transaction!!");
+                e1.printStackTrace();
+            }
         }
-        try{
-            helper.closeStore();
-        }
-        catch(IntactException e) {
-            System.out.println("unable to close store on test cleanup!");
-            e.printStackTrace();
-        }
-        helper = null;
+
     }
 
-    //test methods go here....
-    //NB all protected, called via one test method (to avoid setUp/tearDown called between each test...
+    protected void isPersistent() {
+
+        try {
+            System.out.println("Performing persistence check test...");
+            if(helper.isPersistent(prot4)) System.out.println("persistence check on persistent obj OK");
+            //now remove one and check again...
+            helper.delete(prot4);
+            if(helper.isPersistent(prot4)) {
+                System.out.println("persistence check on deleted obj FAILED");
+            }
+            else {
+                //check OK - create it again for later...
+                helper.create(prot4);
+            }
+
+            System.out.println();
+        }
+        catch(IntactException ie) {
+            System.out.println("error performing persistence test!");
+            ie.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Test for removing an object from the cache. The criterion is that if
+     * an object previously searched for is then removed from the cache, the
+     * query time should be increased.
+     */
+    protected void cacheRemoval() {
+
+        try {
+            System.out.println("Performing cache removal test...");
+            Collection result = helper.search(prot1.getClass().getName(), "shortLabel", "prot1");
+            if(!result.isEmpty()) {
+            Protein prot = (Protein)result.iterator().next();
+            long stop = 0;
+            long start = 0;
+            long time1 = 0;
+            long time2 = 0;
+            //now do the testing by performing the same query, removing from
+            //the cache and then doing it again
+            System.out.println("doing cached search..");
+            start = System.currentTimeMillis();
+            result = helper.search(prot4.getClass().getName(), "shortLabel", "prot1");
+            prot = (Protein)result.iterator().next();
+            stop = System.currentTimeMillis();
+            time1 = stop - start;
+
+            System.out.println("doing search after cache removal..");
+            helper.removeFromCache(prot);
+            start = System.currentTimeMillis();
+            result = helper.search(prot1.getClass().getName(), "shortLabel", "prot1");
+            prot = (Protein)result.iterator().next();
+            stop = System.currentTimeMillis();
+            time2 = stop - start;
+
+            System.out.println("(Difference between times should be bigger than a few milliseconds)");
+            System.out.println("cached search time: " + time1);
+            System.out.println("non-cached search time: " + time2);
+            }
+            else {
+                fail("cache removal test failed - could not retrieve known example object!");
+            }
+            System.out.println();
+
+
+        }
+        catch(IntactException ie) {
+            System.out.println("Error performing cache removal test!");
+            ie.printStackTrace();
+        }
+
+    }
+
+
+    //------------------------- various search tests ----------------------------------
 
     /**
      *  tests simple (classname, param, value) search
      */
     protected void basicSearch() throws Exception {
 
-        System.out.println("testing simple (class, param, value) search.....");
+        System.out.println("Performing basic (class, param, value) search test.....");
         System.out.println("searching for an example Protein...");
         System.out.println();
 
@@ -328,7 +650,7 @@ public class IntactHelperTest extends TestCase {
     */
     protected void nameSearch() throws Exception {
 
-        System.out.println("testing search by name (Interaction, with name '"
+        System.out.println("Performing search by name test (Interaction, with name '"
                 + int1.getFullName() + "')...");
         System.out.println();
 
@@ -360,7 +682,7 @@ public class IntactHelperTest extends TestCase {
     */
     protected void institutionSearch() throws Exception {
 
-        System.out.println("testing search for Experiments by Institution");
+        System.out.println("Performing Experiments by Institution search test...");
         System.out.println("using Institution '" + institution.getShortLabel() + "'.....");
         System.out.println();
 
@@ -393,6 +715,7 @@ public class IntactHelperTest extends TestCase {
 
 
 
+    //-------------------- miscellaneous tests ------------------------------
 
     /**
      * simple check for object serialization of the helper class, and also that you can
@@ -433,7 +756,7 @@ public class IntactHelperTest extends TestCase {
 
         try {
             System.out.println();
-            System.out.println("now checking user validation....");
+            System.out.println("Performing user validation test....");
             System.out.println("attempting to connect as three different users in turn, each creating an object..");
 
             System.out.println("checking testuser1....");
@@ -465,48 +788,6 @@ public class IntactHelperTest extends TestCase {
         }
     }
 
-    /**
-     * Used to check out user connections
-     * @param h an IntactHelper that has user details set
-     * @param label An example shortLabel to use
-     */
-    protected void doUserCheck(IntactHelper h, String label) {
-
-        Collection results = new ArrayList();
-        try {
-
-            Institution inst = new Institution(label);
-            h.create(inst);
-
-            //now check retrieval of the above object...
-            results = h.search(Institution.class.getName(), "shortLabel", inst.getShortLabel());
-            if(results.isEmpty()) {
-                System.out.println("an error occurred - object created by testuser1 could not be found!!");
-            }
-            else {
-                Iterator it = results.iterator();
-                Institution found = (Institution)it.next();
-                if(it.hasNext()) {
-                    System.out.println("error - more than one object found that was created by testuser1!");
-                }
-                else {
-                    System.out.println("checking for retrieved object...");
-                    System.out.println("object created by user (expecting Institution with label " + label + ")");
-                    System.out.println("type: " + found.getClass().getName()
-                            + " AC: " + found.getAc() + " label: " + found.getShortLabel());
-
-                    System.out.println();
-
-                }
-
-            }
-
-        }
-        catch(Exception e) {
-            System.out.println("failed user validation check...");
-            e.printStackTrace();
-        }
-    }
 
     /**
      * main test method - calls the others, which do all the work.
@@ -517,10 +798,32 @@ public class IntactHelperTest extends TestCase {
         //BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         //String answer = "n";
         try {
+             //Do two runs for the persistence checks - firstly using JDBC transactions
+            //and then using ODMG transactions......
+
+            //perform persistence checks, then searches, then deletes...
+            //NB order of tests is important.
+
+            //JDBC
+            int txType = BusinessConstants.JDBC_TX;
+            create(txType);
+            update(txType);
+            cacheRemoval();
+            isPersistent();
 
             basicSearch();
             nameSearch();
             institutionSearch();
+
+            delete(txType);
+
+            //ODMG
+            txType = BusinessConstants.OBJECT_TX;
+            create(txType);
+            update(txType);
+            delete(txType);
+
+            //miscellaneous...
             checkSerialization();
             System.out.println("IntactHelper test case complete.");
             System.out.println();
@@ -565,5 +868,61 @@ public class IntactHelperTest extends TestCase {
         String[] testClasses = {CLASS.getName()};
         junit.textui.TestRunner.main(testClasses);
     }
+
+    //---------------- private helper methods ---------------------------------
+
+    /**
+     * Used to check out user connections
+     * @param h an IntactHelper that has user details set
+     * @param label An example shortLabel to use
+     */
+    private void doUserCheck(IntactHelper h, String label) {
+
+        Collection results = new ArrayList();
+        try {
+
+            Institution inst = new Institution(label);
+            h.create(inst);
+
+            //now check retrieval of the above object...
+            results = h.search(Institution.class.getName(), "shortLabel", inst.getShortLabel());
+            if (results.isEmpty()) {
+                System.out.println("an error occurred - object created by testuser1 could not be found!!");
+            } else {
+                Iterator it = results.iterator();
+                Institution found = (Institution) it.next();
+                if (it.hasNext()) {
+                    System.out.println("error - more than one object found that was created by testuser1!");
+                } else {
+                    System.out.println("checking for retrieved object...");
+                    System.out.println("object created by user (expecting Institution with label " + label + ")");
+                    System.out.println("type: " + found.getClass().getName()
+                            + " AC: " + found.getAc() + " label: " + found.getShortLabel());
+
+                    System.out.println();
+
+                }
+
+            }
+
+        } catch (Exception e) {
+            System.out.println("failed user validation check...");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Convenience method to get a string version of a TX type.
+     * @param tx The type to check
+     * @return The appropriate String, or "method local" if unknown
+     */
+    private String getTxType(int tx) {
+
+            if(tx == BusinessConstants.JDBC_TX) return "JDBC";
+            if(tx == BusinessConstants.OBJECT_TX ) return "ODMG";
+        return "method local";
+
+    }
+
 
 }
