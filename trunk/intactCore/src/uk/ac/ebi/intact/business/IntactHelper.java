@@ -561,24 +561,21 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      */
     public void update(Object obj) throws IntactException {
+        // No force updating.
+        update(obj, false);
+    }
 
-        try {
-
-            if (dao == null) connect();
-
-            //just to be safe, restrict write access..
-            synchronized (this) {
-
-                dao.update(obj);
-
-            }
-        } catch (Exception de) {
-            de.printStackTrace();
-            String msg = "intact helper: failed to perform update on class " + obj.getClass().getName();
-            throw new IntactException(msg, de);
-
-        }
-
+    /**
+     * This method forces the given object to update. This is needed because
+     * OJB does not seem to set the dirty marker properly (e.g., if a
+     * collection size remains unchanged and the OJJB uses the size to work out
+     * if the object is marked as dirty).
+     * @param obj the object to update.
+     * @exception IntactException - thrown if a problem arises during the update
+     */
+     public void forceUpdate(Object obj) throws IntactException {
+        // Force the update
+        update(obj, true);
     }
 
     /**
@@ -2248,6 +2245,30 @@ public class IntactHelper implements SearchI, Externalizable {
             String msg = "failed to create a DAO when it was (somehow!) originally null";
             throw new IntactException(msg, de);
         }
+    }
+
+    private void update(Object obj, boolean force) throws IntactException {
+
+        try {
+
+            if (dao == null) connect();
+
+            //just to be safe, restrict write access..
+            synchronized (this) {
+                if (force) {
+                    ((ObjectBridgeDAO) dao).forceUpdate(obj);
+                }
+                else {
+                    dao.update(obj);
+                }
+            }
+        } catch (Exception de) {
+            de.printStackTrace();
+            String msg = "intact helper: failed to perform update on class " + obj.getClass().getName();
+            throw new IntactException(msg, de);
+
+        }
+
     }
 }
 
