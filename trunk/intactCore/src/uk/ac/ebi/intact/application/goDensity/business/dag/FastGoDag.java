@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.goDensity.exception.SameGraphPathException;
 import uk.ac.ebi.intact.application.goDensity.setupGoDensity.Config;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.CvGoNode;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -45,7 +46,7 @@ public class FastGoDag extends Key2HashSet {
     // Class and object attributes
     // =======================================================================
 
-    static Logger logger = Logger.getLogger("FastGoDag");
+    static Logger logger = Logger.getLogger("goDensity");
 
     /**
      * This class is a repository for the GO graph. All classes can
@@ -613,7 +614,7 @@ public class FastGoDag extends Key2HashSet {
     private void calcGoTermShort() throws IntactException {
         IntactHelper helper = new IntactHelper();
         _goShortlabels = new Hashtable();
-        Collection cvGoNodes = helper.getObjectsByXref(uk.ac.ebi.intact.application.goDensity.business.dag.CvGoNode.class, "*");
+        Collection cvGoNodes = helper.getObjectsByXref(uk.ac.ebi.intact.model.CvGoNode.class, "*");
         Iterator it = cvGoNodes.iterator();
         while (it.hasNext()) {
             CvGoNode node = (CvGoNode) it.next();
@@ -629,7 +630,7 @@ public class FastGoDag extends Key2HashSet {
     private void calcGoTermFullname() throws IntactException {
         IntactHelper helper = new IntactHelper();
         _goFullname = new Hashtable();
-        Collection cvGoNodes = helper.getObjectsByXref(uk.ac.ebi.intact.application.goDensity.business.dag.CvGoNode.class, "*");
+        Collection cvGoNodes = helper.getObjectsByXref(uk.ac.ebi.intact.model.CvGoNode.class, "*");
         Iterator it = cvGoNodes.iterator();
         while (it.hasNext()) {
             CvGoNode node = (CvGoNode) it.next();

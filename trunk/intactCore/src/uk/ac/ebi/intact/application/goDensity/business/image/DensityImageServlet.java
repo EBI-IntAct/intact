@@ -23,7 +23,7 @@ import java.io.OutputStream;
 
 public class DensityImageServlet extends HttpServlet {
 
-    static Logger logger = Logger.getLogger("DensityImageServlet");
+    static Logger logger = Logger.getLogger("goDensity");
 
     /**
      * Servlet allowing to get image data, rasterize into JPEG and send

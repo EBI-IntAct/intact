@@ -43,7 +43,7 @@ import java.util.List;
 
 public final class goChildrenAction extends Action {
 
-    static Logger logger = Logger.getLogger("goChildrenAction");
+    static Logger logger = Logger.getLogger("goDensity");
 
     /**
      * Action execute

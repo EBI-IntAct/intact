@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.application.goDensity.setupGoDensity;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.util.GoTools;
-import uk.ac.ebi.intact.application.goDensity.business.dag.CvGoNode;
+import uk.ac.ebi.intact.model.CvGoNode;
 
 import java.util.Date;
 
