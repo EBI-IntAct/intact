@@ -31,19 +31,20 @@
 
    if (user.InteractionNetworkReadyToBeDisplayed()) {
 
+       String applicationContext = request.getContextPath();
        String centerItem = "";
        String addItem    = "";
-       String radio    = "<img src=\"../images/radio.png\" border=\"0\">";
-       String radioChk = "<img src=\"../images/radio-chk.png\" border=\"0\">";
+       String radio    = "<img src=\""+ applicationContext +"/images/radio.png\" border=\"0\">";
+       String radioChk = "<img src=\""+ applicationContext +"/images/radio-chk.png\" border=\"0\">";
 
-        if (user.clickBehaviourIsAdd ()) {
-            addItem = radioChk;
-            centerItem = "<a href=\"/hierarchView/clickBehaviour.do?action=center\" target=\"sidebarFrame\">" + radio + "</a>";
-        } else {
-            // default
-            addItem = "<a href=\"/hierarchView/clickBehaviour.do?action=add\" target=\"sidebarFrame\">" + radio + "</a>";
-            centerItem = radioChk;
-        }
+       if (user.clickBehaviourIsAdd ()) {
+           addItem = radioChk;
+           centerItem = "<a href=\""+ applicationContext +"/clickBehaviour.do?action=center\" target=\"sidebarFrame\">" + radio + "</a>";
+       } else {
+           // default
+           addItem = "<a href=\""+ applicationContext +"/clickBehaviour.do?action=add\" target=\"sidebarFrame\">" + radio + "</a>";
+           centerItem = radioChk;
+       }
 %>
 
 <br>
