@@ -8,7 +8,10 @@ package uk.ac.ebi.intact.application.editor.struts.view;
 
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 
 import java.io.Serializable;
 
@@ -182,6 +185,23 @@ public class XreferenceBean extends EditBean implements Serializable {
      */
     public void setQualifier(String refQualifier) {
         myReferenceQualifer = refQualifier;
+    }
+
+    /**
+     * Updates the internal annotation with the new values from the form.
+     * @param user the user instance to search for a CvTopic object.
+     * @throws SearchException for errors in searching for a CvTopic.
+     */
+    public void update(EditUserI user) throws SearchException {
+        CvDatabase db = (CvDatabase) user.getObjectByLabel(
+                CvDatabase.class, myDatabaseName);
+        myXref.setCvDatabase(db);
+        myXref.setPrimaryId(myPrimaryId);
+        myXref.setSecondaryId(mySecondaryId);
+        myXref.setDbRelease(myReleaseNumber);
+        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
+                CvXrefQualifier.class, myReferenceQualifer);
+        myXref.setCvXrefQualifier(xqual);
     }
 
     // Override Objects's equal method.

@@ -6,8 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view;
 
-import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.CvTopic;
 
 import java.io.Serializable;
 
@@ -108,6 +111,17 @@ public class CommentBean extends EditBean implements Serializable {
      */
     public void setDescription(String text) {
         myAnnotatedText = text;
+    }
+
+    /**
+     * Updates the internal annotation with the new values from the form.
+     * @param user the user instance to search for a CvTopic object.
+     * @throws SearchException for errors in searching for a CvTopic.
+     */
+    public void update(EditUserI user) throws SearchException {
+        myAnnotation.setAnnotationText(myAnnotatedText);
+        CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class, myTopic);
+        myAnnotation.setCvTopic(cvtopic);
     }
 
     // Override Objects's equal method.
