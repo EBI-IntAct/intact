@@ -20,12 +20,14 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.util.GoServerProxy;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.io.IOException;
 
 /**
  * Dispatcher action which dispatches according to 'dispatch' parameter. This
@@ -158,6 +160,16 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         // The bean to extract the values.
         XreferenceBean xb = (XreferenceBean) dynaform.get("xref");
 
+        // Try to to get the secondary id for a go primary id.
+        if (xb.getDatabase().equals("go")) {
+            ActionErrors errors = setSecondaryIdFromGo(user, xb);
+            // Non null error indicates errors.
+            if (errors != null) {
+                saveErrors(request, errors);
+                // Display the errors in the input page.
+                return mapping.getInputForward();
+            }
+        }
         // Bean is wrapped around this xref.
         Xref xref = user.getXref(xb);
 
@@ -303,5 +315,33 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Sets the secondary id using the primary id.
+     * @param user to access the Go server.
+     * @param xb the Xrerefence bean to set the secondary id.
+     * @return non null for errors; null if no errors encountered.
+     */
+    private ActionErrors setSecondaryIdFromGo(EditUserI user, XreferenceBean xb) {
+        ActionErrors errors = null;
+        String pid = xb.getPrimaryId();
+        try {
+            xb.setSecondaryId(user.getGoProxy().query(pid).getName());
+        }
+        catch (IOException ioe) {
+            // Error in communcating with the server.
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.xref.go.connection",
+                            ioe.getMessage()));
+        }
+        catch (GoServerProxy.GoIdNotFoundException ex) {
+            // GO id not found.
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.xref.go.search", pid));
+        }
+        return errors;
     }
 }
