@@ -130,6 +130,9 @@ public class BioSourceAction extends SubmitFormAction {
         bioview.setFullName(newtName);
         bioview.setTaxId(taxid);
 
+        // Update the form.
+        bioview.copyPropertiesTo(bsform);
+
         // Collection of biosources for the current taxid.
         Collection results = user.search1(BioSource.class.getName(),
                 "taxId", taxid);
@@ -317,7 +320,7 @@ public class BioSourceAction extends SubmitFormAction {
             else {
                 sb.append(", ");
             }
-            sb.append("<a href=\"" + "javascript:show('BioSource, " + label + "')\""
+            sb.append("<a href=\"" + "javascript:show('BioSource', '" + label + "')\""
                     + ">" + label + "</a>");
         }
         return sb.toString();
