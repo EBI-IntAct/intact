@@ -40,11 +40,6 @@ public interface EditorConstants {
     public static final String SERVER_PATH = "path";
 
     /**
-     * The key to success action.
-     */
-    public static final String FORWARD_SUCCESS = "success";
-
-    /**
      * Used in various action classes to define where to forward
      * to on different conditions.  See the struts-config.xml file
      * to see where the page that is using this forwards to.

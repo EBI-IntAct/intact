@@ -138,7 +138,7 @@ public class BioSourceAction extends AbstractEditorAction {
         bioview.setFullName(newtName);
         bioview.setTaxId(taxid);
 
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 
     /**

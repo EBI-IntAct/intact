@@ -35,6 +35,11 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction 
     protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
 
     /**
+     * The key to success action.
+     */
+    protected static final String FORWARD_SUCCESS = "success";
+
+    /**
      * Returns the only instance of Intact Service instance.
      * @return only instance of the <code>EditorService</code> class.
      */

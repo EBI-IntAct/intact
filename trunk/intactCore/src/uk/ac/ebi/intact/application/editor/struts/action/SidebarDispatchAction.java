@@ -99,7 +99,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             user.updateView(annobj);
 
             // Straight to the edit jsp.
-            return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+            return mapping.findForward(FORWARD_SUCCESS);
         }
         // Cache the search results.
         user.addToSearchCache(results);
@@ -148,7 +148,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         user.addToSearchCache(annobj);
         // Started creating a new record.
 //        user.setEditNew(true);
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 
     // Helper methods
