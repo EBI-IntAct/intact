@@ -42,7 +42,7 @@ public class InteractionDetailsViewBean extends DetailsViewBean {
         // build a collection of distinct experiments from the set of Interactions.
         for (Iterator iterator1 = getWrappedObjects().iterator(); iterator1.hasNext();) {
             Interaction interaction = (Interaction) iterator1.next();
-            Collection localExperiments = interaction.getExperiment();
+            Collection localExperiments = interaction.getExperiments();
             for (Iterator iterator2 = localExperiments.iterator(); iterator2.hasNext();) {
                 Experiment experiment = (Experiment) iterator2.next();
 
