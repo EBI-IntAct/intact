@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.model;
  * The subcellular compartment.
  * @author hhe
  */
-public class CvCompartment extends CvObject implements Editable {
+public class CvCompartment extends CvObject {
 
     /**
      * no-arg constructor which will hopefully be removed later...

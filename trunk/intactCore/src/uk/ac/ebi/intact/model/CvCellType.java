@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.model;
 /**
 
  */
-public class CvCellType extends CvObject implements Editable {
+public class CvCellType extends CvObject {
 
     /**
      * no-arg constructor which will hopefully be removed later...

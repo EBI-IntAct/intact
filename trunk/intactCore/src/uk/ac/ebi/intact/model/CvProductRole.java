@@ -13,7 +13,7 @@ import java.util.*;
  * @intact.example In an enzymatic reaction, one product could be the "modified protein", the other the "enzyme".
  * @author hhe
  */
-public class CvProductRole extends CvObject implements Editable {
+public class CvProductRole extends CvObject {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
