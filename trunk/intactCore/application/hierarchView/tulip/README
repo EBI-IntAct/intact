@@ -2,19 +2,6 @@
 HOW-TO create the Tulip Web Service
 -----------------------------------
 
-content of the scripts directory :
-
-	clean.sh         : clean the scripts directory
-	prepare.sh       : prepare the source files (client and server)
-	startService.sh  : start the installed web service by using the deploy.wsdd file
-			   which have to be modified by the user.
-	stopService.sh   : stop the installed web service by using the undeploy.wsdd file.
-
-
-	Run 'prepare.sh' script to do following tasks.
-	you have to be in the 'scripts' directory.
-
-
 
     (1) Writing interface and implementation (package tulip)
 	  uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/TulipAccess.java
@@ -147,19 +134,3 @@ content of the scripts directory :
 
         (9b) It create a new directory with the java file you have now to compile
 
-
-
-
- WARNING :
- -------
-            To make run that web service, some additionnal steps are mandatory :
-
-                 - have a working installation of Tulip libraries and dependencies (GCC 2.96, MESA, QT...),
-		 - be sure that the console is fully working.
-                 - if you choose to use the remote access run the 'Serveur' binary file 
-		   it wait for client remote connection (with cli).
-                 - have installed in the right place binary files from Bordeaux (cli, console)
-                   which allow the Tulip remote access.
-                   Serveur use the console to access Tulip library.
-
-		 ALL files (console, Serveur and cli) source are provided in the tulipRemote-src.tar.gz archive.
