@@ -36,7 +36,7 @@
             <bean:write property="ac" name="bsForm" filter="false"/>
         </td>
         <td class="tableCell">
-            <html:text property="shortLabel" size="20" maxlength="25"
+            <html:text property="shortLabel" size="20" maxlength="20"
                 name="bsForm" styleClass="inputRequired"/>
         </td>
 

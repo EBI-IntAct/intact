@@ -36,7 +36,7 @@
             <bean:write property="ac" name="cvForm" filter="false"/>
         </td>
         <td class="tableCell">
-            <html:text property="shortLabel" size="20" maxlength="25" name="cvForm"
+            <html:text property="shortLabel" size="20" maxlength="20" name="cvForm"
                 styleClass="inputRequired"/>
         </td>
 

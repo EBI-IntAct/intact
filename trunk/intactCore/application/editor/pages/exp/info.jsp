@@ -46,7 +46,7 @@
             <bean:write property="ac" name="expForm" filter="false"/>
         </td>
         <td class="tableCell">
-            <html:text property="shortLabel" size="20" maxlength="25" name="expForm"
+            <html:text property="shortLabel" size="20" maxlength="20" name="expForm"
                 styleClass="inputRequired"/>
         </td>
 
