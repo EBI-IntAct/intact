@@ -96,13 +96,10 @@
     %>
 
     <!-- we need the buttons at the top as well as the bottom now -->
-    <%@ include file="buttonBar.html" %>
-
-    <!-- line seperator -->
-    <hr size="2">
+    <%@ include file="buttonBar.html" %>   
 
     <!-- the main data table -->
-    <table style="width: 100%; background-color: rgb(51, 102, 102);" cellpadding="5">
+    <table style="width: 100%; background-color: rgb(51, 102, 102);" width="100%"  cellpadding="5">
         <tbody>
 
             <!-- header row -->
@@ -121,7 +118,9 @@
                         class="tdlink">IntAct Ac<br></a>
                 </td>
 
-                <td class="headerlight" colspan="1">Number of interactions<br></td>
+                 <td  class="headerlight">
+                   <nobr><a href="<%=bean.getHelpLink() + "search.TableLayout"%>" target="new" class="tdlink">Number of interactions<br></a></nobr>
+                </td>
 
                 <td nowrap="nowrap" class="headerlight" colspan="1">UniProt Ac<br></td>
 
@@ -136,7 +135,7 @@
 
                 <!-- checkbox: NB search results to be checked by default -->
                 <td class="headermid">
-                    <code><input type="checkbox" name="<%= bean.getAc()%>" checked></code>
+                    <code><input type="checkbox" name="<%= bean.getAc()%>" ></code>
                 </td>
 
                 <!-- shortlabel with link: seems to be back to this page (!!)... -->
@@ -174,15 +173,19 @@
                     <a href="<%= bean.getInteractionsSearchURL()%>"><%= bean.getNumberOfInteractions()%></a>
                 </td>
 
-                <!-- Uniprot AC, not linked -->
-                <td class="data" rowspan="1" style="background-color: rgb(255, 255, 255);">
-                    <%= bean.getUniprotAc()%><br>
+                <!-- Uniprot AC, not linked -->               
+                 <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);">
+                    <a href="<%= bean.getUniprotAc()%>"><%= bean.getUniprotAc() %></a>
                 </td>
 
                 <!-- gene name, not linked -->
                 <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);"
                     rowspan="1" colspan="1">
-                    <%= bean.getGeneNames()%><br>
+                    <% Collection someGeneNames = bean.getGeneNames();
+                       for (Iterator iterator = someGeneNames.iterator(); iterator.hasNext();) {
+                           String aGeneName =  (String) iterator.next();    %>
+                            <%=aGeneName%><br>
+                  <%     } %>
                 </td>
 
                 <!-- description, not linked -->
@@ -202,7 +205,8 @@
 
                 <!-- heading, spans the table width (6 columns) -->
                 <td class="data" rowspan="1" colspan="6" style="background-color: rgb(255, 255, 255);">
-                    interacts with<br>
+                    interacts with             
+                    <br>
                 </td>
 
             </tr>
@@ -225,7 +229,7 @@
                     <code><input type="checkbox" name="<%= partner.getAc()%>"></code>
                 </td>
 
-                <!-- shortlabel, linked back to this view for the partner instead -->
+                    <!-- shortlabel, linked back to this view for the partner instead -->
                 <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <code><a href="<%= partner.getProteinPartnerURL()%>"><nobr><%= partner.getIntactName() %></nobr></a></code>
                 </td>
@@ -236,7 +240,7 @@
                 </td>
 
                 <!-- number of Interactions, linked new detail page -->
-                <!-- here 's a bug --> 
+
                 <td align="center" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <a href="<%= partner.getInteractionsSearchURL()%>"><%= partner.getNumberOfInteractions() %></a>
                 </td>
@@ -252,7 +256,12 @@
 
                 <!-- gene name, not linked -->
                 <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);"
-                    rowspan="1" colspan="1"><%= partner.getGeneNames() %>
+                    rowspan="1" colspan="1">
+                     <% Collection somePartnerGeneNames = partner.getGeneNames();
+                       for (Iterator iterator =  somePartnerGeneNames.iterator(); iterator.hasNext();) {
+                           String aGeneName =  (String) iterator.next();    %>
+                            <%=aGeneName%><br>
+                  <%     } %>
                 </td>
 
                 <!-- description, not linked -->

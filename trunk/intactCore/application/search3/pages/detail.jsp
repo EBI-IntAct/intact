@@ -74,10 +74,11 @@
 <h3>Search Results for
     <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
 </h3>
-<br>
+
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
-</span><span class="smalltext">)<br></span></p>
+</span><span class="smalltext">)<br></span>
+<span class="smalltext"><br></span>
 
 <%
     //first check to see if the bean list is null - if it is then it means that the
@@ -150,10 +151,11 @@
 %>
 <!-- The summary message of pages of Interactions for the 'large' Experiment -->
 <p>
+<center>
 Displaying <b><%= firstDisplayIndex %></b> to
 <b><%= lastDisplayIndex %></b> of
 <b><%= bean.getObject().getInteractions().size() %></b> Interactions <br>
-
+</center>
 <!-- the list of pages itself -->
 <table width ="100%">
     <tr>
@@ -179,7 +181,8 @@ Displaying <b><%= firstDisplayIndex %></b> to
                     if(i == currentPage) {
                         //don't link it
             %>
-                        <font color="red"><strong><%= i%></strong></font>&nbsp;
+                       <font color="red"><strong><%= i%></strong></font>&nbsp;
+
                     <%
                     }
                     else {
@@ -222,7 +225,6 @@ Displaying <b><%= firstDisplayIndex %></b> to
 <!-- button bar for the table -->
 <%@ include file="buttonBar.html" %>
 
-
 <!-- main results tables -->
 <%--<table style="width: 100%; background-color: rgb(241, 245, 248);"--%>
 <table style="background-color: rgb(241, 245, 248);"
@@ -237,11 +239,10 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- <td width="10%" rowspan="2" class="headerdark"> -->
             <td rowspan="2" class="headerdark">
 
-                 <!--  <input name="<% //bean.getObjAc()%>" type="checkbox" class="text" checked>  -->
-                    <nobr>  <span class="whiteheadertext">Experiment</span>
 
-                <a href="<%= bean.getHelpLink() + "search.TableLayout"%>" target="new"
-                   class="whitelink"><sup>?</sup> </nobr>
+                    <nobr><span class="whiteheadertext">Experiment</span>
+                <a href="<%= bean.getHelpLink() + "Experiment"%>" target="new"
+                   class="whitelink"><sup>?</sup></nobr>
                 </a>
             </td>
 
@@ -322,11 +323,19 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- linked to BioSource search -->
+            <% if(bean.getBioSourceName().equalsIgnoreCase("-"))  { %>
+
             <td colspan="2" class="lefttop">
+                    <nobr><%= bean.getBioSourceName() %></nobr>
+                </a>
+            </td>
+            <% }  else { %>
+             <td colspan="2" class="lefttop">
                 <a href="<%= bean.getBioSourceSearchURL() %>">
                     <nobr><%= bean.getBioSourceName() %></nobr>
                 </a>
             </td>
+            <% } %>
         </tr>
 
         <!-- Experiment Description -->
@@ -358,7 +367,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <%-- <td width="10%" class="headerdarkmid" rowspan="<%= annotations.size() %>" colspan="1"> --%>
             <td class="headerdarkmid" rowspan="<%= annotations.size() %>" colspan="1">
                 <a href="<%= bean.getHelpLink() + "ANNOT_HELP_SECTION" %>" class="tdlink">
-                    Annotation <br>
+                    Annotation<br>
                 </a>
             </td>
 
@@ -384,8 +393,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- annotation 'topic' title cell -->
             <td style="vertical-align: top;">
                 <a href="<%= bean.getCvTopicSearchURL(annot)%>" style="font-weight: bold;">
-                    <%= annot.getCvTopic().getShortLabel()%>
-                </a><br>
+                    <%= annot.getCvTopic().getShortLabel()%></a><br>
             </td>
 
             <!-- annotation text cell -->
@@ -395,15 +403,18 @@ Displaying <b><%= firstDisplayIndex %></b> to
                     if(annot.getCvTopic().getShortLabel().equals("url")) {
                 %>
                 <a href="<%= annot.getAnnotationText() %>">
-                    <%= annot.getAnnotationText() %>
-                </a><br>
+                    <%= annot.getAnnotationText() %></a><br>
                 <%
+                    } else {
+                            if( annot.getAnnotationText() != null) {  %>
+                                <%= annot.getAnnotationText() %><br>
+                        <%   }
+                            else {
+                            %>
+                          - <br>
+                            <% }
                     }
-                    else {
-                %>
-                <%= annot.getAnnotationText() %><br>
-                <%
-                    }
+
                 %>
             </td>
 
@@ -478,12 +489,10 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <%-- CvXrefQualifier, linked to search for CV --%>
             <td style="vertical-align: top;" rowspan="1" colspan="4">
                 <a href="<%= bean.getHelpLink() + "Xref.cvXrefType"%>" target="new">
-                    Type:
-                </a>
+                    Type:</a>
                 &nbsp;
                 <a href="<%= bean.getCvQualifierURL(xref)%>">
-                    <%= xref.getCvXrefQualifier().getShortLabel() %>
-                </a><br>
+                    <%= xref.getCvXrefQualifier().getShortLabel() %></a><br>
             </td>
             </tr>
 
@@ -506,11 +515,11 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- first cell - title plus checkbox -->
             <%-- <td width="10%" rowspan="2" class="headermid"> --%>
             <td rowspan="2" class="headermid">
-                <input name="<%= interaction.getAc() %>" type="checkbox" checked class="text">
-                <nobr>    <span class="whiteheadertext">Interaction</span>
-                <a href="<%= bean.getHelpLink() + "search.TableLayout"%>"
+              <nobr><input name="<%= interaction.getAc() %>" type="checkbox"  class="text">
+                  <span class="whiteheadertext">Interaction</span>
+                <a href="<%= bean.getHelpLink() + "Interaction"%>"
                     target="new" class="whitelink">
-                    <sup>?</sup>  </nobr>
+                    <sup>?</sup></nobr>
                 </a>
             </td>
 
@@ -547,8 +556,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <td style="vertical-align: top;" class="headerlight" rowspan="1" colspan="4">
                 <a href="<%= bean.getHelpLink() + "Interaction.kD"%>"
                     target="new" class="tdlink">
-                    Dissociation constant (Kd)
-                </a><br>
+                    Dissociation constant (Kd)</a><br>
             </td>
 
         </tr>
@@ -636,7 +644,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <%-- <td width="10%" class="headerlight" rowspan="<%= intAnnots.size() %>" colspan="1"> --%>
             <td class="headerlight" rowspan="<%= intAnnots.size() %>" colspan="1">
                 <a href="<%= bean.getHelpLink() + "ANNOT_HELP_SECTION" %>" class="tdlink">
-                    Annotation <br>
+                    Annotation<br>
                 </a>
             </td>
 
@@ -661,8 +669,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- annotation 'topic' title cell -->
             <td class="data" style="vertical-align: top;">
                 <a href="<%= bean.getCvTopicSearchURL(annot)%>" style="font-weight: bold;">
-                    <%= annot.getCvTopic().getShortLabel()%>
-                </a><br>
+                    <%= annot.getCvTopic().getShortLabel()%></a><br>
             </td>
 
             <!-- annotation text cell -->
@@ -755,8 +762,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <%-- CvXrefQualifier, linked to search for CV --%>
             <td style="vertical-align: top;" rowspan="1" colspan="4">
                 <a href="<%= bean.getHelpLink() + "Xref.cvXrefType"%>" target="new">
-                    Type:
-                </a>
+                    Type:</a>
                 &nbsp;
                 <a href="<%= bean.getCvQualifierURL(xref)%>">
                     <%= xref.getCvXrefQualifier().getShortLabel() %>
@@ -836,16 +842,14 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- shortlabel, linked to protein partners search -->
             <td class="data">
                 <nobr>
-                <input name="<%= protein.getAc() %>" type="checkbox" class="text">              
-                <a href="<%= bean.getProteinPartnerURL(protein)%>"><%= protein.getShortLabel() %>
-                </a>
-                </nobr>
+                <input name="<%=protein.getAc()%>" type="checkbox" class="text">
+                <a href="<%= bean.getProteinPartnerURL(protein)%>"><%=protein.getShortLabel()%></a></nobr>
                 <br>
             </td>
 
             <!-- ac, linked to protein details view -->
             <td class="data">
-                <a href="<%= bean.getProteinSearchURL(protein)%>"><%= protein.getAc() %></a>
+                <a href="<%= bean.getProteinSearchURL(protein)%>"><%=protein.getAc()%></a>
             </td>
 
             <!-- uniprot description -->
