@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.model.CvDatabase;
@@ -122,7 +123,7 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * @return the database as a browsable link.
      */
     public String getDatabaseLink() {
-        return getLink(myDatabaseName);
+        return getLink(EditorService.getTopic(CvDatabase.class), myDatabaseName);
     }
 
     /**
@@ -224,7 +225,7 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * @return the qualifier as a browsable link.
      */
     public String getQualifierLink() {
-        return getLink(myReferenceQualifer);
+        return getLink(EditorService.getTopic(CvXrefQualifier.class), myReferenceQualifer);
     }
 
     /**
@@ -312,14 +313,20 @@ public class XreferenceBean extends AbstractEditKeyBean {
             result.myGoResponse = user.getGoProxy().query(getPrimaryId());
         }
         catch (IOException ioe) {
+            ioe.printStackTrace();
             // Error in communcating with the server.
             result.addErrors(new ActionError("error.xref.go.connection",
                     ioe.getMessage()));
         }
         catch (GoServerProxy.GoIdNotFoundException ex) {
+            ex.printStackTrace();
             // GO id not found.
             result.addErrors(new ActionError("error.xref.go.search",
                     getPrimaryId()));
+        }
+        catch(Exception ex) {
+            System.out.println("Unknown exception");
+            ex.printStackTrace();
         }
         return result;
     }

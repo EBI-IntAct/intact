@@ -96,3 +96,5 @@
 <html:errors property="xref.db"/>
 <html:errors property="xref.pid"/>
 <html:errors property="new.xref"/>
+<html:errors property="error.xref.go.connection"/>
+<html:errors property="error.xref.go.search"/>
