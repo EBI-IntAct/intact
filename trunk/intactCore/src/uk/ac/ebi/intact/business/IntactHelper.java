@@ -22,7 +22,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -315,7 +314,6 @@ public class IntactHelper implements SearchI, Externalizable {
      */
     public String getDbUserName() throws LookupException, SQLException {
         return dao.getDbUserName();
-
     }
 
 
@@ -328,25 +326,14 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      */
     public void create(Collection objects) throws IntactException {
-
         try {
-
-//            if (dao == null) connect();
-
-            //just to be safe, restrict write access..
-//            synchronized (this) {
-
-                dao.makePersistent(objects);
-
-//            }
-
-        } catch (CreateException ce) {
-
+            dao.makePersistent(objects);
+        }
+        catch (CreateException ce) {
             String msg = "intact helper: object creation failed.. \n";
             throw new IntactException(msg, ce);
-
-        } catch (TransactionException te) {
-
+        }
+        catch (TransactionException te) {
             String msg = "intact helper: transaction problem during object creation.. \n";
             throw new IntactException(msg, te);
         }
@@ -361,25 +348,17 @@ public class IntactHelper implements SearchI, Externalizable {
      *
      */
     public void delete(Object obj) throws IntactException {
-
+        // Only delete it if it is persistent.
+        if (!isPersistent(obj)) {
+            return;
+        }
         try {
-
-//            if (dao == null) connect();
-
-            //just to be safe, restrict write access..
-//            synchronized (this) {
-
-                dao.remove(obj);
-
-//            }
-
-        } catch (TransactionException de) {
-
+            dao.remove(obj);
+        }
+        catch (TransactionException de) {
             String msg = "intact helper: failed to delete object of type " + obj.getClass().getName();
             throw new IntactException(msg, de);
-
         }
-
     }
 
     /**
@@ -390,24 +369,14 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException thrown if the creation failed
      */
     public void create(Object obj) throws IntactException {
-
         try {
-
-//            if (dao == null) connect();
-
-            //just to be safe, restrict write access..
-//            synchronized (this) {
-
-                dao.create(obj);
-
-//            }
-        } catch (CreateException ce) {
+            dao.create(obj);
+        }
+        catch (CreateException ce) {
             ce.printStackTrace();
             String msg = "intact helper: single object creation failed for class " + obj.getClass().getName();
             throw new IntactException(msg, ce);
-
         }
-
     }
 
     /**
@@ -454,11 +423,12 @@ public class IntactHelper implements SearchI, Externalizable {
     public Collection paramSearch(String objectType, String searchParam, String searchValue,
                                   boolean includeSubClass,
                                   boolean matchSubString) throws IntactException {
-        Collection result = null;
-
-        //implementation TBD
-
-        return result;
+//        Collection result = null;
+//
+//        //implementation TBD
+//
+//        return result;
+        throw new IntactException("Not Fully Implemented yet");
     }
 
 
@@ -470,52 +440,53 @@ public class IntactHelper implements SearchI, Externalizable {
                              boolean includeSubClass,
                              boolean matchSubString) throws IntactException {
 
-        List result = null;
-        Class classToSearch = null;
-        Field[] fieldsToSearch = null;
-        Collection searchResult = null;
-
-        //implementation under development.......
-        /*
-        * sketch: get the field names from the objectType, and search those
-        fields either a) directly (matchSubString=false) or b)using a "like"
-        search (matchSubString=true). If includeSubclass is true, do this recursively
-        and collect the results until there are no more subclasses.
-        Before return, order results in "descending relevance" (!)
-        NB the "like" search is possible in OJB, but the DAO interface may need modifying
-        to indicate that a "partial" type of search is required..
-        */
-
-        try {
-
-            //NB assumes objectType is fully qualified java classname...
-            classToSearch = Class.forName(objectType);
-            fieldsToSearch = classToSearch.getFields();
-
-            if (matchSubString) {
-            } else {
-
-                //standard search - need to check all fields...
-                for (int i = 0; i < fieldsToSearch.length; i++) {
-
-                    Field fld = fieldsToSearch[i];
-                    searchResult = this.search(objectType, fld.getName(), searchString);
-                    if (!searchResult.isEmpty()) {
-
-                        //done
-                        break;
-                    }
-                }
-
-                //to get the list to return, must order the collection by "relevance"...
-            }
-        } catch (Exception e) {
-
-            //probablky a ClassNotFoundException
-            throw new IntactException("error - possible class not found for " + objectType, e);
-        }
-
-        return result;
+//        List result = null;
+//        Class classToSearch = null;
+//        Field[] fieldsToSearch = null;
+//        Collection searchResult = null;
+//
+//        //implementation under development.......
+//        /*
+//        * sketch: get the field names from the objectType, and search those
+//        fields either a) directly (matchSubString=false) or b)using a "like"
+//        search (matchSubString=true). If includeSubclass is true, do this recursively
+//        and collect the results until there are no more subclasses.
+//        Before return, order results in "descending relevance" (!)
+//        NB the "like" search is possible in OJB, but the DAO interface may need modifying
+//        to indicate that a "partial" type of search is required..
+//        */
+//
+//        try {
+//
+//            //NB assumes objectType is fully qualified java classname...
+//            classToSearch = Class.forName(objectType);
+//            fieldsToSearch = classToSearch.getFields();
+//
+//            if (matchSubString) {
+//            } else {
+//
+//                //standard search - need to check all fields...
+//                for (int i = 0; i < fieldsToSearch.length; i++) {
+//
+//                    Field fld = fieldsToSearch[i];
+//                    searchResult = this.search(objectType, fld.getName(), searchString);
+//                    if (!searchResult.isEmpty()) {
+//
+//                        //done
+//                        break;
+//                    }
+//                }
+//
+//                //to get the list to return, must order the collection by "relevance"...
+//            }
+//        } catch (Exception e) {
+//
+//            //probablky a ClassNotFoundException
+//            throw new IntactException("error - possible class not found for " + objectType, e);
+//        }
+//
+//        return result;
+        throw new IntactException("Not Fully Implemented yet");
     }
 
     //other various search methods......
