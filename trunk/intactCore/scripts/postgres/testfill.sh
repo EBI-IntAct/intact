@@ -1,5 +1,5 @@
 #!/bin/sh
-echo "Usage: testfill.sh user/password database small|medium|large"
+echo "Usage: testfill.sh user/password database onlyCV|small|medium|large"
 
 
 # extract username from the user/password parameter
@@ -11,8 +11,13 @@ then
    DATASET="small"
    DEFAULT_WARN="(default)"
 else
-   DATASET=$3
-   DEFAULT_WARN=""
+   if [ "$3" = "onlyCV" ]
+   then
+       DATASET="Only insert the Controlled Vocabulary"
+   else
+       DATASET=$3
+       DEFAULT_WARN=""
+   fi
 fi
 
 # display parameters summary
@@ -49,7 +54,6 @@ if [ $? != 0 ]
 then
     exit 1
 fi
-
 
 echo ""
 echo ""
@@ -119,21 +123,33 @@ then
     exit 1
 fi
 
-echo ""
-echo "Inserting Proteins ..."
-scripts/javaRun.sh UpdateProteins file:data/yeast_test.sp
-if [ $? != 0 ]
-then
-    exit 1
-fi
 
-echo ""
-echo "Inserting Complexes ..."
+#echo "Stop the script before to insert proteins and complexes ... "
+#exit 0
 
-scripts/javaRun.sh InsertComplex -file data/ho_gavin_${DATASET}.dat -taxId 4932 -interactionType aggregation
-if [ $? != 0 ]
+
+if [ "$3" = "onlyCV" ]
 then
-    exit 1
+    echo ""
+    echo "No data insertion requested."
+    echo "Processing finished."
+    echo ""
+else
+    echo ""
+    echo "Inserting Proteins ..."
+    scripts/javaRun.sh UpdateProteins file:data/yeast_test.sp
+    if [ $? != 0 ]
+    then
+        exit 1
+    fi
+
+    echo ""
+    echo "Inserting Complexes ..."
+    scripts/javaRun.sh InsertComplex -file data/ho_gavin_${DATASET}.dat -taxId 4932 -interactionType aggregation
+    if [ $? != 0 ]
+    then
+        exit 1
+    fi
 fi
 
 #end
