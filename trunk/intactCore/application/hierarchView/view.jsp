@@ -18,9 +18,6 @@
 <%@page import="java.util.Collection"%>
 
 
-<hierarchView:checkInit forwardOnError="/index.jsp" />
-
-
 <html:html locale="true">
 
 <head>
@@ -51,19 +48,16 @@
 
 </head>
 
-
 <body>
 
 <html:errors/>
+
+<!--hierarchView:checkInit forwardOnError="/index.jsp" /-->
 
 <%
    /**
     * Retreive data from the session
     */
-
-    // create session
-    // session = request.getSession (true);
-
 
    String AC           = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
    String depth        = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_DEPTH);
@@ -314,16 +308,14 @@ if (AC != null)
 
 		  <%
 
-		  // Search the list of protein to highlight
-		   HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(methodClass);
-		   String htmlCode = null;
-		   if (null != highlightmentSource) {
-		   htmlCode = highlightmentSource.getHtmlCodeOption(session);
-		   }
-		   out.println(htmlCode);
+              // Search the list of protein to highlight
+               HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(methodClass);
+               String htmlCode = null;
+               if (null != highlightmentSource) {
+                  htmlCode = highlightmentSource.getHtmlCodeOption(session);
+               }
+               out.println(htmlCode);
 
-		  //   <input type="text" name="option">
-		   //   <!--html:text name="option" property="" size="6" maxlength="5"/-->
 		  %>
 
 		  </td>

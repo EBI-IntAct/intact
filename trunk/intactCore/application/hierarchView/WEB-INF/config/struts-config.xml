@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE struts-config PUBLIC
-          "-//Apache Software Foundation//DTD Struts Configuration 1.0//EN"
-          "http://jakarta.apache.org/struts/dtds/struts-config_1_0.dtd">
-
-<!--  DECLARATION FOR STRUTS 1.1
-<!DOCTYPE struts-config PUBLIC
  	"-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
 	"http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
--->
+
 
 <!--
 This is the Struts configuration file for the example application,
@@ -36,14 +31,20 @@ need only the "form-bean" element itself, with the corresponding
 
     </form-beans>
 
-
+    <!-- ========== Global Exceptions ======================================= -->
+    <global-exceptions>
+        <exception
+            key="error.session.expired"
+            path="error.jsp"
+            scope="request"
+            type="uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException"
+        />
+    </global-exceptions>
 
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
         <forward name="quit" path="/exit.jsp"/>
     </global-forwards>
-
-
 
     <!-- ========== Action Mapping Definitions ============================== -->
     <action-mappings>

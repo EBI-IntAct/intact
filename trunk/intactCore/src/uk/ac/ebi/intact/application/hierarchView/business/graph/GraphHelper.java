@@ -44,7 +44,8 @@ public class GraphHelper  {
      *
      *
      */
-    public Collection doSearch(String className, String searchParam, String searchValue) throws Exception {
+    public Collection doSearch(String className, String searchParam, String searchValue)
+            throws Exception {
         Collection resultList = null;
         if (helper != null) {
             //NB assumes full java className supplied...
@@ -60,15 +61,16 @@ public class GraphHelper  {
 
 
     /**
-     * Create a graph ...
+     * Create an interaction graph according to a protein AC
      *
-     *
+     * @param anAC the given protein AC.
+     * @param depth The level of BAIT-BAIT interaction in the interaction graph.
      */
     public InteractionNetwork getInteractionNetwork (String anAC, int depth) throws Exception {
 
         InteractionNetwork in = new InteractionNetwork ();
 
-        //get a complete Institution, then add it to an Experiment..
+        // Retreiving interactor from the database according to the given AC
         logger.info ("retrieving Interactor ...");
         Collection results = this.doSearch ("uk.ac.ebi.intact.model.Interactor", "ac", anAC);
         Iterator iter1     = results.iterator ();
@@ -84,10 +86,10 @@ public class GraphHelper  {
                     uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY,
                     graph);
 
-            logger.info (in);
+            logger.info ("Generated graph : " + in);
         } else {
             in = null;
-            logger.error ("AC not found: " + anAC + "\n");
+            logger.error ("AC not found: " + anAC);
         }
 
         return in;

@@ -44,7 +44,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
 
         try {
             ImageBean imageBean = (ImageBean) session.getAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN);
-            String AC           = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
+            String AC           = (String)    session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
 
             /**
              *  Display only the picture if an AC is in the session
