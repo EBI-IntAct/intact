@@ -64,6 +64,8 @@ public interface EditUserI extends IntactUserI, Serializable {
 
     public void cancelEdit();
 
+    public boolean isPersistent(Object obj);
+
     // The current view.
 
     /**
