@@ -21,9 +21,9 @@
 <!-- Set the drop down lists -->
 <c:set var="topiclist" value="${intactuser.topicList}"/>
 
+<h3>Annotations</h3>
 
 <c:if test="${not empty viewbean.annotations}">
-    <h3>Annotations</h3>
 
     <html:form action="/cv/comment/edit">
         <table width="80%" border="0" cellspacing="1" cellpadding="2">
@@ -97,8 +97,4 @@
         </table>
     </html:form>
 
-</c:if>
-
-<c:if test="${empty viewbean.annotations}">
-    <h3>No Annotations</h3>
 </c:if>
