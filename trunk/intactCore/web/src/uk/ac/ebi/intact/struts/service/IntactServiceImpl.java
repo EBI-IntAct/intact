@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -11,11 +11,14 @@ import java.beans.*;
 
 import uk.ac.ebi.intact.struts.framework.exceptions.InvalidLoginException;
 import uk.ac.ebi.intact.struts.framework.exceptions.MissingIntactTypesException;
-import uk.ac.ebi.intact.persistence.*;
-import uk.ac.ebi.intact.model.Constants;
-import uk.ac.ebi.intact.util.Key;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.core.persistence.*;
+import uk.ac.ebi.intact.core.model.Constants;
+import uk.ac.ebi.intact.core.model.CvTopic;
+import uk.ac.ebi.intact.core.model.CvObject;
+import uk.ac.ebi.intact.core.model.CvDatabase;
+import uk.ac.ebi.intact.core.util.Key;
+import uk.ac.ebi.intact.core.business.IntactHelper;
+import uk.ac.ebi.intact.core.business.IntactException;
 
 import javax.servlet.ServletException;
 
@@ -48,6 +51,18 @@ public class IntactServiceImpl implements IntactService {
     private IntactHelper myIntactHelper;
 
     /**
+     * A cache of available topic names; most likely to remain unchanged
+     * during a session.
+     */
+    private Collection myTopicNames = new ArrayList();
+
+    /**
+     * A cache of available database names; most likely to remain unchanged
+     * during a session.
+     */
+    private Collection myDBNames = new ArrayList();
+
+    /**
      * Constructs an instance of this class with given mapping file and
      * the name of the data source class.
      *
@@ -55,9 +70,11 @@ public class IntactServiceImpl implements IntactService {
      * @param dsClass the class name of the Data Source.
      *
      * @exception DataSourceException for error in getting the data source.
+     * @exception IntactException thrown for any errors in creating an Intact
+     * helper.
      */
     public IntactServiceImpl(String mapping, String dsClass)
-        throws DataSourceException {
+        throws DataSourceException, IntactException {
         myDataSource = DAOFactory.getDAOSource(dsClass);
 
         // Pass config details to data source - don't need fast keys as only
@@ -65,6 +82,11 @@ public class IntactServiceImpl implements IntactService {
         Map fileMap = new HashMap();
         fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
         myDataSource.setConfig(fileMap);
+        myIntactHelper = new IntactHelper(myNameToClassInfo, myDataSource);
+
+        // List of available topics and database names.
+        cacheNames(myTopicNames, CvTopic.class);
+        cacheNames(myDBNames, CvDatabase.class);
     }
 
     // Implements business methods
@@ -123,10 +145,10 @@ public class IntactServiceImpl implements IntactService {
     }
 
     public IntactHelper getIntactHelper() throws IntactException {
-        // Only create an instance if we don't have one.
-        if (myIntactHelper == null) {
-            createIntactHelper();
-        }
+//        // Only create an instance if we don't have one.
+//        if (myIntactHelper == null) {
+//            createIntactHelper();
+//        }
         return myIntactHelper;
     }
 
@@ -138,19 +160,19 @@ public class IntactServiceImpl implements IntactService {
         return myDataSource.getDAO();
     }
 
-    /**
-     * Create an instance of <code>IntactHelper</code> instance.
-     *
-     * @exception IntactException thrown for any errors creating an
-     * <tt>IntactHelper</tt> instance.
-     */
-    private void createIntactHelper() throws IntactException {
-        if (myNameToClassInfo == null) {
-            myIntactHelper = new IntactHelper(myDataSource);
-        }
-        else {
-            // pass in the pre-configured reflection data
-            myIntactHelper = new IntactHelper(myNameToClassInfo, myDataSource);
+    public Collection getTopicNames() {
+        return myTopicNames;
+    }
+
+    public Collection getDatabaseNames() {
+        return myDBNames;
+    }
+
+    private void cacheNames(Collection list, Class clazz) throws IntactException {
+        // Interested in all the records for 'clazz'.
+        Collection results = myIntactHelper.search(clazz.getName(), "ac", "*");
+        for (Iterator iter = results.iterator(); iter.hasNext();) {
+            list.add(((CvObject) iter.next()).getShortLabel());
         }
     }
 }
