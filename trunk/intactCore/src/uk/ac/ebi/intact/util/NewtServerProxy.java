@@ -129,20 +129,9 @@ public class NewtServerProxy {
             throw new TaxIdNotFoundException(taxid);
         }
         // Values from newt stored in
-
-        String tax = matcher.group(1);
-        String shortlabel = matcher.group(2);
-        String fullname = matcher.group(3);
-
-        System.out.println("tax=" + tax);
-        System.out.println("short=" + shortlabel);
-        System.out.println("full=" + fullname);
-
-        NewtResponse newtRes = new NewtResponse(tax, shortlabel, fullname);
-
-//        NewtResponse newtRes = new NewtResponse(matcher.group(1),
-//                matcher.group(2), matcher.group(3));
-//
+        NewtResponse newtRes = new NewtResponse (matcher.group(1),
+                                                 matcher.group(2),
+                                                 matcher.group(3));
 
         return newtRes;
     }
