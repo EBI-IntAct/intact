@@ -334,20 +334,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * True if given interaction exists in this object's interaction collection.
-     * @param inter the Interaction to compare.
-     * @return true <code>inter</code> exists in this object's interaction
-     * collection.
-     *
-     * <pre>
-     * post: return->true implies myInteractionsToAdd.exists(inter)
-     * </pre>
-     */
-    public boolean interactionExists(Interaction inter) {
-        return myInteractions.contains(inter);
-    }
-
-    /**
      * Removes an Interaction
      * @param inter the Interaction to remove.
      *
