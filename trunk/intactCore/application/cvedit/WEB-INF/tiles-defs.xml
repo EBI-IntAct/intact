@@ -53,6 +53,26 @@
         <put name="menu" value="result.menu.links"/>
     </definition>
 
+    <!-- The comment edit/view section. -->
+    <definition name="edit.comment.layout" path="/layouts/editItemLayout.jsp">
+        <put name="item" value="/pages/comments.jsp"/>
+        <put name="itemToAdd" value="/pages/commentsAdd.jsp"/>
+    </definition>
+
+    <!-- The xref edit/view section. -->
+    <definition name="edit.xref.layout" path="/layouts/editItemLayout.jsp">
+        <put name="item" value="/pages/xrefs.jsp"/>
+        <put name="itemToAdd" value="/pages/xrefsAdd.jsp"/>
+    </definition>
+
+    <!-- The edit CV page layout. -->
+    <definition name="edit.content.layout" path="/layouts/editCVLayout.jsp">
+        <put name="header" value="/pages/cvinfo.jsp"/>
+        <put name="comments" value="edit.comment.layout"/>
+        <put name="xrefs" value="edit.xref.layout"/>
+        <put name="action" value="/pages/editAction.jsp"/>
+    </definition>
+
     <!-- =============== Definitions related to pages ================= -->
 
     <!-- Login page description  -->
@@ -90,8 +110,8 @@
 
     <!-- Edit page description. -->
     <definition name="edit.layout" extends="match.layout">
-        <put name="content" value="/pages/edit.jsp"/>
         <put name="sidebar" value="edit.sidebar.layout"/>
+        <put name="content" value="edit.content.layout"/>
     </definition>
 
     <!-- General error layout -->
