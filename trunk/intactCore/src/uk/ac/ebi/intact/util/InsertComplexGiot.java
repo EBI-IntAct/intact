@@ -892,7 +892,7 @@ public class InsertComplexGiot {
         Collection experiments = new ArrayList( 1 );
         experiments.add( giotExperiment );
 
-        interaction = new Interaction( experiments,
+        interaction = new InteractionImpl( experiments,
                                        new ArrayList( 2 ), // we know there are only 2 components to add !
                                        interactionType,
                                        interactionLabel,

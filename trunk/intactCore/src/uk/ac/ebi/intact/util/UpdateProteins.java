@@ -1150,7 +1150,7 @@ public class UpdateProteins extends UpdateProteinsI {
          */
         String shortLabel = generateProteinShortLabel( sptrEntry, bioSource, generateProteinShortlabelUsingBiosource);
 
-        Protein protein = new Protein (myInstitution, bioSource, shortLabel);
+        Protein protein = new ProteinImpl (myInstitution, bioSource, shortLabel);
 
         // get the protein info we need
         helper.create( protein );
@@ -1286,8 +1286,8 @@ public class UpdateProteins extends UpdateProteinsI {
         }
         shortLabel = shortLabel.toLowerCase();
 
-        String sequence    = null;
-        String crc64 = null;
+        String sequence = null;
+        String crc64    = null;
         try {
             sequence = sptrEntry.getAlternativeSequence( isoform );
             if ( sequence != null )
@@ -1470,7 +1470,7 @@ public class UpdateProteins extends UpdateProteinsI {
             }
         }
 
-        Protein spliceVariant = new Protein( myInstitution, bioSource, shortLabel.toLowerCase() );
+        Protein spliceVariant = new ProteinImpl( myInstitution, bioSource, shortLabel.toLowerCase() );
 
         // get the spliceVariant info we need
         helper.create( spliceVariant );
@@ -1623,7 +1623,7 @@ public class UpdateProteins extends UpdateProteinsI {
             // No appropriate protein found, create it.
 
             // Create new Protein
-            targetProtein = new Protein( myInstitution, validBioSource, anAc );
+            targetProtein = new ProteinImpl( myInstitution, validBioSource, anAc );
             helper.create ( targetProtein );
 
             // Create new Xref if a DB has been given
