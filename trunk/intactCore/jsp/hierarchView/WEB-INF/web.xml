@@ -7,11 +7,6 @@
 
 
 <web-app>
-  <context-param>
-    <param-name>dbname</param-name>
-    <param-value>intacttest</param-value>
-  </context-param>
-
   <!--  NB XML config files for the DB MUST be referred to here relative
         to the WEB-INF/classes directory as that is where the class loader
         will start to look. The leading "/" MUST be present if the config
@@ -21,37 +16,10 @@
         location....). The exception to this rule seems to be the struts-config.xml
         file....
   -->
-  <context-param>
-    <param-name>mappingfile</param-name>
-    <param-value>/config/dbMapping.xml</param-value>
-  </context-param>
-
-  <context-param>
-    <param-name>dbfile</param-name>
-    <param-value>/config/dbDescription.xml</param-value>
-  </context-param>
-
-  <!--  location of the intact object type to classname properties file    -->
-  <context-param>
-    <param-name>intacttypesfile</param-name>
-    <param-value>/config/IntactTypes</param-value>
-  </context-param>
-
-  <!--  Class name of the data source object to be used    -->
-  <context-param>
-    <param-name>datasource</param-name>
-    <param-value>uk.ac.ebi.intact.test.persistence.CastorDAOSource</param-value>
-  </context-param>
-
-  <!--  location of the persistence layer log file (seperate from the web tier logs).
-  NB the classLoader for the persistence layer is the Tomcat one, so the file locations
-  are specified relative to the catalina/bin directory (standalone, not golgi-dev!!)..
-  -->
-  <context-param>
+ <context-param>
     <param-name>logfile</param-name>
     <param-value>intact_log.txt</param-value>
   </context-param>
-
 
   <!-- Action Servlet Configuration -->
   <servlet>
@@ -82,19 +50,6 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
-
-   <!-- Database Initialization Servlet (must load after ActionServlet) -->
-  <servlet>
-    <servlet-name>IntactDatabaseServlet</servlet-name>
-    <servlet-class>uk.ac.ebi.intact.test.struts.IntactDatabaseServlet</servlet-class>
-    <init-param>
-      <param-name>debug</param-name>
-      <param-value>2</param-value>
-    </init-param>
-    <load-on-startup>2</load-on-startup>
-  </servlet>
-
-
   <!-- Declaration of the Image generator servlet -->
   <servlet>
     <servlet-name>GenerateImage</servlet-name>
@@ -106,19 +61,16 @@
     <url-pattern>/GenerateImage</url-pattern>
   </servlet-mapping>
 
-
   <!-- Action Servlet Mapping -->
   <servlet-mapping>
     <servlet-name>action</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
 
-
   <!-- The Welcome File List -->
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
- 
  
   <!-- Struts Tag Library Descriptors -->
   <taglib>
@@ -156,6 +108,5 @@
     <taglib-uri>/WEB-INF/tld/intact.tld</taglib-uri>
     <taglib-location>/WEB-INF/tld/intact.tld</taglib-location>
   </taglib>
- 
  
 </web-app>
