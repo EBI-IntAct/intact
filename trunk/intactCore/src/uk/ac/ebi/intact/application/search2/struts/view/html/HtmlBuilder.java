@@ -198,6 +198,11 @@ public class HtmlBuilder {
      */
     private void htmlView(Annotation anAnnotation) throws IOException {
 
+        // Filter out remark (topic).
+        // todo: Need to get the topics to mask from a properties file.
+        if (anAnnotation.getCvTopic().getShortLabel().equals("remark")) {
+            return;
+        }
         rs.write("<tr bgcolor="
                 + tableCellColor
                 + ">");
@@ -918,6 +923,16 @@ public class HtmlBuilder {
     public void htmlView (CvInteraction interaction) throws IOException {
 
         htmlView ( (AnnotatedObject) interaction );
+    }
+
+    /**
+     * TODO as to be refined
+     * @param interactionType
+     * @throws IOException
+     */
+    public void htmlView (CvInteractionType interactionType) throws IOException {
+
+        htmlView ( (AnnotatedObject) interactionType );
     }
 
     /**
