@@ -78,14 +78,6 @@
             <form-property name="items" type="java.util.Collection"/>
         </form-bean>
 
-        <!-- Form for editing CV info (short label, fullname) data -->
-<!--        <form-bean name="cvinfoForm"-->
-<!--            type="org.apache.struts.action.DynaActionForm">-->
-<!--            <form-property name="ac" type="java.lang.String"/>-->
-<!--            <form-property name="shortLabel" type="java.lang.String"/>-->
-<!--            <form-property name="fullName" type="java.lang.String"/>-->
-<!--        </form-bean>-->
-
         <!-- Form for entering tax id data -->
         <form-bean name="bioSourceForm"
             type="org.apache.struts.action.DynaActionForm">
@@ -159,48 +151,20 @@
             <!-- No match is found -->
             <forward name="noMatch" path="no.match.layout"/>
             <!-- Multiple results found -->
-            <forward name="results" path="/do/results/pre"/>
-            <!-- A single match or created a new object; Load annotations and
-                 xrefs to beans or initialize them for the new object.
-            -->
-            <forward name="success" path="/do/edit/pre"/>
+            <forward name="results" path="match.layout"/>
+            <!-- Success would directly take to the edit page -->
         </action>
 
-        <!-- Populate the beans with search result data for the JSP to display -->
-        <action path="/results/pre"
-            type="uk.ac.ebi.intact.application.editor.struts.action.ResultPreAction"
-            scope="request">
-            <forward name="success" path="match.layout"/>
-        </action>
-
-        <!-- Process a new search for a Cv Object. -->
+        <!-- Process a new search for a Editor Object. -->
         <action path="/search/new"
             type="org.apache.struts.actions.ForwardAction"
             parameter="search.layout">
         </action>
 
-        <!-- Process when a user selects CV object from a search result. -->
+        <!-- Process when a user selects an Editor object from a search result. -->
         <action path="/results"
             name="resultForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.ResultAction"
-            scope="request">
-            <!-- Selected an item; fill with annotation and xref data into beans. -->
-            <forward name="success" path="/do/edit/pre"/>
-        </action>
-
-        <!-- Populate the form beans with annotations and xrefs. -->
-        <action path="/edit/pre"
-            type="uk.ac.ebi.intact.application.editor.struts.action.EditorPreAction"
-            scope="request">
-            <!-- Fill with short label, full name data into beans -->
-            <forward name="success" path="/do/info/pre"/>
-        </action>
-
-        <!-- Populate the forms with short label and full name of the CV object
-             we are editing at the moment.
-        -->
-        <action path="/info/pre"
-            type="uk.ac.ebi.intact.application.editor.struts.action.EditorInfoPreAction"
             scope="request">
         </action>
 
@@ -215,29 +179,23 @@
             name="dummyForm"
             scope="request"
             parameter="dispatch">
-            <forward name="results" path="/do/results/pre"/>
+            <forward name="results" path="match.layout"/>
             <forward name="search" path="search.layout"/>
         </action>
 
-        <!-- Actions relating to editing the info for a CV object. The form
-             must be in session for it to retain information for changes to
-            the form such as adding annotations/xrfers.
-        -->
+        <!-- Handles when the user changes the short label or the full name. -->
         <action path="/info/edit"
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorInfoAction"
             name="cvinfoForm"
-            scope="session">
-            <!-- New label; load the CV info to refresh the screen. -->
-            <forward name="refresh" path="/do/info/pre"/>
+            scope="request">
         </action>
 
+        <!-- Handles when the user clickes on aut complete for tax id. -->
         <action path="/biosource/taxid"
             type="uk.ac.ebi.intact.application.editor.struts.action.biosource.TaxIdAction"
             name="bioSourceForm"
-            scope="session"
+            scope="request"
             input="edit.layout">
-            <!-- Info data updated; load the info to refresh the screen. -->
-            <forward name="refresh" path="/do/info/pre"/>
         </action>
 
         <!-- Adds a new comment or annotation; updates the edit contents -->
@@ -247,16 +205,11 @@
             scope="request">
         </action>
 
-        <!--
-            Edits an existing comment. Need this form to be in session or else
-            each edit click will create a new form (causing null pointer
-            exception when getItems() is called. This action also handles delete an
-            annotation as wel.
-        -->
+        <!-- Edits or Deletes an existing annotation. -->
         <action path="/comment/edit"
             name="commentEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommentEditAction"
-            scope="session">
+            scope="request">
         </action>
 
         <!-- Adds a new xref. -->
@@ -266,16 +219,11 @@
             scope="request">
         </action>
 
-        <!--
-            Edits an existing xref. Need this form to be in session or else
-            each edit click will create a new form (causing null pointer
-            exception when getItems() is called. This action also handles delete a
-            xreference as wel.
-        -->
+        <!-- Edits or Delete an existing xref. -->
         <action path="/xref/edit"
             name="xrefEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefEditAction"
-            scope="session">
+            scope="request">
         </action>
 
     </action-mappings>
