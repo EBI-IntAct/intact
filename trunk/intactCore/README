@@ -99,7 +99,7 @@ c) Having downloaded intact and set the configuration details as above, from the
 
 This will generate the core intact classes - individual applications can then be built (there is also an option to
 build everything in one go - 'ant compile-all' - if you so wish).
-
+ 
 d) the final step for the intact core setup is to load the database. There are sample data files in the data directory,
 and to populate your database with this data simply type
 
@@ -126,9 +126,12 @@ the generated javadoc can then be found in doc/api.
 
 Intact comes bundled with a number of web applications - currently we have:
 
-	- search
-	- cvedit
-	- hierarchView
+	- search:       The search application.
+	- editor:       Edit interface for IntAct objects.
+	- hierarchView: Graph visualisation.
+        - intact:       Contains only static documentation pages,
+                        but installation is the same as for normal 
+                        web applications.
 
 There is also the 'synchron' application which is use to exchange data between intact sites - this is standalone 
 and not web-based. As this application matures further details will be included about it in this file 
@@ -136,9 +139,9 @@ and not web-based. As this application matures further details will be included 
 
 The process for building the web applications is broadly the same. At the intactCore level, type
 
-	ant compile-search compile-cvedit compile-hv
+	ant compile-search compile-editor compile-hv
 
-to build the main classes for the web applications. For search there is one further file to edit. In the file
+to build the main classes for the web applications. This step is not necessary for "intact". For search there is one further file to edit. In the file
 
         application/search/WEB-INF/config/HierarchView.properties
 
@@ -151,7 +154,7 @@ The next step is to put the web applications into your tomcat server and start i
 
 a) cd applications/<webapp-name>, then type
 
-	ant war deploy (for cvedit and search)
+	ant war deploy (for editor, search, intact)
 
 This will build a war file and copy it to your tomcat webapps directory 
 (assuming you have $CATALINA_HOME set as an environment variable).
@@ -162,7 +165,7 @@ HierarchView requires a little more effort. The web service for hierarchView nee
 Please read the README file in the application/hierarchView directory for more details about how to install
 the web service and the hierarchView application.
 
-b) For search and cvedit, type ant start-tomcat (once)- if this fails, simply go to your tomcat bin directory and start it manually from there.
+b) For search and editor, type ant start-tomcat (once)- if this fails, simply go to your tomcat bin directory and start it manually from there.
 
 c) to start a web application, open a web browser and type
 
