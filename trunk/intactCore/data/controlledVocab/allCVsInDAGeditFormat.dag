@@ -1,0 +1,259 @@
+$intactCVs ; PSEUDOAC:0
+ %interaction type  ; MI:0190
+  %genetic interaction ; MI:0208
+   %synthetic lethal ; MI:0219
+  %physical interaction ; MI:0218
+   %covalent interaction ; MI:0196
+    %cleavage ; MI:0194
+     %deacetylation reaction ; MI:0197
+     %deformylation reaction ; MI:0199
+     %dephosphorylation reaction ; MI:0203
+     %deubiquitination reaction ; MI:0204
+     %lipid cleavage ; MI:0212
+      %defarnesylation reaction ; MI:0198
+      %degeranylation ; MI:0200
+      %demyristoylation ; MI:0201
+      %depalmitoylation ; MI:0202
+    %covalent binding ; MI:0195
+     %acetylation reaction ; MI:0192
+     %amidation reaction ; MI:0193
+     %formylation reaction ; MI:0207
+     %hydroxylation reaction ; MI:0210
+     %lipid addition ; MI:0211
+      %farnesylation reaction ; MI:0206
+      %geranylation reaction ; MI:0209
+      %myristoylation reaction ; MI:0214
+      %palmitoylation reaction ; MI:0216
+     %methylation reaction ; MI:0213
+     %phosphorylation reaction ; MI:0217
+     %ubiquitination reaction ; MI:0220
+   %non covalent interaction ; MI:0215
+    %aggregation ; MI:0191
+    %disaggregation ; MI:0205
+ %participant detection ; MI:0002
+  %predetermined ; MI:0221
+   %radio-labelled protein ; MI:0222
+  %peptide massfingerprinting ; MI:0082
+  %protein sequence identification ; MI:0093
+   %peptide synthesis ; MI:0083
+   %sequence tag identification ; MI:0102
+   %de novo protein sequencing by mass spectrometry ; MI:0032
+   %edman degradation ; MI:0039
+  %nucleotide sequence identification ; MI:0078
+   %full identification by sequencing ; MI:0056
+   %partial dna sequence identification by hybridization ; MI:0080
+    %primer specific pcr ; MI:0088
+    %southern blot ; MI:0103
+  %western blot ; MI:0113
+   %monoclonal antibody ; MI:0072
+   %polyclonal antibody ; MI:0086
+ %interaction detection ; MI:0001
+  %experimental ; MI:0045
+   %biophysical ; MI:0013
+    %circular dichroism ; MI:0016
+    %electron microscopy ; MI:0040
+    %electron resonance ; MI:0043
+     %electron nuclear double resonance ; MI:0041
+     %electron paramagnetic resonance ; MI:0042
+    %fluorescence technologies ; MI:0051
+     %classical fluorescence spectroscopy ; MI:0017
+     %fluorescence correlation spectroscopy ; MI:0052
+     %fluorescence polarization spectroscopy ; MI:0053
+     %fluorescence-activated cell sorting ; MI:0054
+      %yeast display ; MI:0115 % display technologies ; MI:0034
+      %bacterial display ; MI:0009 % display technologies ; MI:0034
+     %fluorescent resonance energy transfer ; MI:0055 % colocalization/visualisation technologies ; MI:0023
+     %bioluminescence resonance energy transfer ; MI:0012 % colocalization/visualisation technologies ; MI:0023
+    %isothermal titration calorimetry ; MI:0065
+    %light scattering ; MI:0067
+     %dynamic light scattering ; MI:0038
+     %static light scattering ; MI:0104
+    %mass spectrometry studies of complexes ; MI:0069
+    %nuclear magnetic resonance ; MI:0077
+    %scintillation proximity assay ; MI:0099
+    %surface plasmon resonance ; MI:0107
+    %x-ray crystallography ; MI:0114
+   %colocalization/visualisation technologies ; MI:0023
+    %colocalization by electron microscopy ; MI:0020
+    %colocalization by fluorescent probes cloning ; MI:0021
+    %colocalization by immunostaining ; MI:0022
+    %fluorescent resonance energy transfer ; MI:0055 % fluorescence technologies ; MI:0051
+    %bioluminescence resonance energy transfer ; MI:0012 % fluorescence technologies ; MI:0051
+   %copurification ; MI:0025
+    %cosedimentation ; MI:0027
+     %cosedimentation in solution ; MI:0028
+     %cosedimentation through density gradients ; MI:0029
+    %molecular sieving ; MI:0071
+    %coimmunoprecipitation ; MI:0019 % affinity chromatography technologies ; MI:0004
+     %anti tag coimmunoprecipitation ; MI:0007
+      %flag tag ; MI:0050
+      %tandem affinity purification ; MI:0109
+      %ha tag ; MI:0060
+      %his tag ; MI:0062
+      %myc tag ; MI:0075
+     %anti bait coimmunoprecipitation ; MI:0006
+   %display technologies ; MI:0034
+    %mrna display ; MI:0073
+    %phage display ; MI:0084
+     %filamentous phage display ; MI:0048
+     %lambda phage display ; MI:0066
+     %t7 phage display ; MI:0108
+    %ribosome display ; MI:0098
+    %yeast display ; MI:0115 % fluorescence-activated cell sorting ; MI:0054
+    %bacterial display ; MI:0009 % fluorescence-activated cell sorting ; MI:0054
+   %protein complementation assay ; MI:0090
+    %bordetella pertussis adenilate cyclase ; MI:0014
+    %reverse ras recruitment system ; MI:0097
+    %triple hybrid: dehydrofolate reductase reconstruction ; MI:0111
+    %ubiqitin reconstruction ; MI:0112
+    %classical two hybrid ; MI:0018
+    %beta galactosidase complementation ; MI:0010
+    %beta lactamase complementation ; MI:0011
+   %other biochemical technologies ; MI:0079
+    %cross-linking studies ; MI:0030
+     %cross-linking with a bifunctional reagent ; MI:0031
+    %enzyme-linked immunosorbent assay ; MI:0044
+    %far western blotting ; MI:0047
+    %filter binding ; MI:0049
+   %affinity chromatography technologies ; MI:0004
+    %pull down ; MI:0096
+     %gst pull down ; MI:0059
+     %his pull down ; MI:0061
+    %coimmunoprecipitation ; MI:0019 % copurification ; MI:0025
+     %anti tag coimmunoprecipitation ; MI:0007
+      %flag tag ; MI:0050
+      %tandem affinity purification ; MI:0109
+      %ha tag ; MI:0060
+      %his tag ; MI:0062
+      %myc tag ; MI:0075
+     %anti bait coimmunoprecipitation ; MI:0006
+   %array technologies ; MI:0008
+    %peptide array ; MI:0081
+    %protein array ; MI:0089
+    %protein in situ array ; MI:0092
+    %proteinchip(r) on a surface-enhanced laser desorption/ionization ; MI:0095
+  %in silico ; MI:0063
+   %experimental knowledge based ; MI:0046
+    %domain profile pairs ; MI:0037 % sequence based prediction ; MI:0101
+    %interologs ; MI:0064 % sequence based prediction ; MI:0101
+    %text mining ; MI:0110
+     %confirmational text mining ; MI:0024
+     %predictive text mining ; MI:0087
+   %genome based prediction ; MI:0058
+    %domain fusion ; MI:0036 % sequence based prediction ; MI:0101
+    %gene neighbourhoods ; MI:0057
+    %sequence based phylogenetic profile ; MI:0100 % sequence based prediction ; MI:0101
+   %sequence based prediction ; MI:0101
+    %correlated mutations ; MI:0026
+    %domain fusion ; MI:0036 % genome based prediction ; MI:0058
+    %domain profile pairs ; MI:0037 % experimental knowledge based ; MI:0046
+    %interologs ; MI:0064 % experimental knowledge based ; MI:0046
+    %phylogenetic profile ; MI:0085
+    %sequence based phylogenetic profile ; MI:0100 % genome based prediction ; MI:0058
+   %structure based prediction ; MI:0105
+    %docking ; MI:0035
+ %feature type ; MI:0116
+  @is_a@binding site ; MI:0117
+  @is_a@hotspot ; MI:0119
+  @is_a@mutation ; MI:0118
+  @is_a@ptm\: post translation modification ; MI:0120
+   @is_a@acetylation ; MI:0121
+    @is_a@acetylalanine\: N-acetyl-L-alanine ; MI:0122
+    @is_a@acetylaspartic acid\: N-acetyl-L-aspartic acid ; MI:0125
+    @is_a@acetylglutamic acid\: N-acetyl-L-glutamic acid ; MI:0128
+    @is_a@acetylglutamine\: N-acetyl-L-glutamine ; MI:0127
+    @is_a@acetylisoleucine\: N-acetyl-L-isoleucine ; MI:0131
+    @is_a@acetylproline\: N-acetyl-L-proline ; MI:0137
+    @is_a@methionamine\: N-acetyl-L-methionine ; MI:0135
+    @is_a@n-acetyl-l-arginine\: N-acetyl-L-arginine ; MI:0123
+    @is_a@n-acetyl-l-asparagin\: N-acetyl-L-asparagine ; MI:0124
+    @is_a@n-acetyl-l-histidine\: N-acetyl-L-histidine ; MI:0130
+    @is_a@n-acetyl-l-leucine\: N-acetyl-L-leucine ; MI:0132
+    @is_a@n-acetylcysteine\: N-acetyl-L-cysteine ; MI:0126
+    @is_a@n-acetylglycine\: N-acetylglycine ; MI:0129
+    @is_a@n-acetylphenylalanin\: N-acetyl-L-phenylalanine ; MI:0136
+    @is_a@n-acetylserine\: N-acetyl-L-serine ; MI:0138
+    @is_a@n-acetylthreonine\: N-acetyl-L-threonine ; MI:0139
+    @is_a@n-acetyltryptophan\: N-acetyl-L-tryptophan ; MI:0140
+    @is_a@n-acetyltyrosine\: N-acetyl-L-tyrosine ; MI:0141
+    @is_a@n-acetylvaline\: N-acetyl-L-valine ; MI:0142
+    @is_a@n2-acetyllysine\: N2-acetyl-L-lysine ; MI:0133
+    @is_a@n6-acetyl-l-lysine\: N6-acetyl-L-lysine ; MI:0134
+   @is_a@amidation ; MI:0143
+    @is_a@alaninamide\: L-alanine amide ; MI:0144
+    @is_a@argininamide\: L-arginine amide ; MI:0145
+   @is_a@formylation ; MI:0146
+    @is_a@n-formylmethionine\: N-formyl-L-methionine ; MI:0147
+   @is_a@hydroxylation ; MI:0148
+    @is_a@4-hydroxy-l-proline\: 4-hydroxy-L-proline ; MI:0149
+   @is_a@lipid modification ; MI:0150
+    @is_a@n-myristoyl-glycine\: N-myristoyl-glycine ; MI:0155
+    @is_a@n-palmitoyl-l-cystei\: N-palmitoyl-L-cysteine ; MI:0153
+    @is_a@n6-myristoyl-l-lysin\: N6-myristoyl-L-lysine ; MI:0156
+    @is_a@s-farnesyl-l-cystein\: S-farnesyl-L-cysteine ; MI:0151
+    @is_a@s-geranylgeranyl-l-c\: S-geranylgeranyl-L-cysteine ; MI:0152
+    @is_a@s-palmitoyl-l-cystei\: S-palmitoyl-L-cysteine ; MI:0154
+   @is_a@methylation ; MI:0157
+    @is_a@3-methylthio-asparti\: L-beta-methylthioaspartic acid ; MI:0161
+    @is_a@5-methyl-l-glutamate\: L-glutamic acid 5-methyl ester ; MI:0163
+    @is_a@trimethyl-l-alanine\: N-trimethyl-L-alanine ; MI:0159
+    @is_a@n-methylalanine\: N-methyl-L-alanine ; MI:0158
+    @is_a@n-methylglutamine\: N5-methyl-L-glutamine ; MI:0162
+    @is_a@n-methylmethionine\: N-methyl-L-methionine ; MI:0168
+    @is_a@n-methylphenylalanin\: N-methyl-L-phenylalanine ; MI:0169
+    @is_a@trimethyl-l-lysine\: N6-trimethyl-L-lysine ; MI:0167
+    @is_a@n6-dimethyl-l-lysine\: N6-dimethyl-L-lysine ; MI:0166
+    @is_a@n6-methyl-l-lysine\: N6-methyl-L-lysine ; MI:0165
+    @is_a@dimethyl-l-arginine\: omega-N-dimethyl-L-arginine ; MI:0160
+    @is_a@pi-methylhistidine\: 3'-methyl-L-histidine ; MI:0164
+   @is_a@other modification ; MI:0179
+    @is_a@diphthamide\: 2'-[3-carboxamido-3-(trimethylammonio)propyl]-L-histidine (diphthamide) ; MI:0185
+    @is_a@hypusine\: N6-(4-amino-2-hydroxybutyl)-L-lysine (hypusine) ; MI:0187
+    @is_a@l-3-oxoalanine\: L-3-oxoalanine ; MI:0182
+    @is_a@l-glutamyl 5-glycery\: L-glutamyl 5-glycerylphosphorylethanolamine ; MI:0184
+    @is_a@l-selenocysteine\: L-selenocysteine ; MI:0180
+    @is_a@l-selenomethionine\: L-selenomethionine ; MI:0181
+    @is_a@n6-biotinyl-l-lysine\: N6-biotinyl-L-lysine ; MI:0186
+    @is_a@n6-retinyl-lysine\: N6-retinal-L-lysine ; MI:0188
+    @is_a@pyroglutamic acid\: 2-pyrrolidone-5-carboxylic acid ; MI:0183
+    @is_a@ubiquitinated ; MI:0189
+   @is_a@phosphorylation ; MI:0170
+    @is_a@o3-phosphoserine\: O-phospho-L-serine ; MI:0176
+    @is_a@o3-phosphothreonine\: O-phospho-L-threonine ; MI:0177
+    @is_a@omegaphosphoarginine\: omega-N-phospho-L-arginine ; MI:0171
+    @is_a@phosphoaspartic acid\: L-aspartic 4-phosphoric anhydride ; MI:0172
+    @is_a@pi-phosphohistidine\: 3'-phospho-L-histidine ; MI:0175
+    @is_a@s3-phosphocysteine\: S-phospho-L-cysteine ; MI:0173
+    @is_a@tau-phosphohistidine\: 1'-phospho-L-histidine ; MI:0174
+    @is_a@tyrosine-phosphate\: O4'-phospho-L-tyrosine ; MI:0178
+  @is_a@tagged-protein\: Tagged-protein ; MI:0507
+   @is_a@flag-tagged\: FLAG-tagged ; MI:0518
+   @is_a@gst-tagged\: GST-tagged ; MI:0519
+   @is_a@ha-tagged\: HA-tagged ; MI:0520
+   @is_a@his-tagged\: His-Tagged ; MI:0521
+   @is_a@myc-tagged\: Myc-tagged ; MI:0522
+   @is_a@t7-tagged\: T7-tagged ; MI:0523
+   @is_a@tap-tagged\: TAP-tagged ; MI:0524
+   @is_a@v5-tagged\: V5-tagged ; MI:0525
+ %feature detection ; MI:0003
+  @is_a@alanine scanning ; MI:0005
+  @is_a@complete sequence\: full identification by sequencing ; MI:0056
+  @is_a@correlated mutations ; MI:0026
+  @is_a@deletion analysis ; MI:0033
+  @is_a@domain profile pairs ; MI:0037
+  @is_a@electron resonance ; MI:0043
+   @is_a@endor\: electron nuclear double resonance ; MI:0041
+    @is_a@docking ; MI:0035
+   @is_a@epr\: electron paramagnetic resonance ; MI:0042
+  @is_a@interface predictor\: neural network on interface properties ; MI:0076
+  @is_a@mobility shift ; MI:0070
+  @is_a@modified residue ms\: mass detection of residue modification ; MI:0068
+  @is_a@mutation analysis ; MI:0074
+  @is_a@nmr\: nuclear magnetic resonance ; MI:0077
+  @is_a@protein sequence_ms\: de novo protein sequencing by mass spectrometry ; MI:0032
+  @is_a@protein staining ; MI:0094
+  @is_a@surface patches ; MI:0106
+  @is_a@western blot ; MI:0113
+   @is_a@monoclonal antibody ; MI:0072
+   @is_a@polyclonal antibody ; MI:0086
+  @is_a@x-ray\: x-ray crystallography ; MI:0114

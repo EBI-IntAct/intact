@@ -68,6 +68,11 @@ term: Reactome - a knowledgebase of biological processes
 url: http://www.reactome.org/
 search-url: http://www.reactome.org/cgi-bin/search?SUBMIT=1&QUERY_CLASS=DatabaseIdentifier&QUERY=SWALL:${ac}
 
+shortlabel: resid
+term: RESID
+definition: The RESID Database of Protein Modifications is a comprehensive collection of annotations and structures for protein modifications including amino-terminal, carboxyl-terminal and peptide chain cross-link post-translational modifications.
+url: http://www.ebi.ac.uk/RESID/index.html
+
 shortlabel: sgd
 term: Saccharomyces Genome Database
 url: http://genome-www.stanford.edu/Saccharomyces/
@@ -79,4 +84,3 @@ search-url: http://www.ebi.uniprot.org/entry/${ac}
 search-url-ascii: http://www.ebi.uniprot.org/entry/${ac}?format=text&ascii
 url: http://www.uniprot.org/
 definition: The UniProt protein sequence database.
-
