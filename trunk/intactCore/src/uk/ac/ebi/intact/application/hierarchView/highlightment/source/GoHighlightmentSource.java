@@ -99,7 +99,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         Interactor interactor = (Interactor) iterator.next();
 
         // get Xref collection
-        Collection xRef = interactor.getXref();
+        Collection xRef = interactor.getXrefs();
         logger.info(xRef.size() + " Xref found");
         listGOTerm = filterXref(xRef);
 

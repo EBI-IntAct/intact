@@ -83,7 +83,7 @@ public class DisplaySourceTag extends TagSupport {
                 // union of disctinct xref
                 Node centralProtein = (Node) centrals.get(x);
                 interactor = centralProtein.getInteractor();
-                Collection xRefs2 = interactor.getXref();
+                Collection xRefs2 = interactor.getXrefs();
                 Iterator iterator = xRefs2.iterator();
                 while (iterator.hasNext()) {
                     Xref aXref = (Xref) iterator.next();
