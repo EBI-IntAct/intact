@@ -78,6 +78,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <extent-class class-ref="uk.ac.ebi.intact.model.Xref"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Alias"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.AnnotatedObjectImpl"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Range"/>
 </class-descriptor>
 
 
@@ -89,6 +90,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <extent-class class-ref="uk.ac.ebi.intact.model.Experiment"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.InteractorImpl"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.CvObject"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Feature"/>
 </class-descriptor>
 
 
@@ -102,6 +104,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <extent-class class-ref="uk.ac.ebi.intact.model.CvAliasType" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvTopic" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvDagObject" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvFuzzyType" />
 </class-descriptor>
 
 <class-descriptor
@@ -120,11 +123,326 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <extent-class class-ref="uk.ac.ebi.intact.model.CvIdentification" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvInteractionType" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvGoNode" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvFeatureIdentification" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvFeatureType" />
 </class-descriptor>
 
 
 <!-- 'normal' classes -->
 
+<!-- class descriptor for Feature
+-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Feature"
+    table="ia_Feature"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- ***************** fields from superclasses ********************* -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        sequence-name="intact_ac"
+        />
+    <field-descriptor
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- local class field descriptors -->
+    <field-descriptor
+        name="componentAc"
+        column="component_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <field-descriptor
+        name="bindsAc"
+        column="linkedfeature_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <field-descriptor
+            name="featureTypeAc"
+            column="featureType_ac"
+            jdbc-type="VARCHAR"
+            />
+
+    <field-descriptor
+            name="featureIdentAc"
+            column="identification_ac"
+            jdbc-type="VARCHAR"
+            />
+
+
+<!-- references -->
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-ref="ownerAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+            name="component"
+            class-ref="uk.ac.ebi.intact.model.Component"
+            >
+            <foreignkey field-ref="componentAc"/>
+    </reference-descriptor>
+
+    <!-- This is recursive - watch out for possible problems... -->
+    <reference-descriptor
+            name="binds"
+            class-ref="uk.ac.ebi.intact.model.Feature"
+            >
+            <foreignkey field-ref="bindsAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+            name="cvFeatureType"
+            class-ref="uk.ac.ebi.intact.model.CvFeatureType"
+            >
+            <foreignkey field-ref="featureTypeAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+            name="cvFeatureIdentification"
+            class-ref="uk.ac.ebi.intact.model.CvFeatureIdentification"
+            >
+            <foreignkey field-ref="featureIdentAc"/>
+    </reference-descriptor>
+
+
+
+    <!-- fields from AnnotatedObject (intactCore only) -->
+    <collection-descriptor
+        name="xrefs"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <!-- Featuress and Annotations are linked via a (non-qualified) indirection
+    table FEATURE2ANNOT..... -->
+    <collection-descriptor
+        name="annotations"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        proxy="true"
+        auto-delete="true"
+        indirection-table="ia_FEATURE2ANNOT"
+
+        >
+        <fk-pointing-to-this-class column="feature_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+    <!-- Collection of Ranges. One feature may have many Ranges -->
+    <collection-descriptor
+            name="ranges"
+            proxy="true"
+            auto-delete="true"
+            element-class-ref="uk.ac.ebi.intact.model.Range"
+            >
+            <inverse-foreignkey field-ref="featureAc"/>
+    </collection-descriptor>
+
+
+</class-descriptor>
+
+
+<!-- class descriptor for Range
+-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.Range"
+    table="ia_Range"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+    <!-- ***************** fields from superclasses ********************* -->
+    <!-- fields from BasicObject... -->
+    <field-descriptor
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        sequence-name="intact_ac"
+        />
+    <field-descriptor
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- local class field descriptors -->
+
+    <!-- This is only present for the inverse FK relationship to Feature -->
+    <field-descriptor
+            name="featureAc"
+            column="feature_ac"
+            jdbc-type="VARCHAR"
+            />
+
+    <field-descriptor
+                name="fromCvFuzzyTypeAc"
+                column="fromFuzzyType_ac"
+                jdbc-type="VARCHAR"
+                />
+
+    <field-descriptor
+                name="toCvFuzzyTypeAc"
+                column="toFuzzyType_ac"
+                jdbc-type="VARCHAR"
+                />
+
+    <field-descriptor
+                name="sequence"
+                column="sequence"
+                jdbc-type="VARCHAR"
+                />
+   <!-- add stuff for the ints and booleans here -->
+
+    <field-descriptor
+                name="fromIntervalStart"
+                column="fromIntervalStart"
+                jdbc-type="INTEGER"
+                />
+
+    <field-descriptor
+                name="fromIntervalEnd"
+                column="fromIntervalEnd"
+                jdbc-type="INTEGER"
+                />
+
+    <field-descriptor
+                name="toIntervalStart"
+                column="toIntervalStart"
+                jdbc-type="INTEGER"
+                />
+
+    <field-descriptor
+                name="toIntervalEnd"
+                column="toIntervalEnd"
+                jdbc-type="INTEGER"
+                />
+
+    <!-- NB These are booleans when used by application code but they
+    are held as chars internally to the class because oracle has no boolean
+    column type
+    -->
+    <field-descriptor
+                name="undetermined"
+                column="undetermined"
+                jdbc-type="CHAR"
+                />
+
+    <field-descriptor
+                name="link"
+                column="link"
+                jdbc-type="CHAR"
+                />
+
+
+<!-- references -->
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-ref="ownerAc"/>
+    </reference-descriptor>
+
+    <!-- local class references -->
+    <reference-descriptor
+            name="fromCvFuzzyType"
+            class-ref="uk.ac.ebi.intact.model.CvFuzzyType"
+            >
+            <foreignkey field-ref="fromCvFuzzyTypeAc"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+            name="toCvFuzzyType"
+            class-ref="uk.ac.ebi.intact.model.CvFuzzyType"
+            >
+            <foreignkey field-ref="toCvFuzzyTypeAc"/>
+    </reference-descriptor>
+
+</class-descriptor>
+
+
+<!-- descriptor for Protein
+-->
 <class-descriptor
     class="uk.ac.ebi.intact.model.ProteinImpl"
     proxy="uk.ac.ebi.intact.model.proxy.ProteinProxy"
@@ -249,8 +567,9 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         name="annotations"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         proxy="true"
+        auto-delete="true"
         indirection-table="ia_INT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+
         >
         <fk-pointing-to-this-class column="interactor_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -276,8 +595,6 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 
 </class-descriptor>
-
-
 
 
 <!-- descriptor for Interaction.....-->
@@ -403,9 +720,9 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_INT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="interactor_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -418,7 +735,6 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         name="experiments"
         element-class-ref="uk.ac.ebi.intact.model.Experiment"
         indirection-table="ia_INT2EXP"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="interaction_ac"/>
         <fk-pointing-to-element-class column="experiment_ac"/>
@@ -586,9 +902,9 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_EXP2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="experiment_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -601,7 +917,6 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         name="interactions"
         element-class-ref="uk.ac.ebi.intact.model.InteractionImpl"
         indirection-table="ia_INT2EXP"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="experiment_ac"/>
         <fk-pointing-to-element-class column="interaction_ac"/>
@@ -726,7 +1041,6 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_BIOSOURCE2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="biosource_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1221,6 +1535,20 @@ to AnnotatedObject and Experiment
         <foreignkey field-ref="cvComponentRoleAc"/>
     </reference-descriptor>
 
+    <!-- Collection descriptors -->
+
+    <!-- A Component may have many Features (Binding Domains) -->
+    <collection-descriptor
+            proxy="true"
+            name="bindingDomains"
+            auto-delete="true"
+            element-class-ref="uk.ac.ebi.intact.model.Feature"
+            >
+            <inverse-foreignkey field-ref="componentAc"/>
+    </collection-descriptor>
+
+
+
 </class-descriptor>
 
 
@@ -1321,9 +1649,9 @@ to AnnotatedObject and Experiment
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1423,9 +1751,9 @@ to AnnotatedObject and Experiment
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1528,9 +1856,9 @@ to AnnotatedObject and Experiment
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1630,9 +1958,9 @@ to AnnotatedObject and Experiment
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1730,9 +2058,9 @@ to AnnotatedObject and Experiment
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1836,9 +2164,9 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1916,7 +2244,6 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvInteraction"
         indirection-table="ia_Cv2Cv"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="child_ac"/>
         <fk-pointing-to-element-class column="parent_ac"/>
@@ -1929,7 +2256,6 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvInteraction"
         indirection-table="ia_Cv2Cv"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="parent_ac"/>
         <fk-pointing-to-element-class column="child_ac"/>
@@ -1963,9 +2289,9 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2043,7 +2369,6 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvInteractionType"
         indirection-table="ia_Cv2Cv"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="child_ac"/>
         <fk-pointing-to-element-class column="parent_ac"/>
@@ -2056,7 +2381,6 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvInteractionType"
         indirection-table="ia_Cv2Cv"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="parent_ac"/>
         <fk-pointing-to-element-class column="child_ac"/>
@@ -2090,9 +2414,9 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2170,7 +2494,6 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvIdentification"
         indirection-table="ia_Cv2Cv"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="child_ac"/>
         <fk-pointing-to-element-class column="parent_ac"/>
@@ -2183,7 +2506,6 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvIdentification"
         indirection-table="ia_Cv2Cv"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="parent_ac"/>
         <fk-pointing-to-element-class column="child_ac"/>
@@ -2217,9 +2539,9 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2318,9 +2640,9 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     <collection-descriptor
         proxy="true"
         name="annotations"
+        auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
@@ -2498,7 +2820,6 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvGoNode"
         indirection-table="ia_Cv2Cv"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="child_ac"/>
         <fk-pointing-to-element-class column="parent_ac"/>
@@ -2511,7 +2832,6 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvGoNode"
         indirection-table="ia_Cv2Cv"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="parent_ac"/>
         <fk-pointing-to-element-class column="child_ac"/>
@@ -2546,12 +2866,366 @@ this is because the CvTopic linked to an Annotation is a better home for it...
         name="annotations"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
-	collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
         >
         <fk-pointing-to-this-class column="cvobject_ac"/>
         <fk-pointing-to-element-class column="annotation_ac"/>
     </collection-descriptor>
 
 </class-descriptor>
+
+
+<!-- Descriptor for CvFuzzyType. Currently only used by Range classes.
+-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvFuzzyType"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor
+            name="ac"
+            column="ac"
+            jdbc-type="VARCHAR"
+            primarykey="true" autoincrement="true"
+            sequence-name="intact_ac"
+
+            nullable="false"
+            />
+        <field-descriptor
+            name="ownerAc"
+            column="owner_ac"
+            jdbc-type="VARCHAR"
+            />
+        <field-descriptor
+            name="created"
+            column="created"
+            jdbc-type="TIMESTAMP"
+            nullable="false"
+            />
+        <field-descriptor
+            name="updated"
+            column="updated"
+            jdbc-type="TIMESTAMP"
+            nullable="false"
+            />
+        <field-descriptor
+            name="shortLabel"
+            column="shortLabel"
+            jdbc-type="VARCHAR"
+            indexed="true"
+            />
+        <field-descriptor
+            name="fullName"
+            column="fullName"
+            jdbc-type="VARCHAR"
+            />
+
+        <!-- ********** declared fields for this class (actually inherited from CvObject) ********** -->
+
+        <!-- used for class identification -->
+        <field-descriptor
+            name="ojbConcreteClass"
+            column="objClass"
+            jdbc-type="VARCHAR"
+            />
+
+        <reference-descriptor
+            name="owner"
+            class-ref="uk.ac.ebi.intact.model.Institution"
+            >
+            <foreignkey field-ref="ownerAc"/>
+        </reference-descriptor>
+
+        <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+        <collection-descriptor
+            proxy="true"
+            name="xrefs"
+            auto-delete="true"
+            element-class-ref="uk.ac.ebi.intact.model.Xref"
+            >
+            <inverse-foreignkey field-ref="parentAc"/>
+        </collection-descriptor>
+
+        <collection-descriptor
+            name="aliases"
+            proxy="true"
+            auto-delete="true"
+            element-class-ref="uk.ac.ebi.intact.model.Alias"
+            >
+
+            <inverse-foreignkey field-ref="parentAc"/>
+        </collection-descriptor>
+
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+
+<!-- Descriptor for CvFeatureIdentification (subclass of CvDagObject)
+-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvFeatureIdentification"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        sequence-name="intact_ac"
+
+        nullable="false"
+        />
+    <field-descriptor
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvDagObject) ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-ref="ownerAc"/>
+    </reference-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the parent reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="parents"
+        element-class-ref="uk.ac.ebi.intact.model.CvFeatureIdentification"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="child_ac"/>
+        <fk-pointing-to-element-class column="parent_ac"/>
+    </collection-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the child reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="children"
+        element-class-ref="uk.ac.ebi.intact.model.CvFeatureIdentification"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="parent_ac"/>
+        <fk-pointing-to-element-class column="child_ac"/>
+    </collection-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+
+<!-- Descriptor for CvFeatureType (subclass of CvDagObject)
+-->
+<class-descriptor
+    class="uk.ac.ebi.intact.model.CvFeatureType"
+    table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
+    >
+
+    <!-- ******** fields inherited from BasicObject *****************-->
+    <!-- fields from BasicObject... -->
+    <field-descriptor
+        name="ac"
+        column="ac"
+        jdbc-type="VARCHAR"
+        primarykey="true" autoincrement="true"
+        sequence-name="intact_ac"
+
+        nullable="false"
+        />
+    <field-descriptor
+        name="ownerAc"
+        column="owner_ac"
+        jdbc-type="VARCHAR"
+        />
+    <field-descriptor
+        name="created"
+        column="created"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor
+        name="updated"
+        column="updated"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+        />
+    <field-descriptor
+        name="shortLabel"
+        column="shortLabel"
+        jdbc-type="VARCHAR"
+        indexed="true"
+        />
+    <field-descriptor
+        name="fullName"
+        column="fullName"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- ********** declared fields for this class (actually inherited from CvDagObject) ********** -->
+
+    <!-- used for class identification -->
+    <field-descriptor
+        name="ojbConcreteClass"
+        column="objClass"
+        jdbc-type="VARCHAR"
+        />
+
+    <reference-descriptor
+        name="owner"
+        class-ref="uk.ac.ebi.intact.model.Institution"
+        >
+        <foreignkey field-ref="ownerAc"/>
+    </reference-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the parent reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="parents"
+        element-class-ref="uk.ac.ebi.intact.model.CvFeatureType"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="child_ac"/>
+        <fk-pointing-to-element-class column="parent_ac"/>
+    </collection-descriptor>
+
+    <!-- CvDagObject has an n:m self-reference to implement a DAG structure.
+    This is the child reference. -->
+    <collection-descriptor
+        proxy="true"
+        name="children"
+        element-class-ref="uk.ac.ebi.intact.model.CvFeatureType"
+        indirection-table="ia_Cv2Cv"
+        >
+        <fk-pointing-to-this-class column="parent_ac"/>
+        <fk-pointing-to-element-class column="child_ac"/>
+    </collection-descriptor>
+
+    <!-- ************ fields inherited from AnnotatedObject ********* -->
+
+    <collection-descriptor
+        proxy="true"
+        name="xrefs"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
+        >
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <collection-descriptor
+        name="aliases"
+        proxy="true"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Alias"
+        >
+
+        <inverse-foreignkey field-ref="parentAc"/>
+    </collection-descriptor>
+
+    <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
+    table CVOBJECT2ANNOT -->
+    <collection-descriptor
+        proxy="true"
+        name="annotations"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Annotation"
+        indirection-table="ia_CVOBJECT2ANNOT"
+        >
+        <fk-pointing-to-this-class column="cvobject_ac"/>
+        <fk-pointing-to-element-class column="annotation_ac"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+
+
 
 <!-- Mapping of User defined classes ends here -->
