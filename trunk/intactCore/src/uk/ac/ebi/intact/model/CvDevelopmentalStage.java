@@ -12,6 +12,12 @@ import java.util.*;
  */
 public class CvDevelopmentalStage extends CvObject {
 
+    /**
+     * Cache a Vector of all shortLabels of the class, e.g. for menus.
+     *
+     */
+    protected static Vector menuList = null;
+
 
 } // end CvDevelopmentalStage
 
