@@ -1,10 +1,10 @@
 <%@ page language="java" %>
-<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/tld/struts-bean.tld"  prefix="bean" %>
+<%@ taglib uri="/WEB-INF/tld/struts-html.tld"  prefix="html" %>
 <%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.*,
-                 uk.ac.ebi.intact.application.hierarchView.business.IntactUser" %>
+                 uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.graph.*" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.Constants" %>
@@ -58,7 +58,7 @@
    /**
     * Retreive data from the session
     */
-   IntactUser user = (IntactUser) session.getAttribute (Constants.USER_KEY);
+   IntactUserIF user = (IntactUserIF) session.getAttribute (Constants.USER_KEY);
 
 
    String AC           = user.getAC();
