@@ -306,6 +306,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         this.startEditing();
         // Get the new view for the new edit object.
         myEditView = myViewFactory.factory(clazz);
+        myEditView.setAnnotatedClass(clazz);
         setSelectedTopic();
     }
 
