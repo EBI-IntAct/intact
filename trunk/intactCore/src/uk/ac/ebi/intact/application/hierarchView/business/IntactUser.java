@@ -16,8 +16,8 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 public class IntactUser implements HttpSessionBindingListener {
 
     // LOGGER
-    static Logger logger = Logger.getLogger("IntactUser");
+    static Logger logger = Logger.getLogger(uk.ac.ebi.intact.application.hierarchView.business.Constants.LOGGER_NAME);
 
     private IntactHelper intactHelper;
 
@@ -69,7 +69,7 @@ public class IntactUser implements HttpSessionBindingListener {
 
         // build a helper for use throughout a session
         this.intactHelper = new IntactHelper (ds);
-        logger.info("IntactHelper created.");
+        logger.info ("IntactHelper created.");
     }
 
 
@@ -92,8 +92,8 @@ public class IntactUser implements HttpSessionBindingListener {
         }
         catch(IntactException ie) {
             //failed to close the store - not sure what to do here yet....
-            logger.severe ("error when closing the IntactHelper store");
-            logger.severe (ie.toString());
+            logger.error ("error when closing the IntactHelper store");
+            logger.error (ie.toString());
         }
     }
 

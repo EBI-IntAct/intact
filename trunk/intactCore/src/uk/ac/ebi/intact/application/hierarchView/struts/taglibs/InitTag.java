@@ -17,8 +17,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 
 /**
  * That class allow to initialize properly the HTTPSession object
@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class InitTag extends TagSupport {
 
-    private static Logger logger = Logger.getLogger("InitTag");
+    private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     /**
      * Evaluate the tag's body content.
@@ -88,12 +88,12 @@ public class InitTag extends TagSupport {
             catch (DataSourceException de) {
                 // Unable to get a data source...can't proceed
                 de.printStackTrace ();
-                logger.severe(de.toString());
+                logger.error (de.toString());
                 throw new JspException ("Unable to get a data source.");
             }
             catch (IntactException se) {
                 // Unable to construct lists such as topics, db names etc.
-                logger.severe(se.toString());
+                logger.error (se.toString());
                 se.printStackTrace ();
             }
 

@@ -6,6 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.business.servlet;
 
 import org.w3c.dom.Document;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
@@ -27,6 +28,8 @@ import java.util.Properties;
  For a bean given in the session, forward an image (png) to be displayed.
  */
 public class GenerateImage extends HttpServlet {
+
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     // * Public servlet methods
 
@@ -62,19 +65,19 @@ public class GenerateImage extends HttpServlet {
             }
 
             ConvertSVG convert = ConvertSVG.getConvertSVG(className);
+            logger.info (className + " created");
 
             // Encode the off-screen image into a JPEG and send it to the client
-
             String typeMime = convert.getMimeType();
+            logger.info ("set MIME Type to " + typeMime);
             aResponse.setContentType(typeMime);
-
 
             // get the current user session
             HttpSession session = aRequest.getSession();
             ImageBean ib = (ImageBean) session.getAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN);
 
             if (null == ib) {
-                System.out.println("ib == null");
+                logger.error ("ImageBean in the session is null");
                 return;
             }
 
@@ -82,18 +85,20 @@ public class GenerateImage extends HttpServlet {
             if (null != document) {
                 try {
                     byte[] imageData = convert.convert(document);
+                    logger.info ("SVG transcoding done");
+
                     if (null != imageData) {
-                        System.out.println("lenght = " + imageData.length);
+                        logger.info ("Image file size: " + imageData.length + " bytes");
                         out.write (imageData);
                     }
-                    else System.out.println("imageData is null");
+                    else logger.error ("No data produced by " + className);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    System.out.println("Impossible to convert the document");
+                    logger.error ("Couldn't convert the DOM document");
                 }
             }
-            else System.out.println("document is null");
+            else logger.error ("SVG DOM document is null");
 
             out.flush ();
             out.close ();

@@ -56,8 +56,8 @@
       <servlet-class>uk.ac.ebi.intact.application.hierarchView.business.servlet.LoggingInit</servlet-class>
 
       <init-param>
-        <param-name>logging-init-file</param-name>
-        <param-value>WEB-INF/classes/config/logging.properties</param-value>
+        <param-name>log4j-init-file</param-name>
+        <param-value>WEB-INF/classes/config/log4j.properties</param-value>
       </init-param>
 
       <load-on-startup>1</load-on-startup>

@@ -18,9 +18,13 @@ public final class Constants {
     // ******************************************************* Properties file
 
     /**
+     * The name of the logger specific of hierarchView
+     */
+    public static final String LOGGER_NAME = "hierarchView";
+
+    /**
      * Where to find the property file
      */
-    //public static final String PROPERTY_FILE = "/config/ApplicationResources.properties";
     public static final String PROPERTY_FILE = "/config/Graph.properties";
 
     /**
@@ -63,7 +67,6 @@ public final class Constants {
      */
     public static final String ATTRIBUTE_VISIBLE = "visible";
 
-
     /**
      * Key name of the user in the session
      */
@@ -91,6 +94,4 @@ public final class Constants {
      */
     public static final String WEB_SERVICE_MANAGER = "WebServiceManager";
 
-
-
-} // StrutsConstants
+} // Constants

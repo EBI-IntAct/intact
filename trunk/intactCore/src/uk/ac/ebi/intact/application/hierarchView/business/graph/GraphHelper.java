@@ -9,9 +9,12 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.simpleGraph.Graph;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.apache.log4j.Logger;
 
 
 
@@ -23,6 +26,8 @@ import java.util.Iterator;
  */
 
 public class GraphHelper  {
+
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     private IntactHelper helper;
 
@@ -43,10 +48,10 @@ public class GraphHelper  {
         Collection resultList = null;
         if (helper != null) {
             //NB assumes full java className supplied...
-            resultList = helper.search(className, searchParam, searchValue);
+            resultList = helper.search (className, searchParam, searchValue);
             return resultList;
         } else {
-            System.out.println("something failed - couldn't create a helper class to access the data!!");
+            logger.error ("Couldn't create a helper class to access the data!!");
             throw new Exception();
         }
     } // doSearch
@@ -64,13 +69,13 @@ public class GraphHelper  {
         InteractionNetwork in = new InteractionNetwork ();
 
         //get a complete Institution, then add it to an Experiment..
-        System.out.println ("retrieving Interactor ...");
+        logger.info ("retrieving Interactor ...");
         Collection results = this.doSearch ("uk.ac.ebi.intact.model.Interactor", "ac", anAC);
         Iterator iter1     = results.iterator ();
 
         //there is at most one - ac is unique
         if (iter1.hasNext()) {
-            System.out.println ("Starting graph generation ... ");
+            logger.info ("Starting graph generation ... ");
             Interactor interactor = (Interactor) iter1.next();
             Graph graph = in;
             graph = this.helper.subGraph (interactor,
@@ -79,10 +84,10 @@ public class GraphHelper  {
                     uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY,
                     graph);
 
-            System.out.println (in);
+            logger.info (in);
         } else {
             in = null;
-            System.out.println ("AC not found: " + anAC + "\n");
+            logger.error ("AC not found: " + anAC + "\n");
         }
 
         return in;
