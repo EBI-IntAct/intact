@@ -1019,6 +1019,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
 //        return false;
 //    }
 
+    // Helper methods
+
     /**
      * Returns true if a Feature in the components already exists (comparision is
      * made on a Feature's short label).
@@ -1026,7 +1028,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @return true if a Feature in the current Interaction already exists. True
      * is also returned for errors in searching the persistent system.
      */
-    public boolean hasDuplicateFeatures(EditUserI user) {
+    private boolean hasDuplicateFeatures(EditUserI user) {
         try {
             for (Iterator iter1 = myComponents.iterator(); iter1.hasNext();) {
                 ComponentBean cb = (ComponentBean) iter1.next();
@@ -1045,7 +1047,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return false;
     }
 
-    public void markDuplicateFeatures(EditUserI user) throws SearchException {
+    /**
+     * Marks a Feature as duplicate if its short label already exists in the
+     * database.
+     * @param user the user to check the existence of the short label.
+     * @throws SearchException error is searching the persistent system.
+     */
+    private void markDuplicateFeatures(EditUserI user) throws SearchException {
         for (Iterator iter1 = myComponents.iterator(); iter1.hasNext();) {
             ComponentBean cb = (ComponentBean) iter1.next();
             for (Iterator iter2 = cb.getFeatures().iterator(); iter2.hasNext();) {
@@ -1056,8 +1064,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
             }
         }
     }
-
-    // Helper methods
 
     private void makeProteinBeans(Collection components) {
         myComponents.clear();
