@@ -58,13 +58,11 @@ import org.apache.ojb.broker.PersistenceBrokerException;
 import org.apache.ojb.broker.PersistenceBrokerSQLException;
 import org.apache.ojb.broker.PersistenceBrokerFactory;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
-import org.apache.ojb.broker.query.QueryByExample;
 import org.apache.ojb.broker.query.Query;
 
-import org.apache.ojb.broker.singlevm.PersistenceBrokerImpl;
+import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.util.logging.*;
 import org.apache.ojb.broker.util.sequence.SequenceManager;
-import org.apache.ojb.broker.util.sequence.SequenceEntry;
 import org.apache.ojb.broker.util.sequence.SequenceConfiguration;
 import org.apache.ojb.broker.util.configuration.impl.OjbConfiguration;
 import org.apache.ojb.broker.util.configuration.ConfigurationException;
@@ -90,7 +88,7 @@ public class PostgresSequenceManager implements SequenceManager {
      /**
      * reference to the PersistenceBroker
      */
-    protected PersistenceBrokerImpl broker;
+    protected PersistenceBroker broker;
 
     /**
      * singleton instance of the SequenceManager
@@ -113,7 +111,7 @@ public class PostgresSequenceManager implements SequenceManager {
      * Public constructor
      *
      */
-    public PostgresSequenceManager(PersistenceBrokerImpl broker)
+    public PostgresSequenceManager(PersistenceBroker broker)
             throws ConfigurationException {
         this.broker = broker;
 

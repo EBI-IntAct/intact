@@ -21,7 +21,7 @@ import uk.ac.ebi.intact.model.Constants;
  *
  */
 
-public class ObjectBridgeDAOSource implements DAOSource {
+public class ObjectBridgeDAOSource implements DAOSource, Serializable {
 
 
     //holds the filename containing the OR mapping data
@@ -71,7 +71,7 @@ public class ObjectBridgeDAOSource implements DAOSource {
         }
         try {
 
-            broker = PersistenceBrokerFactory.createPersistenceBroker(repositoryFile);
+            broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile));
         }
         catch(Exception e) {
 

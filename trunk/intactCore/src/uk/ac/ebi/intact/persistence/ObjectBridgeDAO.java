@@ -9,15 +9,25 @@ package uk.ac.ebi.intact.persistence;
 import java.util.*;
 import java.lang.reflect.*;
 import java.beans.PropertyDescriptor;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.*;
 
 import org.apache.ojb.broker.*;
+import org.apache.ojb.broker.singlevm.*;
 import org.apache.ojb.broker.util.logging.*;
 import org.apache.ojb.broker.accesslayer.*;
 import org.apache.ojb.broker.query.*;
 import org.apache.ojb.broker.util.*;
+import org.apache.ojb.broker.util.configuration.impl.*;
+import org.apache.ojb.broker.util.configuration.*;
 import org.apache.ojb.broker.metadata.*;
+
+//ODMG
+import org.odmg.*;
+//import org.apache.ojb.odmg.locking.*;
+//import org.apache.ojb.odmg.collections.*;
+//import org.apache.ojb.odmg.oql.*;
+import org.apache.ojb.odmg.*;
 
 import uk.ac.ebi.intact.*;
 import uk.ac.ebi.intact.util.Key;
@@ -31,13 +41,14 @@ import uk.ac.ebi.intact.util.Key;
  *
  */
 
-public class ObjectBridgeDAO implements DAO {
+public class ObjectBridgeDAO implements DAO, Serializable {
 
 
     /**
      *  holds the instance of the Database (ie a connection)
+     * NB this is not serializable!!
      */
-    private PersistenceBroker broker;
+    private transient PersistenceBroker broker;
 
     /**
      * A log utility, used if required
@@ -60,10 +71,30 @@ public class ObjectBridgeDAO implements DAO {
      */
     private HashSet cachedClasses = new HashSet();
 
+    /**
+     * ODMG factory instance used to get DB instances
+     * NB this is not serializable!!
+     */
+    private transient Implementation odmg;
+
+    /**
+     * an ODMG DB instance
+     * NB this is not serializable!!
+     */
+    private transient Database db;
+
+    /**
+     * ODMG transaction - not Serializable!!
+     */
+    private transient Transaction tx;
+
+    private String repositoryFile;
+
 
     public ObjectBridgeDAO(PersistenceBroker broker) {
 
         this.broker = broker;
+        repositoryFile = broker.getDescriptorRepository().getPBkey().getRepositoryFile();
 
         try {
 
@@ -72,6 +103,21 @@ public class ObjectBridgeDAO implements DAO {
         catch(ClassNotFoundException c) {
 
             //try and set up a simple logger instead here....
+        }
+
+        //now also set up some ODMG stuff for operations needing
+        //transaction control and locking (eg write/update)
+        odmg = OJB.getInstance();
+        db = odmg.newDatabase();
+
+        try {
+
+            db.open("config/repository.xml", Database.OPEN_READ_WRITE);
+
+        }
+        catch(ODMGException e) {
+
+            logger.error("failed to open database!!", e);
         }
 
     }
@@ -91,6 +137,56 @@ public class ObjectBridgeDAO implements DAO {
         debug = false;
     }
 
+
+    /**
+     * tries to restore a connection if it has been lost due to
+     * serialization (PBs and ODMG DB/TX objects are not serializable)
+     *
+     */
+    private void checkForOpenStore() {
+
+        if((broker == null) & (db == null) & (odmg == null)) {
+
+            //the DAO has been serialized and the connections need to be
+            //restored.
+            //NB does this mean we lose transactions?....
+            try {
+
+                this.open();
+
+                //get the current transaction back as it couldn't be serialised..
+                tx = odmg.currentTransaction();
+
+            }
+            catch(Exception e) {
+                logger.error("unable to reconnect to store after serialization", e);
+            }
+            //return true;
+        }
+        //return false;
+    }
+
+    /**
+     * validates a username and password against the datastore.
+     *
+     * @return boolean true if user credentials are valid, false if not or if a null username is supplied.
+     */
+    public boolean isUserValid(String userName, String password) {
+
+        //NB simple validation for now, probably to be enhanced later -
+        //just validate against user details in OJB repository.xml..
+        if (userName == null) return false;
+
+        String knownUser = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection().getUserName();
+        String knownPassword = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection().getPassWord();
+        if(userName.equals(knownUser)) {
+            //check password - could be null..
+            if(((password == null) & (knownPassword == null)) ||
+               (password.equals(knownPassword))) return true;
+        }
+        return false;
+    }
+
     /**
      *   Used to begin a transaction.
      *
@@ -100,16 +196,13 @@ public class ObjectBridgeDAO implements DAO {
     public void begin() throws TransactionException {
 
         try {
+            //ODMG transaction...
+            tx = odmg.newTransaction();
+            tx.begin();
 
-            broker.beginTransaction();
+            //broker.beginTransaction();
         }
-        catch(TransactionAbortedException ae) {
-
-            //transaction already open - do something
-            String msg = "failed begin: transaction has been aborted";
-            throw new TransactionException(msg, ae);
-        }
-        catch(TransactionInProgressException pe) {
+        catch(org.odmg.TransactionInProgressException pe) {
 
             //transaction already open - do something
             String msg = "failed begin: cannot begin a transaction as one is already open";
@@ -127,8 +220,44 @@ public class ObjectBridgeDAO implements DAO {
     public void close() throws DataSourceException {
 
         //this releases the broker instance - assumes doing this also
-        //releases the DB connection....
-        PersistenceBrokerFactory.releaseInstance(broker);
+        //releases the DB connection....(may need changing for OJB 0.9.7)
+        //PersistenceBrokerFactory.releaseInstance(broker);
+        checkForOpenStore();
+        try {
+            broker.close();
+
+            //clean up the ODMG stuff too
+            db.close();
+        }
+        catch(Exception e) {
+            throw new DataSourceException("failed to close datasource!", e);
+        }
+
+    }
+
+    /**
+     *   opens a DAO (connection). Note that connections are opened also via
+     * the DAO constructor method, so this method should not be called unless
+     * a previous call to close() has been made.
+     *
+     * @exception DataSourceException - thrown if the DAO cannot be closed (details in specific errors)
+     *
+     */
+    public void open() throws DataSourceException {
+
+        try {
+
+            odmg = OJB.getInstance();
+            db = odmg.newDatabase();
+            db.open("config/repository.xml", Database.OPEN_READ_WRITE);
+            broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile));
+
+        }
+        catch(ODMGException e) {
+
+            throw new DataSourceException("failed to open database!!", e);
+        }
+
 
     }
 
@@ -142,15 +271,28 @@ public class ObjectBridgeDAO implements DAO {
 
         try {
 
-            broker.commitTransaction();
+            //ODMG transaction...
+            if(tx != null) {
+                tx.commit();
+
+                //reset the TX reference to avoid confusion
+                tx = null;
+            }
+            else {
+
+                //error - trying to close a non-existent TX
+                throw new TransactionException("error during commit - no transaction exists!");
+            }
+
+            //broker.commitTransaction();
         }
-        catch(TransactionAbortedException tae) {
+        catch(org.odmg.TransactionAbortedException tae) {
 
             //couldn't commit for some reason - do something
             String msg = "transaction commit failed";
             throw new TransactionException(msg, tae);
         }
-        catch(TransactionNotInProgressException tne) {
+        catch(org.odmg.TransactionNotInProgressException tne) {
 
             //method called outside a transaction - do something
             String msg = "transaction commit failed";
@@ -170,16 +312,159 @@ public class ObjectBridgeDAO implements DAO {
      */
     public void create(Object obj) throws CreateException {
 
+        //do this with ODMG....
+        checkForOpenStore();
+        Transaction tx1 = null;
+        boolean localTx = false;
         try {
 
-            broker.store(obj);
-        }
-        catch(PersistenceBrokerException die) {
+            if(isActive()) {
 
+                //create called as part of another TX, so lock it
+                //note that the lock for write flag tells ODMG to write upon commit
+                //NB ODMG associates the current thread with a TX, so we
+                //should join the TX just in case the thread has changed since
+                //the client begin() was called...
+                tx.join();
+                tx.lock(obj, tx.WRITE);
+            }
+            else {
+
+                //run a local transaction
+                tx1 = odmg.newTransaction();
+                localTx = true;
+                tx1.begin();
+                tx1.lock(obj, tx1.WRITE);
+            }
+            if(localTx) {
+
+                //local transaction, so commit here instead...
+                logger.error("committing local TX");
+                tx1.commit();
+            }
+        }
+        catch(Exception e) {
+
+            if (localTx) {
+
+                //local transaction failed - should rollback here..
+                logger.error("aborting local TX");
+                logger.error(e);
+                tx1.abort();
+            }
+            //Question: if the op fails, should the client TX abort too?...
             String msg = "create failed for object of type " + obj.getClass().getName();
-            throw new CreateException(msg, die);
+            throw new CreateException(msg, e);
         }
 
+    }
+
+    /**
+     * <p>updates a given object which was originally obtained in
+     * another transaction. This allows, for example, objects to be read
+     * from persistent store (or created) in one transaction, modified elsewhere (eg via
+     * a user interface object) and then have the changes reflected in persistent
+     * store within the context of a <bold>different</bold> transaction. This therefore
+     * obviates the need to retrieve the object again in order to perform an update.
+     * </p>
+     *
+     * @param obj - the object to be updated
+     *
+     * @exception CreateException  - thrown if the object could not me modified,
+     * eg called outside a transaction scope
+     *
+     */
+    public void update(Object obj) throws CreateException {
+
+        //use ODMG...
+
+        //old PB code
+        //ObjectModificationDefaultImpl mod = new ObjectModificationDefaultImpl();
+        //mod.setNeedsUpdate(true);
+        checkForOpenStore();
+        Transaction tx1 = null;
+        boolean localTx = false;
+        Object dummy = null;
+
+         try {
+
+             //NB To do a proper (intelligent) update:
+             //1) get the "old" obj data from the DB
+             //2) lock it for write in an ODMG transaction
+             //3) copy the new data into it (harder than it sounds!!)
+             //4) commit
+             //
+             dummy = broker.getObjectByIdentity(new Identity(obj));
+             if(dummy == null) {
+                 throw new CreateException("error - unable to update " + obj.getClass().getName() + " : no object exists in store!!");
+             }
+
+             //check TX details and lock object into appropriate TX
+             if(isActive()) {
+
+                 //NB ODMG associates the current thread with a TX, so we
+                //should join the TX just in case the thread has changed since
+                //the client begin() was called...
+                tx.join();
+                tx.lock(dummy, tx.WRITE);
+             }
+             else {
+
+                 //start a local TX
+                 tx1 = odmg.newTransaction();
+                 tx1.begin();
+                 tx1.lock(dummy, tx1.WRITE);
+                 localTx = true;
+             }
+
+             //do some reflection/security stuff so we can set the fields to new values..
+             Field[] fields = dummy.getClass().getDeclaredFields();
+
+             try {
+                 //set the permissions on the fields - if this ever fails (eg if a
+                 //SecurityManager is set), need to
+                 //go via the AccessController...
+                 AccessibleObject.setAccessible(fields, true);
+             }
+             catch(SecurityException se) {
+                 logger.error("failure during update - field access denied!!", se);
+             }
+
+             //now update them..
+             Object value = null;
+             for(int i=0; i < fields.length; i++) {
+
+                 try {
+                     value = fields[i].get(obj);
+                     fields[i].set(dummy, value);
+                 }
+                 catch(Exception e) {
+                     logger.error("failed to update field " + fields[i].getName(), e);
+                 }
+             }
+
+             if(localTx) {
+
+                //local transaction, so commit here instead...
+                logger.error("committing local TX");
+                tx1.commit();
+             }
+
+        }
+        catch(Exception e) {
+
+             if (localTx) {
+
+                //local transaction failed - should rollback here..
+                logger.error("aborting local TX");
+                logger.error(e);
+                tx1.abort();
+             }
+            //client should be responsible for aborting their own TX...
+            //problem doing DB begin/commit, or updating object - do something
+            String msg = "object update failed: problem saving object of type " + obj.getClass().getName();
+            throw new CreateException(msg, e);
+        }
     }
 
 
@@ -191,56 +476,65 @@ public class ObjectBridgeDAO implements DAO {
      */
     public boolean isActive() {
 
-        try {
-
-            return broker.isInTransaction();
+        checkForOpenStore();
+        if(tx != null) {
+            return tx.isOpen();
         }
-        catch(PersistenceBrokerException pbe) {
-
-            //this is never actually thrown in the body of the broker method,
-            //but is declared to be!!
+        else{
             return false;
         }
     }
 
     /**
      *   checks to see if object saving automatically is turned on
-     *  ### This is not supported by the ObjectBridge broker API ###
-     * - assume it does not turn JDBC autocommit off (needs to be checked..)
      *
      * @return boolean - true if auto saving is on, false otherwise
      */
     public boolean isAutoSave() {
 
-        return true;
+        checkForOpenStore();
+        Configuration con = OjbConfigurator.getInstance().getConfigurationFor(null);
+        OjbConfiguration ojbCon = (OjbConfiguration)con;
+        if(ojbCon.useAutoCommit()==1) return true;
+        return false;
     }
 
     /**
      *   sets whether or not auto saving is turned on
-     *  ### Not supported by ObjectBridge broker API ###
      *
      * @param val - true to turn on, false for off
      */
     public void setAutoSave(boolean val) {
 
-        //do nothing
+        checkForOpenStore();
+            try {
+                broker.getConnectionManager().getConnection().setAutoCommit(val);
+            }
+            catch(Exception se) {
+
+                logger.error("unable to reset autocommit value - reset failed", se);
+            }
     }
 
 
     /**
-     *   checks to see if a transaction is closed
-     *   ### not supported by ObjectBridge broker API ###
+     *   checks to see if a transaction is closed.
      *
      * @return boolean - true if closed (default), false otherwise
      */
     public boolean isClosed() {
 
-        return true;
+        checkForOpenStore();
+        if(tx != null) {
+            return tx.isOpen();
+        }
+        else {
+            return false;
+        }
     }
 
     /**
      *   checks to determine if a given object is persistent or not
-     *   ### not supported by ObjectBridge broker API ###
      *
      * @param obj - the object to be checked
      *
@@ -248,7 +542,12 @@ public class ObjectBridgeDAO implements DAO {
      */
     public boolean isPersistent(Object obj) {
 
+        checkForOpenStore();
+        Object stored = null;
+        stored = broker.getObjectByIdentity(new Identity(obj));
+        if(stored == null) return false;
         return true;
+
     }
 
     /**
@@ -257,18 +556,52 @@ public class ObjectBridgeDAO implements DAO {
      * @param obj - the object to be removed
      *
      * @exception TransactionException - thrown usually if the operation is called outside a transaction
-     * @exception DataSourceException - used to flag other errors in the persistence layer
      *
      */
-    public void remove(Object obj) throws TransactionException, DataSourceException {
+    public void remove(Object obj) throws TransactionException {
 
+        //do this through ODMG - removes from the cache too...
+        checkForOpenStore();
+        Transaction tx1 = null;
+        boolean localTx = false;
         try {
 
-            broker.delete(obj);
+            //broker.delete(obj);
+            if(!isActive()) {
 
+                //start local transaction - don't need to lock for write as db.deletePersistent
+                //does that for us
+                tx1 = odmg.newTransaction();
+                tx1.begin();
+                logger.debug("local TX started to delete object " + obj.getClass().getName());
+                localTx = true;
+            }
+
+            //NB for multi-threaded calls, need to make sure that the current thread
+            //is always connected to the client transaction as this is how ODMG works...
+            if(!localTx) tx.join();
+            db.deletePersistent(obj);
+            logger.debug("object " + obj.getClass().getName() + " successfully locked for delete...");
+
+            if(localTx) {
+
+                //commit the local transaction
+                logger.debug("commiting delete on local transaction for object " + obj.getClass().getName());
+                tx1.commit();
+                logger.debug("local TX committed successfully");
+            }
         }
-        catch(PersistenceBrokerException pbe) {
+        catch(Exception pbe) {
 
+            if(localTx) {
+
+                //should rollback the local TX
+                logger.debug("error - local TX aborting...");
+                logger.debug("failed due to " + pbe);
+                tx1.abort();
+            }
+
+            //should we rollback the client TX also??
             String msg = "remove for object type " + obj.getClass().getName() + " failed: see OBJ exception details";
             throw new TransactionException(msg, pbe);
         }
@@ -282,15 +615,26 @@ public class ObjectBridgeDAO implements DAO {
      */
     public void rollback() throws TransactionException {
 
+        checkForOpenStore();
         try {
 
-            broker.abortTransaction();
+            //broker.abortTransaction();
+            if(tx != null) {
+
+                //make sure the current thread is associated with the TX first, to be safe
+                tx.join();
+                tx.abort();
+            }
+            else {
+                //error - no TX exists...
+                throw new TransactionException("error - cannto perform rollback: no transaction exists!");
+            }
         }
-        catch(PersistenceBrokerException pbe) {
+        catch(org.odmg.TransactionNotInProgressException e) {
 
 
-            String msg = "rollback failed: see OBJ exception details";
-            throw new TransactionException(msg, pbe);
+            String msg = "rollback failed: see OJB exception details";
+            throw new TransactionException(msg, e);
         }
 
     }
@@ -307,6 +651,8 @@ public class ObjectBridgeDAO implements DAO {
     public void makePersistent(Collection objs) throws CreateException, TransactionException {
 
         //local check flag for a localised transaction
+        //do this in ODMG....
+        checkForOpenStore();
         boolean startedHere = false;
 
         if(objs != null) {
@@ -314,25 +660,19 @@ public class ObjectBridgeDAO implements DAO {
             Iterator it = objs.iterator();
 
             try {
-
                 //check for a current transaction - if not, start one
                 if (!isActive()) {
 
                     begin();
                     startedHere = true;
-
                 }
-
                 while(it.hasNext()) {
 
                     create(it.next());
-
                 }
-
                 if(startedHere) {
 
                    commit();
-
                 }
             }
             catch(TransactionException te) {
@@ -373,9 +713,9 @@ public class ObjectBridgeDAO implements DAO {
      * @exception DataSourceException -  thrown for other problems usually related to the persistence engine
      *
      */
-    public Collection find(String type, String col, String val) throws SearchException, TransactionException, DataSourceException {
+    public Collection find(String type, String col, String val) throws SearchException {
 
-
+        checkForOpenStore();
         Query query = null;
         Collection results = new ArrayList();
         Class searchClass = null;
@@ -416,7 +756,7 @@ public class ObjectBridgeDAO implements DAO {
 
                 logger.info("object already cached but not a PK search...");
                 Identity id = (Identity)cache.get(searchClass + "-" + col);
-                query = new QueryByExample(id);
+                query = new QueryByIdentity(id);
                 logger.info("query using object ID created OK");
 
             }
@@ -485,12 +825,13 @@ public class ObjectBridgeDAO implements DAO {
      *   @see uk.ac.ebi.intact.persistence.DAO
      * Note: the local cache of non-PK fields is not currently used in this method (to do)
      */
-    public Collection find(Object obj) throws SearchException, TransactionException, DataSourceException {
+    public Collection find(Object obj) throws SearchException {
 
         //IMPORTANT!! OJB queryByExample only works on IDs again, ie it is not a "real"
         //search by object. If the example has no ID set it returns all for that class.
         //see private method buildQueryByExample for an attempt to do it properly.....
 
+        checkForOpenStore();
         Query query = null;
             Collection results = new ArrayList();
 
@@ -537,38 +878,7 @@ public class ObjectBridgeDAO implements DAO {
 
 
 
-    /**
-     * <p>updates a given object which was originally obtained in
-     * another transaction. This allows, for example, objects to be read
-     * from persistent store in one transaction, modified elsewhere (eg via
-     * a user interface object) and then have the changes reflected in persistent
-     * store within the context of a <bold>different</bold> transaction. This therefore
-     * obviates the need to retrieve the object again in order to perform an update.
-     * </p>
-     *
-     * @param obj - the object to be updated
-     *
-     * @exception CreateException  - thrown if the object could not me modified,
-     * eg called outside a transaction scope
-     *
-     */
-    public void update(Object obj) throws CreateException {
 
-        ObjectModificationDefaultImpl mod = new ObjectModificationDefaultImpl();
-        mod.setNeedsUpdate(true);
-        try {
-
-            broker.store(obj, mod);
-
-        }
-        catch(PersistenceBrokerException pe) {
-            //problem doing DB begin/commit, or updating object - do something
-            String msg = "object update failed: problem saving object of type " + obj.getClass().getName();
-            throw new CreateException(msg, pe);
-        }
-
-
-    }
 
 
 //-------------------------- private helper methods ----------------------------------------
@@ -621,7 +931,7 @@ public class ObjectBridgeDAO implements DAO {
         Criteria criteria = new Criteria();
 
         //get some info on the parameter object's OJB details....
-		ClassDescriptor cld = DescriptorRepository.getInstance().getDescriptorFor(obj.getClass());
+		ClassDescriptor cld = DescriptorRepository.getDefaultInstance().getDescriptorFor(obj.getClass());
 		FieldDescriptor[] fds = cld.getFieldDescriptions();
         String objClassName = obj.getClass().getName();
 
@@ -779,7 +1089,7 @@ public class ObjectBridgeDAO implements DAO {
                     logger.debug("class of collection elements is " + element.getClass().getName());
 
                     //get basic info on the element and its relevant FK
-                    ClassDescriptor elemDesc = DescriptorRepository.getInstance().getDescriptorFor(element.getClass());
+                    ClassDescriptor elemDesc = DescriptorRepository.getDefaultInstance().getDescriptorFor(element.getClass());
                     FieldDescriptor elemFieldDesc = elemDesc.getFieldDescriptorByIndex(inverseFkId);
                     PersistentField persistentField = elemFieldDesc.getPersistentField();
 
@@ -891,7 +1201,7 @@ public class ObjectBridgeDAO implements DAO {
 
                 //only need one example element as they would all relate to the same target PK..
                 Object elem = it.next();
-                ClassDescriptor elemDesc = DescriptorRepository.getInstance().getDescriptorFor(elem.getClass());
+                ClassDescriptor elemDesc = DescriptorRepository.getDefaultInstance().getDescriptorFor(elem.getClass());
                 FieldDescriptor[] elemFieldDesc = elemDesc.getPkFields();
 
                 //assume only one PK for the collection element (not unreasonable!!...)
@@ -965,7 +1275,7 @@ public class ObjectBridgeDAO implements DAO {
                 //need then to work with the ClassDescriptor of the reference supplied
                 //in the example obj....
 
-                ClassDescriptor valueCd = DescriptorRepository.getInstance().getDescriptorFor(value.getClass());
+                ClassDescriptor valueCd = DescriptorRepository.getDefaultInstance().getDescriptorFor(value.getClass());
                 Object[] keys = valueCd.getKeyValues(value);
                 if((keys.length > 1) || (keys.length == 0)){
 
@@ -988,7 +1298,7 @@ public class ObjectBridgeDAO implements DAO {
                         int fkId = ((Integer)fkIds.firstElement()).intValue();
 
                         //now find the field in the target with this ID and compare to the PK
-                        ClassDescriptor cld = DescriptorRepository.getInstance().getDescriptorFor(obj.getClass());
+                        ClassDescriptor cld = DescriptorRepository.getDefaultInstance().getDescriptorFor(obj.getClass());
                         FieldDescriptor fkFieldDesc = cld.getFieldDescriptorByIndex(fkId);
                         PersistentField fkField = fkFieldDesc.getPersistentField();
                         criteria.addEqualTo(fkField.getName(), keys[0]);

@@ -31,6 +31,13 @@ public interface DAO {
 
 
     /**
+     * validates a username and password against the datastore.
+     *
+     * @return boolean true if user credentials are valid, false if not or if a null username is supplied.
+     */
+    public boolean isUserValid(String userName, String password);
+
+    /**
      *   Used to begin a transaction.
      *
      * @exception TransactionException - can be thrown if a transaction is already in progress
@@ -45,6 +52,14 @@ public interface DAO {
      *
      */
     public void close() throws DataSourceException;
+
+    /**
+     *   opens a DAO (connection).
+     *
+     * @exception DataSourceException - thrown if the DAO cannot be closed (details in specific errors)
+     *
+     */
+    public void open() throws DataSourceException;
 
     /**
      *   Commits (finishes) a transaction. Usual meaning.
@@ -107,10 +122,9 @@ public interface DAO {
      * @param obj - the object to be removed
      *
      * @exception TransactionException - thrown usually if the operation is called outside a transaction
-     * @exception DataSourceException - used to flag other errors in the persistence layer
      *
      */
-    public void remove(Object obj) throws TransactionException, DataSourceException;
+    public void remove(Object obj) throws TransactionException;
 
     /**
      *  rollback a transaction. Usual meaning...
@@ -152,7 +166,7 @@ public interface DAO {
      * @exception DataSourceException - thron if there were other problems with the persistence engine used
      *
      */
-     public Collection find(String type, String col, String val) throws SearchException, TransactionException, DataSourceException;
+     public Collection find(String type, String col, String val) throws SearchException;
 
     /**
      * <p>This method performs an object-based search. Specifically it provides a way to
@@ -179,7 +193,7 @@ public interface DAO {
      * @exception DataSourceException - thron if there were other problems with the persistence engine used
      *
      */
-     public Collection find(Object obj) throws SearchException, TransactionException, DataSourceException;
+     public Collection find(Object obj) throws SearchException;
 
 
 
