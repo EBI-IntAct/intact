@@ -1,14 +1,13 @@
 <!--
-  - Author: Sugath Mudali (smudali@ebi.ac.uk)
-  - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
   - All rights reserved. Please see the file LICENSE in the root directory of
   - this distribution.
-  -->
-
-<%--
-  - Displays an error message stored in the struts framework.
-  --%>
+  -
+  - Displays an error message stored in the struts framework
+  -
+  - @author Samuel Kerrien (skerrien@ebi.ac.uk)
+  - @version $Id$
+-->
 
 <%@ page language="java" %>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld"  prefix="html" %>
