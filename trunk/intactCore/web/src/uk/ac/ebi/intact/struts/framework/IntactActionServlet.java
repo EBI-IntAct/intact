@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.struts.framework.exceptions.MissingIntactTypesException;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.model.Constants;
+import uk.ac.ebi.intact.business.IntactException;
 
 import java.util.ResourceBundle;
 import java.util.Map;
@@ -52,6 +53,12 @@ public class IntactActionServlet extends ActionServlet {
             super.log("failed to obtain a data source: " + de.getNestedMessage());
             throw new ServletException();
         }
+        catch (IntactException ie) {
+            // Unable to construct an Intact helper.
+            super.log("failed to construct an IntactHelper", ie);
+            // Severe error as we can't continue further.
+            throw new ServletException();
+        }
 
         // The Intact Types file.
         String types = ctx.getInitParameter(WebIntactConstants.INTACT_TYPES_FILE);
@@ -60,7 +67,7 @@ public class IntactActionServlet extends ActionServlet {
             service.setIntactTypes(types);
         }
         catch (MissingIntactTypesException mite) {
-            super.log("error with loading intact types resource file");
+            super.log("error with loading intact types resource file", mite);
             throw new ServletException();
         }
         catch (ClassNotFoundException cnfe) {
@@ -71,9 +78,7 @@ public class IntactActionServlet extends ActionServlet {
             super.log("failed to get reflection data on object", ie);
             // Carry on; may cause problems later on.
         }
-
         // Store the service into the application scope.
-        super.getServletContext().setAttribute(
-            WebIntactConstants.SERVICE_INTERFACE, service);
+        ctx.setAttribute(WebIntactConstants.SERVICE_INTERFACE, service);
     }
 }
