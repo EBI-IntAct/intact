@@ -1028,7 +1028,7 @@
       <xml node="attribute"/>
     </field>
 
-    <field name="created" type="timestamp" >
+    <field name="created" type    ="timestamp" >
        <xml node="attribute"/>
     </field>
 
@@ -1128,7 +1128,7 @@
     </field>-->
 
     <field name="shortLabel" type="string">
-       <xml node="attribute"/>
+       <xml name="shortLabel" node="attribute"/>
     </field>
 
     <field name="fullName" type="string">

@@ -22,6 +22,7 @@ import org.apache.xml.serialize.*;
 //OJB
 import org.apache.ojb.broker.*;
 import org.apache.ojb.broker.metadata.CollectionDescriptor;
+import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.util.logging.*;
 import org.apache.ojb.broker.accesslayer.*;
 import org.apache.ojb.broker.query.*;
@@ -91,7 +92,7 @@ public class XmlLoader
 
 
     /**
-     * 1,2,1,2, it's just a test
+     *
      */
     public XmlLoader() {}
 
@@ -113,6 +114,7 @@ public class XmlLoader
 
         // Marshall the objects from file
 
+        // receive all objects contain in the XML file
         ObjectSet objectSet;
         try {
             objectSet = (ObjectSet) unmarshaller.unmarshal(reader);
@@ -128,7 +130,11 @@ public class XmlLoader
             while (iterator.hasNext())
             {
                 Object o = iterator.next();
+                // check if all BasicObject (or an Institution)
+                // pointed by the attributes of the object refers to
+                // objects that are persistent in the DB, or create zombies
                 checkForeignKey(o);
+                // store the object in the DB
                 updateDb(o);
             }
             broker.commitTransaction();
@@ -152,7 +158,6 @@ public class XmlLoader
             Criteria criteria = new Criteria();
             criteria.addLike("ac",((IntactNode)o).getAc());
             Query query =	QueryFactory.newQuery(IntactNode.class,criteria);
-
             //select db entry about itselfs
             IntactNode intactNode = (IntactNode) broker.getObjectByQuery(query);
             if (intactNode != null) {
@@ -180,15 +185,25 @@ public class XmlLoader
      */
     private void checkForeignKey(Object o) throws Exception
     {
+        // get all methods from the class and the classes it inherits
         java.lang.reflect.Method getters1[] = o.getClass().getDeclaredMethods();
         java.lang.reflect.Method getters2[] = o.getClass().getMethods();
 
+        // put the getters in a List
         ArrayList getters = new ArrayList();
-        for (int k = 0; k < java.lang.reflect.Array.getLength(getters1); k++) {
-            getters.add( getters1[k] );
+        for (int k = 0; k < java.lang.reflect.Array.getLength(getters1); k++)
+        {
+            if  (getters1[k].getName().startsWith("get"))
+            {
+                getters.add( getters1[k] );
+            }
         }
-        for (int k = 0; k < java.lang.reflect.Array.getLength(getters2); k++) {
-            getters.add( getters2[k] );
+        for (int k = 0; k < java.lang.reflect.Array.getLength(getters2); k++)
+        {
+            if  (getters2[k].getName().startsWith("get"))
+            {
+                getters.add( getters2[k] );
+            }
         }
 
         for (int i=0; i < getters.size(); i++)
@@ -203,7 +218,7 @@ public class XmlLoader
             // fields we are interested in are of type BasicObject or Institution
             // for a field of type BasicObject, we look at the associated field of type String
             // for an Institution we look at the "ownerAc" field
-            if ( m.getName().startsWith("get") && (BasicObject.class).isAssignableFrom(m.getReturnType()))
+            if ((BasicObject.class).isAssignableFrom(m.getReturnType()))
             {
                 // Does the Ac field exist?
                 try {
@@ -214,7 +229,7 @@ public class XmlLoader
                         checkPersistence( o, m, o.getClass().getMethod( "set" + m.getName().substring(3) , parameters) );
                     }
                 } catch ( NoSuchMethodException nsme) {
-                    System.out.println("setter or getter not found for field: " +  m.getName().substring(3) + "Ac in class " + o.getClass().getName());
+                    System.out.println("[XmlLoader][WARNING] setter or getter not found for field: " +  m.getName().substring(3) + "Ac in class " + o.getClass().getName());
                 }
             } // end for basic objects
             // for Institution
@@ -277,7 +292,7 @@ public class XmlLoader
                     }
 
                 } catch ( NoSuchMethodException nsme) {
-                    System.out.println("setter or getter not found for Collection: " +  m.getName().substring(3) + " in class " + o.getClass().getName());
+                    System.out.println("[XmlLoader][WARNING] setter or getter not found for Collection: " +  m.getName().substring(3) + " in class " + o.getClass().getName());
                 }
             } // end for collection
         }
@@ -289,7 +304,7 @@ public class XmlLoader
      * For m to n relationship, we need to keep all information already described in
      * te local database and that could get lost during the update of an object
      */
-    private void synchronizeMtoNrelation(Object newObject, Field f, Collection newCollection) throws Exception
+    private void synchronizeMtoNrelation(Object newObject, java.lang.reflect.Method getter, Collection newCollection) throws Exception
     {
         // get Object o in local database
         Criteria criteria = new Criteria();
@@ -300,7 +315,7 @@ public class XmlLoader
 
         if (persistentObject != null)
         {
-            Collection persistentCollection = (Collection) f.get(persistentObject);
+            Collection persistentCollection = (Collection) getter.invoke(persistentObject, null);
             Iterator it = persistentCollection.iterator();
             while(it.hasNext())
             {
@@ -314,82 +329,6 @@ public class XmlLoader
     }
 
 
-   /**
-    * For m to n relationship, we need to keep all information already described in
-    * te local database and that could get lost during the update of an object
-    */
-   private void synchronizeMtoNrelation(Object newObject, java.lang.reflect.Method getter, Collection newCollection) throws Exception
-   {
-       // get Object o in local database
-       Criteria criteria = new Criteria();
-       criteria.addLike("ac", ((BasicObject)newObject).getAc());
-       Query q =  new QueryByCriteria(newObject.getClass(), criteria);
-
-       Object persistentObject =broker.getObjectByQuery(q);
-
-       if (persistentObject != null)
-       {
-           Collection persistentCollection = (Collection) getter.invoke(persistentObject, null);
-           Iterator it = persistentCollection.iterator();
-           while(it.hasNext())
-           {
-               Object o = it.next();
-               if(!newCollection.contains(o))
-               {
-                   newCollection.add(o);
-               }
-           }
-       }
-   }
-
-    /**
-     * check if the data entry represented by the object is persistent in the database,
-     * else add a zombie
-     *
-     * this method should not be used as most of fields are private or protected
-     * use  checkPersistence(Object o, java.lang.reflect.Method getter, java.lang.reflect.Method setter) instead
-     */
-    private void checkPersistence(Object o, Field f) throws Exception
-    {
-        Object value = f.get(o);
-
-        String ac = (String)((o.getClass().getMethod("get" + f.getName().toUpperCase().charAt(0) + f.getName().substring(1) + "Ac", null)).invoke(o, null))  ;
-
-        if (ac == null) ac = "";
-
-        Criteria c = new Criteria();
-        c.addLike("ac", ac);
-
-        Collection res =  broker.getCollectionByQuery(new QueryByCriteria(f.getType(), c));
-        if (res.size() == 0)
-        { // the data entry is not persistent
-            // add a zombie
-            Object zombie = f.getType().newInstance();
-            if (ac != null && ac != "")
-            {
-                if (BasicObject.class == (f.getType()).getSuperclass())
-                {
-                    ((BasicObject)zombie).setAc(ac);
-                }
-                else // an Institution
-                {
-                    ((Institution)zombie).setAc(ac);
-                }
-            }
-
-            // the name "Zombie" is given to the new object
-            // it makes easy to identifie zombie objects in the database
-            f.set(o, zombie);
-
-            Class[] parameters = {String.class};
-            Object[] parametersValues = {ac};
-            (o.getClass().getMethod("set" + f.getName().toUpperCase().charAt(0) + f.getName().substring(1) + "Ac", parameters)).invoke(o, parametersValues);
-            broker.store(zombie);
-        }  else {
-            f.set(o, res.toArray()[0]);
-        }
-    }
-
     /**
      * check if the data entry represented by the object is persistent in the database,
      * else add a zombie
@@ -400,51 +339,81 @@ public class XmlLoader
 
         String ac = (String)((o.getClass().getMethod(getter.getName() + "Ac", null)).invoke(o, null))  ;
 
-        if (ac == null) ac = "";
-
         Criteria c = new Criteria();
         c.addLike("ac", ac);
 
         Collection res;
         // check if the entry is persistent in the database
-        try
-        {
+        try {
             res=  broker.getCollectionByQuery(new QueryByCriteria(getter.getReturnType(), c));
-        }
-        catch  (Exception e)
-        {
+        } catch  (Exception e) {
             res = new Vector();
         }
 
         if (res.size() == 0)
         {   // the data entry is not persistent
             // add a zombie
-            Object zombie = getter.getReturnType().newInstance();
-            if (ac != null && ac != "")
-            {
-                if (BasicObject.class == (getter.getReturnType().getSuperclass()))
-                {
-                    ((BasicObject)zombie).setAc(ac);
-                }
-                else // an Institution
-                {
-                    ((Institution)zombie).setAc(ac);
+
+            Object zombie = null;
+            Class type = getter.getReturnType();
+            // take care if the return type is not abstract
+
+            // try to create a new instance of the class type,
+            // if an error is reached, it's an abstract class
+            // then try with one of the subtypes
+            while (zombie == null) {
+                try {
+                    zombie = type.newInstance();
+                } catch (java.lang.InstantiationException ie) {
+                    type = getFirstConcreteSubclass(broker.getClassDescriptor(type).getExtentClasses());
+                    if (type == null) {
+                          System.out.println("[XmlLoader] [ERROR] found an abstract type, but no concrete subclasses for " + getter.getReturnType().getName());
+                          throw new Exception();
+                    }
+//                    System.out.println("[XmlLoader] found an abstract type, create a " + type.getName() + " instead of " + getter.getReturnType().getName());
                 }
             }
 
-            // the name "Zombie" is given to the new object
-            // it makes easy to identifie zombie objects in the database
+            if ((BasicObject.class).isAssignableFrom( getter.getReturnType().getSuperclass()))
+            {
+                ((BasicObject)zombie).setAc(ac);
+            }
+            else // an Institution
+            {
+                ((Institution)zombie).setAc(ac);
+            }
+
             getter.invoke(o, null);
 
             Class[] parameters = {String.class};
             Object[] parametersValues = {ac};
-            (o.getClass().getMethod(getter.getName() + "Ac", parameters)).invoke(o, parametersValues);
+            (o.getClass().getMethod(setter.getName() + "Ac", parameters)).invoke(o, parametersValues);
             broker.store(zombie);
-        }  else {
+        } else {
             Object parameter[] =  {res.toArray()[0]};
             setter.invoke(o,  parameter);
         }
+
     }
+
+   private Class getFirstConcreteSubclass(Vector subclasses) {
+       if (subclasses.size() == 0) return null;
+        Iterator it = subclasses.iterator();
+       while (it.hasNext()) {
+           Class type = (Class)it.next();
+           if (!broker.getClassDescriptor(type).isInterface()) return type;
+       }
+
+       // no concrete class found in the first level of subclasses
+       // try with next level
+       it = subclasses.iterator();
+       Vector subsubclasses = new Vector();
+       while (it.hasNext()) {
+           subsubclasses.addAll(broker.getClassDescriptor((Class)it.next()).getExtentClasses());
+       }
+       return getFirstConcreteSubclass(subsubclasses);
+   }
+
 
 
 
