@@ -19,19 +19,18 @@ import uk.ac.ebi.intact.application.cvedit.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 
 /**
- * This class provides the actions required for the search page
- * for intact. The search criteria are obtained from a Form object
- * and then the search is carried out, via the IntactUser functionality,
- * which provides the business logic.
+ * Creates a result form object and initialize it with data for results.jsp
+ * to display. The struts-config.xml file must have the definition for the
+ * results form bean created in this class.
  *
- * @author Chris Lewington, Sugath Mudali (smudali@ebi.ac.uk)
+ * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
 
 public class ResultPreAction extends CvAbstractAction {
 
     /**
-     * A single element array for toArray() method.
+     * A single element array to be used by toArray() method.
      */
     private static final ResultBean[] RESULT_BEAN_ARRAY = new ResultBean[0];
 
@@ -51,11 +50,8 @@ public class ResultPreAction extends CvAbstractAction {
    public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        // Session to access various session objects.
-        HttpSession session = super.getSession(request);
-
         // Handler to the Intact User.
-        IntactUserIF user = super.getIntactUser(session);
+        IntactUserIF user = super.getIntactUser(request);
 
         ModuleConfig appConfig = (ModuleConfig) request.getAttribute(Globals.MODULE_KEY);
         FormBeanConfig config = appConfig.findFormBeanConfig("resultForm");
