@@ -15,7 +15,7 @@ import java.util.Properties;
  *     String login = props.getProperty ("database.login");
  *     // ...
  *   } else {
- *     System.err.println ("Impossible d'ouvrir le fichier properties.");
+ *     System.err.println ("Unable to open the properties file.");
  *   }
  *
  * 
