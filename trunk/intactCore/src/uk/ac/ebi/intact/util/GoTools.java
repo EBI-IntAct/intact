@@ -292,7 +292,7 @@ public class GoTools {
      */
     public static void writeGoDefinitions(Class aTargetClass,
                                           IntactHelper helper,
-					  String goidDatabase,
+                                          String goidDatabase,
                                           String targetFile)
             throws IntactException, IOException {
 
@@ -352,50 +352,56 @@ public class GoTools {
     /**
      * Return a single CvObject as a GO flatfile formatted string
      */
-    public static String toGoString(CvObject current, String goidDatabase) {
+    public static String toGoString( CvObject current, String goidDatabase ) {
         StringBuffer buf = new StringBuffer();
 
-	// Write shortlabel  
-	buf.append("shortlabel: ");
-	buf.append(current.getShortLabel());
-	buf.append("\n");
+        // Write shortlabel
+        buf.append( "shortlabel: " );
+        buf.append( current.getShortLabel() );
+        buf.append( "\n" );
 	
         // Write GO term
-        buf.append("term: ");
-        buf.append(current.getFullName());
-        buf.append("\n");
+        buf.append( "term: " );
+        buf.append( current.getFullName() );
+        buf.append( "\n" );
 
-	// write goid
-	String goid = getGoid(current, goidDatabase);
+        // write goid
+        String goid = getGoid( current, goidDatabase );
 
-	if (null != goid) {
-	    buf.append("goid: ");
-	    buf.append(goid);
-	    buf.append("\n");
+        if( null != goid ) {
+            buf.append( "goid: " );
+            buf.append( goid );
+            buf.append( "\n" );
         }
 	
         // Write all comments in GO format
+        System.out.println( current );
+
         Collection annotation = current.getAnnotations();
-        for (Iterator iterator = annotation.iterator(); iterator.hasNext();) {
+        System.out.println( annotation.size() + " annotations" );
+
+        for ( Iterator iterator = annotation.iterator(); iterator.hasNext(); ) {
             Annotation a = (Annotation) iterator.next();
 
-            buf.append((a.getCvTopic().getShortLabel()).toLowerCase() + ": ");
-            buf.append(a.getAnnotationText());
-            buf.append("\n");
+            System.out.println( "\t" + a );
+
+            buf.append( ( a.getCvTopic().getShortLabel() ).toLowerCase() + ": " );
+            buf.append( a.getAnnotationText() );
+            buf.append( "\n" );
         }
 
         // Write definition references
         Collection xref = current.getXrefs();
-        for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
+        for ( Iterator iterator = xref.iterator(); iterator.hasNext(); ) {
             Xref x = (Xref) iterator.next();
-            if (x.getCvDatabase().getShortLabel().equals("pubmed")) {
-                buf.append("definition_reference: PMID:");
-                buf.append(x.getPrimaryId());
-                buf.append("\n");
+            if( x.getCvDatabase().getShortLabel().equals( "pubmed" ) ) {
+                buf.append( "definition_reference: PMID:" );
+                buf.append( x.getPrimaryId() );
+                buf.append( "\n" );
             }
         }
 
-        buf.append("\n");
+        buf.append( "\n" );
 
         return buf.toString();
     }
@@ -504,6 +510,10 @@ public class GoTools {
                 System.out.println ( "Invalid argument " + args[0] + "\n" + usage );
                 System.exit( 1 );
             }
+
+            if( helper != null ) {
+                helper.closeStore();
+            }
         }
         catch (IntactException e) {
             System.err.println(e.getMessage());
@@ -539,45 +549,45 @@ public class GoTools {
 
     }
 
-    /** 
-	Select an appropriate CvObject for update if it exists.
-	Criterion of object identity:
-	if goidDatabase is '-', try to match by shortlabel
-	otherwise try to match by goid and goidDatabase	
-    */
-    public static CvObject selectCvObject(IntactHelper helper, 
-					  String goidDatabase,
-					  String goid,
-					  String shortLabel,
-					  Class targetClass) 
-	throws IntactException {
-	
-	if (goidDatabase.equals("-")){
-	    if(null != shortLabel){
-		return (CvObject) helper.getObjectByLabel(targetClass, shortLabel);
-	    }
-	} else {
-	    if ((null != goidDatabase) 
-		&&
-		(null != goid)){
-		CvObject current = (CvObject) helper.getObjectByXref(targetClass, goid);
-		if (null != current){
-		    Collection xref = current.getXrefs();
-		    for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
-			Xref x = (Xref) iterator.next();
-			if (x.getCvDatabase().getShortLabel().equals(goidDatabase)
-			    &&
-			    x.getPrimaryId().equals(goid)) {
-			    return current;
-			}			    
-		    }
-		}
-	    }
-	    // We have not found any match by goid. Try shortlabel.
-	    return (CvObject) helper.getObjectByLabel(targetClass, shortLabel); 
-	}
-	
-	return null;
+    /**
+     * Select an appropriate CvObject for update if it exists.
+     * Criterion of object identity:
+     * if goidDatabase is '-', try to match by shortlabel
+     * otherwise try to match by goid and goidDatabase
+     */
+    public static CvObject selectCvObject( IntactHelper helper,
+                                           String goidDatabase,
+                                           String goid,
+                                           String shortLabel,
+                                           Class targetClass )
+            throws IntactException {
+
+        if( goidDatabase.equals( "-" ) ) {
+
+            if( null != shortLabel ) {
+                return (CvObject) helper.getObjectByLabel( targetClass, shortLabel );
+            }
+
+        } else {
+
+            if( ( null != goidDatabase ) && ( null != goid ) ) {
+                CvObject current = (CvObject) helper.getObjectByXref( targetClass, goid );
+                if( null != current ) {
+                    Collection xref = current.getXrefs();
+                    for ( Iterator iterator = xref.iterator(); iterator.hasNext(); ) {
+                        Xref x = (Xref) iterator.next();
+
+                        if( x.getCvDatabase().getShortLabel().equals( goidDatabase ) && x.getPrimaryId().equals( goid ) ) {
+                            return current;
+                        }
+                    }
+                }
+            }
+            // We have not found any match by goid. Try shortlabel.
+            return (CvObject) helper.getObjectByLabel( targetClass, shortLabel );
+        }
+
+        return null;
     }
 
     /** 
@@ -598,7 +608,7 @@ public class GoTools {
 	    goid =  ((Vector) definition.get("goid")).elementAt(0).toString();
 	} 
 	catch (Exception e) {
-	};
+	}
 
         // Get shortLabel
 	String shortLabel = null;
@@ -606,29 +616,30 @@ public class GoTools {
 	    shortLabel =  ((Vector) definition.get("shortlabel")).elementAt(0).toString();
 	} 
 	catch (Exception e) {
-	};
+	}
 
 	return selectCvObject(helper, goidDatabase, goid, shortLabel, targetClass);
     }
 
 
-    /** Return an identifier to be used in the go flat file format
-	for the goid: element.
-    */
-    public static String getGoid(CvObject current, 
-				 String goidDatabase){
+    /**
+     * Return an identifier to be used in the go flat file format
+     * for the goid: element.
+     */
+    public static String getGoid( CvObject current,
+                                  String goidDatabase ) {
 
-	if (! goidDatabase.equals("-")){
-	    Collection xref = current.getXrefs();
-	    for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
-		Xref x = (Xref) iterator.next();
-		if (x.getCvDatabase().getShortLabel().equals(goidDatabase)) {
-		    // There should be only one GO id
-		    return x.getPrimaryId();
-		}
-	    };
-	}	
-	return null;
+        if( !goidDatabase.equals( "-" ) ) {
+            Collection xref = current.getXrefs();
+            for ( Iterator iterator = xref.iterator(); iterator.hasNext(); ) {
+                Xref x = (Xref) iterator.next();
+                if( x.getCvDatabase().getShortLabel().equals( goidDatabase ) ) {
+                    // There should be only one GO id
+                    return x.getPrimaryId();
+                }
+            }
+        }
+        return null;
     }
 }
 
