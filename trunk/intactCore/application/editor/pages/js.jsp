@@ -1,5 +1,6 @@
 <%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
-                 uk.ac.ebi.intact.application.editor.business.EditorService"%>
+                 uk.ac.ebi.intact.application.editor.business.EditorService,
+                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -49,5 +50,18 @@
     // search window.
     function showXrefPId(link) {
         makeNewWindow(link);
+    }
+
+    // Links to the search via the column heading.
+    // type - the type for search, eg., CvTopic
+    // form - the name of the form where the link is
+    // n    - the column number
+    function showColumnLink(type, form, n) {
+        var v = document.forms[form].elements[n].value;
+        if (v == "<%= EditorMenuFactory.SELECT_LIST_ITEM%>") {
+            alert("Please select an item from the list first!");
+            return;
+        }
+        show(type, v);
     }
 </script>
