@@ -20,6 +20,11 @@ import java.util.Iterator;
 public class ResultBean {
 
     /**
+     *  The xref helper to get the search link.
+     */
+    private static final XrefHelper myXrefHelper = new XrefHelper();
+
+    /**
      * The rank of the protein.
      */
     private int myRank;
@@ -38,24 +43,25 @@ public class ResultBean {
         myRank = rank;
         myFullName = protein.getFullName();
 
-        // The xref helper to get the search link.
-        XrefHelper xrefHelper = new XrefHelper();
-
         // The primary id link.
-        String link = xrefHelper.getEmptyLink();
+        String link = myXrefHelper.getEmptyLink();
+
+        // Boolean flag set to true when a proper link is found.
+        boolean linkFound = false;
 
         // Get all the xrefs and iterate through them.
         for (Iterator iter = protein.getXrefs().iterator(); iter.hasNext();) {
-            link = xrefHelper.getPrimaryIdLink((Xref) iter.next());
-            if (!xrefHelper.isLinkEmpty(link)) {
+            link = myXrefHelper.getPrimaryIdLink((Xref) iter.next());
+            if (link.startsWith("http://")) {
                 // Found a non empty link.
+                linkFound = true;
                 break;
             }
         }
-        // Add the java script stuff only if the link is not empty.
-        myShortLabelLink = xrefHelper.isLinkEmpty(link) ? link :
+        // javascipt to display the link is only for a valid link.
+        myShortLabelLink = linkFound ?
                 "<a href=\"" + "javascript:showProtein('" + link + "')\">"
-                + protein.getShortLabel() + "</a>";
+                + protein.getShortLabel() + "</a>" : link;
 
 //        for (Iterator iter0 = protein.getXrefs().iterator(); iter0.hasNext();) {
 //            Xref xref = (Xref) iter0.next();
