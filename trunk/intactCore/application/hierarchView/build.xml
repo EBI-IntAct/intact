@@ -5,13 +5,13 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 Verison: $Id$
 -->
 <project name="hierarchView" basedir="." default="compile">
-    <property name="intact.root"     value="../.."/>
-    <property name="root.lib.dir"    value="${intact.root}/lib"/>
-    <property name="root.dist.dir"   value="${intact.root}/dist"/>
-    <property name="root.src.dir"    value="${intact.root}/src"/>
-    <property name="root.dest.dir"   value="${intact.root}/classes"/>
+    <property name="intact.root" value="../.."/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.dest.dir" value="${intact.root}/classes"/>
     <property name="root.config.dir" value="${intact.root}/config"/>
-    <property name="root.dist.dir"   value="${intact.root}/dist"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
 
     <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
@@ -20,23 +20,23 @@ Verison: $Id$
 
     <!-- context path for hierarchView store in the application level -->
     <property name="intact.context.dir" value="${intact.app.dir}/context"/>
-    <property name="hierarchView.context.file"    value="hierarchView-context.xml"/>
+    <property name="hierarchView.context.file" value="hierarchView-context.xml"/>
 
-    <property name="commons.pages.dir"   value="${intact.app.dir}/pages"/>
+    <property name="commons.pages.dir" value="${intact.app.dir}/pages"/>
     <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
-    <property name="commons.images.dir"  value="${intact.app.dir}/images"/>
+    <property name="commons.images.dir" value="${intact.app.dir}/images"/>
 
-    <property name="pages.dir"          value="pages"/>
-    <property name="images.dir"         value="images"/>
-    <property name="layouts.dir"        value="layouts"/>
+    <property name="pages.dir" value="pages"/>
+    <property name="images.dir" value="images"/>
+    <property name="layouts.dir" value="layouts"/>
     <property name="layouts.styles.dir" value="${layouts.dir}/styles"/>
-    <property name="lib.dir"            value="WEB-INF/lib"/>
-    <property name="tld.dir"            value="WEB-INF/tld"/>
-    <property name="dest.dir"           value="WEB-INF/classes"/>
-    <property name="config.dir"         value="WEB-INF/config"/>
-    <property name="jdoc.dir"           value="doc/api"/>
-    <property name="dist.dir"           value="dist"/>
-    <property name="pg.war.file"        value="${ant.project.name}.war"/>
+    <property name="lib.dir" value="WEB-INF/lib"/>
+    <property name="tld.dir" value="WEB-INF/tld"/>
+    <property name="dest.dir" value="WEB-INF/classes"/>
+    <property name="config.dir" value="WEB-INF/config"/>
+    <property name="jdoc.dir" value="doc/api"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="pg.war.file" value="${ant.project.name}.war"/>
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
@@ -55,9 +55,9 @@ Verison: $Id$
 
     <!-- Properties related to Tulip server -->
     <property name="ws.tulip.server.pkg"
-              value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"/>
+        value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"/>
     <property name="ws.tulip.server.dir"
-              value="uk/ac/ebi/intact/application/hierarchView/business/tulip/webService"/>
+        value="uk/ac/ebi/intact/application/hierarchView/business/tulip/webService"/>
     <property name="ws.tulip.jar.name" value="tulipService.jar"/>
     <property name="ws.tulip.jar" value="${ws.dir}/${ws.tulip.jar.name}"/>
     <property name="ws.props.file" value="WebService.properties"/>
@@ -66,9 +66,9 @@ Verison: $Id$
 
     <!-- Properties related to Tulip client -->
     <property name="ws.tulip.client.pkg"
-              value="uk.ac.ebi.intact.application.hierarchView.business.tulip.client"/>
+        value="uk.ac.ebi.intact.application.hierarchView.business.tulip.client"/>
     <property name="ws.tulip.client.dir"
-              value="uk/ac/ebi/intact/application/hierarchView/business/tulip/client"/>
+        value="uk/ac/ebi/intact/application/hierarchView/business/tulip/client"/>
 
     <property name="ws.session.type" value="Application"/>
 
@@ -76,11 +76,11 @@ Verison: $Id$
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
     <property name="webapps.dir" value="${tomcat.home}/webapps"/>
-    <property name="java.opts"   value="${env.JAVA_OPTS}"/>
+    <property name="java.opts" value="${env.JAVA_OPTS}"/>
 
-    <property name="webService.properties.filename"   value="${config.dir}/WebService.properties"/>
+    <property name="webService.properties.filename" value="${config.dir}/WebService.properties"/>
     <property name="highlighting.properties.filename" value="${config.dir}/Highlighting.properties"/>
-    <property name="search.properties.filename"       value="${config.dir}/Search.properties"/>
+    <property name="search.properties.filename" value="${config.dir}/Search.properties"/>
 
     <!-- Properties files on which some tests will be performed -->
     <property file="${webService.properties.filename}"/>
@@ -115,7 +115,7 @@ Verison: $Id$
         The build process is stopped if smething goes wrong.
     -->
     <target name="all-config-test" depends="test-config"
-            description="Performs configuration test and describes eventual problem.">
+        description="Performs configuration test and describes eventual problem.">
         <antcall target="webService-hostname-result"/>
         <antcall target="console-location-result"/>
         <antcall target="console-location-available-result"/>
@@ -146,9 +146,9 @@ Verison: $Id$
         </condition>
         <echo message="    highlightment.source.GO.hostname = ${highlightment.source.GO.applicationPath}"/>
 
-       <echo message="${search.properties.filename} :"/>
+        <echo message="${search.properties.filename} :"/>
 
-       <condition property="search.hostname.notCustomized">
+        <condition property="search.hostname.notCustomized">
             <contains string="${search.url}" substring="[SEARCH_HOSTNAME]"/>
         </condition>
         <echo message="    search.url = ${search.url}"/>
@@ -221,7 +221,7 @@ Verison: $Id$
         <ant dir=".." inheritAll="false" target="check-tomcat"/>
         <ant dir=".." inheritAll="false" target="check-axis"/>
 
-        <ant target="check-log-level" />
+        <ant target="check-log-level"/>
 
     </target>
 
@@ -235,18 +235,18 @@ Verison: $Id$
             <contains string="${log4j.logger.hierarchView}" substring="INFO"/>
         </condition>
 
-         <condition property="log.level.is.debug">
+        <condition property="log.level.is.debug">
             <contains string="${log4j.logger.hierarchView}" substring="DEBUG"/>
         </condition>
 
-        <ant target="check-log-level-info" />
+        <ant target="check-log-level-info"/>
 
-        <ant target="check-log-level-debug" />
+        <ant target="check-log-level-debug"/>
 
     </target>
 
     <!-- If the log level isn't set to ERROR, a blocking message is displayed to let the user know -->
-    <target name="check-log-level-info" if="log.level.is.info" >
+    <target name="check-log-level-info" if="log.level.is.info">
 
         <echo>
             BEWARE that if the logging feature is set to a verbose mode (${log4j.logger.hierarchView}),
@@ -260,7 +260,7 @@ Verison: $Id$
     </target>
 
     <!-- If the log level isn't set to ERROR, a blocking message is displayed to let the user know -->
-    <target name="check-log-level-debug" if="log.level.is.debug" >
+    <target name="check-log-level-debug" if="log.level.is.debug">
 
         <echo>
             BEWARE that if the logging feature is set to a verbose mode (${log4j.logger.hierarchView}),
@@ -291,7 +291,7 @@ Verison: $Id$
         <delete dir="${jdoc.dir}"/>
         <delete dir="${dist.dir}"/>
 
-        <delete file="last-modified.txt" />
+        <delete file="last-modified.txt"/>
 
         <!-- Clean up the web service directory -->
         <delete file="${ws.dir}/${ws.tulip.jar.name}"/>
@@ -308,53 +308,54 @@ Verison: $Id$
         </delete>
 
         <!-- Libraries -->
-        <delete file="{lib.dir}/jstl.jar" />
+        <delete file="{lib.dir}/jstl.jar"/>
 
         <!-- Tiles commons files -->
         <delete>
-             <fileset dir="${layouts.dir}">
-                 <!-- Do not remove hv specific files -->
-                 <exclude name="index.jsp"/>
-                 <exclude name="sidebar.jsp"/>
-                 <exclude name="contentFrame.jsp"/>
-                 <exclude name="graphFrame.jsp"/>
-                 <exclude name="sourceListFrame.jsp"/>
-                 <exclude name="selectedSourceFrame.jsp"/>
-                 <exclude name="hvHeaderLayout.jsp"/>
+            <fileset dir="${layouts.dir}">
+                <!-- Do not remove hv specific files -->
+                <exclude name="index.jsp"/>
+                <exclude name="sidebar.jsp"/>
+                <exclude name="contentFrame.jsp"/>
+                <exclude name="graphFrame.jsp"/>
+                <exclude name="sourceListFrame.jsp"/>
+                <exclude name="selectedSourceFrame.jsp"/>
+                <exclude name="hvHeaderLayout.jsp"/>
             </fileset>
         </delete>
 
         <delete dir="${layouts.styles.dir}"/>
 
         <delete>
-             <fileset dir="${pages.dir}">
-                 <!-- Do not remove hv specific files -->
-                 <exclude name="index.jsp"/>
-                 <exclude name="blank.jsp"/>
-                 <exclude name="errorFrame.jsp"/>
-                 <exclude name="forwardToSearch.jsp"/>
-                 <exclude name="restoreContext.jsp"/>
-                 <exclude name="sidebarSearch.jsp"/>
-                 <exclude name="sidebarGraph.jsp"/>
-                 <exclude name="sidebarPsiDownload.jsp"/>
-                 <exclude name="sidebarClickBehaviour.jsp"/>
-                 <exclude name="graphTitle.jsp"/>
-                 <exclude name="highlightTitle.jsp"/>
-                 <exclude name="graph.jsp"/>
-                 <exclude name="highlight.jsp"/>
-                 <exclude name="selectedSource.jsp"/>
-                 <exclude name="warning.jsp"/>
+            <fileset dir="${pages.dir}">
+                <!-- Do not remove hv specific files -->
+                <exclude name="index.jsp"/>
+                <exclude name="blank.jsp"/>
+                <exclude name="errorFrame.jsp"/>
+                <exclude name="forwardToSearch.jsp"/>
+                <exclude name="restoreContext.jsp"/>
+                <exclude name="sidebarSearch.jsp"/>
+                <exclude name="sidebarGraph.jsp"/>
+                <exclude name="sidebarPsiDownload.jsp"/>
+                <exclude name="sidebarMine.jsp"/>
+                <exclude name="sidebarClickBehaviour.jsp"/>
+                <exclude name="graphTitle.jsp"/>
+                <exclude name="highlightTitle.jsp"/>
+                <exclude name="graph.jsp"/>
+                <exclude name="highlight.jsp"/>
+                <exclude name="selectedSource.jsp"/>
+                <exclude name="warning.jsp"/>
             </fileset>
         </delete>
 
-         <delete>
-             <fileset dir="${images.dir}">
-                 <!-- Do not remove hv specific files -->
-                 <exclude name="clockT.gif"/>
-                 <exclude name="select.gif"/>
-                 <exclude name="select-chk.gif"/>
-                 <exclude name="ok-grey.png"/>
-                 <exclude name="ok-red.png"/>
+        <delete>
+            <fileset dir="${images.dir}">
+                <!-- Do not remove hv specific files -->
+                <exclude name="clockT.gif"/>
+                <exclude name="select.gif"/>
+                <exclude name="select-chk.gif"/>
+                <exclude name="ok-grey.png"/>
+                <exclude name="ok-red.png"/>
             </fileset>
         </delete>
     </target>
@@ -398,7 +399,7 @@ Verison: $Id$
     <target name="compile"
         description="Compile the source tree and copy the configuration files"
         depends="prepare">
-        <mkdir dir="${dest.dir}" />
+        <mkdir dir="${dest.dir}"/>
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             includes="**/application/hierarchView/**,
@@ -524,20 +525,20 @@ Verison: $Id$
         <delete file="${root.dest.dir}/${ws.props.file}"/>
 
         <echo message="Modify the deployment file"/>
-        <antcall target="mod-deployfile" />
+        <antcall target="mod-deployfile"/>
 
         <!-- ask the user if he wants to use Tulip or GVF -->
-        <echo message="" />
-        <echo message="" />
+        <echo message=""/>
+        <echo message=""/>
         <input message="Do you want the web service to use Tulip or the Graph Visualization Framework ? "
-               validargs="T,GVF"
-               addproperty="choosen.layout.engine" />
+            validargs="T,GVF"
+            addproperty="choosen.layout.engine"/>
 
         <condition property="use.gvf">
             <equals arg1="GVF" arg2="${choosen.layout.engine}"/>
         </condition>
 
-        <antcall target="modify-deploy-to-use-gvf" />
+        <antcall target="modify-deploy-to-use-gvf"/>
 
         <!-- Cleaning up -->
         <echo message="Delete generated files"/>
@@ -575,11 +576,11 @@ Verison: $Id$
     <target name="modify-deploy-to-use-gvf" if="use.gvf">
 
         <!-- Replace Tulip implementation (default) by Royere's -->
-        <echo message="Replace Tulip implementation (default) by the one using GVF" />
-        <replace file="${ws.deploy.file}" token="TulipAccessImpl" value="GVFImpl" />
+        <echo message="Replace Tulip implementation (default) by the one using GVF"/>
+        <replace file="${ws.deploy.file}" token="TulipAccessImpl" value="GVFImpl"/>
 
         <!-- Copy the royere library in the package -->
-        <echo message="Include the royere library (contains GVF) in the web service archive." />
+        <echo message="Include the royere library (contains GVF) in the web service archive."/>
         <copy todir="${ws.lib.dir}">
             <fileset dir="${lib.dir}">
                 <include name="royere.jar"/>
@@ -593,13 +594,13 @@ Verison: $Id$
     <target name="mod-deployfile">
 
         <!-- Replace generated package name by the implementation one -->
-        <echo message="Replace generated package name by the implementation one" />
-        <replace file="${ws.deploy.file}" token=".generated." value="." />
+        <echo message="Replace generated package name by the implementation one"/>
+        <replace file="${ws.deploy.file}" token=".generated." value="."/>
 
         <!-- Replace the SoapBinding generated class name by the implementation one -->
-        <echo message="Replace the SoapBinding name by the implementation one" />
+        <echo message="Replace the SoapBinding name by the implementation one"/>
         <replace file="${ws.deploy.file}" token="TulipSoapBindingImpl"
-            value="TulipAccessImpl" />
+            value="TulipAccessImpl"/>
     </target>
 
     <!-- =================================================================== -->
@@ -608,8 +609,8 @@ Verison: $Id$
     <target name="test-ws"
         description="Test the web service and display results on the screen">
 
-        <echo message="Testing the web service" />
-        <echo message="End point: ${webService.adress}" />
+        <echo message="Testing the web service"/>
+        <echo message="End point: ${webService.adress}"/>
 
         <java classname="uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient" fork="yes">
             <classpath refid="project.class.path"/>
@@ -632,7 +633,7 @@ Verison: $Id$
         <echo message="Generating ${war.file} file"/>
 
         <!-- Create the distribution dir if it doesn't exist. -->
-        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${dist.dir}"/>
 
         <!-- Create local directories to copy common files. -->
         <mkdir dir="${layouts.styles.dir}"/>
@@ -712,7 +713,7 @@ Verison: $Id$
             <classes dir="${dest.dir}"/>
         </war>
 
-        <antcall target="gen-context-file" />
+        <antcall target="gen-context-file"/>
 
     </target>
 
@@ -738,7 +739,7 @@ Verison: $Id$
 
     <target name="war-postgres" if="postgres">
         <!-- Load postgres properties. -->
-        <property file="${intact.root}/config/postgres.properties" />
+        <property file="${intact.root}/config/postgres.properties"/>
 
         <echo message="Building a war for postgres ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
@@ -758,7 +759,7 @@ Verison: $Id$
 
     <target name="war-oracle" description="Builds a war file for oracle" if="oracle">
         <!-- Load oracle properties. -->
-        <property file="${intact.root}/config/oracle.properties" />
+        <property file="${intact.root}/config/oracle.properties"/>
 
         <echo message="Building a war for oracle ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
@@ -780,7 +781,7 @@ Verison: $Id$
 
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${dist.dir}/${hierarchView.context.file}"
-              todir="${webapps.dir}" overwrite="yes"/>
+            todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -800,7 +801,7 @@ Verison: $Id$
 
     <!-- Starts the Tomcat server. -->
 
-    <target name="start-tomcat" description="Start the Tomcat server" >
+    <target name="start-tomcat" description="Start the Tomcat server">
         <ant dir=".." inheritAll="false" target="start-tomcat"/>
     </target>
 
@@ -808,7 +809,7 @@ Verison: $Id$
 
     <!-- Stops the Tomcat server. -->
 
-    <target name="stop-tomcat" description="Stop the Tomcat server" >
+    <target name="stop-tomcat" description="Stop the Tomcat server">
         <ant dir=".." inheritAll="false" target="stop-tomcat"/>
     </target>
 
@@ -831,23 +832,23 @@ Verison: $Id$
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-              file="${intact.context.dir}/${hierarchView.context.file}"
-              overwrite="true" />
+            file="${intact.context.dir}/${hierarchView.context.file}"
+            overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${hierarchView.context.file}"
-                 token="[WAR.FILE.NAME]"
-                 value="${war.file}" />
+            token="[WAR.FILE.NAME]"
+            value="${war.file}"/>
         <replace file="${dist.dir}/${hierarchView.context.file}"
-                 token="[server.name]"
-                 value="${server.name}" />
+            token="[server.name]"
+            value="${server.name}"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
     <target name="junit" depends="compile"
-            description="Runs JUnit directly with output directed to stdout">
+        description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value="uk.ac.ebi.intact.application.hierarchView.business.graph.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
