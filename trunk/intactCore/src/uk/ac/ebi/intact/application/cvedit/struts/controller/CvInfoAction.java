@@ -80,7 +80,6 @@ public class CvInfoAction extends CvAbstractAction {
             return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         // Update the view with new values.
-//        super.log("Unique label is: " + newlabel);
         viewbean.setShortLabel(newlabel);
         viewbean.setFullName((String) theForm.get("fullName"));
 
