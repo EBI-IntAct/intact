@@ -90,6 +90,7 @@
         <td class="tableCell">
             <html:text property="taxId" name="bsForm" size="10" maxlength="16"
                 styleClass="inputRequired"/>
+            <html:errors property="taxId"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
@@ -105,7 +106,6 @@
         </td>
     </tr>
 </table>
-<html:errors property="bs.taxid"/>
 <html:messages id="message" message="true">
 	<span class="warning">
 		<bean:write name="message" filter="false"/>

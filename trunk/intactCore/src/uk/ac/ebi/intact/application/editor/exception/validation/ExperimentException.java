@@ -26,6 +26,15 @@ public class ExperimentException extends ValidationException {
      * @param mkey the message key.
      */
     public ExperimentException(String mkey) {
-        super(mkey, "exp.validation");
+        this("exp.validation", mkey);
+    }
+
+    /**
+     * Construst with given filter key and message key.
+     * @param fkey the filter key.
+     * @param mkey the message key.
+     */
+    public ExperimentException(String fkey, String mkey) {
+        super(mkey, fkey);
     }
 }

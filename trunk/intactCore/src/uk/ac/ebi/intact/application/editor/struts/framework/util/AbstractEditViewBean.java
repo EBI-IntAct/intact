@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
@@ -23,6 +24,8 @@ import uk.ac.ebi.intact.model.Xref;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * This super bean encapsulates behaviour for a common editing session. This
@@ -32,6 +35,12 @@ import java.util.*;
  * @version $Id$
  */
 public abstract class AbstractEditViewBean implements Serializable {
+
+    /**
+     * The pattern for a valid short label.
+     */
+//    private static Pattern SHORT_LABEL_PAT =
+//            Pattern.compile("[a-z0-9\\-:_]+ ?[a-z0-9\\-:_]+$");
 
     /**
      * The Annotated object to wrap this bean around.
@@ -672,13 +681,17 @@ public abstract class AbstractEditViewBean implements Serializable {
      * interaction and identification. Currently this method is empty as no
      * validations are preformed.
      */
-    public void validate(EditUserI user)
-            throws SearchException, ValidationException {
+//    public void validate(EditUserI user)
+//            throws SearchException, ValidationException {
 //        if (getShortLabel() == null) {
-//            if ((myShortLabel == null) || SL_RE.matcher(myShortLabel).find()) {
 //            throw new ShortLabelException();
 //        }
-    }
+//        // Validate the short label
+//        Matcher matcher = SHORT_LABEL_PAT.matcher(getShortLabel());
+//        if (!matcher.matches()) {
+//            throw new ShortLabelException();
+//        }
+//    }
 
     /**
      * Copies properties from given form to the bean.

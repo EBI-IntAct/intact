@@ -62,7 +62,8 @@ public class BioSourceActionForm extends EditorActionForm {
     public void setTissue(String tissue) {
         myTissue = tissue;
     }
-    
+
+    // TODO Remove this later
     /**
      * Validate the properties that have been set from the HTTP request.
      *
@@ -72,22 +73,22 @@ public class BioSourceActionForm extends EditorActionForm {
      * no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
      * object is returned.
      */
-    public ActionErrors validate(ActionMapping mapping,
-                                 HttpServletRequest request) {
-        ActionErrors errors = super.validate(mapping, request);
-
-        // Only proceed if super method does not find any errors.
-        if ((errors != null) && !errors.isEmpty()) {
-            return errors;
-        }
-       // The tax id must be an integer.
-        try {
-            Integer.parseInt(getTaxId());
-        }
-        catch (NumberFormatException nfe) {
-            errors = new ActionErrors();
-            errors.add("bs.taxid", new ActionError("error.taxid.mask", getTaxId()));
-        }
-        return errors;
-    }
+//    public ActionErrors validate(ActionMapping mapping,
+//                                 HttpServletRequest request) {
+//        ActionErrors errors = super.validate(mapping, request);
+//
+//        // Only proceed if super method does not find any errors.
+//        if ((errors != null) && !errors.isEmpty()) {
+//            return errors;
+//        }
+//       // The tax id must be an integer.
+//        try {
+//            Integer.parseInt(getTaxId());
+//        }
+//        catch (NumberFormatException nfe) {
+//            errors = new ActionErrors();
+//            errors.add("bs.taxid", new ActionError("error.taxid.mask", getTaxId()));
+//        }
+//        return errors;
+//    }
 }

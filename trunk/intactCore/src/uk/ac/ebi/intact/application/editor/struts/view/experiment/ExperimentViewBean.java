@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
@@ -290,19 +291,22 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Null for any of these values will throw an exception.
-    public void validate(EditUserI user) throws ValidationException,
-            SearchException {
+//    public void validate(EditUserI user) throws ValidationException,
+//            SearchException {
+//        System.out.println("In the validation");
 //        super.validate(user);
+//        System.out.println("In the validation, after calling super");
 //        if (myOrganism == null) {
-//            throw new ExperimentException("error.exp.biosrc");
+//            System.out.println("My Organism is NULL");
+//            throw new ExperimentException("exp.biosrc", "error.exp.biosrc");
 //        }
 //        else if (myInter == null) {
-//            throw new ExperimentException("error.exp.inter");
+//            throw new ExperimentException("exp.inter", "error.exp.inter");
 //        }
 //        else if (myIdent == null) {
-//            throw new ExperimentException("error.exp.ident");
+//            throw new ExperimentException("exp.ident", "error.exp.ident");
 //        }
-    }
+//    }
 
     // Override the super method to clear this object.
     public void clear() {

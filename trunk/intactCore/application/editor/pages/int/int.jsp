@@ -16,7 +16,7 @@
 
 <jsp:include page="../js.jsp" />
 
-<html:form action="/intDispatch" focus="shortLabel">
+<html:form action="/intDispatch" focus="shortLabel" onsubmit="return validateIntForm(this)">
     <html:hidden property="anchor" />
 
     <jsp:include page="info.jsp" />
@@ -38,3 +38,4 @@
     <jsp:include page="../action.jsp" />
 
 </html:form>
+<html:javascript formName="intForm"/>

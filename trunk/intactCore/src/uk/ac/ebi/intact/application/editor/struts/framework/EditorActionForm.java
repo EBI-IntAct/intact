@@ -6,22 +6,20 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
-import org.apache.struts.validator.ValidatorForm;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
 import org.apache.struts.util.MessageResources;
-import org.apache.struts.Globals;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts.validator.ValidatorForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
 /**
  * The form to edit cv data. This form also is the super class for other
@@ -32,11 +30,12 @@ import java.util.regex.Pattern;
  */
 public class EditorActionForm extends ValidatorForm {
 
+    // TODO Remove this later
     /**
      * The pattern for a valid short label.
      */
-    private static Pattern SHORT_LABEL_PAT =
-            Pattern.compile("[a-z0-9\\-:_]+ ?[a-z0-9\\-:_]+$");
+//    private static Pattern SHORT_LABEL_PAT =
+//            Pattern.compile("[a-z0-9\\-:_]+ ?[a-z0-9\\-:_]+$");
 
     /**
      * The short label.
@@ -230,17 +229,23 @@ public class EditorActionForm extends ValidatorForm {
      */
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
-        ActionErrors errors = null;
+        ActionErrors errors = super.validate(mapping, request);
 
-        // Validate the short label
-        Matcher matcher = SHORT_LABEL_PAT.matcher(getShortLabel());
-        if (!matcher.matches()) {
-            // Invalid syntax for a short label.
-            errors = new ActionErrors();
-            errors.add("shortLabel",
-                    new ActionError("error.shortlabel.mask", getShortLabel()));
+        // Only proceed if super method does not find any errors.
+        if ((errors != null) && !errors.isEmpty()) {
             return errors;
         }
+
+        // TODO Remove this later
+        // Validate the short label
+//        Matcher matcher = SHORT_LABEL_PAT.matcher(getShortLabel());
+//        if (!matcher.matches()) {
+//            // Invalid syntax for a short label.
+//            errors = new ActionErrors();
+//            errors.add("shortLabel",
+//                    new ActionError("error.shortlabel.mask", getShortLabel()));
+//            return errors;
+//        }
         // The dispatch parameter to find out which button was pressed.
         String dispatch = getDispatch();
 

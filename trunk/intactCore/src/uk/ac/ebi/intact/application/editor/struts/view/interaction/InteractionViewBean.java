@@ -309,25 +309,26 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
     }
 
+    // TODO Remove this later
     // Null for any of these values will throw an exception.
-    public void validate(EditUserI user) throws ValidationException,
-            SearchException {
-        super.validate(user);
-
-        if (myInteractionType == null) {
-            throw new InteractionException("error.int.validation.type");
-        }
-        if (myOrganism == null) {
-            throw new InteractionException("error.int.validation.biosrc");
-        }
-        // Look for any unsaved or error proteins.
-        for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
-            ProteinBean pb = (ProteinBean) iter.next();
-            if (!pb.getEditState().equals(AbstractEditBean.VIEW)) {
-                throw new InteractionException();
-            }
-        }
-    }
+//    public void validate(EditUserI user) throws ValidationException,
+//            SearchException {
+//        super.validate(user);
+//
+//        if (myInteractionType == null) {
+//            throw new InteractionException("error.int.validation.type");
+//        }
+//        if (myOrganism == null) {
+//            throw new InteractionException("error.int.validation.biosrc");
+//        }
+//        // Look for any unsaved or error proteins.
+//        for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
+//            ProteinBean pb = (ProteinBean) iter.next();
+//            if (!pb.getEditState().equals(AbstractEditBean.VIEW)) {
+//                throw new InteractionException();
+//            }
+//        }
+//    }
 
     /**
      * The organism menu list.

@@ -96,14 +96,14 @@
             <html:select property="interactionType" name="intForm" styleClass="inputRequired">
                 <html:options name="intertypemenu" />
             </html:select>
+            <html:errors property="interactionType"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
             <html:select property="organism" name="intForm" styleClass="inputRequired">
                 <html:options name="organismmenu" />
             </html:select>
+            <html:errors property="organism"/>
         </td>
     </tr>
 </table>
-<html:errors property="int.interaction"/>
-<html:errors property="int.organism"/>

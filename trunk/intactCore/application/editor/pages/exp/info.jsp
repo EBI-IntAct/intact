@@ -70,19 +70,19 @@
             <html:select property="organism" name="expForm" styleClass="inputRequired">
                 <html:options name="organismmenu"/>
             </html:select>
+            <html:errors property="organism"/>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:select property="inter" name="expForm" styleClass="inputRequired">
                 <html:options name="intermenu"/>
             </html:select>
+            <html:errors property="inter"/>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:select property="ident" name="expForm" styleClass="inputRequired">
                 <html:options name="identmenu"/>
             </html:select>
+            <html:errors property="ident"/>
         </td>
     </tr>
 </table>
-<html:errors property="exp.biosrc"/>
-<html:errors property="exp.inter"/>
-<html:errors property="exp.ident"/>
