@@ -49,11 +49,10 @@
     }
 
     // Links to the search via the column heading.
-    // type - the type for search, eg., CvTopic -- this is no longer required now
-    // form - the name of the form where the link is
-    // n    - the column number
-    function showColumnLink(type, form, n) {
-        var v = document.forms[form].elements[n].value;
+    // type - the type for search, eg., CvTopic
+    // v    - the value to display
+    function showColumnLink(type, v) {
+        // window.alert(v);
         if (v == "<%= EditorMenuFactory.SELECT_LIST_ITEM%>") {
             alert("Please select an item from the list first!");
             return;

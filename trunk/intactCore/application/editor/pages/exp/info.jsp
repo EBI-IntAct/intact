@@ -67,10 +67,29 @@
 
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
-        <th class="tableCellHeader" width="20%">Host Organism</th>
-        <th class="tableCellHeader">Interaction Detection</th>
-        <th class="tableCellHeader">Participant Detection</th>
+        <th class="tableCellHeader" width="20%">
+            <a href="javascript:showColumnLink('BioSource',
+                document.forms['expForm'].elements['organism'].value)">
+                Host Organism
+            </a>
+        </th>
+
+        <th class="tableCellHeader">
+            <a href="javascript:showColumnLink('CvInteraction',
+                document.forms['expForm'].elements['inter'].value)">
+                Interaction Detection
+            </a>
+        </th>
+
+        <th class="tableCellHeader">
+            <a href="javascript:showColumnLink('CvIdentification',
+                document.forms['expForm'].elements['ident'].value)">
+                Participant Detection
+            </a>
+        </th>
+
     </tr>
+
     <tr class="tableRowEven">
         <td class="tableCell" align="left" valign="top">
             <html:select property="organism" name="expForm" styleClass="inputRequired">
@@ -78,12 +97,14 @@
             </html:select>
             <html:errors property="organism"/>
         </td>
+
         <td class="tableCell" align="left" valign="top">
             <html:select property="inter" name="expForm" styleClass="inputRequired">
                 <html:options name="intermenu"/>
             </html:select>
             <html:errors property="inter"/>
         </td>
+
         <td class="tableCell" align="left" valign="top">
             <html:select property="ident" name="expForm" styleClass="inputRequired">
                 <html:options name="identmenu"/>

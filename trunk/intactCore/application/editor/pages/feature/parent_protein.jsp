@@ -14,7 +14,6 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <%-- Display the mutation only for a new feature --%>
@@ -38,9 +37,6 @@
         </th>
         <th class="tableCellHeader">
             <bean:message key="label.fullname"/>
-        </th>
-        <th>
-            <intact:documentation section="editor.short.labels"/>
         </th>
     </tr>
     <tr class="tableRowEven">

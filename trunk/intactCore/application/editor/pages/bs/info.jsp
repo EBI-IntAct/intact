@@ -70,12 +70,14 @@
             <bean:message key="biosource.label.tax"/>
         </th>
         <th class="tableCellHeader">
-            <a href="javascript:showColumnLink('CvTissue', 'bsForm', 4)">
+            <a href="javascript:showColumnLink('CvTissue',
+                document.forms['bsForm'].elements['tissue'].value)">
                 <bean:message key="biosource.label.tissue"/>
             </a>
         </th>
         <th class="tableCellHeader">
-            <a href="javascript:showColumnLink('CvCellType', 'bsForm', 5)">
+            <a href="javascript:showColumnLink('CvCellType',
+                document.forms['bsForm'].elements['cellType'].value)">
                 <bean:message key="biosource.label.cell"/>
             </a>
         </th>
