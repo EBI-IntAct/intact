@@ -18,49 +18,52 @@
 
   *************************************************************/
 
-  drop table ia_cvobject2annot;
---  drop table ia_cvobject2annot_audit;
+  drop table ia_cvobject2annot cascade ;
+--  drop table ia_cvobject2annot_audit cascade ;
 
-  drop table ia_int2annot;
---  drop table ia_int2annot_audit;
+  drop table ia_int2annot cascade ;
+--  drop table ia_int2annot_audit cascade ;
 
-  drop table ia_exp2annot;
---  drop table ia_exp2annot_audit;
+  drop table ia_exp2annot cascade ;
+--  drop table ia_exp2annot_audit cascade ;
 
-  drop table ia_biosource2annot;
---  drop table ia_biosource2annot_audit;
+  drop table ia_biosource2annot cascade ;
+--  drop table ia_biosource2annot_audit cascade ;
 
-  drop table ia_annotation;
---  drop table ia_annotation_audit;
+  drop table ia_annotation cascade ;
+--  drop table ia_annotation_audit cascade ;
 
-  drop table ia_component;
---  drop table ia_component_audit;
+  drop table ia_component cascade ;
+--  drop table ia_component_audit cascade ;
 
-  drop table ia_cv2cv;
---  drop table ia_cv2cv_audit;
+  drop table ia_cv2cv cascade ;
+--  drop table ia_cv2cv_audit cascade ;
 
-  drop table ia_int2exp;
---  drop table ia_int2exp_audit;
+  drop table ia_int2exp cascade ;
+--  drop table ia_int2exp_audit cascade ;
 
-  drop table ia_experiment;
---  drop table ia_experiment_audit;
+  drop table ia_experiment cascade ;
+--  drop table ia_experiment_audit cascade ;
 
-  drop table ia_intactnode;
---  drop table ia_intactnode_audit;
+  drop table ia_intactnode cascade ;
+--  drop table ia_intactnode_audit cascade ;
 
-  drop table ia_xref;
---  drop table ia_xref_audit;
+  drop table ia_xref cascade ;
+--  drop table ia_xref_audit cascade ;
 
-  drop table ia_interactor;
---  drop table ia_interactor_audit; 
+  drop table ia_sequence_chunk cascade ;
 
-  drop table ia_biosource;
---  drop table ia_biosource_audit;
 
-  drop table ia_controlledvocab;
---  drop table ia_controlledvocab_audit; 
+  drop table ia_interactor cascade ;
+--  drop table ia_interactor_audit cascade ; 
 
-  drop table ia_institution;
---  drop table ia_institution_audit;
+  drop table ia_biosource cascade ;
+--  drop table ia_biosource_audit cascade ;
 
-  drop sequence intact_ac;
+  drop table ia_controlledvocab cascade ;
+--  drop table ia_controlledvocab_audit cascade ; 
+
+  drop table ia_institution cascade ;
+--  drop table ia_institution_audit cascade ;
+
+  drop sequence intact_ac cascade ;

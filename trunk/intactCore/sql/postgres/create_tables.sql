@@ -163,15 +163,11 @@ CREATE TABLE IA_BioSource
     'Database user who has performed the last update of the column.';
 
 
-
-
-
 /* This is the key table. The class Interactor is the parent class of
    a class hierarchy which comprises all molecular objects. All
    subclasses are mapped to this table. It's likely to be the largest and
    most queried, hence most performance-critical table.
 */
-
 
 CREATE TABLE IA_Interactor
 (         ac                    VARCHAR (30)    NOT NULL
@@ -197,7 +193,6 @@ CREATE TABLE IA_Interactor
         , fullName              VARCHAR (250)
         /* Colums belonging to BasicObject */
         , owner_ac              VARCHAR (30)    CONSTRAINT fk_Interactor_owner REFERENCES IA_Institution(ac)
-        , polymerSeq            TEXT
 )
 ;
 
@@ -238,11 +233,39 @@ CREATE index i_Interactor_formOf on IA_Interactor(formOf) ;
     'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Interactor.userstamp IS
     'Database user who has performed the last update of the column.';
-    COMMENT ON COLUMN IA_Interactor.polymerSeq IS
-    'The polymer sequence, usually DNA or amino acid.';
 
 
 
+CREATE TABLE IA_Sequence_Chunk
+(         interactor_ac         VARCHAR(30)    NOT NULL CONSTRAINT fk_sequence_interactor REFERENCES IA_Interactor(ac)
+        , order_in_sequence     DECIMAL(3)     NOT NULL
+        , sequence_chunk        VARCHAR(1000)  NOT NULL
+        , created               TIMESTAMP      DEFAULT  now()   NOT NULL  
+        , updated               TIMESTAMP      DEFAULT  now()   NOT NULL  
+        , timestamp             TIMESTAMP      DEFAULT  now()   NOT NULL  
+        , userstamp             VARCHAR(30)    DEFAULT  USER    NOT NULL  
+        , PRIMARY KEY           (interactor_ac , order_in_sequence)
+)
+;
+
+
+
+    COMMENT ON TABLE IA_Sequence_Chunk IS
+    'Sequence chunk. To avoid CLOB columns the sequences are split into chunks of 1000 characters';
+    COMMENT ON COLUMN IA_Sequence_Chunk.interactor_ac IS
+    'Refers to the Interactor to which this bit of sequence belongs.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.order_in_sequence IS
+    'Order of the chunk within the sequence of the Interactor';
+    COMMENT ON COLUMN IA_Sequence_Chunk.sequence_chunk IS
+    '1000 charcacters max size Sequence chunk';
+    COMMENT ON COLUMN IA_Sequence_Chunk.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.timestamp IS
+    'Date of the last update of the column.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.userstamp IS
+    'Database user who has performed the last update of the column.';
 
 CREATE TABLE IA_Component
 (         ac                      VARCHAR (30)    NOT NULL
