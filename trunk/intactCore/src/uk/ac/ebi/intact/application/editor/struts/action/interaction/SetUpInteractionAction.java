@@ -45,7 +45,8 @@ public class SetUpInteractionAction  extends AbstractEditorAction {
             dynaForm.set("organism", view.getOrganism());
         }
         if (isPropertyNullOrEmpty(dynaForm, "interactionType")) {
-            dynaForm.set("interactionType", view.getInteractionType());
+            // Special case this is a dag menu object.
+            dynaForm.set("interactionType", view.getSelectedInterationType());
         }
         return mapping.findForward(FORWARD_SUCCESS);
     }

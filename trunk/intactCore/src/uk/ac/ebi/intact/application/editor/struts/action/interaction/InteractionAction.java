@@ -54,7 +54,11 @@ public class InteractionAction extends AbstractEditorAction {
         // Set the view bean with the new values.
         view.setKD((Float) theForm.get("kD"));
         view.setOrganism((String) theForm.get("organism"));
-        view.setInteractionType((String) theForm.get("interactionType"));
+
+        // Need toi normalize this menu item as is a dag object.
+        String interaction = view.getNormalizedInterationType(
+                (String) theForm.get("interactionType"));
+        view.setInteractionType(interaction);
 
         return mapping.findForward(FORWARD_SUCCESS);
     }
