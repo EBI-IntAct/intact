@@ -25,7 +25,7 @@
 <%-- Individual menu lists --%>
 <c:set var="view" value="${user.view}"/>
 <c:set var="dblist" value="${view.addDatabaseMenu}"/>
-<c:set var="qlist" value="${menus['QualifierNames']}"/>
+<c:set var="qlist" value="${menus['Qualifier']}"/>
 
 <%-- The anchor name for this page --%>
 <a name="xref"/>
