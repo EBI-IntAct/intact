@@ -4,7 +4,7 @@
 # Purpose: Generate PSI MI XML files from prepared input file
 #
 # Usage:
-# psiXmlDownload.pl < sections_file > result_file
+# psiXmlDownload.pl -filePrefix prefix < sections_file > result_file
 # *************************************************************
 
 # ** Initialisation
