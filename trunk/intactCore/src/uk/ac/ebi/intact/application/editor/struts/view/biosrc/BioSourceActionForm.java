@@ -6,12 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.biosrc;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMapping;
-
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 
 /**

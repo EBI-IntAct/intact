@@ -6,13 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * The form to edit bio experiment data.
