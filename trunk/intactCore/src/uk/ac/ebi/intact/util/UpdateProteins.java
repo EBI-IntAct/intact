@@ -12,8 +12,6 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.DAOSource;
-import uk.ac.ebi.intact.persistence.DAOFactory;
 
 import uk.ac.ebi.interfaces.Factory;
 import uk.ac.ebi.interfaces.sptr.SPTRCrossReference;
@@ -300,139 +298,6 @@ public class UpdateProteins extends UpdateProteinsI {
 
 
     /**
-     * Update the given BioSource with data taken from Newt.<br>
-     * it assumes that the taxid is existing in the given BioSource.
-     *
-     * @param taxid the taxid from which we want to get a Biosource
-     * @return an updated BioSource or null
-     */
-    private BioSource getNewtBiosource (String taxid) {
-
-        if (taxid == null) return null;
-
-        logger.info ("Try to get BioSource data from Newt");
-        NewtServerProxy.NewtResponse response = null;
-
-        try {
-            response = newtProxy.query ( Integer.parseInt(taxid) );
-        } catch (IOException e) {
-            logger.error (e);
-            return null;
-        } catch (NumberFormatException e) {
-            logger.error ("invalid taxid: " + taxid, e);
-            return null;
-        } catch (NewtServerProxy.TaxIdNotFoundException e) {
-            logger.error ("taxId not found from Newt: " + taxid, e);
-            return null;
-        }
-
-        BioSource bioSource = new BioSource();
-        // the taxId can be different in obsoleteness case.
-        bioSource.setTaxId ( "" + response.getTaxId() );
-        bioSource.setFullName ( response.getFullName() );
-        bioSource.setShortLabel ( response.getShortLabel().toLowerCase() );
-        bioSource.setOwner ( myInstitution );
-
-        return bioSource;
-    }
-
-    /**
-     * Try to update an existing IntAct BioSource from an other.
-     *
-     * @param bioSource the IntAct BioSource
-     * @param newtBioSource the one from which we get the up-to-date data
-     *
-     * @return an up-to-date IntAct BioSource
-     * @throws IntactException
-     */
-    private BioSource updateBioSource (BioSource bioSource,
-                                       BioSource newtBioSource) throws IntactException {
-
-        boolean needUpdate = false;
-
-        // compare these two BioSource and update in case of differences
-        String newtTaxid = newtBioSource.getTaxId();
-        if (false == bioSource.getTaxId().equals (newtTaxid)) {
-            bioSource.setTaxId(newtTaxid);
-            logger.debug ("Obsolete taxid: taxid " + bioSource.getTaxId() + " becomes " + newtTaxid);
-            needUpdate = true;
-        }
-
-        String fullName = newtBioSource.getFullName();
-        if (false == fullName.equals(bioSource.getFullName())) {
-            bioSource.setFullName (fullName);
-            needUpdate = true;
-        }
-
-        String shortLabel = newtBioSource.getShortLabel().toLowerCase();
-        if (false == shortLabel.equals(bioSource.getShortLabel())) {
-            bioSource.setShortLabel (shortLabel);
-            needUpdate = true;
-        }
-
-        if (needUpdate) {
-            logger.info ("update biosource (taxid="+ bioSource.getTaxId() +")");
-
-            try {
-                helper.update (bioSource);
-            } catch (IntactException ie) {
-                throw ie;
-            }
-        }
-
-        return bioSource;
-    } // updateBioSource
-
-
-    private String getUpToDateTaxid (final String taxid) throws IntactException {
-
-        String uptodateTaxid = null;
-
-        if (taxid != null) {
-            // there is a filter, check if the given taxid is valid AND not obsolete
-            BioSource newtBioSource = getNewtBiosource (taxid);
-            if (newtBioSource != null) {
-                if (newtBioSource.getTaxId().equals(taxid)) {
-                    // the current taxid is up-to-date
-                    uptodateTaxid = taxid;
-                } else {
-                    // obsolete taxid ... update IntAct and the taxid filter
-                    Collection c = helper.search(BioSource.class.getName(),
-                            "taxId",
-                            taxid);
-                    if (c.size() == 0) {
-                        // doesn't exist in IntAct
-
-                        // update the taxid filter
-                        uptodateTaxid = newtBioSource.getTaxId();
-
-                    } else if (c.size() == 1) {
-                        // it Exists so update it
-                        BioSource bs = (BioSource) c.iterator().next();
-                        bs = updateBioSource(bs, newtBioSource);
-
-                        // update the taxid filter
-                        uptodateTaxid = bs.getTaxId();
-                    } else {
-                        // Inconsistancy: we should have 0 or 1 record
-                        logger.error("The taxid " + newtBioSource.getTaxId() +
-                                " gives us several BioSource in IntAct.");
-                    }
-                }
-            } else {
-                // no Newt Biosource
-                logger.error  ("The filter taxid " + taxid + " gives no results in Newt.");
-            }
-
-            if (uptodateTaxid == null) {
-                logger.error ("The taxid parameter given by the user is wrong");
-            }
-        }
-
-        return uptodateTaxid;
-    }
-
-    /**
      * From a SPTREntry, that method will look for the correxponding proteins
      * in IntAct in order to update its data or create brand new if it doesn't exists.<br>
      *
@@ -479,7 +344,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
 
             /**
-             * Process all colelcted BioSource
+             * Process all collected BioSource
              */
             int taxidCount = taxids.size();
             for (i = 0; i < taxidCount; i++) {
@@ -489,156 +354,69 @@ public class UpdateProteins extends UpdateProteinsI {
                 // for each taxid the user want to process
                 String sptrTaxid = (String) taxids.get(i);
                 logger.info ("\tPROCESS: sptrTaxid=" + sptrTaxid);
-                boolean error = false;
 
+                // get a valid Biosource from either Intact or Newt
+                BioSource bioSource = bioSourceFactory.getValidBioSource( sptrTaxid );
 
-                /*
-                    From the taxId found in the SPTREntry, we are going now to get (maybe update)
-                    or create the corresponding BioSource in IntAct.
-                    We rely on Newt (http://www.ebi.ac.uk/newt) to get up to date data related
-                    to that taxid
-                    We take into account that the taxid we got from SPTR can be obsolete and so
-                    the one we get from Newt can be different. In such a case we update IntAct
-                    with the up to date data.
-                */
+                protein = null;
+                // look for a protein in the set which has that taxid
+                for (Iterator iterator = proteins.iterator(); iterator.hasNext() && protein == null;) {
+                    Protein tmp = (Protein) iterator.next();
+                    BioSource bs = tmp.getBioSource();
 
-                // look for that BioSource in Intact
-                Collection c = helper.search (BioSource.class.getName(), "taxId", sptrTaxid);
-                BioSource bioSource = null;
+                    /*
+                     * Problem here if the taxid in the entry is obsolete and
+                     * in intact we have stored the right one ... we don't get in
+                     * the loop and so that protein is not removed from the collection.
+                     */
 
-                if (c.size() <= 1) {
-
-                    // 0 or 1 BioSource found in IntAct
-                    BioSource newtBioSource = getNewtBiosource (sptrTaxid);
-
-                    if (newtBioSource == null) {
-                        logger.error("The taxid " + sptrTaxid + " gives no results in Newt.");
-                        error = true;
-                    } else {
-
-                        if (c.size() == 0) {
-                            // that taxid doesn't exists yet in IntAct
-
-                            if ( false == newtBioSource.getTaxId().equals (sptrTaxid) ) {
-                                /*
-                                    The taxid we got from newt is different from the one we
-                                    was looking for originaly. It was probably obsolete.
-                                    So we have to update IntAct.
-                                 */
-
-                                // look for that BioSource (newt taxid) in Intact
-                                Collection c2 = helper.search (BioSource.class.getName(),
-                                        "taxId",
-                                        newtBioSource.getTaxId());
-
-                                if (c2.size() == 0) {
-                                    // Doesn't exists so create a new Biosource in IntAct
-                                    logger.info ("Create new BioSource in IntAct, taxid: " + newtBioSource.getTaxId());
-                                    helper.create (newtBioSource);
-                                    bioSource = newtBioSource;
-
-                                    // Keep the up to date taxId
-                                    sptrTaxid = bioSource.getTaxId();
-
-                                } else if (c2.size() == 1) {
-                                    // already exists so update it (only if needed)
-                                    bioSource = (BioSource) c2.iterator().next();
-                                    bioSource = updateBioSource (bioSource, newtBioSource);
-
-                                    // Keep the up to date taxId
-                                    sptrTaxid = bioSource.getTaxId();
-                                } else {
-                                    // Inconsistancy: we should have 0 or 1 record
-                                    logger.error ("The taxid " + newtBioSource.getTaxId() +
-                                                  " gives us several BioSource in IntAct.");
-                                    error = true;
-                                }
-
-                            } else {
-                                // TaxIds doesn't change so create a new Biosource in IntAct
-                                logger.info ("Create new BioSource in IntAct, taxid: " + newtBioSource.getTaxId());
-                                helper.create (newtBioSource);
-                                bioSource = newtBioSource;
-                            }
-
-                        } else {
-                            // exactly 1 BioSource found in IntAct with the original taxid, so, check for update.
-                            bioSource = (BioSource) c.iterator().next();
-
-                            // already exists so update it (only if needed)
-                            bioSource = updateBioSource (bioSource, newtBioSource);
-                        } // else
-                    } // else
-                } else {
-                    // Inconsistancy: we should have one or no record
-                    logger.error ("The taxid " + sptrTaxid + " gives us several BioSource in IntAct.");
-                    error = true;
+                    if (bs != null && bs.getTaxId().equals( sptrTaxid )) {
+                        // found ... remove it from the collection
+                        protein = tmp;
+                        proteins.remove (tmp);
+                    }
                 }
 
+                if (protein == null) {
+                    // doesn't found so create a new one
+                    logger.info ("No existing protein for that taxid, create a new one");
 
-                if (error == false) {
-                    protein = null;
-                    // look for a protein in the set which has that taxid
-                    for (Iterator iterator = proteins.iterator(); iterator.hasNext() && protein == null;) {
-                        Protein tmp = (Protein) iterator.next();
-                        BioSource bs = tmp.getBioSource();
-
-                        /*
-                            Problem here if the taxid in the entry is obsolete and
-                            in intact we have stored the right one ... we don't get in
-                            the loop and so that protein is not removed from the collection.
-                         */
-
-                        if (bs != null && bs.getTaxId().equals(sptrTaxid)) {
-                            // found ... remove it from the collection
-                            protein = tmp;
-                            proteins.remove (tmp);
-                        }
+                    if (localTransactionControl){
+                        helper.startTransaction( BusinessConstants.OBJECT_TX );
                     }
-
-                    if (protein == null) {
-                        // doesn't found so create a new one
-                        logger.info ("No existing protein for that taxid, create a new one");
+                    if (createNewProtein (sptrEntry, bioSource)) {
+                        logger.info ("creation sucessfully done");
+                    }
+                    if (localTransactionControl){
+                        helper.finishTransaction();
+                    }
+                    logger.info ("Transaction conplete");
+                } else {
+                    if (update) {
+                        /*
+                         * We are doing the update of the existing protein only if the
+                         * user request it we only update its content if needed
+                         */
+                        logger.info ("A protein exists for that taxid, try to update");
 
                         if (localTransactionControl){
                             helper.startTransaction( BusinessConstants.OBJECT_TX );
                         }
-                        if (createNewProtein (sptrEntry, bioSource)) {
-                            logger.info ("creation sucessfully done");
+                        if (updateExistingProtein (protein, sptrEntry, bioSource)) {
+                            logger.info ("update sucessfully done");
                         }
-                        if (localTransactionControl){
-                                helper.finishTransaction();
-                        }
-                        logger.info ("Transaction conplete");
-                    } else {
-                        if (update) {
-                            /*
-                               We are doing the update of the existing protein only if the
-                               user request it we only update its content if needed
-                             */
-                            logger.info ("A protein exists for that taxid, try to update");
-
-                           if (localTransactionControl){
-                              helper.startTransaction( BusinessConstants.OBJECT_TX );
-                            }
-                            if (updateExistingProtein (protein, sptrEntry, bioSource)) {
-                                logger.info ("update sucessfully done");
-                            }
-                            if (localTransactionControl) {
-                                helper.finishTransaction();
-                                logger.info ("Transaction conplete");
-                            }
+                        if (localTransactionControl) {
+                            helper.finishTransaction();
+                            logger.info ("Transaction conplete");
                         }
                     }
-
-                } else {
-                    logger.info ("Stop updating from taxid: " + sptrTaxid);
                 }
+
             } // for each taxid
 
             /*
-               Check if the protein list is empty, if not, that means we have in IntAct some
-               proteins linked with a BioSource which is not recorded in the current SPTR Entry
+             * Check if the protein list is empty, if not, that means we have in IntAct some
+             * proteins linked with a BioSource which is not recorded in the current SPTR Entry
              */
             if (false == proteins.isEmpty()) {
 
@@ -982,7 +760,7 @@ public class UpdateProteins extends UpdateProteinsI {
         }
 
         // Get or create valid biosource from taxid
-        BioSource validBioSource = getValidBioSource(aTaxId);
+        BioSource validBioSource = bioSourceFactory.getValidBioSource(aTaxId);
 
         /* If there were obsolete taxids in the db, they should now be updated.
            So we will only compare valid biosources.
@@ -1049,10 +827,12 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // check the taxid parameter validity
         try {
-            String newTaxid = getUpToDateTaxid (taxid);
-            if (taxid != null && newTaxid == null) {
-                logger.error ("Could not find an up-to-date taxid for " + taxid + " abort update procedure.");
-                return getCreatedCount() + getUpdatedCount();
+            if ( taxid != null ) {
+                String newTaxid = bioSourceFactory.getUpToDateTaxid ( taxid );
+                if ( newTaxid == null ) {
+                    logger.error ("Could not find an up-to-date taxid for " + taxid + " abort update procedure.");
+                    return getCreatedCount() + getUpdatedCount();
+                }
             }
         } catch (IntactException ie) {
             String msg = "Could not find an up-to-date taxid for " + taxid + " abort update procedure.";
@@ -1257,82 +1037,6 @@ public class UpdateProteins extends UpdateProteinsI {
 
 
     /**
-     * Create or update a BioSource object from a taxid.
-     * @param aTaxId The tax id to create/update a biosource for
-     * @return a valid, persistent BioSource
-     */
-    public BioSource getValidBioSource (String aTaxId) throws IntactException {
-
-        // If a valid BioSource object already exists, return it.
-        if (bioSourceCache.containsKey(aTaxId)) {
-            return (BioSource) bioSourceCache.get(aTaxId);
-        }
-
-        // Get all existing BioSources with aTaxId
-        // Exception if there are more than one.
-        Collection currentBioSources = helper.search (BioSource.class.getName(),
-                                                      "taxId", aTaxId);
-        if (currentBioSources.size() > 1) {
-            throw new IntactException("More than one BioSource with this taxId found: " + aTaxId);
-        }
-
-        // Get a correct BioSource from Newt
-        BioSource validBioSource = getNewtBiosource(aTaxId);
-        if (null == validBioSource) {
-            throw new IntactException("The taxId is invalid: " + aTaxId);
-        }
-
-        // The verified BioSource
-        BioSource newBioSource = null;
-
-        // If there is no current BioSource, create it
-        if (0 == currentBioSources.size()) {
-            if (validBioSource.equals(aTaxId)) {
-                // look for that new taxid in Intact
-                helper.create(validBioSource);
-                newBioSource = validBioSource;
-            } else {
-                // it was obsolete
-                Collection bioSources = helper.search (BioSource.class.getName(),
-                                                              "taxId", validBioSource.getTaxId());
-                switch (bioSources.size()) {
-                    case 0:
-                        // doesn't exists, so create it.
-                        helper.create(validBioSource);
-                        newBioSource = validBioSource;
-                        break;
-
-                    case 1:
-                        // it exists, try to update it.
-                        BioSource intactBs = (BioSource) bioSources.iterator().next();
-                        newBioSource = updateBioSource(intactBs, validBioSource);
-
-                    default:
-                        throw new IntactException("More than one BioSource with this taxId found: " + aTaxId);
-                }
-            }
-        } else {
-            // only one BioSource found with the original taxid
-            // If it is obsolete, update current BioSource
-            BioSource currentBioSource = (BioSource) currentBioSources.iterator().next();
-            if (! currentBioSource.equals(validBioSource)){
-                newBioSource = updateBioSource(currentBioSource, validBioSource);
-            }  else {
-                newBioSource = currentBioSource;
-            }
-        }
-
-        // Return valid BioSource and update cache
-        /* The bioSourceCache will also contain associations from obsolete taxIds
-           to valid BioSource objects to avoid looking up the same obsolete Id
-           over and over again.
-        */
-        bioSourceCache.put(aTaxId, newBioSource);
-
-        return newBioSource;
-    }
-
-    /**
      * If true, each protein is updated in a distinct transaction.
      * If localTransactionControl is false, no local transactions are initiated,
      * control is left with the calling class.
@@ -1380,13 +1084,10 @@ public class UpdateProteins extends UpdateProteinsI {
             }
 
             try {
-                DAOSource dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
-                String repositoryFile = "config/repository.xml";
-                Map fileMap = new HashMap();
-                fileMap.put (Constants.MAPPING_FILE_KEY, repositoryFile);
-                dataSource.setConfig(fileMap);
-                helper = new IntactHelper(dataSource);
-                System.out.println("Helper created");
+                helper = new IntactHelper();
+                System.out.println("Helper created (User: "+helper.getDbUserName()+"" +
+                                   "Database: "+helper.getDbName()+")");
+
             } catch (IntactException e) {
                 System.out.println("Root cause: " + e.getRootCause());
                 e.printStackTrace();
