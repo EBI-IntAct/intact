@@ -808,21 +808,20 @@ public class HtmlBuilder {
                 + tableCellColor
                 + ">");
 
-        rs.write("<td colspan=4><code>");
+        rs.write("<td colspan=4><font face=\"Courier New, Courier, monospace\">");
         String seq = aProtein.getSequence();
         if (seq != null) {
             int blocks = seq.length() / SEQBLOCKLENGTH;
             for (int i = 0; i< blocks; i++){
-                rs.write(seq.substring(i*SEQBLOCKLENGTH,
-                        i*SEQBLOCKLENGTH + SEQBLOCKLENGTH));
-
+                rs.write(seq.substring( i * SEQBLOCKLENGTH,
+                                        i * SEQBLOCKLENGTH + SEQBLOCKLENGTH ));
                 rs.write(" ");
             }
             rs.write(seq.substring(blocks*SEQBLOCKLENGTH));
 
-            rs.write("</code></td>");
+            rs.write("</font></td>");
         } else {
-            rs.write ("<font color=\"#898989\">No sequence available for that protein.");
+            rs.write ("<font color=\"#898989\">No sequence available for that protein.</font>");
         }
 
         rs.write("</tr>\n");
