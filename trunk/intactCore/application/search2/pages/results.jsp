@@ -33,6 +33,7 @@
 
     //build the URL for hierarchView from the absolute path and the relative details..
     String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = relativePath.concat("mine/display.jsp");
 %>
 
 <script language="JavaScript" type="text/javascript">
@@ -67,10 +68,7 @@
         }
     }
 
-    // Will be invoked when user selects graph button. An AC must be selected.
-    // This in trun will create a new widow and invoke hierarchView application
-    // in the new window.
-    function writeToWindow(form, msg) {
+    function writeToWindow(form, msg, id) {
         // An AC must have been selected.
         if (!checkAC(form, msg)) {
             return;
@@ -93,11 +91,18 @@
                 }
             }
         }
-        var link = "<%=hvPath%>"
-            + "?AC=" + ac + "&depth=" + <%=service.getHierarchViewProp("hv.depth")%>
-            + "&method=" + "<%=service.getHierarchViewProp("hv.method")%>";
-        //window.alert(link);
-        makeNewWindow(link);
+        if(id == 0) {
+	     	var link = "<%=hvPath%>"
+    	        + "?AC=" + ac + "&depth=" + <%=service.getHierarchViewProp("hv.depth")%>
+        	    + "&method=" + "<%=service.getHierarchViewProp("hv.method")%>";
+        	//window.alert(link);
+        	makeNewWindow(link);
+       	}
+       	else {
+       		var link = "<%=minePath%>?AC=" + ac ;
+        	//window.alert(link);
+        	makeNewWindow(link);
+       	} 
     }
 
     // Checks all the check boxes.
@@ -186,7 +191,9 @@
             %>
                 <td align="center">
                     <input type="button" name="action" value="Graph"
-                        onclick="writeToWindow( this.form, 'Please select an AC to display the graph')">
+                        onclick="writeToWindow( this.form, 'Please select an AC to display the graph', 0)">
+                    <input type="button" name="action" value="Path"
+                        onclick="writeToWindow( this.form, 'Please select an AC to display the path', 1)">
                     <input type="reset" value="Reset">
                 </td>
            <%
