@@ -6,25 +6,26 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search.struts.view;
 
-import org.apache.struts.action.ActionForm;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
+import java.io.Serializable;
 
 /**
  * Bean to display an Intact object. This bean is used by results.jsp to display
  * the data.
  *
- * @author Sugath Mudali, modofied for basic search by Chris Lewington
+ * @author Sugath Mudali, modified for basic search by Chris Lewington
  * @version $Id$
  */
-public class IntactViewBean {
+public class IntactViewBean implements Serializable {
 
     /**
      * Static empty container to return to JSPs to display
      * no rows (or else display tag library throws an exception).
      */
-    private static Collection theirEmptyCollection = new ArrayList();
+    //private static Collection theirEmptyCollection = new ArrayList();
+
 
     /**
      * Selected topic.
@@ -220,7 +221,7 @@ public class IntactViewBean {
      * </pre>
      */
     public Collection getEmptyCollection() {
-        return theirEmptyCollection;
+        return new ArrayList();
     }
 
     /**
