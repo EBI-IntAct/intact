@@ -34,7 +34,7 @@
 
 <tr>
     <%-- Sidebar section --%>
-    <td bgcolor="#boc4de" width='113' valign='top' align='left'>
+    <td bgcolor="#cccccc" width='113' valign='top' align='left'>
         <tiles:insert attribute="sidebar"/>
     </td>
 
@@ -43,11 +43,14 @@
 
             <%-- Application Header section --%>
             <tr>
-                <td bgcolor="#ffeeaa" height="8%">
+                <td valign="top" height="5%">
                     <tiles:insert attribute="header"/>
                 </td>
-            </tr>
 
+            </tr>
+            <tr>
+                <td height="3" background="<%=request.getContextPath()%>/images/hor.gif"></td>
+            </tr>
             <%-- Content section --%>
             <tr>
                 <td valign="top" height="*">
@@ -58,7 +61,7 @@
 
             <%-- The footer --%>
             <tr>
-                <td valign="bottom" height="15%">
+                <td valign="bottom" height="10%">
                     <tiles:insert attribute="footer"/>
                 </td>
             </tr>

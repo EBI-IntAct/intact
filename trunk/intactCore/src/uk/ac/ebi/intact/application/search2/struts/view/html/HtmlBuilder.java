@@ -165,9 +165,9 @@ public class HtmlBuilder {
      */
     private void htmlView(Annotation anAnnotation) throws IOException {
 
-        rs.write("<tr bgcolor=\""
+        rs.write("<tr bgcolor="
                 + tableCellColor
-                + "\"white>");
+                + ">");
 
         // Annotation topic
         rs.write("<td>");
@@ -262,9 +262,9 @@ public class HtmlBuilder {
      */
     private void htmlView(Xref anXref) throws IOException {
 
-        rs.write("<tr bgcolor=\""
+        rs.write("<tr bgcolor="
                 + tableCellColor
-                + "\"white>");
+                + ">");
 
         // xref db
         rs.write("<td>");
@@ -466,12 +466,12 @@ public class HtmlBuilder {
     private void htmlViewHead(AnnotatedObject anAnnotatedObject,
                               boolean checkBox) throws IOException {
 
-        rs.write("<tr bgcolor=\""
+        rs.write("<tr bgcolor="
                 + tableHeaderColor
-                + "\"white>");
+                + ">");
 
 
-        rs.write("<td>");
+        rs.write("<td class=objectClass>");
 
         // Checkbox
         if (checkBox){
@@ -521,9 +521,9 @@ public class HtmlBuilder {
     private void htmlViewData(AnnotatedObject anAnnotatedObject)
             throws IOException {
 
-        rs.write("<tr bgcolor=\""
+        rs.write("<tr bgcolor="
                 + tableHeaderColor
-                + "\"white>");
+                + ">");
 
 
         // empty cell to get to the total of three cells per row
@@ -542,9 +542,9 @@ public class HtmlBuilder {
      */
     private void htmlViewData(Protein aProtein) throws IOException {
 
-        rs.write("<tr bgcolor=\""
+        rs.write("<tr bgcolor="
                 + tableHeaderColor
-                + "\"white>");
+                + ">");
 
 
         // Biosource
@@ -576,9 +576,9 @@ public class HtmlBuilder {
      */
     private void htmlViewData(Interaction anInteraction) throws IOException {
 
-        rs.write("<tr bgcolor=\""
+        rs.write("<tr bgcolor="
                 + tableHeaderColor
-                + "\"white>");
+                + ">");
 
 
         // kD
@@ -626,7 +626,9 @@ public class HtmlBuilder {
      */
     private void htmlViewData(Experiment exp) throws IOException {
 
-        rs.write("<tr bgcolor=e0f0f0>");
+        rs.write("<tr bgcolor="
+                + tableHeaderColor
+                + ">");
 
         htmlViewPartial(exp.getCvInteraction());
         htmlViewPartial(exp.getCvIdentification());
@@ -709,6 +711,9 @@ public class HtmlBuilder {
         CvComponentRole componentRole = comp.getCvComponentRole();
         String role = componentRole.getShortLabel();
 
+        // avoid that a checkbox appears at the end of a line
+        rs.write("<nobr>");
+
         // Checkbox
         htmlCheckBox(act);
 
@@ -720,6 +725,9 @@ public class HtmlBuilder {
                 "<sup>" + role.substring(0,1) + "</sup>");
 
         rs.write(",");
+        // avoid that a checkbox appears at the end of a line
+        rs.write("</nobr>");
+
 
         // write spaces to fill up to the "normal" length of component shortlabels
         for(int i = label.length(); i<FORMATTED_LABEL_LENGTH; i++){
@@ -745,9 +753,9 @@ public class HtmlBuilder {
         htmlViewXref(aProtein);
 
         // Sequence
-        rs.write("<tr bgcolor=\""
+        rs.write("<tr bgcolor="
                 + tableCellColor
-                + "\"white>");
+                + ">");
 
         rs.write("<td colspan=4><code>");
         String seq = aProtein.getSequence();
@@ -859,9 +867,9 @@ public class HtmlBuilder {
         htmlViewXref(act);
 
         // Interactors
-        rs.write("<tr bgcolor=\""
+        rs.write("<tr bgcolor="
                 + tableCellColor
-                + "\"white>");
+                + ">");
 
         rs.write("<td colspan=\"4\">");
 

@@ -16,7 +16,7 @@
 
                 <%-- Sidebar logo --%>
                 <tr>
-                    <td bgcolor="#boc4de" valign="top" align="left" width="113" height="75">
+                    <td valign="top" align="left" width="113" height="75">
                         <img src="<%=request.getContextPath()%>/images/logo_intact.gif" border="0">
                     </td>
                 </tr>

@@ -7,4 +7,3 @@
 --%>
 
 <span class="header"><tiles:getAsString name="header.title"/></span>
-<hr>
