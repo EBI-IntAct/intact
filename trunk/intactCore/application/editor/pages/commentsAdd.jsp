@@ -1,4 +1,5 @@
-<!--
+<%@ page import="uk.ac.ebi.intact.application.editor.business.EditorService,
+                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%><!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -21,6 +22,12 @@
 <%-- The list of topics --%>
 <c:set var="topiclist" value="${user.view.addAnnotationMenus}"/>
 
+<%
+    // To Allow access to Editor Service.
+    EditorService service = (EditorService)
+            application.getAttribute(EditorConstants.EDITOR_SERVICE);
+%>
+
 <!-- Adds a new comment. This will invoke addComment action. -->
 <html:form action="/comment/add">
     <table class="table" width="80%" border="0" cellspacing="1" cellpadding="2">
@@ -28,6 +35,9 @@
             <th class="tableCellHeader" colspan="2">Action</th>
             <th class="tableCellHeader">Topic</th>
             <th class="tableCellHeader">Description</th>
+            <th>
+                <a target="help" href="<%=service.getHelpLink("annotations")%>">[?]</a>
+            </th>
         </tr>
         <tr class="tableRowOdd">
             <td class="tableCell" align="left" valign="bottom">

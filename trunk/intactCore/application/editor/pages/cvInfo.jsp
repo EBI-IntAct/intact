@@ -31,6 +31,7 @@
     // To Allow access to Editor Service.
     EditorService service = (EditorService)
             application.getAttribute(EditorConstants.EDITOR_SERVICE);
+    String helpLink = service.getHelpLinkAsHTML("short.labels");
 %>
 
 <script language="JavaScript" type="text/javascript">
@@ -54,8 +55,9 @@
     // Will be invoked when user selects graph button. An AC must be selected.
     // This in trun will create a new widow.
     function show(topic, label) {
-        var link = "<%=service.getSerachLink()%>"
+        var link = "<%=service.getSearchLink()%>"
             + "?searchString=" + label + "&searchClass=" + topic;
+        //    window.alert(link);
         makeNewWindow(link);
     }
 </script>
@@ -69,6 +71,9 @@
                     <bean:message key="cvinfo.label.shortlabel"/>
             </th>
             <th class="tableCellHeader">Full Name</th>
+            <th>
+                <%=helpLink%>
+            </th>
         </tr>
         <tr class="tableRowEven">
             <td class="tableCell">
