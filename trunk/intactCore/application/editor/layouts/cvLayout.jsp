@@ -16,19 +16,4 @@
 <%-- The error page at the top --%>
 <tiles:insert attribute="error"/>
 
-<%-- The common information for all the CV objects. --%>
-<tiles:insert attribute="cv-info"/>
-
-<%-- The plugin for editor specific info. --%>
-<tiles:insert attribute="editor-info" ignore="true"/>
-
-<%-- The annotations. --%>
-<tiles:insert attribute="comments"/>
-<tiles:insert attribute="add-comments"/>
-
-<%-- The cross references. --%>
-<tiles:insert attribute="xrefs"/>
-<tiles:insert attribute="add-xrefs"/>
-
-<%-- The action button at the bottom. --%>
-<tiles:insert attribute="action"/>
+<tiles:insert attribute="cv"/>
