@@ -232,8 +232,8 @@ public class Component extends BasicObjectImpl {
         // Compare if the component links the same objects.
         // This comparision can be based on reference equality,
         // so "==" can be used instead of "equals".
-        return this.interactor == component.interactor &&
-               this.interaction == component.interaction &&
+        return this.interactor == component.getInteractor() &&
+               this.interaction == component.getInteraction() &&
                this.cvComponentRole == component.cvComponentRole;
     }
 
@@ -247,8 +247,8 @@ public class Component extends BasicObjectImpl {
 
         //need these checks because we still have a no-arg
         //constructor at the moment.....
-        if(interactor != null) code = code * 29 + interactor.hashCode();
-        if(interaction != null) code = code * 29 +  interaction.hashCode();
+        if(interactor != null) code = code * 29 + getInteractor().hashCode();
+        if(interaction != null) code = code * 29 +  getInteractor().hashCode();
         if(cvComponentRole != null) code = code * 29 +  cvComponentRole.hashCode();
 
         return code;
@@ -296,6 +296,9 @@ public class Component extends BasicObjectImpl {
      */
     void setInteractionForClone(Interaction interaction) {
         this.interaction = interaction;
+    }
+    void setInteractorForClone(Interactor interactor) {
+        this.interactor = interactor;
     }
 } // end Component
 
