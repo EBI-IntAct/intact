@@ -13,9 +13,7 @@ import uk.ac.ebi.intact.model.*;
 
 
 import java.net.URL;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Iterator;
@@ -94,16 +92,19 @@ public class GoTools {
     /**
      * Insert a GO term into IntAct.
      */
-    private static void insertDefinition (Hashtable definition,
-                                          IntactHelper helper,
-                                          Class targetClass)
+    public static CvObject insertDefinition (Hashtable definition,
+                                             IntactHelper helper,
+                                             Class targetClass,
+                                             boolean deleteold)
         throws IntactException, Exception {
 
         /* Update strategy:
         Criterion of object identity: GO id == IntAct GO xref.
         Update shortlabel, name, description, GO comment.
-        Update references depending on constant setting.
+        Subobjects are only removed if deleteOld is true.
         */
+
+        RE pubmedRefPat =  new RE("PMID\\:(\\d+)");
 
         // Get or create CvObject
         CvObject current;
@@ -114,11 +115,13 @@ public class GoTools {
             current = (CvObject) targetClass.newInstance();
             current.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
         } else {
-            // Delete all old data
-            helper.deleteAllElements(current.getXref());
-            current.getXref().removeAll(current.getXref());
-            helper.deleteAllElements(current.getAnnotation());
-            current.getAnnotation().removeAll(current.getAnnotation());
+            if (deleteold){
+                // Delete all old data
+                helper.deleteAllElements(current.getXref());
+                current.getXref().removeAll(current.getXref());
+                helper.deleteAllElements(current.getAnnotation());
+                current.getAnnotation().removeAll(current.getAnnotation());
+            }
         }
 
         // Update shortLabel. Label has to be unique!
@@ -132,95 +135,53 @@ public class GoTools {
         // Update fullName
         current.setFullName(goTerm.substring(0,Math.min(goTerm.length(), MAX_NAME_LEN)));
 
-        // Now we have a valid database object with all constraints
-        // fulfilled. Update or create object.
         helper.update(current);
 
         // Update GO term
         // The term needs to be stored separately, as the length may exceed the maximum fullName length.
-        updateAnnotation(current,
-                helper,
-                (CvTopic) helper.getObjectByLabel(CvTopic.class, "GO term"),
-                goTerm);
+        current.updateUniqueAnnotation((CvTopic) helper.getObjectByLabel(CvTopic.class, "GO term"),
+                                       goTerm,
+                                       (Institution) helper.getObjectByLabel(Institution.class, "EBI"));
 
         // Update GO description
         if (null != definition.get("definition")) {
-            updateAnnotation(current,
-                    helper,
-                    (CvTopic) helper.getObjectByLabel(CvTopic.class, "GO description"),
-                    ((Vector) definition.get("definition")).elementAt(0).toString());
+            current.updateUniqueAnnotation((CvTopic) helper.getObjectByLabel(CvTopic.class, "GO description"),
+                                           ((Vector) definition.get("definition")).elementAt(0).toString(),
+                                           (Institution) helper.getObjectByLabel(Institution.class, "EBI"));
         }
 
         // Update GO comment
         if (null != definition.get("comment")) {
 
-            updateAnnotation(current,
-                    helper,
-                    (CvTopic) helper.getObjectByLabel(CvTopic.class, "GO comment"),
-                    ((Vector) definition.get("comment")).elementAt(0).toString());
+            current.updateUniqueAnnotation((CvTopic) helper.getObjectByLabel(CvTopic.class, "GO comment"),
+                                           ((Vector) definition.get("comment")).elementAt(0).toString(),
+                                           (Institution) helper.getObjectByLabel(Institution.class, "EBI"));
         }
 
-        // Update xref
-        addNewXref(current,
-                   helper,
-                   new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                             (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "GO"),
-                             ((Vector) definition.get("goid")).elementAt(0).toString(),
-                             null, null));
+        // add xref
+        current.addXref(new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
+                                  (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "GO"),
+                                  ((Vector) definition.get("goid")).elementAt(0).toString(),
+                                  null, null));
 
-        // Update main object
-        helper.update(current);
-    }
-
-    /**
-     * Update a unique annotation topic.
-     * @param current The Object to be modified
-     * @param helper Persistence engine
-     * @param topic The topic to be updated
-     * @param annotationText The new text for the topic
-     * @throws IntactException
-     */
-    private static void updateAnnotation(CvObject current,
-                                         IntactHelper helper,
-                                         CvTopic topic,
-                                         String annotationText) throws IntactException {
-        // Update
-        // Get current GO description
-        Annotation annotation = null;
-        for (Iterator iterator = current.getAnnotation().iterator(); iterator.hasNext();) {
-            Annotation a = (Annotation) iterator.next();
-            if (a.getCvTopic() == topic){
-                annotation = a;
-                break;
+        // add definition references
+        Vector v = (Vector) definition.get("definition_reference");
+        if (null != v) {
+            for (int i = 0; i < v.size(); i++) {
+                String s = (String) v.elementAt(i);
+                if (pubmedRefPat.match(s)){
+                    // add Pubmed xref
+                    current.addXref(new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
+                                              (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "PubMed"),
+                                              pubmedRefPat.getParen(1),
+                                              null, null));
+                }
             }
         }
-        if (null == annotation){
-            annotation = new Annotation();
-            annotation.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
-            annotation.setCvTopic(topic);
-            current.addAnnotation(annotation);
-        }
-        // Now annotation is a valid object, (re-) set the text
-        if (annotation.getAnnotationText() != annotationText){
-            annotation.setAnnotationText(annotationText);
-        }
 
-        helper.update(annotation);
-
-        return;
-    }
-
-    /** Add a new xref to an annotatedObject.
-     *
-     */
-    public static void addNewXref(AnnotatedObject current,
-                                  IntactHelper helper,
-                                  Xref xref)  throws Exception {
-
-        current.addXref(xref);
-        if (xref.getParentAc() == current.getAc()){
-            helper.create(xref);
-        }
+        // Update main object
+        current.update(helper);
+        return current;
     }
 
     /**
@@ -242,23 +203,20 @@ public class GoTools {
 
             int count = 0;
 
-            System.err.println("GO records read: ");
+            System.err.print("GO records read: ");
 
             while (null != ( goRecord = readRecord(in))) {
 
                 // Progress report
-                if((++count % 100) == 0){
-                   System.err.println(count + " ");
+                if((++count % 1) == 0){
+                   System.err.println(count + " " + goRecord);
                 }
 
                 // Insert the definition
                 try {
-                    //helper.startTransaction();
-                    insertDefinition(goRecord, helper, aTargetClass);
-                    //helper.finishTransaction();
+                    insertDefinition(goRecord, helper, aTargetClass, false);
                 }
                 catch (IntactException e){
-                    // helper.undoTransaction();
                     System.err.println("Error storing GO record " + (count - 1) + "\n" + e);
                 }
             }
@@ -267,21 +225,43 @@ public class GoTools {
     }
 
     /**
+     * Read a GO DAG file from the given URL,
+     * insert or update DAG into aTargetClass.
+     */
+    public static void insertGoDag(Class aTargetClass,
+                                   IntactHelper helper,
+                                   String aSourceUrl)
+            throws Exception {
+
+        // initialisation
+        Vector goRecord;
+        URL goServer = new URL(aSourceUrl);
+        BufferedReader in = new BufferedReader(new InputStreamReader(goServer.openStream()));
+
+        DagNode.addNodes(in, null, aTargetClass, helper);
+
+        return;
+    }
+
+    /**
      * Write a Controlled vocabulary in GO definition format flat file.
      */
     public static void writeGoDefinitions(Class aTargetClass,
-                                          IntactHelper helper)
-        throws IntactException {
+                                          IntactHelper helper,
+                                          String targetFile)
+        throws IntactException, IOException {
 
+        PrintWriter out = new PrintWriter( new BufferedWriter(new FileWriter(targetFile)));
         // Get all members of the class
         Collection result = helper.search(aTargetClass.getName(), "ac", "*");
 
         for (Iterator iterator = result.iterator(); iterator.hasNext();) {
             CvObject o = (CvObject) iterator.next();
 
-            System.out.print(toGoString(o));
-
+            out.print(toGoString(o));
         }
+
+        out.close();
     }
 
     /**
@@ -293,7 +273,7 @@ public class GoTools {
         Hashtable parsed = new Hashtable();
         String line;
         RE emptyLinePat = new RE("^[:blank:]*$");
-        RE tagValuePat = new RE("(.*): (.*)");
+        RE tagValuePat = new RE("(\\S*): (.*)");
 
         while (null != (line = in.readLine())) {
 
@@ -358,21 +338,63 @@ public class GoTools {
                 buf.append(a.getAnnotationText());
                 buf.append("\n");
             }
+        }
+
+        xref = current.getXref();
+        for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
+            Xref x = (Xref) iterator.next();
+            if (x.getCvDatabase().getShortLabel().equals("PubMed")){
+                buf.append("definition_reference: PMID:");
+                buf.append(x.getPrimaryId());
+                buf.append("\n");
+            }
+        }
+
+        annotation = current.getAnnotation();
+        for (Iterator iterator = annotation.iterator(); iterator.hasNext();) {
+            Annotation a = (Annotation) iterator.next();
+
             if (a.getCvTopic().getShortLabel().equals("GO comment")){
                 buf.append("comment: ");
                 buf.append(a.getAnnotationText());
                 buf.append("\n");
             }
         }
-
         buf.append("\n");
 
         return buf.toString();
     }
 
+    /** Print the GO format DAG to a file.
+     *
+     * @param aTargetClass The class for which to print the DAG
+     * @param helper       IntactHelper object for database access
+     * @param aTargetFile  The file to print to
+     * @throws IntactException
+     * @throws IOException
+     */
+    private static void writeGoDag(Class aTargetClass, IntactHelper helper, String aTargetFile)
+        throws IntactException, IOException {
+
+        PrintWriter out = new PrintWriter( new BufferedWriter(new FileWriter(aTargetFile)));
+
+        // Get a random members of the class
+        Collection result = helper.search(aTargetClass.getName(), "ac", "*");
+
+        if (result.size()>0){
+            Iterator iterator = result.iterator();
+            CvDagObject o = (CvDagObject) iterator.next();
+            o = o.getRoot();
+            out.print(o.toGoDag());
+        }
+
+        out.close();
+    }
+
+
     /** Load or unload Controlled Vocabularies in GO format.
      *  Usage:
-     *  GoTools upload IntAct_classname Go_File_URL  |
+     *  GoTools upload IntAct_classname Go_DefinitionFile_Url Go_DagFile_Url |
      *  GoTools download IntAct_classname
      *
      * @param args
@@ -381,13 +403,13 @@ public class GoTools {
     public static void main(String[] args) throws Exception {
 
         final String usage = "Usage:\n" +
-                             "GoTools upload IntAct_classname Go_File_URL    OR\n" +
-                             "GoTools download IntAct_classname";
+                             "GoTools upload IntAct_classname Go_DefinitionFile_Url Go_DagFile_Url    OR\n" +
+                             "GoTools download IntAct_classname Go_DefinitionsFile Go_DagFile";
         Class targetClass;
 
         try {
             // Check parameters
-            if (args.length < 2 || args.length > 3) {
+            if (args.length != 4) {
                 throw new IntactException("Invalid number of arguments.\n" + usage);
             }
 
@@ -398,23 +420,23 @@ public class GoTools {
             }
 
 
+            // Create database access object
+            IntactHelper helper = new IntactHelper();
+
             if (args[0].equals("upload")) {
-                if (args.length != 3)
-                    throw new IntactException("Invalid number of arguments.\n" + usage);
 
-                // Create database access object
-                IntactHelper helper = new IntactHelper();
-
-                // Read definitins
+                // Insert definitions
                 insertGoDefinitions(targetClass, helper, args[2]);
+                // Insert DAG
+                insertGoDag(targetClass, helper, args[3]);
 
             } else if (args[0].equals("download")) {
 
-                // Create database access object
-                IntactHelper helper = new IntactHelper();
-
                 // Write definitions
-                writeGoDefinitions(targetClass, helper);
+                writeGoDefinitions(targetClass, helper, args[2]);
+
+                // Write go dag format
+                writeGoDag(targetClass, helper, args[3]);
 
             } else
                 throw new IntactException("Invalid argument " + args[0] + "\n" + usage);
@@ -424,3 +446,4 @@ public class GoTools {
         }
     }
 }
+
