@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.util.logging;
 import java.net.UnknownHostException;
 import java.net.InetAddress;
 import java.io.IOException;
+import java.util.Properties;
 
 public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollingFileAppender {
 
@@ -12,15 +13,31 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
     private static final String HOSTNAME_FLAG = "$hostname";
 
     private static String hostname;
+    private static String username;
+
+
 
     static {
+
+        // try to get the hostname
         try {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
             e.printStackTrace();
             hostname="noHostnameFound";
         }
+
+        // get the current time
+//        Date date = new Date(); // today's date
+//        Format formatter = new SimpleDateFormat("yyyy.MM.dd@HH.mm.ss"); // 2003.03.29@09.45.33
+//        currentTime = formatter.format(date);
+
+        // get the username
+        Properties props = System.getProperties();
+        username = props.getProperty("user.name");
     }
+
+
 
     /**
      * Over definition of that method inherited from FileAppender.
@@ -31,12 +48,13 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
      *
      * @throws IOException
      */
-    public void setFile(String fileName,
-                        boolean append,
-                        boolean bufferedIO,
-                        int bufferSize)
+    public void setFile (String fileName,
+                         boolean append,
+                         boolean bufferedIO,
+                         int bufferSize)
             throws IOException {
 
+        // look for the $hostname flag and replace it by the proper value if it exists
         int indexOfFlag = fileName.indexOf(HOSTNAME_FLAG);
         if (indexOfFlag >= -1) {
             fileName = fileName.substring(0, indexOfFlag) +
@@ -44,10 +62,16 @@ public class IntactDailyRollingFileAppender extends org.apache.log4j.DailyRollin
                        fileName.substring(indexOfFlag + HOSTNAME_FLAG.length(), fileName.length());
         }
 
+        // Add at the end the date of creation
+        // in case Tomcat run an intact part, all log files are created.
+        // if several instance of Tomcat runs ... you get file right access conflict ...
+        // adding that time should prevent troubles.
+        fileName += "_" + username;
+
         super.setFile (fileName,
                 append,
                 bufferedIO,
                 bufferSize);
+    } // setFile
 
-    }
-}
+} // IntactDailyRollingFileAppender
