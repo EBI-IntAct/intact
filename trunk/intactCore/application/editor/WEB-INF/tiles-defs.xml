@@ -80,13 +80,13 @@
     -->
     <definition name="header.layout" path="/layouts/headerLayout.jsp"
         controllerUrl="/do/tiles/headerSwitch">
-        <put name="header.title" value="IntAct Editor"/>
+        <put name="header.title" value="Editor"/>
     </definition>
 
     <!-- Login page description  -->
     <definition name="login.layout" path="/layouts/intactLayout.jsp">
 <!--        <put name="stylesheet" value="layouts/styles/cvedit.css"/>-->
-        <put name="title"  value="IntAct Editor"/>
+        <put name="title"  value="Editor"/>
         <put name="sidebar" value="login.sidebar.layout"/>
         <put name="header" value="header.layout"/>
         <put name="footer" value="/pages/footer.jsp"/>
