@@ -30,7 +30,6 @@ public class VisibleHighlightmentBehaviour
    * @return the new collection to highlight
    */
   public Collection modifyCollection (Collection proteins, InteractionNetwork aGraph) throws UnsupportedOperationException {
-     Protein protein;
      boolean b;
      
      /* Get the list of proteins in the current InteractionNetwork */
