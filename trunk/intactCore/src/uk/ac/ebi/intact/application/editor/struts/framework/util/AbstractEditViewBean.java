@@ -19,7 +19,6 @@ import java.util.*;
 //import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.beanutils.DynaBean;
 import org.apache.struts.tiles.ComponentContext;
 
 /**
