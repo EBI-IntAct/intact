@@ -11,7 +11,7 @@ import org.apache.struts.action.ActionMapping;
 
 import javax.servlet.http.HttpServletRequest;
 
-import uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
 
 /**
  * This class holds the data from the searching an Intact object. It is basically
