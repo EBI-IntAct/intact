@@ -102,12 +102,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         password = broker.getPBKey().getPassword();
 
         try {
-
             logger = LoggerFactory.getLogger(Class.forName("org.apache.ojb.broker.util.logging.Log4jLoggerImpl"));
         }
         catch(ClassNotFoundException c) {
 
-            //try and set up a simple logger instead here....
+          //  try and set up a simple logger instead here....
         }
 
         //now also set up some ODMG stuff for operations needing
@@ -523,6 +522,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                      try {
                          value = fields[i].get(obj);
+
+                         // skip final field
+                         if (Modifier.isFinal (fields[i].getModifiers())) continue;
+
                          logger.debug("field: " + fields[i].getName());
                          logger.debug("old value: " + fields[i].get(dummy));
                          logger.debug("new value: " + value);
