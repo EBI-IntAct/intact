@@ -37,6 +37,7 @@ public class LineExport {
     // Constants
 
     protected static final String UNIPROT_DR_EXPORT = "uniprot-dr-export";
+    protected static final String UNIPROT_CC_EXPORT = "uniprot-cc-export";
     protected static final String AUTHOR_CONFIDENCE = "author-confidence";
     protected static final String GENE_NAME = "gene-name";
     protected static final String NEGATIVE = "negative";
@@ -98,7 +99,7 @@ public class LineExport {
         }
 
         public void addKeywords( Collection keywords ) {
-            if ( keywords == null ) {
+            if( keywords == null ) {
                 throw new IllegalArgumentException( "Keywords must not be null" );
             }
             this.keywords = keywords;
@@ -109,8 +110,8 @@ public class LineExport {
             StringBuffer sb = new StringBuffer( 128 );
 
             sb.append( "ExperimentStatus{ keywords= " );
-            if ( keywords != null ) {
-                for ( Iterator iterator = keywords.iterator(); iterator.hasNext(); ) {
+            if( keywords != null ) {
+                for( Iterator iterator = keywords.iterator(); iterator.hasNext(); ) {
                     String kw = (String) iterator.next();
                     sb.append( kw ).append( ' ' );
                 }
@@ -239,7 +240,7 @@ public class LineExport {
 
         public void run() {
             System.out.println( "JDBCShutdownHook thread started" );
-            if ( helper != null ) {
+            if( helper != null ) {
                 try {
                     helper.closeStore();
                     System.out.println( "Connexion to the database closed." );
@@ -275,7 +276,7 @@ public class LineExport {
         }
 
         public void run() {
-            if ( outputFileWriter != null ) {
+            if( outputFileWriter != null ) {
                 try {
                     outputFileWriter.close();
                 } catch ( IOException e ) {
@@ -284,7 +285,7 @@ public class LineExport {
                 }
             }
 
-            if ( outputFileWriter != null ) {
+            if( outputFileWriter != null ) {
                 try {
                     outputFileWriter.close();
                 } catch ( IOException e ) {
@@ -307,6 +308,7 @@ public class LineExport {
     protected CvDatabase intactDatabase = null;
 
     protected CvTopic uniprotDR_Export = null;
+    protected CvTopic uniprotCC_Export = null;
     protected CvTopic authorConfidenceTopic = null;
     protected CvTopic negativeTopic = null;
     protected CvTopic ccNoteTopic = null;
@@ -354,6 +356,7 @@ public class LineExport {
         isoformParentQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, ISOFORM_PARENT );
 
         uniprotDR_Export = (CvTopic) getCvObject( helper, CvTopic.class, UNIPROT_DR_EXPORT );
+        uniprotCC_Export = (CvTopic) getCvObject( helper, CvTopic.class, UNIPROT_CC_EXPORT );
         authorConfidenceTopic = (CvTopic) getCvObject( helper, CvTopic.class, AUTHOR_CONFIDENCE );
         negativeTopic = (CvTopic) getCvObject( helper, CvTopic.class, NEGATIVE );
         ccNoteTopic = (CvTopic) getCvObject( helper, CvTopic.class, CC_NOTE );
@@ -375,7 +378,7 @@ public class LineExport {
                    DatabaseContentException {
 
         CvObject cv = (CvObject) helper.getObjectByLabel( clazz, shortlabel );
-        if ( cv == null ) {
+        if( cv == null ) {
             StringBuffer sb = new StringBuffer( 128 );
             sb.append( shortlabel );
             sb.append( ' ' );
@@ -401,7 +404,7 @@ public class LineExport {
     protected void setDebugFileEnabled( boolean enabled ) {
         debugFileEnabled = enabled;
 
-        if ( enabled ) {
+        if( enabled ) {
             // create the output file if the user requested it.
             String filename = "export2uniprot_verboseOutput_" + TIME + ".txt";
             File file = new File( filename );
@@ -433,11 +436,11 @@ public class LineExport {
 
         Collection xrefs = protein.getXrefs();
         boolean found = false;
-        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
+        for( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
             Xref xref = (Xref) iterator.next();
 
-            if ( uniprotDatabase.equals( xref.getCvDatabase() ) &&
-                 identityXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
+            if( uniprotDatabase.equals( xref.getCvDatabase() ) &&
+                identityXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
                 uniprot = xref.getPrimaryId();
                 found = true;
             }
@@ -458,11 +461,11 @@ public class LineExport {
 
         Collection xrefs = protein.getXrefs();
         boolean found = false;
-        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
+        for( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
             Xref xref = (Xref) iterator.next();
 
-            if ( intactDatabase.equals( xref.getCvDatabase() ) &&
-                 isoformParentQualifier.equals( xref.getCvXrefQualifier() ) ) {
+            if( intactDatabase.equals( xref.getCvDatabase() ) &&
+                isoformParentQualifier.equals( xref.getCvXrefQualifier() ) ) {
                 ac = xref.getPrimaryId();
                 found = true;
             }
@@ -487,7 +490,7 @@ public class LineExport {
 
         String ac = getMasterAc( protein );
 
-        if ( ac != null ) {
+        if( ac != null ) {
             // search for that Protein
             Collection proteins = null;
             try {
@@ -496,8 +499,8 @@ public class LineExport {
                 e.printStackTrace();
             }
 
-            if ( proteins != null ) {
-                if ( !proteins.isEmpty() ) {
+            if( proteins != null ) {
+                if( !proteins.isEmpty() ) {
                     master = (Protein) proteins.iterator().next();
                 } else {
                     System.err.println( "Could not find the master protein (AC: " + ac +
@@ -524,12 +527,12 @@ public class LineExport {
         Collection components = protein.getActiveInstances();
         List interactions = new ArrayList( components.size() );
 
-        for ( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
+        for( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
             Component component = (Component) iterator.next();
 
             Interaction interaction = component.getInteraction();
 
-            if ( !interactions.contains( interaction ) ) {
+            if( !interactions.contains( interaction ) ) {
                 interactions.add( interaction );
             }
         }
@@ -548,11 +551,11 @@ public class LineExport {
         boolean isBinaryInteraction = false;
         // if that interaction has not exactly 2 interactors, it is not taken into account
 
-        if ( interaction.getComponents() != null ) {
+        if( interaction.getComponents() != null ) {
 
             int componentCount = interaction.getComponents().size();
 
-            if ( componentCount == 2 ) {
+            if( componentCount == 2 ) {
 
                 // check that the stochiometry is 1 for each component
                 Iterator iterator1 = interaction.getComponents().iterator();
@@ -563,7 +566,7 @@ public class LineExport {
                 Component component2 = (Component) iterator1.next();
                 float stochio2 = component2.getStoichiometry();
 
-                if ( stochio1 == 1 && stochio2 == 1 ) {
+                if( stochio1 == 1 && stochio2 == 1 ) {
 
                     isBinaryInteraction = true;
 
@@ -573,12 +576,12 @@ public class LineExport {
                     isBinaryInteraction = false;
                 }
 
-            } else if ( componentCount == 1 ) {
+            } else if( componentCount == 1 ) {
 
                 // check that the stochiometry is 2
                 Iterator iterator1 = interaction.getComponents().iterator();
                 Component component1 = (Component) iterator1.next();
-                if ( component1.getStoichiometry() == 2 ) {
+                if( component1.getStoichiometry() == 2 ) {
 
                     isBinaryInteraction = true;
 
@@ -604,11 +607,11 @@ public class LineExport {
      */
     protected final void log( String message ) {
 
-        if ( debugEnabled ) {
+        if( debugEnabled ) {
             System.out.println( message );
         }
 
-        if ( debugFileEnabled ) {
+        if( debugFileEnabled ) {
             try {
                 outputBufferedWriter.write( message );
                 outputBufferedWriter.write( NEW_LINE );
@@ -647,10 +650,10 @@ public class LineExport {
         CvInteractionStatus status = null;
 
         // cache the CvInteraction status
-        if ( null != cvInteraction ) {
+        if( null != cvInteraction ) {
 
             CvInteractionStatus cache = (CvInteractionStatus) cvInteractionExportStatusCache.get( cvInteraction.getAc() );
-            if ( null != cache ) {
+            if( null != cache ) {
 
 //                log( logPrefix + "\t\t\t\t CvInteraction: Status already processed, retreived from cache." );
                 status = cache;
@@ -665,13 +668,13 @@ public class LineExport {
 
                 log( logPrefix + "\t\t\t " + annotations.size() + " annotations found." );
                 Annotation annotation = null;
-                for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && !multipleAnnotationFound; ) {
+                for( Iterator iterator = annotations.iterator(); iterator.hasNext() && !multipleAnnotationFound; ) {
                     Annotation _annotation = (Annotation) iterator.next();
-                    if ( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
+                    if( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
 
                         log( logPrefix + "\t\t\t\t Found uniprot-dr-export annotation: " + _annotation );
 
-                        if ( true == found ) {
+                        if( true == found ) {
                             multipleAnnotationFound = true;
                             System.err.println( "There are multiple annotation having Topic:" + UNIPROT_DR_EXPORT +
                                                 " in CvInteraction: " + cvInteraction.getShortLabel() +
@@ -684,26 +687,26 @@ public class LineExport {
                 }
 
 
-                if ( multipleAnnotationFound ) {
+                if( multipleAnnotationFound ) {
 
                     status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
                     log( logPrefix + "\t\t\t multiple annotation found: do not export " );
 
                 } else {
 
-                    if ( true == found ) {
+                    if( true == found ) {
 
                         String text = annotation.getAnnotationText();
-                        if ( null != text ) {
+                        if( null != text ) {
                             text = text.toLowerCase().trim();
                         }
 
-                        if ( METHOD_EXPORT_KEYWORK_EXPORT.equals( annotation.getAnnotationText() ) ) {
+                        if( METHOD_EXPORT_KEYWORK_EXPORT.equals( annotation.getAnnotationText() ) ) {
 
                             status = new CvInteractionStatus( CvInteractionStatus.EXPORT );
                             log( logPrefix + "\t\t\t " + METHOD_EXPORT_KEYWORK_EXPORT + " found: export " );
 
-                        } else if ( METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( annotation.getAnnotationText() ) ) {
+                        } else if( METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( annotation.getAnnotationText() ) ) {
 
                             status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
                             log( logPrefix + "\t\t\t " + METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT + " found: do not export " );
@@ -717,13 +720,13 @@ public class LineExport {
                                 Integer value = new Integer( text );
                                 int i = value.intValue();
 
-                                if ( i >= 2 ) {
+                                if( i >= 2 ) {
 
                                     // value is >= 2
                                     status = new CvInteractionStatus( CvInteractionStatus.CONDITIONAL_EXPORT, i );
                                     log( logPrefix + "\t\t\t " + i + " found: conditional export " );
 
-                                } else if ( i == 1 ) {
+                                } else if( i == 1 ) {
 
                                     String err = cvInteraction.getShortLabel() + " having annotation (" + UNIPROT_DR_EXPORT +
                                                  ") has an annotationText like <integer value>. Value was: " + i +
@@ -776,6 +779,81 @@ public class LineExport {
     }
 
     /**
+     * Checks if there is a uniprot-cc-exportt annotation defined at the experiment level.
+     * if set to yes, export.
+     * if set to no, do not export.
+     * if no set or the keyword is not yes, no, relies on the standart method.
+     *
+     * @param experiment the experiment for which we check if we have to export it.
+     * @param logPrefix  for all logging messages
+     * @return an Integer that has 4 possible value based on constant value: EXPORT, DO_NOT_EXPORT, NOT_SPECIFIED,
+     *         LARGE_SCALE. and a list of keywords that is set in case of large scale experiment.
+     */
+    public final ExperimentStatus getCCLineExperimentExportStatus( final Experiment experiment, String logPrefix ) {
+
+        ExperimentStatus status = null;
+
+        // cache the cvInteraction
+        ExperimentStatus cache = (ExperimentStatus) experimentExportStatusCache.get( experiment.getAc() );
+        if( null != cache ) {
+
+            status = cache;
+            return status;
+
+        } else {
+            Collection annotations = experiment.getAnnotations();
+            boolean yesFound = false;
+            boolean noFound = false;
+
+
+            for( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
+                Annotation _annotation = (Annotation) iterator.next();
+                if( uniprotCC_Export.equals( _annotation.getCvTopic() ) ) {
+
+                    log( logPrefix + "\t\t\t\t " + _annotation );
+
+                    String text = _annotation.getAnnotationText();
+                    if( text != null ) {
+                        text = text.trim().toLowerCase();
+                    }
+
+                    if( EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals( text ) ) {
+                        yesFound = true;
+                        log( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found" );
+
+                    } else {
+                        if( EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( text ) ) {
+                            noFound = true;
+                            log( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found" );
+
+                        } else {
+
+                            log( logPrefix + "\t\t\t\t '" + text + "' found, that keyword wasn't recognised." );
+                        }
+                    }
+                }
+            } // annotations
+
+            if( yesFound ) {
+                status = new ExperimentStatus( ExperimentStatus.EXPORT );
+            } else if( noFound ) {
+                status = new ExperimentStatus( ExperimentStatus.DO_NOT_EXPORT );
+            }
+        }
+
+        if( status != null ) {
+
+            // cache it.
+            experimentExportStatusCache.put( experiment.getAc(), status );
+
+            return status;
+        }
+
+        return getExperimentExportStatus( experiment, logPrefix );
+    }
+
+
+    /**
      * Answers the question: does that experiment is to be exported to SwissProt ?
      * <br>
      * Do give that answer, we check that the Experiment has an annotation having
@@ -794,6 +872,7 @@ public class LineExport {
      * </p>
      *
      * @param experiment the experiment for which we check if we have to export it.
+     * @param logPrefix  for all logging messages
      * @return an Integer that has 4 possible value based on constant value: EXPORT, DO_NOT_EXPORT, NOT_SPECIFIED,
      *         LARGE_SCALE. and a list of keywords that is set in case of large scale experiment.
      */
@@ -803,9 +882,8 @@ public class LineExport {
 
         // cache the cvInteraction
         ExperimentStatus cache = (ExperimentStatus) experimentExportStatusCache.get( experiment.getAc() );
-        if ( null != cache ) {
+        if( null != cache ) {
 
-//            log( "\t\t\t\t Experiment: Status already processed, retreived from cache." );
             status = cache;
 
         } else {
@@ -820,28 +898,28 @@ public class LineExport {
             Collection annotations = experiment.getAnnotations();
             log( logPrefix + "\t\t\t\t " + annotations.size() + " annotation(s) found" );
 
-            for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
+            for( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
                 Annotation _annotation = (Annotation) iterator.next();
-                if ( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
+                if( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
 
                     log( logPrefix + "\t\t\t\t " + _annotation );
 
                     String text = _annotation.getAnnotationText();
-                    if ( text != null ) {
+                    if( text != null ) {
                         text = text.trim().toLowerCase();
                     }
 
-                    if ( EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals( text ) ) {
+                    if( EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals( text ) ) {
                         yesFound = true;
                         log( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found" );
 
                     } else {
-                        if ( EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( text ) ) {
+                        if( EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( text ) ) {
                             noFound = true;
                             log( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found" );
 
                         } else {
-                            if ( keywords == null ) {
+                            if( keywords == null ) {
                                 keywords = new ArrayList( 2 );
                             }
                             keywordFound = true;
@@ -854,11 +932,11 @@ public class LineExport {
             }
 
 
-            if ( yesFound && !keywordFound ) { // if at least one keyword found, set to large scale experiment.
+            if( yesFound && !keywordFound ) { // if at least one keyword found, set to large scale experiment.
                 status = new ExperimentStatus( ExperimentStatus.EXPORT );
-            } else if ( noFound ) {
+            } else if( noFound ) {
                 status = new ExperimentStatus( ExperimentStatus.DO_NOT_EXPORT );
-            } else if ( keywordFound ) {
+            } else if( keywordFound ) {
                 status = new ExperimentStatus( ExperimentStatus.LARGE_SCALE );
                 status.addKeywords( keywords );
             } else {
@@ -884,10 +962,10 @@ public class LineExport {
         boolean isNegative = false;
 
         Collection annotations = annotatedObject.getAnnotations();
-        for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && false == isNegative; ) {
+        for( Iterator iterator = annotations.iterator(); iterator.hasNext() && false == isNegative; ) {
             Annotation annotation = (Annotation) iterator.next();
 
-            if ( negativeTopic.equals( annotation.getCvTopic() ) ) {
+            if( negativeTopic.equals( annotation.getCvTopic() ) ) {
                 isNegative = true;
             }
         }
@@ -902,11 +980,11 @@ public class LineExport {
     protected Collection getCCnote( Interaction interaction ) {
         Collection notes = null;
 
-        for ( Iterator iterator = interaction.getAnnotations().iterator(); iterator.hasNext(); ) {
+        for( Iterator iterator = interaction.getAnnotations().iterator(); iterator.hasNext(); ) {
             Annotation annotation = (Annotation) iterator.next();
 
-            if ( ccNoteTopic.equals( annotation.getCvTopic() ) ) {
-                if ( notes == null ) {
+            if( ccNoteTopic.equals( annotation.getCvTopic() ) ) {
+                if( notes == null ) {
                     notes = new ArrayList( 2 ); // should rarely have more than 2
                 }
 
@@ -931,7 +1009,7 @@ public class LineExport {
 
         // TODO check here is it has a master or not.
 
-        if ( protein.getShortLabel().indexOf( "-" ) != -1 ) {
+        if( protein.getShortLabel().indexOf( "-" ) != -1 ) {
             // eg. P12345-2
 
             if( getMasterAc( protein ) != null ) {
@@ -956,11 +1034,11 @@ public class LineExport {
         // in the case of a splice variant, we should pick the gene name from the master protein.
         Protein queryProtein = null;
 
-        if ( isSpliceVariant( protein ) ) {
+        if( isSpliceVariant( protein ) ) {
 
             // get the master protein.
             queryProtein = getMasterProtein( protein, helper );
-            if ( queryProtein == null ) {
+            if( queryProtein == null ) {
 
                 queryProtein = protein;
             }
@@ -971,10 +1049,10 @@ public class LineExport {
         }
 
         // search for a gene name in the aliases of that protein - stop when we find one.
-        for ( Iterator iterator = queryProtein.getAliases().iterator(); iterator.hasNext() && null == geneName; ) {
+        for( Iterator iterator = queryProtein.getAliases().iterator(); iterator.hasNext() && null == geneName; ) {
             Alias alias = (Alias) iterator.next();
 
-            if ( geneNameAliasType.equals( alias.getCvAliasType() ) ) {
+            if( geneNameAliasType.equals( alias.getCvAliasType() ) ) {
                 geneName = alias.getName();
             }
         }
