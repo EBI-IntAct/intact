@@ -189,7 +189,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         user.removeFromCurrentExperiment((Experiment) getAnnotatedObject());
     }
 
-    // Ovverride to provide Experiment layout.
+    // Override to provide Experiment layout.
     public void setLayout(ComponentContext context) {
         context.putAttribute("content", "edit.exp.layout");
     }
@@ -205,6 +205,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         setOrganism((String) dynaform.get("organism"));
         setInter((String) dynaform.get("inter"));
         setIdent((String) dynaform.get("ident"));
+    }
+
+    // Override to check for a large experiment.
+    public Boolean getReadOnly() {
+        return myHasLargeInts ? Boolean.TRUE : Boolean.FALSE;
     }
 
     public void sanityCheck(EditUserI user) throws ValidationException,
