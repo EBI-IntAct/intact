@@ -663,12 +663,40 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         nullable="false"
         />
 
-    <!-- used for class identification - OJB uses it directly -->
+   <!-- controlled vocab fields for tissue and celltype -->
+    <field-descriptor id="9"
+        name="cvTissueAc"
+        column="tissue_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <field-descriptor id="10"
+        name="cvCellTypeAc"
+        column="celltype_ac"
+        jdbc-type="VARCHAR"
+        />
+
+    <!-- other descriptors -->
     <reference-descriptor
         name="owner"
         class-ref="uk.ac.ebi.intact.model.Institution"
         >
         <foreignkey field-id-ref="2"/>
+    </reference-descriptor>
+
+    <!-- controlled vocab for tissue and celltype -->
+    <reference-descriptor
+        name="cvTissue"
+        class-ref="uk.ac.ebi.intact.model.CvTissue"
+        >
+        <foreignkey field-id-ref="9"/>
+    </reference-descriptor>
+
+    <reference-descriptor
+        name="cvCellType"
+        class-ref="uk.ac.ebi.intact.model.CvCellType"
+        >
+        <foreignkey field-id-ref="10"/>
     </reference-descriptor>
 
     <collection-descriptor
