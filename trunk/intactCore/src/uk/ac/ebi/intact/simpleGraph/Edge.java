@@ -5,12 +5,16 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.simpleGraph;
 
+import uk.ac.ebi.intact.model.Component;
+
 public class Edge extends BasicGraph implements EdgeI {
 
     ///////////////////////////////////////
     // attributes
     private NodeI node1;
     private NodeI node2;
+    private Component Component1;
+    private Component Component2;
 
     ///////////////////////////////////////
     // access methods for attributes
@@ -30,19 +34,47 @@ public class Edge extends BasicGraph implements EdgeI {
         this.node2 = node2;
     }
 
+
+    public Component getComponent1() {
+        return Component1;
+    }
+
+    public void setComponent1(Component Component1) {
+        this.Component1 = Component1;
+    }
+
+    public Component getComponent2() {
+        return Component2;
+    }
+
+    public void setComponent2(Component Component2) {
+        this.Component2 = Component2;
+    }
+
+    ///////////////////////////////////////////////////
+    // Instance methods
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Edge)) return false;
         if (!super.equals(o)) return false;
 
-        final Edge edge = (Edge) o;
-        final String edgeAC1 = edge.getNode1().getAc(),
-                     edgeAC2 = edge.getNode2().getAc();
-        final String AC1 = node1.getAc(),
-                     AC2 = node2.getAc();
+        // An edge object is symmetric. Check if either
+        // this.attribute1 equals o.attribute1 or
+        // this.attribute1 equals o.attribute2
 
-        return ((edgeAC1.equals(AC1) && edgeAC2.equals(AC2)) ||
-                (edgeAC1.equals(AC2) && edgeAC2.equals(AC1)));
+        final Edge that = (Edge) o;
+
+        return (((this.getNode1().getAc().equals(that.getNode1().getAc())) &&
+                (this.getNode2().getAc().equals(that.getNode2().getAc())) &&
+                (this.getComponent1().getAc().equals(that.getComponent1().getAc())) &&
+                (this.getComponent2().getAc().equals(that.getComponent2().getAc()))
+                )
+                ||
+                ((this.getNode1().getAc().equals(that.getNode2().getAc())) &&
+                (this.getNode2().getAc().equals(that.getNode1().getAc())) &&
+                (this.getComponent1().getAc().equals(that.getComponent2().getAc())) &&
+                (this.getComponent2().getAc().equals(that.getComponent1().getAc()))
+                ));
     }
 
 }
