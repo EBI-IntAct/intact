@@ -1,3 +1,9 @@
+/*
+* Copyright (c) 2002 The European Bioinformatics Institute, and others.
+* All rights reserved. Please see the file LICENSE
+* in the root directory of this distribution.
+*/
+
 package uk.ac.ebi.intact.tutorial;
 
 import uk.ac.ebi.intact.business.*;
@@ -9,29 +15,30 @@ import java.util.*;
 import java.sql.SQLException;
 import java.io.*;
 
+/**
+ *
+ * @author Anja Friedrichsen
+ * @version $id$
+ */
 public class QueryTutorial {
 
+    /**
+     * This class gives you an overview how to get information out of the database
+     *
+     * @param args
+     * @throws IntactException
+     */
     public static void main(String[] args) throws IntactException {
 
         // the non-argument Intact-Helper
         IntactHelper helper = null;
         helper = new IntactHelper();
 
-//        // the advanced Intact-Helper
-//        IntactHelper helper = null;
-//        try{
-//            DAOSource dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
-//            helper = new IntactHelper(dataSource);
-//
-//        }catch(DataSourceException de){
-//            de.printStackTrace();
-//        }
-
         // get user name and db name
         try {
             String user = helper.getDbUserName();
             String dbName = helper.getDbName();
-            System.out.println("User '" + user + "' is connected to database: " + dbName + ".");
+            System.out.println("User " + user + " is connected to database: " + dbName + ".");
         } catch (LookupException lupe) {
             lupe.printStackTrace();
         } catch (SQLException sqle) {
@@ -39,7 +46,7 @@ public class QueryTutorial {
         }
 
 
-        //get only one spezific experiment
+        //get only one specific experiment
         Object experiment = helper.getObjectByLabel(Experiment.class, "ho");
         if (experiment != null) {
             String ex = experiment.toString();
