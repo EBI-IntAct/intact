@@ -9,7 +9,6 @@
 
 <%@ page language="java" import="java.util.Collection,
     uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants,
-    uk.ac.ebi.intact.application.cvedit.business.IntactUserIF,
     uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean"
 %>
 <!-- JSTL tag libraries-->
@@ -106,7 +105,6 @@
 <h2><html:errors/></h2>
 
 Topic: <b><c:out value="${viewbean.topic}"/></b>
-
 &nbsp;&nbsp;AC: <b><c:out value="${viewbean.ac}"/></b>
 &nbsp;&nbsp;Short Label: <b><c:out value="${viewbean.shortLabel}"/></b>
 
