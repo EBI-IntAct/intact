@@ -250,6 +250,14 @@ public class EditorService {
     }
 
     /**
+     * Returns the default xref qualifier.
+     * @return the default xref qualifier as a string.
+     */
+    public String getDefaultXrefQualifier() {
+        return getResource("default.xref.qualifier");
+    }
+
+    /**
      * Returns an anchor name by (1). error message, (2) the dispatch event.
      * <code>null</code> is returned if no anchor was found for the above two.
      * This method is protected for a subclass to overide it. For example,
