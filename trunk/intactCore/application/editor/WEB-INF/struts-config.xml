@@ -123,11 +123,12 @@
 
         <!-- Form to search for a Protein -->
         <form-bean name="intProteinSearchForm"
-            type="org.apache.struts.action.DynaActionForm">
+            type="uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinSearchDynaForm">
             <form-property name="shortLabel" type="java.lang.String"/>
             <form-property name="spAc" type="java.lang.String"/>
             <form-property name="ac" type="java.lang.String"/>
-            <form-property name="fullName" type="java.lang.String"/>
+            <form-property name="param" type="java.lang.String"/>
+            <form-property name="value" type="java.lang.String"/>
         </form-bean>
     </form-beans>
 
