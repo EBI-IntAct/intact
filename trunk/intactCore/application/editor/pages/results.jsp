@@ -16,8 +16,7 @@
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
 
-<style>
-<!--
+<style type="text/css">
     .error {
         color: white;
         background-color: red
@@ -27,7 +26,6 @@
         color: white;
         background-color: #ff8c00
     }
--->
 </style>
 
 <%-- Javascript code to link to the search page. --%>
@@ -51,7 +49,7 @@
     type="java.util.List"/>
 
 <%-- The uri when clicking on tab links --%>
-<bean:define id="uri" value="<%=request.getContextPath() + "/do/fillResultForm"%>"/>
+<bean:define id="uri" value="<%=request.getContextPath() + "/do/showResults"%>"/>
 
 <html:form action="/result">
     <display:table width="100%" name="results" pagesize="50" requestURI="<%=uri%>"
