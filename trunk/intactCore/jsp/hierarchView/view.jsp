@@ -5,7 +5,7 @@
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.*" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.graph.*" %>
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.Constants" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.Constants" %>
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.OptionGenerator" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader" %>
@@ -54,29 +54,29 @@
    /**
     * Retreive data from the session
     */
-   String AC           = (String)  session.getAttribute (Constants.ATTRIBUTE_AC);
-   String depth        = (String)  session.getAttribute (Constants.ATTRIBUTE_DEPTH);
-   Boolean depthLimit  = (Boolean) session.getAttribute (Constants.ATTRIBUTE_NO_DEPTH_LIMIT);
+   String AC           = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_AC);
+   String depth        = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_DEPTH);
+   Boolean depthLimit  = (Boolean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_NO_DEPTH_LIMIT);
    String noDepthLimit = "null";
    if (null != depthLimit) {
      noDepthLimit = depthLimit.toString();
    }
 
-   ImageBean imageBean   = (ImageBean) session.getAttribute (Constants.ATTRIBUTE_IMAGE_BEAN); 
+   ImageBean imageBean   = (ImageBean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_IMAGE_BEAN); 
 
-   String keys           = (String)  session.getAttribute (Constants.ATTRIBUTE_KEYS);
-   String methodLabel    = (String)  session.getAttribute (Constants.ATTRIBUTE_METHOD_LABEL);
-   String methodClass    = (String)  session.getAttribute (Constants.ATTRIBUTE_METHOD_CLASS);
-   String behaviour      = (String)  session.getAttribute (Constants.ATTRIBUTE_BEHAVIOUR);
-   InteractionNetwork in = (InteractionNetwork) session.getAttribute (Constants.ATTRIBUTE_GRAPH);
+   String keys           = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_KEYS);
+   String methodLabel    = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_METHOD_LABEL);
+   String methodClass    = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_METHOD_CLASS);
+   String behaviour      = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_BEHAVIOUR);
+   InteractionNetwork in = (InteractionNetwork) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_GRAPH);
 
-   Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+   Properties properties = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.struts.Constants.PROPERTY_FILE);
    String debug = null;
    if (null != properties) {
       debug = properties.getProperty ("application.debug");
    } else {
       debug = "disable";
-   }
+   } 
 
 
    /**
@@ -230,7 +230,7 @@ if (AC != null)
    if ((null != AC) && (null != keys) && (behaviour != null)) {
        HighlightProteins hp = new HighlightProteins(methodClass, behaviour, session, in);
 
-       imageBean = (ImageBean) session.getAttribute (Constants.ATTRIBUTE_IMAGE_BEAN);
+       imageBean = (ImageBean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_IMAGE_BEAN);
    }
 
 
@@ -245,8 +245,10 @@ if (AC != null)
        // read the ApplicationResource.proterties file
        String mapName = null;
 
-       if (null != properties) {
-	  mapName = properties.getProperty ("hierarchView.image.map.name");
+       Properties propertiesBusiness = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
+
+       if (null != propertiesBusiness) {
+	  mapName = propertiesBusiness.getProperty ("hierarchView.image.map.name");
        }
 
 %>

@@ -15,8 +15,9 @@ public final class Constants {
   /**
    * Where to find the property file
    */
-  public static final String PROPERTY_FILE = "/config/ApplicationResources.properties";
-
+  //public static final String PROPERTY_FILE = "/config/ApplicationResources.properties";
+  public static final String PROPERTY_FILE = "/config/Struts.properties";
+ public static final String PROPERTY_FILE_HIGHLIGHTING = "/config/Highlighting.properties";
 
 
   // ******************************************************* Session Attributes

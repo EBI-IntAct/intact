@@ -137,6 +137,9 @@ public final class CenteredAction extends Action {
 	  session.setAttribute (Constants.ATTRIBUTE_IMAGE_BEAN, ib);	  
 	  // store the graph
 	  session.setAttribute (Constants.ATTRIBUTE_GRAPH, in);
+
+	  // Take keys to null int the session
+	  //	  session.setAttribute (Constants.ATTRIBUTE_KEYS, null);
 	}
 
 	// Print debug in the log file

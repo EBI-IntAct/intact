@@ -86,7 +86,7 @@ public final class VisualizeAction extends Action {
 	  methodLabel   = ((VisualizeForm) form).getMethod ();
 
 	  // read the ApplicationResource.proterties file 
-	  Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+	  Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE_HIGHLIGHTING);
   
 	  if (null != properties) {
 	    methodClass = properties.getProperty ("highlightment.source." + methodLabel + ".class");
