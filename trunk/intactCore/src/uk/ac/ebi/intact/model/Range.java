@@ -170,14 +170,9 @@ public class Range extends BasicObjectImpl {
         if(fromEnd > toStart) throw new IllegalArgumentException("The 'from' and 'to' intervals cannot overlap!");
         if(fromStart > toEnd) throw new IllegalArgumentException("The 'from' interval starts beyond the 'to' interval!");
         if(fromStart > toStart) throw new IllegalArgumentException("The 'from' interval cannot begin during the 'to' interval!");
-        //don't allow default empty String to be replaced by null. Check size also
-        //to avoid unnecessary DB call for a seq that is too big...
-        if(seq != null) {
-            if(seq.length() > Range.MAX_SEQ_SIZE)
-                throw new IllegalArgumentException("Sequence too big! Max allowed: "
-                        + Range.MAX_SEQ_SIZE);
-            sequence = seq;
-        }
+
+        setSequence(seq);
+        
         this.fromIntervalStart = fromStart;
         this.fromIntervalEnd = fromEnd;
         this.toIntervalStart = toStart;
@@ -247,6 +242,21 @@ public class Range extends BasicObjectImpl {
 
     public void setParentAc(String parentAc) {
         this.featureAc = parentAc;
+    }
+
+    public void setSequence(String seq) {
+        //don't allow default empty String to be replaced by null. Check size also
+        //to avoid unnecessary DB call for a seq that is too big...
+        if(seq != null) {
+            if(seq.length() > Range.MAX_SEQ_SIZE)
+                throw new IllegalArgumentException("Sequence too big! Max allowed: "
+                        + Range.MAX_SEQ_SIZE);
+            this.sequence = seq;
+        }
+    }
+
+    public String getSequene() {
+        return this.sequence;
     }
 
     /**
