@@ -7,8 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.view;
 
 import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl;
-import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 
 import java.io.Serializable;
 
@@ -21,11 +19,6 @@ import java.io.Serializable;
 public class CommentBean extends EditBean implements Serializable {
 
     // Instance Data
-
-    /**
-     * The unique identifier for this bean.
-     */
-    private long myKey;
 
     /**
      * Reference to the annotation object.
@@ -48,18 +41,9 @@ public class CommentBean extends EditBean implements Serializable {
      * instance of this class.
      */
     public CommentBean(Annotation annotation) {
-        myKey = IntactUserImpl.getId();
         myAnnotation = annotation;
         myTopic = annotation.getCvTopic().getShortLabel();
         myAnnotatedText = annotation.getAnnotationText();
-    }
-
-    /**
-     * Return the key for this object.
-     * @return key for this object as a <code>long</code>.
-     */
-    public long getKey() {
-        return myKey;
     }
 
     /**
@@ -119,7 +103,8 @@ public class CommentBean extends EditBean implements Serializable {
         }
         if ((obj != null) && (getClass() == obj.getClass())) {
             // Can safely cast it.
-            return myKey == ((CommentBean) obj).getKey();
+            CommentBean other = (CommentBean) obj;
+            return myAnnotation.getAc().equals(other.myAnnotation.getAc());
         }
         return false;
     }
