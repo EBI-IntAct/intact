@@ -467,8 +467,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Map of exceptions.
         Map map = myProteinFactory.getParsingExceptions();
         // Only interested in the first entry as the parsing is limited to a
-        // single entry.
-        return (Exception) map.values().iterator().next();
+        // single entry. Guard against empty exceptions
+        if (!map.values().isEmpty()) {
+            return (Exception) map.values().iterator().next();
+        }
+        return null;
     }
 
     public Collection search1(String objectType, String searchParam,

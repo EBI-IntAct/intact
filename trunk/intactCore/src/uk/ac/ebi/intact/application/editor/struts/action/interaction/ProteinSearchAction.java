@@ -121,9 +121,11 @@ public class ProteinSearchAction extends AbstractEditorAction {
         }
         // Search found any results?
         if (proteins.isEmpty()) {
-            // Log the error.
-            LOGGER.info(user.getProteinParseException());
-
+            // Log the error if we have one.
+            Exception exp = user.getProteinParseException();
+            if (exp != null) {
+                LOGGER.info(exp);
+            }
             // The error to display on the web page.
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
