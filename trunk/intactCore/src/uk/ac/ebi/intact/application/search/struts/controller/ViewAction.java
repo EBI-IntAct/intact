@@ -35,7 +35,7 @@ import org.w3c.dom.traversal.*;
 /**
  * Process the user submitted search form.
  *
- * @author Sugath Mudali (smudali@ebi.ac.uk)
+ * @author Sugath Mudali (smudali@ebi.ac.uk), Chris Lewington (clewing@ebi.ac.uk)
  * @version $Id$
  */
 public class ViewAction extends IntactBaseAction {
@@ -73,6 +73,25 @@ public class ViewAction extends IntactBaseAction {
         // Save the parameters from the view page.
         Map map = request.getParameterMap();
 
+       //debug stuff...
+       System.out.println("new view requested...");
+       System.out.println("Check box keys submitted in request:");
+       for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                String key = (String) entry.getKey();
+                if (!key.startsWith("tbl_")) {
+                    continue;
+                }
+                System.out.println("key: " + key);
+       }
+       System.out.println();
+       System.out.println("Keys that we know have already been expanded:");
+       for(Iterator it = expandedSet.iterator(); it.hasNext();) {
+           System.out.println(it.next());
+       }
+       System.out.println();
+
+
         // Only search for the check boxes if the number of parameters in a
         // request exceed 1 (one parameter is always returned for buttons).
         if (map.size() > 1) {
@@ -86,6 +105,7 @@ public class ViewAction extends IntactBaseAction {
                 if (!key.startsWith("tbl_")) {
                     continue;
                 }
+
                 // Extract the bean id and the AC.
                 StringTokenizer stk = new StringTokenizer(key, "_");
                 String ignore = stk.nextToken();
@@ -98,6 +118,7 @@ public class ViewAction extends IntactBaseAction {
                 //tell the bean to do whatever action was requested
                 List acList = new ArrayList();
                 acList.add(ac);
+
                 if(((ViewForm)form).expandContractSelected()) {
                     try {
 
@@ -116,7 +137,8 @@ public class ViewAction extends IntactBaseAction {
 
                         if(mode == XmlBuilder.CONTRACT_NODES) {
 
-                            System.out.println("contract node " + ac + " ....removing from set..");
+                            System.out.println("contract node " + ac);
+                            System.out.println("....removing key " + key + " from expanded set..");
                             expandedSet.remove(key);
 
                             //if the root (wrapped) object is to be contracted - all
@@ -126,7 +148,8 @@ public class ViewAction extends IntactBaseAction {
                             if(wrappedObj instanceof BasicObject) wrappedAc = ((BasicObject)wrappedObj).getAc();
                             if(wrappedObj instanceof Institution) wrappedAc = ((Institution)wrappedObj).getAc();
 
-                            if(ac.equals(wrappedAc)) {
+                            String keyToMatch = "tbl_" + beanId + wrappedAc;
+                            if(key.equals(keyToMatch)) {
                                 //the bean ID represents the top level item, so go
                                 //through the expanded set and remove those in it containing
                                 //that ID
@@ -167,8 +190,7 @@ public class ViewAction extends IntactBaseAction {
                             Node n = null;
                             System.out.println("Checking for an Interaction...");
                             while((n = nodeIter.nextNode()) != null) {
-                                System.out.println("in check loop");
-                                System.out.println("content of n " + n.getNodeType() + " " + n.getNodeName());
+
                                 Element e = (Element)n;
                                 System.out.println("element name: " + e.getTagName());
                                 System.out.println("element AC: " + e.getAttribute("ac"));
@@ -193,6 +215,44 @@ public class ViewAction extends IntactBaseAction {
                     catch(Exception e) {
                         //just to pick up the transformer exceptions
                     }
+                }
+                if(((ViewForm)form).expandAllSelected()) {
+                    try {
+                        TransformerFactory tf = TransformerFactory.newInstance();
+                        Transformer transformer = tf.newTransformer();
+                        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                        //first expand the node itself
+                        bean.modifyXml(XmlBuilder.EXPAND_NODES, acList);
+                        System.out.println("XML before full expand..");
+                        System.out.println();
+                        Document doc1 = bean.getAsXmlDoc();
+                        transformer.transform(new DOMSource(doc1), new StreamResult(System.out));
+                        System.out.println();
+                        //need to start at the tree Node that was selected for expand -
+                        //otherwise the whole tree will be done!
+                        //NB don't expand the siblings of the first Node to check,
+                        //so pass empty Collection...
+                        Element start = bean.getElement(ac);
+                        if(start != null) {
+                            System.out.println("found element with AC " + ac + " - expanding from there..");
+                            this.expandTree(bean, start, new ArrayList());
+                        }
+                        //no-op if the AC doesn't exist for some reason in the tree
+                        System.out.println();
+                        System.out.println("XML after full expand..");
+                        Document doc3 = bean.getAsXmlDoc();
+                        transformer.transform(new DOMSource(doc3), new StreamResult(System.out));
+
+                    }
+                    catch(IntactException ie) {
+
+                        //return with errors...
+                        super.log("modify XML failed during full expansion" + ie.toString());
+                    }
+                    catch(Exception e) {
+                        //transformer only
+                    }
+
                 }
 
             }
@@ -249,29 +309,130 @@ public class ViewAction extends IntactBaseAction {
     /**
      * Updates the expanded Set of ACs to remove those related to the root object
      * when it needs contracting. In other words, sub-items need to be taken out
-     * of the expanded set if they exits there because otherwise the next time the
+     * of the expanded set if they exist there because otherwise the next time the
      * root object is expanded, the sub-items will have the wrong mode associated with
      * them.
      *
      * @param expandedAcs The set of ACs currently expanded
      * @param id The id of the Bean we are interested in
      */
-    public void updateExpandedAcs (Set expandedAcs, String id) {
+    private void updateExpandedAcs (Set expandedAcs, String id) {
 
         Iterator it = expandedAcs.iterator();
-        System.out.println("expanded keys associated with this bean:-");
+        System.out.println("removing expansion keys associated with bean ID = " + id +":-");
         Set toRemove = new HashSet();
         //have to copy them, *then* remove them as the Iterator
         //will get confused if some get deleted along the way
         //NB probably a List would have been better..
         while(it.hasNext()) {
                 String acKey = (String)it.next();
-                System.out.println("key: " + acKey);
                 if(acKey.indexOf("tbl_" + id) != -1) toRemove.add(acKey);
         }
         Iterator toRemoveIter = toRemove.iterator();
+        System.out.println("sub-elements to be removed from expansion set:");
         while(toRemoveIter.hasNext()) {
-            expandedAcs.remove(toRemoveIter.next());
+            Object obj = toRemoveIter.next();
+            System.out.println(obj);
+            expandedAcs.remove(obj);
         }
+    }
+
+    /**
+     * Method to recursively expand the Elements of a tree until it can't be done
+     * anymore.
+     *
+     * @param bean The bean whose Document is to be expanded
+     * @param currentNode The first Node of the tree identifying the tree level and hence
+     * @param siblings The siblings of the current Node
+     * where to start expanding from.
+     *
+     * @exception IntactException thrown if there was a modify problem
+     */
+    private void expandTree(IntactViewBean bean, Node currentNode, List siblings) throws IntactException {
+
+        //keep expanding the item until there are no children left..
+        //Basic algorithm:
+        //for each Node in a list of siblings:
+        //get the ACs of the Node's children, then expand the bean for those ACs;
+        //when the siblings are all done, move down to the next level of the DOM tree;
+        //repeat the above until all Nodes at one level no longer have any children
+
+        System.out.println("current Node: " + ((Element)currentNode).getAttribute("ac"));
+        System.out.println("current Node Tag: " + ((Element)currentNode).getTagName());
+        Node nextSibling = null;
+
+        //local copy of siblings
+        List remainingSibs = new ArrayList();
+        if(!siblings.isEmpty()) {
+            System.out.println("sibling class: " + siblings.get(0).getClass());
+            Node sib = (Node)siblings.get(0);
+            if(sib != null) {
+                System.out.println("current Node first sibling: " + sib.getNodeType() + sib.getNodeName());
+            }
+            else { System.out.println("no next sibling!!"); }
+            Iterator siblingIter = siblings.iterator();
+            while(siblingIter.hasNext()) {
+                Object obj = siblingIter.next();
+                if(obj instanceof Element) {
+                    Element e = (Element)obj;
+                    System.out.println("sibling AC: " + e.getAttribute("ac"));
+                    System.out.println("sibling Tag: " + e.getTagName());
+                    remainingSibs.add(e);
+                }
+                else { System.out.println("sibling type wrong! Type is " + ((Node)obj).getNodeType()); }
+            }
+        }
+        else {System.out.println("current Node has no siblings - continuing..."); }
+
+        //base case - all Nodes at this level have no children
+        if(!currentNode.hasChildNodes()) {
+            boolean done = true;
+            if(!siblings.isEmpty()) {
+                Iterator it = siblings.iterator();
+                while(it.hasNext()) {
+                    Node checkNode = (Node)it.next();
+                    if(checkNode.hasChildNodes()) {
+                        //found one - better start here instead
+                        System.out.println("sibling has children - changing target node to it..");
+                        currentNode = checkNode;
+                        done = false;
+                        break;
+                    }
+                }
+            }
+            System.out.println("done expanding for node " + ((Element)currentNode).getAttribute("ac"));
+            if(done) return;
+        }
+        List childAcs = new ArrayList();
+        NodeList children = currentNode.getChildNodes();
+        Element nextLevelChild = (Element)children.item(0);
+        System.out.println("next level first Node: " + nextLevelChild.getAttribute("ac"));
+        System.out.println("Children of current node " + ((Element)currentNode).getAttribute("ac") + ":");
+        for(int i=0; i<children.getLength(); i++) {
+            Element childElem = (Element)children.item(i);
+            System.out.println("child: " + childElem.getAttribute("ac"));
+            if(childElem.hasAttribute("ac")) childAcs.add(childElem.getAttribute("ac"));
+
+            //add the children into the sibling list for the next level down
+            remainingSibs.add(childElem);
+        }
+        //got the current Node's child ACs, so now modify the bean data
+        System.out.println("modifying bean with child ACs..");
+        bean.modifyXml(XmlBuilder.EXPAND_NODES, childAcs);
+        //now do the siblings and move to the next level
+        if(!siblings.isEmpty()) {
+            System.out.println("now doing siblings...");
+            Iterator sibIterator = siblings.iterator();
+
+            while(sibIterator.hasNext()) {
+                this.expandTree(bean, (Node)sibIterator.next(), siblings);
+            }
+        }
+        else {System.out.println("no siblings to check"); }
+        System.out.println("now moving down to next level...");
+        //take out the next level "first" child as it is the first node to check at the
+        //next level
+        remainingSibs.remove(nextLevelChild);
+        this.expandTree(bean, nextLevelChild, remainingSibs);
     }
 }
