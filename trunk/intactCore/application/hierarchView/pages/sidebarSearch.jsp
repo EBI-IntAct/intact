@@ -1,5 +1,16 @@
 <%@ page language="java" %>
 
+<!--
+   - Copyright (c) 2002 The European Bioinformatics Institute, and others.
+   - All rights reserved. Please see the file LICENSE
+   - in the root directory of this distribution.
+   -
+   - This layout displays the search box for hierarchView.
+   -
+   - @author Samuel Kerrien (skerrien@ebi.ac.uk)
+   - @version $Id$
+-->
+
 <%@ page import="java.util.ArrayList,
                  uk.ac.ebi.intact.application.hierarchView.struts.view.utils.OptionGenerator,
                  uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
@@ -8,11 +19,6 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-
-<%--
-    This layout displays the search box for hierarchView.
-    Author: Samuel Kerrien (skerrien@ebi.ac.uk)
---%>
 
 <%
     /**
@@ -56,7 +62,9 @@
                 ArrayList sources = OptionGenerator.getHighlightmentSources ();
 
                 if (sources.size() > 1) {
-                    // set the item collection and display it
+                    /**
+                     * set the item collection and display it
+                     */
                     pageContext.setAttribute("sources", sources, PageContext.PAGE_SCOPE);
             %>
                     <table border=0>
@@ -78,7 +86,7 @@
                     LabelValueBean lvb = (LabelValueBean) sources.get(0);
                     String methodClassName = lvb.getValue();
             %>
-                    <!-- dont't display the method if no choice -->
+                    <!-- dont't display the method if no choice available -->
                     <html:hidden property="method" value="<%= methodClassName %>"/>
             <%
                 }

@@ -1,19 +1,22 @@
 <%@ page language="java" %>
 
+<!--
+   - Copyright (c) 2002 The European Bioinformatics Institute, and others.
+   - All rights reserved. Please see the file LICENSE
+   - in the root directory of this distribution.
+   -
+   - hierarchView content page
+   - This should be displayed in the content part of the IntAct layout,
+   - it is organised as follow :
+   -    > Left cells: displays the interaction network and title
+   -    > Right cells: Display the highligh tool anf title
+   -
+   - @author Samuel Kerrien (skerrien@ebi.ac.uk)
+   - @version $Id$
+-->
+
 <%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld"  prefix="html"%>
-
-<%-- hierarchView content page
-
-     This should be displayed in the content part of the IntAct layout,
-     it is organised as follow :
-        - Left cells: displays the interaction network and title
-        - Right cells: Display the highligh tool anf title
-
-     author : Samuel Kerrien (skerrien@ebi.ac.uk)
- --%>
-
- <!-- Content of the hierarchView application -->
 
 <table border="1" cellpadding="3" cellspacing="0" width="100%" heigth="100%">
 

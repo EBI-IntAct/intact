@@ -2,14 +2,18 @@
                  uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
 <%@ page language="java" %>
 
-
-<%-- hierarchView highlight title page
-
-     This should be displayed in the content part of the IntAct layout,
-     it displays the highlightment sources title.
-
-     author : Samuel Kerrien (skerrien@ebi.ac.uk)
- --%>
+<!--
+   - Copyright (c) 2002 The European Bioinformatics Institute, and others.
+   - All rights reserved. Please see the file LICENSE
+   - in the root directory of this distribution.
+   -
+   - hierarchView highlight title page
+   - This should be displayed in the content part of the IntAct layout,
+   - it displays the highlightment sources title.
+   -
+   - @author Samuel Kerrien (skerrien@ebi.ac.uk)
+   - @version $Id$
+-->
 
 <%
    /**
@@ -22,7 +26,7 @@
 
       <tr>
              <td>
-                   <!-- displays the interaction network -->
+                   <!-- displays the interaction network title -->
                    Existing highlight source for the protein AC: <%= user.getAC() %>.
              </td>
       </tr>
