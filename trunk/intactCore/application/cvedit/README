@@ -16,18 +16,18 @@ INSTALLATION
     edit repository.xml and OJB.properties in the intact root directory
     (intactCore/config) to suit your requirements (oracle vs postgres etc).
     Instead of editing these files manually, you may just run ant set-target-env
-    from intactCore directory. The target environment is specified in
+    from intactCore directory. The target environment is specified in the
     build.properties file (intactCore directory). CvEdit has been tested
     under Oracle 8.1.6 and PostGres 7.2 (local and remote).
 
 BUILD
     ant war
         prepares a WAR file to be deployed in a WEB container. The WAR file is
-        created in dist/ directory.
+        created in the dist/ directory.
 
 OTHER USEFUL COMMANDS
     ant deploy (Tomcat specific)
-        deploys the WAR file in dist/ location to CATALINA_HOME/webapps. The
+        deploys the WAR file in the dist/ location to the CATALINA_HOME/webapps. The
         environment variable CATALINA_HOME must be set for this command to work
         correctly.
 
