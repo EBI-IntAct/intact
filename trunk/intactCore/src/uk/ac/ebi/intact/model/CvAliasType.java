@@ -30,7 +30,6 @@ public class CvAliasType extends CvObject {
      * @exception NullPointerException thrown if either parameters are not specified
      */
     public CvAliasType(String shortLabel, Institution owner) {
-
         //super call sets up a valid CvObject
         super(shortLabel, owner);
     }
