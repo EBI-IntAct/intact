@@ -1304,28 +1304,31 @@ public class UpdateProteins extends UpdateProteinsI {
 
             String geneName = genes[ i ].getName();
 
-            if( !isAliasAlreadyExisting( aliases, geneName, geneNameAliasType ) ) {
-                alias = new Alias( myInstitution,
-                                   protein,
-                                   geneNameAliasType, // gene-name
-                                   geneName );
+            if( geneName != null && ( false == "".equals( geneName.trim() ) ) ) {
 
-                // link the Alias to the protein and persist it in the database
-                addNewAlias( protein, alias );
-                if( logger != null ) {
-                    logger.info( "ADD new Alias[name: " + alias.getName() +
-                                 " type: " + geneNameAliasType.getShortLabel() + "]" +
-                                 ", to: " + protein.getShortLabel() );
-                }
-                needUpdate = true;
-            } else {
-                if( logger != null ) {
-                    logger.info( "SKIP Alias[name: " + geneName +
-                                 " type: " + geneNameAliasType.getShortLabel() + "]" +
-                                 ", for: " + protein.getShortLabel() );
-                }
-            } // Gene names
+                if( !isAliasAlreadyExisting( aliases, geneName, geneNameAliasType ) ) {
+                    alias = new Alias( myInstitution,
+                                       protein,
+                                       geneNameAliasType, // gene-name
+                                       geneName );
 
+                    // link the Alias to the protein and persist it in the database
+                    addNewAlias( protein, alias );
+                    if( logger != null ) {
+                        logger.info( "ADD new Alias[name: " + alias.getName() +
+                                     " type: " + geneNameAliasType.getShortLabel() + "]" +
+                                     ", to: " + protein.getShortLabel() );
+                    }
+                    needUpdate = true;
+                } else {
+                    if( logger != null ) {
+                        logger.info( "SKIP Alias[name: " + geneName +
+                                     " type: " + geneNameAliasType.getShortLabel() + "]" +
+                                     ", for: " + protein.getShortLabel() );
+                    }
+                } // Gene names
+
+            } // if
 
             // create/update synonyms
             String[] synonyms = genes[ i ].getSynonyms();
@@ -1333,25 +1336,28 @@ public class UpdateProteins extends UpdateProteinsI {
 
                 String syn = synonyms[ ii ];
 
-                if( !isAliasAlreadyExisting( aliases, syn, geneNameSynonymAliasType ) ) {
-                    alias = new Alias( myInstitution,
-                                       protein,
-                                       geneNameSynonymAliasType, // gene-name-synonym
-                                       syn );
+                if( syn != null && ( false == "".equals( syn.trim() ) ) ) {
 
-                    // link the Alias to the protein and persist it in the database
-                    addNewAlias( protein, alias );
-                    if( logger != null ) {
-                        logger.info( "ADD new Alias[name: " + alias.getName() +
-                                     " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
-                                     ", to: " + protein.getShortLabel() );
-                    }
-                    needUpdate = true;
-                } else {
-                    if( logger != null ) {
-                        logger.info( "SKIP Alias[name: " + syn +
-                                     " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
-                                     ", for: " + protein.getShortLabel() );
+                    if( !isAliasAlreadyExisting( aliases, syn, geneNameSynonymAliasType ) ) {
+                        alias = new Alias( myInstitution,
+                                           protein,
+                                           geneNameSynonymAliasType, // gene-name-synonym
+                                           syn );
+
+                        // link the Alias to the protein and persist it in the database
+                        addNewAlias( protein, alias );
+                        if( logger != null ) {
+                            logger.info( "ADD new Alias[name: " + alias.getName() +
+                                         " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
+                                         ", to: " + protein.getShortLabel() );
+                        }
+                        needUpdate = true;
+                    } else {
+                        if( logger != null ) {
+                            logger.info( "SKIP Alias[name: " + syn +
+                                         " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
+                                         ", for: " + protein.getShortLabel() );
+                        }
                     }
                 }
             } // Gene name synonyms
@@ -1363,25 +1369,28 @@ public class UpdateProteins extends UpdateProteinsI {
 
                 String locusName = locus[ ii ];
 
-                if( !isAliasAlreadyExisting( aliases, locusName, locusNameAliasType ) ) {
-                    alias = new Alias( myInstitution,
-                                       protein,
-                                       locusNameAliasType, // locus-name
-                                       locusName );
+                if( locusName != null && ( false == "".equals( locusName.trim() ) ) ) {
 
-                    // link the Alias to the protein and persist it in the database
-                    addNewAlias( protein, alias );
-                    if( logger != null ) {
-                        logger.info( "ADD new Alias[name: " + alias.getName() +
-                                     " type: " + locusNameAliasType.getShortLabel() + "]" +
-                                     ", to: " + protein.getShortLabel() );
-                    }
-                    needUpdate = true;
-                } else {
-                    if( logger != null ) {
-                        logger.info( "SKIP Alias[name: " + locusName +
-                                     " type: " + locusNameAliasType.getShortLabel() + "]" +
-                                     ", for: " + protein.getShortLabel() );
+                    if( !isAliasAlreadyExisting( aliases, locusName, locusNameAliasType ) ) {
+                        alias = new Alias( myInstitution,
+                                           protein,
+                                           locusNameAliasType, // locus-name
+                                           locusName );
+
+                        // link the Alias to the protein and persist it in the database
+                        addNewAlias( protein, alias );
+                        if( logger != null ) {
+                            logger.info( "ADD new Alias[name: " + alias.getName() +
+                                         " type: " + locusNameAliasType.getShortLabel() + "]" +
+                                         ", to: " + protein.getShortLabel() );
+                        }
+                        needUpdate = true;
+                    } else {
+                        if( logger != null ) {
+                            logger.info( "SKIP Alias[name: " + locusName +
+                                         " type: " + locusNameAliasType.getShortLabel() + "]" +
+                                         ", for: " + protein.getShortLabel() );
+                        }
                     }
                 }
             } // Locus names
@@ -1393,25 +1402,28 @@ public class UpdateProteins extends UpdateProteinsI {
 
                 String orfName = ORFs[ ii ];
 
-                if( !isAliasAlreadyExisting( aliases, orfName, orfNameAliasType ) ) {
-                    alias = new Alias( myInstitution,
-                                       protein,
-                                       orfNameAliasType, // orf-name
-                                       orfName );
+                if( orfName != null && ( false == "".equals( orfName.trim() ) ) ) {
+                
+                    if( !isAliasAlreadyExisting( aliases, orfName, orfNameAliasType ) ) {
+                        alias = new Alias( myInstitution,
+                                           protein,
+                                           orfNameAliasType, // orf-name
+                                           orfName );
 
-                    // link the Alias to the protein and persist it in the database
-                    addNewAlias( protein, alias );
-                    if( logger != null ) {
-                        logger.info( "ADD new Alias[name: " + alias.getName() +
-                                     " type: " + orfNameAliasType.getShortLabel() + "]" +
-                                     ", to: " + protein.getShortLabel() );
-                    }
-                    needUpdate = true;
-                } else {
-                    if( logger != null ) {
-                        logger.info( "SKIP Alias[name: " + orfName +
-                                     " type: " + orfNameAliasType.getShortLabel() + "]" +
-                                     ", for: " + protein.getShortLabel() );
+                        // link the Alias to the protein and persist it in the database
+                        addNewAlias( protein, alias );
+                        if( logger != null ) {
+                            logger.info( "ADD new Alias[name: " + alias.getName() +
+                                         " type: " + orfNameAliasType.getShortLabel() + "]" +
+                                         ", to: " + protein.getShortLabel() );
+                        }
+                        needUpdate = true;
+                    } else {
+                        if( logger != null ) {
+                            logger.info( "SKIP Alias[name: " + orfName +
+                                         " type: " + orfNameAliasType.getShortLabel() + "]" +
+                                         ", for: " + protein.getShortLabel() );
+                        }
                     }
                 }
             } // ORFs
