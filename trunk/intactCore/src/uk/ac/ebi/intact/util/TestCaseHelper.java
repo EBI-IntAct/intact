@@ -168,7 +168,7 @@ public class TestCaseHelper {
             bio1.setOwnerAc(institution.getAc());
             bio1.setFullName("test biosource 1");
             bio1.setOwner(institution);
-            bio1.setScientificName("some kind of obscure Greek should go here");
+            bio1.setFullName("some kind of obscure Greek should go here");
             bio1.setShortLabel("bio1");
             bio1.setTaxId("1");
 
@@ -177,7 +177,7 @@ public class TestCaseHelper {
             bio2.setOwnerAc(institution.getAc());
             bio2.setFullName("test biosource 2");
             bio2.setOwner(institution);
-            bio2.setScientificName("more obscure Greek should go here");
+            bio2.setFullName("more obscure Greek should go here");
             bio2.setShortLabel("bio2");
             bio2.setTaxId("2");
 

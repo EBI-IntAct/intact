@@ -277,7 +277,6 @@ public class XmlBuilder implements Serializable {
                         compactCache.put(key, result);
                     }
                 }
-
                 //import the new Element into the current document so we can use it
                 Node newNode = dc.importNode(result, true);
 
@@ -519,6 +518,7 @@ public class XmlBuilder implements Serializable {
         return elem;
 
     }
+
 
     //------------------------ private helper methods ------------------------------------
 
