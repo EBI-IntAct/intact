@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * The form to edit Proteins. Overrides the validate method to provide Protein
@@ -49,6 +50,25 @@ public class ProteinEditForm extends EditForm {
      */
     public List getProteins() {
         return getItems();
+    }
+
+    /**
+     * Returns the position of the delete protein.
+     * @return the position of the Protein to delete; -1 is returned to
+     * indicate that there are no Proteins marked for delete among the current
+     * Proteins.
+     */
+    public int getDelProteinPos() {
+        if (getProteins() == null ) {
+            return -1;
+        }
+        for (ListIterator iter = getProteins().listIterator(); iter.hasNext();) {
+            ProteinBean pb = (ProteinBean) iter.next();
+            if (pb.isMarkedForDelete()) {
+                return iter.nextIndex() - 1;
+            }
+        }
+        return -1;
     }
 
     /**
