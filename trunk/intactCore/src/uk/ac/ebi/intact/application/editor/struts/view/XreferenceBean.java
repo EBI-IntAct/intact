@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.view;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 
 import java.io.Serializable;
 
@@ -99,6 +98,16 @@ public class XreferenceBean extends EditBean implements Serializable {
     }
 
     /**
+     * Returns the database with a link to show its contents in a window.
+     * @return the database as a browsable link.
+     */
+    public String getDatabaseLink() {
+        String link = "<a href=\"" + "javascript:show('CvDatabase', "
+                + "'" + myDatabaseName + "')\"" + ">" + myDatabaseName + "</a>";
+        return link;
+    }
+
+    /**
      * Sets the database name.
      *
      * @param dbname the name of the database.
@@ -157,6 +166,17 @@ public class XreferenceBean extends EditBean implements Serializable {
      */
     public String getQualifier() {
         return myReferenceQualifer;
+    }
+
+    /**
+     * Returns the qualifier with a link to show its contents in a window.
+     * @return the qualifier as a browsable link.
+     */
+    public String getQualifierLink() {
+        String link = "<a href=\"" + "javascript:show('CvXrefQualifier', " + "'"
+                + myReferenceQualifer + "')\"" + ">"
+                + myReferenceQualifer + "</a>";
+        return link;
     }
 
     /**
