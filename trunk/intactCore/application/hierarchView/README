@@ -57,7 +57,7 @@ That web service will allows hierarchView to calculate proteins' coordinates of 
 
 (4) Install the web service
     ------------------------
-    - copy that archive to your server
+    - copy that archive to the machine which will host the web service
     - uncompress it (tar zxvf tulipWebService.tar.gz)
     - enter the freshly created directory 'ws' and read the README file to know how
       to install and manage the web service.
@@ -78,22 +78,27 @@ PART 2 : INSTALL THE WEB APPLICATION
     - customize :
         * 'highlightment.source.GO.hostname' with the hostname of the interpro web server.
 
-(3) Build the application war file
+(3) Configure how to access the search application
+    ----------------------------------------------
+    - edit the 'WEB-INF/config/Search.properties' file.
+    - customize :
+        * 'search.url' with the hostname of the server which hosts the search application.
+
+(4) Build the application war file
     ------------------------------
     run 'ant undeploy war deploy', will clean Tomcat build the application war file and install
     the web application in the local machine assuming you have $CATALINA_HOME correctly set as
     an environment variable.
 
-(4) Start Tomcat
+(5) Start Tomcat
     ------------
     run 'ant start-tomcat' (once)- if this fails, simply go to your tomcat bin directory and start it manually from there.
 
-(5) Test the web service (OPTIONAL)
+(6) Test the web service (OPTIONAL)
     -------------------------------
     By running 'ant test-ws', you send a dummy TLP file to the web service and get back a
     list of protein's coordinates. Those coordinates are computed by Tulip.
 
-(6) Try the web application
+(7) Try the web application
     -----------------------
     let's open a browser and go to http://[TOMCAT_HOSTNAME]/intact/hierarchView
-
