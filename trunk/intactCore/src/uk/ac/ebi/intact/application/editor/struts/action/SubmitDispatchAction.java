@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
@@ -24,10 +23,10 @@ import uk.ac.ebi.intact.util.GoServerProxy;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.io.IOException;
 
 /**
  * Dispatcher action which dispatches according to 'dispatch' parameter. This
@@ -264,15 +263,16 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
                     new ActionError("error.update",
                             ie1.getRootCause().getMessage()));
             saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
+            return mapping.findForward(FAILURE);
         }
-        // Need to load the current menu from the database.
-        view.removeMenu();
-        // Update the search cache.
-        user.updateSearchCache();
         if (submit) {
-            // All changes are committed successfully; either search or results.
-            return mapping.findForward(getForwardAction(user));
+            // Need to rebuild the menu again as the short label may have been
+            // changed. Remove it from cache.
+            view.removeMenu();
+            // Update the search cache.
+            user.updateSearchCache();
+            // Only show the submitted record.
+            return mapping.findForward(RESULT);
         }
         return mapping.getInputForward();
     }
