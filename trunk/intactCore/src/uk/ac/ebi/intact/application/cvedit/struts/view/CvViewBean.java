@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.cvedit.struts.view;
 
-import org.apache.struts.action.ActionForm;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
@@ -42,14 +41,26 @@ public class CvViewBean {
     private String myShortLabel;
 
     /**
-     * The annotations.
+     * The annotations to display.
      */
     private Collection myAnnotations = new ArrayList();
 
     /**
-     * The Xreferences.
+     * The Xreferences to display.
      */
     private Collection myXrefs = new ArrayList();
+
+    /**
+     * Holds the transaction (add/delete) for annotations. This set is cleared
+     * once the user commits the transaction.
+     */
+    private Set myAnnotTransactions = new HashSet();
+
+    /**
+     * Holds the transaction (add/delete) for xrefs. This set is cleared
+     * once the user commits the transaction.
+     */
+    private Set myXrefTransactions = new HashSet();
 
     /**
      * Set attributes using values from CvObject. A coarse-grained method to
@@ -131,6 +142,93 @@ public class CvViewBean {
     }
 
     /**
+     * Adds an annotation.
+     * @param annotation the annotation to add.
+     *
+     * <pre>
+     * post: myAnnotTransactions = myAnnotTransactions@pre + 1
+     * post: myAnnotations = myAnnotations@pre + 1
+     * </pre>
+     */
+    public void addAnnotation(Annotation annotation) {
+        CommentBean cb = TransactionalCommentBean.createCommentBeanAdd(annotation);
+        myAnnotTransactions.add(cb);
+        // Add to the view as well.
+        myAnnotations.add(cb);
+    }
+
+    /**
+     * Removes an annotation for given key.
+     * @param key the primary key.
+     * @param annotation the annotation to remove.
+     *
+     * <pre>
+     * post: myAnnotTransactions = myAnnotTransactions@pre - 1
+     * post: myAnnotations = myAnnotations@pre - 1
+     * </pre>
+     */
+    public void delAnnotation(long key, Annotation annotation) {
+        CommentBean cb =
+                TransactionalCommentBean.createCommentBeanDel(key, annotation);
+        myAnnotTransactions.add(cb);
+        // Remove from the view as well.
+        myAnnotations.remove(cb);
+    }
+
+    /**
+     * Finds the annotation for a given key.
+     * @param key the key to search for the annotation.
+     * @return the <code>Annotation</code> object whose key matches with given
+     * <code>key</code>. <code>null</code> is returned if no matching annotation
+     * is found.
+     */
+    public Annotation findAnnotation(long key) {
+        for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
+            CommentBean bean = (CommentBean) iter.next();
+            if (bean.getKey() == key) {
+                return bean.getAnnotation();
+            }
+        }
+        // Not found the bean.
+        return null;
+    }
+
+    /**
+     * Returns a collection of annotations to add.
+     * @return the collection of annotations to add to the current CV object.
+     *
+     * <pre>
+     * post: return->forAll(a | a.getTransState() = TransactionalCommentBean.ADD)
+     * </pre>
+     */
+    public Collection getAnnotationsToAdd() {
+        return getTransAnnots(TransactionalCommentBean.ADD);
+    }
+
+    /**
+     * Returns a collection of annotations to remove.
+     * @return the collection of annotations to remove from the current CV object.
+     *
+     * <pre>
+     * post: return->forAll(a | a.getTransState() = TransactionalCommentBean.DEL)
+     * </pre>
+     */
+    public Collection getAnnotationsToDel() {
+        return getTransAnnots(TransactionalCommentBean.DEL);
+    }
+
+    /**
+     * Clears annotations stored in the transaction container.
+     *
+     * <pre>
+     * post: myAnnotTransactions.isEmpty()
+     * </pre>
+     */
+    public void clearTransAnnotations() {
+        myAnnotTransactions.clear();
+    }
+
+    /**
      * Returns a collection <code>XRefe</code>
      *
      * <pre>
@@ -139,6 +237,93 @@ public class CvViewBean {
      */
     public Collection getXrefs() {
         return myXrefs;
+    }
+
+    /**
+     * Adds an xref.
+     * @param xref the xref to add.
+     *
+     * <pre>
+     * post: myXrefTransactions = myXrefTransactions@pre + 1
+     * post: myXrefs = myXrefs@pre + 1
+     * </pre>
+     */
+    public void addXref(Xref xref) {
+        XreferenceBean xb = TransactionalXrefBean.createXrefBeanAdd(xref);
+        myXrefTransactions.add(xb);
+        // Add to the view as well.
+        myXrefs.add(xb);
+    }
+
+    /**
+     * Removes a xref for given key.
+     * @param key the primary key.
+     * @param xref the annotation to remove.
+     *
+     * <pre>
+     * post: myXrefTransactions = myXrefTransactions@pre - 1
+     * post: myXrefs = myXrefs@pre - 1
+     * </pre>
+     */
+    public void delXref(long key, Xref xref) {
+        XreferenceBean xb =
+                TransactionalXrefBean.createXrefBeanDel(key, xref);
+        myXrefTransactions.add(xb);
+        // Remove from the view as well.
+        myXrefs.remove(xb);
+    }
+
+    /**
+     * Finds the xref for a given key.
+     * @param key the key to search for the xref.
+     * @return the <code>Xref</code> object whose key matches with given
+     * <code>key</code>. <code>null</code> is returned if no matching xref
+     * is found.
+     */
+    public Xref findXref(long key) {
+        for (Iterator iter = myXrefs.iterator(); iter.hasNext();) {
+            XreferenceBean bean = (XreferenceBean) iter.next();
+            if (bean.getKey() == key) {
+                return bean.getXref();
+            }
+        }
+        // Not found the bean.
+        return null;
+    }
+
+    /**
+     * Returns a collection of xrefs to add.
+     * @return the collection of xrefs to add to the current CV object.
+     *
+     * <pre>
+     * post: return->forAll(a | a.getTransState() = TransactionalXrefBean.ADD)
+     * </pre>
+     */
+    public Collection getXrefsToAdd() {
+        return getTransXrefs(TransactionalXrefBean.ADD);
+    }
+
+    /**
+     * Returns a collection of xrefs to remove.
+     * @return the collection of xrefs to remove from the current CV object.
+     *
+     * <pre>
+     * post: return->forAll(a | a.getTransState() = TransactionalXrefBean.DEL)
+     * </pre>
+     */
+    public Collection getXrefsToDel() {
+        return getTransXrefs(TransactionalXrefBean.DEL);
+    }
+
+    /**
+     * Clears xrefs stored in the transaction container.
+     *
+     * <pre>
+     * post: myXrefTransactions.isEmpty()
+     * </pre>
+     */
+    public void clearTransXrefs() {
+        myXrefTransactions.clear();
     }
 
     /**
@@ -184,5 +369,41 @@ public class CvViewBean {
             Xref xref = (Xref) iter.next();
             myXrefs.add(new XreferenceBean(xref));
         }
+    }
+
+    /**
+     * Returns transactional comment bean for given transaction state.
+     * @param state the transaction state; ADD or DEL
+     * @return a collection of <code>Annotations</code> for given state.
+     */
+    private Collection getTransAnnots(int state) {
+        // The collection to return.
+        Collection result = new ArrayList();
+        // Filter out annotations.
+        for (Iterator iter = myAnnotTransactions.iterator(); iter.hasNext(); ) {
+            TransactionalCommentBean tcb = (TransactionalCommentBean) iter.next();
+            if (tcb.getTransState() == state) {
+                result.add(tcb.getAnnotation());
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns transactional xref bean for given transaction state.
+     * @param state the transaction state; ADD or DEL
+     * @return a collection of <code>Xrefs</code> for given state.
+     */
+    private Collection getTransXrefs(int state) {
+        // The collection to return.
+        Collection result = new ArrayList();
+        // Filter out annotations.
+        for (Iterator iter = myXrefTransactions.iterator(); iter.hasNext(); ) {
+            TransactionalXrefBean txb = (TransactionalXrefBean) iter.next();
+            if (txb.getTransState() == state) {
+                result.add(txb.getXref());
+            }
+        }
+        return result;
     }
 }
