@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -81,7 +82,11 @@ public final class CenteredAction extends IntactBaseAction {
             user.setDepthToDefault();
 
             // Creation of the graph and the image
-            produceInteractionNetworkImage (user);
+            try {
+                produceInteractionNetworkImage (user);
+            } catch (MultipleResultException e) {
+                return (mapping.findForward("displayWithSearch"));
+            }
 
             if (false == isErrorsEmpty()) {
                 // Rollback to the old AC

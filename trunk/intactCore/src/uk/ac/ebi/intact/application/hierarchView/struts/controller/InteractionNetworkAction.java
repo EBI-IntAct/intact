@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.InteractionNetworkForm;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 
 import javax.servlet.ServletException;
@@ -63,14 +64,18 @@ public final class InteractionNetworkAction extends IntactBaseAction {
 
         if (myForm.expandSelected()) {
             user.increaseDepth();
-            produceInteractionNetworkImage (user);
         } else if (myForm.contractSelected()) {
             user.desacreaseDepth();
-            produceInteractionNetworkImage (user);
         } else {
             addError ("error.graph.command.notRecognized", myForm.getAction());
             saveErrors(request);
             return (mapping.findForward("error"));
+        }
+
+        try {
+            produceInteractionNetworkImage (user);
+        } catch (MultipleResultException e) {
+            return (mapping.findForward("displayWithSearch"));
         }
 
         // Forward control to the specified success URI
