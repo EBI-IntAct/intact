@@ -288,43 +288,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         user.removeFromCurrentInteraction((Interaction) getAnnotatedObject());
     }
 
-    /**
-     * Persists proteins.
-     * @param user handler to the user to persist proteins.
-     * @throws IntactException for errors in persisting.
-     * @throws SearchException for errors in searching for objects in the
-     * persistent system.
-     */
-//    public void persistProteins(EditUserI user) throws IntactException, SearchException {
-//        Interaction intact = (Interaction) getAnnotatedObject();
-//        // Delete proteins and remove it from the interaction.
-//        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
-//            Component comp = ((ProteinBean) iter.next()).getComponent(user);
-//            // No need to delete from persistent storage if the link to this
-//            // Protein is not persisted.
-//            if ((comp == null) || (comp.getAc() == null)) {
-//                continue;
-//            }
-//            user.delete(comp);
-//            intact.removeComponent(comp);
-//        }
-//        // Update proteins.
-//        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
-//            ProteinBean pb = (ProteinBean) iter.next();
-//            Component comp = pb.getComponent(user);
-//            intact.addComponent(comp);
-//            if (user.isPersistent(comp)) {
-//                user.update(comp);
-//            }
-//            else {
-//                user.create(comp);
-//            }
-//        }
-//        // No need to test whether this 'intact' persistent or not because we
-//        // know it has been already persisted by persist() call.
-//        user.update(intact);
-//    }
-
     // Override super method to clear experiments and componets.
     public void clear() {
         super.clear();
@@ -651,6 +614,22 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public void addProteinToUpdate(ProteinBean pb) {
         myProteinsToUpdate.add(pb);
+    }
+
+    /**
+     * Removes all the unsaved proteins for the current protein collection. A
+     * protein bean whose state equivalent to {@link ProteinBean.SAVE_NEW} is
+     * considered as unsaved.
+     */
+    public void removeUnsavedProteins() {
+        List unsaved = new ArrayList();
+        for (Iterator iter = myProteins.iterator(); iter.hasNext(); ) {
+            ProteinBean pb = (ProteinBean) iter.next();
+            if (pb.getEditState().equals(ProteinBean.SAVE_NEW)) {
+                unsaved.add(pb);
+            }
+        }
+        myProteins.removeAll(unsaved);
     }
 
     /**

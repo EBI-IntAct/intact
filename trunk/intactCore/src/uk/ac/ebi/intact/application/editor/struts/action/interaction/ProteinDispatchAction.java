@@ -125,6 +125,9 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         // Back to the view mode.
         pb.setEditState(AbstractEditBean.VIEW);
 
+        // Remove the unsaved proteins.
+        viewbean.removeUnsavedProteins();
+        
         // Update the form.
         return mapping.findForward(SUCCESS);
     }
