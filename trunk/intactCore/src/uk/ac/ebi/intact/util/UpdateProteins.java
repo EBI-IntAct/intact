@@ -1081,8 +1081,6 @@ public class UpdateProteins extends UpdateProteinsI {
 
         boolean needUpdate = false;
         Collection aliases = protein.getAliases();
-        // gene[i][0]: gene name
-        // gene[i][1 ...]: synomyms of the gene's name
         Gene[] genes = sptrEntry.getGenes();
 
         Alias alias = null;
@@ -1111,6 +1109,8 @@ public class UpdateProteins extends UpdateProteinsI {
                 }
             }
 
+
+            // create/update synonyms
             for ( int ii = 1; ii < genes[ i ].getSynonyms().length; ii++ ) {
 
                 if( !isAliasAlreadyExisting( aliases, genes[ i ].getSynonyms()[ ii ], geneNameSynonymAliasType ) ) {
@@ -1417,27 +1417,7 @@ public class UpdateProteins extends UpdateProteinsI {
         updateUniprotXref4Protein( sptrEntry, protein );
 
         // create Aliases
-        Gene[] genes = sptrEntry.getGenes();
-        Alias alias = null;
-        for ( int i = 0; i < genes.length; i++ ) {
-
-            alias = new Alias( myInstitution,
-                               protein,
-                               geneNameAliasType, // gene-name
-                               genes[ i ].getName() );
-
-            addNewAlias( protein, alias );
-
-            for ( int ii = 1; ii < genes.length; ii++ ) {
-
-                alias = new Alias( myInstitution,
-                                   protein,
-                                   geneNameSynonymAliasType, // gene-name-synonym
-                                   genes[ i ].getName() );
-
-                addNewAlias( protein, alias );
-            }
-        }
+        updateAliases( sptrEntry, protein );
 
         // update database
         try {
