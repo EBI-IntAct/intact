@@ -21,10 +21,14 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
 <%
+
+    IntactUserI user = null;
+
+    user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+
     /**
      * Retreive user's data from the session
      */
-    IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
     String queryString = null;
     String methodLabel = null;
     String fieldMethod = null;
@@ -41,7 +45,7 @@
 %>
 
 <!-- Search section -->
-<html:form action="/search" focus="AC">
+<html:form action="/search" focus="queryString">
 
     <table>
         <tr>
@@ -102,7 +106,7 @@
                     <bean:message key="sidebar.search.button.submit"/>
                 </html:submit>
             <%
-                if (user.InteractionNetworkReadyToBeDisplayed()) {
+                if (user != null && user.InteractionNetworkReadyToBeDisplayed()) {
                     // display the Add button only if the user as already a network
             %>
                 <html:submit property="action" titleKey="sidebar.search.button.add.title">
