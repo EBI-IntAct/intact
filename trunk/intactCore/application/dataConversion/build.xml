@@ -105,6 +105,7 @@
         <!-- Delete directories first -->
         <delete dir="${dest.dir}"/>
         <delete dir="${docs.dir}"/>
+	  <delete dir="${lib.dir}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -144,11 +145,15 @@
     <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
-    <target name="compile" depends="make-jar"
-        description="Compiles non test source files">
+    <target name="compile" depends="make-jar, set-db-type"
+ 				description="Compiles non test source files">
 
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}"/>
+
+	<!-- now make sure the correct DB driver is copied -->
+	<antcall target="cp-postgres"/>
+	<antcall target="cp-oracle"/>
 
         <!-- Only compile sources. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
@@ -160,7 +165,8 @@
 
         <!-- Copy configuration files -->
         <antcall target="cp-config-files"/>
-    </target>
+
+	</target>
 
     <!-- =================================================================== -->
 
@@ -171,7 +177,7 @@
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}"/>
 
-        <!-- Only compile editor sources only. -->
+        <!-- Only compile dataConversion sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.4"
             includes="**/application/dataConversion/**">
@@ -188,8 +194,10 @@
     <!-- =================================================================== -->
 
     <!-- Copies jar files. The database to include is specified as a parameter. -->
+    <target name="copy-lib" depends="gen-last-modified-file">
 
-    <target name="copy-lib" depends="compile, gen-last-modified-file">
+	  <!-- Create the lib dir if it doesn't exist. -->
+        <mkdir dir="${lib.dir}"/>
 
         <!-- Copy jar files -->
         <copy todir="lib">
@@ -228,11 +236,11 @@
     <!-- =================================================================== -->
 
     <!--
-         Builds an application for postgres;
+         copies postgres DB driver;
          should be called only after calling set-db-type.
       -->
 
-    <target name="app-postgres" if="postgres">
+    <target name="cp-postgres" if="postgres">
         <!-- Load postgres properties. -->
         <antcall target="copy-lib">
             <param name="db" value="postgresql.jar"/>
@@ -242,11 +250,11 @@
     <!-- =================================================================== -->
 
     <!--
-        Builds an application for oracle database;
+        copies oracle database driver;
         should be called only after calling set-db-type.
       -->
 
-    <target name="app-oracle" description="Builds a war file for oracle" if="oracle">
+    <target name="cp-oracle" description="copies driver for oracle" if="oracle">
         <!-- Load oracle properties. -->
         <antcall target="copy-lib">
             <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
