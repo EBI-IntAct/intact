@@ -55,5 +55,6 @@ public class IntactActionServlet extends ActionServlet {
         }
         // Store the service into the session scope.
         ctx.setAttribute(SearchConstants.INTACT_SERVICE, service);
+        ctx.setAttribute(SearchConstants.INTACT_TYPES, service.getIntactTypes());
     }
 }
