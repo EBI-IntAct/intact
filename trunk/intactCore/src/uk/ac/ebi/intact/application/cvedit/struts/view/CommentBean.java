@@ -103,18 +103,16 @@ public class CommentBean implements Serializable {
     /**
      * Compares <code>obj</code> with this object according to
      * Java's equals() contract. Only returns <tt>true</tt> if the internal
-     * keys for both objects match. Made it final to allow slice comparision
-     * without violating transitivity law for equals() method.
+     * keys for both objects match.
      *
      * @param obj the object to compare.
      */
-    public final boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         // Identical to this?
         if (obj == this) {
             return true;
         }
-        // Allow for slice comparision.
-        if ((obj != null) && (obj instanceof CommentBean)) {
+        if ((obj != null) && (getClass() == obj.getClass())) {
             // Can safely cast it.
             return myKey == ((CommentBean) obj).getKey();
         }
