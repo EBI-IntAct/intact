@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.OptionGenerator;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.InitForm;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 
@@ -124,6 +125,15 @@ public final class DisplayAction extends IntactBaseAction {
         } else {
             // set default values
             user.init();
+
+            String host = request.getParameter ("host");
+            System.out.println("THE HOST GIVEN BY JAVASCRIPT: " + host);
+
+            String protocol = request.getParameter ("protocol");
+            System.out.println("THE PROTOCOL GIVEN BY JAVASCRIPT: " + protocol);
+
+            session.setAttribute( StrutsConstants.HOST, host );
+            session.setAttribute( StrutsConstants.PROTOCOL, protocol );
 
             // Save user's data
             user.setQueryString (AC);

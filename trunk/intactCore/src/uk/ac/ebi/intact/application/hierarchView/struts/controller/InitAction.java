@@ -10,6 +10,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.InitForm;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
@@ -76,6 +78,15 @@ public final class InitAction extends IntactBaseAction {
         }
 
         logger.info ("User's setting ok.");
+
+        String host = ((InitForm)form).getHost();
+        System.out.println("THE HOST GIVEN BY JAVASCRIPT: " + host);
+
+        String protocol = ((InitForm)form).getProtocol();
+        System.out.println("THE PROTOCOL GIVEN BY JAVASCRIPT: " + protocol);
+
+        session.setAttribute( StrutsConstants.HOST, host );
+        session.setAttribute( StrutsConstants.PROTOCOL, protocol) ;
 
         // Forward control to the specified success URI
         return (mapping.findForward("success"));
