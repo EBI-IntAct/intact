@@ -1,157 +1,157 @@
 $intactCVs ; PSEUDOAC:0
- %interaction type  ; MI:0190
-  %genetic interaction ; MI:0208
-   %synthetic lethal ; MI:0219
-  %physical interaction ; MI:0218
-   %covalent interaction ; MI:0196
-    %cleavage ; MI:0194
-     %deacetylation reaction ; MI:0197
-     %deformylation reaction ; MI:0199
-     %dephosphorylation reaction ; MI:0203
-     %deubiquitination reaction ; MI:0204
-     %lipid cleavage ; MI:0212
-      %defarnesylation reaction ; MI:0198
-      %degeranylation ; MI:0200
-      %demyristoylation ; MI:0201
-      %depalmitoylation ; MI:0202
-    %covalent binding ; MI:0195
-     %acetylation reaction ; MI:0192
-     %amidation reaction ; MI:0193
-     %formylation reaction ; MI:0207
-     %hydroxylation reaction ; MI:0210
-     %lipid addition ; MI:0211
-      %farnesylation reaction ; MI:0206
-      %geranylation reaction ; MI:0209
-      %myristoylation reaction ; MI:0214
-      %palmitoylation reaction ; MI:0216
-     %methylation reaction ; MI:0213
-     %phosphorylation reaction ; MI:0217
-     %ubiquitination reaction ; MI:0220
-   %non covalent interaction ; MI:0215
-    %aggregation ; MI:0191
-    %disaggregation ; MI:0205
- %participant detection ; MI:0002
-  %predetermined ; MI:0221
-   %radio-labelled protein ; MI:0222
-  %peptide massfingerprinting ; MI:0082
-  %protein sequence identification ; MI:0093
-   %peptide synthesis ; MI:0083
-   %sequence tag identification ; MI:0102
-   %de novo protein sequencing by mass spectrometry ; MI:0032
-   %edman degradation ; MI:0039
-  %nucleotide sequence identification ; MI:0078
-   %full identification by sequencing ; MI:0056
-   %partial dna sequence identification by hybridization ; MI:0080
-    %primer specific pcr ; MI:0088
-    %southern blot ; MI:0103
-  %western blot ; MI:0113
-   %monoclonal antibody ; MI:0072
-   %polyclonal antibody ; MI:0086
- %interaction detection ; MI:0001
-  %experimental ; MI:0045
-   %biophysical ; MI:0013
-    %circular dichroism ; MI:0016
-    %electron microscopy ; MI:0040
-    %electron resonance ; MI:0043
-     %electron nuclear double resonance ; MI:0041
-     %electron paramagnetic resonance ; MI:0042
-    %fluorescence technologies ; MI:0051
-     %classical fluorescence spectroscopy ; MI:0017
-     %fluorescence correlation spectroscopy ; MI:0052
-     %fluorescence polarization spectroscopy ; MI:0053
-     %fluorescence-activated cell sorting ; MI:0054
-      %yeast display ; MI:0115 % display technologies ; MI:0034
-      %bacterial display ; MI:0009 % display technologies ; MI:0034
-     %fluorescent resonance energy transfer ; MI:0055 % colocalization/visualisation technologies ; MI:0023
-     %bioluminescence resonance energy transfer ; MI:0012 % colocalization/visualisation technologies ; MI:0023
-    %isothermal titration calorimetry ; MI:0065
-    %light scattering ; MI:0067
-     %dynamic light scattering ; MI:0038
-     %static light scattering ; MI:0104
-    %mass spectrometry studies of complexes ; MI:0069
-    %nuclear magnetic resonance ; MI:0077
-    %scintillation proximity assay ; MI:0099
-    %surface plasmon resonance ; MI:0107
-    %x-ray crystallography ; MI:0114
-   %colocalization/visualisation technologies ; MI:0023
-    %colocalization by electron microscopy ; MI:0020
-    %colocalization by fluorescent probes cloning ; MI:0021
-    %colocalization by immunostaining ; MI:0022
-    %fluorescent resonance energy transfer ; MI:0055 % fluorescence technologies ; MI:0051
-    %bioluminescence resonance energy transfer ; MI:0012 % fluorescence technologies ; MI:0051
-   %copurification ; MI:0025
-    %cosedimentation ; MI:0027
-     %cosedimentation in solution ; MI:0028
-     %cosedimentation through density gradients ; MI:0029
-    %molecular sieving ; MI:0071
-    %coimmunoprecipitation ; MI:0019 % affinity chromatography technologies ; MI:0004
-     %anti tag coimmunoprecipitation ; MI:0007
-      %flag tag ; MI:0050
-      %tandem affinity purification ; MI:0109
-      %ha tag ; MI:0060
-      %his tag ; MI:0062
-      %myc tag ; MI:0075
-     %anti bait coimmunoprecipitation ; MI:0006
-   %display technologies ; MI:0034
-    %mrna display ; MI:0073
-    %phage display ; MI:0084
-     %filamentous phage display ; MI:0048
-     %lambda phage display ; MI:0066
-     %t7 phage display ; MI:0108
-    %ribosome display ; MI:0098
-    %yeast display ; MI:0115 % fluorescence-activated cell sorting ; MI:0054
-    %bacterial display ; MI:0009 % fluorescence-activated cell sorting ; MI:0054
-   %protein complementation assay ; MI:0090
-    %bordetella pertussis adenilate cyclase ; MI:0014
-    %reverse ras recruitment system ; MI:0097
-    %triple hybrid: dehydrofolate reductase reconstruction ; MI:0111
-    %ubiqitin reconstruction ; MI:0112
-    %classical two hybrid ; MI:0018
-    %beta galactosidase complementation ; MI:0010
-    %beta lactamase complementation ; MI:0011
-   %other biochemical technologies ; MI:0079
-    %cross-linking studies ; MI:0030
-     %cross-linking with a bifunctional reagent ; MI:0031
-    %enzyme-linked immunosorbent assay ; MI:0044
-    %far western blotting ; MI:0047
-    %filter binding ; MI:0049
-   %affinity chromatography technologies ; MI:0004
-    %pull down ; MI:0096
-     %gst pull down ; MI:0059
-     %his pull down ; MI:0061
-    %coimmunoprecipitation ; MI:0019 % copurification ; MI:0025
-     %anti tag coimmunoprecipitation ; MI:0007
-      %flag tag ; MI:0050
-      %tandem affinity purification ; MI:0109
-      %ha tag ; MI:0060
-      %his tag ; MI:0062
-      %myc tag ; MI:0075
-     %anti bait coimmunoprecipitation ; MI:0006
-   %array technologies ; MI:0008
-    %peptide array ; MI:0081
-    %protein array ; MI:0089
-    %protein in situ array ; MI:0092
-    %proteinchip(r) on a surface-enhanced laser desorption/ionization ; MI:0095
-  %in silico ; MI:0063
-   %experimental knowledge based ; MI:0046
-    %domain profile pairs ; MI:0037 % sequence based prediction ; MI:0101
-    %interologs ; MI:0064 % sequence based prediction ; MI:0101
-    %text mining ; MI:0110
-     %confirmational text mining ; MI:0024
-     %predictive text mining ; MI:0087
-   %genome based prediction ; MI:0058
-    %domain fusion ; MI:0036 % sequence based prediction ; MI:0101
-    %gene neighbourhoods ; MI:0057
-    %sequence based phylogenetic profile ; MI:0100 % sequence based prediction ; MI:0101
-   %sequence based prediction ; MI:0101
-    %correlated mutations ; MI:0026
-    %domain fusion ; MI:0036 % genome based prediction ; MI:0058
-    %domain profile pairs ; MI:0037 % experimental knowledge based ; MI:0046
-    %interologs ; MI:0064 % experimental knowledge based ; MI:0046
-    %phylogenetic profile ; MI:0085
-    %sequence based phylogenetic profile ; MI:0100 % genome based prediction ; MI:0058
-   %structure based prediction ; MI:0105
-    %docking ; MI:0035
+ %interaction type\: interaction type  ; MI:0190
+  @is_a@genetic interaction ; MI:0208
+   @is_a@synthetic lethal ; MI:0219
+  @is_a@physical interaction ; MI:0218
+   @is_a@covalent interaction ; MI:0196
+    @is_a@cleavage ; MI:0194
+     @is_a@deacetylation reacti\: deacetylation reaction ; MI:0197
+     @is_a@deformylation reacti\: deformylation reaction ; MI:0199
+     @is_a@dephosphorylation re\: dephosphorylation reaction ; MI:0203
+     @is_a@deubiquitination rea\: deubiquitination reaction ; MI:0204
+     @is_a@lipid cleavage ; MI:0212
+      @is_a@defarnesylation reac\: defarnesylation reaction ; MI:0198
+      @is_a@degeranylation ; MI:0200
+      @is_a@demyristoylation ; MI:0201
+      @is_a@depalmitoylation ; MI:0202
+    @is_a@covalent binding ; MI:0195
+     @is_a@acetylation reaction ; MI:0192
+     @is_a@amidation reaction ; MI:0193
+     @is_a@formylation reaction ; MI:0207
+     @is_a@hydroxylation reacti\: hydroxylation reaction ; MI:0210
+     @is_a@lipid addition ; MI:0211
+      @is_a@farnesylation reacti\: farnesylation reaction ; MI:0206
+      @is_a@geranylation reactio\: geranylation reaction ; MI:0209
+      @is_a@myristoylation react\: myristoylation reaction ; MI:0214
+      @is_a@palmitoylation react\: palmitoylation reaction ; MI:0216
+     @is_a@methylation reaction ; MI:0213
+     @is_a@phosphorylation reac\: phosphorylation reaction ; MI:0217
+     @is_a@ubiquitination react\: ubiquitination reaction ; MI:0220
+   @is_a@non covalent interac\: non covalent interaction ; MI:0215
+    @is_a@aggregation ; MI:0191
+    @is_a@disaggregation ; MI:0205
+ %participant detectio\: participant detection ; MI:0002
+  @is_a@predetermined ; MI:0221
+   @is_a@radio-labelled prote\: radio-labelled protein ; MI:0222
+  @is_a@peptide massfingerpr\: peptide massfingerprinting ; MI:0082
+  @is_a@protein sequence ide\: protein sequence identification ; MI:0093
+   @is_a@peptide synthesis ; MI:0083
+   @is_a@sequence tag identif\: sequence tag identification ; MI:0102
+   @is_a@de novo protein sequ\: de novo protein sequencing by mass spectrometry ; MI:0032
+   @is_a@edman degradation ; MI:0039
+  @is_a@nucleotide sequence\: nucleotide sequence identification ; MI:0078
+   @is_a@full identification\: full identification by sequencing ; MI:0056
+   @is_a@partial dna sequence\: partial dna sequence identification by hybridization ; MI:0080
+    @is_a@primer specific pcr ; MI:0088
+    @is_a@southern blot ; MI:0103
+  @is_a@western blot ; MI:0113
+   @is_a@monoclonal antibody ; MI:0072
+   @is_a@polyclonal antibody ; MI:0086
+ %interaction detectio\: interaction detection ; MI:0001
+  @is_a@experimental ; MI:0045
+   @is_a@biophysical ; MI:0013
+    @is_a@circular dichroism ; MI:0016
+    @is_a@electron microscopy ; MI:0040
+    @is_a@electron resonance ; MI:0043
+     @is_a@electron nuclear dou\: electron nuclear double resonance ; MI:0041
+     @is_a@electron paramagneti\: electron paramagnetic resonance ; MI:0042
+    @is_a@fluorescence technol\: fluorescence technologies ; MI:0051
+     @is_a@classical fluorescen\: classical fluorescence spectroscopy ; MI:0017
+     @is_a@fluorescence correla\: fluorescence correlation spectroscopy ; MI:0052
+     @is_a@fluorescence polariz\: fluorescence polarization spectroscopy ; MI:0053
+     @is_a@fluorescence-activat\: fluorescence-activated cell sorting ; MI:0054
+      @is_a@yeast display ; MI:0115 @is_a@ display technologies ; MI:0034
+      @is_a@bacterial display ; MI:0009 @is_a@ display technologies ; MI:0034
+     @is_a@fluorescent resonanc\: fluorescent resonance energy transfer ; MI:0055 @is_a@ colocalization/visua\: colocalization/visualisation technologies ; MI:0023
+     @is_a@bioluminescence reso\: bioluminescence resonance energy transfer ; MI:0012 @is_a@ colocalization/visua\: colocalization/visualisation technologies ; MI:0023
+    @is_a@isothermal titration\: isothermal titration calorimetry ; MI:0065
+    @is_a@light scattering ; MI:0067
+     @is_a@dynamic light scatte\: dynamic light scattering ; MI:0038
+     @is_a@static light scatter\: static light scattering ; MI:0104
+    @is_a@mass spectrometry st\: mass spectrometry studies of complexes ; MI:0069
+    @is_a@nuclear magnetic res\: nuclear magnetic resonance ; MI:0077
+    @is_a@scintillation proxim\: scintillation proximity assay ; MI:0099
+    @is_a@surface plasmon reso\: surface plasmon resonance ; MI:0107
+    @is_a@x-ray crystallograph\: x-ray crystallography ; MI:0114
+   @is_a@colocalization/visua\: colocalization/visualisation technologies ; MI:0023
+    @is_a@colocalization by el\: colocalization by electron microscopy ; MI:0020
+    @is_a@colocalization by fl\: colocalization by fluorescent probes cloning ; MI:0021
+    @is_a@colocalization by im\: colocalization by immunostaining ; MI:0022
+    @is_a@fluorescent resonanc\: fluorescent resonance energy transfer ; MI:0055 @is_a@ fluorescence technol\: fluorescence technologies ; MI:0051
+    @is_a@bioluminescence reso\: bioluminescence resonance energy transfer ; MI:0012 @is_a@ fluorescence technol\: fluorescence technologies ; MI:0051
+   @is_a@copurification ; MI:0025
+    @is_a@cosedimentation ; MI:0027
+     @is_a@cosedimentation in s\: cosedimentation in solution ; MI:0028
+     @is_a@cosedimentation thro\: cosedimentation through density gradients ; MI:0029
+    @is_a@molecular sieving ; MI:0071
+    @is_a@coimmunoprecipitatio\: coimmunoprecipitation ; MI:0019 @is_a@ affinity chromatogra\: affinity chromatography technologies ; MI:0004
+     @is_a@anti tag coimmunopre\: anti tag coimmunoprecipitation ; MI:0007
+      @is_a@flag tag ; MI:0050
+      @is_a@tandem affinity puri\: tandem affinity purification ; MI:0109
+      @is_a@ha tag ; MI:0060
+      @is_a@his tag ; MI:0062
+      @is_a@myc tag ; MI:0075
+     @is_a@anti bait coimmunopr\: anti bait coimmunoprecipitation ; MI:0006
+   @is_a@display technologies ; MI:0034
+    @is_a@mrna display ; MI:0073
+    @is_a@phage display ; MI:0084
+     @is_a@filamentous phage di\: filamentous phage display ; MI:0048
+     @is_a@lambda phage display ; MI:0066
+     @is_a@t7 phage display ; MI:0108
+    @is_a@ribosome display ; MI:0098
+    @is_a@yeast display ; MI:0115 @is_a@ fluorescence-activat\: fluorescence-activated cell sorting ; MI:0054
+    @is_a@bacterial display ; MI:0009 @is_a@ fluorescence-activat\: fluorescence-activated cell sorting ; MI:0054
+   @is_a@protein complementat\: protein complementation assay ; MI:0090
+    @is_a@bordetella pertussis\: bordetella pertussis adenilate cyclase ; MI:0014
+    @is_a@reverse ras recruitm\: reverse ras recruitment system ; MI:0097
+    @is_a@triple hybrid: dehyd\: triple hybrid: dehydrofolate reductase reconstruction ; MI:0111
+    @is_a@ubiqitin reconstruct\: ubiqitin reconstruction ; MI:0112
+    @is_a@classical two hybrid ; MI:0018
+    @is_a@beta galactosidase c\: beta galactosidase complementation ; MI:0010
+    @is_a@beta lactamase compl\: beta lactamase complementation ; MI:0011
+   @is_a@other biochemical te\: other biochemical technologies ; MI:0079
+    @is_a@cross-linking studie\: cross-linking studies ; MI:0030
+     @is_a@cross-linking with a\: cross-linking with a bifunctional reagent ; MI:0031
+    @is_a@enzyme-linked immuno\: enzyme-linked immunosorbent assay ; MI:0044
+    @is_a@far western blotting ; MI:0047
+    @is_a@filter binding ; MI:0049
+   @is_a@affinity chromatogra\: affinity chromatography technologies ; MI:0004
+    @is_a@pull down ; MI:0096
+     @is_a@gst pull down ; MI:0059
+     @is_a@his pull down ; MI:0061
+    @is_a@coimmunoprecipitatio\: coimmunoprecipitation ; MI:0019 @is_a@ copurification ; MI:0025
+     @is_a@anti tag coimmunopre\: anti tag coimmunoprecipitation ; MI:0007
+      @is_a@flag tag ; MI:0050
+      @is_a@tandem affinity puri\: tandem affinity purification ; MI:0109
+      @is_a@ha tag ; MI:0060
+      @is_a@his tag ; MI:0062
+      @is_a@myc tag ; MI:0075
+     @is_a@anti bait coimmunopr\: anti bait coimmunoprecipitation ; MI:0006
+   @is_a@array technologies ; MI:0008
+    @is_a@peptide array ; MI:0081
+    @is_a@protein array ; MI:0089
+    @is_a@protein in situ arra\: protein in situ array ; MI:0092
+    @is_a@proteinchip(r) on a\: proteinchip(r) on a surface-enhanced laser desorption/ionization ; MI:0095
+  @is_a@in silico ; MI:0063
+   @is_a@experimental knowled\: experimental knowledge based ; MI:0046
+    @is_a@domain profile pairs ; MI:0037 @is_a@ sequence based predi\: sequence based prediction ; MI:0101
+    @is_a@interologs ; MI:0064 @is_a@ sequence based predi\: sequence based prediction ; MI:0101
+    @is_a@text mining ; MI:0110
+     @is_a@confirmational text\: confirmational text mining ; MI:0024
+     @is_a@predictive text mini\: predictive text mining ; MI:0087
+   @is_a@genome based predict\: genome based prediction ; MI:0058
+    @is_a@domain fusion ; MI:0036 @is_a@ sequence based predi\: sequence based prediction ; MI:0101
+    @is_a@gene neighbourhoods ; MI:0057
+    @is_a@sequence based phylo\: sequence based phylogenetic profile ; MI:0100 @is_a@ sequence based predi\: sequence based prediction ; MI:0101
+   @is_a@sequence based predi\: sequence based prediction ; MI:0101
+    @is_a@correlated mutations ; MI:0026
+    @is_a@domain fusion ; MI:0036 @is_a@ genome based predict\: genome based prediction ; MI:0058
+    @is_a@domain profile pairs ; MI:0037 @is_a@ experimental knowled\: experimental knowledge based ; MI:0046
+    @is_a@interologs ; MI:0064 @is_a@ experimental knowled\: experimental knowledge based ; MI:0046
+    @is_a@phylogenetic profile ; MI:0085
+    @is_a@sequence based phylo\: sequence based phylogenetic profile ; MI:0100 @is_a@ genome based predict\: genome based prediction ; MI:0058
+   @is_a@structure based pred\: structure based prediction ; MI:0105
+    @is_a@docking ; MI:0035
  %feature type ; MI:0116
   @is_a@binding site ; MI:0117
   @is_a@hotspot ; MI:0119

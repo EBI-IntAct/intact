@@ -1,107 +1,111 @@
-shortlabel: agonist
-term: Activator of an interactor.
+term: agonist: Activator of an interactor.
 definition: This biological entity interacts with the interactor such that the proportion of interactor in active form is increased.
 example: EBI-448589: pretreatment of IRAK1 with agonist IL-1 beta required for interaction.
+definition_reference: PMID:INTACT
 
-shortlabel: antagonist
-term: Inactivator of an interactor.
+term: antagonist: Inactivator of an interactor.
 definition: This biological entity interacts with an interactor to reduce the action of the interactor.
+definition_reference: PMID:INTACT
 
-shortlabel: author-confidence
-term: Confidence classification assigned by the author of the publication
+term: author-confidence: Confidence classification assigned by the author of the publication
 definition: A confidence value assigned to an interaction by the author of a paper. This may be a numerical value or a classification into groups. There may be more than one author-confidence for an interaction if the author uses different systems to assign them.
 example: In the Giot dataset (giot-2003-ex1), one interaction can have one author-confidence "0.43" and one author-confidence "low", because the authors chose 0.5 as a cutoff for high-confidence interactions.
+definition_reference: PMID:INTACT
 
-shortlabel: caution
-term: warning about errors/ grounds for confusion.
+term: caution: warning about errors/ grounds for confusion.
+definition_reference: PMID:INTACT
 
-shortlabel: comment
-term: Comment for public view
+term: comment: Comment for public view
+definition_reference: PMID:INTACT
 
-shortlabel: confidence-mapping
-term: Description of confidence mappings in the experiment
+term: confidence-mapping: Description of confidence mappings in the experiment
 definition: Description of author-confidence mappings in the experiment. If more than one system of confidence mappings are used by the author, these will be described here.
+definition_reference: PMID:INTACT
 
-shortlabel: definition
-term: Definition of the controlled vocabulary term
+term: definition: Definition of the controlled vocabulary term
+definition_reference: PMID:INTACT
 
-shortlabel: disease
-term: The interaction has a disease association.
+term: disease: The interaction has a disease association.
 comment: The interaction is shown to have a disease association OR
+definition_reference: PMID:INTACT
 
-shortlabel: example
-term: Example
+term: example: Example
 definition: Comment topic used to mark examples, normally used for the explanation of controlled vocabulary terms.
+definition_reference: PMID:INTACT
 
-shortlabel: exp-modification
-term: Modifications of an existing experimental method.
+term: exp-modification: Modifications of an existing experimental method.
 definition: Modifications of experimental method/s described in the controlled vocabulary.
+definition_reference: PMID:INTACT
 
-shortlabel: function
-term: Biological Function of the Object
+term: function: Biological Function of the Object
 function: Describes the biological function of the Object.
+definition_reference: PMID:INTACT
 
-shortlabel: inhibition
-term: Inhibitor of an interaction.
+term: inhibition: Inhibitor of an interaction.
 definition: The interaction between the proteins or the formation of a  complex is disrupted by this biological entity or by this modification of the interactors.
 example: EBI-447320: 'Interaction between ep300 and hif1a is disrupted by chetomin'. The information will be added under annotation topic 'inhibition' in interaction.
 example: EBI-447720 'Autophosphorylation of IRAK-1 inhibits the interaction between IRAK-1 and MYD88' This information is added under annotation topic 'inhibition'
+definition_reference: PMID:INTACT
 
-shortlabel: isoform-comment
-term: Protein isoform's comment for public view
+term: isoform-comment: Protein isoform's comment for public view
+definition_reference: PMID:INTACT
 
-shortlabel: negative
-term: The interactions described in this experiment are not observed under these experimental conditions.
+term: kinetics: Data related to kinetics of enzymes.
+definition: Data with the rates of change in the concentration of reactants in a enzymatic reaction should be entered here.
+definition_reference: PMID:INTACT
+
+term: negative: The interactions described in this experiment are not observed under these experimental conditions.
 definition: It was demonstrated in this paper that these interactions do not occur under the experimental conditions described.
+definition_reference: PMID:INTACT
 
-shortlabel: on-hold
-term: Experiment on hold until a defined date
+term: on-hold: Experiment on hold until a defined date
 definition: Experiment on hold until a certain date. The date is shown in UniProt style as dd-MMM-yyyy as the first item of the line. Additional comments may be added in the same annotation. An experiment is only released if the on-hold comment has been DELETED, not automatically when it is exceeded.
 example: 30-JUL-2004: Authors expect publication in JBC in July 2004.
+definition_reference: PMID:INTACT
 
-shortlabel: pathway
-term: refers to the metabolic pathway that the interaction/complex is involved in.
+term: pathway: refers to the metabolic pathway that the interaction/complex is involved in.
+definition_reference: PMID:INTACT
 
-shortlabel: prerequisite ptm
-term: PTM required for an interaction to occur.
+term: prerequisite ptm: PTM required for an interaction to occur.
+definition_reference: PMID:INTACT
 
-shortlabel: remark
-term: Internal remark
+term: remark_internal: Internal remark
 definition: Internal remark. Will normally not be shown to the public.
+definition_reference: PMID:INTACT
 
-shortlabel: resulting ptm
-term: PTM occurs subsequent to interaction occuring
+term: resulting ptm: PTM occurs subsequent to interaction occuring
 definition: PTM occuring to one protein within the complex as a result of the complex formation.
+definition_reference: PMID:INTACT
 
-shortlabel: search-url
-term: Search engine URL.
+term: search-url: Search engine URL.
 definition: Normally used for CvDatabase. The URL of a search engine which will retrieve an object by its primary  identifier.
 example: http://www.expasy.org/cgi-bin/niceprot.pl?${ac} is the search url for the database uniprot. If ${ac} is replaced by an SPTR accession number, the resulting URL http://www.expasy.org/cgi-bin/niceprot.pl?P12345 will retrieve the corresponding database object.
+definition_reference: PMID:INTACT
 
-shortlabel: search-url-ascii
-term: Search URL to retrieve an external entry in ASCII format
+term: search-url-ascii: Search URL to retrieve an external entry in ASCII format
 definition: Normally used for CvDatabase objects. A URL to retrieve an external object by its accession number. Same as search-url, but the URL retrieves the external object as ASCII text.
+definition_reference: PMID:INTACT
 
-shortlabel: stimulation
-term: Stimulator of an interaction.
+term: stimulation: Stimulator of an interaction.
 definition: The interaction between the interactors can normally occur but is enhanced in the presence of his nodification or biological entity.
 example: EBI-74820: 'Interaction between robo and dock is stimulated by slit protein'. This information is added under the annotation topic 'stimulation'.
+definition_reference: PMID:INTACT
 
-shortlabel: submitted
-term: Data submitted by author/s directly o IntAct.
+term: submitted: Data submitted by author/s directly to IntAct.
 definition: Additional data relating to an existing interaction submitted by author/s directly to IntAct. This data will not in future be part of an publication.
+definition_reference: PMID:INTACT
 
-shortlabel: uniprot-cc-note
-term: Text which is exported into UniProt as a "note" in the CC INTERACTION block.
+term: uniprot-cc-note: Text which is exported into UniProt as a "note" in the CC INTERACTION block.
+definition_reference: PMID:INTACT
 
-shortlabel: uniprot-dr-export
-term: Determines if the experiment is to be exported to UniProt DR lines.
+term: uniprot-dr-export: Determines if the experiment is to be exported to UniProt DR lines.
 definition: Determines whether the interactions of an experiment should be exported to UniProt DR lines. This can be according to a setting in the CvInteraction controlled vocabulary, or by an explicit setting for an experiment.
 comment: For experiments: If set in an experiment, the setting overrides any setting derived from the CvInteraction controlled vocabulary. If this topic is set to value set by "author-confidence", e.g. "high", then this means only interactions with that author-confidence are to be exported to UniProt.
+definition_reference: PMID:INTACT
 
-shortlabel: url
-term: URL/Web address
+term: url: URL/Web address
 definition: The URL (Web address) at which to find more information on the object.
 example: Normally crossreferences will be entered as crossreference object with the appropriate accession number and database from the list of defined databases. However, in some cases the database many not be defined in IntAct, or the reference is to a web page, not a database with search by accession number. In this case, the appropriate URL can be inserted as a URL object.
 example: The home page of a database in a CvDatabase object, e.g. http://www.uniprot.org
+definition_reference: PMID:INTACT
 
