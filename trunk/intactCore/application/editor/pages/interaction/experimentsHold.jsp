@@ -16,6 +16,10 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
+<style type="text/css">
+    <%@ include file="/layouts/styles/editor.css" %>
+</style>
+
 <h3>Experiments not yet added to the Interaction</h3>
 
 <c:if test="${not empty intHoldExpForm.experiments}">
@@ -23,11 +27,12 @@
     <html:form action="/interaction/experiment/hold">
         <table width="100%" border="0" cellspacing="1" cellpadding="2">
             <tr class="tableRowHeader">
+                <th class="tableCellHeader" width="2%"></th>
                 <th class="tableCellHeader" width="10%" colspan="2">Action</th>
                 <th class="tableCellHeader" width="10%">Short Label</th>
                 <th class="tableCellHeader" width="10%">Pubmed Id</th>
                 <th class="tableCellHeader" width="10%">IntAct AC</th>
-                <th class="tableCellHeader" width="60%">Full Name</th>
+                <th class="tableCellHeader" width="58%">Full Name</th>
             </tr>
             <%-- To calculate odd or even row --%>
             <c:set var="row"/>
@@ -41,6 +46,8 @@
                         <tr class="tableRowOdd">
                     </c:otherwise>
                 </c:choose>
+
+                    <td class="experimentHoldCell"/>
 
                     <td class="tableCell">
                         <html:submit indexed="true" property="cmd"
