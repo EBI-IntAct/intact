@@ -9,13 +9,25 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMappings;
+import org.apache.struts.config.ModuleConfig;
+import org.apache.struts.config.ActionConfig;
+import org.apache.struts.config.ForwardConfig;
+import org.apache.struts.Globals;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 import java.util.Map;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * Dispatcher action which dispatches to various submit actions.
@@ -43,12 +55,11 @@ public class SubmitFormAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-//        System.out.println("At the beginning of form dispatch");
-//        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-//            String para = (String) e.nextElement();
-//            System.out.println("parameters: " + para + " - " + request.getParameter(para));
-//        }
-
+        LOGGER.debug("At the beginning of SubmitFormAction");
+        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+            String para = (String) e.nextElement();
+            LOGGER.debug("parameter: " + para + " - " + request.getParameter(para));
+        }
         // Cast the form.
         EditorActionForm editorForm = (EditorActionForm) form;
 
@@ -60,7 +71,23 @@ public class SubmitFormAction extends AbstractEditorAction {
 
         // The dispatch value holds the button label.
         String dispatch = editorForm.getDispatch();
+        LOGGER.debug("Dispatch received " + dispatch);
 
+//        if (dispatch == null) {
+//            dispatch = ((InteractionActionForm) form).getDispatchFeature();
+//            LOGGER.debug("Received feature dispatch: " + dispatch);
+//            InteractionActionForm myform = (InteractionActionForm) form;
+//            for (Iterator iter = myform.getProteins().iterator(); iter.hasNext();) {
+//                ComponentBean pb = (ComponentBean) iter.next();
+//                for (Iterator iter1 = pb.getFeatures().iterator(); iter1.hasNext();) {
+//                    FeatureBean fb = (FeatureBean) iter1.next();
+//                    LOGGER.debug("Processing feature " + fb.getAc() + " and selected status: " + fb.isSelected());
+//                    if (fb.isSelected()) {
+//                        LOGGER.debug("Feaure: " + fb.getAc() + " was selected");
+//                    }
+//                }
+//            }
+//        }
         // The action path from the map.
         String path = (String) map.get(dispatch);
 
@@ -68,7 +95,8 @@ public class SubmitFormAction extends AbstractEditorAction {
             return mapping.findForward(path);
         }
         LOGGER.info("Received a null mapping; check the EditorActionServlet "
-                + "for setting the action map");
+                + "for setting the action map only for non Interaction form");
+//        LOGGER.error("Dispatch received " + dispatch);
         return mapping.findForward(FAILURE);
     }
 }

@@ -228,13 +228,6 @@ public abstract class AbstractEditViewBean implements Serializable {
         setAnnotatedObject(null);
         setShortLabel(null);
         setFullName(null);
-
-        // Clear any left overs from previous transaction.
-//        clearTransactions();
-
-        // Clear annotations and xrefs.
-//        makeCommentBeans(Collections.EMPTY_LIST);
-//        makeXrefBeans(Collections.EMPTY_LIST);
     }
 
     /**
@@ -243,15 +236,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     protected void reset(AnnotatedObject annobj) {
         resetAnnotatedObject(annobj);
-        // Need to get the real object for a proxy type.
-//        setAnnotatedObject((AnnotatedObject) IntactHelper.getRealIntactObject(annot));
-//        myEditClass = IntactHelper.getRealClassName(annot);
-//        setShortLabel(annot.getShortLabel());
-//        setFullName(annot.getFullName());
-//
-//        // Clear any left overs from previous transaction.
-//        clearTransactions();
-
         // Cache the annotations and xrefs here to save it from loading
         // multiple times with each invocation to getAnnotations()
         // or getXrefs() methods.
@@ -269,7 +253,7 @@ public abstract class AbstractEditViewBean implements Serializable {
     public void resetClonedObject(AnnotatedObject copy) {
         // Clear previous transactions.
         clearTransactions();
-//        System.out.println("Copy's class: " + copy.getClass());
+
         // Reset the cloned object with values given by parameter.
         resetAnnotatedObject(copy);
 
@@ -854,7 +838,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @param annotations a collection of <code>Annotation</code> objects.
      */
     private void makeCommentBeans(Collection annotations) {
-//        myAnnotations.clear();
         for (Iterator iter = annotations.iterator(); iter.hasNext();) {
             Annotation annot = (Annotation) iter.next();
             myAnnotations.add(new CommentBean(annot));
@@ -867,7 +850,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @param xrefs a collection of <code>Xref</code> objects.
      */
     private void makeXrefBeans(Collection xrefs) {
-//        myXrefs.clear();
         for (Iterator iter = xrefs.iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
             myXrefs.add(new XreferenceBean(xref));
@@ -985,11 +967,11 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     private List getTopicMenu(int mode) throws SearchException {
-        return getMenu(EditorMenuFactory.TOPICS, getShortLabel(), mode);
+        return getMenu(EditorMenuFactory.TOPIC, getShortLabel(), mode);
     }
 
     private List getDatabaseMenu(int mode) throws SearchException {
-        return getMenu(EditorMenuFactory.DATABASES, getShortLabel(), mode);
+        return getMenu(EditorMenuFactory.DATABASE, getShortLabel(), mode);
     }
 
     private Map getXrefMenus(int mode) throws SearchException {
@@ -999,11 +981,11 @@ public abstract class AbstractEditViewBean implements Serializable {
         String label = getShortLabel();
 
         // The database menu.
-        name = EditorMenuFactory.DATABASES;
+        name = EditorMenuFactory.DATABASE;
         map.put(name, getMenu(name, label, mode));
 
         // The qualifier menu.
-        name = EditorMenuFactory.QUALIFIERS;
+        name = EditorMenuFactory.QUALIFIER;
         map.put(name, getMenu(name, label, mode));
         return map;
     }

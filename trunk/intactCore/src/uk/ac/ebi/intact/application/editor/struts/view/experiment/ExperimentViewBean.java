@@ -326,7 +326,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public List getOrganismMenu() throws SearchException {
         int mode = (myOrganism == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISMS, mode);
+        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISM, mode);
     }
 
     /**
@@ -338,7 +338,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public List getInterMenu() throws SearchException {
         int mode = (myInter == null) ? 1 : 0;
-        return getMenuFactory().getDagMenu(EditorMenuFactory.INTERACTIONS, mode);
+        return getMenuFactory().getDagMenu(EditorMenuFactory.INTERACTION, mode);
     }
 
     /**
@@ -350,7 +350,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     public List getIdentMenu() throws SearchException {
         int mode = (myIdent == null) ? 1 : 0;
-        return getMenuFactory().getDagMenu(EditorMenuFactory.IDENTIFICATIONS, mode);
+        return getMenuFactory().getDagMenu(EditorMenuFactory.IDENTIFICATION, mode);
     }
 
     // Getter/Setter methods for Organism.

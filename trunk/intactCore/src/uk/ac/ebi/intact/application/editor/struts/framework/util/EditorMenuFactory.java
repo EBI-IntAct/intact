@@ -35,57 +35,67 @@ public class EditorMenuFactory {
     /**
      * The names (edit/add) for the topic list.
      */
-    public static final String TOPICS = "TopicNames";
+    public static final String TOPIC = "Topic";
 
     /**
      * The name for the database list.
      */
-    public static final String DATABASES = "DatabaseNames";
+    public static final String DATABASE = "Database";
 
     /**
      * The name for the qualifier list.
      */
-    public static final String QUALIFIERS = "QualifierNames";
+    public static final String QUALIFIER = "Qualifier";
 
     /**
      *  The name for the host oragnism list.
      */
-    public static final String ORGANISMS = "Organisms";
+    public static final String ORGANISM = "Organism";
 
     /**
      * The name for the interaction list.
      */
-    public static final String INTERACTIONS = "Interactions";
+    public static final String INTERACTION = "Interaction";
 
     /**
      * The name for the identification list.
      */
-    public static final String IDENTIFICATIONS = "Identifications";
+    public static final String IDENTIFICATION = "Identification";
 
     /**
      * The name for the interaction type list.
      */
-    public static final String INTERACTION_TYPES = "InteractionTypes";
+    public static final String INTERACTION_TYPE = "InteractionType";
 
     /**
      * The name for the experiment list.
      */
-    public static final String EXPERIMENTS = "Experiments";
+    public static final String EXPERIMENT = "Experiment";
 
     /**
      * The name for the role list.
      */
-    public static final String ROLES = "Roles";
+    public static final String ROLE = "Role";
 
     /**
      * The name for the CV cell list.
      */
-    public static final String CELLS = "Cells";
+    public static final String CELL = "Cell";
 
     /**
-     * The name for the Tissues.
+     * The name for the Tissue list.
      */
-    public static final String TISSUES = "Tissues";
+    public static final String TISSUE = "Tissue";
+
+    /**
+     * The name for the CvFeatureType list.
+     */
+    public static final String FEATURE_TYPE = "FeatureType";
+
+    /**
+     * The name for the CvFeatureIdentification list.
+     */
+    public static final String FEATURE_IDENTIFICATION = "FeatureIdentification";
 
     /**
      * Maps: Menu Name -> Menu type. Common to all the users and it is immutable.
@@ -123,20 +133,25 @@ public class EditorMenuFactory {
 
     static {
         // Fill the maps with list names and their associated classes.
-        theirNameToType.put(TOPICS, CvTopic.class);
-        theirNameToType.put(DATABASES, CvDatabase.class);
-        theirNameToType.put(QUALIFIERS, CvXrefQualifier.class);
-        theirNameToType.put(ORGANISMS, BioSource.class);
-        theirNameToType.put(INTERACTIONS, CvInteraction.class);
-        theirNameToType.put(DAG_PREFIX + INTERACTIONS, CvInteraction.class);
-        theirNameToType.put(IDENTIFICATIONS, CvIdentification.class);
-        theirNameToType.put(DAG_PREFIX + IDENTIFICATIONS, CvIdentification.class);
-        theirNameToType.put(INTERACTION_TYPES, CvInteractionType.class);
-        theirNameToType.put(DAG_PREFIX + INTERACTION_TYPES, CvInteractionType.class);
-        theirNameToType.put(EXPERIMENTS, Experiment.class);
-        theirNameToType.put(ROLES, CvComponentRole.class);
-        theirNameToType.put(CELLS, CvCellType.class);
-        theirNameToType.put(TISSUES, CvTissue.class);
+        theirNameToType.put(TOPIC, CvTopic.class);
+        theirNameToType.put(DATABASE, CvDatabase.class);
+        theirNameToType.put(QUALIFIER, CvXrefQualifier.class);
+        theirNameToType.put(ORGANISM, BioSource.class);
+        theirNameToType.put(INTERACTION, CvInteraction.class);
+        theirNameToType.put(DAG_PREFIX + INTERACTION, CvInteraction.class);
+        theirNameToType.put(IDENTIFICATION, CvIdentification.class);
+        theirNameToType.put(DAG_PREFIX + IDENTIFICATION, CvIdentification.class);
+        theirNameToType.put(INTERACTION_TYPE, CvInteractionType.class);
+        theirNameToType.put(DAG_PREFIX + INTERACTION_TYPE, CvInteractionType.class);
+        theirNameToType.put(EXPERIMENT, Experiment.class);
+        theirNameToType.put(ROLE, CvComponentRole.class);
+        theirNameToType.put(CELL, CvCellType.class);
+        theirNameToType.put(TISSUE, CvTissue.class);
+
+        // These two are dag menus but not adding prefix because dag menus are now
+        // treated like other menus.
+        theirNameToType.put(FEATURE_TYPE, CvFeatureType.class);
+        theirNameToType.put(FEATURE_IDENTIFICATION, CvFeatureIdentification.class);
     }
 
     /**
@@ -162,10 +177,10 @@ public class EditorMenuFactory {
      * Returns a menu for given name. This is retrieved from cache if it is
      * in the cache or else new menu is created and stored in the cache before
      * returning it.
-     * @param key the name of the menu; the valid values are: {@link #TOPICS},
-     * {@link #DATABASES}, {@link #QUALIFIERS}, {@link #ORGANISMS},
-     * {@link #INTERACTIONS}, {@link #IDENTIFICATIONS}, {@link #INTERACTION_TYPES},
-     * {@link #EXPERIMENTS} and {@link #ROLES}.
+     * @param key the name of the menu; the valid values are: {@link #TOPIC},
+     * {@link #DATABASE}, {@link #QUALIFIER}, {@link #ORGANISM},
+     * {@link #INTERACTION}, {@link #IDENTIFICATION}, {@link #INTERACTION_TYPE},
+     * {@link #EXPERIMENT} and {@link #ROLE}.
      * @param mode 0 for and edit menu and 1 for an add menu; the difference is
      * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
      * @return the menu for given <code>name</code>; <code><label/code> is
@@ -217,12 +232,12 @@ public class EditorMenuFactory {
      * creating a nornmal menu for given name and then removing leading '.'
      * chacaters. So, two new menus are created when this method is called
      * for the first time.
-     * @param name the name of the menu; the valid values are: {@link #TOPICS},
-     * {@link #DATABASES}, {@link #QUALIFIERS}, {@link #ORGANISMS},
-     * {@link #INTERACTIONS}, {@link #IDENTIFICATIONS}, {@link #INTERACTION_TYPES},
-     * {@link #EXPERIMENTS} and {@link #ROLES}. Although all the above names are
+     * @param name the name of the menu; the valid values are: {@link #TOPIC},
+     * {@link #DATABASE}, {@link #QUALIFIER}, {@link #ORGANISM},
+     * {@link #INTERACTION}, {@link #IDENTIFICATION}, {@link #INTERACTION_TYPE},
+     * {@link #EXPERIMENT} and {@link #ROLE}. Although all the above names are
      * valid, you should only use this method for Dag menu items (i.e,
-     * {@link #INTERACTIONS} and {@link #IDENTIFICATIONS}).
+     * {@link #INTERACTION} and {@link #IDENTIFICATION}).
      * @param mode 0 for and edit menu and 1 for an add menu; the difference is
      * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
      * @return the menu for given <code>name</code>; <code><label/code> is
@@ -237,16 +252,16 @@ public class EditorMenuFactory {
      * Returns the menus for the Interaction editor.
      * @param mode 1 for add or 0 for edit; see the documentation for
      * {@link #getMenu(String, int)}
-     * @return a map name -> menu; the valid names (keys) are: {@link #ORGANISMS},
-     * {@link #INTERACTION_TYPES} and {@link #EXPERIMENTS}.
+     * @return a map name -> menu; the valid names (keys) are: {@link #ORGANISM},
+     * {@link #INTERACTION_TYPE} and {@link #EXPERIMENT}.
      * @throws SearchException for errors in constructing the menu.
      */
     public Map getInteractionMenus(int mode) throws SearchException {
         // The map to put menus.
         Map map = new HashMap();
-        map.put(ORGANISMS, getMenu(ORGANISMS, mode));
-        map.put(INTERACTION_TYPES, getMenu(INTERACTION_TYPES, mode));
-        map.put(EXPERIMENTS, getMenu(EXPERIMENTS, mode));
+        map.put(ORGANISM, getMenu(ORGANISM, mode));
+        map.put(INTERACTION_TYPE, getMenu(INTERACTION_TYPE, mode));
+        map.put(EXPERIMENT, getMenu(EXPERIMENT, mode));
         return map;
     }
 

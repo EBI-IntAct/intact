@@ -168,7 +168,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
      * @throws SearchException for errors in generating menus.
      */
     public List getCellTypeMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.CELLS, 1);
+        return getMenuFactory().getMenu(EditorMenuFactory.CELL, 1);
     }
 
     /**
@@ -178,7 +178,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
      * @throws SearchException for errors in generating menus.
      */
     public List getTissueMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.TISSUES, 1);
+        return getMenuFactory().getMenu(EditorMenuFactory.TISSUE, 1);
     }
 
     /**

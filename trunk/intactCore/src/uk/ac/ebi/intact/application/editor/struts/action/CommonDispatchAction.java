@@ -65,7 +65,27 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-        return submitForm(mapping, form, request, true);
+        System.out.println("In the common submit action");
+        ActionForward forward = submitForm(mapping, form, request, true);
+
+        // Only return to the result page for a successful submission.
+        if (forward.getPath().equals(mapping.findForward(SUCCESS).getPath())) {
+            // Handler to the Intact User.
+            EditUserI user = getIntactUser(request);
+
+            // The current view.
+            AbstractEditViewBean view = user.getView();
+
+            // Update the search cache.
+            user.updateSearchCache(view.getAnnotatedObject());
+
+            // Add the current edited object to the recent list.
+            view.addToRecentList(user);
+
+            // Only show the submitted record.
+            forward = mapping.findForward(RESULT);
+        }
+        return forward;
     }
 
     /**
@@ -230,7 +250,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
      * search has produced multiple results.
      * @throws Exception for any uncaught errors.
      */
-    private ActionForward submitForm(ActionMapping mapping,
+    protected ActionForward submitForm(ActionMapping mapping,
                                      ActionForm form,
                                      HttpServletRequest request,
                                      boolean submit)
@@ -241,7 +261,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // The current view.
         AbstractEditViewBean view = user.getView();
 
-        // Extract the short label for us to cheque for its uniqueness.
+        // Extract the short label for us to check for its uniqueness.
         String formlabel = (String) ((EditorActionForm) form).getShortLabel();
 
         // Validate the short label.
@@ -286,7 +306,6 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             }
         }
         catch (IntactException ie1) {
-            // We may need to
             // Log the stack trace.
             LOGGER.info(ie1);
             // Error with updating.
@@ -303,17 +322,17 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             }
         }
 
-        if (submit) {
-            // Update the search cache.
-            user.updateSearchCache(view.getAnnotatedObject());
-
-            // Add the current edited object to the recent list.
-            view.addToRecentList(user);
-
-            // Only show the submitted record.
-            return mapping.findForward(RESULT);
-        }
-        // Refresh the curretn view
+//        if (submit) {
+//            // Update the search cache.
+//            user.updateSearchCache(view.getAnnotatedObject());
+//
+//            // Add the current edited object to the recent list.
+//            view.addToRecentList(user);
+//
+//            // Only show the submitted record.
+//            return mapping.findForward(RESULT);
+//        }
+        // Refresh the current view
         view.refresh();
 
         // We can't use mapping.getInputForward here as this return value

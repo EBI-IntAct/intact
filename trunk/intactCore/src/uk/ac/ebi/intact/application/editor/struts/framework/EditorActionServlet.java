@@ -99,12 +99,26 @@ public class EditorActionServlet extends ActionServlet {
         map.put(rb.getString("int.exp.button.hide"), "int.exp.hold");
         map.put(rb.getString("int.exp.button.recent"), "int.exp.search");
         map.put(rb.getString("int.exp.button.search"), "int.exp.search");
+
+        // Actions related to edit/save/delete of proteins.
         map.put(rb.getString("int.proteins.button.edit"), "int.prot");
         map.put(rb.getString("int.proteins.button.save"), "int.prot");
         map.put(rb.getString("int.proteins.button.delete"), "int.prot");
+
+        // Related to feature. NOTE: Add feature is treated as same as editing
+        // or deleteing a protein.
+        map.put(rb.getString("int.proteins.button.feature.add"), "int.prot");
+        map.put(rb.getString("int.proteins.button.feature.edit"), "int.feature");
+        map.put(rb.getString("int.proteins.button.feature.delete"), "int.feature");
+
+        // Feature link/unlink.  
+        map.put(rb.getString("int.proteins.button.feature.link"), "int.feature.link");
+        map.put(rb.getString("int.proteins.button.feature.unlink"), "int.feature.link");
+
+        // Actions related protein search.
         map.put(rb.getString("int.proteins.button.search"), "int.prot.search");
 
-        // Actions ralted to Experiment.
+        // Actions related to Experiment.
         map.put(rb.getString("exp.int.button.edit"), "interaction");
         map.put(rb.getString("exp.int.button.del"), "interaction");
         map.put(rb.getString("exp.int.button.add"), "exp.int.hold");
@@ -114,6 +128,14 @@ public class EditorActionServlet extends ActionServlet {
 
         // Actions related to BioSource.
         map.put(rb.getString("biosource.button.taxid"), "taxid");
+
+        // Actions related to Feature.
+        map.put(rb.getString("button.auto.complete"), "feature.autocomplete");
+        map.put(rb.getString("feature.clone.button"), "feature.clone");
+        map.put(rb.getString("feature.range.button.add"), "feature.range.new");
+        map.put(rb.getString("feature.range.button.edit"), "feature.range");
+        map.put(rb.getString("feature.range.button.save"), "feature.range");
+        map.put(rb.getString("feature.range.button.delete"), "feature.range");
 
         return map;
     }

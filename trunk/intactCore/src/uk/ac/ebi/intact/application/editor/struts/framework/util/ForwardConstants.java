@@ -52,4 +52,14 @@ public interface ForwardConstants {
      * Forward to the experiment editor from the interaction editor.
      */
     public static final String EXP = "experiment";
+
+    /**
+     * Forward to the interaction editor from the feature editor.
+     */
+    public static final String INT = "interaction";
+
+    /**
+     * Forward to the feature editor from the interaction editor.
+     */
+    public static final String FEATURE = "feature";
 }
