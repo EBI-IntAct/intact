@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+ <!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<!--
+    Tiles definitions for hierarchView.
+    Author: Samuel Kerrien (skerrien@ebi.ac.uk)
+
+    The header and footer are common to all IntAct application and just need to
+    receive proper value in defined key
+    (e.g. display the String defined in the header.title property)
+
+
+    Sidebar layout :
+    _________________
+    |   IntAct      |
+    |    logo       |
+    |_______________|
+    |   Search      |
+    |    form       |
+    |_______________|
+    |    Graph      |
+    |    tools      |
+    |_______________|
+    |    Links      |
+    |    menu       |
+    _________________
+
+
+    Main layout :
+     __________________________________________
+    |       |                                 |
+    |       |           header                |
+    | side  |_________________________________|
+    | bar   |                                 |
+    |       |                                 |
+    | see   |           content               |
+    | below |         (see below)             |
+    |       |                                 |
+    |       |                                 |
+    |       |_________________________________|
+    |       |           footer                |
+    |_______|_________________________________|
+
+    Result Content layout :
+     _________________________________________
+    |                   |                    |
+    |    Graph title    |  Highlight title   |
+    |___________________|____________________|
+    |                   |                    |
+    |                   |                    |
+    |       Graph       |     Highlight      |
+    |                   |                    |
+    |                   |                    |
+    |                   |                    |
+    |                   |                    |
+    |___________________|____________________|
+
+ -->
+
+<tiles-definitions>
+
+    <!-- =============== Menu Links ====================================== -->
+
+    <!-- Menu links for the hierarchView page. -->
+    <definition name="hierarchView.menu.links" path="/layouts/menu.jsp">
+        <put name="title" value="Links"/>
+        <putList name="items">
+            <item value="Back to search" link="/search/welcome.jsp"/>
+        </putList>
+    </definition>
+
+    <!-- =============== Sidebars ====================================== -->
+
+    <!-- Sidebar for the search page -->
+    <definition name="hierarchView.sidebar.layout" path="/layouts/sidebar.jsp">
+        <put name="search" value="/pages/sidebarSearch.jsp"/>
+        <put name="graph"  value="/pages/sidebarGraph.jsp"/>
+        <put name="menu"   value="hierarchView.menu.links"/>
+    </definition>
+
+    <!-- =============== Definitions related to pages ================= -->
+
+    <!-- The header layout. -->
+    <definition name="header.layout" path="/layouts/headerLayout.jsp">
+        <put name="header.title" value="IntAct - hierarchView"/>
+    </definition>
+
+    <!-- hierarchView content page description -->
+    <definition name="hierarchView.content.layout" path="/layouts/content.jsp">
+        <put name="graphTitle"     value="/pages/graphTitle.jsp"/>
+        <put name="highlightTitle" value="/pages/highlightTitle.jsp"/>
+        <put name="graph"          value="/pages/graph.jsp"/>
+        <put name="highlight"      value="/pages/highlight.jsp"/>
+    </definition>
+
+    <!-- hierarchView page description -->
+    <definition name="hierarchView.blank.layout" path="/layouts/intactLayout.jsp">
+        <put name="title"   value="IntAct - hierarchView"/>
+        <put name="sidebar" value="hierarchView.sidebar.layout"/>
+        <put name="header"  value="header.layout"/>
+        <put name="footer"  value="/pages/footer.jsp"/>
+    </definition>
+
+    <!-- General content for result layout
+         It simply overwrite the content definition and keep all other
+         tiles of hierarchView.layout
+      -->
+    <definition name="hierarchView.result.layout" extends="hierarchView.blank.layout">
+        <put name="content" value="hierarchView.content.layout"/>
+    </definition>
+
+    <!-- General error layout
+         It simply overwrite the content definition and keep all other
+         tiles of hierarchView.layout
+      -->
+    <definition name="hierarchView.error.layout" extends="hierarchView.blank.layout">
+        <put name="content" value="/pages/error.jsp"/>
+    </definition>
+
+</tiles-definitions>
