@@ -126,11 +126,7 @@ public class IntactUser implements IntactUserI {
 	 */
 	public String getDatabaseName() {
 		if (this.intactHelper != null) {
-			try {
-				return this.intactHelper.getDbName();
-			} catch (LookupException e) {
-			} catch (SQLException e) {
-			}
+            return this.intactHelper.getDbName();
 		}
 		return null;
 	}

@@ -127,11 +127,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public String getDatabaseName() {
         if (this.helper != null) {
-            try {
-                return this.helper.getDbName();
-            }
-            catch (LookupException e) {}
-            catch (SQLException e) {}
+            return this.helper.getDbName();
         }
         return null;
     }
