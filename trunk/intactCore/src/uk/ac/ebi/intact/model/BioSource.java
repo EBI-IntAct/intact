@@ -29,11 +29,6 @@ public class BioSource extends AnnotatedObject implements Editable {
      */
     protected String taxId;
 
-    /**
-     * The scientific name. This is for human readability and text based searching only, the object is defined by the taxId.
-     */
-    protected String scientificName;
-
     ///////////////////////////////////////
     // associations
 
@@ -68,12 +63,6 @@ public class BioSource extends AnnotatedObject implements Editable {
     }
     public void setTaxId(String taxId) {
         this.taxId = taxId;
-    }
-    public String getScientificName() {
-        return scientificName;
-    }
-    public void setScientificName(String scientificName) {
-        this.scientificName = scientificName;
     }
 
     ///////////////////////////////////////
