@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * This class wraps a search result and provides extra information.
@@ -23,6 +24,8 @@ public class ResultWrapper implements Serializable {
      * The result.
      */
     private List myResults;
+
+    private Map myInfo;
 
     /**
      * The actual number of records that could be retrieved by the search.
@@ -42,8 +45,9 @@ public class ResultWrapper implements Serializable {
     }
 
     /**
-     * Creates an instance of this class with given records. Use this constructor
-     * only when the result set is of acceptable size.
+     * Creates an instance of this class with given records. Use this constructor only when the
+     * result set is of acceptable size.
+     *
      * @param results the list of search results
      * @param maxSize the maximum size for the search result.
      */
@@ -51,18 +55,38 @@ public class ResultWrapper implements Serializable {
         this(results, results.size(), maxSize);
     }
 
+    public ResultWrapper(Collection results, int maxSize, Map info) {
+            this(results, results.size(), maxSize);
+            this.myInfo = info; 
+        }
+
+
     /**
-     * Creates an instance of this class with given maximum number of records
-     * allowed. Use this constructor when the result set is too big.
+     * Creates an instance of this class with given maximum number of records allowed. Use this
+     * constructor when the result set is too big.
+     *
      * @param possibleSize the possible size of the returned set.
-     * @param maxSize maximum number of records allowed.
+     * @param maxSize      maximum number of records allowed.
      */
     public ResultWrapper(int possibleSize, int maxSize) {
         this(null, possibleSize, maxSize);
     }
 
+     /**
+     * Creates an instance of this class with given maximum number of records allowed. Use this
+     * constructor when the result set is too big.
+     *
+     * @param possibleSize the possible size of the returned set.
+     * @param maxSize      maximum number of records allowed.
+     */
+    public ResultWrapper(int possibleSize, int maxSize, Map info) {
+        this(null, possibleSize, maxSize);
+        this.myInfo = info;
+    }
+
     /**
      * Returns the result set.
+     *
      * @return can be empty if the result set is too large or no matches.
      */
     public List getResult() {
@@ -70,6 +94,10 @@ public class ResultWrapper implements Serializable {
             return Collections.EMPTY_LIST;
         }
         return myResults;
+    }
+
+    public boolean isEmpty() {
+        return this.getResult().isEmpty(); 
     }
 
     // Read only methods.
@@ -81,6 +109,11 @@ public class ResultWrapper implements Serializable {
     public int getPossibleResultSize() {
         return myPossibleSize;
     }
+
+    public Map getInfo() {
+            return myInfo;
+        }
+
 
     // Helper methods.
 

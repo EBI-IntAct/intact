@@ -68,10 +68,8 @@ to identify the source page of the request to the Action classes.
     Map sizeMap = (Map)session.getServletContext().getAttribute(SearchConstants.MAX_ITEMS_MAP);
 
 %>
-
 <%-- The javascript for the button bars.... --%>
 <%@ include file="jscript.html" %>
-
 <!-- top line info -->
 <h3>Search Results for
     <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
@@ -79,9 +77,6 @@ to identify the source page of the request to the Action classes.
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
 </span><span class="smalltext">)<br></span></p>
-
-
-<br>
 
 <%-- Firstly need to check that we have at least one set of results that we can display,
 because if not then we should NOT display the message below..
@@ -135,8 +130,9 @@ because if not then we should NOT display the message below..
         //display the 'friendly' message at the top of the page..
 %>
 <p>
-    <span class="largetext">Please click on any name to view more detail.<br></span>
-    <span class="smalltext"> </span>
+    <span class="largetext">Please click on any name to view more detail.</span>
+  <span class="smalltext"> <br> </span>
+
 </p>
 <%
     }
@@ -146,14 +142,13 @@ because if not then we should NOT display the message below..
 <!-- the main form for the page -->
 <form name="viewForm">
 
-<br>
-
 <%-- process each remaining partitioned List in turn and display its results in the appropriate
 table.....
 --%>
 
 <%-- The header should be displayed for each table - need to iterate over each
 partitioned list to do this --%>
+
 <%
     List displayList = null;     //use this as each iteration holder
     for(Iterator it1 = partitionList.iterator(); it1.hasNext();) {
@@ -169,11 +164,11 @@ partitioned list to do this --%>
 NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 
 --%>
-<%@ include file="buttonBar.html" %>
+ <%@ include file="buttonBar.html" %>
 
 <!-- result table -->
 <table style="background-color: rgb(241, 245, 248);"
-       border="1" cellpadding="5" cellspacing="0" bordercolor="#4b9996">
+       border="1" cellpadding="5" cellspacing="0" bordercolor="#4b9996" width="100%" >
 
     <tbody>
 
@@ -184,38 +179,50 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 //in which case we display 'controlled vocabularies'
                 if(CvObject.class.isAssignableFrom(firstItem.getObject().getClass())) {
             %>
-            <td style="vertical-align: top;">Controlled Vocabulary Terms<br>
+      <!--      <td style="vertical-align: top;">Controlled Vocabulary Terms<br>
+            </td> -->
+
+             <td  class="headerdark">
+                   <nobr>  <span class="whiteheadertext">Controlled Vocabulary Terms</span>
+
+                <a href="<%=firstItem.getHelpUrl()%>" target="new"
+                   class="whitelink"><sup>?</sup></nobr>
+                </a>
             </td>
+
             <%
                 }
                 else {
                     //need plurals - appending 's' works in most cases..
             %>
-            <td class="headerdark">
 
-              <nobr>  <span class="whiteheadertext"><%= firstItem.getIntactType() + "s" %></span>
-
-                <a href="<%=  firstItem.getHelpLink() + "AnnotatedObject.shortLabel"%>" target="new"
-                   class="whitelink"><sup>?</sup> </nobr>
-                </a>
+            <td  class="headerdark">
+                   <nobr> <span class="whiteheadertext"> <%=firstItem.getIntactType() + "s"%></span>
+                <a href="<%=firstItem.getHelpUrl()%>" target="new"
+                   class="whitelink"><sup>?</sup></a></nobr>
 
             </td>
-        
+
+
             <%
                 }
             %>
 
             <td nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="1">
                 <a href="<%= firstItem.getHelpLink() + "AnnotatedObject.shortLabel"%>" target="new"
-                   class="tdlink">Name
-                </a>&nbsp;
+                   class="tdlink">Name</a>
             </td>
 
             <td nowrap="nowrap" class="headerdarkmid">
                 <a href="<%= firstItem.getHelpLink() + "BasicObject.ac"%>" target="new"
-                   class="tdlink">Ac
-                </a>
+                   class="tdlink">Ac</a>
             </td>
+
+              <%
+                if(Protein.class.isAssignableFrom(firstItem.getObject().getClass())) {
+            %>
+            <td class="headerdarkmid">Gene-Name</td>
+            <% } %>
 
             <td nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="3">
                 <a href="<%= firstItem.getHelpLink() + "AnnotatedObject.fullName"%>" target="new"
@@ -236,9 +243,11 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <td colspan="2" nowrap="nowrap" class="headerdarkmid">Proteins
             </td>
             <%
-                }
+                } else if (Protein.class.isAssignableFrom(firstItem.getObject().getClass())) {
             %>
-
+             <td colspan="2" nowrap="nowrap" class="headerdarkmid">Interactions
+            </td>
+            <% } %>
         </tr>
 
 
@@ -269,14 +278,16 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                         Experiment.class.isAssignableFrom(firstItem.getObject().getClass()) ) {
             %>
             <!-- Single cell padding -->
-            <td rowspan ="1"></td>
+            <td>
+             &nbsp;
+            </td>
             <%
                 } else {
             %>
 
             <!-- checkbox -->
-            <td>
-                <input name="<%= bean.getObjAc()%>" type="checkbox" class="text" checked>
+            <td align="right" >
+                <input name="<%= bean.getObjAc()%>" type="checkbox" class="text" >
             </td>
             <%
                 }
@@ -287,18 +298,24 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 Action classes know what to do with eg Protein search requests..
             --%>
             <td nowrap="nowrap" style="vertical-align: top;">
-                <a href="<%= searchURL + "&" + SearchConstants.PAGE_SOURCE + "=simple"%>">
-                    <b><span style="color: rgb(255, 0, 0);"><%= bean.getObjIntactName() %></span></b>
-                </a><br>
+               <a href="<%= searchURL + "&" + SearchConstants.PAGE_SOURCE + "=simple"%>">
+                   <b><span style="color: rgb(255, 0, 0);"><%=bean.getObjIntactName()%></span></b></a><br>
             </td>
 
             <!-- AC, not linked -->
             <td nowrap="nowrap" class="lefttop"><%= bean.getObjAc() %>
             </td>
+          <%
+          if((Protein.class.isAssignableFrom(bean.getObject().getClass()))) { %>
+               <!-- Gene Name (not linked)  -->
+           <td class="lefttop" rowspan="1" colspan="1">
+              <%= bean.getGeneNames((Protein)bean.getObject())%><br>
+            </td>
 
+          <% } %>
             <!-- Description (ie full name - or a dash if there isn't one), not linked -->
             <td class="lefttop" rowspan="1" colspan="3">
-                <%= bean.getObjDescription() %><br>
+                <%= bean.getObjDescription()%><br>
             </td>
 
             <!-- 'number of related items', ie interactions for Experiments,
@@ -313,6 +330,19 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <%
                 }
             %>
+
+             <%
+                if((Protein.class.isAssignableFrom(bean.getObject().getClass()))) {
+
+            %>
+            <td class="data">
+                <nobr><%= bean.getNumberOfInteractions(((Protein)bean.getObject())) %><br></nobr>
+            </td>
+            <%
+                }
+            %>
+
+
         </tr>
 
         <%
@@ -328,17 +358,17 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 NB don't want one for CvObjects
 --%>
 <!-- same buttons as at the top of the page -->
-<%@ include file="buttonBar.html" %>
+<!-- <%// @ include file="buttonBar.html" %> -->
 
 <!-- line seperator -->
-<hr size="2">
-
 
 <%
 
     }   //ends the partition loop - now do the next group...
 
 %>
+
+<%@ include file="buttonBar.html" %>
 
 <br>
 
