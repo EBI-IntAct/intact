@@ -5,7 +5,10 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import javax.mail.MessagingException;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -31,6 +34,11 @@ public class SanityChecker {
     private static Map usersEmails = new HashMap();
 
     /**
+     * List of user name that can't be mapped to a mail adress
+     */
+    private static Set unknownUsers = new HashSet();
+
+    /**
      * List of admin mail adress
      */
     private static Collection adminsEmails = new HashSet();
@@ -52,18 +60,16 @@ public class SanityChecker {
 
     static {
         Properties props = PropertyLoader.load( SANITY_CHECK_CONFIG_FILE );
-        if (props != null) {
+        if( props != null ) {
             int index;
-            for( Iterator iterator = props.keySet().iterator(); iterator.hasNext(); ) {
+            for ( Iterator iterator = props.keySet().iterator(); iterator.hasNext(); ) {
                 String key = (String) iterator.next();
-
 
 
                 index = key.indexOf( CURATOR );
                 if( index != -1 ) {
                     String userstamp = key.substring( index + CURATOR.length() );
                     String curatorMail = (String) props.get( key );
-//                    System.out.println( "Curator: " + userstamp + " ---> " + curatorMail );
                     usersEmails.put( userstamp, curatorMail );
                 } else {
                     // is it an admin then ?
@@ -71,14 +77,13 @@ public class SanityChecker {
                     if( index != -1 ) {
                         // store it
                         String adminMail = (String) props.get( key );
-//                        System.out.println( "Admin: " + adminMail );
                         adminsEmails.add( adminMail );
                     }
                 }
             } // keys
         } else {
 
-            System.err.println ("Unable to open the properties file: " + SANITY_CHECK_CONFIG_FILE );
+            System.err.println( "Unable to open the properties file: " + SANITY_CHECK_CONFIG_FILE );
         }
 
         // format the current time
@@ -111,7 +116,7 @@ public class SanityChecker {
                 try {
                     helper.closeStore();
                     System.out.println( "Connexion to the database closed." );
-                } catch( IntactException e ) {
+                } catch ( IntactException e ) {
                     System.err.println( "Could not close the connexion to the database." );
                     e.printStackTrace();
                 }
@@ -146,7 +151,7 @@ public class SanityChecker {
 
             StringBuffer sb = new StringBuffer( ( title.length() * 2 ) + 2 );
             sb.append( title ).append( NEW_LINE );
-            for( int i = 0; i < title.length() ; i++ ) {
+            for ( int i = 0; i < title.length(); i++ ) {
                 sb.append( '-' );
             }
 
@@ -288,7 +293,7 @@ public class SanityChecker {
 
         System.out.println( "Checking on BioSource (rule 15) ..." );
 
-        for( Iterator it = bioSources.iterator(); it.hasNext(); ) {
+        for ( Iterator it = bioSources.iterator(); it.hasNext(); ) {
             BioSource bioSource = (BioSource) it.next();
 
             //check 15
@@ -308,7 +313,7 @@ public class SanityChecker {
 
         System.out.println( "Checking on Experiment (rules 8, 11, 12, 13) ..." );
 
-        for( Iterator it = experiments.iterator(); it.hasNext(); ) {
+        for ( Iterator it = experiments.iterator(); it.hasNext(); ) {
             Experiment exp = (Experiment) it.next();
 
             if( !isExperimentOnHold( exp ) ) {
@@ -348,14 +353,14 @@ public class SanityChecker {
         System.out.println( "Checking on Experiment and their pubmed IDs (rules 1 and 2) ..." );
 
         //check 1 and 2
-        for( Iterator it = experiments.iterator(); it.hasNext(); ) {
+        for ( Iterator it = experiments.iterator(); it.hasNext(); ) {
             Experiment exp = (Experiment) it.next();
 
             if( !isExperimentOnHold( exp ) ) {
                 int pubmedCount = 0;
                 int pubmedPrimaryCount = 0;
                 Collection Xrefs = exp.getXrefs();
-                for( Iterator iterator = Xrefs.iterator(); iterator.hasNext(); ) {
+                for ( Iterator iterator = Xrefs.iterator(); iterator.hasNext(); ) {
                     Xref xref = (Xref) iterator.next();
                     if( xref.getCvDatabase().getShortLabel().equals( "pubmed" ) ) {
                         pubmedCount++;
@@ -388,7 +393,7 @@ public class SanityChecker {
 
         System.out.println( "Checking on Interactions (rule 7) ..." );
 
-        for( Iterator it = interactions.iterator(); it.hasNext(); ) {
+        for ( Iterator it = interactions.iterator(); it.hasNext(); ) {
             Interaction interaction = (Interaction) it.next();
 
             //check 7
@@ -420,7 +425,7 @@ public class SanityChecker {
         System.out.println( "Checking on Interactions (rule 6) ..." );
 
         //check 7
-        for( Iterator it = interactions.iterator(); it.hasNext(); ) {
+        for ( Iterator it = interactions.iterator(); it.hasNext(); ) {
             Interaction interaction = (Interaction) it.next();
 
             Collection components = interaction.getComponents();
@@ -435,7 +440,7 @@ public class SanityChecker {
             float selfStoichiometry = 0;
             float neutralStoichiometry = 0;
 
-            for( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
+            for ( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
                 Component component = (Component) iterator.next();
                 //record it.....
 
@@ -480,7 +485,7 @@ public class SanityChecker {
 
             int categoryCount = baitPrey + targetAgent + neutral + self + complex + unspecified;
 
-            switch( categoryCount ) {
+            switch ( categoryCount ) {
                 case 0:
                     // none of those categories
                     addMessage( INTERACTION_WITH_NO_CATEGORIES, interaction );
@@ -551,7 +556,7 @@ public class SanityChecker {
         System.out.println( "Checking on Components (rules 5 and 6) ..." );
 
         //checks 5 and 6 (easier if done together)
-        for( Iterator it = interactions.iterator(); it.hasNext(); ) {
+        for ( Iterator it = interactions.iterator(); it.hasNext(); ) {
 
             Interaction interaction = (Interaction) it.next();
             Collection components = interaction.getComponents();
@@ -570,7 +575,7 @@ public class SanityChecker {
                     return;
                 }
 
-                for( Iterator iter = components.iterator(); iter.hasNext(); ) {
+                for ( Iterator iter = components.iterator(); iter.hasNext(); ) {
                     Component comp = (Component) iter.next();
                     Interactor interactor = comp.getInteractor();
                     if( interactor.equals( proteinToCheck ) ) {
@@ -596,12 +601,12 @@ public class SanityChecker {
         System.out.println( "Checking on Proteins (rules 14 and 16) ..." );
 
         //checks 14
-        for( Iterator it = proteins.iterator(); it.hasNext(); ) {
+        for ( Iterator it = proteins.iterator(); it.hasNext(); ) {
             Protein protein = (Protein) it.next();
 
             Collection xrefs = protein.getXrefs();
             int count = 0;
-            for( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
+            for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
                 Xref xref = (Xref) iterator.next();
 
                 if( uniprot.equals( xref.getCvDatabase() ) && identity.equals( xref.getCvXrefQualifier() ) ) {
@@ -635,7 +640,7 @@ public class SanityChecker {
             if( bioSourceStatement != null ) {
                 bioSourceStatement.close();
             }
-        } catch( SQLException se ) {
+        } catch ( SQLException se ) {
             System.out.println( "failed to close statement!!" );
             se.printStackTrace();
         }
@@ -653,7 +658,7 @@ public class SanityChecker {
 
         boolean onHold = false;
 
-        for( Iterator iterator = experiment.getAnnotations().iterator(); iterator.hasNext() && !onHold; ) {
+        for ( Iterator iterator = experiment.getAnnotations().iterator(); iterator.hasNext() && !onHold; ) {
             Annotation annotation = (Annotation) iterator.next();
 
             if( onHoldCvTopic.equals( annotation.getCvTopic() ) ) {
@@ -753,7 +758,6 @@ public class SanityChecker {
     }
 
 
-
     /**
      * post emails to the curators (their individual errors) and to the administrator (global list of errors)
      *
@@ -764,21 +768,21 @@ public class SanityChecker {
         MailSender mailer = new MailSender();
 
         // send individual mail to curators
-        for( Iterator iterator = allUsersReport.keySet().iterator(); iterator.hasNext(); ) {
+        for ( Iterator iterator = allUsersReport.keySet().iterator(); iterator.hasNext(); ) {
             String user = (String) iterator.next();
 
             Map reportMessages = (Map) allUsersReport.get( user );
             StringBuffer fullReport = new StringBuffer( 256 );
             int errorCount = 0;
 
-            for( Iterator iterator1 = reportMessages.keySet().iterator(); iterator1.hasNext(); ) {
+            for ( Iterator iterator1 = reportMessages.keySet().iterator(); iterator1.hasNext(); ) {
                 ReportTopic topic = (ReportTopic) iterator1.next();
 
                 fullReport.append( topic.getUnderlinedTitle() ).append( NEW_LINE );
                 Collection messages = (Collection) reportMessages.get( topic );
 
                 // write individual messages of that topic.
-                for( Iterator iterator2 = messages.iterator(); iterator2.hasNext(); ) {
+                for ( Iterator iterator2 = messages.iterator(); iterator2.hasNext(); ) {
                     String message = (String) iterator2.next();
 
                     fullReport.append( message ).append( NEW_LINE );
@@ -791,31 +795,68 @@ public class SanityChecker {
             // don't send mail to curator if no errors
             if( errorCount > 0 ) {
 
-//                System.out.println( "Send individual report to "+ user + "( "+ email + )" );
+                System.out.println( "Send individual report to " + user + "( " + user + ")" );
                 String email = (String) usersEmails.get( user.toLowerCase() );
-                String[] recipients = new String[ 1 ];
-                recipients[ 0 ] = email;
 
-                // send mail
-                mailer.postMail( recipients,
-                                 "SANITY CHECK - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
-                                 fullReport.toString(),
-                                 "skerrien@ebi.ac.uk" );
+                if( email != null ) {
+                    String[] recipients = new String[ 1 ];
+                    recipients[ 0 ] = email;
+
+                    // send mail
+                    mailer.postMail( recipients,
+                                     "SANITY CHECK - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
+                                     fullReport.toString(),
+                                     "skerrien@ebi.ac.uk" );
+                } else {
+
+                    // keep track of unknown users
+                    unknownUsers.add( user.toLowerCase() );
+
+                    System.err.println( "Could not find that user, here is the content of his report:" );
+                    System.err.println( fullReport.toString() );
+
+                }
             }
         } // users
 
         // send summary of all individual mail to admin
         StringBuffer fullReport = new StringBuffer( 256 );
-        int errorCount = 0;
-        if( adminReport.isEmpty() ) {
 
-        } else {
-            for( Iterator iterator = adminReport.keySet().iterator(); iterator.hasNext(); ) {
+        try {
+            fullReport.append( "Instance name: " + helper.getDbName() );
+            fullReport.append( NEW_LINE ).append( NEW_LINE );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+
+        // generate error message is some users have not been found
+        if( !unknownUsers.isEmpty() ) {
+            if( unknownUsers.size() == 1 ) {
+
+                fullReport.append( "Could not find an email adress for user: " + unknownUsers.iterator().next() );
+
+            } else {
+                // more than one, then generate a list
+                fullReport.append( "Could not find email adress for the following list of users: " ).append( NEW_LINE );
+                for ( Iterator iterator = unknownUsers.iterator(); iterator.hasNext(); ) {
+                    String user = (String) iterator.next();
+                    fullReport.append( user ).append( NEW_LINE );
+                }
+            }
+
+            fullReport.append( NEW_LINE ).append( NEW_LINE );
+        }
+
+        // generate full report
+        int errorCount = 0;
+        if( !adminReport.isEmpty() ) {
+
+            for ( Iterator iterator = adminReport.keySet().iterator(); iterator.hasNext(); ) {
                 ReportTopic topic = (ReportTopic) iterator.next();
 
                 Collection messages = (Collection) adminReport.get( topic );
                 fullReport.append( topic.getUnderlinedTitle() ).append( NEW_LINE );
-                for( Iterator iterator1 = messages.iterator(); iterator1.hasNext(); ) {
+                for ( Iterator iterator1 = messages.iterator(); iterator1.hasNext(); ) {
                     String message = (String) iterator1.next();
                     fullReport.append( message ).append( NEW_LINE );
                     errorCount++;
@@ -824,31 +865,38 @@ public class SanityChecker {
                 fullReport.append( NEW_LINE );
             } // topics
 
-            String[] recipients = new String[ adminsEmails.size() ];
-            int i = 0;
-            for( Iterator iterator = adminsEmails.iterator(); iterator.hasNext(); ) {
-                String email = (String) iterator.next();
-                recipients[ i++ ] = email;
-            }
+        } else {
 
-            // always send mail to admin, even if no errors
-            mailer.postMail( recipients,
-                             "SANITY CHECK (ADMIN) - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
-                             fullReport.toString(),
-                             "skerrien@ebi.ac.uk" );
+            fullReport.append( "No curation error to report." );
+
         }
+
+        // Send mail to the administrator
+        String[] recipients = new String[ adminsEmails.size() ];
+        int i = 0;
+        for ( Iterator iterator = adminsEmails.iterator(); iterator.hasNext(); ) {
+            String email = (String) iterator.next();
+            recipients[ i++ ] = email;
+        }
+
+        // always send mail to admin, even if no errors
+        mailer.postMail( recipients,
+                         "SANITY CHECK (ADMIN) - " + TIME + " (" + errorCount + " error" + ( errorCount > 1 ? "s" : "" ) + ")",
+                         fullReport.toString(),
+                         "skerrien@ebi.ac.uk" );
+
     }
 
     private String getFullReportOutput() {
 
         StringBuffer fullReport = new StringBuffer( 256 );
 
-        for( Iterator iterator = adminReport.keySet().iterator(); iterator.hasNext(); ) {
+        for ( Iterator iterator = adminReport.keySet().iterator(); iterator.hasNext(); ) {
             ReportTopic topic = (ReportTopic) iterator.next();
 
             Collection messages = (Collection) adminReport.get( topic );
             fullReport.append( topic.getUnderlinedTitle() ).append( NEW_LINE );
-            for( Iterator iterator1 = messages.iterator(); iterator1.hasNext(); ) {
+            for ( Iterator iterator1 = messages.iterator(); iterator1.hasNext(); ) {
                 String message = (String) iterator1.next();
                 fullReport.append( message ).append( NEW_LINE );
             } // messages
@@ -913,10 +961,9 @@ public class SanityChecker {
 
             // try to send emails
             try {
-
                 checker.postEmails();
 
-            } catch( MessagingException e ) {
+            } catch ( MessagingException e ) {
                 // scould not send emails, then how error ...
                 e.printStackTrace();
 
@@ -946,19 +993,19 @@ public class SanityChecker {
                 out.close();
             }
 
-        } catch( IntactException e ) {
+        } catch ( IntactException e ) {
 
             e.printStackTrace();
             if( e.getRootCause() != null ) {
-                e.getRootCause().printStackTrace( );
+                e.getRootCause().printStackTrace();
             }
             System.exit( 1 );
-        } catch( SQLException sqe ) {
+        } catch ( SQLException sqe ) {
 
             System.out.println( "DB error!" );
             sqe.printStackTrace();
             System.exit( 1 );
-        } catch( OutOfMemoryError aome ) {
+        } catch ( OutOfMemoryError aome ) {
 
             aome.printStackTrace();
             System.err.println( "" );
@@ -970,7 +1017,7 @@ public class SanityChecker {
             System.err.println( "      eg. java -Xms128m -Xmx640m <className>" );
 
             System.exit( 1 );
-        } catch( Exception e ) {
+        } catch ( Exception e ) {
 
             e.printStackTrace();
             System.exit( 1 );
