@@ -138,11 +138,9 @@ CREATE TABLE BioSource
         , owner_ac                VARCHAR (30)    CONSTRAINT fk_BioSource_owner REFERENCES Institution(ac)
         , shortLabel              VARCHAR (20)
         , fullName                VARCHAR (250)
-        , scientificName          VARCHAR (255)
 )
 ;
 
--- too small a table ?  CREATE INDEX i_BioSource_scientificName on BioSource(scientificName);
 -- too small a table ?  CREATE INDEX i_BioSource_shortLabel on BioSource(shortLabel);
 
 
@@ -151,8 +149,6 @@ CREATE TABLE BioSource
     'BioSource normally some kind of organism. ';
     COMMENT on COLUMN BioSource.taxId IS
     'The NCBI tax ID.';
-    COMMENT on COLUMN BioSource.scientificName IS
-    'The full scientific name of the biological source organism.';
     COMMENT on COLUMN BioSource.owner_ac IS
     'Refers to the owner of this object. ';
     COMMENT on COLUMN BioSource.ac IS
