@@ -4,14 +4,15 @@
 # Purpose: HTMLise GO def and dag files.
 # 
 
-# Usage: dag2html.pl -stems filename_stems_list
+# Usage: dag2html.pl -targetDir -stems filename_stems_list
 # 
 
 
 use Getopt::Long;
-use vars qw(@opt_stems);
+use vars qw(@opt_stems $opt_targetDir);
 
-&GetOptions("stems=s@"
+&GetOptions("stems=s@",
+	    "targetDir=s"
 	   );
 
 for (my $i=0; $i <= $#opt_stems; $i++) {
@@ -26,8 +27,8 @@ for (my $i=0; $i <= $#opt_stems; $i++) {
 
   # add NAMEs to the definition file
   # do some crude HTML formatting
-  open(IN, $deffile);
-  open(OUT, ">$htmldeffile");
+  open(IN, $opt_targetDir.$deffile);
+  open(OUT, ">$opt_targetDir$htmldeffile");
 
   print OUT "<html><table>\n";
 
@@ -43,13 +44,13 @@ for (my $i=0; $i <= $#opt_stems; $i++) {
   close IN;
 
   # exit if there is no DAG file
-  if (! (-e $dagfile)) {
+  if (! (-e $opt_targetDir.$dagfile)) {
     next;
   }
 
   # add HREFs to the dag file
-  open(IN, $dagfile);
-  open(OUT, ">$htmldagfile");
+  open(IN, $opt_targetDir.$dagfile);
+  open(OUT, ">$opt_targetDir$htmldagfile");
 
   print OUT "<html><pre>\n";
 
