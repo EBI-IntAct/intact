@@ -62,31 +62,33 @@ public class CvDynaForm extends DynaValidatorForm {
         // The dispatch parameter to find out which button was pressed.
         String dispatch = (String) get("dispatch");
 
-        // Message resources to access button labels.
-        MessageResources msgres =
-                ((MessageResources) request.getAttribute(Globals.MESSAGES_KEY));
+        if (dispatch != null) {
+            // Message resources to access button labels.
+            MessageResources msgres =
+                    ((MessageResources) request.getAttribute(Globals.MESSAGES_KEY));
 
-        // Adding an annotation?
-        if (dispatch.equals(msgres.getMessage("annotations.button.add"))) {
-            // The bean to extract the values.
-            CommentBean cb = (CommentBean) get("annotation");
-            if (cb.getTopic().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-                errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                        new ActionError("error.annotation.topic"));
+            // Adding an annotation?
+            if (dispatch.equals(msgres.getMessage("annotations.button.add"))) {
+                // The bean to extract the values.
+                CommentBean cb = (CommentBean) get("annotation");
+                if (cb.getTopic().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+                    errors = new ActionErrors();
+                    errors.add(ActionErrors.GLOBAL_ERROR,
+                            new ActionError("error.annotation.topic"));
+                    return errors;
+                }
+            }
+            // Adding an Xref?
+            if (dispatch.equals(msgres.getMessage("xrefs.button.add"))) {
+                // The bean to extract the values.
+                XreferenceBean xb = (XreferenceBean) get("xref");
+                if (xb.getDatabase().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+                    errors = new ActionErrors();
+                    errors.add(ActionErrors.GLOBAL_ERROR,
+                            new ActionError("error.xref.database"));
+                }
                 return errors;
             }
-        }
-        // Adding an Xref?
-        if (dispatch.equals(msgres.getMessage("xrefs.button.add"))) {
-            // The bean to extract the values.
-            XreferenceBean xb = (XreferenceBean) get("xref");
-            if (xb.getDatabase().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-                errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                        new ActionError("error.xref.database"));
-            }
-            return errors;
         }
         return errors;
     }
