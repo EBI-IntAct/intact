@@ -1,6 +1,5 @@
 <%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
-                 uk.ac.ebi.intact.application.editor.business.EditorService,
-                 org.apache.struts.action.ActionMessages"
+                 uk.ac.ebi.intact.application.editor.business.EditorService"
 %>
  <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
@@ -18,7 +17,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
@@ -70,7 +69,7 @@
             </th>
             <th class="tableCellHeader">Full Name</th>
             <th>
-                <editor:helpLink tag="short.labels"/>
+                <intact:documentation section="editor.short.labels"/>
             </th>
         </tr>
         <tr class="tableRowEven">

@@ -15,7 +15,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
+<%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
@@ -50,7 +50,7 @@
                 <bean:message key="xref.label.reference"/>
             </th>
             <th>
-                <editor:helpLink tag="xrefs"/>
+                <intact:documentation section="editor.xrefs"/>
             </th>
         </tr>
         <tr class="tableRowOdd">
@@ -84,4 +84,3 @@
         </tr>
     </table>
 </html:form>
-<%--<html:javascript formName="xrefAddForm"/>--%>
