@@ -13,6 +13,8 @@ import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
+import uk.ac.ebi.intact.application.editor.event.EventListener;
+import uk.ac.ebi.intact.application.editor.event.LogoutEvent;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
@@ -33,6 +35,7 @@ import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.io.IOException;
@@ -342,8 +345,16 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
         getLogger().info("User is about to unbound");
-        LockManager lm = (LockManager) event.getSession().getServletContext().getAttribute(
-                EditorConstants.LOCK_MGR);
+        ServletContext ctx = event.getSession().getServletContext();
+        LockManager lm = (LockManager) ctx.getAttribute(EditorConstants.LOCK_MGR);
+
+        // Notify the event listener.
+        EventListener listener = (EventListener) ctx.getAttribute(
+                EditorConstants.EVENT_LISTENER);
+        listener.notifyObservers(new LogoutEvent(getUserName()));
+
+        // Not an error, just a logging statemet to see values are unbound or not
+        getLogger().error("User unbound: " + getUserName());
         try {
             logoff(lm);
         }
@@ -874,13 +885,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     private void logoff(LockManager lm) throws IntactException {
         mySessionEndTime = Calendar.getInstance().getTime();
-        // Not an error, just a logging statemet to see values are unbound or not
-        getLogger().error("User: " + getUserName() + " at: " + mySessionEndTime);
         getLogger().info("User is logging off at: " + mySessionEndTime);
         // Release all the locks held by this user.
         lm.releaseAllLocks(getUserName());
         myHelper.closeStore();
-//        myProteinFactory.closeStore();
     }
 
     /**
