@@ -394,8 +394,6 @@
         <copy file="welcome.jsp" todir="${temp.web}"/>
         <!-- The last modifed file at the root. -->
         <copy file="${last.modified.file}" todir="${temp.web}"/>
-        <!-- Will be removed, only for testing -->
-        <copy file="links.html" todir="${temp.web}"/>
 
         <!-- TLD files -->
         <copy todir="${temp.web}/WEB-INF/tld">
@@ -530,9 +528,6 @@
 
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${temp.web}">
-                <!-- To be removed once the testing is done -->
-                <include name="links.html"/>
-
                 <include name="welcome.jsp"/>
                 <include name="${last.modified.file}"/>
                 <include name="images/*"/>
