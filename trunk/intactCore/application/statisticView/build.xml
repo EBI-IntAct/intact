@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      ANT build configuration file for template web application.
+      Author: Sophie Huet (shuet@ebi.ac.uk)
+-->
+
+<project name="statisticView" basedir="." default="compile">
+
+    <property name="project.title" value="statisticView"/>
+
+    <!-- Intact core locations -->
+    <property name="intact.root"     value="../.."/>
+    <property name="root.lib.dir"    value="${intact.root}/lib"/>
+    <property name="root.src.dir"    value="${intact.root}/src"/>
+    <property name="root.dest.dir"   value="${intact.root}/classes"/>
+    <property name="root.config.dir" value="${intact.root}/config"/>
+    <property name="root.dist.dir"   value="${intact.root}/dist"/>
+
+    <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
+    <!--<property name="root.util.dir" value="${root.src.dir}/uk/ac/ebi/intact/util"/>-->
+
+    <!-- Intact application location for the shared common pages -->
+    <property name="intact.app.dir" value=".."/>
+
+    <property name="commons.pages.dir"   value="${intact.app.dir}/pages"/>
+    <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
+    <property name="commons.images.dir"  value="${intact.app.dir}/images"/>
+
+    <property name="layouts.styles.dir" value="${commons.layouts.dir}/styles"/>
+    <property name="pages.dir"          value="pages"/>
+    <property name="images.dir"         value="images"/>
+    <property name="layouts.dir"        value="layouts"/>
+
+
+    <!-- context path for statisticsView store in the application level -->
+    <property name="config.dir"         value="WEB-INF/config" />
+    <property name="lib.dir"            value="WEB-INF/lib"/>
+    <property name="tld.dir"            value="WEB-INF/tld"/>
+    <property name="dest.dir"           value="WEB-INF/classes"/>
+    <property name="jdoc.dir"           value="doc/api"/>
+    <property name="dist.dir"           value="dist"/>
+
+    <property name="war.dir"           value="statisticView"/>
+    <property name="war.file"           value="${war.dir}.war"/>
+
+    <!-- The build properties. -->
+    <property file="${intact.root}/config/build.properties"/>
+
+    <!-- Intact Application location -->
+    <property name="pages.dir"          value="pages"/>
+
+    <!-- This project specific paths. -->
+
+    <!-- We need this flag because the "deploy" targets need to know where to deploy. -->
+    <property environment="env"/>
+    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir" value="${tomcat.home}/webapps"/>
+
+    <!-- Build working classpath -->
+    <path id="project.class.path">
+
+        <!-- Project specific jar files. -->
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- Intact core at root. -->
+        <pathelement path="${root.dest.dir}"/>
+        <!-- Where the classes are compiled to. -->
+        <pathelement path="${dest.dir}"/>
+
+        <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
+        <pathelement path="${root.lib.dir}/servlet.jar"/>
+        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
+    </path>
+
+    <!-- =================================================================== -->
+
+    <!-- Operation to perform before to compile.
+    -->
+    <target name="prepare">
+        <tstamp/>
+        <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+        <!-- This target is called to display messages if tomcat is not present. -->
+        <ant dir=".." inheritAll="false" target="check-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Calls the jar task from core build file if intact core jar file
+         is missing.
+    -->
+    <target name="make-jar" depends="prepare" unless="intact.jar.present">
+        <ant dir="${intact.root}" target="jar-core" inheritAll="false"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove some directories/files for clean build. -->
+    <target name="clean" description="Prepare for clean build; removes api docs and classes dirs">
+        <!-- Delete directories first -->
+        <delete dir="${dest.dir}"/>
+        <delete dir="${jdoc.dir}"/>
+        <delete dir="${dist.dir}"/>
+
+        <!-- Delete the Struts imported tlds-->
+        <delete>
+             <fileset dir="${tld.dir}">
+                  <exclude name="statisticsView.tld"/>
+             </fileset>
+        </delete>
+
+        <!-- Tiles commons files -->
+        <delete>
+             <fileset dir="${layouts.dir}">
+                 <!-- Do not remove our specific files -->
+                 <exclude name="sidebar.jsp"/>
+             </fileset>
+        </delete>
+
+        <delete dir="${layouts.styles.dir}"/>
+
+        <delete>
+             <fileset dir="${pages.dir}">
+                 <!-- Do not remove our specific files -->
+                 <exclude name="statView.jsp"/>
+            </fileset>
+        </delete>
+
+        <delete dir="${images.dir}"/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copy configuration files. -->
+    <target name="cp-config-files">
+        <!-- Copy repository files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${root.config.dir}">
+                <include name="repository*.xml"/>
+                <include name="repository.dtd"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy intSeq property files to the intSeq pkg root ${intSeq.pkg.root}-->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${config.dir}">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+
+        <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
+        <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
+        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile"
+        description="Compile the source tree and copy the configuration files"
+        depends="prepare">
+
+        <!-- Create the dest dir if it doesn't exist. -->
+        <mkdir dir="${dest.dir}" />
+
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes="**/application/statisticView/**,
+                      **/application/commons/**,
+                      **/intact/util/StatisticsSet*,
+                      **/intact/util/IntactStatistics*"
+            excludes="**/test/**">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy configuration files -->
+        <antcall target="cp-config-files"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file using the current database setup. -->
+
+    <target name="war" description="Builds a war file"
+            depends="set-db-type, war-pg, war-oracle"/>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file. The database to include is specified as a parameter. -->
+
+    <target name="build-war" depends="compile, make-jar" description="Builds a war file">
+
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}" />
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+        <!-- Create the tld dir if it doesn't exist. -->
+        <mkdir dir="${tld.dir}" />
+
+        <!-- Copy struts standard tld files -->
+        <copy todir="${tld.dir}">
+            <fileset dir="${intact.app.dir}/tld">
+                <include name="struts-bean.tld"/>
+                <include name="struts-html.tld"/>
+                <include name="struts-logic.tld"/>
+                <include name="struts-tiles.tld"/>
+            </fileset>
+        </copy>
+
+        <!-- Create local directories to copy common files. -->
+        <mkdir dir="${layouts.dir}"/>
+        <mkdir dir="${layouts.styles.dir}"/>
+        <mkdir dir="${images.dir}"/>
+
+        <!-- Common layouts -->
+        <copy todir="${layouts.dir}">
+            <fileset dir="${commons.layouts.dir}"/>
+        </copy>
+
+        <!-- Common images -->
+        <copy todir="${images.dir}">
+            <fileset dir="${commons.images.dir}"/>
+        </copy>
+
+        <!-- Common jsp files -->
+        <copy todir="${pages.dir}">
+            <fileset dir="${commons.pages.dir}"/>
+        </copy>
+
+        <!-- copy needed classes from the util directory
+        <copy todir="${dest.dir}/uk/ac/ebi/intact/util">
+            <fileset dir="${root.util.dir}/StatisticsSet.java"/>
+            <fileset dir="${root.util.dir}/IntactStatistics.java"/>
+        </copy>           -->
+
+        <!-- Copy log4j properties file -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${root.config.dir}">
+                <include name="log4j.properties"/>
+            </fileset>
+        </copy>
+
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${basedir}">
+                <include name="*.jsp"/>
+                <include name="${layouts.dir}/*.jsp"/>
+                <include name="${pages.dir}/*.jsp"/>
+                <include name="${images.dir}/*.gif"/>
+                <include name="${layouts.styles.dir}/*.css"/>
+                <include name="WEB-INF/struts-config.xml"/>
+                <include name="WEB-INF/tiles-defs.xml"/>
+                <include name="${tld.dir}/**"/>
+            </fileset>
+
+            <!-- Include intSeq specific jar files. -->
+			<lib dir="${lib.dir}">
+                <!-- Avoid NFS temp files (occationally) -->
+                <include name="*.jar"/>
+            </lib>
+
+            <!-- Inlcude the intact core -->
+            <lib dir="${root.dist.dir}"/>
+
+            <!-- Include common jar files for struts. -->
+            <lib dir="${intact.app.dir}/lib" />
+
+            <!-- Include common jar files from intact core. -->
+			<lib dir="${root.lib.dir}">
+				<include name="jakarta-ojb-0.9.7.jar"/>
+				<include name="log4j-1.2.5.jar"/>
+                <include name="${db}"/>
+			</lib>
+
+
+            <!-- StatisticView classes and config files. -->
+            <classes dir="${dest.dir}"/>
+        </war>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the database type using the values given in build.properties. -->
+
+    <target name="set-db-type">
+        <condition property="postgres">
+            <contains string="${target.env}" substring="-postgres-"/>
+        </condition>
+        <condition property="oracle">
+            <contains string="${target.env}" substring="-oracle-"/>
+        </condition>
+    </target>
+
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file with postgres; should be called only after calling
+        set-db-type. -->
+
+    <target name="war-pg" description="Builds a war file" if="postgres">
+        <echo message="Building a war for postgres"/>
+        <antcall target="build-war">
+            <param name="db" value="postgresql.jar"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file with oracle; should be called only after calling
+        set-db-type. -->
+
+    <target name="war-oracle" description="Builds a war file" if="oracle">
+        <echo message="Building a war for oracle"/>
+        <antcall target="build-war">
+            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+        </antcall>
+    </target>
+
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server.
+         It assumes that $CATALINA_HOME is defined in your system
+      -->
+    <target name="deploy" description="Deploys the WAR file on the Tomcat server"
+        depends="war">
+
+        <copy file="${dist.dir}/${war.file}" todir="${tomcat.home}/webapps"/>
+        <echo message="Now you have to restart Tomcat ... "/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file on the Tomcat server.
+         It assumes that $CATALINA_HOME is defined in your system
+      -->
+    <target name="undeploy" description="Undeploys the WAR file from the Tomcat server">
+        <delete file="${tomcat.home}/webapps/${war.file}" quiet="true"/>
+        <delete dir="${tomcat.home}/webapps/${war.dir}" quiet="true"/>
+        <echo message="Application undeployed ... "/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tomcat">
+        <ant dir=".." inheritAll="false" target="start-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tomcat">
+        <ant dir=".." inheritAll="false" target="stop-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Restarts the Tomcat server. -->
+
+    <target name="restart-tomcat">
+        <ant dir=".." inheritAll="false" target="restart-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays the status of Tomcat server. -->
+
+    <target name="status-tomcat">
+        <ant dir=".." inheritAll="false" target="status-tomcat"/>
+    </target>
+
+</project>
