@@ -1,3 +1,23 @@
+
+/*
+  Copyright (c) 2003 The European Bioinformatics Institute, and others.  
+  All rights reserved. Please see the file LICENSE 
+  in the root directory of this distribution.
+*/
+/*************************************************************
+
+  Package:    IntAct core
+
+  Purpose:    Drop all Postgres components for IntAct
+
+  Usage:      psql - f drop_tables.sql
+              
+
+  $Date$
+  $Locker$
+
+  *************************************************************/
+
   drop table annotation_audit;
   drop table biosource_audit;
   drop table biosource2annot_audit;
@@ -28,3 +48,5 @@
   drop table intactnode;
   drop table interactor;
   drop table xref;
+
+  drop sequence intact_ac;
