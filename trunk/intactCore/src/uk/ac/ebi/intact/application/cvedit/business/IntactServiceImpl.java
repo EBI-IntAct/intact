@@ -9,9 +9,7 @@ package uk.ac.ebi.intact.application.cvedit.business;
 import java.util.*;
 import java.beans.*;
 
-import uk.ac.ebi.intact.application.cvedit.exception.InvalidLoginException;
 import uk.ac.ebi.intact.application.cvedit.exception.MissingIntactTypesException;
-import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.util.Key;
 
 /**
