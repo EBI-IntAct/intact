@@ -104,10 +104,9 @@
     <!-- hierarchView page description -->
     <definition name="hierarchView.layout" path="/layouts/intactLayoutFrame.jsp">
         <put name="title"     value="IntAct - hierarchView"/>
-        <put name="header"    value="headerFrame.jsp"/>
-        <!-- just no content - this must be defined -->
-        <put name="content"   value="../pages/blank.jsp"/>
-        <put name="sidebar"   value="sidebarFrame.jsp"/>
+        <put name="header"    value="layouts/headerFrame.jsp"/>
+        <put name="content"   value="pages/blank.jsp"/>
+        <put name="sidebar"   value="layouts/sidebarFrame.jsp"/>
     </definition>
 
     <!-- General content for result layout
@@ -115,7 +114,7 @@
          tiles of hierarchView.layout
       -->
     <definition name="hierarchView.result.layout" extends="hierarchView.layout">
-        <put name="content" value="contentFrame.jsp"/>
+        <put name="content" value="layouts/contentFrame.jsp"/>
     </definition>
 
     <!-- General error layout
@@ -123,36 +122,28 @@
          tiles of hierarchView.layout
       -->
     <definition name="hierarchView.error.layout" extends="hierarchView.layout">
-        <put name="content" value="../pages/errorFrame.jsp"/>
+        <put name="content" value="pages/errorFrame.jsp"/>
     </definition>
 
     <!-- ============ Definition of tiles used in the content frame ======= -->
 
     <!-- Used when the user request a highlighting, so we only refresh the graph layout -->
-    <definition name="hierarchView.graphAndTitle.layout" path="/layouts/graphFrame.jsp">
-    </definition>
+    <definition name="hierarchView.graphAndTitle.layout" path="layouts/graphFrame.jsp"/>
 
-    <definition name="hierarchView.graphError.layout" path="/pages/errorFrame.jsp">
-    </definition>
+    <definition name="hierarchView.graphError.layout" path="../pages/errorFrame.jsp"/>
 
-    <definition name="hierarchView.graphTitle.layout" path="/pages/graphTitle.jsp">
-    </definition>
+    <definition name="hierarchView.graphTitle.layout" path="../pages/graphTitle.jsp"/>
 
-    <definition name="hierarchView.graph.layout" path="/pages/graph.jsp">
-    </definition>
+    <definition name="hierarchView.graph.layout" path="../pages/graph.jsp"/>
 
-    <definition name="highlightTitle" path="/pages/highlightTitle.jsp">
-    </definition>
+    <definition name="highlightTitle" path="../pages/highlightTitle.jsp"/>
 
-    <definition name="highlight" path="/pages/highlight.jsp">
-    </definition>
+    <definition name="highlight" path="../pages/highlight.jsp"/>
 
-    <definition name="hierarchView.selectedSource.layout" path="/pages/selectedSource.jsp">
-    </definition>
+    <definition name="hierarchView.selectedSource.layout" path="../pages/selectedSource.jsp"/>
 
     <!-- ===== Definition of the forward page to the search application === -->
 
-    <definition name="search.result.layout" path="/pages/forwardToSearch.jsp">
-    </definition>
+    <definition name="search.result.layout" path="../pages/forwardToSearch.jsp"/>
 
 </tiles-definitions>
