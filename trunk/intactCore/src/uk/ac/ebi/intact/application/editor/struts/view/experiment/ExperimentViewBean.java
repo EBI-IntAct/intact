@@ -201,23 +201,10 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     // Override to provide set experiment from the bean.
     public void updateFromForm(DynaActionForm dynaform) {
-        // Set the common values by calling super first.
         super.updateFromForm(dynaform);
-        String organism = (String) dynaform.get("organism");
-        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(organism)) {
-            // Set the view bean with the new values.
-            setOrganism(organism);
-        }
-
-        // These two items need to be normalized.
-        String interaction = (String) dynaform.get("inter");
-        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(interaction)) {
-            setInter(interaction);
-        }
-        String identification = (String) dynaform.get("ident");
-        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(identification)) {
-            setIdent(identification);
-        }
+        setOrganism((String) dynaform.get("organism"));
+        setInter((String) dynaform.get("inter"));
+        setIdent((String) dynaform.get("ident"));
     }
 
     public void sanityCheck(EditUserI user) throws ValidationException,
@@ -314,7 +301,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     public void setOrganism(String organism) {
-        myOrganism = organism;
+        myOrganism = normalizeMenuItem(organism);
     }
 
     // Getter/Setter methods for Interaction.
@@ -323,7 +310,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     public void setInter(String interaction) {
-        myInter = interaction;
+        myInter = normalizeMenuItem(interaction);
     }
 
     // Getter/Setter methods for Identification.
@@ -332,7 +319,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     public void setIdent(String identification) {
-        myIdent = identification;
+        myIdent = normalizeMenuItem(identification);
     }
 
     /**
