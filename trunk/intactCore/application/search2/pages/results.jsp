@@ -5,7 +5,9 @@
     @version $Id$
 --%>
 
-<%@ page language="java"%>
+<%@ page language="java"  %>
+<%@ page buffer="none"    %>
+<%@ page autoFlush="true" %>
 
 <%@ page import="uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants,
                  uk.ac.ebi.intact.application.search2.business.IntactServiceIF,
@@ -168,7 +170,8 @@
         <hr size=2>
 
 <%
-         out.write(bean.getHTML());
+        // Displays the content of the view.
+        bean.getHTML( out );
 %>
 
     <hr size=2>
@@ -195,5 +198,3 @@
      } // end if bean != null
 %>
 </form>
-
-</html>

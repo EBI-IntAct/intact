@@ -1,4 +1,7 @@
-<%@ page language="java"%>
+<%@ page language="java"  %>
+<%@ page buffer="none"    %>
+<%@ page autoFlush="true" %>
+
 <%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
 
 <!--
