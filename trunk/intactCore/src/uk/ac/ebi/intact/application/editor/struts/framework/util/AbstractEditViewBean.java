@@ -9,13 +9,14 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.ValidationException;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException;
 import uk.ac.ebi.intact.business.IntactException;
 
 import java.util.*;
+//import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.beanutils.DynaBean;
@@ -29,6 +30,11 @@ import org.apache.struts.tiles.ComponentContext;
  * @version $Id$
  */
 public abstract class AbstractEditViewBean {
+
+    /**
+     * Only letters and numbers are allowed.
+     */
+//    private static final Pattern SL_RE = Pattern.compile("\\W+");
 
     /**
      * The Annotated object to wrap.
@@ -452,22 +458,6 @@ public abstract class AbstractEditViewBean {
     }
 
     /**
-     * Populates given form with annotations
-     * @param form the form to poplulate.
-     */
-    public void populateAnnotations(EditForm form) {
-        form.setItems(myAnnotations);
-    }
-
-    /**
-     * Populates given form with xrefs.
-     * @param form the form to poplulate.
-     */
-    public void populateXrefs(EditForm form) {
-        form.setItems(myXrefs);
-    }
-
-    /**
      * Sets the layout in given context. This method is currently empty as
      * the layout defaults to cv layout. Override this method to provide editor
      * specific layout.
@@ -485,8 +475,12 @@ public abstract class AbstractEditViewBean {
      * interaction and identification. Currently this method is empty as no
      * validations are preformed.
      */
-    public void validate(EditUserI user) throws ValidationException {
-        // Need to override by the subclass.
+    public void validate(EditUserI user)
+            throws SearchException, ValidationException {
+        if (myShortLabel == null) {
+//            if ((myShortLabel == null) || SL_RE.matcher(myShortLabel).find()) {
+            throw new ShortLabelException();
+        }
     }
 
     /**
