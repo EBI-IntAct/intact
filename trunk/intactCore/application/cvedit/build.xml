@@ -208,20 +208,21 @@
             </fileset>
         </copy>
 
-		<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
-		   <fileset dir="${basedir}">
-				<include name="*.jsp"/>
-	        	<include name="*.css"/>
-	  			<include name="WEB-INF/struts-config.xml"/>
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${basedir}">
+                <include name="*.jsp"/>
+                <include name="*.css"/>
+                <include name="WEB-INF/struts-config.xml"/>
                 <include name="WEB-INF/tiles-defs.xml"/>
-	  			<include name="${tld.dir}/**"/>
+                <include name="WEB-INF/validat*.xml"/>
+                <include name="${tld.dir}/**"/>
                 <include name="images/*"/>
                 <include name="pages/**"/>
                 <include name="layouts/**"/>
-	   		</fileset>
+            </fileset>
 
 			<!-- Include cvedit specific jar files. -->
-			<lib dir="${lib.dir}">
+            <lib dir="${lib.dir}">
                 <!-- Avoid NFS temp files (occationally) -->
                 <include name="*.jar"/>
             </lib>
