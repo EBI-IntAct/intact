@@ -44,6 +44,10 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     private String binaryValue;
 
+    private String viewValue;
+
+    private String filterValue;
+
     /**
      * Managment of the object chunk - Chunk to display
      */
@@ -70,12 +74,17 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
         // Pass config beans to data source - don't need fast keys as only
         // accessed once
-//        Map fileMap = new HashMap();
-//        fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
-//        ds.setConfig(fileMap);
+        // Map fileMap = new HashMap();
+        // fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
+        // ds.setConfig(fileMap);
 
         // build a helper and XmlBuilder for use throughout a session
         this.helper = new IntactHelper(ds);
+    }
+
+    public IntactUserImpl() throws IntactException {
+
+        this.helper = new IntactHelper();
     }
 
     public int getSelectedChunk() {
@@ -101,7 +110,8 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
         try {
             this.helper.closeStore();
-        } catch (IntactException ie) {
+        }
+        catch (IntactException ie) {
             //failed to close the store - not sure what to do here yet....
         }
     }
@@ -112,8 +122,10 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         if (this.helper != null) {
             try {
                 return this.helper.getDbUserName();
-            } catch (LookupException e) {
-            } catch (SQLException e) {
+            }
+            catch (LookupException e) {
+            }
+            catch (SQLException e) {
             }
         }
         return null;
@@ -121,11 +133,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public String getDatabaseName() {
         if (this.helper != null) {
-            try {
-                return this.helper.getDbName();
-            } catch (LookupException e) {
-            } catch (SQLException e) {
-            }
+            return this.helper.getDbName();
         }
         return null;
     }
@@ -175,4 +183,25 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     public String getHelpLink() {
         return myHelpLink;
     }
+
+    public String getView() {
+        return viewValue;
+    }
+
+    public void setView(String viewValue) {
+        this.viewValue = viewValue;
+    }
+
+    public void setFilter(String filterValue) {
+        this.filterValue = filterValue;
+    }
+
+    public String getFilter() {
+        return this.filterValue;
+    }
+
+    public IntactHelper getIntactHelper() {
+        return this.helper;
+    }
+
 }
