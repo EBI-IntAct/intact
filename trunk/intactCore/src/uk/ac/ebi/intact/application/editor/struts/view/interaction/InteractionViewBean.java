@@ -87,15 +87,23 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     public void setAnnotatedObject(Interaction intact) {
         super.setAnnotatedObject(intact);
+
         myKD = intact.getKD();
+
         // Only set the short labels if the interaction has non null values.
         BioSource biosrc = intact.getBioSource();
         if (biosrc != null) {
-            setOrganism(biosrc.getShortLabel());
+            myOrganism = biosrc.getShortLabel();
+        }
+        else {
+            myOrganism = null;
         }
         CvInteractionType inter = intact.getCvInteractionType();
         if (inter != null) {
-            setInteractionType(intact.getCvInteractionType().getShortLabel());
+            myInteractionType = intact.getCvInteractionType().getShortLabel();
+        }
+        else {
+            myInteractionType = null;
         }
         // Clear any left overs from previous transaction.
         clearTransactions();
