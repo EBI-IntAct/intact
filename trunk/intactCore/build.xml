@@ -21,7 +21,7 @@
     <!-- Repository/OJB file properties -->
     <property name="rep.template.file" value="${template.dir}/repository_database.template"/>
     <property name="rep.dest.file"     value="${config.dir}/repository_database.xml"/>
-<!--    <property name="ojb.template.file" value="${template.dir}/OJB.template"/>
+<!--<property name="ojb.template.file" value="${template.dir}/OJB.template"/>
     <property name="ojb.dest.file"     value="${config.dir}/OJB.properties"/>
     -->
     <property name="ora.props.file"    value="${config.dir}/oracle.properties"/>
@@ -43,6 +43,9 @@
 
     <!-- The build properties. -->
     <property file="config/build.properties"/>
+
+    <!-- The jdbc properties. -->
+    <property file="config/jdbc.properties"/>
 
     <!-- The IntAct node properties. -->
     <property file="config/Institution.properties"/>
@@ -209,6 +212,19 @@
               see template/postgres.template file for the format.
         </fail>
 
+
+        <condition property="postgres.jdbc.driver.missing">
+          <not>
+              <available file="lib/${postgresql.jar}"/>
+          </not>
+        </condition>
+
+          <fail if="postgres.jdbc.driver.missing">
+              Unable to find your postgres jdbc driver!
+              see /config/jdbc.properties file for the format.
+        </fail>
+
+
         <!-- Copy the template to config directory first -->
         <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
 
@@ -250,9 +266,22 @@
             </not>
         </condition>
 
+
+
         <fail if="oracle.property.missing">
               Unable to find ${ora.props.file} file;
               see template/oracle.template file for the format.
+        </fail>
+
+        <condition property="oracle.jdbc.driver.missing">
+          <not>
+              <available file="lib/${oracle.jar}"/>
+          </not>
+        </condition>
+
+          <fail if="oracle.jdbc.driver.missing">
+             Unable to find your oracle jdbc driver !
+              see /config/jdbc.properties file for the format.
         </fail>
 
         <!-- Copy the template to config directory first -->
