@@ -76,15 +76,18 @@
 
     <!-- =============== Definitions related to pages ================= -->
 
-    <!-- Institution header -->
-    <definition name="ebi.header.layout" path="/layouts/ebiHeaderLayout.jsp">
-        <put name="title"  value="IntAct - Control Vocabulary Editor"/>
+    <!-- The header layout. The controller may change the header when editing
+         the CV object.
+    -->
+    <definition name="header.layout" path="/layouts/headerLayout.jsp"
+        controllerUrl="/do/tiles/headerSwitch">
+        <put name="header.title" value="IntAct - Control Vocabulary Editor"/>
     </definition>
 
     <!-- Login page description  -->
     <definition name="login.layout" path="/layouts/intactLayout.jsp">
 <!--        <put name="stylesheet" value="layouts/styles/cvedit.css"/>-->
-        <put name="institution.header" value="ebi.header.layout"/>
+        <put name="title"  value="IntAct - Control Vocabulary Editor"/>
         <put name="sidebar" value="login.sidebar.layout"/>
         <put name="header" value="header.layout"/>
         <put name="footer" value="/pages/footer.jsp"/>
@@ -93,14 +96,6 @@
     <!-- Login failure page description  -->
     <definition name="login.error.layout" extends="login.layout">
         <put name="content" value="/pages/error.jsp"/>
-    </definition>
-
-    <!-- The header layout. The controller may change the header when editing
-         the CV object.
-    -->
-    <definition name="header.layout" path="/layouts/headerLayout.jsp"
-        controllerUrl="/do/tiles/headerSwitch">
-        <put name="header.title" value="IntAct - Control Vocabulary Editor"/>
     </definition>
 
     <!-- Search page description  -->
