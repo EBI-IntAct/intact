@@ -25,10 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.Collection;
+import java.util.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.io.*;
@@ -314,7 +311,7 @@ public class BioSourceAction extends AbstractEditorAction {
      */
     private XreferenceBean findXref(String dbname, BioSourceViewBean bioview) {
         // The xrefs to loop.
-        ArrayList xrefs = bioview.getXrefs();
+        List xrefs = bioview.getXrefs();
         // The primary id to match.
         String primaryId = bioview.getTaxId();
 
