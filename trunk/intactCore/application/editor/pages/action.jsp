@@ -29,7 +29,14 @@
             <html:submit property="dispatch">
                 <bean:message key="button.submit"/>
             </html:submit>
-            <br/>Saves the current object to the database
+            <br/>Submits the form and exits
+        </td>
+
+        <td align="center" bgcolor="palegreen">
+            <html:submit property="dispatch">
+                <bean:message key="button.save"/>
+            </html:submit>
+            <br/>Saves the changes to the database
         </td>
 
         <td align="center" bgcolor="yellow">

@@ -18,16 +18,14 @@ import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Xref;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Collection;
 
 /**
  * Dispatcher action which dispatches according to 'dispatch' parameter. This
@@ -47,6 +45,7 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
         map.put("button.submit", "submit");
+        map.put("button.save", "save");
         map.put("annotations.button.add", "addAnnot");
         map.put("xrefs.button.add", "addXref");
         return map;
@@ -70,84 +69,28 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-        // Handler to the Intact User.
-        EditUserI user = getIntactUser(request);
+        return submitForm(mapping, form, request, true);
+    }
 
-        // The current view.
-        AbstractEditViewBean view = user.getView();
-
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // Extract the short label for us to cheque for its uniqueness.
-        String formlabel = (String) dynaform.get("shortLabel");
-
-        // Validate the short label.
-        if (user.duplicateShortLabel(formlabel)) {
-            // Found more than one entry with the same short label.
-            ActionErrors errors = new ActionErrors();
-            errors.add("shortLabel",
-                    new ActionError("error.cvinfo.label", formlabel));
-            saveErrors(request, errors);
-
-            ActionMessages messages = new ActionMessages();
-            messages.add(ActionMessages.GLOBAL_MESSAGE,
-                    new ActionMessage("message.existing.labels", getExistingLabels(user)));
-            saveMessages(request, messages);
-            // Display the errors in the input page.
-            return mapping.getInputForward();
-        }
-        String newlabel = user.getUniqueShortLabel(formlabel);
-        dynaform.set("shortLabel", newlabel);
-
-        // Update the view with new values.
-//        view.updateFromForm(dynaform);
-
-        // Validate the data.
-        view.validate(user);
-
-        try {
-            // Begin the transaction.
-            user.begin();
-
-            // Persist my current state
-            view.persist(user);
-
-            // Commit all the changes.
-            user.commit();
-
-            // New transaction for updating proteins - this fixes the problem
-            // with adding new proteins and annotations together.
-            if (view.getAnnotatedObject() instanceof Interaction) {
-                user.begin();
-                ((InteractionViewBean) view).persistProteins(user);
-                user.commit();
-            }
-        }
-        catch (IntactException ie1) {
-            try {
-                user.rollback();
-            }
-            catch (IntactException ie2) {
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
-            // Log the stack trace.
-            LOGGER.info(ie1);
-            // Error with updating.
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.update",
-                            ie1.getRootCause().getMessage()));
-            saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
-        // Need to load the current menu from the database.
-        view.removeMenu();
-        // Update the search cache.
-        user.updateSearchCache();
-        // All changes are committed successfully; either search or results.
-        return mapping.findForward(getForwardAction(user));
+    /**
+     * Action for saving the edit form.
+     * @param mapping the <code>ActionMapping</code> used to select this instance
+     * @param form the optional <code>ActionForm</code> bean for this request
+     * (if any).
+     * @param request the HTTP request we are processing
+     * @param response the HTTP response we are creating
+     * @return failure mapping for any errors in updating the CV object; search
+     * mapping if the update is successful and the previous search has only one
+     * result; results mapping if the update is successful and the previous
+     * search has produced multiple results.
+     * @throws Exception for any uncaught errors.
+     */
+    public ActionForward save(ActionMapping mapping,
+                              ActionForm form,
+                              HttpServletRequest request,
+                              HttpServletResponse response)
+            throws Exception {
+        return submitForm(mapping, form, request, false);
     }
 
     /**
@@ -221,6 +164,104 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         // Add the bean to the view.
         user.getView().addXref(new XreferenceBean(xref, xb.getKey()));
 
+        return mapping.getInputForward();
+    }
+
+    /**
+     * Handles both submit/save actions.
+     * @param mapping the <code>ActionMapping</code> used to select this instance
+     * @param form the optional <code>ActionForm</code> bean for this request
+     * (if any).
+     * @param request the HTTP request we are processing
+     * @param submit true for submit action.
+     * @return failure mapping for any errors in updating the CV object; search
+     * mapping if the update is successful and the previous search has only one
+     * result; results mapping if the update is successful and the previous
+     * search has produced multiple results.
+     * @throws Exception for any uncaught errors.
+     */
+    private ActionForward submitForm(ActionMapping mapping,
+                                     ActionForm form,
+                                     HttpServletRequest request,
+                                     boolean submit)
+            throws Exception {
+        // Handler to the Intact User.
+        EditUserI user = getIntactUser(request);
+
+        // The current view.
+        AbstractEditViewBean view = user.getView();
+
+        // The dyna form.
+        DynaActionForm dynaform = (DynaActionForm) form;
+
+        // Extract the short label for us to cheque for its uniqueness.
+        String formlabel = (String) dynaform.get("shortLabel");
+
+        // Validate the short label.
+        if (user.duplicateShortLabel(formlabel)) {
+            // Found more than one entry with the same short label.
+            ActionErrors errors = new ActionErrors();
+            errors.add("shortLabel",
+                    new ActionError("error.cvinfo.label", formlabel));
+            saveErrors(request, errors);
+
+            ActionMessages messages = new ActionMessages();
+            messages.add(ActionMessages.GLOBAL_MESSAGE,
+                    new ActionMessage("message.existing.labels", getExistingLabels(user)));
+            saveMessages(request, messages);
+            // Display the errors in the input page.
+            return mapping.getInputForward();
+        }
+        String newlabel = user.getUniqueShortLabel(formlabel);
+        dynaform.set("shortLabel", newlabel);
+
+        // Validate the data.
+        view.validate(user);
+
+        try {
+            // Begin the transaction.
+            user.begin();
+
+            // Persist my current state
+            view.persist(user);
+
+            // Commit all the changes.
+            user.commit();
+
+            // New transaction for updating proteins - this fixes the problem
+            // with adding new proteins and annotations together.
+            if (view.getAnnotatedObject() instanceof Interaction) {
+                user.begin();
+                ((InteractionViewBean) view).persistProteins(user);
+                user.commit();
+            }
+        }
+        catch (IntactException ie1) {
+            try {
+                user.rollback();
+            }
+            catch (IntactException ie2) {
+                // Oops! Problems with rollback; ignore this as this
+                // error is reported via the main exception (ie1).
+            }
+            // Log the stack trace.
+            LOGGER.info(ie1);
+            // Error with updating.
+            ActionErrors errors = new ActionErrors();
+            errors.add(AbstractEditorAction.EDITOR_ERROR,
+                    new ActionError("error.update",
+                            ie1.getRootCause().getMessage()));
+            saveErrors(request, errors);
+            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
+        }
+        // Need to load the current menu from the database.
+        view.removeMenu();
+        // Update the search cache.
+        user.updateSearchCache();
+        if (submit) {
+            // All changes are committed successfully; either search or results.
+            return mapping.findForward(getForwardAction(user));
+        }
         return mapping.getInputForward();
     }
 

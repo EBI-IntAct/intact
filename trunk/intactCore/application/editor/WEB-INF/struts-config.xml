@@ -399,6 +399,7 @@
             scope="session">
 
             <forward name="submit" path="/do/cvSubmit"/>
+            <forward name="save" path="/do/cvSubmit"/>
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/cvAnnotSubmit"/>
@@ -456,6 +457,7 @@
             scope="session">
 
             <forward name="submit" path="/do/expSubmit"/>
+            <forward name="save" path="/do/expSubmit"/>
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/expAnnotSubmit"/>
@@ -516,6 +518,7 @@
             scope="session">
 
             <forward name="submit" path="/do/bsSubmit"/>
+            <forward name="save" path="/do/bsSubmit"/>
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/bsAnnotSubmit"/>
@@ -586,6 +589,7 @@
             scope="session">
 
             <forward name="submit" path="/do/intSubmit"/>
+            <forward name="save" path="/do/intSubmit"/>
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/intAnnotSubmit"/>
