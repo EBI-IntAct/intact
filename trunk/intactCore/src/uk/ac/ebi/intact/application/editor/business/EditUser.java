@@ -180,12 +180,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                     String password) throws DataSourceException, IntactException {
         myDAOSource = DAOFactory.getDAOSource(dsClass);
 
-        // Pass config details to data source - don't need fast keys as only
-        // accessed once
-        Map fileMap = new HashMap();
-        fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
-        myDAOSource.setConfig(fileMap);
-
         // Save the user info in the DS for us to access them later.
         myDAOSource.setUser(user);
         myDAOSource.setPassword(password);
@@ -596,9 +590,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public void logoff() throws IntactException {
         mySessionEndTime = Calendar.getInstance().getTime();
-        myHelper.closeStore();
         // Release all the locks held by this user.
         LockManager.getInstance().releaseAllLocks(getUserName());
+        myHelper.closeStore();
     }
 
     public Date loginTime() {
