@@ -24,7 +24,7 @@
     <table width="80%" border="0" cellspacing="1" cellpadding="2">
         <html:messages id="error">
             <tr class="tableRowEven">
-                <td class="tableErrorCell"><html:errors/></td>
+                <td class="tableErrorCell"><bean:write name="error"/></td>
             </tr>
         </html:messages>
     </table>
