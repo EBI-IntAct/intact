@@ -16,6 +16,8 @@ import uk.ac.ebi.intact.application.hierarchView.highlightment.source.Highlightm
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * Allows to perfoem the highlightment according to data stored in the user session
@@ -25,6 +27,8 @@ import java.util.Collection;
  */
 
 public class HighlightProteins {
+
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /** Constructor
      * Allow to modify the current graph to highlight a part of this.
@@ -57,14 +61,21 @@ public class HighlightProteins {
         // apply the highlight to the selected set of protein
         highlightmentBehaviour.apply (proteinsToHighlight, in);
 
+        // store data in the session
+        IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER_KEY);
+        if (user == null) {
+            logger.info ("USER is null, exit the highlight process");
+            return;
+        }
+
+        String applicationPath = user.getApplicationPath();
+
         // Rebuild Image data
 //        GraphToSVG svgProducer = new GraphToSVG (in);
-        DrawGraph imageProducer = new DrawGraph (in);
+        DrawGraph imageProducer = new DrawGraph (in, applicationPath);
         imageProducer.draw();
         ImageBean ib = imageProducer.getImageBean();
 
-        // store data in the session
-        IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER_KEY);
         // TODO : test is user OK
         user.setImageBean(ib);
 

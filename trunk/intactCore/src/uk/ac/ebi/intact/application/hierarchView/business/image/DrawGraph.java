@@ -169,14 +169,15 @@ public class DrawGraph {
     private String nodeAntialiased;
 
     private float edgeThickness;
-
+    private String applicationPath;
 
 
     /**
      * Constructor
      */
-    public DrawGraph (InteractionNetwork in) {
+    public DrawGraph (InteractionNetwork in, String applicationPath) {
         this.graph = in;
+        this.applicationPath = applicationPath;
 
         // Initialization of mapCode container
         this.mapCode = new StringBuffer();
@@ -637,8 +638,12 @@ public class DrawGraph {
 
         // Write the map
         // TODO : get the contextPath in the runtime
-        mapCode.append("<AREA SHAPE=\"RECT\" HREF=\"/intact/hierarchView/click.do?AC=" + protein.getAc() +
+//        mapCode.append("<AREA SHAPE=\"RECT\" HREF=\"/intact/hierarchView/click.do?AC=" + protein.getAc() +
+//                " \" COORDS=" + (int)x1 + "," + (int)y1 + "," + x2 + "," + y2 + ">");
+
+        mapCode.append("<AREA SHAPE=\"RECT\" HREF=\""+ applicationPath +"/click.do?AC=" + protein.getAc() +
                 " \" COORDS=" + (int)x1 + "," + (int)y1 + "," + x2 + "," + y2 + ">");
+
 
         // Write label
         g.setFont (labelFont);
