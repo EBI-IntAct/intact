@@ -30,7 +30,7 @@
 
                    <display:table
                         name="sources" width="100%"
-                        decorator="uk.ac.ebi.intact.application.hierarchView.struts.view.SourceDecorator">
+                        decorator="uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceDecorator">
                            <display:column property="label" title="ID" />
                            <display:column property="description" />
 
