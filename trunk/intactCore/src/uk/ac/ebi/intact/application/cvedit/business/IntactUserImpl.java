@@ -16,7 +16,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
-import uk.ac.ebi.intact.application.cvedit.struts.view.ListObject;
+import uk.ac.ebi.intact.application.cvedit.struts.view.ResultBean;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -318,6 +318,22 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         myHelper.update(object);
     }
 
+    public void cancelUpdate() {
+        myHelper.cancelUpdate(myEditCvObject);
+
+        // Cancel any updates to annotations.
+        Collection updateComments = myView.getAnnotationsToUpdate();
+        for (Iterator iter = updateComments.iterator(); iter.hasNext();) {
+            myHelper.cancelUpdate(iter.next());
+        }
+
+        // Cancel any updates to xrefs.
+        Collection updateXrefs = myView.getXrefsToUpdate();
+        for (Iterator iter = updateXrefs.iterator(); iter.hasNext();) {
+            myHelper.cancelUpdate(iter.next());
+        }
+    }
+
     public void delete(Object object) throws IntactException {
         myHelper.delete(object);
     }
@@ -383,18 +399,18 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         // Clear previous results.
         mySearchResults.clear();
 
-        // Wrap as ListObjects for tag library to display.
+        // Wrap as ResultsBeans for tag library to display.
         for (Iterator iter = results.iterator(); iter.hasNext();) {
-            mySearchResults.add(new ListObject((CvObject) iter.next()));
+            mySearchResults.add(new ResultBean((CvObject) iter.next()));
         }
     }
 
-    public Collection getCacheSearchResult() {
-        return mySearchResults;
+    public ArrayList getCacheSearchResult() {
+        return (ArrayList) mySearchResults;
     }
 
     public void removeFromSearchCache(String ac) {
-        CollectionUtils.filter(mySearchResults, ListObject.getPredicate(ac));
+        CollectionUtils.filter(mySearchResults, ResultBean.getPredicate(ac));
     }
 
     public void logoff() throws IntactException {
