@@ -711,6 +711,11 @@ public abstract class AbstractObjectBridgeDAO implements DAO {
         return myBroker.getCollectionByQuery(query);
     }
 
+    protected Object getIdentity(Object obj) {
+        Identity ident = new Identity(obj, myBroker);
+        return myBroker.getObjectByIdentity(ident);
+    }
+
 //-------------------------- private helper methods ----------------------------------------
 
     /**
