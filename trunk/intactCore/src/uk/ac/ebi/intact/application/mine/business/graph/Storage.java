@@ -12,7 +12,7 @@ import jdsl.graph.api.Vertex;
  * informations for the jdsl algorithm which is used in the mine project. <br>
  * The algorithm needs additional information for each node in the graph (e.g.
  * the ancestor node, the distance from the source node and so on). <br>
- * To enable multiple simultaneously searches in the same graph these
+ * To enable multiple simultaneous searches in the same graph these
  * informations are stored in an extra class and not directly in the graph.
  * 
  * @author Andreas Groscurth
