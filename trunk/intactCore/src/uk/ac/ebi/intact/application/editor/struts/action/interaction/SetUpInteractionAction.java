@@ -37,11 +37,18 @@ public class SetUpInteractionAction  extends AbstractEditorAction {
         // The view of the current object we are editing at the moment.
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
-        // Poplulate with experiment data.
+        // Poplulate with experiment data; first try the form first, so it
+        // will save the last typed values.
         DynaActionForm dynaForm = (DynaActionForm) form;
-        dynaForm.set("kD", view.getKD());
-        dynaForm.set("organism", view.getOrganism());
-        dynaForm.set("interactionType", view.getInteractionType());
+        if (dynaForm.get("kD") == null) {
+            dynaForm.set("kD", view.getKD());
+        }
+        if (dynaForm.get("organism") == null) {
+            dynaForm.set("organism", view.getOrganism());
+        }
+        if (dynaForm.get("interactionType") == null) {
+            dynaForm.set("interactionType", view.getInteractionType());
+        }
 
         // The session to retrieve forms.
         HttpSession session = getSession(request);
