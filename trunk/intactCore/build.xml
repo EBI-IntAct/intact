@@ -41,7 +41,7 @@
 
     <!-- copy mapping files for castor and ojb in synchron class directory -->
     <target name="copyMappings">
-        <copy todir="${dest.dir}/uk/ac/ebi/intact/synchron" >
+        <copy todir="${dest.dir}/uk/ac/ebi/intact/application/synchron" >
             <fileset dir="config" >
                 <include name="**/*.xml"/>
             </fileset>
@@ -89,7 +89,7 @@
 
     <!-- Build javadocs -->
     <target name="javadoc" depends="compile"
-        description="Creats Intact core API Documentation">
+        description="Creates Intact core API Documentation">
         <mkdir dir="${jdoc.dir}" />
         <javadoc packagenames="uk.ac.ebi.intact.**"
                  sourcepath="${src.dir}"
