@@ -339,7 +339,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             if(localTx) {
 
                 //local transaction, so commit here instead...
-                logger.error("committing local TX");
+                logger.debug("committing local TX");
                 tx1.commit();
             }
         }
@@ -366,9 +366,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * a user interface object) and then have the changes reflected in persistent
      * store within the context of a <bold>different</bold> transaction. This therefore
      * obviates the need to retrieve the object again in order to perform an update.
+     * Note: if the object parameter cannot be found in the persistent store, it will
+     * be created as in such cases an update is not possible.
      * </p>
      *
-     * @param obj - the object to be updated
+     * @param obj - the object to be updated (or created if it does not exist in store)
      *
      * @exception CreateException  - thrown if the object could not me modified,
      * eg called outside a transaction scope
@@ -394,60 +396,72 @@ public class ObjectBridgeDAO implements DAO, Serializable {
              //3) copy the new data into it (harder than it sounds!!)
              //4) commit
              //
+             logger.debug("doing update - searching for old data...");
              dummy = broker.getObjectByIdentity(new Identity(obj));
              if(dummy == null) {
-                 throw new CreateException("error - unable to update " + obj.getClass().getName() + " : no object exists in store!!");
-             }
-
-             //check TX details and lock object into appropriate TX
-             if(isActive()) {
-
-                 //NB ODMG associates the current thread with a TX, so we
-                //should join the TX just in case the thread has changed since
-                //the client begin() was called...
-                tx.join();
-                tx.lock(dummy, tx.WRITE);
+                 logger.debug("unable to update " + obj.getClass().getName() + " : no object exists in store; creating it...");
+                 create(obj);
              }
              else {
+                 logger.debug("object retrieved : " + dummy.toString());
 
-                 //start a local TX
-                 tx1 = odmg.newTransaction();
-                 tx1.begin();
-                 tx1.lock(dummy, tx1.WRITE);
-                 localTx = true;
-             }
+                 //check TX details and lock object into appropriate TX
+                 if(isActive()) {
 
-             //do some reflection/security stuff so we can set the fields to new values..
-             Field[] fields = dummy.getClass().getDeclaredFields();
+                     //NB ODMG associates the current thread with a TX, so we
+                    //should join the TX just in case the thread has changed since
+                    //the client begin() was called...
+                     logger.debug("client transaction detected - locking retrieved object for write..");
+                    tx.join();
+                    tx.lock(dummy, tx.WRITE);
+                 }
+                 else {
 
-             try {
-                 //set the permissions on the fields - if this ever fails (eg if a
-                 //SecurityManager is set), need to
-                 //go via the AccessController...
-                 AccessibleObject.setAccessible(fields, true);
-             }
-             catch(SecurityException se) {
-                 logger.error("failure during update - field access denied!!", se);
-             }
+                     //start a local TX
+                     logger.debug("beginning local transaction - locking object for write...");
+                     tx1 = odmg.newTransaction();
+                     tx1.begin();
+                     tx1.lock(dummy, tx1.WRITE);
+                     localTx = true;
+                 }
 
-             //now update them..
-             Object value = null;
-             for(int i=0; i < fields.length; i++) {
+                 //do some reflection/security stuff so we can set the fields to new values..
+                 Field[] fields = dummy.getClass().getDeclaredFields();
 
                  try {
-                     value = fields[i].get(obj);
-                     fields[i].set(dummy, value);
+                     //set the permissions on the fields - if this ever fails (eg if a
+                     //SecurityManager is set), need to
+                     //go via the AccessController...
+                     logger.debug("setting fields to be accessible for write...");
+                     AccessibleObject.setAccessible(fields, true);
                  }
-                 catch(Exception e) {
-                     logger.error("failed to update field " + fields[i].getName(), e);
+                 catch(SecurityException se) {
+                     logger.error("failure during update - field access denied!!", se);
                  }
-             }
 
-             if(localTx) {
+                 //now update them..
+                 Object value = null;
+                 for(int i=0; i < fields.length; i++) {
 
-                //local transaction, so commit here instead...
-                logger.error("committing local TX");
-                tx1.commit();
+                     try {
+                         value = fields[i].get(obj);
+                         logger.debug("field: " + fields[i].getName());
+                         logger.debug("old value: " + fields[i].get(dummy));
+                         logger.debug("new value: " + value);
+                         fields[i].set(dummy, value);
+                         logger.debug("field updated OK...");
+                     }
+                     catch(Exception e) {
+                         logger.error("failed to update field " + fields[i].getName(), e);
+                     }
+                 }
+
+                 if(localTx) {
+
+                    //local transaction, so commit here instead...
+                    logger.debug("committing local TX");
+                    tx1.commit();
+                 }
              }
 
         }
@@ -463,7 +477,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //client should be responsible for aborting their own TX...
             //problem doing DB begin/commit, or updating object - do something
             String msg = "object update failed: problem saving object of type " + obj.getClass().getName();
-            throw new CreateException(msg, e);
+            logger.debug("exception details: " + e.getMessage());
+            logger.debug(e.toString());
+             throw new CreateException(msg, e);
         }
     }
 
@@ -751,26 +767,30 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             searchClass = Class.forName(type);
             Criteria crit = null;
 
-            //check local cache first for the object ID, in case the col is not the PK
+            //check local cache first for the object, in case the col is not the PK
             if(isCachedClass(searchClass)) {
 
-                logger.info("object already cached but not a PK search...");
-                Identity id = (Identity)cache.get(searchClass + "-" + col);
-                query = new QueryByIdentity(id);
-                logger.info("query using object ID created OK");
+                logger.info("search class may be unique by criteria other than PK - trying local cache...");
 
+                Object obj = cache.get(searchClass + "-" + col);
+
+                if(obj != null) {
+
+                    logger.debug("class " + obj.getClass().getName()+ " found in local cache");
+                    logger.debug("returning locally cached object as find result - class: " + obj.getClass().getName());
+                    //as obj is unique, we are done
+                    results.add(obj);
+                    return results;
+
+                }
             }
-            else {
-
-                //build a normal Criteria query
-                crit = new Criteria();
-                crit.addEqualTo(col, val);
-                logger.info("criteria built OK");
-                query = new QueryByCriteria(searchClass, crit);
-                logger.info("query by criteria built OK: "
-                        + type + " " + col + " " + val);
-
-            }
+            //build a normal Criteria query, if class is cached locally or not (
+            //if found locally, would have returned by here)
+            crit = new Criteria();
+            crit.addEqualTo(col, val);
+            logger.info("criteria built OK");
+            query = new QueryByCriteria(searchClass, crit);
+            logger.info("query by criteria built OK: " + type + " " + col + " " + val);
 
             //simple timing
             //System.gc();
@@ -807,7 +827,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         if((isCachedClass(searchClass)) & (!results.isEmpty())) {
 
-            //must have a unique result that could be queried other than by PK, so cache its ID
+            //must have a unique result that could be queried other than by PK, so cache it locally
             Iterator it = results.iterator();
             Object obj = it.next();
             if(it.hasNext()) {
