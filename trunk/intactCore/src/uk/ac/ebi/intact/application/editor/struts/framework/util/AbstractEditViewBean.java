@@ -181,7 +181,7 @@ public abstract class AbstractEditViewBean {
      * post: return->forall(obj : Object | obj.oclIsTypeOf(CommentBean))
      * </pre>
      */
-    public ArrayList getAnnotations() {
+    public List getAnnotations() {
         return myAnnotations;
     }
 
@@ -253,7 +253,7 @@ public abstract class AbstractEditViewBean {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(Xref))
      * </pre>
      */
-    public ArrayList getXrefs() {
+    public List getXrefs() {
         return myXrefs;
     }
 
@@ -466,7 +466,7 @@ public abstract class AbstractEditViewBean {
      * @param form the form to poplulate.
      */
     public void populateAnnotations(EditForm form) {
-        form.setItems(getAnnotations());
+        form.setItems(myAnnotations);
     }
 
     /**
@@ -474,7 +474,7 @@ public abstract class AbstractEditViewBean {
      * @param form the form to poplulate.
      */
     public void populateXrefs(EditForm form) {
-        form.setItems(getXrefs());
+        form.setItems(myXrefs);
     }
 
     /**
