@@ -151,7 +151,7 @@ public class GraphToSVG
      * The used font to write the label
      */
     private Font fontLabel;
-    private FontMetrics labelFontMetrics;
+    private Font boldFontLabel;
 
     /**
      * Properties file content
@@ -179,8 +179,7 @@ public class GraphToSVG
     /**
      * Constructor
      */
-    public GraphToSVG (InteractionNetwork in)
-    {
+    public GraphToSVG (InteractionNetwork in) {
         this.graph = in;
 
         // Initialization of mapCode container
@@ -206,7 +205,7 @@ public class GraphToSVG
         this.dimensionRateY  = dimension.height() / imageHeight;
         this.imageSizex      = imageLength + borderSize * 2;
         this.imageSizey      = imageHeight + borderSize * 2;
-    } // GraphToImage
+    }
 
 
 
@@ -216,6 +215,8 @@ public class GraphToSVG
      * @param in the interaction network we build the SVG DOM  from
      */
     private void updateProteinData (InteractionNetwork in) {
+
+        FontMetrics fontMetrics = null;
 
         ArrayList listOfProtein     = graph.getOrderedNodes();
         int numberOfProtein = in.sizeNodes();
@@ -227,9 +228,8 @@ public class GraphToSVG
 
         SVGGraphics2D g = new SVGGraphics2D(doc);
 
-
         g.setFont (fontLabel);
-        this.labelFontMetrics = g.getFontMetrics ();
+        fontMetrics = g.getFontMetrics ();
 
         ImageDimension dimension = in.getImageDimension();
         int j;
@@ -250,41 +250,55 @@ public class GraphToSVG
         } // for
 
 
+        // get the central protein in order to apply a different font
+        uk.ac.ebi.intact.simpleGraph.Node centralProtein = graph.getCentralProtein();
+
         // update the image dimension according to the proteins coordinates and their size's label
         for (j = 0; j < numberOfProtein; j++) {
             protein = (uk.ac.ebi.intact.simpleGraph.Node) listOfProtein.get(j);
 
             if (((Boolean) protein.get(Constants.ATTRIBUTE_VISIBLE)).booleanValue() == true) {
                 // get the protein label
-                String proteinLabel  = protein.getLabel();
+                String proteinLabel = protein.getLabel();
 
                 // get Tulip coordinate
-                float proteinX       = ((Float) protein.get(Constants.ATTRIBUTE_COORDINATE_X)).floatValue();
-                float proteinY       = ((Float) protein.get(Constants.ATTRIBUTE_COORDINATE_Y)).floatValue();
+                float proteinX = ((Float) protein.get(Constants.ATTRIBUTE_COORDINATE_X)).floatValue();
+                float proteinY = ((Float) protein.get(Constants.ATTRIBUTE_COORDINATE_Y)).floatValue();
+
+
+
+                if (protein == centralProtein) {
+                    g.setFont (boldFontLabel);
+                    fontMetrics = g.getFontMetrics ();
+                }else{
+                    g.setFont (fontLabel);
+                    fontMetrics = g.getFontMetrics ();
+                }
 
                 // calculate heigth and width
-                float height = this.labelFontMetrics.getHeight() +
-                        this.internalTopMargin +
-                        this.internalBottomMargin;
-                float length = this.labelFontMetrics.stringWidth(proteinLabel) +
-                        this.internalLeftMargin +
-                        this.internalRightMargin;
+                float height = fontMetrics.getHeight() +
+                               this.internalTopMargin +
+                               this.internalBottomMargin;
+                float length = fontMetrics.stringWidth(proteinLabel) +
+                               this.internalLeftMargin +
+                               this.internalRightMargin;
 
                 // The dimension rate depends of the size of the picture.
                 // so, we have to calculate at each iteration to keep a right value.
-                this.dimensionRateX  = dimension.length() / imageLength;
-                this.dimensionRateY  = dimension.height() / imageHeight;
+                this.dimensionRateX = dimension.length() / imageLength;
+                this.dimensionRateY = dimension.height() / imageHeight;
 
                 // update data in the protein
                 protein.put (Constants.ATTRIBUTE_LENGTH, new Float (length));
                 protein.put (Constants.ATTRIBUTE_HEIGHT, new Float (height));
 
                 // update the image dimension according to the protein label size
-                dimension.adjustCadre (length * dimensionRateX , height * dimensionRateY, proteinX, proteinY);
+                dimension.adjustCadre (length * dimensionRateX,
+                                       height * dimensionRateY,
+                                       proteinX,
+                                       proteinY);
             }
         } //  for
-
-        //    graphImage = null;
 
     } // updateProteinData
 
@@ -434,8 +448,9 @@ public class GraphToSVG
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         env.getAvailableFontFamilyNames();
 
-        this.fontLabel = new Font (fontName, Font.PLAIN, intFontSize);
-        this.borderSize = (new Float(border)).floatValue();
+        this.fontLabel     = new Font (fontName, Font.PLAIN, intFontSize);
+        this.boldFontLabel = new Font (fontName, Font.BOLD, intFontSize+1);
+        this.borderSize    = (new Float(border)).floatValue();
         this.imageLength     = (new Float(xSize)).floatValue();
         this.imageHeight     = (new Float(ySize)).floatValue();
 
@@ -571,8 +586,9 @@ public class GraphToSVG
      *
      * @param protein The protein to draw
      * @param g The graphic where we draw
+     * @param labelFont the Font with which to draw the label
      */
-    private void drawNode(uk.ac.ebi.intact.simpleGraph.Node protein, Graphics2D g) {
+    private void drawNode (uk.ac.ebi.intact.simpleGraph.Node protein, Graphics2D g, Font labelFont) {
 
         String proteinLabel  = protein.getLabel();
 
@@ -598,8 +614,8 @@ public class GraphToSVG
 
         if (this.nodeAntialiased.equalsIgnoreCase ("enable")) {
             // Enable antialiasing for shape
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint (RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
         if (this.shapeEnable.equalsIgnoreCase ("enable")) {
@@ -630,13 +646,13 @@ public class GraphToSVG
                 " \" COORDS=" + (int)x1 + "," + (int)y1 + "," + x2 + "," + y2 + ">");
 
         // Write label
-        g.setFont (fontLabel);
+        g.setFont (labelFont);
         Color colorLabel = (Color) protein.get(Constants.ATTRIBUTE_COLOR_LABEL);
         g.setColor (colorLabel);
 
         g.drawString (proteinLabel,
-                (int) x1 + this.internalLeftMargin,
-                (int) (y1 + proteinHeight / 2) + this.internalTopMargin);
+                      (int) x1 + this.internalLeftMargin,
+                      (int) (y1 + proteinHeight / 2) + this.internalTopMargin);
 
         // set the protein as drawn
         ArrayList listOfProteins = graph.getOrderedNodes();
@@ -658,7 +674,7 @@ public class GraphToSVG
 
         float proteinRx, proteinRy,
                 proteinLx, proteinLy;
-        Color proteinRcolorNode, proteinLcolorNode;
+//        Color proteinRcolorNode, proteinLcolorNode;
 
         ImageDimension dimension = graph.getImageDimension();
 
@@ -666,13 +682,13 @@ public class GraphToSVG
         proteinR           = (uk.ac.ebi.intact.simpleGraph.Node) interaction.getNode1();
         proteinRx          = ((Float) proteinR.get(Constants.ATTRIBUTE_COORDINATE_X)).floatValue();
         proteinRy          = ((Float) proteinR.get(Constants.ATTRIBUTE_COORDINATE_Y)).floatValue();
-        proteinRcolorNode  = (Color) proteinR.get(Constants.ATTRIBUTE_COLOR_NODE);
+//        proteinRcolorNode  = (Color) proteinR.get(Constants.ATTRIBUTE_COLOR_NODE);
 
         // proteinLeft
         proteinL           = (uk.ac.ebi.intact.simpleGraph.Node) interaction.getNode2();
         proteinLx          = ((Float) proteinL.get(Constants.ATTRIBUTE_COORDINATE_X)).floatValue();
         proteinLy          = ((Float) proteinL.get(Constants.ATTRIBUTE_COORDINATE_Y)).floatValue();
-        proteinLcolorNode  = (Color) proteinL.get(Constants.ATTRIBUTE_COLOR_NODE);
+//        proteinLcolorNode  = (Color) proteinL.get(Constants.ATTRIBUTE_COLOR_NODE);
 
         // calcul
         xline1 = newCoordinateEdge(proteinRx,
@@ -802,13 +818,22 @@ public class GraphToSVG
         // We draw all visible nodes
         mapCode.append("<MAP NAME=\"" + mapName + "\">");
 
+        // set the central protein as drawn to draw only all others,
+        // we'll draw the central protein after
+        ArrayList listOfProteins = graph.getOrderedNodes();
+        uk.ac.ebi.intact.simpleGraph.Node centralProtein = graph.getCentralProtein();
+        drawnNode[listOfProteins.indexOf(centralProtein)] = true;
+
         for(int j = 0; j < numberOfProtein; j++) {
             tmp = (uk.ac.ebi.intact.simpleGraph.Node) listOfProtein.get(j);
             if(drawnNode[j] == false &&
                     ((Boolean) tmp.get(Constants.ATTRIBUTE_VISIBLE)).booleanValue() == true) {
-                drawNode(tmp, g);
+                drawNode(tmp, g, fontLabel);
             }
         }
+
+        // Draw the central node with a bold font to be sure it is visible and distinguishable.
+        drawNode(centralProtein, g, boldFontLabel);
 
         mapCode.append("</MAP>");
 
