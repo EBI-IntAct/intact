@@ -8,4 +8,5 @@ begin
     execute immediate (analysis);
   end loop;
 end;
+/
 
