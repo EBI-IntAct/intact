@@ -815,6 +815,7 @@
 <tag>
 <name>hidden</name>
 <tagclass>org.apache.struts.taglib.html.HiddenTag</tagclass>
+<bodycontent>empty</bodycontent>
 <attribute>
 <name>accesskey</name>
 <required>false</required>
@@ -1345,6 +1346,11 @@
 <tagclass>org.apache.struts.taglib.html.JavascriptValidatorTag</tagclass>
 <bodycontent>empty</bodycontent>
 <attribute>
+<name>cdata</name>
+<required>false</required>
+<rtexprvalue>true</rtexprvalue>
+</attribute>
+<attribute>
 <name>dynamicJavascript</name>
 <required>false</required>
 <rtexprvalue>false</rtexprvalue>
@@ -1572,7 +1578,7 @@
 <attribute>
 <name>id</name>
 <required>true</required>
-<rtexprvalue>true</rtexprvalue>
+<rtexprvalue>false</rtexprvalue>
 </attribute>
 <attribute>
 <name>bundle</name>
@@ -1854,7 +1860,7 @@
 </attribute>
 <attribute>
 <name>property</name>
-<required>true</required>
+<required>false</required>
 <rtexprvalue>true</rtexprvalue>
 </attribute>
 <attribute>
