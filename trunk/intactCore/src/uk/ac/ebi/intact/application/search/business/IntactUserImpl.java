@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search.business;
 
 import java.util.*;
+import java.sql.SQLException;
 
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -15,6 +16,7 @@ import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.XmlBuilder;
+import org.apache.ojb.broker.accesslayer.LookupException;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -97,6 +99,30 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         catch(IntactException ie) {
             //failed to close the store - not sure what to do here yet....
         }
+    }
+
+    // Implementation of IntactUserI interface.
+
+    public String getUserName() {
+        if (this.helper != null) {
+            try {
+                return this.helper.getDbUserName();
+            }
+            catch (LookupException e) {}
+            catch (SQLException e) {}
+        }
+        return null;
+    }
+
+    public String getDatabaseName() {
+        if (this.helper != null) {
+            try {
+                return this.helper.getDbName();
+            }
+            catch (LookupException e) {}
+            catch (SQLException e) {}
+        }
+        return null;
     }
 
     public String getSearchCritera() {
