@@ -227,7 +227,7 @@ public class FileGenerator {
         if(searchResults.size() == 1) {
             //may be a large experiment - check and process if necessary
             Experiment exp = (Experiment)searchResults.iterator().next();
-            if(exp.getInteractions().size() > FileGenerator.SMALLSCALELIMIT) {
+            if(exp.getInteractions().size() > FileGenerator.LARGESCALESIZE) {
                 System.err.println("processing large experiment "
                         + exp.getShortLabel() + " ....");
                 FileGenerator.processLargeExperiment(exp);
@@ -292,7 +292,11 @@ public class FileGenerator {
                     System.out.println("Generating InteractionList for chunk "
                             + chunkCount + "...");
                     System.out.println();
-                    Node interactionRoot = singleFileDoc.importNode(builder.buildInteractionsOnly(itemsToProcess), true);
+                    //the next line is too long really, but you have to pass the
+                    //result Element in, not a reference, to importNode otherwise you get a
+                    //'Wrong Document' error from the XML parser!
+                    Node interactionRoot =
+                            singleFileDoc.importNode(builder.buildInteractionsOnly(itemsToProcess, FileGenerator.LARGESCALESIZE), true);
 
                     //now the interactionList has been built we can get at the other info...
                     //NB need to rearrange the order of child appending, but AFTER
