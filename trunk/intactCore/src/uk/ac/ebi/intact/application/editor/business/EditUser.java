@@ -304,16 +304,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Get the new view for the new edit object.
         myEditView = myViewFactory.factory(clazz);
         myEditView.reset(clazz);
-        setSelectedTopic();
     }
 
     public void setView(AnnotatedObject annot) {
         // Start editing the object.
         startEditing();
         // Get the new view for the new edit object.
-        myEditView = myViewFactory.factory(annot.getClass());
+        myEditView = myViewFactory.factory(IntactHelper.getRealClassName(annot));
         myEditView.reset(annot);
-        setSelectedTopic();
     }
 
     public String getSelectedTopic() {
@@ -745,13 +743,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             mySearchHelper = new SearchHelper(logger);
         }
         return mySearchHelper;
-    }
-
-    private void setSelectedTopic() {
-        // The class name of the current edit object.
-        String className = myEditView.getEditClass().getName();
-        // Strip the package name from the class name.
-        mySelectedTopic = className.substring(className.lastIndexOf('.') + 1);
     }
 
     /**
