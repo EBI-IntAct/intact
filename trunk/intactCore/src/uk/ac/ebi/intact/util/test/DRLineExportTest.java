@@ -22,6 +22,7 @@ public class DRLineExportTest extends TestCase {
     // needed controlled vocabulary (ie. the DRLineExport relies on it)
     private CvDatabase uniprot;
     private CvTopic uniprotDrExport;
+    private CvTopic negative;
     private CvTopic authorConfidence;
     private CvXrefQualifier identityCvXrefQualifier;
 
@@ -49,6 +50,16 @@ public class DRLineExportTest extends TestCase {
     }
 
 
+    /**
+     * Create a couple of dummy objects that will be shared amongst the dummy experiments that
+     * will be used for the test:<br>
+     * institution<br>
+     * CvTopic<br>
+     * CvDatabase<br>
+     * CvXrefQualifier<br>
+     * Protein and their Xref (at least one to uniprot) + couple of random one<br>
+     * BioSource<br>
+     */
     public void setUp() {
 
         institution = new Institution( "MyInstitution" );
@@ -56,6 +67,7 @@ public class DRLineExportTest extends TestCase {
         // create the needed vocabulary
         uniprotDrExport = new CvTopic( institution, "uniprot-dr-export" );
         authorConfidence = new CvTopic( institution, "author-confidence" );
+        negative = new CvTopic( institution, "negative" );
         uniprot = new CvDatabase( institution, "uniprot" );
         identityCvXrefQualifier = new CvXrefQualifier( institution, "identity" );
 
@@ -90,6 +102,11 @@ public class DRLineExportTest extends TestCase {
     //////////////////////
     // UTILITY METHOD
 
+    /**
+     * Create a new dummy CvInteraction containing annotations with various random CvTopic.
+     *
+     * @return an dummy CvInteraction.
+     */
     private CvInteraction initCvInteraction() {
 
         CvTopic topic1 = new CvTopic( institution, "foo" );
@@ -104,12 +121,20 @@ public class DRLineExportTest extends TestCase {
     }
 
     /**
-     * Gives back an experiment ahving the following interactions
-     * 1a (P1 P2)
-     * 2a (P2 P3)
-     * 3a (P3 P3)
+     * Gives back a properly initialised experiement.
+     * <p/>
+     * <pre>
+     * Gives back an experiment having the following interactions
+     *      1a (P1 P2)
+     *      2a (P2 P3)
+     *      3a (P3 P3)
+     *   [OR]
+     *     P1 (I1a)
+     *     P2 (I1a, I2a)
+     *     P3 (I2a, I3a, I3a)
+     * </pre>
      *
-     * @return
+     * @return an experiment with well known interactions and interactors.
      */
     private Experiment initExperimentA() {
 
@@ -172,11 +197,19 @@ public class DRLineExportTest extends TestCase {
     }
 
     /**
-     * Gives back an experiment ahving the following interactions
-     * 1b (P1 P2)
-     * 2b (P4 P4)
+     * Gives back a properly initialised experiement.
+     * <p/>
+     * <pre>
+     * Gives back an experiment having the following interactions
+     *      1b (P1 P2)
+     *      2b (P4 P4)
+     *   [OR]
+     *     P1 (I1b)
+     *     P2 (I1b, I2b)
+     *     P4 (I2b, I2b)
+     * </pre>
      *
-     * @return
+     * @return an experiment with well known interactions and interactors.
      */
     private Experiment initExperimentB() {
 
@@ -232,15 +265,17 @@ public class DRLineExportTest extends TestCase {
     }
 
     /**
-     * Constructs a NewtServerProxyTest instance with the specified name.
+     * Give a ready to use DrLineExporter.
+     * <p/>
+     * It especially give a bunch of mock objects that should be normally retrieved from the database.
+     * Those objects are used internally in the exporter to perform .equals() operation and those
+     * objects are also used in the experiments we build for the purpose of the test.
+     * <br>
+     * By doing so, we can test the exporter in complete isolation from the database.
      *
-     * @param name the name of the test.
+     * @return a ready to use DrLineExporter
      */
-    public DRLineExportTest( String name ) {
-        super( name );
-    }
-
-    private DRLineExport getDrLineExporter() {
+    private DRLineExport getDrLineExporter( final boolean debug ) {
 
         DRLineExport drLineExporter = new DRLineExport() {
 
@@ -251,6 +286,9 @@ public class DRLineExportTest extends TestCase {
                 this.identityXrefQualifier = identityCvXrefQualifier;
                 this.uniprotDR_Export = uniprotDrExport;
                 this.authorConfidenceTopic = authorConfidence;
+                this.negativeTopic = negative;
+
+                this.debugEnabled = debug;
             }
         };
 
@@ -267,8 +305,8 @@ public class DRLineExportTest extends TestCase {
 
 
 
-    //////////////////////
-    //   T E S T S
+    //////////////////////////////////////////////////
+    // (Test set 1) Handling of the status of an Experiment
 
     public void testGetExperimentExportStatus_Export() {
 
@@ -278,7 +316,7 @@ public class DRLineExportTest extends TestCase {
         annotation.setAnnotationText( "yes" );
         experiment.addAnnotation( annotation );
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
         DRLineExport.ExperimentStatus status = exporter.getExperimentExportStatus( experiment );
 
         assertNotNull( status );
@@ -298,7 +336,7 @@ public class DRLineExportTest extends TestCase {
         annotation.setAnnotationText( "no" );
         experiment.addAnnotation( annotation );
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
         DRLineExport.ExperimentStatus status = exporter.getExperimentExportStatus( experiment );
 
         assertNotNull( status );
@@ -314,7 +352,7 @@ public class DRLineExportTest extends TestCase {
 
         Experiment experiment = initExperimentA();
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
         DRLineExport.ExperimentStatus status = exporter.getExperimentExportStatus( experiment );
 
         assertNotNull( status );
@@ -341,7 +379,7 @@ public class DRLineExportTest extends TestCase {
         annotation2.setAnnotationText( keyword2 );
         experiment.addAnnotation( annotation2 );
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
         DRLineExport.ExperimentStatus status = exporter.getExperimentExportStatus( experiment );
 
         assertNotNull( status );
@@ -358,9 +396,12 @@ public class DRLineExportTest extends TestCase {
     }
 
 
+    //////////////////////////////////////////////////
+    // (Test set 2) Handling of the status of a CvInteraction
+
     public void testGetCvInteractionExportStatus_Export() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         CvInteraction cvInteraction = initCvInteraction();
 
@@ -379,7 +420,7 @@ public class DRLineExportTest extends TestCase {
 
     public void testGetCvInteractionExportStatus_DoNotExport() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         CvInteraction cvInteraction = initCvInteraction();
 
@@ -398,7 +439,7 @@ public class DRLineExportTest extends TestCase {
 
     public void testGetCvInteractionExportStatus_NotSpecified() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         CvInteraction cvInteraction = initCvInteraction();
 
@@ -413,7 +454,7 @@ public class DRLineExportTest extends TestCase {
 
     public void testGetCvInteractionExportStatus_ConditionalExport() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         CvInteraction cvInteraction = initCvInteraction();
 
@@ -434,7 +475,7 @@ public class DRLineExportTest extends TestCase {
 
     public void testGetCvInteractionExportStatus_JunkValue() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         CvInteraction cvInteraction = initCvInteraction();
 
@@ -453,7 +494,7 @@ public class DRLineExportTest extends TestCase {
 
     public void testGetCvInteractionExportStatus_MultipleValues() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         CvInteraction cvInteraction = initCvInteraction();
 
@@ -475,9 +516,12 @@ public class DRLineExportTest extends TestCase {
     }
 
 
+    //////////////////////////////////////////////////////////////////
+    // (Test set 3) Handling of the retrieval of a Protein Uniprot identity
+
     public void testGetUniprotID() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         String id = exporter.getUniprotID( protein1 );
         assertNotNull( id );
@@ -485,9 +529,37 @@ public class DRLineExportTest extends TestCase {
     }
 
 
+    //////////////////////////////////////////////////////////////////////////////////
+    // (Test set 4) Handling of the detection of a Experiment annotated as negative
+    //     ---------------------------------------------------------------
+    //     I didn't repeat that test for Interaction as this relie on the
+    //     same method call (both are AnnotatedObject)
+
+    public void testIsNegative_true() {
+        DRLineExport exporter = getDrLineExporter( false );
+        Experiment experiment = initExperimentA(); // originally no negative annotation
+        Annotation annotation = new Annotation( institution, negative );
+        experiment.addAnnotation( annotation );
+
+        boolean answer = exporter.isNegative( experiment );
+        assertTrue( answer );
+    }
+
+    public void testIsNegative_false() {
+        DRLineExport exporter = getDrLineExporter( false );
+        Experiment experiment = initExperimentA(); // no negative annotation
+
+        boolean answer = exporter.isNegative( experiment );
+        assertFalse( answer );
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // (Test set 5) Handling of the protein eligibility based on the status of the Experiment
+
     public void testGetProteinEligibleForExport_NothingSpecified() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         Collection proteins = new ArrayList();
         proteins.add( protein1 );
@@ -502,7 +574,7 @@ public class DRLineExportTest extends TestCase {
 
     public void testGetProteinEligibleForExport_ExperimentExportable() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         Experiment experiment = initExperimentA();
 
@@ -526,7 +598,7 @@ public class DRLineExportTest extends TestCase {
 
     public void testGetProteinEligibleForExport_ExperimentNotExportable() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         Experiment experiment = initExperimentA();
 
@@ -545,9 +617,29 @@ public class DRLineExportTest extends TestCase {
         assertEquals( 0, eligibleProteins.size() );
     }
 
+    public void testGetProteinEligibleForExport_ExperimentNegative() {
+
+        DRLineExport exporter = getDrLineExporter( false );
+
+        Experiment experiment = initExperimentA();
+
+        Annotation annotation = new Annotation( institution, negative );
+        experiment.addAnnotation( annotation );
+
+        Collection proteins = new ArrayList();
+        proteins.add( protein1 );
+        proteins.add( protein2 );
+        proteins.add( protein3 );
+
+        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+
+        assertNotNull( eligibleProteins );
+        assertEquals( 0, eligibleProteins.size() );
+    }
+
     public void testGetProteinEligibleForExport_ExperimentLargeScale() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         Experiment experiment = initExperimentA();
 
@@ -582,9 +674,12 @@ public class DRLineExportTest extends TestCase {
     }
 
 
+    /////////////////////////////////////////////////////////////////////////////////////
+    // (Test set 6) Handling of the protein eligibility based on the status of the CvInteraction
+
     public void testGetProteinEligibleForExport_MethodExportable() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         // involve interaction 1a, 2a, 3a and protein 1 2 3.
         Experiment experiment = initExperimentA();
@@ -612,7 +707,7 @@ public class DRLineExportTest extends TestCase {
 
     public void testGetProteinEligibleForExport_MethodDoNotExportable() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         // involve interaction 1a, 2a, 3a and protein 1 2 3.
         Experiment experiment = initExperimentA();
@@ -637,7 +732,7 @@ public class DRLineExportTest extends TestCase {
 
     public void testGetProteinEligibleForExport_MethodConditional_DoNotExport() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         // involve interaction 1a, 2a, 3a and protein 1 2 3.
         Experiment experiment = initExperimentA();
@@ -662,7 +757,7 @@ public class DRLineExportTest extends TestCase {
 
     public void testGetProteinEligibleForExport_MethodConditional_PartialExport() {
 
-        DRLineExport exporter = getDrLineExporter();
+        DRLineExport exporter = getDrLineExporter( false );
 
         // involve interaction 1a, 2a, 3a and protein 1 2 3.
         Experiment experimentA = initExperimentA();
@@ -690,5 +785,120 @@ public class DRLineExportTest extends TestCase {
         assertTrue( eligibleProteins.contains( "PROT-2" ) );
 //        assertTrue( eligibleProteins.contains( "PROT-3" ) );
 //        assertTrue( eligibleProteins.contains( "PROT-4" ) );
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // (Test set 7) Handling of the protein eligibility based on the interaction being annotated negative
+
+    public void testGetProteinEligibleForExport_NegativeInteraction() {
+
+        DRLineExport exporter = getDrLineExporter( false );
+
+        Experiment experiment = initExperimentA();
+
+        // make it exportable
+        Annotation annotation = new Annotation( institution, uniprotDrExport );
+        annotation.setAnnotationText( "yes" );
+        experiment.addAnnotation( annotation );
+
+        Annotation negativeAnnotation = new Annotation( institution, negative );
+        interaction2a.addAnnotation( negativeAnnotation );
+        interaction3a.addAnnotation( negativeAnnotation );
+
+        Collection proteins = new ArrayList();
+        proteins.add( protein1 );
+        proteins.add( protein2 );
+        proteins.add( protein3 );
+
+        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+
+        /**
+         * Explanation of what should happen
+         *
+         * Here is the configuration of the interaction and proteins
+         *
+         *     1a  (P1 P2)
+         *     2a* (P2 P3)
+         *     3a  (P3 P3)
+         *  [OR]
+         *     P1 (I1)
+         *     P2 (I1, I2*)
+         *     P3 (I2*, I3*, I3*)
+         *
+         * We flagged the interaction I2 and I3 (interaction with *)
+         * P1: no problem because not linked to any negative interaction
+         * P2: no problem because has at least one interaction with no negative interaction
+         * P3: not exported because all 3 interaction are negative
+         *
+         * export should contains P1 and P2.
+         */
+
+        assertNotNull( eligibleProteins );
+        assertEquals( 2, eligibleProteins.size() );
+        assertTrue( eligibleProteins.contains( "PROT-1" ) );
+        assertTrue( eligibleProteins.contains( "PROT-2" ) );
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // (Test set 8) Handling of the protein eligibility based on the experiment being annotated negative
+
+    public void testGetProteinEligibleForExport_NegativeExperiment() {
+
+        DRLineExport exporter = getDrLineExporter( false );
+
+        Experiment experimentA = initExperimentA();
+        Experiment experimentB = initExperimentB();
+
+        // make them exportable - even if we are going to flag it as negative ;o) negative is dominant!
+        Annotation annotation = new Annotation( institution, uniprotDrExport );
+        annotation.setAnnotationText( "yes" );
+
+        experimentA.addAnnotation( annotation );
+        experimentB.addAnnotation( annotation );
+
+        Annotation negativeAnnotation = new Annotation( institution, negative );
+        experimentA.addAnnotation( negativeAnnotation );
+
+        Collection proteins = new ArrayList();
+        proteins.add( protein1 );
+        proteins.add( protein2 );
+        proteins.add( protein3 );
+        proteins.add( protein4 );
+
+        Set eligibleProteins = exporter.getProteinEligibleForExport( proteins );
+
+        /**
+         * Explanation of what should happen
+         *
+         * Here is the configuration of the interactions and proteins
+         *
+         *     I1a  (P1 P2)  \
+         *     I2a  (P2 P3)  |> Experiment A *
+         *     I3a  (P3 P3) /
+         *
+         *     I1b (P1 P2)  \_ Experiemnt B
+         *     I2b (P4 P4)  /
+         *  [OR]
+         *     P1  A(I1a)   B(I1b)
+         *     P2  A(I1a, I2a)   B(I1b, I2b)
+         *     P3  A(I2a, I3a, I3a)
+         *     P4  B(I2b, I2b)
+         *
+         * We flagged the experiment A ( * ) which implicitly means that all of its interaction are negative too !
+         * P1: no problem because has at least 1 interaction with no negative interaction (I1b)
+         * P2: no problem because has at least 2 interaction with no negative interaction (I1b, I2b)
+         * P3: not exported because all 3 interaction are negative
+         * P4: no problem because not linked to any negative interaction
+         *
+         * export should contains P1, P2 and P4.
+         */
+
+        assertNotNull( eligibleProteins );
+        assertEquals( 3, eligibleProteins.size() );
+        assertTrue( eligibleProteins.contains( "PROT-1" ) );
+        assertTrue( eligibleProteins.contains( "PROT-2" ) );
+        assertTrue( eligibleProteins.contains( "PROT-4" ) );
     }
 }
