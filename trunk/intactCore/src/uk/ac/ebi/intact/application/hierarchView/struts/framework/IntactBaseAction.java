@@ -490,7 +490,7 @@ public abstract class IntactBaseAction extends Action {
                         // if the current element is an instance of BasicGraphI
                         // the mine database table is used to create the new
                         // network
-                        if ( interactor instanceof BasicGraphI ) {
+                        if ( GraphHelper.BUILT_WITH_MINE_TABLE ) {
                             try {
                                 in = gh.addInteractionNetwork( in,
                                         (BasicGraphI) interactor, depth );
