@@ -264,12 +264,14 @@ public abstract class IntactBaseAction extends Action {
         catch (DataSourceException de) {
             // Unable to get a data source...can't proceed
             logger.error (de.getMessage(), de);
-            addError ("error.datasource.notCreated");
+            String applicationPath = aRequest.getContextPath();
+            addError ("error.datasource.notCreated", applicationPath);
             return null;
         }
         catch (IntactException ie) {
             logger.error ("Could not initialize user's settings", ie);
-            addError ("error.datasource.notCreated");
+            String applicationPath = aRequest.getContextPath();
+            addError ("error.datasource.notCreated", applicationPath);
             return null;
         }
 
