@@ -69,6 +69,11 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      */
     private static final int theirMultipleEntries = 1;
 
+    /**
+     * A single element array to be used by toArray() method.
+     */
+    private static final ResultBean[] RESULT_BEAN_ARRAY = new ResultBean[0];
+
     // End of static data
 
     /**
@@ -114,7 +119,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     /**
      * Holds the last search results. No need to save search results.
      */
-    private transient Collection mySearchResults = new ArrayList();
+    private transient Collection mySearchCache = new ArrayList();
 
     /**
      * Stores the last query result.
@@ -341,22 +346,26 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         return myLastQueryClass;
     }
 
-    public void cacheSearchResult(Collection results) {
+    public void addToSearchCache(Collection results) {
         // Clear previous results.
-        mySearchResults.clear();
+        mySearchCache.clear();
 
         // Wrap as ResultsBeans for tag library to display.
         for (Iterator iter = results.iterator(); iter.hasNext();) {
-            mySearchResults.add(new ResultBean((CvObject) iter.next()));
+            mySearchCache.add(new ResultBean((CvObject) iter.next()));
         }
     }
 
-    public ArrayList getCacheSearchResult() {
-        return (ArrayList) mySearchResults;
+    public void addToSearchCache(CvObject cvobj) {
+        mySearchCache.add(new ResultBean(cvobj));
+    }
+
+    public ResultBean[] getSearchCache() {
+        return (ResultBean[]) mySearchCache.toArray(RESULT_BEAN_ARRAY);
     }
 
     public void removeFromSearchCache(String ac) {
-        CollectionUtils.filter(mySearchResults, ResultBean.getPredicate(ac));
+        CollectionUtils.filter(mySearchCache, ResultBean.getPredicate(ac));
     }
 
     public void logoff() throws IntactException {
