@@ -13,6 +13,8 @@ import uk.ac.ebi.intact.application.search2.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search2.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.proxy.ProteinProxy;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,25 +38,23 @@ public class DispatcherAction extends IntactBaseAction {
      * control should be forwarded, or null if the response has
      * already been completed.
      *
-     * @param mapping - The <code>ActionMapping</code> used to select this instance
-     * @param form - The optional <code>ActionForm</code> bean for this request (if any)
-     * @param request - The HTTP request we are processing
+     * @param mapping  - The <code>ActionMapping</code> used to select this instance
+     * @param form     - The optional <code>ActionForm</code> bean for this request (if any)
+     * @param request  - The HTTP request we are processing
      * @param response - The HTTP response we are creating
-     *
      * @return - represents a destination to which the controller servlet,
-     * <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
-     * or HttpServletResponse.sendRedirect() to, as a result of processing
-     * activities of an <code>Action</code> class
+     *         <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
+     *         or HttpServletResponse.sendRedirect() to, as a result of processing
+     *         activities of an <code>Action</code> class
      */
-    public ActionForward execute(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response) throws  Exception {
-
+    public ActionForward execute( ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response ) throws Exception {
 
         //get the search results from the request
-        Collection results = (Collection)request.getAttribute(SearchConstants.SEARCH_RESULTS);
+        Collection results = (Collection) request.getAttribute( SearchConstants.SEARCH_RESULTS );
 
-        logger.info("dispatcher action: analysing user's query...");
+        logger.info( "dispatcher action: analysing user's query..." );
 
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser( getSession( request ) );
@@ -62,7 +62,6 @@ public class DispatcherAction extends IntactBaseAction {
             //browser page caching screwed up the session - need to
             //get a user object created again by forwarding to welcome action...
             return mapping.findForward( SearchConstants.FORWARD_SESSION_LOST );
-
         }
 
         // The first element of the search result.
@@ -70,14 +69,14 @@ public class DispatcherAction extends IntactBaseAction {
 
         // dispatch to the right action accordingly
         logger.info( "First item className: " + resultItem.getClass().getName() );
-        if ( resultItem.getClass().isAssignableFrom( ProteinProxy.class ) ||
-             resultItem.getClass().isAssignableFrom( Protein.class ) ) {
+        if( resultItem.getClass().isAssignableFrom( ProteinProxy.class ) ||
+            resultItem.getClass().isAssignableFrom( Protein.class ) ) {
 
-            if ((results.size() == 1)) {
+            if( ( results.size() == 1 ) ) {
                 String searchClass = user.getSearchClass();
-                logger.info( "SearchClass: "+ searchClass );
+                logger.info( "SearchClass: " + searchClass );
 
-                if ( searchClass.equals( "Protein" ) || searchClass.equals( "ProteinImpl" ) ) {
+                if( searchClass.equals( "Protein" ) || searchClass.equals( "ProteinImpl" ) ) {
                     logger.info( "Dispatcher ask forward to SingleResultAction" );
                     return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
                 }
@@ -90,9 +89,9 @@ public class DispatcherAction extends IntactBaseAction {
             return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
         }
 
-        if ((results.size() == 1) & (Protein.class.isAssignableFrom(resultItem.getClass()))) {
-            //only use the single view for Proteins - Interactions still need
-            //to be displayed in the context of an Experiment
+        if( ( results.size() == 1 ) & ( ! Interaction.class.isAssignableFrom( resultItem.getClass() ) ) ) {
+            //only use the single view for Proteins, Experiment and Controlled vocabulary - Interactions
+            // still need to be displayed in the context of an Experiment
             logger.info( "Dispatcher ask forward to SingleResultAction" );
             return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
         }
