@@ -134,6 +134,8 @@
 
             <!-- BioSource specific information -->
             <form-property name="taxId" type="java.lang.String"/>
+            <form-property name="cellType" type="java.lang.String"/>
+            <form-property name="tissue" type="java.lang.String"/>
 
             <!-- For annotations -->
             <form-property name="annotations"

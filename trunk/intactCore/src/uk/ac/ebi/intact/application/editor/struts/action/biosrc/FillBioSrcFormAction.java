@@ -44,10 +44,14 @@ public class FillBioSrcFormAction extends FillCvFormAction {
         // short label. Reset the previous values.
         if (view.getShortLabel() == null) {
             dynaForm.set("taxId", null);
+            dynaForm.set("tissue", null);
+            dynaForm.set("cellType", null);
         }
         else {
             // Preserver existing values for editing.
             dynaForm.set("taxId", view.getTaxId());
+            dynaForm.set("tissue", view.getTissue());
+            dynaForm.set("cellType", view.getCellType());
         }
         return mapping.findForward(SUCCESS);
     }

@@ -78,6 +78,16 @@ public class EditorMenuFactory {
     public static final String ROLES = "Roles";
 
     /**
+     * The name for the CV cell list.
+     */
+    public static final String CELLS = "Cells";
+
+    /**
+     * The name for the Tissues.
+     */
+    public static final String TISSUES = "Tissues";
+
+    /**
      * Maps: Menu Name -> Menu type. Common to all the users and it is immutable.
      */
     private static final Map theirNameToType = new HashMap();
@@ -125,6 +135,9 @@ public class EditorMenuFactory {
         theirNameToType.put(DAG_PREFIX + INTERACTION_TYPES, CvInteractionType.class);
         theirNameToType.put(EXPERIMENTS, Experiment.class);
         theirNameToType.put(ROLES, CvComponentRole.class);
+        theirNameToType.put(CELLS, CvCellType.class);
+        theirNameToType.put(TISSUES, CvTissue.class);
+
 
         // Fills with default values.
         theirNameToDefValue.put(QUALIFIERS, "identity");
