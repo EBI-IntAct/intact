@@ -21,7 +21,7 @@
 CREATE TABLE Institution
 (
 	shortLabel		VARCHAR(20)	NOT NULL,
-	fullName		VARCHAR(50),
+	fullName		VARCHAR(250),
 	postalAddress		VARCHAR(2000),	
 	url			VARCHAR(255),
 	ac			VARCHAR(30)	NOT NULL 
@@ -64,7 +64,7 @@ CREATE TABLE ControlledVocab
 (
 	objClass		VARCHAR(255)	,
 	shortLabel		VARCHAR(20)	NOT NULL,
-	fullName		VARCHAR(70),
+	fullName		VARCHAR(250),
 	owner_ac		VARCHAR(30)   	NOT NULL 
 						CONSTRAINT fk_ControlledVocab_owner 
 						REFERENCES Institution(ac),
@@ -105,7 +105,7 @@ COMMENT on COLUMN ControlledVocab.userstamp IS
 CREATE TABLE BioSource
 (
 	shortLabel		VARCHAR(20)	NOT NULL,
-	fullName		VARCHAR(70),
+	fullName		VARCHAR(250),
         taxId			VARCHAR(30)	NOT NULL
 						CONSTRAINT uq_BioSource_taxId 
 						UNIQUE   ,
@@ -210,7 +210,7 @@ CREATE TABLE Interactor
 						REFERENCES ControlledVocab(ac),
 	/* Colums belonging to AnnotatedObject */
 	shortLabel		VARCHAR(20)	NOT NULL,
-	fullName		VARCHAR(50),
+	fullName		VARCHAR(250),
 	/* Colums belonging to BasicObject */	
 	ac			VARCHAR(30)	NOT NULL 
 						CONSTRAINT pk_Interactor 
@@ -377,7 +377,7 @@ CREATE TABLE Experiment
 	relatedExperiment_ac  	VARCHAR(30)     CONSTRAINT fk_Experiment_relatedExp
 						REFERENCES Experiment(ac),
 	shortLabel		VARCHAR(20)	NOT NULL,
-	fullName		VARCHAR(50),
+	fullName		VARCHAR(250),
 	ac			VARCHAR(30)	NOT NULL 
 						CONSTRAINT pk_Experiment 
 						PRIMARY KEY   ,

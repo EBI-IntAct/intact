@@ -28,7 +28,7 @@ CREATE TABLE Institution
     owner_ac		VARCHAR2(30)
 						CONSTRAINT fk_Institution$owner
 						REFERENCES Institution(ac),
-	fullName		VARCHAR2(50),
+	fullName		VARCHAR2(250),
 	postalAddress		VARCHAR2(2000),
 	url			VARCHAR2(255),
 	ac			VARCHAR2(30)	NOT NULL
@@ -74,7 +74,7 @@ CREATE TABLE ControlledVocab
 (
 	objClass		VARCHAR2(255)	,
 	shortLabel		VARCHAR2(20),
-	fullName		VARCHAR2(70),
+	fullName		VARCHAR2(250),
 	owner_ac		VARCHAR2(30)
 						CONSTRAINT fk_ControlledVocab$owner
 						REFERENCES Institution(ac),
@@ -122,7 +122,7 @@ PROMPT ... BioSource
 CREATE TABLE BioSource
 (
 	shortLabel		VARCHAR2(20),
-	fullName		VARCHAR2(70),
+	fullName		VARCHAR2(250),
         taxId			VARCHAR(30)
 						CONSTRAINT uq_BioSource$taxId
 						UNIQUE USING INDEX,
@@ -236,7 +236,7 @@ CREATE TABLE Interactor
 						REFERENCES ControlledVocab(ac),
 	/* Colums belonging to AnnotatedObject */
 	shortLabel		VARCHAR2(20),
-	fullName		VARCHAR2(50),
+	fullName		VARCHAR2(250),
 	/* Colums belonging to BasicObject */
 	ac			VARCHAR2(30)	NOT NULL
 						CONSTRAINT pk_Interactor
@@ -414,7 +414,7 @@ CREATE TABLE Experiment
 	relatedExperiment_ac    VARCHAR2(30)    CONSTRAINT fk_Experiment$relatedExp
 						REFERENCES Experiment(ac),
 	shortLabel		VARCHAR2(20),
-	fullName		VARCHAR2(50),
+	fullName		VARCHAR2(250),
 	ac			VARCHAR2(30)	NOT NULL
 						CONSTRAINT pk_Experiment
 						PRIMARY KEY USING INDEX,
