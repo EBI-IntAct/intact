@@ -5,8 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
-
 /**
  * An alternative name for the object.
  *
@@ -17,14 +15,10 @@ public class Alias extends BasicObject {
     ///////////////////////////////////////
     //attributes
 
-    // Attributes used for mapping BasicObjects
-    public String CvAliasTypeAc;
-
-
     /**
      * Alternative name for the object.
      */
-    protected String name;
+    private String name;
 
     ///////////////////////////////////////
     // associations
@@ -32,12 +26,41 @@ public class Alias extends BasicObject {
     /**
      *
      */
-    public CvAliasType cvAliasType;
-    /**
-     * The reference object(s) this alias refers to.
-     */
-    public Collection referenceObject = new Vector();
+    private CvAliasType cvAliasType;
+    public String cvAliasTypeAc; // only needed for the OJB mapping.
 
+    /**
+     * Accession id to the Object to which refers that alias.
+     */
+    private String parentAc;
+
+    // MUST be declared to allow OJB to create instances of the object
+    public Alias() {
+        super();
+    }
+
+    /**
+     * Create a new Alias for the given Annotated object
+     *
+     * @param annotatedObject the object to which we'll add a new Alias
+     * @param cvAliasType the CvAliasType
+     * @param name the name of the alias
+     *
+     * @see uk.ac.ebi.intact.model.CvAliasType
+     * @see uk.ac.ebi.intact.model.AnnotatedObject
+     */
+    public Alias ( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
+        this();
+        setOwner(anOwner);
+        String ac = annotatedObject.getAc();
+        if ( ac == null ){
+            throw new IllegalArgumentException( "The given Annotated object doesn't have an AC." );
+        }
+
+        this.parentAc = annotatedObject.getAc();
+        this.cvAliasType = cvAliasType;
+        this.name = name;
+    }
 
     ///////////////////////////////////////
     //access methods for attributes
@@ -47,6 +70,14 @@ public class Alias extends BasicObject {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getParentAc() {
+        return parentAc;
+    }
+
+    public void setParentAc( String parentAc ) {
+        this.parentAc = parentAc;
     }
 
     ///////////////////////////////////////
@@ -59,14 +90,25 @@ public class Alias extends BasicObject {
     public void setCvAliasType(CvAliasType cvAliasType) {
         this.cvAliasType = cvAliasType;
     }
-    public Collection getReferenceObject() {
-        return referenceObject;
+
+    public boolean equals ( Object o ) {
+        if ( this == o ) return true;
+        if ( !(o instanceof Alias) ) return false;
+        if ( !super.equals ( o ) ) return false;
+
+        final Alias alias = (Alias) o;
+
+        if ( !cvAliasType.equals ( alias.cvAliasType ) ) return false;
+        if ( !name.equals ( alias.name ) ) return false;
+
+        return true;
     }
-    public void addReferenceObject(AnnotatedObject annotatedObject) {
-        if (! this.referenceObject.contains(annotatedObject)) this.referenceObject.add(annotatedObject);
-    }
-    public void removeReferenceObject(AnnotatedObject annotatedObject) {
-        this.referenceObject.remove(annotatedObject);
+
+    public int hashCode () {
+        int result = super.hashCode ();
+        result = 29 * result + name.hashCode ();
+        result = 29 * result + cvAliasType.hashCode ();
+        return result;
     }
 
 } // end Alias
