@@ -695,7 +695,7 @@
     </field>-->
 
     <field name="shortLabel" type="string">
-       <xml node="attribute"/>
+       <xml name="shortLabel" node="attribute"/>
     </field>
 
     <field name="fullName" type="string">
@@ -767,7 +767,7 @@
     </field>-->
 
     <field name="shortLabel" type="string">
-       <xml node="attribute"/>
+       <xml name="shortLabel" node="attribute"/>
     </field>
 
     <field name="fullName" type="string">
@@ -838,7 +838,7 @@
     </field>-->
 
     <field name="shortLabel" type="string">
-       <xml node="attribute"/>
+       <xml name="shortLabel" node="attribute"/>
     </field>
 
     <field name="fullName" type="string">
@@ -909,7 +909,7 @@
     </field>-->
 
     <field name="shortLabel" type="string">
-       <xml node="attribute"/>
+       <xml name="shortLabel" node="attribute"/>
     </field>
 
     <field name="fullName" type="string">
@@ -979,7 +979,7 @@
     </field> -->
 
     <field name="shortLabel" type="string">
-       <xml node="attribute"/>
+       <xml name="shortLabel" node="attribute"/>
     </field>
 
     <field name="fullName" type="string">
@@ -1049,7 +1049,7 @@
     </field> -->
 
     <field name="shortLabel" type="string">
-       <xml node="attribute"/>
+       <xml name="shortLabel" node="attribute"/>
     </field>
 
     <field name="fullName" type="string">
