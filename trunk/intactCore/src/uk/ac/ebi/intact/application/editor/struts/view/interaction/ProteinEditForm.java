@@ -48,6 +48,8 @@ public class ProteinEditForm extends EditForm {
         // Must select from the drop down list.
         if (pb.getRole().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors.add("protein.role", new ActionError("error.dropdown.list"));
+            // This is an error protein.
+            pb.setEditState(ProteinBean.ERROR);
         }
         return errors;
     }
