@@ -61,7 +61,7 @@ public class RangeBeanTest extends TestCase {
     public void testConstructor1() {
         EditUserI user = null;
         try {
-            user = new EditUser("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
+            user = new EditUser();
             doTestConstructor1(user);
         }
         catch (Exception ex) {
@@ -429,7 +429,7 @@ public class RangeBeanTest extends TestCase {
     public void testGetRange() {
         EditUserI user = null;
         try {
-            user = new EditUser("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
+            user = new EditUser();
             doTestGetRange(user);
         }
         catch (Exception ex) {

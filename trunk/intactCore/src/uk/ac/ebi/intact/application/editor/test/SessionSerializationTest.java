@@ -18,8 +18,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.DAOFactory;
-import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 
 import java.util.Collection;
@@ -33,12 +31,6 @@ import java.util.Collection;
 public class SessionSerializationTest extends TestCase  {
 
     /**
-     * The DAOSource class name.
-     */
-    private static String ourDAOSourceClass =
-            "uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource";
-
-    /**
      * The handler to the Intact helper
      */
     private IntactHelper myHelper;
@@ -47,9 +39,8 @@ public class SessionSerializationTest extends TestCase  {
         super(name);
     }
 
-    public void setUp() throws DataSourceException, IntactException {
-        DAOSource ds = DAOFactory.getDAOSource(ourDAOSourceClass);
-        myHelper = new IntactHelper(ds);
+    public void setUp() throws IntactException {
+        myHelper = new IntactHelper();
     }
 
     public void tearDown() {
@@ -73,7 +64,7 @@ public class SessionSerializationTest extends TestCase  {
     public void atestExperiment1() throws DataSourceException {
         try {
             // Create the user we want to serialize.
-            EditUserI preUser = new EditUser(ourDAOSourceClass);
+            EditUserI preUser = new EditUser();
 
             // The experiment we are dealing at the moment.
             Experiment exp = (Experiment) myHelper.getObjectByLabel(
@@ -122,7 +113,7 @@ public class SessionSerializationTest extends TestCase  {
     public void atestExperiment2() throws DataSourceException {
         try {
             // Create the user we want to serialize.
-            EditUserI preUser = new EditUser(ourDAOSourceClass);
+            EditUserI preUser = new EditUser();
 
             // The experiment we are dealing at the moment.
             Experiment exp = (Experiment) myHelper.getObjectByLabel(
@@ -210,7 +201,7 @@ public class SessionSerializationTest extends TestCase  {
     public void testExperiment3() throws DataSourceException {
         try {
             // Create the user we want to serialize.
-            EditUserI preUser = new EditUser(ourDAOSourceClass);
+            EditUserI preUser = new EditUser();
 
             // The experiment we are dealing at the moment.
             Experiment exp = (Experiment) myHelper.getObjectByLabel(
@@ -300,7 +291,7 @@ public class SessionSerializationTest extends TestCase  {
     public void testExperiment4() throws DataSourceException {
         try {
             // Create the user we want to serialize.
-            EditUserI preUser = new EditUser(ourDAOSourceClass);
+            EditUserI preUser = new EditUser();
 
             // The experiment we are dealing at the moment.
             Experiment exp = (Experiment) myHelper.getObjectByLabel(
@@ -408,7 +399,7 @@ public class SessionSerializationTest extends TestCase  {
     public void testUser1() throws DataSourceException {
         try {
             // Create the user we want to serialize.
-            EditUserI preUser = new EditUser(ourDAOSourceClass);
+            EditUserI preUser = new EditUser();
 
             // Serialize it.
             byte[] bytes0 = SerializationUtils.serialize(preUser);
