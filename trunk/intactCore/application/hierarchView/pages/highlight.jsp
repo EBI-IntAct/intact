@@ -1,5 +1,14 @@
 <%@ page language="java" %>
 
+<!--
+   - Copyright (c) 2002 The European Bioinformatics Institute, and others.
+   - All rights reserved. Please see the file LICENSE
+   - in the root directory of this distribution.
+   -
+   - @author Samuel Kerrien (skerrien@ebi.ac.uk)
+   - @version $Id$
+-->
+
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
 
@@ -25,7 +34,7 @@
 
       <tr>
              <td valign="top">
-                   <!-- Prepare available highlightment source for the selected protein in the session -->
+                   <%-- Prepare available highlightment source for the selected protein in the session --%>
                    <hierarchView:displaySource/>
 
                    <!-- Displays the available highlightment source -->
@@ -56,12 +65,20 @@
                    <!-- Displays Http content if URL updated in the session -->
                    <%
                         if (user.hasSourceUrlToDisplay()) {
+                            String urlStr = user.getSourceURL();
                    %>
                             <hr>
-                            <hierarchView:displayHttpContent/>
+
+                            <IFRAME SRC="<%= urlStr %>" WIDTH="430" HEIGHT="460">
+                                If you can see this, your browser doesn't
+                                understand IFRAME.  However, you will find
+                                below the wanted content.
+                                <hierarchView:displayHttpContent/>
+                            </IFRAME>
                    <%
                         }
                    %>
+
              </td>
       </tr>
 

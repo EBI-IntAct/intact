@@ -1,20 +1,25 @@
 <%@ page language="java" %>
 
+<!--
+   - Copyright (c) 2002 The European Bioinformatics Institute, and others.
+   - All rights reserved. Please see the file LICENSE
+   - in the root directory of this distribution.
+   -
+   - This layout displays graph management components for hierarchView.
+   - According to the current state of the displayed graph : its depth,
+   - we display button in order to get expanded or contracted.
+   - We show only available options (e.g. if the depth can be desacrease
+   - we don't show the contract button).
+   -
+   - @author Samuel Kerrien (skerrien@ebi.ac.uk)
+   - @version $Id$
+-->
+
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-
-<%--
-    This layout displays graph management components for hierarchView.
-    According to the current state of the displayed graph : its depth,
-    we display button in order to get expanded or contracted.
-    We show only available options (e.g. if the depth can be desacrease
-    we don't show the contract button).
-
-    Author: Samuel Kerrien (skerrien@ebi.ac.uk)
---%>
 
 <%
     /**
