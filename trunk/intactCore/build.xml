@@ -54,9 +54,9 @@
             <include name="*.jar"/>
         </fileset>
 
-        <!-- cvedit specific jar files. -->
-        <pathelement location="${app.dir}/cvedit/WEB-INF/classes"/>
-        <fileset dir="${app.dir}/cvedit/WEB-INF/lib">
+        <!-- editor specific jar files. -->
+        <pathelement location="${app.dir}/editor/WEB-INF/classes"/>
+        <fileset dir="${app.dir}/editor/WEB-INF/lib">
             <include name="*.jar"/>
         </fileset>
 
@@ -120,17 +120,18 @@
         <!-- Delete the existing jar file. -->
         <delete file="${dist.dir}/${intact.core.jar}" quiet="true"/>
 
-        <antcall target="clean-cvedit"/>
+        <antcall target="clean-editor"/>
         <antcall target="clean-search"/>
         <antcall target="clean-hv"/>
+        <antcall target="clean-intact"/>
     </target>
 
     <!-- =================================================================== -->
 
-    <!-- Remove 'dest' and docs directories of cvedit module for clean build -->
-    <target name="clean-cvedit"
-        description="Prepare cvedit module for a clean build">
-        <ant dir="${app.dir}/cvedit" inheritAll="false" target="clean" />
+    <!-- Remove 'dest' and docs directories of editor module for clean build -->
+    <target name="clean-editor"
+        description="Prepare editor module for a clean build">
+        <ant dir="${app.dir}/editor" inheritAll="false" target="clean" />
     </target>
 
     <!-- =================================================================== -->
@@ -149,6 +150,14 @@
     <target name="clean-hv"
         description="Prepare hierarchView module for a clean build">
         <ant dir="${app.dir}/hierarchView" inheritAll="false" target="clean" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories of intact module for clean build -->
+    <target name="clean-intact"
+        description="Prepare intact module for a clean build">
+        <ant dir="${app.dir}/intact" inheritAll="false" target="clean" />
     </target>
 
     <!-- =================================================================== -->
@@ -336,7 +345,7 @@
 
     <!-- =================================================================== -->
 
-    <!-- Compiles the cvedit module. -->
+    <!-- Compiles the editor module. -->
     <target name="compile-editor" depends="compile-core"
         description="Compiles the editor module">
 
