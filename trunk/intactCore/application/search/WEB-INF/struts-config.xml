@@ -29,8 +29,9 @@
         <form-bean name="searchForm"
                    type="uk.ac.ebi.intact.application.search.struts.view.SearchForm"/>
 
-        <!-- Dummy form bean -->
-        <form-bean name="dummyForm" type="org.apache.struts.action.DynaActionForm"/>
+        <!-- Search form bean -->
+        <form-bean name="viewForm"
+                   type="uk.ac.ebi.intact.application.search.struts.view.ViewForm"/>
 
     </form-beans>
 
@@ -75,10 +76,11 @@
         <!-- Process a user selects from a search result. -->
         <action path="/view"
                 type="uk.ac.ebi.intact.application.search.struts.controller.ViewAction"
-                name="dummyForm"
+                name="viewForm"
                 scope="request"
                 input="/results.jsp">
             <forward name="results" path="/results.jsp"/>
+<!--            <forward name="hv" path="/hv.jsp"/>-->
         </action>
 
     <!-- The standard administrative actions available with Struts -->
