@@ -388,12 +388,12 @@ public abstract class AbstractEditViewBean {
     }
 
     /**
-     * Returns the edit menu for annotations.
-     * @return the edit menu for annotations
+     * Returns the topic menu for editing an existing annotation.
+     * @return the topic menu for annotations
      * @throws SearchException thrown for failures with database access.
      */
-    public List getEditAnnotationMenus() throws SearchException {
-        return getAnnotationMenus(0);
+    public List getEditTopicMenu() throws SearchException {
+        return getTopicMenu(0);
     }
 
     /**
@@ -401,8 +401,8 @@ public abstract class AbstractEditViewBean {
      * @return the add menu for annotations
      * @throws SearchException thrown for failures with database access.
      */
-    public List getAddAnnotationMenus() throws SearchException {
-        return getAnnotationMenus(1);
+    public List getAddTopicMenu() throws SearchException {
+        return getTopicMenu(1);
     }
 
     /**
@@ -662,7 +662,7 @@ public abstract class AbstractEditViewBean {
         return xref;
     }
 
-    private List getAnnotationMenus(int mode) throws SearchException {
+    private List getTopicMenu(int mode) throws SearchException {
         return getMenu(EditorMenuFactory.TOPICS,
                 myAnnotObject.getShortLabel(), mode);
     }
@@ -697,7 +697,8 @@ public abstract class AbstractEditViewBean {
             throws SearchException {
         List list;
         if (myMenuFactory.isMenuType(myAnnotObject.getClass())) {
-            // Remove my short label to avoid circular reference.
+            // Remove my short label to avoid circular reference. We create a
+            // new list so the remove method wouldn't affect the original list.
             list = new ArrayList(myMenuFactory.getMenu(name, mode));
             list.remove(label);
         }
