@@ -1035,6 +1035,31 @@ public class IntactHelper implements SearchI, Serializable {
         return result;
     }
 
+    /** Return an Object by classname and ac.
+     *
+     */
+    public Object getObjectByAc(Class clazz,
+                                String ac) throws IntactException {
+
+        Object result = null;
+
+        Collection resultList = null;
+
+        resultList = this.search(clazz.getName(), "ac", ac);
+
+        if (resultList.isEmpty()) {
+            result = null;
+        } else {
+            Iterator i = resultList.iterator();
+            result = i.next();
+            if (i.hasNext()) {
+                IntactException ie = new DuplicateLabelException();
+                throw(ie);
+            }
+        }
+
+        return result;
+    }
     /**
      *  This method retrieves an intact object, given a class and the object's full
      * name (provided that name is unique).
