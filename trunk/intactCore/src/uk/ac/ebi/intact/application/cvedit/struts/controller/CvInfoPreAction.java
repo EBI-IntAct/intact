@@ -57,8 +57,6 @@ public class CvInfoPreAction extends CvAbstractAction {
 
         // Fill the form to edit short label and full name.
         DynaBean dynaForm = this.getCvInfoForm(request, session);
-        super.log("Short Label: " + viewbean.getShortLabel());
-        super.log("Full Name: " + viewbean.getFullName());
         dynaForm.set("ac", viewbean.getAc());
         dynaForm.set("shortLabel", viewbean.getShortLabel());
         dynaForm.set("fullName", viewbean.getFullName());
