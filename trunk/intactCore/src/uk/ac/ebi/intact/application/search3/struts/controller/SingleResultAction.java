@@ -32,8 +32,8 @@ public class SingleResultAction extends AbstractResultAction {
     ///////////////////////////////////
 
 
-
-    /**
+   
+     /**
      * @see AbstractResultAction#getAbstractViewBean
      * @param result
      * @param user
