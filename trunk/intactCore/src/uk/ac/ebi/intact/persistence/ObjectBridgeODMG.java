@@ -94,6 +94,7 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
         if ((tx == null) || (!tx.isOpen())) {
             throw new TransactionNotInProgressException();
         }
+        tx.join();
         tx.lock(obj, Transaction.WRITE);
     }
 
@@ -104,6 +105,8 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
      */
     public void close() throws DataSourceException {
         super.close();
+//        System.out.println("In the ODMG DAO close");
+
         //clean up the ODMG stuff too
         try {
             db.close();
@@ -151,7 +154,9 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
         //should join the TX just in case the thread has changed since
         //the client begin() was called...
         ourLogger.debug("Doing a object transaction");
-        tx.lock(obj, Transaction.WRITE);
+        lock(obj);
+//        tx.join();
+//        tx.lock(obj, Transaction.WRITE);
 
         // Commit only for a local transaction.
         if (localTransaction) {
@@ -357,6 +362,7 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
             localTransaction = true;
             begin(1);
         }
+        tx.join();
         db.deletePersistent(obj);
 
         // Comit only for a local transaction.
@@ -377,6 +383,7 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
      * @throws TransactionException - thrown if  the transaction couldn't be rolled back
      */
     public void rollback() throws TransactionException {
+        tx.join();
         tx.abort();
     }
 

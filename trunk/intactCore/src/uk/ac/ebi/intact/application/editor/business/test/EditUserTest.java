@@ -10,7 +10,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.Interaction;
 
@@ -127,49 +126,33 @@ public class EditUserTest extends TestCase {
     }
 
     public void testGetNextAvailableShortLabel() {
-        EditUser user = null;
-        try {
-            user = new EditUser();
+        EditUser user = new EditUser();
+        // ga doesn't exist.
+        assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ga"),
+                "ga");
 
-            // ga doesn't exist.
-            assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ga"),
-                    "ga");
+        // cloning ga interaction.
+        assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ga-x"),
+                "ga-376");
 
-            // cloning ga interaction.
-            assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ga-x"),
-                    "ga-376");
+        // ho-1 exists
+        assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ho-1"),
+                "ho-2");
 
-            // ho-1 exists
-            assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ho-1"),
-                    "ho-2");
+        // ho doesn't exist
+        assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ho"),
+                "ho");
 
-            // ho doesn't exist
-            assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ho"),
-                    "ho");
+        // cloning ga-2 interaction. ga-3 exists, so it goes for the largest number.
+        assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ga-2-x"),
+                "ga-376");
 
-            // cloning ga-2 interaction. ga-3 exists, so it goes for the largest number.
-            assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ga-2-x"),
-                    "ga-376");
+        // cloning ga-2 interaction. ga-7 doesn't exist.
+        assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ga-6-x"),
+                "ga-7");
 
-            // cloning ga-2 interaction. ga-7 doesn't exist.
-            assertEquals(user.getNextAvailableShortLabel(Interaction.class, "ga-6-x"),
-                    "ga-7");
-
-            // go exists.
-            assertEquals(user.getNextAvailableShortLabel(CvDatabase.class, "go"),
-                    "go-1");
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-            fail(ex.getMessage());
-        }
-        finally {
-            if (user != null) {
-                try {
-                    user.logoff();
-                }
-                catch (IntactException e) {}
-            }
-        }
+        // go exists.
+        assertEquals(user.getNextAvailableShortLabel(CvDatabase.class, "go"),
+                "go-1");
     }
 }
