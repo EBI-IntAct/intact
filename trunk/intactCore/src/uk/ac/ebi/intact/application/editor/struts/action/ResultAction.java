@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import org.apache.struts.action.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,11 +66,11 @@ public class ResultAction extends AbstractEditorAction {
         try {
             // Needs the class object for the topic.
             Class clazz = Class.forName(className);
-            super.log("Label: " + shortLabel + " class: " + clazz.getName());
+            LOGGER.info("Label: " + shortLabel + " class: " + clazz.getName());
             annobj = (AnnotatedObject) user.getObjectByLabel(clazz, shortLabel);
         }
         catch (ClassNotFoundException cnfe) {
-            super.log(ExceptionUtils.getStackTrace(cnfe));
+            LOGGER.info(cnfe);
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,
@@ -80,7 +79,7 @@ public class ResultAction extends AbstractEditorAction {
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
         catch (DuplicateLabelException dle) {
-            super.log(ExceptionUtils.getStackTrace(dle));
+            LOGGER.info(dle);
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,
@@ -91,8 +90,8 @@ public class ResultAction extends AbstractEditorAction {
         // The object we are editing presently.
         user.updateView(annobj);
 
-        super.log("Numner of annotations: " + annobj.getAnnotation().size());
-        super.log("Number of xrefs: " + annobj.getXref().size());
+        LOGGER.info("Numner of annotations: " + annobj.getAnnotation().size());
+        LOGGER.info("Number of xrefs: " + annobj.getXref().size());
 
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
     }

@@ -87,7 +87,7 @@ public class LoginAction extends AbstractEditorAction {
         }
         // Create a new session.
         session = request.getSession(true);
-        super.log("Created a new session");
+        LOGGER.info("Created a new session");
         // Need to access the user later.
         session.setAttribute(EditorConstants.INTACT_USER, user);
 

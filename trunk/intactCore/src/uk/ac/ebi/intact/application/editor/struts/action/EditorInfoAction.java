@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.persistence.SearchException;
 import org.apache.struts.action.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,7 +62,7 @@ public class EditorInfoAction extends AbstractEditorAction {
             newlabel = user.getUniqueShortLabel(formlabel);
         }
         catch (SearchException se) {
-            super.log(ExceptionUtils.getStackTrace(se));
+            LOGGER.info(se);
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,

@@ -11,6 +11,7 @@ import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.config.FormBeanConfig;
 import org.apache.struts.Globals;
 import org.apache.commons.beanutils.DynaBean;
+import org.apache.log4j.Logger;
 
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
@@ -30,6 +31,11 @@ public abstract class AbstractEditorAction extends Action {
 
     /** The global Intact error key. */
     public static final String EDITOR_ERROR = "EditError";
+
+    /**
+     * The logger for Editor. Allow access from the subclasses.
+     */
+    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
 
     /**
      * Returns the only instance of Intact Service instance.
@@ -84,15 +90,6 @@ public abstract class AbstractEditorAction extends Action {
             throw new SessionExpiredException();
         }
         return user;
-    }
-
-    /**
-     * Convenience method that logs for agiven message.
-     * @param message string that describes the error or exception
-     */
-    protected void log(String message) {
-        if (super.servlet.getDebug() >= 1)
-            super.servlet.log(message);
     }
 
     /**
