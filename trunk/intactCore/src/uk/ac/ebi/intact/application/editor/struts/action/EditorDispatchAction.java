@@ -18,8 +18,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.exception.ValidationException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 
@@ -72,21 +70,12 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
         AbstractEditViewBean view = user.getView();
 
         // Validate the data.
-        validate(user, view, request);
+        view.validate(user);
 
-        // Any validation errors?
-        if (hasErrors(request)) {
-            return inputForward(mapping);
-        }
         try {
             // Begin the transaction.
             user.begin();
 
-            // Need to create a new record first if we are editing a new record.
-//            if (user.isEditingNew()) {
-//                // Create the new object on the persistence system.
-//                user.create(view.getAnnotatedObject());
-//            }
             // Persist my current state
             view.persist(user);
 
@@ -113,8 +102,6 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
         finally {
             // Clear containers; regardless of the outcome.
             view.clearTransactions();
-            // Not editing a new record any more.
-//            user.setEditNew(false);
         }
         // Update the search cache.
         user.updateSearchCache();
@@ -211,26 +198,5 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
 
         // Either search or results.
         return mapping.findForward(getForwardAction(user));
-    }
-
-    // Helper methods
-
-    /**
-     * Validates the current view.
-     * @param user handler to the user to access database for validation.
-     * @param view the view to validate.
-     * @param request the Http request to store validation errors.
-     * @throws SearchException thrown by validate method of the view.
-     */
-    private void validate(EditUserI user, AbstractEditViewBean view,
-                          HttpServletRequest request) throws SearchException {
-        try {
-            view.validate(user);
-        }
-        catch (ValidationException ex) {
-            ActionErrors errors = new ActionErrors();
-            errors.add(ex.getFilterKey(), new ActionError(ex.getMessageKey()));
-            saveErrors(request, errors);
-        }
     }
 }
