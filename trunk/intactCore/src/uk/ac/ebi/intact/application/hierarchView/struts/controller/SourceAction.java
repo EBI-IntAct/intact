@@ -64,7 +64,8 @@ public final class SourceAction extends IntactBaseAction {
             // retreive user fron the session
             user = getIntactUser(session);
         } catch (SessionExpiredException see) {
-            addError ("error.session.expired");
+            String applicationPath = request.getContextPath();
+            addError ("error.session.expired", applicationPath);
             saveErrors(request);
             return (mapping.findForward("error"));
         }
