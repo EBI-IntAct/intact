@@ -40,8 +40,7 @@
                                 <bean:message key="button.search"/>
                             </html:submit>
                         </td>
-                        <td><html:text property="searchString" size="12"
-                            value="<%=user.getSearchInput()%>"/></td>
+                        <td><html:text property="searchString" size="12"/></td>
                         <td>
                             <intact:documentation section="editor.search" />
                         </td>
