@@ -238,7 +238,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
                 goTermInfo        = (String[]) list.next();
                 goTerm            = goTermInfo[0];
                 goTermDescription = goTermInfo[1];
-                String url = hostname + "/interpro/DisplayGoTerm?id=" + goTerm + "&format=simple";
+                String url = hostname + "/ingo/ego/DisplayGoTerm?id=" + goTerm + "&format=contentonly";
 
                 urls.add ( new LabelValueBean (goTerm, url, goTermDescription) );
             }
