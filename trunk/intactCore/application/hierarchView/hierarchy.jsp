@@ -68,7 +68,7 @@
          out.println("source is null! <br>");
       } else {
       
-	  Collection urls = source.getUrl(AC); 
+	  Collection urls = source.getUrl(AC, session);
 
 	  Iterator iterator = urls.iterator();
 	  int size = urls.size();
