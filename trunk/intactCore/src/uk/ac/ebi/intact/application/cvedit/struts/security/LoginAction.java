@@ -140,6 +140,10 @@ public class LoginAction extends IntactBaseAction {
         // Save the info in the user session object for us to retrieve later.
         super.log("user selected " + theForm.getTopic());
 
+//        super.log("Existing session timeout is: " + session.getMaxInactiveInterval());
+//        session.setMaxInactiveInterval(90);
+//        super.log("New session timeout is: " + session.getMaxInactiveInterval());
+
         // Need to access the user later.
         session.setAttribute(WebIntactConstants.INTACT_USER, user);
         // Have a valid user. set the topic selected.
