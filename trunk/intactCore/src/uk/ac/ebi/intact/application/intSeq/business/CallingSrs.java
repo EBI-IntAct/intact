@@ -17,9 +17,9 @@ import java.net.MalformedURLException;
 //import uk.ac.ebi.intact.business.IntactException;
 
 import uk.ac.ebi.intact.application.intSeq.struts.framework.SeqIdConstants;
-import uk.ac.ebi.intact.application.search.business.IntactUserIF;
 import uk.ac.ebi.intact.application.intSeq.business.ManagerFilesSrs;
 import uk.ac.ebi.intact.application.intSeq.business.CallingSrsIF;
+import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
 import org.apache.log4j.Logger;
 
@@ -60,7 +60,7 @@ public class CallingSrs implements CallingSrsIF{
 
     // --------- INSTANCE VARIABLES --------------//
 
-    protected IntactUserIF theUser = null;
+    protected IntactUserI theUser = null;
 
     /**
      * protein feature which has been captured by the user
