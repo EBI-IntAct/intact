@@ -48,16 +48,19 @@ public class EditorExceptionHandler extends ExceptionHandler {
         // The prtoperty name for this error.
         String property = null;
 
-        // Logs the error.
-        myLogger.info(ex);
 
         // Figure out what type of exception has been thrown.
         if (ex instanceof ValidationException) {
+            // Logs the error.
+            myLogger.info(ex);
             ValidationException valex = (ValidationException) ex;
             property = valex.getFilterKey();
             error = new ActionError(valex.getMessageKey());
         }
         else if (ex instanceof BaseException) {
+            System.out.println("Encountered a base exception");
+            // Logs the error.
+            myLogger.info(ex);
             // Editor specific exception.
             BaseException baseEx = (BaseException) ex;
             error = new ActionError(baseEx.getMessageKey(), baseEx.getMessage());
@@ -65,6 +68,8 @@ public class EditorExceptionHandler extends ExceptionHandler {
         else {
             error = new ActionError(config.getKey());
             property = error.getKey();
+            // Unexpected error. Log it.
+            myLogger.error("", ex);
         }
         // Store the error in the proper action using the super method.
         storeException(request, property, error, forward, config.getScope());
