@@ -255,8 +255,10 @@
                 <include name="*.jar"/>
             </lib>
 
-            <!-- Inlcude the intact core -->
-            <lib dir="${root.dist.dir}"/>
+            <!-- Include the intact core  -->
+            <lib dir="${root.dist.dir}">
+                <include name="intact-core.jar"/>
+            </lib>
 
             <!-- Include common jar files for struts. -->
             <lib dir="${intact.app.dir}/lib" />
