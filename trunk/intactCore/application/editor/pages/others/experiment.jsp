@@ -1,4 +1,5 @@
-<%@ page import="org.apache.commons.beanutils.DynaBean"%>
+<%@ page import="org.apache.commons.beanutils.DynaBean,
+                 uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -19,19 +20,24 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-<%-- Set the drop down lists --%>
-<c:set var="menus" value="${user.view.editorMenus}"/>
+<%-- The current view --%>
+<c:set var="view" value="${user.view}"/>
 
 <%-- Individual menu lists --%>
-<c:set var="organismlist" value="${menus['Organisms']}"/>
-<c:set var="interactionlist" value="${menus['Interactions']}"/>
-<c:set var="identificationlist" value="${menus['Identifications']}"/>
+<c:set var="organismmenu" value="${view.organismMenu}"/>
+<c:set var="interactionmenu" value="${view.interactionMenu}"/>
+<c:set var="identificationmenu" value="${view.identificationMenu}"/>
 
 <%-- Class wide declarations. --%>
 <%!
     String formName = "experimentForm";
 %>
 
+<%
+    ExperimentViewBean view = (ExperimentViewBean) user.getView();
+    String intvalue = view.getSelectedInteraction();
+
+%>
 <html:form action="/experiment/info">
     <table width="80%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
@@ -48,19 +54,19 @@
             </td>
             <td class="tableCell" align="left" valign="top">
                 <html:select property="organism" name="<%=formName%>">
-                    <html:options name="organismlist" />
+                    <html:options name="organismmenu"/>
                 </html:select>
                 <html:errors property="exp.organism"/>
             </td>
             <td class="tableCell" align="left" valign="top">
-                <html:select property="interaction" name="<%=formName%>">
-                    <html:options name="interactionlist" />
+                <html:select property="interaction" name="<%=formName%>" value="<%=intvalue%>">
+                    <html:options name="interactionmenu"/>
                 </html:select>
                 <html:errors property="exp.interaction"/>
             </td>
             <td class="tableCell" align="left" valign="top">
                 <html:select property="identification" name="<%=formName%>">
-                    <html:options name="identificationlist" />
+                    <html:options name="identificationmenu"/>
                 </html:select>
                 <html:errors property="exp.identification"/>
             </td>
