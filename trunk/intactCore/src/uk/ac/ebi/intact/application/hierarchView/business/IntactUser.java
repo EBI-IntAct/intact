@@ -96,10 +96,15 @@ public class IntactUser implements IntactUserI {
     private String methodLabel;
     private String methodClass;
     private String behaviour;
+    private String applicationPath;
 
 
     public String getQueryString() {
         return queryString;
+    }
+
+    public String getApplicationPath () {
+        return applicationPath;
     }
 
     public int getCurrentDepth() {
@@ -277,6 +282,7 @@ public class IntactUser implements IntactUserI {
      *
      * @param repositoryfile the name of the mapping file.
      * @param datasourceClass the class name of the Data Source.
+     * @param applicationPath the current application path
      *
      * @exception DataSourceException for error in getting the data source; this
      *  could be due to the errors in repository files or the underlying
@@ -285,10 +291,12 @@ public class IntactUser implements IntactUserI {
      * @exception IntactException thrown for any error in creating lists such
      *  as topics, database names etc.
      */
-    public IntactUser (String repositoryfile, String datasourceClass)
+    public IntactUser (String repositoryfile, String datasourceClass, String applicationPath)
             throws DataSourceException, IntactException {
 
         init ();
+
+        this.applicationPath = applicationPath;
 
         DAOSource dataSource = DAOFactory.getDAOSource (datasourceClass);
 

@@ -176,7 +176,7 @@ public abstract class IntactBaseAction extends Action {
      *      check is the errorsAction is empty, any errors are reported in there.
      * </post>
      */
-    protected IntactUser createIntactUser (HttpSession session) {
+    protected IntactUser createIntactUser (HttpSession session, HttpServletRequest aRequest) {
         IntactUser user = null;
         ServletContext servletContext = getServlet().getServletContext();
 
@@ -186,7 +186,9 @@ public abstract class IntactBaseAction extends Action {
 
         // Create an instance of IntactUser which we'll store in the Session
         try {
-            user = new IntactUser (repositoryfile, datasourceClass);
+            String applicationPath = aRequest.getContextPath();
+
+            user = new IntactUser (repositoryfile, datasourceClass, applicationPath);
             session.setAttribute (Constants.USER_KEY, user);
         }
         catch (DataSourceException de) {
@@ -215,6 +217,8 @@ public abstract class IntactBaseAction extends Action {
     protected void produceImage (IntactUserI user) {
 
         InteractionNetwork in = user.getInteractionNetwork();
+        String applicationPath = user.getApplicationPath();
+
         if (in == null) return;
 
         // TODO : If depth desacrease we don't have to access IntAct, we have to reduce the current graph.
@@ -241,7 +245,7 @@ public abstract class IntactBaseAction extends Action {
         Chrono chrono = new Chrono ();
         chrono.start();
 
-        DrawGraph te = new DrawGraph (in);
+        DrawGraph te = new DrawGraph (in, applicationPath);
         te.draw ();
 
         chrono.stop();

@@ -67,7 +67,7 @@ public final class InitAction extends IntactBaseAction {
         }
 
         // No user found, let's create one
-        createIntactUser (session);
+        createIntactUser (session, request);
 
         if (false == isErrorsEmpty()) {
             // Report any errors we have discovered back to the original form
