@@ -6,7 +6,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
@@ -24,6 +23,7 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.rmi.RemoteException;
 
 /**
  * Super class for all hierarchView related action classes.
@@ -202,7 +202,7 @@ public abstract class IntactBaseAction extends Action {
                 }
                 return;
             }
-        } catch (Exception e) {
+        } catch (RemoteException e) {
             addError ("error.webService", e.getMessage());
             logger.error (e.getMessage(), e);
             return;

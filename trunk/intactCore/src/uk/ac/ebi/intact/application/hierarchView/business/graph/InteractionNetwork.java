@@ -289,7 +289,7 @@ public class InteractionNetwork extends Graph {
      * @return an array of error message or <b>null</b> if no error occurs.
      */
     public String[] importDataToImage (String dataTlp)
-           throws Exception {
+          throws RemoteException {
 
         ProteinCoordinate[] result;
         TulipClient client  = new TulipClient();
@@ -298,6 +298,7 @@ public class InteractionNetwork extends Graph {
         try {
             result = client.getComputedTlpContent(dataTlp);
         } catch (RemoteException e) {
+            logger.error("couldn't get coodinate from the TLP content", e);
             throw e;
         }
 
