@@ -20,9 +20,6 @@
               - suppose this script resides in /tmp , then give this command in psql :    
                      \i /tmp/create_triggers.sql 
                      
-              - to run actual trigger creation, next give this command in psql:
-                     select make_triggers ();
-
               - you can check for the succesful creation of the triggers by querying pg_trigger and pg_proc system tables.
 
 
@@ -132,3 +129,7 @@ CREATE OR REPLACE FUNCTION make_triggers () RETURNS varchar AS '
 
     END;
 ' LANGUAGE 'plpgsql';                                                              
+
+
+-- run it;
+select make_triggers ();

@@ -19,8 +19,6 @@
               - suppose this script resides in /tmp , then give this command in psql :    
                      \i /tmp/create_privs.sql 
                      
-              - to run actual trigger creation, next give this command in psql:
-                     select make_privs ();
                      
               - type /dp to verify you have created the privileges
 
