@@ -64,11 +64,6 @@ public interface EditorConstants {
     public static final String FORWARD_NO_MATCHES = "noMatch";
 
     /**
-     * Forward to refresh the screen.
-     */
-    public static final String FORWARD_REFRESH = "refresh";
-
-    /**
      * The form to display the results from a search.
      */
     public static final String FORM_RESULTS = "resultForm";
