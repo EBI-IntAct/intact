@@ -57,6 +57,10 @@
         <!-- Form for an Interaction -->
         <form-bean name="intForm"
             type="uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm"/>
+
+        <!-- Form for a Feature -->
+        <form-bean name="featureForm"
+            type="uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm"/>
     </form-beans>
 
     <!-- ========== Global Exceptions ======================================= -->
@@ -230,6 +234,15 @@
         <action path="/int/fill/form"
             type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
             name="intForm"
+            validate="false"
+            scope="session">
+            <forward name="success" path="edit.layout"/>
+        </action>
+
+        <!-- This action fills the Feature form. -->
+        <action path="/feature/fill/form"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
+            name="featureForm"
             validate="false"
             scope="session">
             <forward name="success" path="edit.layout"/>
@@ -467,7 +480,7 @@
              Interaction editor.
         -->
         <action path="/intDispatch"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.SubmitIntFormAction"
             name="intForm"
             validate="false"
             scope="session">
@@ -485,11 +498,18 @@
 
             <forward name="int.prot" path="/do/int/prot"/>
             <forward name="int.prot.search" path="/do/int/prot/search"/>
+
+            <!-- Action to handle edit/delete of a Feature -->
+            <forward name="int.feature" path="/do/int/feature"/>
+
+            <!-- Action to handle link/unlink a Feature -->
+            <forward name="int.feature.link" path="/do/int/feature/link"/>
+
         </action>
 
         <!-- Action to handle when an Interaction is Submitted -->
         <action path="/int/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.SubmitAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.SubmitButtonAction"
             name="intForm"
             input="/do/int/fill/form"
             validate="true"
@@ -532,8 +552,7 @@
             <forward name="success" path="/do/int/fill/form"/>
         </action>
 
-        <!-- Action to handle when an experiment is added to an Interaction
-             hidden from the current view.
+        <!-- Action to handle when an experiment is added to or hidden from the hold area.
         -->
         <action path="/int/exp/hold"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentHoldAction"
@@ -544,8 +563,7 @@
             <forward name="success" path="/do/int/fill/form"/>
         </action>
 
-        <!-- Action to handle when an experiment is added to an Interaction
-             hidden from the current view.
+        <!-- Action to handle when an experiment is added to or deleted from an Interaction.
         -->
         <action path="/int/exp/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentDispatchAction"
@@ -567,6 +585,9 @@
             parameter="dispatch">
             <forward name="success" path="/do/int/fill/form"/>
             <forward name="failure" path="/do/int/fill/form"/>
+
+            <!-- Link to the feature editor (adding) -->
+            <forward name="feature" path="/do/feature/fill/form"/>
         </action>
 
         <!-- Action to handle for the Protein search. -->
@@ -580,6 +601,153 @@
             <forward name="failure" path="/do/int/fill/form"/>
         </action>
 
+        <!--
+             Action to refresh componets section of the Interaction editor.
+             This action saves time in updating the entire editor (only used by
+             submit feature action at the moment). 
+        -->
+<!--        <action path="/int/refresh/comp"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ComponentRefreshAction"
+            name="intForm"
+            validate="false"
+            scope="session">
+            <forward name="success" path="edit.layout"/>
+        </action>
+-->
+        <!-- Action to handle edit/delete of a Feature. -->
+        <action path="/int/feature"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FeatureDispatchAction"
+            name="intForm"
+            input="edit.layout"
+            validate="true"
+            scope="session"
+            parameter="dispatch">
+<!--            <forward name="success" path="edit.layout"/>-->
+<!--            <forward name="failure" path="/do/int/fill/form"/>-->
+
+            <!-- Linking to the feature editor -->
+            <forward name="feature" path="/do/feature/fill/form"/>
+        </action>
+
+        <!-- Action to handle link/unlink of a Feature. -->
+        <action path="/int/feature/link"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FeatureLinkAction"
+            name="intForm"
+            input="edit.layout"
+            validate="true"
+            scope="session"
+            parameter="dispatch">
+        </action>
+
+        <!-- ============= Actions related to the Feature editor ============ -->
+
+        <!-- Responsible for dispatching action events dependent on the various
+             submit buttons (submit, cancel, delete, add annotation/xref) on the
+             Feature editor.
+        -->
+        <action path="/featureDispatch"
+            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
+            name="featureForm"
+            validate="false"
+            scope="session">
+
+            <forward name="submit" path="/do/feature/submit"/>
+            <forward name="cancel" path="/do/feature/cancel"/>
+            <forward name="delete" path="/do/delete"/>
+
+            <!-- Pressed on Auto Complete button -->
+            <forward name="feature.autocomplete" path="/do/feature/autocomplete"/>
+
+            <!-- Cloning a feature for given AC -->
+            <forward name="feature.clone" path="/do/feature/clone"/>
+
+            <!-- Changing an existing range (edit/save/delete) -->
+            <forward name="feature.range" path="/do/feature/range"/>
+
+            <!-- Adding a new range to the feature -->
+            <forward name="feature.range.new" path="/do/feature/range/new"/>
+
+            <!-- Adding an Xref -->
+            <forward name="xref" path="/do/feature/xref/submit"/>
+        </action>
+
+        <!-- Action to handle when the Submit/Save & Continue button is pressed -->
+        <action path="/feature/submit"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureSubmitAction"
+            name="featureForm"
+            input="/do/feature/fill/form"
+            validate="true"
+            scope="session"
+            parameter="dispatch">
+            <!-- A success for Save/Continue -->
+            <forward name="success" path="edit.layout"/>
+            <!-- Update the components of the interaction editor -->
+<!--            <forward name="interaction" path="/do/int/refresh/comp"/>
+-->            <forward name="interaction" path="/do/int/fill/form"/>
+        </action>
+
+        <!--
+             Action to handle when the Cancel button is selected from the
+             Feature editor.
+        -->
+        <action path="/feature/cancel"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.CancelFormAction"
+            name="featureForm"
+            validate="false"
+            scope="session">
+            <!-- Back to the interaction editor -->
+            <forward name="interaction" path="/do/int/fill/form"/>
+        </action>
+
+        <!-- Action to handle when a button (edit/save/delete) related to xref
+             is activated
+        -->
+        <action path="/feature/xref/submit"
+            type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
+            name="featureForm"
+            input="/do/feature/fill/form"
+            validate="false"
+            scope="session" />
+
+        <!-- Action to handle when auto-complete button is pressed -->
+        <action path="/feature/autocomplete"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureAutoCompleteAction"
+            name="featureForm"
+            input="/do/feature/fill/form"
+            validate="false"
+            scope="session">
+            <forward name="success" path="/do/feature/fill/form"/>
+        </action>
+
+        <!-- Action to handle when cloning a feature for given AC -->
+        <action path="/feature/clone"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureCloneAction"
+            name="featureForm"
+            input="/do/feature/fill/form"
+            validate="false"
+            scope="session">
+            <forward name="success" path="/do/feature/fill/form"/>
+        </action>
+
+        <!-- Action to handle for adding a new  range -->
+        <action path="/feature/range/new"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureNewRangeAction"
+            name="featureForm"
+            input="/do/feature/fill/form"
+            validate="true"
+            scope="session">
+        </action>
+
+        <!-- Action to handle when a Feature is saved/deleted or edited. -->
+        <action path="/feature/range"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.RangeDispatchAction"
+            name="featureForm"
+            input="/do/feature/fill/form"
+            validate="true"
+            scope="session"
+            parameter="dispatch">
+        </action>
+
         <!-- ========== Common actions shared by various editors ========== -->
 
         <!-- Action to handle when the current edit is cancelled. -->
@@ -588,8 +756,10 @@
             validate="false"
             scope="session">
             <!-- Back to the results page as we got here from a search result (global) -->
-            <!-- Back to the experiment editor (where we came from) -->
+            <!-- Back to the experiment editor (Interaction editor) -->
             <forward name="experiment" path="/do/exp/fill/form"/>
+            <!-- Back to the interaction editor (Feature editor) -->
+            <forward name="interaction" path="/do/int/fill/form"/>
         </action>
 
         <!-- Action to handle when the current edit record is deleted. -->
@@ -599,8 +769,18 @@
             scope="session">
             <!-- Back to the search page  (global) -->
             <!-- error goes to the global error action -->
-            <!-- Back to the experiment editor (where we came from) -->
+            <!-- Back to the experiment editor (Interaction editor) -->
             <forward name="experiment" path="/do/exp/fill/form"/>
+            <!-- Back to the interaction editor (Feature editor) -->
+            <forward name="interaction" path="/do/int/fill/form"/>
+        </action>
+
+        <!-- This common action is for displaying the editor when clicked on
+             next link (from the tab entries above a table)
+        -->
+        <action path="/next"
+            type="org.apache.struts.actions.ForwardAction"
+            parameter="edit.layout">
         </action>
 
         <!-- ============================================================== -->
