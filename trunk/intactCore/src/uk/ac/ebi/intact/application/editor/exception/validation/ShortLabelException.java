@@ -17,6 +17,6 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 public class ShortLabelException extends ValidationException {
 
     public ShortLabelException() {
-        super("error.cvinfo.label.validation", "cvinfo");
+        super("error.cvinfo.label", "cvinfo");
     }
 }
