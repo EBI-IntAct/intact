@@ -58,13 +58,15 @@ public class ResultDisplayWrapper extends TableDecorator {
             // The current lock associated with the object.
             LockManager.LockObject lock = lcm.getLock(annotbj.getAc());
 
-            // Check the lock owner with the current user.
-            if (lock.getOwner().equals(user.getUserName())) {
-                // Locked by the same user.
-                return "<span class=\"owner\">" + getEditorLink(annotbj) + "</span>";
+            if (lock != null) {
+                // Check the lock owner with the current user.
+                if (lock.getOwner().equals(user.getUserName())) {
+                    // Locked by the same user.
+                    return "<span class=\"owner\">" + getEditorLink(annotbj) + "</span>";
+                }
+                // Locked by someone else.
+                return "<span class=\"error\">" + annotbj.getShortLabel() + "</span>";
             }
-            // Locked by someone else.
-            return "<span class=\"error\">" + annotbj.getShortLabel() + "</span>";
         }
         // Not locked.
         return getEditorLink(annotbj);
