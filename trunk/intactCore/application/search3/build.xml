@@ -37,6 +37,7 @@
     <!-- This project specific paths. -->
     <property name="src.dir"     value="src"/>
     <property name="layouts.dir" value="layouts"/>
+    <property name="styles.dir" value="styles"/>
     <property name="pages.dir"   value="pages"/>
     <property name="images.dir"  value="images"/>
     <property name="lib.dir"     value="WEB-INF/lib"/>
@@ -107,13 +108,15 @@
         <!-- Delete directories first -->
         <delete dir="${dest.dir}"/>
         <delete dir="${docs.dir}"/>
+        <delete dir="${dist.dir}"/>
 
         <!-- layout commons files -->
         <delete>
              <fileset dir="${layouts.dir}">
                  <!-- Do not remove search specific files -->
                  <exclude name="sidebar.jsp"/>
-            </fileset>
+		     <exclude name="${styles.dir}/intact.css"/>
+		</fileset>
         </delete>
 
         <!-- pages commons files -->
