@@ -115,7 +115,7 @@ public class EditorInfoAction extends AbstractEditorAction {
         // Found more than one entry with the same short label.
         ActionErrors errors = new ActionErrors();
         errors.add(ActionErrors.GLOBAL_ERROR,
-                new ActionError("error.cvinfo.label", label));
+                new ActionError("errors.cvinfo.label", label));
         saveErrors(request, errors);
 
         ActionMessages messages = new ActionMessages();
