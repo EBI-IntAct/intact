@@ -141,10 +141,10 @@
             <forward name="noMatch" path="no.match.layout"/>
             <!-- Multiple results found -->
             <forward name="results" path="/do/cv/results/pre"/>
-            <!-- A single match; Load annotations anc xrefs to beans -->
-            <forward name="edit" path="/do/cv/edit/pre"/>
-            <!-- Created a new object; load CV info before the edit page. -->
-            <forward name="success" path="/do/cv/info/pre"/>
+            <!-- A single match or created a new object; Load annotations and
+                 xrefs to beans or initialize them for the new object.
+            -->
+            <forward name="success" path="/do/cv/edit/pre"/>
         </action>
 
         <!-- Populate the beanswith search result data for the JSP to display -->
