@@ -748,13 +748,13 @@
       validate="false"
     >
       <forward
-        name="single"
+        name="create"
         path="/do/choose"
         redirect="false"
       />
       <forward
-        name="create"
-        path="/do/choose"
+        name="secure"
+        path="/do/secure/edit"
         redirect="false"
       />
     </action>
