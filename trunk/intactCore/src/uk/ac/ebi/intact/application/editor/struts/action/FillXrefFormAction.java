@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.struts.view.XrefEditForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,8 +34,9 @@ public class FillXrefFormAction extends AbstractEditorAction {
         AbstractEditViewBean view = getIntactUser(request).getView();
 
         // Populate the form.
-        EditForm editform = (EditForm) form;
-        editform.setItems(view.getXrefs());
+        ((XrefEditForm) form).setXrefs(view.getXrefs());
+//        EditForm editform = (EditForm) form;
+//        editform.setItems(view.getXrefs());
 
         return mapping.findForward(FORWARD_SUCCESS);
     }
