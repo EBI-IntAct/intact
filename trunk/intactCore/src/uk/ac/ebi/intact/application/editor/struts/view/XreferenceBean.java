@@ -12,12 +12,17 @@ import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.util.GoServerProxy;
 
 import java.io.Serializable;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionError;
 
 /**
  * Bean to store data for x'references.
@@ -119,9 +124,9 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
     }
 
     /**
-     * Return the primary id.
+     * Return the primary id as a link. Only used when viewing a xref.
      */
-    public String getPrimaryId() {
+    public String getPrimaryIdLink() {
         // When no Xref is wrapped (for instance adding a new xref).
         if (myXref == null) {
             return myPrimaryId;
@@ -131,7 +136,7 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
 
         // Loop through annotations looking for search-url.
         Collection annots = myXref.getCvDatabase().getAnnotations();
-        for (Iterator iter = annots.iterator(); iter.hasNext(); ){
+        for (Iterator iter = annots.iterator(); iter.hasNext(); ) {
             Annotation annot = (Annotation) iter.next();
             if (annot.getCvTopic().getShortLabel().equals("search-url")){
                 // save searchUrl for future use
@@ -148,6 +153,13 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
         searchUrl = matcher.replaceAll(myPrimaryId);
         return "<a href=\"" + "javascript:showXrefPId('" + searchUrl + "')\"" + ">"
                 + myPrimaryId + "</a>";
+    }
+
+    /**
+     * Return the primary id. Used for editing the data (not the link).
+     */
+    public String getPrimaryId() {
+        return myPrimaryId;
     }
 
     /**
@@ -173,6 +185,37 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
      */
     public void setSecondaryId(String secondaryId) {
         mySecondaryId = secondaryId;
+    }
+
+    /**
+     * Sets the secondary id using the primary id only if the current database
+     * is Go and no errors in querying the Go database.
+     * @param user to access the Go server.
+     * @return non null for errors; null if no errors encountered or the database
+     * is not Go database.
+     */
+    public ActionErrors setSecondaryIdFromGo(EditUserI user) {
+        if (!getDatabase().equals("go")) {
+            return null;
+        }
+        ActionErrors errors = null;
+        try {
+            setSecondaryId(user.getGoProxy().query(getPrimaryId()).getName());
+        }
+        catch (IOException ioe) {
+            // Error in communcating with the server.
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.xref.go.connection",
+                            ioe.getMessage()));
+        }
+        catch (GoServerProxy.GoIdNotFoundException ex) {
+            // GO id not found.
+            errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.xref.go.search", getPrimaryId()));
+        }
+        return errors;
     }
 
     /**
