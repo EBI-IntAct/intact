@@ -68,6 +68,7 @@ public class InteractionNetwork extends Graph {
      * Protein from which has been created the interaction network.
      */
     private String centralProteinAC;
+    private Node centralProtein;
 
 
     /*********************************************************************** Methods */
@@ -75,14 +76,20 @@ public class InteractionNetwork extends Graph {
      * Constructor
      */
     public InteractionNetwork (String aCentralProteinAC) {
-        this.centralProteinAC = aCentralProteinAC;
-        this.dimension        = new ImageDimension();
-        this.isInitialized    = false;
+        centralProteinAC = aCentralProteinAC;
+        // wait the user to add some node to reference the central one
+        centralProtein   = null;
+        dimension        = new ImageDimension();
+        isInitialized    = false;
     }
 
 
     public String getCentralProteinAC() {
         return centralProteinAC;
+    }
+
+    public Node getCentralProtein() {
+        return centralProtein;
     }
 
     /**
@@ -109,8 +116,10 @@ public class InteractionNetwork extends Graph {
 
         // initialization of the node
         if (null != aNode) {
-            // String label = anInteractor.getShortLabel();
             String label = anInteractor.getAc ();
+            if (label.equals(centralProteinAC)) {
+               centralProtein = aNode;
+            }
             aNode.put (Constants.ATTRIBUTE_LABEL,label);
 
             this.initNodeDisplay (aNode);
