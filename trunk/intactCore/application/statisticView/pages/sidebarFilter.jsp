@@ -26,12 +26,15 @@
                  uk.ac.ebi.intact.application.statisticView.business.data.NoDataException,
                  uk.ac.ebi.intact.util.IntactStatistics,
                  java.sql.Timestamp,
-                 java.sql.Date"%>
+                 java.sql.Date,
+                 org.apache.log4j.Logger"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
 <%
+    Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+
     StatisticsBean bean = null;
     Date eldest = null;
     try {
@@ -39,30 +42,29 @@
         IntactStatistics statistics = bean.getFirstRow();
         Timestamp timestamp = statistics.getTimestamp();
         eldest = new Date( timestamp.getTime() );
-    } catch (NoDataException nde) {
+        logger.info( "Oldest date found: " + eldest );
+    } catch ( NoDataException nde ) {
         // forward to an error page.
+        logger.error( "Error while trying to get the first timestamp.", nde );
     }
-
-
 
     /**
      * create the links
      */
     SimpleDateFormat dateFormater = StatisticsDataSet.dateFormater;
-    Calendar calendar = new GregorianCalendar();
+    Calendar calendar = GregorianCalendar.getInstance();
     ArrayList filters = new ArrayList();
-    calendar.getTime();
     filters.add( new FilterBean( "-", "" ) );
 
     int i = 1;
     while ( calendar.getTime().after( eldest ) ) {
-        calendar.roll( Calendar.MONTH, -1 ); // previous month
+        calendar.add( Calendar.MONTH, -1 ); // previous month
         String iMonthAgo = dateFormater.format( calendar.getTime() );
         filters.add( new FilterBean( "" + i, iMonthAgo ) );
         i++;
     }
 
-    pageContext.setAttribute("filters", filters);
+    pageContext.setAttribute( "filters", filters );
 %>
 
     <table width="100%">
@@ -105,10 +107,10 @@
 
                    <%
                       String start = request.getParameter( "start" );
-                      String stop = request.getParameter( "stop" );
+                      String stop  = request.getParameter( "stop" );
 
                       String startValue = (start == null ? "" : start);
-                      String stopValue = (stop == null ? "" : stop);
+                      String stopValue  = (stop  == null ? "" : stop);
                    %>
 
 
@@ -116,7 +118,7 @@
 
                <table>
                   <tr>
-                     <td align="right">
+                     <td valign="top" align="right">
                         <bean:message key="filter.label.from"/>
                      </td>
                      <td>
@@ -127,7 +129,7 @@
                   </tr>
 
                   <tr>
-                    <td align="right">
+                    <td valign="top" align="right">
                        <bean:message key="filter.label.to"/>
                     </td>
                     <td>
