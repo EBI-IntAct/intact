@@ -25,6 +25,7 @@ import java.io.IOException;
  * @author Samuel Kerrien
  * @version $Id$
  */
+
 public final class CenteredAction extends IntactBaseAction {
 
     /**

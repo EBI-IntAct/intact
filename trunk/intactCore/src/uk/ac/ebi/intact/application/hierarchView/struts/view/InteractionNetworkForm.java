@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseForm
  * This form captures the user action of the sideBarGraph.jsp.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public class InteractionNetworkForm extends IntactBaseForm {
 

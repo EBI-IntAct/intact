@@ -64,5 +64,4 @@ public class PNGConvertSVG extends ConvertSVG {
     public String getMimeType() {
         return "image/png";
     }
-
 }

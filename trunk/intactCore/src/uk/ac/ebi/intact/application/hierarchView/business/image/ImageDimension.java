@@ -7,9 +7,14 @@ package uk.ac.ebi.intact.application.hierarchView.business.image;
 
 import java.io.Serializable;
 
-
+/**
+ * Storage of the image dimension, allow to keep the heigth, width, border soze ...
+ *
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ */
 public class ImageDimension implements Serializable {
-    // ---------------------------------------------------------------- StrutsConstants
+    // ---------------------------------------------------------------- Constants
     public static float DEFAULT_BORDER = 5f;
 
     // ---------------------------------------------------------------- Instance Variables
@@ -17,21 +22,13 @@ public class ImageDimension implements Serializable {
     private float xmax;
     private float ymin;
     private float ymax;
-    private float border;
 
     // ---------------------------------------------------------------- Constructors
     /**
-     * Create an ImageDimension with a specified border
-     *
-     * @param aBorder the border
+     * initialize all coordinate to zero
      */
-    public ImageDimension (float aBorder) {
+    public ImageDimension () {
         xmin = xmax = ymin = ymax = 0;
-        border = aBorder;
-    }
-
-    public ImageDimension() {
-        this (DEFAULT_BORDER);
     }
 
     // ---------------------------------------------------------------- Accessors
@@ -43,10 +40,7 @@ public class ImageDimension implements Serializable {
 
     public float ymin ()   { return ymin; }
 
-    public float border ()  { return border; }
-
-
-    // ---------------------------------------------------------------- Other methods
+    // ---------------------------------------------------------------- public methods
     /**
      * Widen the size if the new coordinate is out of the usable space.
      * After adding a set of points we should have obtain something like below.<br>
@@ -72,7 +66,7 @@ public class ImageDimension implements Serializable {
         if (y < ymin) ymin = y;
         if (x > xmax) xmax = x;
         if (y > ymax) ymax = y;
-    } // adjust
+    }
 
 
     /**
@@ -102,6 +96,5 @@ public class ImageDimension implements Serializable {
             ymin = tmp;
         if ((tmp = y  + height/2) > ymax)
             ymax = tmp;
-    } // adjustCadre
-
-} // ImageDimension
+    }
+}

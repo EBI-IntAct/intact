@@ -8,7 +8,8 @@ package uk.ac.ebi.intact.application.hierarchView.exception;
 /**
  * Thrown when the user session is expired.
  *
- * Created by Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public class SessionExpiredException extends Exception {
 
@@ -18,5 +19,4 @@ public class SessionExpiredException extends Exception {
     public SessionExpiredException(String message) {
         super(message);
     }
-
 }

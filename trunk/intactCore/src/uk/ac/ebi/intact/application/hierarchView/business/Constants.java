@@ -9,24 +9,11 @@ package uk.ac.ebi.intact.application.hierarchView.business;
 /**
  * Manifest constants for the interaction network components.
  *
- * @author KERRIEN Samuel and FROT Emilie
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 public final class Constants {
-
-
-    // ******************************************************* Properties file
-
-
-    /**
-     * The name of the left frame
-     */
-    public static final String LEFT_FRAME_NAME = "frameView";
-
-    /**
-     * The name of the left frame
-     */
-    public static final String RIGHT_FRAME_NAME = "frameHierarchy";
 
     /**
      * The name of the logger specific of hierarchView
@@ -94,15 +81,4 @@ public final class Constants {
      * is deifned in the web.xml file as a servlet context parameter
      */
     public static final String DATA_SOURCE = "datasource";
-
-    /**
-     * The name of the file containing the java to XML mapping
-     */
-    public static final String XML_MAPPING_FILE = "xmlMappingFile";
-
-    /**
-     * The name of the file containing the java to XML mapping
-     */
-    public static final String WEB_SERVICE_MANAGER = "WebServiceManager";
-
-} // Constants
+}

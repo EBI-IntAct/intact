@@ -34,6 +34,9 @@ import java.util.Vector;
  *                 uk.ac.ebi.intact.simpleGraph.Node
  *                 org.w3c.dom.Node in org.w3c.dom
  *            So we had chosen to fully qualified the simpleGraph one !
+ *
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 
@@ -863,9 +866,8 @@ public class GraphToSVG
         ib.setDocument(document);
 
         return ib;
-    } // getImageBean
-
-}// GraphToSVG
+    }
+}
 
 
 

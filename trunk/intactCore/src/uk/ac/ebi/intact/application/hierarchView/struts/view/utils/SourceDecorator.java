@@ -31,9 +31,10 @@ import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBea
  *   </p>
  * </p>
  *
- * Created by Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
+
 public class SourceDecorator extends Decorator {
 
     /**
@@ -80,5 +81,4 @@ public class SourceDecorator extends Decorator {
 
         return description;
     }
-
 }

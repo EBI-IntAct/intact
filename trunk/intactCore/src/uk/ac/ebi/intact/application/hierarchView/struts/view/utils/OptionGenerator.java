@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
  * Allows to create some collection to populate option list in HTML form.
  * 
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 public class OptionGenerator {
@@ -247,7 +248,4 @@ public class OptionGenerator {
         return behaviours;
 
     } // getAuthorizedBehaviour
-
-
-
-} // OptionGenerator
+}

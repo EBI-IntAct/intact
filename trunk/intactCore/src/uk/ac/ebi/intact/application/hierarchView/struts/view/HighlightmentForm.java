@@ -15,7 +15,9 @@ import javax.servlet.http.HttpSession;
  * <ul>
  * <li><b>behaviour</b> - Entered behaviour value
  * </ul>
- * 
+ *
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 public final class HighlightmentForm extends IntactBaseForm {
@@ -97,6 +99,4 @@ public final class HighlightmentForm extends IntactBaseForm {
 
         return getErrors();
     } // validate
-
-
-} // HighlightmentForm
+}

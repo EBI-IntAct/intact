@@ -142,7 +142,6 @@ public class LabelValueBean {
         sb.append("]");
         return (sb.toString());
     }
-
-} // LabelValueBean
+}
 
 

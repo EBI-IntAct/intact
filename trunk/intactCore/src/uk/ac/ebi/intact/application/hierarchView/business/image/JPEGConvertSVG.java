@@ -57,6 +57,4 @@ public class JPEGConvertSVG extends ConvertSVG {
     public String getMimeType() {
         return "image/jpeg";
     }
-
-} // JPEGConvertSVG
-
+}

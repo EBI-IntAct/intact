@@ -17,11 +17,11 @@ import java.util.Iterator;
  * the implementation of that class would just specify the behaviour
  * of one node of the graph.
  *
- * @author Samuel KERRIEN
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 public abstract class HighlightmentBehaviour {
-
 
     /**
      * Provides a implementation of HighlightmentBehaviour from its name.<br>
@@ -77,13 +77,13 @@ public abstract class HighlightmentBehaviour {
      */
     public Collection modifyCollection (Collection proteins, InteractionNetwork aGraph) {
         return proteins;
-    } // modifyCollection
+    }
 
     /**
      * Apply the implemented behaviour to a set of nodes.
      *
-     * @param proteins
-     * @param aGraph
+     * @param proteins the set of protein on which to apply the behaviour
+     * @param aGraph the interaction network they come from
      */
     public void apply (Collection proteins, InteractionNetwork aGraph) {
 
@@ -95,10 +95,9 @@ public abstract class HighlightmentBehaviour {
                 Node protein = (Node) iterator.next();
                 applyBehaviour (protein);
             }
-        }
-    } // apply
-
-} // HighlightmentBehaviour
+        } // if
+    }
+}
 
 
 

@@ -71,9 +71,8 @@ public class GraphHelper  {
         }
 
         return in;
-    } // getInteractionNetwork
-
-} // GraphHelper
+    }
+}
 
 
 

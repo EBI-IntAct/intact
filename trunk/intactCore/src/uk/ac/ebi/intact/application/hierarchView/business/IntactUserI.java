@@ -25,6 +25,7 @@ import java.net.URL;
  * can be notified of session time outs.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public interface IntactUserI extends Serializable, HttpSessionBindingListener {
 
@@ -114,5 +115,4 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener {
      * @return the value associated to the name
      */
     public Object getHighlightOption (String name);
-
 }
