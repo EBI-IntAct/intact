@@ -38,7 +38,6 @@
    if (user.InteractionNetworkReadyToBeDisplayed()) {
 %>
 
-<br>
 <hr>
 
 <!-- Graph section -->

@@ -50,7 +50,6 @@
        }
 %>
 
-<br>
 <hr>
 
 <!-- click behaviour section -->
