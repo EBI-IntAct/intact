@@ -92,26 +92,43 @@ public class FillFormAction extends AbstractEditorAction {
     }
 
     private String getAnchor(HttpServletRequest request, EditorActionForm form) {
-        // Errors are stored under this key.
-        String key =  Globals.ERROR_KEY;
-
         // The map containing anchors.
         Map anchorMap = (Map) getApplicationObject(EditorConstants.ANCHOR_MAP);
 
+		// Errors are stored under this key.
+		String errorkey =  Globals.ERROR_KEY;
+
         // Any errors?
-        if (request.getAttribute(key) != null) {
-            ActionErrors errors = (ActionErrors) request.getAttribute(key);
+        if (request.getAttribute(errorkey) != null) {
+            ActionErrors errors = (ActionErrors) request.getAttribute(errorkey);
             // Only interested in the first (or only) error.
             ActionError error = (ActionError) errors.get().next();
 
             // The key this error is stored.
-            String errorKey = error.getKey();
+            String key = error.getKey();
 
             // Check the map for the error key.
-            if (anchorMap.containsKey(errorKey)) {
-                return (String) anchorMap.get(errorKey);
+            if (anchorMap.containsKey(key)) {
+                return (String) anchorMap.get(key);
             }
         }
+        
+        // Any messages? Messages are storde under this key. 
+//        String msgkey = Globals.MESSAGE_KEY;
+//        
+//        if (request.getAttribute(msgkey) != null) {
+//        	ActionMessages msgs = (ActionMessages) request.getAttribute(msgkey);
+//			// Only interested in the first (or only) message.
+//			ActionError msg = (ActionError) msgs.get().next();
+//
+//			// The key this error is stored.
+//			String key = msg.getKey();
+//
+//			// Check the map for the msg key.
+//			if (anchorMap.containsKey(key)) {
+//				return (String) anchorMap.get(key);
+//			}        	 
+//        }
         // Start searching the dispatch.
         String dispatch = form.getDispatch();
 
