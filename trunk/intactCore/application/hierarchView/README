@@ -13,7 +13,7 @@ tulip/     : source files of the tulip console
 INSTALLATION NOTES
 ------------------
 
-The command line 'Ant -projecthelp' allows you to have the description of
+The command line 'ant -projecthelp' allows you to have the description of
 needed Ant task to install hierarchView.
 
 In the following part, I will consider that :
