@@ -21,6 +21,6 @@ public class XreferenceBeanWrapper extends TableDecorator {
      */
     public String getDeleteLink() {
         long key = ((XreferenceBean) super.getObject()).getKey();
-        return "<a href=\"delXref.do?key=" + key + "\">Delete</a>";
+        return "<a href=\"../do/cv/xref/del?key=" + key + "\">Delete</a>";
     }
 }
