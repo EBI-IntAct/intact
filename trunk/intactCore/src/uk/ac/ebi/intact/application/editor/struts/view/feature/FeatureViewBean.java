@@ -522,10 +522,10 @@ public class FeatureViewBean extends AbstractEditViewBean {
             Range range = ((RangeBean) iter.next()).getRange(feature, user);
             // Avoid creating duplicate Ranges.
             if (feature.getRanges().contains(range)) {
-                System.out.println("A duplicate range");
+//                System.out.println("A duplicate range");
                 continue;
             }
-            System.out.println("Adding range: " + range.getFromIntervalStart());
+//            System.out.println("Adding range: " + range.getFromIntervalStart());
             user.create(range);
             feature.addRange(range);
         }
@@ -533,17 +533,14 @@ public class FeatureViewBean extends AbstractEditViewBean {
         // Delete ranges.
         for (Iterator iter = getRangesToDel().iterator(); iter.hasNext();) {
             Range range = ((RangeBean) iter.next()).getRange();
-            System.out.println("Deleting range: " + range.getAc());
+//            System.out.println("Deleting range: " + range.getAc());
             user.delete(range);
             feature.removeRange(range);
         }
 
         // Update existing ranges.
         for (Iterator iter = myRangesToUpdate.iterator(); iter.hasNext();) {
-            RangeBean rb = (RangeBean) iter.next();
-            Range range = rb.getRange(feature, user);
-            range.setAc(rb.getRange().getAc());
-//            System.out.println("Updating range " + range.getFromIntervalStart());
+            Range range = ((RangeBean) iter.next()).getRange();
             user.update(range);
         }
         // No need to test whether this 'feature' persistent or not because we

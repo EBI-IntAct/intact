@@ -9,25 +9,14 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMappings;
-import org.apache.struts.config.ModuleConfig;
-import org.apache.struts.config.ActionConfig;
-import org.apache.struts.config.ForwardConfig;
-import org.apache.struts.Globals;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
-import java.util.Map;
 import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Dispatcher action which dispatches to various submit actions.
