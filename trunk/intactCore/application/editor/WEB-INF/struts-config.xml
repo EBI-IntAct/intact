@@ -649,6 +649,9 @@
             <forward name="submit" path="/do/feature/submit"/>
             <forward name="cancel" path="/do/feature/cancel"/>
 
+            <!-- Toggle between Mutation and Normal feature editor -->
+            <forward name="feature.mutation" path="/do/feature/mutation"/>
+
             <!-- Cloning a undetermined feature -->
             <forward name="feature.undetermined.clone" path="/do/feature/undetermined/clone"/>
 
@@ -673,6 +676,18 @@
             <!-- A success for Save/Continue -->
             <forward name="success" path="/do/display"/>
             <forward name="interaction" path="/do/int/fill/form"/>
+        </action>
+
+        <!--
+             Handles the user toggles between Normal / Mutation button.
+        -->
+        <action path="/feature/mutation"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.MutationToggleAction"
+            name="featureForm"
+            validate="false"
+            scope="session">
+            <!-- Reset the form again -->
+            <forward name="success" path="/do/feature/fill/form"/>
         </action>
 
         <!--

@@ -70,6 +70,11 @@
         <put name="cv" value="/pages/feature/feature.jsp"/>
     </definition>
 
+    <!-- The edit Mutation Feature page layout. -->
+    <definition name="edit.feature.mutation.layout" extends="edit.cv.layout">
+        <put name="cv" value="/pages/feature/feature_mutation.jsp"/>
+    </definition>
+
     <!-- =============== Definitions related to pages ================= -->
 
     <!-- The header layout. The controller may change the header when editing
