@@ -62,7 +62,7 @@
 
 <tiles-definitions>
 
-    <!-- =============== Menu Links ====================================== -->
+    <!-- ============ Menu Links ========================================== -->
 
     <!-- Menu links for the hierarchView page. -->
     <definition name="hierarchView.menu.links" path="/layouts/menu.jsp">
@@ -72,52 +72,68 @@
         </putList>
     </definition>
 
-    <!-- =============== Sidebars ====================================== -->
+    <!-- ============ Sidebars ============================================ -->
 
     <!-- Sidebar for the search page -->
-    <definition name="hierarchView.sidebar.layout" path="/layouts/sidebar.jsp">
+    <definition name="intact.sidebar.layout" path="/layouts/sidebar.jsp">
         <put name="search" value="/pages/sidebarSearch.jsp"/>
         <put name="graph"  value="/pages/sidebarGraph.jsp"/>
         <put name="menu"   value="hierarchView.menu.links"/>
     </definition>
 
-    <!-- =============== Definitions related to pages ================= -->
+    <!-- ============ Commons to all IntAct pplication ==================== -->
 
     <!-- The header layout. -->
-    <definition name="header.layout" path="/layouts/headerLayout.jsp">
+    <definition name="intact.header.layout" path="/layouts/headerLayout.jsp">
         <put name="header.title" value="IntAct - hierarchView"/>
     </definition>
 
-    <!-- hierarchView content page description -->
-    <definition name="hierarchView.content.layout" path="/layouts/content.jsp">
-        <put name="graphTitle"     value="/pages/graphTitle.jsp"/>
-        <put name="highlightTitle" value="/pages/highlightTitle.jsp"/>
-        <put name="graph"          value="/pages/graph.jsp"/>
-        <put name="highlight"      value="/pages/highlight.jsp"/>
+    <!-- The footer layout -->
+    <definition name="intact.footer.layout" path="/pages/footer.jsp">
     </definition>
 
+    <!-- ============ Definitions of hierarchView screens ================= -->
+
     <!-- hierarchView page description -->
-    <definition name="hierarchView.blank.layout" path="/layouts/intactLayout.jsp">
-        <put name="title"   value="IntAct - hierarchView"/>
-        <put name="sidebar" value="hierarchView.sidebar.layout"/>
-        <put name="header"  value="header.layout"/>
-        <put name="footer"  value="/pages/footer.jsp"/>
+    <definition name="hierarchView.layout" path="/layouts/intactLayoutFrame.jsp">
+        <put name="title"    value="IntAct - hierarchView"/>
+        <put name="header"   value="headerFrame.jsp"/>
+        <!-- just no content - this must be defined -->
+        <put name="content" value=""/>
+        <put name="sidebar"  value="sidebarFrame.jsp"/>
     </definition>
 
     <!-- General content for result layout
          It simply overwrite the content definition and keep all other
          tiles of hierarchView.layout
       -->
-    <definition name="hierarchView.result.layout" extends="hierarchView.blank.layout">
-        <put name="content" value="hierarchView.content.layout"/>
+    <definition name="hierarchView.result.layout" extends="hierarchView.layout">
+        <put name="content" value="contentFrame.jsp"/>
     </definition>
 
     <!-- General error layout
          It simply overwrite the content definition and keep all other
          tiles of hierarchView.layout
       -->
-    <definition name="hierarchView.error.layout" extends="hierarchView.blank.layout">
-        <put name="content" value="/pages/error.jsp"/>
+    <definition name="hierarchView.error.layout" extends="hierarchView.layout">
+        <put name="content" value="../pages/error.jsp"/>
+    </definition>
+
+    <!-- ============ Definition of tiles used in the content frame ======= -->
+
+    <definition name="hierarchView.graphTitle.layout" path="/pages/graphTitle.jsp">
+    </definition>
+
+    <definition name="hierarchView.graph.layout" path="/pages/graph.jsp">
+    </definition>
+
+    <definition name="highlightTitle" path="/pages/highlightTitle.jsp">
+    </definition>
+
+    <definition name="highlight" path="/pages/highlight.jsp">
+    </definition>
+
+    <definition name="hierarchView.selectedSource.layout" path="/pages/selectedSource.jsp">
     </definition>
 
 </tiles-definitions>

@@ -36,12 +36,12 @@
 
       <tr>
              <td width="60%" valign="top">
-                 <!-- Left cell: displays the interaction network -->
+                 <!-- Bottom Left cell: displays the interaction network -->
                  <tiles:insert attribute="graph"/>
              </td>
 
              <td width="40%" valign="top">
-                 <!-- Right cell: Display the highligh tool -->
+                 <!-- Bottom Right cell: Display the highligh tool -->
                  <tiles:insert attribute="highlight"/>
              </td>
       </tr>
