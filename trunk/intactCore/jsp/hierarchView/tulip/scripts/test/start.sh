@@ -21,4 +21,4 @@ fi
  
 # Launch the test 
 echo "Start test ..."
-java -classpath .:${CLASSPATH}:${ROOT}/target/hierarchView/WEB-INF/classes Tulip
+java -classpath .:${CLASSPATH}:${ROOT}/target/hierarchView/WEB-INF/classes Tulip $1
