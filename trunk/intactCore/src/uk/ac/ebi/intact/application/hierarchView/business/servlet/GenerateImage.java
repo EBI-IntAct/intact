@@ -53,7 +53,9 @@ public class GenerateImage extends HttpServlet {
 
     if (null == ib) return;
 
-    out.write (ib.getImageData());
+    if (null != ib.getImageData()) {
+      out.write (ib.getImageData());
+    }
 
     out.flush ();
     out.close ();
