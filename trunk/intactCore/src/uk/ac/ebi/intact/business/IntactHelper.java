@@ -326,14 +326,15 @@ public class IntactHelper implements SearchI, Serializable {
      */
     public void startTransaction(int transactionType) throws IntactException {
 
+        // The default transaction type is JDBC.
         int txType = BusinessConstants.JDBC_TX;
-        if(transactionType == BusinessConstants.OBJECT_TX) txType = transactionType;
-
+        if (transactionType == BusinessConstants.OBJECT_TX) {
+            txType = BusinessConstants.OBJECT_TX;
+        }
         try {
             dao.begin(txType);
         }
         catch(Exception e) {
-
             throw new IntactException("unable to start an intact transaction!", e);
         }
     }
@@ -360,7 +361,6 @@ public class IntactHelper implements SearchI, Serializable {
             dao.commit();
         }
         catch(Exception e) {
-
             throw new IntactException("unable to complete an intact transaction!", e);
         }
     }
@@ -378,7 +378,6 @@ public class IntactHelper implements SearchI, Serializable {
             dao.rollback();
         }
         catch(Exception e) {
-
             throw new IntactException("unable to undo an intact transaction!", e);
         }
     }
@@ -438,20 +437,19 @@ public class IntactHelper implements SearchI, Serializable {
             String msg = "intact helper: transaction problem during object creation.. \n";
             throw new IntactException(msg, te);
 
-        } finally {
-
-            //make sure the connection gets closed - but this actually happens in the commit of org.apache.ojb....
-            try {
-
-                // dao.close();
-            } catch (Exception de) {
-
-                String msg = "intact helper: could not close data source connection properly";
-                throw new IntactException(msg, de);
-
-            }
+//        } finally {
+//
+//            //make sure the connection gets closed - but this actually happens in the commit of org.apache.ojb....
+//            try {
+//
+//                // dao.close();
+//            } catch (Exception de) {
+//
+//                String msg = "intact helper: could not close data source connection properly";
+//                throw new IntactException(msg, de);
+//
+//            }
         }
-
     }
 
     /**
@@ -506,7 +504,7 @@ public class IntactHelper implements SearchI, Serializable {
                 }
         }
         catch(Exception de) {
-
+            de.printStackTrace();
             String msg = "intact helper: single object creation failed for class " + obj.getClass().getName();
             throw new IntactException(msg, de);
 
@@ -536,7 +534,7 @@ public class IntactHelper implements SearchI, Serializable {
                }
            }
            catch(Exception de) {
-
+                  de.printStackTrace();
                   String msg = "intact helper: could not close data source connection properly";
                   throw new IntactException(msg, de);
 
@@ -759,28 +757,28 @@ public class IntactHelper implements SearchI, Serializable {
                 return new ArrayList();
             }
         } catch (SearchException se) {
-
+            se.printStackTrace();
             //return to action servlet witha forward to error page command
             String msg = "intact helper: unable to perform search operation.. \n";
             throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
 
         }
-        finally {
-
-            //done with the connection, so close it
-            try {
-
-                //debug
-                pr.info("intact helper: doing final dao close in search...");
-                //      dao.close();
-                pr.info("intact helper: connection closed OK after search...");
-            } catch (Exception de) {
-
-                String msg = "intact helper: could not close data source connection properly";
-                throw new IntactException(msg, de);
-
-            }
-        }
+//        finally {
+//
+//            //done with the connection, so close it
+//            try {
+//
+//                //debug
+//                pr.info("intact helper: doing final dao close in search...");
+//                //      dao.close();
+//                pr.info("intact helper: connection closed OK after search...");
+//            } catch (Exception de) {
+//
+//                String msg = "intact helper: could not close data source connection properly";
+//                throw new IntactException(msg, de);
+//
+//            }
+//        }
 
 
         return resultList;
@@ -845,22 +843,22 @@ public class IntactHelper implements SearchI, Serializable {
             throw new IntactException(msg, se);
 
         }
-        finally {
-
-            //done with the connection, so close it
-            try {
-
-                //debug
-                pr.info("intact helper: doing final dao close in search...");
-                //      dao.close();
-                pr.info("intact helper: connection closed OK after search...");
-            } catch (Exception de) {
-
-                String msg = "intact helper: could not close data source connection properly";
-                throw new IntactException(msg, de);
-
-            }
-        }
+//        finally {
+//
+//            //done with the connection, so close it
+//            try {
+//
+//                //debug
+//                pr.info("intact helper: doing final dao close in search...");
+//                //      dao.close();
+//                pr.info("intact helper: connection closed OK after search...");
+//            } catch (Exception de) {
+//
+//                String msg = "intact helper: could not close data source connection properly";
+//                throw new IntactException(msg, de);
+//
+//            }
+//        }
 
         return resultList;
     }
@@ -1798,9 +1796,6 @@ public class IntactHelper implements SearchI, Serializable {
             throw new IntactException(msg, de);
             }
     }
-
-
-
 }
 
 
