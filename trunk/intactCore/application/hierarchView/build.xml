@@ -59,6 +59,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <!-- We need this flag because deploy targets need to know where to deploy. -->
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="java.opts"   value="${env.JAVA_OPTS}"/>
 
     <property name="webService.properties.filename"   value="${config.dir}/WebService.properties"/>
     <property name="highlighting.properties.filename" value="${config.dir}/Highlighting.properties"/>
@@ -113,7 +114,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <echo message="    webService.console.location = ${webService.console.location}"/>
 
         <available file="${webService.console.location}" type="file" property="webService.console.isAvailable"/>
-
 
         <echo message="${highlighting.properties.filename} :"/>
 
@@ -236,7 +236,8 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <mkdir dir="${dest.dir}" />
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            includes="**/application/hierarchView/**" debug="on">
+            includes="**/application/hierarchView/**, **/application/commons/**"
+            debug="on">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -255,7 +256,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <!-- Ensures that tomcat.present property is called only once to avoid
     error from Ant.
     -->
-
     <target name="run-once" unless="tomcat.present">
         <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
         <available file="${tomcat.home}/webapps/axis/WEB-INF/web.xml" property="axis.present"/>
@@ -401,8 +401,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <target name="start-ws"
         description="Start the web service by using the deployment file">
 
-       <echo message=
-            "DEPRECATED; That task is now automatically managed"/>
+       <echo message="DEPRECATED; That task is now automatically managed"/>
 
         <echo message="Starting the web service" />
         <java classname="org.apache.axis.client.AdminClient" fork="yes">
@@ -417,8 +416,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <target name="stop-ws"
         description="Stop the web service by using the undeployment file">
 
-        <echo message=
-            "DEPRECATED; That task is now automatically managed"/>
+        <echo message="DEPRECATED; That task is now automatically managed"/>
 
         <echo message="Stopping the web service" />
         <java classname="org.apache.axis.client.AdminClient" fork="yes">
@@ -471,6 +469,11 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
             <fileset dir="${ws.wsdd.dir}">
                 <include name="deploy.wsdd"/>
                 <include name="undeploy.wsdd"/>
+            </fileset>
+
+            <!-- Copy log4j properties file -->
+            <fileset dir="${root.config.dir}">
+                <include name="log4j.properties"/>
             </fileset>
         </copy>
 
