@@ -126,9 +126,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         try {
             logger = Logger.getLogger(OJB_LOGGER_NAME);
         }
-        catch(Exception c) {
+        catch (Exception c) {
 
-          //  try and set up a simple logger instead here....
+            //  try and set up a simple logger instead here....
         }
 
         //now also set up some ODMG stuff for operations needing
@@ -140,11 +140,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             //connect using the user details supplied to the broker
             //NB ODMG expects reopsitory location, user, password to be seperated by #
-            connectionDetails = "config/repository.xml#" + user +"#" + password;
+            connectionDetails = "config/repository.xml#" + user + "#" + password;
             db.open(connectionDetails, Database.OPEN_READ_WRITE);
 
         }
-        catch(ODMGException e) {
+        catch (ODMGException e) {
 
             logger.error("failed to open database!!", e);
         }
@@ -158,11 +158,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * @param itemIterator The iterator over the results (should be obtained from iteratorFind)
      * @exception IllegalArgumentException thrown if the Iterator is an invalid type
      */
-    public void closeResults(Iterator itemIterator){
-        if(!(itemIterator instanceof OJBIterator)) {
+    public void closeResults(Iterator itemIterator) {
+        if (!(itemIterator instanceof OJBIterator)) {
             throw new IllegalArgumentException("parameter must be a valid Iterator generated from iteratorFind");
         }
-        OJBIterator ojbIter = (OJBIterator)itemIterator;
+        OJBIterator ojbIter = (OJBIterator) itemIterator;
         ojbIter.releaseDbResources();
 
     }
@@ -180,7 +180,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         this.user = user;
         this.password = password;
-        connectionDetails = "config/repository.xml#" + user +"#" + password;
+        connectionDetails = "config/repository.xml#" + user + "#" + password;
     }
 
     public void addCachedClass(Class clazz) {
@@ -209,7 +209,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      */
     private void checkForOpenStore() {
 
-        if((broker == null) & (db == null) & (odmg == null)) {
+        if ((broker == null) & (db == null) & (odmg == null)) {
 
             //the DAO has been serialized and the connections need to be
             //restored.
@@ -222,7 +222,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 tx = odmg.currentTransaction();
 
             }
-            catch(Exception e) {
+            catch (Exception e) {
                 logger.error("unable to reconnect to store after serialization", e);
             }
             //return true;
@@ -243,10 +243,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         String knownUser = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection().getUserName();
         String knownPassword = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection().getPassWord();
-        if(userName.equals(knownUser)) {
+        if (userName.equals(knownUser)) {
             //check password - could be null..
-            if(((password == null) & (knownPassword == null)) ||
-               (password.equals(knownPassword))) return true;
+            if (((password == null) & (knownPassword == null)) ||
+                    (password.equals(knownPassword)))
+                return true;
         }
         return false;
     }
@@ -258,15 +259,16 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * getting the Connection
      * @exception SQLException thrown if the metatdata can't be obtained
      */
-    public String getDbName() throws LookupException, SQLException  {
+    public String getDbName() throws LookupException, SQLException {
         String dbName = "";
         JdbcConnectionDescriptor jDesc = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection();
-        if(jDesc.getDbAlias() != null) dbName = jDesc.getDbAlias();
+        if (jDesc.getDbAlias() != null) dbName = jDesc.getDbAlias();
 //        Connection conn = broker.getConnectionManager().getConnection();
 //        DatabaseMetaData metaInfo = conn.getMetaData();
 //        dbName = metaInfo.getDatabaseProductName();
         return dbName;
     }
+
     /**
      * Provides the user name that is connecting to the DB.
      * @return String the user name, or an empty String if the query fails
@@ -274,7 +276,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * getting the Connection
      * @exception SQLException thrown if the metatdata can't be obtained
      */
-    public String getDbUserName() throws LookupException, SQLException  {
+    public String getDbUserName() throws LookupException, SQLException {
         String userName = "";
         Connection conn = broker.getConnectionManager().getConnection();
         DatabaseMetaData metaInfo = conn.getMetaData();
@@ -293,7 +295,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      */
     public void begin(int txType) throws TransactionException {
 
-        if(txType == BusinessConstants.OBJECT_TX) {
+        if (txType == BusinessConstants.OBJECT_TX) {
             try {
                 //ODMG transaction...
                 tx = odmg.newTransaction();
@@ -302,7 +304,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                 //broker.beginTransaction();
             }
-            catch(org.odmg.TransactionInProgressException pe) {
+            catch (org.odmg.TransactionInProgressException pe) {
 
                 //transaction already open - do something
                 String msg = "failed begin: cannot begin a transaction as one is already open";
@@ -347,7 +349,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //clean up the ODMG stuff too
             db.close();
         }
-        catch(Exception e) {
+        catch (Exception e) {
             throw new DataSourceException("failed to close datasource!", e);
         }
 
@@ -369,7 +371,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             db = odmg.newDatabase();
 
             //check for a user/password override of default
-            if(user != null) {
+            if (user != null) {
                 db.open(connectionDetails, Database.OPEN_READ_WRITE);
                 broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile, user, password));
             }
@@ -380,7 +382,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             }
 
         }
-        catch(ODMGException e) {
+        catch (ODMGException e) {
 
             throw new DataSourceException("failed to open database!!", e);
         }
@@ -399,7 +401,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         try {
 
             //ODMG transaction...
-            if(tx != null) {
+            if (tx != null) {
                 tx.commit();
 
                 //reset the TX reference to avoid confusion, and also
@@ -407,7 +409,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 tx = null;
                 transactionType = NULL_TX_TYPE;
             }
-            else if(transactionType == BusinessConstants.JDBC_TX){
+            else if (transactionType == BusinessConstants.JDBC_TX) {
                 //it's a PB transaction instead
                 broker.commitTransaction();
                 //reset the transaction type flag ready for next time
@@ -420,18 +422,18 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             //broker.commitTransaction();
         }
-        catch(org.odmg.TransactionAbortedException tae) {
+        catch (org.odmg.TransactionAbortedException tae) {
 
-            logger.error (tae.getCause());
-            logger.error (tae.getMessage(), tae);
+            logger.error(tae.getCause());
+            logger.error(tae.getMessage(), tae);
 
             //couldn't commit for some reason - do something
             String msg = "transaction commit failed";
             throw new TransactionException(msg, tae);
         }
-        catch(org.odmg.TransactionNotInProgressException tne) {
-            logger.error (tne.getCause());
-            logger.error (tne.getMessage(), tne);
+        catch (org.odmg.TransactionNotInProgressException tne) {
+            logger.error(tne.getCause());
+            logger.error(tne.getMessage(), tne);
 
             //method called outside a transaction - do something
             String msg = "transaction commit failed";
@@ -457,7 +459,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         boolean localTx = false;
         try {
 
-            if(isActive()) {
+            if (isActive()) {
                 logger.debug("Transaction already started");
 
                 //create called as part of another TX, so lock it
@@ -465,7 +467,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //NB ODMG associates the current thread with a TX, so we
                 //should join the TX just in case the thread has changed since
                 //the client begin() was called...
-                if(transactionType == BusinessConstants.OBJECT_TX) {
+                if (transactionType == BusinessConstants.OBJECT_TX) {
                     //do the ODMG thing - otherwsie don't do anything!
                     tx.join();
                     tx.lock(obj, tx.WRITE);
@@ -479,12 +481,12 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 //                    tx1 = odmg.newTransaction();
 //                    tx1.begin();
 //                    tx1.lock(obj, tx1.WRITE);
-                    //default to JDBC
-                    transactionType = BusinessConstants.JDBC_TX;
-                    broker.beginTransaction();
+                //default to JDBC
+                transactionType = BusinessConstants.JDBC_TX;
+                broker.beginTransaction();
 
             }
-            if(localTx) {
+            if (localTx) {
 
                 //local transaction, so commit here instead...
                 logger.debug("committing local TX");
@@ -496,7 +498,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 broker.commitTransaction();
             }
         }
-        catch(Exception e) {
+        catch (Exception e) {
 
             if (localTx) {
                 //local transaction failed - should rollback here..
@@ -522,26 +524,16 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     }
 
     /**
-     * <p>updates a given object which was originally obtained in
-     * another transaction. This allows, for example, objects to be read
-     * from persistent store (or created) in one transaction, modified elsewhere (eg via
-     * a user interface object) and then have the changes reflected in persistent
-     * store within the context of a <bold>different</bold> transaction. This therefore
-     * obviates the need to retrieve the object again in order to perform an update.
-     * Note: if the object parameter cannot be found in the persistent store, it will
-     * be created as in such cases an update is not possible.
-     * </p>
-     *
-     * @param obj - the object to be updated (or created if it does not exist in store)
-     *
-     * @exception CreateException  - thrown if the object could not me modified,
-     * eg called outside a transaction scope
-     *
+     * @see uk.ac.ebi.intact.persistence.DAO#update(Object)
      */
-    public void update(Object obj) throws CreateException {
-
+    public void update(Object obj) throws UpdateException {
+        if (!isPersistent(obj)) {
+            throw new UpdateException();
+        }
         //use ODMG...
-
+        //old PB code
+        //ObjectModificationDefaultImpl mod = new ObjectModificationDefaultImpl();
+        //mod.setNeedsUpdate(true);
         checkForOpenStore();
         //Transaction tx1 = null;
         boolean localTx = false;
@@ -550,145 +542,142 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         logger.debug("doing update - searching for old data...");
         // Removed the object from cache for a database load to get the
         // true old data.
+
         broker.removeFromCache(obj);
-         try {
+        try {
 
-             //NB To do a proper (intelligent) update:
-             //1) get the "old" obj data from the DB
-             //2) lock it for write in an ODMG transaction
-             //3) copy the new data into it (harder than it sounds!!)
-             //4) commit
-             //
-             dummy = broker.getObjectByIdentity(new Identity(obj));
-             if(dummy == null) {
-                 logger.debug("unable to update " + obj.getClass().getName() + " : no object exists in store; creating it...");
-                 create(obj);
-             }
-             else {
-                 logger.debug("object retrieved : " + dummy.toString());
+            //NB To do a proper (intelligent) update:
+            //1) get the "old" obj data from the DB
+            //2) lock it for write in an ODMG transaction
+            //3) copy the new data into it (harder than it sounds!!)
+            //4) commit
+            //
+            Identity ident = new Identity(obj, broker);
+            dummy = broker.getObjectByIdentity(ident);
+            // dummy should never be null at this point.
+//            if (dummy == null) {
+//                // Has a primary key but unknown to the DB.
+//                throw new UpdateException("Can't find an object with primary key "
+//                        + ident.getPrimaryKeyValues()[0]);
+//            }
+            logger.debug("object retrieved : " + dummy.toString());
 
-                 //check TX details and lock object into appropriate TX
-                 if(isActive()) {
+            //check TX details and lock object into appropriate TX
+            if (isActive()) {
 
-                     //NB ODMG associates the current thread with a TX, so we
-                    //should join the TX just in case the thread has changed since
-                    //the client begin() was called...
-                    logger.debug("client transaction detected - locking retrieved object for write..");
-                     if(transactionType == BusinessConstants.OBJECT_TX) {
-                        tx.join();
-                        tx.lock(dummy, tx.WRITE);
-                     }
-                 }
-                 else {
-                     //start a local TX - NB **** local TXs default to JDBC ****
+                //NB ODMG associates the current thread with a TX, so we
+                //should join the TX just in case the thread has changed since
+                //the client begin() was called...
+                logger.debug("client transaction detected - locking retrieved object for write..");
+                if (transactionType == BusinessConstants.OBJECT_TX) {
+                    tx.join();
+                    tx.lock(dummy, tx.WRITE);
+                }
+            }
+            else {
+                //start a local TX - NB **** local TXs default to JDBC ****
 //                     logger.debug("beginning local transaction - locking object for write...");
 //                     tx1 = odmg.newTransaction();
 //                     tx1.begin();
 //                     tx1.lock(dummy, tx1.WRITE);
-                     broker.beginTransaction();
-                     localTx = true;
-                 }
+                broker.beginTransaction();
+                localTx = true;
+            }
 
-                 //do some reflection/security stuff so we can set the fields to new values..
+            //do some reflection/security stuff so we can set the fields to new values..
 
-                 //first though, need to get all the superclasses as we don't get them directly from a Class object...
+            //first though, need to get all the superclasses as we don't get them directly from a Class object...
 
-                 Collection superClasses = new ArrayList();
-                 Class tester = dummy.getClass();
-                 logger.debug("getting classes - first class is " + tester.getName());
-                 while(tester != Object.class) {
+            Collection superClasses = new ArrayList();
+            Class tester = dummy.getClass();
+            logger.debug("getting classes - first class is " + tester.getName());
+            while (tester != Object.class) {
+                logger.debug("superclass added to collection: " + tester.getName());
+                superClasses.add(tester);
 
-                    logger.debug("superclass added to collection: " + tester.getName());
-                    superClasses.add(tester);
+                //now get the next parent up
+                tester = tester.getSuperclass();
+            }
 
-                     //now get the next parent up
-                     tester = tester.getSuperclass();
-                 }
+            logger.debug("parent classes obtained - getting all fields in hierarchy...");
+            Collection fieldList = new ArrayList();
+            Iterator it = superClasses.iterator();
+            while (it.hasNext()) {
+                Field[] superclassFields = ((Class) it.next()).getDeclaredFields();
+                for (int i = 0; i < superclassFields.length; i++) {
+                    logger.debug("field name: " + superclassFields[i].getName());
+                    fieldList.add(superclassFields[i]);
+                }
+            }
 
-                 logger.debug("parent classes obtained - getting all fields in hierarchy...");
-                 Collection fieldList = new ArrayList();
-                 Iterator it = superClasses.iterator();
-                 while(it.hasNext()) {
-                     Field[] superclassFields = ((Class)it.next()).getDeclaredFields();
-                     for(int i=0; i < superclassFields.length; i++) {
-                         logger.debug("field name: " + superclassFields[i].getName());
-                         fieldList.add(superclassFields[i]);
-                     }
-                 }
+            //convert list of fields to an array, as EccessibleObject needs
+            //an array of AccessibleObjects as a param
+            logger.debug("converting field list to array for security processing...");
+            Field[] fields = (Field[]) fieldList.toArray(new Field[0]);
 
-                 //convert list of fields to an array, as EccessibleObject needs
-                 //an array of AccessibleObjects as a param
-                 logger.debug("converting field list to array for security processing...");
-                 Field[] fields = (Field[]) fieldList.toArray(new Field[0]);
+            try {
+                //set the permissions on the fields - if this ever fails (eg if a
+                //SecurityManager is set), need to
+                //go via the AccessController...
+                logger.debug("setting fields to be accessible for write...");
+                AccessibleObject.setAccessible(fields, true);
+            }
+            catch (SecurityException se) {
+                logger.error("failure during update - field access denied!!", se);
+            }
 
-                 try {
-                     //set the permissions on the fields - if this ever fails (eg if a
-                     //SecurityManager is set), need to
-                     //go via the AccessController...
-                     logger.debug("setting fields to be accessible for write...");
-                     AccessibleObject.setAccessible(fields, true);
-                 }
-                 catch(SecurityException se) {
-                     logger.error("failure during update - field access denied!!", se);
-                 }
+            //now update them..
+            Object value = null;
+            logger.debug("The number of fields: " + fields.length);
+            for (int i = 0; i < fields.length; i++) {
 
-                 //now update them..
-                 Object value = null;
-                 logger.debug("The number of fields: " + fields.length);
-                 for(int i=0; i < fields.length; i++) {
+                try {
+                    value = fields[i].get(obj);
 
-                     try {
-                         value = fields[i].get(obj);
+                    // skip final field
+                    if (Modifier.isFinal(fields[i].getModifiers())) continue;
 
-                         // skip final field
-                         if (Modifier.isFinal (fields[i].getModifiers())) continue;
+                    logger.debug("field: " + fields[i].getName());
+                    logger.debug("old value: " + fields[i].get(dummy));
+                    logger.debug("new value: " + value);
+                    fields[i].set(dummy, value);
+                    logger.debug("field updated OK...");
+                }
+                catch (Exception e) {
+                    logger.error("failed to update field " + fields[i].getName(), e);
+                }
+            }
 
-                         logger.debug("field: " + fields[i].getName());
-                         logger.debug("old value: " + fields[i].get(dummy));
-                         logger.debug("new value: " + value);
-                         fields[i].set(dummy, value);
-                         logger.debug("field updated OK...");
-                     }
-                     catch(Exception e) {
-                         logger.error("failed to update field " + fields[i].getName(), e);
-                     }
-                 }
+            if (localTx) {
 
-                 if(localTx) {
-
-                    //local transaction, so commit here instead...(JDBC)
-                    logger.debug("committing local TX");
-                    //tx1.commit();
-
-                    //old PB code...
-                    //need to do a mark for update + PB.store here...
-                    ObjectModificationDefaultImpl mod = new ObjectModificationDefaultImpl();
-                    mod.setNeedsUpdate(true);
-                    broker.store(obj, mod);
-                    broker.commitTransaction();
-                 }
-             }
+                //local transaction, so commit here instead...(JDBC)
+                logger.debug("committing local TX");
+                //tx1.commit();
+                ObjectModificationDefaultImpl mod = new ObjectModificationDefaultImpl();
+                mod.setNeedsUpdate(true);
+                broker.store(obj, mod);
+                broker.commitTransaction();
+            }
 
         }
-        catch(Exception e) {
+        catch (Exception e) {
 
-             if (localTx) {
+            if (localTx) {
 
                 //local transaction failed - should rollback here..
                 logger.error("aborting local TX");
                 logger.error(e);
                 //tx1.abort();
-                 broker.abortTransaction();
-             }
+                broker.abortTransaction();
+            }
             //client should be responsible for aborting their own TX...
             //problem doing DB begin/commit, or updating object - do something
-            String msg = "object update failed: problem saving object of type " + obj.getClass().getName();
+            String msg = "object update failed: problem updating object of type " + obj.getClass().getName();
             logger.debug("exception details: " + e.getMessage());
             logger.debug(e.toString());
-             throw new CreateException(msg, e);
+            throw new UpdateException(msg, e);
         }
     }
-
 
 
     /**
@@ -701,15 +690,15 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     public boolean isActive() {
 
         checkForOpenStore();
-        if(transactionType == BusinessConstants.OBJECT_TX) {
-            if(tx != null) {
+        if (transactionType == BusinessConstants.OBJECT_TX) {
+            if (tx != null) {
                 return tx.isOpen();
             }
         }
-        if(transactionType == BusinessConstants.JDBC_TX) {
+        if (transactionType == BusinessConstants.JDBC_TX) {
             return broker.isInTransaction();
         }
-        else{
+        else {
             return false;
         }
     }
@@ -723,8 +712,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         checkForOpenStore();
         Configuration con = OjbConfigurator.getInstance().getConfigurationFor(null);
-        OjbConfiguration ojbCon = (OjbConfiguration)con;
-        if(ojbCon.useAutoCommit()==1) return true;
+        OjbConfiguration ojbCon = (OjbConfiguration) con;
+        if (ojbCon.useAutoCommit() == 1) return true;
         return false;
     }
 
@@ -736,13 +725,13 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     public void setAutoSave(boolean val) {
 
         checkForOpenStore();
-            try {
-                broker.getConnectionManager().getConnection().setAutoCommit(val);
-            }
-            catch(Exception se) {
+        try {
+            broker.getConnectionManager().getConnection().setAutoCommit(val);
+        }
+        catch (Exception se) {
 
-                logger.error("unable to reset autocommit value - reset failed", se);
-            }
+            logger.error("unable to reset autocommit value - reset failed", se);
+        }
     }
 
 
@@ -754,7 +743,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     public boolean isClosed() {
 
         checkForOpenStore();
-        if(tx != null) {
+        if (tx != null) {
             return tx.isOpen();
         }
         else {
@@ -770,13 +759,22 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * @return boolean - true if the object is persistent (default), false otherwise
      */
     public boolean isPersistent(Object obj) {
-
         checkForOpenStore();
-        Object stored = null;
-        stored = broker.getObjectByIdentity(new Identity(obj));
-        if(stored == null) return false;
+        ClassDescriptor cldes = getClassDescriptor(obj.getClass());
+        Object pkvalue = cldes.getPkFields()[0].getPersistentField().get(obj);
+        if (pkvalue == null) {
+            // Doesn't exist in the database
+            return false;
+        }
+        // Got a non null primary key. However, the object in between create and
+        // commit (e.g., object created and not comitted in a transaction).
+        // Check for real by querying the database with an Identity.
+        Identity ident = new Identity(obj, broker);
+        Object dummy = broker.getObjectByIdentity(ident);
+        if (dummy == null) {
+           return false;
+        }
         return true;
-
     }
 
     /**
@@ -796,7 +794,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         try {
 
             //broker.delete(obj);
-            if(!isActive()) {
+            if (!isActive()) {
 
                 //start local transaction - don't need to lock for write as db.deletePersistent
                 //does that for us
@@ -810,7 +808,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             //NB if an Object TX, for multi-threaded calls, need to make sure that the current thread
             //is always connected to the client transaction as this is how ODMG works...
-            if((!localTx) & (transactionType == BusinessConstants.OBJECT_TX)) {
+            if ((!localTx) & (transactionType == BusinessConstants.OBJECT_TX)) {
                 tx.join();
                 db.deletePersistent(obj);
                 logger.debug("object " + obj.getClass().getName() + " successfully locked for delete...");
@@ -819,7 +817,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //do a PB delete
                 broker.delete(obj);
             }
-            if(localTx) {
+            if (localTx) {
 
                 //commit the local transaction
                 logger.debug("commiting delete on local transaction for object " + obj.getClass().getName());
@@ -828,9 +826,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 logger.debug("local TX committed successfully");
             }
         }
-        catch(Exception pbe) {
+        catch (Exception pbe) {
 
-            if(localTx) {
+            if (localTx) {
 
                 //should rollback the local TX
                 logger.debug("error - local TX aborting...");
@@ -856,7 +854,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         try {
 
             //broker.abortTransaction();
-            if((transactionType == BusinessConstants.OBJECT_TX) & (tx != null))  {
+            if ((transactionType == BusinessConstants.OBJECT_TX) & (tx != null)) {
                 //make sure the current thread is associated with the TX first, to be safe
                 tx.join();
                 tx.abort();
@@ -869,7 +867,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 throw new TransactionException("error - cannto perform rollback: no transaction exists!");
             }
         }
-        catch(org.odmg.TransactionNotInProgressException e) {
+        catch (org.odmg.TransactionNotInProgressException e) {
 
 
             String msg = "rollback failed: see OJB exception details";
@@ -894,7 +892,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         checkForOpenStore();
         boolean startedHere = false;
 
-        if(objs != null) {
+        if (objs != null) {
 
             Iterator it = objs.iterator();
 
@@ -906,24 +904,24 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     begin(BusinessConstants.JDBC_TX);
                     startedHere = true;
                 }
-                while(it.hasNext()) {
+                while (it.hasNext()) {
 
                     create(it.next());
                 }
-                if(startedHere) {
+                if (startedHere) {
 
-                   commit();
+                    commit();
                 }
             }
-            catch(TransactionException te) {
+            catch (TransactionException te) {
 
                 rollback();
                 throw te;
 
             }
-            catch(CreateException ce) {
+            catch (CreateException ce) {
 
-                 rollback();
+                rollback();
                 throw ce;
             }
         }
@@ -963,9 +961,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         long timer = 0;
 
         //first check the params
-        if(type == null) throw new NullPointerException("can't search with a null type!");
+        if (type == null) throw new NullPointerException("can't search with a null type!");
 
-        if(col == null) {
+        if (col == null) {
 
             //no table column
             String msg = "search failed: no search parameter specified in request";
@@ -978,20 +976,25 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             searchClass = Class.forName(type);
             //should now call getConcreteClasses to obtain the concrete
             //Class instances we should build if necessary....
+//            System.out.println("search: requested for Class" + searchClass.getName());
             Collection classesToSearch = getConcreteClasses(searchClass);
+//            System.out.println("search: Concrete classes found:");
+//            for (Iterator iter = classesToSearch.iterator(); iter.hasNext();) {
+//                System.out.println(((Class) iter.next()).getName());
+//            }
 
             Criteria crit = null;
 
             //check local cache first for the object, in case the col is not the PK
-            if(isCachedClass(searchClass)) {
+            if (isCachedClass(searchClass)) {
 
                 logger.info("search class may be unique by criteria other than PK - trying local cache...");
 
                 Object obj = cache.get(searchClass + "-" + col + "-" + val);
 
-                if(obj != null) {
+                if (obj != null) {
 
-                    logger.debug("class " + obj.getClass().getName()+ " found in local cache");
+                    logger.debug("class " + obj.getClass().getName() + " found in local cache");
                     logger.debug("returning locally cached object as find result - class: " + obj.getClass().getName());
                     //as obj is unique, we are done
                     results.add(obj);
@@ -1001,7 +1004,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             }
             //build a normal Criteria query, if class is cached locally or not (
             //if found locally, would have returned by here)
-            if(val != null) {
+            if (val != null) {
                 crit = new Criteria();
                 crit.addEqualTo(col, val);
             }
@@ -1009,9 +1012,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             logger.info("criteria built OK");
             //now build a query for each search class...
             Collection queries = new ArrayList();
-            for(Iterator it = classesToSearch.iterator(); it.hasNext();) {
+            for (Iterator it = classesToSearch.iterator(); it.hasNext();) {
                 //query = new QueryByCriteria(searchClass, crit);
-                queries.add(new QueryByCriteria((Class)it.next(), crit));
+                queries.add(new QueryByCriteria((Class) it.next(), crit));
             }
             logger.info("query by criteria built OK: " + type + " " + col + " " + val);
 
@@ -1025,8 +1028,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //this is to avoid the oracle 'open cursors' problem. If connection
             //pooling is used, commit should just release the connection's resources..
             broker.beginTransaction();
-            for(Iterator queryIt = queries.iterator(); queryIt.hasNext();) {
-                results.addAll(broker.getCollectionByQuery((Query)queryIt.next()));
+            for (Iterator queryIt = queries.iterator(); queryIt.hasNext();) {
+                results.addAll(broker.getCollectionByQuery((Query) queryIt.next()));
             }
             broker.commitTransaction();
 
@@ -1037,7 +1040,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             logger.info("******************************************");
 
         }
-        catch(PersistenceBrokerException pbe) {
+        catch (PersistenceBrokerException pbe) {
 
             //problem doing the query....
             String msg = "search failed: problem executing query";
@@ -1049,7 +1052,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             throw new SearchException(msg, pbe);
 
         }
-        catch(ClassNotFoundException c) {
+        catch (ClassNotFoundException c) {
 
             //problem finding the class to search on....
             String msg = "search failed: problem executing query - class to search not found! ";
@@ -1059,12 +1062,12 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         }
 
-        if((isCachedClass(searchClass)) & (!results.isEmpty())) {
+        if ((isCachedClass(searchClass)) & (!results.isEmpty())) {
 
             //must have a unique result that could be queried other than by PK, so cache it locally
             Iterator it = results.iterator();
             Object obj = it.next();
-            if(it.hasNext()) {
+            if (it.hasNext()) {
 
                 //some problem - expecting a unique result...
                 throw new SearchException("search error - expecting a unique result but got more than one");
@@ -1087,48 +1090,48 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         checkForOpenStore();
         Query query = null;
-            Collection results = new ArrayList();
+        Collection results = new ArrayList();
 
-            //debug info..
-            long timer = 0;
+        //debug info..
+        long timer = 0;
 
-            //first check the param
-            if(obj==null) {
+        //first check the param
+        if (obj == null) {
 
-                //no search value
-                String msg = "search failed: no search value specified in request";
-                logger.info(msg);
-                throw new SearchException(msg);
-            }
-
-            try {
-
-                query = buildQueryByExample(obj);
-                logger.info("query by example built OK");
-
-                timer = System.currentTimeMillis();
-
-                //get a Collection - may be more than one object matching the example
-                results = broker.getCollectionByQuery(query);
-
-                long tmp = System.currentTimeMillis();
-                timer = tmp - timer;
-                logger.info("******************************************");
-                logger.info("search by object: time in OJB query execute (ms): " + timer);
-                logger.info("******************************************");
-
-            }
-            catch(PersistenceBrokerException pbe) {
-
-                //problem doing the query....
-                String msg = "search failed: problem executing query " + query.toString();
-                logger.info(msg);
-                throw new SearchException(msg, pbe);
-
-            }
-
-            return results;
+            //no search value
+            String msg = "search failed: no search value specified in request";
+            logger.info(msg);
+            throw new SearchException(msg);
         }
+
+        try {
+
+            query = buildQueryByExample(obj);
+            logger.info("query by example built OK");
+
+            timer = System.currentTimeMillis();
+
+            //get a Collection - may be more than one object matching the example
+            results = broker.getCollectionByQuery(query);
+
+            long tmp = System.currentTimeMillis();
+            timer = tmp - timer;
+            logger.info("******************************************");
+            logger.info("search by object: time in OJB query execute (ms): " + timer);
+            logger.info("******************************************");
+
+        }
+        catch (PersistenceBrokerException pbe) {
+
+            //problem doing the query....
+            String msg = "search failed: problem executing query " + query.toString();
+            logger.info(msg);
+            throw new SearchException(msg, pbe);
+
+        }
+
+        return results;
+    }
 
 // ------------------------- some convenience search methods --------------------------
     /**
@@ -1149,7 +1152,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      */
     public Iterator findColumnValues(String type, String[] cols) throws SearchException {
 
-        if(type == null) throw new NullPointerException("can't query with a null type!!");
+        if (type == null) throw new NullPointerException("can't query with a null type!!");
         ReportQueryByCriteria query = null;
         try {
 
@@ -1159,19 +1162,19 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             return results;
         }
 
-        catch(PersistenceBrokerException pbe) {
+        catch (PersistenceBrokerException pbe) {
 
             //problem doing the query....
             String msg = "search failed: problem finding column details";
             logger.info(msg);
-            if(query != null) {
+            if (query != null) {
                 logger.info("class: " + query.getSearchClass().getName() + "\n");
                 logger.info("attribute requested: " + query.getRequestedAttribute() + "\n");
             }
             throw new SearchException(msg, pbe);
 
         }
-        catch(ClassNotFoundException c) {
+        catch (ClassNotFoundException c) {
 
             //problem finding the class to search on....
             String msg = "search failed: problem executing query - class to search not found! ";
@@ -1180,20 +1183,20 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
 
         }
-     }
+    }
 
     /**
-    * This method allows submission of a query by straight SQL string. If the string
-    * is garbage then expect garbage back - no guarantees are made for the results.
-    * @param type the object type you want details of (must be specified)
-    * @param sqlString the string to be used for the query
-    * @return A Collection of search results, or empty if none found
-    * @exception SearchException thrown if a problem occurs whilst searching the data store
-    * @exception NullPointerException thrown if the type is null
-    */
+     * This method allows submission of a query by straight SQL string. If the string
+     * is garbage then expect garbage back - no guarantees are made for the results.
+     * @param type the object type you want details of (must be specified)
+     * @param sqlString the string to be used for the query
+     * @return A Collection of search results, or empty if none found
+     * @exception SearchException thrown if a problem occurs whilst searching the data store
+     * @exception NullPointerException thrown if the type is null
+     */
     public Collection findBySQL(String type, String sqlString) throws SearchException {
 
-        if(type == null) throw new NullPointerException("can't query with a null type!!");
+        if (type == null) throw new NullPointerException("can't query with a null type!!");
         Collection results = new ArrayList();
         QueryBySQL query = null;
         try {
@@ -1203,19 +1206,19 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             return results;
         }
 
-        catch(PersistenceBrokerException pbe) {
+        catch (PersistenceBrokerException pbe) {
 
             //problem doing the query....
             String msg = "search failed: problem doing raw SQL string search";
             logger.info(msg);
-            if(query != null) {
+            if (query != null) {
                 logger.info("class: " + query.getSearchClass().getName() + "\n");
                 logger.info("attribute requested: " + query.getRequestedAttribute() + "\n");
             }
             throw new SearchException(msg, pbe);
 
         }
-        catch(ClassNotFoundException c) {
+        catch (ClassNotFoundException c) {
 
             //problem finding the class to search on....
             String msg = "search failed: problem executing query - class to search not found! ";
@@ -1286,7 +1289,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 }
             }
 
-            if(val != null) {
+            if (val != null) {
                 //fully specified search value
                 crit = new Criteria();
                 crit.addEqualTo(col, val);
@@ -1301,7 +1304,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //the iterator. The user has to handle it!
             resultIterator = broker.getIteratorByQuery(query);
 
-        } catch (PersistenceBrokerException pbe) {
+        }
+        catch (PersistenceBrokerException pbe) {
 
             //problem doing the query....
             String msg = "search failed: problem executing query";
@@ -1311,7 +1315,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             logger.info("attribute requested: " + query.getRequestedAttribute() + "\n");
             throw new SearchException(msg, pbe);
 
-        } catch (ClassNotFoundException c) {
+        }
+        catch (ClassNotFoundException c) {
 
             //problem finding the class to search on....
             String msg = "search failed: problem executing query - class to search not found! ";
@@ -1389,48 +1394,46 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         Criteria criteria = new Criteria();
 
         //get some info on the parameter object's OJB details....
-		ClassDescriptor cld = DescriptorRepository.getDefaultInstance().getDescriptorFor(obj.getClass());
-		FieldDescriptor[] fds = cld.getFieldDescriptions();
+        ClassDescriptor cld = DescriptorRepository.getDefaultInstance().getDescriptorFor(obj.getClass());
+        FieldDescriptor[] fds = cld.getFieldDescriptions();
         String objClassName = obj.getClass().getName();
 
         logger.debug("DAO: field descriptions for object " + objClassName + " :");
 
-		//worker variables to hold persistent fields and their values set in the example obj
+        //worker variables to hold persistent fields and their values set in the example obj
         PersistentField field;
-		Object value;
+        Object value;
 
-		//handle "simple" fields eg String, Date etc
+        //handle "simple" fields eg String, Date etc
         logger.debug("field info for object " + objClassName + ":");
-        for (int i = 0; i < fds.length; i++)
-		{
-			try {
+        for (int i = 0; i < fds.length; i++) {
+            try {
 
-				field = fds[i].getPersistentField();
+                field = fds[i].getPersistentField();
                 value = field.get(obj);
 
                 logger.debug("name: " + field.getName());
                 logger.debug("type: " + field.getType());
 
-				if (value != null)
-				{
-					//OK to use the field name - its mapping to a column name is handled by OJB...
+                if (value != null) {
+                    //OK to use the field name - its mapping to a column name is handled by OJB...
                     criteria.addEqualTo(field.getName(), value);
                     logger.debug("value: " + value.toString());
-				}
-			}
-			catch (Throwable ex) {
+                }
+            }
+            catch (Throwable ex) {
 
-				logger.error(ex);
-			}
-		}
+                logger.error(ex);
+            }
+        }
 
         //try object refs..
         Vector objRefs = cld.getObjectReferenceDescriptors();
         Iterator it1 = objRefs.iterator();
         logger.debug("reference object details for " + objClassName + ":");
 
-        while(it1.hasNext()) {
-            ObjectReferenceDescriptor refDesc = (ObjectReferenceDescriptor)it1.next();
+        while (it1.hasNext()) {
+            ObjectReferenceDescriptor refDesc = (ObjectReferenceDescriptor) it1.next();
 
             logger.debug("name: " + refDesc.getAttributeName());
             logger.debug("type: " + refDesc.getClass().getName());
@@ -1443,11 +1446,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         Vector collectionDescs = cld.getCollectionDescriptors();
         Iterator it = collectionDescs.iterator();
         logger.debug("collection descriptor details for " + objClassName + ":");
-        while(it.hasNext()) {
+        while (it.hasNext()) {
 
             //go through the collections until we find a single one
             //containing data - only one is needed to obtain the target PK we want
-            CollectionDescriptor collectionDesc = (CollectionDescriptor)it.next();
+            CollectionDescriptor collectionDesc = (CollectionDescriptor) it.next();
 
             logger.debug("name: " + collectionDesc.getAttributeName());
             logger.debug("item type:" + collectionDesc.getItemClass().getName());
@@ -1455,10 +1458,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             try {
                 field = collectionDesc.getPersistentField();
-                Collection col = (Collection)field.get(obj);
+                Collection col = (Collection) field.get(obj);
 
                 //got a Collection - now  need to add its details to the search info..
-                if((col != null) & (!col.isEmpty())) {
+                if ((col != null) & (!col.isEmpty())) {
 
                     if (collectionDesc.isMtoNRelation()) {
 
@@ -1479,11 +1482,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     }
                 }
             }
-            catch(Throwable ex) {
+            catch (Throwable ex) {
 
                 logger.error(ex);
             }
-       }
+        }
 
         if (query == null) {
 
@@ -1510,17 +1513,20 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * @exception PersistenceBrokerException Thrown if there were OJB problems
      *
      */
-    private void buildCollectionCriteria(ClassDescriptor targetDesc, CollectionDescriptor collectionDesc, Criteria criteria, Object obj) throws PersistenceBrokerException {
+    private void buildCollectionCriteria(ClassDescriptor targetDesc,
+                                         CollectionDescriptor collectionDesc,
+                                         Criteria criteria, Object obj)
+            throws PersistenceBrokerException {
 
         //get some basic info first
         PersistentField field = collectionDesc.getPersistentField();
-        Collection collection = (Collection)field.get(obj);
+        Collection collection = (Collection) field.get(obj);
         Vector inverseFkIds = collectionDesc.getForeignKeyFields();
 
         logger.debug("search by object (collection): field in example object " + obj.getClass().getName() + " with collection is " + field.getName());
 
 
-        if(inverseFkIds != null) {
+        if (inverseFkIds != null) {
 
             //must be: a) elements with inverse FKs (ie 1:n mappings)....
             /*
@@ -1532,18 +1538,25 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             */
 
             //must only be one, as we know by now the relation to the Collection is 1:n
-            int inverseFkId = ((Integer)inverseFkIds.firstElement()).intValue();
+            int inverseFkId = ((Integer) inverseFkIds.firstElement()).intValue();
             logger.debug("ID of inverse foreign key is " + inverseFkId);
 
             //get the PK value from the FK in the example if set, or from the DB if not...
-            if(collection != null) {
+            if (collection != null) {
 
                 Iterator it = collection.iterator();
 
                 //only need one example element...
-                if(it.hasNext()) {
+                if (it.hasNext()) {
 
                     Object element = it.next();
+                    // Element must be persistable.
+                    if (!isPersistent(element)) {
+                        throw new PersistenceBrokerException("Found an element that isn't persistent");
+                    }
+
+                    // To get this far; element is already persistent.
+
                     logger.debug("class of collection elements is " + element.getClass().getName());
 
                     //get basic info on the element and its relevant FK
@@ -1559,8 +1572,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                         logger.debug("querying DB to get the inverse key to target...");
 
                         //assumes collection element in example has PK set
-                        Object dbElement = broker.getObjectByIdentity(new Identity(element));
-                        if(dbElement != null) {
+                        Object dbElement = broker.getObjectByIdentity(new Identity(element, broker));
+                        if (dbElement != null) {
 
                             logger.debug("DB element obtained OK - collection element details:");
                             logger.debug(dbElement.toString());
@@ -1569,7 +1582,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                             val = persistentField.get(dbElement);
                         }
                         else {
-
+                            // We shouldn't get here because we have already chekced for persistence
+                            // above.
                             logger.debug("error - no collection element found in DB either.");
                             logger.debug("unable to build FK relationship between collection elements and target object!!");
                             throw new PersistenceBrokerException("search by object: failed to find example details in DB");
@@ -1578,7 +1592,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                     //now add in the criteria details...
                     FieldDescriptor[] fieldDescs = targetDesc.getPkFields();
-                    if((fieldDescs == null) || (fieldDescs.length > 1)) {
+                    if ((fieldDescs == null) || (fieldDescs.length > 1)) {
 
                         //a problem - should only have one PK field!!
                         logger.debug("search by object (collection): target object has zero or > 1 primary key fields!!");
@@ -1617,7 +1631,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      *
      * @exception PersistenceBrokerException Thrown if there are OJB problems
      *
-     */ private Query buildMtoNQuery(ClassDescriptor targetDesc, CollectionDescriptor collectionDesc, Object obj) throws PersistenceBrokerException {
+     */
+    private Query buildMtoNQuery(ClassDescriptor targetDesc, CollectionDescriptor collectionDesc, Object obj) throws PersistenceBrokerException {
 
         //b) indierection table case (ie m:n mappings).....
         logger.debug("search by object (collection): need to check indirection table...");
@@ -1626,7 +1641,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         //get some basic info
         PersistentField field = collectionDesc.getPersistentField();
-        Collection collection = (Collection)field.get(obj);
+        Collection collection = (Collection) field.get(obj);
 
         /*
         * sketch:
@@ -1651,7 +1666,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         logger.debug("column name holding element PK: " + elemClassFks[0]);
         logger.debug("column name holding target PK: " + targetClassFks[0]);
 
-        if(collection != null) {
+        if (collection != null) {
 
             Iterator it = collection.iterator();
 
@@ -1675,7 +1690,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 if (elemPk != null) {
 
                     logger.debug("PK field for element class " + elemDesc.getClassOfObject().getName() + " : " + elemPk);
-                    criteria.addEqualTo(indirectionTable + "." + (String)elemClassFks[0], elemPk);
+                    criteria.addEqualTo(indirectionTable + "." + (String) elemClassFks[0], elemPk);
                 }
                 else {
 
@@ -1727,7 +1742,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             PersistentField field = refDesc.getPersistentField();
             Object value = field.get(obj);
 
-            if(value != null) {
+            if (value != null) {
 
                 // subqueries not supported by OJB, so can't use them -
                 //need then to work with the ClassDescriptor of the reference supplied
@@ -1735,7 +1750,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                 ClassDescriptor valueCd = DescriptorRepository.getDefaultInstance().getDescriptorFor(value.getClass());
                 Object[] keys = valueCd.getKeyValues(value);
-                if((keys.length > 1) || (keys.length == 0)){
+                if ((keys.length > 1) || (keys.length == 0)) {
 
                     //something odd - reference object has zero or more than one PK
                     logger.error("object-based search: contained reference object has zero or more than one PK!!");
@@ -1746,14 +1761,14 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     //the ID of the FK field can be obtained from the ObjectReferenceDescriptor
                     //as a Vector of Integer - but this is likely only ever to contain one ID!!
                     Vector fkIds = refDesc.getForeignKeyFields();
-                    if((fkIds.size() > 1) || (fkIds.size() == 0)) {
+                    if ((fkIds.size() > 1) || (fkIds.size() == 0)) {
 
                         //something odd - reference has zero or more than one FK attribute in the target!!
                         logger.error("object-based search: zero or more than one FK attribute present for an object reference!!");
                     }
                     else {
 
-                        int fkId = ((Integer)fkIds.firstElement()).intValue();
+                        int fkId = ((Integer) fkIds.firstElement()).intValue();
 
                         //now find the field in the target with this ID and compare to the PK
                         ClassDescriptor cld = DescriptorRepository.getDefaultInstance().getDescriptorFor(obj.getClass());
@@ -1767,7 +1782,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             }
         }
-        catch(Throwable ex) {
+        catch (Throwable ex) {
 
             logger.error(ex);
         }
@@ -1787,19 +1802,19 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         Collection result = new ArrayList();
         ClassDescriptor classDesc = getClassDescriptor(classToCheck);
-        if(classDesc != null) {
+        if (classDesc != null) {
 
             //NB if this doesn't work we could just check to see if it is abstract..
-            if(!classDesc.isExtent()) {
+            if (!classDesc.isExtent()) {
                 //concrete already - just return it
                 result.add(classToCheck);
             }
             else {
                 //get all of the concrete classes we can find
                 Vector subClasses = classDesc.getExtentClasses();
-                for(Iterator it = subClasses.iterator(); it.hasNext();) {
-                    Class subClass = (Class)it.next();
-                   // ClassDescriptor subClassDesc = getClassDescriptor(subClass);
+                for (Iterator it = subClasses.iterator(); it.hasNext();) {
+                    Class subClass = (Class) it.next();
+                    // ClassDescriptor subClassDesc = getClassDescriptor(subClass);
                     result.addAll(getConcreteClasses(subClass));
                 }
 
@@ -1816,12 +1831,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * in the repositro_user.xml configuration) - null if the descriptor does not exist
      */
     private ClassDescriptor getClassDescriptor(Class clazz) {
-        return(DescriptorRepository.getDefaultInstance().getDescriptorFor(clazz));
+        return (DescriptorRepository.getDefaultInstance().getDescriptorFor(clazz));
     }
-
-
-
-
 
 
 }
