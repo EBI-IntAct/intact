@@ -229,7 +229,7 @@ public class MockXmlContent {
             "                    <fullName>Functional organization of the yeast proteome by " +
             "systematic analysis of protein complexes.</fullName>" + NEW_LINE +
             "                </names>" + NEW_LINE +
-            "               <xref> <!--  WEIRD THING HERE, doesn't wotk if xref comes after bibref -->" + NEW_LINE +
+            "               <xref>" + NEW_LINE +
             "                     <primaryRef db=\"go\" id=\"GO:0000000\"" + NEW_LINE +
             "                         secondary=\"blabla\" version=\"versionX\"/>" + NEW_LINE +
             "                     <secondaryRef db=\"psi-mi\" id=\"MI:0082\"" + NEW_LINE +
@@ -239,8 +239,8 @@ public class MockXmlContent {
             "                </xref>" + NEW_LINE +
             "                <bibref>" + NEW_LINE +
             "                    <xref>" + NEW_LINE +
-            "                        <primaryRef db=\"pubmed\" id=\"11805826\"" + NEW_LINE +
-            "                            secondary=\"\" version=\"\"/>" + NEW_LINE +
+            "                        <primaryRef db=\"pubmed\" id=\"11805826\" secondary=\"\" version=\"\"/>" + NEW_LINE +
+            "                        <secondaryRef db=\"pubmed\" id=\"11809999\" secondary=\"\" version=\"\"/>" + NEW_LINE +
             "                    </xref>" + NEW_LINE +
             "                </bibref>" + NEW_LINE +
             "                <hostOrganism ncbiTaxId=\"4932\">" + NEW_LINE +
@@ -292,14 +292,58 @@ public class MockXmlContent {
             "                            secondary=\"C:nucleus\" version=\"version2\" />" + NEW_LINE +
             "                    </xref>";
 
-
     public static final String HOST_ORGANISM_1 =
             "                <hostOrganism ncbiTaxId=\"4932\">" + NEW_LINE +
             "                    <names>" + NEW_LINE +
             "                        <shortLabel>s cerevisiae</shortLabel>" + NEW_LINE +
             "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
             "                    </names>" + NEW_LINE +
+            "                    <tissue>\n" +
+            "                        <xref>\n" +
+            "                            <primaryRef db=\"psi-mi\" id=\"MI:123\" secondary=\"\" version=\"\"/>\n" +
+            "                        </xref>\n" +
+            "                   </tissue>\n" +
+            "                   <cellType>\n" +
+            "                        <xref>\n" +
+            "                           <primaryRef db=\"psi-mi\" id=\"MI:987\" secondary=\"\" version=\"\"/>\n" +
+            "                        </xref>\n" +
+            "                   </cellType>" +
             "                </hostOrganism>";
+
+    public static final String HOST_ORGANISM_2 =
+            "                <hostOrganism ncbiTaxId=\"4932\">" + NEW_LINE +
+            "                    <names>" + NEW_LINE +
+            "                        <shortLabel>s cerevisiae</shortLabel>" + NEW_LINE +
+            "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
+            "                    </names>" + NEW_LINE +
+            "                </hostOrganism>";
+
+    public static final String HOST_ORGANISM_3 =
+            "                <hostOrganism ncbiTaxId=\"4932\">" + NEW_LINE +
+            "                    <names>" + NEW_LINE +
+            "                        <shortLabel>s cerevisiae</shortLabel>" + NEW_LINE +
+            "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
+            "                    </names>" + NEW_LINE +
+            "                    <tissue>\n" +
+            "                        <xref>\n" +
+            "                            <primaryRef db=\"psi-mi\" id=\"MI:123\" secondary=\"\" version=\"\"/>\n" +
+            "                        </xref>\n" +
+            "                   </tissue>\n" +
+            "                </hostOrganism>";
+
+    public static final String HOST_ORGANISM_4 =
+            "                <hostOrganism ncbiTaxId=\"4932\">" + NEW_LINE +
+            "                    <names>" + NEW_LINE +
+            "                        <shortLabel>s cerevisiae</shortLabel>" + NEW_LINE +
+            "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
+            "                    </names>" + NEW_LINE +
+            "                   <cellType>\n" +
+            "                        <xref>\n" +
+            "                           <primaryRef db=\"psi-mi\" id=\"MI:987\" secondary=\"\" version=\"\"/>\n" +
+            "                        </xref>\n" +
+            "                   </cellType>" +
+            "                </hostOrganism>";
+
 
     public static final String PROTEIN_INTERACTOR_1 =
             "            <proteinInteractor id=\"EBI-111\">" + NEW_LINE +
@@ -354,6 +398,21 @@ public class MockXmlContent {
             "                        <fullName>Saccharomyces cerevisiae</fullName>" + NEW_LINE +
             "                    </names>" + NEW_LINE +
             "                </organism>" + NEW_LINE +
+            "                <sequence>MATRTQFENSNEIGVFSKLTNTYCLVAVGGSENFYSAFEAELGDAIPIVHTTIAGTRIIGRMTAGNRRGLLVPTQTTDQELQHLRNSLPDSVKIQRVEERLSALGNVICCNDYVALVHPDIDRETEELISDVLGVEVFRQTISGNILVGSYCSLSNQGGLVHPQTSVQDQEELSSLLQVPLVAGTVNRGSSVVGAGMVVNDYLAVTGLDTTAPELSVIESIFRLQDAQPESISGNLRDTLIETYS</sequence>" + NEW_LINE +
+            "            </proteinInteractor>";
+
+    public static final String PROTEIN_INTERACTOR_WITHOUT_BIOSOURCE =
+            "            <proteinInteractor id=\"EBI-333\">" + NEW_LINE +
+            "                <names>" + NEW_LINE +
+            "                    <shortLabel>if6_yeast</shortLabel>" + NEW_LINE +
+            "                    <fullName>Eukaryotic translation initiation factor 6</fullName>" + NEW_LINE +
+            "                </names>" + NEW_LINE +
+            "                <xref>" + NEW_LINE +
+            "                    <primaryRef db=\"uniprot\" id=\"P12345\"" + NEW_LINE +
+            "                        secondary=\"blablabla\" version=\"2.46\"/>" + NEW_LINE +
+            "                    <secondaryRef db=\"go\" id=\"GO:0042273\"" + NEW_LINE +
+            "                        secondary=\"P:ribosomal large subunit biog\" version=\"\"/>" + NEW_LINE +
+            "                </xref>" + NEW_LINE +
             "                <sequence>MATRTQFENSNEIGVFSKLTNTYCLVAVGGSENFYSAFEAELGDAIPIVHTTIAGTRIIGRMTAGNRRGLLVPTQTTDQELQHLRNSLPDSVKIQRVEERLSALGNVICCNDYVALVHPDIDRETEELISDVLGVEVFRQTISGNILVGSYCSLSNQGGLVHPQTSVQDQEELSSLLQVPLVAGTVNRGSSVVGAGMVVNDYLAVTGLDTTAPELSVIESIFRLQDAQPESISGNLRDTLIETYS</sequence>" + NEW_LINE +
             "            </proteinInteractor>";
 

@@ -61,7 +61,7 @@ public class ProteinInteractorParserTest extends TestCase {
         return null;
     }
 
-    public void testProcess() {
+    public void testProcessWithBioSource() {
 
         final MockInputStream is = new MockInputStream();
         is.setBuffer( MockXmlContent.PROTEIN_INTERACTOR_1 );
@@ -80,6 +80,33 @@ public class ProteinInteractorParserTest extends TestCase {
         OrganismTag organism = protein.getOrganism();
         assertNotNull( organism );
         assertEquals( "4932", organism.getTaxId() );
+
+        XrefTag xref = protein.getUniprotXref();
+        assertNotNull( xref );
+        assertEquals( "uniprot", xref.getDb() );
+        assertEquals( "P12345", xref.getId() );
+        assertEquals( "blablabla", xref.getSecondary() );
+        assertEquals( "2.46", xref.getVersion() );
+    }
+
+    public void testProcessWithoutBioSource() {
+
+        final MockInputStream is = new MockInputStream();
+        is.setBuffer( MockXmlContent.PROTEIN_INTERACTOR_WITHOUT_BIOSOURCE );
+        final Document document = MockDocumentBuilder.build( is );
+        final Element element = document.getDocumentElement();
+
+        LabelValueBean lvb = null;
+        final ProteinInteractorParser proteinInteractor = new ProteinInteractorParser( null, element );
+        lvb = proteinInteractor.process();
+
+        assertNotNull( lvb );
+        assertEquals( "EBI-333", lvb.getLabel() );
+        final ProteinInteractorTag protein = (ProteinInteractorTag) lvb.getValue();
+        assertNotNull( protein );
+
+        OrganismTag organism = protein.getOrganism();
+        assertNull( organism );
 
         XrefTag xref = protein.getUniprotXref();
         assertNotNull( xref );
