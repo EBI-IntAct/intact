@@ -28,9 +28,22 @@ cf. README file in the intactCore root directory.
 
 PART 1 : INSTALL THE TULIP WEB SERVICE
 ---------------------------------------
-That web service will allows hierarchView to calculate proteins' coordinates of the interaction network to display.
+That web service will allows hierarchView to calculate proteins' coordinates of the
+interaction network to display. It can either be based on Tulip or the
+Graph Visualization Framework, the user will be asked which one as to be used when
+building the web service.
 
-(1) Install the tulip console (software allowing to interact with the Tulip library)
+(1) Build the web service archive
+    -----------------------------
+    type 'ant make-ws'
+    At the prompt, choose which layout library you want to use (Tulip or GVF).
+    It creates an archive called tulipWebService.tar.gz in the 'dist' directory.
+
+
+[ If you have choosen the GVF library, please go to (3) ]
+
+
+(2) Install the tulip console (software allowing to interact with the Tulip library)
     -------------------------
     - in the 'tulip' directory, you will find the 'tulipRemote-scr.tar.gz' archive.
     - Uncompress it.
@@ -42,24 +55,23 @@ That web service will allows hierarchView to calculate proteins' coordinates of 
     - You obtain 'console' binary file you have now to copy in a location of your
       choice (on the machine which will run the web service).
 
-(2) Configure the Tulip web service
+
+(3) Configure the Tulip web service
     -------------------------------
     - edit the 'WEB-INF/config/WebService.properties' file.
     - customize :
         * webService.adress             : with the url of your tulip web service
+
+        [ properties below are only needed by tulip, hence skip it if you have choosen GVF ]
         * webService.console.location   : with the absolute path to the console you have compiled in step 1.
         * webService.tlpRepository.path : with the path of a writable directory (default /tmp).
 
-(3) Build the web service archive
-    -----------------------------
-    type 'ant make-ws'
-    it creates an archive called tulipWebService.tar.gz in the 'dist' directory.
 
 (4) Install the web service
     ------------------------
     - copy that archive to the machine which will host the web service
     - uncompress it (tar zxvf tulipWebService.tar.gz)
-    - enter the freshly created directory 'ws' and read the README file to know how
+    - enter the freshly created directory 'ws' (type: 'cd ws') and read the README file to know how
       to install and manage the web service.
 
 
@@ -72,17 +84,20 @@ PART 2 : INSTALL THE WEB APPLICATION
     - customize :
         * webService.adress : with the url of your tulip web service
 
+
 (2) Configure the Highlighting
     --------------------------
     - edit the 'WEB-INF/config/Highlighting.properties' file.
     - customize :
         * 'highlightment.source.GO.hostname' with the hostname of the interpro web server.
 
+
 (3) Configure how to access the search application
     ----------------------------------------------
     - edit the 'WEB-INF/config/Search.properties' file.
     - you can customize :
         * 'search.url' with the hostname of the server which hosts the search application.
+
 
 (4) Configure how to access the graph2mif application
     -------------------------------------------------
@@ -92,20 +107,24 @@ PART 2 : INSTALL THE WEB APPLICATION
         * 'graph2mif.url' with the full URL of the servlet which allow to interact with the service.
           eg. http://www.ebi.ac.uk/intact/graph2mif/getXML
 
+
 (5) Build the application war file
     ------------------------------
     run 'ant undeploy war deploy', will clean Tomcat build the application war file and install
     the web application in the local machine assuming you have $CATALINA_HOME correctly set as
     an environment variable.
 
+
 (6) Start Tomcat
     ------------
     run 'ant start-tomcat' (once)- if this fails, simply go to your tomcat bin directory and start it manually from there.
+
 
 (7) Test the web service (OPTIONAL)
     -------------------------------
     By running 'ant test-ws', you send a dummy TLP file to the web service and get back a
     list of protein's coordinates. Those coordinates are computed by Tulip.
+
 
 (8) Try the web application
     -----------------------
