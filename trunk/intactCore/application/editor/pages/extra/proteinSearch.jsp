@@ -13,15 +13,16 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
 <html:form action="/interaction/protein/search">
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="10%">Action</th>
-            <th class="tableCellHeader" width="10%">ShortLabel</th>
+            <th class="tableCellHeader" width="10%">Short Label</th>
             <th class="tableCellHeader" width="10%">SP AC</th>
             <th class="tableCellHeader" width="10%">IntAct AC</th>
-            <th class="tableCellHeader" width="60%">Full text</th>
+            <th class="tableCellHeader" width="60%">Full Text</th>
         </tr>
         <tr class="tableRowEven">
             <td class="tableCell">
@@ -39,8 +40,19 @@
                 <html:text property="ac" size="10" maxlength="16"/>
             </td>
             <td class="tableCell">
-                <html:text property="fullText" size="20" maxlength="30"/>
+                <html:text property="fullName" size="20" maxlength="30"/>
             </td>
         </tr>
+
+        <%-- Prints all the error messages relevant to this page only. --%>
+        <logic:messagesPresent>
+            <tr class="tableRowOdd">
+                <td class="tableErrorCell" colspan="5">
+                    <%-- Filter out other error messages. --%>
+                    <html:errors property="protein.search"/>
+                </td>
+            </tr>
+        </logic:messagesPresent>
+
     </table>
 </html:form>
