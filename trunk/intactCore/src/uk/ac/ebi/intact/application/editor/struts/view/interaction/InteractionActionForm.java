@@ -6,15 +6,11 @@
 
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
 import java.util.List;
 
@@ -205,51 +201,12 @@ public class InteractionActionForm extends EditorActionForm {
     }
 
     /**
-     * Validates Interaction info page.
-     * 
-     * @param mapping the mapping used to select this instance
-     * @param request the servlet request we are processing
-     * @return <tt>ActionErrors</tt> object that contains validation errors.
-     * If no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
-     * object is returned.
-     */
-    public ActionErrors validate(ActionMapping mapping,
-            HttpServletRequest request) {
-        ActionErrors errors = super.validate(mapping, request);
-
-        // Only proceed if super method does not find any errors.
-        if ((errors != null) && !errors.isEmpty()) {
-            return errors;
-        }
-
-        // The dispatch parameter to find out which button was pressed.
-        String dispatch = getDispatch();
-
-        if (dispatch != null) {
-            // Message resources to access button labels.
-            MessageResources msgres = ((MessageResources) request
-                    .getAttribute(Globals.MESSAGES_KEY));
-
-            // Trap errors for linking two features.
-            if (dispatch.equals(msgres.getMessage(
-                    "int.proteins.button.feature.link"))) {
-                errors = validateLinkTwoFeatures();
-            }
-            else if (dispatch.equals(msgres.getMessage(
-                    "int.proteins.button.feature.unlink"))) {
-                errors = validateUnlinkFeature();
-            }
-        }
-        return errors;
-    }
-
-    /**
      * Validates the form for when Link Selected Features button was selected.
      * 
      * @return errors if two features not selected (exactly). A null is returned
      * if there no errors.
      */
-    private ActionErrors validateLinkTwoFeatures() {
+    public ActionErrors validateLinkFeatures() {
         ActionErrors errors = null;
         int count = 0;
         for (Iterator iter0 = getComponents().iterator(); iter0.hasNext()
@@ -276,7 +233,7 @@ public class InteractionActionForm extends EditorActionForm {
      * @return errors if a single feature wasn't selected. A null is returned
      * if there no errors.
      */
-    private ActionErrors validateUnlinkFeature() {
+    public ActionErrors validateUnlinkFeatures() {
         ActionErrors errors = null;
         int count = 0;
         for (Iterator iter0 = getComponents().iterator(); iter0.hasNext()
