@@ -29,6 +29,7 @@ import java.util.Properties;
  * @author Samuel Kerrien
  * @version $Id$
  */
+
 public final class SearchAction extends IntactBaseAction {
 
     /**

@@ -13,12 +13,12 @@ import java.util.StringTokenizer;
 /**
  * This class give some usefull methods
  *
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 
-public class Utilities
-{
-
+public class Utilities {
 
     /**
      * Parse a string (number separated by comma) and create a Color Object
@@ -50,12 +50,8 @@ public class Utilities
         }
 
         return new Color(red, green, blue);
-
-    } // parseColor
-
-
-
-} // Utilities
+    }
+}
 
 
 

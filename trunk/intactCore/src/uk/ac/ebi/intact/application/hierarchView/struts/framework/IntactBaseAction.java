@@ -34,6 +34,7 @@ import java.rmi.RemoteException;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
+
 public abstract class IntactBaseAction extends Action {
 
     public static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
@@ -270,6 +271,4 @@ public abstract class IntactBaseAction extends Action {
         user.setImageBean (ib);
         user.setInteractionNetwork (in);
     } // produceInteractionNetworkImage
-
-
 }

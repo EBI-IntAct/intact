@@ -26,6 +26,7 @@ import java.io.IOException;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
+
 public class DisplayHttpContentTag extends TagSupport {
 
     /**
@@ -89,5 +90,4 @@ public class DisplayHttpContentTag extends TagSupport {
 
        return EVAL_PAGE;  // the rest of the calling JSP is evaluated
     } // doEndTag
-
 }

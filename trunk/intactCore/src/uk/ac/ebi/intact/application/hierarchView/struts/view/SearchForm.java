@@ -22,6 +22,8 @@ import uk.ac.ebi.intact.application.hierarchView.business.Constants;
  * <li><b>method</b> - Selected method value
  * </ul>
  *
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 public final class SearchForm extends IntactBaseForm {
@@ -30,9 +32,7 @@ public final class SearchForm extends IntactBaseForm {
 
     // --------------------------------------------------- Instance Variables
 
-    /**
-     * AC.
-     */
+    // the AC of the protein to search.
     private String AC = null;
 
     /**
@@ -110,5 +110,4 @@ public final class SearchForm extends IntactBaseForm {
         sb.append("]");
         return (sb.toString());
     }
-
 }

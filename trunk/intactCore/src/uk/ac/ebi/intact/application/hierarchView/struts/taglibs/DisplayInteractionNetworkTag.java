@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
+
 public class DisplayInteractionNetworkTag extends TagSupport {
 
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
@@ -126,5 +127,4 @@ public class DisplayInteractionNetworkTag extends TagSupport {
 
         return EVAL_PAGE; // the rest of the calling JSP is evaluated
     } // doEndTag
-
-} // DisplayInteractionNetworkTag
+}

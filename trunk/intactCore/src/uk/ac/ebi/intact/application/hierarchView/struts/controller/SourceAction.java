@@ -27,6 +27,7 @@ import java.util.Collection;
  * @author Samuel Kerrien
  * @version $Id$
  */
+
 public final class SourceAction extends IntactBaseAction {
 
     /**

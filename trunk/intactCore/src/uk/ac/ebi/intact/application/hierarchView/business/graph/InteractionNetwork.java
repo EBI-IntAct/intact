@@ -8,10 +8,10 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
 /**
  * Give a specific behaviour to the generic graph definition
  *
- * @author Samuel Kerrien
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
-// intact
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
@@ -345,8 +345,7 @@ public class InteractionNetwork extends Graph {
 
         return null;
     } //importDataToImage
-
-} // InteractionNetwork
+}
 
 
 

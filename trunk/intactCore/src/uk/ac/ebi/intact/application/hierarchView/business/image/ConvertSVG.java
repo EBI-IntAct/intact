@@ -61,6 +61,5 @@ public abstract class ConvertSVG {
      * @return String
      */
     abstract public String getMimeType();
-
-} // ConvertSVG
+}
 

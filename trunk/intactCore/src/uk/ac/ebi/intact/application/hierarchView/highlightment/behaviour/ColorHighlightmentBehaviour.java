@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
  * Behaviour class allowing to change the color of highlighted proteins.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 public class ColorHighlightmentBehaviour extends HighlightmentBehaviour {
@@ -42,8 +43,6 @@ public class ColorHighlightmentBehaviour extends HighlightmentBehaviour {
      */
     public void applyBehaviour (Node aProtein) {
 
-        // apply the behaviour
-
         // read the Graph.proterties file
         Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
 
@@ -66,6 +65,5 @@ public class ColorHighlightmentBehaviour extends HighlightmentBehaviour {
 
         aProtein.put(Constants.ATTRIBUTE_COLOR_LABEL, color);
 
-    } // applyBehaviour
-
-} // ColorHighlightmentBehaviour
+    }
+}

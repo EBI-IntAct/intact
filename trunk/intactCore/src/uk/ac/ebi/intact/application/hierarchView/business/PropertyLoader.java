@@ -25,6 +25,7 @@ import java.util.Properties;
  *
  * 
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 public class PropertyLoader {
@@ -74,6 +75,5 @@ public class PropertyLoader {
         }
 
         return sb.toString ();
-    } // getContent
-
-} // PropertyLoader
+    }
+}

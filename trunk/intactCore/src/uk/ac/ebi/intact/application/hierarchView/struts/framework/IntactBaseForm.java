@@ -16,7 +16,9 @@ import uk.ac.ebi.intact.application.hierarchView.business.Constants;
  * Super class for all hierarchView related form classes.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
+
 public class IntactBaseForm extends ActionForm {
 
     public static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
@@ -75,5 +77,4 @@ public class IntactBaseForm extends ActionForm {
     protected boolean isErrorsEmpty () {
         return myErrors.isEmpty();
     }
-
 }

@@ -18,6 +18,13 @@ import java.io.IOException;
 import java.util.Collection;
 
 
+/**
+ * Allows to perfoem the highlightment according to data stored in the user session
+ *
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ */
+
 public class HighlightProteins {
 
     /** Constructor
@@ -29,15 +36,16 @@ public class HighlightProteins {
      * @param in The interaction network
      */
     public static void perform (String source,
-                           String behaviourClass,
-                           HttpSession session,
-                           InteractionNetwork in)
-            throws IOException {
-        // Put the default color and default visibility in the
-        // interaction network before to highlight this one
+                                String behaviourClass,
+                                HttpSession session,
+                                InteractionNetwork in) {
+        /*
+         * Put the default color and default visibility in the
+         * interaction network before to highlight this one.
+         */
         in.initNodes();
 
-        // Search the list of protein to highlight
+        // Search the highlight source implementation
         HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(source);
 
         // Search the protein to highlight
@@ -47,6 +55,7 @@ public class HighlightProteins {
         HighlightmentBehaviour highlightmentBehaviour;
         highlightmentBehaviour = HighlightmentBehaviour.getHighlightmentBehaviour (behaviourClass);
 
+        // apply the highlight to the selected set of protein
         highlightmentBehaviour.apply (proteinsToHighlight, in);
 
         // Rebuild SVG data
@@ -58,8 +67,8 @@ public class HighlightProteins {
         IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER_KEY);
         // TODO : test is user OK
         user.setImageBean(ib);
+
+        // TODO: needed ?! have to be tested !
         user.setInteractionNetwork(in);
-
-    } // highlightProteins
-
-} // HighlightProteins
+    }
+}

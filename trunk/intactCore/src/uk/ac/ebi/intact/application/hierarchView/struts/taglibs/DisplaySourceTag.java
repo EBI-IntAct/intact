@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
+
 public class DisplaySourceTag extends TagSupport {
 
     private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
@@ -94,5 +95,4 @@ public class DisplaySourceTag extends TagSupport {
         }
         return EVAL_PAGE;
     } // doEndTag
-
 }

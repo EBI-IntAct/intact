@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
  * can be notified of session time outs.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public class IntactUser implements IntactUserI {
 
@@ -391,5 +392,4 @@ public class IntactUser implements IntactUserI {
             logger.error ("error when closing the IntactHelper store", ie);
         }
     }
-
-} // IntactUser
+}

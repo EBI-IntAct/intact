@@ -8,7 +8,8 @@ package uk.ac.ebi.intact.application.hierarchView.exception;
 /**
  * Thrown when we don't find a protein by its AC
  *
- * Created by Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public class ProteinNotFoundException extends Exception {
 
@@ -18,5 +19,4 @@ public class ProteinNotFoundException extends Exception {
     public ProteinNotFoundException(String message) {
         super(message);
     }
-
 }

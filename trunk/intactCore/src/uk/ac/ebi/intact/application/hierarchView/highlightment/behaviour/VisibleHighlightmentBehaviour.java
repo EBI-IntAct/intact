@@ -16,6 +16,7 @@ import java.util.Collection;
  * Behaviour allowing to display only highlighted protein and hide all others.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 public class VisibleHighlightmentBehaviour
@@ -42,7 +43,7 @@ public class VisibleHighlightmentBehaviour
         newList.removeAll(proteins);
 
         return newList;
-    } // modifyCollection
+    }
 
 
     /**
@@ -53,9 +54,8 @@ public class VisibleHighlightmentBehaviour
      */
     public void applyBehaviour (Node aProtein) {
         aProtein.put(Constants.ATTRIBUTE_VISIBLE, new Boolean (false));
-    } // applyBehaviour
-
-} // VisibleHighlightmentBehaviour
+    }
+}
 
 
 

@@ -30,6 +30,7 @@ import java.util.Properties;
  * @author Samuel Kerrien
  * @version $Id$
  */
+
 public final class DisplayAction extends IntactBaseAction {
 
     // --------------------------------------------------------- Public Methods
@@ -145,7 +146,6 @@ public final class DisplayAction extends IntactBaseAction {
         return (mapping.findForward("success"));
 
     } // execute
-
 }
 
 

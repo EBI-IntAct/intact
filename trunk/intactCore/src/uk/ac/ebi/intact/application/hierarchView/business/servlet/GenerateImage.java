@@ -119,7 +119,6 @@ public class GenerateImage extends HttpServlet {
             return;
         }
     } // doGet
-
 }
 
 
