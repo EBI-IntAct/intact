@@ -328,9 +328,10 @@ public class CCLineExport extends LineExport {
 
         buffer.append( ';' ).append( ' ' ).append( "NbExp=" ).append( experimentCount ).append( ';' ).append( ' ' );
         buffer.append( "IntAct=" ).append( protein1.getAc() ).append( ',' ).append( ' ' ).append( protein2.getAc() ).append( ';' );
-        buffer.append( NEW_LINE );
 
-        log( "\t\t\t\t" + buffer.toString() );
+        log( "\t\t\t" + buffer.toString() );
+
+        buffer.append( NEW_LINE );
 
         return new CcLine( buffer.toString(), geneName );
     }
@@ -392,34 +393,34 @@ public class CCLineExport extends LineExport {
 
             Interaction interaction = (Interaction) interactions.get( i );
 
-            log( "\t\t\t\t Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc() );
+            log( "\t\t Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc() );
 
             if( isNegative( interaction ) ) {
 
-                log( "\t\t\t\t\t That interaction or at least one of its experiments is negative, skip it." );
+                log( "\t\t\t That interaction or at least one of its experiments is negative, skip it." );
                 continue; // skip that interaction
             }
 
             Collection experiments = interaction.getExperiments();
 
             int expCount = experiments.size();
-            log( "\t\t\t\t\t interaction related to " + expCount + " experiment" + ( expCount > 1 ? "s" : "" ) + "." );
+            log( "\t\t\t interaction related to " + expCount + " experiment" + ( expCount > 1 ? "s" : "" ) + "." );
 
             for( Iterator iterator2 = experiments.iterator(); iterator2.hasNext(); ) {
                 Experiment experiment = (Experiment) iterator2.next();
 
                 boolean experimentExport = false;
-                log( "\t\t\t\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc() );
+                log( "\t\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc() );
 
-                ExperimentStatus experimentStatus = getCCLineExperimentExportStatus( experiment, "\t\t\t" );
+                ExperimentStatus experimentStatus = getCCLineExperimentExportStatus( experiment, "\t\t\t\t\t" );
                 if( experimentStatus.doNotExport() ) {
                     // forbid export for all interactions of that experiment (and their proteins).
-                    log( "\t\t\t\t\t\t\t No interactions of that experiment will be exported." );
+                    log( "\t\t\t\t\t No interactions of that experiment will be exported." );
 
                 } else if( experimentStatus.doExport() ) {
                     // Authorise export for all interactions of that experiment (and their proteins),
                     // This overwrite the setting of the CvInteraction concerning the export.
-                    log( "\t\t\t\t\t\t\t All interaction of that experiment will be exported." );
+                    log( "\t\t\t\t\t All interaction of that experiment will be exported." );
 
                     experimentExport = true;
 
@@ -437,7 +438,7 @@ public class CCLineExport extends LineExport {
                         if( authorConfidenceTopic.equals( annotation.getCvTopic() ) ) {
                             String text = annotation.getAnnotationText();
 
-                            log( "\t\t\t\t Interaction has " + authorConfidenceTopic.getShortLabel() + ": '" + text + "'" );
+                            log( "\t\t\t Interaction has " + authorConfidenceTopic.getShortLabel() + ": '" + text + "'" );
 
                             if( text != null ) {
                                 text = text.trim();
@@ -447,7 +448,7 @@ public class CCLineExport extends LineExport {
                                 String kw = (String) iterator4.next();
                                 // NOT case sensitive
 
-                                log( "\t\t\t\t\t Compare it with '" + kw + "'" );
+                                log( "\t\t\t\t Compare it with '" + kw + "'" );
 
                                 if( kw.equalsIgnoreCase( text ) ) {
                                     annotationFound = true;
@@ -475,7 +476,7 @@ public class CCLineExport extends LineExport {
 
                 } else if( experimentStatus.isNotSpecified() ) {
 
-                    log( "\t\t\t\t\t\t No experiment status, check the experimental method." );
+                    log( "\t\t\t\t No experiment status, check the experimental method." );
 
                     // Then check the experimental method (CvInteraction)
                     // Nothing specified at the experiment level, check for the method (CvInteraction)
@@ -503,7 +504,7 @@ public class CCLineExport extends LineExport {
 
                     } else if( methodStatus.isConditionalExport() ) {
 
-                        log( "\t\t\t\t\t\t As conditional export, check the count of distinct experiment for that method." );
+                        log( "\t\t\t\t As conditional export, check the count of distinct experiment for that method." );
 
                         // if the threshold is not reached, iterates over all available interactions to check if
                         // there is (are) one (many) that could allow to reach the threshold.
@@ -519,7 +520,7 @@ public class CCLineExport extends LineExport {
                         for( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
                             Experiment experiment1 = (Experiment) iterator.next();
 
-                            log( "\t\t\t\t\t\t Experiment: Shortlabel:" + experiment1.getShortLabel() + "  AC: " + experiment1.getAc() );
+                            log( "\t\t\t\t Experiment: Shortlabel:" + experiment1.getShortLabel() + "  AC: " + experiment1.getAc() );
 
                             CvInteraction method = experiment1.getCvInteraction();
 
@@ -531,7 +532,7 @@ public class CCLineExport extends LineExport {
                             }
                         }
 
-                        log( "\t\t\t\t\tLooking for other interactions that support that method in other experiments..." );
+                        log( "\t\t\tLooking for other interactions that support that method in other experiments..." );
 
                         for( int j = 0; j < interactionCount && !enoughExperimentFound; j++ ) {
 
@@ -551,13 +552,13 @@ public class CCLineExport extends LineExport {
 
                             Interaction interaction2 = (Interaction) interactions.get( j );
 
-                            log( "\t\t\t\t Interaction: Shortlabel:" + interaction2.getShortLabel() + "  AC: " + interaction2.getAc() );
+                            log( "\t\t Interaction: Shortlabel:" + interaction2.getShortLabel() + "  AC: " + interaction2.getAc() );
 
                             Collection experiments2 = interaction2.getExperiments();
 
                             for( Iterator iterator6 = experiments2.iterator(); iterator6.hasNext() && !enoughExperimentFound; ) {
                                 Experiment experiment2 = (Experiment) iterator6.next();
-                                log( "\t\t\t\t\t\t Experiment: Shortlabel:" + experiment2.getShortLabel() + "  AC: " + experiment2.getAc() );
+                                log( "\t\t\t\t Experiment: Shortlabel:" + experiment2.getShortLabel() + "  AC: " + experiment2.getAc() );
 
                                 CvInteraction method = experiment2.getCvInteraction();
 
@@ -568,16 +569,16 @@ public class CCLineExport extends LineExport {
                                 }
                             } // j's experiments
 
-                            log( "\t\t\t\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
+                            log( "\t\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
                                  threshold + " #experiment: " +
                                  ( experimentAcs == null ? "none" : "" + experimentAcs.size() ) );
                         } // j
 
                         if( enoughExperimentFound ) {
-                            log( "\t\t\t\t\t\t Enough experiemnt found" );
+                            log( "\t\t\t\t Enough experiemnt found" );
                             experimentExport = true;
                         } else {
-                            log( "\t\t\t\t\t\t Not enough experiemnt found" );
+                            log( "\t\t\t\t Not enough experiemnt found" );
                         }
 
                     } // conditional status
@@ -776,14 +777,14 @@ public class CCLineExport extends LineExport {
                                 // add the current one
                                 potentiallyEligibleInteraction.add( interaction );
                                 iterator.remove();
-                                log( "\t\t Add the current one: " + interaction.getShortLabel() + "(" + interaction.getAc() + ")" );
+                                log( "\t\t\t Add the current one: " + interaction.getShortLabel() + "(" + interaction.getAc() + ")" );
 
                                 for( Iterator iterator2 = interactionP1.iterator(); iterator2.hasNext(); ) {
                                     Interaction interaction1 = (Interaction) iterator2.next();
 
                                     if( alreadyProcessedInteraction.contains( interaction1.getAc() ) ) {
 
-                                        log( "\t\t That interaction " + interaction1.getShortLabel() + "(" +
+                                        log( "\t\t\t That interaction " + interaction1.getShortLabel() + "(" +
                                              interaction1.getAc() + ") has been processed already ... skip it." );
                                         iterator2.remove(); // remove it.
 
@@ -823,13 +824,13 @@ public class CCLineExport extends LineExport {
                                                 potentiallyEligibleInteraction.add( interaction1 );
                                                 iterator2.remove();
 
-                                                log( "\t\t Add: " + interaction1.getShortLabel() + "(" + interaction1.getAc() + ")" );
+                                                log( "\t\t\t Add: " + interaction1.getShortLabel() + "(" + interaction1.getAc() + ")" );
                                             }
                                         } // else
                                     } // else
                                 } // selection of the interactions
 
-                                log( "\t\t\t They have " + potentiallyEligibleInteraction.size() + " interaction(s) in common" );
+                                log( "\t\t They have " + potentiallyEligibleInteraction.size() + " interaction(s) in common" );
 
                                 // run the algo
                                 int experimentCount = getEligibleExperimentCount( potentiallyEligibleInteraction );

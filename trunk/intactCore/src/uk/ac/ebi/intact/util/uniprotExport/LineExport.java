@@ -37,7 +37,7 @@ public class LineExport {
     // Constants
 
     protected static final String UNIPROT_DR_EXPORT = "uniprot-dr-export";
-    protected static final String UNIPROT_CC_EXPORT = "uniprot-cc-export";
+    protected static final String UNIPROT_CC_EXPORT = "uniprot-cc-note";
     protected static final String AUTHOR_CONFIDENCE = "author-confidence";
     protected static final String GENE_NAME = "gene-name";
     protected static final String NEGATIVE = "negative";
@@ -118,7 +118,7 @@ public class LineExport {
             }
 
             sb.append( " status=" );
-            switch ( status ) {
+            switch( status ){
                 case EXPORT:
                     sb.append( "EXPORT" );
                     break;
@@ -188,7 +188,7 @@ public class LineExport {
             sb.append( "CvInteractionStatus{ minimumOccurence=" ).append( minimumOccurence );
 
             sb.append( " status=" );
-            switch ( status ) {
+            switch( status ){
                 case EXPORT:
                     sb.append( "EXPORT" );
                     break;
@@ -810,7 +810,7 @@ public class LineExport {
                 Annotation _annotation = (Annotation) iterator.next();
                 if( uniprotCC_Export.equals( _annotation.getCvTopic() ) ) {
 
-                    log( logPrefix + "\t\t\t\t " + _annotation );
+                    log( logPrefix + _annotation );
 
                     String text = _annotation.getAnnotationText();
                     if( text != null ) {
@@ -896,13 +896,13 @@ public class LineExport {
             Collection keywords = null;
 
             Collection annotations = experiment.getAnnotations();
-            log( logPrefix + "\t\t\t\t " + annotations.size() + " annotation(s) found" );
+            log( logPrefix + annotations.size() + " annotation(s) found" );
 
             for( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
                 Annotation _annotation = (Annotation) iterator.next();
                 if( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
 
-                    log( logPrefix + "\t\t\t\t " + _annotation );
+                    log( logPrefix + _annotation );
 
                     String text = _annotation.getAnnotationText();
                     if( text != null ) {
@@ -911,12 +911,12 @@ public class LineExport {
 
                     if( EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals( text ) ) {
                         yesFound = true;
-                        log( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found" );
+                        log( logPrefix + "'" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found" );
 
                     } else {
                         if( EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( text ) ) {
                             noFound = true;
-                            log( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found" );
+                            log( logPrefix + "'" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found" );
 
                         } else {
                             if( keywords == null ) {
@@ -924,7 +924,7 @@ public class LineExport {
                             }
                             keywordFound = true;
 
-                            log( logPrefix + "\t\t\t\t '" + text + "' keyword found" );
+                            log( logPrefix + "'" + text + "' keyword found" );
                             keywords.add( text );
                         }
                     }
@@ -947,7 +947,7 @@ public class LineExport {
             experimentExportStatusCache.put( experiment.getAc(), status );
         }
 
-        log( logPrefix + "\t\t\t\t Experiment status: " + status );
+        log( logPrefix + "Experiment status: " + status );
         return status;
     }
 
