@@ -17,6 +17,8 @@ import org.apache.struts.action.DynaActionFormClass;
 
 import javax.servlet.http.HttpServletRequest;
 
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+
 /**
  * The factory class to create edit form beans.
  *
@@ -26,11 +28,16 @@ import javax.servlet.http.HttpServletRequest;
 public class EditorFormFactory {
 
     /**
-     * Maps: name -> views. Cache for dyna form beans. It is safe to reuse the
+     * Maps: name -> bean. Cache for dyna form beans. It is safe to reuse the
      * form beans as only one can be used at any time. We cache them to reuse
      *  rather than creating a new instance for each selection.
      */
     private Map myNameToDynaForm = new HashMap();
+
+    /**
+     * Maps: name -> Edit form. Cache for Edit forms. The purpose as same as above.
+     */
+    private Map myNameToEditForm = new HashMap();
 
     /**
      * Returns a DynaBean form constructed using given form name and Http request.
@@ -59,6 +66,25 @@ public class EditorFormFactory {
                 // Null form will be returned.
             }
             myNameToDynaForm.put(formName, form);
+        }
+        return form;
+    }
+
+    /**
+     * Returns an edit form from internal cache if it exists or a new form.
+     * @param formName the name of the form.
+     * @return A cached form is returned if a form exists in the local cache
+     * saved under <code>formName</code> or else a new form is created and
+     * saved in the cache before returning it.
+     */
+    public EditForm getEditForm(String formName) {
+        EditForm form = null;
+        if (myNameToEditForm.containsKey(formName)) {
+            form = (EditForm) myNameToEditForm.get(formName);
+        }
+        else {
+            form = new EditForm();
+            myNameToEditForm.put(formName, form);
         }
         return form;
     }
