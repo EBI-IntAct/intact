@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import uk.ac.ebi.intact.application.commons.struts.taglibs.DocumentationTag;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -45,9 +46,14 @@ public class EditorService {
     private URL myNewtServerUrl;
 
     /**
-     * Reference to the help server URL.
+     * The search server URL.
      */
-    private URL myHelpUrl;
+    private String mySearchUrl;
+
+    /**
+     * The help server URL.
+     */
+    private String myHelpUrl;
 
     /**
      * Construts with the resource file.
@@ -106,35 +112,41 @@ public class EditorService {
     }
 
     /**
-     * Returns the link to the search application.
-     * @return the link to the search application as a String object.
+     * Returns the relative link to the search application.
+     * @param request the request object to get the context path.
+     * This is only used once when this method is called for the first time.
+     * For subsequent calls, the cached value is returned.
+     * @return the relative path to the search page.
      */
-    public String getSearchLink() {
-        return myResources.getString("search.url");
+    public String getSearchURL(HttpServletRequest request) {
+        if (mySearchUrl == null) {
+            String ctxtPath = request.getContextPath();
+            String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("editor"));
+            mySearchUrl = relativePath.concat(myResources.getString("search.url"));
+        }
+        return mySearchUrl;
     }
 
     /**
-     * Returns the URL to the help page.
-     * @param request the request object to get the server name and host.
+     * Returns the relative link to the help page.
+     * @param request the request object to get the context path.
      * This is only used once when this method is called for the first time.
-     * For subsequent calls, the cached  URL value is returned.
-     * @return the URL to the help page or null is returned if a valid URL
-     * cannot be constructed from <code>request</code>.
+     * For subsequent calls, the cached value is returned.
+     * @return the relative path to the help page.
      */
-    public String getHelpURL(ServletRequest request) {
+    public String getHelpURL(HttpServletRequest request) {
         if (myHelpUrl == null) {
-            try {
-                myHelpUrl = new URL("http", request.getServerName(),
-                        request.getServerPort(), DocumentationTag.getJspPath());
-            }
-            catch (MalformedURLException e) {
-                e.printStackTrace();
-                return null;
-            }
+            String ctxtPath = request.getContextPath();
+            String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("editor"));
+            myHelpUrl = relativePath.concat(myResources.getString("help.url"));
         }
-        return myHelpUrl.toExternalForm();
+        return myHelpUrl;
     }
 
+    /**
+     * Moves the given item to the front of the topics list.
+     * @param item the item to move; this is only moved if it exists.
+     */
     private void moveToFront(String item) {
         int pos = myTopicsCache.indexOf(item);
         if (pos != -1) {
