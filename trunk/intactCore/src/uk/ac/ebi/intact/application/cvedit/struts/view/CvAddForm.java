@@ -54,10 +54,13 @@ public class CvAddForm extends IntactBaseForm {
                                  HttpServletRequest request) {
         ActionErrors errors = null;
 
-        if (myShortLabel == null || myShortLabel.length() < 1) {
-            errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                new ActionError("global.required", "Short Label"));
+        // Only verify if submitted.
+        if (super.isSubmitted()) {
+            if (myShortLabel == null || myShortLabel.length() < 1) {
+                errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("global.required", "Short Label"));
+            }
         }
         return errors;
     }
