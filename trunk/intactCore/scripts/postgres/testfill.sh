@@ -15,6 +15,13 @@ psql -f sql/postgres/drop_tables.sql
 psql -f sql/postgres/create_tables.sql          
 psql -f sql/postgres/create_dummy.sql          
 
+echo "Inserting controlled vocabularies"
+
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvTopic data/controlledVocab/CvTopic.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvXrefQualifier data/controlledVocab/CvXrefQualifier.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase data/controlledVocab/CvDatabase.def
+
+
 if [ "$3" = "" ]
 then
    $3="small"

@@ -1,0 +1,11 @@
+intact_ac: EBI-26
+shortlabel: GO-definition-ref
+term: GO definition reference
+definition: This qualifier is used when the crossreference is imported from the GO tag definition_reference.
+
+intact_ac: EBI-27
+shortlabel: Identity
+term: Reference to the identical object in another database
+definition: This qualifier is used when the object referred to by the crossreference describes the same object.
+example: The same protein, described in two different databases.
+
