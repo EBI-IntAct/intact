@@ -250,15 +250,21 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
         // filter to keep only GO terms
         logger.info(xRefs.size() + " Xref before filtering");
-        Collection listGOTerm = filterXref (xRefs);
+        Collection listGOTerm = filterXref( xRefs );
         logger.info(listGOTerm.size() + " GO term after filtering");
 
         // create url collection with exact size
-        List urls = new ArrayList (listGOTerm.size());
+        List urls = new ArrayList( listGOTerm.size() );
 
         // Create a collection of label-value object (GOterm, URL to access a nice display in interpro)
         String[] goTermInfo;
         String goTermId, goTermDescription;
+
+        /*
+         * In order to avoid the browser to cache the response to that request
+         * we stick at its end of the generated URL.
+         */
+        String randomParam = "&now=" + System.currentTimeMillis();
 
         if (listGOTerm != null && (false == listGOTerm.isEmpty())) {
             Iterator list = listGOTerm.iterator();
@@ -267,7 +273,8 @@ public class GoHighlightmentSource extends HighlightmentSource {
                 goTermId          = goTermInfo[0];
                 goTermDescription = goTermInfo[1];
 
-                String directHighlightUrl = applicationPath + "/source.do?keys=${selected-children}&clicked=${id}";
+                String directHighlightUrl = applicationPath +
+                        "/source.do?keys=${selected-children}&clicked=${id}" + randomParam;
                 String hierarchViewURL = null;
 
                 try {

@@ -171,6 +171,8 @@ public class DrawGraph {
     private float edgeThickness;
     private String applicationPath;
 
+    private String currentTime;
+
 
     /**
      * Constructor
@@ -635,7 +637,7 @@ public class DrawGraph {
 
         // Write the map
         mapCode.append("<AREA SHAPE=\"RECT\" HREF=\""+ applicationPath +"/click.do?AC=" + protein.getAc() +
-                " \" COORDS=" + (int)x1 + "," + (int)y1 + "," + x2 + "," + y2 + ">");
+                currentTime + "\" COORDS=" + (int)x1 + "," + (int)y1 + "," + x2 + "," + y2 + ">");
 
 
         // Write label
@@ -726,6 +728,8 @@ public class DrawGraph {
         int i;
         int numberOfProtein     = graph.sizeNodes();
         int numberOfInteraction = graph.sizeEdges();
+
+        currentTime = "&now=" + System.currentTimeMillis(); // this will be added at each link of the graph
 
         ArrayList listOfProtein  = graph.getOrderedNodes();
         ArrayList listOfInteraction = (ArrayList) graph.getEdges();
