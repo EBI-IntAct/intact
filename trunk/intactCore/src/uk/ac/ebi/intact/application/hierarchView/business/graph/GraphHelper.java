@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 import uk.ac.ebi.intact.business.IntactException;
@@ -62,9 +63,6 @@ public class GraphHelper {
     // flag whether the graph was built with the mine database table
     public static final boolean BUILT_WITH_MINE_TABLE;
 
-    // the JDBC connection to retrieve data from the database
-    private Connection con;
-
     static {
         // the default size should be big enough
         SOURCES = new ArrayList();
@@ -117,17 +115,16 @@ public class GraphHelper {
         else {
             BUILT_WITH_MINE_TABLE = false;
         }
-    }/*
-      * Datasource
-      */
+    }
+
     private IntactUserI user;
 
     /**
      * basic constructor - sets up (hard-coded) data source and an intact
      * helper.
      */
-    public GraphHelper(IntactUserI intactUser) {
-        user = intactUser;
+    public GraphHelper(IntactUserI user) {
+        this.user = user;
     } // GraphHelper
 
     /**
@@ -177,7 +174,7 @@ public class GraphHelper {
         }
         in = new InteractionNetwork( interactor );
 
-        in = this.user.subGraph( in, depth, null,
+        in = user.subGraph( in, depth, null,
                 uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY );
 
         if ( tmp != null ) {
@@ -218,9 +215,7 @@ public class GraphHelper {
 
         // if no connection was retrieved by now - the JDBC connection of the
         // datasource is fetched
-        if ( con == null ) {
-            con = user.getHelper().getJDBCConnection();
-        }
+        Connection con = user.getHelper().getJDBCConnection();
 
         // a new interaction network is created with the given interactor as
         // central protein
@@ -256,11 +251,12 @@ public class GraphHelper {
      * @param network the network to buil
      * @param depth the maximal depth of the network
      * @return the built network
-     * @throws SQLException whether the building failed because of database
-     *             error
+     * @throws SQLException
+     * @throws IntactException
      */
     private InteractionNetwork buildNetwork(BasicGraphI baitNode,
-            InteractionNetwork network, int depth) throws SQLException {
+            InteractionNetwork network, int depth) throws SQLException,
+            IntactException {
         // if the depth is 0 we have reached the maximal depth in the network
         // and therefore we dont build more
         if ( depth == 0 ) {
@@ -277,6 +273,8 @@ public class GraphHelper {
         // add source highlight information for the central protein
         addSourcesToNode( baitNode, true, network );
         network.addNode( baitNode );
+
+        Connection con = user.getHelper().getJDBCConnection();
 
         /**
          * I1 is a bait in an interaction: -> all preys are collected of that
@@ -413,9 +411,10 @@ public class GraphHelper {
      *            the nodes
      * @throws SQLException whether the retrieving of the sources failed due to
      *             database error
+     * @throws IntactException
      */
-    private void addSourcesToNode(BasicGraphI node, boolean central,
-            InteractionNetwork network) throws SQLException {
+    public void addSourcesToNode(BasicGraphI node, boolean central,
+            InteractionNetwork network) throws SQLException, IntactException {
         /*
          * The method stores the source informations in two different ways
          * depending whether a central node is given or not.
@@ -430,6 +429,7 @@ public class GraphHelper {
          * all available source to highlight on the right top corner of the HV
          * result page.
          */
+        Connection con = user.getHelper().getJDBCConnection();
 
         PreparedStatement sourceStm = con.prepareStatement( SOURCE_QUERY );
         sourceStm.setString( 2, node.getAc() );

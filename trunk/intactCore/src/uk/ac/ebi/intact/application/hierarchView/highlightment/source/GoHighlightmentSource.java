@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 import uk.ac.ebi.intact.simpleGraph.Node;
 import uk.ac.ebi.intact.util.SearchReplace;
 
@@ -48,7 +50,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
     private static final String KEY_SEPARATOR = ",";
     private static final String ATTRIBUTE_OPTION_CHILDREN = "CHILDREN";
     private static final String PROMPT_OPTION_CHILDREN = "With children of the selected GO term";
-    
+
     /**
      * The key for this source 'go'
      */
@@ -224,28 +226,48 @@ public class GoHighlightmentSource extends HighlightmentSource {
      * @param children the children GO Terms of the selected GO Term
      * @param searchForChildren whether it shall be searched for the children
      * @return
+     * @throws IntactException
+     * @throws SQLException
      */
-    private Collection proteinToHighlightInteractor(HttpSession aSession,
+    private Collection proteinToHighlightInteractor(InteractionNetwork aGraph,
+            String selectedGOTerm, Collection children,
+            boolean searchForChildren, IntactUserI user) throws SQLException,
+            IntactException {
+
+        if ( !aGraph.isSourceHighlightMapEmpty() ) {
+            return proteinToHighlightSourceMap( aGraph, children,
+                    selectedGOTerm, searchForChildren );
+        }
+
+        GraphHelper gh = new GraphHelper( user );
+
+        ArrayList listOfNode = aGraph.getOrderedNodes();
+        int size = listOfNode.size();
+
+        for (int i = 0; i < size; i++) {
+            BasicGraphI node = (BasicGraphI) listOfNode.get( i );
+            gh.addSourcesToNode( node, false, aGraph );
+        }
+        return proteinToHighlightSourceMap( aGraph, children, selectedGOTerm,
+                searchForChildren );
+    }
+
+    private Collection proteinToHighlightDatabase(HttpSession aSession,
             InteractionNetwork aGraph, String selectedGOTerm,
             Collection children, boolean searchForChildren) {
-
         Collection nodeList = new ArrayList( 20 ); // should be enough for 90%
         // cases
         ArrayList listOfNode = aGraph.getOrderedNodes();
         int size = listOfNode.size();
         String[] goTermInfo = null;
         String goTerm = null;
-
         for (int i = 0; i < size; i++) {
             Node node = (Node) listOfNode.get( i );
             String ac = node.getAc();
-
             // Search all GoTerm for this ac number
             Collection listGOTerm = this.getKeysFromIntAct( ac, aSession );
-
             if ( ( listGOTerm != null ) && ( listGOTerm.isEmpty() == false ) ) {
                 Iterator list = listGOTerm.iterator();
-
                 while ( list.hasNext() ) {
                     goTermInfo = (String[]) list.next();
                     goTerm = goTermInfo[0];
@@ -299,7 +321,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
             nodeList.addAll( proteinsToHighlight );
         }
 
-        /* 
+        /*
          * for every children all proteins related to the current GO Term are
          * fetched from the source highlighting map of the graph and added to
          * the collection
@@ -363,8 +385,14 @@ public class GoHighlightmentSource extends HighlightmentSource {
                     selectedGOTerm, searchForChildren );
         }
         else {
-            return proteinToHighlightInteractor( aSession, aGraph,
-                    selectedGOTerm, children, searchForChildren );
+            try {
+                return proteinToHighlightInteractor( aGraph, selectedGOTerm,
+                        children, searchForChildren, user );
+            }
+            catch ( Exception e ) {
+                return proteinToHighlightDatabase( aSession, aGraph,
+                        selectedGOTerm, children, searchForChildren );
+            }
         }
     }
 
