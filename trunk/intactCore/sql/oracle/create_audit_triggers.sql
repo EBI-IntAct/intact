@@ -19,10 +19,10 @@ begin
       dbms_output.put_line (chr(9)||chr(9)||'l_event := ''D'';');
       dbms_output.put_line (chr(9)||'elsif updating then ');
       dbms_output.put_line (chr(9)||chr(9)||'l_event := ''U'';');
+      dbms_output.put_line (chr(9)||chr(9)||':new.updated   := sysdate; '); 
+      dbms_output.put_line (chr(9)||chr(9)||':new.userstamp := user;  '); 
+
       dbms_output.put_line (chr(9)||'end if ;  '); 
-      dbms_output.put_line (chr(9)||''); 
-      dbms_output.put_line (chr(9)||':new.updated   := sysdate; '); 
-      dbms_output.put_line (chr(9)||':new.userstamp := user;  '); 
       dbms_output.put_line (chr(9)||''); 
       dbms_output.put_line (chr(9)||''); 
 
