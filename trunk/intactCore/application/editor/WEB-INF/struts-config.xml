@@ -350,6 +350,7 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorDispatchAction"
             name="dummyForm"
             input="/do/fillCvForm"
+            validate="false"
             scope="request"
             parameter="dispatch">
 
@@ -387,7 +388,6 @@
         <action path="/experiment/info"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.ExperimentAction"
             name="experimentForm"
-            validate="true"
             input="/do/fillCvForm"
             scope="request">
         </action>
@@ -398,7 +398,6 @@
         <action path="/interaction/info"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionAction"
             name="interactionForm"
-            validate="true"
             input="/do/fillCvForm"
             scope="request">
         </action>
@@ -430,7 +429,6 @@
         <action path="/interaction/protein/edit"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinEditAction"
             name="intProtEditForm"
-            validate="true"
             input="/do/fillCvForm"
             scope="session">
         </action>
@@ -449,7 +447,6 @@
         <action path="/comment/add"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommentAddAction"
             name="commentAddForm"
-            validate="true"
             input="/do/fillCvForm"
             scope="request">
         </action>
@@ -469,7 +466,6 @@
         <action path="/xref/add"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefAddAction"
             name="xrefAddForm"
-            validate="true"
             input="/do/fillCvForm"
             scope="request">
         </action>
@@ -478,7 +474,6 @@
         <action path="/xref/edit"
             name="xrefEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefEditAction"
-            validate="true"
             input="/do/fillCvForm"
             scope="session">
         </action>
