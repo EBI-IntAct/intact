@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.io.Serializable;
 
@@ -31,7 +32,8 @@ public class InteractionBean extends AbstractEditBean implements Serializable {
      * @param interaction the <code>Interaction</code> object.
      */
     public InteractionBean(Interaction interaction) {
-        myInteraction = interaction;
+        // Get the real object wrapped around the proxy.
+        myInteraction = (Interaction) IntactHelper.getRealIntactObject(interaction);
     }
 
     // Read only properties.
