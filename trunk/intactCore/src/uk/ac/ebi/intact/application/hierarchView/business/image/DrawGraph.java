@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.application.hierarchView.business.image;
 
 // intact
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
@@ -582,9 +581,6 @@ public class DrawGraph {
      * @param labelFont the Font with which to draw the label
      */
     private void drawNode (Node protein, Graphics2D g, Font labelFont) {
-
-
-        Float f = (Float) protein.get(Constants.ATTRIBUTE_LENGTH);
 
         String proteinLabel  = protein.getLabel();
 

@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.application.hierarchView.business;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.util.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;

@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.hierarchView.business.tulip;
 
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.utils.Options;
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
@@ -67,9 +66,6 @@ public class WebServiceManager implements ServletContextListener {
      * @throws Exception
      */
     public void init () throws Exception {
-
-        // The configuration file.
-        String configFile = StrutsConstants.WEB_SERVICE_PROPERTY_FILE;
 
         logger.info ("Loading web service's properties");
         Properties props = IntactUserI.WEB_SERVICE_PROPERTIES;

@@ -6,7 +6,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
 import uk.ac.ebi.intact.simpleGraph.Node;
