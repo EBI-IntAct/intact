@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.application.graph2MIF.client;
 
 import org.apache.axis.client.*;
@@ -8,7 +13,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.commons.cli.*;
 import uk.ac.ebi.intact.util.PropertyLoader;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.application.graph2MIF.GraphNotConvertableException;
+import uk.ac.ebi.intact.application.graph2MIF.NoGraphRetrievedException;
+import uk.ac.ebi.intact.application.graph2MIF.MIFSerializeException;
+import uk.ac.ebi.intact.application.graph2MIF.NoInteractorFoundException;
+import uk.ac.ebi.intact.persistence.DataSourceException;
 
 /**
  * Graph2MIFWSClient
@@ -20,6 +32,7 @@ import uk.ac.ebi.intact.util.PropertyLoader;
  * See http://psidev.sourceforge.net/ for further information on the PSI-MIF-Format
  *
  * @author Henning Mersch <hmersch@ebi.ac.uk>
+ * @version $Id$
  */
 
 public class Graph2MIFWSClient {
@@ -41,36 +54,67 @@ public class Graph2MIFWSClient {
             //loading properties
             Properties props = PropertyLoader.load("/graph2MIF.properties");
             if (props != null) {
-                if (args.length <= 2) {
-                    System.err.println("Graph2MIFWSClient usage:" + NEW_LINE +
-                            "\tjava uk.ac.ebi.intact.application.graph2MIF.client.Graph2MIFWSClient ac depth strict" + NEW_LINE +
-                            "\tac\tac in IntAct Database" + NEW_LINE +
-                            "\tdepth\tInteger of depth the graph should be expanded" + NEW_LINE +
-                            "\tstrict (true|false) if only strict MIF should be produced" + NEW_LINE +
-                            " by Henning Mersch <hmersch@ebi.ac.uk>");
-
-                    System.exit(1);
-                }
-                URL url = new URL(props.getProperty("webservice.location"));
-                // prepare the call (the same for all called methods)
-                Call call = (Call) new Service().createCall();
-                call.setTargetEndpointAddress(url);
-                // if no args are submitted give out usage.
-                // call  getMIF  & give out with params to retrieve data
-                String ac = args[0];
-                Boolean strictmif;
-                if (args[2].equals("true")) {
-                    strictmif = new Boolean(true);
-                } else {
-                    strictmif = new Boolean(false);
-                }
+                // setting/checking arguments
+                Option helpOpt = new Option("help", "print this message");
+                Option acOpt = OptionBuilder.withArgName("ac")
+                        .hasArg()
+                        .withDescription("accession number")
+                        .create("ac");
+                acOpt.setRequired(true);
+                Option depthOpt = OptionBuilder.withArgName("depth")
+                        .hasArg()
+                        .withDescription("depth to expand")
+                        .create("depth");
+                depthOpt.setRequired(true);
+                Option strictOpt = OptionBuilder.withArgName("strict")
+                        .hasArg()
+                        .withDescription("true or false for getting only strict MIF Default: false")
+                        .create("strict");
+                strictOpt.setRequired(false);
+                Options options = new Options();
+                options.addOption(helpOpt);
+                options.addOption(acOpt);
+                options.addOption(depthOpt);
+                options.addOption(strictOpt);
+                // create the parser
+                CommandLineParser parser = new BasicParser();
                 try {
-                    Integer depth = new Integer(args[1]);
-                    call.setMaintainSession(false);
-                    call.setOperationName("getMIF");
-                    System.out.println(call.invoke(new Object[]{ac, depth, strictmif}));
-                } catch (NumberFormatException e) {
-                    System.err.println("depth sould be an integer");
+                    // parse the command line arguments
+                    CommandLine line = parser.parse(options, args, true);
+
+                    if (line.hasOption("help")) {
+                        displayUsage(options);
+                        System.exit(0);
+                    }
+
+                    // These argument are mandatory.
+                    String ac = line.getOptionValue("ac");
+                    Boolean strictmif;
+                    if (line.getOptionValue("strict").equals("true")) {
+                        strictmif = new Boolean(true);
+                    } else {
+                        strictmif = new Boolean(false);
+                    }
+
+                    try {
+                        Integer depth = new Integer(line.getOptionValue("depth"));
+                        URL url = new URL(props.getProperty("webservice.location"));
+                        // prepare the call (the same for all called methods)
+                        Call call = (Call) new Service().createCall();
+                        call.setTargetEndpointAddress(url);
+                        // if no args are submitted give out usage.
+                        // call  getMIF  & give out with params to retrieve data
+                        call.setMaintainSession(false);
+                        call.setOperationName("getMIF");
+                        System.out.println(call.invoke(new Object[]{ac, depth, strictmif}));
+                    } catch (NumberFormatException e) {
+                        System.err.println("depth sould be an integer");
+                        System.exit(1);
+                    }
+                } catch (ParseException exp) {
+                    // oops, something went wrong
+                    displayUsage(options);
+                    System.err.println("Parsing failed.  Reason: " + exp.getMessage());
                     System.exit(1);
                 }
                 // error handling with proper information for the user
@@ -84,37 +128,52 @@ public class Graph2MIFWSClient {
             //error message. When an axception occours, the client side of Axis will throw
             //an RemoteException which includes the class name of the thrown exception.
             //There is no way to get more information like the original stacktrace !!!
-            if (e.toString().equals("uk.ac.ebi.intact.business.IntactException")) {
+            if (e.toString().equals(IntactException.class.getName())) {
                 System.err.println("ERROR: Search for interactor failed (" + e.toString() + ")");
                 System.exit(1);
-                    }
-            if (e.toString().equals("uk.ac.ebi.intact.application.graph2MIF.GraphNotConvertableException")) {
+            } else if (e.toString().equals(GraphNotConvertableException.class.getName())) {
                 System.err.println("ERROR: Graph failed requirements of MIF. (" + e.toString() + ")");
                 System.exit(1);
-                    }
-            if (e.toString().equals("uk.ac.ebi.intact.application.graph2MIF.NoGraphRetrievedException")) {
+            } else if (e.toString().equals(NoGraphRetrievedException.class.getName())) {
                 System.err.println("ERROR: Could not retrieve graph from interactor (" + e.toString() + ")");
                 System.exit(1);
-                    }
-            if (e.toString().equals("uk.ac.ebi.intact.application.graph2MIF.MIFSerializeException")) {
+            } else if (e.toString().equals(MIFSerializeException.class.getName())) {
                 System.err.println("ERROR: DOM-Object could not be serialized (" + e.toString() + ")");
                 System.exit(1);
-                    }
-            if (e.toString().equals("uk.ac.ebi.intact.persistence.DataSourceException")) {
+            } else if (e.toString().equals(DataSourceException.class.getName())) {
                 System.err.println("ERROR: IntactHelper could not be created (" + e.toString() + ")");
                 System.exit(1);
-                    }
-            if (e.toString().equals("uk.ac.ebi.intact.application.graph2MIF.NoInteractorFoundException")) {
+            } else if (e.toString().equals(NoInteractorFoundException.class.getName())) {
                 System.err.println("ERROR: No Interactor found for this ac (" + e.toString() + ")");
                 System.exit(1);
-                    }
+            } else { //should never occour
+                System.err.println("ERROR: unexpected RemoteException (" + e.toString() + ")");
+                System.exit(1);
+            }
         } catch (ServiceException e) {
             e.printStackTrace();
             System.exit(1);
-                } catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             System.err.println("Wrong URL Format - change graph2MIF.properties");
             System.exit(1);
         }
 
+
     }
+
+    /**
+     * Will give proper usage, if requested or wrong arguments.
+     *
+     * @param options command line otions
+     */
+    private static void displayUsage(Options options) {
+        // automatically generate the help statement
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("Client -ac <ac> " +
+                "-depth <depth> " +
+                "-strict [true|false]",
+                options);
+
+    }
+
 }
