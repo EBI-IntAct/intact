@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This is the template metadata repository for the ObJectBridge System.
+     Authors: Intact Team
+     Version: $Id$
+ -->
+
+<!-- defining entities for include-files -->
+<!DOCTYPE descriptor-repository SYSTEM "repository.dtd" [
+<!ENTITY user SYSTEM "repository_user.xml">
+<!ENTITY junit SYSTEM "repository_junit.xml">
+<!ENTITY internal SYSTEM "repository_internal.xml">
+]>
+
+<descriptor-repository version="0.9.6" isolation-level="read-uncommitted">
+<!-- The connection-descriptor template -->
+
+    <jdbc-connection-descriptor
+        platform="@DBMS_NAME@"
+   	    jdbc-level="2.0"
+   	    driver="@DRIVER_NAME@"
+   	    protocol="jdbc"
+   	    subprotocol="@URL_SUBPROTOCOL@"
+   	    dbalias="@URL_DBALIAS@"
+   	    username="@USER_NAME@"
+   	    password="@USER_PASSWD@"
+    />
+
+    <!-- include user defined mappings here -->
+    &user;
+
+    <!-- include ojb internal mappings here -->
+    &internal;
+
+</descriptor-repository>
