@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.cvedit.struts.security;
 
 import java.io.IOException;
 
-import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.CvAbstractAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl;
@@ -30,7 +30,7 @@ import javax.servlet.ServletContext;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class LoginAction extends IntactBaseAction {
+public class LoginAction extends CvAbstractAction {
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
