@@ -24,6 +24,8 @@ import uk.ac.ebi.intact.model.Constants;
 
 public class ObjectBridgeDAOSource implements DAOSource, Serializable {
 
+    public static final String OJB_LOGGER_NAME = "ojb";
+
 
     //holds the filename containing the OR mapping data
     private String repositoryFile;
@@ -40,11 +42,13 @@ public class ObjectBridgeDAOSource implements DAOSource, Serializable {
 
         //just set up a logger
         try {
-            logger = LoggerFactory.getLogger(Class.forName("org.apache.ojb.broker.util.logging.Log4jLoggerImpl"));
-        }
-        catch(ClassNotFoundException ce) {
+//            logger = LoggerFactory.getLogger(Class.forName("org.apache.ojb.broker.util.logging.Log4jLoggerImpl"));
+            logger = LoggerFactory.getLogger(OJB_LOGGER_NAME);
 
-            //do nothing - not finding a logger is not a failure condition
+        }
+        catch(Exception ce) {
+
+            // do nothing - not finding a logger is not a failure condition
         }
     }
 

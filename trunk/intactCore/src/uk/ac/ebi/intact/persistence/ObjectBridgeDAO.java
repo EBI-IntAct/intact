@@ -33,6 +33,7 @@ import org.apache.ojb.odmg.*;
 
 public class ObjectBridgeDAO implements DAO, Serializable {
 
+    public static final String OJB_LOGGER_NAME = "ojb";
 
     /**
      *  holds the instance of the Database (ie a connection)
@@ -101,10 +102,14 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         user = broker.getPBKey().getUser();
         password = broker.getPBKey().getPassword();
 
+
+
+
         try {
-            logger = LoggerFactory.getLogger(Class.forName("org.apache.ojb.broker.util.logging.Log4jLoggerImpl"));
+//            logger = LoggerFactory.getLogger(Class.forName("org.apache.ojb.broker.util.logging.Log4jLoggerImpl"));
+            logger = LoggerFactory.getLogger(OJB_LOGGER_NAME);
         }
-        catch(ClassNotFoundException c) {
+        catch(Exception c) {
 
           //  try and set up a simple logger instead here....
         }
