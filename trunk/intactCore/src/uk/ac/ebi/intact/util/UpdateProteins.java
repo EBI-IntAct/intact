@@ -10,6 +10,7 @@ import gnu.regexp.REMatch;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DAOFactory;
@@ -599,7 +600,7 @@ public class UpdateProteins extends UpdateProteinsI {
                         // doesn't found so create a new one
                         logger.info ("No existing protein for that taxid, create a new one");
 
-                        helper.startTransaction();
+                        helper.startTransaction( BusinessConstants.OBJECT_TX );
                         if (createNewProtein (sptrEntry, bioSource)) {
                             logger.info ("creation sucessfully done");
                         }
@@ -613,7 +614,7 @@ public class UpdateProteins extends UpdateProteinsI {
                              */
                             logger.info ("A protein exists for that taxid, try to update");
 
-                            helper.startTransaction();
+                            helper.startTransaction( BusinessConstants.OBJECT_TX );
                             if (updateExistingProtein (protein, sptrEntry, bioSource)) {
                                 logger.info ("update sucessfully done");
                             }
