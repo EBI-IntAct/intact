@@ -6,7 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.exception.validation;
 
-import uk.ac.ebi.intact.application.editor.exception.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 
 /**
  * Thrown when the validation for an experiment fails.
