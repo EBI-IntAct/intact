@@ -6,41 +6,28 @@
   <meta http-equiv="expires" content="-1">
   <title>Statistics</title>
 <!-- Don't put the base tag here; let the browser sort out the URLs -->
-  <link rel="stylesheet" type="text/css" href="intact.css">
+  <link rel="stylesheet" type="text/css" href="index_files/intact.css">
 </head>
-<body bgcolor="#ffffff" topmargin="0" leftmargin="0">
-<table border="0" height="100%" width="100%" cellspacing="5">
+<body topmargin="0" leftmargin="0" bgcolor="#ffffff">
+<table border="0" cellspacing="5" height="100%" width="100%">
   <tbody>
     <tr>
-      <td bgcolor="#cccccc" width="113" valign="top" align="left"><!--
+      <td align="left" bgcolor="#cccccc" valign="top" width="113"><!--
     The layout for the side bar, which consists of intact logo, input dialog box
     and menu. Except for the logo, other two components are optional.
 
     Author: Sugath Mudali (smudali@ebi.ac.uk)
     Version: $Id$
 -->
-      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
         <tbody>
           <tr>
-            <td bgcolor="#cccccc" valign="top" align="left" width="113"
- height="75"> <img src="logo_intact.gif" border="0"> </td>
+            <td align="left" bgcolor="#cccccc" height="75" valign="top"
+ width="113"> <img src="index_files/logo_intact.gif" border="0"> </td>
           </tr>
 <!-- filter --> <tr>
-            <td><!--
-   - Copyright (c) 2002 The European Bioinformatics Institute, and others.
-   - All rights reserved. Please see the file LICENSE
-   - in the root directory of this distribution.
-   -
-   - This layout displays graph management components for hierarchView.
-   - According to the current state of the displayed graph : its depth,
-   - we display button in order to get expanded or contracted.
-   - We show only available options (e.g. if the depth can be desacrease
-   - we don't show the contract button).
-   -
-   - @author Samuel Kerrien (skerrien@ebi.ac.uk)
-   - @version $Id$
--->
-            <hr> </td>
+            <td><br>
+            </td>
           </tr>
           <tr>
             <td>
@@ -52,10 +39,11 @@
                   </th>
                 </tr>
                 <tr>
-                  <td width="10" valign="top"><br>
+                  <td valign="top" width="10"><br>
                   </td>
                   <td valign="top"> <font size="-1"><a
- href="http://www.ebi.ac.uk/intact"> IntAct home </a> </font> </td>
+ href="http://www.ebi.ac.uk/intact">
+IntAct home </a> </font> </td>
                 </tr>
               </tbody>
             </table>
@@ -64,19 +52,19 @@
         </tbody>
       </table>
       </td>
-      <td valign="top" height="100%" width="">
-      <table width="100%" height="100%">
+      <td height="100%" valign="top" width="0">
+      <table height="100%" width="100%">
         <tbody>
           <tr>
-            <td valign="top" height="5%"> <span class="header">Statistics</span>
+            <td height="5%" valign="top"> <span class="header">Statistics</span>
             </td>
           </tr>
           <tr>
-            <td height="3" background="hor.gif"><br>
+            <td background="index_files/hor.gif" height="3"><br>
             </td>
           </tr>
           <tr>
-            <td valign="top" height=""><!-- No errors if none specified --><!--
+            <td height="0" valign="top"><!-- No errors if none specified --><!--
 - Copyright (c) 2002 The European Bioinformatics Institute, and others.
 - All rights reserved. Please see the file LICENSE
 - in the root directory of this distribution.
@@ -86,67 +74,68 @@
 - @author Sophie Huet (shuet@ebi.ac.uk), Samuel Kerrien (skerrien@ebi.ac.uk)
 - @version $Id$
 -->
-            <table width="100%" height="100%">
+            <table height="100%" width="100%">
               <tbody>
                 <tr>
-                  <td valign="top" height=""><!--
+                  <td height="0" valign="top">
+<!--
         Comment for developpers.
         This is the Database from which we extracted the data.
         Database: d002
 -->
-IntAct database contents as of <b>1 JULY 2004</b>. <br>
+IntAct database contents as of <b>28 Jul 2004</b>. <br>
                   </td>
                 </tr>
                 <tr>
-                  <td valign="top" height=""><!-- Displays the available highlightment source -->
-                  <table class="table" width="80%" border="0"
- cellspacing="1" cellpadding="2">
+                  <td height="0" valign="top"><!-- Displays the available highlightment source -->
+                  <table class="table" border="0" cellpadding="2"
+ cellspacing="1" width="80%">
                     <tbody>
                       <tr class="tableRowHeader">
-                        <th width="22%" class="tableCellHeader">Object</th>
-                        <th width="8%" class="tableCellHeader">Count</th>
-                        <th width="70%" class="tableCellHeader">Description</th>
+                        <th class="tableCellHeader" width="22%">Object</th>
+                        <th class="tableCellHeader" width="8%">Count</th>
+                        <th class="tableCellHeader" width="70%">Description</th>
                       </tr>
                       <tr class="tableRowOdd">
-                        <td class="tableCellAlignRight" width="22%"
- align="left" valign="top">Proteins</td>
-                        <td class="tableCellAlignRight" width="8%"
- align="left" valign="top">27077</td>
-                        <td class="tableCell" width="70%" align="left"
- valign="top">Number of proteins in the database</td>
+                        <td class="tableCellAlignRight" align="left"
+ valign="top" width="22%">Proteins</td>
+                        <td class="tableCellAlignRight" align="left"
+ valign="top" width="8%">27652</td>
+                        <td class="tableCell" align="left" valign="top"
+ width="70%">Number of proteins in the database</td>
                       </tr>
                       <tr class="tableRowEven">
-                        <td class="tableCellAlignRight" width="22%"
- align="left" valign="top">Interactions</td>
-                        <td class="tableCellAlignRight" width="8%"
- align="left" valign="top">30074</td>
-                        <td class="tableCell" width="70%" align="left"
- valign="top">Number of binary interactions and complexes</td>
+                        <td class="tableCellAlignRight" align="left"
+ valign="top" width="22%">Interactions</td>
+                        <td class="tableCellAlignRight" align="left"
+ valign="top" width="8%">36641</td>
+                        <td class="tableCell" align="left" valign="top"
+ width="70%">Number of binary interactions and complexes</td>
                       </tr>
                       <tr class="tableRowOdd">
-                        <td class="tableCellAlignRight" width="22%"
- align="left" valign="top">Binary interactions</td>
-                        <td class="tableCellAlignRight" width="8%"
- align="left" valign="top">37680</td>
-                        <td class="tableCell" width="70%" align="left"
- valign="top">Number of binary interactions, n-ary interactions
-expanded according to the "spoke" model</td>
+                        <td class="tableCellAlignRight" align="left"
+ valign="top" width="22%">Binary interactions</td>
+                        <td class="tableCellAlignRight" align="left"
+ valign="top" width="8%">44416</td>
+                        <td class="tableCell" align="left" valign="top"
+ width="70%">Number of binary interactions, n-ary interactions expanded
+according to the "spoke" model</td>
                       </tr>
                       <tr class="tableRowEven">
-                        <td class="tableCellAlignRight" width="22%"
- align="left" valign="top">Experiments</td>
-                        <td class="tableCellAlignRight" width="8%"
- align="left" valign="top">570</td>
-                        <td class="tableCell" width="70%" align="left"
- valign="top">Distinct experiments</td>
+                        <td class="tableCellAlignRight" align="left"
+ valign="top" width="22%">Experiments</td>
+                        <td class="tableCellAlignRight" align="left"
+ valign="top" width="8%">643</td>
+                        <td class="tableCell" align="left" valign="top"
+ width="70%">Distinct experiments</td>
                       </tr>
                       <tr class="tableRowOdd">
-                        <td class="tableCellAlignRight" width="22%"
- align="left" valign="top">Terms</td>
-                        <td class="tableCellAlignRight" width="8%"
- align="left" valign="top">244</td>
-                        <td class="tableCell" width="70%" align="left"
- valign="top">Controlled vocabulary terms</td>
+                        <td class="tableCellAlignRight" align="left"
+ valign="top" width="22%">Terms</td>
+                        <td class="tableCellAlignRight" align="left"
+ valign="top" width="8%">252</td>
+                        <td class="tableCell" align="left" valign="top"
+ width="70%">Controlled vocabulary terms</td>
                       </tr>
                     </tbody>
                   </table>
@@ -160,48 +149,43 @@ expanded according to the "spoke" model</td>
                   </td>
                 </tr>
                 <tr>
-                  <td valign="top" height="">
-                  <table width="100%" height="100%">
+                  <td height="0" valign="top">
+                  <table height="100%" width="100%">
                     <tbody>
                       <tr>
-                        <td valign="top" height=""> <map
- name="jfreechart-40543.png">
-                        </map>
-                        <img src="index_files/DisplayChart.png"
- style="border: 0px solid ; width: 500px; height: 300px;"
- usemap="#testing" title="" alt=""> </td>
-                      </tr>
-                      <tr>
-                        <td valign="top" height=""> <map
- name="jfreechart-40544.png">
-                        </map>
-                        <img src="index_files/DisplayChart_003.png"
- style="border: 0px solid ; width: 500px; height: 300px;"
- usemap="#testing" title="" alt=""> </td>
-                      </tr>
-                      <tr>
-                        <td valign="top" height=""> <map
- name="jfreechart-40545.png">
-                        </map>
-                        <img src="index_files/DisplayChart_004.png"
- style="border: 0px solid ; width: 500px; height: 300px;"
- usemap="#testing" title="" alt=""> </td>
-                      </tr>
-                      <tr>
-                        <td valign="top" height=""> <map
- name="jfreechart-40546.png">
+                        <td height="0" valign="top"> <map
+ name="jfreechart-19143.png">
                         </map>
                         <img src="index_files/DisplayChart_002.png"
- style="border: 0px solid ; width: 500px; height: 300px;"
- usemap="#testing" title="" alt=""> </td>
+ usemap="#jfreechart-19143.png" border="0" height="300" width="500"> </td>
                       </tr>
                       <tr>
-                        <td valign="top" height=""> <map
- name="jfreechart-40547.png">
+                        <td height="0" valign="top"> <map
+ name="jfreechart-19144.png">
                         </map>
                         <img src="index_files/DisplayChart_005.png"
- style="border: 0px solid ; width: 500px; height: 300px;"
- usemap="#testing" title="" alt=""> </td>
+ usemap="#jfreechart-19144.png" border="0" height="300" width="500"> </td>
+                      </tr>
+                      <tr>
+                        <td height="0" valign="top"> <map
+ name="jfreechart-19145.png">
+                        </map>
+                        <img src="index_files/DisplayChart_003.png"
+ usemap="#jfreechart-19145.png" border="0" height="300" width="500"> </td>
+                      </tr>
+                      <tr>
+                        <td height="0" valign="top"> <map
+ name="jfreechart-19146.png">
+                        </map>
+                        <img src="index_files/DisplayChart.png"
+ usemap="#jfreechart-19146.png" border="0" height="300" width="500"> </td>
+                      </tr>
+                      <tr>
+                        <td height="0" valign="top"> <map
+ name="jfreechart-19147.png">
+                        </map>
+                        <img src="index_files/DisplayChart_004.png"
+ usemap="#jfreechart-19147.png" border="0" height="300" width="500"> </td>
                       </tr>
                     </tbody>
                   </table>
@@ -212,7 +196,7 @@ expanded according to the "spoke" model</td>
             </td>
           </tr>
           <tr>
-            <td valign="bottom" height="10%"><!--
+            <td height="10%" valign="bottom"><!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -225,9 +209,9 @@ expanded according to the "spoke" model</td>
                 <tr>
                   <td> Please send any questions or suggestions to <a
  href="mailto:intact-help@ebi.ac.uk">intact-help@ebi.ac.uk</a> <br>
-Last modified: <i>29-June-2004 07:31 PM by sp</i> </td>
-                  <td class="tableCell"> <img border="0" align="right"
- src="struts-power.gif"> </td>
+Last modified: <i>28-July-2004 10:02 AM by Samuel</i> </td>
+                  <td class="tableCell"> <img
+ src="index_files/struts-power.gif" align="right" border="0"> </td>
                 </tr>
               </tbody>
             </table>
