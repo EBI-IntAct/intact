@@ -115,7 +115,7 @@
 
     <!-- intSeq page description -->
     <definition name="intSeq.layout" path="/layouts/intactLayout.jsp">
-        <put name="title"     value="IntAct - Database Search"/>
+        <put name="title"     value="IntAct - intSeq"/>
         <!-- just no sidebar - this must be defined -->
         <!-- just no header - this must be defined -->
         <!-- just no content - this must be defined -->

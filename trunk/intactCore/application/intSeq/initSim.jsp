@@ -3,7 +3,7 @@
 
  <%--
     Forwards the request to the login page.
-    Author: Sugath Mudali (smudali@ebi.ac.uk)
+    @author Sophie Huet (shuet@ebi.ac.uk)
     Version: $Id$
 --%>
 
