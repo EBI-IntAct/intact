@@ -4,17 +4,20 @@ README for hierarchView
 DIRECTORIES
 ------------
 
-WEB-INF/   : config, classes and needed libraries.
-interpro/  : modification done on the interpro web application to fit our needs
-tulip/     : source files of the tulip console
+WEB-INF/   : config files, classes and needed libraries.
+tulip/     : source files of the tulip console.
+ws/        : all you need to install and manage the tulip web service.
+pages/     : hierarchView front-end (set of JSPs).
+layouts/   : hierarchView front-end (set of JSPs).
+images/    : images needed for the front-end.
 
 
 
 INSTALLATION NOTES
 ------------------
 
-The command line 'ant -projecthelp' allows you to have the description of
-needed Ant task to install hierarchView.
+The command line 'ant -projecthelp' allows you to get the available list of
+Ant task to install hierarchView.
 
 
 PART 0 : PREPARE THE INTACTCORE
@@ -25,7 +28,7 @@ cf. README file in the intactCore root directory.
 
 PART 1 : INSTALL THE TULIP WEB SERVICE
 ---------------------------------------
-That web service will allow hierarchView to calculate proteins' coordinates of the interaction network to display.
+That web service will allows hierarchView to calculate proteins' coordinates of the interaction network to display.
 
 (1) Install the tulip console (software allowing to interact with the Tulip library)
     -------------------------
@@ -55,7 +58,7 @@ That web service will allow hierarchView to calculate proteins' coordinates of t
 (4) Install the web service
     ------------------------
     - copy that archive to your server
-    - decompress it (tar zxvf tulipWebService.tar.gz)
+    - uncompress it (tar zxvf tulipWebService.tar.gz)
     - enter the freshly created directory 'ws' and read the README file to know how
       to install and manage the web service.
 
@@ -92,5 +95,5 @@ PART 2 : INSTALL THE WEB APPLICATION
 
 (6) Try the web application
     -----------------------
-    let's open a browser and go to http://[TOMCAT_HOSTNAME]/hierarchView
+    let's open a browser and go to http://[TOMCAT_HOSTNAME]/intact/hierarchView
 
