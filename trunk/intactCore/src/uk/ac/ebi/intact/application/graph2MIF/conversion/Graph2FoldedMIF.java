@@ -1010,26 +1010,35 @@ public class Graph2FoldedMIF {
         // keep track of the existence of a primary Xref
         Xref primaryXref = null;
 
-
         //local elements processing...
         //the first uniprot Intact Xref (preferably with identity qualifier) will become primaryRef in PSI
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             final Xref xref = (Xref) iterator.next();
-            final CvXrefQualifier cvXrefQualifier = xref.getCvXrefQualifier();
-            final CvDatabase db = xref.getCvDatabase();
 
-            if( cvXrefQualifier != null ) {
-                if( "identity".equals( cvXrefQualifier.getShortLabel() ) &&
-                    "uniprot".equals( db.getShortLabel() ) ) {
-                    // found Xref( uniprot, identity ) -> we can stop
-                    primaryXref = xref;
-                    break;
-                } else {
-                    // found Xref( uniprot, not identity) -> carry on searching in case we find an identity later.
-                    primaryXref = xref;
-                }
-            }
-        }
+            final CvDatabase db = xref.getCvDatabase();
+            if( db != null) {
+                if( "uniprot".equals( db.getShortLabel() ) ) {
+                    final CvXrefQualifier cvXrefQualifier = xref.getCvXrefQualifier();
+                    if( cvXrefQualifier != null ) {
+                        if( "identity".equals( cvXrefQualifier.getShortLabel() ) ) {
+                            // found Xref( uniprot, identity ) -> we can stop
+                            primaryXref = xref;
+                            break;
+                        } else {
+                            // found Xref( uniprot, not identity) -> carry on searching in case we find an identity later.
+                            if( primaryXref == null ) {
+                                primaryXref = xref;
+                            }
+                        }
+                    } else {
+                        // found Xref( uniprot, not identity) -> carry on searching in case we find an identity later.
+                        if( primaryXref == null ) {
+                            primaryXref = xref;
+                        }
+                    }
+                } // if uniprot
+            } // db null
+        } // for xrefs
 
         return procXrefCollection( xrefs, primaryXref );
     }
