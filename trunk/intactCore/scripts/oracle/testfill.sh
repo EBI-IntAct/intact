@@ -32,9 +32,7 @@ scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase data/control
 scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvComponentRole data/controlledVocab/CvComponentRole.def
 scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvIdentification data/controlledVocab/CvIdentification.def data/controlledVocab/CvIdentification.dag
 scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteraction data/controlledVocab/CvInteraction.def data/controlledVocab/CvInteraction.dag
-
-echo "Inserting Proteins and their Xrefs ..."
-scripts/javaRun.sh InsertGo data/go_${DATASET}.dat "http://www.geneontology.org/doc/GO.defs"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteractionType data/controlledVocab/CvInteractionType.def data/controlledVocab/CvInteractionType.dag
 
 echo "Inserting Complexes ..."
 scripts/javaRun.sh InsertComplex data/ho_gavin_${DATASET}.dat
