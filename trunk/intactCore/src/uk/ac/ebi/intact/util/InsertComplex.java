@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 /**
  * Insert complex data for Ho and Gavin publications.
  * Data is read from an input text file.
- *
+ * <p/>
  * Input file format:
  * Line records, elements are space-delimited:
  * Interaction Bait   Preys         Experiment
@@ -39,11 +39,13 @@ public final class InsertComplex {
     private IntactHelper helper;
     private UpdateProteins proteinFactory;
 
-    /** All proteins which have been created for the current complex.
+    /**
+     * All proteins which have been created for the current complex.
      */
     private HashMap createdProteins = null;
 
-    /** Newt Server class - used to get a valid BioSource given a taxID
+    /**
+     * Newt Server class - used to get a valid BioSource given a taxID
      */
     private NewtServerProxy newtServer;
 
@@ -65,6 +67,9 @@ public final class InsertComplex {
     public InsertComplex() throws Exception {
         try {
             helper = new IntactHelper();
+            System.out.println( "Database user:     " + helper.getDbUserName() );
+            System.out.println( "Database instance: " + helper.getDbName() );
+
             proteinFactory = new UpdateProteins( helper );
 
             // Transactions are controlled by this class, not by UpdateProteins.
@@ -93,7 +98,11 @@ public final class InsertComplex {
      */
     public final void closeHelper() {
         try {
-            if( helper != null ) helper.closeStore();
+            if( helper != null ) {
+                helper.closeStore();
+                System.out.println( "Database connexion closed." );
+            }
+
         } catch( IntactException e ) {
             e.printStackTrace();
         }
@@ -102,19 +111,15 @@ public final class InsertComplex {
     /**
      * Insert a Component object linking an Interactor to an Interaction.
      *
-     * @param act The interaction to add the Interactor to
+     * @param act  The interaction to add the Interactor to
      * @param spAc Swiss-Prot accession number of the Protein to add.
      *             If the protein does not yet exist, it will be created.
      * @param role Role of the protein in the interaction.
      * @throws Exception
      */
     public final void insertComponent( Interaction act,
-                                 String spAc,
-                                 CvComponentRole role ) throws Exception {
-
-        // Component comp = new Component();
-        // comp.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
-        // comp.setInteraction(act);
+                                       String spAc,
+                                       CvComponentRole role ) throws IntactException {
 
         Collection proteins = null;
 
@@ -133,10 +138,9 @@ public final class InsertComplex {
 
                 // if it looks like an sgd protein, create it with an xref to sgd
                 if( ( 0 == proteins.size() ) && ( spAc.substring( 0, 1 ).equals( "S" ) ) ) {
-                    proteins.add(
-                            proteinFactory.insertSimpleProtein( spAc,
-                                                                (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sgd" ),
-                                                                bioSource.getTaxId() ) );
+                    CvDatabase sgd = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sgd" );
+                    Protein protein = proteinFactory.insertSimpleProtein( spAc, sgd, bioSource.getTaxId() );
+                    proteins.add( protein );
                 }
             } else {
                 System.err.print( "p" );
@@ -166,16 +170,14 @@ public final class InsertComplex {
 
         //now build the Component.....
         Component comp = new Component( owner, act, targetProtein, role );
-
-        // comp.setInteractor(targetProtein);
-        // comp.setCvComponentRole(role);
         helper.create( comp );
     }
 
     /**
-     * utility method to get an Experiment. If one cannot be found then
+     * Utility method to get an Experiment. If one cannot be found then
      * an new one will be created using the owner and BioSource objects
      * already built.
+     *
      * @param experimentLabel Label to search the DB for the Experiment
      * @return either an exisitng Experiment or a (valid) new one.
      * @throws IntactException thrown if there was a problem searching the DB
@@ -183,8 +185,7 @@ public final class InsertComplex {
     private Experiment getExperiment( String experimentLabel ) throws IntactException {
 
         // Get experiment from the local node
-        logger.debug( "looking for an Experiment in the DB with label "
-                      + experimentLabel + " ...." );
+        logger.debug( "looking for an Experiment in the DB with label " + experimentLabel + " ...." );
         Experiment ex = (Experiment) helper.getObjectByLabel( Experiment.class, experimentLabel );
         if( null == ex ) {
             // create it - NB under the new model the Experiment needs
@@ -193,11 +194,50 @@ public final class InsertComplex {
                           experimentLabel + ": creating a new one..." );
             ex = new Experiment( owner, experimentLabel, bioSource );
             //NB as this is already in a TX scope the Experiment will not be persisted yet!!
+
             helper.create( ex );
             logger.debug( "checking it was persisted....." );
             Experiment dummy = (Experiment) helper.getObjectByLabel( Experiment.class, experimentLabel );
             if( dummy == null ) logger.debug( "Error: new Experiment not created; may be nested TX problem..." );
         }
+
+        boolean needUpdate = false;
+        if( null == ex.getCvInteraction() ) {
+            needUpdate = true;
+
+            logger.debug( "Oops, an Experiment in the DB does not have a CvInteraction!" );
+            logger.debug( "Setting one for it now...." );
+            // Give that experiment a default CvInteraction
+            Collection result = helper.search( CvInteraction.class.getName(), "shortlabel", "experimental" );
+            if( result.size() == 1 ) {
+                CvInteraction cvInteraction = (CvInteraction) result.iterator().next();
+                ex.setCvInteraction( cvInteraction );
+            } else {
+                logger.debug( "ERROR! Found "+ result.size() +"  CvInteraction by shortlabel: experimental" );
+                throw new IntactException( "failed to add CvInteraction to Experiment - " +
+                                           "multiple object found by shortlabel: experimental." );
+            }
+        }
+
+        if( null == ex.getCvIdentification() ) {
+            needUpdate = true;
+
+            logger.debug( "Oops, an Experiment in the DB does not have a CvIdentification!" );
+            logger.debug( "Setting one for it now...." );
+            // Give that experiment a default CvIdentification
+            Collection result = helper.search( CvIdentification.class.getName(), "shortlabel", "western blot" );
+            if( result.size() == 1 ) {
+                CvIdentification cvIdentification = (CvIdentification) result.iterator().next();
+                ex.setCvIdentification( cvIdentification );
+            } else {
+                logger.debug( "ERROR! Found "+ result.size() +" CvIdentification by shortlabel: experimental" );
+                throw new IntactException( "failed to add CvInteraction to Experiment - " +
+                                           "multiple object found by shortlabel: experimental." );
+            }
+
+        }
+
+
         //Experiments in the DB SHOULD have a BioSource - but just in case
         //they don't.....
         if( ex.getBioSource() == null ) {
@@ -214,14 +254,15 @@ public final class InsertComplex {
                 throw new IntactException( "failed to add BioSource to Experiment - no bioSource!" );
             }
 
+
+        }
+        logger.debug( "Experiment: " + ex );
+
+        if( needUpdate == true ) {
             //persist the change (assumes TX started outside this method..)
             helper.update( ex );
-            logger.debug( "update called on Experiment - BioSource added (but not yet persistent).." );
+            logger.debug( "needUpdate called on Experiment - BioSource added (but not yet persistent).." );
         }
-        logger.debug( "Experiment used has shortLabel " + ex.getShortLabel()
-                      + " and BioSource with Label: "
-                      + ex.getBioSource().getShortLabel() );
-
         return ex;
     }
 
@@ -229,6 +270,7 @@ public final class InsertComplex {
      * Private method to get the CV info for an Interaction type.
      * As this is not mandatory if the type cannot be found it can
      * safely be ignored.
+     *
      * @param typeLabel The label used to find the Interaction type (may be null)
      * @return CvInteractionType the CV data if found, null otherwise
      */
@@ -237,8 +279,7 @@ public final class InsertComplex {
         CvInteractionType cvType = null;
         if( typeLabel != null ) {
             try {
-                cvType = (CvInteractionType) helper.getObjectByLabel(
-                        CvInteractionType.class, typeLabel );
+                cvType = (CvInteractionType) helper.getObjectByLabel( CvInteractionType.class, typeLabel );
                 if( cvType == null ) {
                     // TODO: Problem if type is unknown - do what??
                     logger.debug( typeLabel + " is not known as a CvInteractionType shortLabel." );
@@ -257,24 +298,24 @@ public final class InsertComplex {
      *
      * @param interactionNumber The number of the interaction in the publication.
      *                          Used for the shortLabel.
-     * @param bait Swiss-Prot accession number of the bait protein.
-     * @param preys Swiss-Prot accession numbers of the prey proteins.
-     * @param actLabel The short label to be used for the Interaction
-     * @param experiment The Experiment that the Complex belongs to
+     * @param bait              Swiss-Prot accession number of the bait protein.
+     * @param preys             Swiss-Prot accession numbers of the prey proteins.
+     * @param actLabel          The short label to be used for the Interaction
+     * @param experiment        The Experiment that the Complex belongs to
      * @throws Exception
      */
     public final void insertComplex( String interactionNumber,
-                               String bait,
-                               Vector preys,
-                               String actLabel,
-                               Experiment experiment,
-                               String interactionTypeLabel ) throws Exception {
+                                     String bait,
+                                     Vector preys,
+                                     String actLabel,
+                                     Experiment experiment,
+                                     String interactionTypeLabel ) throws Exception {
 
         // Get Interaction
         // The label is the first two letters of the experiment label plus the interaction number
         //String actLabel = experimentLabel.substring(0, 2) + "-" + interactionNumber;
-        //Interaction act = (Interaction) helper.getObjectByLabel(Interaction.class, actLabel);
-        //if (null == act) {
+        //Interaction interaction = (Interaction) helper.getObjectByLabel(Interaction.class, actLabel);
+        //if (null == interaction) {
 
         Collection experiments = new ArrayList();
         //Experiment experiment = getExperiment(experimentLabel);
@@ -285,29 +326,32 @@ public final class InsertComplex {
 
         //got our data - now build the new Interaction (with an empty component Collection)
         //get the info needed to create a new Interaction and build one...
-        Interaction act = new InteractionImpl( experiments, new ArrayList(), cvInteractionType, actLabel, owner );
-        helper.create( act );
+        Interaction interaction =
+                new InteractionImpl( experiments, new ArrayList(), cvInteractionType, actLabel, owner );
+        helper.create( interaction );
 
         // Initialise list of proteins created
         createdProteins = new HashMap();
 
         // add bait
-        insertComponent( act, bait, (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "bait" ) );
+        CvComponentRole cvBait = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "bait" );
+        CvComponentRole cvPrey = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "prey" );
 
-        CvComponentRole role = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "prey" );
+        insertComponent( interaction, bait, cvBait );
+
         // add preys
         for( int i = 0; i < preys.size(); i++ ) {
             String prey = (String) preys.elementAt( i );
-            insertComponent( act, prey, role );
+            insertComponent( interaction, prey, cvPrey );
         }
 
         // link interaction to experiment
-        experiment.addInteraction( act );
+        experiment.addInteraction( interaction );
 
         // No need to do an update here because we have created a new Interaction.
         // In fact, it is an error to do so because you can only update objects that
         // are already in the DB.
-//            helper.update(act);
+//            helper.update(interaction);
         System.err.print( "C" );
         //}
         //else {
@@ -326,9 +370,8 @@ public final class InsertComplex {
 
 
     /**
-     *
-     * @param filename the filename to parse
-     * @param taxId the taxId
+     * @param filename        the filename to parse
+     * @param taxId           the taxId
      * @param interactionType the CvInteractionType shortlabel which will
      *                        allow to retreive the right object from the
      *                        database and then to link it to the created
@@ -371,7 +414,7 @@ public final class InsertComplex {
         //if not it will need persisting....
         bioSource = helper.getBioSourceByTaxId( taxId );
         if( ( bioSource == null ) || ( bioSource.getOwner() == null ) ||
-                ( bioSource.getTaxId() == null ) ) {
+            ( bioSource.getTaxId() == null ) ) {
 
             logger.debug( "No BioSource with TaxId "
                           + taxId + " exists yet - creating a new one.." );
@@ -512,8 +555,8 @@ public final class InsertComplex {
      * Read complex data from flat file and insert it into the database.
      *
      * @param args the command line arguments. The first argument is the
-     * InputFileName and the second argument is the the tax id of the target
-     * proteins.
+     *             InputFileName and the second argument is the the tax id of the target
+     *             proteins.
      * @throws Exception for any errors.
      */
     public static void main( String[] args ) throws Exception {
