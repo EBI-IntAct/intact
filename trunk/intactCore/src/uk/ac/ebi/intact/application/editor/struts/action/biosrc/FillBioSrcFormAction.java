@@ -49,6 +49,6 @@ public class FillBioSrcFormAction extends FillCvFormAction {
             // Preserver existing values for editing.
             dynaForm.set("taxId", view.getTaxId());
         }
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 }

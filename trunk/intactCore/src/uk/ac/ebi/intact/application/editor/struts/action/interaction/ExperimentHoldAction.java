@@ -87,6 +87,6 @@ public class ExperimentHoldAction extends AbstractEditorAction {
             // Must have pressed 'Hide'.
             view.hideExperimentToHold(eb);
         }
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 }

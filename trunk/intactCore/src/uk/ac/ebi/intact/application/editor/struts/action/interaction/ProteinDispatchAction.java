@@ -76,10 +76,6 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         // The index position of the annotation.
         int idx = ((Integer) dynaform.get("idx")).intValue();
 
-        // The current view of the edit session.
-//        InteractionViewBean viewbean =
-//                (InteractionViewBean) getIntactUser(request).getView();
-
         // The protein we are editing at the moment.
         ProteinBean pb = ((ProteinBean[]) dynaform.get("proteins"))[idx];
 
@@ -90,7 +86,7 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         pb.setEditState(AbstractEditBean.SAVE);
 
         // Update the form.
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 
     public ActionForward save(ActionMapping mapping,
@@ -121,7 +117,7 @@ public class ProteinDispatchAction extends AbstractEditorAction {
                     new ActionError("error.int.protein.edit.role"));
             saveErrors(request, errors);
             pb.setEditState(ProteinBean.ERROR);
-            return mapping.findForward(FORWARD_FAILURE);
+            return mapping.findForward(FAILURE);
         }
 
         // Any duplicate Proteins (same role)?
@@ -132,7 +128,7 @@ public class ProteinDispatchAction extends AbstractEditorAction {
                             pb.getShortLabel(), pb.getRole()));
             saveErrors(request, errors);
             pb.setEditState(ProteinBean.ERROR);
-            return mapping.findForward(FORWARD_FAILURE);
+            return mapping.findForward(FAILURE);
         }
         // The protein to update.
         viewbean.addProteinToUpdate(pb);
@@ -141,7 +137,7 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         pb.setEditState(AbstractEditBean.VIEW);
 
         // Update the form.
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 
     public ActionForward delete(ActionMapping mapping,
@@ -169,6 +165,6 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         view.delProtein(idx);
 
         // Update the form.
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 }

@@ -67,7 +67,7 @@ public class FillCvFormAction extends AbstractEditorAction {
         dynaform.set("xrefCmd", new String[xrefs.size()]);
 
         // Straight to the editor.
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 
     /**

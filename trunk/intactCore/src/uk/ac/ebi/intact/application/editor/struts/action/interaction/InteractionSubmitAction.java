@@ -72,7 +72,7 @@ public class InteractionSubmitAction extends SubmitFormAction {
             dynaform.set("idx", new Integer(protIdx));
             return mapping.findForward("prot");
         }
-        return mapping.findForward(FORWARD_FAILURE);
+        return mapping.findForward(FAILURE);
     }
 
     // Handle events with dispatch parameter.
