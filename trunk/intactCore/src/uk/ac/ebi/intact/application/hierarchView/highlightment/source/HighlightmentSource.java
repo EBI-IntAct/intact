@@ -8,6 +8,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -111,7 +112,7 @@ public abstract class HighlightmentSource {
      * @param aProteinAC a protein identifier (AC).
      * @return a set of URL pointing on the highlightment source.
      */
-    abstract public Collection getSourceUrls (String aProteinAC, HttpSession aSession)
+    abstract public List getSourceUrls (String aProteinAC, HttpSession aSession)
             throws IntactException;
 
 

@@ -15,11 +15,15 @@ import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
+import java.util.Properties;
+import java.net.URL;
+
 
 import org.apache.log4j.Logger;
 
@@ -36,6 +40,11 @@ import org.apache.log4j.Logger;
 public class IntactUser implements IntactUserI {
 
     static Logger logger = Logger.getLogger(uk.ac.ebi.intact.application.hierarchView.business.Constants.LOGGER_NAME);
+
+    private static final int MINIMAL_DEPTH = 1;
+    private static final int MAXIMAL_DEPTH = 2;
+    private static final int DEFAULT_DEPTH = 1;
+
 
     /**
      * datasource entry point
@@ -63,37 +72,85 @@ public class IntactUser implements IntactUserI {
      */
     private Collection keys;
 
+    /**
+     * URL describes the link to the highlight source in the case the user has selected
+     * one of those available for the current protein.
+     * The URL is encoded in the UTF-8 format.
+     */
+    private String sourceURL;
+
     // User's form fields
     private String AC;
-    private String depth;
-    private boolean hasNoDepthLimit;
+    private int currentDepth;
+    private int defaultDepth;
+    private int minimalDepth;
+    private int maximalDepth;
+
+    //private boolean hasNoDepthLimit;
     private String methodLabel;
     private String methodClass;
     private String behaviour;
 
 
     public String getAC() {
-        return (this.AC);
+        return AC;
     }
 
-    public String getDepth() {
-        return (this.depth);
+    public int getCurrentDepth() {
+        return currentDepth;
     }
 
-    public boolean getHasNoDepthLimit() {
-        return (this.hasNoDepthLimit);
+    public int getMinimalDepth() {
+        return minimalDepth;
+    }
+
+    public int getMaximalDepth() {
+        return maximalDepth;
+    }
+
+    /**
+     * says if the current depth is minimal
+     * @return boolean true is the current depth is minimal, esle false.
+     */
+    public boolean minimalDepthReached(){
+        return (currentDepth == minimalDepth);
+    }
+
+    /**
+     * says if the current depth is maximal
+     * @return boolean true is the current depth is maximal, esle false.
+     */
+    public boolean maximalDepthReached(){
+        return (currentDepth == maximalDepth);
     }
 
     public String getMethodLabel() {
-        return (this.methodLabel);
+        return methodLabel;
     }
 
     public String getMethodClass() {
-        return (this.methodClass);
+        return methodClass;
     }
 
     public String getBehaviour() {
         return behaviour;
+    }
+
+    /**
+     * Allows the user to know if an interaction network will be displayed
+     * @return
+     */
+    public boolean InteractionNetworkReadyToBeDisplayed(){
+        return ((null != AC) && (null != imageBean));
+    }
+
+    /**
+     * Allows the user to know if an interaction network is ready to be highlighted.
+     * i.e. all data needed to highlight the current interaction network are available.
+     * @return boolean true if the interaction network can be highlighted, esle false.
+     */
+    public boolean InteractionNetworkReadyToBeHighlighted(){
+        return (null != AC) && (null != keys) && (behaviour != null) && (null != interactionNetwork);
     }
 
     public InteractionNetwork getInteractionNetwork() {
@@ -111,18 +168,37 @@ public class IntactUser implements IntactUserI {
         return intactHelper;
     }
 
+    public String getSourceURL() {
+        return sourceURL;
+    }
+
+    public boolean hasSourceUrlToDisplay() {
+        return (sourceURL != null);
+    }
 
 
     public void setAC(String AC) {
         this.AC = AC;
     }
 
-    public void setDepth (String depth) {
-        this.depth = depth;
+    /**
+     * Increase the depth of the interraction network up to the defined maximum.
+     */
+    public void increaseDepth(){
+        if (currentDepth < maximalDepth)
+            currentDepth++;
     }
 
-    public void setHasNoDepthLimit (boolean flag) {
-        this.hasNoDepthLimit = flag;
+    /**
+     * Desacrease the depth of the interraction network up to the defined minimum.
+     */
+    public void desacreaseDepth(){
+        if (currentDepth > minimalDepth)
+            currentDepth--;
+    }
+
+    public void setDepthToDefault() {
+        currentDepth = defaultDepth;
     }
 
     public void setMethodLabel (String methodLabel) {
@@ -147,6 +223,14 @@ public class IntactUser implements IntactUserI {
 
     public void setKeys(Collection keys) {
         this.keys = keys;
+    }
+
+    public void setSourceURL(String sourceURL) {
+        this.sourceURL = sourceURL;
+    }
+
+    public void resetSourceURL() {
+        setSourceURL(null);
     }
 
 
@@ -185,11 +269,36 @@ public class IntactUser implements IntactUserI {
      * Set the default value of user's data
      */
     public void init () {
-
         this.AC = null;
-        this.depth = null;
-        this.hasNoDepthLimit = false;
-        this.methodLabel = null;
+
+        // read the Graph.properties file
+        Properties properties = PropertyLoader.load (StrutsConstants.GRAPH_PROPERTY_FILE);
+
+        if (null != properties) {
+            String depth = properties.getProperty ("hierarchView.graph.depth.default");
+            if (depth != null) {
+                defaultDepth = Integer.parseInt(depth);
+            } else {
+                defaultDepth = DEFAULT_DEPTH;
+            }
+            currentDepth = defaultDepth;
+
+            depth = properties.getProperty ("hierarchView.graph.depth.minimum");
+            if (depth != null) {
+                minimalDepth = Integer.parseInt(depth);
+            } else {
+                minimalDepth = MINIMAL_DEPTH;
+            }
+
+            depth = properties.getProperty ("hierarchView.graph.depth.maximum");
+            if (depth != null) {
+                maximalDepth = Integer.parseInt(depth);
+            } else {
+                maximalDepth = MAXIMAL_DEPTH;
+            }
+        }
+
+        methodLabel = null;
         methodClass = null;
         behaviour = null;
 
@@ -197,6 +306,8 @@ public class IntactUser implements IntactUserI {
         imageBean = null;
         keys = null;
         highlightOptions = new HashMap();
+        sourceURL = null;
+        logger.info ("User's data set to default");
     }
 
 

@@ -50,24 +50,22 @@ public class DisplayInteractionNetworkTag extends TagSupport {
 
         try {
             IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
-            ImageBean imageBean = user.getImageBean();
-            String AC = user.getAC();
-            Collection keys = user.getKeys();
-            String behaviour = user.getBehaviour();
+            ImageBean imageBean   = user.getImageBean();
+            String behaviour      = user.getBehaviour();
             InteractionNetwork in = user.getInteractionNetwork();
 
             /**
-             * Apply an highlight if needed
+             * Apply an highlight if needed data are available
              */
-            if ((null != AC) && (null != keys) && (behaviour != null) && (null != in)) {
+            if (user.InteractionNetworkReadyToBeHighlighted()) {
                 String methodClass = user.getMethodClass();
                 HighlightProteins.perform (methodClass, behaviour, session, in) ;
             }
 
             /**
-             *  Display only the picture if an AC is in the session
+             *  Display only the picture if needed data are available
              */
-            if ((null != AC) && (null != imageBean)) {
+            if (user.InteractionNetworkReadyToBeDisplayed()) {
 
                 // Display the HTML code map
                 pageContext.getOut().write (imageBean.getMapCode());
@@ -86,12 +84,31 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                                  uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
                 }
 
-                // the random parameter in the URL is given to prevent some browser
-                // (eg. Netscape 4.7) to cache image.
+
+                // Prepare an identifier unique to the generated image
+                String AC = user.getAC();
+                int depth = user.getCurrentDepth();
+                String method = user.getMethodClass();
+                Collection keys = user.getKeys();
+                String highlightContext = "";
+                if (keys != null) {
+                    // a highlight has been requested
+                    highlightContext = (String) keys.iterator().next();
+                    // only relevant to add the behaviour if one is applied
+                    highlightContext += behaviour;
+                }
+
+                String userContext = AC + depth + method + highlightContext;
+
+                /* the context parameter in the URL is given to prevent some browser
+                 * (eg. Netscape 4.7) to cache image wrongly.
+                 * If the image link were /hierarchView/GenerateImage, netscape don't even
+                 * call the servlet and display cached image.
+                 */
                 String msg = "<p align=\"left\">\n"
                         + "  <center>"
                         + "     <img src=\"/hierarchView/GenerateImage?format=" + format
-                        +        "&random="+ System.currentTimeMillis() +"\" "
+                        +        "&context="+ userContext +"\" "
                         + "      USEMAP=\"#" + mapName +"\" border =\"0\">"
                         + "     <br>"
                         + "  </center>"

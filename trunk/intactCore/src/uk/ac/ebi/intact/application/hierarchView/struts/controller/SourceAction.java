@@ -29,8 +29,6 @@ import java.util.Collection;
  */
 public final class SourceAction extends IntactBaseAction {
 
-    // --------------------------------------------------------- Public Methods
-
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -60,11 +58,6 @@ public final class SourceAction extends IntactBaseAction {
 
         // retreive user fron the session
         IntactUserI user = getIntactUser(session);
-        if (null == user) {
-            addError ("error.datasource.notCreated");
-            saveErrors(request);
-            return (mapping.findForward("error"));
-        }
 
         String someKeys = request.getParameter (StrutsConstants.ATTRIBUTE_KEYS);
 
@@ -96,7 +89,5 @@ public final class SourceAction extends IntactBaseAction {
 
         // Forward control to the specified success URI
         return (mapping.findForward("success"));
-
     }
-
-} // SourceAction
+}

@@ -5,30 +5,33 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
+
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.HighlightmentForm;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
+import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+
 /**
- * Implementation of <strong>Action</strong> that validates an highlightment submisson.
+ * Implementation of <strong>Action</strong> that validates a centered submisson (from a link).
  *
  * @author Samuel Kerrien
  * @version $Id$
  */
-
-public final class HighlightmentAction extends IntactBaseAction {
+public final class InitAction extends IntactBaseAction {
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -42,8 +45,8 @@ public final class HighlightmentAction extends IntactBaseAction {
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      *
-     * @exception java.io.IOException if an input/output error occurs
-     * @exception javax.servlet.ServletException if a servlet exception occurs
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if a servlet exception occurs
      */
     public ActionForward execute (ActionMapping mapping,
                                   ActionForm form,
@@ -54,49 +57,28 @@ public final class HighlightmentAction extends IntactBaseAction {
         // Clear any previous errors.
         clearErrors();
 
-        // get the current session
-        HttpSession session = getSession(request);
+        // get a session
+        HttpSession session = getNewSession(request);
+        IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
 
-        // retreive user fron the session
-        IntactUserI user = getIntactUser(session);
-
-        String behaviour = null;
-
-        if (null != form) {
-            behaviour = ((HighlightmentForm) form).getBehaviour ();
-
-            // get the class method name to create an instance
-            String source = user.getMethodClass();
-
-            // save options (given in this request) of the source in the user's session
-            HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(source);
-            if (null != highlightmentSource) {
-                highlightmentSource.saveOptions (request, session);
-            } else {
-                addError ("error.HighlightmentSource.unknown", source);
-            }
+        if (null != user) {
+            // user already exists
+            logger.info ("User already exists ... don't create a new one !");
+            // set user's data field (AC, ...) to default value
+            user.init();
+            return (mapping.findForward("success"));
         }
 
-        // Report any errors we have discovered back to the original form
+        // No user found, let's create one
+        createIntactUser (session);
+
         if (false == isErrorsEmpty()) {
+            // Report any errors we have discovered back to the original form
             saveErrors(request);
             return (mapping.findForward("error"));
         }
 
-        // Save our data in the session
-        user.setBehaviour (behaviour);
-
-        // Print debug in the log file
-        logger.info ("HighlightmentAction: behaviour=" + behaviour +
-                     "\nlogged on in session " + session.getId());
-
-        // Remove the obsolete form bean
-        if (mapping.getAttribute() != null) {
-            if ("request".equals(mapping.getScope()))
-                request.removeAttribute(mapping.getAttribute());
-            else
-                session.removeAttribute(mapping.getAttribute());
-        }
+        logger.info ("User's setting ok.");
 
         // Forward control to the specified success URI
         return (mapping.findForward("success"));

@@ -9,9 +9,8 @@ package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.HighlightmentForm;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.InteractionNetworkForm;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 
@@ -22,13 +21,13 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Implementation of <strong>Action</strong> that validates an highlightment submisson.
+ * Implementation of <strong>Action</strong> that perform hndling of the current interaction network.
  *
  * @author Samuel Kerrien
  * @version $Id$
  */
 
-public final class HighlightmentAction extends IntactBaseAction {
+public final class InteractionNetworkAction extends IntactBaseAction {
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -42,8 +41,8 @@ public final class HighlightmentAction extends IntactBaseAction {
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      *
-     * @exception java.io.IOException if an input/output error occurs
-     * @exception javax.servlet.ServletException if a servlet exception occurs
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if a servlet exception occurs
      */
     public ActionForward execute (ActionMapping mapping,
                                   ActionForm form,
@@ -60,42 +59,18 @@ public final class HighlightmentAction extends IntactBaseAction {
         // retreive user fron the session
         IntactUserI user = getIntactUser(session);
 
-        String behaviour = null;
+        InteractionNetworkForm myForm = (InteractionNetworkForm) form;
 
-        if (null != form) {
-            behaviour = ((HighlightmentForm) form).getBehaviour ();
-
-            // get the class method name to create an instance
-            String source = user.getMethodClass();
-
-            // save options (given in this request) of the source in the user's session
-            HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(source);
-            if (null != highlightmentSource) {
-                highlightmentSource.saveOptions (request, session);
-            } else {
-                addError ("error.HighlightmentSource.unknown", source);
-            }
-        }
-
-        // Report any errors we have discovered back to the original form
-        if (false == isErrorsEmpty()) {
+        if (myForm.expandSelected()) {
+            user.increaseDepth();
+            produceInteractionNetworkImage (user);
+        } else if (myForm.contractSelected()) {
+            user.desacreaseDepth();
+            produceInteractionNetworkImage (user);
+        } else {
+            addError ("error.graph.command.notRecognized", myForm.getAction());
             saveErrors(request);
             return (mapping.findForward("error"));
-        }
-
-        // Save our data in the session
-        user.setBehaviour (behaviour);
-
-        // Print debug in the log file
-        logger.info ("HighlightmentAction: behaviour=" + behaviour +
-                     "\nlogged on in session " + session.getId());
-
-        // Remove the obsolete form bean
-        if (mapping.getAttribute() != null) {
-            if ("request".equals(mapping.getScope()))
-                request.removeAttribute(mapping.getAttribute());
-            else
-                session.removeAttribute(mapping.getAttribute());
         }
 
         // Forward control to the specified success URI

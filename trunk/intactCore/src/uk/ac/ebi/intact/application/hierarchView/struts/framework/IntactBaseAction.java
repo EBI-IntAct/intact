@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
@@ -14,6 +15,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundException;
 import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.business.IntactException;
 
 import org.apache.struts.action.Action;
@@ -23,12 +25,14 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 import java.rmi.RemoteException;
 
 /**
  * Super class for all hierarchView related action classes.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public abstract class IntactBaseAction extends Action {
 
@@ -39,6 +43,17 @@ public abstract class IntactBaseAction extends Action {
 
     /** Error container */
     private ActionErrors myErrors = new ActionErrors();
+
+    /**
+     * Says if an IntactUser object is currently available in the session.
+     *
+     * @param session the session to look into.
+     * @return true is the IntactUser exists, else false.
+     */
+    protected boolean intactUserExists (HttpSession session) {
+        IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER_KEY);
+        return (null == user);
+    }
 
     /**
      * Returns the Intact User instance saved in a session.
@@ -76,6 +91,15 @@ public abstract class IntactBaseAction extends Action {
         }
 
         return session;
+    }
+
+    /**
+     * Returns a session and create a new one if necessary.
+     * @param request the request to get the session from.
+     * @return session associated with given request.
+     */
+    protected HttpSession getNewSession(HttpServletRequest request) {
+        return request.getSession(true);
     }
 
     /**
@@ -135,17 +159,45 @@ public abstract class IntactBaseAction extends Action {
 
     // Helper methods.
 
+
+
     /**
-     * A convenient method to retrieve an application object from a session.
-     * @param attrName the attribute name.
-     * @return an application object stored in a session under <tt>attrName</tt>.
+     * Create a new IntactUser and store it in the session.<br>
+     * A datasource is also initialised inside the IntactUser.
+     * @param session the user session where to store the IntactUser
+     * @return a brand new IntactUser or null is something goes wrong.
+     *
+     * <post>
+     *      check is the errorsAction is empty, any errors are reported in there.
+     * </post>
      */
-//    private Object getApplicationObject(String attrName) {
-//        return super.servlet.getServletContext().getAttribute(attrName);
-//    }
+    protected IntactUser createIntactUser (HttpSession session) {
+        IntactUser user = null;
+        ServletContext servletContext = getServlet().getServletContext();
 
+        // Name of the mapping file and data source class.
+        String repositoryfile  = servletContext.getInitParameter (Constants.MAPPING_FILE);
+        String datasourceClass = servletContext.getInitParameter (Constants.DATA_SOURCE);
 
+        // Create an instance of IntactUser which we'll store in the Session
+        try {
+            user = new IntactUser (repositoryfile, datasourceClass);
+            session.setAttribute (Constants.USER_KEY, user);
+        }
+        catch (DataSourceException de) {
+            // Unable to get a data source...can't proceed
+            logger.error (de.getMessage(), de);
+            addError ("error.datasource.notCreated");
+            return null;
+        }
+        catch (IntactException ie) {
+            logger.error ("Could not initialize user's settings", ie);
+            addError ("error.datasource.notCreated");
+            return null;
+        }
 
+        return user;
+    }
 
     /**
      * Produces and updates the user session with :
@@ -156,19 +208,16 @@ public abstract class IntactBaseAction extends Action {
      * Any errors are stored in the <i>ActionErrors</i> object. A test need to be done
      * afterward to check if any errors have occured.
      *
-     * @param AC the protein identifier on which is centered the interaction network.
-     * @param depth the search depth around the cetered protein
      * @param user where are saved produced data
      */
-    public void produceInteractionNetworkImage (String AC, String depth, IntactUserI user) {
-
-        int depthInt = 0;
+    protected void produceInteractionNetworkImage (IntactUserI user) {
         InteractionNetwork in = null;
+        String AC = user.getAC();
+        int depth = user.getCurrentDepth();
 
         try {
             GraphHelper gh = new GraphHelper(user);
-            depthInt = Integer.parseInt(depth);
-            in = gh.getInteractionNetwork(AC, depthInt);
+            in = gh.getInteractionNetwork(AC, depth);
         } catch (ProteinNotFoundException e) {
             addError ("error.protein.notFound", AC);
             return;
@@ -223,4 +272,4 @@ public abstract class IntactBaseAction extends Action {
     } // produceInteractionNetworkImage
 
 
-} // IntactBaseAction
+}

@@ -17,57 +17,60 @@ public final class StrutsConstants {
      */
     public static final String WEB_SERVICE_PROPERTY_FILE = "/config/WebService.properties";
 
-    public static final String PROPERTY_FILE = "/config/Struts.properties";
+//    public static final String STRUTS_PROPERTY_FILE = "/config/Struts.properties";
 
-    public static final String PROPERTY_FILE_HIGHLIGHTING = "/config/Highlighting.properties";
+    public static final String HIGHLIGHTING_PROPERTY_FILE = "/config/Highlighting.properties";
+
+    public static final String GRAPH_PROPERTY_FILE = "/config/Graph.properties";
 
 
     // ******************************************************* Session Attributes
 
-    /**
-     * The name of the AC attribute set in the session.
-     */
-    public static final String ATTRIBUTE_AC = "AC";
+//    /**
+//     * The name of the AC attribute set in the session.
+//     */
+//    public static final String ATTRIBUTE_AC = "AC";
+//
+//    /**
+//     * The name of the depth attribute set in the session.
+//     */
+//    public static final String ATTRIBUTE_DEPTH = "depth";
+
+//    /**
+//     * The name of the methodLabel attribute set in the session.
+//     */
+//    public static final String ATTRIBUTE_METHOD_LABEL = "methodLabel";
+//
+//    /**
+//     * The name of the methodClass attribute set in the session.
+//     */
+//    public static final String ATTRIBUTE_METHOD_CLASS = "methodClass";
+
+//    /**
+//     * The name of the behaviour attribute set in the session.
+//     */
+//    public static final String ATTRIBUTE_BEHAVIOUR = "behaviour";
+//
 
     /**
-     * The name of the depth attribute set in the session.
-     */
-    public static final String ATTRIBUTE_DEPTH = "depth";
-
-    /**
-     * The name of the noDepthLimit flag set in the session.
-     */
-    public static final String ATTRIBUTE_NO_DEPTH_LIMIT = "noDepthLimit";
-
-    /**
-     * The name of the methodLabel attribute set in the session.
-     */
-    public static final String ATTRIBUTE_METHOD_LABEL = "methodLabel";
-
-    /**
-     * The name of the methodClass attribute set in the session.
-     */
-    public static final String ATTRIBUTE_METHOD_CLASS = "methodClass";
-
-    /**
-     * The name of the behaviour attribute set in the session.
-     */
-    public static final String ATTRIBUTE_BEHAVIOUR = "behaviour";
-
-    /**
-     * The name of the keys attribute set int the session.
+     * The name of the keys attribute set in the session.
      */
     public static final String ATTRIBUTE_KEYS = "keys";
 
     /**
-     * The name of the imageBean attribute set in the session.
+     * The name of the HTTP attribute to describe the URL of the highlight source.
      */
-    public static final String ATTRIBUTE_IMAGE_BEAN = "imageBean";
+    public static final String ATTRIBUTE_SOURCE_URL = "url";
 
-    /**
-     * The name of an attribute set int the session.
-     */
-    public static final String ATTRIBUTE_GRAPH = "graph";
+//    /**
+//     * The name of the imageBean attribute set in the session.
+//     */
+//    public static final String ATTRIBUTE_IMAGE_BEAN = "imageBean";
+
+//    /**
+//     * The name of an attribute set int the session.
+//     */
+//    public static final String ATTRIBUTE_GRAPH = "graph";
 
 } // StrutsConstants
 

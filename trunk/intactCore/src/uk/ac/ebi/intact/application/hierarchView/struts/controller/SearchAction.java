@@ -5,27 +5,31 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 
+import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
+import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.SearchForm;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
-import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-
+import java.util.Properties;
 
 /**
- * Implementation of <strong>Action</strong> that validates a centered submisson (from a link).
+ * Implementation of <strong>Action</strong> that validates a visualize submisson.
  *
  * @author Samuel Kerrien
  * @version $Id$
  */
-public final class CenteredAction extends IntactBaseAction {
+public final class SearchAction extends IntactBaseAction {
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -39,8 +43,8 @@ public final class CenteredAction extends IntactBaseAction {
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      *
-     * @exception java.io.IOException if an input/output error occurs
-     * @exception javax.servlet.ServletException if a servlet exception occurs
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if a servlet exception occurs
      */
     public ActionForward execute (ActionMapping mapping,
                                   ActionForm form,
@@ -57,54 +61,64 @@ public final class CenteredAction extends IntactBaseAction {
         // retreive user fron the session
         IntactUserI user = getIntactUser(session);
 
-        String AC = null;
+        String AC    = null;
+        String methodLabel = null;
+        String methodClass = null;
+        String behaviourDefault = null;
 
-        // look in the request ...
-        AC = request.getParameter ("AC");
+        if (null != form) {
+            // read form values from the bean
+            AC          = ((SearchForm) form).getAC ();
+            methodLabel = ((SearchForm) form).getMethod ();
 
-        if ((null == AC) || (AC.trim().length() == 0)) {
-            addError("error.centeredAC.required");
-            saveErrors(request);
-            return (mapping.findForward("error"));
+            // read the highlighting.proterties file
+            Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+
+            if (null != properties) {
+                methodClass = properties.getProperty ("highlightment.source." + methodLabel + ".class");
+                behaviourDefault = properties.getProperty ("highlighting.behaviour.default.class");
+            }
         }
 
-        String currentAC = user.getAC();
+        // store the bean (by taking care of the scope)
+        if ("request".equals(mapping.getScope()))
+            request.setAttribute(mapping.getAttribute(), form);
+        else
+            session.setAttribute(mapping.getAttribute(), form);
 
-        /*
-         * Don't create the interaction network if it is the same,
-         * data are already in the session.
-         */
-        if (false == AC.equals(currentAC)) {
-            // Save our data
+        if (false == isErrorsEmpty()) {
+            // Report any errors we have discovered back to the original form
+            saveErrors(request);
+            return (mapping.findForward("error"));
+        } else {
+            // Save user's data
             user.setAC (AC);
             user.setDepthToDefault();
+            user.resetSourceURL();
+            user.setMethodLabel (methodLabel);
+            user.setMethodClass (methodClass);
+            user.setBehaviour (behaviourDefault);
 
             // Creation of the graph and the image
+            // that method fill the ActionError in case of trouble, so a check is necessary then.
             produceInteractionNetworkImage (user);
 
             if (false == isErrorsEmpty()) {
-                // Rollback to the old AC
-                user.setAC (currentAC);
-
-                // Report any errors we have discovered back to the original form
+                // Report any errors we have discovered during the interaction network producing
                 saveErrors(request);
                 return (mapping.findForward("error"));
             }
         }
 
-        // Print debug in the log file
-        logger.info ("CenteredAction: AC=" + AC +
-                     "\nlogged on in session " + session.getId());
-
-        // Remove the obsolete form bean
-        if (mapping.getAttribute() != null) {
-            if ("request".equals(mapping.getScope()))
-                request.removeAttribute(mapping.getAttribute());
-            else
-                session.removeAttribute(mapping.getAttribute());
-        }
+        logger.info ("SearchAction: AC=" + AC +
+                     " methodLabel=" + methodLabel +
+                     " methodClass=" + methodClass);
 
         // Forward control to the specified success URI
         return (mapping.findForward("success"));
     }
 }
+
+
+
+

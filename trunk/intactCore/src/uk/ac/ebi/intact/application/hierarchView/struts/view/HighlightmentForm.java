@@ -1,10 +1,9 @@
 package uk.ac.ebi.intact.application.hierarchView.struts.view;
 
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
+import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -19,7 +18,7 @@ import javax.servlet.http.HttpSession;
  * 
  */
 
-public final class HighlightmentForm extends ActionForm {
+public final class HighlightmentForm extends IntactBaseForm {
 
     // --------------------------------------------------- Instance Variables
 
@@ -62,13 +61,7 @@ public final class HighlightmentForm extends ActionForm {
      * @param request The servlet request we are processing
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
-
         this.behaviour = null;
-
-        // clean the session
-        HttpSession session = request.getSession();
-        session.removeAttribute(StrutsConstants.ATTRIBUTE_BEHAVIOUR);
-
     } // reset
 
 
@@ -84,30 +77,25 @@ public final class HighlightmentForm extends ActionForm {
      */
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
-
-        ActionErrors errors = new ActionErrors();
-
         if ((behaviour == null) || (behaviour.length() < 1))
-            errors.add("behaviour", new ActionError("error.behaviour.required"));
+            addError ("error.behaviour.required");
 
         try {
             // try to load the specified behaviour
             Class.forName (behaviour);
-
         } catch (ClassNotFoundException e) {
-            errors.add("behaviour", new ActionError("error.behaviour.unknown", behaviour));
+            addError("error.behaviour.unknown", behaviour);
         }
         catch (Exception e) {
-            errors.add("behaviour", new ActionError("error.behaviour.unexpected", e.getMessage() ) ) ;
+            addError("error.behaviour.unexpected", e.getMessage()) ;
         }
 
-        if (false == errors.isEmpty()) {
+        if (false == isErrorsEmpty()) {
             // delete properties of the bean, so can't be saved int the session.
             reset(mapping, request);
         }
 
-        return errors;
-
+        return getErrors();
     } // validate
 
 

@@ -36,7 +36,7 @@ public class OptionGenerator {
         ArrayList sources = new ArrayList ();
 
         // read the Highlighting.proterties file
-        Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE_HIGHLIGHTING);
+        Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
 
         if (null != properties) {
 
@@ -44,7 +44,7 @@ public class OptionGenerator {
 
             if ((null == sourceList) || (sourceList.length() < 1)) {
                 logger.warn ("Unable to find the property: highlightment.source.allowed (" +
-                             StrutsConstants.PROPERTY_FILE_HIGHLIGHTING +")");
+                             StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
                 return null;
             }
 
@@ -53,7 +53,7 @@ public class OptionGenerator {
 
             if ((null == token) || (token.length() < 1)) {
                 logger.warn ("Unable to find the property: highlightment.source.token (" +
-                             StrutsConstants.PROPERTY_FILE_HIGHLIGHTING +")");
+                             StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
                 return null;
             }
 
@@ -65,20 +65,122 @@ public class OptionGenerator {
                 String label = properties.getProperty (propName);
 
                 if ((null == label) || (label.length() < 1)) {
-                logger.warn ("Unable to find the property: "+ propName +" ("+
-                             StrutsConstants.PROPERTY_FILE_HIGHLIGHTING +")");
+                    logger.warn ("Unable to find the property: "+ propName +" ("+
+                                 StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
                     continue;
                 }
 
                 sources.add (new LabelValueBean(label, sourceKey, ""));
             } // while
         } else {
-            logger.warn("Unable to load the properties file: " + StrutsConstants.PROPERTY_FILE_HIGHLIGHTING);
+            logger.warn("Unable to load the properties file: " + StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
         }
 
         return sources;
+    } // getHighlightmentSources
 
-    } // getHighlightmentMethods
+
+    /**
+     * create a LabelValueBean object corresponding to the default source if it exists
+     *
+     * @return a LabelValueBean object or null is no default.
+     */
+    public static LabelValueBean getDefaultSource () {
+
+        // read the Highlighting.proterties file
+        Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+
+        if (null != properties) {
+
+            String sourceList = properties.getProperty ("highlightment.source.allowed");
+
+            if ((null == sourceList) || (sourceList.length() < 1)) {
+                logger.warn ("Unable to find the property: highlightment.source.allowed (" +
+                             StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
+                return null;
+            }
+
+            // parse source list
+            String token = properties.getProperty ("highlightment.source.token");
+
+            if ((null == token) || (token.length() < 1)) {
+                logger.warn ("Unable to find the property: highlightment.source.token (" +
+                             StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
+                return null;
+            }
+
+            StringTokenizer st = new StringTokenizer (sourceList, token);
+
+            if (st.hasMoreTokens()) {
+                String sourceKey = st.nextToken();
+                String propName = "highlightment.source." + sourceKey + ".label";
+                String label = properties.getProperty (propName);
+
+                if ((null == label) || (label.length() < 1)) {
+                    logger.warn ("Unable to find the property: "+ propName +" ("+
+                                 StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
+                }
+
+                return new LabelValueBean (label, sourceKey, "");
+            }
+        } else {
+            logger.warn("Unable to load the properties file: " + StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+        }
+
+        return null;
+    } // getDefaultSource
+
+    /**
+     * create a LabelValueBean object corresponding to the default source if it exists
+     *
+     * @return a LabelValueBean object or null if it doesn't exists.
+     */
+    public static LabelValueBean getSource (String sourceName) {
+
+        // read the Highlighting.proterties file
+        Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+
+        if (null != properties) {
+
+            String sourceList = properties.getProperty ("highlightment.source.allowed");
+
+            if ((null == sourceList) || (sourceList.length() < 1)) {
+                logger.warn ("Unable to find the property: highlightment.source.allowed (" +
+                             StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
+                return null;
+            }
+
+            // parse source list
+            String token = properties.getProperty ("highlightment.source.token");
+
+            if ((null == token) || (token.length() < 1)) {
+                logger.warn ("Unable to find the property: highlightment.source.token (" +
+                             StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
+                return null;
+            }
+
+            StringTokenizer st = new StringTokenizer (sourceList, token);
+
+            while (st.hasMoreTokens()) {
+                String sourceKey = st.nextToken();
+                if (sourceKey.equals(sourceName)) {
+                    String propName = "highlightment.source." + sourceKey + ".label";
+                    String label = properties.getProperty (propName);
+
+                    if ((null == label) || (label.length() < 1)) {
+                        logger.warn ("Unable to find the property: "+ propName +" ("+
+                                StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
+                        return null;
+                    }
+
+                    return new LabelValueBean (label, sourceKey, "");
+                }
+            }
+        } else {
+            logger.warn("Unable to load the properties file: " + StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+        }
+        return null;
+    } // getSource
 
 
     /**
@@ -93,7 +195,7 @@ public class OptionGenerator {
         ArrayList behaviours = new ArrayList ();
 
         // read the Highlighting.proterties file
-        Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE_HIGHLIGHTING);
+        Properties properties = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
 
         if (null != properties) {
 
@@ -108,7 +210,7 @@ public class OptionGenerator {
 
                 if ((null == behaviourList) || (behaviourList.length() < 1)) {
                     logger.warn ("Unable to find the property: highlightment.behaviour.existing ("+
-                                  StrutsConstants.PROPERTY_FILE_HIGHLIGHTING +")");
+                                  StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
                     return null;
                 }
             }
@@ -118,7 +220,7 @@ public class OptionGenerator {
 
             if ((null == token) || (token.length() < 1)) {
                 logger.warn ("Unable to find the property: highlightment.behaviour.token ("+
-                             StrutsConstants.PROPERTY_FILE_HIGHLIGHTING +")");
+                             StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
                 return null;
             }
 
@@ -133,7 +235,7 @@ public class OptionGenerator {
 
                 if ((null == label) || (label.length() < 1) || (null == value) || (value.length() < 1)) {
                     logger.warn ("Unable to find either properties:  ("+ labelProp + ", " + classProp + " ("+
-                                 StrutsConstants.PROPERTY_FILE_HIGHLIGHTING +")");
+                                 StrutsConstants.HIGHLIGHTING_PROPERTY_FILE +")");
                     continue; // don't add this element
                 }
 
