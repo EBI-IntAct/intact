@@ -41,7 +41,6 @@
     <!-- A snapshot of the war file -->
     <property name="temp.web" value="temp-web"/>
 
-    <property name="tld.dir" value="WEB-INF/tld"/>
     <property name="dest.dir" value="${temp.web}/WEB-INF/classes"/>
     <property name="docs.dir" value="doc/api"/>
 
@@ -266,8 +265,6 @@
             <fileset dir="${intact.app.dir}/tld">
                 <include name="*.tld"/>
             </fileset>
-            <!-- Editor tag libraries. -->
-            <fileset dir="${tld.dir}"/>
         </copy>
 
         <!-- Copy jar files -->
