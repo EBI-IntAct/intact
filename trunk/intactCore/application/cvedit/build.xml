@@ -59,6 +59,7 @@
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-lang.jar"/>
+        <pathelement path="${intact.app.dir}/lib/commons-beanutils.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
     </path>
 
