@@ -5,24 +5,42 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.simpleGraph;
 
-import java.util.Map;
+import uk.ac.ebi.intact.model.Interactor;
 
 /**
  * A simple node class for temporary processing, for example to prepare output for graph analysis packages.
  */
 public class Node extends BasicGraph implements NodeI {
 
-    ///////////////////////////////////////
-    // attributes
-    private String ac;
+    public Interactor interactor;
+
+    public Node (Interactor interactor) {
+        this.interactor = interactor;
+    }
 
     ///////////////////////////////////////
     // access methods for attributes
-    public String getAc() {
-        return ac;
+    public Interactor getInteractor () {
+        return interactor;
     }
 
-    public void setAc(String ac) {
-        this.ac = ac;
+
+    public String getAc() {
+        return interactor.getAc();
     }
+
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Node)) return false;
+
+        final Node node = (Node) o;
+        final String ac  = getAc(),
+                     _ac = node.getAc();
+
+        if (ac != null ? !ac.equals(_ac) : _ac != null) return false;
+
+        return true;
+    }
+
 }

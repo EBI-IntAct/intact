@@ -30,16 +30,15 @@ public class Graph extends BasicGraph implements GraphI {
     ///////////////////////////////////////
     // access methods for attributes
     public void addNode(NodeI aNode) {
-        nodes.put(aNode.getAc(),aNode);
+        nodes.put(aNode.getAc(), aNode);
     }
 
     public Node addNode(Interactor anInteractor){
         Node node = (Node) nodes.get(anInteractor.getAc());
         if (null == node) {
-            node = new Node();
-            node.setAc(anInteractor.getAc());
-            node.setLabel(anInteractor.getShortLabel());
-            this.addNode(node);
+            node = new Node (anInteractor);
+            node.setLabel (anInteractor.getShortLabel());
+            this.addNode (node);
         }
         return node;
     }
