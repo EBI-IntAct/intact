@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2004 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -9,39 +9,29 @@ package uk.ac.ebi.intact.application.editor.struts.framework;
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.LookupDispatchAction;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * The super class for all the CV edit actions.
+ * The super class for all the dispatch actions.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
- * @version $id$$
+ * @version $id$
  */
-public abstract class AbstractEditorDispatchAction extends LookupDispatchAction {
+public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
+        implements ForwardConstants {
 
     /**
      * The logger for Editor. Allow access from the subclasses.
      */
     protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
-
-    /**
-     * The key to success action.
-     */
-    protected static final String FORWARD_SUCCESS = "success";
-
-    /**
-     * The key to failure action.
-     */
-    protected static final String FORWARD_FAILURE = "failure";
 
     /**
      * Returns the only instance of Intact Service instance.
@@ -94,34 +84,6 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction 
             throw new SessionExpiredException();
         }
         return user;
-    }
-
-    /**
-     * Returns the course of action based on the last search result. If the
-     * last search produced multiple entries then this method returns the
-     * path to multiple results page. For a single result, the method
-     * returns the path to the search page.
-     *
-     * @param user the user to determine where to go.
-     *
-     * <pre>
-     * post: return = EditorConstants.FORWARD_SEARCH or
-     *                EditorConstants.FORWARD_RESULTS
-     * post: return <> Undefined
-     * </pre>
-     */
-    protected String getForwardAction(EditUserI user) {
-        return user.hasSingleSearchResult() ? EditorConstants.FORWARD_SEARCH :
-                EditorConstants.FORWARD_RESULTS;
-    }
-
-    /**
-     * Returns the forward for input.
-     * @param mapping the mapping to get forward action.
-     * @return forward action stored in <code>mapping</code> under "input".
-     */
-    protected ActionForward inputForward(ActionMapping mapping) {
-        return mapping.findForward("input");
     }
 
     /**
