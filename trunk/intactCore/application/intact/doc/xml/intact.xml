@@ -379,13 +379,16 @@
                                     for strings such as EBI*, *BI-14, E*4, etc etc.</li>
 
                                 <li>
-                                    upper or lower case strings are acceptable and will be matched if they
-                                    exist</li>
+                                    upper or lower case strings are acceptable (but not mixed case) and will be matched if they
+                                    exist. The exception to this is a search by alias (ie gene name, as defined in
+                                    Swisprot) - currently these
+                                    are stored as lower case and are searched for as such. This will become more sophisiticated
+                                    as the project matures.</li>
 
                                 <li>
                                     currently searches progress in a certain order: proteins, then interactions,
                                     then experiments. At a lower level, specific attributes are searched by
-                                    AC, name, Xref primary ID and finally full name. </li>
+                                    AC, short label, alias (gene name), Xref primary ID and finally full name. </li>
 
                                 <li>
                                     Note that whilst CvObject details can be displayed via the click of a link,
@@ -404,157 +407,45 @@
 
                         <br/>
 
-                        <table BORDER="1" COLS="4" WIDTH="94%">
-                            <tr>
-                                <td>
-                                    <b>Experiment</b>
-                                </td>
-
-                                <td>
-                                    <u>AC</u>
-                                </td>
-
-                                <td>
-                                    <u>ShortLabel</u>
-                                </td>
-
-                                <td>full name</td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <u>CvInteraction</u>
-                                </td>
-
-                                <td>
-                                    <u>CvIdentification</u>
-                                </td>
-
-                                <td>BioSource</td>
-
-                                <td></td>
-                            </tr>
-
-                            <tr>
-                                <td>Comment topic</td>
-
-                                <td>Comment description</td>
-
-                                <td></td>
-
-                                <td></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <u>xref database</u>
-                                </td>
-
-                                <td>primaryId</td>
-
-                                <td>secondaryId</td>
-
-                                <td></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <b>Interaction</b>
-                                </td>
-
-                                <td>
-                                    <u>AC</u>
-                                </td>
-
-                                <td>
-                                    <u>ShortLabel</u>
-                                </td>
-
-                                <td>full name</td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <u>label1</u> [
-                                    <u>b</u>],
-                                    <u>label2</u> [
-                                    <u>p</u>],
-                                </td>
-
-                                <td>
-                                    <u>label3</u> [
-                                    <u>p</u>],
-                                    <u>label4</u> [p],
-                                </td>
-
-                                <td>......................................</td>
-
-                                <td></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <b>Interaction</b>
-                                </td>
-
-                                <td>
-                                    <u>AC</u>
-                                </td>
-
-                                <td>
-                                    <u>ShortLabel</u>
-                                </td>
-
-                                <td>full name</td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <u>label5</u> [
-                                    <u>b</u>],
-                                    <u>label6</u> [
-                                    <u>p</u>],
-                                </td>
-
-                                <td>
-                                    <u>label7</u> [
-                                    <u>p</u>],
-                                    <u>label8</u> [
-                                    <u>p</u>],
-                                </td>
-
-                                <td>...........................</td>
-
-                                <td></td>
-                            </tr>
-                        </table>
 
                         <p>
-                            <a NAME="ResultsExample"></a>Searching for interactions, proteins or
-                            experiments typically results in the same view - a table detailing all
-                            the interactions for a particular experiment, with the names listed
-                            of the proteins involved in the interactions. An example result screen
+                            <a NAME="experiment.single.view"></a>An example result screen when searching for an Experiment
                             is shown below:
                         </p>
                         <p>
-                            <img SRC="./images/search/imageV3F.JPG" height="768" width="1024"/>
+                            <img SRC="./images/search/exp.png" height="768" width="1024"/>
+                        </p>
+
+                        <p>
+                            <a NAME="interaction.single.view"></a>An example result screen when searching for an Interaction is shown below:
                         </p>
                         <p>
-                            <a NAME="ExampleProteinView"></a>An example result view from clicking
-                            on a Protein link is shown below:
+                            <img SRC="./images/search/int_single.png" height="768" width="1024"/>
+                        </p>
+
+                        <p>
+                            <a NAME="binary.view"></a>Protein views can be of various types. Searching for a protein will result in a so-called
+                            'binary view'. This view shows the list of proteins which are in a pairwise interaction with the searched-for protein.
+                            An example result screen for this view is shown below:
                         </p>
                         <p>
-                            <img SRC="./images/search/image23F.JPG" height="768" width="1024"/>
+                            <img SRC="./images/search/binary.png" height="768" width="1024"/>
+                        </p>
+                        <p>
+                            <a NAME="protein.single.view"></a>The details for an individual protein are displayed as below:
+                        </p>
+                        <p>
+                            <img SRC="./images/search/protein_single.png" height="768" width="1024"/>
                         </p>
                         <br/>
                         <p>
-                            <a NAME="ExampleCvView"></a>If for example in the above screen you click
+                            <a NAME="single.view"></a>If for example in the above screen you click
                             on 'SPTR', this will display the controlled vocabulary information for
                             the database identified with a name of 'SPTR'. The screen looks
                             like this:
                         </p>
                         <p>
-                            <img SRC="./images/search/imageE0A.JPG" height="768" width="1024"/>
+                            <img SRC="./images/search/sptr.png" height="768" width="1024"/>
                         </p>
                         <br/>
                         <p>
@@ -586,10 +477,6 @@
                         </p>
                         <ul>
                             <ul>
-                                <li>
-                                    a button to view the full details of what is on the results page (this
-                                    expands all the information currently on the page, apart from the controlled
-                                    vocabulary details);</li>
 
                                 <li>a reset button to uncheck any textboxes;</li>
 
@@ -598,12 +485,7 @@
                                     chosen by clicking the appropriate checkboxes.</li>
                             </ul>
                         </ul>
-                        <a NAME="ExamplDetailView"></a>Clicking on the 'Detail View' button expands
-                        all protein details - a partial view of an example resulting page is shown
-                        below:
-                        <p>
-                            <img SRC="./images/search/imageGKH.JPG" height="768" width="1024"/>
-                        </p>
+
                     </blockquote>
 
                 </section> <!-- Basic Overview -->
