@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT build configuration file for editor module.
+     Author: Sugath Mudali, smudali@ebi.ac.uk.
+     Version: $Id$
+-->
+
+<project name="editor" basedir="." default="compile">
+    <property name="project.title" value="editor"/>
+    <property name="project.version" value="1.0"/>
+
+    <!-- Intact core locations -->
+    <property name="intact.root" value="../.."/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.dest.dir" value="${intact.root}/classes"/>
+    <property name="root.config.dir" value="${intact.root}/config"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
+
+    <!-- Intact application location. -->
+    <property name="intact.app.dir" value=".."/>
+
+    <!-- The build properties. -->
+    <property file="${intact.root}/config/build.properties"/>
+
+    <property name="dist.dir" value="dist"/>
+    <property name="war.file" value="${ant.project.name}.war"/>
+    <property name="war.test.file" value="${ant.project.name}-test.war"/>
+
+    <!-- This project specific paths. -->
+    <property name="src.dir" value="src"/>
+    <property name="lib.dir" value="WEB-INF/lib"/>
+    <property name="tld.dir" value="WEB-INF/tld"/>
+    <property name="dest.dir" value="WEB-INF/classes"/>
+    <property name="docs.dir" value="doc/api"/>
+
+    <!-- editor package root. -->
+    <property name="editor.pkg.root" value="uk/ac/ebi/intact/application/editor"/>
+
+    <!-- Contains jar files required for testing. -->
+    <property name="test.lib.dir" value="test/lib"/>
+    <!-- Holds misc files required for testing. -->
+    <property name="test.etc.dir" value="test/etc"/>
+
+    <!-- Build working classpath -->
+    <path id="project.class.path">
+        <!-- Project specific jar files. -->
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- Where the classes are compiled to. -->
+        <pathelement path="${dest.dir}"/>
+
+        <!-- Intact core at root. -->
+        <pathelement path="${root.dest.dir}"/>
+
+        <!-- Common jar files. -->
+        <pathelement path="${root.lib.dir}/junit.jar"/>
+        <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
+        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
+        <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
+        <pathelement path="${intact.app.dir}/lib/commons-lang.jar"/>
+        <pathelement path="${intact.app.dir}/lib/commons-beanutils.jar"/>
+        <pathelement path="${root.lib.dir}/servlet.jar"/>
+    </path>
+
+    <path id="project.test.class.path">
+        <!-- Current directory to access struts-config.xml -->
+        <pathelement path="."/>
+
+        <!-- Struts test jar files. -->
+        <fileset dir="${test.lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- The project class path. -->
+        <path refid="project.class.path"/>
+
+        <!-- Runtime jar files. -->
+        <fileset dir="${root.lib.dir}">
+            <include name="junit.jar"/>
+            <include name="jakarta-ojb-0.9.7.jar"/>
+            <include name="log4j-1.2.5.jar"/>
+            <include name="pgjdbc2.jar"/>
+        </fileset>
+    </path>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp and various 'present' properties. -->
+    <target name="prepare">
+        <tstamp/>
+        <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Creates the 'docs' directory. -->
+    <target name="mk-docs">
+        <mkdir dir="${docs.dir}" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories for clean build -->
+    <target name="clean" description="Prepare for clean build">
+        <!-- Delete directories first -->
+        <delete dir="${dest.dir}"/>
+        <delete dir="${docs.dir}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Calls the jar task from core build file if intact core jar file
+         is missing.
+    -->
+    <target name="make-jar" depends="prepare" unless="intact.jar.present">
+        <ant dir="${intact.root}" target="jar-core" inheritAll="false"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copy configuration files. -->
+    <target name="cp-config-files">
+        <!-- Copy repository files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${root.config.dir}">
+                <include name="repository*.xml"/>
+                <include name="repository.dtd"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy editor property files to the editor pkg root -->
+        <copy todir="${dest.dir}/${editor.pkg.root}">
+            <fileset dir="WEB-INF/config">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+
+        <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
+        <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
+        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile" depends="make-jar"
+        description="Compiles non test source files">
+
+        <!-- Create the dest dir if it doesn't exist. -->
+        <mkdir dir="${dest.dir}" />
+
+        <!-- Only compile editor sources only. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes="**/application/editor/**"
+            excludes="**/test/**">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy configuration files -->
+        <antcall target="cp-config-files"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile-all" depends="make-jar"
+        description="Compiles all the source files">
+
+        <!-- Create the dest dir if it doesn't exist. -->
+        <mkdir dir="${dest.dir}" />
+
+        <!-- Only compile editor sources only. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes="**/application/editor/**">
+            <classpath refid="project.test.class.path"/>
+        </javac>
+
+        <!-- Copy configuration files -->
+        <antcall target="cp-config-files"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file using the current database setup. -->
+
+    <target name="war" description="Builds a war file"
+            depends="set-db-type, war-pg, war-oracle"/>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file. The database to include is specified as a parameter. -->
+
+    <target name="build-war" depends="compile">
+
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}" />
+
+        <!-- Create local directories to copy common files. -->
+        <mkdir dir="${basedir}/layouts/styles"/>
+        <mkdir dir="${basedir}/images"/>
+        <mkdir dir="${basedir}/${tld.dir}"/>
+        <mkdir dir="${basedir}/${lib.dir}"/>
+
+        <!-- Common layouts -->
+        <copy todir="${basedir}/layouts">
+            <fileset dir="${intact.app.dir}/layouts"/>
+        </copy>
+        <!-- Common images -->
+        <copy todir="${basedir}/images">
+            <fileset dir="${intact.app.dir}/images"/>
+        </copy>
+        <!-- Common jsp files -->
+        <copy todir="${basedir}/pages">
+            <fileset dir="${intact.app.dir}/pages"/>
+        </copy>
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+        <!-- Copy struts standard tld files -->
+        <copy todir="${tld.dir}">
+            <fileset dir="${intact.app.dir}/tld">
+                <include name="*.tld"/>
+            </fileset>
+        </copy>
+
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${basedir}">
+                <include name="*.jsp"/>
+                <include name="*.css"/>
+                <include name="WEB-INF/struts-config.xml"/>
+                <include name="WEB-INF/tiles-defs.xml"/>
+                <include name="WEB-INF/validat*.xml"/>
+                <include name="${tld.dir}/**"/>
+                <include name="images/*"/>
+                <include name="pages/**"/>
+                <include name="layouts/**"/>
+            </fileset>
+
+			<!-- Include editor specific jar files. -->
+            <lib dir="${lib.dir}">
+                <!-- Avoid NFS temp files (occationally) -->
+                <include name="*.jar"/>
+            </lib>
+
+            <!-- Inlcude the intact core -->
+            <lib dir="${root.dist.dir}" />
+
+            <!-- Include common jar files for struts. -->
+            <lib dir="${intact.app.dir}/lib" />
+
+			<!-- Include common jar files from intact core. -->
+			<lib dir="${root.lib.dir}">
+				<include name="jakarta-ojb-0.9.7.jar"/>
+				<include name="log4j-1.2.5.jar"/>
+                <include name="${db}"/>
+			</lib>
+
+            <!-- editor specific classes -->
+  			<classes dir="${dest.dir}"/>
+		</war>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file. -->
+
+    <target name="war-test" depends="compile-all" description="Builds a test war file">
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}" />
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.test.file}" quiet="true"/>
+
+        <!-- Copy the misc files for testing. -->
+        <copy file="${test.etc.dir}/jspRedirector.jsp" todir="${basedir}"/>
+
+        <!-- Copy struts standard tld files -->
+        <copy todir="${tld.dir}">
+            <fileset dir="${intact.app.dir}/tld">
+                <include name="*.tld"/>
+            </fileset>
+        </copy>
+
+		<war destfile="${dist.dir}/${war.test.file}" webxml="${test.etc.dir}/web.xml">
+		   <fileset dir="${basedir}">
+				<include name="*.jsp"/>
+	        	<include name="*.css"/>
+	  			<include name="WEB-INF/struts-config.xml"/>
+	  			<include name="${tld.dir}/**"/>
+	   		</fileset>
+
+			<!-- Include editor specific jar files. -->
+			<lib dir="${lib.dir}">
+                <!-- Avoid NFS temp files (occationally) -->
+                <include name="*.jar"/>
+            </lib>
+
+            <!-- The jar files for unit testing -->
+            <lib dir="${test.lib.dir}">
+                <include name="aspectjrt-1.0.5.jar"/>
+                <include name="cactus-1.4.1.jar"/>
+                <include name="httpunit-1.4.1.jar"/>
+                <include name="strutstest.jar"/>
+            </lib>
+
+            <!-- Inlcude the intact core -->
+            <lib dir="${root.dist.dir}" />
+
+            <!-- Include common jar files for struts. -->
+            <lib dir="${intact.app.dir}/lib" />
+
+			<!-- Include common jar files from intact core. -->
+			<lib dir="${root.lib.dir}">
+                <include name="junit.jar"/>
+				<include name="jakarta-ojb-0.9.7.jar"/>
+				<include name="log4j-1.2.5.jar"/>
+				<include name="pgjdbc2.jar"/>
+			</lib>
+
+            <!-- xerces needed for Catalina LE -->
+            <lib dir="../search/WEB-INF/lib">
+                <include name="xerces.jar"/>
+            </lib>
+
+            <!-- editor specific classes -->
+  			<classes dir="${dest.dir}"/>
+		</war>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the database type using the values given in build.properties. -->
+
+    <target name="set-db-type">
+        <condition property="postgres">
+            <contains string="${target.env}" substring="-pg-"/>
+        </condition>
+        <condition property="oracle">
+            <contains string="${target.env}" substring="-oracle-"/>
+        </condition>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file with postgres; should be called only after calling
+        set-db-type. -->
+
+    <target name="war-pg" description="Builds a war file" if="postgres">
+        <echo message="Building a war for postgres"/>
+        <antcall target="build-war">
+            <param name="db" value="postgresql.jar"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file with oracle; should be called only after calling
+        set-db-type. -->
+
+    <target name="war-oracle" description="Builds a war file" if="oracle">
+        <echo message="Building a war for oracle"/>
+        <antcall target="build-war">
+            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server. -->
+    <target name="deploy" description="Deploys the WAR file on the Tomcat server">
+        <ant dir=".." inheritAll="false" target="deploy">
+            <property name="war" value="${ant.project.name}/${dist.dir}/${war.file}"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file from the Tomcat server. -->
+    <target name="undeploy"
+        description="Undeploys the WAR file from the Tomcat server">
+        <ant dir=".." inheritAll="false" target="undeploy">
+            <property name="war" value="${ant.project.name}"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the test war file on the Tomcat server. -->
+    <target name="deploy-test" description="Deploys the test WAR file on the Tomcat server">
+        <ant dir=".." inheritAll="false" target="deploy">
+            <property name="war" value="${ant.project.name}/${dist.dir}/${war.test.file}"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the test war file from the Tomcat server. -->
+    <target name="undeploy-test"
+        description="Undeploys the test WAR file from the Tomcat server">
+        <ant dir=".." inheritAll="false" target="undeploy">
+            <property name="war" value="${ant.project.name}-test"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- These unit tests only run one tests in a single package; we need to add
+         a utility class which can run all the unit tests together.
+     -->
+    <!-- Runs tests using junit. -->
+    <target name="junit-test" depends="compile" description="Run JUnit tests">
+        <junit printsummary="withOutAndErr">
+            <test name=
+                "uk.ac.ebi.intact.application.editor.struts.framework.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </junit>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+    <target name="junit-test-stdout" depends="compile-all"
+            description="Runs JUnit directly with output directed to stdout">
+        <!-- Make sure that we have the cactus properties file in the current classpath -->
+        <copy file="${test.etc.dir}/cactus.properties" todir="${basedir}"/>
+
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value=
+                "uk.ac.ebi.intact.application.editor.struts.framework.util.test.AllJUnitTests"/>
+            <classpath refid="project.test.class.path"/>
+        </java>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+    <target name="test">
+        <java classname="uk.ac.ebi.intact.application.editor.struts.security.test.LoginActionTest" fork="true">
+            <classpath refid="project.test.class.path"/>
+        </java>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tomcat">
+        <ant dir=".." inheritAll="false" target="start-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tomcat">
+        <ant dir=".." inheritAll="false" target="stop-tomcat"/>
+    </target>
+
+</project>
