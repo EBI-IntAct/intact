@@ -739,6 +739,14 @@ public abstract class AbstractEditViewBean implements Serializable {
         myAnnotObject = annot;
     }
 
+    /**
+     * Helper method for subclasses to access the editor service.
+     * @return the only editor service for the application.
+     */
+    protected EditorService getService() {
+        return EditorService.getInstance();
+    }
+
     // Abstract method
 
     /**

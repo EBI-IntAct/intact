@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.cv;
 
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -15,8 +14,8 @@ import uk.ac.ebi.intact.model.Institution;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The CV edit view bean. Currently, this class does not provide any additional
@@ -46,7 +45,7 @@ public class CvViewBean extends AbstractEditViewBean {
                 Constructor ctr = getEditClass().getDeclaredConstructor(
                         new Class[]{Institution.class, String.class});
                 cvobj = (CvObject) ctr.newInstance(
-                        new Object[]{EditUser.getInstitution(), getShortLabel()});
+                        new Object[]{getService().getOwner(), getShortLabel()});
             }
             catch (NoSuchMethodException ne) {
                 // Shouldn't happen.

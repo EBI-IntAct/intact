@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.biosrc;
 
 import org.apache.struts.tiles.ComponentContext;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.exception.validation.BioSourceException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
@@ -79,7 +78,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         // Have we set the annotated object for the view?
         if (bs == null) {
             // Not persisted; create a new biosource object.
-            bs = new BioSource(EditUser.getInstitution(), getShortLabel(), getTaxId());
+            bs = new BioSource(getService().getOwner(), getShortLabel(), getTaxId());
             setAnnotatedObject(bs);
         }
         else {

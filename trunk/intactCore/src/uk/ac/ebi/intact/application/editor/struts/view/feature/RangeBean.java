@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -129,8 +128,8 @@ public class RangeBean extends AbstractEditKeyBean {
         int[] toRanges = getRangeValues(toFuzzyType, toMatcher);
 
         // Construct a range and set fuzzy types.
-        Range range = new Range(EditUser.getInstitution(), fromRanges[0], fromRanges[1],
-                toRanges[0], toRanges[1], null);
+        Range range = new Range(getService().getOwner(),fromRanges[0],
+                fromRanges[1], toRanges[0], toRanges[1], null);
         range.setLink(linked);
 
         IntactHelper helper = new IntactHelper();

@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.business;
 
-import org.apache.commons.beanutils.DynaBean;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
@@ -14,7 +13,6 @@ import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.event.LogoutEvent;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
@@ -24,7 +22,6 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
@@ -159,21 +156,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * pattern: any number of characters followed by -, and digits.
      */
     private static final Pattern ourClonedSLPattern = Pattern.compile("^(.+)?\\-(\\d+)$");
-
-    /**
-     * The institution; only one instance among many users.
-     */
-    private static Institution ourInstitution;
-
-    /**
-     * The session start time. This info is reset at deserialization.
-     */
-    private transient Date mySessionStartTime;
-
-    /**
-     * The session end time. This info is reset at deserialization.
-     */
-    private transient Date mySessionEndTime;
 
     /**
      * Maintains the edit state; it used when inserting the header dynamically.
@@ -336,7 +318,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Not an error, just a logging statemet to see values are unbound or not
         getLogger().error("User unbound: " + getUserName());
-        logoff(lm);
+
+        // Release all the locks held by this user.
+        lm.releaseAllLocks(getUserName());
     }
 
     // Override Objects's equal method.
@@ -417,14 +401,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         mySelectedTopic = topic;
     }
 
-    public static Institution getInstitution() throws IntactException {
-        if (ourInstitution == null) {
-            IntactHelper helper = new IntactHelper();
-            ourInstitution = helper.getInstitution();
-        }
-        return ourInstitution;
-    }
-
     public boolean isEditing() {
         return myEditState;
     }
@@ -453,10 +429,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         helper.undoTransaction();
         endEditing();
     }
-
-//    public void persist() throws IntactException, SearchException {
-//        myEditView.persist(this);
-//    }
 
     public void delete(IntactHelper helper) throws IntactException {
         // Clear the view.
@@ -601,7 +573,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * invalid format.
      */
     public String getNextAvailableShortLabel(Class clazz, String label) {
-        IntactHelper helper;
+        IntactHelper helper = null;
         try {
             helper = new IntactHelper();
             return doGetNextAvailableShortLabel(helper, clazz, label);
@@ -610,27 +582,19 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             // Error in searching, just return the original name for user to
             // decide.
         }
+        finally {
+            if (helper != null) {
+                try {
+                    helper.closeStore();
+                }
+                catch (IntactException ie) {}
+            }
+        }
         return label;
     }
 
-//    public void fillSearchResult(DynaBean dynaForm) {
-//        dynaForm.set("items", mySearchCache);
-//    }
-
     public List getSearchResult() {
         return (List) mySearchCache;
-    }
-
-    public void logoff() throws IntactException {
-        logoff(LockManager.getInstance());
-    }
-
-    public Date loginTime() {
-        return mySessionStartTime;
-    }
-
-    public Date logoffTime() {
-        return mySessionEndTime;
     }
 
     public NewtServerProxy getNewtProxy() {
@@ -699,9 +663,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         catch (UpdateProteinsI.UpdateException e) {
             throw new IntactException("Unable to create the Protein factory");
         }
-        // Record the time started.
-        mySessionStartTime = Calendar.getInstance().getTime();
-
         // Create the factories.
         myViewFactory = new EditViewBeanFactory();
     }
@@ -726,13 +687,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private void endEditing() {
         myEditState = false;
-    }
-
-    private void logoff(LockManager lm) {
-        mySessionEndTime = Calendar.getInstance().getTime();
-        getLogger().info("User is logging off at: " + mySessionEndTime);
-        // Release all the locks held by this user.
-        lm.releaseAllLocks(getUserName());
     }
 
     /**

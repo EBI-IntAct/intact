@@ -39,22 +39,11 @@ public class EditorActionServlet extends ActionServlet {
         // Save the context to avoid repeat calls.
         ServletContext ctx = super.getServletContext();
 
-        // Create an instance of EditorService.
-        EditorService service = null;
-        try {
-            // Load resources.
-            service = EditorService.getInstance(ctx.getInitParameter("resources"));
-        }
-        catch (MissingResourceException mre) {
-            // Unable to find the resource file.
-            log(ExceptionUtils.getStackTrace(mre));
-            throw new ServletException();
-        }
-        catch (EmptyTopicsException mite) {
-            // An empty topic resource file.
-            log(ExceptionUtils.getStackTrace(mite));
-            throw new ServletException();
-        }
+        // Create an instance of EditorService. This will throw an exception
+        // if the service can't initialize properly (basically the application
+        // wouldn't start) 
+        EditorService service = EditorService.getInstance();
+
         // Make them accessible for any servlets within the server.
         ctx.setAttribute(EditorConstants.EDITOR_SERVICE, service);
         ctx.setAttribute(EditorConstants.EDITOR_TOPICS, service.getIntactTypes());

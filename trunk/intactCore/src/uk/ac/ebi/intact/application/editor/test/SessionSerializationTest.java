@@ -12,6 +12,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.lang.SerializationUtils;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
@@ -73,9 +74,8 @@ public class SessionSerializationTest extends TestCase  {
             // Set this experiment as the current view.
             preUser.setView(exp);
 
-            // Verify the view and owner before serializing it.
+            // Verify the view before serializing it.
             assertEquals(exp, preUser.getView().getAnnotatedObject());
-            assertEquals(exp.getOwner(), preUser.getInstitution());
 
             byte[] bytes = SerializationUtils.serialize(preUser);
             System.out.println("Number of bytes is: " + bytes.length);
@@ -85,9 +85,6 @@ public class SessionSerializationTest extends TestCase  {
 
             // They are two different objects.
             assertNotSame(preUser, postUser);
-
-            // Instution should be same.
-            assertEquals(preUser.getInstitution(), postUser.getInstitution());
 
             // User names are equal.
             assertEquals(preUser.getUserName(), postUser.getUserName());
@@ -120,7 +117,7 @@ public class SessionSerializationTest extends TestCase  {
                     Experiment.class, "gavin");
 
             // Institution and topic for annotations.
-            Institution inst = preUser.getInstitution();
+            Institution inst = EditorService.getInstance().getOwner();
             CvTopic comment = (CvTopic) myHelper.getObjectByLabel(
                     CvTopic.class, "comment");
 
@@ -151,9 +148,8 @@ public class SessionSerializationTest extends TestCase  {
             // Set this experiment as the current view.
             preUser.setView(exp);
 
-            // Verify the view and owner before serializing it.
+            // Verify the viewbefore serializing it.
             assertEquals(exp, preUser.getView().getAnnotatedObject());
-            assertEquals(exp.getOwner(), preUser.getInstitution());
 
             byte[] bytes = SerializationUtils.serialize(preUser);
             System.out.println("Number of bytes is: " + bytes.length);
@@ -163,9 +159,6 @@ public class SessionSerializationTest extends TestCase  {
 
             // They are two different objects.
             assertNotSame(preUser, postUser);
-
-            // Instution should be same.
-            assertEquals(preUser.getInstitution(), postUser.getInstitution());
 
             // User names are equal.
             assertEquals(preUser.getUserName(), postUser.getUserName());
@@ -214,7 +207,7 @@ public class SessionSerializationTest extends TestCase  {
             AbstractEditViewBean preView = preUser.getView();
 
             // Institution and topic for annotations.
-            Institution inst = preUser.getInstitution();
+            Institution inst = EditorService.getInstance().getOwner();
             CvTopic comment = (CvTopic) myHelper.getObjectByLabel(
                     CvTopic.class, "comment");
 
@@ -242,9 +235,8 @@ public class SessionSerializationTest extends TestCase  {
             Xref xref2 = new Xref(inst, sptr, "xxx", "yyy", "aaa", xqualifier);
             preView.addXref(new XreferenceBean(xref2));
 
-            // Verify the view and owner before serializing it.
+            // Verify the view before serializing it.
             assertEquals(exp, preUser.getView().getAnnotatedObject());
-            assertEquals(exp.getOwner(), preUser.getInstitution());
 
             // Serialize it.
             byte[] bytes = SerializationUtils.serialize(preUser);
@@ -254,9 +246,6 @@ public class SessionSerializationTest extends TestCase  {
 
             // They are two different objects.
             assertNotSame(preUser, postUser);
-
-            // Instution should be same.
-            assertEquals(preUser.getInstitution(), postUser.getInstitution());
 
             // User names are equal.
             assertEquals(preUser.getUserName(), postUser.getUserName());
@@ -304,7 +293,7 @@ public class SessionSerializationTest extends TestCase  {
             AbstractEditViewBean preView = preUser.getView();
 
             // Institution and topic for annotations.
-            Institution inst = preUser.getInstitution();
+            Institution inst = EditorService.getInstance().getOwner();
             CvTopic comment = (CvTopic) myHelper.getObjectByLabel(
                     CvTopic.class, "comment");
 
@@ -362,9 +351,6 @@ public class SessionSerializationTest extends TestCase  {
 
             // They are two different objects.
             assertNotSame(preUser, postUser);
-
-            // Instution should be same.
-            assertEquals(preUser.getInstitution(), postUser.getInstitution());
 
             // User names are equal.
             assertEquals(preUser.getUserName(), postUser.getUserName());

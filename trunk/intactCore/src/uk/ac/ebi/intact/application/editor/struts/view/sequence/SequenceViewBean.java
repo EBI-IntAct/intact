@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.sequence;
 
 import org.apache.struts.tiles.ComponentContext;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -79,7 +78,7 @@ public class SequenceViewBean extends AbstractEditViewBean {
         // Have we set the annotated object for the view?
         if (prot == null) {
             // Not persisted; create a new Protein
-            prot = new ProteinImpl(EditUser.getInstitution(), biosrc, getShortLabel());
+            prot = new ProteinImpl(getService().getOwner(), biosrc, getShortLabel());
             setAnnotatedObject(prot);
         }
         else {

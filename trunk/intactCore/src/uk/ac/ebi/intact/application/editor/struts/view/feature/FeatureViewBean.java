@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.tiles.ComponentContext;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -461,7 +460,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         // null if creating a new Feature.
         if (feature == null) {
             // Not persisted; create a new feature object.
-            feature = new Feature(EditUser.getInstitution(), getShortLabel(),
+            feature = new Feature(getService().getOwner(), getShortLabel(),
                     myComponent, featureType);
             setAnnotatedObject(feature);
         }

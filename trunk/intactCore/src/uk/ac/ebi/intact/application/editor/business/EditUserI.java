@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.editor.business;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -21,7 +20,6 @@ import uk.ac.ebi.intact.util.NewtServerProxy;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -57,14 +55,6 @@ public interface EditUserI extends IntactUserI, Serializable {
     public void rollback(IntactHelper helper) throws IntactException;
 
     // Persistent Methods
-
-    /**
-     * Persists the object the user is editing.
-     * @exception IntactException for errors in updating the persistent system.
-     * @exception SearchException for search errors (unable to find an object
-     * to update).
-     */
-//    public void persist() throws IntactException, SearchException;
 
     /**
      * This method clears the view of the current edit object, remove it from
@@ -200,12 +190,6 @@ public interface EditUserI extends IntactUserI, Serializable {
      * invalid format.
      */
     public String getNextAvailableShortLabel(Class clazz, String label);
-    
-    /**
-     * Popluate the given form with search result.
-     * @param dynaForm the form to populate.
-     */
-//    public void fillSearchResult(DynaBean dynaForm);
 
     /**
      * Returns the search result as a list.
@@ -240,23 +224,6 @@ public interface EditUserI extends IntactUserI, Serializable {
     public String getHelpTag();
 
     // Session methods
-
-    /**
-     * Logs off from the application. This will close the connection to
-     * the persistent storage.
-     *
-     * <b>
-     * Use this method only for logging a user off in a non web environement
-     * (i.e., unit testing).
-     * </b>
-     *
-     * @exception IntactException for problems with logging off.
-     */
-    public void logoff() throws IntactException;
-
-    public Date loginTime();
-
-    public Date logoffTime();
 
     /**
      * Adds the experiment to the currently edited/added experiment list.

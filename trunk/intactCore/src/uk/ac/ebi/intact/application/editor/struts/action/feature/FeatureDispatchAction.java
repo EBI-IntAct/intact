@@ -162,7 +162,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         FeatureViewBean view = ((FeatureViewBean) user.getView());
 
         // The owner for new Features.
-        Institution owner = EditUser.getInstitution();
+        Institution owner = getService().getOwner();
 
         // Cache CV objects.
 
