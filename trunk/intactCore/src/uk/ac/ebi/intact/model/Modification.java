@@ -14,7 +14,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class Modification extends BasicObject {
+public class Modification extends BasicObjectImpl {
 
     ///////////////////////////////////////
     // associations

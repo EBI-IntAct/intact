@@ -20,7 +20,7 @@ import java.util.Collection;
  * @author hhe
  * @version $Id$
  */
-public class Component extends BasicObject {
+public class Component extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //attributes

@@ -14,7 +14,7 @@ import java.sql.Timestamp;
  * @author hhe
  * @version $Id$
  */
-public class IntactNode extends BasicObject {
+public class IntactNode extends BasicObjectImpl {
 
     /**
      * ftp attributes: the address,directory, login and password

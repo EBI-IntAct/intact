@@ -11,7 +11,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class Xref extends BasicObject {
+public class Xref extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //attributes

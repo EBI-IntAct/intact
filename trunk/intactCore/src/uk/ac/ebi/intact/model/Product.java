@@ -12,7 +12,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class Product extends BasicObject {
+public class Product extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //attributes

@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @version $Id$
  */
 // TODO cf. note
-public class Institution extends IntactObject implements Serializable {
+public class Institution extends IntactObjectImpl implements Serializable {
 
     ///////////////////////////////////////
     //attributes

@@ -12,7 +12,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class Annotation extends BasicObject {
+public class Annotation extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //attributes

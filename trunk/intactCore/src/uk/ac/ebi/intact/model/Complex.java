@@ -11,7 +11,7 @@ package uk.ac.ebi.intact.model;
  * @author hhe
  * @version $Id$
  */
-public class Complex extends Interactor {
+public class Complex extends InteractorImpl {
 
     ///////////////////////////////////////
     //attributes

@@ -20,7 +20,7 @@ import java.util.Iterator;
  * @author hhe
  * @version $Id$
  */
-public class Experiment extends AnnotatedObject implements Editable {
+public class Experiment extends AnnotatedObjectImpl implements Editable {
 
     ///////////////////////////////////////
     // associations
