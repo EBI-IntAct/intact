@@ -11,3 +11,7 @@ shortlabel: secondary-ac
 term: Secondary accession number
 definition: This qualifier is used when the object referred to by the crossreference describes the same object, and the identifier used is a seconcary identifier in the external database. Crossreferences using secondary accession numbers are only included in IntAct to allow to retrieve imported proteins by their secondary accession numbers.
 
+shortlabel: isoform-parent
+term: Reference to the original protein from which is derived that isoform
+definition: This qualifier is used when an isoform is created, the object refered is the protein to which belongs the original sequence. 
+
