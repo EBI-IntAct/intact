@@ -1095,14 +1095,11 @@ public class UpdateProteins extends UpdateProteinsI {
         boolean needUpdate = false;
         Collection aliases = protein.getAliases();
         Gene[] genes = sptrEntry.getGenes();
-
         Alias alias = null;
 
         for ( int i = 0; i < genes.length; i++ ) {
 
             String geneName = genes[ i ].getName();
-
-            System.out.println( "geneName: " + geneName );
 
             if( !isAliasAlreadyExisting( aliases, geneName, geneNameAliasType ) ) {
                 alias = new Alias( myInstitution,
@@ -1114,27 +1111,24 @@ public class UpdateProteins extends UpdateProteinsI {
                 addNewAlias( protein, alias );
                 if( logger != null ) {
                     logger.info( "ADD new Alias[name: " + alias.getName() +
-                             " type: " + geneNameAliasType.getShortLabel() + "]" +
-                             ", to: " + protein.getShortLabel() );
+                                 " type: " + geneNameAliasType.getShortLabel() + "]" +
+                                 ", to: " + protein.getShortLabel() );
                 }
                 needUpdate = true;
             } else {
                 if( logger != null ) {
                     logger.info( "SKIP Alias[name: " + geneName +
-                             " type: " + geneNameAliasType.getShortLabel() + "]" +
-                             ", for: " + protein.getShortLabel() );
+                                 " type: " + geneNameAliasType.getShortLabel() + "]" +
+                                 ", for: " + protein.getShortLabel() );
                 }
             } // Gene names
 
 
             // create/update synonyms
             String[] synonyms = genes[ i ].getSynonyms();
-            System.out.println( "#Syn: " + synonyms.length );
             for ( int ii = 0; ii < synonyms.length; ii++ ) {
 
                 String syn = synonyms[ ii ];
-
-                System.out.println( "Syn: " + syn );
 
                 if( !isAliasAlreadyExisting( aliases, syn, geneNameSynonymAliasType ) ) {
                     alias = new Alias( myInstitution,
@@ -1146,15 +1140,15 @@ public class UpdateProteins extends UpdateProteinsI {
                     addNewAlias( protein, alias );
                     if( logger != null ) {
                         logger.info( "ADD new Alias[name: " + alias.getName() +
-                                 " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
-                                 ", to: " + protein.getShortLabel() );
+                                     " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
+                                     ", to: " + protein.getShortLabel() );
                     }
                     needUpdate = true;
                 } else {
                     if( logger != null ) {
                         logger.info( "SKIP Alias[name: " + syn +
-                                 " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
-                                 ", for: " + protein.getShortLabel() );
+                                     " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
+                                     ", for: " + protein.getShortLabel() );
                     }
                 }
             } // Gene name synonyms
@@ -1162,12 +1156,9 @@ public class UpdateProteins extends UpdateProteinsI {
 
             // create/update locus names
             String[] locus = genes[ i ].getLocusNames();
-            System.out.println( "#Locus: " + locus.length );
             for ( int ii = 0; ii < locus.length; ii++ ) {
 
                 String locusName = locus[ ii ];
-
-                System.out.println( "locusName: " + locusName );
 
                 if( !isAliasAlreadyExisting( aliases, locusName, locusNameAliasType ) ) {
                     alias = new Alias( myInstitution,
@@ -1179,15 +1170,15 @@ public class UpdateProteins extends UpdateProteinsI {
                     addNewAlias( protein, alias );
                     if( logger != null ) {
                         logger.info( "ADD new Alias[name: " + alias.getName() +
-                                 " type: " + locusNameAliasType.getShortLabel() + "]" +
-                                 ", to: " + protein.getShortLabel() );
+                                     " type: " + locusNameAliasType.getShortLabel() + "]" +
+                                     ", to: " + protein.getShortLabel() );
                     }
                     needUpdate = true;
                 } else {
                     if( logger != null ) {
                         logger.info( "SKIP Alias[name: " + locusName +
-                                 " type: " + locusNameAliasType.getShortLabel() + "]" +
-                                 ", for: " + protein.getShortLabel() );
+                                     " type: " + locusNameAliasType.getShortLabel() + "]" +
+                                     ", for: " + protein.getShortLabel() );
                     }
                 }
             } // Locus names
@@ -1195,12 +1186,9 @@ public class UpdateProteins extends UpdateProteinsI {
 
             // create/update ORF names
             String[] ORFs = genes[ i ].getORFNames();
-            System.out.println( "#ORF: " + ORFs.length );
             for ( int ii = 0; ii < ORFs.length; ii++ ) {
 
                 String orfName = ORFs[ ii ];
-
-                System.out.println( "ORF: " + orfName );
 
                 if( !isAliasAlreadyExisting( aliases, orfName, orfNameAliasType ) ) {
                     alias = new Alias( myInstitution,
@@ -1212,15 +1200,15 @@ public class UpdateProteins extends UpdateProteinsI {
                     addNewAlias( protein, alias );
                     if( logger != null ) {
                         logger.info( "ADD new Alias[name: " + alias.getName() +
-                                 " type: " + orfNameAliasType.getShortLabel() + "]" +
-                                 ", to: " + protein.getShortLabel() );
+                                     " type: " + orfNameAliasType.getShortLabel() + "]" +
+                                     ", to: " + protein.getShortLabel() );
                     }
                     needUpdate = true;
                 } else {
                     if( logger != null ) {
                         logger.info( "SKIP Alias[name: " + orfName +
-                                 " type: " + orfNameAliasType.getShortLabel() + "]" +
-                                 ", for: " + protein.getShortLabel() );
+                                     " type: " + orfNameAliasType.getShortLabel() + "]" +
+                                     ", for: " + protein.getShortLabel() );
                     }
                 }
             } // ORFs
