@@ -9,8 +9,6 @@ import org.apache.struts.action.ActionMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
-
 
 /**
  * Form bean for the main form of the view.jsp page.  
@@ -136,17 +134,11 @@ public final class VisualizeForm extends ActionForm {
      * @param request The servlet request we are processing
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
-//        this.AC     = null;
-//        this.depth  = null;
-//        this.method = null;
-//        this.hasNoDepthLimit = false;
-
-        // clean the session from produced data
-        HttpSession session = request.getSession();
-        session.removeAttribute(Constants.ATTRIBUTE_IMAGE_BEAN);
-        session.removeAttribute(Constants.ATTRIBUTE_GRAPH);
-
-    } // reset
+        this.AC     = null;
+        this.depth  = null;
+        this.method = null;
+        this.hasNoDepthLimit = false;
+     } // reset
 
 
     /**
