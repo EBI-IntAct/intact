@@ -52,11 +52,6 @@ public interface CvEditConstants {
     public static final String FORWARD_RESULTS = "results";
 
     /**
-     * Forward to the CV edit page.
-     */
-    public static final String FORWARD_EDIT = "edit";
-
-    /**
      * Used as a key to identify a page to display when matches are found
      * from a search.
      */
