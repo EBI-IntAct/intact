@@ -19,6 +19,11 @@ import java.util.Collection;
  */
 public interface AnnotatedObject extends BasicObject {
 
+    /**
+     * This matches with the column size for short label
+     */
+    public static final int MAX_SHORT_LABEL_LEN = 20;
+
     public String getShortLabel();
 
     public void setShortLabel(String shortLabel);
