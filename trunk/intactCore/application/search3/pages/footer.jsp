@@ -16,7 +16,7 @@
 <span class="footer">
 <table width="100%">
 <tr>
-    <td class="data">
+    <td>
         Please send any questions or suggestions to
             <a href="mailto:intact-help@ebi.ac.uk">intact-help@ebi.ac.uk</a>
         </br>
