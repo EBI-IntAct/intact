@@ -7,7 +7,9 @@ T O   D O
 
 
 
-- in the startup create a logger object and put it in the context to allow better tracing.
+
+
+- Add licence in files it's missing.
 
 - Find a way to check if a web service is currently running (in the runtime)
   test could be done when a new user is lauching the first page !
@@ -86,6 +88,12 @@ WAIT FOR INTEGRATION IN BORDEAUX ...
 ====================================
               D O N E
 ====================================
+
+
+(07.02.2003)
++ in the startup create a logger object and put it in the context to allow better tracing.
+  + a logger is configured in an init Servlet and the logger can be accessed via a static method
+    from every classes.
 
 (05.02.2003)
 + Detect during the Build process if every configuration file have been customized

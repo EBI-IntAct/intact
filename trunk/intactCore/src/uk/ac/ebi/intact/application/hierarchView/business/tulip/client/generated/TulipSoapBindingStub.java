@@ -39,12 +39,12 @@ public class TulipSoapBindingStub extends org.apache.axis.client.Stub implements
             Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;
             Class simplesf = org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory.class;
             Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
-            qName = new javax.xml.rpc.namespace.QName("urn:tulip", "ArrayOf_tns2_ProteinCoordinate");
+            qName = new javax.xml.rpc.namespace.QName("http://webService.tulip.business.hierarchView.application.intact.ebi.ac.uk", "ProteinCoordinate");
             cachedSerQNames.add(qName);
-            cls = uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate[].class;
+            cls = uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate.class;
             cachedSerClasses.add(cls);
-            cachedSerFactories.add(arraysf);
-            cachedDeserFactories.add(arraydf);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
 
             qName = new javax.xml.rpc.namespace.QName("urn:tulip", "ArrayOf_SOAP-ENC_string");
             cachedSerQNames.add(qName);
@@ -53,12 +53,12 @@ public class TulipSoapBindingStub extends org.apache.axis.client.Stub implements
             cachedSerFactories.add(arraysf);
             cachedDeserFactories.add(arraydf);
 
-            qName = new javax.xml.rpc.namespace.QName("http://webService.tulip.business.hierarchView.application.intact.ebi.ac.uk", "ProteinCoordinate");
+            qName = new javax.xml.rpc.namespace.QName("urn:tulip", "ArrayOf_tns2_ProteinCoordinate");
             cachedSerQNames.add(qName);
-            cls = uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate.class;
+            cls = uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate[].class;
             cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+            cachedSerFactories.add(arraysf);
+            cachedDeserFactories.add(arraydf);
 
         }
         catch(java.lang.Exception t) {
