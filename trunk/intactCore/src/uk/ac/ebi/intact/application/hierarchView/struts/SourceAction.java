@@ -1,9 +1,11 @@
 package uk.ac.ebi.intact.application.hierarchView.struts;
 
+import uk.ac.ebi.intact.application.hierarchView.highlightment.source.*;
 
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Collection;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -60,9 +62,9 @@ public final class SourceAction extends Action {
 	// read form values from the bean
 	ActionErrors errors = new ActionErrors();
 
-	String keys = request.getParameter(Constants.ATTRIBUTE_KEYS);
+	String someKeys = request.getParameter(Constants.ATTRIBUTE_KEYS);
 
-	if ((null == keys) || (keys.length() < 1))
+	if ((null == someKeys) || (someKeys.length() < 1))
 	  errors.add("keys", new ActionError("error.keys.required"));
 
 	// Report any errors we have discovered back to the original form
@@ -73,6 +75,13 @@ public final class SourceAction extends Action {
 
 	// Save our data in the session
 	HttpSession session = request.getSession();
+
+	// get the class method name to create an instance
+	String source = (String) session.getAttribute (Constants.ATTRIBUTE_METHOD_CLASS);
+
+	HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(source);
+	Collection keys = highlightmentSource.parseKeys(someKeys);
+
 	session.setAttribute(Constants.ATTRIBUTE_KEYS, keys);
 
 	// Print debug in the log file
