@@ -26,20 +26,10 @@
         <param-value>/config/</param-value>
     </context-param>
 
-    <!--  Class name of the data source object to be used    -->
-    <context-param>
-        <param-name>datasource</param-name>
-        <param-value>uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource</param-value>
-    </context-param>
-
         <!-- Action Servlet Configuration -->
     <servlet>
         <servlet-name>action</servlet-name>
         <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
-        <init-param>
-            <param-name>application</param-name>
-            <param-value>/config/IntactResources</param-value>
-        </init-param>
 
         <init-param>
             <param-name>config</param-name>

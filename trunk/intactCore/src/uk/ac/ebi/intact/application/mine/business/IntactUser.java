@@ -196,10 +196,14 @@ public class IntactUser implements IntactUserI {
      * 
      * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getHVLink()
      */
-    public String getHVLink(String context) {
+    public String getHVLink(String contextPath) {
         StringBuffer link = new StringBuffer( 256 );
-        link.append( context );
-        link.append( "/hierarchView/display.jsp?AC=" );
+        link.append( contextPath );
+
+        // the link to hierarchview is added according to the given string
+        // in the properties file (e.g. hierarchView/display.jsp?AC=)
+        link.append( HIERARCHVIEW_PROPERTIES.getProperty( "hv.url" ) );
+
         // borders stores the borders of the different minimal connecting
         // networks. E.g. borders=2,4 means for the
         // network=EBI-1,EBI-2,EBI-3,EBI-4 that (EBI-1,EBI-2) is one network
@@ -218,6 +222,7 @@ public class IntactUser implements IntactUserI {
                 }
             }
             // boundaries stores the sizes of the different networks
+            // see comments above for details
             boundaries += path.size();
             borders.append( boundaries );
             if ( it.hasNext() ) {
@@ -225,8 +230,9 @@ public class IntactUser implements IntactUserI {
                 borders.append( "," );
             }
         }
-        link.append( "&network=" ).append( borders ).append(
-                "&method=GO&depth=1" );
+        // the boundaries of the different connecting networks are added to the
+        // link
+        link.append( "&network=" ).append( borders );
 
         // if singletons are present they are added to the link
         if ( !singletons.isEmpty() ) {
@@ -235,6 +241,7 @@ public class IntactUser implements IntactUserI {
 
             link.append( "&singletons=" + sing );
         }
+        Constants.LOGGER.warn( link );
         return link.toString();
     }
 }

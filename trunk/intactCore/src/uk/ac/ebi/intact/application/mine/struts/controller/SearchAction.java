@@ -20,6 +20,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
 
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
@@ -98,10 +99,10 @@ public class SearchAction extends Action {
 
             if ( ( searchAc.size() + notSearchAc.size() ) > Constants.MAX_SEARCH_NUMBER ) {
                 Constants.LOGGER.warn( "too many searches" );
-                request.setAttribute( Constants.ERROR, new ErrorForm(
-                        "The number of selected proteins " + "is greater than "
-                                + Constants.MAX_SEARCH_NUMBER
-                                + " !<br>Please select less proteins !" ) );
+                MessageResources mr = getResources( request );
+                request.setAttribute( Constants.ERROR, new ErrorForm( mr
+                        .getMessage( "searchAction.tooMuchProteins", Integer
+                                .toString( Constants.MAX_SEARCH_NUMBER ) ) ) );
                 return mapping.findForward( Constants.ERROR );
             }
 
