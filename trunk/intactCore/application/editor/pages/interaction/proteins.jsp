@@ -26,9 +26,20 @@
 
 <c:set var="viewbean" value="${user.view}"/>
 
-<%-- The menus needed to edit/add Proteins --%>
+<%-- Menus to edit a Protein --%>
 <c:set var="rolelist" value="${viewbean.editProteinRoleMenu}"/>
+<%-- Menu to add a new Protein --%>
 <c:set var="rolelist_" value="${viewbean.addProteinRoleMenu}"/>
+
+<style type="text/css">
+    td.proteinEditCell {
+        font-size: 8pt;
+        font-family: Arial, verdana, sans-serif;
+        text-align: left;
+        vertical-align: top;
+        background-color: #ff8c00
+    }
+</style>
 
 <%-- Class wide declarations. --%>
 <%!
@@ -36,12 +47,6 @@
     String viewState = EditBean.VIEW;
     String saveState = EditBean.SAVE;
     String saveNewState = ProteinBean.SAVE_NEW;
-%>
-
-<%
-    // Fill with form data for this page to display.
-//    EditForm form = (EditForm) session.getAttribute(formName);
-//    ((InteractionViewBean) user.getView()).fillProteins(form);
 %>
 
 <h3>Proteins</h3>
@@ -144,24 +149,24 @@
                     </nested:equal>
 
                     <nested:equal property="editState" value="<%=saveState%>">
-                        <td class="tableCell">
+                        <td class="proteinEditCell">
                             <nested:select property="role">
                                 <nested:options name="rolelist" />
                             </nested:select>
                         </td>
-                        <td class="tableCell">
+                        <td class="proteinEditCell">
                             <nested:text size="5" property="stoichiometry"/>
                         </td>
                     </nested:equal>
 
                     <nested:equal property="editState" value="<%=saveNewState%>">
-                        <td class="tableCell">
+                        <td class="proteinEditCell">
                             <nested:select property="role">
                                 <nested:options name="rolelist_" />
                             </nested:select>
                             <html:errors property="protein.role"/>
                         </td>
-                        <td class="tableCell">
+                        <td class="proteinEditCell">
                             <nested:text size="5" property="stoichiometry"/>
                         </td>
                     </nested:equal>
