@@ -58,11 +58,25 @@ public class XreferenceBean implements Serializable {
     /**
      * Instantiate an object of this class from a Xref object.
      *
-     * @param annot the <code>Xref</code> object to construct an
+     * @param xref the <code>Xref</code> object to construct an
      * instance of this class.
      */
     public XreferenceBean(Xref xref) {
-        myKey = IntactUserImpl.getId();
+        this(IntactUserImpl.getId(), xref);
+    }
+
+    /**
+     * Instantiate an object of this class from a Xref object using
+     * the supplied key as the primary key (i.e., new primary key is not created).
+     * <p>
+     * This constructor is visible to subclasses only.
+     *
+     * @param key the primary key for this new instance.
+     * @param xref the <code>Xref</code> object to construct an instance of
+     *  this class.
+     */
+    protected XreferenceBean(long key, Xref xref) {
+        myKey = key;
         myXref = xref;
         myDatabaseName = xref.cvDatabase.getShortLabel();
         myPrimaryId = xref.getPrimaryId();
@@ -139,17 +153,18 @@ public class XreferenceBean implements Serializable {
     /**
      * Compares <code>obj</code> with this object according to
      * Java's equals() contract. Only returns <tt>true</tt> if the internal
-     * keys for both objects match.
+     * keys for both objects match. Made it final to allow slice comparision
+     * without violating transitivity law for equals() method.
      *
      * @param obj the object to compare.
      */
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         // Identical to this?
         if (obj == this) {
             return true;
         }
-        if ((obj != null) && (obj.getClass() == getClass())) {
-            // Same class; can safely cast it.
+        // Allow for slice comparision.
+        if ((obj != null) && (obj instanceof XreferenceBean)) {
             return myKey == ((XreferenceBean) obj).getKey();
         }
         return false;

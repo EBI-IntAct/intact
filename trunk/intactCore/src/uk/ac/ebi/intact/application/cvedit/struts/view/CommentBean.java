@@ -42,14 +42,28 @@ public class CommentBean implements Serializable {
     /**
      * Instantiate an object of this class from an Annotation object.
      *
-     * @param annot the <code>Annotation</code> object to construct an
+     * @param annotation the <code>Annotation</code> object to construct an
      * instance of this class.
      */
-    public CommentBean(Annotation annot) {
-        myKey = IntactUserImpl.getId();
-        myAnnotation = annot;
-        myTopic = annot.getCvTopic().getShortLabel();
-        myAnnotatedText = annot.getAnnotationText();
+    public CommentBean(Annotation annotation) {
+        this(IntactUserImpl.getId(), annotation);
+    }
+
+    /**
+     * Instantiate an object of this class from an Annotation object using
+     * the supplied key as the primary key (i.e., new primary key is not created).
+     * <p>
+     * This constructor is visible to subclasses only.
+     *
+     * @param key the primary key for this new instance.
+     * @param annotation the <code>Annotation</code> object to construct an
+     * instance of this class.
+     */
+    protected CommentBean(long key, Annotation annotation) {
+        myKey = key;
+        myAnnotation = annotation;
+        myTopic = annotation.getCvTopic().getShortLabel();
+        myAnnotatedText = annotation.getAnnotationText();
     }
 
     /**
@@ -103,17 +117,19 @@ public class CommentBean implements Serializable {
     /**
      * Compares <code>obj</code> with this object according to
      * Java's equals() contract. Only returns <tt>true</tt> if the internal
-     * keys for both objects match.
+     * keys for both objects match. Made it final to allow slice comparision
+     * without violating transitivity law for equals() method.
      *
      * @param obj the object to compare.
      */
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         // Identical to this?
         if (obj == this) {
             return true;
         }
-        if ((obj != null) && (obj.getClass() == getClass())) {
-            // Same class; can safely cast it.
+        // Allow for slice comparision.
+        if ((obj != null) && (obj instanceof CommentBean)) {
+            // Can safely cast it.
             return myKey == ((CommentBean) obj).getKey();
         }
         return false;
