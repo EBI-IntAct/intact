@@ -6,38 +6,132 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 /**
- * TODO comments
+ * <p>
+ * Represents a location on a sequence.
+ * </p>
+ * <p>
+ * Features with multiple positions on the sequence, e.g. structural
+ * domains or PRINTS matches are represented by multiple range objects
+ * attached to the Feature.
+ * </p>
+ * <p>
+ * A Range may have a &quot;fuzzy&quot; start/end, e.g. 4..5 or &lt;5.
+ * </p>
+ * <p>
+ * The table below shows the representation of both exact and &quot;fuzzy&quot;
+ * features:
+ * </p>
+ * <p>
+ * attribute 4-4 4-10 4..6-10 &lt;5-&gt;10 ?-10 undetermined
+ * </p>
+ * <p>
+ * fromIntervalStart 4 4 4 5 null null
+ * </p>
+ * <p>
+ * fromIntervalEnd 4 4 6 5 null null
+ * </p>
+ * <p>
+ * toIntervalStart 4 10 10 10 10 null
+ * </p>
+ * <p>
+ * toIntervalEnd 4 10 10 10 10 null
+ * </p>
+ * <p>
+ * startFuzzyType exact exact interval lessThan undet. null
+ * </p>
+ * <p>
+ * endFuzzyType exact exact exact greaterThan exact null
+ * </p>
+ * <p>
+ * undetermined false false false false false true
+ * </p>
  *
- * @author hhe
- * @version $Id$
+ *
+ * @author Chris Lewington, hhe
  */
 public class Range extends BasicObjectImpl {
 
-    ///////////////////////////////////////
-    //attributes
-
-    //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
-    private String ModificationAc;
+    //------------ attributes ------------------------------------
 
     /**
-     * TODO Represents ...
+     * Sequence size limit for this class
      */
-    private int posFrom;
+    private static final int MAX_SEQ_SIZE = 100;
 
     /**
-     * TODO Represents ...
+     * TODO Comments
      */
-    private int posTo;
-
-    ///////////////////////////////////////
-    // associations
+    private int fromIntervalStart = 0;
 
     /**
-     * TODO comments
+     * TODO Comments
      */
-    private Modification modification;
+    private int fromIntervalEnd = 0;
 
+    /**
+     * TODO Comments
+     */
+    private int toIntervalStart = 0;
+
+    /**
+     * TODO Comments
+     */
+    private int toIntervalEnd = 0;
+
+    /**
+     * <p>
+     * Contains the first 100 amino acids of the sequence in the Range. This is
+     * purely used for data consistency checks. In case of sequence updates the
+     * new position can be determined by sequence alignment.
+     * </p>
+     *
+     */
+    //NOTE: We will assume a maximum size of 100 characters for this
+    private String sequence = "";
+
+    /**
+     * TODO Comments
+     * This is really a boolean but we need to use a character for
+     * it because Oracle does not support boolean types
+     * NB JDBC spec has no JDBC type for char, only Strings!
+     */
+    private String undetermined = "N";
+
+    /**
+     * <p>
+     * True if the Range describes a link between two positions in the
+     * sequence, e.g. a sulfate bridge.
+     * </p>
+     * <p>
+     * False otherwise.
+     * </p>
+     *
+     * This is really a boolena but we need to use a character for
+     * it because Oracle does not support boolean types
+     * NB JDBC spec has no JDBC type for char, only Strings!
+     */
+    private String link = "N";
+
+    /**
+     * Only needed by OJB to get a handle to an inverse FK from Feature
+     */
+    private String featureAc;   //can go later by using OJB 'anonymous' field
+
+    //------------------- cvObjects --------------------------------------
+
+    /**
+     * TODO Comments
+     */
+    private CvFuzzyType fromCvFuzzyType;
+    private String fromCvFuzzyTypeAc;  //get rid of this later with OJB 'anonymous'
+    /**
+     * TODO Comments
+     */
+    private CvFuzzyType toCvFuzzyType;
+    private String toCvFuzzyTypeAc;  //get rid of this later with OJB 'anonymous'
+
+
+    //--------------------------- constructors --------------------------------------
     /**
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
@@ -47,50 +141,98 @@ public class Range extends BasicObjectImpl {
     private Range() {
         super();
     }
-    ////////////////////////////////////////
-    // Constructor
 
-    public Range (int from, int to) {
+    /**
+     * Sets up a valid Range instance. Currently a valid Range must have at least
+     * the following defined:
+     *
+     * @param fromStart The starting point of the 'from' interval for the Range.
+     * @param fromEnd The end point of the 'from' interval.
+     * @param toStart The starting point of the 'to' interval of the Range
+     * @param toEnd The end point of the 'to' interval
+     * @param seq The sequence - maximum of 100 characters (null allowed)
+     */
+    public Range (int fromStart, int fromEnd, int toStart, int toEnd, String seq) {
 
-        if (to < from) throw new IllegalArgumentException ("End of range must be bigger that begining");
-        if (from < 0) throw new IllegalArgumentException ("Start of range should be positive");
-        if (to < 0) throw new IllegalArgumentException ("End of range should be positive");
+        if (fromEnd < fromStart) throw new IllegalArgumentException ("End of 'from' interval must be bigger than the start!");
+        if (toEnd < toStart) throw new IllegalArgumentException ("End of 'to' interval must be bigger than the start!");
+        if (fromStart < 0) throw new IllegalArgumentException ("Start of 'from' interval should be positive");
+        if (toStart < 0) throw new IllegalArgumentException ("End of 'from' should be positive");
+        if(fromEnd > toStart) throw new IllegalArgumentException("The 'from' and 'to' intervals cannot overlap!");
+        if(fromStart > toEnd) throw new IllegalArgumentException("The 'from' interval starts beyond the 'to' interval!");
 
-        posFrom = from;
-        posTo = to;
+        //don't allow default empty String to be replaced by null. Check size also
+        //to avoid unnecessary DB call for a seq that is too big...
+        if(seq != null) {
+            if(seq.length() > Range.MAX_SEQ_SIZE)
+                throw new IllegalArgumentException("Sequence too big! Max allowed: "
+                        + Range.MAX_SEQ_SIZE);
+            sequence = seq;
+        }
+
     }
 
 
-    ///////////////////////////////////////
-    //access methods for attributes
+    //------------------------- public methods --------------------------------------
 
-    public int getPosFrom() {
-        return posFrom;
+    public int getFromIntervalStart() {
+        return fromIntervalStart;
     }
-    public void setPosFrom(int posFrom) {
-        this.posFrom = posFrom;
+    public void setFromIntervalStart(int posFrom) {
+        fromIntervalStart = posFrom;
     }
-    public int getPosTo() {
-        return posTo;
+    public int getFromIntervalEnd() {
+        return fromIntervalEnd;
     }
-    public void setPosTo(int posTo) {
-        this.posTo = posTo;
-    }
-
-    ///////////////////////////////////////
-    // access methods for associations
-
-    public Modification getModification() {
-        return modification;
+    public void setFromIntervalEnd(int posTo) {
+        fromIntervalEnd = posTo;
     }
 
-    public void setModification(Modification modification) {
-        if (this.modification != modification) {
-            this.modification = modification;
-            if (modification != null) modification.setRange(this);  
-        }      
+    public int getToIntervalStart() {
+        return fromIntervalStart;
+    }
+    public void setToIntervalStart(int posFrom) {
+        toIntervalStart = posFrom;
+    }
+    public int getToIntervalEnd() {
+        return toIntervalEnd;
+    }
+    public void setToIntervalEnd(int posTo) {
+        toIntervalEnd = posTo;
     }
 
+    public boolean isUndertermined() {
+        return charToBoolean(undetermined);
+    }
+
+    public void setUndetermined(boolean val) {
+        undetermined = booleanToChar(val);
+    }
+
+    public boolean isLinked() {
+        return charToBoolean(link);
+    }
+
+    public void setLink(boolean isLinked) {
+        link = booleanToChar(isLinked);
+    }
+
+    public CvFuzzyType getFromCvFuzzyType() {
+        return fromCvFuzzyType;
+    }
+
+
+    public void setFromCvFuzzyType(CvFuzzyType type) {
+        fromCvFuzzyType = type;
+    }
+
+    public CvFuzzyType getToCvFuzzyType_1() {
+        return toCvFuzzyType;
+    }
+
+    public void setToCvFuzzyType(CvFuzzyType type) {
+        toCvFuzzyType = type;
+    }
 
     /**
      * Equality for Ranges is currently based on equality for
@@ -105,32 +247,63 @@ public class Range extends BasicObjectImpl {
 
         final Range range = (Range) o;
 
-        //TODO Auto-generated - needs rewriting later to be more readable...
-        if (posFrom != range.posFrom) return false;
-        if (posTo != range.posTo) return false;
-        if (modification != null ? !modification.equals(range.modification) : range.modification != null) return false;
+        //check the intervals are the same
+        if (fromIntervalStart != range.fromIntervalStart) return false;
+        if (fromIntervalEnd != range.fromIntervalEnd) return false;
+        if (toIntervalStart != range.toIntervalStart) return false;
+        if (toIntervalEnd != range.toIntervalEnd) return false;
+
+        //check the booleans
+        if(link != range.link) return false;
+        if(undetermined != range.undetermined) return false;
+
+        //check the fuzzy types
+        if (!fromCvFuzzyType.equals(range.fromCvFuzzyType)) return false;
+        if (!toCvFuzzyType.equals(range.toCvFuzzyType)) return false;
+
+        //check the sequence
+        if(!sequence.equals(range.sequence)) return false;
 
         return true;
     }
 
     public int hashCode() {
         int result;
-        result = posFrom;
-        //TODO Auto-generated - needs rewriting later to be more readable...
-        result = 29 * result + posTo;
-        result = 29 * result + (modification != null ? modification.hashCode() : 0);
+        result = fromIntervalStart;
+
+        result = 29 * result + fromIntervalEnd;
+        result = 29 * result + toIntervalStart;
+        result = 29 * result + toIntervalEnd;
+
+        //add in the sequence hashcode
+        result = 29 * result + sequence.hashCode();
+
         return result;
     }
 
+    //---------------- private utility methods -----------------------
 
-    //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
-    public String getModificationAc() {
-        return this.ModificationAc;
+
+    /**
+     * Simple converter.
+     * @param val boolean
+     * @return "Y" if the boolean is true, "N" otherwise
+     */
+    private String booleanToChar(boolean val) {
+          if(val) return "Y";
+        return "N";
     }
-    public void setModificationAc(String ac) {
-        this.ModificationAc = ac;
+
+    /**
+     * Simple converter
+     * @param st The String to convert
+     * @return true if the String is "Y", false otherwise
+     */
+    private boolean charToBoolean(String st) {
+        if(st.equals("N")) return false;
+        return true;
     }
+
 
 } // end Range
 

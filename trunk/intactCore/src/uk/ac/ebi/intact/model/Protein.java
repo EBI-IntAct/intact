@@ -35,14 +35,6 @@ public interface Protein extends Interactor {
 
     public void setCvProteinForm(CvProteinForm cvProteinForm);
 
-    public void setFeatures(Collection someFeature);
-
-    public Collection getFeatures();
-
-    public void addFeature(Feature feature);
-
-    public void removeFeature(Feature feature);
-
     public void setModifications(Collection someModification);
 
     public Collection getModifications();

@@ -70,11 +70,6 @@ public class ProteinImpl extends InteractorImpl implements Protein {
     /**
      * TODO comments
      */
-    private Collection features = new ArrayList();
-
-    /**
-     * TODO comments
-     */
     private Collection modifications = new ArrayList();
 
     /**
@@ -260,22 +255,7 @@ public class ProteinImpl extends InteractorImpl implements Protein {
     public void setCvProteinForm(CvProteinForm cvProteinForm) {
         this.cvProteinForm = cvProteinForm;
     }
-    public void setFeatures(Collection someFeature) {
-        this.features = someFeature;
-    }
-    public Collection getFeatures() {
-        return features;
-    }
-    public void addFeature(Feature feature) {
-        if (! this.features.contains(feature)) {
-            this.features.add(feature);
-            feature.setProtein(this);
-        }
-    }
-    public void removeFeature(Feature feature) {
-        boolean removed = this.features.remove(feature);
-        if (removed) feature.setProtein(null);
-    }
+
     public void setModifications(Collection someModification) {
         this.modifications = someModification;
     }
