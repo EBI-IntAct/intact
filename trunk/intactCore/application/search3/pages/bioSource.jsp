@@ -17,8 +17,7 @@ in the root directory of this distribution.
                  java.util.Iterator,
                  uk.ac.ebi.intact.model.Annotation,
                  uk.ac.ebi.intact.model.Xref,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.BioSourceViewBean,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.SingleViewBean,
+                 uk.ac.ebi.intact.application.search3.struts.view.beans.BioSourceViewBean,                 
                  uk.ac.ebi.intact.application.search3.struts.view.beans.XrefViewBean,
                  java.util.Collection,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.AnnotationViewBean"
@@ -31,15 +30,16 @@ in the root directory of this distribution.
    BioSourceViewBean bean = (BioSourceViewBean)session.getAttribute(SearchConstants.VIEW_BEAN);
 %>
 
-<h3>Search Results for
-    <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
-</h3>
+<span class="smalltext"> </span>
 
-<br>
+<h3>Search Results for
+    <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%>
+</h3>
 <!-- show the searched object ac -->
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
-</span><span class="smalltext">)<br></span></p>
+</span><span class="smalltext">)<br></span>
+<span class="smalltext"><br></span>
 
 <form name="viewForm">
    <!-- create a table with the object deatils -->
@@ -55,7 +55,7 @@ in the root directory of this distribution.
                         <span class = "whiteheadertext">
                         <%=bean.getIntactType() %>
                         </span>
-                        <a href="<%= bean.getHelpLink() + "search.TableLayout"%>"
+                        <a href="<%= bean.getHelpLink() + "BioSource"%>"
                         target="new"><sup><b><font color="white">?</font></b></sup></a></nobr>
                     </td>
 
