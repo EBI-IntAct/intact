@@ -99,7 +99,7 @@
         <put name="title"    value="IntAct - hierarchView"/>
         <put name="header"   value="headerFrame.jsp"/>
         <!-- just no content - this must be defined -->
-        <put name="content" value=""/>
+        <put name="content"  value="../pages/blank.jsp"/>
         <put name="sidebar"  value="sidebarFrame.jsp"/>
     </definition>
 
@@ -116,7 +116,7 @@
          tiles of hierarchView.layout
       -->
     <definition name="hierarchView.error.layout" extends="hierarchView.layout">
-        <put name="content" value="../pages/error.jsp"/>
+        <put name="content" value="../pages/errorFrame.jsp"/>
     </definition>
 
     <!-- ============ Definition of tiles used in the content frame ======= -->

@@ -63,7 +63,7 @@
                 type="uk.ac.ebi.intact.application.hierarchView.struts.controller.SearchAction"
                 name="searchForm"
                 validate="true"
-                scope="session"
+                scope="request"
                 input="hierarchView.error.layout"/>
 
         <!-- Processes the user search for an external application -->
