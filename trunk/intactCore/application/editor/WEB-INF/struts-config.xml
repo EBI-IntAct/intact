@@ -66,6 +66,13 @@
     <!-- ========== Global Exceptions ======================================= -->
 
     <global-exceptions>
+        <!-- IntAct internal error -->
+        <exception
+            handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+            key="error.intact"
+            path="error.layout"
+            type="uk.ac.ebi.intact.business.IntactException"/>
+
         <exception
             key="error.session.expired"
             path="login.error.layout"
@@ -86,8 +93,9 @@
 
         <!-- Any other exception -->
         <exception
-            key="dummy.key"
-            path="login.error.layout"
+            handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+            key="error.intact"
+            path="error.layout"
             type="java.lang.Exception"/>
     </global-exceptions>
 
@@ -173,9 +181,8 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.SidebarDispatchAction"
             scope="request"
             parameter="dispatch">
-            <!-- No match is found -->
-            <forward name="noMatch" path="no.match.layout"/>
             <!-- Multiple results found; global action -->
+
             <!-- Single item found for the search -->
             <forward name="single" path="/do/choose"/>
             <!-- Select the appropriate editor for the new record. -->
