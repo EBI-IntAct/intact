@@ -6,31 +6,31 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search.struts.controller;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
+import org.w3c.dom.Document;
 import uk.ac.ebi.intact.application.search.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
-import uk.ac.ebi.intact.application.search.struts.view.IntactViewBean;
+import uk.ac.ebi.intact.application.search.struts.view.BasicObjectViewBean;
 import uk.ac.ebi.intact.application.search.struts.view.ViewForm;
-import uk.ac.ebi.intact.util.*;
-import uk.ac.ebi.intact.business.*;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.util.XmlBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.DynaActionForm;
-
-import java.util.*;
-
-//for debugging only
-import org.w3c.dom.*;
-
-import javax.xml.transform.*;
-import javax.xml.transform.stream.*;
-import javax.xml.transform.dom.*;
-import javax.xml.parsers.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 
 /**
@@ -84,7 +84,7 @@ public class ViewAction extends IntactBaseAction {
             //for every view bean, set the status of every Protein & Iteraction as
             // views are same.
             for (Iterator it = idToView.values().iterator(); it.hasNext();) {
-                IntactViewBean bean = (IntactViewBean) it.next();
+                BasicObjectViewBean bean = (BasicObjectViewBean) it.next();
 
                 System.out.println("expand/contract selected");
                 System.out.println("XML before transform..");
@@ -138,7 +138,7 @@ public class ViewAction extends IntactBaseAction {
 
     //--------------------------- private helper methods -------------------------------
 
-    private void printBean(IntactViewBean bean) throws TransformerException,
+    private void printBean(BasicObjectViewBean bean) throws TransformerException,
             ParserConfigurationException {
         //using System.out for logging as we want the bean info, which
         //does not have access to a logger...
@@ -150,7 +150,7 @@ public class ViewAction extends IntactBaseAction {
         System.out.println();
     }
 
-    private void setStatus(IntactViewBean bean, String tagName, int mode)
+    private void setStatus(BasicObjectViewBean bean, String tagName, int mode)
             throws ParserConfigurationException, IntactException {
         Collection acs = bean.getAcs(tagName);
         bean.modifyXml(mode, acs);

@@ -6,38 +6,35 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search.struts.controller;
 
-import java.util.*;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.dom.DOMSource;
-
-import org.apache.struts.action.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.w3c.dom.Document;
-
-import javax.servlet.http.*;
-
-import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
-import uk.ac.ebi.intact.application.search.struts.framework.IntactBaseAction;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.search.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search.struts.view.IntactViewBean;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.application.search.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.Protein;
 
-import uk.ac.ebi.intact.util.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
- * This class provides the actions required for the search page
- * for intact. The search criteria are obtained from a Form object
- * and then the search is carried out, via the IntactUser functionality,
- * which provides the business logic.
+ * This class provides the actions required to carry out search operations
+ * for intact via a web-based interface. The search criteria are obtained from a
+ * Form object and then the search is carried out, via the IntactUser functionality,
+ * which provides the business logic. Once a search has been carried out, this class will
+ * forward to another Action class as appropriate to generate specific types of
+ * data that will later be displayed via the View classes.
  *
- * @author Sugath Mudali (smudali@ebi.ac.uk), modified by Chris Lewington
+ * @author Chris Lewington (clewing@ebi.ac.uk)
  * @version $Id$
  */
 
@@ -74,10 +71,6 @@ public class SearchAction extends IntactBaseAction {
         // Clear any previous errors.
         super.clearErrors();
 
-        // The search link for links (used by style sheet).
-        String relativeLink = getServlet().getServletContext().getInitParameter("searchLink");
-        String link = request.getContextPath() + relativeLink;
-
         DynaActionForm dyForm = (DynaActionForm) form;
         String searchValue = (String) dyForm.get("searchString");
         String searchClass = (String) dyForm.get("searchClass");
@@ -91,50 +84,16 @@ public class SearchAction extends IntactBaseAction {
         //clean out previous single object views
         session.setAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN, null);
 
+        //also clean out any bean filter sets here??...
+
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(session);
         if(user == null) {
             //browser page caching screwed up the session - need to
             //get a user object created again by forwarding to welcome action...
-            //------- SET THIS TO THE CORRECT FORWARD VALUE -------------
-            return mapping.findForward(SearchConstants.FORWARD_RESULTS);
+            return mapping.findForward(SearchConstants.FORWARD_SESSION_LOST);
 
         }
-
-        //now need to try searches based on AC, label or name (only
-        //ones we will accept for now) and return as soon as we get a result
-        //NB obviously can't distinguish between a zero return and a search
-        //with garbage input using this approach...
-
-        //get or create (if necessary) an XML builder via the Session
-        XmlBuilder builder = (XmlBuilder) session.getAttribute(SearchConstants.XML_BUILDER);
-        if (builder == null) {
-            //create one and save in session, making sure the builder reuses
-            //the current user's helper so the DB access cocnfiguration is correct
-            try {
-                builder = new XmlBuilder(user.getHelper());
-                session.setAttribute(SearchConstants.XML_BUILDER, builder);
-            }
-            catch (IntactException ie) {
-
-                //build and forward error....
-                super.log(ExceptionUtils.getStackTrace(ie));
-                // The errors to report back.
-                super.addError("error.search", ie.getMessage());
-                super.saveErrors(request);
-                return mapping.findForward(SearchConstants.FORWARD_FAILURE);
-            }
-        }
-
-
-        // The stylesheet for the transformation.
-        String xslname = session.getServletContext().getInitParameter(SearchConstants.XSL_FILE);
-
-        //for war files....
-        //String xslfile = session.getServletContext().getRealPath(xslname);
-        //String xslfile = request.getContextPath() + (xslname);
-
-        String xslfile = session.getServletContext().getResource(xslname).toExternalForm();
 
         // Holds the result from the initial search.
         Collection results = null;
@@ -163,7 +122,6 @@ public class SearchAction extends IntactBaseAction {
                         // Save the search parameters for results page to display.
                         session.setAttribute(SearchConstants.SEARCH_CRITERIA,
                                 user.getSearchCritera() + "=" + searchValue);
-//                        session.setAttribute(SearchConstants.SEARCH_TYPE, searchClass);
                         return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
                     }
 
@@ -173,276 +131,30 @@ public class SearchAction extends IntactBaseAction {
 
             // ************* Search was a success. ********************************
 
-            //get all the shortLabels (for AnnotatedObjects!) from the result set so we
-            //can pass them on to view beans for highlighting in web pages...
-            StringBuffer buf = new StringBuffer();
-            for(Iterator it = results.iterator(); it.hasNext();) {
-                buf.append(((AnnotatedObject)it.next()).getShortLabel());
-                if(it.hasNext()) buf.append(",");
-            }
-
             // Save the search parameters for results page to display.
             session.setAttribute(SearchConstants.SEARCH_CRITERIA,
                     user.getSearchCritera() + "=" + searchValue);
-            super.log("found results - performing XML conversion...");
-            //assume search results are all the same type (we know it is not empty by here)...
-            Object searchItem = results.iterator().next();
+            super.log("found results - forwarding to relevant Action for processing...");
+            request.setAttribute(SearchConstants.SEARCH_RESULTS, results);
 
-            //first deal with single object search (ie single Protein view,
-            //CvObject view) - only ever one match.
-            //NB for a Protein this gives a BASIC view, ie non-contextual, and
-            //we only do this view IF the searchClass has been specified (ie from a link)
-            if (((CvObject.class.isAssignableFrom(searchItem.getClass())) ||
-                    (Protein.class.isAssignableFrom(searchItem.getClass()))) &
-                    (!searchClass.equals(""))){
-
-                //in this case only want a viewBean wrapping a single (non-experiment)
-                //object, expanded as necessary.....
-                IntactViewBean bean = new IntactViewBean(searchItem, xslfile, builder, link);
-                bean.createXml();
-
-                //now expand it...
-                String objAc = ((BasicObject)searchItem).getAc();
-                bean.modifyXml(XmlBuilder.EXPAND_NODES, objAc);
-
-                System.out.println("Single Object View: XML after initial expansion:");
-                printBean(bean);
-
-                Collection objXrefs = bean.getAcs("Xref");
-                bean.modifyXml(XmlBuilder.EXPAND_NODES, objXrefs);
-                System.out.println("Single Object View: XML after Xref expansion:");
-                printBean(bean);
-
-                Collection objAnnots = bean.getAcs("Annotation");
-                bean.modifyXml(XmlBuilder.EXPAND_NODES, objAnnots);
-                System.out.println("Single Object View: XML after Annotation expansion:");
-                printBean(bean);
-
-                //for DAG objects, need also to expand details of parent and
-                //child terms...
-                if (CvDagObject.class.isAssignableFrom(searchItem.getClass())) {
-
-                    //get the parent and child ACs from the object itself, because
-                    //CvDagObject is abstract and therefore not represented in any
-                    //XML representations....
-                    Collection parentAcs = new ArrayList();
-                    Collection childAcs = new ArrayList();
-                    CvDagObject cvObj = (CvDagObject) searchItem;
-
-                    Collection parents = cvObj.getParents();
-                    Collection children = cvObj.getChilds();
-                    if (!parents.isEmpty()) {
-                        for (Iterator it = parents.iterator(); it.hasNext();) {
-                            parentAcs.add(((BasicObject) it.next()).getAc());
-                        }
-                    }
-                    if (!children.isEmpty()) {
-                        for (Iterator it = parents.iterator(); it.hasNext();) {
-                            parentAcs.add(((BasicObject) it.next()).getAc());
-                        }
-                    }
-                    //now do it (no ACs, no change :-))
-                    bean.modifyXml(XmlBuilder.EXPAND_NODES, childAcs);
-                    bean.modifyXml(XmlBuilder.EXPAND_NODES, parentAcs);
-
-                }
-                //add it to the session for later display
-                session.setAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN, bean);
-                //idToView.put(Integer.toString(counter), bean);
-
-                //tell the bean about the search details....
-                bean.setSearchInfo(buf.toString());
+            //Two places to go now:
+            //1) do a single item view if the request was from a link rather than a search
+            //   query (ie a searchClass was specified) - DOES NOT apply to Interactions,
+            // because we wnat to see the Protein shortlabels in that case (ie normal view);
+            //2) All other requests go to the 'detail view' for the complex processing
+            if((results.size() == 1) & (!searchClass.equals("")) & (!searchClass.equals("Interaction"))) {
+                System.out.println("single view requested from page link (type given)...");
+                return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
 
             }
             else {
-
-                //must be multiple experiments, proteins etc to be viewed...
 
                 //set the original search criteria into the session for use by
                 //the view action - needed because if the 'back' button is used from
                 //single object views, the original search details are lost
                 session.setAttribute(SearchConstants.LAST_VALID_SEARCH, searchValue);
-
-                // Retrieve the map to add matching results.
-                Map idToView = (Map) session.getAttribute(SearchConstants.FORWARD_MATCHES);
-                // Remove any previous views.
-                idToView.clear();
-                int counter = 0;    // The counter for view beans.
-
-                if (!(searchItem instanceof Experiment)) {
-
-                    //first make sure that any earlier CvObjects are not displayed
-                    //later by mistake
-                    session.setAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN, null);
-
-                    // Maintains the list of protein related interactions which
-                    // have already processed.
-                    // Maps bean id -> list of interactions to be removed later.
-                    Map idToAcList = new HashMap();
-
-                    //Just in case we need to handle Interactions,
-                    //get the ACs of the result set
-                    Collection resultAcs = new ArrayList();
-                    if (searchItem instanceof Interaction) {
-                        for (Iterator it2 = results.iterator(); it2.hasNext();) {
-                            Interaction interaction = (Interaction) it2.next();
-                            resultAcs.add(interaction.getAc());
-                        }
-                    }
-                    //go through the search results and build beans as required...
-                    Iterator it = results.iterator();
-
-                    Map doneExperiments = new HashMap();
-                    boolean isNew = false;
-                    //while(resIter.hasNext()) {
-                    while (it.hasNext()) {
-
-                        //need to get any related objects - eg if a Protein we want to
-                        //see the experiments and interactions etc. In general we would expect
-                        //the results to be all the same type, and related objects we want to be
-                        //Experiments (eg when Proteins or Interactions have been searched for)
-                        Object item = it.next();
-                        //Object item = resIter.next();
-                        Collection relatedObjs = user.getHelper().getRelatedObjects(item);
-                        // Store the view beans in a map.
-                        for (Iterator iter = relatedObjs.iterator(); iter.hasNext(); ++counter) {
-
-                            String beanId = Integer.toString(counter);
-                            IntactViewBean bean = null;
-
-                            //handle redundancy, eg if some Proteins occur in multiple places
-                            //within an Experiment we should only have one bean for the Experiment,
-                            //not as many beans as there are matches..
-                            Set expKeys = doneExperiments.keySet();
-                            Experiment experiment = (Experiment) iter.next();
-                            String experimentAc = experiment.getAc();
-                            if (expKeys.contains(experimentAc)) {
-                                //done this experiment before - modify it rather than create
-                                //a new view bean...
-                                beanId = (String) doneExperiments.get(experimentAc);
-                                bean = (IntactViewBean) idToView.get(beanId);
-                                isNew = false;
-                            } else {
-                                // Construct a view bean for each search result.
-
-                                bean = new IntactViewBean(experiment, xslfile, builder, link);
-                                bean.createXml();
-                                idToView.put(beanId, bean);
-                                // Set the map with an empty collection.
-                                idToAcList.put(beanId, new ArrayList());
-                                isNew = true;
-                            }
-                            //know the view object is an Experiment - we only
-                            //want to expand the Interactions that contain the Protein
-                            //that was searched on, and leave the rest compact...
-                            if (isNew) {
-                                expandTree(bean, "Experiment", null);
-                            }
-
-                            //need to expand the Xrefs and Annotations for the Experiment also, so
-                            //things like eg CvDatabase, CvTopic can be displayed
-                            Collection expXrefs = bean.getAcs("Xref");
-                            bean.modifyXml(XmlBuilder.EXPAND_NODES, expXrefs);
-                            Collection expAnnots = bean.getAcs("Annotation");
-                            bean.modifyXml(XmlBuilder.EXPAND_NODES, expAnnots);
-
-                            //now we have data in a bean we need to generate the required
-                            //XML, based upon the object in the bean. For example, if it is
-                            //an Experiment then it needs expanding down to its Proteins, because
-                            //that is going to be the new initial view. BUT, this also depends on what
-                            //was searched for - if a Protein then the above holds, but if an
-                            //Interaction was searched for then we only expand down to Interactions..
-                            if (item instanceof Protein) {
-                                //done the rest of the Experiment - now do the specific Interactions
-                                //we want.......
-                                Protein protein = (Protein) item;
-                                System.out.println("AC of the searched-for Protein: " + protein.getAc());
-                                System.out.println("AC of experiment containing this Protein: " + experimentAc);
-                                System.out.println("Interactions containing this Protein:");
-                                Collection interactionAcs = getInteractionAcs(protein, experimentAc);
-                                expandTree(bean, "Interaction", interactionAcs);
-                                // Interactions done so far for this bean.
-                                Collection doneInteractions = (Collection) idToAcList.get(beanId);
-                                doneInteractions.addAll(interactionAcs);        //record that we have done these
-                            } else {
-                                // Must be an Interaction!!
-                                //just do the Experiment (XSL should hide the ones we don't want)
-                                //NB BUT to do this we probably need to keep a track here of the ACs
-                                //of the search results so thatthey are the only ones to be displayed.
-                                //Also they somehow need to get passed to the Stylesheet for this!!
-
-                                //get all the Experiment's interaction ACs, then filter out the ones
-                                //we are interested in and use the remaining ones to remove
-                                //the XML elements in the bean...
-                                Collection interactions = experiment.getInteraction();
-                                Collection interactionAcs = new ArrayList();
-                                for (Iterator iter1 = interactions.iterator(); iter1.hasNext();) {
-                                    interactionAcs.add(((Interaction) iter1.next()).getAc());
-                                }
-
-                                Collection acsToKeep = CollectionUtils.intersection(resultAcs, interactionAcs);
-                                expandTree(bean, "Interaction", acsToKeep);
-                                // Interactions done so far for this bean.
-                                Collection doneInteractions = (Collection) idToAcList.get(beanId);
-                                //record that we have done these
-                                doneInteractions.addAll(acsToKeep);
-                            }
-                            // Collect the results together (if necessary)...
-                            if (isNew) {
-                                //record that this bean has been done...
-                                doneExperiments.put(experimentAc, beanId);
-                            }
-
-                            //tell the bean about the search details....
-                            bean.setSearchInfo(buf.toString());
-                            super.log("view bean for related objects to " + searchItem.getClass().getName() + " built OK...");
-                        }
-                    }
-                    // if Proteins or Interactions searched, get rid of compact elements
-                    //we want to leave out.
-                    if (!(searchItem instanceof Experiment)) {
-                        //XSL is only any use for static ops - this means we can't just hide
-                        //the Interactions we don't want to see, as whether or not we want
-                        //them depends on user interaction, which is dynamic. So we have to
-                        //be rather messy and remove the unwanted ones for this particular
-                        //view from the XML managed by the bean....
-                        cleanUpBeans(idToAcList, idToView);
-                        // Store the state in a session, so the JSP can display the
-                        // appropriate view buttons.
-                        request.setAttribute(SearchConstants.PROTEIN_VIEW_BUTTON, "Detail View");
-                    }
-
-                }
-                else {
-                     //just build beans for the Experiments (no need to get the
-                    //related objects of them) - similar code - may refactor later when I have time!!
-                    for (Iterator iter = results.iterator(); iter.hasNext(); ++counter) {
-
-                        // Construct a view bean for each search result.
-                        IntactViewBean bean = new IntactViewBean(iter.next(), xslfile, builder, link);
-                        bean.createXml();
-
-                        //need to expand the Xrefs for the Experiment also, so
-                        //things like eg CvDatabase can be displayed
-                        expandTree(bean, "Experiment", null);
-                        Collection expXrefs = bean.getAcs("Xref");
-                        bean.modifyXml(XmlBuilder.EXPAND_NODES, expXrefs);
-                        //tell the bean about the search details....
-                        bean.setSearchInfo(buf.toString());
-
-                        // Collect the results together...
-                        idToView.put(Integer.toString(counter), bean);
-
-                        super.log("Experiment view bean built OK...");
-                    }
-                }
-
-                //close results
-                System.out.println("closing the result data (Iterator used up, so done automatically).....");
-                //user.getHelper().closeData(resIter);
+                return mapping.findForward(SearchConstants.FORWARD_DETAIL_ACTION);
              }
-            // Move to the results page.
-            return mapping.findForward(SearchConstants.FORWARD_RESULTS);
         }
         catch (IntactException se) {
             // Something failed during search...
@@ -455,25 +167,9 @@ public class SearchAction extends IntactBaseAction {
             super.saveErrors(request);
             return mapping.findForward(SearchConstants.FORWARD_FAILURE);
         }
-        catch (TransformerException te) {
-            // Unable to create a transformer for given stylesheet.
-            super.log(ExceptionUtils.getStackTrace(te));
-            // The errors to report back.
-            super.addError("error.search", te.getMessage());
-            super.saveErrors(request);
-            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
-        }
-        catch (ParserConfigurationException pe) {
-            // Unable to create a transformer for given stylesheet.
-            super.log(ExceptionUtils.getStackTrace(pe));
-            // The errors to report back.
-            super.addError("error.search", pe.getMessage());
-            super.saveErrors(request);
-            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
-        }
     }
 
-    // Helper methods.
+    // ----------------------------- Helper methods ------------------------------
 
     /**
      * utility method to handle the logic for lookup, ie trying AC, label etc.
@@ -579,154 +275,4 @@ public class SearchAction extends IntactBaseAction {
         return results;
         }
 
-
-    /**
-     * Method to recursively expand the Elements of a tree.
-     * Note: this is intact-specific, so for example all expansions stop
-     * at an Xref element, and also any CvObjects are only generated to a compact level
-     * due to the recursive constraints they impose on the XML tree. For each new AC within
-     * a bean's tree that is expanded, the AC+bean id key information is also updated to expand mode
-     * to ensure cache and view consistency.
-     *
-     * @param bean The bean whose Document is to be expanded
-     * @param tagName The name of the type of tags which are to be expanded
-     * @param acList A Collection of specific ACs of this tag type to be expanded. If null, then
-     * by default all elements with the specified taqg name will be expanded.
-     *
-     * @exception IntactException thrown if there was a modify problem
-     * @exception ParserConfigurationException if there was a problem obtaining the XML from the bean
-     */
-    private void expandTree(IntactViewBean bean, String tagName, Collection acList) throws ParserConfigurationException, IntactException {
-
-        //Basic algorithm:
-        //depending on the tag name, either simply expand in full (Protein)
-        //or expand in full then call expandTree again with the next tag type down.
-        //For example, an Experiment should then move to Interactions. the recursion will
-        //take care of the rest if each tag type is handled correctly.
-        if (acList == null) {
-            //find all the ACs for this tag type in the bean, then expand them
-            Collection localAcList = new ArrayList();
-            localAcList = bean.getAcs(tagName);
-            bean.modifyXml(XmlBuilder.EXPAND_NODES, localAcList);
-        }
-        else {
-            bean.modifyXml(XmlBuilder.EXPAND_NODES, acList);
-        }
-
-
-
-        //update the state, just to be sure
-        //this.updateViewState(modes, id, XmlBuilder.EXPAND_NODES);
-
-        //now consider each tag type in turn we are interested in...
-        if (tagName.equals("Protein")) {
-            //base case.....do nothing more
-            return;
-        }
-        if (tagName.equals("Interaction")) {
-            //do the Components, but leave the Proteins as compact for now..
-            expandTree(bean, "Component", null);
-            //expandTree(bean, "Protein", null);
-        }
-        //if(tagName.equals("Experiment")) {
-        //for an Experiment we want to expand everything EXCEPT any
-        //Interactions - always want eg Xrefs, CVs, Annotations, but
-        //XML for Interactions may be only selectively needed....
-        //HOW? XML builder full expansion covers *all* collections!!
-        //}
-
-    }
-
-    /**
-     * obtains the ACs of Interactions for a particular Protein.
-     * @param protein The Protein we are interested in
-     * @param experimentAc The AC of the experiment that contains the Protein
-     * @return Collection The Collection of ACs of the Interactions that refer to the Protein (empty if none)
-     */
-    private Collection getInteractionAcs(Protein protein, String experimentAc) {
-
-        Collection resultList = new ArrayList();
-
-        //the active instance refers to the Components - this isn't documented
-        //though, but by looking at the code activeInstance should contain Components...
-        Collection components = protein.getActiveInstance();
-        //get the Interactions containing this Protein, for the Experiment
-        //we want...
-        Iterator it = components.iterator();
-        while (it.hasNext()) {
-            Object obj = it.next();
-            if (!(obj instanceof Component)) {
-                //something very odd - didn't get Components back from the Protein!!
-                System.out.println("no valid Components for this Protein!");
-                break;
-            }
-            Component component = (Component) obj;
-            Interaction interaction = component.getInteraction();
-            Collection experiments = interaction.getExperiment();
-            Iterator iter = experiments.iterator();
-            while (iter.hasNext()) {
-                Object item = iter.next();
-                if (!(item instanceof Experiment)) {
-                    //something very odd - didn't get Experiments back from the Interaction!!
-                    System.out.println("no valid Experiments for this Interaction!");
-                    break;
-                }
-                Experiment experiment = (Experiment) item;
-                String expAc = experiment.getAc();
-                if (expAc.equals(experimentAc)) {
-                    resultList.add(interaction.getAc());
-                    System.out.println(interaction.getAc());
-                }
-            }
-        }
-
-        return resultList;
-
-    }
-
-    /**
-     * For Protein searches, this method tidies up view beans wrapping
-     * experiments. It removes compact elements and leaves expanded ones.
-     * @param map contains bean id to ACs to keep.
-     * @param idToView to access the bean.
-     */
-    private void cleanUpBeans(Map map, Map idToView)
-            throws ParserConfigurationException {
-        for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            String beanId = (String) entry.getKey();
-            Collection acsToKeep = (Collection) entry.getValue();
-            IntactViewBean bean = (IntactViewBean) idToView.get(beanId);
-
-            Experiment exp = (Experiment) bean.getWrappedObject();
-            Collection removeAcs = new ArrayList();
-            for (Iterator iter1 = exp.getInteraction().iterator(); iter1.hasNext();) {
-                Object obj = iter1.next();
-                if (obj instanceof Interaction) {
-                    removeAcs.add(((Interaction) obj).getAc());
-                }
-            }
-            //now clear the Experiment's interaction AC list of the ones
-            //we have already done, and leave the ones to be removed in it
-            removeAcs.removeAll(acsToKeep);
-            bean.removeElements(removeAcs);
-
-            //now reset the view state to the Protein view.
-            // The AC for Proteins need to set compact for this bean.
-            Collection proteinAcs = bean.getAcs("Protein");
-            bean.resetStatus(proteinAcs, XmlBuilder.CONTRACT_NODES);
-        }
-    }
-
-    private void printBean(IntactViewBean bean) throws TransformerException,
-            ParserConfigurationException {
-        //using System.out for logging as we want the bean info, which
-        //does not have access to a logger...
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //adds whitespace
-        Document doc1 = bean.getAsXmlDoc();
-        transformer.transform(new DOMSource(doc1), new StreamResult(System.out));
-        System.out.println();
-    }
 }
