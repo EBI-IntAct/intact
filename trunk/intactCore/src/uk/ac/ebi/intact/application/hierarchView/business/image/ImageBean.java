@@ -11,7 +11,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.image;
  *
  * Allows to store the image and the associated HTML MAP.
  *
- * @author Emilie Frot
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
 import org.w3c.dom.Document;
 
@@ -33,10 +33,6 @@ public class ImageBean  {
      * HTML MAP code.
      */
     private String mapCode;
-
-    /*************************************************** Constructor */
-
-    public ImageBean() {}
 
     /*************************************************** Setter and getter */
 
@@ -63,8 +59,6 @@ public class ImageBean  {
     public String getMapCode () {
         return mapCode;
     } // getMapCode
-
-
 
 } // ImageBean
 
