@@ -12,10 +12,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import org.apache.struts.action.*;
 
@@ -38,7 +35,7 @@ public class BioSourceAction extends AbstractEditorAction {
     /**
      * The tax id database.
      */
-    private static final String TAX_DB = "SGD";
+    private static final String TAX_DB = "sgd";
 
     /**
      * Action for submitting the CV info form.
@@ -244,7 +241,9 @@ public class BioSourceAction extends AbstractEditorAction {
         CvDatabase db = (CvDatabase) user.getObjectByLabel(
                 CvDatabase.class, TAX_DB);
 
-        return new Xref(owner, db, taxid, label, null, null);
+        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
+                CvXrefQualifier.class, "identity");
+        return new Xref(owner, db, taxid, label, null, xqual);
     }
 
     /**
