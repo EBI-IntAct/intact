@@ -1,0 +1,307 @@
+	Experimental				
+		Biophysical			
+			BIAcore Surface Plasmon Resonance 	Optical biosensor	Surface plasmon resonance
+			X-ray crystallography		
+			NMR nuclear magnetic resonance		
+			ITC Isothermal titration calorimetry		
+			CD Circular Dichroism		
+			Light scattering		
+
+		Mass Spectroscopy			
+			Liquid Chromatography-Mass Spectroscopy	LC-MS	
+			Tandem mass spectroscopy	MS-MS	
+			Electospray		
+			MALDI-TOF	"matrix-assisted laser desorption and ionization, time-of flight"	
+			Multidimensional protein identification technology	MudPIT	
+		Electron Resonance			
+			ENDOR		
+			EPR Electron Paramagnetic resonance	ESR electron spin resonance 	EMR electron magnetic resonance 
+		Fluorescence  technologies			
+			Classical  fluorescence  spectroscopy		
+			FCS fluorescence correlation spectroscopy		
+			Fluorescence polarization spectroscopy FP	Fluorescence anisotropy	
+			FIDA fluorescence intensity distribution analysis		
+			Fluorescence based enzymatic analysis		
+			Flow cytometry  Fluorescence-Activated Cell Sorting (FACS)	FACS	
+			FRET analysis		
+		Cosedimentation			
+			Cosedimentation Ultra centrifugation 		
+			Cosedimentation equilibrium		
+			Cosedimentation velocity		
+			Cosedimentation through gradients		
+		Radioisotope labelling			
+			Scintillation Proximity Assay SPA 		
+					
+		Affinity technologies			
+			Coimmunoprecipitation	Copurification	Immunoprecipitation
+			Affinity chromatography	Copurification	"GSTcolumn, affinity purification "
+			TAP Tandem Affinity Purification	Copurification	
+					
+			Crosslinking studies in vivo  	Label transfer techniques	
+			Photoaffinity labelling		
+					
+			Filter binding	Filter overlay assay	
+			Phage display		
+			Crosslinking studies in vitro 	Label transfer techniques	
+			Ribosome display		
+			mRNA display		
+			PISA		
+			Protein array		
+			Peptide array		
+			ELISA		
+			Molecular sieving 	Copurification	"Gel Filtration, siezing column"
+					
+					
+			Affinity blotting	immunoblotting	Western blotting
+			SELDI ProteinChip		
+					
+			Bordetella pertussis Adenilate cyclase. E coli specific	Bacteria two hybrid	
+			Triple Hybrid : DHFR dehydrofolate reductase 	Mammalia two hybrid	
+			Ubiqitin reconstruction		
+			Reverse Ras Recrutment System (reverse RRS)		
+			Two hybrid Transcription factor (Gal4) reconstruction		
+			Beta gal complementation		
+			Two Hybrid technologies		
+		Colocalization/Visualisation Techniques			
+			Green Fluorescent Protein labelling		
+			Protein staining		
+			Immuno-histochemistry		
+			Colocalization with electron microscopy	immunostaining	
+			Colocalization by fluorescent probes cloning	Immunofluorescence Staining	Confocal microscopy analysis
+	in silico				
+		Text mining			
+			Predictive text mining		
+			Confirmational text mining		
+					
+		Structure based prediction			
+			Surface  patches		
+			Neural network on interface properties		
+			Domain fusion		Rosetta Stone 
+		Sequence based prediction			
+			Correlated mutations		
+			Phylogenetic profile		
+			Gene neighbourhoods		
+			Sequence based phylogenetic profile		
+		Protein interaction extention			
+			Machine learning approach		
+			Interologs ( homology based)		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
