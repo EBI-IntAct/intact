@@ -63,9 +63,11 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <property name="webService.properties.filename"   value="${config.dir}/WebService.properties"/>
     <property name="highlighting.properties.filename" value="${config.dir}/Highlighting.properties"/>
 
-    <!-- Properties files on which some tests will be performed -->
-    <property resource="${webService.properties.filename}"/>
-    <property resource="${highlighting.properties.filename}"/>
+    <!-- Properties files on which some tests will be performed
+         Give the full path from root
+      -->
+    <property file="${webService.properties.filename}"/>
+    <property file="${highlighting.properties.filename}"/>
 
     <!-- Build working classpath -->
     <path id="project.class.path">
@@ -167,9 +169,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <tstamp/>
         <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
 
-        <!-- These targets are called to display messages if tomcat or axis
-        are not present.
-        -->
+        <!-- These targets are called to display messages if tomcat or axis are not present. -->
         <ant dir=".." inheritAll="false" target="check-tomcat"/>
         <ant dir=".." inheritAll="false" target="check-axis"/>
     </target>
@@ -225,10 +225,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
-
-        <!--
-        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
-        -->
     </target>
 
     <!-- =================================================================== -->
@@ -368,8 +364,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
         <echo message="Delete generated files"/>
         <delete dir="uk"/>
-
-
     </target>
 
     <!-- =================================================================== -->
@@ -382,7 +376,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
         <echo message="Remove the service from Axis (installed on Tomcat)"/>
         <delete file="${tomcat.home}/webapps/axis/WEB-INF/lib/${ws.tulip.jar.name}"/>
-
     </target>
 
     <!-- =================================================================== -->
