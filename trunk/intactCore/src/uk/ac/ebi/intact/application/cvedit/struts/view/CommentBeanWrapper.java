@@ -38,7 +38,7 @@ public class CommentBeanWrapper extends TableDecorator {
      * Returns the hyperlink to delete a comment.
      */
     public String getDeleteLink() {
-        String ac = ((CommentBean) super.getObject()).getAc();
-        return "<a href=\"delComment.do?ac=" + ac + "\">Delete</a>";
+        long key = ((CommentBean) super.getObject()).getKey();
+        return "<a href=\"delComment.do?key=" + key + "\">Delete</a>";
     }
 }
