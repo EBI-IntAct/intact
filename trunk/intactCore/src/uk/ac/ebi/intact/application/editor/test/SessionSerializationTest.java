@@ -350,7 +350,10 @@ public class SessionSerializationTest extends TestCase  {
 
             // Update the cb2.
             cb2.setTopic("remark");
-            preView.addAnnotationToUpdate(cb2);
+            // This method is no longer public. Instead:
+            // CommentBean cb22 = new CommentBean(cb2.getAnnotation(user), cb.getKey());
+            // view.saveComment(cb2, cb22);
+//            preView.addAnnotationToUpdate(cb2);
 
             // Database and Xref qualifier for Xrefs.
             CvDatabase sptr = (CvDatabase) myHelper.getObjectByLabel(
@@ -373,7 +376,8 @@ public class SessionSerializationTest extends TestCase  {
 
             // Update xb2.
             xb2.setDatabase("go");
-            preView.addXrefToUpdate(xb2);
+            // See the comments made under preView.addAnnotationToUpdate(cb2).
+//            preView.addXrefToUpdate(xb2);
 
             // Serialize it.
             byte[] bytes = SerializationUtils.serialize(preUser);
