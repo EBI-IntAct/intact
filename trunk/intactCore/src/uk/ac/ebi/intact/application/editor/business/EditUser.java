@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.business;
 
 import java.util.*;
 import java.net.URL;
+import java.sql.SQLException;
 
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -32,6 +33,7 @@ import uk.ac.ebi.intact.persistence.DAOFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.log4j.Logger;
+import org.apache.ojb.broker.accesslayer.LookupException;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -257,14 +259,34 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
+    // Implementation of IntactUserI interface.
+
+    public String getUserName() {
+        if (myHelper != null) {
+            try {
+                return myHelper.getDbUserName();
+            }
+            catch (LookupException e) {}
+            catch (SQLException e) {}
+        }
+        return null;
+    }
+
+    public String getDatabaseName() {
+        if (myHelper != null) {
+            try {
+                return myHelper.getDbName();
+            }
+            catch (LookupException e) {}
+            catch (SQLException e) {}
+        }
+        return null;
+    }
+
     // Implementation of EditUserI interface.
 
     public AbstractEditViewBean getView() {
         return myEditView;
-    }
-
-    public String getUser() {
-        return myUser;
     }
 
     public void setSelectedTopic(String topic) {

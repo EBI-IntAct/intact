@@ -6,23 +6,21 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.business;
 
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.business.IntactException;
+import org.apache.commons.beanutils.DynaBean;
+import uk.ac.ebi.intact.application.commons.business.IntactUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
-import java.util.Collection;
-import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.net.URL;
-
-import org.apache.commons.beanutils.DynaBean;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.Date;
 
 /**
  * Provides methods specific to a user editing an Annotated object.
@@ -30,13 +28,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public interface EditUserI extends Serializable {
-
-    /**
-     * Retturns the user name.
-     * @return the user name of the current user.
-     */
-    public String getUser();
+public interface EditUserI extends IntactUserI, Serializable {
 
     // Get/Set methods for topic selected.
     public void setSelectedTopic(String topic);
