@@ -94,6 +94,15 @@ instructions for anonymous download on the CVS pages. All of what follows assume
 b) You must then ensure that the configuration files are set correctly for you environment. A lot of this is automated
 for you, via the 'config/build.properties' file.
 
+c.) You have to download the relevant jdbc driver for your database and store this driver in /lib.
+    Then set the jdbc-driver name for your database in config/jdbc.properties.
+
+          Postgres users should download the relevant jdbc-driver for your postgres version from
+          http://jdbc.postgresql.org/download.html#jars
+
+          Oracle users should download the relevant jdbc-driver for your oracle version from
+          http://www.oracle.com/technology/software/tech/java/sqlj_jdbc/index.html
+
 Features:
         - Target database:
           Uncomment the target environment that you have (ie currently for oracle or postgres)
