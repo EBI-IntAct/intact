@@ -7,8 +7,9 @@ T O   D O
 
 
 + interact with EGO (e.g. GOTerm.isAParent(GOTerm))
+   - take over with Sugath
+   - make meet Sugath and David Binns
 
-+ no depth limit (see hhe)
 
 + SVG integration 
   + SVG producing (batik)
@@ -24,16 +25,38 @@ T O   D O
   - image processing
   - highlighting process
 
++ add logging facilities in the web service
 
+- Presents to Sugath the new architecture to generate picture !
+  generate svg and the servlet build on the fly the image according to parameters (format ...)
 
++ Work on the SVG applet 
+   - create or reuse an existing one (CSIRO, Batik) 
+   - features
+    - size
 
-- Modify the SVG generation class to fit the improvement of the drawing process (GraphToImage)
+	Q: My applets are big and it takes much time to download (on 
+	browser) when a network is slow.
+	Is there any way to decrease the start up time?
+
+	Answer: The good solution is to make a small core .jar file that
+	contains part applet that is necessary to start it up (initial 
+	GUI elements) and rest of classes can be loaded later when applet
+	is already running. Nobody use 100 % of functionality directly 
+	and will give an impression that everything is ready... :-) 
+	This solution is good due to another reason also. If browser lost
+	connection during loading of one big .jar file you need to start 
+	everything from scratch. If it happens with our solution browser 
+	will cash part of classes and it will save time for reloading!
+
+	Usually you don?t need all the functionality of the applet at 
+	once, so the applet can operate before all of its possible 
+	functionality is downloaded. And .jar and .class files does get
+	cached by most browsers. 
 
 - building a script allowing to do the tedious task of managing the web service !
 
 - create then an external build.xml for hierarchView
-
-- add logging facilities in the web service
 
 - Find a way to check if a web service is currently running (in the runtime)
 
@@ -59,6 +82,12 @@ T O   D O
 ==============
    D O N E
 ==============
+
+
++ Modify the SVG generation class to fit the improvement of the drawing process (GraphToImage)
+  + test it !
+
++ no depth limit (see hhe)
 
 - implement the option of GoHighlightmentSource to use the list of GO terms (children)
 
