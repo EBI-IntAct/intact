@@ -5,35 +5,47 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.business;
 
-import java.util.*;
-import java.beans.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.io.*;
-import java.sql.SQLException;
-import java.sql.Connection;
-
-//as good a logging facility as any other....
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.accesslayer.LookupException;
+import org.apache.ojb.broker.VirtualProxy;
 
-import uk.ac.ebi.intact.util.*;
-import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.simpleGraph.*;
+import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
+import uk.ac.ebi.intact.persistence.*;
+import uk.ac.ebi.intact.simpleGraph.Edge;
+import uk.ac.ebi.intact.simpleGraph.Graph;
+import uk.ac.ebi.intact.simpleGraph.Node;
+import uk.ac.ebi.intact.util.Key;
+import uk.ac.ebi.intact.util.PropertyLoader;
+
+import java.beans.PropertyDescriptor;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
 
 
 /**
  * <p>This class implements the business logic for intact. The requests to be
  * processed are usually obtained (in a webapp environment) from a struts
- * action class and then the business operations are carried out, via the DAO interface to
- * the data source. </p>
+ * action class and then the business operations are carried out, via the DAO
+ * interface to the data source. </p>
  *
  * @author Chris Lewington
  */
-
 public class IntactHelper implements SearchI, Externalizable {
+
+    /**
+     * Path of the configuration file which allow to retrieve the
+     * inforamtion related to the IntAct node we are running on.
+     */
+    private static final String INSTITUTION_CONFIG_FILE = "/config/Institution.properties";
 
     //initialise variables used for persistence
     private DAO dao = null;
@@ -419,9 +431,11 @@ public class IntactHelper implements SearchI, Externalizable {
 
     /**
      * Provides the database name that is being connected to.
+     *
      * @return String the database name, or an empty String if the query fails
+     *
      * @exception org.apache.ojb.broker.accesslayer.LookupException thrown on error
-     * getting the Connection
+     *            getting the Connection
      * @exception SQLException thrown if the metatdata can't be obtained
      */
      public String getDbName() throws LookupException, SQLException {
@@ -1839,6 +1853,205 @@ public class IntactHelper implements SearchI, Externalizable {
         }
 
 
+    /**
+     * Allow the user not to know about the it's Institution, it has to be configured once
+     * in the properties file: ${INTACTCORE_HOME}/config/Institution.properties and then
+     * when calling that method, the Institution is either retreived or created according
+     * to its shortlabel.
+     *
+     * @return the Institution to which all created object will be linked.
+     */
+    public Institution getInstitution() throws IntactException {
+        Institution institution = null;
+
+        Properties props = PropertyLoader.load ( INSTITUTION_CONFIG_FILE );
+        if (props != null) {
+            String shortlabel = props.getProperty ( "Institution.shortLabel" );
+            if (shortlabel == null || shortlabel.trim().equals( "" ))
+                throw new IntactException( "Your institution is not properly configured, check out the configuration file:"+
+                                           INSTITUTION_CONFIG_FILE + " and set 'Institution.shortLabel' correctly" );
+
+            // search for it
+            shortlabel = shortlabel.trim();
+            Collection result = search( Institution.class.getName(), "shortLabel", shortlabel );
+
+            if( result.size() == 0 ){
+                // doesn't exist, create it
+                institution = new Institution( shortlabel );
+
+                String fullname = props.getProperty ( "Institution.fullName" );
+                if ( fullname != null ) {
+                    fullname = fullname.trim();
+                    if( ! fullname.equals( "" ) )
+                    institution.setFullName( fullname );
+                }
+
+
+                String lineBreak = System.getProperty( "line.separator" );
+                StringBuffer address = new StringBuffer( 128 );
+                String line = props.getProperty ( "Institution.postalAddress.line1" );
+                if ( line != null ) {
+                    line = line.trim();
+                    if( ! line.equals( "" ) ) {
+                        address.append( line ).append( lineBreak );
+                    }
+                }
+
+                line = props.getProperty ( "Institution.postalAddress.line2" );
+                if ( line != null ) {
+                    line = line.trim();
+                    if( ! line.equals( "" ) )
+                        address.append( line ).append( lineBreak );
+                }
+
+                line = props.getProperty ( "Institution.postalAddress.line3" );
+                if ( line != null ) {
+                    line = line.trim();
+                    if( ! line.equals( "" ) )
+                        address.append( line ).append( lineBreak );
+                }
+
+                line = props.getProperty ( "Institution.postalAddress.line4" );
+                if ( line != null ) {
+                    line = line.trim();
+                    if( ! line.equals( "" ) )
+                        address.append( line ).append( lineBreak );
+                }
+
+                line = props.getProperty ( "Institution.postalAddress.line5" );
+                if ( line != null ) {
+                    line = line.trim();
+                    if( ! line.equals( "" ) )
+                        address.append( line ).append( lineBreak );
+                }
+
+                if( address.length() > 0) {
+                    address.deleteCharAt( address.length() - 1 ); // delete the last line break;
+                    institution.setPostalAddress( address.toString() );
+                }
+
+                String url = props.getProperty ("Institution.url");
+                if ( url != null ) {
+                    url = url.trim();
+                    if( ! url.equals( "" ) )
+                        institution.setUrl( url );
+                }
+
+                this.create( institution );
+
+            } else {
+                // return the object found
+                institution = (Institution) result.iterator().next();
+            }
+
+        } else {
+            throw new IntactException( "Unable to read the properties from " + INSTITUTION_CONFIG_FILE );
+        }
+
+        return institution;
+    }
+
+
+
+    /**
+     * Gives the Object classname, give the real object class name if this is a VirtualProxy class
+     *
+     * @param obj the object for which we request the real class name.
+     * @return the real class name.
+     *
+     * @see org.apache.ojb.broker.VirtualProxy
+     */
+    public static Class getRealClassName( Object obj ) {
+        Class name = null;
+
+        if( obj instanceof VirtualProxy ) {
+            name = ( (IntactObjectProxy) obj ).getRealClassName();
+        } else {
+            name = obj.getClass();
+        }
+
+        return name;
+    }
+
+    /**
+     * From the real className of an object, gets a displayable name.
+     *
+     * @param obj the object for which we want the class name to display - the object must not be null
+     * @return the classname to display in the view.
+     */
+    public static String getDisplayableClassName( Object obj ) {
+
+        return getDisplayableClassName( getRealClassName( obj ) );
+    }
+
+     /**
+     * From the real className of className, gets a displayable name.
+     *
+     * @param clazz the class for which we want the class name to display - the class must not be null
+     * @return the classname to display in the view.
+     */
+    public static String getDisplayableClassName( Class clazz ) {
+
+        return getDisplayableClassName( clazz.getName() );
+    }
+
+     /**
+     * From the real className of className, gets a displayable name.
+     * <br>
+     * 1. get the real class name.
+     * 2. Removes the package name
+     * 3. try to remove an eventual Impl suffix
+     *
+     * @param name the class name for which we want the class name to display - the class must not be null
+     * @return the classname to display in the view.
+     */
+    public static String getDisplayableClassName( String name ) {
+
+        int indexDot  = name.lastIndexOf( "." );
+        int indexImpl = name.lastIndexOf( "Impl" );
+        if ( indexImpl != -1 )
+            name = name.substring( indexDot + 1, indexImpl ) ;
+        else
+            name = name.substring( indexDot + 1 ) ;
+
+        return name;
+    }
+
+
+    /**
+     *
+     */
+    private static HashMap menuList = new HashMap();
+
+    /** Return a Vector of all shortLabels of the class, e.g. for menus.
+     *
+     * @param helper Database access object
+     * @param forceUpdate If true, an update of the list is forced.
+     *
+     * @return Vector of Strings. Each string one shortlabel.
+     */
+    public static Vector getMenuList(Class targetClass, IntactHelper helper, boolean forceUpdate)
+            throws IntactException {
+        Vector _menuList = (Vector) menuList.get( targetClass );
+
+        if (( _menuList == null) || forceUpdate) {
+            // get all elements of the class
+            Collection allElements = helper.search( targetClass.getName(), "ac", "*" );
+
+            // create the collection
+            _menuList = new Vector( allElements.size() );
+
+            // save all shortLabels
+            for (Iterator i = allElements.iterator(); i.hasNext();) {
+                _menuList.add(((AnnotatedObject) i.next()).getShortLabel());
+            }
+
+            // cache it
+            menuList.put( targetClass, _menuList);
+        }
+        return _menuList;
+    }
+
     //---------------- private helper methods ------------------------------------
 
     /**
@@ -1864,7 +2077,7 @@ public class IntactHelper implements SearchI, Externalizable {
         catch(DataSourceException de) {
             String msg = "failed to create a DAO when it was (somehow!) originally null";
             throw new IntactException(msg, de);
-            }
+        }
     }
 }
 
