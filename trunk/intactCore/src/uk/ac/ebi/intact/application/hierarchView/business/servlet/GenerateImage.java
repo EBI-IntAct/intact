@@ -1,19 +1,19 @@
 package uk.ac.ebi.intact.application.hierarchView.business.servlet;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import java.util.*;
-import java.text.*;
-
-import java.io.IOException;
-
 import org.w3c.dom.Document;
-
-import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ConvertSVG;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
    Purpose: <br>

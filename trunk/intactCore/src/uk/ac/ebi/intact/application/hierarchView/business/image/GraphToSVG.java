@@ -1,44 +1,23 @@
 package uk.ac.ebi.intact.application.hierarchView.business.image;
 
 // intact
-import uk.ac.ebi.intact.simpleGraph.*;
-
-// hierarchView
-import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.struts.*;
-import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-
-// JDK
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.util.*;
-import java.util.Properties;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.lang.Boolean;
-
-import java.io.Writer;
-import java.io.FileWriter;
-import java.io.OutputStreamWriter;
-
-// Batik
-import org.apache.batik.swing.*;
-import org.apache.batik.svggen.*;
-//import org.apache.batik.dom.svg.SVGDOMImplementation;
-//import org.w3c.dom.*;
-import org.w3c.dom.svg.*;
-import javax.swing.*;
-
-import org.apache.batik.transcoder.image.JPEGTranscoder;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.svg.SVGDocument;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.ImageDimension;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.simpleGraph.EdgeI;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.Vector;
 
 
 /**

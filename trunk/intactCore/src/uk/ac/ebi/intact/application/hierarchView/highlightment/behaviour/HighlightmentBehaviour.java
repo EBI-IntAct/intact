@@ -1,13 +1,10 @@
 package uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour;
 
-import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
-import uk.ac.ebi.intact.simpleGraph.*;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.simpleGraph.Node;
 
-import java.util.Iterator;
 import java.util.Collection;
-import java.util.Vector;
-import java.lang.Class;
-import java.lang.Object;
+import java.util.Iterator;
 
 
   /**

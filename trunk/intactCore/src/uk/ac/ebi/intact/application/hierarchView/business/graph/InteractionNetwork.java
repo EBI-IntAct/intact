@@ -7,19 +7,19 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
  */
 
 // intact
-import uk.ac.ebi.intact.simpleGraph.*;
-import uk.ac.ebi.intact.model.*;
-
-// hierarchView
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.*;
-import uk.ac.ebi.intact.application.hierarchView.business.image.*;
+import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
+import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient;
+import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.simpleGraph.EdgeI;
+import uk.ac.ebi.intact.simpleGraph.Graph;
+import uk.ac.ebi.intact.simpleGraph.Node;
+import uk.ac.ebi.intact.simpleGraph.NodeI;
 
-// JDK
+import java.awt.*;
 import java.util.*;
-import java.awt.Color;
  
 public class InteractionNetwork extends Graph {
 

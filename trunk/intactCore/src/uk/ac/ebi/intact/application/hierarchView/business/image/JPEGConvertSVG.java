@@ -1,16 +1,12 @@
 package uk.ac.ebi.intact.application.hierarchView.business.image;
 
-import java.io.*;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import javax.servlet.http.*;
-import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.DOMImplementation;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 
 /**
  * Interface allowing convert a SVG document to an other format (JPEG, TIFF, PNG)
