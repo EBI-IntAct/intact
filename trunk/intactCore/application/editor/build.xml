@@ -50,7 +50,7 @@
     <property name="editor.pkg.root" value="uk/ac/ebi/intact/application/editor"/>
 
     <!-- Editor topic properties location -->
-    <property name="editor.topics.file" value="WEB-INF/config/EditorTopics"/>
+    <property name="editor.topics.file" value="WEB-INF/config/EditorTopics.properties"/>
 
     <!-- Build working classpath -->
     <path id="project.class.path">
@@ -339,6 +339,10 @@
 
         <!-- Generate editor topics -->
         <antcall target="gen-editor-topics"/>
+
+        <!-- Copy topics property file to the editor pkg root -->
+        <copy file="${editor.topics.file}"
+            todir="${dest.dir}/${editor.pkg.root}"/>
 
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${temp.web}">
