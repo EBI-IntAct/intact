@@ -42,7 +42,8 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         super.reset(clazz);
         // Set fields to null.
         setTaxId(null);
-
+        setCellType(null);
+        setTissue(null);
     }
 
     // Override the super method to set the tax id.
@@ -121,14 +122,16 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     public void sanityCheck(EditUserI user) throws ValidationException,
             SearchException {
         // There should be one unique bisosurce.
-        BioSource bs = user.getBioSourceByTaxId(myTaxId);
-        if (bs !=null) {
-        	// A BioSource found.
-        	if (!bs.getAc().equals(getAc())) {
-        		// Different biosources.
-				throw new BioSourceException("bs.sanity.taxid.dup",
-					 "error.bs.sanity.taxid.dup");
-			}
+        if ((getCellType() == null) && (getTissue() == null)) {
+            BioSource bs = user.getBioSourceByTaxId(myTaxId);
+            if (bs !=null) {
+                // A BioSource found.
+                if (!bs.getAc().equals(getAc())) {
+                    // Different biosources.
+                    throw new BioSourceException("bs.sanity.taxid.dup",
+                         "error.bs.sanity.taxid.dup");
+                }
+            }
         }
     }
 
