@@ -52,6 +52,9 @@
     <!-- Editor topic properties location -->
     <property name="editor.topics.file" value="WEB-INF/config/EditorTopics.properties"/>
 
+    <!-- The name of the last modified file -->
+    <property name="last.modified.file" value="last-modified.txt"/>
+
     <!-- Build working classpath -->
     <path id="project.class.path">
         <!-- Project specific jar files. -->
@@ -206,7 +209,7 @@
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
-    <target name="build-war" depends="compile">
+    <target name="build-war" depends="compile, gen-last-modified-file">
 
         <!-- Copy XML (configuration) files -->
         <copy todir="${temp.web}/WEB-INF">
@@ -247,6 +250,8 @@
 
         <!-- The welcome file at the root. -->
         <copy file="welcome.jsp" todir="${temp.web}"/>
+        <!-- The last modifed file at the root. -->
+        <copy file="${last.modified.file}" todir="${temp.web}"/>
 
         <!-- Common struts standard tld files -->
         <copy todir="${temp.web}/WEB-INF/tld">
@@ -347,6 +352,7 @@
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${temp.web}">
                 <include name="welcome.jsp"/>
+                <include name="${last.modified.file}"/>
                 <include name="images/*"/>
                 <include name="pages/**"/>
                 <include name="layouts/**"/>
@@ -439,4 +445,13 @@
         <ant dir=".." inheritAll="false" target="stop-tomcat"/>
     </target>
 
+    <!-- =================================================================== -->
+
+    <!-- Generates the last modified date file. -->
+
+    <target name="gen-last-modified-file">
+        <ant dir=".." inheritAll="false" target="gen-last-modified-file">
+            <property name="file" value="editor/${last.modified.file}"/>
+        </ant>
+    </target>
 </project>
