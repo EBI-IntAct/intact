@@ -266,22 +266,19 @@ public abstract class AnnotatedObject extends BasicObject {
         Annotation annotation = null;
          for (Iterator iterator = getAnnotations().iterator(); iterator.hasNext();) {
              Annotation a = (Annotation) iterator.next();
-             if (a.getCvTopic() == topic){
+             if (a.getCvTopic().equals(topic)){
                  annotation = a;
                  break;
              }
          }
          if (null == annotation){
              annotation = new Annotation(owner, topic);
-             //annotation.setOwner(owner);
-             //annotation.setCvTopic(topic);
              addAnnotation(annotation);
          }
          // Now annotation is a valid object, (re-) set the text
-         if (annotation.getAnnotationText() != description){
-             annotation.setAnnotationText(description);
-         }
-        return annotation;
+	 annotation.setAnnotationText(description);
+         
+	 return annotation;
     }
 
     /**

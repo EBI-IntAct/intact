@@ -57,7 +57,7 @@ echo "Inserting controlled vocabularies"
 
 echo ""
 echo "Insert CvTopic"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvTopic data/controlledVocab/CvTopic.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvTopic - data/controlledVocab/CvTopic.def
 if [ $? != 0 ]
 then
     exit 1
@@ -65,7 +65,7 @@ fi
 
 echo ""
 echo "Insert CvXrefQualifier"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvXrefQualifier data/controlledVocab/CvXrefQualifier.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvXrefQualifier - data/controlledVocab/CvXrefQualifier.def
 if [ $? != 0 ]
 then
     exit 1
@@ -73,7 +73,7 @@ fi
 
 echo ""
 echo "Insert CvAliasType"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvAliasType data/controlledVocab/CvAliasType.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvAliasType - data/controlledVocab/CvAliasType.def
 if [ $? != 0 ]
 then
     exit 1
@@ -81,7 +81,7 @@ fi
 
 echo ""
 echo "Insert CvDatabase"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase data/controlledVocab/CvDatabase.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase - data/controlledVocab/CvDatabase.def
 if [ $? != 0 ]
 then
     exit 1
@@ -89,7 +89,7 @@ fi
 
 echo ""
 echo "Insert CvComponentRole"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvComponentRole data/controlledVocab/CvComponentRole.def
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvComponentRole - data/controlledVocab/CvComponentRole.def
 if [ $? != 0 ]
 then
     exit 1
@@ -97,7 +97,7 @@ fi
 
 echo ""
 echo "Insert CvIdentification"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvIdentification data/controlledVocab/CvIdentification.def data/controlledVocab/CvIdentification.dag
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvIdentification psi-mi data/controlledVocab/CvIdentification.def data/controlledVocab/CvIdentification.dag
 if [ $? != 0 ]
 then
     exit 1
@@ -105,7 +105,7 @@ fi
 
 echo ""
 echo "Insert CvInteraction"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteraction data/controlledVocab/CvInteraction.def data/controlledVocab/CvInteraction.dag
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteraction psi-mi data/controlledVocab/CvInteraction.def data/controlledVocab/CvInteraction.dag
 if [ $? != 0 ]
 then
     exit 1
@@ -113,7 +113,7 @@ fi
 
 echo ""
 echo "Insert CvInteractionType"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteractionType data/controlledVocab/CvInteractionType.def data/controlledVocab/CvInteractionType.dag
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteractionType psi-mi data/controlledVocab/CvInteractionType.def data/controlledVocab/CvInteractionType.dag
 if [ $? != 0 ]
 then
     exit 1

@@ -1,13 +1,13 @@
 shortlabel: sptr
 term: Swiss-Prot/TrEMBL protein sequence database
-definition: The Swiss-Prot/TrEMBL protein sequence database.
-url: http://www.ebi.ac.uk/swissprot/
 search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+[SWALL-acc:${ac}]+-view+SwissEntry
+url: http://www.ebi.ac.uk/swissprot/
+definition: The Swiss-Prot/TrEMBL protein sequence database.
 
 shortlabel: pubmed
 term: PubMed
-definition: Citation database of the National Library of Medicine, US.
 url: http://www.ncbi.nlm.nih.gov/PubMed/
+definition: Citation database of the National Library of Medicine, US.
 search-url: http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=${ac}&dopt=Abstract
 
 shortlabel: sgd
@@ -23,12 +23,28 @@ search-url: http://www.ebi.ac.uk/ego/DisplayGoTerm?id=${ac}
 
 shortlabel: newt
 term: New EBI Web Taxonomy
-url: http://www.ebi.ac.uk/newt/index.html
 search-url: http://www.ebi.ac.uk/newt/display?search=${ac}
+url: http://www.ebi.ac.uk/newt/index.html
 definition: NEWT is the taxonomy database maintained by the Swiss-Prot group. It integrates taxonomy data compiled in the NCBI database and data specific to the Swiss-Prot protein knowledgebase. 
 
 shortlabel: interpro
 term: InterPro
-url: http://www.ebi.ac.uk/interpro
 search-url: http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=${ac}
+url: http://www.ebi.ac.uk/interpro
 definition: InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
+
+shortlabel: intact
+term: IntAct molecular InterAction database
+url: http://www.ebi.ac.uk/intact/
+search-url: http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=${ac}
+
+shortlabel: psi-mi
+term: Proteomics Standards Initiative - Molecular Interaction XML format CVs
+definition: The HUPO Proteomics Standards Initiative has developed controlled vocabularies for protein interaction data. These CVs are fully integrated into IntAct, therefore no search-url is given, only the URL of the PSI documentation.
+url: http://psidev.sf.net/mi/xml/doc/user/index.html
+url: http://psidev.sf.net/mi/controlledVocab/psi-mi.dag.html
+
+shortlabel: flybase
+term: FlyBase - A Database of the Drosophila Genome
+url: http://fbserver.gen.cam.ac.uk:7081/
+

@@ -100,31 +100,24 @@ public class GoTools {
      */
     public static CvObject insertDefinition(Hashtable definition,
                                             IntactHelper helper,
+					    String goidDatabase, 
                                             Class targetClass,
                                             boolean deleteold)
             throws IntactException, Exception {
 
         /* Update strategy:
-        Criterion of object identity: GO id == IntAct GO xref.
-        Update shortlabel, name, description, GO comment.
-        Subobjects are only removed if deleteOld is true.
+	   Select correct term to update.
+	   Update shortlabel, name, description, GO comment.
+	   Subobjects are only removed if deleteOld is true.
         */
 
         RE pubmedRefPat = new RE("PMID\\:(\\d+)");
 
         // Get or create CvObject
-        CvObject current;
-
-        // If the intact shortlabel is defined, use it, otherwise use the GO id to try to retrieve the
-        // corresponding IntAct object.
-        if (((Vector) definition.get("shortlabel")) != null) {
-            String shortLabel = ((Vector) definition.get("shortlabel")).elementAt(0).toString();
-            current = (CvObject) helper.getObjectByLabel(targetClass, shortLabel);
-        }
-        else {
-            current = (CvObject) helper.getObjectByXref(targetClass,
-                    ((Vector) definition.get("goid")).elementAt(0).toString());
-        }
+        CvObject current = selectCvObject(helper,
+					  goidDatabase,
+					  definition, 
+					  targetClass);
 
         if (null == current) {
             //This would be better done using the (owner, shortLabel) constructor
@@ -149,7 +142,13 @@ public class GoTools {
         // Update shortLabel. Label has to be unique!
         String label;
         String goTerm = ((Vector) definition.get("term")).elementAt(0).toString();
-
+	String goid = "";
+	try {
+	    goid =  ((Vector) definition.get("goid")).elementAt(0).toString();
+	} 
+	catch (Exception e) {
+	};
+	
         // The short label might be properly defined in the GO flat file.
         if ((Vector) definition.get("shortlabel") != null) {
             label = (((Vector) definition.get("shortlabel")).elementAt(0)).toString();
@@ -157,17 +156,13 @@ public class GoTools {
         else {
             label = goTerm.substring(0, Math.min(goTerm.length(), MAX_LABEL_LEN));
             label = getUniqueShortLabel(helper, targetClass, current.getAc(), label,
-                    ((Vector) definition.get("goid")).elementAt(0).toString());
+					goid);
         }
 
         current.setShortLabel(label);
 
         // Update fullName
         current.setFullName(goTerm.substring(0, Math.min(goTerm.length(), MAX_NAME_LEN)));
-
-//        if (helper.isPersistent(current)) {
-//            helper.update(current);
-//        }
 
         // Update all comments
         for (Enumeration comments = definition.keys(); comments.hasMoreElements();) {
@@ -189,10 +184,11 @@ public class GoTools {
             }
         }
 
-        // add GO xref if it does not yet exist.
-        if ((Vector) definition.get("goid") != null) {
+        // add xref to goidDatabase if it does not yet exist.
+        if (((Vector) definition.get("goid") != null) &&
+	    (! goidDatabase.equals("-"))) {
             Xref xref = new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                    (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go"),
+                    (CvDatabase) helper.getObjectByLabel(CvDatabase.class, goidDatabase),
                     ((Vector) definition.get("goid")).elementAt(0).toString(),
                     null, null, null);
             if (! current.getXrefs().contains(xref)){
@@ -238,6 +234,7 @@ public class GoTools {
      */
     public static void insertGoDefinitions(Class aTargetClass,
                                            IntactHelper helper,
+					   String goidDatabase,
                                            String sourceFile)
             throws Exception {
 
@@ -260,7 +257,7 @@ public class GoTools {
             // Insert the definition
             try {
                 // helper.startTransaction(BusinessConstants.JDBC_TX);
-                insertDefinition(goRecord, helper, aTargetClass, false);
+                insertDefinition(goRecord, helper, goidDatabase, aTargetClass, false);
                 // helper.finishTransaction();
             }
             catch (IntactException e){
@@ -279,6 +276,7 @@ public class GoTools {
      */
     public static void insertGoDag(Class aTargetClass,
                                    IntactHelper helper,
+				   String goidDatabase,
                                    String sourceFile)
             throws Exception {
 
@@ -287,7 +285,7 @@ public class GoTools {
         BufferedReader in = new BufferedReader(new FileReader(sourceFile));
 
         System.err.println("Reading GO DAG lines: ");
-        DagNode.addNodes(in, null, aTargetClass, helper, 0);
+        DagNode.addNodes(in, null, aTargetClass, helper, goidDatabase, 0);
         System.err.println("\nGO DAG read.");
 
         return;
@@ -298,6 +296,7 @@ public class GoTools {
      */
     public static void writeGoDefinitions(Class aTargetClass,
                                           IntactHelper helper,
+					  String goidDatabase,
                                           String targetFile)
             throws IntactException, IOException {
 
@@ -308,7 +307,7 @@ public class GoTools {
         for (Iterator iterator = result.iterator(); iterator.hasNext();) {
             CvObject o = (CvObject) iterator.next();
 
-            out.print(toGoString(o));
+            out.print(toGoString(o,goidDatabase));
         }
 
         out.close();
@@ -359,33 +358,28 @@ public class GoTools {
     /**
      * Return a single CvObject as a GO flatfile formatted string
      */
-    public static String toGoString(CvObject current) {
+    public static String toGoString(CvObject current, String goidDatabase) {
         StringBuffer buf = new StringBuffer();
 
-        // Write IntAct ac and shortlabel
-        buf.append("intact_ac: ");
-        buf.append(current.getAc());
-        buf.append("\n");
-        buf.append("shortlabel: ");
-        buf.append(current.getShortLabel());
-        buf.append("\n");
-
+	// Write shortlabel  
+	buf.append("shortlabel: ");
+	buf.append(current.getShortLabel());
+	buf.append("\n");
+	
         // Write GO term
         buf.append("term: ");
         buf.append(current.getFullName());
         buf.append("\n");
 
-        // Write GO id
-        Collection xref = current.getXrefs();
-        for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
-            Xref x = (Xref) iterator.next();
-            if (x.getCvDatabase().getShortLabel().equals("go")) {
-                buf.append("goid: ");
-                buf.append(x.getPrimaryId());
-                buf.append("\n");
-            }
-        }
+	// write goid
+	String goid = getGoid(current, goidDatabase);
 
+	if (null != goid) {
+	    buf.append("goid: ");
+	    buf.append(goid);
+	    buf.append("\n");
+        }
+	
         // Write all comments in GO format
         Collection annotation = current.getAnnotations();
         for (Iterator iterator = annotation.iterator(); iterator.hasNext();) {
@@ -397,7 +391,7 @@ public class GoTools {
         }
 
         // Write definition references
-        xref = current.getXrefs();
+        Collection xref = current.getXrefs();
         for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
             Xref x = (Xref) iterator.next();
             if (x.getCvDatabase().getShortLabel().equals("pubmed")) {
@@ -416,11 +410,12 @@ public class GoTools {
      *
      * @param aTargetClass The class for which to print the DAG
      * @param helper       IntactHelper object for database access
+     * @param goidDatabase The database xref to use for the goid.
      * @param aTargetFile  The file to print to
      * @throws IntactException
      * @throws IOException
      */
-    private static void writeGoDag(Class aTargetClass, IntactHelper helper, String aTargetFile)
+    private static void writeGoDag(Class aTargetClass, IntactHelper helper, String goidDatabase, String aTargetFile)
             throws IntactException, IOException {
 
         PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(aTargetFile)));
@@ -432,7 +427,7 @@ public class GoTools {
             Iterator iterator = result.iterator();
             CvDagObject o = (CvDagObject) iterator.next();
             o = o.getRoot();
-            out.print(o.toGoDag());
+            out.print(o.toGoDag(goidDatabase));
         }
 
         out.close();
@@ -441,8 +436,14 @@ public class GoTools {
 
     /** Load or unload Controlled Vocabularies in GO format.
      *  Usage:
-     *  GoTools upload   IntAct_classname Go_DefinitionFile [Go_DagFile] |
-     *  GoTools download IntAct_classname Go_DefinitionFile [Go_DagFile]
+     *  GoTools upload   IntAct_classname goid_db Go_DefinitionFile [Go_DagFile] |
+     *  GoTools download IntAct_classname goid_db Go_DefinitionFile [Go_DagFile]
+     *  
+     *  goid_db is the shortLabel of the database which is to be used to establish 
+     *  object identity by mapping it to goid: in the GO flat file.
+     *  Example: If goid_db is psi-mi, an CvObject with an xref "psi-mi; MI:123" is
+     *  considered to be the same object as an object from the flat file with goid MI:123.
+     *  If goid_db is '-', the shortLabel will be used if present.
      *
      * @param args
      * @throws Exception
@@ -450,14 +451,20 @@ public class GoTools {
     public static void main(String[] args) throws Exception {
 
         final String usage = "Usage:\n" +
-                "GoTools upload   IntAct_classname Go_DefinitionFile [Go_DagFile]    OR\n" +
-                "GoTools download IntAct_classname Go_DefinitionFile [Go_DagFile]";
+	    "GoTools upload   IntAct_classname goid_db Go_DefinitionFile [Go_DagFile]    OR\n" +
+	    "GoTools download IntAct_classname goid_db Go_DefinitionFile [Go_DagFile]\n"  +
+	    "\n"  +
+	    "goid_db is the shortLabel of the database which is to be used to establish \n"  +
+	    "object identity by mapping it to goid: in the GO flat file.\n" +
+	    "Example: If goid_db is psi-mi, an CvObject with an xref psi-mi; MI:123 is\n" +
+	    "considered to be the same object as an object from the flat file with goid MI:123.\n" +
+	    "If goid_db is '-', the short label will be used if present.";
 
         Class targetClass = null;
 
         try {
             // Check parameters
-            if ((args.length < 3) || (args.length > 4)) {
+            if ((args.length < 4) || (args.length > 5)) {
                 System.out.println ( "Invalid number of arguments.\n" + usage );
                 System.exit( 1 );
             }
@@ -477,24 +484,24 @@ public class GoTools {
             if (args[0].equals("upload")) {
 
                 // Insert definitions
-                insertGoDefinitions(targetClass, helper, args[2]);
+                insertGoDefinitions(targetClass, helper, args[2], args[3]);
 
                 // Insert DAG
-                if (args.length == 4) {
-                    insertGoDag(targetClass, helper, args[3]);
+                if (args.length == 5) {
+                    insertGoDag(targetClass, helper, args[2], args[4]);
                 }
 
             }
             else if (args[0].equals("download")) {
 
                 // Write definitions
-                System.err.println("Writing GO definitons to " + args[2] + " ...");
-                writeGoDefinitions(targetClass, helper, args[2]);
+                System.err.println("Writing GO definitons to " + args[3] + " ...");
+                writeGoDefinitions(targetClass, helper, args[2], args[3]);
 
                 // Write go dag format
-                if (args.length == 4) {
-                    System.err.println("Writing GO DAG to " + args[3] + " ...");
-                    writeGoDag(targetClass, helper, args[3]);
+                if (args.length == 5) {
+                    System.err.println("Writing GO DAG to " + args[4] + " ...");
+                    writeGoDag(targetClass, helper, args[2], args[4]);
                     System.err.println("Done.");
                 }
 
@@ -536,6 +543,98 @@ public class GoTools {
         }
         return null;
 
+    }
+
+    /** 
+	Select an appropriate CvObject for update if it exists.
+	Criterion of object identity:
+	if goidDatabase is '-', try to match by shortlabel
+	otherwise try to match by goid and goidDatabase	
+    */
+    public static CvObject selectCvObject(IntactHelper helper, 
+					  String goidDatabase,
+					  String goid,
+					  String shortLabel,
+					  Class targetClass) 
+	throws IntactException {
+	
+	if (goidDatabase.equals("-")){
+	    if(null != shortLabel){
+		return (CvObject) helper.getObjectByLabel(targetClass, shortLabel);
+	    }
+	} else {
+	    if ((null != goidDatabase) 
+		&&
+		(null != goid)){
+		CvObject current = (CvObject) helper.getObjectByXref(targetClass, goid);
+		if (null != current){
+		    Collection xref = current.getXrefs();
+		    for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
+			Xref x = (Xref) iterator.next();
+			if (x.getCvDatabase().getShortLabel().equals(goidDatabase)
+			    &&
+			    x.getPrimaryId().equals(goid)) {
+			    return current;
+			}			    
+		    }
+		}
+	    }
+	    // We have not found any match by goid. Try shortlabel.
+	    return (CvObject) helper.getObjectByLabel(targetClass, shortLabel); 
+	}
+	
+	return null;
+    }
+
+    /** 
+	Select an appropriate CvObject for update if it exists.
+	Criterion of object identity:
+	if goidDatabase is '-', try to match by shortlabel
+	otherwise try to match by goid and goidDatabase	
+    */
+    public static CvObject selectCvObject(IntactHelper helper, 
+					  String goidDatabase,
+					  Hashtable definition,
+					  Class targetClass)  
+	throws IntactException {
+	
+        // Get goid
+	String goid = null;
+	try {
+	    goid =  ((Vector) definition.get("goid")).elementAt(0).toString();
+	} 
+	catch (Exception e) {
+	};
+
+        // Get shortLabel
+	String shortLabel = null;
+	try {
+	    shortLabel =  ((Vector) definition.get("shortlabel")).elementAt(0).toString();
+	} 
+	catch (Exception e) {
+	};
+
+	return selectCvObject(helper, goidDatabase, goid, shortLabel, targetClass);
+    }
+
+
+    /** Return an identifier to be used in the go flat file format
+	for the goid: element.
+    */
+    public static String getGoid(CvObject current, 
+				 String goidDatabase){
+
+	if (! goidDatabase.equals("-")){
+	    Collection xref = current.getXrefs();
+	    for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
+		Xref x = (Xref) iterator.next();
+		if (x.getCvDatabase().getShortLabel().equals(goidDatabase)) {
+		    // There should be only one GO id
+		    return x.getPrimaryId();
+		}
+	    };
+	}	
+	return null;
     }
 }
 

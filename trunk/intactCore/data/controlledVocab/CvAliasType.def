@@ -8,5 +8,5 @@ definition: A synonym for a gene name.
 
 shortlabel: isoform-synonym
 term: Isoform synonym
-definition: A synonym for an protein isoform.
+definition: A synonym for a protein isoform.
 
