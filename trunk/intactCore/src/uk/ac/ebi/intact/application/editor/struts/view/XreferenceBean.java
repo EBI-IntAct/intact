@@ -11,8 +11,13 @@ import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.Annotation;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Bean to store data for x'references.
@@ -21,6 +26,11 @@ import java.io.Serializable;
  * @version $Id$
  */
 public class XreferenceBean extends AbstractEditKeyBean implements Serializable {
+
+    /**
+     * The pattern to replace the ac.
+     */
+    private static Pattern ourSearchUrlPat = Pattern.compile("\\$\\{ac\\}");
 
     /**
      * Reference to the Xref object this instance is created with.
@@ -33,9 +43,9 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
     private String myDatabaseName;
 
     /**
-     * The primary id.
+     * The primary id. Set to empty; this is a required field.
      */
-    private String myPrimaryId;
+    private String myPrimaryId = "";
 
     /**
      * The secondary id.
@@ -112,7 +122,32 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
      * Return the primary id.
      */
     public String getPrimaryId() {
-        return myPrimaryId;
+        // When no Xref is wrapped (for instance adding a new xref).
+        if (myXref == null) {
+            return myPrimaryId;
+        }
+        // Null to indicate that there is no search-url in the annotations.
+        String searchUrl = null;
+
+        // Loop through annotations looking for search-url.
+        Collection annots = myXref.getCvDatabase().getAnnotations();
+        for (Iterator iter = annots.iterator(); iter.hasNext(); ){
+            Annotation annot = (Annotation) iter.next();
+            if (annot.getCvTopic().getShortLabel().equals("search-url")){
+                // save searchUrl for future use
+                searchUrl = annot.getAnnotationText();
+                break;
+            }
+        }
+        if (searchUrl == null) {
+            // No links
+            return myPrimaryId;
+        }
+        Matcher matcher = ourSearchUrlPat.matcher(searchUrl);
+        // After replacing the ac with primary id.
+        searchUrl = matcher.replaceAll(myPrimaryId);
+        return "<a href=\"" + "javascript:showXrefPId('" + searchUrl + "')\"" + ">"
+                + myPrimaryId + "</a>";
     }
 
     /**
@@ -179,9 +214,9 @@ public class XreferenceBean extends AbstractEditKeyBean implements Serializable 
     }
 
     /**
-     * Updates the internal annotation with the new values from the form.
-     * @param user the user instance to search for a CvTopic object.
-     * @throws SearchException for errors in searching for a CvTopic.
+     * Updates the internal xref with the new values from the form.
+     * @param user the user instance to search for a cv database and xref qualifier.
+     * @throws SearchException for errors in searching the database.
      */
     public void update(EditUserI user) throws SearchException {
         CvDatabase db = (CvDatabase) user.getObjectByLabel(
