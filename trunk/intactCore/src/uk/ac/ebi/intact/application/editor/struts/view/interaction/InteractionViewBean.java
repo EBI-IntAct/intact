@@ -589,20 +589,21 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public void delProtein(int pos) {
-//        // Get the bean from the current view.
-//        int pos = myComponents.indexOf(cb);
-//
-//        // We should have this bean in the view.
-//        assert pos != -1;
-//
-//        // The bean we want to remove.
-//        ComponentBean bean = (ComponentBean) myComponents.get(pos);
+        // The component bean at position 'pos'.
+        ComponentBean cb = (ComponentBean) myComponents.get(pos);
 
-        // Remove from the view as well; need the index because we need to
-        // remove a specific bean (not just any bean which returns true for
-        // equals method).
-        ComponentBean cb = (ComponentBean) myComponents.remove(pos);
-        // Add to the container to delete proteins.
+        // Avoid creating an empty list if the comp has no features.
+        if (!cb.getFeatures().isEmpty()) {
+            // Collects features to delete (to get around concurrent modification prob)
+            List featuresToDel = new ArrayList(cb.getFeatures());
+            // Delete all the Features belonging to this component.
+            for (Iterator iter = featuresToDel.iterator(); iter.hasNext();) {
+                delFeature((FeatureBean) iter.next());
+            }
+        }
+        // Remove it from the view.
+        myComponents.remove(pos);
+        // Add to the container to delete it.
         myComponentsToDel.add(cb);
         // Remove from the update list if it has already been added.
         myComponentsToUpdate.remove(cb);
@@ -652,7 +653,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         myExperimentsToDel.clear();
         myExperimentsToHold.clear();
 
-        // Clear proteins.
+        // Clear components.
         myComponentsToDel.clear();
         myComponentsToUpdate.clear();
 
@@ -738,28 +739,27 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     /**
      * Deletes the given feature from the current view.
-     *
      * @param fb the Feature bean to delete. This feature must exist
      * in the current view.
      */
-    public void deleteFeature(FeatureBean fb)
-            throws SearchException {
+    public void delFeature(FeatureBean fb) {
         // Extract the corresponding feature bean.
         FeatureBean bean = getFeatureBean(fb);
 
+        // Has this feature linked to another feature?
+        if (bean.getBoundDomain().length() != 0) {
+            addFeatureToUnlink(bean);
+            // The linked feature bean.
+//            FeatureBean tofb = getFeatureBean(bean.getBoundDomain());
+//            tofb.setBoundDomain("");
+        }
         // The component bean the feature belongs to.
         ComponentBean comp = getComponentBean(bean.getComponentAc());
 
         // We should have this component.
         assert comp != null;
 
-        // Has this feature linked to another feature?
-        if (bean.getBoundDomain().length() != 0) {
-            // The linked feature bean.
-            FeatureBean tofb = getFeatureBean(bean.getBoundDomain());
-            tofb.setBoundDomain("");
-        }
-        // Remove from the component beans.
+        // Remove it from the component beans.
         comp.delFeature(bean);
 
         // Update this component for it to persist correctly.
@@ -793,11 +793,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
      *
      * @param fb the Feature bean to remove the link. This bean
      * replaces any previous similar feature (i.e, no duplicates).
-     * @throws SearchException for errors in accessing Feature instance
-     * wrapped around the bean.
      */
-    public void addFeatureToUnlink(FeatureBean fb)
-            throws SearchException {
+    public void addFeatureToUnlink(FeatureBean fb) {
         // The destination feature as a bean.
         FeatureBean toFb = getFeatureBean(fb.getBoundDomain());
         // This bean must exist.
@@ -819,21 +816,17 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     /**
      * Deletes features that have been added. This is required when an Interaction
-     * is canclled after adding features (these features are submitted via the
+     * is cancelled after adding features (these features are submitted via the
      * Feature editor).
      *
      * @param user to delete feature.
      * @throws IntactException for errors in deleting features.
      */
     public void delFeaturesAdded(EditUserI user) throws IntactException {
-        // Search among the updated components.
-        for (Iterator iter0 = myComponentsToUpdate.iterator(); iter0.hasNext();) {
-            ComponentBean cb = (ComponentBean) iter0.next();
-            for (Iterator iter1 = cb.getFeaturesToAdd().iterator();
-                 iter1.hasNext();) {
-                user.delete(((FeatureBean) iter1.next()).getFeature());
-            }
-        }
+        // Search among the updated and deleted components.
+        deleteFeaturesAdded(myComponentsToUpdate, user);
+        // Could be that newly added Feature was deleted.
+        deleteFeaturesAdded(myComponentsToDel, user);
     }
 
     /**
@@ -996,12 +989,16 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Delete components and remove it from the interaction.
         for (Iterator iter = myComponentsToDel.iterator(); iter.hasNext();) {
-            Component comp = ((ComponentBean) iter.next()).getComponent(user);
+            ComponentBean cb = (ComponentBean) iter.next();
+            Component comp = cb.getComponent(user);
             // No need to delete from persistent storage if the link to this
             // Protein is not persisted.
             if ((comp == null) || (comp.getAc() == null)) {
                 continue;
             }
+            // Disconnect any links between features in the component.
+            disconnectLinkedFeatures(cb, user);
+
             user.delete(comp);
             intact.removeComponent(comp);
         }
@@ -1010,24 +1007,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
         for (Iterator iter1 = myComponentsToUpdate.iterator(); iter1.hasNext();) {
             ComponentBean cb = (ComponentBean) iter1.next();
             cb.setInteraction((Interaction) getAnnotatedObject());
-            Component comp = cb.getComponent(user);
 
-            // Delete any links among features to delete. This should be done
-            // first before deleting a feature. Actual deleting a feature is
-            // done in a separate transaction.
-            for (Iterator iter2 = cb.getFeaturesToDelete().iterator(); iter2.hasNext();) {
-                Feature feature = ((FeatureBean) iter2.next()).getFeature(user);
-                // Remove any links if this feature is linked to another feature.
-                if (feature.getBoundDomain() != null) {
-                    Feature toFeature = feature.getBoundDomain();
-                    if (toFeature.getBoundDomain() == null) {
-                        continue;
-                    }
-                    // Disconnect the links between two features.
-                    toFeature.setBoundDomain(null);
-                    user.update(toFeature);
-                }
-            }
+            // Disconnect any links between features in the component.
+            disconnectLinkedFeatures(cb, user);
+
+            Component comp = cb.getComponent(user);
 
             // Add features
             for (Iterator iter2 = cb.getFeaturesToAdd().iterator(); iter2.hasNext();) {
@@ -1080,7 +1064,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
             // The Feature to unlink.
             Feature feature = ((FeatureBean) iter.next()).getFeature();
 
-            // Set the bound domian to null.
+            // Set the bound domain to null.
             feature.setBoundDomain(null);
 
             // Update features.
@@ -1199,6 +1183,49 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
         // Not found the bean, return null.
         return null;
+    }
+
+    /**
+     * Disconnects the link between two Features.
+     * @param cb the bean to search among the Features to delete
+     * @param user the user to update a Feature
+     * @throws SearchException for errors in accessing a Feature.
+     * @throws IntactException for update errors.
+     */
+    private void disconnectLinkedFeatures(ComponentBean cb, EditUserI user)
+            throws SearchException, IntactException {
+        // Delete any links among features to delete. This should be done
+        // first before deleting a feature. Actual deleting a feature is
+        // done in a separate transaction.
+        for (Iterator iter = cb.getFeaturesToDelete().iterator(); iter.hasNext();) {
+            Feature feature = ((FeatureBean) iter.next()).getFeature(user);
+            // Remove any links if this feature is linked to another feature.
+            if (feature.getBoundDomain() != null) {
+                Feature toFeature = feature.getBoundDomain();
+                if (toFeature.getBoundDomain() == null) {
+                    continue;
+                }
+                // Disconnect the links between two features.
+                toFeature.setBoundDomain(null);
+                user.update(toFeature);
+            }
+        }
+    }
+
+    /**
+     * Deletes added featues from given collection.
+     * @param componets the components to search for Features
+     * @param user the user to delete added features.
+     * @throws IntactException for errors in deleting a Feature.
+     */
+    private void deleteFeaturesAdded(Collection componets, EditUserI user)
+            throws IntactException {
+        for (Iterator iter0 = componets.iterator(); iter0.hasNext();) {
+            ComponentBean cb = (ComponentBean) iter0.next();
+            for (Iterator iter1 = cb.getFeaturesAdded().iterator(); iter1.hasNext();) {
+                user.delete(((FeatureBean) iter1.next()).getFeature());
+            }
+        }
     }
 
     // Static Inner Class -----------------------------------------------------
