@@ -7,11 +7,15 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.search.struts.controller;
 
 import uk.ac.ebi.intact.application.search.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
+import uk.ac.ebi.intact.application.search.struts.framework.util.TreeViewAction;
 import uk.ac.ebi.intact.application.search.struts.view.IntactViewBean;
+import uk.ac.ebi.intact.application.search.struts.view.ViewForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -46,38 +50,53 @@ public class ViewAction extends IntactBaseAction {
     * or HttpServletResponse.sendRedirect() to, as a result of processing
     * activities of an <code>Action</code> class
     */
-    public ActionForward perform (ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
                                   HttpServletRequest request,
-                                  HttpServletResponse response) {
+                                  HttpServletResponse response) throws Exception {
         // The collection of beans to process.
         Map idToView = (Map) super.getSession(request).getAttribute(
-                WebIntactConstants.FORWARD_MATCHES);
+                SearchConstants.FORWARD_MATCHES);
+
+        // The user action.
+        TreeViewAction action = TreeViewAction.factory((ViewForm) form);
 
         // Save the parameters from the view page.
         Map map = request.getParameterMap();
 
-        // Search through the parameter lists (check boxes).
-        for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            String key = (String) entry.getKey();
+        // Only search for the check boxes if the number of parameters in a
+        // request exceed 1 (one parameter is always returned for buttons).
+        if (map.size() > 1) {
 
-            // Ignore the non tbl parameters.
-            if (!key.startsWith("tbl_")) {
-                continue;
+            // Search through the parameter lists (check boxes).
+            for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                String key = (String) entry.getKey();
+
+                // Ignore the non tbl parameters.
+                if (!key.startsWith("tbl_")) {
+                    continue;
+                }
+                // Extract the bean id and the AC.
+                StringTokenizer stk = new StringTokenizer(key, "_");
+                String ignore = stk.nextToken();
+                String beanId = stk.nextToken();
+                String ac = stk.nextToken();
+
+                // The view bean associated with the id.
+                IntactViewBean bean = (IntactViewBean) idToView.get(beanId);
+
+                // Change the status for the ac.
+                bean.setTreeStatus(action, ac);
             }
-            // Extract the bean id and the AC.
-            StringTokenizer stk = new StringTokenizer(key, "_");
-            String ignore = stk.nextToken();
-            String beanId = stk.nextToken();
-            String ac = stk.nextToken();
-
-            // The view bean associated with the id.
-            IntactViewBean bean = (IntactViewBean) idToView.get(beanId);
-
-            // Change the status for the ac.
-            bean.changeElementStatus(ac);
         }
-       // Move to the results page.
-       return mapping.findForward(WebIntactConstants.FORWARD_RESULTS);
+//        else {
+//            // No check boxes were selected. Assume all is wanted.
+//            for (Iterator iter = idToView.values().iterator(); iter.hasNext(); ) {
+//                IntactViewBean bean = (IntactViewBean) iter.next();
+//                bean.setTreeStatus(action);
+//            }
+//        }
+        // Move to the results page.
+        return mapping.findForward(SearchConstants.FORWARD_RESULTS);
     }
 }
