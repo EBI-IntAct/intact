@@ -1,4 +1,5 @@
- <!--
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory"%>
+<!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -65,10 +66,14 @@
             <bean:message key="biosource.label.tax"/>
         </th>
         <th class="tableCellHeader">
-            <bean:message key="biosource.label.tissue"/>
+            <a href="javascript:showColumnLink('CvTissue', 'bsForm', 4)">
+                <bean:message key="biosource.label.tissue"/>
+            </a>
         </th>
         <th class="tableCellHeader">
-            <bean:message key="biosource.label.cell"/>
+            <a href="javascript:showColumnLink('CvCellType', 'bsForm', 5)">
+                <bean:message key="biosource.label.cell"/>
+            </a>
         </th>
     </tr>
     <tr class="tableRowEven">
