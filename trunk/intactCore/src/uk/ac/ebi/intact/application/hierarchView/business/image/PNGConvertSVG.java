@@ -8,10 +8,13 @@ package uk.ac.ebi.intact.application.hierarchView.business.image;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 
 /**
  * Interface allowing convert a SVG document to an other format (JPEG, TIFF, PNG)
@@ -21,15 +24,19 @@ import java.io.OutputStream;
 
 public class PNGConvertSVG extends ConvertSVG {
 
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
+
     /**
      * Convert an object Document to a byte []
      *
      */
     public byte[] convert(Document doc) throws Exception {
 
+        if (null == doc) logger.debug ("document is null");
+
         PNGTranscoder t = new PNGTranscoder();
-        t.addTranscodingHint(PNGTranscoder.KEY_FORCE_TRANSPARENT_WHITE ,
-                new Boolean(true));
+        t.addTranscodingHint (PNGTranscoder.KEY_FORCE_TRANSPARENT_WHITE,
+                              new Boolean(true));
 
         TranscoderInput input   = new TranscoderInput(doc);
         OutputStream ostream    = new ByteArrayOutputStream();

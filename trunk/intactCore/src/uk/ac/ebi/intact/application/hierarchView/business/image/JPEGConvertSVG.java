@@ -23,15 +23,13 @@ public class JPEGConvertSVG extends ConvertSVG {
 
     /**
      * Convert an object Document to a byte []
-     *
+     * @param doc the SVG DOM to convert (not null)
      */
     public byte[] convert(Document doc) throws Exception {
 
-        if (null == doc) System.out.println("document is null");
-
         JPEGTranscoder t = new JPEGTranscoder();
-        t.addTranscodingHint(JPEGTranscoder.KEY_QUALITY,
-                new Float(.8));
+        t.addTranscodingHint (JPEGTranscoder.KEY_QUALITY,
+                              new Float(.8));
 
         TranscoderInput input   = new TranscoderInput(doc);
         OutputStream ostream    = new ByteArrayOutputStream();

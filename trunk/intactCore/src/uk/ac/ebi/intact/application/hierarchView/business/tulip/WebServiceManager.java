@@ -9,13 +9,15 @@ package uk.ac.ebi.intact.application.hierarchView.business.tulip;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.utils.Options;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 /**
  * Allows to deploy and undeploy the web service
@@ -25,7 +27,7 @@ import java.util.logging.Logger;
 
 public class WebServiceManager implements ServletContextListener {
 
-    private static Logger logger = Logger.getLogger("CheckInitTag");
+    private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     private String deploymentFile   = null;
     private String undeploymentFile = null;
@@ -81,13 +83,12 @@ public class WebServiceManager implements ServletContextListener {
 
             if ((null == deploymentFile) || (null == undeploymentFile)) {
                 String msg = "Error, can't initialize WebServiceManager : unable to read properties file.";
-                logger.severe (msg);
+                logger.error (msg);
                 throw new Exception (msg);
             }
 
             this.setDeploymentFile (deploymentFile);
             this.setUndeploymentFile (undeploymentFile);
-
             logger.info ("Properties loaded.");
         }
     } // init
@@ -165,16 +166,21 @@ public class WebServiceManager implements ServletContextListener {
                 }
                 else {
                     // FAILURE
-                    throw (new Exception ("Unable to process the WSDD file: " + wsddFile));
+                    Exception e = new Exception ("Unable to process the WSDD file: " + wsddFile);
+                    logger.info("", e);
+                    throw (e);
                 }
             }
             catch (Exception e) {
                 // REGISTRATION ERROR;
                 throw (e);
             }
+        } else {
+            Exception e = new Exception ("Unable to open the WSDD file: " + wsddFile);
+            logger.error("",e);
+            throw (e);
         }
-        else
-            throw (new Exception ("Unable to open the WSDD file: " + wsddFile));
+
     }  // processWsddFile
 
 
@@ -192,10 +198,9 @@ public class WebServiceManager implements ServletContextListener {
         // the web service.
         try {
             this.undeploy();
-            System.out.println ("Tulip web service undeployed successfully");
+            logger.info ("Tulip web service undeployed successfully");
         } catch (Exception e) {
-            // TODO : log it
-            System.out.println ("Unable to undeploy the web service\n" + e.getMessage());
+            logger.error ("Unable to undeploy the web service", e);
             e.printStackTrace();
         }
     } // contextDestroyed

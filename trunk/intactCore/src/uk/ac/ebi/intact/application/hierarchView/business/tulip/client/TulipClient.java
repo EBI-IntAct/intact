@@ -10,12 +10,14 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccess;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessService;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -29,8 +31,7 @@ import java.util.logging.Logger;
 
 public class TulipClient {
 
-    // LOGGER
-    static Logger logger = Logger.getLogger("TulipClient");
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /* --------------------------------------------------- Instance variable
 
@@ -66,7 +67,7 @@ public class TulipClient {
             String tulipAdress = null;
             if (null != properties) {
                 tulipAdress = properties.getProperty ("webService.adress");
-                logger.info (" adress=" + tulipAdress);
+                logger.info ("Tulip web service URL: " + tulipAdress);
             } else {
                 tulip = null;
                 return;
@@ -112,15 +113,14 @@ public class TulipClient {
         ProteinCoordinate[] pc = null;
         String mask = "0";
 
-        // - LOG -
-        System.out.println (tlpContent);
+        logger.info (tlpContent);
 
         if (null != tulip) {
             try {
                 pc = tulip.getComputedTlpContent (tlpContent, mask);
             } catch (java.rmi.RemoteException se) {
-                logger.severe ("Exception during retreiving proteins' coordinate");
-                logger.severe (se.toString());
+                logger.error ("Exception during retreiving proteins' coordinate");
+                logger.error (se.toString());
                 se.printStackTrace ();
             }
         }
@@ -189,7 +189,7 @@ public class TulipClient {
         }
 
         if (0 == proteins.length) {
-            System.out.println ("No protein retrived.");
+            System.out.println ("No protein retreived.");
         } else {
             for (int i = 0; i < proteins.length; i++) {
                 // display coordinates

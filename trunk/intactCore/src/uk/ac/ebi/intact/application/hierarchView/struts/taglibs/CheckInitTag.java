@@ -16,7 +16,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 /**
  * That class allow to check if the initialisation has been properly done.
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
 public class CheckInitTag  extends TagSupport {
 
     // LOGGER
-    private static Logger logger = Logger.getLogger("CheckInitTag");
+    private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     private String forwardOnError;
 
@@ -57,17 +58,17 @@ public class CheckInitTag  extends TagSupport {
         IntactUser user = (IntactUser) session.getAttribute (Constants.USER_KEY);
 
         if (null == user) {
-            logger.warning ("Data source unavailable, forward to home page");
+            logger.error ("Data source unavailable, forward to home page");
             // user doesn't exists
             try {
                 // FORWARD
                 super.pageContext.forward (this.forwardOnError);
                 return SKIP_PAGE;
             } catch (ServletException e) {
-                logger.warning (e.toString());
+                logger.error (e.toString());
                 e.printStackTrace();
             } catch (IOException e) {
-                logger.warning (e.toString());
+                logger.error (e.toString());
                 e.printStackTrace();
             }
         }
@@ -78,16 +79,16 @@ public class CheckInitTag  extends TagSupport {
                 (WebServiceManager) servletContext.getAttribute (Constants.WEB_SERVICE_MANAGER);
 
         if ((null == webServiceManager) || (false == webServiceManager.isRunning() )) {
-            logger.warning ("Web Service not properly deployed, forward to home page");
+            logger.error ("Web Service not properly deployed, forward to home page");
             try {
                 // FORWARD
                 super.pageContext.forward (this.forwardOnError);
                 return SKIP_PAGE;
             } catch (ServletException e) {
-                logger.warning (e.toString());
+                logger.error (e.toString());
                 e.printStackTrace();
             } catch (IOException e) {
-                logger.warning (e.toString());
+                logger.error (e.toString());
                 e.printStackTrace();
             }
         }

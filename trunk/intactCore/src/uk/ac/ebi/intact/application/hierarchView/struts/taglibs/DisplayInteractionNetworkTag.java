@@ -54,7 +54,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                 // Display the HTML code map
                 pageContext.getOut().write (imageBean.getMapCode());
 
-                // read the ApplicationResource.proterties file
+                // read the Graph.proterties file
                 String mapName = null;
                 String format = null;
 

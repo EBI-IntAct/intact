@@ -65,8 +65,7 @@ public class InteractionNetwork extends Graph {
     /**
      * Constructor
      */
-    public InteractionNetwork()
-    {
+    public InteractionNetwork() {
         this.dimension     = new ImageDimension();
         this.isInitialized = false;
     }
@@ -119,8 +118,7 @@ public class InteractionNetwork extends Graph {
      * Allow to put the default color and default visibility for each
      * protein of the interaction network
      */
-    public void initNodes()
-    {
+    public void initNodes() {
         Node aNode;
 
         HashMap  someNodes = super.getNodes();
@@ -131,14 +129,6 @@ public class InteractionNetwork extends Graph {
             aNode = (Node) someNodes.get(iterator.next());
             this.initNodeDisplay (aNode);
         }
-
-//     Iterator iterator = someNodes.values().iterator ();
-
-//     while (iterator.hasNext ()) {
-//       aNode = (Node) ((Entry) iterator.next()).getValue();
-//       this.initNodeDisplay (aNode);
-//     }
-
     } // initNodes
 
 
