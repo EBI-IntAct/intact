@@ -10,19 +10,20 @@ import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 /**
- * Abstract class allowing to deals with the Highlightment behaviour,
- * the implementation of that class would just specify the behaviour
- * of one node of the graph.
+ * Behaviour class allowing to change the color of highlighted proteins.
  *
- * @author Samuel KERRIEN
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
 
 public class ColorHighlightmentBehaviour extends HighlightmentBehaviour {
 
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /********** CONSTANTS ************/
     private final static int DEFAULT_COLOR_HIGHLIGHTING_RED   = 255;
@@ -43,7 +44,7 @@ public class ColorHighlightmentBehaviour extends HighlightmentBehaviour {
 
         // apply the behaviour
 
-        // read the ApplicationResource.proterties file
+        // read the Graph.proterties file
         Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
 
         String colorString = null;
@@ -52,17 +53,18 @@ public class ColorHighlightmentBehaviour extends HighlightmentBehaviour {
             colorString = properties.getProperty ("hierarchView.color.highlighting");
         }
 
-        if (null == colorString) colorString = DEFAULT_COLOR_HIGHLIGHTING;
-        else {
-            /*error log*/
+        if (null == colorString) {
+            colorString = DEFAULT_COLOR_HIGHLIGHTING;
+            logger.warn ("Unable to find the property hierarchView.color.highlighting in " + Constants.PROPERTY_FILE);
         }
+
 
         Color color = Utilities.parseColor (colorString,
                                             DEFAULT_COLOR_HIGHLIGHTING_RED,
                                             DEFAULT_COLOR_HIGHLIGHTING_GREEN,
                                             DEFAULT_COLOR_HIGHLIGHTING_BLUE);
 
-        aProtein.put(Constants.ATTRIBUTE_COLOR_NODE, color);
+        aProtein.put(Constants.ATTRIBUTE_COLOR_LABEL, color);
 
     } // applyBehaviour
 

@@ -13,25 +13,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Abstract class allowing to deals with the Highlightment behaviour,
- * the implementation of that class would just specify the behaviour
- * of one node of the graph.
+ * Behaviour allowing to display only highlighted protein and hide all others.
  *
- * @author Emilie FROT
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
 
 public class VisibleHighlightmentBehaviour
         extends HighlightmentBehaviour {
     /**
-     * Select all the graph's protein which are not in the given collection
-     * When we call apply, the proteins visibility of the new collection will be set to false.
+     * Select all the graph's protein which are not in the given collection.<br>
+     * The aim of that behaviour is to display only se selected protein, so we
+     * have to set the VISIBLE flag of all other proteins to false.
      *
-     * @param proteins
-     * @param aGraph
+     * @param proteins the list of protein to highlight
+     * @param aGraph the current interaction network
      *
-     * @return the new collection to highlight
+     * @return the new collection of protein to highlight
      */
-    public Collection modifyCollection (Collection proteins, InteractionNetwork aGraph) throws UnsupportedOperationException {
+    public Collection modifyCollection (Collection proteins, InteractionNetwork aGraph) {
 
         /* Get the list of proteins in the current InteractionNetwork */
         ArrayList listAllProteins = new ArrayList (aGraph.getNodes().values());
@@ -54,7 +53,6 @@ public class VisibleHighlightmentBehaviour
      */
     public void applyBehaviour (Node aProtein) {
         aProtein.put(Constants.ATTRIBUTE_VISIBLE, new Boolean (false));
-
     } // applyBehaviour
 
 } // VisibleHighlightmentBehaviour

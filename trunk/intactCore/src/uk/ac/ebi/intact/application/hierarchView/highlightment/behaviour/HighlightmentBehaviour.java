@@ -24,14 +24,14 @@ public abstract class HighlightmentBehaviour {
 
 
     /**
-     * Provides a implementation of HighlightmentBehaviour by its name.
+     * Provides a implementation of HighlightmentBehaviour from its name.<br>
      * for example you have an implementation of this abstract class called : <b>ColorHighlightmentBehaviour</b>.
-     *      so, you could call the following method to get an instance of this class :
-     *      <br>
-     *      <b>HighlightmentBehaviour.getHighlightmentBehaviour ("mypackage.ColorHighlightmentBehaviour");</b>
-     *      <br>
-     *      then you're able to use methods provided by this abstract class without to know
-     *      what implementation you are using.
+     * so, you could call the following method to get an instance of this class :
+     * <br>
+     * <b>HighlightmentBehaviour.getHighlightmentBehaviour ("mypackage.ColorHighlightmentBehaviour");</b>
+     * <br>
+     * then you're able to use methods provided by this abstract class without to know
+     * what implementation you are using.
      *
      * @param aClassName the name of the implementation class you want to get
      * @return an HighlightmentBehaviour object, or null if an error occurs.
@@ -53,8 +53,8 @@ public abstract class HighlightmentBehaviour {
         }
 
         return (HighlightmentBehaviour) object;
-
     } // getHighlightmentBehaviour
+
 
     /**
      * Apply the implemented behaviour to the specific Node of the graph
@@ -64,16 +64,16 @@ public abstract class HighlightmentBehaviour {
     abstract public void applyBehaviour (Node aProtein);
 
     /**
-     * Allow to apply a modification on the collection.
-     * for example Select all the graph protein which are not in the given collection
+     * Allow to apply a modification on the collection of protein to highlight.
+     * for example select all the graph proteins which are not in the given collection
      *
      * The default behaviour of that method is to return the given Collection,
-     * to change that you have to overwrite that method int your implementation.
+     * to change that you have to overwrite that method in your implementation.
      *
-     * @param proteins
-     * @param aGraph
+     * @param proteins the list of protein to highlight
+     * @param aGraph the current interaction network
      *
-     * @return the new collection to highlight
+     * @return the new collection of protein to highlight
      */
     public Collection modifyCollection (Collection proteins, InteractionNetwork aGraph) {
         return proteins;
@@ -96,7 +96,6 @@ public abstract class HighlightmentBehaviour {
                 applyBehaviour (protein);
             }
         }
-
     } // apply
 
 } // HighlightmentBehaviour
