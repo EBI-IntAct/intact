@@ -323,13 +323,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public Object getObjectByLabel(Class clazz, String label)
-            throws DuplicateLabelException {
-        try {
-            return myHelper.getObjectByLabel(clazz, label);
-        }
-        catch (IntactException ie) {
-            throw (DuplicateLabelException) ie;
-        }
+            throws IntactException {
+        return myHelper.getObjectByLabel(clazz, label);
     }
 
     public Collection search(String objectType, String searchParam,
@@ -471,9 +466,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return mySessionEndTime;
     }
 
-    public AbstractROViewBean getReadOnlyView(Class clazz,
-                                                   String shortLabel)
-            throws DuplicateLabelException {
+    public AbstractROViewBean getReadOnlyView(Class clazz, String shortLabel)
+            throws IntactException {
         // Try searching as it is.
         AnnotatedObject annonj = (AnnotatedObject) getObjectByLabel(clazz,
                 shortLabel);

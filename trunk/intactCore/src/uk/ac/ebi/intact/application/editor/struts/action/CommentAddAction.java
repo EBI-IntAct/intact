@@ -11,7 +11,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.DuplicateLabelException;
+import uk.ac.ebi.intact.business.IntactException;
 
 import org.apache.struts.action.*;
 
@@ -71,13 +71,13 @@ public class CommentAddAction extends AbstractEditorAction {
             // The owner of the object we are editing.
             owner = user.getInstitution();
         }
-        catch (DuplicateLabelException dle) {
+        catch (IntactException ie) {
             // Can't query the database.
-            LOGGER.info(dle);
+            LOGGER.info(ie);
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search", dle.getMessage()));
+                    new ActionError("error.search", ie.getMessage()));
             saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }

@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.business.DuplicateLabelException;
+import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,12 +78,12 @@ public class ResultAction extends AbstractEditorAction {
             saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
-        catch (DuplicateLabelException dle) {
-            LOGGER.info(dle);
+        catch (IntactException ie) {
+            LOGGER.info(ie);
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search", dle.getMessage()));
+                    new ActionError("error.search", ie.getMessage()));
             saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }

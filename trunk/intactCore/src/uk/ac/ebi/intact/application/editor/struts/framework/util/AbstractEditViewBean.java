@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.ValidationException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.persistence.SearchException;
 
 import java.util.*;
@@ -635,7 +634,7 @@ public abstract class AbstractEditViewBean {
     }
 
     private Annotation updateAnnotation(EditUserI user, CommentBean cb)
-            throws DuplicateLabelException {
+            throws IntactException {
         // Update with the new description.
         Annotation annot = cb.getAnnotation();
         annot.setAnnotationText(cb.getDescription());
@@ -651,7 +650,7 @@ public abstract class AbstractEditViewBean {
     }
 
     private Xref updateXref(EditUserI user, XreferenceBean xb)
-            throws DuplicateLabelException {
+            throws IntactException {
         // The xref object to update
         Xref xref = xb.getXref();
 

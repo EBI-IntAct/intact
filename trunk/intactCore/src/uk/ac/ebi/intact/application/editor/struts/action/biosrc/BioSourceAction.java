@@ -16,7 +16,7 @@ import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.business.DuplicateLabelException;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import org.apache.struts.action.*;
@@ -153,12 +153,12 @@ public class BioSourceAction extends AbstractEditorAction {
                 Xref xref = createTaxXref(user, taxid, newtLabel);
                 bioview.addXref(xref);
             }
-            catch (DuplicateLabelException se) {
+            catch (IntactException ie) {
                 // Duplicate databases?
-                LOGGER.info(se);
+                LOGGER.info(ie);
                 errors = new ActionErrors();
                 errors.add(AbstractEditorAction.EDITOR_ERROR,
-                        new ActionError("error.search", se.getNestedMessage()));
+                        new ActionError("error.search", ie.getNestedMessage()));
                 saveErrors(request, errors);
                 return mapping.findForward(EditorConstants.FORWARD_FAILURE);
             }
@@ -243,7 +243,7 @@ public class BioSourceAction extends AbstractEditorAction {
     }
 
     private Xref createTaxXref(EditUserI user, String taxid, String label)
-            throws DuplicateLabelException {
+            throws IntactException {
         // The owner of the object we are editing.
         Institution owner = user.getInstitution();
 

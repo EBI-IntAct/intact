@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.persistence.SearchException;
-import org.apache.commons.beanutils.DynaBean;
 import org.apache.struts.tiles.ComponentContext;
 
 import java.util.Map;
@@ -104,17 +103,17 @@ public class ExperimentViewBean extends AbstractEditViewBean {
                 throw new ExperimentValidationException();
             }
         }
-        catch (DuplicateLabelException dle) {
+        catch (IntactException ie) {
             throw new ExperimentValidationException();
         }
     }
 
     // Override to provide Experiment info.
-    public void fillEditorSpecificInfo(DynaBean form) {
-        form.set("organism", myOrganism);
-        form.set("interaction", myInteraction);
-        form.set("identification", myIdentification);
-    }
+//    public void fillEditorSpecificInfo(DynaBean form) {
+//        form.set("organism", myOrganism);
+//        form.set("interaction", myInteraction);
+//        form.set("identification", myIdentification);
+//    }
 
     public Map getEditorMenus() throws SearchException {
         // The map to return.
