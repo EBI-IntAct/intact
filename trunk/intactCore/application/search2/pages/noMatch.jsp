@@ -1,7 +1,7 @@
 <%@ page language="java" %>
 
-<%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants,
-                 uk.ac.ebi.intact.application.search.struts.controller.SearchAction"%>
+<%@ page import="uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants,
+                 uk.ac.ebi.intact.application.search2.struts.controller.SearchAction"%>
  <%--
    /**
     * no matches page.
