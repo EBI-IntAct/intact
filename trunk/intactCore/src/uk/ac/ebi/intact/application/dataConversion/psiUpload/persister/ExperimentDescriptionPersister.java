@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.dataConversion.psiUpload.persister;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.*;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExperimentDescriptionTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.AnnotationTag;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -112,6 +113,43 @@ public class ExperimentDescriptionPersister {
         experiment.addXref( primaryXref );
         helper.create( primaryXref );
 
+        
+        // BibRefs: primary and secondary.
+        final Collection secondaryPubmedXrefs = experimentDescription.getAdditionalBibRef();
+        for ( Iterator iterator = secondaryPubmedXrefs.iterator(); iterator.hasNext(); ) {
+            XrefTag xrefTag = (XrefTag) iterator.next();
+            Xref seeAlsoXref = new Xref( helper.getInstitution(),
+                                  XrefChecker.getCvDatabase( xrefTag.getDb() ),
+                                  xrefTag.getId(),
+                                  xrefTag.getSecondary(),
+                                  xrefTag.getVersion(),
+                                  ControlledVocabularyRepository.getSeeAlsoXrefQualifier() );
+
+            experiment.addXref( seeAlsoXref );
+            helper.create( seeAlsoXref );
+        }
+
+
+        // annotations
+        final Collection annotations = experimentDescription.getAnnotations();
+        for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
+            final AnnotationTag annotationTag = (AnnotationTag) iterator.next();
+            final CvTopic cvTopic = AnnotationChecker.getCvTopic( annotationTag.getType() );
+
+            // search for an annotation to re-use, instead of creating a new one.
+            Annotation annotation = searchIntactAnnotation( annotationTag, helper );
+
+            if( annotation == null ) {
+                // doesn't exist, then create a new Annotation
+                annotation = new Annotation( helper.getInstitution(), cvTopic );
+                annotation.setAnnotationText( annotationTag.getText() );
+                helper.create( annotation );
+            }
+
+            experiment.addAnnotation( annotation );
+        }
+
+
         // other xrefs
         final Collection xrefs = experimentDescription.getXrefs();
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
@@ -134,5 +172,33 @@ public class ExperimentDescriptionPersister {
         cache.put( experiment.getShortLabel(), experiment );
 
         return experiment;
+    }
+
+    /**
+     * Search in IntAct for an Annotation having the a specific type and annotationText.
+     *
+     * @param annotationTag the description of the Annotation we are looking for.
+     * @param helper        the access to the IntAct database
+     * @return the found Annotation or null if not found.
+     * @throws IntactException
+     */
+    private static Annotation searchIntactAnnotation( final AnnotationTag annotationTag,
+                                                      final IntactHelper helper )
+            throws IntactException {
+
+        final String text = annotationTag.getText();
+        Collection annotations = helper.search( Annotation.class.getName(), "annotationText", text );
+        Annotation annotation = null;
+
+        if( annotations != null ) {
+            for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && annotation == null; ) {
+                Annotation anAnnotation = (Annotation) annotations.iterator().next();
+                if( annotationTag.getType().equals( anAnnotation.getCvTopic().getShortLabel() ) ) {
+                    annotation = anAnnotation;
+                }
+            }
+        }
+
+        return annotation;
     }
 }
