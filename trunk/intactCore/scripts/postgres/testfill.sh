@@ -44,6 +44,9 @@ scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvIdentification data/c
 scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteraction data/controlledVocab/CvInteraction.def data/controlledVocab/CvInteraction.dag
 scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteractionType data/controlledVocab/CvInteractionType.def data/controlledVocab/CvInteractionType.dag
 
+echo "Inserting Proteins ..."
+scripts/javaRun.sh UpdateProteins file:data/yeast_test.sp
+
 echo "Inserting Complexes ..."
 scripts/javaRun.sh InsertComplex data/ho_gavin_${DATASET}.dat 4932
 
