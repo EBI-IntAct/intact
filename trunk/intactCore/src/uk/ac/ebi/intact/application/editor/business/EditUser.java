@@ -463,15 +463,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myProteinFactory.insertSPTrProteins(pid);
     }
 
-    public Collection getSpliceProteinsByXref(String pid) throws SearchException {
-        try {
-            return myHelper.getSpliceProteinsByXref(pid);
-        }
-        catch (IntactException e) {
-            throw new SearchException(e.getMessage());
-        }
-    }
-
     public Collection search1(String objectType, String searchParam,
                               String searchValue) throws SearchException {
         // Retrieve an object...
@@ -555,7 +546,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
-    public boolean duplicateShortLabel(String label) throws SearchException {
+    public boolean shortLabelExists(String label) throws SearchException {
         // The class of the object we are editing at the moment.
         Class clazz = myEditView.getEditClass();
 
@@ -583,35 +574,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         // There is another record exists with the same short label.
         return true;
-    }
-
-    public List getExistingShortLabels() throws SearchException {
-        // The current edit object's short label.
-        String editLabel = myEditView.getShortLabel();
-        // The class name of the current edit object.
-        String className = myEditView.getEditClass().getName();
-
-        // The list to return.
-        List list = new ArrayList();
-
-        // Flag to indicate processing of the first item.
-        boolean first = true;
-        // Search the database.
-        Collection results = search1(className, "shortLabel", "*");
-        for (Iterator iter = results.iterator(); iter.hasNext();) {
-            // Avoid this object's own short label.
-            String label = ((AnnotatedObject) iter.next()).getShortLabel();
-            if (label.equals(editLabel)) {
-                continue;
-            }
-            if (first) {
-                first = false;
-            }
-            else {
-                list.add(label);
-            }
-        }
-        return list;
     }
 
     public void fillSearchResult(DynaBean dynaForm) {

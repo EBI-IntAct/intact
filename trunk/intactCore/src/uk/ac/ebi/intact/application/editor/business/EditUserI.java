@@ -179,15 +179,6 @@ public interface EditUserI extends IntactUserI, Serializable {
     public Collection getSPTRProteins(String pid);
 
     /**
-     * Returns a collection of splice proteins for given primary id.
-     * @param pid the primary id to search for splice objects.
-     * @return a collection of splice proteins for <code>pid</code>. An empty
-     * collection is returned if there are no proteins found for <code>pid</code>.
-     * @throws SearchException for errors in searching for proteins.
-     */
-    public Collection getSpliceProteinsByXref(String pid) throws SearchException;
-
-    /**
      * This method provides a means of searching intact objects, within the constraints
      * provided by the parameters to the method.
      * <p>
@@ -271,19 +262,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * in the database.
      * @exception SearchException for errors in acccessing the database.
      */
-    public boolean duplicateShortLabel(String shortlabel) throws SearchException;
-
-    /**
-     * Returns a list of existing short labels for the current edit object.
-     * @return a list of String objects for short labels of current object type
-     * minus the short label of the current edit object.
-     * @throws SearchException for errors in search the database for short labels.
-     *
-     * <pre>
-     * pre: results->forall(obj: Object | obj.oclIsTypeOf(String))
-     * </pre>
-     */
-    public List getExistingShortLabels() throws SearchException;
+    public boolean shortLabelExists(String shortlabel) throws SearchException;
 
     /**
      * Popluate the given form with search result.
