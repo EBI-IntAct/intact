@@ -45,6 +45,7 @@ public class AllJUnitTests extends TestCase {
         suite.addTest( XrefParserTest.suite() );
         suite.addTest( AnnotationParserTest.suite() );
         suite.addTest( HostOrganismParserTest.suite() );
+        suite.addTest( OrganismParserTest.suite() );
         suite.addTest( ExperimentDescriptionParserTest.suite() );
         suite.addTest( ProteinInteractorParserTest.suite() );
         suite.addTest( InteractionTypeParserTest.suite() );
