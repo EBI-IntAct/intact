@@ -56,14 +56,14 @@
             </td>
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'ac'"/>
+                <xsl:with-param name="item" select="'BasicObject.ac'"/>
                 </xsl:call-template>
 
                 <xsl:value-of select="@ac"/>
             </td>
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'ShortLabel'"/>
+                <xsl:with-param name="item" select="'AnnotatedObject.ShortLabel'"/>
                 </xsl:call-template>
 
                 <xsl:call-template name="draw_short_label">
@@ -73,7 +73,7 @@
 
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'FullName'"/>
+                <xsl:with-param name="item" select="'AnnotatedObject.FullName'"/>
                 </xsl:call-template>
 
                 <xsl:value-of select="@fullName"/>
@@ -84,7 +84,7 @@
             <tr class="Experiment">
                 <td colspan="2">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'CvInteraction'"/>
+                    <xsl:with-param name="item" select="'CvObject'"/>
                     </xsl:call-template>
 
                     <xsl:if test="CvInteraction/@shortLabel">
@@ -96,7 +96,7 @@
                </td>
                 <td>
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'CvIdentification'"/>
+                    <xsl:with-param name="item" select="'CvObject'"/>
                     </xsl:call-template>
 
                     <xsl:if test="CvIdentification/@shortLabel">
@@ -123,7 +123,7 @@
             <tr class="Experiment">
                 <td colspan="2">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'Comment'"/>
+                    <xsl:with-param name="item" select="'CvObject'"/>
                     </xsl:call-template>
 
                     <xsl:call-template name="draw_cv_link">
@@ -134,7 +134,7 @@
 
                 <td colspan="3">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'Comment'"/>
+                    <xsl:with-param name="item" select="'Annotation'"/>
                     </xsl:call-template>
 
                     <xsl:value-of select="@annotationText"/>
@@ -171,7 +171,7 @@
 
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'ShortLabel'"/>
+                <xsl:with-param name="item" select="'AnnotatedObject.ShortLabel'"/>
                 </xsl:call-template>
 
                 <xsl:call-template name="draw_short_label">
@@ -180,7 +180,7 @@
             </td>
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'FullName'"/>
+                <xsl:with-param name="item" select="'AnnotatedObject.FullName'"/>
                 </xsl:call-template>
 
                 <xsl:value-of select="@fullName"/>
@@ -192,7 +192,7 @@
                 <tr class="Interaction">
                     <td colspan="2">
                         <xsl:call-template name="draw_help_link">
-                        <xsl:with-param name="item" select="'CvInteractionType'"/>
+                        <xsl:with-param name="item" select="'CvObject'"/>
                         </xsl:call-template>
 
                         <xsl:call-template name="draw_cv_link">
@@ -210,7 +210,7 @@
                 <tr class="Interaction">
                     <td colspan="2">
                         <xsl:call-template name="draw_help_link">
-                        <xsl:with-param name="item" select="'Comment'"/>
+                        <xsl:with-param name="item" select="'CvObject'"/>
                         </xsl:call-template>
 
                         <xsl:call-template name="draw_cv_link">
@@ -220,7 +220,7 @@
                     </td>
                     <td colspan="3">
                         <xsl:call-template name="draw_help_link">
-                        <xsl:with-param name="item" select="'Comment'"/>
+                        <xsl:with-param name="item" select="'Annotation'"/>
                         </xsl:call-template>
 
                         <xsl:value-of select="@annotationText"/>
@@ -243,7 +243,7 @@
             <tr class="Protein">
                 <td colspan="5">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'ProteinList'"/>
+                    <xsl:with-param name="item" select="'search.ProteinList'"/>
                     </xsl:call-template>
 
                     <xsl:for-each select="components/Component/Protein">
@@ -291,14 +291,14 @@
             </td>
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'AC'"/>
+                <xsl:with-param name="item" select="'BasicObject.ac'"/>
                 </xsl:call-template>
 
                 <xsl:value-of select="@ac"/>
             </td>
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'ShortLabel'"/>
+                <xsl:with-param name="item" select="'AnnotatedObject.ShortLabel'"/>
                 </xsl:call-template>
 
                 <xsl:call-template name="draw_short_label">
@@ -320,7 +320,7 @@
 
             <td colspan="2">
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'FullName'"/>
+                <xsl:with-param name="item" select="'AnnotatedObject.FullName'"/>
                 </xsl:call-template>
 
                 <xsl:value-of select="@fullName"/>
@@ -331,7 +331,7 @@
             <tr class="Protein">
                 <td colspan="2">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'CvComponentRole'"/>
+                    <xsl:with-param name="item" select="'CvObject'"/>
                     </xsl:call-template>
 
                     <xsl:call-template name="draw_cv_link">
@@ -341,7 +341,7 @@
                 </td>
                 <td>
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'Stoichiometry'"/>
+                    <xsl:with-param name="item" select="'Component.Stoichiometry'"/>
                     </xsl:call-template>
 
                     <xsl:value-of select="../@stoichiometry"/>
@@ -360,14 +360,14 @@
             <tr class="Protein">
                 <td colspan="2">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'Comment'"/>
+                    <xsl:with-param name="item" select="'Annotation'"/>
                     </xsl:call-template>
 
                     <xsl:value-of select="CvTopic/@shortLabel"/>
                 </td>
                 <td colspan="3">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'Comment'"/>
+                    <xsl:with-param name="item" select="'Annotat6ion'"/>
                     </xsl:call-template>
 
                     <xsl:value-of select="@annotationText"/>
@@ -454,13 +454,13 @@ CvTissue | CvTopic | CvXrefQualifier">
             </td>
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'AC'"/>
+                <xsl:with-param name="item" select="'BasicObject.ac'"/>
                 </xsl:call-template>
                 <xsl:value-of select="@ac"/>
             </td>
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'ShortLabel'"/>
+                <xsl:with-param name="item" select="'AnnotatedObject.ShortLabel'"/>
                 </xsl:call-template>
 
                 <xsl:call-template name="draw_short_label">
@@ -470,7 +470,7 @@ CvTissue | CvTopic | CvXrefQualifier">
 
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'FullName'"/>
+                <xsl:with-param name="item" select="'AnnotatedObject.FullName'"/>
                 </xsl:call-template>
 
                 <xsl:value-of select="@fullName"/>
@@ -481,7 +481,7 @@ CvTissue | CvTopic | CvXrefQualifier">
             <tr class="Interaction">
                 <td colspan="2">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'Comment'"/>
+                    <xsl:with-param name="item" select="'CvObject'"/>
                     </xsl:call-template>
 
                     <xsl:value-of select="CvTopic/@shortLabel"/>
@@ -489,7 +489,7 @@ CvTissue | CvTopic | CvXrefQualifier">
 
                 <td colspan="3">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'Comment'"/>
+                    <xsl:with-param name="item" select="'Annotation'"/>
                     </xsl:call-template>
 
                     <xsl:value-of select="@annotationText"/>
@@ -517,14 +517,14 @@ CvTissue | CvTopic | CvXrefQualifier">
             </td>
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'AC'"/>
+                <xsl:with-param name="item" select="'BasicObject.ac'"/>
                 </xsl:call-template>
 
                 <xsl:value-of select="@ac"/>
             </td>
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'ShortLabel'"/>
+                <xsl:with-param name="item" select="'AnnotatedObject.ShortLabel'"/>
                 </xsl:call-template>
 
                 <xsl:call-template name="draw_short_label">
@@ -534,7 +534,7 @@ CvTissue | CvTopic | CvXrefQualifier">
 
             <td>
                 <xsl:call-template name="draw_help_link">
-                <xsl:with-param name="item" select="'FullName'"/>
+                <xsl:with-param name="item" select="'AnnotatedObject.FullName'"/>
                 </xsl:call-template>
 
                 <xsl:value-of select="@fullName"/>
@@ -545,7 +545,7 @@ CvTissue | CvTopic | CvXrefQualifier">
             <tr class="Interaction">
                 <td colspan="2">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'Comment'"/>
+                    <xsl:with-param name="item" select="'CvObject'"/>
                     </xsl:call-template>
 
                     <xsl:value-of select="CvTopic/@shortLabel"/>
@@ -553,7 +553,7 @@ CvTissue | CvTopic | CvXrefQualifier">
 
                 <td colspan="3">
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'Comment'"/>
+                    <xsl:with-param name="item" select="'Annotation'"/>
                     </xsl:call-template>
 
                     <xsl:value-of select="@annotationText"/>
@@ -581,7 +581,7 @@ CvTissue | CvTopic | CvXrefQualifier">
         </xsl:variable>
         <td>
             <xsl:call-template name="draw_help_link">
-            <xsl:with-param name="item" select="'AC'"/>
+            <xsl:with-param name="item" select="'BasicObject.ac'"/>
             </xsl:call-template>
 
             <a href="{$link}"><xsl:value-of select="$ac"/></a>

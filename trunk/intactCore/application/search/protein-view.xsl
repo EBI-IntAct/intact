@@ -88,7 +88,7 @@
                 <xsl:call-template name="draw-checkbox"/>
                 <td>
                     <xsl:call-template name="draw_help_link">
-                    <xsl:with-param name="item" select="'ShortLabel'"/>
+                    <xsl:with-param name="item" select="'AnnotatedObject.ShortLabel'"/>
                     </xsl:call-template>
 
                     <xsl:if test="$view_type='main'">
@@ -118,7 +118,7 @@
                         <!-- highlight the main search result in bold -->
                         <b>
                             <xsl:call-template name="draw_help_link">
-                            <xsl:with-param name="item" select="'FullName'"/>
+                            <xsl:with-param name="item" select="'AnnotatedObject.FullName'"/>
                             </xsl:call-template>
                             <xsl:value-of select="@fullName"/>
                         </b>
@@ -126,7 +126,7 @@
                     <xsl:if test="$view_type='partner'">
                         <!-- no highlighting -->
                         <xsl:call-template name="draw_help_link">
-                        <xsl:with-param name="item" select="'FullName'"/>
+                        <xsl:with-param name="item" select="'AnnotatedObject.FullName'"/>
                         </xsl:call-template>
                         <xsl:value-of select="@fullName"/>
                     </xsl:if>
@@ -185,7 +185,7 @@
         </xsl:variable>
         <td>
             <xsl:call-template name="draw_help_link">
-            <xsl:with-param name="item" select="'AC'"/>
+            <xsl:with-param name="item" select="'BasicObject.ac'"/>
             </xsl:call-template>
 
             <a href="{$link}"><xsl:value-of select="$ac"/></a>
