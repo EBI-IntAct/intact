@@ -12,8 +12,7 @@
 <head>
     <title><tiles:getAsString name="title"/></title>
     <html:base/>
-<%--    <link rel="stylesheet" type="text/css" href="./layouts/styles/cvedit.css"/>--%>
-    <link rel="stylesheet" type="text/css" href="<tiles:getAsString name="stylesheet"/>"/>
+    <link rel="stylesheet" type="text/css" href="styles/cvedit.css"/>
 </head>
 
 <body topmargin="0" leftmargin="0">
