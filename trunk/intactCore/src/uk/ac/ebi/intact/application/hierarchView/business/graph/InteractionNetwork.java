@@ -177,10 +177,6 @@ public class InteractionNetwork extends Graph {
         initNetwork();
         this.centralNode = centralNode;
         centralProteinAC = centralNode.getAc();
-        // a hashtable is taken to avoid null entries as key or as values
-        // we only need the number of allowed sources - so the map is intialised
-        // with the provided number of sources.
-        sourceHighlightMap = new Hashtable( GraphHelper.SOURCES.size() );
         centralNodes.add( centralNode );
     }
 
@@ -193,6 +189,14 @@ public class InteractionNetwork extends Graph {
         // wait the user to add some node to reference the central one
         dimension = new ImageDimension();
         isInitialized = false;
+        // a hashtable is taken to avoid null entries as key or as values
+        // we only need the number of allowed sources - so the map is intialised
+        // with the provided number of sources.
+        sourceHighlightMap = new Hashtable( GraphHelper.SOURCES.size() );
+    }
+    
+    public boolean isSourceHighlightMapEmpty() {
+        return sourceHighlightMap.isEmpty();
     }
 
     /**
