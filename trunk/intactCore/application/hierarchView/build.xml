@@ -220,11 +220,6 @@ Verison: $Id$
         <ant dir=".." inheritAll="false" target="check-tomcat"/>
         <ant dir=".." inheritAll="false" target="check-axis"/>
 
-        <!-- Check the log level -->
-        <condition property="log.level.is.error">
-            <contains string="${log4j.logger.hierarchView}" substring="ERROR"/>
-        </condition>
-
         <ant target="check-log-level" />
 
     </target>
@@ -232,11 +227,42 @@ Verison: $Id$
 
     <!-- =================================================================== -->
 
+    <target name="check-log-level">
+
+        <!-- Check the log level -->
+        <condition property="log.level.is.info">
+            <contains string="${log4j.logger.hierarchView}" substring="INFO"/>
+        </condition>
+
+         <condition property="log.level.is.debug">
+            <contains string="${log4j.logger.hierarchView}" substring="DEBUG"/>
+        </condition>
+
+        <ant target="check-log-level-info" />
+
+        <ant target="check-log-level-debug" />
+
+    </target>
+
     <!-- If the log level isn't set to ERROR, a blocking message is displayed to let the user know -->
-    <target name="check-log-level" unless="log.level.is.error" >
+    <target name="check-log-level-info" if="log.level.is.info" >
 
         <echo>
-            BEWARE that if the logging feature isn't set to ERROR (ie. ${log4j.logger.hierarchView}),
+            BEWARE that if the logging feature is set to a verbose mode (${log4j.logger.hierarchView}),
+            it might affect considerably the performance of the application.
+            Up to now, even the WARN level is generating a huge load of log.
+            cf. the file $INTACT_CORE/config/log4j.properties (section hierarchView).
+        </echo>
+
+        <input message="Press the ENTER to continue..."/>
+
+    </target>
+
+    <!-- If the log level isn't set to ERROR, a blocking message is displayed to let the user know -->
+    <target name="check-log-level-debug" if="log.level.is.debug" >
+
+        <echo>
+            BEWARE that if the logging feature is set to a verbose mode (${log4j.logger.hierarchView}),
             it might affect considerably the performance of the application.
             Up to now, even the WARN level is generating a huge load of log.
             cf. the file $INTACT_CORE/config/log4j.properties (section hierarchView).
