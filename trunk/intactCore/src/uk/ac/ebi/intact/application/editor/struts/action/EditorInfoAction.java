@@ -62,6 +62,7 @@ public class EditorInfoAction extends AbstractEditorAction {
         // Validate the short label.
         if (!validateShortLabel(user, formlabel, request)) {
             // Display the errors in the input page.
+            System.out.println("mapping for cvinfo " + inputForward(mapping));
             return inputForward(mapping);
         }
         String newlabel = user.getUniqueShortLabel(formlabel);
