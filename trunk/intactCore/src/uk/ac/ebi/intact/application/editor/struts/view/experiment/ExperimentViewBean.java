@@ -12,8 +12,10 @@ import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
@@ -184,6 +186,34 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(identification)) {
             setIdent(identification);
         }
+    }
+
+    public void sanityCheck(EditUserI user) throws ValidationException,
+            SearchException {
+        // COMMENTED OUT these checks as they need to be warning!
+
+        /// keeps track of pubmed xrefs.
+//        int pmCount = 0;
+//
+//        // Keeps track of primary pubmed counts.
+//        int pmPrimaryCount = 0;
+//
+//        for ( Iterator iterator = getXrefs().iterator(); iterator.hasNext(); ) {
+//            Xref xref = ((XreferenceBean) iterator.next()).getXref(user);
+//            if (xref.getCvDatabase().getShortLabel().equals("pubmed")) {
+//                pmCount++;
+//                if (xref.getCvXrefQualifier().getShortLabel().equals(
+//                        "primary-reference")) {
+//                    pmPrimaryCount++;
+//                }
+//            }
+//        }
+//        if (pmCount == 0) {
+//            throw new ExperimentException("error.exp.sanity.pubmed");
+//        }
+//        if (pmPrimaryCount != 1) {
+//            throw new ExperimentException("error.exp.sanity.primary.pubmed");
+//        }
     }
 
     // Null for any of these values will throw an exception.

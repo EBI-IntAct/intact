@@ -363,6 +363,21 @@ public class InteractionViewBean extends AbstractEditViewBean {
         setKD((Float) dynaform.get("kD"));
     }
 
+    public void sanityCheck(EditUserI user) throws ValidationException,
+            SearchException {
+        // Look for any unsaved or error proteins.
+        for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
+            ProteinBean pb = (ProteinBean) iter.next();
+            if (!pb.getEditState().equals(AbstractEditBean.VIEW)) {
+                throw new InteractionException("error.int.sanity.exp");
+            }
+        }
+        // Any missing experiments (check 7).
+        if (myExperiments.size() == 0) {
+            throw new InteractionException("error.int.sanity.unsaved.prot");
+        }
+    }
+
     // Null for any of these values will throw an exception.
     public void validate(EditUserI user) throws ValidationException,
             SearchException {
@@ -811,4 +826,113 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // know it has been already persisted by persist() call.
         user.update(intact);
     }
+
+    // Sanity checking routines
+
+    /**
+    * Performs Interaction checks.
+    * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
+    */
+//    private void checkBaitAndPrey(EditUserI user) throws IntactException, SearchException  {
+//
+//        //check 7
+//            Collection components = getProteins();
+//            int preyCount    = 0,
+//                baitCount    = 0,
+//                neutralCount = 0;
+//            for (Iterator iterator = getProteins().iterator(); iterator.hasNext();) {
+//                Component component = ((ProteinBean) iterator.next()).getComponent(user);
+//
+//                // The role.
+//                String role = component.getCvComponentRole().getShortLabel();
+//
+//                if (role.equals("bait")) {
+//                    baitCount++;
+//                }
+//                if (role.equals("prey")) {
+//                    preyCount++;
+//                }
+//                if (role.equals("neutral")) {
+//                    neutralCount++;
+//                }
+//            }
+//
+//            // TODO: we have to consider Components as 3 distinct groups: bait-prey, agent-target and neutral
+//            // TODO: we are not allowed to mix categories,
+//            // TODO: if you have a bait you must have at least one prey
+//            // TODO: if you have a target you must have at least one agent ----- NOT DONE YET
+//            // TODO: else you must have at least 2 neutral components
+//            if ( preyCount == 0 && baitCount == 0 ) {
+//                if ( neutralCount <= 1 ) {
+//                    getUserInfo(interactionWithNeitherPreyNorBaitCheck, interaction);
+//                }
+//            } else {
+//                if (baitCount == 0) {
+//                    getUserInfo(interactionWithNoBaitCheck, interaction);
+//                } else if (preyCount == 0) {
+//                    getUserInfo(interactionWithNoPreyCheck, interaction);
+//                }
+//            }
+//        }
+//        //now dump the results...
+//        writeResults(interactionWithNeitherPreyNorBaitCheck);
+//        writeResults(interactionWithNoBaitCheck);
+//        writeResults(interactionWithNoPreyCheck);
+//        writer.println();
+//
+//    }
+//
+//    /**
+//     * Performs checks against Proteins.
+//     * @throws IntactException Thrown if there were Helper problems
+//     * @throws SQLException thrown if there were DB access problems
+//     */
+//    public void checkProteins() throws IntactException, SQLException {
+//
+//        //checks 5 and 6 (easier if done together)
+//        for (Iterator it = interactions.iterator(); it.hasNext();) {
+//
+//            Interaction interaction = (Interaction) it.next();
+//            Collection components = interaction.getComponents();
+//            int originalSize = components.size();
+//            int matchCount = 0;
+//            Protein proteinToCheck = null;
+//            if (components.size() > 0) {
+//                Component firstOne = (Component) components.iterator().next();
+//
+//                if (firstOne.getInteractor() instanceof Protein) {
+//                    proteinToCheck = (Protein) firstOne.getInteractor();
+//                    components.remove(firstOne); //don't check it twice!!
+//                } else {
+//                    //not interested (for now) in Interactions that have
+//                    //interactors other than Proteins (for now)...
+//                    return;
+//                }
+//
+//                for (Iterator iter = components.iterator(); iter.hasNext();) {
+//                    Component comp = (Component) iter.next();
+//                    Interactor interactor = comp.getInteractor();
+//                    if (interactor.equals(proteinToCheck)) {
+//                        //check it against the first one..
+//                        matchCount++;
+//                    }
+//                }
+//                //now compare the count and the original - if they are the
+//                //same then we have found one that needs to be flagged..
+//                if (matchCount == originalSize) {
+//                    getUserInfo(singleProteinCheck, interaction);
+//                }
+//
+//            } else {
+//                //Interaction has no Components!! This is in fact test 5...
+//                getUserInfo(noProteinCheck, interaction);
+//            }
+//        }
+//
+//        writeResults(singleProteinCheck);
+//        writer.println();
+//        writeResults(noProteinCheck);
+//        writer.println();
+//
+//    }
 }
