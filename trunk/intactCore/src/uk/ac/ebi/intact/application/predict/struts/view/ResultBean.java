@@ -20,11 +20,6 @@ import java.util.Iterator;
 public class ResultBean {
 
     /**
-     *  The xref helper to get the search link.
-     */
-    private static final XrefHelper myXrefHelper = new XrefHelper();
-
-    /**
      * The rank of the protein.
      */
     private int myRank;
@@ -44,14 +39,14 @@ public class ResultBean {
         myFullName = protein.getFullName();
 
         // The primary id link.
-        String link = myXrefHelper.getEmptyLink();
+        String link = XrefHelper.getEmptyLink();
 
         // Boolean flag set to true when a proper link is found.
         boolean linkFound = false;
 
         // Get all the xrefs and iterate through them.
         for (Iterator iter = protein.getXrefs().iterator(); iter.hasNext();) {
-            link = myXrefHelper.getPrimaryIdLink((Xref) iter.next());
+            link = XrefHelper.getPrimaryIdLink((Xref) iter.next());
             if (link.startsWith("http://")) {
                 // Found a non empty link.
                 linkFound = true;
@@ -62,32 +57,6 @@ public class ResultBean {
         myShortLabelLink = linkFound ?
                 "<a href=\"" + "javascript:showProtein('" + link + "')\">"
                 + protein.getShortLabel() + "</a>" : link;
-
-//        for (Iterator iter0 = protein.getXrefs().iterator(); iter0.hasNext();) {
-//            Xref xref = (Xref) iter0.next();
-//
-//            // Null to indicate that there is no search-url for this protein.
-//            String searchUrl = null;
-//
-//            // Loop through xref's db annotations looking for search-url.
-//            Collection dbannots = xref.getCvDatabase().getAnnotations();
-//            for (Iterator iter1 = dbannots.iterator(); iter1.hasNext();) {
-//                Annotation annot = (Annotation) iter1.next();
-//                if (annot.getCvTopic().getShortLabel().equals("search-url")) {
-//                    // save searchUrl for future use
-//                    searchUrl = annot.getAnnotationText();
-//                    break;
-//                }
-//            }
-//            if (searchUrl != null) {
-//                Matcher matcher = ourSearchUrlPat.matcher(searchUrl);
-//                // After replacing the ac with primary id.
-//                searchUrl = matcher.replaceAll(xref.getPrimaryId());
-//                myShortLabelLink = "<a href=\"" + "javascript:showProtein('" + searchUrl + "')\">"
-//                        + protein.getShortLabel() + "</a>";
-//                break;
-//            }
-//        }
     }
 
     // Get methods to access info from JSP pages.
