@@ -9,11 +9,16 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.commons.beanutils.DynaBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Sets up the editor form type using the selected editor topic.
@@ -28,6 +33,17 @@ public class SetUpEditorAction  extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
+        // The view of the current object we are editing at the moment.
+        AbstractEditViewBean view = getIntactUser(request).getView();
+
+        // The annotation form; populate with annotations.
+        getEditForm(request,
+                EditorConstants.FORM_COMMENT_EDIT).setItems(view.getAnnotations());
+
+        // The xref form; populate it with xrefs.
+        getEditForm(request,
+                EditorConstants.FORM_XREF_EDIT).setItems(view.getXrefs());
+
         // The topic to choose where to go.
         String topic = getIntactUser(request).getSelectedTopic();
         if (topic.equals("BioSource")) {
