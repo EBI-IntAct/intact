@@ -12,6 +12,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
@@ -29,6 +30,11 @@ import uk.ac.ebi.intact.business.IntactException;
  * @version $Id$
  */
 public class SidebarDispatchAction extends CvAbstractDispatchAction {
+
+    /**
+     * Only letters and numbers are allowed.
+     */
+    private static final Pattern SL_RE = Pattern.compile("\\W+");
 
     // Implements super's abstract methods.
 
@@ -150,6 +156,15 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
         DynaActionForm theForm = (DynaActionForm) form;
         String  topic = (String) theForm.get("topic");
         String label = (String) theForm.get("shortLabel");
+
+        // Validate the short label.
+        if (SL_RE.matcher(label).find()) {
+            ActionErrors errors = new ActionErrors();
+            errors.add(CvAbstractAction.INTACT_ERROR,
+                    new ActionError("error.create.shortLabel"));
+            super.saveErrors(request, errors);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
+        }
 
         // The class name associated with the topic.
         String classname = super.getIntactService().getClassName(topic);
