@@ -506,7 +506,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-        depends="all-config-test, set-db-type, war-pg, war-oracle"/>
+        depends="all-config-test, set-db-type, war-postgres, war-oracle"/>
 
     <!-- =================================================================== -->
 
@@ -598,7 +598,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
     <target name="set-db-type">
         <condition property="postgres">
-            <contains string="${target.env}" substring="-pg-"/>
+            <contains string="${target.env}" substring="-postgres-"/>
         </condition>
         <condition property="oracle">
             <contains string="${target.env}" substring="-oracle-"/>
@@ -611,7 +611,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     Builds a war file with postgres; should be called only after calling
     set-db-type. -->
 
-    <target name="war-pg" if="postgres">
+    <target name="war-postgres" if="postgres">
         <echo message="Building a war for postgres"/>
         <antcall target="build-war">
             <param name="db" value="postgresql.jar"/>
