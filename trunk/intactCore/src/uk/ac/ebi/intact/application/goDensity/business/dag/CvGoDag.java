@@ -31,7 +31,6 @@ import java.util.Iterator;
  * @author Markus Brosch (markus @ brosch.cc)
  * @version $Id$
  */
-
 public class CvGoDag {
 
     // =======================================================================
@@ -181,11 +180,16 @@ public class CvGoDag {
 
         result.append(_root.toString());
         result.append("\n      -> Interactors: ");
-        Collection someInteractorsOfRoot = _root.getInteractors(_helper);
-        Iterator itInteractorsOfRoot = someInteractorsOfRoot.iterator();
-        while (itInteractorsOfRoot.hasNext()) {
-            Interactor interactor = (Interactor) itInteractorsOfRoot.next();
-            result.append(interactor.getAc() + ", ");
+
+        try {
+            Collection someInteractorsOfRoot = _root.getInteractors(_helper);
+            Iterator itInteractorsOfRoot = someInteractorsOfRoot.iterator();
+            while (itInteractorsOfRoot.hasNext()) {
+                Interactor interactor = (Interactor) itInteractorsOfRoot.next();
+                result.append(interactor.getAc() + ", ");
+            }
+        } catch ( IntactException e ) {
+            e.printStackTrace();
         }
 
         Collection allChilds = null;
@@ -195,9 +199,13 @@ public class CvGoDag {
             while (itAllChilds.hasNext()) {
                 CvGoNode node = (CvGoNode) itAllChilds.next();
                 result.append("\n" + node.toString() + "\n      -> Interactors: ");
-                Iterator itSomeInteractors = node.getInteractors(_helper).iterator();
-                while (itSomeInteractors.hasNext()) {
-                    result.append(((Interactor) itSomeInteractors.next()).getAc() + ", ");
+                try {
+                    Iterator itSomeInteractors = node.getInteractors(_helper).iterator();
+                    while (itSomeInteractors.hasNext()) {
+                        result.append(((Interactor) itSomeInteractors.next()).getAc() + ", ");
+                    }
+                } catch ( IntactException e ) {
+                    e.printStackTrace ();
                 }
             }
         } catch (KeyNotFoundException e) {
