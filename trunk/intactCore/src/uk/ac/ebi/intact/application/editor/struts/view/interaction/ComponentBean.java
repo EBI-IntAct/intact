@@ -319,7 +319,7 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    void setFromClonedObject(Component copy, EditUserI user) {
+    void setFromClonedObject(Component copy) {
         initialize(copy);
         clearTransactions();
 
@@ -330,11 +330,8 @@ public class ComponentBean extends AbstractEditKeyBean {
         for (Iterator iter = myComponent.getBindingDomains().iterator(); iter.hasNext();) {
             Feature feature = (Feature) iter.next();
 
-            // Set it with most likely next short label from the database.
-            String newSL = user.getNextAvailableShortLabel(Feature.class,
-                    feature.getShortLabel());
-            FeatureBean fb = new FeatureBean(feature, newSL);
-
+            FeatureBean fb = new FeatureBean(feature,
+                    stripCloneSuffix(feature.getShortLabel()));
             // Add to the view.
             myFeatures.add(fb);
             // Features need to be added to the component.
@@ -392,5 +389,11 @@ public class ComponentBean extends AbstractEditKeyBean {
                     CvComponentRole.class, myRole);
         }
         return null;
+    }
+
+    private String stripCloneSuffix(String label) {
+        int idx = label.indexOf("-x");
+        // suffix is always present, so we can safely assume that idx is never -1
+        return label.substring(0, idx);
     }
 }
