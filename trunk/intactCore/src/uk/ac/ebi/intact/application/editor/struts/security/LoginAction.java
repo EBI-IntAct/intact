@@ -95,6 +95,7 @@ public class LoginAction extends AbstractEditorAction {
         // config file.
         session.setAttribute(EditorConstants.FORM_COMMENT_EDIT, new EditForm());
         session.setAttribute(EditorConstants.FORM_XREF_EDIT, new EditForm());
+        session.setAttribute("proteinEditForm", new EditForm());
 
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
     }
