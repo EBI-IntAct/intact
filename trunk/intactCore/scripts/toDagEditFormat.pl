@@ -27,30 +27,73 @@ my @goQualifiers = ("term:", "goid:", "definition:", "definition_reference:");
 my $pseudoAC = 0;
 my %pseudoAcAssignments = ();
 
+# Maps: goid -> dag file
+my %goidToDagFile = ();
+# Maps: goid -> dag line
+my %goidToDagLine = ();
+
+# Forward declaration to avoid called too early to check prototype error.
+sub leftTrim($);
 
 # Create the target dag file
 open (TARGETDAG, ">$opt_targetDagFile") || die "Could not open target dag file $opt_targetDagFile\n";
 
+# Add this tag for the Dag editor to load this file properly.
+print TARGETDAG "!type: % is_a is a\n";
 print TARGETDAG "\$intactCVs ; PSEUDOAC:$pseudoAC\n";
 $pseudoAC++;
 
 for (my $i=0; $i <= $#opt_sourceDagFile; $i++) {
     open (SOURCEDAG, $opt_sourceDagFile[$i]) || die "Could not open source dag file $opt_sourceDagFile[$i]\n";
     print STDERR "Processing $opt_sourceDagFile[$i]\n";
+
     while (<SOURCEDAG>){
-	s/^\$/\%/;
-	if (/MI\:/){
-	    print TARGETDAG " " . $_;
-	} else {
-	    chomp;
-	    print TARGETDAG " " . $_ . " \; PSEUDOAC\:$pseudoAC" . "\n";
+        # Replace $ in each file with a 'is_a' relation.
+        s/^\$/\@is_a\@/;
 
-	    # Parse out the GO term
-	    (my $goTerm) = /[\%\$](.*)\s?\;?/;
-	    $pseudoAcAssignments{"term: " . $goTerm . "\n"} = "PSEUDOAC\:$pseudoAC";
+        if (/MI\:/){
+            # Extract the goid from the current line.
+            (my $goid) = /(MI\:\d+)/;
 
-	    $pseudoAC++;
-	} 
+            # Have we processed this goid before?
+            if ($goidToDagLine{$goid}) {
+               # Extract the existing and new term for matching.
+               (my $existingTerm) = $goidToDagLine{$goid} =~ /\@is_a\@([^:;\\]+)/;
+               (my $newTerm) = /\@is_a\@([^:;\\]+)/;
+
+               # Compare existing and new terms, flag it as a warning if they differ. Also
+               # note that the line is written using the EXISTING dag line.
+               if ($existingTerm ne $newTerm) {
+                  print "$goid found in $goidToDagFile{$goid}. Ignoring the entry from file: $opt_sourceDagFile[$i]\n";
+
+                  # Need to calculate the current spaces before printing.
+                  (my $spaceSize) = /(^\s+)/;
+                  print TARGETDAG " " . (" " x length $spaceSize) . $goidToDagLine{$goid};
+               }
+               else {
+                  # Terms do match, print it as it is.
+                  print TARGETDAG " " . $_;
+               }
+            }
+            else {
+               # Read a new go term. Save the source and the line in maps.
+               $goidToDagFile{$goid} = $opt_sourceDagFile[$i];
+               # Trim left spaces before storing it in the map.
+               $goidToDagLine{$goid} = leftTrim($_);
+
+               # No processing for the output
+               print TARGETDAG " " . $_;
+            }
+        } else {
+            chomp;
+            print TARGETDAG " " . $_ . " \; PSEUDOAC\:$pseudoAC" . "\n";
+
+            # Parse out the GO term
+            (my $goTerm) = /[\%\$](.*)\s?\;?/;
+            $pseudoAcAssignments{"term: " . $goTerm . "\n"} = "PSEUDOAC\:$pseudoAC";
+
+            $pseudoAC++;
+        }
     } 
 }
 close TARGETDAG;
@@ -135,3 +178,11 @@ for (my $i=0; $i <= $#opt_sourceDefFile; $i++) {
 }
 close TARGETDEF;
 
+# -----------------------------------------------------------------------------
+
+# Remove whitespace from the start a string
+sub leftTrim($) {
+	my $string = shift;
+	$string =~ s/^\s+//;
+	return $string;
+}
