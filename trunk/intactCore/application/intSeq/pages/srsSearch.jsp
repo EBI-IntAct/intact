@@ -33,7 +33,7 @@
             <table>
 
               <tbody>
-                <html:form action="/srs" focus="srs">
+                <html:form action="/srs" focus="searchString">
                 <tr>
                   <td><html:text property="searchString" size="16" value="Search String" />
                   </td>
