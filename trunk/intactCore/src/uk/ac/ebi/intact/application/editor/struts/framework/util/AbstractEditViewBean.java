@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
@@ -307,7 +308,8 @@ public abstract class AbstractEditViewBean implements Serializable {
         if (getAc() == null) {
             return "";
         }
-        return "<a href=\"" + "javascript:show('" + getShortLabel() + "')\""
+        String topic = EditorService.getTopic(getEditClass());
+        return "<a href=\"" + "javascript:show('" + topic + "', '" + getShortLabel() + "')\""
                 + ">" + getAc() + "</a>";
     }
 

@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.wrappers;
 
 import org.apache.taglibs.display.TableDecorator;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -36,7 +37,11 @@ public class ResultDisplayWrapper extends TableDecorator {
      */
     public String getAc() {
         AnnotatedObject annotobj = (AnnotatedObject) getObject();
-        return "<a href=\"" + "javascript:show('" + annotobj.getShortLabel()
+
+        // The type for the link..
+        String type = EditorService.getTopic(annotobj.getClass());
+
+        return "<a href=\"" + "javascript:show('" + type + "', '" + annotobj.getShortLabel()
                 + "')\">" + annotobj.getAc() + "</a>";
     }
 

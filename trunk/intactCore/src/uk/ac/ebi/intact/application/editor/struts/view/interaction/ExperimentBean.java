@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
@@ -80,7 +81,7 @@ public class ExperimentBean extends AbstractEditBean implements Serializable {
      * @return the topic as a browsable link.
      */
     public String getShortLabelLink() {
-        return getLink(myExperiment.getShortLabel());
+        return getLink(EditorService.getTopic(Experiment.class), myExperiment.getShortLabel());
     }
 
     // Override Objects's equal method.

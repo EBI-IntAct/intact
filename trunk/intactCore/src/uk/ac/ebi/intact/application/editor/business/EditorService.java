@@ -97,6 +97,22 @@ public class EditorService {
         return ourInstance;
     }
 
+    /**
+     * Returns the topic name for given class.
+     * @param clazz the Class object to extract the tipic name.
+     * @return the class name without the package prefix. The returned
+     * value equals to given class's class name if there is no package
+     * information associated with <code>clazz</code>
+     */
+    public static String getTopic(Class clazz) {
+        String className = clazz.getName();
+        int lastIdx = className.lastIndexOf('.');
+        if (lastIdx != -1) {
+            return className.substring(lastIdx + 1);
+        }
+        return className;
+    }
+
     // Constructor private to return the only instance via getInstance method.
 
     /**
@@ -133,22 +149,6 @@ public class EditorService {
      */
     public String getClassName(String topic) {
         return myTopics.getString(topic);
-    }
-
-    /**
-     * Returns the topic name for given class.
-     * @param clazz the Class object to extract the tipic name.
-     * @return the class name without the package prefix. The returned
-     * value equals to given class's class name if there is no package
-     * information associated with <code>clazz</code>
-     */
-    public String getTopic(Class clazz) {
-        String className = clazz.getName();
-        int lastIdx = className.lastIndexOf('.');
-        if (lastIdx != -1) {
-            return className.substring(lastIdx + 1);
-        }
-        return className;
     }
 
     /**

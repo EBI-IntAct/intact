@@ -35,8 +35,9 @@
     }
 
     // Will be invoked when the user selects on a link.
-    function show(label) {
-        var link = "<%=service.getSearchURL(request)%>" + "?searchString=" + label;
+    function show(type, label) {
+        var link = "<%=service.getSearchURL(request)%>" + "?searchString=" + label
+           + "&searchClass=" + type;
         //window.alert(link);
         makeNewWindow(link);
     }
@@ -57,6 +58,6 @@
             alert("Please select an item from the list first!");
             return;
         }
-        show(v);
+        show(type, v);
     }
 </script>

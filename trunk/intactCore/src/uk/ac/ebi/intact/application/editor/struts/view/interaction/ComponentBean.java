@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
@@ -167,7 +168,7 @@ public class ComponentBean extends AbstractEditKeyBean {
     }
 
     public String getShortLabelLink() {
-        return getLink(getShortLabel());
+        return getLink(EditorService.getTopic(Protein.class), getShortLabel());
     }
 
     public String getSpAc() {

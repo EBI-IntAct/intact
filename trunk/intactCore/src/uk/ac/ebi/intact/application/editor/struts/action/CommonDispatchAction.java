@@ -268,6 +268,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             // Non null error indicates errors.
             if (errors != null) {
                 saveErrors(request, errors);
+                // Set the anchor
+                setAnchor(request, editorForm);
                 // Display the errors in the input page.
                 return mapping.getInputForward();
             }
