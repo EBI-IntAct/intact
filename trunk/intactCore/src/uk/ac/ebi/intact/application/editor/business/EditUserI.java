@@ -125,11 +125,10 @@ public interface EditUserI extends Serializable {
      * @param clazz the class object to search.
      * @param label the short label to search for.
      *
-     * @exception DuplicateLabelException thrown if the search produced more
-     * than a single object.
+     * @exception IntactException thrown for search errors.
      */
     public Object getObjectByLabel(Class clazz, String label)
-            throws DuplicateLabelException;
+            throws IntactException;
 
     /**
      * This method provides a means of searching intact objects, within the constraints
@@ -253,7 +252,14 @@ public interface EditUserI extends Serializable {
 
     public Date logoffTime();
 
-    public AbstractROViewBean getReadOnlyView(Class clazz,
-                                                   String shortLabel)
-            throws DuplicateLabelException;
+    /**
+     * Returns the read only view.
+     * @param clazz the Class to return the view for.
+     * @param shortLabel the short label to search the database for.
+     * @return the read only view for <code>shortLabel</code> of
+     * <code>clazz</code>.
+     * @throws IntactException for errors in searching the database.
+     */
+    public AbstractROViewBean getReadOnlyView(Class clazz, String shortLabel)
+            throws IntactException;
 }

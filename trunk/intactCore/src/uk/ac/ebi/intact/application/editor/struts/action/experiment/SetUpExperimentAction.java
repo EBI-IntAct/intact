@@ -27,7 +27,7 @@ public class SetUpExperimentAction  extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        LOGGER.info("In the SetUpExperimentAction");
+//        LOGGER.info("In the SetUpExperimentAction");
         // The view of the current object we are editing at the moment.
         ExperimentViewBean view =
                 (ExperimentViewBean) getIntactUser(request).getView();
