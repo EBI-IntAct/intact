@@ -61,34 +61,20 @@ import uk.ac.ebi.intact.business.IntactException;
  * This sequence manager accesses a database sequence object to
  * get the next unique id, leaving the management of the sequence
  * to the database. In it's current implementation, this class is
- * Postgresql-specific, but some other RDBMS also offer sequence objects.
+ * Oracle-specific, but some other RDBMS also offer sequence objects.
  *
  * IDs are unique across all classes.
  *
- * @author hhe .adapted to postgresql DBMS by Z.Tassamart
+ * @author hhe
  * @author Samuel Kerrien (skerrien@ebi.ac.uk) - abstraction of the model
  */
-public class PostgresSequenceManager extends AbstractSequenceManager {
+public class OracleSequenceManager extends AbstractSequenceManager {
 
-    /**
-     *
-     * Public constructor
-     *
-     */
-    public PostgresSequenceManager( PersistenceBroker broker ) throws IntactException {
+    public OracleSequenceManager ( PersistenceBroker broker ) throws IntactException {
         super( broker );
     }
 
     protected final String getNextSequence() {
-        return "SELECT nextval('Intact_ac')";
+        return "SELECT intact.intact_ac.nextval FROM DUAL";
     }
 }
-
-
-
-
-
-
-
-
-
