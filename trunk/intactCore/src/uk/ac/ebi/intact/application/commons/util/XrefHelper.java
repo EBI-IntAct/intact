@@ -17,7 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class contains various useful utilities. All methods are static.
+ * This class contains various useful utilities related to Xref. All methods
+ * are static.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -36,12 +37,15 @@ public class XrefHelper {
      */
     private static Pattern ourSearchUrlPat = Pattern.compile("\\$\\{ac\\}");
 
-    // Instance Data
-
     /**
-     * Maps: Short label of CV database -> url.
+     * Maps: Short label of CV database -> url. Need a common map to store db
+     * urls.
      */
-    private Map myCvDbToUrl = new HashMap();
+    private static Map ourCvDbToUrl = new HashMap();
+
+    // No instantiation from outside.
+
+    private XrefHelper() {}
 
     /**
      * Return the primary id as a link. Only used when viewing a xref.
@@ -52,7 +56,7 @@ public class XrefHelper {
      * if there is 'search-url' is found among the annotations for given
      * xreference.
      */
-    public String getPrimaryIdLink(Xref xref) {
+    public static String getPrimaryIdLink(Xref xref) {
         // Return the empty link if there is no primar yd.
         String pid = xref.getPrimaryId();
         if (pid == null) {
@@ -61,8 +65,8 @@ public class XrefHelper {
         // The short label of the database of the xref.
         String dbname = xref.getCvDatabase().getShortLabel();
 
-        // Null to indicate that there is no search-url in the annotations.
-        String searchUrl = (String) myCvDbToUrl.get(dbname);
+        // Set it to the value from the cache.
+        String searchUrl = (String) ourCvDbToUrl.get(dbname);
 
         // Is it in the cache?
         if (searchUrl == null) {
@@ -84,7 +88,7 @@ public class XrefHelper {
                 searchUrl = ourEmptyPidLink;
             }
             // Cache the url.
-            myCvDbToUrl.put(dbname, searchUrl);
+            ourCvDbToUrl.put(dbname, searchUrl);
         }
         // return pid if there is no search url for the database.
         if (searchUrl.equals(ourEmptyPidLink)) {
@@ -99,7 +103,7 @@ public class XrefHelper {
      * Returns the identifier for the empty primary id link.
      * @return the identifier for the empty primary id link.
      */
-    public String getEmptyLink() {
+    public static String getEmptyLink() {
         return ourEmptyPidLink;
     }
 }
