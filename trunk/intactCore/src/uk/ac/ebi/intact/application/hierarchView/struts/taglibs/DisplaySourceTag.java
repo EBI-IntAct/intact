@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.Xref;
@@ -140,8 +141,8 @@ public class DisplaySourceTag extends TagSupport {
 
                     if (urls.size() == 1) {
                         // only one source element, let's display automatically the relevant page.
-                        LabelValueBean url = (LabelValueBean) urls.get(0);
-                        String absoluteUrl = url.getValue();
+                        SourceBean url = (SourceBean) urls.get(0);
+                        String absoluteUrl = url.getSourceBrowserUrl(); // Value();
                         user.setSourceURL (absoluteUrl);
                     } else {
                         user.setSourceURL (null);
