@@ -14,6 +14,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.Globals;
 
 /**
@@ -41,10 +42,16 @@ public class ClearErrorsTag extends TagSupport {
     public int doEndTag() throws JspException {
 
         ActionErrors errors = (ActionErrors) pageContext.findAttribute(Globals.ERROR_KEY);
-
         if ( null != errors ) {
             errors.clear();
             pageContext.removeAttribute(Globals.ERROR_KEY);
+        }
+
+        ActionMessages messages = (ActionMessages) pageContext.findAttribute (Globals.MESSAGE_KEY);
+        if ( null != messages ) {
+            logger.info ("!!!!!!!!!!!!!!!!!!!!!!! Some messages found : CREARED");
+            messages.clear();
+            pageContext.removeAttribute(Globals.MESSAGE_KEY);
         }
 
         return EVAL_PAGE;
