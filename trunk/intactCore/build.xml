@@ -2,6 +2,7 @@
     <!--
         ANT build configuration file for intactCore module.
         Authors: Henning Hermjakob (hhe@ebi.ac.uk), Sugath Mudali (smudali@ebi.ac.uk).
+        Version: $Id$
     -->
 
     <project name="intact-core" basedir="." default="project">
@@ -261,7 +262,7 @@
         <replace file="${rep.dest.file}" propertyfile="${ora.properties}">
             <replacefilter token="@DBMS_NAME@" value="Oracle" />
             <replacefilter token="@DRIVER_NAME@" value="oracle.jdbc.pool.OracleConnectionCacheImpl"/>
-            <replacefilter token="@URL_SUBPROTOCOL@" value="oracle"/>
+            <replacefilter token="@URL_SUBPROTOCOL@" property="subprotocol"/>
             <replacefilter token="@URL_DBALIAS@" property="dbalias"/>
             <replacefilter token="@USER_NAME@" property="username"/>
             <replacefilter token="@USER_PASSWD@" property="password"/>
