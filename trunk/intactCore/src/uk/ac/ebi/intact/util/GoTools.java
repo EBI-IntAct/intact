@@ -183,14 +183,16 @@ public class GoTools {
             }
         }
 
-        // add GO xref
+        // add GO xref if it does not yet exist.
         if ((Vector) definition.get("goid") != null) {
             Xref xref = new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                     (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go"),
                     ((Vector) definition.get("goid")).elementAt(0).toString(),
                     null, null, null);
-            current.addXref(xref);
-            helper.create(xref);
+            if (! current.getXref().contains(xref)){
+		current.addXref(xref);
+		helper.create(xref);
+	    }
         }
 
         // add definition references
@@ -207,8 +209,10 @@ public class GoTools {
                             null,
                             (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class,
                                     "go-definition-ref"));
-                    current.addXref(xref);
-                    helper.create(xref);
+                    if (! current.getXref().contains(xref)){
+			current.addXref(xref);
+			helper.create(xref);
+		    }
                 }
             }
         }
@@ -369,7 +373,7 @@ public class GoTools {
         Collection xref = current.getXref();
         for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
             Xref x = (Xref) iterator.next();
-            if (x.getCvDatabase().getShortLabel().equals("GO")) {
+            if (x.getCvDatabase().getShortLabel().equals("go")) {
                 buf.append("goid: ");
                 buf.append(x.getPrimaryId());
                 buf.append("\n");
@@ -390,7 +394,7 @@ public class GoTools {
         xref = current.getXref();
         for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
             Xref x = (Xref) iterator.next();
-            if (x.getCvDatabase().getShortLabel().equals("PubMed")) {
+            if (x.getCvDatabase().getShortLabel().equals("pubmed")) {
                 buf.append("definition_reference: PMID:");
                 buf.append(x.getPrimaryId());
                 buf.append("\n");
