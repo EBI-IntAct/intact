@@ -368,12 +368,9 @@ public abstract class AbstractEditViewBean {
         user.update(myAnnotObject);
     }
 
-    /**
-     * Returns a string representation of this object. Mainly for debugging.
-     */
-    public String toString() {
-        return "ac: " + getAc() + " short label: " + getShortLabel();
-    }
+    // Abstract methods
+
+    public abstract String getEditorType();
 
     // Helper Methods
 
