@@ -26,11 +26,11 @@
     <h3>Annotations</h3>
 
     <html:form action="/cv/comment/edit">
-        <table width="70%">
+        <table width="80%" border="0" cellspacing="1" cellpadding="2">
             <tr class="tableRowHeader">
-                <th class="tableCellHeader" width="10%">Topic</th>
-                <th class="tableCellHeader" width="40%">Description</th>
-                <th class="tableCellHeader" width="10%" colspan="2">Action</th>
+                <th class="tableCellHeader" colspan="2">Action</th>
+                <th class="tableCellHeader">Topic</th>
+                <th class="tableCellHeader">Description</th>
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
@@ -46,28 +46,6 @@
                     </c:otherwise>
                 </c:choose>
                 <c:set var="row" value="${row + 1}"/>
-
-                <%-- The following loop is under <tr> tag --%>
-                    <nested:equal name="<%=CvEditConstants.COMMENT_EDIT_FORM%>"
-                        property="editState" value="<%=EditBean.VIEW%>">
-                        <td class="tableCell">
-                            <nested:text size="17" readonly="true" property="topic"/>
-                        </td>
-                        <td class="tableCell">
-                            <nested:textarea cols="70" rows="3" readonly="true" property="description"/>
-                        </td>
-                    </nested:equal>
-
-                    <nested:equal property="editState" value="<%=EditBean.SAVE%>">
-                        <td class="tableCell">
-                            <nested:select property="topic">
-                                <nested:options name="topiclist" />
-                            </nested:select>
-                        </td>
-                        <td class="tableCell">
-                            <nested:textarea cols="70" rows="3" property="description"/>
-                        </td>
-                    </nested:equal>
 
                     <%-- Buttons; Edit or Save depending on the bean state;
                          Delete is visible regardless of the state.
@@ -92,6 +70,28 @@
                             <bean:message key="button.delete"/>
                         </html:submit>
                     </td>
+
+                <%-- The following loop is under <tr> tag --%>
+                    <nested:equal name="<%=CvEditConstants.COMMENT_EDIT_FORM%>"
+                        property="editState" value="<%=EditBean.VIEW%>">
+                        <td class="tableCell">
+                            <nested:write property="topic"/>
+                        </td>
+                        <td class="tableCell">
+                            <nested:write property="description"/>
+                        </td>
+                    </nested:equal>
+
+                    <nested:equal property="editState" value="<%=EditBean.SAVE%>">
+                        <td class="tableCell">
+                            <nested:select property="topic">
+                                <nested:options name="topiclist" />
+                            </nested:select>
+                        </td>
+                        <td class="tableCell">
+                            <nested:textarea cols="70" rows="3" property="description"/>
+                        </td>
+                    </nested:equal>
                 </tr>
             </nested:iterate>
         </table>
