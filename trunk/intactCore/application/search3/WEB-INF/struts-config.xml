@@ -20,17 +20,22 @@
      need only the "form-bean" element itself, with the corresponding
      "name" and "type" attributes.
 
-  Workflow:
+  Workflow:                                         __________      _____________
+                ================================>  | tooLarge |==> |tooLarge.jsp |
+                |                                  |__________|    |_____________|
+                |                                   _________      _____________
+                |                              ==> | partner  |==> | partner.jsp|
+                |                             |    |_________ |    |____________|
+  Query     _________       ____________      |     _________      _____________
+ =======>  | Search | ===> | Dispatcher | ===|==>  | Single  |==> | single.jsp  |
+           |________|      |____________|     |    |_________|    |_____________|
+                                |             |     _________      ____________
+                                |             |==> | Details |==> | detail.jsp |
+                                |             |    |_________|    |____________|
+                            ____|____         |    _________      ____________
+                           |binary  |         ==> | simple  |==> | simple.jsp |
+                           |________|===========> |_________|    |____________|
 
-                                                   _________      _____________
-                                              ==> | Binary  |==> | simple.jsp |
-                                             |    |_________|    |____________|
-  Query     _________       ____________     |     _________      ____________
- =======>  | Search | ===> | Dispatcher | ===|==> | Single  |==> | single.jsp |
-           |________|      |____________|    |    |_________|    |____________|
-                                             |     _________      ____________
-                                              ==> | Details |==> | detail.jsp |
-                                                  |_________|    |____________|
 
 -->
 
@@ -42,31 +47,37 @@
         <!-- The sidebar form -->
         <form-bean name="sidebarForm"
             type="org.apache.struts.action.DynaActionForm">
+            <!--  <form-property name="searchString" type="java.lang.String"/> -->
             <form-property name="searchString" type="java.lang.String" initial="*"/>
             <form-property name="searchClass" type="java.lang.String"/>
             <form-property name="binary" type="java.lang.String"/>
             <form-property name="selectedChunk" type="java.lang.String" initial="-1"/>
+            <form-property name="view" type="java.lang.String" initial="partner"/>
+            <form-property name="filter" type="java.lang.String" initial="all"/>
         </form-bean>
-
     </form-beans>
 
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
-        <!-- Need this global forward from the index.jsp -->
         <forward name="start" path="/do/welcome"/>
         <forward name="failure" path="error.layout"/>
         <forward name="warning" path="warning.layout"/>
     </global-forwards>
 
     <!-- ========== Action Mapping Definitions ============================== -->
+
     <action-mappings>
+
+        <!-- ========== Url Mapping Actions for entering ================== -->
 
         <!-- Process when user clicks on the logo to enter the application. -->
         <action path="/welcome"
             type="uk.ac.ebi.intact.application.search3.struts.controller.WelcomeAction"
             scope="request">
             <forward name="success" path="search.layout"/>
+            <forward name="noResource" path="no.resource.layout"/>
         </action>
+
 
         <!-- Process when user accesses search via HierarchView application -->
         <action path="/hvWelcome"
@@ -75,10 +86,13 @@
             <forward name="success" path="/do/search"/>
         </action>
 
-        <!-- Process a user searches. The form is in a session because we reuse search details
+        <!-- ========== Buisness Logic ================================== -->
+
+        <!-- Process the dispatch action th the view. The form is in a session because we reuse search details
              from view action. Currently once a search has been successful, we delegate the
              choice of choosing the relevant action to a dispatcher.
           -->
+
         <action path="/search"
             name="sidebarForm"
             type="uk.ac.ebi.intact.application.search3.struts.controller.SearchAction"
@@ -89,28 +103,15 @@
             <forward name="dispatcher" path="/do/dispatcher"/>
             <forward name="binary" path="binary.layout"/>
             <forward name="pairwise" path="pairwise.layout"/>
+            <forward name="noProtein" path="no.protein.layout"/>
+            <forward name="false" path="no.resource.layout"/>
         </action>
 
-          <!-- Process when user accesses search via a pairwise query -->
-        <action path="/pairwise"
-            type="uk.ac.ebi.intact.application.search3.struts.controller.WelcomeAction"
-            scope="request">
-            <forward name="success" path="/do/search"/>
-        </action>
+        <!-- Process a user the forward to the secific view site -->
 
-
-
-        <!-- Decide accordingly to the data retreived and the parameters given by the user,
-             which action will process the data collected in order to display them to the user.
-             The dispatcher could either delegate the processing to the following actions:
-             - single,
-             - binary,
-             - details.
-          -->
         <action path="/dispatcher"
             type="uk.ac.ebi.intact.application.search3.struts.controller.DispatcherAction"
             scope="session">
-            <forward name="results" path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
             <forward name="single" path="/do/single"/>
             <forward name="binary" path="/do/binary"/>
@@ -119,87 +120,68 @@
             <forward name="binaryProtein" path="/do/binaryProtein"/>
         </action>
 
+        <!-- ========== View Actions ================================== -->
 
-        <!-- A single IntAct object has to be prepared and displayed.
-             It could process either a collection containing a single:
-             - Protein
-             - Interaction
-             - Experiment
-             - CvObject
-             - BioSource
+        <!-- Process when user accesses search via a pairwise query -->
 
-            NOTE: It seems that the Action below doesn't actually do the forwarding -
-            it simply builds a view bean and then the Abstract result Action does the
-            forwarding. May need to change this, because it is cleaner to have things
-            forwarded to specific JSPs rather than have it all done in one....
- -->
+        <action path="/pairwise"
+            type="uk.ac.ebi.intact.application.search3.struts.controller.WelcomeAction"
+            scope="request">
+            <forward name="success" path="/do/search"/>
+        </action>
+
+        <!-- Process when user accesses search via a pairwise query -->
+
         <action path="/single"
             type="uk.ac.ebi.intact.application.search3.struts.controller.SingleResultAction"
             scope="session">
             <forward name="noMatch" path="no.match.layout"/>
-            <!-- new path to the single Protein view -->
             <forward name="singleProtein" path="singleProtein.layout"/>
-            <forward name="results" path="match.layout"/>
-            <!-- used for BioSource -->
             <forward name="cvObject" path="cvObject.layout"/>
-            <!-- used for CvObjects -->                      
             <forward name="bioSource" path="bioSource.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
         </action>
 
-        <!-- July 2004: summary view of Protein interaction partners (can also display multiple results) -->
         <action path="/binary"
             type="uk.ac.ebi.intact.application.search3.struts.controller.BinaryResultAction"
             scope="session">
             <forward name="noMatch" path="no.match.layout"/>
-            <forward name="results" path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
-            <!-- new path to the partners JSP -->
-            <forward name="partners" path="partners.layout"/>
+            <forward name="partner" path="partners.layout"/>
         </action>
 
-        <!-- Aug 2004: simple (initial) view - may contain multiple type details -->
         <action path="/simple"
             type="uk.ac.ebi.intact.application.search3.struts.controller.SimpleResultAction"
             scope="session">
             <forward name="noMatch" path="no.match.layout"/>
-            <forward name="results" path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
-
-            <!-- new path to the 'simple' JSP -->
             <forward name="simpleResults" path="simple.layout"/>
         </action>
 
-        <!-- Jan 2005 : new view for request from ihop  -->
         <action path="/binaryProtein"
             type="uk.ac.ebi.intact.application.search3.struts.controller.BinaryProteinAction"
             scope="session">
-           <forward name="noMatch" path="no.match.layout"/>
-           <forward name="results" path="simple.layout"/>
+            <forward name="noMatch" path="no.match.layout"/>
+            <forward name="noInteractions" path="no.interactions.layout"/>
+            <forward name="tooManyProteins" path="too.many.proteins.layout"/>
+            <forward name="simple" path="/do/simple"/>
+            <forward name="partner" path="partners.layout"/>
         </action>
 
-         <action path="/tooLarge"
-            type="uk.ac.ebi.intact.application.search3.struts.controller.TooLargeAction"
-            scope="session">
-            <forward name="results" path="too.large.layout"/>
-        </action>
-
-
-        <!-- one to many intactObjects have to be prepared
-             It could process either a collection of:
-             - Protein,
-             - Interaction,
-             - Experiment.
-             TBD...
-          -->
         <action path="/details"
             type="uk.ac.ebi.intact.application.search3.struts.controller.DetailsResultAction"
             scope="session">
             <forward name="noMatch" path="no.match.layout"/>
-            <forward name="results" path="match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
-            <!-- new look detail page -->
             <forward name="detailPage" path="detail.layout"/>
+        </action>
+
+        <!-- ========== Error Actions ================================== -->
+
+        <action path="/tooLarge"
+            type="uk.ac.ebi.intact.application.search3.struts.controller.TooLargeAction"
+            scope="session">
+            <forward name="results" path="too.large.layout"/>
         </action>
 
     </action-mappings>
