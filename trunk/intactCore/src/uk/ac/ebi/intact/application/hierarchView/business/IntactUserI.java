@@ -29,7 +29,8 @@ import java.io.Serializable;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public interface IntactUserI extends Serializable, HttpSessionBindingListener {
+public interface IntactUserI extends Serializable, HttpSessionBindingListener,
+        uk.ac.ebi.intact.application.commons.business.IntactUserI {
 
     // All the properties needed by the user (Session scope !)
     public static final Properties GRAPH_PROPERTIES        = PropertyLoader.load (StrutsConstants.GRAPH_PROPERTY_FILE);
