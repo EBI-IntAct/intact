@@ -69,7 +69,7 @@ All those variable settings could be done by sourcing one of the following scrip
   - scripts/setEnv.csh (for csh environment)
     type: source scripts/setEnv.csh
 
-Intact has been tested on both Redhat Linux 7.1 and Windows2000 running inside cygwin, and with both local and
+Intact has been tested on both Redhat Linux 7.1 and Windows 2000/XP running inside cygwin, and with both local and
 remote postgres databases as well as a remote oracle DB. Thus intact is based around a linux/unix environment, but if you
 have Windows then everything can still be used provided you have cygwin installed.
 
@@ -80,7 +80,7 @@ For postgres 7.x:
     e.g:
     # Allow any user from any host with IP address 127.x.x.x to connect to database
     # TYPE  DATABASE    USER        IP-ADDRESS        IP-MASK           METHOD
-      host    all         all         127.0.0.0         255.0.0.0   trust
+    host    all         all         127.0.0.0         255.0.0.0         trust
 
     See also http://www.postgresql.org/docs/7.x/interactive/client-authentication.html#AUTH-PG-HBA-CONF
     (replace the '7.x' in the URL with your postgres version)
@@ -95,12 +95,15 @@ b) You must then ensure that the configuration files are set correctly for you e
 for you, via the 'config/build.properties' file.
 
 c.) You have to download the relevant jdbc driver for your database and store this driver in /lib.
-    Then set the jdbc-driver name and the class of the driver itself  for your database in config/jdbc.properties.
+    Then set the jdbc-driver filename and the class of the driver itself for your database in config/jdbc.properties.
+    You will find examples of configuration in that file. 
 
-          Postgres users should download the relevant jdbc-driver for your postgres version from
+    Here are locations from which you can download JDBC drivers for wither PostgreSQL and Oracle:
+
+        - Postgres users should download the relevant jdbc-driver for your postgres version from
           http://jdbc.postgresql.org/download.html#jars
 
-          Oracle users should download the relevant jdbc-driver for your oracle version from
+        - Oracle users should download the relevant jdbc-driver for your oracle version from
           http://www.oracle.com/technology/software/tech/java/sqlj_jdbc/index.html
 
 Features:
