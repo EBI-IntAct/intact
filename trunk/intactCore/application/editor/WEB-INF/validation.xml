@@ -117,6 +117,18 @@
                     <var-value>20</var-value>
                   </var>
               </field>
+              <field property="featureType"
+                     depends="mask">
+                  <msg
+                    name="mask"
+                    key="error.feature.cvtype"/>
+
+                  <arg0 key="featureForm.featureType"/>
+                  <var>
+                    <var-name>mask</var-name>
+                    <var-value>${menu-pat}</var-value>
+                  </var>
+              </field>
       </form>
       <form name="intForm">
               <field property="interactionType"
