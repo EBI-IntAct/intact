@@ -24,32 +24,38 @@
 
         <section title="Recent changes" name="new">
 
-                <blockquote>
+            <blockquote>
                     Changes up to February 01, 2004:
-                    <ul>
-                        <li>IntAct release 1: IntAct data is now available in <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>, see the <a href="#download">download</a> section. Controlled vocabularies are available in GO DAG format. 
-                        </li>
-                        <li>20672 interactions have been imported from Giot et al, 2003. 
+                <ul>
+                    <li>IntAct release 1: IntAct data is now available in
+                        <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>, see the
+                        <a href="#download">download</a> section. Controlled vocabularies are available in GO DAG format.
+                    </li>
+                    <li>20672 interactions have been imported from Giot et al, 2003.
 The dataset contains extensive crosslinking to UniProt, GO, InterPro, and FlyBase.
-                        </li>
-                    </ul>
+                    </li>
+                </ul>
 
-                </blockquote>
+            </blockquote>
         </section>
 
 
         <section name="data" title="Data">
-           <section name="download" title="Download">
-            <blockquote> IntAct data is available in <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>. Each IntAct release is split into multiple XML files according to the pattern Species_name-[small | exeriment-name].xml. For example, s-cerevisiae_small.xml contains data on all small-scale experiments in S.cerevisiae stored in IntAct, s-cerevisiae_ho-2002.xml contains the data from the Ho et al, 2002 experiment. The current release is available at <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/">ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/</a>.
-            </blockquote>
-           </section>   <!-- end download -->
-           <section name="cvs" title="Controlled Vocabularies">
-            <blockquote>To ensure data consistency, IntAct makes intensive use of controlled vocabularies. All controlled vocabularies are available in Gene Ontology DAG-Edit format and HTML format. Some IntAct annotation of controlled vocabulary terms does not fit the GO DAG-Edit format, but as we want to export all available information, some comments might have to be filtered out from the *.def files before editing them in GO DAG-Edit. For an overview and download of IntAct controlled vocabularies, see <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/">ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/</a>.
-            </blockquote>
-           </section>   <!-- end cvs -->
-           <section name="statistics" title="Statistics">
-Please see separate <a href="statistics/index.html">statistics section</a>.
-           </section>   <!-- end statistics -->
+            <section name="download" title="Download">
+                <blockquote> IntAct data is available in
+                    <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>. Each IntAct release is split into multiple XML files according to the pattern Species_name-[small | exeriment-name].xml. For example, s-cerevisiae_small.xml contains data on all small-scale experiments in S.cerevisiae stored in IntAct, s-cerevisiae_ho-2002.xml contains the data from the Ho et al, 2002 experiment. The current release is available at
+                    <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/">ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/</a>.
+                </blockquote>
+            </section>   <!-- end download -->
+            <section name="cvs" title="Controlled Vocabularies">
+                <blockquote>To ensure data consistency, IntAct makes intensive use of controlled vocabularies. All controlled vocabularies are available in Gene Ontology DAG-Edit format and HTML format. Some IntAct annotation of controlled vocabulary terms does not fit the GO DAG-Edit format, but as we want to export all available information, some comments might have to be filtered out from the *.def files before editing them in GO DAG-Edit. For an overview and download of IntAct controlled vocabularies, see
+                    <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/">ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/</a>.
+                </blockquote>
+            </section>   <!-- end cvs -->
+            <section name="statistics" title="Statistics">
+Please see separate
+                <a href="statistics/index.html">statistics section</a>.
+            </section>   <!-- end statistics -->
         </section>   <!-- end data -->
 
         <section title="IntAct data representation" name="core">
@@ -95,16 +101,22 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                         providing all the necessary data to repeat the experiment. The
                         attributes of the Experiment are the
                         <dl>
-                            <dt><a href="#BioSource">BioSource</a></dt>
+                            <dt>
+                                <a href="#BioSource">BioSource</a>
+                            </dt>
                             <dd>The biological system in which the interaction took place in the experiment.</dd>
 
-                            <dt><a name="Experiment.cvIdentification"></a>identificationMethod</dt>
+                            <dt>
+                                <a name="Experiment.cvIdentification"></a>identificationMethod
+                            </dt>
                             <dd>The experimental method by which the molecules participating in the
                                 interaction have been detected.
                                 <br/>Example: Mass spectrometry.
                             </dd>
 
-                            <dt><a name="Experiment.cvInteraction"></a>interactionMethod</dt>
+                            <dt>
+                                <a name="Experiment.cvInteraction"></a>interactionMethod
+                            </dt>
                             <dd>The experimental method by which the interaction has been detected.
                                 <br/>
                                 Example: yeast two hybrid.
@@ -148,7 +160,9 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                         A molecule or complex participating in an Interaction. The
                         only direct attribute of an Interactor is
                         <dl>
-                            <dt><a href="#BioSource">BioSource</a></dt>
+                            <dt>
+                                <a href="#BioSource">BioSource</a>
+                            </dt>
                             <dd>The biological system in which the interactor normally is
                                 found. For a human protein, the BioSource would be "Human",
                                 even if it has been expressed in E.coli in a particular
@@ -190,7 +204,8 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                                 the interaction. The default is one.
                             </dd>
                             <dt>expressedIn</dt>
-                            <dd>A <a href="#BioSource">BioSource </a> object which describes
+                            <dd>A
+                                <a href="#BioSource">BioSource </a> object which describes
                                 the biological system in which the protein has been
                                 expressed.
                                 <br/>
@@ -330,7 +345,8 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                             <dd/>The primary id or accession number of the object in the external database.
                             <dt/>Secondary id
                             <dd/>The secondary id of the object in the external database.
-                            <dt/><a name="Xref.cvXrefType"></a>
+                            <dt/>
+                            <a name="Xref.cvXrefType"></a>
                                  Crossreference type
                             <dd/>The type of crossreference.
                         </dl>
@@ -374,130 +390,130 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
             IntAct provides a number of applications. Depending on the installation you are using, some modules described here may not be available, or additional modules not described in this manual might be available.
 
 
-            <section title="Search" name="search">
+        <section title="Search" name="search">
 
 
-                <section title="Availability" name="search.availability">
+            <section title="Availability" name="search.availability">
 
-                    <blockquote>
-                    </blockquote>
+                <blockquote>
+                </blockquote>
 
-                </section>
+            </section>
 
 
-                <section title="Basic Overview" name="search.Overview">
+            <section title="Basic Overview" name="search.Overview">
 
-                    <blockquote>
+                <blockquote>
                         The search application currently allows a text-based search by entering
                         a text string into the search text box. It is possible to obtain information
                         on experiments, protein interactions and the proteins themselves, with
                         various views used to display the data. Intact uses the concept of
-                        <a href="#AnnotatedObject.shortLabel"> short
+                    <a href="#AnnotatedObject.shortLabel"> short
                             label </a> which is intended to provide a way of 'more memorable identification'
                         compared to an
-                        <a href="#AnnotatedObject.ac"> accession number (ac) </a> , although searches by ac are
+                    <a href="#AnnotatedObject.ac"> accession number (ac) </a> , although searches by ac are
                         obviously allowed. For example a particular Experiment may have an ac of
                         EBI-14, but its name is 'gavin' indicating a more meaningful reference
                         to the physical experiment which the entry represents. Basic points on
                         usage:
 
+                    <ul>
                         <ul>
-                            <ul>
-                                <li>
+                            <li>
                                     Wildcard searching is supported - for example matches will be retrieved
                                     for strings such as EBI*, *BI-14, E*4, etc etc.</li>
 
-                                <li>
+                            <li>
                                     upper or lower case strings are acceptable (but not mixed case) and will be matched if they
                                     exist. The exception to this is a search by alias (ie gene name, as defined in
                                     UniProt) - currently these
                                     are stored as lower case and are searched for as such. This will become more sophisticated
                                     as the project matures.</li>
 
-                                <li>
+                            <li>
                                     currently searches progress in a certain order: proteins, then interactions,
                                     then experiments. At a lower level, specific attributes are searched by
                                     AC, short label, alias (gene name), Xref primary ID and finally full name. </li>
 
-                                <li>
+                            <li>
                                     Note that whilst CvObject details can be displayed via the click of a link,
                                     currently it is not possible to search for CvObjects via the text box search
                                     entry point.</li>
-                            </ul>
                         </ul>
-                    </blockquote>
+                    </ul>
+                </blockquote>
 
-                </section> <!--  -->
+            </section> <!--  -->
 
-                <section title="Structure of Search Results" name="search.TableLayout">
+            <section title="Structure of Search Results" name="search.TableLayout">
 
-                    <blockquote>
+                <blockquote>
                         The basic layout of the main results page follows the structure below:
 
-                        <br/>
+                    <br/>
 
 
-                        <p>
-                            <a NAME="experiment.single.view"></a>An example result screen when searching for an Experiment
+                    <p>
+                        <a NAME="experiment.single.view"></a>An example result screen when searching for an Experiment
                             is shown below:
-                        </p>
-                        <p>
-                            <img SRC="./images/search/exp.png" height="768" width="1024"/>
-                        </p>
+                    </p>
+                    <p>
+                        <img SRC="./images/search/exp.png" height="768" width="1024"/>
+                    </p>
 
-                        <p>
-                            <a NAME="experiment.single.chunked"></a>An other example result screen when searching for an Experiment,
+                    <p>
+                        <a NAME="experiment.single.chunked"></a>An other example result screen when searching for an Experiment,
                             this time there are too many interactions to display it in one go. So, the Experiment is splited in several pages
                             that you can reach using the index above the Experiment.
-                            <br/>
+                        <br/>
                             This is shown below:
-                        </p>
-                        <p>
-                            <img SRC="./images/search/exp-chunked.png" border="0" />
-                        </p>
+                    </p>
+                    <p>
+                        <img SRC="./images/search/exp-chunked.png" border="0"/>
+                    </p>
 
-                        <p>
-                            <a NAME="interaction.single.view"></a>An example result screen when searching for an Interaction is shown below:
-                        </p>
-                        <p>
-                            <img SRC="./images/search/int_single.png" height="768" width="1024"/>
-                        </p>
+                    <p>
+                        <a NAME="interaction.single.view"></a>An example result screen when searching for an Interaction is shown below:
+                    </p>
+                    <p>
+                        <img SRC="./images/search/int_single.png" height="768" width="1024"/>
+                    </p>
 
-                        <p>
-                            <a NAME="binary.view"></a>Protein views can be of various types. Searching for a protein will result in a so-called
+                    <p>
+                        <a NAME="binary.view"></a>Protein views can be of various types. Searching for a protein will result in a so-called
                             'binary view'. This view shows the list of proteins which are in a pairwise interaction with the searched-for protein.
                             An example result screen for this view is shown below:
-                        </p>
-                        <p>
-                            <img SRC="./images/search/binary.png" height="768" width="1024"/>
-                        </p>
-                        <p>
-                            <a NAME="interaction.details.view"></a>Viewing the interactions for a particular protein can also be done from the binary view - an
+                    </p>
+                    <p>
+                        <img SRC="./images/search/binary.png" height="768" width="1024"/>
+                    </p>
+                    <p>
+                        <a NAME="interaction.details.view"></a>Viewing the interactions for a particular protein can also be done from the binary view - an
                             example screen displayed by clicking on the 'view 1 interaction' link is shown below:
-                        </p>
-                        <p>
-                            <img SRC="./images/search/interaction_details.png" height="768" width="1024"/>
-                        </p>
-                        <p>
-                            <a NAME="protein.single.view"></a>The details for an individual protein are displayed as below:
-                        </p>
-                        <p>
-                            <img SRC="./images/search/protein_single.png" height="768" width="1024"/>
-                        </p>
-                        <br/>
+                    </p>
+                    <p>
+                        <img SRC="./images/search/interaction_details.png" height="768" width="1024"/>
+                    </p>
+                    <p>
+                        <a NAME="protein.single.view"></a>The details for an individual protein are displayed as below:
+                    </p>
+                    <p>
+                        <img SRC="./images/search/protein_single.png" height="768" width="1024"/>
+                    </p>
+                    <br/>
 
-                        <p>
-                            <a NAME="single.view"></a>If for example in the above screen you click
+                    <p>
+                        <a NAME="single.view"></a>If for example in the above screen you click
                             on 'SPTR', this will display the controlled vocabulary information for
                             the database identified with a name of 'SPTR'. The screen looks
                             like this:
-                        </p>
-                        <p>
-                            <img SRC="./images/search/sptr.png" height="768" width="1024"/>
-                        </p>
-                        <br/>
-                        <p>
-                            <a NAME="ShortLabelHelp"></a>Protein names are links you can
+                    </p>
+                    <p>
+                        <img SRC="./images/search/sptr.png" height="768" width="1024"/>
+                    </p>
+                    <br/>
+                    <p>
+                        <a NAME="ShortLabelHelp"></a>Protein names are links you can
                             click to get a view of the protein details. Also each protein name
                             has a term in superscript which denotes the role that the protein
                             plays in the interaction. These terms have tooltips associated with them
@@ -505,38 +521,48 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                             you can view the full details of the controlled vocabulary term which presents
                             the controlled vocabulary information for that term (eg the details held
                             to define the meaning of the term 'bait').
-                        </p>
-                        <p>Since the items displayed for a search result include many items not
+                    </p>
+                    <p>Since the items displayed for a search result include many items not
                             actually queried for, the items that matched the original search string
                             are highlighted in
-                            <b>
-                                <i>bold italic</i>
-                            </b>. Specifically
+                        <b>
+                            <i>bold italic</i>
+                        </b>. Specifically
                             the *names* of the matching items are highlighted, since these are
                             always displayed in every view.
-                        </p>
-                        <p>Where a protein (for example) might actually occur more than once in
+                    </p>
+                    <p>Where a protein (for example) might actually occur more than once in
                             an experiment, the display is rationalised to avoid multiple presentations
                             of the same experiment - therefore all occurrences within an experiment
                             are gathered together into one experiment view.</p>
-                        <p>
-                            <a NAME="ButtonDefinition"></a>At the bottom of the page are a number
+                    <p>
+                        <a NAME="ButtonDefinition"></a>At the bottom of the page are a number
                             of buttons:
-                        </p>
+                    </p>
+                    <ul>
                         <ul>
-                            <ul>
 
-                                <li>a reset button to uncheck any textboxes;</li>
+                            <li>a reset button to uncheck any textboxes;</li>
 
-                                <li>
+                            <li>
                                     a graph button to display a graph of any selected proteins or interactions, which can be
                                     chosen by clicking the appropriate checkboxes.</li>
-                            </ul>
                         </ul>
+                    </ul>
 
-                    </blockquote>
+                </blockquote>
 
-                </section> <!-- Basic Overview -->
+            </section> <!-- Basic Overview -->
+
+            <section title="Number of Interaction" name="number.interactions">
+                <blockquote>
+                    <p>
+                    The column "number of interactions" indicates:
+                    a) for the query protein (first row), in how many distinct interactions it has been observed.
+                    b) for all interactors of the query protein (subsequent rows), in how many interactions the current protein (current row) and the query protein (first row) interact.
+                    </p>
+                </blockquote>
+
 
             </section> <!-- Search -->
 
@@ -1094,7 +1120,11 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                         <center>
                             <table border="0">
                                 <tr>
-                                    <td> <a href="./images/hierarchView/PPIN.png" target="_blank"><img src="./images/hierarchView/PPIN-small.png" border="0" width="300" height="197"></img></a> </td>
+                                    <td>
+                                        <a href="./images/hierarchView/PPIN.png" target="_blank">
+                                            <img src="./images/hierarchView/PPIN-small.png" border="0" width="300" height="197"></img>
+                                        </a>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td> click the image to enlarge </td>
@@ -1238,7 +1268,11 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                             <center>
                                 <table border="0">
                                     <tr>
-                                        <td><a href="./images/hierarchView/highlight.png" target="_blank"><img src="./images/hierarchView/highlight-small.png" border="0" width="299" height="197"></img></a> </td>
+                                        <td>
+                                            <a href="./images/hierarchView/highlight.png" target="_blank">
+                                                <img src="./images/hierarchView/highlight-small.png" border="0" width="299" height="197"></img>
+                                            </a>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td> click the image to enlarge </td>
@@ -1253,7 +1287,8 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                     <section title="Retreive the interaction network in PSI MI XML format" name="hierarchView.PPIN.download">
                         <blockquote>
                             After loading an interaction network, you can request to download its representation in
-                            PSI MI XML format. To do so, you have to click on the <i>Download</i> button of the
+                            PSI MI XML format. To do so, you have to click on the
+                            <i>Download</i> button of the
                             <i>PSI-XML</i> section and a new window will appear in which the XML content will be
                             displayed. After the data are fully loaded you can save that content on your hard disk.
                             <br/>
@@ -1262,7 +1297,8 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                             <br/>
                             You can find a list of the tools supporting the PSI MI XML format
                             <a href="http://psidev.sourceforge.net/mi/xml/doc/user" target="_blank">here</a>
-                            in the <i>Tools</i> section.
+                            in the
+                            <i>Tools</i> section.
                         </blockquote>
 
                     </section> <!-- interaction network download -->
@@ -1270,78 +1306,85 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                 </section> <!-- How to interact -->
 
             </section> <!-- hierarchView -->
-			
-			<section name="mine" title="MiNe - Minimal connecting network">
-				<blockquote>
+
+            <section name="mine" title="MiNe - Minimal connecting network">
+                <blockquote>
                     MiNe is a web based application which computes the minimal connecting network for a given
-					set of proteins if possible. 
+					set of proteins if possible.
                     <br/>
 					A minimal network is a sub network of an interaction network which has to fulfill the following
 					points:
-					<ul>
-						<li>it has to contain all wanted proteins</li>
-						<li>the sum of the weight of the edges has to be minimal.<br/>
+                    <ul>
+                        <li>it has to contain all wanted proteins</li>
+                        <li>the sum of the weight of the edges has to be minimal.
+                            <br/>
 							The weight of the edges can be either different or identical (e.g. weight 1) -
 							then the minimal connecting network is actually the network with the minimal number of nodes
-						</li>
-					</ul>
+                        </li>
+                    </ul>
                     <br/>
                     This includes :
                     <ul>
-                        <li> Query interface: to select the set of <i>Interactors</i> from which the minimal network is computed, </li>
+                        <li> Query interface: to select the set of
+                            <i>Interactors</i> from which the minimal network is computed,
+                        </li>
                         <li> Computation of the minimal connecting network, </li>
                         <li> Forwarding to HierarchView to visualise the network </li>
                     </ul>
                 </blockquote>
-				
-				<section name="mine.search" title="How to search for a minimal connecting network ?">
-					<blockquote>
-						Type in the <i>Interactor</i> form either a protein name or accession number and
-						click the <i>Find network</i> button to get the related minimal connecting network.
+
+                <section name="mine.search" title="How to search for a minimal connecting network ?">
+                    <blockquote>
+						Type in the
+                        <i>Interactor</i> form either a protein name or accession number and
+						click the
+                        <i>Find network</i> button to get the related minimal connecting network.
 						You are free to type a comma separated list of proteins in order to display all of them in one go.
-						<br/>
-						<br/>
+                        <br/>
+                        <br/>
 						As search phrases can be used:
-						<ol>	
-						   <li>IntAct Ac: EBI-44444</li>
-						   <li>ene names: lsm7</li>
-						   <li>SwissProt / Trembl Ac: Q08162</li>
-						   <li>SwissProt / Trembl Id: rr44_yeast</li>
-						   <li>InterPro Ac: IPR001900</li>
-						   <li>GO Id: GO:0000176</li>
-						</ol>
-					</blockquote>
-				</section>
-				
-				<section name="mine.ambiguous.result" title="What is an ambiguous result ?">
-					<blockquote>
+                        <ol>
+                            <li>IntAct Ac: EBI-44444</li>
+                            <li>ene names: lsm7</li>
+                            <li>SwissProt / Trembl Ac: Q08162</li>
+                            <li>SwissProt / Trembl Id: rr44_yeast</li>
+                            <li>InterPro Ac: IPR001900</li>
+                            <li>GO Id: GO:0000176</li>
+                        </ol>
+                    </blockquote>
+                </section>
+
+                <section name="mine.ambiguous.result" title="What is an ambiguous result ?">
+                    <blockquote>
 						If your search returns an ambiguous result all found proteins for every search phrase
 						are shown on this page.
-						<br/>
-						An ambiguous result occurs when you search for either an <i>Interaction</i> or an <i>Experiment</i> 
+                        <br/>
+						An ambiguous result occurs when you search for either an
+                        <i>Interaction</i> or an
+                        <i>Experiment</i>
 						or at least one search phrase returns more than one protein.
-						<br/>
+                        <br/>
 						To proceed you have to select the proteins from which you want to compute the minimal connecting
 						network by activating the checkboxes related to the proteins.
-					</blockquote>	
-				</section>
-				
-				<section name="mine.ambiguous.additional" title="What are additional search phrases ?">
-					<blockquote>
+                    </blockquote>
+                </section>
+
+                <section name="mine.ambiguous.additional" title="What are additional search phrases ?">
+                    <blockquote>
 						In this textbox you can enter search phrases in addition to or instead of the
 						selected proteins shown on the page.
-						<br/>
+                        <br/>
 						If you want to add search phrases to your selection type a protein or an accession 
 						number or a comma seperated list into this field
-						<br/>
+                        <br/>
 						If you want to search for the phrases instead of the selection make sure to deselect
 						all proteins found by the previous search.
-						<br/>
-						<br/>
+                        <br/>
+                        <br/>
 						Please be aware of the search limit of seven proteins !
-					</blockquote>
-				</section>
-			</section>
+                    </blockquote>
+                </section>
+            </section>
 
 
             <section name="graph2mif" title="Graph2MIF -  Export IntAct to PSI Molecular Interaction Format">
@@ -1358,7 +1401,9 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                         The URL to access the web service is the following:
                         <pre>http://server.domain:port/intact/graph2mif</pre>
                         <br/>
-                        You can replace <code>server.domain:port</code> by <code>www.ebi.ac.uk</code>
+                        You can replace
+                        <code>server.domain:port</code> by
+                        <code>www.ebi.ac.uk</code>
                         <br/>
                         <br/>
                         For validation: Just call the URL above within a browser.
@@ -1393,7 +1438,7 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                         starting with an interactor of
                         <pre>ac</pre> and expanded to depth of
                         <pre>depth</pre>.
-                        <pre>striftmif</pre> is a Boolean. When set to true, a graph in PSI MI XML format will only be generated if the data allows to provide all required PSI MI attributes. Otherwise a exception is thrown. 
+                        <pre>striftmif</pre> is a Boolean. When set to true, a graph in PSI MI XML format will only be generated if the data allows to provide all required PSI MI attributes. Otherwise a exception is thrown.
 When set to false, the generated graph will still be in PSI MI format, but might lack some mandatory elements.
                         <br/>
                         The resulting graph will be returned in PSI MI XML as a formated XML-String.
@@ -1417,7 +1462,8 @@ When set to false, the generated graph will still be in PSI MI format, but might
                                 <i>depth </i>
                                 <i>(true|false) </i>
                             </code>
-                            to get a graph of IntAct as MIF. The result will be printed to <i>STDOUT</i>.
+                            to get a graph of IntAct as MIF. The result will be printed to
+                            <i>STDOUT</i>.
                             Have a look at the simple source code for getting an impression of how to write your own client.
                         </blockquote>
                     </section>
@@ -1432,40 +1478,44 @@ When set to false, the generated graph will still be in PSI MI format, but might
                                 <i>depth </i>
                                 <i>(true|false) </i>
                             </code>
-                            to get a graph in PSI MI XML format. The result will be printed to <i>STDOUT</i>.
+                            to get a graph in PSI MI XML format. The result will be printed to
+                            <i>STDOUT</i>.
                             Have also a look at the simple source code for getting an impression of how to write your own client.
                         </blockquote>
                     </section>
                 </section>
                 <section name="graph2mif.references" title="PSI Molecular Interaction Format">
                     <blockquote>
-					  <ul>
-						For details about the mapping have a look at the annotated <a href="graph2MIF/MIF-1.23-annotated.xsd">MIF.xsd</a> or
-						at the generated mapping documentation <a href="graph2MIF/mapping/graph2MIF.html">here.</a>
-					  </ul>
-					  <ul>
+                        <ul>
+						For details about the mapping have a look at the annotated
+                            <a href="graph2MIF/MIF-1.23-annotated.xsd">MIF.xsd</a> or
+						at the generated mapping documentation
+                            <a href="graph2MIF/mapping/graph2MIF.html">here.</a>
+                        </ul>
+                        <ul>
                         For details about MIF hava a look at the homepage of the PSI project:
-						<a href="http://psidev.sourceforge.net/">Proteomics Standards Initiative</a>
-					  </ul>
+                            <a href="http://psidev.sourceforge.net/">Proteomics Standards Initiative</a>
+                        </ul>
                     </blockquote>
                 </section>
             </section>   <!-- end graph2MIF -->
 
 
-           <section name="proviz" title="ProViz - Standalone Interaction Visualization System">
-              <blockquote>
+            <section name="proviz" title="ProViz - Standalone Interaction Visualization System">
+                <blockquote>
                   ProViz is a high-performance, standalone visualization system for molecular interactions. For a detailed description,
-                  please see the <a href="proviz/proviz.html">ProViz user manual</a>.
-              </blockquote>
-           </section>   <!-- end ProViz -->
-  
-           <section name="targets" title="Targets - prediction of promising targets for pull-down experiments">
-              <blockquote>
+                  please see the
+                    <a href="proviz/proviz.html">ProViz user manual</a>.
+                </blockquote>
+            </section>   <!-- end ProViz -->
+
+            <section name="targets" title="Targets - prediction of promising targets for pull-down experiments">
+                <blockquote>
                 Uncovering the interactome is one of the primary challenges in the post-genomic era. The topology information gained from the coverage of interaction space can shed light on the likely function and structure of proteins within the network (Vitkup et al, 2001). Here we present a list of the 'best baits' which give the highest return on experimental effort - i.e. those proteins which form 'hubs' in the interaction network. These lists are generated using the Pay-As-You-Go strategy (Lappe, M. Holm, L.(2004) Nature Biotechnology 22, pp 98 - 103) which detects and prioritises those proteins which have the highest likelihood of being hubs based on the current data within IntAct for various species. To illustrate the experimental effort which could be saved by using the strategy recommended here, take the Human interactome as an example. It is estimated that 50,000 experiments would be required to cover the entire human interactome following a purely random strategy for the selection of targets. The information gain here is close to linear for each experiment. This could be drastically reduced to less than 10,000 for 90% coverage of the entire human interactome by using the proteins listed here as baits. This would save years of experimental effort. This of course relies on the timely deposition of experimental data into the IntAct database in order that the Pay-As-You-Go algorithm should be fully uptodate and effective.
-              </blockquote>
-           </section>   <!-- end targets -->
+                </blockquote>
+            </section>   <!-- end targets -->
         </section> <!-- applications -->
- 
+
     </division>
 
 </page>
