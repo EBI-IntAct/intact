@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
@@ -77,8 +76,10 @@ public class XrefAddAction extends AbstractEditorAction {
         }
         catch (DuplicateLabelException se) {
             // Error in accessing the database.
-            super.addError("error.search", se.getNestedMessage());
-            super.saveErrors(request);
+            ActionErrors errors = new ActionErrors();
+            errors.add(AbstractEditorAction.EDITOR_ERROR,
+                    new ActionError("error.search", se.getMessage()));
+            saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
         // Add the annotation to the view.

@@ -57,9 +57,6 @@ public class ResultAction extends AbstractEditorAction {
         // The class name to search.
         String className = super.getService().getClassName(topic);
 
-        // Clear any previous errors.
-        super.clearErrors();
-
         // The short label to search
         String shortLabel = request.getParameter("shortLabel");
 
@@ -75,15 +72,19 @@ public class ResultAction extends AbstractEditorAction {
         catch (ClassNotFoundException cnfe) {
             super.log(ExceptionUtils.getStackTrace(cnfe));
             // The errors to report back.
-            super.addError("error.class", cnfe.getMessage());
-            super.saveErrors(request);
+            ActionErrors errors = new ActionErrors();
+            errors.add(AbstractEditorAction.EDITOR_ERROR,
+                    new ActionError("error.class", cnfe.getMessage()));
+            saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
         catch (DuplicateLabelException dle) {
             super.log(ExceptionUtils.getStackTrace(dle));
             // The errors to report back.
-            super.addError("error.search", dle.getNestedMessage());
-            super.saveErrors(request);
+            ActionErrors errors = new ActionErrors();
+            errors.add(AbstractEditorAction.EDITOR_ERROR,
+                    new ActionError("error.search", dle.getMessage()));
+            saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
         // The object we are editing presently.

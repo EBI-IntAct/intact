@@ -56,8 +56,6 @@ public class LoginAction extends AbstractEditorAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        // Clear any previous errors.
-        super.clearErrors();
 
         // Get the user's login name and password. They should have already
         // validated by the ActionForm.
@@ -99,31 +97,32 @@ public class LoginAction extends AbstractEditorAction {
             // Unable to get a data source...can't proceed
             super.log(ExceptionUtils.getStackTrace(de));
             // The errors to report back.
-            super.addError("error.datasource", de.getMessage());
-            super.saveErrors(request);
+            ActionErrors errors = new ActionErrors();
+            errors.add(AbstractEditorAction.EDITOR_ERROR,
+                    new ActionError("error.datasource", de.getMessage()));
+            saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
         catch (IntactException ie) {
             // Unable to access the intact helper.
             super.log(ExceptionUtils.getStackTrace(ie));
             // The errors to report back.
-            super.addError("error.invalid.user");
-            super.saveErrors(request);
+            ActionErrors errors = new ActionErrors();
+            errors.add(AbstractEditorAction.EDITOR_ERROR,
+                    new ActionError("error.invalid.user"));
+            saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
         catch (SearchException se) {
             // Unable to construct lists such as topics, db names etc.
             super.log(ExceptionUtils.getStackTrace(se));
             // The errors to report back.
-            super.addError("error.invalid.user");
-//            super.addError("error.search", se.getMessage());
-            super.saveErrors(request);
+            ActionErrors errors = new ActionErrors();
+            errors.add(AbstractEditorAction.EDITOR_ERROR,
+                    new ActionError("error.invalid.user"));
+            saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
-//        super.log("Existing session timeout is: " + session.getMaxInactiveInterval());
-//        session.setMaxInactiveInterval(90);
-//        super.log("New session timeout is: " + session.getMaxInactiveInterval());
-
         // Need to access the user later.
         session.setAttribute(EditorConstants.INTACT_USER, user);
 

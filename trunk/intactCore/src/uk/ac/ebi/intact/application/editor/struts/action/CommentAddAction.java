@@ -73,11 +73,11 @@ public class CommentAddAction extends AbstractEditorAction {
         catch (DuplicateLabelException dle) {
             // Can't query the database.
             super.log(ExceptionUtils.getStackTrace(dle));
-
-            // Clear any previous errors.
-            super.clearErrors();
-            super.addError("error.search", dle.getMessage());
-            super.saveErrors(request);
+            // The errors to report back.
+            ActionErrors errors = new ActionErrors();
+            errors.add(AbstractEditorAction.EDITOR_ERROR,
+                    new ActionError("error.search", dle.getMessage()));
+            saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
         // The new annotation to add to database.
