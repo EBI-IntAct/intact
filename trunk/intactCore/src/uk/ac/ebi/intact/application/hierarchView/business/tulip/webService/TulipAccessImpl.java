@@ -24,6 +24,7 @@ import java.lang.InterruptedException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.StringTokenizer;
 
 /**
@@ -47,6 +48,8 @@ public class TulipAccessImpl implements TulipAccess {
    */
   private static String PROPERTY_FILE_LOCATION = "/WebService.properties";
 
+
+  private static String ERROR_MESSAGE_KEY = "messages";
 
   /**
    * Definition of the Tulip supported mode (based on the following list)
@@ -113,6 +116,11 @@ public class TulipAccessImpl implements TulipAccess {
   private String consoleLocation = null;
 
 
+  /**
+   * Error messages in order to allow the user to know what happen on the web service
+   */
+  private Collection errorMessages = new Vector ();
+
 
 
 
@@ -128,11 +136,16 @@ public class TulipAccessImpl implements TulipAccess {
    */
   public ProteinCoordinate[] getComputedTlpContent ( String tlpContent, String optionMask ) {
 
+    MessageContext ctx = MessageContext.getCurrentContext();
+    Session session = ctx.getSession();
+    session.set (ERROR_MESSAGE_KEY, errorMessages);
+
     // init the service
     readProperties (PROPERTY_FILE_LOCATION);
 
     if (null == consoleLocation) {
       // send back a meaningful message (maybe via an Exception)
+      addErrorMessage ("Unable to find the console binary file, indeed, impossible to calculate coordinates.");
       return null;
     }
 
@@ -143,10 +156,18 @@ public class TulipAccessImpl implements TulipAccess {
     String outputFile = sessionKey + ".out";
 
     // Store the content in a file on hard disk
-    if (!storeInputFile (inputFile, tlpContent)) return null;
+    if (!storeInputFile (inputFile, tlpContent)) {
+      addErrorMessage ("Unable to store on the hard disk the content of the TLP file.");
+      deleteFile (inputFile);
+      return null;
+    }
 
     // call the tulip client in a new process
-    if (!computeTlpFile (inputFile, outputFile, optionMask)) return null;
+    if (!computeTlpFile (inputFile, outputFile, optionMask)) {
+      deleteFile (inputFile);
+      deleteFile (outputFile);
+      return null;
+    }
 
     // Read the content of the generated file and create a collection of proteinCoordinate
     Collection coordinateSet = parseOutputFile (outputFile);
@@ -169,6 +190,60 @@ public class TulipAccessImpl implements TulipAccess {
   } // computeTlpContent
 
 
+  /**
+   * Allows the user to get messages produced byte the web service
+   *
+   * @param hasToBeCleaned delete all messages after sended them back to the client
+   * @return an array of messages or <b>null</b> if no messages are stored.
+   *
+   **/
+  public String[] getErrorMessages (boolean hasToBeCleaned) {
+
+    MessageContext ctx = MessageContext.getCurrentContext();
+    Session session = ctx.getSession();
+    Collection errorMessages = (Collection) session.get (ERROR_MESSAGE_KEY);
+
+    if (null == errorMessages) 
+      return null;
+
+    // Don't try to use the Collection.toArray() method, it give you back Object[]
+    // and also an Exception when you send back to the client (even with a String[] cast)
+
+    int count = errorMessages.size();
+    String[] messagesArray = new String[count];
+
+    count = 0;
+    for (Iterator iterator = errorMessages.iterator(); iterator.hasNext(); ) {
+      messagesArray [count++] = (String) iterator.next();
+    }
+
+    // clean up messages
+    if (hasToBeCleaned) cleanErrorMessages ();
+
+    return messagesArray;
+
+  } // getErrorMessages
+
+
+
+  /**
+   * Clean message list
+   */
+  public void cleanErrorMessages () {
+
+    if (null == errorMessages) {
+      errorMessages = new Vector ();
+      return;
+    }
+
+    errorMessages.clear ();
+
+  } // cleanErrorMessages
+
+
+
+
+
 
 
   /*********************/
@@ -177,25 +252,59 @@ public class TulipAccessImpl implements TulipAccess {
 
 
   /**
+   * Add a message to the message list
+   * 
+   * @param aMessage the message to add
+   */
+  private void addErrorMessage (String aMessage) {
+
+    if (null == errorMessages) errorMessages = new Vector ();
+    errorMessages.add (aMessage);
+
+  } // addErrorMessage
+
+
+
+  /**
    * Read from the property file all needed properties
    *
    */
   private void readProperties (String filename) {
+
+    InputStream is = null;
+
+    // get the content of the property file
+    is = TulipAccessImpl.class.getResourceAsStream (filename);      
+
     Properties properties = null;
 
     try {
-      // get the content of the property file
-      InputStream is = TulipAccessImpl.class.getResourceAsStream (filename);
+      // Create the Properties object with the content of the red file
       if (is != null) {
         properties = new Properties ();
         properties.load (is);        
+      } else {
+	addErrorMessage ("Unable to find the property file : " + filename );
       }
-    } catch (IOException ioe) {}
+    } catch (IOException ioe) {
+      addErrorMessage ("Unable to read the content of the property file : " + filename );
+    }
 
+  
     if (null != properties) {
       // look for properties ...
       this.consoleLocation = properties.getProperty ("webService.console.location");
     } 
+    
+    if (null == this.consoleLocation) {
+      addErrorMessage ("Unable to find the following property : <b>webService.console.location</b> " +
+		       "in the property file ("+ filename +")");
+    } else {
+      // check if the file is physically on the hard disk
+      
+
+    }
+
   } // readProperties
 
 
@@ -217,7 +326,9 @@ public class TulipAccessImpl implements TulipAccess {
     * @return a unique key
     */
   private String getUniqueIdentifier () {
+
     return new java.rmi.server.UID().toString();
+
   } // getSessionKey
 
 
@@ -230,16 +341,18 @@ public class TulipAccessImpl implements TulipAccess {
     * @return true if the file is right written, false else.
     */
   private boolean storeInputFile (String anInputFile, String aTlpContent) {
+
     try {
       FileWriter fileWriter = new FileWriter (anInputFile);
       BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
       bufferedWriter.write(aTlpContent);      
       bufferedWriter.close();
       fileWriter.close();
-    } catch (IOException e) {
+    } catch (IOException e) {      
       return false;
     }
     return true;
+
   } // storeInputFile
 
 
@@ -302,6 +415,7 @@ public class TulipAccessImpl implements TulipAccess {
       process.waitFor();
     } catch ( Exception e ) {
       // an error occurs during execution of the process
+      addErrorMessage ("An error occured during the Tulip processing.");
       return false;
     }
     
@@ -309,9 +423,11 @@ public class TulipAccessImpl implements TulipAccess {
     File outputFile = new File(anOutputFile);
     if (!outputFile.exists()) {
       // an error occur on Tulip, no generated file
+      addErrorMessage ("After the Tulip processing, no output file produced.");
       return false;
     }    
     return true;
+
   } // computeTlpFile
   
 
@@ -323,6 +439,7 @@ public class TulipAccessImpl implements TulipAccess {
     * @return the content of the file or null if a problems occur.
     */
   private String readOutputFile (String anOutputFile) {
+
     StringBuffer stringBuffer = new StringBuffer ();
     try {
       FileReader fileReader = new FileReader(anOutputFile);
@@ -337,9 +454,11 @@ public class TulipAccessImpl implements TulipAccess {
       bufferedReader.close();
       fileReader.close ();
     } catch (IOException e) {
+      addErrorMessage ("Error during reading of the output file : " + anOutputFile);
       return null;
     }
     return stringBuffer.toString();
+
   } // readOutputFile
 
 
@@ -360,7 +479,7 @@ public class TulipAccessImpl implements TulipAccess {
    * @param anOutputFile the path of the file to read
    * @return a collection of ProteinCoordinate
    */
-  public static Collection parseOutputFile (String anOutputFile) {
+  public Collection parseOutputFile (String anOutputFile) {
 
     ArrayList collection = new ArrayList ();
 
@@ -416,7 +535,7 @@ public class TulipAccessImpl implements TulipAccess {
 	   } // while
 
 	   // stop reading file
-	   
+
 
 
 	 } // if "viewLayout"
@@ -427,6 +546,7 @@ public class TulipAccessImpl implements TulipAccess {
       fileReader.close ();
     } catch (IOException e) {
       e.printStackTrace();
+      addErrorMessage ("Error during the parsing of the output file");
       return null;
     }
 
@@ -442,13 +562,16 @@ public class TulipAccessImpl implements TulipAccess {
     * @param aFilename the path of the file 
     */
   private void deleteFile (String aFilename) {
+
     try {
       File file = new File (aFilename);
       file.delete ();
     } catch (Exception e) {
+      addErrorMessage ("Unable to delete the file : " + aFilename);
       e.printStackTrace();
     }
-  }
+
+  } // deleteFile
 
 
 } // TulipAccessImpl

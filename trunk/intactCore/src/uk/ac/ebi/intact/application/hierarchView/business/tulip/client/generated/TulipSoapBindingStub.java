@@ -53,6 +53,13 @@ public class TulipSoapBindingStub extends org.apache.axis.client.Stub implements
             cachedSerFactories.add(arraysf);
             cachedDeserFactories.add(arraydf);
 
+            qName = new javax.xml.rpc.namespace.QName("urn:tulip", "ArrayOf_SOAP-ENC_string");
+            cachedSerQNames.add(qName);
+            cls = java.lang.String[].class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(arraysf);
+            cachedDeserFactories.add(arraydf);
+
         }
         catch(java.lang.Exception t) {
             throw org.apache.axis.AxisFault.makeFault(t);
@@ -135,6 +142,51 @@ public class TulipSoapBindingStub extends org.apache.axis.client.Stub implements
             } catch (java.lang.Exception e) {
                 return (uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate[]) org.apache.axis.utils.JavaUtils.convert(resp, uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate[].class);
             }
+        }
+    }
+
+    public java.lang.String[] getErrorMessages(boolean in0) throws java.rmi.RemoteException{
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call call = createCall();
+        javax.xml.rpc.namespace.QName p0QName = new javax.xml.rpc.namespace.QName("", "in0");
+        call.addParameter(p0QName, new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"), boolean.class, javax.xml.rpc.ParameterMode.IN);
+        call.setReturnType(new javax.xml.rpc.namespace.QName("urn:tulip", "ArrayOf_SOAP-ENC_string"));
+        call.setUseSOAPAction(true);
+        call.setSOAPActionURI("");
+        call.setOperationStyle("rpc");
+        call.setOperationName(new javax.xml.rpc.namespace.QName("getErrorMessages", "getErrorMessages"));
+
+        Object resp = call.invoke(new Object[] {new Boolean(in0)});
+
+        if (resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)resp;
+        }
+        else {
+            try {
+                return (java.lang.String[]) resp;
+            } catch (java.lang.Exception e) {
+                return (java.lang.String[]) org.apache.axis.utils.JavaUtils.convert(resp, java.lang.String[].class);
+            }
+        }
+    }
+
+    public void cleanErrorMessages() throws java.rmi.RemoteException{
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call call = createCall();
+        call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);
+        call.setUseSOAPAction(true);
+        call.setSOAPActionURI("");
+        call.setOperationStyle("rpc");
+        call.setOperationName(new javax.xml.rpc.namespace.QName("cleanErrorMessages", "cleanErrorMessages"));
+
+        Object resp = call.invoke(new Object[] {});
+
+        if (resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)resp;
         }
     }
 

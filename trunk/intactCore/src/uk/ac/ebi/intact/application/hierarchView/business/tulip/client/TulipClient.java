@@ -35,6 +35,7 @@ public class TulipClient {
 
 
 
+
   /* --------------------------------------------------- Methods
   /**
    * Prepare the web service.
@@ -43,10 +44,12 @@ public class TulipClient {
    */
    public TulipClient () {
     try {
-      System.out.print ("Trying to create the web service");
 
       // Make a service locator (allow to find the service)
       TulipAccessServiceLocator serviceLocator = new TulipAccessServiceLocator();
+
+      // Ask the service to maintain the session int order to keep values between two call
+      serviceLocator.setMaintainSession (true);
       
       // get a service object
       TulipAccessService service = (TulipAccessService) serviceLocator;
@@ -74,7 +77,6 @@ public class TulipClient {
     catch (javax.xml.rpc.ServiceException se) {
       tulip = null;
     }
-
 
   } // constructor
 
@@ -104,6 +106,7 @@ public class TulipClient {
     ProteinCoordinate[] pc = null;
     String mask = "0";
 
+    // - LOG -
     System.out.println (tlpContent);
 
     if (null != tulip) {
@@ -117,6 +120,26 @@ public class TulipClient {
 
     return pc;
   } // getComputedTlpContent
+
+
+  /**
+   * Get the list of messages produce in the web service
+   *
+   * @param hasToBeCleaned delete all messages after sended them back to the client
+   */
+  public String[] getErrorMessages (boolean hasToBeCleaned) {
+    try {
+      return tulip.getErrorMessages (hasToBeCleaned);
+    } catch (java.rmi.RemoteException se) {
+      // create an error message to display
+      String[] errors = new String[1];
+      errors[0] = "\n\nError while checking errors.";
+
+      // log exception
+      se.printStackTrace ();
+      return errors;
+    }
+  } // getErrorMessages
 
 
   /**

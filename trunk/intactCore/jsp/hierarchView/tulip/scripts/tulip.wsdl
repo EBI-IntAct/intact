@@ -19,6 +19,14 @@
     </complexContent>
    </complexType>
    <element name="ArrayOf_tns1_ProteinCoordinate" nillable="true" type="intf:ArrayOf_tns1_ProteinCoordinate"/>
+   <complexType name="ArrayOf_SOAP-ENC_string">
+    <complexContent>
+     <restriction base="SOAP-ENC:Array">
+      <attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="xsd:string[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <element name="ArrayOf_SOAP-ENC_string" nillable="true" type="intf:ArrayOf_SOAP-ENC_string"/>
   </schema>
  </types>
 
@@ -30,9 +38,29 @@
 
    </wsdl:message>
 
+   <wsdl:message name="cleanErrorMessagesRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="getErrorMessagesResponse">
+
+      <wsdl:part name="return" type="intf:ArrayOf_SOAP-ENC_string"/>
+
+   </wsdl:message>
+
    <wsdl:message name="getComputedTlpContentResponse">
 
       <wsdl:part name="return" type="intf:ArrayOf_tns1_ProteinCoordinate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="cleanErrorMessagesResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getErrorMessagesRequest">
+
+      <wsdl:part name="in0" type="xsd:boolean"/>
 
    </wsdl:message>
 
@@ -43,6 +71,22 @@
          <wsdl:input message="intf:getComputedTlpContentRequest"/>
 
          <wsdl:output message="intf:getComputedTlpContentResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getErrorMessages" parameterOrder="in0">
+
+         <wsdl:input message="intf:getErrorMessagesRequest"/>
+
+         <wsdl:output message="intf:getErrorMessagesResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="cleanErrorMessages">
+
+         <wsdl:input message="intf:cleanErrorMessagesRequest"/>
+
+         <wsdl:output message="intf:cleanErrorMessagesResponse"/>
 
       </wsdl:operation>
 
@@ -70,13 +114,49 @@
 
       </wsdl:operation>
 
+      <wsdl:operation name="getErrorMessages">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input>
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="getErrorMessages" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output>
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:tulip" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="cleanErrorMessages">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input>
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="cleanErrorMessages" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output>
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:tulip" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
    </wsdl:binding>
 
    <wsdl:service name="TulipAccessService">
 
       <wsdl:port binding="intf:tulipSoapBinding" name="tulip">
 
-         <wsdlsoap:address location="http://arafel:8080/axis/services/tulip"/>
+         <wsdlsoap:address location="http://localhost:8080/axis/services/tulip"/>
 
       </wsdl:port>
 
