@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.util.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import uk.ac.ebi.intact.util.uniprotExport.test.DRLineExportTest;
 
 /**
  * Testsuite that is composed of the individual JUnit test suites. Any new test
@@ -41,12 +42,16 @@ public class AllJUnitTests extends TestCase {
     public static Test suite() {
         TestSuite suite = new TestSuite();
 
-        // Add your test suite here.
-        suite.addTest( DRLineExportTest.suite() );
+        // sub-packages
+        suite.addTest( uk.ac.ebi.intact.util.uniprotExport.test.AllJUnitTests.suite() );
+
+        // local to the util package
         suite.addTest( SearchReplaceTest.suite() );
         suite.addTest( NewtServerProxyTest.suite() );
         suite.addTest( GoServerProxyTest.suite() );
         suite.addTest( UpdateProteinsTest.suite() );
+
+        // Add your test suite here.
 
         return suite;
     }
