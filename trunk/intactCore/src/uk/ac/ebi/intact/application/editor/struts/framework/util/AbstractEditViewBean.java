@@ -372,66 +372,45 @@ public abstract class AbstractEditViewBean {
     }
 
     /**
+     * Updates the current edit object with the values from the form. This
+     * method is called prior to pesisting the current state.
+     * @param user handler to access the persistent method calls. Not used
+     * in here but a subclass could use the user object to query the
+     * persistent system.
+     */
+    public void update(EditUserI user) throws IntactException, SearchException {
+        // Update the cv info data.
+        myAnnotObject.setShortLabel(getShortLabel());
+        myAnnotObject.setFullName(getFullName());
+    }
+
+    /**
      * Persists the current state to the persistent system. After this
      * method is called the persistent view is as same as the current view.
      * @param user handler to access the persistent method calls.
      * @exception IntactException for errors in updating the persistent system.
      */
     public void persist(EditUserI user) throws IntactException, SearchException {
-        // Update the cv info data.
-        myAnnotObject.setShortLabel(getShortLabel());
-        myAnnotObject.setFullName(getFullName());
+        try {
+            // Begin the transaction.
+            user.begin();
 
-        // Don't care whether annotated object exists or not because we don't
-        // need an AC in the annotation table.
+            // Persiste the current view.
+            persistCurrentView(user);
 
-        // Create annotations and add them to CV object.
-        for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation();
-            // Need this to generate the PK for the indirection table.
-            user.create(annot);
-            myAnnotObject.addAnnotation(annot);
+            // Commit the transaction.
+            user.commit();
         }
-        // Delete annotations and remove them from CV object.
-        for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation();
-            user.delete(annot);
-            myAnnotObject.removeAnnotation(annot);
-        }
-        // Update annotations; update the object with values from the bean.
-        // The update of annotated object ensures the sub objects are updated as well.
-        for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
-            CommentBean cb = (CommentBean) iter.next();
-            cb.update(user);
-            user.update(cb.getAnnotation());
-        }
-        // Xref has a parent_ac column which is not a foreign key. So, the parent needs
-        // to be persistent before we can create the Xrefs.
-        if (!user.isPersistent(myAnnotObject)) {
-            user.create(myAnnotObject);
-        }
-
-        // Create xrefs and add them to CV object.
-        for (Iterator iter = getXrefsToAdd().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref();
-            user.create(xref);
-            myAnnotObject.addXref(xref);
-        }
-        // Delete xrefs and remove them from CV object.
-        for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref();
-            user.delete(xref);
-            myAnnotObject.removeXref(xref);
-        }
-        // Update xrefs; see the comments for annotation update above.
-        for (Iterator iter = getXrefsToUpdate().iterator(); iter.hasNext();) {
-            XreferenceBean xb = (XreferenceBean) iter.next();
-            xb.update(user);
-            user.update(xb.getXref());
-        }
-        // Update the cv object only for an object already persisted.
-        if (user.isPersistent(myAnnotObject)) {
-            user.update(myAnnotObject);
+        catch (IntactException ie1) {
+            try {
+                user.rollback();
+            }
+            catch (IntactException ie2) {
+                // Oops! Problems with rollback; ignore this as this
+                // error is reported via the main exception (ie1).
+            }
+            // Rethrow the exception to be logged.
+            throw ie1;
         }
     }
 
@@ -554,6 +533,28 @@ public abstract class AbstractEditViewBean {
     public void updateFromForm(DynaActionForm dynaform) {
         setShortLabel((String) dynaform.get("shortLabel"));
         setFullName((String) dynaform.get("fullName"));
+    }
+
+    // Dummy methods to be overriden by sub classes.
+
+    /**
+     * Persist any sub objects of the edited object. For example, proteins
+     * need to be persisted in a separate transaction for an Interaction
+     * @param user handler to the user to persist sub objects.
+     * @throws IntactException for errors in persisting.
+     * @throws SearchException for errors in searching for objects in the
+     * persistent system.
+     */
+    public void persistOthers(EditUserI user) throws IntactException,
+            SearchException {
+    }
+
+    /**
+     * Adds the current edit object to the recent edited item list. Only needed
+     * for Interactions or Experiments.
+     * @param user the user handle to add to the recent list.
+     */
+    public void addToRecentList(EditUserI user) {
     }
 
     /**
@@ -746,5 +747,62 @@ public abstract class AbstractEditViewBean {
             return list;
         }
         return myMenuFactory.getMenu(name, mode);
+    }
+
+    // Persist the current annotated object.
+
+    private void persistCurrentView(EditUserI user) throws IntactException,
+            SearchException {
+        // Don't care whether annotated object exists or not because we don't
+        // need an AC in the annotation table.
+
+        // Create annotations and add them to CV object.
+        for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
+            Annotation annot = ((CommentBean) iter.next()).getAnnotation();
+            // Need this to generate the PK for the indirection table.
+            user.create(annot);
+            myAnnotObject.addAnnotation(annot);
+        }
+        // Delete annotations and remove them from CV object.
+        for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
+            Annotation annot = ((CommentBean) iter.next()).getAnnotation();
+            user.delete(annot);
+            myAnnotObject.removeAnnotation(annot);
+        }
+        // Update annotations; update the object with values from the bean.
+        // The update of annotated object ensures the sub objects are updated as well.
+        for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
+            CommentBean cb = (CommentBean) iter.next();
+            cb.update(user);
+            user.update(cb.getAnnotation());
+        }
+        // Xref has a parent_ac column which is not a foreign key. So, the parent needs
+        // to be persistent before we can create the Xrefs.
+        if (!user.isPersistent(myAnnotObject)) {
+            user.create(myAnnotObject);
+        }
+
+        // Create xrefs and add them to CV object.
+        for (Iterator iter = getXrefsToAdd().iterator(); iter.hasNext();) {
+            Xref xref = ((XreferenceBean) iter.next()).getXref();
+            user.create(xref);
+            myAnnotObject.addXref(xref);
+        }
+        // Delete xrefs and remove them from CV object.
+        for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
+            Xref xref = ((XreferenceBean) iter.next()).getXref();
+            user.delete(xref);
+            myAnnotObject.removeXref(xref);
+        }
+        // Update xrefs; see the comments for annotation update above.
+        for (Iterator iter = getXrefsToUpdate().iterator(); iter.hasNext();) {
+            XreferenceBean xb = (XreferenceBean) iter.next();
+            xb.update(user);
+            user.update(xb.getXref());
+        }
+        // Update the cv object only for an object already persisted.
+        if (user.isPersistent(myAnnotObject)) {
+            user.update(myAnnotObject);
+        }
     }
 }

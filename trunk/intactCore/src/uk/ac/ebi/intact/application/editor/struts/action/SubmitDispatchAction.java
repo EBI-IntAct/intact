@@ -226,32 +226,48 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         // Validate the data.
         view.validate(user);
 
+        // Update the annotated object with current values.
+        view.update(user);
+
         try {
-            // Begin the transaction.
-            user.begin();
+//            // Begin the transaction.
+//            user.begin();
 
             // Persist my current state
             view.persist(user);
+//
+//            // Commit all the changes.
+//            user.commit();
 
-            // Commit all the changes.
-            user.commit();
-
+            // Any other objects to persist in their own transaction.
+            try {
+                view.persistOthers(user);
+            }
+            catch (IntactException ie) {
+                // Delete the object we are editing at the moment (it has
+                // already been made persisted by persist() method.
+                user.delete();
+                // Rethrow it again for outer try block to catch it and
+                // log the exception.
+                throw ie;
+            }
             // New transaction for updating proteins - this fixes the problem
             // with adding new proteins and annotations together.
-            if (view.getAnnotatedObject() instanceof Interaction) {
-                user.begin();
-                ((InteractionViewBean) view).persistProteins(user);
-                user.commit();
-            }
+//            if (view.getAnnotatedObject() instanceof Interaction) {
+//                user.begin();
+//                ((InteractionViewBean) view).persistProteins(user);
+//                user.commit();
+//            }
         }
         catch (IntactException ie1) {
-            try {
-                user.rollback();
-            }
-            catch (IntactException ie2) {
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
+            // We may need to
+//            try {
+//                user.rollback();
+//            }
+//            catch (IntactException ie2) {
+//                // Oops! Problems with rollback; ignore this as this
+//                // error is reported via the main exception (ie1).
+//            }
             // Log the stack trace.
             LOGGER.info(ie1);
             // Error with updating.
@@ -274,6 +290,8 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
             view.removeMenu();
             // Update the search cache.
             user.updateSearchCache(getLockManager());
+            // Add the current edited object to the recent list.
+            view.addToRecentList(user);
             // Only show the submitted record.
             return mapping.findForward(RESULT);
         }
