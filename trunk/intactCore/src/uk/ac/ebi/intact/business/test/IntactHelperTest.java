@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.business.test;
@@ -12,13 +12,15 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.*;
 
 import java.util.*;
-import java.io.*;
 
 
 /**
  * Class used for JUnit testing of intact search methods.
+ * NB This class needs complete revision for use with the new model
+ * and the new constructors (can't any longer create empty objects).
  *
  * @author Chris Lewington
+ * @version $Id$
  *
  */
 public class IntactHelperTest extends TestCase {
@@ -85,174 +87,109 @@ public class IntactHelperTest extends TestCase {
             *
             * two options: a) store and get back ACs, or b) set ACs artificially. Go for b) just now (if it works!)..
             */
-            institution = new Institution();
+            institution = new Institution("Boss");
 
             //NB if Institution is not to extend BasicObject, its created/updated need setting also
-            institution.setAc("EBITEST-111111");
             institution.setFullName("The Owner Of Everything");
             institution.setPostalAddress("1 AnySreet, AnyTown, AnyCountry");
-            institution.setShortLabel("Boss");
             institution.setUrl("http://www.dummydomain.org");
 
-            bio1 = new BioSource();
-            bio1.setAc("EBITEST-111112");
+            bio1 = new BioSource(institution, "bio1", "1");
             bio1.setOwnerAc(institution.getAc());
             bio1.setFullName("test biosource 1");
-            bio1.setOwner(institution);
-            bio1.setFullName("some kind of obscure Greek should go here");
-            bio1.setShortLabel("bio1");
-            bio1.setTaxId("1");
 
-            bio2 = new BioSource();
-            bio2.setAc("EBITEST-111113");
+            bio2 = new BioSource(institution, "bio2", "2");
             bio2.setOwnerAc(institution.getAc());
             bio2.setFullName("test biosource 2");
-            bio2.setOwner(institution);
-            bio2.setFullName("more obscure Greek should go here");
-            bio2.setShortLabel("bio2");
-            bio2.setTaxId("2");
 
-            exp1 = new Experiment();
-            exp1.setAc("EBITEST-111114");
+            exp1 = new Experiment(institution, "exp1", bio1);
             exp1.setOwnerAc(institution.getAc());
             exp1.setFullName("test experiment 1");
-            exp1.setShortLabel("exp1");
-            exp1.setOwner(institution);
-            exp1.setBioSource(bio1);
 
-            exp2 = new Experiment();
-            exp2.setAc("EBITEST-111115");
+            exp2 = new Experiment(institution, "exp2", bio2);
             exp2.setOwnerAc(institution.getAc());
             exp2.setFullName("test experiment 2");
-            exp2.setShortLabel("exp2");
-            exp2.setOwner(institution);
-            exp2.setBioSource(bio2);
 
-            prot1 = new Protein();
-            prot2 = new Protein();
-            prot3 = new Protein();
+            prot1 = new Protein(institution, bio1, "prot1");
+            prot2 = new Protein(institution, bio1, "prot2");
+            prot3 = new Protein(institution, bio1, "prot3");
 
-            prot1.setAc("EBITEST-111118");
             prot1.setOwnerAc(institution.getAc());
             prot1.setFullName("test protein 1");
-            prot1.setOwner(institution);
-            prot1.setShortLabel("prot1");
-            prot1.setBioSource(bio1);
             prot1.setCrc64("dummy 1 crc64");
-            prot2.setAc("EBITEST-111119");
             prot2.setOwnerAc(institution.getAc());
             prot2.setFullName("test protein 2");
-            prot2.setOwner(institution);
-            prot2.setShortLabel("prot2");
-            prot2.setBioSource(bio1);
             prot2.setCrc64("dummy 2 crc64");
-            prot3.setAc("EBITEST-111121");
             prot3.setOwnerAc(institution.getAc());
             prot3.setFullName("test protein 3");
-            prot3.setOwner(institution);
-            prot3.setShortLabel("prot3");
-            prot3.setBioSource(bio1);
             prot3.setCrc64("dummy 3 crc64");
 
-            int1 = new Interaction();
-            int2 = new Interaction();
-            int3 = new Interaction();
+            //set up some collections to be added to later - needed for
+            //some of the constructors..
+            Collection experiments = new ArrayList();
+            Collection components = new ArrayList();
 
-            int1.setAc("EBITEST-111122");
+            experiments.add(exp1);
+            //needs exps, components, type, shortlabel, owner...
+            //No need to set BioSource - taken from the Experiment...
+            int1 = new Interaction(experiments, components, null, "int1", institution);
+            int2 = new Interaction(experiments, components, null, "int2", institution);
+            int3 = new Interaction(experiments, components, null, "int3", institution);
+
             int1.setOwnerAc(institution.getAc());
-            int1.setBioSource(bio1);
             int1.setFullName("test interaction 1");
-            int1.setOwner(institution);
-            int1.setShortLabel("int1");
             int1.setKD(new Float(1));
 
-            int2.setAc("EBITEST-111123");
             int2.setOwnerAc(institution.getAc());
-            int2.setBioSource(bio1);
             int2.setFullName("test interaction 2");
-            int2.setOwner(institution);
-            int2.setShortLabel("int2");
             int2.setKD(new Float(2));
 
-            int3.setAc("EBITEST-111124");
             int3.setOwnerAc(institution.getAc());
-            int3.setBioSource(bio2);
             int3.setFullName("test interaction 3");
-            int3.setOwner(institution);
-            int3.setShortLabel("int3");
             int3.setKD(new Float(3));
 
 
             //create some xrefs and link to proteins/interactions
-            cvDb = new CvDatabase();
-            cvDb.setOwner(institution);
-            cvDb.setShortLabel("testCvDb");
+            cvDb = new CvDatabase(institution, "testCvDb");
             cvDb.setFullName("dummy test cvdatabase");
-            cvDb.setAc("EBITEST-999999");
-            xref1 = new Xref();
-            xref1.setAc("EBITEST-111116");
+            xref1 = new Xref(institution, cvDb, "G0000000", "GAAAAAAA", "1.0", null);
             xref1.setOwnerAc(institution.getAc());
-            xref1.setOwner(institution);
-            xref1.setPrimaryId("GOOOOOOO");
-            xref1.setSecondaryId("GAAAAAAA");
-            xref1.setDbRelease("1.0");
             xref1.setParentAc(prot1.getAc());
-            xref1.setCvDatabase(cvDb);
             cvDb.addXref(xref1);
 
-            xref2 = new Xref();
-            xref2.setAc("EBITEST-111117");
+            xref2 = new Xref(institution, cvDb, "GEEEEEEE", "GGGGGGGG", "1.0", null);
             xref2.setOwnerAc(institution.getAc());
-            xref2.setOwner(institution);
-            xref2.setPrimaryId("GEEEEEEEE");
-            xref2.setSecondaryId("GGGGGGGG");
-            xref2.setDbRelease("1.0");
             xref2.setParentAc(int1.getAc());
-            xref2.setCvDatabase(cvDb);
             cvDb.addXref(xref2);
 
             prot1.addXref(xref1);
             int1.addXref(xref2);
 
             //now link up interactions and proteins via some components..
-            compRole = new CvComponentRole();
-            compRole.setAc("EBITEST-999998");
-            compRole.setOwner(institution);
-            compRole.setShortLabel("role");
-            comp1 = new Component();
-            comp1.setAc("EBITEST-111125");
+            compRole = new CvComponentRole(institution, "role");
+
+            comp1 = new Component(institution, int1, prot1, compRole);
             comp1.setOwnerAc(institution.getAc());
-            comp1.setOwner(institution);
             comp1.setStoichiometry(1);
-            comp1.setInteraction(int1);
-            comp1.setInteractor(prot1);
-            comp1.setCvComponentRole(compRole);
 
-            comp2 = new Component();
-            comp2.setAc("EBITEST-111126");
+            comp2 = new Component(institution, int2, prot2, compRole);
             comp2.setOwnerAc(institution.getAc());
-            comp2.setOwner(institution);
             comp2.setStoichiometry(2);
-            comp2.setInteraction(int2);
-            comp2.setInteractor(prot2);
-            comp2.setCvComponentRole(compRole);
 
-            comp3 = new Component();
-            comp3.setAc("EBITEST-111127");
+            //needs owner, interaction, interactor, role
+            comp3 = new Component(institution, int2, prot3, compRole);
             comp3.setOwnerAc(institution.getAc());
-            comp3.setOwner(institution);
             comp3.setStoichiometry(3);
-            comp3.setInteraction(int2);
-            comp3.setInteractor(prot3);
-            comp3.setCvComponentRole(compRole);
 
-            comp4 = new Component();
-            comp4.setAc("EBITEST-111128");
-            comp4.setOwner(institution);
+            comp4 = new Component(institution, int1, prot2, compRole);
             comp4.setStoichiometry(4);
-            comp4.setInteraction(int1);
-            comp4.setInteractor(prot2);
-            comp4.setCvComponentRole(compRole);
+
+            int1.addComponent(comp1);
+            int2.addComponent(comp2);
+            int3.addComponent(comp3);
+            int2.addComponent(comp4);
+            int3.addComponent(comp4);
+
 
             //store everything...
             Collection persistList = new ArrayList();
@@ -285,18 +222,16 @@ public class IntactHelperTest extends TestCase {
             helper.create(persistList);
             helper.finishTransaction();
 
-            //now add the link between experiments and interactions and do an update
+            //now add some experiments and interactions and do an update
             helper.startTransaction(BusinessConstants.JDBC_TX);
-            int1.addExperiment(exp1);
-            int2.addExperiment(exp1);
-            int3.addExperiment(exp1);
+            int2.addExperiment(exp2);
+            int3.addExperiment(exp2);
 
-            helper.update(int1);
+            helper.update(int2);
             System.out.println("serializing helper again, within an update TX...");
             newHelper = (IntactHelper)Serializer.serializeDeserialize(helper);
             System.out.println("resetting helper connections in update TX...");
             helper = newHelper;
-            helper.update(int2);
             helper.update(int3);
             helper.finishTransaction();
 
@@ -389,10 +324,11 @@ public class IntactHelperTest extends TestCase {
         if (helper != null) {
 
             //NB assumes full java className supplied...
-            resultList = helper.search(prot1.getClass().getName(), "ac", prot1.getAc());
+            resultList = helper.search(prot1.getClass().getName(), "shortLabel", prot1.getShortLabel());
             if(!resultList.isEmpty()) {
 
-                System.out.println("results for testBasicSearch (expecting details for Protein EBITEST-111118)...");
+                System.out.println("results for testBasicSearch (expecting details for Protein "
+                        + prot1.getShortLabel() +")...");
                 System.out.println();
                 Iterator it = resultList.iterator();
                 while(it.hasNext()) {
@@ -415,44 +351,46 @@ public class IntactHelperTest extends TestCase {
     /**
      *  Test search by object only.
      */
-    protected void objectSearch() throws Exception {
-
-        System.out.println("testing simple search by object...");
-        System.out.println("First checking for an Institution....");
-        System.out.println();
-
-        Collection resultList = null;
-            if (helper != null) {
-
-                resultList = helper.search(institution);
-                if(!resultList.isEmpty()) {
-
-                    System.out.println("results for testObjectSearch (expecting details for EBITEST-111111)...");
-                    System.out.println();
-                    Iterator it = resultList.iterator();
-                    while(it.hasNext()) {
-                        System.out.println(it.next().toString());
-                    }
-                    System.out.println();
-                }
-                else {
-                    System.out.println("testObjectSearch: completed with empty result set");
-                }
-
-            }
-            else {
-
-                fail("something failed - couldn't create a helper class to access the data!!");
-
-            }
-    }
+//    protected void objectSearch() throws Exception {
+//
+//        System.out.println("testing simple search by object...");
+//        System.out.println("First checking for an Institution....");
+//        System.out.println();
+//
+//        Collection resultList = null;
+//            if (helper != null) {
+//
+//                resultList = helper.search(institution);
+//                if(!resultList.isEmpty()) {
+//
+//                    System.out.println("results for testObjectSearch (expecting details for "
+//                            + institution.getShortLabel() +")...");
+//                    System.out.println();
+//                    Iterator it = resultList.iterator();
+//                    while(it.hasNext()) {
+//                        System.out.println(it.next().toString());
+//                    }
+//                    System.out.println();
+//                }
+//                else {
+//                    System.out.println("testObjectSearch: completed with empty result set");
+//                }
+//
+//            }
+//            else {
+//
+//                fail("something failed - couldn't create a helper class to access the data!!");
+//
+//            }
+//    }
 
     /**
     *  Test name search, ie by fullName
     */
     protected void nameSearch() throws Exception {
 
-        System.out.println("testing search by name (Interaction, with name 'test interaction 1')...");
+        System.out.println("testing search by name (Interaction, with name '"
+                + int1.getFullName() + "')...");
         System.out.println();
 
         Object result = null;
@@ -462,7 +400,8 @@ public class IntactHelperTest extends TestCase {
             result = helper.getObjectByName(int1.getClass(), int1.getFullName());
             if(result != null) {
 
-                System.out.println("results for testNameSearch (expecting details for EBITEST-111122)...");
+                System.out.println("results for testNameSearch (expecting details for "
+                        + int1.getFullName() +")...");
                 System.out.println();
                 System.out.println(result.toString());
                 System.out.println();
@@ -470,15 +409,11 @@ public class IntactHelperTest extends TestCase {
             else {
                     System.out.println("testNameSearch: completed with no match found");
             }
-
         }
         else {
 
             fail("something failed - couldn't create a helper class to access the data!!");
-
         }
-
-
     }
 
     /**
@@ -487,7 +422,7 @@ public class IntactHelperTest extends TestCase {
     protected void institutionSearch() throws Exception {
 
         System.out.println("testing search for Experiments by Institution");
-        System.out.println("using Institution EBITEST-111111.....");
+        System.out.println("using Institution " + institution.getShortLabel() + ".....");
         System.out.println();
 
 
@@ -498,7 +433,8 @@ public class IntactHelperTest extends TestCase {
             if(!resultList.isEmpty()) {
 
                 System.out.println("results for testInstitutionSearch -");
-                System.out.println("(expecting results for Experiments EBITEST-111114 and EBITEST-111115)...");
+                System.out.println("(expecting results for Experiments "
+                        + exp1.getShortLabel() + " and " + exp2.getShortLabel() + " ...");
                 System.out.println();
                 Iterator it = resultList.iterator();
                 while(it.hasNext()) {
@@ -509,46 +445,41 @@ public class IntactHelperTest extends TestCase {
             else {
                 System.out.println("testInstitutiontSearch: completed with empty result set");
             }
-
         }
         else {
 
             fail("something failed - couldn't create a helper class to access the data!!");
-
         }
-
-
     }
 
     protected void collectionSearch() throws Exception {
 
+        //NB The 'example Protein' created here must of course be one we already
+        //know exists - howevere we need more information than we used to require
+        //due to the model changes. Thus our 'example' is just prot1, and we are
+        //expecting a result with a non-null AC...
         Collection results = null;
-
-        System.out.println("testing search by example object containing a collection.....");
-        System.out.println("example used: search for a Protein, given a single Xref...");
-        System.out.println("building example Xref object, with AC = EBITEST-111116...");
-        System.out.println();
 
         if(helper != null) {
 
-            Xref xref = new Xref();
-            xref.setAc("EBITEST-111116");
-
-            //NB unset created/updated for searching...
-            xref.setUpdated(null);
-            xref.setCreated(null);
-
-            System.out.println("building example (empty) Protein to search on.....");
+            System.out.println("testing search by example object containing a collection.....");
+            System.out.println("example used: search for a Protein, given a single Xref...");
+            System.out.println("using example xref with primary ID "
+                    + xref1.getPrimaryId() + "...");
             System.out.println();
-            Protein prot = new Protein();
 
-            //NB unset created/updated for searching...
+            System.out.println("building example Protein to search on.....");
+            System.out.println();
+
+            Protein prot = new Protein(institution, bio1, "prot1");
+
+            //NB unset created/updated for "new" object searching...
             prot.setUpdated(null);
             prot.setCreated(null);
 
             System.out.println("adding Xref to Protein example....");
             System.out.println();
-            prot.addXref(xref);
+            prot.addXref(xref1);
             System.out.println("done - example built, now performing search ..");
             System.out.println();
 
@@ -564,11 +495,12 @@ public class IntactHelperTest extends TestCase {
 
                 //write results to console..
                 System.out.println("search results: ");
-                System.out.println("(expecting EBITEST-111118 details)....");
+                System.out.println("(expecting Protein(s) with non-null AC)....");
                 Iterator it2 = results.iterator();
                 while (it2.hasNext()) {
 
-                    System.out.println(it2.next().toString());
+                    System.out.println("Protein ACs found:");
+                    System.out.println(((Protein)it2.next()).getAc());
                 }
                 System.out.println();
             }
@@ -578,41 +510,35 @@ public class IntactHelperTest extends TestCase {
                 fail("something failed - couldn't create a helper class to access the data!!");
         }
 
-
     }
 
     protected void collectionMtoNSearch() throws Exception {
 
+        //NB Again we need an 'example' that we know exists and expect to find
+        //one, and hence it should have something in it...
+
         Collection results = null;
+        Collection exps = new ArrayList();
+        Collection comps = new ArrayList();
 
         System.out.println("testing search by example object with collection, (m:n relation)....");
         System.out.println("example used: search for an Interaction, given a single Experiment...");
-        System.out.println("building example Experiment object, with AC = EBITEST-111114...");
+        System.out.println("using example Experiment object with label "
+                + exp1.getShortLabel() + " ...");
         System.out.println();
 
         if(helper != null) {
 
-            Experiment exp = new Experiment();
-
-            //NB unset created/updated for searching...
-            exp.setUpdated(null);
-            exp.setCreated(null);
-
-            exp.setAc("EBITEST-111114");
-            System.out.println("building example (empty) Interaction to search on.....");
+            System.out.println("searching for interaction with label " + int1.getShortLabel());
             System.out.println();
-            Interaction interaction = new Interaction();
-
-            //NB unset created/updated for searching...
-            interaction.setUpdated(null);
+            exps.add(exp1);
+            System.out.println("building example Interaction...");
+            Interaction interaction = new Interaction(exps, comps, null, "int1", institution);
             interaction.setCreated(null);
-
-            System.out.println("adding Experiment to Interaction example....");
-            interaction.addExperiment(exp);
-            System.out.println("done - example built, now performing search ..");
-            System.out.println();
+            interaction.setUpdated(null);
 
             results = helper.search(interaction);
+            System.out.println("search returned OK...");
 
             if (results.isEmpty()) {
 
@@ -624,11 +550,11 @@ public class IntactHelperTest extends TestCase {
 
                 //write results to console..
                 System.out.println("search results:");
-                System.out.println("(expecting details for EBITEST-111122, EBITEST-111123, EBITEST-111124)....");
+                System.out.println("(expecting non-null AC for interaction " + int1.getShortLabel() + ")....");
                 Iterator it2 = results.iterator();
                 while (it2.hasNext()) {
 
-                    System.out.println(it2.next().toString());
+                    System.out.println(((Interaction)it2.next()).getAc());
                 }
                 System.out.println();
             }
@@ -642,10 +568,11 @@ public class IntactHelperTest extends TestCase {
 
     protected void componentSearch() throws Exception {
 
-        System.out.println("testing component search...(for a given Protein EBITEST-111118) ");
+        System.out.println("testing component search...(for a given Protein with label "
+                + prot2.getShortLabel() + ") ");
 
         //first get correct details for the example protein from the DB
-        Collection results = helper.search("uk.ac.ebi.intact.model.Protein", "ac", "EBITEST-111118");
+        Collection results = helper.search("uk.ac.ebi.intact.model.Protein", "shortLabel", prot2.getShortLabel());
         if (results.isEmpty()) {
 
             //no matches found
@@ -654,32 +581,21 @@ public class IntactHelperTest extends TestCase {
         }
         else {
 
-            //must only be one Protein with unique AC
-            Iterator it = results.iterator();
-            Object obj = null;
+            //create a dummy Component and add the Protein to it (assumes result IS a Protein -
+            //OK as that is the class we searched on.....)
+            Component component = new Component(institution, int2,
+                    (Protein)results.iterator().next(), compRole);
 
-            if(it.hasNext()) {
-               obj = it.next();
-            }
-            else {
-
-                fail("testComponentSearch: could not retrieve valid details for Protein EBITEST-111118!!");
-            }
-            //create a dummy Component and add the Protein to it
-            Component component = new Component();
-
-            //unset the created/updated fields again!
+            //unset the created/updated fields for 'example object' search
             component.setUpdated(null);
             component.setCreated(null);
 
-            component.setInteractor((Interactor)obj);
-
             results = helper.search(component);
-
 
             //now loop through the components and get the interactions from each one..
             System.out.println("search results...");
-            System.out.println("(expecting details for EBITEST-111122)....");
+            System.out.println("(expecting component with interaction "
+                    + int2.getShortLabel() + "...)");
             Iterator it2 = results.iterator();
 
             while (it2.hasNext()) {
@@ -720,13 +636,9 @@ public class IntactHelperTest extends TestCase {
     }
 
     protected void checkUserValidation() {
-        boolean isUserOk = false;
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String username = null;
         String password = null;
-
-        Collection results = new ArrayList();
 
         try {
             System.out.println();
@@ -765,21 +677,18 @@ public class IntactHelperTest extends TestCase {
     /**
      * Used to check out user connections
      * @param h an IntactHelper that has user details set
+     * @param label An example shortLabel to use
      */
-    protected void doUserCheck(IntactHelper h, String Ac) {
+    protected void doUserCheck(IntactHelper h, String label) {
 
         Collection results = new ArrayList();
         try {
 
-            Institution inst = new Institution();
-            inst.setAc(Ac);
-
-            //also need to seta label as it is a non-null field
-            inst.setShortLabel(String.valueOf(Ac.charAt(Ac.length()-1)));
+            Institution inst = new Institution(label);
             h.create(inst);
 
             //now check retrieval of the above object...
-            results = h.search(Institution.class.getName(), "ac", inst.getAc());
+            results = h.search(Institution.class.getName(), "shortLabel", inst.getShortLabel());
             if(results.isEmpty()) {
                 System.out.println("an error occurred - object created by testuser1 could not be found!!");
             }
@@ -791,8 +700,9 @@ public class IntactHelperTest extends TestCase {
                 }
                 else {
                     System.out.println("checking for retrieved object...");
-                    System.out.println("object created by user (expecting Institution with AC " + Ac + ")");
-                    System.out.println("type: " + found.getClass().getName() + " AC: " + found.getAc());
+                    System.out.println("object created by user (expecting Institution with label " + label + ")");
+                    System.out.println("type: " + found.getClass().getName()
+                            + " AC: " + found.getAc() + " label: " + found.getShortLabel());
 
                     System.out.println();
 
@@ -813,12 +723,12 @@ public class IntactHelperTest extends TestCase {
      */
     public void testHelper() {
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        String answer = "n";
+        //BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        //String answer = "n";
         try {
 
             basicSearch();
-            objectSearch();
+            //objectSearch();
             nameSearch();
             institutionSearch();
             collectionSearch();
