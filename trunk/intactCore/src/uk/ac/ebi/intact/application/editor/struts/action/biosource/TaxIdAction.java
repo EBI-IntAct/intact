@@ -179,14 +179,14 @@ public class TaxIdAction extends AbstractEditorAction {
                 return mapping.findForward(EditorConstants.FORWARD_FAILURE);
             }
         }
-        log("newt label: " + newtLabel);
-        log("newt name: " + newtName);
+//        log("newt label: " + newtLabel);
+//        log("newt name: " + newtName);
         // Set the view with the new inputs.
         bioview.setShortLabel(newtLabel);
         bioview.setFullName(newtName);
         bioview.setTaxId(taxid);
 
-        return mapping.findForward(EditorConstants.FORWARD_REFRESH);
+        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
     }
 
     /**
