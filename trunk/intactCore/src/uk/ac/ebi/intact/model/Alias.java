@@ -144,6 +144,11 @@ public class Alias extends BasicObjectImpl {
         return result;
     }
 
+    public String toString() {
+        return "Alias[name: " + name + ", type: " +
+                (cvAliasType != null ? cvAliasType .getShortLabel() : "" ) + "]";
+    }
+
 } // end Alias
 
 

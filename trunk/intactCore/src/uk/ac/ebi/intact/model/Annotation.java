@@ -137,6 +137,11 @@ public class Annotation extends BasicObjectImpl {
         return code;
     }
 
+    public String toString() {
+        return "Annotation[type: " + (cvTopic != null ? cvTopic.getShortLabel() : "" ) +
+               ", text: " + annotationText + "]";
+    }
+
 } // end Annotation
 
 
