@@ -552,16 +552,16 @@ public class RangeBeanTest extends TestCase {
         assertEquals(bean.getRange().getToCvFuzzyType(), range);
 
         // c for for range
-        bean = new RangeBean(user, "c2", "3");
-        assertEquals(bean.toString(), "c2-3");
+        bean = new RangeBean(user, "c", "3");
+        assertEquals(bean.toString(), "c-3");
         // Fuzzy type is c-terminal for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), ct);
         // Fuzzy type is null for to type.
         assertNull(bean.getRange().getToCvFuzzyType());
 
         // n for for range
-        bean = new RangeBean(user, "n2", "n3");
-        assertEquals(bean.toString(), "n2-n3");
+        bean = new RangeBean(user, "n", "n");
+        assertEquals(bean.toString(), "n-n");
         // Fuzzy type is n-terminal for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), nt);
         // Fuzzy type is n-terminal for to type.
@@ -628,31 +628,31 @@ public class RangeBeanTest extends TestCase {
         assertEquals(bean.getRange(user).getToCvFuzzyType(), greaterThan);
 
         // n for for range
-        bean = new RangeBean(user, "n2", "n3");
-        assertEquals(bean.toString(), "n2-n3");
+        bean = new RangeBean(user, "n", "n");
+        assertEquals(bean.toString(), "n-n");
         // Fuzzy type is n-terminal for from type.
         assertEquals(bean.getRange(user).getFromCvFuzzyType(), nt);
         // Fuzzy type is n-terminal for to type.
         assertEquals(bean.getRange(user).getToCvFuzzyType(), nt);
         // Change the to range.
-        bean.setToRange("c3");
-        assertEquals(bean.toString(), "n2-c3");
+        bean.setToRange("c");
+        assertEquals(bean.toString(), "n-c");
         // Fuzzy type is n-terminal for from type.
         assertEquals(bean.getRange(user).getFromCvFuzzyType(), nt);
         // Fuzzy type is c-terminal for to type.
         assertEquals(bean.getRange(user).getToCvFuzzyType(), ct);
 
         // n for for range
-        bean = new RangeBean(user, "n2", "n3");
-        assertEquals(bean.toString(), "n2-n3");
+        bean = new RangeBean(user, "n", "n");
+        assertEquals(bean.toString(), "n-n");
         // Fuzzy type is n-terminal for from type.
         assertEquals(bean.getRange(user).getFromCvFuzzyType(), nt);
         // Fuzzy type is n-terminal for to type.
         assertEquals(bean.getRange(user).getToCvFuzzyType(), nt);
         // Change both to c terminals.
-        bean.setFromRange("c1");
-        bean.setToRange("c3");
-        assertEquals(bean.toString(), "c1-c3");
+        bean.setFromRange("c");
+        bean.setToRange("c");
+        assertEquals(bean.toString(), "c-c");
         // Fuzzy type are c-terminals for both types.
         assertEquals(bean.getRange(user).getFromCvFuzzyType(), ct);
         assertEquals(bean.getRange(user).getToCvFuzzyType(), ct);

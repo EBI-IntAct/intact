@@ -28,11 +28,12 @@ public class RangeBean extends AbstractEditKeyBean {
     // Class Data
 
     /**
-     * optional ?, <, >, c, n, -, followed by an optional number, optional ..
-     * , optional -
+     * pattern 1: starting with ? or c or n
+     * pattern 2: starting with < or > and optional - followed by digits
+     * pattern 3: starting with optional -, .. followed by an optional - and digits
      */
     private static final Pattern ourRangePattern =
-            Pattern.compile("^(\\?|<|>|c|n|\\-)?+(\\d+)*?(\\.\\.)?+(\\-)?+(\\d+)?+$");
+            Pattern.compile("^(\\?|c|n)$|^(<|>)?+(-)*?(\\d+)$|^(-)*?(\\d+)\\.\\.(-)*?(\\d+)$");
 
     // Instance Data
 
@@ -259,12 +260,14 @@ public class RangeBean extends AbstractEditKeyBean {
             // Check the validity of ranges.
             if (fromStart > fromEnd) {
                 errors = new ActionErrors();
-                errors.add(prefix + ".fromRange", new ActionError("error.feature.range.interval.invalid"));
+                errors.add(prefix + ".fromRange",
+                        new ActionError("error.feature.range.interval.invalid"));
             }
         }
         catch (IllegalArgumentException iae) {
             errors = new ActionErrors();
-            errors.add(prefix + ".fromRange", new ActionError("error.feature.range.invalid"));
+            errors.add(prefix + ".fromRange",
+                    new ActionError("error.feature.range.invalid"));
         }
         // Don't check any further if we have errors.
         if (errors != null) {
@@ -286,7 +289,8 @@ public class RangeBean extends AbstractEditKeyBean {
             // Check the validity of ranges.
             if (toStart > toEnd) {
                 errors = new ActionErrors();
-                errors.add(prefix + ".toRange", new ActionError("error.feature.range.interval.invalid"));
+                errors.add(prefix + ".toRange",
+                        new ActionError("error.feature.range.interval.invalid"));
             }
         }
         catch (IllegalArgumentException iae) {
@@ -301,23 +305,28 @@ public class RangeBean extends AbstractEditKeyBean {
         // copied from Range constructor.
         if (fromEnd < fromStart) {
             errors = new ActionErrors();
-            errors.add(prefix + ".range", new ActionError("error.feature.range.fromEnd.less.fromStart"));
+            errors.add(prefix + ".range",
+                    new ActionError("error.feature.range.fromEnd.less.fromStart"));
         }
         else if (toEnd < toStart) {
             errors = new ActionErrors();
-            errors.add(prefix + ".range", new ActionError("error.feature.range.toEnd.less.toStart"));
+            errors.add(prefix + ".range",
+                    new ActionError("error.feature.range.toEnd.less.toStart"));
         }
         else if (fromEnd > toStart) {
             errors = new ActionErrors();
-            errors.add(prefix + ".range", new ActionError("error.feature.range.fromEnd.more.toStart"));
+            errors.add(prefix + ".range",
+                    new ActionError("error.feature.range.fromEnd.more.toStart"));
         }
         else if (fromStart > toEnd) {
             errors = new ActionErrors();
-            errors.add(prefix + ".range", new ActionError("error.feature.range.fromStart.more.toEnd"));
+            errors.add(prefix + ".range",
+                    new ActionError("error.feature.range.fromStart.more.toEnd"));
         }
         else if (fromStart > toStart) {
             errors = new ActionErrors();
-            errors.add(prefix + ".range", new ActionError("error.feature.range.fromStart.more.toStart"));
+            errors.add(prefix + ".range",
+                    new ActionError("error.feature.range.fromStart.more.toStart"));
         }
         return errors;
     }
@@ -365,19 +374,24 @@ public class RangeBean extends AbstractEditKeyBean {
         // copied from Range constructor. Alternative is to create a dummy
         // range object to validate inputs.
         if (fromEnd < fromStart) {
-            throw new IllegalArgumentException("End of 'from' interval must be bigger than the start!");
+            throw new IllegalArgumentException(
+                    "End of 'from' interval must be bigger than the start!");
         }
         if (toEnd < toStart) {
-            throw new IllegalArgumentException("End of 'to' interval must be bigger than the start!");
+            throw new IllegalArgumentException(
+                    "End of 'to' interval must be bigger than the start!");
         }
         if (fromEnd > toStart) {
-            throw new IllegalArgumentException("The 'from' and 'to' intervals cannot overlap!");
+            throw new IllegalArgumentException(
+                    "The 'from' and 'to' intervals cannot overlap!");
         }
         if (fromStart > toEnd) {
-            throw new IllegalArgumentException("The 'from' interval starts beyond the 'to' interval!");
+            throw new IllegalArgumentException(
+                    "The 'from' interval starts beyond the 'to' interval!");
         }
         if (fromStart > toStart) {
-            throw new IllegalArgumentException("The 'from' interval cannot begin during the 'to' interval!");
+            throw new IllegalArgumentException(
+                    "The 'from' interval cannot begin during the 'to' interval!");
         }
         // Update the ranges.
         myRange.setFromIntervalStart(fromStart);
@@ -440,8 +454,8 @@ public class RangeBean extends AbstractEditKeyBean {
         // The value for display (fuzzy).
         String dispLabel = myFTConverter.getDisplayValue(type);
 
-        // Undetermined?
-        if (type.equals(CvFuzzyType.UNDETERMINED)) {
+        // Single type?
+        if (isSingleType(type)) {
             myFromRange = dispLabel;
         }
         // Range type?
@@ -494,6 +508,7 @@ public class RangeBean extends AbstractEditKeyBean {
     private int[] getFromRangeValues() {
         Matcher matcher = ourRangePattern.matcher(myFromRange);
         String fuzzyType = myFTConverter.getFuzzyShortLabel(matcher);
+
         return getRangeValues(fuzzyType, matcher);
     }
 
@@ -518,30 +533,33 @@ public class RangeBean extends AbstractEditKeyBean {
      */
     private int[] getRangeValues(String fuzzyType, Matcher matcher) {
         int[] ranges = new int[2];
-        if (!fuzzyType.equals(CvFuzzyType.UNDETERMINED)) {
-            if (fuzzyType.equals(CvFuzzyType.RANGE)) {
-                // Range, 1..2 type
-                // From value.
-                ranges[0] = Integer.parseInt(matcher.group(2));
-                // Check for negative values.
-                if (matcher.group(1) != null && matcher.group(1).equals("-")) {
-                    ranges[0] *= -1;
-                }
-                // End value
-                ranges[1] = Integer.parseInt(matcher.group(5));
-                // Check for negative values.
-                if (matcher.group(4) != null && matcher.group(4).equals("-")) {
-                    ranges[1] *= -1;
-                }
+
+        // No further parsing for single character types.
+        if (isSingleType(fuzzyType)) {
+            return ranges;
+        }
+        if (fuzzyType.equals(CvFuzzyType.RANGE)) {
+            // Range, 1..2 type
+            // From value.
+            ranges[0] = Integer.parseInt(matcher.group(6));
+            // Check for negative values.
+            if (matcher.group(5) != null) {
+                ranges[0] *= -1;
             }
-            else {
-                // Other type, <2 or >2, c2 etc.
-                ranges[0] = Integer.parseInt(matcher.group(5));
-                if (matcher.group(1) != null && matcher.group(1).equals("-")) {
-                    ranges[0] *= -1;
-                }
-                ranges[1] = ranges[0];
+            // End value
+            ranges[1] = Integer.parseInt(matcher.group(8));
+            // Check for negative values.
+            if (matcher.group(7) != null) {
+                ranges[1] *= -1;
             }
+        }
+        else {
+            // Other type, 2, <2 or >2
+            ranges[0] = Integer.parseInt(matcher.group(4));
+            if (matcher.group(3) != null) {
+                ranges[0] *= -1;
+            }
+            ranges[1] = ranges[0];
         }
         return ranges;
     }
@@ -555,8 +573,8 @@ public class RangeBean extends AbstractEditKeyBean {
         // The value for display (fuzzy).
         String dispLabel = myFTConverter.getDisplayValue(type);
 
-        // Undetermined?
-        if (type.equals(CvFuzzyType.UNDETERMINED)) {
+        // Single type?
+        if (isSingleType(type)) {
             myToRange = dispLabel;
         }
         // Range type?
@@ -580,5 +598,16 @@ public class RangeBean extends AbstractEditKeyBean {
             fuzzyType = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class, type);
         }
         return fuzzyType;
+    }
+
+    /**
+     * @param type the CvFuzzy label to compare
+     * @return true if <code>type</code> is of Untermined or C or N terminal types.
+     * False is returned for all other instances.
+     */
+    private boolean isSingleType(String type) {
+        return type.equals(CvFuzzyType.UNDETERMINED)
+                || type.equals(CvFuzzyType.C_TERMINAL)
+                || type.equals(CvFuzzyType.N_TERMINAL);
     }
 }

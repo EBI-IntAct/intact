@@ -85,17 +85,24 @@ public class FuzzyTypeConverter {
         if (!matcher.matches()) {
             throw new IllegalArgumentException("No match found");
         }
-        if (matcher.group(3) != null) {
-            // Range type
-            return CvFuzzyType.RANGE;
+        // The short label to return.
+        String shortLabel = "";
+
+        // for ? or c or n types
+        if (matcher.group(1) != null) {
+            shortLabel = (String) getKey(matcher.group(1));
         }
-        else if (matcher.group(1) != null) {
-            if (ourNormalMap.containsValue(matcher.group(1))) {
-                return (String) getKey(matcher.group(1));
+        else if (matcher.group(4) != null) {
+            if (matcher.group(2) != null) {
+                // For < or > types
+                shortLabel = (String) getKey(matcher.group(2));
             }
         }
-        // None in the mapping file (normal type)
-        return "";
+        else {
+            // Range type
+            shortLabel = CvFuzzyType.RANGE;
+        }
+        return shortLabel;
     }
 
     // Helper methods
