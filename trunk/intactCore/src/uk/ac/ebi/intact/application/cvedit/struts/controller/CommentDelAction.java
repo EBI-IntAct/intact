@@ -6,7 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
-import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.CvAbstractAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CommentBean;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class CommentDelAction extends IntactBaseAction {
+public class CommentDelAction extends CvAbstractAction {
 
     /**
      * Process the specified HTTP request, and create the corresponding
