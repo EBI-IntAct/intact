@@ -23,6 +23,16 @@ public class BaseException extends Exception {
      */
     private Throwable myRootException;
 
+    /**
+     * The message key to search in the resource file.
+     */
+    private String myMessageKey;
+
+    /**
+     * The message arguments.
+     */
+    private String[] myMessageArgs;
+
     // Constructors
 
     /**
@@ -80,5 +90,38 @@ public class BaseException extends Exception {
      */
     public Throwable getRootCause() {
         return myRootException;
+    }
+
+    /**
+     * Sets the message key.
+     * @param key the key to search in the application resources file.
+     */
+    public void setMessageKey(String key) {
+        myMessageKey = key;
+    }
+
+    /**
+     * Returns the message key
+     * @return the key to search in the application resources file.
+     */
+    public String getMessageKey() {
+        return myMessageKey;
+    }
+
+    /**
+     * The arguments to pass to place holders in the application resources file.
+     * @param args an array of arguments to pass to place holders.
+     */
+    public void setMessageArgs(String[] args) {
+        myMessageArgs = args;
+    }
+
+    /**
+     * Returns an array of arguments to pass to place holders application
+     * resources file.
+     * @return an array of String arguments to pass to place holders.
+     */
+    public String[] getMessageArgs() {
+        return myMessageArgs;
     }
 }
