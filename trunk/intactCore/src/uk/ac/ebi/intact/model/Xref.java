@@ -68,7 +68,7 @@ public class Xref extends BasicObject {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
-    public Xref() {
+    private Xref() {
         //super call sets creation time data
         super();
     }
@@ -82,12 +82,12 @@ public class Xref extends BasicObject {
      * <li>a Primary ID</li>
      * @param anOwner Owner of the cross-reference (non-null)
      * @param aDatabase Controlled vocabulary instance defining the database details (non-null)
-     * @param aPrimaryId primary identifier for the corss-reference (non-null), this should be 30 caracters maximum
+     * @param aPrimaryId primary identifier for the cross-reference (non-null), this should be 30 characters maximum
      * if it's more it will be truncated. if not done, Oracle would throw an error.
-     * @param aSecondaryId secondary identifier (eg a domain name), this should be 30 caracters maximum
+     * @param aSecondaryId secondary identifier (eg a domain name), this should be 30 characters maximum
      * if it's more it will be truncated. if not done, Oracle would throw an error.
      * @param aDatabaseRelease database version
-     * @param aCvXrefQualifier controlled vocabulary for any qualifiers
+     * @param aCvXrefQualifier controlled vocabulary for any qualifiers (may be null)
      * @exception NullPointerException thrown if any mandatory parameters are not specified
      */
     public Xref (Institution anOwner,
@@ -102,15 +102,28 @@ public class Xref extends BasicObject {
         if(aDatabase == null) throw new NullPointerException("valid Xref must have non-null database details!");
         if(aPrimaryId == null) throw new NullPointerException("valid Xref must have a primary ID!");
 
+
         if (aPrimaryId != null && aPrimaryId.length() > 30) {
             aPrimaryId = aPrimaryId.substring(0,30);
         }
+
+        if (aPrimaryId != null && aPrimaryId.length() > 30) {
+            aPrimaryId = aPrimaryId.substring(0,30);
+        }
+
         this.primaryId = aPrimaryId;
+
 
         if (aSecondaryId != null && aSecondaryId.length() > 30) {
             aSecondaryId = aSecondaryId.substring(0,30);
         }
         this.cvDatabase = aDatabase;
+
+        if (aSecondaryId != null && aSecondaryId.length() > 30) {
+            aSecondaryId = aSecondaryId.substring(0,30);
+        }
+        this.cvDatabase = aDatabase;
+
         this.secondaryId = aSecondaryId;
         this.dbRelease = aDatabaseRelease;
         this.cvXrefQualifier = aCvXrefQualifier;

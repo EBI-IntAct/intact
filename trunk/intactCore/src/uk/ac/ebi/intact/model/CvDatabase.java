@@ -31,7 +31,7 @@ public class CvDatabase extends CvObject implements Editable {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
-    public CvDatabase() {
+    private CvDatabase() {
         //super call sets creation time data
         super();
     }

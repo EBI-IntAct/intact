@@ -19,7 +19,7 @@ public class CvCellCycle extends CvObject {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
-    public CvCellCycle() {
+    private CvCellCycle() {
         //super call sets creation time data
         super();
     }

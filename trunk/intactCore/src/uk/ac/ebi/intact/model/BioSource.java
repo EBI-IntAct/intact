@@ -65,7 +65,7 @@ public class BioSource extends AnnotatedObject implements Editable {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
-    public BioSource() {
+    private BioSource() {
         //super call sets creation time data
         super();
     }

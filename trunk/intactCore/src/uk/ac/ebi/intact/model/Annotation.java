@@ -44,7 +44,7 @@ public class Annotation extends BasicObject {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
-    public Annotation() {
+    private Annotation() {
         //super call sets creation time data
         super();
     }
