@@ -1136,6 +1136,43 @@ public class IntactHelper implements SearchI, Externalizable {
         return results;
     }
 
+    /**
+     * Searches for splice objects by primaryId.
+     * @param primaryId Primary Id to search for proteins.
+     * @return a collection of splice proteins for <code>primaryId</code> or an
+     * empty collection if none are found.
+     * @exception IntactException if there is more than single protein returned from
+     * the search or an error ocurred in searching.
+     */
+    public Collection getSpliceProteinsByXref(String primaryId)
+            throws IntactException {
+        // The results to return.
+        Collection results = new ArrayList();
+
+        // The protein retrieved via xrefs.
+        Protein protein = (Protein) getObjectByXref(Protein.class, primaryId);
+
+        // Null if no protein is found for the primary id.
+        if (protein == null) {
+            // An empty collection if no proteins found.
+            return results;
+        }
+        // All splice proteins have 'this' protein as the primary id.
+        Collection proteins = search(Xref.class.getName(), "primaryId", protein.getAc());
+
+        // The iso-form to check for splice or not.
+        CvXrefQualifier isoForm = (CvXrefQualifier) getObjectByLabel(
+                CvXrefQualifier.class, "isoform-parent");
+
+        // Loop through proteins collection; only add the splice proteins.
+        for (Iterator iterator = proteins.iterator(); iterator.hasNext();) {
+            Xref xref = (Xref) iterator.next();
+            if (xref.getCvXrefQualifier().equals(isoForm)) {
+                results.addAll(search(Protein.class.getName(), "ac", xref.getParentAc()));
+            }
+        }
+        return results;
+    }
 
     /** Searches for a unique Object by classname and Xref.
      *  Currently this searches only by primaryId.
