@@ -82,11 +82,30 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
+     * True if an object of given class and AC exists in the cache.
+     * @param clazz the object type. IntactObject must be the top class of this.
+     * @param ac the AC
+     * @return true if an object is found in the cache.
+     */
+    public boolean isInCache(Class clazz, String ac) {
+        return dao.isInCache(clazz, IntactObject.class, ac);
+    }
+
+    /**
      * Removes given object from the cache.
      * @param obj the object to clear from the OJB cache.
      */
     public void removeFromCache(Object obj) {
         dao.removeFromCache(obj);
+    }
+
+    /**
+     * Removes given object from the cache.
+     * @param clazz the object type. IntactObject must be the top class of this.
+     * @param ac the AC
+     */
+    public void removeFromCache(Class clazz, String ac) {
+        dao.removeFromCache(clazz, IntactObject.class, ac);
     }
 
     /**

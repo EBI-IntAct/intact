@@ -312,6 +312,23 @@ public interface DAO {
     public void removeFromCache(Object obj);
 
     /**
+     * Removes given object from the cache.
+     * @param realClass the object type.
+     * @param topClass the top class of the <code>realClass</code>.
+     * @param ac the AC
+     */
+    public void removeFromCache(Class realClass, Class topClass, String ac);
+
+    /**
+     * True if an object of given class and AC exists in the cache.
+     * @param realClass the object type.
+     * @param topClass the top class of the <code>realClass</code>.
+     * @param ac the AC
+     * @return true if an object is found in the cache.
+     */
+    public boolean isInCache(Class realClass, Class topClass, String ac);
+
+    /**
      * <p>updates a given object which was oroginally obtained in
      * another transaction. This allows, for example, objects to be read
      * from persistent store in one transaction, modified elsewhere (eg via

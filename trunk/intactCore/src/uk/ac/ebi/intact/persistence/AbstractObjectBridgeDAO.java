@@ -198,6 +198,15 @@ public abstract class AbstractObjectBridgeDAO implements DAO {
         myBroker.removeFromCache(obj);
     }
 
+    public void removeFromCache(Class realClass, Class topClass, String ac) {
+        removeFromCache(new Identity(realClass, topClass, new Object[] {ac}));
+    }
+
+    public boolean isInCache(Class realClass, Class topClass, String ac) {
+        Identity id = new Identity(realClass, topClass, new Object[] {ac});
+        return myBroker.serviceObjectCache().lookup(id) != null;
+    }
+
     /**
      * checks to see if object saving automatically is turned on
      *
