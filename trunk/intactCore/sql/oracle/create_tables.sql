@@ -121,7 +121,9 @@ PROMPT creating table ...
 PROMPT ... BioSource
 CREATE TABLE BioSource
 (
-	taxId			VARCHAR(30)
+	shortLabel		VARCHAR2(20),
+	fullName		VARCHAR2(70),
+        taxId			VARCHAR(30)
 						CONSTRAINT uq_BioSource$taxId
 						UNIQUE USING INDEX,
 	scientificName		VARCHAR2(255),
@@ -141,6 +143,7 @@ CREATE TABLE BioSource
 STORAGE (INITIAL 4K NEXT 4K) PARALLEL;
 
 CREATE INDEX i_BioSource$scientificName on BioSource(scientificName);
+CREATE INDEX i_BioSource$shortLabel on BioSource(shortLabel);
 
 COMMENT ON TABLE BioSource IS
 'BioSource, normally some kind of organism. ';

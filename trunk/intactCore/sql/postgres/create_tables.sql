@@ -104,7 +104,9 @@ COMMENT on COLUMN ControlledVocab.userstamp IS
 
 CREATE TABLE BioSource
 (
-	taxId			VARCHAR(30)	NOT NULL
+	shortLabel		VARCHAR(20)	NOT NULL,
+	fullName		VARCHAR(70),
+        taxId			VARCHAR(30)	NOT NULL
 						CONSTRAINT uq_BioSource_taxId 
 						UNIQUE   ,
 	scientificName 		VARCHAR(255)	NOT NULL,
@@ -122,6 +124,7 @@ CREATE TABLE BioSource
 );
 
 CREATE INDEX i_BioSource_scientificName on BioSource(scientificName);
+CREATE INDEX i_BioSource_shortLabel on BioSource(shortLabel);
 
 COMMENT ON TABLE BioSource IS
 'BioSource, normally some kind of organism. ';
