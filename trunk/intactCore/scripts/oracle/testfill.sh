@@ -114,6 +114,14 @@ then
     exit 1
 fi
 
+echo ""
+echo "Insert CvFuzzyType"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvFuzzyType - data/controlledVocab/CvFuzzyType.def
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
 if [ "$3" = "onlyCV" ]
 then
     echo ""
