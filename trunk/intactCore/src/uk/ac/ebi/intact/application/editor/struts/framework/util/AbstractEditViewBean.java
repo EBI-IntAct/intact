@@ -303,8 +303,16 @@ public abstract class AbstractEditViewBean implements Serializable {
     /**
      * Sets the full name.
      * @param fullName the full name to set for the current edit object.
+     * An empty name (set by tag library when submitting the form) is set
+     * to null to avoid equals method returning false for identical objects
+     * apart from the full name.
      */
     public final void setFullName(String fullName) {
+        // It is improtant for this check or else the full name will be set to
+        // an empty string thus causing equals method to return false.
+        if (fullName != null && fullName.equals("")) {
+            fullName = null;
+        }
         myFullName = fullName;
     }
 
