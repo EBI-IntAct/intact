@@ -200,7 +200,7 @@
         <!-- Delete the class directory. -->
         <delete dir="${dest.dir}"/>
 
-        <!-- Just compile without copying config files to the class dir. -->
+        <!-- Just compile without copying config files to the class dir; exclude tests. -->
         <mkdir dir="${dest.dir}" />
         <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
             excludes="${non.core.files}, **/test/**">
@@ -333,5 +333,35 @@
 
     <!-- Build entire project -->
     <target name="project" depends="javadoc,demo"/>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs tests using junit task. -->
+    <target name="junit-test" depends="compile-core" description="Runs JUnit tests">
+        <junit printsummary="withOutAndErr">
+            <test name="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </junit>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+    <target name="junit-test-stdout" depends="compile-core"
+            description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- An alias for for junit-test -->
+    <target name="test">
+        <antcall target="junit-test-stdout"/>
+    </target>
+
+    <!-- =================================================================== -->
 
 </project>
