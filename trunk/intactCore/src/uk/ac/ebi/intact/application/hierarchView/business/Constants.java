@@ -21,6 +21,13 @@ public final class Constants {
     public static final String LOGGER_NAME = "hierarchView";
 
     /**
+     * The name of the benchmark logger
+     */
+    public static final String BENCHMARK_LOGGER_NAME = "benchmark";
+
+
+
+    /**
      * Where to find the property file
      */
     public static final String PROPERTY_FILE = "/config/Graph.properties";
