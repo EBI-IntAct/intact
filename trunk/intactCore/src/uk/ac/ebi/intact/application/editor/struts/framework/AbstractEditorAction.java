@@ -258,6 +258,9 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
                 Experiment.class, ac);
 
+        // Set the topic.
+        user.setSelectedTopic(getService().getTopic(Experiment.class));
+
         // The experiment we going back to.
         user.setView(annobj);
 

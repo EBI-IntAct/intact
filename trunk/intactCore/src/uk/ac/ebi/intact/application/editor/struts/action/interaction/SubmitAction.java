@@ -9,13 +9,12 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 
@@ -50,8 +49,8 @@ public class SubmitAction extends SubmitDispatchAction {
 //        user.getView().updateFromForm((DynaActionForm) form);
 
         // Intercept before returning back to the result page.
-        System.out.println("forward: " + forward.getPath());
-        System.out.println("forward 1: " + mapping.findForward(RESULT).getPath());
+//        System.out.println("forward: " + forward.getPath());
+//        System.out.println("forward 1: " + mapping.findForward(RESULT).getPath());
 
         if (forward.getPath().equals(mapping.findForward(RESULT).getPath())) {
             // Check and see if we have to go to the experiment page (only
@@ -63,6 +62,8 @@ public class SubmitAction extends SubmitDispatchAction {
                 // The experiment we have been editing.
                 AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
                         Experiment.class, ac);
+                // Set the topic.
+                user.setSelectedTopic(getService().getTopic(Experiment.class));
                 // The experiment we going back to.
                 user.setView(annobj);
 
