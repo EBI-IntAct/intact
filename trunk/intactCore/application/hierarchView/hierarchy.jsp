@@ -1,6 +1,7 @@
 <%@ page language="java" %>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.*,
                  uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean" %>
@@ -43,82 +44,8 @@
 </head>
 
 <body>
-
-
-<% 
-   String AC = (String) session.getAttribute (Constants.ATTRIBUTE_AC);
-   String method_class = (String) session.getAttribute (Constants.ATTRIBUTE_METHOD_CLASS);
-
-   Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
-   String debug = null;
-   if (null != properties) {
-      debug = properties.getProperty ("application.debug");
-   } else {
-      debug = "disable";
-   }
-
-   if (debug.equalsIgnoreCase ("enable")) {
-      out.println("AC : " + AC + "<br>");
-      out.println("method : " + method_class + " <br>");
-   }
-
-   if (null != AC) { 
-      HighlightmentSource source = HighlightmentSource.getHighlightmentSource(method_class);
-
-      if (null == source) {
-         out.println("source is null! <br>");
-      } else {
-      
-	  Collection urls = source.getUrl(AC, session);
-
-	  Iterator iterator = urls.iterator();
-	  int size = urls.size();
-
-    	  if (0 == size) {
-	  
-	    out.println ("no GO term for that protein (AC=" + AC + ")");
-    
-	  } else if (1 == size) {
-	    LabelValueBean url = (LabelValueBean) iterator.next();
-	    String adress = url.getValue();
-	    String label = url.getLabel();
-	    String description = url.getDescription();
-
-	    String absoluteUrl = adress;
-
-	    /* redirection to this URL */
-         %>
-
-	    <script language="JavaScript">
-	      <!--
-		 forward ( '<%= absoluteUrl %>' );
-	      //-->
-	    </script>
-
-          <%
-
-	  } else {
-	       out.println("Select an element in the list : <br>");
-
-	       while (iterator.hasNext()) {
-		   LabelValueBean url = (LabelValueBean) iterator.next();
-		   String adress = url.getValue();
-		   String label = url.getLabel();
-		   String description = url.getDescription();
-
-		   if (null == description)
-		   out.println("<a href=" + adress +" target=\"frameHierarchy\">" + label + "</a> <br>");
-		   else 
-		   out.println("<a href=" + adress +" target=\"frameHierarchy\">" + label + "</a> " + description + "<br>");
-
-	       } // while
-
-	   } // else
-
-       } // else
-
-    } // if
-%>
+        <!-- Displays available source for the selected protein -->
+        <hierarchView:displaySource/>
 
 </body>
 </html:html>
