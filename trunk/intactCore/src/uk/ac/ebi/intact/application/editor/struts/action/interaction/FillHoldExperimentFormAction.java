@@ -12,14 +12,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinEditForm;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.Enumeration;
-import java.util.List;
 
 /**
  * Action to populate the form with experiments ob hold.
@@ -41,25 +36,6 @@ public class FillHoldExperimentFormAction extends AbstractEditorAction {
         // Populate the form.
         PropertyUtils.setSimpleProperty(form, "experiments", view.getHoldExperiments());
 
-//        HttpSession session = getSession(request);
-//        for (Enumeration enum = session.getAttributeNames(); enum.hasMoreElements();) {
-//            String name = (String) enum.nextElement();
-//            if (name.equals("intProtEditForm")) {
-//                if (session.getAttribute(name) != null) {
-//                    ProteinEditForm protform = (ProteinEditForm) session.getAttribute(name);
-//                    List list = protform.getProteins();
-//                    for (int j = 0; j < list.size(); j++) {
-//                        System.out.println("Protein Bean: " + ((ProteinBean) list.get(j)).getShortLabel());
-//                    }
-//                }
-//            }
-//            System.out.println("Request: " + name +  " items " + session.getAttribute(name));
-//        }
-//        for (Enumeration eum = request.getParameterNames(); eum.hasMoreElements();) {
-//            String name = (String) eum.nextElement();
-//            System.out.print("Parameter Name: " + name);
-//            System.out.println(" Parameter value is " + request.getParameter(name));
-//        }
         return mapping.findForward(FORWARD_SUCCESS);
     }
 }
