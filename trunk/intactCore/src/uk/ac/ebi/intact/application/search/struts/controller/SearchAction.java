@@ -69,7 +69,7 @@ public class SearchAction extends IntactBaseAction {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response) {
+                                 HttpServletResponse response) throws  Exception {
 
         // Clear any previous errors.
         super.clearErrors();
@@ -119,7 +119,12 @@ public class SearchAction extends IntactBaseAction {
 
         // The stylesheet for the transformation.
         String xslname = session.getServletContext().getInitParameter(SearchConstants.XSL_FILE);
-        String xslfile = session.getServletContext().getRealPath(xslname);
+
+        //for war files....
+        //String xslfile = session.getServletContext().getRealPath(xslname);
+        //String xslfile = request.getContextPath() + (xslname);
+
+        String xslfile = session.getServletContext().getResource(xslname).toExternalForm();
 
         // Holds the result from the initial search.
         Collection results = null;

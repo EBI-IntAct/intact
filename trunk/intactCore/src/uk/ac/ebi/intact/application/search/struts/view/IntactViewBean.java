@@ -52,7 +52,7 @@ public class IntactViewBean implements Serializable {
     private Object wrappedObject;
 
     /**
-     * The stylesheet.
+     * The stylesheet (expected as a URL strin).
      */
 
     private String stylesheet;
