@@ -366,8 +366,6 @@
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
     <target name="build-war" depends="compile, gen-last-modified-file">
-        <echo message="In build war normal mode"/>
-
         <!-- Copy XML (configuration) files -->
         <copy todir="${temp.web}/WEB-INF">
             <fileset dir="WEB-INF">
@@ -397,7 +395,7 @@
         <!-- The last modifed file at the root. -->
         <copy file="${last.modified.file}" todir="${temp.web}"/>
         <!-- Will be removed, only for testing -->
-<!--        <copy file="links.html" todir="${temp.web}"/>-->
+        <copy file="links.html" todir="${temp.web}"/>
 
         <!-- TLD files -->
         <copy todir="${temp.web}/WEB-INF/tld">
@@ -608,7 +606,33 @@
     <!-- =================================================================== -->
 
     <!-- Runs the web testing in simple mode (without generating reports) -->
-    <target name="junit-web-simple"
+    <target name="junit-web"
+        description="Runs JUnit for web applications">
+
+        <antcall target="run-junit-single">
+            <param name="test.case"
+                value="uk.ac.ebi.intact.application.editor.test.pg.AllJUnitTests"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Runs the given unit testing class in simple mode (without generating reports).
+        The junit class to run must be given as -Dtest.case="......."
+    -->
+    <target name="junit-single"
+        description="Runs the given JUnit test case">
+
+        <antcall target="run-junit-single">
+            <param name="test.case" value="${test.case}"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the web testing in simple mode (without generating reports) -->
+    <target name="run-junit-single"
         description="Runs JUnit directly with output directed to stdout">
 
         <available file="${temp.web}/WEB-INF/lib" type="dir"
@@ -618,8 +642,7 @@
         <antcall target="check-war"/>
 
         <antcall target="run-junit-simple">
-            <param name="test.class"
-                value="uk.ac.ebi.intact.application.editor.test.pg.AllJUnitTests"/>
+            <param name="test.case" value="${test.case}"/>
         </antcall>
     </target>
 
@@ -644,7 +667,7 @@
             file="WEB-INF/config/TestResources.properties" />
 
         <java classname="junit.textui.TestRunner" fork="true">
-            <arg value="${test.class}"/>
+            <arg value="${test.case}"/>
             <classpath refid="project.test.class.path"/>
         </java>
     </target>
