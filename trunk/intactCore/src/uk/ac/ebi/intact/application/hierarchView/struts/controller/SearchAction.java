@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.SearchForm;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -95,14 +96,17 @@ public final class SearchAction extends IntactBaseAction {
             // Save user's data
             user.setAC (AC);
             user.setDepthToDefault();
-            user.resetSourceURL();
+            //user.resetSourceURL();
             user.setMethodLabel (methodLabel);
             user.setMethodClass (methodClass);
             user.setBehaviour (behaviourDefault);
 
             // Creation of the graph and the image
-            // that method fill the ActionError in case of trouble, so a check is necessary then.
-            produceInteractionNetworkImage (user);
+            try {
+                produceInteractionNetworkImage (user);
+            } catch (MultipleResultException e) {
+                return (mapping.findForward("displayWithSearch"));
+            }
 
             if (false == isErrorsEmpty()) {
                 // Report any errors we have discovered during the interaction network producing

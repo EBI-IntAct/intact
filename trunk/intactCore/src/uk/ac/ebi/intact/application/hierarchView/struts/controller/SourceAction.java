@@ -49,23 +49,33 @@ public final class SourceAction extends IntactBaseAction {
                                   ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response)
-            throws IOException, ServletException, SessionExpiredException {
+            throws IOException, ServletException {
 
         // Clear any previous errors.
         clearErrors();
+        HttpSession session = null;
+        IntactUserI user = null;
 
-        // get the current session
-        HttpSession session = getSession(request);
 
-        // retreive user fron the session
-        IntactUserI user = getIntactUser(session);
+        try {
+            // get the current session
+            session = getSession(request);
 
-        String someKeys = request.getParameter (StrutsConstants.ATTRIBUTE_KEYS);
+            // retreive user fron the session
+            user = getIntactUser(session);
+        } catch (SessionExpiredException see) {
+            addError ("error.session.expired");
+            saveErrors(request);
+            return (mapping.findForward("error"));
+        }
 
-        if ((null == someKeys) || (someKeys.length() < 1)) {
+        String someKeys    = request.getParameter (StrutsConstants.ATTRIBUTE_KEYS_LIST);
+        String clickedKeys = request.getParameter (StrutsConstants.ATTRIBUTE_KEY_CLICKED);
+
+        if ((null == clickedKeys) || (clickedKeys.trim().length() == 0)) {
             addError ("error.keys.required");
             saveErrors(request);
-            return (new ActionForward(mapping.getInput()));
+            return (mapping.findForward("error"));
         }
 
         // get the class method name to create an instance
@@ -75,9 +85,10 @@ public final class SourceAction extends IntactBaseAction {
         Collection keys = highlightmentSource.parseKeys (someKeys);
 
         user.setKeys(keys);
+        user.setSelectedKey(clickedKeys);
 
         // Print debug in the log file
-        logger.info ("SourceAction: keys=" + someKeys +
+        logger.info ("SourceAction: selectedKey=" + clickedKeys + " keys=" + someKeys +
                      "\nlogged on in session " + session.getId());
 
         // Remove the obsolete form bean

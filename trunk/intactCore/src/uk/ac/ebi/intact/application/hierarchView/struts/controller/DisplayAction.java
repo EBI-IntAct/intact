@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseActi
 import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.OptionGenerator;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -25,7 +26,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Implementation of <strong>Action</strong> that validates a visualize submisson.
+ * Action allowing to display an interaction network.
+ * It integrates the environment initialisation so that action can be called
+ * eventually by an external application.
+ * URL : <action>?AC=<YOUR_AC>&method=<YOUR_METHOD>&depth=<YOUR_DEPTH>
  *
  * @author Samuel Kerrien
  * @version $Id$
@@ -63,10 +67,10 @@ public final class DisplayAction extends IntactBaseAction {
         HttpSession session = getNewSession(request);
         IntactUserI user = null;
 
-        if ( intactUserExists(session) ) {
+        if ( false == intactUserExists(session) ) {
             /* Happens in the case hierarchView is called by an external applciation in
              * order to perform a search.
-             * e.g. by using http://server/hierarchView/search.do?AC=EBI-foo
+             * e.g. by using http://server/hierarchView/display.do?AC=EBI-foo
              */
             user = createIntactUser (session);
 
@@ -82,6 +86,8 @@ public final class DisplayAction extends IntactBaseAction {
 
         String AC          = request.getParameter ("AC");
         String methodLabel = request.getParameter ("method");
+        String depth       = request.getParameter ("depth");
+
         String methodClass = null;
         String behaviourDefault = null;
 
@@ -122,14 +128,22 @@ public final class DisplayAction extends IntactBaseAction {
 
             // Save user's data
             user.setAC (AC);
-            user.setDepthToDefault();
+            try {
+                int d = Integer.parseInt(depth);
+                user.setCurrentDepth(d);
+            } catch (NumberFormatException nfe) {
+                user.setDepthToDefault();
+            }
             user.setMethodLabel (methodLabel);
             user.setMethodClass (methodClass);
             user.setBehaviour (behaviourDefault);
 
             // Creation of the graph and the image
-            // that method fill the ActionError in case of trouble, so a check is necessary then.
-            produceInteractionNetworkImage (user);
+            try {
+                produceInteractionNetworkImage (user);
+            } catch (MultipleResultException e) {
+                return (mapping.findForward("displayWithSearch"));
+            }
 
             if (false == isErrorsEmpty()) {
                 // Report any errors we have discovered during the interaction network producing
@@ -138,7 +152,7 @@ public final class DisplayAction extends IntactBaseAction {
             }
         }
 
-        logger.info ("SearchAction: AC=" + AC +
+        logger.info ("DisplayAction: AC=" + AC + " depth=" + depth +
                      " methodLabel=" + methodLabel +
                      " methodClass=" + methodClass);
 

@@ -5,15 +5,14 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
-import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
+import uk.ac.ebi.intact.application.hierarchView.business.*;
 import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundException;
+import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.business.IntactException;
@@ -53,7 +52,7 @@ public abstract class IntactBaseAction extends Action {
      */
     protected boolean intactUserExists (HttpSession session) {
         IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER_KEY);
-        return (null == user);
+        return (null != user);
     }
 
     /**
@@ -139,14 +138,15 @@ public abstract class IntactBaseAction extends Action {
      *
      * @param request the request to save errors.
      */
-    protected void saveErrors(HttpServletRequest request)
-            throws SessionExpiredException {
+    protected void saveErrors(HttpServletRequest request) {
         super.saveErrors(request, myErrors);
 
         // As an error occured, remove the image data stored in the session
-        HttpSession session = this.getSession(request);
-        IntactUserI user = getIntactUser(session);
-        user.setImageBean (null);
+        try {
+            HttpSession session = this.getSession(request);
+            IntactUserI user = getIntactUser(session);
+            user.setImageBean (null);
+        } catch (SessionExpiredException see) {}
     }
 
     /**
@@ -211,14 +211,26 @@ public abstract class IntactBaseAction extends Action {
      *
      * @param user where are saved produced data
      */
-    protected void produceInteractionNetworkImage (IntactUserI user) {
+    protected void produceInteractionNetworkImage (IntactUserI user)
+              throws MultipleResultException {
+
         InteractionNetwork in = null;
         String AC = user.getAC();
         int depth = user.getCurrentDepth();
 
         try {
             GraphHelper gh = new GraphHelper(user);
+            Chrono chrono = new Chrono ();
+            chrono.start();
+
             in = gh.getInteractionNetwork(AC, depth);
+
+            chrono.stop();
+            String msg = "Time for retreiving the interaction network ( " +
+                    in.sizeNodes() + " proteins, " + in.sizeEdges() + " edges) :" +
+                    chrono;
+            logger.info(msg);
+
         } catch (ProteinNotFoundException e) {
             addError ("error.protein.notFound", AC);
             return;
@@ -230,6 +242,8 @@ public abstract class IntactBaseAction extends Action {
         } catch (IntactException e) {
             addError ("error.interactionNetwork.notCreated", e.getMessage());
             return;
+        } catch (MultipleResultException mre) {
+             throw mre;
         }
 
         if (0 == in.sizeNodes()) {
@@ -258,8 +272,14 @@ public abstract class IntactBaseAction extends Action {
             return;
         }
 
+        Chrono chrono = new Chrono ();
+        chrono.start();
         GraphToSVG te = new GraphToSVG (in);
         te.draw ();
+        chrono.stop();
+        String msg = "Time for rendering the interaction network " + chrono;
+        logger.info(msg);
+
         ImageBean ib = te.getImageBean ();
 
         if (null == ib) {
