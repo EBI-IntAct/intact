@@ -86,12 +86,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
     private transient Collection myProteinsToUpdate = new ArrayList();
 
     /**
-     * Constructs with the Intact helper.
-     * @param helper the Intact helper.
+     * This holds the AC of the experiment from this bean is construected.
      */
-//    public InteractionViewBean(IntactHelper helper) {
-//        super(helper);
-//    }
+    private String mySourceExperimentAc;
 
     public void setAnnotatedObject(AnnotatedObject annobj) {
         super.setAnnotatedObject(annobj);
@@ -115,6 +112,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
         // Clear any left overs from previous transaction.
         clearTransactions();
+
+        // Set the source experiment to null to indicate that this bean
+        // is not constructed from within an experiment.
+        mySourceExperimentAc = null;
 
         // Prepare for Proteins and Experiments for display.
         makeExperimentBeans(intact.getExperiments());
@@ -680,6 +681,32 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Clear proteins.
         myProteinsToDel.clear();
         myProteinsToUpdate.clear();
+    }
+
+    /**
+     * Returns the AC of the source experiment.
+     * @return the AC of the source experiment if it is set; othewise
+     * null is returned.
+     */
+    public String getSourceExperimentAc() {
+        return mySourceExperimentAc;
+    }
+
+    /**
+     * Set the AC of the source experiment.
+     * @param ac the AC of the source experiment.
+     */
+    public void setSourceExperimentAc(String  ac) {
+        mySourceExperimentAc = ac;
+    }
+
+    /**
+     * True when this bean is constructed from an experiment.
+     * @return true if this bean is constructed from an experiment. For all
+     * otheer instances, false is returned.
+     */
+    public boolean isSourceFromAnExperiment() {
+        return mySourceExperimentAc != null;
     }
 
     // Helper methods

@@ -8,16 +8,18 @@ package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
+import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -210,6 +212,38 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         return ((String) form.get(name)).trim().length() == 0;
     }
 
+    /**
+     * True if the next path is take to back to the experiment editor. This is
+     * applicable to the InteractionView bean only.
+     * @param request the Http request to access the user.
+     * @return true if the next action path is back to the experiment.
+     * @throws SessionExpiredException if the session is expired.
+     * @throws SearchException unable to access the experiment to go back to.
+     */
+    protected boolean returnToExperiment(HttpServletRequest request)
+            throws SessionExpiredException, SearchException {
+        // Handler to the Intact User.
+        EditUserI user = getIntactUser(request);
+
+        // The current view.
+        AbstractEditViewBean view = user.getView();
+
+        // Check and see if we have to go to the experiment page (only
+        // applicable for an Interaction editor.
+        if (view.getClass().isAssignableFrom(InteractionViewBean.class)) {
+//            InteractionViewBean ivb = (InteractionViewBean) user.getView();
+            return ((InteractionViewBean) view).isSourceFromAnExperiment();
+                // The AC of the experiment.
+//                String ac = ivb.getSourceExperimentAc();
+//                // The selected Annotated object.
+//                AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
+//                        Interaction.class, ac);
+//                // The experiment we going back to.
+//                user.setView(annobj);
+//                return mapping.findForward("experiment");
+        }
+        return false;
+    }
     // Helper Methods
 
     /**

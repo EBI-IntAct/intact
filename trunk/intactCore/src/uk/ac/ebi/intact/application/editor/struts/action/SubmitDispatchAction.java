@@ -206,22 +206,24 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
 
         // Validate the short label.
         if (user.duplicateShortLabel(formlabel)) {
+            // Suggested label.
+            String newlabel = user.getUniqueShortLabel(formlabel);
+            view.setShortLabel(newlabel);
+
             // Found more than one entry with the same short label.
             ActionErrors errors = new ActionErrors();
             errors.add("shortLabel",
-                    new ActionError("error.cvinfo.label", formlabel));
+                    new ActionError("error.cvinfo.label", formlabel, newlabel));
             saveErrors(request, errors);
 
             ActionMessages messages = new ActionMessages();
             messages.add(ActionMessages.GLOBAL_MESSAGE,
-                    new ActionMessage("message.existing.labels", getExistingLabels(user)));
+                    new ActionMessage("message.existing.labels",
+                            getExistingLabels(user)));
             saveMessages(request, messages);
             // Display the errors in the input page.
             return mapping.getInputForward();
         }
-        String newlabel = user.getUniqueShortLabel(formlabel);
-        dynaform.set("shortLabel", newlabel);
-
         // Validate the data.
         view.validate(user);
 
@@ -278,7 +280,7 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
             // Only show the submitted record.
             return mapping.findForward(RESULT);
         }
-        return mapping.getInputForward();
+        return mapping.findForward(SUCCESS);
     }
 
     /**
