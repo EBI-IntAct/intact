@@ -25,9 +25,10 @@
     <!-- =============== Sidebars ====================================== -->
 
     <!-- Sidebar for the search page -->
-    <definition name="search.sidebar.layout" path="/layouts/sidebar.jsp">
+    <definition name="search.sidebar.layout" path="/layouts/sidebarLayout.jsp">
         <put name="input-dialog" value="/pages/sidebarInput.jsp"/>
         <put name="menu" value="search.menu.links"/>
+        <put name="footer" value="/pages/sidebarFooter.jsp"/>
     </definition>
 
     <!-- =============== Definitions related to pages ================= -->
