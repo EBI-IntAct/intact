@@ -6,10 +6,15 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
+import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Query;
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.commons.search.ResultIterator;
+import uk.ac.ebi.intact.application.commons.search.SearchHelper;
+import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.OJBQueryFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -17,7 +22,6 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
-import java.math.BigDecimal;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -99,39 +103,33 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // The class for the topic.
         Class searchClass = Class.forName(getService().getClassName(topic));
 
+        // The array to store queries.
+        Query[] queries = new Query[2];
+
         // The query to get a search result size.
-        Query countQuery = qf.getSearchCountQuery(searchClass, searchString);
+        queries[0] = qf.getSearchCountQuery(searchClass, searchString);
+
+        // The search query
+        queries[1] = qf.getSearchQuery(searchClass, searchString);
 
         // The results to display.
         List results = new ArrayList();
 
-        // The actual search count.
-        int count = 0;
+        // The search helper to do the searching.
+        SearchHelperI searchHelper = new SearchHelper(Logger.getLogger(
+                EditorConstants.LOGGER));
 
+        // Helper to pass onto the search helper.
         IntactHelper helper = new IntactHelper();
+
+        // The result iterator returned from the search.
+        ResultIterator resultIter;
         try {
-            Iterator iter0 = helper.getIteratorByReportQuery(countQuery);
-            Object rowCount = ((Object[]) iter0.next())[0];
-            // Check for oracle
-            if (rowCount.getClass().isAssignableFrom(BigDecimal.class)) {
-                count =  ((BigDecimal) rowCount).intValue();
-            }
-            else {
-                // postgres driver returns Long. Could be a problem for another DB
-                // This may throw a classcast exception which will be logged by the
-                // EditorExceptionHandler - handles genreic exceptions
-                count =  ((Long) rowCount).intValue();
-            }
-            if ((count > 0) || (count <= max)) {
-                // The search query
-                Query searchQuery = qf.getSearchQuery(searchClass, searchString);
-
-                // Not empty and within the max limits. Do the search
-                Iterator iter1 = helper.getIteratorByReportQuery(searchQuery);
-
+            resultIter = searchHelper.searchByQuery(helper, queries, max);
+            if (resultIter.isNonEmptyAndWithinBounds()) {
                 // Fill the results set.
-                while (iter1.hasNext()) {
-                    results.add(new ResultRowData((Object[])iter1.next(), searchClass));
+                for (Iterator iter = resultIter.getIterator(); iter.hasNext();) {
+                    results.add(new ResultRowData((Object[])iter.next(), searchClass));
                 }
             }
         }
@@ -140,16 +138,17 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         }
 
         // Too large result set?
-        if (count > max) {
+        if (resultIter.isTooLarge()) {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.search.large", Integer.toString(count)));
+                    new ActionError("error.search.large",
+                            Integer.toString(resultIter.getPossibleResultSize())));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
 
         // Nothing found?
-        if (count == 0) {
+        if (resultIter.isEmpty()) {
             // No matches found - forward to a suitable page
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
@@ -159,7 +158,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         }
 
         // Only one instance found?
-        if (count == 1) {
+        if (results.size() == 1) {
             // The search returned only one instance.
             ResultRowData row = (ResultRowData) results.get(0);
 
