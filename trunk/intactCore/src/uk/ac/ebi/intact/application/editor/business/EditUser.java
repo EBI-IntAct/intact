@@ -366,6 +366,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditView;
     }
 
+    public void releaseView() {
+        if (myEditView != null) {
+            EditViewBeanFactory.getInstance().returnObject(myEditView);
+        }
+        myEditView = null;
+    }
+
     public void setView(InteractionViewBean view) {
         // Return the view back to the pool.
         releaseView();
@@ -470,14 +477,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         helper.deleteAllElements(annobj.getXrefs());
         annobj.getXrefs().clear();
 
-        // Return the view back to the pool.
-        releaseView();
+        // Not returning the view back to the pool as it may be required for other
+        // information such as releasing the lock etc.
     }
 
     public void cancelEdit() {
         endEditing();
-        // Return the view back to the pool.
-        releaseView();
+        // Can't release the view vbecause it is required to display the cancelled
+        // view in the search page.
     }
 
     public ResultWrapper getSPTRProteins(String pid, int max) throws IntactException {
@@ -706,12 +713,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     private Logger getLogger() {
         return Logger.getLogger(EditorConstants.LOGGER);
-    }
-
-    private void releaseView() {
-        if (myEditView != null) {
-            EditViewBeanFactory.getInstance().returnObject(myEditView);
-        }
     }
 
     /**
