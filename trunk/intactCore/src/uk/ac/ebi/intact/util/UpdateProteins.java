@@ -37,8 +37,7 @@ import org.apache.log4j.Logger;
 /**
  * Parse an URL and update the IntAct database.
  * <p>
- * Here is the detail implemented algorithm
- * <br>
+ * Here is the detail implemented algorithm <br>
  * <pre>
  *
  * (1) From the URL given by the user, get an <i>EntryIterator</i> to process them one by one.
@@ -75,6 +74,8 @@ import org.apache.log4j.Logger;
  *
  *   The update and creation process (2.3.2 a and b) includes a check of the following Xref :
  *   SPTR, GO, SGD.
+ *
+ *   CAUTION: Be aware that no checks have been done about the ownership of updated objects.
  *
  * </pre>
  * </p>
@@ -126,6 +127,8 @@ public class UpdateProteins implements UpdateProteinsI {
     int proteinUpToDate;
     int entryCount;
     int entrySkipped;
+
+    NewtServerProxy newtProxy;
 
 
     public int getCreatedCount () {
@@ -203,6 +206,19 @@ public class UpdateProteins implements UpdateProteinsI {
         }
 
         this.helper = helper;
+
+        URL url = null;
+        try {
+            // TODO: switch back to the right server when fixed.
+//            url = new URL("http://www.ebi.ac.uk/newt/display");
+            url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display");
+        } catch (MalformedURLException e) {
+            logger.error ("Newt URL is invalid", e);
+            throw new UpdateException ("Unable to create Newt proxy, invalid URL: " + url);
+        }
+
+        newtProxy = new NewtServerProxy(url);
+        newtProxy.enableCaching();
     }
 
     public final String getUrl(String sptrAC) {
@@ -211,8 +227,6 @@ public class UpdateProteins implements UpdateProteinsI {
 
         return url ;
     }
-
-    // http://www3.ebi.ac.uk/srs7bin/cgi-bin/wgetz?-e+[SWALL-acc:P07260]+-vn+2+-ascii
 
     public String getAnEntry (String anUrl) {
         BufferedReader br = null ;
@@ -342,20 +356,21 @@ public class UpdateProteins implements UpdateProteinsI {
         logger.info ("Try to get BioSource data from Newt");
 
         // get the species name from Newt
-        URL url = null;
-        try {
-//            url = new URL("http://www.ebi.ac.uk/newt/display");
-            url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display");
-        } catch (MalformedURLException e) {
-            logger.error ("Newt URL is invalid", e);
-            return null;
-        }
-
-        NewtServerProxy server = new NewtServerProxy(url);
+//        URL url = null;
+//        try {
+//            // TODO: switch back to the right server when fixed.
+////            url = new URL("http://www.ebi.ac.uk/newt/display");
+//            url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display");
+//        } catch (MalformedURLException e) {
+//            logger.error ("Newt URL is invalid", e);
+//            return null;
+//        }
+//
+//        NewtServerProxy server = new NewtServerProxy(url);
         NewtServerProxy.NewtResponse response = null;
 
         try {
-            response = server.query ( Integer.parseInt(taxid) );
+            response = newtProxy.query ( Integer.parseInt(taxid) );
         } catch (IOException e) {
             logger.error (e);
             return null;
@@ -430,8 +445,6 @@ public class UpdateProteins implements UpdateProteinsI {
 
                 throw ie;
             }
-
-
         }
 
         return bioSource;
@@ -717,6 +730,49 @@ public class UpdateProteins implements UpdateProteinsI {
 
 
     /**
+     * update all Xref specific to a database.
+     * That procedure is used when creating and updating a Protein Xref.
+     *
+     * @param sptrEntry  Entry from which we get the Xrefs
+     * @param protein    The protein to update
+     * @param database   The database filter
+     * @param cvDatabase The CvDatabase to link in the Protein's Xref
+     * @return true if the protein has been updated, else false.
+     * @throws SPTRException
+     */
+    private boolean updateXref (final SPTREntry sptrEntry,
+                                Protein protein,
+                                final String database,
+                                final CvDatabase cvDatabase) throws SPTRException{
+
+        // create existing GO Xrefs
+        SPTRCrossReference cr[] = sptrEntry.getCrossReferences (database);
+
+        for (int i = 0; i < cr.length; i++) {
+            SPTRCrossReference xref = cr[i];
+            String ac = xref.getAccessionNumber();
+            String id = xref.getPropertyValue(SPTRCrossReference.PROPERTY_DESCRIPTION);
+
+            Xref goXref = new Xref ( myInstitution,
+                                     cvDatabase,
+                                     ac,
+                                     id, null, null) ;
+
+            Collection xrefs = protein.getXref();
+            if (! xrefs.contains(goXref)) {
+                // link the Xref to the protein and record it in the database
+                addNewXref (protein, goXref);
+                logger.info ("CREATE "+ database +" Xref[AC: " + ac + ", Id: " + id + "]");
+                return true;
+            } else {
+                logger.info ("SKIP: "+ database +" Xref[AC: " + ac + ", Id: " + id + "] already exists");
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Update an existing protein with data from a SPTR Entry.
      *
      * @param protein the protein to update
@@ -734,10 +790,6 @@ public class UpdateProteins implements UpdateProteinsI {
             IntactException {
 
         boolean needUpdate = false;
-
-        // Start transaction.
-        // The transaction range is the protein update.
-        helper.startTransaction();
 
         // get the protein info we need
         String fullName    = sptrEntry.getProteinName();
@@ -782,56 +834,14 @@ public class UpdateProteins implements UpdateProteinsI {
             needUpdate = true;
         }
 
-        // check Xrefs
-        Collection xrefs = protein.getXref();
-
-        SPTRCrossReference[] cr = null;
-
-        // update SGD Xrefs
-        cr = sptrEntry.getCrossReferences(Factory.XREF_SGD);
-        for (int i = 0; i < cr.length; i++) {
-            SPTRCrossReference xref = cr[i];
-            String ac = xref.getAccessionNumber();
-            String id = xref.getPropertyValue(SPTRCrossReference.PROPERTY_DESCRIPTION);
-
-            Xref sgdXref = new Xref ( myInstitution,
-                                      sgdDatabase,
-                                      ac,
-                                      id, null, null) ;
-
-            if (! xrefs.contains(sgdXref)) {
-                // link the Xref to the protein and record it in the database
-                addNewXref (protein, sgdXref);
-                needUpdate = true;
-
-                logger.info ("CREATE SGD Xref[sgdAC: " + ac + ", sgdId: " + id + "]");
-            } else {
-                logger.info ("SKIP: SGD Xref[sgdAC: " + ac + ", sgdId: " + id + "] already exists");
-            }
-        }
-
-        // update GO Xrefs
-        cr = sptrEntry.getCrossReferences(Factory.XREF_GO);
-        for (int i = 0; i < cr.length; i++) {
-            SPTRCrossReference xref = cr[i];
-            String ac = xref.getAccessionNumber();
-            String id = xref.getPropertyValue(SPTRCrossReference.PROPERTY_DESCRIPTION);
-
-            Xref goXref = new Xref ( myInstitution,
-                                     goDatabase,
-                                     ac,
-                                     id, null, null) ;
-
-            if (! xrefs.contains(goXref)) {
-                // link the Xref to the protein and record it in the database
-                addNewXref (protein, goXref);
-                needUpdate = true;
-
-                logger.info ("CREATE GO Xref[goAC: " + ac + ", goId: " + id + "]");
-            } else {
-                logger.info ("SKIP: GO Xref[goAC: " + ac + ", goId: " + id + "] already exists");
-            }
-        }
+        /*
+         * false || false -> false
+         * false || true -> true
+         * true || false -> true
+         * true || true -> true
+         */
+        needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
+        needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
 
         // update SPTR Xref
         Xref sptrXref = new Xref ( myInstitution,
@@ -839,6 +849,8 @@ public class UpdateProteins implements UpdateProteinsI {
                                    proteinAC[0],
                                    shortLabel, null, null) ;
 
+        // check Xrefs
+        Collection xrefs = protein.getXref();
         if (! xrefs.contains(sptrXref)) {
             // link the Xref to the protein and record it in the database
             addNewXref (protein, sptrXref);
@@ -854,21 +866,12 @@ public class UpdateProteins implements UpdateProteinsI {
             // update databse
             try {
                 helper.update (protein);
-//                helper.finishTransaction();
-//                logger.info ("Transaction conplete");
 
                 if (debugOnScreen) System.out.print (" U");
                 proteinUpdated++;
                 return true;
             } catch (IntactException ie) {
-//                writeEntry2file ();
                 logger.error (protein, ie);
-
-//                if (helper.isInTransaction()) {
-//                    logger.error ("Try to undo transaction.");
-//                    helper.undoTransaction();
-//                }
-
                 throw ie;
             }
         } else {
@@ -881,31 +884,6 @@ public class UpdateProteins implements UpdateProteinsI {
 
     } // updateExistingProtein
 
-
-    private void updateXref (final SPTREntry sptrEntry,
-                             Protein protein,
-                             final String database,
-                             final CvDatabase cvDatabase) throws SPTRException{
-
-        // create existing GO Xrefs
-        SPTRCrossReference cr[] = sptrEntry.getCrossReferences (database);
-
-        for (int i = 0; i < cr.length; i++) {
-            SPTRCrossReference xref = cr[i];
-            String ac = xref.getAccessionNumber();
-            String id = xref.getPropertyValue(SPTRCrossReference.PROPERTY_DESCRIPTION);
-
-            Xref goXref = new Xref ( myInstitution,
-                                     cvDatabase,
-                                     ac,
-                                     id, null, null) ;
-            // link the Xref to the protein and record it in the database
-            logger.info (goXref);
-            addNewXref (protein, goXref);
-            logger.info ("created "+ database +" Xref[AC: " + ac + ", Id: " + id + "]");
-        }
-
-    }
 
     /**
      * From a SPTR Entry, create in IntAct a new protein.
@@ -921,18 +899,12 @@ public class UpdateProteins implements UpdateProteinsI {
             throws SPTRException,
                    IntactException {
 
-        // Start transaction.
-        // The transaction range is the protein creation.
-//        helper.startTransaction();
-
         Protein protein = new Protein ();
 
         protein.setOwner (myInstitution);
 
         // get the protein info we need
         String shortLabel  = sptrEntry.getID();
-
-//        System.out.println("\ncreate minimal protein:\n\n" + protein);
 
         helper.create(protein);
 
@@ -947,44 +919,8 @@ public class UpdateProteins implements UpdateProteinsI {
         protein.setCrc64 (crc64);
         protein.setBioSource (bioSource);
 
-        SPTRCrossReference[] cr = null;
-
         updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
         updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
-//        updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
-
-//        // create existing SGD Xrefs
-//        cr = sptrEntry.getCrossReferences(Factory.XREF_SGD);
-//        for (int i = 0; i < cr.length; i++) {
-//            SPTRCrossReference xref = cr[i];
-//            String ac = xref.getAccessionNumber();
-//            String id = xref.getPropertyValue(SPTRCrossReference.PROPERTY_DESCRIPTION);
-//
-//            Xref sgdXref = new Xref ( myInstitution,
-//                                      sgdDatabase,
-//                                      ac,
-//                                      id, null, null) ;
-//            // link the Xref to the protein and record it in the database
-//            addNewXref (protein, sgdXref);
-//            logger.info ("created SGD Xref[sgdAC: " + ac + ", sgdId: " + id + "]");
-//        }
-
-//        // create existing GO Xrefs
-//        cr = sptrEntry.getCrossReferences (Factory.XREF_GO);
-//        for (int i = 0; i < cr.length; i++) {
-//            SPTRCrossReference xref = cr[i];
-//            String ac = xref.getAccessionNumber();
-//            String id = xref.getPropertyValue(SPTRCrossReference.PROPERTY_DESCRIPTION);
-//
-//            Xref goXref = new Xref ( myInstitution,
-//                                     goDatabase,
-//                                     ac,
-//                                     id, null, null) ;
-//            // link the Xref to the protein and record it in the database
-//            logger.info (goXref);
-//            addNewXref (protein, goXref);
-//            logger.info ("created GO Xref[goAC: " + ac + ", goId: " + id + "]");
-//        }
 
         // create a SPTR Xref
         Xref sptrXref = new Xref ( myInstitution,
@@ -1043,7 +979,6 @@ public class UpdateProteins implements UpdateProteinsI {
         }
 
 
-
         try {
             URL url = new URL (sourceUrl);
 
@@ -1068,25 +1003,7 @@ public class UpdateProteins implements UpdateProteinsI {
              */
             while (entryIterator.hasNext()) {
 
-                /**
-                 * E X I T   H E R E !!!
-                 */
-                if (entryCount == -1) {
-                    printStats();
-                    return getCreatedCount() + getUpdatedCount();
-                }
-
                 entryCount++;
-
-
-                /**
-                 * S K I P   H E R E
-                 */
-                if (entryCount < 740) {
-                    System.out.print(".");
-                    if (entryCount % 50 == 0) System.out.flush();
-                    continue;
-                }
 
                 // Check if there is any exception remaining in the Entry before to use it
                 if (entryIterator.hadException()) {
@@ -1109,7 +1026,7 @@ public class UpdateProteins implements UpdateProteinsI {
                 SPTREntry sptrEntry = (SPTREntry) entryIterator.next();
 
                 if (sptrEntry == null) {
-                    logger.error("\n\nSPTR entry is NULL");
+                    logger.error("\n\nSPTR entry is NULL ... skip it");
 
                     entrySkipped++;
                     continue;
