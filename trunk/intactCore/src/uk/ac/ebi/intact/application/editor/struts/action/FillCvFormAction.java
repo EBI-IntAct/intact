@@ -6,20 +6,19 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import org.apache.struts.action.*;
-import org.apache.struts.config.ModuleConfig;
-import org.apache.struts.config.FormBeanConfig;
-import org.apache.struts.Globals;
 import org.apache.commons.beanutils.DynaBean;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionFormClass;
+import org.apache.struts.config.FormBeanConfig;
+import org.apache.struts.config.ModuleConfig;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * Sets up the editor form type using the selected editor topic. The common forms
@@ -41,10 +40,10 @@ public class FillCvFormAction  extends AbstractEditorAction {
 //            System.out.println("Creating a new CV form");
             dynaform = createForm("cvInfoForm", request);
             if ("request".equals(mapping.getScope())) {
-                request.setAttribute(mapping.getAttribute(), dynaform);
+                request.setAttribute(mapping.getName(), dynaform);
             }
             else {
-                getSession(request).setAttribute(mapping.getAttribute(), dynaform);
+                getSession(request).setAttribute(mapping.getName(), dynaform);
             }
         }
         else {
