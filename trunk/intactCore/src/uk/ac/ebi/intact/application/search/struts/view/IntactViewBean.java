@@ -58,6 +58,11 @@ public class IntactViewBean implements Serializable {
      */
     private XmlBuilder builder;
 
+    /**
+     * The most recent view mode for the bean data (expanded or contract)
+     */
+    private int currentMode;
+
 
     /**
      * Construct an instance of this class for given object. A default XML builder is also created,
@@ -99,6 +104,27 @@ public class IntactViewBean implements Serializable {
     public Object getWrappedObject() {
 
         return this.wrappedObject;
+    }
+
+    /**
+     * Sets the current view mode of the object wrapped by the bean. This method
+     * should be used with caution as it can put the view into an inconsistent state
+     * (eg when the wrapped object is currently expanded, its state can be set to
+     * contracted, which is incorrect). The method is mainly here to allow the search
+     * application to reset the initial state of an Experiment when it is first used to
+     * display results (it gets expanded in some cases but we want it to be flagged as
+     * being compact initially).
+     *
+     * @param mode The new view mode to be set - if an unknown mode is passed then
+     * the view state of the object will be set to 'compact'
+     */
+    public void setViewMode(int mode) {
+        if((mode == XmlBuilder.CONTRACT_NODES) || (mode == XmlBuilder.EXPAND_NODES)) {
+            currentMode = mode;
+        }
+        else {
+            currentMode = XmlBuilder.CONTRACT_NODES;
+        }
     }
 
     /**
@@ -157,6 +183,9 @@ public class IntactViewBean implements Serializable {
                 factory.newTransformer(new StreamSource(this.stylesheet));
         // Set the global parameters.
         transformer.setParameter("tableName", "tbl_" + id);
+        if(currentMode == XmlBuilder.EXPAND_NODES) transformer.setParameter("viewMode", "expand");
+        if(currentMode == XmlBuilder.CONTRACT_NODES) transformer.setParameter("viewMode", "compact");
+
         // Perform the transform.
         transformer.transform(new DOMSource(this.rootNode), out);
     }
@@ -172,6 +201,7 @@ public class IntactViewBean implements Serializable {
 
         System.out.println("modifyXml called on bean...");
         System.out.println("mode value used: " + action);
+        currentMode = action;
 //        if(currentMode == action) {
 //            //do nothing - requested mode is the same as the current one
 //            System.out.println("mode unchanged! returning..");
@@ -214,6 +244,65 @@ public class IntactViewBean implements Serializable {
             if(elem.getAttribute("ac").equals(ac)) return elem;
         }
         return null;
+    }
+
+    /**
+     * Gets all of the ACs for a given tag name in an XML document
+     * @tag The element type we want the ACs for
+     *
+     * @return List the list of ACs for that tag type (empty if none found)
+     * @exception ParserConfigurationException if there was a problem getting the XML from the bean
+     */
+    public List getAcs(String tag) throws ParserConfigurationException {
+
+        List result = new ArrayList();
+        //set up a NodeIterator for the bean
+        Node root = this.rootNode.getDocumentElement();
+        NodeIterator nodeIter = ((DocumentTraversal)this.rootNode).createNodeIterator(root, NodeFilter.SHOW_ALL,null,true);
+        Node n = null;
+        System.out.println("collecting " + tag + " ACs in bean...");
+        while((n = nodeIter.nextNode()) != null) {
+            Element e = (Element)n;
+            if((e.getTagName().equals(tag))) {
+                System.out.println(tag + " AC found:" + e.getAttribute("ac"));
+                result.add(e.getAttribute("ac"));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * This method is used to remove particular items from the XML tree managed
+     * by this bean. This method should be used with caution as it may result in
+     * inconsistent view states.
+     *
+     * @param acList The list of ACs identifying the elements to be removed. If an
+     * AC is not found in the XML tree then nothing is done.
+     */
+    public void removeElements(List acList) {
+
+        if(acList == null) return;
+        Iterator it = acList.iterator();
+        String acToCheck = null;
+        while(it.hasNext()) {
+            Object obj = it.next();
+            if(!(obj instanceof String)) break;  //incorrect List element type
+            acToCheck = (String)obj;
+
+            NodeIterator nodeIter = ((DocumentTraversal)this.rootNode).createNodeIterator(this.rootNode.getDocumentElement(),
+                                                    NodeFilter.SHOW_ALL, null, true);
+            Node n = null;
+            while((n = nodeIter.nextNode()) != null) {
+                Element elem = (Element)n;
+                if(elem.getAttribute("ac").equals(acToCheck)) {
+                    //remove it from the tree
+                    Node parent = elem.getParentNode();
+                    parent.removeChild(elem);
+                    break;      //AC is unique - don't waste time searching anymore
+                }
+            }
+        }
+
     }
 
  }

@@ -51,7 +51,7 @@ public class ViewForm extends ActionForm {
      * 'AC' then the search is by AC otherwise the search is by label.
      */
     public void setAction(String action) {
-        if (action.equals("Expand/Contract")) {
+        if (action.equals("View Detail")) {
             myAction = EXPAND_CONTRACT;
         }
         else if (action.equals("Full Expand")) {
