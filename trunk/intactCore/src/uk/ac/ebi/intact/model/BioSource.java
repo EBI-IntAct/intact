@@ -5,14 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
-
 /**
  * Represents a biological source.
  *
  * @author hhe
  */
-public class BioSource extends AnnotatedObject {
+public class BioSource extends AnnotatedObject implements Editable {
 
     ///////////////////////////////////////
     //attributes

@@ -13,7 +13,7 @@ import java.util.*;
  * @intact.todo Further specification.
  * @author hhe
  */
-public class NucleicAcid extends Interactor {
+public class NucleicAcid extends Interactor implements Editable {
 } // end NucleicAcid
 
 

@@ -17,7 +17,7 @@ import java.util.*;
  *
  * @author hhe
  */
-public class Experiment extends AnnotatedObject {
+public class Experiment extends AnnotatedObject implements Editable {
 
     ///////////////////////////////////////
     // associations

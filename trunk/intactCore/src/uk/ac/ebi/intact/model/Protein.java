@@ -14,7 +14,7 @@ import java.util.*;
  *
  * @author hhe
  */
-public class Protein extends Interactor {
+public class Protein extends Interactor implements Editable {
 
     ///////////////////////////////////////
     //attributes

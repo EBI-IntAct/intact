@@ -13,7 +13,7 @@ import java.util.*;
  * @intact.example phosphorylation
  * @author hhe
  */
-public class CvModificationType extends CvObject {
+public class CvModificationType extends CvObject implements Editable {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.

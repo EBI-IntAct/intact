@@ -17,12 +17,11 @@ import java.util.*;
  * 
  * @example co-immunoprecipitation
  * </p>
- * <p>
  * @author hhe
  * </p>
  * </p>
  */
-public class CvInteraction extends CvDagObject {
+public class CvInteraction extends CvDagObject implements Editable {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.

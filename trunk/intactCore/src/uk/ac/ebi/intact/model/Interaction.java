@@ -19,7 +19,7 @@ import java.util.*;
  *
  * @author hhe
  */
-public class Interaction extends Interactor {
+public class Interaction extends Interactor implements Editable {
 
     ///////////////////////////////////////
     //attributes

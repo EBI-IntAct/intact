@@ -5,12 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
-
 /**
 
  */
-public class SmallMolecule extends Interactor {
+public class SmallMolecule extends Interactor implements Editable {
 } // end SmallMolecule
 
 

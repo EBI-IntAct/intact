@@ -12,7 +12,7 @@ import java.util.*;
  * 
  * @author hhe
  */
-public class CvTopic extends CvObject {
+public class CvTopic extends CvObject implements Editable {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.

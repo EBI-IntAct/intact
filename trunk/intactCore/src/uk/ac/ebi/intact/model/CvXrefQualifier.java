@@ -15,7 +15,7 @@ import java.util.*;
  *
  * @author hhe
  */
-public class CvXrefQualifier extends CvObject {
+public class CvXrefQualifier extends CvObject implements Editable {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.

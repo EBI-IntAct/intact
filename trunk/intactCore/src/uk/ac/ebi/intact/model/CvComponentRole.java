@@ -5,8 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
-
 /**
  * The role of the specific substrate in the
  * interaction.
@@ -15,7 +13,7 @@ import java.util.*;
  * @intact.example prey
  * @author hhe
  */
-public class CvComponentRole extends CvObject {
+public class CvComponentRole extends CvObject implements Editable {
 
 
 } // end CvComponentRole

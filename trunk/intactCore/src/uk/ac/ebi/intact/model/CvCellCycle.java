@@ -5,12 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
-
 /**
 
  */
-public class CvCellCycle extends CvObject {
+public class CvCellCycle extends CvObject implements Editable {
 
 
 } // end CvCellCycle
