@@ -1,5 +1,6 @@
+set doc off
 /*
-  Copyright (c) 2002 The European Bioinformatics Institute, and others.  
+  Copyright (c) 2003 The European Bioinformatics Institute, and others.  
   All rights reserved. Please see the file LICENSE 
   in the root directory of this distribution.
 */
@@ -9,71 +10,36 @@
 
   Purpose:    Drop all Oracle components for IntAct
 
-  Usage:      sqlplus username/password@INSTANCE @drop_tables.sql
+  Usage:      is called from 'create_all.sql' 
+              individual usage : sqlplus username/password@INSTANCE @drop_tables.sql
+              
 
   $Date$
   $Locker$
 
   *************************************************************/
 
-SET DOC OFF
 
 -- Tables
-PROMPT Dropping tables ...
+PROMPT Dropping tables and sequences..
 
-PROMPT ... Component
-DROP TABLE Component;
+BEGIN
+   IF user in ('SYS' , 'SYSTEM' ) then
+      raise_application_error (-20001, 'You are using a DBA account ! Use the intact account. ');
+   END IF;
+   
+   FOR r_tab in (select table_name from user_tables) loop
+      EXECUTE IMMEDIATE 'DROP TABLE '||r_tab.table_name||' CASCADE CONSTRAINTS ';
+   END LOOP;
+   
+   FOR r_seq in (select sequence_name from user_sequences) loop
+      EXECUTE IMMEDIATE 'DROP SEQUENCE '||r_seq.sequence_name||' ';
+   END LOOP;
 
-PROMPT ... Int2Exp
-DROP TABLE Int2Exp;
+END;
+/
 
-PROMPT ... Xref
-DROP TABLE Xref;
-
-PROMPT ... Obj2Annot
-DROP TABLE Obj2Annot;
-
-PROMPT ... Interactor
-DROP TABLE Interactor;
-
-PROMPT ... PolymerSeq
-DROP TABLE PolymerSeq;
-
-PROMPT ... Experiment
-DROP TABLE Experiment;
-
-PROMPT ... Annotation
-DROP TABLE Annotation;
-
-PROMPT ... BioSource
-DROP TABLE BioSource;
-
-PROMPT ... Cv2Cv
-DROP TABLE Cv2Cv;
-
-PROMPT ... ControlledVocab
-DROP TABLE ControlledVocab;
-
-PROMPT ... IntactNode
-DROP TABLE IntactNode;
-
-PROMPT ... Institution
-DROP TABLE Institution;
-
-
-
--- Sequences
-PROMPT Dropping sequences ...
-PROMPT ... Intact_ac
-DROP SEQUENCE Intact_ac;
-
-
-exit;
-
-
--- Grants
-
-exit;
+set doc on
 
 
 
