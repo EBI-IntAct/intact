@@ -175,11 +175,6 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         jdbc-type="VARCHAR"
         indexed="true"
         />
-    <field-descriptor
-        name="ojbConcreteClass"
-        column="objClass"
-        jdbc-type="VARCHAR"
-        />
 
     <!-- local class field descriptors -->
     <field-descriptor
@@ -339,11 +334,6 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
         column="fullName"
         jdbc-type="VARCHAR"
         indexed="true"
-        />
-    <field-descriptor
-        name="ojbConcreteClass"
-        column="objClass"
-        jdbc-type="VARCHAR"
         />
 
     <!-- local class field descriptors -->
