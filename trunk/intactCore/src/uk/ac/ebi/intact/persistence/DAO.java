@@ -39,7 +39,7 @@ public interface DAO {
      *
      * @return boolean true if user credentials are valid, false if not or if a null username is supplied.
      */
-    public boolean isUserValid(String userName, String password);
+//    public boolean isUserValid(String userName, String password);
 
     /**
      * Method to release result resources (eg result set). An IllegalArgumentException
@@ -127,14 +127,14 @@ public interface DAO {
      *
      * @return boolean - true if auto saving is on, false otherwise
      */
-    public boolean isAutoSave();
+//    public boolean isAutoSave();
 
     /**
      *   sets whether or not auto saving is turned on
      *
      * @param val - true to turn on, false for off
      */
-    public void setAutoSave(boolean val);
+//    public void setAutoSave(boolean val);
 
     /**
      *   checks to see if a transaction is closed
@@ -314,19 +314,17 @@ public interface DAO {
     /**
      * Removes given object from the cache.
      * @param realClass the object type.
-     * @param topClass the top class of the <code>realClass</code>.
      * @param ac the AC
      */
-    public void removeFromCache(Class realClass, Class topClass, String ac);
+    public void removeFromCache(Class realClass, String ac);
 
     /**
      * True if an object of given class and AC exists in the cache.
      * @param realClass the object type.
-     * @param topClass the top class of the <code>realClass</code>.
      * @param ac the AC
      * @return true if an object is found in the cache.
      */
-    public boolean isInCache(Class realClass, Class topClass, String ac);
+    public boolean isInCache(Class realClass, String ac);
 
     /**
      * <p>updates a given object which was oroginally obtained in

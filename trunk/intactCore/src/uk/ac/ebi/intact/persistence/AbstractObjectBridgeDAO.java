@@ -13,11 +13,9 @@ import org.apache.ojb.broker.accesslayer.OJBIterator;
 import org.apache.ojb.broker.metadata.*;
 import org.apache.ojb.broker.metadata.fieldaccess.PersistentField;
 import org.apache.ojb.broker.query.*;
-
 import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -198,12 +196,14 @@ public abstract class AbstractObjectBridgeDAO implements DAO {
         myBroker.removeFromCache(obj);
     }
 
-    public void removeFromCache(Class realClass, Class topClass, String ac) {
-        removeFromCache(new Identity(realClass, topClass, new Object[] {ac}));
+    public void removeFromCache(Class realClass, String ac) {
+        removeFromCache(new Identity(realClass, myBroker.getTopLevelClass(realClass),
+                new Object[] {ac}));
     }
 
-    public boolean isInCache(Class realClass, Class topClass, String ac) {
-        Identity id = new Identity(realClass, topClass, new Object[] {ac});
+    public boolean isInCache(Class realClass, String ac) {
+        Identity id = new Identity(realClass, myBroker.getTopLevelClass(realClass),
+                new Object[] {ac});
         return myBroker.serviceObjectCache().lookup(id) != null;
     }
 
@@ -212,29 +212,29 @@ public abstract class AbstractObjectBridgeDAO implements DAO {
      *
      * @return boolean - true if auto saving is on, false otherwise
      */
-    public boolean isAutoSave() {
-        MetadataManager meta = MetadataManager.getInstance();
-        PBKey pbkey = meta.getDefaultPBKey();
-        JdbcConnectionDescriptor jDesc = meta.connectionRepository().getDescriptor(pbkey);
-        return jDesc.getUseAutoCommit() == 1;
-    }
+//    public boolean isAutoSave() {
+//        MetadataManager meta = MetadataManager.getInstance();
+//        PBKey pbkey = meta.getDefaultPBKey();
+//        JdbcConnectionDescriptor jDesc = meta.connectionRepository().getDescriptor(pbkey);
+//        return jDesc.getUseAutoCommit() == 1;
+//    }
 
     /**
      * sets whether or not auto saving is turned on
      *
      * @param val - true to turn on, false for off
      */
-    public void setAutoSave(boolean val) {
-        try {
-            myBroker.serviceConnectionManager().getConnection().setAutoCommit(val);
-        }
-        catch (LookupException se) {
-            ourLogger.error("unable to reset autocommit value - reset failed", se);
-        }
-        catch (SQLException sqle) {
-            ourLogger.error("unable to reset autocommit value - reset failed", sqle);
-        }
-    }
+//    public void setAutoSave(boolean val) {
+//        try {
+//            myBroker.serviceConnectionManager().getConnection().setAutoCommit(val);
+//        }
+//        catch (LookupException se) {
+//            ourLogger.error("unable to reset autocommit value - reset failed", se);
+//        }
+//        catch (SQLException sqle) {
+//            ourLogger.error("unable to reset autocommit value - reset failed", sqle);
+//        }
+//    }
 
     /**
      * checks to determine if a given object is persistent or not
