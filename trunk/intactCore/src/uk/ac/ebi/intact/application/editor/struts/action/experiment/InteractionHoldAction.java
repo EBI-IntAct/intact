@@ -7,10 +7,11 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
 import org.apache.struts.action.*;
-import org.apache.struts.util.MessageResources;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.PageValueBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean;
+import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,44 +49,32 @@ public class InteractionHoldAction extends AbstractEditorAction {
         // The dyna form.
         DynaActionForm dynaform = (DynaActionForm) form;
 
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+        // Handler to the current user.
+        EditUserI user = getIntactUser(request);
 
-        // The bean associated with the current action.
-        InteractionBean ib = ((InteractionBean[]) dynaform.get("intshold"))[idx];
+        // PV bean to extract values from the cmd string.
+        PageValueBean pvb = new PageValueBean((String) dynaform.get("intCmd"));
+
+        Interaction inter = (Interaction) user.getObjectByAc(
+                Interaction.class, pvb.getAc());
 
         // We must have the interaction bean.
-        assert ib != null;
+        assert inter != null;
 
         // The current view of the edit session.
-        ExperimentViewBean view =
-                (ExperimentViewBean) getIntactUser(request).getView();
+        ExperimentViewBean view = (ExperimentViewBean) user.getView();
 
-        // Message resources to access button labels.
-        MessageResources msgres = getResources(request);
-
-        // The command associated with the index.
-        String cmd = ((String[]) dynaform.get("intsholdCmd"))[idx];
-
-        if (cmd.equals(msgres.getMessage("exp.int.button.add"))) {
-            // Avoid duplicates.
-            if (view.interactionExists(ib)) {
-                ActionErrors errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                        new ActionError("error.exp.int.hold.add", ib.getShortLabel()));
-                saveErrors(request, errors);
-                return mapping.getInputForward();
-            }
-            else {
-                // Wants to add the selected interaction to the Experiment.
-                view.addInteraction(ib);
-                // Clear all the interactions in the hold section.
-                view.clearInteractionToHold();
-            }
+        // Adding interactions in the hold section?
+        if (pvb.isMinor("add")) {
+            // No need to check for duplicates because it has already been
+            // checked when adding to the hold section.
+            view.addInteraction(inter);
+            // Clear all the interactions in the hold section.
+            view.clearInteractionToHold();
         }
         else {
             // Must have pressed 'Hide'.
-            view.hideInteractionToHold(ib);
+            view.hideInteractionToHold(inter);
         }
         return mapping.findForward(SUCCESS);
     }

@@ -9,10 +9,9 @@ package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.PageValueBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
-import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,21 +33,12 @@ public class InteractionLinkAction extends SubmitDispatchAction {
         // The dyna form.
         DynaActionForm dynaform = (DynaActionForm) form;
 
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
-
-        // The protein we are editing at the moment.
-        InteractionBean ib = ((InteractionBean[]) dynaform.get("ints"))[idx];
-
-        // We must have this Interaction bean.
-        assert ib != null;
-
         // Save the experiment first.
         ActionForward forward = save(mapping, form, request, response);
 
-//        System.out.println("Forward path: " + forward.getPath() + " name: " + forward.getName());
-        // Check for any errors to display in the input page.
-        if (forward.getPath().equals(mapping.getInputForward().getPath())) {
+        // Check for any errors and redirect to the error page.
+//        if (forward.getPath().equals(mapping.getInputForward().getPath())
+        if (forward.equals(mapping.findForward(FAILURE))) {
             return forward;
         }
         // No errors. Linking starts from here.
@@ -59,11 +49,19 @@ public class InteractionLinkAction extends SubmitDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // Cache the this object's intAc because we need to set it later.
+        // Cache the this experiment's AC because we need to set it later.
         String expAc = user.getView().getAc();
 
-        // The intAc to search
-        String intAc = ib.getAc();
+        // The AC of the interaction we are about to edit.
+        PageValueBean pvb = new PageValueBean((String) dynaform.get("intCmd"));
+        String intAc = pvb.getAc();
+
+        // The interaction we are about to edit.
+        Interaction inter = (Interaction) user.getObjectByAc(
+                Interaction.class, intAc);
+
+        // We must have this Interaction.
+        assert inter != null;
 
         // Try to acuire the lock.
         if (!lmr.acquire(intAc, user.getUserName())) {
@@ -74,11 +72,8 @@ public class InteractionLinkAction extends SubmitDispatchAction {
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
-        // The selected Annotated object.
-        AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
-                Interaction.class, intAc);
-        // The object we are editing presently.
-        user.setView(annobj);
+        // Set the interaction as the new view.
+        user.setView(inter);
 
         // Set the experiment AC, so we can come back to this experiment again.
         ((InteractionViewBean) user.getView()).setSourceExperimentAc(expAc);
