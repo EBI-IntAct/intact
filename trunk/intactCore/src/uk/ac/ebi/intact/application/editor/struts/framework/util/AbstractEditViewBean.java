@@ -362,7 +362,8 @@ public abstract class AbstractEditViewBean {
         // Delete annotations and remove them from CV object.
         for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation();
-            user.delete(annot);
+            // Can do without an explcit call to delete.
+            //user.delete(annot);
             myAnnotObject.removeAnnotation(annot);
         }
         // Update annotations.
@@ -390,16 +391,6 @@ public abstract class AbstractEditViewBean {
         }
         // Update the cv object.
         user.update(myAnnotObject);
-    }
-
-    /**
-     * Populates the given bean with editor specific info. Override this
-     * method to provide editor specific behaviour. Currently, this method
-     * is empty.
-     * @param form the form to fill data.
-     */
-    public void fillEditorSpecificInfo(DynaBean form) {
-        // Empty
     }
 
     /**
