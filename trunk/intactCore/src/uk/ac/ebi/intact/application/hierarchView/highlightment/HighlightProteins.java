@@ -6,15 +6,14 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.highlightment;
 
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
-import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.business.image.DrawGraph;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour.HighlightmentBehaviour;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.Collection;
 
 
@@ -58,10 +57,11 @@ public class HighlightProteins {
         // apply the highlight to the selected set of protein
         highlightmentBehaviour.apply (proteinsToHighlight, in);
 
-        // Rebuild SVG data
-        GraphToSVG svgProducer = new GraphToSVG (in);
-        svgProducer.draw();
-        ImageBean ib = svgProducer.getImageBean();
+        // Rebuild Image data
+//        GraphToSVG svgProducer = new GraphToSVG (in);
+        DrawGraph imageProducer = new DrawGraph (in);
+        imageProducer.draw();
+        ImageBean ib = imageProducer.getImageBean();
 
         // store data in the session
         IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER_KEY);

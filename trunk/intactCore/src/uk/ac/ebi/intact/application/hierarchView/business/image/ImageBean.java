@@ -7,29 +7,28 @@ package uk.ac.ebi.intact.application.hierarchView.business.image;
 
 /**
  * Allows to store the image and the associated data :
- * - SVG DOM document,
+ * - Image data and infos,
  * - HTML MAP.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-import org.w3c.dom.Document;
+
+import java.awt.image.BufferedImage;
 
 public class ImageBean  {
 
-    /*************************************************** Instance variable */
-
     /**
-     * SVG DOM document
+     * generated image data in order to display the picture
      */
-    private Document document;
+    private BufferedImage imageData;
 
-    public void setDocument (Document aDocument) {
-        document = aDocument;
+    public BufferedImage getImageData() {
+        return imageData;
     }
 
-    public Document getDocument () {
-        return document;
+    public void setImageData(BufferedImage imageData) {
+        this.imageData = imageData;
     }
 
 
@@ -70,7 +69,5 @@ public class ImageBean  {
     public void setImageWidth(int imageWidth) {
         this.imageWidth = imageWidth;
     }
-
-
 }
 

@@ -6,8 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
 import uk.ac.ebi.intact.application.hierarchView.business.*;
-import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.business.image.DrawGraph;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
@@ -274,7 +274,8 @@ public abstract class IntactBaseAction extends Action {
 
         Chrono chrono = new Chrono ();
         chrono.start();
-        GraphToSVG te = new GraphToSVG (in);
+        DrawGraph te = new DrawGraph (in);
+//        GraphToSVG te = new GraphToSVG (in);
         te.draw ();
         chrono.stop();
         String msg = "Time for rendering the interaction network " + chrono;

@@ -5,23 +5,30 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.business.servlet;
 
-import org.w3c.dom.Document;
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
-//import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
-import uk.ac.ebi.intact.application.hierarchView.business.image.ConvertSVG;
+import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Properties;
+import java.io.OutputStream;
+import java.io.BufferedOutputStream;
+import java.awt.image.BufferedImage;
+
+import com.sun.image.codec.jpeg.JPEGEncodeParam;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.media.jai.codec.ImageCodec;
+import com.sun.media.jai.codec.ImageEncoder;
+import com.sun.media.jai.codec.PNGEncodeParam;
+
+
 
 /**
  * Purpose: <br>
@@ -38,19 +45,21 @@ public class GenerateImage extends HttpServlet {
     private final static String ERROR_MESSAGE = "Unable to produce the interaction network, please warn your administrator";
 
     /**
-     * Servlet allowing to get SVG data, convert them into the user wanted format
-     * and send to the browser the image by taking care of the MIME type.
+     * Servlet allowing to get image data, rasterize into JPEG and send
+     * to the browser the image by taking care of the MIME type.
      */
-    public void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse)
+    public void doGet (HttpServletRequest aRequest, HttpServletResponse aResponse)
             throws ServletException{
-        ServletOutputStream out = null;
+        OutputStream outputStream = null;
 
         try {
             // get the current user session
             HttpSession session = aRequest.getSession ();
             IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
             if (user == null) {
-               logger.error ("No user in the session, don't displays interaction network");
+                aResponse.getOutputStream().print(ERROR_MESSAGE);
+
+                logger.error ("No user in the session, don't displays interaction network");
                 return;
             }
 
@@ -61,70 +70,36 @@ public class GenerateImage extends HttpServlet {
                 return;
             }
 
-            // binary output
-            out = aResponse.getOutputStream();
+            BufferedImage image = imageBean.getImageData();
+            outputStream = new BufferedOutputStream(aResponse.getOutputStream(), 1024);
 
-            // take the parameter in the request
-            String format = aRequest.getParameter("format");
+            // Send browser MIME type
+            aResponse.setContentType("image/jpg");
+            logger.info ("MIME type: image/jpg");
 
-            String className = null;
-            Properties propertiesBusiness = PropertyLoader.load (Constants.PROPERTY_FILE);
+            // JPEG encoding
+            JPEGEncodeParam  jpegEncodeParam  = null;
+            jpegEncodeParam  = JPEGCodec.getDefaultJPEGEncodeParam (image);
 
-            if (null != propertiesBusiness) {
-                className = propertiesBusiness.getProperty ("hierarchView.image.format." + format + ".class" );
-            }
+            Chrono chrono = new Chrono ();
+            chrono.start();
 
             /*
-            * Create a SVG Rasterizer to convert the SVG DOM to an image
-            * The ConvertSVG abstract instanciate one of its implementation
-            * according to the class name.
+            *  Encode the produced image in JPEG.
+            *   Quality range : 0.0 .. 1.0
+            *   0.7  : high quality   (good compromise between file size and quality)
+            *   0.5  : medium quality
+            *   0.25 : low quality
             */
-            ConvertSVG convert = ConvertSVG.getConvertSVG (className);
+            jpegEncodeParam.setQuality (0.7F, false);
+            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(outputStream, jpegEncodeParam);
+            encoder.encode(image);
 
-            if (null == convert) {
-                logger.error ("Unable to create the rasterizer " + className);
-                out.println (ERROR_MESSAGE);
-            } else {
-                logger.info (className + " created");
+            chrono.stop();
+            logger.info("Time for rasterizing " + chrono);
 
-                // set MIME type according to user format choice
-                String typeMime = convert.getMimeType();
-                logger.info ("set MIME Type to " + typeMime);
-                aResponse.setContentType(typeMime);
+            outputStream.close();
 
-                Document document = imageBean.getDocument();
-                if (null != document) {
-                    try {
-//                        Chrono chrono = new Chrono ();
-//                        chrono.start();
-                        byte[] imageData = convert.convert(document);
-//                        chrono.stop();
-//                        String msg = "Time for rasterizing the SVG DOM " + chrono;
-//                        logger.info(msg);
-
-                        logger.info ("SVG transcoding done");
-
-                        if (null != imageData) {
-                            logger.info ("Image file size: " + imageData.length + " bytes");
-                            out.write (imageData);
-                        }
-                        else {
-                            logger.error ("No data produced by " + className);
-                            out.println (ERROR_MESSAGE);
-                        }
-                    }
-                    catch (Exception e) {
-                        logger.error ("Couldn't convert the DOM document", e);
-                        out.println (ERROR_MESSAGE);
-                    }
-                }
-                else {
-                    logger.error ("SVG DOM document is null");
-                    out.println (ERROR_MESSAGE);
-                }
-            }
-            out.flush ();
-            out.close ();
         }
         catch (IOException e) {
             logger.error ("Error during the image producing process", e);
@@ -132,7 +107,7 @@ public class GenerateImage extends HttpServlet {
         }
         finally {
             try {
-                out.close();
+                outputStream.close();
             } catch (IOException ioe) {}
         }
     } // doGet
