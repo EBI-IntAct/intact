@@ -318,22 +318,6 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         myHelper.update(object);
     }
 
-    public void cancelUpdate() {
-        myHelper.cancelUpdate(myEditCvObject);
-
-        // Cancel any updates to annotations.
-        Collection updateComments = myView.getAnnotationsToUpdate();
-        for (Iterator iter = updateComments.iterator(); iter.hasNext();) {
-            myHelper.cancelUpdate(iter.next());
-        }
-
-        // Cancel any updates to xrefs.
-        Collection updateXrefs = myView.getXrefsToUpdate();
-        for (Iterator iter = updateXrefs.iterator(); iter.hasNext();) {
-            myHelper.cancelUpdate(iter.next());
-        }
-    }
-
     public void delete(Object object) throws IntactException {
         myHelper.delete(object);
     }
