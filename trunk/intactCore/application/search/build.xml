@@ -241,7 +241,7 @@
 
     <target name="set-db-type">
         <condition property="postgres">
-            <contains string="${target.env}" substring="-pg-"/>
+            <contains string="${target.env}" substring="-postgres-"/>
         </condition>
         <condition property="oracle">
             <contains string="${target.env}" substring="-oracle-"/>
