@@ -11,16 +11,11 @@ import org.apache.struts.action.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
-//import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactException;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -30,11 +25,6 @@ import uk.ac.ebi.intact.business.IntactException;
  * @version $Id$
  */
 public class SidebarDispatchAction extends AbstractEditorDispatchAction {
-
-    /**
-     * Only letters and numbers are allowed.
-     */
-    private static final Pattern SL_RE = Pattern.compile("\\W+");
 
     // Implements super's abstract methods.
 
@@ -85,34 +75,18 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // The class name associated with the topic.
         String classname = getIntactService().getClassName(topic);
 
-        // Holds the result from the search.
-        Collection results = null;
-
-//        try {
-            // Try searching as it is.
-            results = user.lookup(classname, searchString, true);
+        // Try searching as it is.
+        Collection results = user.lookup(classname, searchString, true);
+        if (results.isEmpty()) {
+            // try searching first using all uppercase, then all lower case
+            // if it returns nothing...
+            // NB this would be better done at the DB level, but keep it here for now
+            results = user.lookup(classname, searchString.toUpperCase(), true);
             if (results.isEmpty()) {
-                // try searching first using all uppercase, then all lower case
-                // if it returns nothing...
-                // NB this would be better done at the DB level, but keep it here for now
-                results = user.lookup(classname, searchString.toUpperCase(), true);
-                if (results.isEmpty()) {
-                    // now try all lower case....
-                    results = user.lookup(classname, searchString.toLowerCase(), true);
-                }
+                // now try all lower case....
+                results = user.lookup(classname, searchString.toLowerCase(), true);
             }
-//        }
-//        catch (SearchException ie) {
-//            // Something failed during search...
-//            LOGGER.info(ie);
-//            // The errors to report back.
-//            // Error with updating.
-//            ActionErrors errors = new ActionErrors();
-//            errors.add(AbstractEditorAction.EDITOR_ERROR,
-//                    new ActionError("error.search", ie.getMessage()));
-//            super.saveErrors(request, errors);
-//            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-//        }
+        }
         if (results.isEmpty()) {
             // No matches found - forward to a suitable page
             LOGGER.info("No matches were found for the specified search criteria");
@@ -155,80 +129,16 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
 
         DynaActionForm theForm = (DynaActionForm) form;
         String topic = (String) theForm.get("topic");
-        String label = (String) theForm.get("shortLabel");
-
-        // Validate the short label.
-        if (SL_RE.matcher(label).find()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.create.shortLabel"));
-            super.saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
 
         // The class name associated with the topic.
         String classname = super.getIntactService().getClassName(topic);
         // The current topic.
         user.setSelectedTopic(topic);
 
-        // The owner of the object we are editing.
-        Institution owner = null;
-
-        // Holds the result from the search.
-        Collection result = null;
-
-        try {
-            owner = user.getInstitution();
-            result = user.search(classname, "shortLabel", label);
-        }
-        catch (SearchException se) {
-            // Can't query the database.
-            LOGGER.info(se);
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search", se.getMessage()));
-            super.saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
-        // result is not empty if we have this label on the database.
-        if (!result.isEmpty()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.create",
-                            label + " you entered is not unique! Label must be unique."));
-            super.saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
-        // Found a unique short label and topic combination; create a new instance.
+        // The object we are about to edit.
         AnnotatedObject annobj = createNew(classname);
-        annobj.setShortLabel(label);
-        annobj.setOwner(owner);
+        annobj.setOwner(user.getInstitution());
 
-        try {
-            // Begin the transaction.
-            user.begin();
-            // Create the new object on the persistence system.
-            user.create(annobj);
-            // Commit all the changes.
-            user.commit();
-        }
-        catch (IntactException ie1) {
-            try {
-                user.rollback();
-            }
-            catch (IntactException ie2) {
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
-            // Log the stack trace.
-            LOGGER.info(ie1);
-            // Error with creating the new CV object changes.
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.create", ie1.getMessage()));
-            super.saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
         // Set the new object as the current edit object. This has to be
         // done before removeMenu (it relies on current cv object).
         user.updateView(annobj);
@@ -236,6 +146,8 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         user.getView().removeMenu();
         // Add to the view page.
         user.addToSearchCache(annobj);
+        // Started creating a new record.
+//        user.setEditNew(true);
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
     }
 

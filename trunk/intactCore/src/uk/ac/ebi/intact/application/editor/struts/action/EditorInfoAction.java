@@ -46,17 +46,17 @@ public class EditorInfoAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
+        // Handler to the current user.
+        EditUserI user = super.getIntactUser(request);
+
         // The view of the current object we are editing at the moment.
-        AbstractEditViewBean viewbean = super.getIntactUser(request).getView();
+        AbstractEditViewBean viewbean = user.getView();
 
         // The form to access input data.
         DynaActionForm theForm = (DynaActionForm) form;
 
         // Extract the short label for us to cheque for its uniqueness.
         String formlabel = (String) theForm.get("shortLabel");
-
-        // Handler to the current user.
-        EditUserI user = super.getIntactUser(request);
 
         // Validate the short label.
         if (!validateShortLabel(user, formlabel, request)) {
@@ -94,16 +94,21 @@ public class EditorInfoAction extends AbstractEditorAction {
             // Don't have this short label on the database.
             return true;
         }
-        // If we found a single record then it must be the current record.
+        // If we found a single record then it could be the current record.
         if (results.size() == 1) {
             // Found an object with similar short label; is it as same as the
             // current record?
             AbstractEditViewBean view = user.getView();
             String currentAc = view.getAnnotatedObject().getAc();
-            String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
-            if (currentAc.equals(resultAc)) {
-                // We have retrieved the same record from the DB.
-                return true;
+            // ac is null until a record is persisted; current ac is null
+            // for a new object.
+            if (currentAc != null) {
+                // Eediting an existing record.
+                String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
+                if (currentAc.equals(resultAc)) {
+                    // We have retrieved the same record from the DB.
+                    return true;
+                }
             }
         }
         // Found more than one entry with the same short label.
