@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 
+import java.util.List;
+
 /**
  * The form to edit Proteins. Overrides the validate method to provide Protein
  * specific validation. No validation is performed if 'Delete' button was pressed.
@@ -23,6 +25,31 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
  * @version $Id$
  */
 public class ProteinEditForm extends EditForm {
+
+    /**
+     * Sets the proteins on hold for the form to retrieve.
+     * @param exps list of ProteinBean objects.
+     *
+     * <pre>
+     * pre:  exps->forAll(obj : Object | obj.oclIsTypeOf(ProteinBean))
+     * </pre>
+     */
+    public void setProteins(List exps) {
+        setItems(exps);
+    }
+
+    /**
+     * Returns a list of proteins for a JSP to display. The var component
+     * of c:forAll part must be named as 'proteins'.
+     * @return a list of ProteinBean onjects.
+     *
+     * <pre>
+     * post:  return->forAll(obj : Object | obj.oclIsTypeOf(ProteinBean))
+     * </pre>
+     */
+    public List getProteins() {
+        return getItems();
+    }
 
     /**
      * Validate the properties that have been set from the HTTP request.
