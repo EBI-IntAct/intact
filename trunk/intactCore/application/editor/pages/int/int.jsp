@@ -19,7 +19,7 @@
 <%-- Include javascript for show user functionality --%>
 <jsp:include page="../misc/user_js.jsp"/>
 
-<html:form action="/intDispatch" focus="shortLabel" onsubmit="return validateIntForm(this)">
+<html:form action="/int/dispatch" focus="shortLabel" onsubmit="return validateIntForm(this)">
     <html:hidden property="anchor" />
 
     <jsp:include page="info.jsp" />
