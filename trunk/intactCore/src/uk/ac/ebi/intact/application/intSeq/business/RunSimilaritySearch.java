@@ -52,22 +52,34 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
             //------ INSTANCE VARIABLES ----//
 
     /**
-      * data required to manage the blast program.
+      * command line required to manage the blast program.
       */
     protected String command = "";
-    protected String sequence = "";
+
     /**
-     * EValue initialized at "0" to make a test afterwards.
+      * protein sequence written in the input file
+      */
+    protected String sequence = "";
+
+    /**
+     * E-Value initialized at "0" to make a test afterwards.
      */
     protected double evalueMin = 0;
 
      /**
       * the both ManagerFiles
+      *         -> 1 input file and 1 output file for each execution of BLAST or FASTA
       */
     protected ManagerFilesBlast fileInput = null;
     protected ManagerFilesBlast fileOutput = null;
 
+    /**
+     * Test if the command line is a BLAST or FASTA program
+     */
     boolean blast = false;
+    /**
+     * Test if the command line has been well done
+     */
     boolean commandExecution = false;
 
 
@@ -128,7 +140,7 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
     }
 
     /**
-     * keep inform the action whether the command line was executed well or not.
+     * keep inform the Action Class whether the command line was executed well or not.
      *
      * @return the boolean answer.
      */
@@ -171,18 +183,43 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
                 if (optionLooked == true) {
 
                     if (blast == true) {
-                            //when the tabular output blast file is used (-m 9 ncbi or -m 9 fasta)
+                        /* when the tabular output blast file is used (-m 9 ncbi or -m 9 fasta)
+
+                        # Fields: Query id, Subject id, % identity, alignment length, mismatches, gap openings, q. start, q. end, s. start, s. end, e-value, bit score
+                        sptrembl:Q9BQD2 sptrembl:Q9BQD2 100.00  679     0       0       1       679     1       679     0.0     1337.0
+                        sptrembl:Q9BQD2 sptrembl:Q8WWS8 40.14   715     356     17      1       650     1       708     1e-125  438.7
+
+                        */
                         listResults = fileOutput.ResultParsingTableFile(SeqIdConstants.PARSING_TABLE_BLAST_FILE);
+                        /*
+                            example (second line)
+                            listResults = list of ArrayList with 7 columns -> | Q9BQD2 | 40.14 | 1 | 650 | 1 | 708 | 1e-125 |
+                        */
+                            // the E-Value is in the column 7
                         indexEvalue = 6;
                     }
                     else {
-                           //when the tabular output blast file is used (-m 9 ncbi or -m 9 fasta)
+                           /*
+                                    when the tabular output FASTA file is used (-m 9 ncbi or -m 9 fasta):
+
+                                the best scores are:                                       opt bits E(55)       %_id  %_gid   sw  alen  mn0  mx0  mn1  mx1 gapq gapl
+                                sptrembl:Q9BQD2 Q9BQD2; Signal transducer and act  ( 679) 4524 1231       0     1.000 1.000 4524  679    1  679    1  679   0   0
+                                sptrembl:Q8WWS8 Q8WWS8; Partial STAT5B signal tra  ( 787) 1443  398 5.1e-113    0.410 0.459 1548  717    1  650    1  708  67   9
+
+                           */
                         listResults = fileOutput.ResultParsingTableFile(SeqIdConstants.PARSING_TABLE_FASTA_FILE);
+                        /*
+                            example (second line)
+                            listResults = list of ArrayList with 7 columns -> | Q8WWS8 | 5.1e-113 | 0.41 | 1 | 650 | 1 | 708 |
+                        */
+                            // the E-Value is in the column 1
                         indexEvalue = 1;
                     }
                 }
                 else {
                         //when the standard output blast file is used (-m 0 ncbi or wu-blast output)
+                        // more comments about the ouput format
+                        // in the ResultParsing method of the ManagerFilesBlast class
                     ArrayList patternList = new ArrayList ();
                         //to pass the pattern list in parameter
                     patternList.add(SeqIdConstants.PARSING_ID);
@@ -196,12 +233,14 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
                 }
             }
 
-                // any program needs this file anymore.
+                // no program needs this file anymore.
             fileOutput.DeleteFile();
 
-                // to test if the EValue is smaller than our constant defined in the web.xml file.
+                // To test if the EValue is smaller than our constant defined in the web.xml file.
+                // Then the E-Value is removed from the list since it is not displayed for the user.
             listResults = this.ParamTest(indexEvalue, listResults);
 
+            //listResults is a list of ArrayList (with 6 items for each)
             return listResults;
     }
 
@@ -310,7 +349,8 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
             blast = this.SearchOptionTab ("\\s", splitCommandLine);
 
             if (input == true) {
-                    //creates a file with a random name.
+                    //creates an input file where the protein sequence is going to be recorded
+                    // file with a random name and a constant extension.
                 fileInput = new ManagerFilesBlast(inputDir, (Object)".fasta");
                 wholePathFile = fileInput.GetPathFile();
 
@@ -348,6 +388,8 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
             }
                 // to manage the output file in the command line.
             else {
+                    // creates an output file where the result of the alignment program is going to be recorded
+                    // file with a random name and a constant extension.
                 fileOutput = new ManagerFilesBlast(inputDir, (Object)".blast");
                 wholePathFile = fileOutput.GetPathFile();
 
@@ -438,6 +480,7 @@ public class RunSimilaritySearch implements RunSimilaritySearchIF{
     /**
      * This method tests if the evalue is smaller than the constant defined in the web.xml file,
      * which means that the alignment is acceptable.
+     * If it is, the E-Value column is then removed from the list.
      *
      * @param indexTab int which corresponds to the "evalue column" in the tabular output file.
      * @param alignResults List which contains all the results from the parsing of the output file.
