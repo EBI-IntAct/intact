@@ -246,9 +246,9 @@ public abstract class AbstractEditorAction extends Action {
      * @param mapping the mapping to get forward action.
      * @return forward action stored in <code>mapping</code> under "input".
      */
-    protected ActionForward inputForward(ActionMapping mapping) {
-        return mapping.findForward("input");
-    }
+//    protected ActionForward inputForward(ActionMapping mapping) {
+//        return mapping.findForward("input");
+//    }
 
     /**
      * Returns an action form.
