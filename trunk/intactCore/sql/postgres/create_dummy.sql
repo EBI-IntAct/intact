@@ -161,7 +161,7 @@ INSERT INTO Annotation (ac, topic_ac, owner_ac, description)
         WHERE i.shortLabel='EBI'
           AND cv.shortLabel='Function';
 
-INSERT INTO obj2annot (annotation_ac, cvobject_ac)
+INSERT INTO cvobject2annot (annotation_ac, cvobject_ac)
        SELECT a.ac,
 	      cv.ac
          FROM Annotation a, ControlledVocab cv

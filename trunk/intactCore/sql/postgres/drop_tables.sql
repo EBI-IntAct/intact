@@ -28,8 +28,17 @@ DROP TABLE Int2Exp;
 /* PROMPT ... Xref*/
 DROP TABLE Xref;
 
-/*PROMPT ... Obj2Annot*/
-DROP TABLE Obj2Annot;
+/*PROMPT ... Int2Annot*/
+DROP TABLE Int2Annot;
+
+/*PROMPT ... Exp2Annot*/
+DROP TABLE Exp2Annot;
+
+/*PROMPT ... cvobject2Annot*/
+DROP TABLE cvobject2Annot;
+
+/*PROMPT ... biosource2Annot*/
+DROP TABLE biosource2Annot;
 
 /*PROMPT ... Interactor*/
 DROP TABLE Interactor;
