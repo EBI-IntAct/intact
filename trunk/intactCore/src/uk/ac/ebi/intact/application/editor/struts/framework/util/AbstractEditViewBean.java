@@ -6,20 +6,18 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException;
-import uk.ac.ebi.intact.business.IntactException;
-
-import java.util.*;
-//import java.util.regex.Pattern;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.tiles.ComponentContext;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ShortLabelException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
+import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.*;
+
+import java.util.*;
 
 /**
  * This super bean encapsulates behaviour for a common editing session. This
@@ -405,6 +403,14 @@ public abstract class AbstractEditViewBean {
         return getTopicMenu(1);
     }
 
+    public List getEditDatabaseMenu() throws SearchException {
+        return getDatabaseMenu(0);
+    }
+
+    public List getAddDatabaseMenu() throws SearchException {
+        return getDatabaseMenu(1);
+    }
+
     /**
      * Returns the edit menu for xrefs.
      * @return the edit menu for xrefs.
@@ -667,6 +673,11 @@ public abstract class AbstractEditViewBean {
                 myAnnotObject.getShortLabel(), mode);
     }
 
+    private List getDatabaseMenu(int mode) throws SearchException {
+        return getMenu(EditorMenuFactory.DATABASES,
+                myAnnotObject.getShortLabel(), mode);
+    }
+
     private Map getXrefMenus(int mode) throws SearchException {
         Map map = new HashMap();
         String name;
@@ -696,7 +707,8 @@ public abstract class AbstractEditViewBean {
     private List getMenu(String name, String label, int mode)
             throws SearchException {
         List list;
-        if (myMenuFactory.isMenuType(myAnnotObject.getClass())) {
+        // Only need to remove the current label for editing an existing object.
+        if (myMenuFactory.isMenuType(myAnnotObject.getClass()) && (mode == 0)) {
             // Remove my short label to avoid circular reference. We create a
             // new list so the remove method wouldn't affect the original list.
             list = new ArrayList(myMenuFactory.getMenu(name, mode));
