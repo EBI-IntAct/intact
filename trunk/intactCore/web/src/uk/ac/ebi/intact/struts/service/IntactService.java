@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -8,13 +8,14 @@ package uk.ac.ebi.intact.struts.service;
 
 import uk.ac.ebi.intact.struts.framework.exceptions.InvalidLoginException;
 import uk.ac.ebi.intact.struts.framework.exceptions.MissingIntactTypesException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.DAO;
-import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.core.business.IntactHelper;
+import uk.ac.ebi.intact.core.business.IntactException;
+import uk.ac.ebi.intact.core.persistence.DAO;
+import uk.ac.ebi.intact.core.persistence.DataSourceException;
 
 import java.util.ResourceBundle;
 import java.util.Map;
+import java.util.Collection;
 import java.beans.IntrospectionException;
 
 /**
@@ -77,4 +78,24 @@ public interface IntactService {
      * instance.
      */
     public DAO getDAO() throws DataSourceException;
+
+    /**
+     * Returns a list of available topic names.
+     *
+     * <pre>
+     * post: return != null
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(String))
+     * </pre>
+     */
+    public Collection getTopicNames();
+
+    /**
+     * Returns a list of available database names.
+     *
+     * <pre>
+     * post: return != null
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(String))
+     * </pre>
+     */
+    public Collection getDatabaseNames();
 }
