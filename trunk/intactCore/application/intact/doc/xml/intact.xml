@@ -83,7 +83,7 @@
                 <blockquote>
                     To ensure data consistency, IntAct makes intensive use of controlled vocabularies.
                     All controlled vocabularies are available in Gene Ontology DAG-Edit format and HTML format.
-                    Some IntAct annotation of controlled vocabulary terms does not fit the GO DAG-Edit format, but
+                    Some IntAct annotation of controlled vocabulary terms do not fit the GO DAG-Edit format, but
                     as we want to export all available information, some comments might have to be filtered out from
                     the *.def files before editing them in GO DAG-Edit. For an overview and download of IntAct
                     controlled vocabularies, see
@@ -120,12 +120,21 @@
 
                 </section>
 
-                <section title="name" name="AnnotatedObject.shortLabel">
+                <section title="shortlabel" name="AnnotatedObject.shortLabel">
 
                     <blockquote>
                         The name is a short, concise name to identify an object.
                         Names for proteins are usually UniProt IDs,
-                        names for experiments are usually the names of the first author of the publication,
+                        names for experiments are usually:
+                        <b>author-year-number</b>.
+                        <br/>
+                        <b>author</b> being the name of the first author of the associated publication.
+                        That author name can be truncated if too long.
+                        <br/>
+                        <b>year</b> being the year of the publication.
+                        <br/>
+                        <b>number</b> maybe be used in case we create multiple experiments related to one publication.
+                        <br/>
                         names for interactions are usually the name of gene1 'hyphen' name of gene2.
                         <br/>
                         Names will normally be stable, but they may change, e.g. when the gene name of a protein is changed
@@ -794,8 +803,7 @@
                         <img src="./images/editor/types.png" title="" alt="IntAct Types"/>
                         <br/>
                         <br/>
-                        <img src="./images/editor/warning.gif" title=""
-                            alt="" width="40" height="40" align="left"/>
+                        <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
                         The IntAct type list defaults to the first item (i.e., Experiment) if a type wasn't selected.
                         <br/>
                         <br/>
@@ -814,11 +822,10 @@
                         <ol>
                             <li>accession number (ac)</li>
                             <li>short label</li>
-                            <li>primary id</li>
-                            <li>full name</li>
+                            <!--                            <li>primary id</li>-->
+                            <!--                            <li>full name</li>-->
                         </ol>
-                        <img src="./images/editor/idea.gif" title=""
-                            alt="" width="40" height="40" align="left"/>
+                        <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
                         So, it is faster to search by an accession number than by a shortlabel.
                         <br/>
                         <br/>
@@ -830,8 +837,7 @@
                         records.
                         <br/>
                         <br/>
-                        <img src="./images/editor/idea.gif" title=""
-                            alt="" width="40" height="40" align="left"/>
+                        <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
                         Fo faster response, always prefer a restrictive search criteria.
                         <br/>
                         <br/>
@@ -844,16 +850,14 @@
                         figure shows the result of clicking on EBI-39 link.
                         <br/>
                         <br/>
-                        <img src="./images/editor/search-link.png" title="Result of clicking on EBI-39 link"
-                            alt="Search Link"/>
+                        <img src="./images/editor/search-link.png" title="Result of clicking on EBI-39 link" alt="Search Link"/>
                         <br/>
                         <br/>
                         The 'shortlabel link', takes you to the appropriate edit screen. In this example,
                         'go' entry will be opened in the CV editor (see below, Cv Editors, for more on CV editor).
                         <br/>
                         <br/>
-                        <img src="./images/editor/idea.gif" title=""
-                            alt="" width="40" height="40" align="left"/>
+                        <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
                         Alternatively, you can go to the edit screen by searching for EBI-39 or 'go' alone.
                         <br/>
                         <br/>
@@ -903,8 +907,7 @@
                             <b>ADD THE link to the curation manual</b>
                             <br/>
                             <br/>
-                            <img src="./images/editor/shortlabel-client-error.png" title=""
-                                alt="Incorrect shortlabel"/>
+                            <img src="./images/editor/shortlabel-client-error.png" title="" alt="Incorrect shortlabel"/>
                             <br/>
                             <br/>
                             Submitting the form without entering a syntactically valid name
@@ -914,8 +917,7 @@
                             appears if Javascript is disabled in the browser).
                             <br/>
                             <br/>
-                            <img src="./images/editor/shortlabel-server-error.png" title=""
-                                alt="Shortlabel server validation"/>
+                            <img src="./images/editor/shortlabel-server-error.png" title="" alt="Shortlabel server validation"/>
                             <br/>
                             <br/>
                             Although both validations are similar in nature, they serve two
@@ -928,8 +930,7 @@
                             any browser.
                             <br/>
                             <br/>
-                            <img src="./images/editor/warning.gif" title=""
-                                alt="" width="40" height="40" align="left"/>
+                            <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
                             However, some editor components such as Experiment and
                             Interaction editors rely on Javascript and they wouldn't work correctly
                             if Javascript is disabled. You will have then to enable Javascript in order to get
@@ -963,16 +964,14 @@
                             <img src="./images/editor/edit-annotation.png" title="" alt="Editing an Annotation"/>
                             <br/>
                             <br/>
-                            <img src="./images/editor/warning.gif" title=""
-                                alt="" width="40" height="40" align="left"/>
+                            <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
                             You cannot save the form if an annotation is in 'edit' mode. In this case, you
                             must either save or delete it first.
                             <br/>
                             <br/>
                             <br/>
                             <br/>
-                            <img src="./images/editor/idea.gif" title=""
-                                alt="" width="40" height="40" align="left"/>
+                            <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
                             Edit one annotation at a time as there is no way to save a group of
                             annotations in a single button click.
                             <br/>
@@ -991,8 +990,7 @@
                             the reference qualifier consists of names for CvXrefQualifier.
                             <br/>
                             <br/>
-                            <img src="./images/editor/add-xref.png" title="Adding a new Xref"
-                                alt="New Xref"/>
+                            <img src="./images/editor/add-xref.png" title="Adding a new Xref" alt="New Xref"/>
                             <br/>
                             <br/>
                             As with annotations, the values from drop down lists must be selected
@@ -1001,15 +999,13 @@
                             of empty values.
                             <br/>
                             <br/>
-                            <img src="./images/editor/warning.gif" title=""
-                                alt="" width="40" height="40" align="left"/>
+                            <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
                             Any changes to the form are not saved until the form is submitted. So
                             for a new IntAct type, a record is not created on the database until the
                             Submit or Save &amp; Continue button is clicked and the server reports no errors.
                             <br/>
                             <br/>
-                            <img src="./images/editor/idea.gif" title=""
-                                alt="" width="40" height="40" align="left"/>
+                            <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
                             Save your work periodically by selecting Save &amp; Continue. This avoids the
                             danger of loosing your data due to an extended period of inactivity (session
                             timing out).
@@ -1020,8 +1016,7 @@
                             name already have their existing values.
                             <br/>
                             <br/>
-                            <img src="./images/editor/edit-cv.png" title="Editing an existing entry"
-                                alt="Editing an existing CV object"/>
+                            <img src="./images/editor/edit-cv.png" title="Editing an existing entry" alt="Editing an existing CV object"/>
                             <br/>
                             <br/>
                         </blockquote>
@@ -1070,8 +1065,7 @@
                     <section title="Interaction" name="editor.interaction">
 
                         <blockquote>
-                            <img src="./images/editor/interaction.jpg" title="Interaction Editor"
-                                alt="Interaction Editor"/>
+                            <img src="./images/editor/interaction.jpg" title="Interaction Editor" alt="Interaction Editor"/>
                         </blockquote>
 
                         <section title="Experiments" name="editor.int.experiments">
@@ -1082,8 +1076,7 @@
                                 Interaction as shown below.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/int-exp.png" title=""
-                                    alt="Experiments not yet added"/>
+                                <img src="./images/editor/int-exp.png" title="" alt="Experiments not yet added"/>
                                 <br/>
                                 <br/>
                                 Select Add button to add an experiment or Hide to remove from the
@@ -1158,12 +1151,10 @@
                                 button.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/feature-undefined.png" title="Undefined Feature"
-                                    alt="Undefined Feature"/>
+                                <img src="./images/editor/feature-undefined.png" title="Undefined Feature" alt="Undefined Feature"/>
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/warning.gif" title=""
-                                    alt="" width="40" height="40" align="left"/>
+                                <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
                                 However, you still need to select the CvFeatureType before submitting the form.
                                 <br/>
                                 <br/>
@@ -1175,12 +1166,10 @@
                                 Feature editor.
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/mutation-button.png" title=""
-                                    alt="Mutation Button"/>
+                                <img src="./images/editor/mutation-button.png" title="" alt="Mutation Button"/>
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/warning.gif" title=""
-                                    alt="" width="40" height="40" align="left"/>
+                                <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
                                 You can switch back to the Normal Feature editor at anytime (or vice versa) but you
                                 will lose data entered in the form.
                                 <br/>
@@ -1199,15 +1188,13 @@
                                 <img src="./images/editor/hotspot-error.png" title="" alt="Hotspot Error"/>
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/warning.gif" title=""
-                                    alt="" width="40" height="40" align="left"/>
+                                <img src="./images/editor/warning.gif" title="" alt="" align="left"/>
                                 There is no 'Save &amp; Continue' button. You need to save the data by selecting the
                                 'Submit' button.
                                 <br/>
                                 <br/>
                                 <br/>
-                                <img src="./images/editor/idea.gif" title=""
-                                    alt="" width="40" height="40" align="left"/>
+                                <img src="./images/editor/idea.gif" title="" alt="" align="left"/>
                                 The CvFeatureType defaults to hotspot. Ensure that the entire entry for hotspot
                                 is complete before you select the 'Submit' button.
                                 <br/>
