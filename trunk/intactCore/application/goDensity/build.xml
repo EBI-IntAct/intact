@@ -38,7 +38,7 @@
 
     <!-- This project specific paths. -->
     <property name="src.dir"  value="src"/>
-    <property name="lib.dir"  value="WEB-INF/lib"/>
+<!--    <property name="lib.dir"  value="WEB-INF/lib"/>-->
     <property name="tld.dir"  value="WEB-INF/tld"/>
     <property name="dest.dir" value="WEB-INF/classes"/>
     <property name="docs.dir" value="doc/api"/>
@@ -47,9 +47,9 @@
     <path id="project.class.path">
 
         <!-- Project specific jar files. -->
-        <fileset dir="${lib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
+<!--        <fileset dir="${lib.dir}">-->
+<!--            <include name="**/*.jar"/>-->
+<!--        </fileset>-->
 
         <!-- Where the classes are compiled to. -->
         <pathelement path="${dest.dir}"/>
