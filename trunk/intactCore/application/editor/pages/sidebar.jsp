@@ -18,7 +18,7 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
-<html:form action="/sidebar" focus="AC">
+<html:form action="/sidebar" focus="searchString">
     <table>
         <tr>
             <td align="left">

@@ -10,7 +10,7 @@
     Version: $Id$
 --%>
 
-<html:form action="/search" focus="AC">
+<html:form action="/search" focus="searchString">
     <table>
         <tr>
             <td><html:text property="searchString" size="16"/></td>
