@@ -11,9 +11,10 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
                 xmlns="http://www.w3.org/TR/REC-html40">
     <!--
-        Defaults to zero if none was sepecified. Note the single quotes
+        Defaults to zero if none was specified. Note the single quotes
         around the value. -->
     <xsl:param name="tableName" select="'tbl_0'"/>
+    <xsl:param name="viewMode"/>
 
     <xsl:output method="xml" version="1.0" indent="yes"
         doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -93,11 +94,9 @@
             <xsl:with-param name="colSpan" select="3"/>
         </xsl:call-template>
 
-        <!-- Do only if status is on -->
-        <!-- <xsl:if test="@status='true'">  -->
-
-            <xsl:apply-templates select="interactions/Interaction"/>
-        <!-- </xsl:if>   -->
+        <xsl:if test="interactions/Interaction">
+         <xsl:apply-templates select="interactions/Interaction"/>
+         </xsl:if>
 
     </xsl:template>
 
@@ -157,7 +156,8 @@
     ****************************************************************************
     ** Template for interaction attribute.
     *************************************************************************-->
-    <xsl:template name="Interaction" match="Interaction|interactions/Interaction">
+    <xsl:template name="Interaction" match="Experiment/interactions/Interaction">
+
         <tr class="Interaction">
             <xsl:call-template name="draw-checkbox"/>
             <td></td>
@@ -197,59 +197,76 @@
             <xsl:with-param name="colSpan" select="2"/>
         </xsl:call-template>
 
-        <!-- Do only if status is on -->
-       <!-- <xsl:if test="@status='true'"> -->
             <!-- interactor (eg only a Protein at present) is inside component element -->
-            <xsl:apply-templates select="components/Component/Protein"/>
-      <!--  </xsl:if>  -->
+
+               <!-- <xsl:call-template name="draw-2-empty-cells"/>   -->
+                <xsl:apply-templates select="components/Component/Protein"/>
+
     </xsl:template>
 
     <!--
     ****************************************************************************
     ** Template for interactor attribute.
     *************************************************************************-->
-    <xsl:template name="components/Component/Protein" match="components/Component/Protein">
-        <tr class="Protein">
-            <xsl:call-template name="draw-checkbox"/>
-            <xsl:call-template name="draw-2-empty-cells"/>
-            <td colspan="2">Protein: <xsl:value-of select="@shortLabel"/></td>
-            <xsl:apply-templates select="@ac"/>
-            <td><xsl:value-of select="substring-before(@created, ' ')"/></td>
-            <td><xsl:value-of select="substring-before(@updated, ' ')"/></td>
-        </tr>
+    <xsl:template match="components/Component/Protein">
 
-        <xsl:if test="@fullName">
-            <tr>
-                <xsl:call-template name="draw-4-empty-cells"/>
-                <td colspan="4"><xsl:value-of select="@fullName"/></td>
-            </tr>
-        </xsl:if>
+        <xsl:choose>
 
-        <xsl:if test="cvComponentRole/@shortLabel">
-            <tr>
-                <xsl:call-template name="draw-4-empty-cells"/>
-                <td><xsl:value-of select="cvComponentRole/@shortLabel"/></td>
-                <td></td>
-                <td>Tax scientific name</td>
-                <td>Taxid</td>
-            </tr>
-        </xsl:if>
+            <!-- compact view - only show ShortLabel/role etc -->
+            <xsl:when test="$viewMode='compact'">
+                <tr class="Protein">
+                    <xsl:call-template name="draw-checkbox"/>
+                    <xsl:call-template name="draw-2-empty-cells"/>
+                    <td colspan="2"><xsl:value-of select="@shortLabel"/> [<xsl:value-of select="../CvComponentRole/@shortLabel"/>]</td>
+                </tr>
+            </xsl:when>
 
-        <xsl:for-each select="annotation">
-            <tr>
-                <xsl:call-template name="draw-4-empty-cells"/>
-                <td colspan="1"><xsl:value-of select="cvTopic/@shortLabel"/></td>
-                <td colspan="3"><xsl:value-of select="@annotationText"/></td>
-            </tr>
-        </xsl:for-each>
+            <!-- expanded view - more detail should be available -->
+            <xsl:when test="$viewMode='expand'">
+                <tr class="Protein">
+                    <xsl:call-template name="draw-checkbox"/>
+                    <xsl:call-template name="draw-2-empty-cells"/>
+                    <td colspan="2">
+                        <xsl:value-of select="@shortLabel"/>
+                        [<xsl:value-of select="../CvComponentRole/@shortLabel"/>]
+                    </td>
+                    <xsl:apply-templates select="@ac"/>
+                    <td><xsl:value-of select="substring-before(@created, ' ')"/></td>
+                    <td><xsl:value-of select="substring-before(@updated, ' ')"/></td>
+                </tr>
 
-        <!-- Do only if status is on -->
-        <!-- <xsl:if test="@status='true'"> -->
-            <xsl:call-template name="draw-xrefs">
-                <xsl:with-param name="emptyCells" select="4"/>
-                <xsl:with-param name="colSpan" select="1"/>
-            </xsl:call-template>
-       <!-- </xsl:if> -->
+                <xsl:if test="@fullName">
+                    <tr>
+                        <xsl:call-template name="draw-4-empty-cells"/>
+                        <td colspan="4"><xsl:value-of select="@fullName"/></td>
+                    </tr>
+                </xsl:if>
+
+                <xsl:if test="cvComponentRole/@shortLabel">
+                    <tr>
+                        <xsl:call-template name="draw-4-empty-cells"/>
+                        <td><xsl:value-of select="cvComponentRole/@shortLabel"/></td>
+                        <td></td>
+                        <td>Tax scientific name</td>
+                        <td>Taxid</td>
+                    </tr>
+                </xsl:if>
+
+                <xsl:for-each select="annotation">
+                    <tr>
+                        <xsl:call-template name="draw-4-empty-cells"/>
+                        <td colspan="1"><xsl:value-of select="cvTopic/@shortLabel"/></td>
+                        <td colspan="3"><xsl:value-of select="@annotationText"/></td>
+                    </tr>
+                </xsl:for-each>
+
+                <xsl:call-template name="draw-xrefs">
+                    <xsl:with-param name="emptyCells" select="4"/>
+                    <xsl:with-param name="colSpan" select="1"/>
+                </xsl:call-template>
+
+            </xsl:when>
+        </xsl:choose>
 
     </xsl:template>
 
@@ -275,7 +292,7 @@
             </xsl:variable>
             <xsl:value-of select="concat($tableName, '_', $ac)"/>
         </xsl:variable>
-        <td><input name="{$cbName}" type="checkbox"></input></td>
+       <td><input name="{$cbName}" type="checkbox"></input></td>
     </xsl:template>
 
     <!--
