@@ -44,7 +44,7 @@ public class Range extends BasicObject {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
-    public Range() {
+    private Range() {
         super();
     }
     ////////////////////////////////////////

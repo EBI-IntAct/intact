@@ -41,7 +41,7 @@ public class SubmissionRef extends Reference {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
-    public SubmissionRef () {
+    private SubmissionRef () {
         super();
     }
     public SubmissionRef(Institution owner, String title, String authors, Reference reference, Date holdDate) {

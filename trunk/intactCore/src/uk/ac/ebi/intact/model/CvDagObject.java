@@ -43,7 +43,7 @@ public abstract class CvDagObject extends CvObject {
     /**
      * no-arg constructor which will hopefully be removed later...
      */
-    public CvDagObject() {
+    protected CvDagObject() {
         //super call sets creation time data
         super();
     }

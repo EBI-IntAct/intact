@@ -73,7 +73,7 @@ public class Experiment extends AnnotatedObject implements Editable {
      * purposes only and if possible will be made private.
      * @deprecated Use the full constructor instead
      */
-    public Experiment() {
+    private Experiment() {
         //super call sets creation time data
         super();
     }
@@ -95,6 +95,36 @@ public class Experiment extends AnnotatedObject implements Editable {
         super(shortLabel, owner);
         if(source == null) throw new NullPointerException("valid Experiment must have a BioSource!");
         this.bioSource = source;
+
+    }
+
+    /**
+     * Builds a SHALLOW copy of the Experiment parameter. This means that a
+     * new Experiment instance is returned, but you should be aware that the
+     * object references it contains <b>point to the objects referenced in the
+     * original object </b>.
+     * @param experiment The Experiment you want a shallow copy of
+     * @return Experiment a new Experiment instance containing new references
+     * to the parameter object's attributes.
+     * @exception NullPointerException thrown if required items are not present
+     * in the parameter Experiment instance.
+     */
+    public static Experiment getShallowCopy(Experiment experiment) {
+
+        Experiment ex = new Experiment ( experiment.getOwner(),
+                                         experiment.getShortLabel(),
+                                         experiment.getBioSource() );
+        ex.ac = (experiment.getAc());
+        ex.setAnnotation( experiment.getAnnotations() );
+        ex.setCurator( experiment.getCurator() );
+        ex.setCvInteraction( experiment.getCvInteraction() );
+        ex.setCvIdentification( experiment.getCvIdentification() );
+        ex.setEvidences( experiment.getEvidences() );
+        ex.setFullName( experiment.getFullName() );
+        ex.setReferences( experiment.getReferences() );
+        ex.setRelatedExperiment( experiment.getRelatedExperiment() );
+        ex.setXrefs( experiment.getXrefs() );
+        return ex;
     }
 
 

@@ -55,12 +55,12 @@ public class Reference extends BasicObject {
     private Xref xref;
 
     /**
-     * This constructor should <b>not</b> be used as it could
-     * result in objects with invalid state. It is here for object mapping
-     * purposes only and if possible will be made private.
-     * @deprecated Use the full constructor instead
+     * This constructor exists only for the benefit of subclasses so that
+     * they can call the BasicObject no-arg constructor. This is an expcetion to
+     * the general rule as this is the only concrete class which itself is already
+     * subclassed.
      */
-    public Reference() {
+    protected Reference() {
         super();
     }
 

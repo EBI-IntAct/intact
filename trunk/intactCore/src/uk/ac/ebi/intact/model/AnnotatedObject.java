@@ -272,9 +272,9 @@ public abstract class AnnotatedObject extends BasicObject {
              }
          }
          if (null == annotation){
-             annotation = new Annotation();
-             annotation.setOwner(owner);
-             annotation.setCvTopic(topic);
+             annotation = new Annotation(owner, topic);
+             //annotation.setOwner(owner);
+             //annotation.setCvTopic(topic);
              addAnnotation(annotation);
          }
          // Now annotation is a valid object, (re-) set the text
