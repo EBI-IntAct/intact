@@ -568,6 +568,8 @@ public class DrawGraph {
                 g.setColor( edgeDefaultColor );
             }
         }
+        // the application was not called from MiNe -> so the edge colors are
+        // the default color
         else {
             g.setColor( edgeDefaultColor );
         }
@@ -650,11 +652,10 @@ public class DrawGraph {
         for (int j = 0; j < numberOfProtein; j++) {
             currentNode = (BasicGraphI) listOfProtein.get( j );
 
-            // if the current node is visible
-            if ( ( currentNode.get( Constants.ATTRIBUTE_VISIBLE ) == Boolean.TRUE ) ) {
-                // if the current node is not a central protein
-                if ( !centralNodes.contains( currentNode ) ) {
-                    // draw the current node
+            // if the current node is not a central protein
+            if ( !centralNodes.contains( currentNode ) ) {
+                // if the current node is visible
+                if ( ( currentNode.get( Constants.ATTRIBUTE_VISIBLE ) == Boolean.TRUE ) ) {
                     drawNode( currentNode, g, fontLabel );
                 }
             }
