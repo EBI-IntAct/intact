@@ -233,7 +233,7 @@ public class IntactUser implements IntactUserI {
             String sing = singletons.toString();
             sing = sing.substring( 1, sing.length() - 1 );
 
-            link.append( "&singletons=" + singletons );
+            link.append( "&singletons=" + sing );
         }
         return link.toString();
     }
