@@ -36,6 +36,8 @@ import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -49,6 +51,19 @@ import java.util.*;
  * @version $Id$
  */
 public class EditUser implements EditUserI, HttpSessionBindingListener {
+
+    /**
+     * The pattern to parse the given short label to get the next available
+     * short label.
+     * pattern: any number of characters followed by -x.
+     */
+    private static final Pattern ourNextSLPattern = Pattern.compile("^(.+)?\\-(x)$");
+
+    /**
+     * The pattern to parse an existing cloned short label.
+     * pattern: any number of characters followed by -, and digits.
+     */
+    private static final Pattern ourClonedSLPattern = Pattern.compile("^(.+)?\\-(\\d+)$");
 
     /**
      * Reference to the Intact Helper. This is transient as it is reconstructed
@@ -331,7 +346,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void setClonedView(AnnotatedObject obj) {
         startEditing();
         myEditView = myViewFactory.factory(IntactHelper.getRealClassName(obj));
-        myEditView.resetClonedObject(obj);
+        myEditView.resetClonedObject(obj, this);
     }
 
     public String getSelectedTopic() {
@@ -546,60 +561,83 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return Arrays.asList(items);
     }
 
-    public String getUniqueShortLabel(String shortlabel) throws SearchException {
-        // Need to change to lower case as uppercases are not allowed for a name.
-        String ac = myEditView.getAc();
-        // If ac is null, just a template as the suggested value.
-        return this.getUniqueShortLabel(shortlabel, ac == null ? "xxx-xx"
-                : ac.toLowerCase());
-    }
-
-    public String getUniqueShortLabel(String shortlabel, String extAc)
-            throws SearchException {
-        try {
-            return GoTools.getUniqueShortLabel(myHelper, myEditView.getEditClass(),
-                    myEditView.getAc(), shortlabel, extAc);
-        }
-        catch (IntactException ie) {
-            String msg = "Failed to get a unique short label for " + extAc;
-            throw new SearchException(msg);
-        }
-    }
+//    public String getUniqueShortLabel(String shortlabel) throws SearchException {
+//        // Need to change to lower case as uppercases are not allowed for a name.
+//        String ac = myEditView.getAc();
+//        // If ac is null, just a template as the suggested value.
+//        return this.getUniqueShortLabel(shortlabel, ac == null ? "xxx-xx"
+//                : ac.toLowerCase());
+//    }
+//
+//    public String getUniqueShortLabel(String shortlabel, String extAc)
+//            throws SearchException {
+//        try {
+//            return GoTools.getUniqueShortLabel(myHelper, myEditView.getEditClass(),
+//                    myEditView.getAc(), shortlabel, extAc);
+//        }
+//        catch (IntactException ie) {
+//            String msg = "Failed to get a unique short label for " + extAc;
+//            throw new SearchException(msg);
+//        }
+//    }
 
     public boolean shortLabelExists(String label) throws SearchException {
         return doesShortLabelExist(myEditView.getEditClass(), label, myEditView.getAc());
-        // The class of the object we are editing at the moment.
-//        Class clazz = myEditView.getEditClass();
-//
-//        // Holds the result from the search.
-//        Collection results = search1(clazz.getName(), "shortLabel", label);
-//        if (results.isEmpty()) {
-//            // Don't have this short label on the database.
-//            return false;
-//        }
-//        // If we found a single record then it could be the current record.
-//        if (results.size() == 1) {
-//            // Found an object with similar short label; is it as same as the
-//            // current record?
-//            String currentAc = myEditView.getAc();
-//            // ac is null until a record is persisted; current ac is null
-//            // for a new object.
-//            if (currentAc != null) {
-//                // Editing an existing record.
-//                String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
-//                if (currentAc.equals(resultAc)) {
-//                    // We have retrieved the same record from the DB.
-//                    return false;
-//                }
-//            }
-//        }
-//        // There is another record exists with the same short label.
-//        return true;
     }
 
     public boolean shortLabelExists(Class clazz, String label, String ac)
             throws SearchException {
         return doesShortLabelExist(clazz, label, ac);
+    }
+
+    /**
+     * Returns the next available short label from the persistent system.
+     * @param clazz the calss or the type for the search.
+     * @param label the starting short label; this must contain the suffix '-x'
+     * @return the next available short label from the persistent system. Basically,
+     * this takes the form of <code>label</code> with -x substituted with the last
+     * persistent number. For example, it could be abc-2 provided that <code>label</code>
+     * is abc-x and abc-1 is the last persistent suffix. This could be as same
+     * as <code>label</code> if there is an error in accessing the database to
+     * access other similar objects. Null is returned if <code>label</code> has
+     * invalid format.
+     */
+    public String getNextAvailableShortLabel(Class clazz, String label) {
+        Matcher matcher = ourNextSLPattern.matcher(label);
+        if (!matcher.matches()) {
+            return null;
+        }
+        // Try the longest name first.
+        String prefix = matcher.group(1) + "-";
+        Collection results = null;
+        try {
+            results = search1(clazz.getName(), "shortLabel", prefix + "*");
+        }
+        catch (SearchException se) {
+            return label;
+        }
+        if (results.isEmpty()) {
+            // No matches found for the longes match. The first clone entry.
+            return prefix + "1";
+        }
+        // Found at least one entry. Need to find out the largest number.
+        int number = 1;
+        for (Iterator iter = results.iterator(); iter.hasNext();) {
+            String shortLabel = ((AnnotatedObject) iter.next()).getShortLabel();
+            // Need to split the short label to extract the number.
+            Matcher matcher1 = ourClonedSLPattern.matcher(shortLabel);
+            if (matcher1.matches()) {
+                // Only consider a short label matching the prefix.
+                if (matcher1.group(1).equals(matcher.group(1))) {
+                    // They should match; the search returns only the matching one.
+                    int digit = Integer.parseInt(matcher1.group(2));
+                    if (digit >= number) {
+                        number = digit + 1;
+                    }
+                }
+            }
+        }
+        return prefix + number;
     }
 
     public void fillSearchResult(DynaBean dynaForm) {
@@ -612,7 +650,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public void logoff() throws IntactException {
         mySessionEndTime = Calendar.getInstance().getTime();
-        Logger.getLogger(EditorConstants.LOGGER).info("User is logging of at: " + mySessionEndTime);
+        Logger.getLogger(EditorConstants.LOGGER).info("User is logging off at: "
+                + mySessionEndTime);
         // Release all the locks held by this user.
         LockManager.getInstance().releaseAllLocks(getUserName());
         myHelper.closeStore();
@@ -790,16 +829,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         if (results.size() == 1) {
             // Found an object with similar short label; is it as same as the
             // current record?
-//            String currentAc = myEditView.getAc();
-            // ac is null until a record is persisted; current ac is null
-            // for a new object.
-            if (ac != null) {
-                // Editing an existing record.
-                String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
-                if (ac.equals(resultAc)) {
-                    // We have retrieved the same record from the DB.
-                    return false;
-                }
+            String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
+            if (resultAc.equals(ac)) {
+                // We have retrieved the same record from the DB.
+                return false;
             }
         }
         // There is another record exists with the same short label.

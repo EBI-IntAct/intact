@@ -233,6 +233,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @param annobj <code>AnnotatedObject</code> object to set this bean.
      */
     protected void reset(AnnotatedObject annobj) {
+        setShortLabel(annobj.getShortLabel());
         resetAnnotatedObject(annobj);
         // Cache the annotations and xrefs here to save it from loading
         // multiple times with each invocation to getAnnotations()
@@ -247,15 +248,21 @@ public abstract class AbstractEditViewBean implements Serializable {
      * similar to {@link #reset(AnnotatedObject)} except for annotations and
      * xrefs are added as new objects (so, upon persisting this object, new
      * annotations and xrefs will be created).
+     * @param user the handler to the user to set the available short label.
      */
-    public void resetClonedObject(AnnotatedObject copy) {
+    public void resetClonedObject(AnnotatedObject copy, EditUserI user) {
         // Clear previous transactions.
         clearTransactions();
 
         // Clear existing annotations & xrefs (don't want to share them).
         myAnnotations.clear();
         myXrefs.clear();
-        
+
+        // Set it with most likely next short label from the database.
+        String newSL = user.getNextAvailableShortLabel(copy.getClass(),
+                    copy.getShortLabel());
+        setShortLabel(newSL);
+
         // Reset the cloned object with values given by parameter.
         resetAnnotatedObject(copy);
 
@@ -279,7 +286,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Sets the menu factory to create menus.
      * @param factory the factory to create menus.
      */
-    public void setMenuFactory(EditorMenuFactory factory) {
+    public final void setMenuFactory(EditorMenuFactory factory) {
         myMenuFactory = factory;
     }
 
@@ -287,7 +294,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Returns the Annotated object. Could be null if the object is not persisted.
      * @return <code>AnnotatedObject</code> this instace is wrapped around.
      */
-    public AnnotatedObject getAnnotatedObject() {
+    public final AnnotatedObject getAnnotatedObject() {
         return myAnnotObject;
     }
 
@@ -296,7 +303,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @return the accession number as a <code>String</code> instance; null if
      * the current view is not persisted.
      */
-    public String getAc() {
+    public final String getAc() {
         if (myAnnotObject != null) {
             return myAnnotObject.getAc();
         }
@@ -308,7 +315,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @return ac as a link to the seatch application or an empty string if this
      * object is not yet persisted (i.r., ac is not yet set).
      */
-    public String getAcLink() {
+    public final String getAcLink() {
         if (getAc() == null) {
             return "";
         }
@@ -323,7 +330,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Returns the edit class.
      * @return the class name of the current edit object.
      */
-    public Class getEditClass() {
+    public final Class getEditClass() {
         return myEditClass;
     }
 
@@ -339,7 +346,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Returns the short label.
      * @return the short label as a <code>String</code> instance.
      */
-    public String getShortLabel() {
+    public final String getShortLabel() {
         return myShortLabel;
     }
 
@@ -1062,7 +1069,6 @@ public abstract class AbstractEditViewBean implements Serializable {
         // Need to get the real object for a proxy type.
         setAnnotatedObject((AnnotatedObject) IntactHelper.getRealIntactObject(annobj));
         myEditClass = IntactHelper.getRealClassName(annobj);
-        setShortLabel(annobj.getShortLabel());
         setFullName(annobj.getFullName());
     }
 

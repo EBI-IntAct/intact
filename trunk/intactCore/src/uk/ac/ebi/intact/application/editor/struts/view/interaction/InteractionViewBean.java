@@ -141,8 +141,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    public void resetClonedObject(AnnotatedObject copy) {
-        super.resetClonedObject(copy);
+    public void resetClonedObject(AnnotatedObject copy, EditUserI user) {
+        super.resetClonedObject(copy, user);
 
         Interaction interaction = (Interaction) copy;
 
@@ -156,7 +156,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Add cloned proteins as new proteins.
         for (Iterator iter = interaction.getComponents().iterator(); iter.hasNext();) {
             ComponentBean cb = new ComponentBean();
-            cb.setFromClonedObject((Component) iter.next());
+            cb.setFromClonedObject((Component) iter.next(), user);
             // Add to the view.
             myComponents.add(cb);
             // The componen needs to be updated as well.

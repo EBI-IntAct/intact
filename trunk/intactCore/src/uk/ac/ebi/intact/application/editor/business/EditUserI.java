@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
@@ -253,7 +252,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      *
      * @see #getUniqueShortLabel(String, String)
      */
-    public String getUniqueShortLabel(String shortlabel) throws SearchException;
+//    public String getUniqueShortLabel(String shortlabel) throws SearchException;
 
     /**
      * Returns a unique short label.
@@ -266,8 +265,8 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @see uk.ac.ebi.intact.util.GoTools#getUniqueShortLabel(
             * uk.ac.ebi.intact.business.IntactHelper, Class, String, String, String)
      */
-    public String getUniqueShortLabel(String shortlabel, String extAc)
-            throws SearchException;
+//    public String getUniqueShortLabel(String shortlabel, String extAc)
+//            throws SearchException;
 
     /**
      * Check for duplicity of short label for the current edit object.
@@ -293,6 +292,20 @@ public interface EditUserI extends IntactUserI, Serializable {
     public boolean shortLabelExists(Class clazz, String shortlabel, String ac)
             throws SearchException;
 
+    /**
+     * Returns the next available short label from the persistent system.
+     * @param clazz the calss or the type for the search.
+     * @param label the starting short label; this must contain the suffix '-x'
+     * @return the next available short label from the persistent system. Basically,
+     * this takes the form of <code>label</code> with -x substituted with the last
+     * persistent number. For example, it could be abc-2 provided that <code>label</code>
+     * is abc-x and abc-1 is the last persistent suffix. This could be as same
+     * as <code>label</code> if there is an error in accessing the database to
+     * access other similar objects. Null is returned if <code>label</code> has
+     * invalid format.
+     */
+    public String getNextAvailableShortLabel(Class clazz, String label);
+    
     /**
      * Popluate the given form with search result.
      * @param dynaForm the form to populate.

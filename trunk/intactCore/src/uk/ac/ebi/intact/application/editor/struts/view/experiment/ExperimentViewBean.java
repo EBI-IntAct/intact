@@ -168,8 +168,8 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    public void resetClonedObject(AnnotatedObject copy) {
-        super.resetClonedObject(copy);
+    public void resetClonedObject(AnnotatedObject copy, EditUserI user) {
+        super.resetClonedObject(copy, user);
         // Reset the experiment view with the copy.
         resetExperiment((Experiment) copy);
     }

@@ -319,7 +319,7 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
-    void setFromClonedObject(Component copy) {
+    void setFromClonedObject(Component copy, EditUserI user) {
         initialize(copy);
         clearTransactions();
 
@@ -328,8 +328,13 @@ public class ComponentBean extends AbstractEditKeyBean {
 
         // All the Features need to be added.
         for (Iterator iter = myComponent.getBindingDomains().iterator(); iter.hasNext();) {
-            // Blank out any link among features.
-            FeatureBean fb = new FeatureBean((Feature) iter.next());
+            Feature feature = (Feature) iter.next();
+
+            // Set it with most likely next short label from the database.
+            String newSL = user.getNextAvailableShortLabel(Feature.class,
+                    feature.getShortLabel());
+            FeatureBean fb = new FeatureBean(feature, newSL);
+
             // Add to the view.
             myFeatures.add(fb);
             // Features need to be added to the component.

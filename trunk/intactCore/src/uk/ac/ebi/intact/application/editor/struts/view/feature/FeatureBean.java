@@ -84,22 +84,7 @@ public class FeatureBean extends AbstractEditKeyBean {
      * @param feature the <code>Feature</code> object.
      */
     public FeatureBean(Feature feature) {
-        initialize(feature);
-//        myFeature = feature;
-//        myShortLabel = feature.getShortLabel();
-//        myFullName = feature.getFullName();
-//        myType = feature.getCvFeatureType().getShortLabel();
-//        myDetection = feature.getCvFeatureIdentification() == null ? ""
-//                : feature.getCvFeatureIdentification().getShortLabel();
-//
-//        // Loop through the ranges.
-//        for (Iterator iter = feature.getRanges().iterator(); iter.hasNext();) {
-//            Range range = (Range) iter.next();
-//            myRanges.add(new RangeBean(range));
-//        }
-//
-//        myBoundDomain = feature.getBoundDomain() == null ? ""
-//                : feature.getBoundDomain().getShortLabel();
+        initialize(feature, true);
     }
 
     /**
@@ -110,7 +95,18 @@ public class FeatureBean extends AbstractEditKeyBean {
      */
     public FeatureBean(Feature feature, long key) {
         super(key);
-        initialize(feature);
+        initialize(feature, true);
+    }
+
+    /**
+     * Instantiate an object of this class from a Feature instance
+     * and a short label
+     * @param feature the <code>Feature</code> object.
+     * @param label the short label to assign to this bean.
+     */
+    public FeatureBean(Feature feature, String label) {
+        initialize(feature, false);
+        setShortLabel(label);
     }
 
     // Read only properties.
@@ -319,9 +315,11 @@ public class FeatureBean extends AbstractEditKeyBean {
         return myRanges.iterator();
     }
 
-    private void initialize(Feature feature) {
+    private void initialize(Feature feature, boolean assignSL) {
         myFeature = feature;
-        myShortLabel = feature.getShortLabel();
+        if (assignSL) {
+            myShortLabel = feature.getShortLabel();
+        }
         myFullName = feature.getFullName();
         myType = feature.getCvFeatureType().getShortLabel();
         myDetection = feature.getCvFeatureIdentification() == null ? ""
