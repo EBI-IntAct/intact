@@ -53,6 +53,9 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     private String myFullName;
 
+    /**
+     * The current anchor.
+     */
     private String myAnchor;
 
     /**
@@ -701,6 +704,15 @@ public abstract class AbstractEditViewBean implements Serializable {
         return false;
     }
 
+    /**
+     * By default editor objects can be deleted by selecting Delete button from
+     * edit screen. However, Features are deleted from the Interaction editor.
+     * @return true as by default editor objects are deletable.
+     */
+    public boolean getDeleteState() {
+        return true;
+    }
+
     // Protected Methods
 
     /**
@@ -930,6 +942,11 @@ public abstract class AbstractEditViewBean implements Serializable {
         myAnnotObject.setShortLabel(getShortLabel());
         myAnnotObject.setFullName(getFullName());
 
+        // Save the annotation size for comparision.
+        int initSize = myAnnotObject.getAnnotations().size();
+        // Flag to track whether the annotations are changed or not.
+        boolean changed = false;
+
         // Don't care whether annotated object exists or not because we don't
         // need an AC in the annotation table.
 
@@ -938,19 +955,24 @@ public abstract class AbstractEditViewBean implements Serializable {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
             // Need this to generate the PK for the indirection table.
             user.create(annot);
+            System.out.println("After the create: " + annot);
             myAnnotObject.addAnnotation(annot);
+            changed = true;
         }
         // Delete annotations and remove them from CV object.
         for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-//            user.delete(annot);
+            user.delete(annot);
             myAnnotObject.removeAnnotation(annot);
+            changed = true;
         }
         // Update annotations; update the object with values from the bean.
         // The update of annotated object ensures the sub objects are updated as well.
         for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
+            System.out.println("Before the update AC: " + annot);
             user.update(annot);
+            changed = true;
         }
         // Xref has a parent_ac column which is not a foreign key. So, the parent needs
         // to be persistent before we can create the Xrefs.
@@ -977,7 +999,15 @@ public abstract class AbstractEditViewBean implements Serializable {
         }
         // Update the cv object only for an object already persisted.
         if (user.isPersistent(myAnnotObject)) {
-            user.update(myAnnotObject);
+            // If collection sizes are same but modified; force update. Need
+            // this OJB update strategy doesn't mark the object as dirty.
+            if ((myAnnotations.size() == initSize) && changed) {
+                user.forceUpdate(myAnnotObject);
+            }
+            else {
+                // Ordinary update
+                user.update(myAnnotObject);
+            }
         }
     }
 

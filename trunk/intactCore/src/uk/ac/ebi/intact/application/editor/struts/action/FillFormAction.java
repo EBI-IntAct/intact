@@ -45,7 +45,7 @@ public class FillFormAction extends AbstractEditorAction {
         view.copyPropertiesTo(editorForm);
 
         // Reset any new beans (such as annotations & xrefs).
-        editorForm.resetNewBeans();
+        editorForm.clearNewBeans();
 
         // Reset the dispatch action.
         editorForm.resetDispatch();

@@ -378,6 +378,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myHelper.update(object);
     }
 
+    public void forceUpdate(Object object) throws IntactException {
+        myHelper.forceUpdate(object);
+    }
+
     public void delete(Object object) throws IntactException {
         // Only delete if it is persistent.
         if (isPersistent(object)) {

@@ -40,7 +40,7 @@ public class CommentBean extends AbstractEditKeyBean {
     /**
      * Default constructor. Used for creating a new annotation.
      *
-     * @see #reset()
+     * @see #clear()
      */
     public CommentBean() {
     }
@@ -64,37 +64,8 @@ public class CommentBean extends AbstractEditKeyBean {
         initialize(annotation);
     }
 
-    // Override Object's equals method.
-
     /**
-     * Compares <code>obj</code> with this object according to
-     * Java's equals() contract.
-     * @param obj the object to compare.
-     * @return true only if <code>obj</code> is an instance of this class
-     * and all non transient fields are equal to given object's non tranient
-     * fields. For all other instances, false is returned.
-     */
-//    public boolean equals(Object obj) {
-//        // Identical to this?
-//        if (this == obj) {
-//            return true;
-//        }
-//        if (!(obj instanceof CommentBean)) {
-//            return false;
-//        }
-//        // Can safely cast it.
-//        CommentBean other = (CommentBean) obj;
-//
-//        // Compare topic and annotation text.
-//        if (!equals(myTopic, other.myTopic)) {
-//            return false;
-//        }
-//        return equals(myAnnotatedText, other.myAnnotatedText);
-//    }
-
-    /**
-     * Updates the internal annotation with the new values from the form. If there
-     * is no annotation, a new annotation is created.
+     * Updates the internal annotation with the new values from the form.
      * @param user the user instance to search for a CvTopic object.
      * @return an Annotation created or updated using values in the bean.
      * @throws SearchException for errors in searching for a CvTopic.
@@ -153,8 +124,7 @@ public class CommentBean extends AbstractEditKeyBean {
      * Resets fields to blanks, so the addAnnotation form doesn't display
      * previous values.
      */
-    public void reset() {
-        super.reset();
+    public void clear() {
         myTopic = "";
         myAnnotatedText = "";
     }

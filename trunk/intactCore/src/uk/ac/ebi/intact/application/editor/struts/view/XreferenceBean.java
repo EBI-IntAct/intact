@@ -95,8 +95,11 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * @throws SearchException for errors in searching the database.
      */
     public Xref getXref(EditUserI user) throws SearchException {
-        CvDatabase db = (CvDatabase) user.getObjectByLabel(CvDatabase.class, myDatabaseName);
-        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(CvXrefQualifier.class, myReferenceQualifer);
+        // The CV objects to set.
+        CvDatabase db = (CvDatabase) user.getObjectByLabel(
+                CvDatabase.class, myDatabaseName);
+        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
+                CvXrefQualifier.class, myReferenceQualifer);
         // Update the existing xref with new values.
         myXref.setCvDatabase(db);
         myXref.setPrimaryId(myPrimaryId);
@@ -259,8 +262,7 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * Resets fields to blanks, so the addXref form doesn't display
      * previous values.
      */
-    public void reset() {
-        super.reset();
+    public void clear() {
         myDatabaseName = "";
         myPrimaryId = "";
         mySecondaryId = "";

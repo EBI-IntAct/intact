@@ -145,9 +145,9 @@ public class EditorActionForm extends ValidatorForm {
         return myNewXref;
     }
 
-    public void resetNewBeans() {
-        myNewAnnotation.reset();
-        myNewXref.reset();
+    public void clearNewBeans() {
+        myNewAnnotation.clear();
+        myNewXref.clear();
     }
 
     public void setDispatch(String dispatch) {

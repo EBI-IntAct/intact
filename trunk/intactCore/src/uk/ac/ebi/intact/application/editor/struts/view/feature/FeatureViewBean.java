@@ -62,7 +62,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * commits the transaction.This represents the current view of ranges for
      * the feature.
      */
-    private Set myRanges = new HashSet();
+    private List myRanges = new ArrayList();
 
     /**
      * List of new ranges to add to the feature. This collection is cleared
@@ -129,6 +129,11 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
         // Properties related to the ranges.
         featureForm.setRanges(myRanges);
+    }
+
+    // Override to not to display the Delete button.
+    public boolean getDeleteState() {
+        return false;
     }
 
     /**
@@ -279,23 +284,24 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * the same key as the new bean.
      */
     public void saveRange(RangeBean rb) {
-        // Remove the existing bean which has the same key as the new bean.
-        myRanges.remove(rb);
-        // This will add the new bean.
-        myRanges.add(rb);
+//        // Remove the existing bean which has the same key as the new bean.
+//        myRanges.remove(rb);
+//        // This will add the new bean.
+//        myRanges.add(rb);
 
         // Do the same check for beans to add collection as well.
-        if (myRangesToAdd.contains(rb)) {
-            // Remove the existing bean with the same key.
-            myRangesToAdd.remove(rb);
-            // Add the new bean.
-            myRangesToAdd.add(rb);
-        }
-        else {
-            // Remove the old bean from the 'update' list.
-            myRangesToUpdate.remove(rb);
-            // Add the new bean to the update list.
-            myRangesToUpdate.add(rb);
+        if (!myRangesToAdd.contains(rb)) {
+             myRangesToUpdate.add(rb);
+//            // Remove the existing bean with the same key.
+//            myRangesToAdd.remove(rb);
+//            // Add the new bean.
+//            myRangesToAdd.add(rb);
+//        }
+//        else {
+//            // Remove the old bean from the 'update' list.
+//            myRangesToUpdate.remove(rb);
+//            // Add the new bean to the update list.
+//            myRangesToUpdate.add(rb);
         }
     }
 
