@@ -94,4 +94,9 @@ public class SingleViewBean extends AbstractViewBean
         set.add( this.wrappedObject.getShortLabel() );
         setHighlightMap(set);
     }
+
+    public String getHelpSection() {
+        return "single.view";
+    }
+
 }

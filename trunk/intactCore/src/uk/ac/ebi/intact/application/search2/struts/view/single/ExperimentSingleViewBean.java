@@ -35,4 +35,9 @@ public class ExperimentSingleViewBean extends SingleViewBean {
     public boolean showGraphButtons() {
         return true;
     }
+
+    public String getHelpSection() {
+        return "experiment.single.view";
+    }
+
 }

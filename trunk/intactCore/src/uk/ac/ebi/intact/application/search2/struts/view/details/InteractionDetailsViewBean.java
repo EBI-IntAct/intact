@@ -66,4 +66,8 @@ public class InteractionDetailsViewBean extends DetailsViewBean {
         // write the HTML content
         super.getHTML( writer );
     }
+
+    public String getHelpSection() {
+        return "interaction.details.view";
+    }
 }
