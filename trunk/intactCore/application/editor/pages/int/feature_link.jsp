@@ -39,7 +39,7 @@
             }
         }
         if (count != 2) {
-            window.alert('<%=msgres.getMessage("error.int.feature.link")%>');//'Exactly two features must be selected to link them');
+            window.alert('<%=msgres.getMessage("error.int.feature.link")%>');
             return false;
         }
         return true;
@@ -73,7 +73,7 @@
 </script>
 
 <%-- The anchor name for this page --%>
-<a name="feature.link.unlink"/>
+<a name="feature.link"/>
 
 <table width="70%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
