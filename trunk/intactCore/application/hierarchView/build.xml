@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT build configuration file for hierarchView module.
+     Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
+-->
+<project name="hv" basedir="." default="compile">
+
+    <property name="project.title" value="hierarchView"/>
+
+    <property name="intact.root" value="../.."/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.dest.dir" value="${intact.root}/classes"/>
+
+    <property name="lib.dir" value="WEB-INF/lib"/>
+    <property name="dest.dir" value="WEB-INF/classes"/>
+    <property name="config.dir" value="WEB-INF/config"/>
+    <property name="jdoc.dir" value="doc/api"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="war.file" value="hierarchView.war"/>
+
+    <!-- Web service related properties. -->
+    <property name="ws.dir" value="ws"/>
+    <property name="ws.wsdd.dir" value="ws/wsdd"/>
+    <property name="ws.wsdl.dir" value="ws/wsdl"/>
+    <property name="ws.tulip.wsdl" value="tulip.wsdl"/>
+
+    <!-- Properties related to Tulip server -->
+    <property name="ws.tulip.server.pkg"
+        value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"/>
+    <property name="ws.tulip.server.dir"
+        value="uk/ac/ebi/intact/application/hierarchView/business/tulip/webService"/>
+    <property name="ws.tulip.jar" value="tulipService.jar"/>
+    <property name="ws.props.file" value="WebService.properties"/>
+    <property name="ws.deploy.file" value="${ws.wsdd.dir}/deploy.wsdd"/>
+    <property name="ws.undeploy.file" value="${ws.wsdd.dir}/undeploy.wsdd"/>
+
+    <!-- Properties related to Tulip client -->
+    <property name="ws.tulip.client.pkg"
+        value="uk.ac.ebi.intact.application.hierarchView.business.tulip.client"/>
+    <property name="ws.tulip.client.dir"
+        value="uk/ac/ebi/intact/application/hierarchView/business/tulip/client"/>
+
+    <property name="ws.session.type" value="Application"/>
+
+    <!-- We need this flag because deploy targets need to know where to deploy. -->
+    <property environment="env"/>
+    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+
+    <!-- Build working classpath -->
+    <path id="project.class.path">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <pathelement path="${root.dest.dir}"/>
+        <pathelement path="${dest.dir}"/>
+        <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
+        <pathelement path="${root.lib.dir}/struts.jar"/>
+    </path>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp and 'intact.jar.present' property if intact core
+         jar file is found.
+    -->
+    <target name="prepare">
+        <tstamp/>
+        <available file="${lib.dir}/intact-core.jar" type="file" property="intact.jar.present"/>
+        <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
+        <available file="${tomcat.home}/webapps/axis/WEB-INF/web.xml" property="axis.present"/>
+
+        <!-- These targets are called to display messages if tomcat or axis
+             are not present.
+        -->
+        <ant dir=".." inheritAll="false" target="check-tom"/>
+        <ant dir=".." inheritAll="false" target="check-axis"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and 'jdoc' directories for clean build. -->
+    <target name="clean"
+        description="Prepare for clean build; removes api docs and classes dirs">
+        <delete dir="${dest.dir}"/>
+        <delete dir="${jdoc.dir}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Calls the jar task from core build file if intact core jar file
+         is missing.
+    -->
+    <target name="make-jar" depends="prepare" unless="intact.jar.present">
+        <ant dir="${intact.root}" target="jar-core" inheritAll="false"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile">
+        <mkdir dir="${dest.dir}" />
+
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+			includes="**/application/hierarchView/**" debug="on">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <copy todir="${dest.dir}/config" filtering="on">
+            <fileset dir="WEB-INF/config">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the web service source tree. -->
+    <target name="deploy-ws" depends="compile" if="axis.present">
+        <!-- Create ws specific directories. -->
+        <mkdir dir="${ws.dir}"/>
+        <mkdir dir="${ws.wsdd.dir}"/>
+        <mkdir dir="${ws.wsdl.dir}"/>
+
+        <!-- Generate WSDL file. This needs to run in a separate JVM to avoid
+             any clashes with linkage problem with Document class. Also, -o
+             option is passed via arg line instead of value to avoid creating
+             a wsdl with a space in the name!
+        -->
+        <echo message="Generating WSDL file..."/>
+        <java classname="org.apache.axis.wsdl.Java2WSDL" fork="yes">
+            <arg line="-o ${ws.tulip.wsdl}"/>
+            <arg value="-l http://localhost:8080/axis/services/tulip"/>
+            <arg line="-n urn:tulip"/>
+            <arg value="-p ${ws.tulip.server.pkg}"/>
+            <arg value="urn:${ws.tulip.server.pkg}"/>
+            <arg value="${ws.tulip.server.pkg}.TulipAccess"/>
+            <classpath refid="project.class.path"/>
+        </java>
+
+        <!-- Generate server side files. -->
+        <echo message="Generating Server side files..."/>
+        <java classname="org.apache.axis.wsdl.WSDL2Java" fork="yes">
+            <arg line="-o ."/>
+            <arg line="-d ${ws.session.type}"/>
+            <arg value="-s"/>
+            <arg line="-p ${ws.tulip.server.pkg}.generated"/>
+            <arg value="${ws.tulip.wsdl}"/>
+            <classpath refid="project.class.path"/>
+        </java>
+
+        <!-- Extract the wsdd files. -->
+        <echo message="Extracting deploy/undeply wsdd files"/>
+        <copy todir="${ws.wsdd.dir}">
+            <fileset dir="${ws.tulip.server.dir}/generated">
+                <include name="*.wsdd"/>
+            </fileset>
+        </copy>
+
+        <!-- Remove the generated directories. -->
+        <echo message="Removing generated server files..."/>
+        <delete dir="${ws.tulip.server.dir}"/>
+
+        <!-- Generate server side files. -->
+        <echo message="Generating Client side files..."/>
+        <java classname="org.apache.axis.wsdl.WSDL2Java" fork="yes">
+            <arg line="-o ."/>
+            <arg line="-d ${ws.session.type}"/>
+            <arg value="-s"/>
+            <arg line="-p ${ws.tulip.client.pkg}.generated"/>
+            <arg value="${ws.tulip.wsdl}"/>
+            <classpath refid="project.class.path"/>
+        </java>
+
+        <!-- Copy generated client files. -->
+        <echo message="Copying generated client files..."/>
+        <copy todir="${root.src.dir}/${ws.tulip.client.dir}">
+            <fileset dir="${ws.tulip.client.dir}">
+                <include name="*.java"/>
+            </fileset>
+        </copy>
+
+        <!-- Compile the client generated files -->
+        <echo message="Compiling client generated files"/>
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+			includes="${ws.tulip.client.dir}/generated/**" debug="on">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy the configuration file to the current directory. -->
+        <echo message="Copying configuration file to the ${root.dest.dir} dir"/>
+        <copy file="${config.dir}/${ws.props.file}" todir="${root.dest.dir}"
+            overwrite="true"/>
+
+        <!-- Create the jar file. -->
+        <!-- First delete the jar file if it exists. -->
+        <delete file="${ws.tulip.jar}" quiet="true"/>
+        <echo message="Create the service jar file"/>
+        <jar destfile="${ws.tulip.jar}" basedir="${root.dest.dir}"
+             includes="${ws.tulip.server.dir}/**, ${ws.props.file}"/>
+
+        <!-- Delete the webservice properties file. -->
+        <echo message="Deleting the configuration file"/>
+        <delete file="${root.dest.dir}/${ws.props.file}"/>
+
+        <!-- Copy the service to Tomcat. -->
+        <echo message="Copy the service to Tomcat"/>
+        <copy file="${ws.tulip.jar}" todir="${tomcat.home}/webapps/axis/WEB-INF/lib}"
+            overwrite="true"/>
+
+        <echo message="Modify the deployment file"/>
+        <antcall target="mod-deployfile" />
+
+        <echo message="Delete generated files"/>
+        <delete dir="uk"/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Replace current class in the deployment file by those from the implementation -->
+    <target name="mod-deployfile">
+
+        <!-- Replace generated package name by the implementation one -->
+        <echo message="Replace generated package name by the implementation one" />
+        <replace file="${ws.deploy.file}" token=".generated." value="." />
+
+        <!-- Replace the SoapBinding generated class name by the implementation one -->
+        <echo message="Replace the SoapBinding name by the implementation one" />
+        <replace file="${ws.deploy.file}" token="TulipSoapBindingImpl"
+                 value="TulipAccessImpl" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Start the web service by using the modified deployment file. -->
+    <target name="start-ws">
+
+       <echo message="Starting the web service" />
+       <java classname="org.apache.axis.client.AdminClient" fork="yes">
+            <arg line="${ws.deploy.file}"/>
+            <classpath refid="project.class.path"/>
+       </java>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stop the web service by using the undeployment file -->
+    <target name="stop-ws">
+
+       <echo message="Stopping the web service" />
+       <java classname="org.apache.axis.client.AdminClient" fork="yes">
+            <arg line="${ws.undeploy.file}"/>
+            <classpath refid="project.class.path"/>
+       </java>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file. -->
+
+    <target name="war" depends="compile" description="Builds a war file">
+
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}" />
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+		<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+		   <fileset dir="${basedir}">
+				<include name="*.jsp"/>
+	        	<include name="*.css"/>
+	  			<include name="WEB-INF/config/struts-config.xml"/>
+	  			<include name="WEB-INF/tld/**"/>
+	   		</fileset>
+
+			<!-- Include jar files for hv. -->
+			<lib dir="${lib.dir}"/>
+
+			<!-- Include common jar files from intact core. -->
+			<lib dir="${root.lib.dir}">
+				<include name="jakarta-ojb-0.9.7.jar"/>
+				<include name="struts.jar"/>
+				<include name="log4j-1.2.5.jar"/>
+                <include name="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+			</lib>
+  			<classes dir="${dest.dir}"/>
+		</war>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server. -->
+    <target name="deploy" depends="war" if="tomcat.present"
+        description="Deploys the WAR file on the Tomcat server">
+        <!-- Copy the file across to the deploy dir. -->
+        <copy file="${dist.dir}/${war.file}" todir="${tomcat.home}/webapps" overwrite="yes"/>
+
+        <echo message="Please restart Tomcat to take effect (ant restart-tom)"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tom">
+        <ant dir=".." inheritAll="false" target="start-tom"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tom">
+        <ant dir=".." inheritAll="false" target="stop-tom"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Restarts the Tomcat server. -->
+
+    <target name="restart-tom">
+        <ant dir=".." inheritAll="false" target="restart-tom"/>
+    </target>
+
+</project>
