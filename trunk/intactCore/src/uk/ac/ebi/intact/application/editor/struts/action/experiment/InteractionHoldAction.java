@@ -12,7 +12,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,13 +51,14 @@ public class InteractionHoldAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
+//        DynaActionForm dynaform = (DynaActionForm) form;
+        ExperimentActionForm expForm = (ExperimentActionForm) form;
 
         // Handler to the current user.
         EditUserI user = getIntactUser(request);
 
         Interaction inter = (Interaction) user.getObjectByAc(
-                Interaction.class, (String) dynaform.get("intac"));
+                Interaction.class, expForm.getIntac());// (String) dynaform.get("intac"));
 
         // We must have the interaction bean.
         assert inter != null;
@@ -64,7 +67,8 @@ public class InteractionHoldAction extends AbstractEditorAction {
         ExperimentViewBean view = (ExperimentViewBean) user.getView();
 
         // Adding interactions in the hold section?
-        if (dynaform.get("dispatch").equals(
+        if (expForm.getDispatch().equals(
+//        if (dynaform.get("dispatch").equals(
                 getResources(request).getMessage("exp.int.button.add"))) {
 
             // No need to check for duplicates because it has already been

@@ -7,12 +7,12 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
@@ -310,13 +310,40 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     // Override to provide set experiment from the bean.
-    public void updateFromForm(DynaActionForm dynaform) {
+//    public void updateFromForm(DynaActionForm dynaform) {
+//        // Set the common values by calling super first.
+//        super.updateFromForm(dynaform);
+//
+//        setInteractionType((String) dynaform.get("interactionType"));
+//        setOrganism((String) dynaform.get("organism"));
+//        setKD((Float) dynaform.get("kD"));
+//    }
+    // Override to provide set experiment from the bean.
+    public void copyPropertiesFrom(EditorActionForm editorForm) {
         // Set the common values by calling super first.
-        super.updateFromForm(dynaform);
+        super.copyPropertiesFrom(editorForm);
 
-        setInteractionType((String) dynaform.get("interactionType"));
-        setOrganism((String) dynaform.get("organism"));
-        setKD((Float) dynaform.get("kD"));
+        // Cast to the interaction to get interaction specific data.
+        InteractionActionForm intform = (InteractionActionForm) editorForm;
+        setInteractionType(intform.getInteractionType());
+        setOrganism(intform.getOrganism());
+        setKD(intform.getKd());
+    }
+
+    // Override to copy Interaction data.
+    public void copyPropertiesTo(EditorActionForm form) {
+        super.copyPropertiesTo(form);
+
+        // Cast to the interaction form to copy interaction data.
+        InteractionActionForm intform = (InteractionActionForm) form;
+
+        intform.setInteractionType(getInteractionType());
+        intform.setOrganism(getOrganism());
+        intform.setKd(getKD());
+
+        intform.setExperiments(getExperiments());
+        intform.setExpsOnHold(getHoldExperiments());
+        intform.setProteins(getProteins());
     }
 
     public void sanityCheck(EditUserI user) throws ValidationException,
@@ -329,7 +356,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
             }
         }
         // Any missing experiments (check 7).
-        if (myExperiments.size() == 0) {
+        if (myExperiments.isEmpty()) {
             throw new InteractionException("error.int.sanity.exp");
         }
     }

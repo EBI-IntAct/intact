@@ -13,6 +13,7 @@ import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
@@ -47,14 +48,11 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
+        // The editor form.
+        EditorActionForm editorForm = (EditorActionForm) form;
 
-        // The index position of the xref.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
-
-        // The command associated with the index.
-        String cmd = ((String[]) dynaform.get("annotCmd"))[idx];
+        // The command associated with the dispatch
+        String cmd = editorForm.getDispatch();
 
         // Message resources to access button labels.
         MessageResources msgres = getResources(request);
@@ -88,14 +86,11 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+        // The editor form.
+        EditorActionForm editorForm = (EditorActionForm) form;
 
         // The annotation we are editing at the moment.
-        CommentBean cb = ((CommentBean[]) dynaform.get("annotations"))[idx];
+        CommentBean cb = editorForm.getSelectedAnnotation();
 
         // Must save this bean.
         cb.setEditState(AbstractEditBean.SAVE);
@@ -124,13 +119,18 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
                                 HttpServletResponse response)
             throws Exception {
         // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
+//        DynaActionForm dynaform = (DynaActionForm) form;
 
         // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+//        int idx = ((Integer) dynaform.get("idx")).intValue();
+        EditorActionForm editorForm = (EditorActionForm) form;
+
+        // The index position of the xref.
+//        int idx = ((Integer) dynaform.get("idx")).intValue();
+//        int idx = editorForm.getDispatchIndex();
 
         // The annotation we are about to delete.
-        CommentBean cb = ((CommentBean[]) dynaform.get("annotations"))[idx];
+        CommentBean cb = editorForm.getSelectedAnnotation();//((CommentBean[]) dynaform.get("annotations"))[idx];
 
         // The current view of the edit session.
         AbstractEditViewBean view = getIntactUser(request).getView();
@@ -160,13 +160,14 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
                                 HttpServletResponse response)
             throws Exception {
         // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
+//        DynaActionForm dynaform = (DynaActionForm) form;
+        EditorActionForm editorForm = (EditorActionForm) form;
 
         // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+//        int idx = ((Integer) dynaform.get("idx")).intValue();
 
         // The annotation we are editing at the moment.
-        CommentBean cb = ((CommentBean[]) dynaform.get("annotations"))[idx];
+        CommentBean cb = editorForm.getSelectedAnnotation(); //((CommentBean[]) dynaform.get("annotations"))[idx];
 
         // Handler to the EditUserI.
         EditUserI user = getIntactUser(request);

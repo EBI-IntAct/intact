@@ -11,6 +11,7 @@ import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,14 +46,11 @@ public class ExperimentHoldAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
 
         // The bean associated with the current action.
-        ExperimentBean eb = ((ExperimentBean[]) dynaform.get("expshold"))[idx];
+        ExperimentBean eb = intform.getSelectedExpOnHoldCmd();
 
         // We must have the experiment bean.
         assert eb != null;
@@ -64,8 +62,8 @@ public class ExperimentHoldAction extends AbstractEditorAction {
         // Message resources to access button labels.
         MessageResources msgres = getResources(request);
 
-        // The command associated with the index.
-        String cmd = ((String[]) dynaform.get("expsholdCmd"))[idx];
+        // The dispatch label.
+        String cmd = intform.getDispatch();
 
         if (cmd.equals(msgres.getMessage("int.exp.button.add"))) {
             // Avoid duplicates.

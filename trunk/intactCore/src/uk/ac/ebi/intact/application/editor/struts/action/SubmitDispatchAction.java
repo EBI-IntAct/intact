@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
@@ -111,13 +112,13 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
                                   HttpServletResponse response)
             throws Exception {
         // Need the form to get data entered by the user.
-        DynaActionForm dynaform = (DynaActionForm) form;
+//        DynaActionForm dynaform = (DynaActionForm) form;
 
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
         // The bean to extract the values.
-        CommentBean cb = (CommentBean) dynaform.get("annotation");
+        CommentBean cb = ((EditorActionForm) form).getNewAnnotation();//CommentBean) dynaform.get("annotation");
 
         // The topic for the annotation.
         CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class,
@@ -150,14 +151,11 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // Need the form to get data entered by the user.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
         // Handler to the EditUserI.
         EditUserI user = getIntactUser(request);
 
         // The bean to extract the values.
-        XreferenceBean xb = (XreferenceBean) dynaform.get("xref");
+        XreferenceBean xb = ((EditorActionForm) form).getNewXref();
 
         // For Go database, set values from the Go server.
         if (xb.getDatabase().equals("go")) {
@@ -205,11 +203,8 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         // The current view.
         AbstractEditViewBean view = user.getView();
 
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
         // Extract the short label for us to cheque for its uniqueness.
-        String formlabel = (String) dynaform.get("shortLabel");
+        String formlabel = (String) ((EditorActionForm) form).getShortLabel();
 
         // Validate the short label.
         if (user.shortLabelExists(formlabel)) {

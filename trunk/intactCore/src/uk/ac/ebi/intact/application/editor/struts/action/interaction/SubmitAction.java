@@ -22,9 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * An action to handle when an Interaction is submitted. This action overrides
- * the submit method of the super class to analyze the the next cause of action
+ * the submit method of the super class to analyze the next cause of action
  * to take. If there are no errors, the user is returned to the experiment
- * editor only if we got to the interaction editor came from an experiment.
+ * editor only if we got to the interaction editor from an experiment.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$

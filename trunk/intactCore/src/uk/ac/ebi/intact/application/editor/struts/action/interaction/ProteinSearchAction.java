@@ -10,6 +10,7 @@ import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.model.Protein;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,12 +60,12 @@ public class ProteinSearchAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
 
-        String ac = ((String) dynaform.get("protSearchAC")).trim();
-        String spAc = ((String) dynaform.get("protSearchSpAC")).trim();
-        String shortLabel = ((String) dynaform.get("protSearchLabel")).trim();
+        String ac = intform.getProtSearchAC();
+        String spAc = intform.getProtSearchSpAC();
+        String shortLabel = intform.getProtSearchLabel();
 
         // Cache string lengths.
         int acLen = ac.length();

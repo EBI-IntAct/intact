@@ -10,6 +10,7 @@ import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
@@ -45,14 +46,11 @@ public class XrefDispatchAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
+        // The editor form.
+        EditorActionForm editorForm = (EditorActionForm) form;
 
-        // The index position of the xref.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
-
-        // The command associated with the index.
-        String cmd = ((String[]) dynaform.get("xrefCmd"))[idx];
+        // The command associated with the dispatch
+        String cmd = editorForm.getDispatch();
 
         // Message resources to access button labels.
         MessageResources msgres = getResources(request);
@@ -86,14 +84,11 @@ public class XrefDispatchAction extends AbstractEditorAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // The index position of the xref.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+        // The editor form.
+        EditorActionForm editorForm = (EditorActionForm) form;
 
         // The xref we are editing at the moment.
-        XreferenceBean xb = ((XreferenceBean[]) dynaform.get("xrefs"))[idx];
+        XreferenceBean xb = editorForm.getSelectedXref();
 
         // Must save this bean.
         xb.setEditState(AbstractEditBean.SAVE);
@@ -121,14 +116,11 @@ public class XrefDispatchAction extends AbstractEditorAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+        // The editor form.
+        EditorActionForm editorForm = (EditorActionForm) form;
 
         // The xref we are about to delete.
-        XreferenceBean xb = ((XreferenceBean[]) dynaform.get("xrefs"))[idx];
+        XreferenceBean xb = editorForm.getSelectedXref();
 
         // The current view of the edit session.
         AbstractEditViewBean view = getIntactUser(request).getView();
@@ -159,14 +151,11 @@ public class XrefDispatchAction extends AbstractEditorAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
+        // The editor form.
+        EditorActionForm editorForm = (EditorActionForm) form;
 
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
-
-        // The xref we are about to delete.
-        XreferenceBean xb = ((XreferenceBean[]) dynaform.get("xrefs"))[idx];
+        // The xref we are about to save.
+        XreferenceBean xb = editorForm.getSelectedXref();
 
         // Handler to the EditUserI.
         EditUserI user = getIntactUser(request);

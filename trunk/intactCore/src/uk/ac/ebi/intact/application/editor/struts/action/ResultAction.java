@@ -85,6 +85,7 @@ public class ResultAction extends AbstractEditorAction {
         LOGGER.info("Numner of annotations: " + annobj.getAnnotations().size());
         LOGGER.info("Number of xrefs: " + annobj.getXrefs().size());
 
+        request.setAttribute("location", "dick");
         return mapping.findForward(SUCCESS);
     }
 }
