@@ -981,9 +981,9 @@ CREATE TABLE IA_Feature
         , timestamp             DATE            DEFAULT  SYSDATE NOT NULL
         , userstamp             VARCHAR2(30)    DEFAULT  USER    NOT NULL
         , component_ac          VARCHAR2(30)    NOT NULL CONSTRAINT fk_Feature$component REFERENCES IA_Component(ac) ON DELETE CASCADE
-        , linkedfeature_ac      VARCHAR2(30)    NOT NULL CONSTRAINT fk_Feature$feature REFERENCES IA_Feature(ac)
         , identification_ac     VARCHAR2(30)    CONSTRAINT fk_Feature$identification_ac REFERENCES IA_ControlledVocab(ac)
         , featureType_ac        VARCHAR2(30)    CONSTRAINT fk_Feature$featureType_ac REFERENCES IA_ControlledVocab(ac)
+        , linkedfeature_ac      VARCHAR2(30)    CONSTRAINT fk_Feature$feature REFERENCES IA_Feature(ac)
         , shortLabel            VARCHAR2(20)
         , fullName              VARCHAR2(250)
 )
