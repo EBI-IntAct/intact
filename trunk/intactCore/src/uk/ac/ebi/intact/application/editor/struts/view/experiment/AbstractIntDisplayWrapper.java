@@ -32,8 +32,8 @@ public abstract class AbstractIntDisplayWrapper extends TableDecorator {
      */
     public String getShortLabel() {
         String label = ((Interaction) getObject()).getShortLabel();
-        return "<a href=\"" + "javascript:show('Interaction', '"
-                + label + "')\"" + ">" + label + "</a>";
+        return "<a href=\"" + "javascript:show('" + label + "')\"" + ">" + label
+                + "</a>";
     }
 
     protected String getAc() {

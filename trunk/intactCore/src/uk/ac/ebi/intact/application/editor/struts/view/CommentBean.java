@@ -93,7 +93,7 @@ public class CommentBean extends AbstractEditKeyBean {
      * @return the topic as a browsable link.
      */
     public String getTopicLink() {
-        return getLink("CvTopic", myTopic);
+        return getLink(myTopic);
     }
 
     /**

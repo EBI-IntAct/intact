@@ -36,9 +36,8 @@ public class ResultDisplayWrapper extends TableDecorator {
      */
     public String getAc() {
         AnnotatedObject annotobj = (AnnotatedObject) getObject();
-        String topic = IntactHelper.getDisplayableClassName(annotobj);
-        return "<a href=\"" + "javascript:show('" + topic + "', '"
-                + annotobj.getShortLabel() + "')\">" + annotobj.getAc() + "</a>";
+        return "<a href=\"" + "javascript:show('" + annotobj.getShortLabel()
+                + "')\">" + annotobj.getAc() + "</a>";
     }
 
     /**

@@ -122,7 +122,7 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * @return the database as a browsable link.
      */
     public String getDatabaseLink() {
-        return getLink("CvDatabase", myDatabaseName);
+        return getLink(myDatabaseName);
     }
 
     /**
@@ -224,7 +224,7 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * @return the qualifier as a browsable link.
      */
     public String getQualifierLink() {
-        return getLink("CvXrefQualifier", myReferenceQualifer);
+        return getLink(myReferenceQualifer);
     }
 
     /**

@@ -154,8 +154,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Does the short label exist?
         if (user.shortLabelExists(Feature.class, formLabel, fb.getAc())) {
             // Found more than one entry with the same short label.
-            String link = "<a href=\"javascript:show('" + user.getSelectedTopic()
-                    + "', '" + formLabel + "')\">here</a>";
+            String link = "<a href=\"javascript:show('" + formLabel + "')\">here</a>";
             ActionErrors errors = new ActionErrors();
             errors.add("int.feature.shortlabel",
                     new ActionError("error.label", formLabel, link));
@@ -168,9 +167,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
             // Need to update the link if this feature is linked to another feature.
             if (fb.hasBoundDomain()) {
                 FeatureBean target = view.getFeatureBean(fb.getBoundDomain());
-                System.out.println("Bound domain: " + fb.getBoundDomain());
                 view.addFeatureLink(fb, target);
-//                target.setBoundDomain(formLabel);
             }
         }
         // Update the input page.

@@ -324,8 +324,8 @@ public class BioSourceAction extends SubmitFormAction {
             else {
                 sb.append(", ");
             }
-            sb.append("<a href=\"" + "javascript:show('" + topic + "', '"
-                    + label + "')\"" + ">" + label + "</a>");
+            sb.append("<a href=\"" + "javascript:show('" + label + "')\""
+                    + ">" + label + "</a>");
         }
         return sb.toString();
     }
