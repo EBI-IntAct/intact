@@ -234,6 +234,9 @@ public class GoHighlightmentSource extends HighlightmentSource {
             boolean searchForChildren, IntactUserI user) throws SQLException,
             IntactException {
 
+        // if the source highlight map of the network is empty
+        // it is filled with the source informations from each
+        // node of the graph
         if ( aGraph.isSourceHighlightMapEmpty() ) {
             GraphHelper gh = new GraphHelper( user );
 
@@ -242,9 +245,16 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
             for (int i = 0; i < size; i++) {
                 BasicGraphI node = (BasicGraphI) listOfNode.get( i );
+                // add all sources to the source highglighting map
+                // TODO: every node is set as non central node....
+                // this was done because the additional information which is
+                // added to the central node is not used when the graph is not
+                // built by the mine database table
                 gh.addSourcesToNode( node, false, aGraph );
             }
         }
+        // return the set of proteins to highlight based on the source
+        // highlighting map of the graph
         return proteinToHighlightSourceMap( aGraph, children, selectedGOTerm,
                 searchForChildren );
     }
