@@ -21,7 +21,7 @@ import java.util.*;
  * That class takes care of an Interaction.
  * <br>
  * It assumes that the data are already parsed and passed the validity check successfully.
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -92,24 +92,24 @@ public final class InteractionPersister {
         Collection e = interactionTag.getExperiments();
         Collection experiments = new ArrayList( e.size() );
         for ( Iterator iterator = e.iterator(); iterator.hasNext(); ) {
-            ExperimentDescriptionTag experimentDescription = (ExperimentDescriptionTag) iterator.next();
+            ExperimentDescriptionTag experimentDescription = ( ExperimentDescriptionTag ) iterator.next();
             experiments.add( new ExperimentWrapper( experimentDescription ) );
         }
 
-        if( DEBUG ) {
+        if ( DEBUG ) {
             System.out.println( "Before createShortlabel() " );
             for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
-                ExperimentWrapper experimentWrapper = (ExperimentWrapper) iterator.next();
+                ExperimentWrapper experimentWrapper = ( ExperimentWrapper ) iterator.next();
                 System.out.println( experimentWrapper );
             }
         }
 
         createShortlabel( interactionTag, experiments, helper );
 
-        if( DEBUG ) {
+        if ( DEBUG ) {
             System.out.println( "After createShortlabel() " );
             for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
-                ExperimentWrapper experimentWrapper = (ExperimentWrapper) iterator.next();
+                ExperimentWrapper experimentWrapper = ( ExperimentWrapper ) iterator.next();
                 System.out.println( experimentWrapper );
             }
         }
@@ -154,7 +154,7 @@ public final class InteractionPersister {
 
         // LOOP HERE OVER THE RESULT COLLECTION(shortlabel, experiment)
         for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
-            ExperimentWrapper experimentWrapper = (ExperimentWrapper) iterator.next();
+            ExperimentWrapper experimentWrapper = ( ExperimentWrapper ) iterator.next();
             ExperimentDescriptionTag psiExperiment = experimentWrapper.getExperiment();
             Collection myExperiments = new ArrayList( 1 );
             Experiment intactExperiment = ExperimentDescriptionPersister.persist( psiExperiment, helper );
@@ -190,13 +190,13 @@ public final class InteractionPersister {
             // Annotations
             final Collection annotations = interactionTag.getAnnotations();
             for ( Iterator iterator2 = annotations.iterator(); iterator2.hasNext(); ) {
-                final AnnotationTag annotationTag = (AnnotationTag) iterator2.next();
+                final AnnotationTag annotationTag = ( AnnotationTag ) iterator2.next();
                 final CvTopic cvTopic = AnnotationChecker.getCvTopic( annotationTag.getType() );
 
                 // search for an annotation to re-use, instead of creating a new one.
                 Annotation annotation = searchIntactAnnotation( annotationTag, helper );
 
-                if( annotation == null ) {
+                if ( annotation == null ) {
                     // doesn't exist, then create a new Annotation
                     annotation = new Annotation( helper.getInstitution(), cvTopic );
                     annotation.setAnnotationText( annotationTag.getText() );
@@ -209,7 +209,7 @@ public final class InteractionPersister {
             // TODO clean that thing. Right now we are most of the time stuffing the author confidence as annotation 
             // Confidence data
             final ConfidenceTag confidence = interactionTag.getConfidence();
-            if( confidence != null ) {
+            if ( confidence != null ) {
                 // TODO look after that unit parameter, we might have to adapt the CvTopic accordingly later.
                 final CvTopic authorConfidence = ControlledVocabularyRepository.getAuthorConfidenceTopic();
 
@@ -219,13 +219,13 @@ public final class InteractionPersister {
                                                          confidence.getValue() );
                 Annotation annotation = null;
                 for ( Iterator iterator3 = _annotations.iterator(); iterator3.hasNext() && annotation == null; ) {
-                    Annotation _annotation = (Annotation) iterator3.next();
-                    if( authorConfidence.equals( _annotation.getCvTopic() ) ) {
+                    Annotation _annotation = ( Annotation ) iterator3.next();
+                    if ( authorConfidence.equals( _annotation.getCvTopic() ) ) {
                         annotation = _annotation;
                     }
                 }
 
-                if( annotation == null ) {
+                if ( annotation == null ) {
                     // create it !
                     annotation = new Annotation( helper.getInstitution(), authorConfidence );
                     annotation.setAnnotationText( confidence.getValue() );
@@ -240,7 +240,7 @@ public final class InteractionPersister {
             // Now process the components...
             final Collection participants = interactionTag.getParticipants();
             for ( Iterator iterator4 = participants.iterator(); iterator4.hasNext(); ) {
-                ProteinParticipantTag proteinParticipant = (ProteinParticipantTag) iterator4.next();
+                ProteinParticipantTag proteinParticipant = ( ProteinParticipantTag ) iterator4.next();
                 ProteinParticipantPersister.persist( proteinParticipant, interaction, helper );
             }
         }
@@ -268,11 +268,11 @@ public final class InteractionPersister {
          */
         public final int compare( final Object o1, final Object o2 ) {
 
-            final String s1 = ( (String) o1 ).toLowerCase();
-            final String s2 = ( (String) o2 ).toLowerCase();
+            final String s1 = ( ( String ) o1 ).toLowerCase();
+            final String s2 = ( ( String ) o2 ).toLowerCase();
 
             // the current string comes first if it's before in the alphabetical order
-            if( !( s1.equals( s2 ) ) ) {
+            if ( !( s1.equals( s2 ) ) ) {
                 return s1.compareTo( s2 );
             } else {
                 return 0;
@@ -336,18 +336,18 @@ public final class InteractionPersister {
          */
         final Collection proteins = interaction.getParticipants();
         for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
-            ProteinParticipantTag proteinParticipant = (ProteinParticipantTag) iterator.next();
+            ProteinParticipantTag proteinParticipant = ( ProteinParticipantTag ) iterator.next();
             final String role = proteinParticipant.getRole();
             final ProteinHolder proteinHolder = getProtein( proteinParticipant );
 
             // the gene name is held in the master protein, not the splice variant.
             final String geneName = getGeneName( proteinHolder.getProtein() );
 
-            if( role.equals( "prey" ) ) { // most numerous role, cut down the number of test
+            if ( role.equals( "prey" ) ) { // most numerous role, cut down the number of test
                 preys.add( geneName );
-            } else if( role.equals( "bait" ) ) {
+            } else if ( role.equals( "bait" ) ) {
                 baits.add( geneName );
-            } else if( role.equals( "neutral" ) ) {
+            } else if ( role.equals( "neutral" ) ) {
                 neutrals.add( geneName );
             } else {
                 // we should never get in here if RoleChecker plays its role !
@@ -356,7 +356,7 @@ public final class InteractionPersister {
 
         String baitShortlabel = getLabelFromCollection( baits, true ); // fail on error
         String preyShortlabel = getLabelFromCollection( preys, false ); // don't fail on error
-        if( preyShortlabel == null ) {
+        if ( preyShortlabel == null ) {
             preyShortlabel = getLabelFromCollection( neutrals, true ); // fail on error
         }
 
@@ -377,7 +377,7 @@ public final class InteractionPersister {
     private static String getLabelFromCollection( Collection geneNames, boolean failOnError ) throws IntactException {
         String shortlabel = null;
 
-        if( geneNames == null ) {
+        if ( geneNames == null ) {
             throw new IllegalArgumentException( "You must give a non null collection of gene name." );
         }
 
@@ -385,19 +385,19 @@ public final class InteractionPersister {
             case 0:
                 // ERROR, we should have a bait.
                 // This should have been detected during step 1 or 2.
-                if( failOnError ) {
+                if ( failOnError ) {
                     throw new IntactException( "Could not find gene name for that interaction." );
                 }
                 break;
             case 1:
-                shortlabel = (String) geneNames.iterator().next();
+                shortlabel = ( String ) geneNames.iterator().next();
                 break;
 
             default:
                 // more than one ... need sorting
                 Object[] _geneNames = geneNames.toArray();
                 Arrays.sort( _geneNames, new GeneNameIgnoreCaseComparator() );
-                shortlabel = (String) _geneNames[ 0 ];
+                shortlabel = ( String ) _geneNames[0];
                 break;
         }
 
@@ -449,7 +449,7 @@ public final class InteractionPersister {
 
         while ( !allLabelFound ) {
 
-            if( count == 0 ) {
+            if ( count == 0 ) {
                 suffix = null;
                 label = _bait + "-" + _prey;
             } else {
@@ -462,13 +462,13 @@ public final class InteractionPersister {
             // check if truncation needed.
             // if so, remove one character from the longest between bait and prey ... until the length is right.
             while ( label.length() > MAX_LENGTH_INTERACTION_SHORTLABEL ) {
-                if( _bait.length() > _prey.length() ) {
+                if ( _bait.length() > _prey.length() ) {
                     _bait = _bait.substring( 0, _bait.length() - 1 ); // truncate, remove last charachter (from bait)
                 } else {
                     _prey = _prey.substring( 0, _prey.length() - 1 ); // truncate, remove last charachter (from prey)
                 }
 
-                if( suffix == null ) {
+                if ( suffix == null ) {
                     label = _bait + "-" + _prey;
                 } else {
                     label = _bait + "-" + _prey + suffix;
@@ -476,13 +476,13 @@ public final class InteractionPersister {
             } // while
 
             // we have the right label's size now ... search for existing one !
-            if( DEBUG ) {
+            if ( DEBUG ) {
                 System.out.println( "Search interaction by label: " + label );
             }
             Collection interactions = helper.search( Interaction.class.getName(), "shortlabel", label );
-            if( interactions.size() == 0 ) {
+            if ( interactions.size() == 0 ) {
 
-                if( DEBUG ) {
+                if ( DEBUG ) {
                     System.out.println( "No interaction found with the label: " + label );
                 }
 
@@ -492,41 +492,41 @@ public final class InteractionPersister {
                 boolean atLeastOneInteractionWithoutShortlabel = false;
                 boolean oneExperimentHasAlreadyBeenUpdated = false;
                 for ( Iterator iterator = experiments.iterator(); iterator.hasNext() && !atLeastOneInteractionWithoutShortlabel; ) {
-                    ExperimentWrapper experimentWrapper = (ExperimentWrapper) iterator.next();
+                    ExperimentWrapper experimentWrapper = ( ExperimentWrapper ) iterator.next();
                     // we want to associate only one shortlabel per loop and check if there is at least one
                     // more experiment to update.
-                    if( DEBUG ) {
+                    if ( DEBUG ) {
                         System.out.println( "Work on " + experimentWrapper );
                     }
-                    if( oneExperimentHasAlreadyBeenUpdated ) {
-                        if( !experimentWrapper.hasShortlabel() ) {
+                    if ( oneExperimentHasAlreadyBeenUpdated ) {
+                        if ( !experimentWrapper.hasShortlabel() ) {
                             atLeastOneInteractionWithoutShortlabel = true; // exit the loop.
-                            if( DEBUG ) {
+                            if ( DEBUG ) {
                                 System.out.println( "At least one more experiment to which we have to give a shortlabel" );
                             }
                         } else {
-                            if( DEBUG ) {
+                            if ( DEBUG ) {
                                 System.out.println( "has already a shortlabel" );
                             }
                         }
                     } else {
-                        if( !experimentWrapper.hasShortlabel() ) {
+                        if ( !experimentWrapper.hasShortlabel() ) {
                             experimentWrapper.setShortlabel( label );
                             oneExperimentHasAlreadyBeenUpdated = true;
-                            if( DEBUG ) {
+                            if ( DEBUG ) {
                                 System.out.println( "Experiment " + experimentWrapper.getExperiment().getShortlabel()
                                                     + " has been given the interaction shortlabel: " + label );
                             }
                         } else {
-                            if( DEBUG ) {
+                            if ( DEBUG ) {
                                 System.out.println( "none has been set up to now and the current one has already a shortlabel" );
                             }
                         }
                     }
                 }
 
-                if( DEBUG ) {
-                    if( atLeastOneInteractionWithoutShortlabel == true ) {
+                if ( DEBUG ) {
+                    if ( atLeastOneInteractionWithoutShortlabel == true ) {
                         System.out.println( "All experiment have been given an interaction shortlabel." );
                     }
                 }
@@ -534,7 +534,7 @@ public final class InteractionPersister {
                 allLabelFound = !atLeastOneInteractionWithoutShortlabel;
             } else {
 
-                if( DEBUG ) {
+                if ( DEBUG ) {
                     System.out.println( interactions.size() + " interactions found with the label: " + label );
                 }
 
@@ -560,7 +560,7 @@ public final class InteractionPersister {
                  */
 
                 for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
-                    Interaction intactInteraction = (Interaction) iterator.next();
+                    Interaction intactInteraction = ( Interaction ) iterator.next();
 
                     alreadyExistsInIntact( psiInteraction, experiments, intactInteraction ); // update experiments !
 
@@ -598,19 +598,19 @@ public final class InteractionPersister {
         // this is in theory a pretty heavy computation but in practice an interaction doesn't have much experiment
         // and few interaction have a lot of components.
 
-        if( DEBUG ) {
+        if ( DEBUG ) {
             System.out.println( "Compare interactions: " + psi + "\n and " + intact );
         }
 
         Collection psiExperiments = psi.getExperiments(); // TODO could be experiments
         for ( Iterator iterator = psiExperiments.iterator(); iterator.hasNext(); ) {
-            ExperimentDescriptionTag psiExperiment = (ExperimentDescriptionTag) iterator.next();
+            ExperimentDescriptionTag psiExperiment = ( ExperimentDescriptionTag ) iterator.next();
 
             Collection intactExperiments = intact.getExperiments();
             for ( Iterator iterator1 = intactExperiments.iterator(); iterator1.hasNext(); ) {
-                Experiment intactExperiment = (Experiment) iterator1.next();
+                Experiment intactExperiment = ( Experiment ) iterator1.next();
 
-                if( DEBUG ) {
+                if ( DEBUG ) {
                     System.out.println( "Check their experiment: psi(" +
                                         psiExperiment.getShortlabel() +
                                         ") and intact(" +
@@ -618,21 +618,21 @@ public final class InteractionPersister {
                 }
 
                 // compare two experiments using their shortlabel - TODO is this enough ?
-                if( intactExperiment.getShortLabel().equals( psiExperiment.getShortlabel() ) ) {
+                if ( intactExperiment.getShortLabel().equals( psiExperiment.getShortlabel() ) ) {
                     // they are the same ... check on the conponents
 
-                    if( DEBUG ) {
+                    if ( DEBUG ) {
                         System.out.println( "They are equals ! Check on their participants..." );
                     }
 
                     Collection psiComponents = psi.getParticipants();
                     boolean allComponentFound = true;
                     for ( Iterator iterator2 = psiComponents.iterator(); iterator2.hasNext() && allComponentFound; ) {
-                        ProteinParticipantTag psiComponent = (ProteinParticipantTag) iterator2.next();
+                        ProteinParticipantTag psiComponent = ( ProteinParticipantTag ) iterator2.next();
 
                         ProteinHolder holder = getProtein( psiComponent );
                         final Protein psiProtein;
-                        if( holder.isSpliceVariantExisting() ) {
+                        if ( holder.isSpliceVariantExisting() ) {
                             psiProtein = holder.getSpliceVariant();
                         } else {
                             psiProtein = holder.getProtein();
@@ -640,23 +640,23 @@ public final class InteractionPersister {
 
                         final CvComponentRole psiRole = RoleChecker.getCvComponentRole( psiComponent.getRole() );
 
-                        if( DEBUG ) {
+                        if ( DEBUG ) {
                             System.out.println( "PSI: " + psiProtein.getShortLabel() + " (" + psiRole.getShortLabel() + ")" );
                         }
 
                         Collection intactComponents = intact.getComponents();
                         boolean found = false;
                         for ( Iterator iterator3 = intactComponents.iterator(); iterator3.hasNext() && !found; ) {
-                            Component intactComponent = (Component) iterator3.next();
+                            Component intactComponent = ( Component ) iterator3.next();
 
-                            if( DEBUG ) {
+                            if ( DEBUG ) {
                                 System.out.print( "\tINTACT: " + intactComponent.getInteractor().getShortLabel() +
                                                   " (" + intactComponent.getCvComponentRole().getShortLabel() + "): " );
                             }
 
-                            if( psiRole.equals( intactComponent.getCvComponentRole() ) &&
-                                psiProtein.equals( intactComponent.getInteractor() ) ) {
-                                if( DEBUG ) {
+                            if ( psiRole.equals( intactComponent.getCvComponentRole() ) &&
+                                 psiProtein.equals( intactComponent.getInteractor() ) ) {
+                                if ( DEBUG ) {
                                     System.out.println( "EQUALS" );
                                 }
                                 found = true;
@@ -665,13 +665,13 @@ public final class InteractionPersister {
                                 // special case, a same protein can be bait and prey in the same interaction.
                                 // Hence, we have to browse the whole intact Component set until we find the
                                 // component or all have been checked.
-                                if( DEBUG ) {
+                                if ( DEBUG ) {
                                     System.out.println( "DIFFERENT" );
                                 }
                             }
                         } // intact components
 
-                        if( !found ) {
+                        if ( !found ) {
                             // no need to carry on to check the psi component set because now, we know that
                             // at least one is not found.
                             allComponentFound = false;
@@ -679,9 +679,9 @@ public final class InteractionPersister {
 
                     } // psi components
 
-                    if( allComponentFound ) {
+                    if ( allComponentFound ) {
                         // there is already an instance of that interaction in intact
-                        if( DEBUG ) {
+                        if ( DEBUG ) {
                             System.out.println( "All component have been found, hence there is an instance of " +
                                                 "that interaction in intact" );
                         }
@@ -693,7 +693,7 @@ public final class InteractionPersister {
                         sb.append( '\n' );
                         sb.append( "and involving as components: " );
                         for ( Iterator iterator2 = psi.getParticipants().iterator(); iterator2.hasNext(); ) {
-                            ProteinParticipantTag psiComponent = (ProteinParticipantTag) iterator2.next();
+                            ProteinParticipantTag psiComponent = ( ProteinParticipantTag ) iterator2.next();
                             sb.append( '[' );
                             sb.append( psiComponent.getProteinInteractor().getUniprotXref().getId() );
                             sb.append( ',' );
@@ -711,12 +711,12 @@ public final class InteractionPersister {
                         ExperimentWrapper experimentWrapper = null;
                         boolean found = false;
                         for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext() && !found; ) {
-                            experimentWrapper = (ExperimentWrapper) iterator2.next();
-                            if( experimentWrapper.getExperiment().equals( psiExperiment ) ) {
+                            experimentWrapper = ( ExperimentWrapper ) iterator2.next();
+                            if ( experimentWrapper.getExperiment().equals( psiExperiment ) ) {
                                 found = true;
                             }
                         }
-                        if( found == true ) {
+                        if ( found == true ) {
                             experiments.remove( experimentWrapper );
                         }
                     }
@@ -724,7 +724,7 @@ public final class InteractionPersister {
                     // else ... just carry on searching.
 
                 } else {
-                    if( DEBUG ) {
+                    if ( DEBUG ) {
                         System.out.println( "Experiment shortlabel are different ... don't check the components" );
                     }
                 }
@@ -747,16 +747,15 @@ public final class InteractionPersister {
                                                       final IntactHelper helper )
             throws IntactException {
 
-        final String text = annotationTag.getText();
-        Collection annotations = helper.search( Annotation.class.getName(), "annotationText", text );
         Annotation annotation = null;
 
-        if( annotations != null ) {
-            for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && annotation == null; ) {
-                Annotation anAnnotation = (Annotation) annotations.iterator().next();
-                if( annotationTag.getType().equals( anAnnotation.getCvTopic().getShortLabel() ) ) {
-                    annotation = anAnnotation;
-                }
+        final String text = annotationTag.getText();
+        Collection annotations = helper.search( Annotation.class.getName(), "annotationText", text );
+
+        for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && annotation == null; ) {
+            Annotation anAnnotation = ( Annotation ) iterator.next();
+            if ( annotationTag.getType().equals( anAnnotation.getCvTopic().getShortLabel() ) ) {
+                annotation = anAnnotation;
             }
         }
 
@@ -776,18 +775,18 @@ public final class InteractionPersister {
 
         final Collection aliases = protein.getAliases();
         for ( Iterator iterator = aliases.iterator(); iterator.hasNext() && geneName == null; ) {
-            final Alias alias = (Alias) iterator.next();
-            if( alias.getCvAliasType().getShortLabel().equals( "gene-name" ) ) {
+            final Alias alias = ( Alias ) iterator.next();
+            if ( alias.getCvAliasType().getShortLabel().equals( "gene-name" ) ) {
                 geneName = alias.getName();
             }
         }
 
-        if( geneName == null ) {
+        if ( geneName == null ) {
             geneName = protein.getShortLabel();
 
             // remove any _organism in case it exists
             int index = geneName.indexOf( '_' );
-            if( index != -1 ) {
+            if ( index != -1 ) {
                 geneName = geneName.substring( 0, index );
             }
 
@@ -811,7 +810,7 @@ public final class InteractionPersister {
 
         OrganismTag organism = proteinInteractor.getOrganism();
         BioSource bioSource = null;
-        if( organism != null ) {
+        if ( organism != null ) {
             bioSource = OrganismChecker.getBioSource( proteinInteractor.getOrganism() );
         }
 
