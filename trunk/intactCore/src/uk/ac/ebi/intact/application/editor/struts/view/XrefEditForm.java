@@ -32,7 +32,7 @@ public class XrefEditForm extends EditForm {
                                  HttpServletRequest request) {
         // The current xref.
         XreferenceBean xref = (XreferenceBean) getSelectedBean();
-        if (xref.getPrimaryId().trim().equals("")) {
+        if (xref.getPrimaryId().equals("")) {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("errors.required", "Primary Id"));

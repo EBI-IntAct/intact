@@ -54,16 +54,16 @@ public class SetUpInteractionAction  extends AbstractEditorAction {
         HttpSession session = getSession(request);
 
         // The experiment form.
-        String expFormName = EditorConstants.FORM_INTERACTION_EXP;
-        EditForm expForm = user.getEditForm(expFormName);
-        expForm.setItems(view.getExperiments());
-        request.setAttribute(expFormName, expForm);
+//        String expFormName = EditorConstants.FORM_INTERACTION_EXP;
+//        EditForm expForm = user.getEditForm(expFormName);
+//        expForm.setItems(view.getExperiments());
+//        request.setAttribute(expFormName, expForm);
 
         // The experiment hold form.
         String expHoldFormName = EditorConstants.FORM_INTERACTION_EXP_HOLD;
         EditForm expHoldForm = user.getEditForm(expHoldFormName);
         expHoldForm.setItems(view.getHoldExperiments());
-        request.setAttribute(expHoldFormName, expHoldForm);
+        session.setAttribute(expHoldFormName, expHoldForm);
 
         // The proteins edit form.
         String protFormName = EditorConstants.FORM_INTERACTION_PROT;
@@ -74,6 +74,7 @@ public class SetUpInteractionAction  extends AbstractEditorAction {
         // Populate with proteins.
         protForm.setItems(view.getProteins());
 
-        return mapping.findForward(EditorConstants.FORWARD_EDITOR);
+        return mapping.findForward(FORWARD_SUCCESS);
+//        return mapping.findForward(EditorConstants.FORWARD_EDITOR);
     }
 }

@@ -123,10 +123,12 @@ public class XreferenceBean extends EditBean implements Serializable {
 
     /**
      * Sets the primary id.
-     * @param primaryId the primary id as a <code>String</code>.
+     * @param primaryId the primary id as a <code>String</code>; any excess
+     * blanks are trimmed as this is set from values entered into a free input
+     * text box.
      */
     public void setPrimaryId(String primaryId) {
-        myPrimaryId = primaryId;
+        myPrimaryId = primaryId.trim();
     }
 
     /**

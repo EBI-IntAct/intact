@@ -40,6 +40,11 @@ public abstract class AbstractEditorAction extends Action {
     protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
 
     /**
+     * The key to success action.
+     */
+    protected static final String FORWARD_SUCCESS = "success";
+
+    /**
      * Returns the only instance of Intact Service instance.
      * @return only instance of the <code>EditorService</code> class.
      */
@@ -299,6 +304,26 @@ public abstract class AbstractEditorAction extends Action {
             getSession(request).setAttribute(name, instance);
         }
         return instance;
+    }
+
+    /**
+     * Returns true if the property for given name is empty.
+     * @param form the form to check.
+     * @param name the name of the property to check.
+     * @return true if <code>name</code> is empty in <code>form</code>.
+     */
+    protected boolean isPropertyEmpty(DynaActionForm form, String name) {
+        return isPropertyEmpty((String) form.get(name));
+    }
+
+    /**
+     * Returns true if given value is empty.
+     * @param value the value to check for empty.
+     * @return true if <code>value</code> is empty; any excess spaces
+     * are removed before checking for empty.
+     */
+    protected boolean isPropertyEmpty(String value) {
+        return value.trim().length() == 0;
     }
 
     // Helper Methods
