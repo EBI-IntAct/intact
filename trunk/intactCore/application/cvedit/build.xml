@@ -116,7 +116,7 @@
 
         <!-- Only compile cvedit sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            includes="**/application/cvedit/**" debug="on">
+            includes="**/application/cvedit/**" debug="on" source="1.4">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -150,7 +150,7 @@
             </lib>
 
             <!-- Inlcude the intact core -->
-            <lib dir="${root.dist.dir}"/>
+            <lib dir="${root.dist.dir}" />
 
 			<!-- Include common jar files from intact core. -->
 			<lib dir="${root.lib.dir}">
@@ -159,6 +159,8 @@
 				<include name="log4j-1.2.5.jar"/>
 				<include name="commons-beanutils.jar"/>
 				<include name="commons-collections-2.0.jar"/>
+				<include name="commons-pool.jar"/>
+				<include name="commons-logging.jar"/>
 				<include name="pgjdbc2.jar"/>
 			</lib>
 
