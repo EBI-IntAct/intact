@@ -23,7 +23,8 @@ import java.util.*;
 
 /**
  * Runs the PAYG algorithm for Oracle database. Type ant payg-ora from
- * the application/predict directory.
+ * the application/predict directory. Also, ensure that repository.xml contains
+ * entries for a user with write priviledges.
  *
  * @author konrad.paszkiewicz (konrad.paszkiewicz@ic.ac.uk)
  * @author Sugath Mudali (smudali@ebi.ac.uk)
@@ -163,7 +164,9 @@ public class PredictOra {
         }
         finally {
             // Close the connection regardless.
-            pred.closeConnection();
+            if (pred != null) {
+                pred.closeConnection();
+            }
         }
     } //end main
 
