@@ -50,9 +50,6 @@ public class ProteinEditForm extends EditForm {
         if (pb.getRole().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors.add("protein.role", new ActionError("error.dropdown.list"));
         }
-        else if (pb.getOrganism().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors.add("protein.organism", new ActionError("error.dropdown.list"));
-        }
         return errors;
     }
 }
