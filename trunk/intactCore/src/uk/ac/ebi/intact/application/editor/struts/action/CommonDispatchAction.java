@@ -14,8 +14,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -208,21 +207,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             // Display the error in the edit page.
             return mapping.getInputForward();
         }
-        IntactHelper helper = new IntactHelper();
-        // The topic for the annotation.
-        CvTopic cvtopic;
-        try {
-            cvtopic = (CvTopic) helper.getObjectByLabel(CvTopic.class,
-                cb.getTopic());
-        }
-        finally {
-            helper.closeStore();
-        }
-        Annotation annot = new Annotation(getService().getOwner(), cvtopic);
-        annot.setAnnotationText(cb.getDescription());
-
-        // Add the bean to the view; new bean is wrapped around the annotation.
-        view.addAnnotation(new CommentBean(annot));
+        // Add the bean to the view.
+        view.addAnnotation((CommentBean) cb.clone());
 
         return mapping.getInputForward();
     }
@@ -281,24 +267,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                 return mapping.getInputForward();
             }
         }
-        // We need to create a Xref here because getPrimaryIdLink() returns
-        // the primary key with out the link if Xref is null.
-        IntactHelper helper = new IntactHelper();
-        CvDatabase db;
-        CvXrefQualifier xqual;
-        try {
-            db = (CvDatabase) helper.getObjectByLabel(CvDatabase.class,
-                    xb.getDatabase());
-            xqual = (CvXrefQualifier) helper.getObjectByLabel(
-                CvXrefQualifier.class, xb.getQualifier());
-        }
-        finally {
-            helper.closeStore();
-        }
-        Xref xref = new Xref(getService().getOwner(), db, xb.getPrimaryId(),
-                xb.getSecondaryId(), xb.getReleaseNumber(), xqual);
-        // Add the bean to the view; new bean is wrapped around the xref.
-        view.addXref(new XreferenceBean(xref));
+        // Add the bean to the view.
+        view.addXref((XreferenceBean) xb.clone());
 
         return mapping.getInputForward();
     }
