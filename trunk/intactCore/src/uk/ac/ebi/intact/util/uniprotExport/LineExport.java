@@ -40,6 +40,8 @@ public class LineExport {
     protected static final String UNIPROT_CC_EXPORT = "uniprot-cc-note";
     protected static final String AUTHOR_CONFIDENCE = "author-confidence";
     protected static final String GENE_NAME = "gene-name";
+    protected static final String LOCUS_NAME = "locus-name";
+    protected static final String ORF_NAME = "orf-name";
     protected static final String NEGATIVE = "negative";
     protected static final String CC_NOTE = "uniprot-cc-note";
     protected static final String UNIPROT = "uniprot";
@@ -314,6 +316,8 @@ public class LineExport {
     protected CvTopic ccNoteTopic = null;
 
     protected CvAliasType geneNameAliasType;
+    protected CvAliasType locusNameAliasType; // locus-name
+    protected CvAliasType orfNameAliasType; // orf-name
 
     /**
      * Cache the CvInteraction property for the export.
@@ -362,6 +366,8 @@ public class LineExport {
         ccNoteTopic = (CvTopic) getCvObject( helper, CvTopic.class, CC_NOTE );
 
         geneNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, GENE_NAME );
+        locusNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, LOCUS_NAME );
+        orfNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, ORF_NAME );
     }
 
     /**
@@ -572,7 +578,7 @@ public class LineExport {
 
                 } else {
 
-                    log( "\t\t Interaction has 2 interactors but stochio are " + stochio1 + " and " + stochio2 + ", we don't export it." );
+                    log( "\t\t\t Interaction has 2 interactors but stochio are " + stochio1 + " and " + stochio2 + ", we don't export it." );
                     isBinaryInteraction = false;
                 }
 
@@ -587,12 +593,13 @@ public class LineExport {
 
                 } else {
 
-                    log( "\t\t Interaction has 1 interactors but stochio is " + component1.getStoichiometry() + " (should be 1), we don't export it." );
+                    log( "\t\t\t Interaction has 1 interactors but stochio is " + component1.getStoichiometry() + " (should be 1), we don't export it." );
                     isBinaryInteraction = false;
                 }
             } else {
 
-                log( "\t\t Interaction has not exactly 2 interactors (" + componentCount + "), we don't export it." );
+                log( "\t\t\t Interaction (" + interaction.getShortLabel() + ") is not binary (" + componentCount +
+                     " component(s)), we don't export it." );
                 isBinaryInteraction = false;
             }
         }
@@ -1026,7 +1033,7 @@ public class LineExport {
      * @param protein the protein from which we want to get a gene name.
      * @return a gene name or null if non could be found.
      */
-    protected String getGeneName( Protein protein, IntactHelper helper ) {
+    public String getGeneName( Protein protein, IntactHelper helper ) {
 
         String geneName = null;
 
@@ -1048,19 +1055,85 @@ public class LineExport {
             queryProtein = protein;
         }
 
-        // search for a gene name in the aliases of that protein - stop when we find one.
-        for( Iterator iterator = queryProtein.getAliases().iterator(); iterator.hasNext() && null == geneName; ) {
-            Alias alias = (Alias) iterator.next();
+        // look first for gene-name
+        List geneNames = selectAliasByCvTopic( queryProtein.getAliases(), geneNameAliasType );
 
-            if( geneNameAliasType.equals( alias.getCvAliasType() ) ) {
-                geneName = alias.getName();
+        if( geneNames.isEmpty() ) {
+
+            // then look for locus
+            geneNames = selectAliasByCvTopic( queryProtein.getAliases(), locusNameAliasType );
+
+            if( geneNames.isEmpty() ) {
+
+                // then look for orf
+                geneNames = selectAliasByCvTopic( queryProtein.getAliases(), orfNameAliasType );
+
+                if( geneNames.isEmpty() ) {
+
+                    // no gene-name, locus or orf for that protein, will display a dash ( '-' ) instead.
+
+                } else {
+                    geneName = ( (Alias) geneNames.get( 0 ) ).getName();
+                }
+
+            } else {
+                geneName = ( (Alias) geneNames.get( 0 ) ).getName();
             }
+
+        } else {
+            geneName = ( (Alias) geneNames.get( 0 ) ).getName();
         }
 
-//        if ( geneName == null ) {
-//            System.err.println( "Could not find a geneName for Protein: " + protein );
+//        // search for a gene name in the aliases of that protein - stop when we find one.
+//        for( Iterator iterator = queryProtein.getAliases().iterator(); iterator.hasNext() && null == geneName; ) {
+//            Alias alias = (Alias) iterator.next();
+//
+//            if( geneNameAliasType.equals( alias.getCvAliasType() ) ) {
+//                geneName = alias.getName();
+//            }
 //        }
 
         return geneName;
+    }
+
+    public List selectAliasByCvTopic( Collection aliases, CvAliasType aliasType ) {
+
+        List result = null;
+
+        for( Iterator iterator = aliases.iterator(); iterator.hasNext(); ) {
+            Alias alias = (Alias) iterator.next();
+
+            if( aliasType.equals( alias.getCvAliasType() ) ) {
+
+                if( result == null ) {
+                    result = new ArrayList( 4 );
+                }
+
+                result.add( alias );
+            }
+        }
+
+        if( result == null ) {
+
+            result = Collections.EMPTY_LIST;
+
+        } else {
+
+            Comparator c = new Comparator() {
+                public int compare( Object o1, Object o2 ) {
+
+                    Alias alias1 = (Alias) o1;
+                    Alias alias2 = (Alias) o2;
+
+                    return alias1.getName().compareTo( alias2.getName() );
+                }
+            };
+
+            if( result.size() > 1 ) {
+                Collections.sort( result, c );
+            }
+        }
+
+        return result;
     }
 }

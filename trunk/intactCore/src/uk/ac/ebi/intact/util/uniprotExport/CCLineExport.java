@@ -53,7 +53,10 @@ public class CCLineExport extends LineExport {
 
     /**
      * Storage of the CC lines per protein.
+     * <br>
      * Structure: Map( ProteinAC, Collection( CCLine ) )
+     * <br>
+     * <b>Note</b>: proteinAC must be a protein AC, not a Splice Variant ID.
      */
     private Map ccLines = new HashMap( 4096 );
 
@@ -192,22 +195,59 @@ public class CCLineExport extends LineExport {
                                String uniprotID2, Protein protein2,
                                int experimentCount ) {
 
+        // BUG:
+        //      if we give a UniProt ID which is a splice variant, then we add it with a key and that it never flushed
+        //      to fix that bug we need to convert it to a master AC before to put it in ccLines.
+        // Fix:
+        //      if protein is a splice variant, get its master uniprot ID for use in the ccLines.
+
+
+        // contains the Uniprot ID of protein 1, if protein 1 is a splice variant, we retreive its master's.
+        String master1 = null;
+        if( isSpliceVariant( protein1 ) ) {
+
+            Protein proteinMaster1 = getMasterProtein( protein1, helper );
+
+            if( proteinMaster1 == null ) {
+                System.err.println( "Could not export a CC line related to the master of " + uniprotID1 );
+            } else {
+                master1 = getUniprotID( proteinMaster1 );
+            }
+        } else {
+            master1 = uniprotID1;
+        }
+
+        // contains the Uniprot ID of protein 1, if protein 1 is a splice variant, we retreive its master's.
+        String master2 = null;
+        if( isSpliceVariant( protein2 ) ) {
+
+            Protein proteinMaster2 = getMasterProtein( protein2, helper );
+
+            if( proteinMaster2 == null ) {
+                System.err.println( "Could not export a CC line related to the master of " + uniprotID2 );
+            } else {
+                master2 = getUniprotID( proteinMaster2 );
+            }
+        } else {
+            master2 = uniprotID2;
+        }
+
         // produce the CC lines for the 1st protein
         CcLine cc1 = formatCCLines( uniprotID1, protein1, uniprotID2, protein2, experimentCount );
-        List cc4protein1 = (List) ccLines.get( uniprotID1 );
+        List cc4protein1 = (List) ccLines.get( master1 );
         if( null == cc4protein1 ) {
             cc4protein1 = new ArrayList();
-            ccLines.put( uniprotID1, cc4protein1 );
+            ccLines.put( master1, cc4protein1 );
         }
         cc4protein1.add( cc1 );
 
         // produce the CC lines for the 2nd protein
         if( !uniprotID1.equals( uniprotID2 ) ) {
             CcLine cc2 = formatCCLines( uniprotID2, protein2, uniprotID1, protein1, experimentCount );
-            List cc4protein2 = (List) ccLines.get( uniprotID2 );
+            List cc4protein2 = (List) ccLines.get( master2 );
             if( null == cc4protein2 ) {
                 cc4protein2 = new ArrayList();
-                ccLines.put( uniprotID2, cc4protein2 );
+                ccLines.put( master2, cc4protein2 );
             }
             cc4protein2.add( cc2 );
         }
@@ -224,9 +264,9 @@ public class CCLineExport extends LineExport {
      *          <font color=gray>DE   blablabla.</font>
      *          <font color=gray>GN   X OR Y.</font>
      *          CC   -!- INTERACTION:
-     *          CC       Self; Experiments=1; AC=EBI-307456,EBI-307456;
-     *          CC       P10981:tsr; Experiments=4; AC=EBI-307456,EBI-234567;
-     *          CC       P01232:rr44; Experiments=3; AC=EBI-307456,EBI-237;
+     *          CC       Self; NbExp=1; AC=EBI-307456,EBI-307456;
+     *          CC       P01232:rr44; NbExp=3; AC=EBI-307456,EBI-237;
+     *          CC       P10981:tsr; NbExp=4; AC=EBI-307456,EBI-234567;
      *          <font color=gray>DR   IntAct; P45594, -.</font>
      * </pre>
      *
@@ -241,7 +281,7 @@ public class CCLineExport extends LineExport {
                                   String uniprotID2, Protein protein2,
                                   int experimentCount ) {
 
-        StringBuffer buffer = new StringBuffer( 128 ); // average size is 160 char (without NEGATIVE, CAUTION, NOTES)
+        StringBuffer buffer = new StringBuffer( 128 ); // average size is 160 char
 
         buffer.append( "CC       " );
 
@@ -578,7 +618,7 @@ public class CCLineExport extends LineExport {
 
         for( Iterator iteratorUniprotId = uniprotIDs.iterator(); iteratorUniprotId.hasNext(); ) {
 
-            String uniprotID_1 = (String) iteratorUniprotId.next();
+            String uniprot_ID = (String) iteratorUniprotId.next();
 
             idProcessed++;
 
@@ -592,17 +632,20 @@ public class CCLineExport extends LineExport {
                 }
             }
 
-            log( NEW_LINE + "Protein selected: " + uniprotID_1 );
+            log( NEW_LINE + "Protein selected: " + uniprot_ID );
 
             percentProteinProcessed = (int) ( ( (float) idProcessed / (float) count ) * 100 );
             log( "Protein processed: " + percentProteinProcessed + "% (" + idProcessed + " out of " + count + ")" );
             log( "Interaction processed: " + alreadyProcessedInteraction.size() );
 
             // get the protein's and splice variants related to that Uniprot ID
-            Collection proteinSet_1 = getProteinFromIntact( helper, uniprotID_1 );
+            Collection proteinSet_1 = getProteinFromIntact( helper, uniprot_ID );
 
             for( Iterator iteratorP = proteinSet_1.iterator(); iteratorP.hasNext(); ) {
                 Protein protein1 = (Protein) iteratorP.next();
+
+                // get the protein1 real uniprot_ID.
+                final String uniprotID_1 = getUniprotID( protein1 );
 
                 Collection interactionP1 = getInteractions( protein1 );
 
@@ -660,18 +703,20 @@ public class CCLineExport extends LineExport {
 
                             log( "\t\t Interaction has exactly 2 interactors." );
 
-                            // now get the other protein ( other than uniprotID_1 )
+                            // now get the other protein ( other than uniprotID )
 
                             /**
                              * Uniprot ID -> Collection(Protein) (ie. all species + splice variants)
                              *
-                             * in the interaction, for each component, if the protein is part of the collection, take the protein
-                             * attached to the other component. If still the same, that means that we have the same protein
-                             * interacting as self. could be SV+P or different species though
+                             * in the interaction, for each component, if the protein is part of the collection, take
+                             * the protein attached to the other component. If still the same, that means that we have
+                             * the same protein interacting as self. could be SV+P or different species though.
                              */
 
-                            // we assume that they carry only Protein
+                            // we assume that Component carry only Protein as Interactor.
                             log( "\t\t Check what is the partner of " + uniprotID_1 );
+
+                            // TODO what happen is uniprot_ID = P12345 and protein1 is its splice variant: P12345-2 ?
 
                             Protein p1 = (Protein) component1.getInteractor();
                             log( "\t\t 1st Partner found: " + p1.getShortLabel() );
@@ -689,7 +734,7 @@ public class CCLineExport extends LineExport {
 
                             // retreive the UniProt ID of the protein or its master (is splice variant) to check if it
                             // should be exported. Reminder, only protein exported in the DR are exported in the CCs.
-                            String uniprotID_2_check = null;
+                            String uniprotID_2_check = uniprotID_2;
                             if( isSpliceVariant( protein2 ) ) {
                                 Protein master = getMasterProtein( protein2, helper );
                                 if( master != null ) {
@@ -697,12 +742,8 @@ public class CCLineExport extends LineExport {
                                 }
                             }
 
-                            if( uniprotID_2_check == null ) {
-                                uniprotID_2_check = uniprotID_2;
-                            }
-
-                            // we check that the protein we are currently dealing with was eligible in DR
-                            // if it is a splice variant, we check that the master protein was eligible.
+                            // We check that the protein we are currently dealing with was eligible in the DRLines set.
+                            // Note: if it is a splice variant, we check on its master protein.
                             if( !uniprotIDs.contains( uniprotID_2_check ) ) {
 
                                 log( "\n\t\t " + uniprotID_2 + " was not eligible for DR export, that interaction is not taken into account." );
@@ -783,14 +824,14 @@ public class CCLineExport extends LineExport {
                                                   experimentCount );
                                 }
 
-                            } // else (uniprotID2 is eligible for DR export)
+                            } // else (uniprotID_2 is eligible for DR export)
                         } // else (interaction is binary)
                     } // else (interaction hasn't been processed yet)
                 } // while there is interactions
-            } // proteins associated to UniprotID_1
+            } // proteins associated to UniprotID
 
             // write the CC content of protein still designated by index 'i' as its processing is finished.
-            flushCCLine( uniprotID_1 );
+            flushCCLine( uniprot_ID );
         } // i (all eligible uniprot IDs)
 
         // flush and close output file
