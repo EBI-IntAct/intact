@@ -171,7 +171,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
 <%@ include file="buttonBar.html" %>
 
 <!-- result table -->
-<table style="width: 100%; background-color: rgb(241, 245, 248);"
+<table style="background-color: rgb(241, 245, 248);"
        border="1" cellpadding="5" cellspacing="0" bordercolor="#4b9996">
 
     <tbody>
@@ -190,25 +190,29 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 else {
                     //need plurals - appending 's' works in most cases..
             %>
-            <td style="vertical-align: top;"><%= firstItem.getIntactType() + "s" %>
+            <!-- <td style="vertical-align: top;"><%= firstItem.getIntactType() + "s" %> -->
+            <td><%= firstItem.getIntactType() + "s" %>
             </td>
             <%
                 }
             %>
 
-            <td width="10%" nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="1">
+           <!--  <td width="10%" nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="1"> -->
+            <td nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="1">
                 <a href="<%= firstItem.getHelpLink() + "AnnotatedObject.shortLabel"%>" target="new"
                    class="tdlink">Name
                 </a>&nbsp;
             </td>
 
-            <td width="10%" nowrap="nowrap" class="headerdarkmid">
+           <!-- <td width="10%" nowrap="nowrap" class="headerdarkmid"> -->
+            <td nowrap="nowrap" class="headerdarkmid">
                 <a href="<%= firstItem.getHelpLink() + "BasicObject.ac"%>" target="new"
                    class="tdlink">Ac
                 </a>
             </td>
 
-            <td width="20%" nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="3">
+           <!-- <td width="80%" nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="3"> -->
+            <td nowrap="nowrap" class="headerdarkmid" rowspan="1" colspan="3">
                 <a href="<%= firstItem.getHelpLink() + "AnnotatedObject.fullName"%>" target="new"
                    class="tdlink">Description
                 </a>
@@ -223,7 +227,8 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <%
                 if(Experiment.class.isAssignableFrom(firstItem.getObject().getClass())) {
             %>
-            <td colspan="2" nowrap="nowrap" class="headerdarkmid">Interactions
+            <!-- <td colspan="2" nowrap="nowrap" class="headerdarkmid">Interactions -->
+            <td class="headerdarkmid">Interactions
             </td>
             <%
                 }
@@ -268,7 +273,8 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <%
                 } else {
             %>
-            <td style="vertical-align: top;">
+            <!-- <td style="vertical-align: top;"> -->
+            <td>
                 <input name="<%= bean.getObjAc()%>" type="checkbox" class="text" checked>
             </td>
             <%
@@ -286,11 +292,13 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             </td>
 
             <!-- AC, not linked -->
-            <td width="10%" class="lefttop"><%= bean.getObjAc() %>
+            <!-- <td width="10%" class="lefttop"><%= bean.getObjAc() %> -->
+            <td class="lefttop"><%= bean.getObjAc() %>
             </td>
 
             <!-- Description (ie full name - or a dash if there isn't one), not linked -->
-            <td width="20%" class="lefttop" rowspan="1" colspan="3">
+            <!-- <td width="80%" class="lefttop" rowspan="1" colspan="3"> -->
+            <td class="lefttop" rowspan="1" colspan="3">
                 <%= bean.getObjDescription() %><br>
             </td>
 
@@ -300,7 +308,8 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 if((Experiment.class.isAssignableFrom(bean.getObject().getClass())) ||
                     (Interaction.class.isAssignableFrom(bean.getObject().getClass()))) {
             %>
-            <td colspan="2" class="lefttop">
+            <!-- <td colspan="2" class="lefttop"> -->
+            <td>
                 <nobr><%= bean.getRelatedItemsSize() %><br></nobr>
             </td>
             <%
