@@ -42,7 +42,8 @@ public class CommentBean extends AbstractEditBean {
      *
      * @see #reset()
      */
-    public CommentBean() {}
+    public CommentBean() {
+    }
 
     /**
      * Instantiate an object of this class from an Annotation object. The key
@@ -94,16 +95,8 @@ public class CommentBean extends AbstractEditBean {
         // The topic for the annotation.
         CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class,
                 getTopic());
-
-        // Avoid creating multiple annotation objects for each call to this method.
-        if (myAnnotation == null) {
-            // Create a new annotation.
-            myAnnotation = new Annotation(user.getInstitution(), cvtopic);
-        }
-        else {
-            // Update the existing annotation object.
-            myAnnotation.setCvTopic(cvtopic);
-        }
+        // Update the existing annotation object.
+        myAnnotation.setCvTopic(cvtopic);
         myAnnotation.setAnnotationText(getDescription());
         return myAnnotation;
     }
@@ -150,7 +143,7 @@ public class CommentBean extends AbstractEditBean {
 
     /**
      * Resets fields to blanks, so the addAnnotation form doesn't display
-     * previous values. Calls the super reset to reset the internal key.
+     * previous values.
      */
     public void reset() {
         myTopic = "";
