@@ -30,13 +30,6 @@ import java.util.List;
  */
 public class EditorActionForm extends ValidatorForm {
 
-    // TODO Remove this later
-    /**
-     * The pattern for a valid short label.
-     */
-//    private static Pattern SHORT_LABEL_PAT =
-//            Pattern.compile("[a-z0-9\\-:_]+ ?[a-z0-9\\-:_]+$");
-
     /**
      * The short label.
      */
@@ -225,17 +218,6 @@ public class EditorActionForm extends ValidatorForm {
         if ((errors != null) && !errors.isEmpty()) {
             return errors;
         }
-
-        // TODO Remove this later
-        // Validate the short label
-//        Matcher matcher = SHORT_LABEL_PAT.matcher(getShortLabel());
-//        if (!matcher.matches()) {
-//            // Invalid syntax for a short label.
-//            errors = new ActionErrors();
-//            errors.add("shortLabel",
-//                    new ActionError("error.shortlabel.mask", getShortLabel()));
-//            return errors;
-//        }
         // The dispatch parameter to find out which button was pressed.
         String dispatch = getDispatch();
 

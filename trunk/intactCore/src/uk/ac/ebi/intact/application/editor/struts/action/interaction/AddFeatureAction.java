@@ -68,8 +68,6 @@ public class AddFeatureAction extends CommonDispatchAction {
         // Set the parent for the feature view.
         featureView.setParentView(intView);
 
-//        featureView.setParent((Interaction) intView.getAnnotatedObject());
-
         // The form.
         InteractionActionForm intform = (InteractionActionForm) form;
 

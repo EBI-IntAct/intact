@@ -17,14 +17,19 @@ import java.io.Serializable;
 public abstract class AbstractEditBean implements Serializable {
 
     /**
-     * The editing state.
+     * The bean is in the editing state.
      */
     public static final String VIEW = "editing";
 
     /**
-     * The saving state.
+     * The bean is in the saving state.
      */
     public static final String SAVE = "saving";
+
+    /**
+     * The bean is in the error state.
+     */
+    public static final String ERROR = "error";
 
     /**
      * Keeps track of the edit state; default is in view mode.

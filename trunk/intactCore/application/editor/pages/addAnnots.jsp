@@ -19,7 +19,7 @@
 <script language="JavaScript" type="text/javascript">
 
     function validateAnnotation() {
-    window.alert('I am here');
+    //window.alert('I am here');
     var v = document.forms[0].elements['dispatch'].value;
     window.alert(v);
         if (dispatch == "<%= EditorMenuFactory.SELECT_LIST_ITEM%>") {

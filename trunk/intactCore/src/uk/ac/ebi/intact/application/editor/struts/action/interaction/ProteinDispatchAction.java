@@ -74,16 +74,15 @@ public class ProteinDispatchAction extends AbstractEditorAction {
             return save(mapping, intform, request);
         }
         if (cmd.equals(msgres.getMessage("int.proteins.button.feature.add"))) {
-            request.setAttribute("dispatch", "add");
             return mapping.findForward(FEATURE);
-//            return addFeature(mapping, intform, request);
         }
         // default is delete protein.
         return delete(mapping, intform, request);
     }
 
+    // Helper methods
 
-    public ActionForward edit(ActionMapping mapping,
+    private ActionForward edit(ActionMapping mapping,
                               InteractionActionForm form,
                               HttpServletRequest request)
             throws Exception {
@@ -100,7 +99,7 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         return mapping.findForward(SUCCESS);
     }
 
-    public ActionForward save(ActionMapping mapping,
+    private ActionForward save(ActionMapping mapping,
                               InteractionActionForm form,
                               HttpServletRequest request)
             throws Exception {
@@ -121,7 +120,7 @@ public class ProteinDispatchAction extends AbstractEditorAction {
             errors.add("int.prot.role",
                     new ActionError("error.int.protein.edit.role"));
             saveErrors(request, errors);
-            cb.setEditState(ComponentBean.ERROR);
+            cb.setEditState(AbstractEditBean.ERROR);
             return mapping.findForward(FAILURE);
         }
         // The protein to update.
@@ -137,7 +136,7 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         return mapping.findForward(SUCCESS);
     }
 
-    public ActionForward delete(ActionMapping mapping,
+    private ActionForward delete(ActionMapping mapping,
                                 InteractionActionForm form,
                                 HttpServletRequest request)
             throws Exception {
@@ -150,46 +149,5 @@ public class ProteinDispatchAction extends AbstractEditorAction {
 
         // Update the form.
         return mapping.findForward(SUCCESS);
-    }
-
-    public ActionForward addFeature(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-            throws Exception {
-
-//    private ActionForward addFeature(ActionMapping mapping,
-//                                    InteractionActionForm form,
-//                                    HttpServletRequest request)
-//            throws Exception {
-        // Handler to the Intact User.
-        EditUserI user = getIntactUser(request);
-
-        // Still with the interaction view.
-        InteractionViewBean intView = (InteractionViewBean) user.getView();
-
-        // Set the selected topic as other operation use it for various tasks.
-        user.setSelectedTopic("Feature");
-
-        // Set the new object as the current edit object.
-        user.setView(Feature.class);
-
-        // The feature view bean.
-        FeatureViewBean featureView = (FeatureViewBean) user.getView();
-
-        // Set the parent for the feature view.
-        featureView.setParentView(intView);
-//        featureView.setParent((Interaction) intView.getAnnotatedObject());
-
-        // The form.
-        InteractionActionForm intform = (InteractionActionForm) form;
-
-        // The selected component from the form.
-        ComponentBean selectedComp = intform.getSelectedComponent();
-        
-        // The component for the feature.
-        featureView.setComponent(selectedComp.getComponent(user));
-
-        return mapping.findForward(FEATURE);
     }
 }

@@ -129,6 +129,17 @@
                 </var>
             </field>
 
+            <!-- Annotation topic property -->
+            <!-- Can't be done as it is because we want this validation only for
+                 pressing the add annotation button -->
+<!--            <field property="newAnnotation.topic" depends="mask">-->
+<!--                <msg name="mask" key="error.annotation.topic"/>-->
+<!--                <var>-->
+<!--                    <var-name>mask</var-name>-->
+<!--                    <var-value>${menu-pat}</var-value>-->
+<!--                </var>-->
+<!--            </field>-->
+
             <!-- CvInteractionType property -->
             <field property="interactionType" depends="mask">
                 <msg name="mask" key="error.int.cvtype"/>

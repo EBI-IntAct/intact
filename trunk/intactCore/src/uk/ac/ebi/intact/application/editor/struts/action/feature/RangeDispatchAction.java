@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The action class for editing a Range.
+ * The action class for editing a Range (edit/delete/save).
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -65,11 +65,14 @@ public class RangeDispatchAction extends AbstractEditorAction {
         else if (cmd.equals(msgres.getMessage("feature.range.button.save"))) {
             // Does the range exist in the current ranges?
             if (view.rangeExists(bean)) {
+                // Mar the bean as error.
+                bean.setEditState(AbstractEditBean.ERROR);
+
+                // The errors to display.
                 ActionErrors errors = new ActionErrors();
                 errors.add("feature.range.exists",
                         new ActionError("error.feature.range.exists"));
                 saveErrors(request, errors);
-
                 // Display the errors.
                 return mapping.getInputForward();
             }
@@ -88,9 +91,6 @@ public class RangeDispatchAction extends AbstractEditorAction {
             // from the view.
             view.delRange(bean);
         }
-        // Refresh the existing defined feature.
-        view.refreshDefinedFeature();
-
         // Update the form.
         return mapping.getInputForward();
     }

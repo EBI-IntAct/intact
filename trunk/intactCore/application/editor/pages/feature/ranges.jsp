@@ -53,6 +53,7 @@
             <c:if test="${ranges.editState == 'editing'}" var="edit"/>
             <c:if test="${ranges.editState != 'editing'}" var="notEdit"/>
             <c:if test="${ranges.editState == 'saving'}" var="save"/>
+            <c:if test="${ranges.editState == 'error'}" var="error"/>
 
             <%-- Fill with appropriate color; simply sets the color for the
                  cell; no information is displayed yet.
@@ -63,6 +64,10 @@
 
             <c:if test="${save}">
                 <td class="editCell"/>
+            </c:if>
+
+            <c:if test="${error}">
+                <td class="errorCell"/>
             </c:if>
 
                 <%-- Buttons; Edit or Save depending on the bean state;
@@ -92,7 +97,7 @@
                     </html:submit>
                 </td>
 
-                <%-- Data --%>
+                <%-- View mode --%>
                 <c:if test="${edit}">
                     <td class="tableCell">
                         <bean:write name="ranges" property="fromRange" filter="false"/>
@@ -108,8 +113,8 @@
                     </td>
                 </c:if>
 
-                <%-- Data --%>
-                <c:if test="${save}">
+                <%-- Save or Error mode --%>
+                <c:if test="${save or error}">
                     <td class="tableCell">
                         <html:text name="ranges" size="10" property="fromRange" indexed="true"/>
                         <br/><html:errors property="edit.fromRange"/>
@@ -130,15 +135,6 @@
                     </td>
                 </c:if>
             </tr>
-
-            <%-- Display error in a different row if it exists --%>
-            <html:messages id="error" property="edit.range">
-                <tr class="tableRowEven">
-                    <td class="tableErrorCell" colspan="6">
-                        <bean:write name="error" filter="false"/>
-                    </td>
-                </tr>
-            </html:messages>
 
             <%-- Increment row by 1 --%>
             <c:set var="row" value="${row + 1}"/>

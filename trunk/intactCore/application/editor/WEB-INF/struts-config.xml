@@ -660,9 +660,6 @@
             <forward name="cancel" path="/do/feature/cancel"/>
             <forward name="delete" path="/do/feature/delete"/>
 
-            <!-- Pressed on Auto Complete button -->
-            <forward name="feature.autocomplete" path="/do/feature/autocomplete"/>
-
             <!-- Cloning a feature for given AC -->
             <forward name="feature.clone" path="/do/feature/clone"/>
 
@@ -727,21 +724,10 @@
             validate="false"
             scope="session" />
 
-        <!-- Action to handle when auto-complete button is pressed -->
-        <action path="/feature/autocomplete"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureAutoCompleteAction"
-            name="featureForm"
-            input="/do/feature/fill/form"
-            validate="false"
-            scope="session">
-            <forward name="success" path="/do/feature/fill/form"/>
-        </action>
-
         <!-- Action to handle when cloning a feature for given AC -->
         <action path="/feature/clone"
             type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureCloneAction"
             name="featureForm"
-            input="/do/feature/fill/form"
             validate="false"
             scope="session">
             <forward name="success" path="/do/feature/fill/form"/>
