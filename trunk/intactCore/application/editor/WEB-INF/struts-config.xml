@@ -234,7 +234,7 @@
 
         <!-- Action to handle when the Submit/Cancel/Delete button is pressed -->
         <action path="/cv/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction"
             name="cvForm"
             input="/do/cv/fill/form"
             validate="true"
@@ -293,7 +293,7 @@
              no actions specific to the Experiment editor.
              -->
         <action path="/exp/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction"
             name="expForm"
             input="/do/exp/fill/form"
             validate="true"
@@ -394,7 +394,7 @@
 
         <!-- Action to handle when the Submit/Cancel/Delete button is pressed -->
         <action path="/bs/submit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction"
             name="bsForm"
             input="/do/bs/fill/form"
             validate="true"
