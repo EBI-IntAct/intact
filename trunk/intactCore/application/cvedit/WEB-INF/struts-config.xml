@@ -21,7 +21,7 @@
 
         <!-- logon form bean -->
         <form-bean name="loginForm"
-                   type="org.apache.struts.action.DynaActionForm">
+                   type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="username" type="java.lang.String"/>
             <form-property name="password" type="java.lang.String"/>
         </form-bean>
@@ -109,7 +109,7 @@
                 type="uk.ac.ebi.intact.application.cvedit.struts.security.LoginAction"
                 name="loginForm"
                 scope="request"
-                input="/login.jsp">
+                input="login.error.layout">
             <forward name="failure" path="login.error.layout"/>
             <forward name="success" path="search.layout"/>
         </action>
@@ -124,7 +124,7 @@
             <forward name="noMatch" path="no.match.layout"/>
             <!-- Multiple results found -->
             <forward name="results" path="/do/cv/results/pre"/>
-            <!-- Only a single match is found -->
+            <!-- Only a single match or created a new CV object -->
             <forward name="edit" path="/do/cv/edit/pre"/>
         </action>
 
