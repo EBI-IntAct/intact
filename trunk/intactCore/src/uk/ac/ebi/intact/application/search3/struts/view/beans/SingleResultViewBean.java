@@ -1,18 +1,27 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+
 /**
  * @author Michael Kleen
  * @version SingleResultViewBean.java Date: Dec 15, 2004 Time: 10:43:16 AM
  */
 public class SingleResultViewBean {
-    private String intactType;
-    private String link;
-    private String count;
+    private final String intactType;
+    private final String helpLink;
+    private final String searchLink;
+    private final String searchString;
+    private final int count;
 
-    public SingleResultViewBean(String intactType, String count, String link) {
+
+    public SingleResultViewBean(final String intactType, final int count, final String helpLink,
+                                final String searchLink, final String searchString) {
+
         this.intactType = intactType;
         this.count = count;
-        this.link = link;
+        this.helpLink = helpLink;
+        this.searchLink = searchLink;
+        this.searchString = searchString.replaceAll("\\'", "");
 
     }
 
@@ -20,27 +29,71 @@ public class SingleResultViewBean {
         return this.intactType;
     }
 
+    private String getSearchType() {
+        if (intactType.equalsIgnoreCase("Controlled vocabulary term")) {
+            return "CvObject";
+        }
+        else {
+            return this.intactType;
+        }
+    }
+
     public String getHelpURL() {
 
         if (intactType.equalsIgnoreCase("Protein")) {
-            return link + "Interactor";
+            return helpLink + "Interactor";
         }
         if (intactType.equalsIgnoreCase("Interaction")) {
-            return link + "Interaction";
+            return helpLink + "Interaction";
         }
         if (intactType.equalsIgnoreCase("Experiment")) {
-            return link + "Experiment";
+            return helpLink + "Experiment";
         }
         if (intactType.equalsIgnoreCase("Controlled vocabulary term")) {
-            return link + "cvs";
+            return helpLink + "CVS";
         }
         else {
-            return link + "search.TableLayout";
+            return helpLink + "search.TableLayout";
         }
     }
 
     public String getCount() {
-        return count;
+        return new Integer(count).toString();
     }
 
+    public String getSearchLink() {
+        if (count < SearchConstants.MAXIMUM_RESULT_SIZE) {
+            return this.searchLink + this.searchString + "&searchClass=" + this.getSearchType();
+        }
+        else {
+            return "-";
+        }
+    }
+
+    public String getSearchName() {
+        if (intactType.equalsIgnoreCase("Protein")) {
+            return "Select by Protein";
+        }
+        if (intactType.equalsIgnoreCase("Interaction")) {
+            return "Select by Interaction";
+        }
+        if (intactType.equalsIgnoreCase("Experiment")) {
+            return "Select by Experiment";
+        }
+        if (intactType.equalsIgnoreCase("Controlled vocabulary term")) {
+            return "Select by Controlled vocabulary";
+        }
+        else {
+            return "-";
+        }
+    }
+
+    public boolean isSearchable() {
+        if (count < SearchConstants.MAXIMUM_RESULT_SIZE) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

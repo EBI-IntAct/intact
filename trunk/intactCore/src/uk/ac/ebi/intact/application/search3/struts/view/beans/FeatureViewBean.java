@@ -1,4 +1,3 @@
-
 /*
 Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
@@ -7,7 +6,9 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Feature;
+import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.util.*;
@@ -66,9 +67,6 @@ public class FeatureViewBean extends AbstractViewBean {
         dbUrls = new HashMap();
     }
 
-
-
-//---------------- basic abstract methods that need implementing --------------
     /**
      * Adds the shortLabel of the Feature to an internal list used later for highlighting in a
      * display. NOT SURE IF WE STILL NEED THIS!!
@@ -87,19 +85,23 @@ public class FeatureViewBean extends AbstractViewBean {
         return "protein.single.view";
     }
 
+
     /**
-     * This is left over from the earlier version - will be removed. It does nothing here.
+     * Returns the Shortlabel of the given Feature Object
+     *
+     * @return String contains the shortlabel of the give Feature Object
      */
-    public void getHTML(java.io.Writer writer) {
-    };
-
-    //-------------------------- the useful stuff ------------------------------------
-
     public String getFeatureName() {
         return feature.getShortLabel();
 
     }
 
+
+    /**
+     * Returns the Feature Object itself
+     *
+     * @return Feature of WrappedFeatureViewBean
+     */
     public Feature getFeature() {
         return feature;
     }
@@ -111,9 +113,10 @@ public class FeatureViewBean extends AbstractViewBean {
      *         bound feature
      */
     public FeatureViewBean getBoundFeatureView() {
-        if (feature.getBoundDomain() != null)
+        if (feature.getBoundDomain() != null) {
             return new FeatureViewBean(feature.getBoundDomain(),
-                    getHelpLink(), searchURL, getContextPath());
+                                       getHelpLink(), searchURL, getContextPath());
+        }
         return null;
     }
 
@@ -134,7 +137,7 @@ public class FeatureViewBean extends AbstractViewBean {
             // get the rest and add it to the beginning
             String rest = label.substring(1, label.length());
             return begin + rest;
-            
+
 
         }
         return "-";
@@ -149,8 +152,9 @@ public class FeatureViewBean extends AbstractViewBean {
      */
     public String getFeatureIdentificationName() {
 
-        if (feature.getCvFeatureIdentification() != null)
+        if (feature.getCvFeatureIdentification() != null) {
             return feature.getCvFeatureIdentification().getShortLabel();
+        }
         return "-";
     }
 
@@ -169,17 +173,21 @@ public class FeatureViewBean extends AbstractViewBean {
     public String getFeatureIdentFullName() {
 
         if ((feature.getCvFeatureIdentification() != null) &&
-                (feature.getCvFeatureIdentification().getFullName() != null))
+                (feature.getCvFeatureIdentification().getFullName() != null)) {
             return feature.getCvFeatureIdentification().getFullName();
+        }
         return "-";
     }
 
+    /**
+     * Provides a Collection of Strings with shortlabels of the Xref of this specific Feature
+     *
+     * @return a Collection of String with the shortlabel of the Xref of the wrapped Feature
+     */
     public Collection getFeatureXrefs() {
         return feature.getXrefs();
 
     }
-
-    //------------------------------ useful URLs --------------------------------------
 
     /**
      * Provides a String representation of a URL to perform a search on CvFeatureType
@@ -192,7 +200,7 @@ public class FeatureViewBean extends AbstractViewBean {
             //set it on the first call
             //get the CvInteraction object and pull out its AC
             cvFeatureTypeSearchURL = searchURL + feature.getCvFeatureType().getAc()
-                    + "&amp;searchClass=CvFeatureType";
+                    + "&amp;searchClass=CvFeatureType" + "&filter=ac";
         }
         return cvFeatureTypeSearchURL;
     }
@@ -208,7 +216,7 @@ public class FeatureViewBean extends AbstractViewBean {
             //set it on the first call
             //get the CvInteraction object and pull out its AC
             cvFeatureIdentSearchURL = searchURL + feature.getCvFeatureIdentification().getAc()
-                    + "&amp;searchClass=CvFeatureIdentification";
+                    + "&amp;searchClass=CvFeatureIdentification" + "&filter=ac";
         }
         return cvFeatureIdentSearchURL;
     }

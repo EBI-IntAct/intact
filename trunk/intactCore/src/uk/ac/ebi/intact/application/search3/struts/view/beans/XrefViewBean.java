@@ -53,14 +53,6 @@ public class XrefViewBean {
         return "protein.single.view";
     }
 
-    /**
-     * This is left over from the earlier version - will be removed. It does nothing here.
-     */
-    public void getHTML(java.io.Writer writer) {
-    };
-
-
-
 
     /**
      * Provides direct access to the wrapped Xref itself.
@@ -107,17 +99,20 @@ public class XrefViewBean {
     public String getXrefQualifierName() {
         if (null != this.obj.getCvXrefQualifier()) {
             return this.obj.getCvXrefQualifier().getShortLabel();
-        } else
+        }
+        else {
             return "-";
+        }
     }
-  
+
 
     public String getPrimaryId() {
 
         if (null != this.obj.getPrimaryId()) {
             return this.obj.getPrimaryId();
 
-        } else {
+        }
+        else {
             return "-";
         }
 
@@ -129,7 +124,8 @@ public class XrefViewBean {
 
             //TODO
             return null;
-        } else {
+        }
+        else {
             return "-";
         }
 
@@ -140,7 +136,8 @@ public class XrefViewBean {
         if (null != this.obj.getSecondaryId()) {
             return this.obj.getSecondaryId();
 
-        } else {
+        }
+        else {
             return "-";
         }
 
@@ -152,7 +149,8 @@ public class XrefViewBean {
             //TODO
             return null;
 
-        } else {
+        }
+        else {
             return "-";
         }
 

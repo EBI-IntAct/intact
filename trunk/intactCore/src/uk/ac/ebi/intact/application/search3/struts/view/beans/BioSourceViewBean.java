@@ -23,13 +23,13 @@ import java.util.List;
  */
 
 /**
- * This class provides JSP view information for a particular BioSource Object. It is used in the
- * BioSource View
+ * This view bean is used to provide the information for JSP display relating to a particular BioSource Object.
+ * Its main purpose is to provide very simple beans for display in an initial search result page.
  */
 public class BioSourceViewBean extends AbstractViewBean {
 
     /**
-     * The BioSource Object which is wrapped 
+     * The BioSource Object which is wrapped
      */
     private final BioSource obj;
 
@@ -45,10 +45,9 @@ public class BioSourceViewBean extends AbstractViewBean {
     private String objSearchURL;
 
     /**
-     * The intact type of the wrapped AnnotatedObject. Note that only the interface types are
+     * The intact type of the wrapped BioSource Object. Note that only the interface types are
      * relevant for display purposes - thus any concrete 'Impl' types will be considered to be their
-     * interface types in this case (eg a wrapped ProteinImpl will have the intact type of
-     * 'Protein'). Would be nice to get rid of the proxies one day ...:-)
+     * interface types.
      */
     private String intactType;
 
@@ -56,15 +55,21 @@ public class BioSourceViewBean extends AbstractViewBean {
      * List of Annotation topics which should be filtered on. The values are set in the bean's
      * constructor.
      */
-    private List annotationFilters;
+    //TODO  move that code in an superclass 
+    private static List annotationFilters = new ArrayList(3);
+
+    static {
+        annotationFilters.add("remark-internal");
+        annotationFilters.add("uniprot-dr-export");
+        annotationFilters.add("uniprot-cc-export");
+    }
 
 
     /**
-     * The bean constructor requires an AnnotatedObject to wrap, plus beans on the context path to
-     * the search application and the help link. The object itself can be any one of Experiment,
-     * Protein, Interaction or CvObject type.
+     * The bean constructor requires an BioSource Object to wrap, plus beans on the context path to
+     * the search application and the help link.
      *
-     * @param obj         The AnnotatedObject whose beans are to be displayed
+     * @param obj         The BioSource whose beans are to be displayed
      * @param link        The link to the help pages
      * @param searchURL   The general URL to be used for searching (can be filled in later).
      * @param contextPath The path to the search application.
@@ -74,12 +79,6 @@ public class BioSourceViewBean extends AbstractViewBean {
         super(link, contextPath);
         this.searchURL = searchURL;
         this.obj = obj;
-        this.annotationFilters = new ArrayList();
-        //now set up the Annotation filter list
-        annotationFilters = new ArrayList();
-        annotationFilters.add("remark");
-        annotationFilters.add("uniprot-dr-export");
-        annotationFilters.add("uniprot-cc-export");
     }
 
 
@@ -98,13 +97,6 @@ public class BioSourceViewBean extends AbstractViewBean {
         return "protein.single.view";
     }
 
-    /**
-     * This is left over from the earlier version - will be removed. It does nothing here.
-     */
-    public void getHTML(java.io.Writer writer) {
-    };
-
-
 
     /**
      * The intact name for an object is its shortLabel. Required in all view types.
@@ -119,7 +111,7 @@ public class BioSourceViewBean extends AbstractViewBean {
     }
 
     /**
-     * The AnnotatedObject's AC. Required in all view types.
+     * The BioSource Object's AC. Required in all view types.
      *
      * @return String the AC of the wrapped object.
      */
@@ -131,9 +123,9 @@ public class BioSourceViewBean extends AbstractViewBean {
     }
 
     /**
-     * This is currently assumed to be the AnnotatedObject's full name. Required by all view types.
+     * This is currently assumed to be the BioSource's full name. Required by all view types.
      *
-     * @return String a description of the AnnotatedObject, or a "-" if there is none.
+     * @return String a description of the BioSource, or a "-" if there is none.
      */
     public String getObjDescription() {
         if (this.obj.getFullName() != null) return this.obj.getFullName();
@@ -161,7 +153,7 @@ public class BioSourceViewBean extends AbstractViewBean {
     /**
      * Provides direct access to the wrapped AnnotatedObject itself.
      *
-     * @return AnnotatedObject The reference to the wrapped object.
+     * @return BioSource The reference to the wrapped object.
      */
     public AnnotatedObject getObject() {
         return this.obj;
@@ -185,7 +177,7 @@ public class BioSourceViewBean extends AbstractViewBean {
             if ((!annotationFilters.contains(annotation.getCvTopic().getShortLabel()))) {
                 // if it's not in the filter get them
                 AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation,
-                        this.searchURL);
+                                                                                 this.searchURL);
                 result.add(anAnnotationViewBean);
             }
         }
@@ -195,7 +187,7 @@ public class BioSourceViewBean extends AbstractViewBean {
 
 
     /**
-     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in
+     * Provides access to Annotations of the CVTopics of the  wrraped BioSource stored in
      * SingleViewBeans for the prasentation in the jsp
      *
      * @return Collection with all XrefsViewBeans which  wrapped all Xrefs from the given Object
@@ -214,12 +206,11 @@ public class BioSourceViewBean extends AbstractViewBean {
     }
 
     /**
-     * Provides the basic Intact type of the wrapped AnnotatedObject (ie no java package beans).
+     * Provides the basic Intact type of the wrapped BioSource (ie no java package beans).
      * NOTE: only the INTERFACE types are provided as these are the only ones of interest in the
-     * model - display pages are not interested in objects of type XXXImpl. For subclasses of
-     * CvObject we only need 'CvObject' for display purposes.
+     * model - display pages are not interested in objects of type XXXImpl.
      *
-     * @return String The intact type of the wrapped object (eg 'Experiment')
+     * @return String The intact type of the wrapped object
      */
     public String getIntactType() {
 
@@ -242,25 +233,27 @@ public class BioSourceViewBean extends AbstractViewBean {
      */
     public String getSearchUrl(final AnnotatedObject anAnnotatedObject) {
 
-        final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType(
-                anAnnotatedObject);
+        final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType(anAnnotatedObject);
         return aSearchURL;
 
     }
 
     /**
-     * @return the SearchUrl to the given AnnotatadObject
+     * Returns a Url based Search Query to the givevn BioSource Object
+     *
+     * @return the SearchUrl to the given BioSource Object
      */
     public String getSearchUrl() {
 
-        final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType(
-                this.obj);
+        final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType(this.obj);
         return aSearchURL;
 
     }
 
     /**
-     * @return the FullName to the given AnnotatedObject
+     * Returns the Fullname to the givevn BioSource Object
+     *
+     * @return the FullName to the given BioSource Object
      */
     public String getFullname() {
         if (this.obj.getFullName() != null) {

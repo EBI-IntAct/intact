@@ -56,7 +56,6 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     private String cvIdentificationSearchURL = "";
 
-
     /**
      * The intact type of the wrapped AnnotatedObject. Note that only the interface types are
      * relevant for display purposes - thus any concrete 'Impl' types will be considered to be their
@@ -105,6 +104,18 @@ public class MainDetailViewBean extends AbstractViewBean {
     private Interaction wrappedInteraction;
 
     /**
+     * ArrayList to provide a Filter on Gene Names
+     */
+    private static ArrayList geneNameFilter = new ArrayList();
+
+    static {
+        geneNameFilter.add("gene-name");
+        geneNameFilter.add("gene-name-synonym");
+        geneNameFilter.add("orf-name");
+        geneNameFilter.add("locus-name");
+    }
+
+    /**
      * The maximum number of pages that can be displayed. This is only of relevance to 'large'
      * Experiments, ie those with more than {@link Constants} MAX_PAGE_SIZE Interactions.
      */
@@ -122,13 +133,15 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @throws IllegalArgumentException thrown if the parameter is not an Experiment
      */
     public MainDetailViewBean(Experiment obj, String link, String searchURL, String contextPath) {
+
         super(link, contextPath);
-        if (obj == null) throw new NullPointerException(
-                "MainDetailViewBean: can't display null object!");
-        if (!(obj instanceof Experiment))
-            throw new IllegalArgumentException(
-                    "MainDetailViewBean: Wrong object passed to view bean: type is " +
-                    obj.getClass().getName());
+        if (obj == null) {
+            throw new NullPointerException("MainDetailViewBean: can't display null object!");
+        }
+        if (!(obj instanceof Experiment)) {
+            throw new IllegalArgumentException("MainDetailViewBean: Wrong object passed to view bean: type is " +
+                                               obj.getClass().getName());
+        }
         this.searchURL = searchURL;
         this.obj = obj;
         dbUrls = new HashMap();
@@ -142,18 +155,19 @@ public class MainDetailViewBean extends AbstractViewBean {
             if (obj.getInteractions().size() % Constants.MAX_PAGE_SIZE > 0) maxPages++;
             //set the initial page of Interactions
             setInteractionPage(1);
-        } else
+        }
+        else {
             interactionList = obj.getInteractions();
+        }
 
         //now set up the Annotation filter list
         annotationFilters = new ArrayList();
         annotationFilters.add("remark");
+        annotationFilters.add("remark-internal");
         annotationFilters.add("uniprot-dr-export");
         annotationFilters.add("uniprot-cc-export");
+
     }
-
-
-    //---------------- basic abstract methods that need implementing --------------
 
     /**
      * Adds the shortLabel of the AnnotatedObject to an internal list used later for highlighting in
@@ -165,21 +179,12 @@ public class MainDetailViewBean extends AbstractViewBean {
         setHighlightMap(set);
     }
 
-
     /**
      * Returns the help section. Needs to be reviewed.
      */
     public String getHelpSection() {
         return "protein.single.view";
     }
-
-    /**
-     * This is left over from the earlier version - will be removed. It does nothing here.
-     */
-    public void getHTML(java.io.Writer writer) {
-    };
-
-    //--------------------- useful stuff ---------------------------------------------
 
     /**
      * Used to tell the bean whether or not it is to be used for a 'full' Experiment view or simply
@@ -230,7 +235,6 @@ public class MainDetailViewBean extends AbstractViewBean {
         return "-";
     }
 
-
     /**
      * Provides direct access to the wrapped Experiment itself.
      *
@@ -262,6 +266,11 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     }
 
+    /**
+     * Returns the BioSource of the given Experiment, returns "-" if the BioSource got no valid fullname
+     *
+     * @return String which contains the fullname of the biosource object
+     */
     public String getBioSourceName() {
 
         if (bioSourceName == null) {
@@ -289,8 +298,9 @@ public class MainDetailViewBean extends AbstractViewBean {
                 Annotation annotation = (Annotation) it.next();
 
                 //run through the filter
-                if ((annotationFilters.contains(annotation.getCvTopic().getShortLabel())))
+                if ((annotationFilters.contains(annotation.getCvTopic().getShortLabel()))) {
                     continue;   //ignore these
+                }
 
                 annotationsForDisplay.add(annotation);
             }
@@ -314,15 +324,15 @@ public class MainDetailViewBean extends AbstractViewBean {
             Annotation annotation = (Annotation) it.next();
 
             //run through the filter
-            if ((annotationFilters.contains(annotation.getCvTopic().getShortLabel())))
+            if ((annotationFilters.contains(annotation.getCvTopic().getShortLabel()))) {
                 continue;   //ignore these
+            }
 
             filteredAnnots.add(annotation);
         }
 
         return filteredAnnots;
     }
-
 
     /**
      * Filters the Annotations for the 'comment' ones only. This is useful for JSPs wishing to
@@ -332,6 +342,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @return Collection a list of the 'comment' Annotations, or empty if there are none.
      */
     public Collection getComments(Collection annots) {
+
         Collection comments = new ArrayList();
         for (Iterator it = annots.iterator(); it.hasNext();) {
             Annotation annot = (Annotation) it.next();
@@ -370,7 +381,6 @@ public class MainDetailViewBean extends AbstractViewBean {
         return uniprotLabel;
     }
 
-
     /**
      * Provides the Interactions for the wrapped Experiment.
      * <p/>
@@ -387,8 +397,10 @@ public class MainDetailViewBean extends AbstractViewBean {
         //first check for an 'Interaction context' view - if so then return that one only
         if (isInteractionView()) {
             result.add(wrappedInteraction);
-        } else
+        }
+        else {
             result = interactionList;
+        }
 
         return result;
     }
@@ -405,9 +417,10 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public void setInteractionPage(int page) {
 
-        if (page > maxPages)
+        if (page > maxPages) {
             throw new IndexOutOfBoundsException("interaction page number too large! Got: "
-                    + page + " Max: " + maxPages);
+                                                + page + " Max: " + maxPages);
+        }
         if (page < 1) throw new IndexOutOfBoundsException("interaction page number < 1!");
 
         //now need to work out the actual start index from the page number itself, as follows:
@@ -417,12 +430,13 @@ public class MainDetailViewBean extends AbstractViewBean {
         //The 'toIndex' has to be the smallest of either a 'page size' offset from the
         //startIndex, or the last index (ie size) of the whole List (ie if we are at the end)
         int toIndex = Math.min(fromIndex + Constants.MAX_PAGE_SIZE,
-                obj.getInteractions().size());
+                               obj.getInteractions().size());
 
         //'fromIndex' inclusive, 'toIndex' exclusive for subList method!
         if (List.class.isAssignableFrom(obj.getInteractions().getClass())) {
             interactionList = ((List) obj.getInteractions()).subList(fromIndex, toIndex);
-        } else {
+        }
+        else {
             // copy the collection in a List
             List tmpList = new ArrayList(obj.getInteractions());
             interactionList = tmpList.subList(fromIndex, toIndex);
@@ -465,10 +479,10 @@ public class MainDetailViewBean extends AbstractViewBean {
             Collection features = component.getBindingDomains();
             for (Iterator it1 = features.iterator(); it1.hasNext();) {
                 feature = (Feature) it1.next();
-                if (feature.getBoundDomain() != null)
-                    linkedFeatures.add(
-                            new FeatureViewBean(feature, getHelpLink(), searchURL,
-                                    this.getContextPath()));
+                if (feature.getBoundDomain() != null) {
+                    linkedFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL,
+                                                           this.getContextPath()));
+                }
             }
         }
         return linkedFeatures;
@@ -495,10 +509,10 @@ public class MainDetailViewBean extends AbstractViewBean {
             Collection features = component.getBindingDomains();
             for (Iterator it1 = features.iterator(); it1.hasNext();) {
                 feature = (Feature) it1.next();
-                if (feature.getBoundDomain() == null)
-                    singleFeatures.add(
-                            new FeatureViewBean(feature, getHelpLink(), searchURL,
-                                    this.getContextPath()));
+                if (feature.getBoundDomain() == null) {
+                    singleFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL,
+                                                           this.getContextPath()));
+                }
             }
         }
         return singleFeatures;
@@ -526,7 +540,6 @@ public class MainDetailViewBean extends AbstractViewBean {
         return results;
     }
 
-
     /**
      * Provides the Component that holds a Protein for a given Interaction. Assumes that a Protein
      * only appears ONCE as a Component of an Interaction.
@@ -549,46 +562,31 @@ public class MainDetailViewBean extends AbstractViewBean {
     }
 
     /**
-     * Provides a comma-separated list of gene names for the specified Protein.
+     * Convenience method to obtain all Gene Names of a Proteins
      *
-     * @param protein the Protein we want the gene names for
-     * @return String a list of gene names.
+     * @param protein The Protein we are interested in
+     * @return Collection a Set of Gene Names as Strings, empty if none found
      */
-    public String getGeneNames(Protein protein) {
+    public Collection getGeneNames(Protein protein) {
 
-        //populate on first request
-        Set nameSet = new HashSet();    //useful because sometimes they are repeated!! (eg GIOT)
-        StringBuffer geneNames = new StringBuffer();
-
+        Collection geneNames = new HashSet(); 
+        //geneNames = new StringBuffer();
         //the gene names are obtained from the Aliases for the Protein
         //which are of type 'gene name'...
         Collection aliases = protein.getAliases();
         for (Iterator it = aliases.iterator(); it.hasNext();) {
             Alias alias = (Alias) it.next();
 
-            //NB check the type String in this!!
-            if (alias.getCvAliasType().getShortLabel().equals("gene-name")) {
-                //don't know how many gene names there are - also
-                //there may be more aliases than gene names, so we can't
-                //tell here if we are done or not
-                nameSet.add(alias.getName());
+            if (geneNameFilter.contains(alias.getCvAliasType().getShortLabel())) {
+                geneNames.add(alias.getName());
             }
         }
-        //now convert to a String - if there are any names....
-        if (nameSet.size() > 0) {
-            for (Iterator it = nameSet.iterator(); it.hasNext();) {
-                geneNames.append(it.next());
-                if (it.hasNext()) geneNames.append(",");
-            }
-        } else
-            geneNames.append("-");
-
-        return geneNames.toString();
+        //now strip off trailing comma - if there are any names....
+        if (geneNames.size() == 0) {
+            geneNames.add("-");
+        }
+        return geneNames;
     }
-
-
-
-    //------------------------ useful URL generators ------------------------------
 
     /**
      * Provides a String representation of a URL to access the CV related to the Xref (ie the Cv
@@ -599,7 +597,8 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public String getCvDbURL(Xref xref) {
 
-        return (searchURL + xref.getCvDatabase().getAc() + "&amp;searchClass=CvDatabase");
+        return (searchURL + xref.getCvDatabase().getAc() +
+                "&amp;searchClass=CvDatabase&amp;");
     }
 
     /**
@@ -611,9 +610,9 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public String getCvQualifierURL(Xref xref) {
 
-        return (searchURL + xref.getCvXrefQualifier().getAc() + "&amp;searchClass=CvXrefQualifier");
+        return (searchURL + xref.getCvXrefQualifier().getAc() +
+                "&amp;searchClass=CvXrefQualifier&amp;");
     }
-
 
     /**
      * Provides a String representation of a URL to provide acces to an Xrefs' database (curently
@@ -676,7 +675,6 @@ public class MainDetailViewBean extends AbstractViewBean {
 
     }
 
-
     /**
      * Provides a String representation of a URL to perform a search on this Experiment's beans
      * (curently via AC)
@@ -688,7 +686,8 @@ public class MainDetailViewBean extends AbstractViewBean {
         if (objSearchURL == null) {
             //set it on the first call
             //NB need to get the correct intact type of the wrapped object
-            objSearchURL = searchURL + obj.getAc() + "&amp;searchClass=" + getIntactType();
+            objSearchURL = searchURL + obj.getAc() + "&amp;searchClass=" + getIntactType() +
+                    "&filter=ac";
         }
         return objSearchURL;
     }
@@ -706,7 +705,7 @@ public class MainDetailViewBean extends AbstractViewBean {
             //set it on the first call
             //get the CvInteraction object and pull out its AC
             cvInteractionSearchURL = searchURL + obj.getCvInteraction().getAc()
-                    + "&amp;searchClass=CvInteraction";
+                    + "&amp;searchClass=CvInteraction&filter=ac";
         }
         return cvInteractionSearchURL;
     }
@@ -725,7 +724,7 @@ public class MainDetailViewBean extends AbstractViewBean {
             //set it on the first call
             //get the CvIdentification object and pull out its AC
             cvIdentificationSearchURL = searchURL + obj.getCvIdentification().getAc()
-                    + "&amp;searchClass=CvIdentification";
+                    + "&amp;searchClass=CvIdentification&filter=ac";
         }
         return cvIdentificationSearchURL;
     }
@@ -741,8 +740,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
         if (interaction.getCvInteractionType() == null) return "-";
         return searchURL + interaction.getCvInteractionType().getAc()
-                + "&amp;searchClass=CvInteractionType";
-
+                + "&amp;searchClass=CvInteractionType&filter=ac";
     }
 
     /**
@@ -760,14 +758,28 @@ public class MainDetailViewBean extends AbstractViewBean {
         return bioSourceSearchURL;
     }
 
+    /**
+     * Provides a String representation of URL to perform a search to the BioSource Object from the give Protein
+     *
+     * @param protein the Protein in which we are interested in
+     * @return String contains the URL
+     */
     public String getProteinBiosourceURL(Protein protein) {
         return searchURL + protein.getBioSource().getAc() + "&amp;searchClass=BioSource";
     }
 
+    /**
+     * Provides a String representation of the URL to perform a search to the BioSource Object
+     *
+     * @param bioSource the BioSource in which we are interested in
+     * @return Sring contains the URL
+     */
     public String getBiosourceURL(BioSource bioSource) {
+
         if (bioSource != null) {
             return searchURL + bioSource.getAc() + "&amp;searchClass=BioSource";
-        } else {
+        }
+        else {
             return "-";
         }
     }
@@ -780,14 +792,12 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @return String a String representation of the name of the BioSource
      */
     public String getBioSourceName(BioSource bioSource) {
-        if (bioSource != null) {
-            if (bioSource.getFullName() != null) {
-                return bioSource.getFullName();
-            } else {
-                return bioSource.getShortLabel();
-            }
+
+        if (bioSource != null && bioSource.getShortLabel() != null) {
+            return bioSource.getShortLabel();
         }
         return "-";
+
     }
 
     /**
@@ -799,13 +809,11 @@ public class MainDetailViewBean extends AbstractViewBean {
     public String getExperimentBioSourceName() {
         BioSource bioSource = obj.getBioSource();
         if (bioSource != null) {
-            if (bioSource.getFullName() != null) {
-                return bioSource.getFullName();
-            } else {
-                return bioSource.getShortLabel();
-            }
+            return bioSource.getShortLabel();
         }
-        return "-";
+        else {
+            return "-";
+        }
     }
 
     /**
@@ -817,7 +825,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public String getCvTopicSearchURL(Annotation annot) {
 
-        return searchURL + annot.getCvTopic().getAc() + "&amp;searchClass=CvTopic";
+        return searchURL + annot.getCvTopic().getAc() + "&amp;searchClass=CvTopic&filter=ac";
     }
 
     /**
@@ -829,9 +837,9 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public String getCvComponentRoleSearchURL(Component comp) {
 
-        return searchURL + comp.getCvComponentRole().getAc() + "&amp;searchClass=CvComponentRole";
+        return searchURL + comp.getCvComponentRole().getAc() +
+                "&amp;searchClass=CvComponentRole&filter=ac";
     }
-
 
     /**
      * Convenience method to provide a String representation of a URL to perform a search on
@@ -842,7 +850,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public String getProteinSearchURL(Protein prot) {
 
-        return searchURL + prot.getAc() + "&amp;searchClass=Protein";
+        return searchURL + prot.getAc() + "&amp;searchClass=Protein&amp;view=single&filter=ac";
     }
 
     /**
@@ -854,8 +862,6 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public String getProteinPartnerURL(Protein prot) {
 
-        return searchURL + prot.getAc() + "&amp;searchClass=Protein&amp;source=simple";
+        return searchURL + prot.getAc() + "&amp;searchClass=Protein&amp;view=partner&filter=ac";
     }
-
-
 }
