@@ -230,9 +230,10 @@ public class HtmlBuilder {
      */
     private void htmlView(Annotation anAnnotation) throws IOException {
 
-        // Filter out remark (topic).
+        // Filter out remark and uniprot-dr-export (topics).
         // todo: Need to get the topics to mask from a properties file.
-        if (anAnnotation.getCvTopic().getShortLabel().equals("remark")) {
+        String label = anAnnotation.getCvTopic().getShortLabel();
+        if ((label.equals("remark")) || (label.equals("uniprot-dr-export"))) {
             return;
         }
         write("<tr bgcolor="
