@@ -20,6 +20,11 @@ public interface SearchConstants {
     public static final String INTACT_SERVICE = "IntactService";
 
     /**
+     * To access intact types.
+     */
+    public static final String INTACT_TYPES = "intacttypes";
+
+    /**
      * The key to access a user session object.
      */
     public static final String INTACT_USER = "IntactUser";
