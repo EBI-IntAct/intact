@@ -247,10 +247,10 @@ public class Graph2MIF {
         Collection relInteractionTypes = getRelInteractionTypes(relExperiments);
         Iterator relInteractionTypesIterator = relInteractionTypes.iterator();
         while (relInteractionTypesIterator.hasNext()) {
-            CvInteractionType interactionType = (CvInteractionType) relInteractionTypesIterator.next();
+            CvInteraction cvInteraction = (CvInteraction) relInteractionTypesIterator.next();
             Element psiInteractionType = null;
             try {
-                psiInteractionType = procInteractionType(interactionType);
+                psiInteractionType = procCvInteraction(cvInteraction);
                 psiInteraction.appendChild(psiInteractionType);
             } catch (ElementNotParseableError e) {
                 logger.info("interactionType failed (not required):" + e.getMessage());
@@ -274,47 +274,7 @@ public class Graph2MIF {
         return psiInteraction;
     }
 
-    /**
-     * process CvInteractionType
-     * @param relInteractionType to convert to PSI-Format
-     * @return DOM-Object, representing a <interactionType>
-     * @exception ElementNotParseableError if PSIrequired Elements are missing within graph
-     * @see uk.ac.ebi.intact.model.CvInteractionType
-     */
-    private Element procInteractionType(CvInteractionType relInteractionType) throws ElementNotParseableError {
-        //generate DOM-Element
-        Element psiInteractionType = doc.createElement("interactionType");
-        //local elements processing...
-        try {
-            Element psiNames = getPsiNamesOfAnnotatedObject(relInteractionType);
-            psiInteractionType.appendChild(psiNames);
-        } catch (ElementNotParseableError e) {
-            logger.warn("names failed (required):" + e.getMessage());
-            if (STRICT_MIF) {
-                throw new ElementNotParseableError("no cvInteractionType ShortLabel");
-            }
-        }
-        try {
-            Element psiXref = procXrefCollection(relInteractionType.getXref());
-            psiInteractionType.appendChild(psiXref);
-        } catch (ElementNotParseableError e) {
-            logger.warn("xref failed (required):" + e.getMessage());
-            if (STRICT_MIF) {
-                throw new ElementNotParseableError("no cvInteraction:" + e.getMessage());
-            }
-        } catch (NullPointerException e) {
-            logger.warn("xref failed (required):" + e.getMessage());
-            if (STRICT_MIF) {
-                throw new ElementNotParseableError("no cvInteraction-xref");
-            }
-        }
-        //returning result DOMObject
-        if (!psiInteractionType.hasChildNodes()) {
-            logger.warn("interactionType failed, no child elements.");
-            throw new ElementNotParseableError("interactionType has no Child Elements");
-        }
-        return psiInteractionType;
-    }
+
 
     /**
      * process experiments
