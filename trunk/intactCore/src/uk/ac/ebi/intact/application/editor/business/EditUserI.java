@@ -79,6 +79,13 @@ public interface EditUserI extends IntactUserI, Serializable {
     public AbstractEditViewBean getView();
 
     /**
+     * Releases the current view back to the pool. Once this method is called
+     * the view is unusable till a new view is set again. Only do this as the
+     * last item in a series of actions to do.
+     */
+    public void releaseView();
+    
+    /**
      * Sets the current view to the Interaction editor. This is used situation
      * where the last edited state is restored without reinitialising the view.
      * For example, the Interaction editor state is restored when returning from the
