@@ -15,13 +15,14 @@ package uk.ac.ebi.intact.application.hierarchView.business.image;
  */
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class ImageBean  {
+public class ImageBean implements Serializable {
 
     /**
      * generated image data in order to display the picture
      */
-    private BufferedImage imageData;
+    private transient BufferedImage imageData;
 
     public BufferedImage getImageData() {
         return imageData;
