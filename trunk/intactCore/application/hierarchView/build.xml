@@ -98,6 +98,7 @@ Verison: $Id$
         <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-1.0.jar"/>
+        <pathelement path="${root.lib.dir}/junit.jar"/>
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-logging.jar"/>
 
@@ -321,6 +322,7 @@ Verison: $Id$
             <fileset dir="${root.config.dir}">
                 <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
+                <include name="Institution.properties"/>
             </fileset>
         </copy>
 
@@ -331,7 +333,7 @@ Verison: $Id$
             </fileset>
         </copy>
 
-        <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
+        <!-- the OJB and Institution properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
     </target>
 
@@ -743,6 +745,17 @@ Verison: $Id$
         <replace file="${dist.dir}/${hierarchView.context.file}"
                  token="[server.name]"
                  value="${server.name}" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+    <target name="junit" depends="compile"
+            description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="uk.ac.ebi.intact.application.hierarchView.business.graph.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
     </target>
 
 </project>

@@ -21,12 +21,12 @@
     <property name="intact.app.dir" value=".."/>
 
     <property environment="env"/>
-    
+
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
     <property name="dist.dir" value="dist"/>
-    
+
     <!-- This project specific paths. -->
     <property name="src.dir" value="src"/>
     <property name="lib.dir" value="lib"/>
@@ -110,7 +110,7 @@
 
     <!-- =================================================================== -->
 
-    
+
     <!-- =================================================================== -->
 
     <!-- Calls the jar task from core build file if intact core jar file
@@ -129,6 +129,7 @@
             <fileset dir="${root.config.dir}">
                 <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
+                <include name="Institution.properties"/>
             </fileset>
         </copy>
 
@@ -136,7 +137,7 @@
         <copy todir="${dest.dir}/config"
             file="${root.config.dir}/proxy.properties"/>
 
-        
+
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
         <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
@@ -190,7 +191,7 @@
 
     <!-- =================================================================== -->
 
-    
+
     <!-- =================================================================== -->
 
     <!-- Copies jar files. The database to include is specified as a parameter. -->
@@ -213,7 +214,7 @@
                 <include name="commons-pool.jar"/>
                 <include name="xercesImpl.jar"/>
                 <include name="xml-apis.jar"/>
-                <include name="jakarta-regexp-1.2.jar"/>
+		    <include name="jakarta-regexp-1.2.jar"/>
             </fileset>
         </copy>
 
@@ -264,7 +265,7 @@
 
     <!-- =================================================================== -->
 
-   
+
     <!-- =================================================================== -->
 
     <!-- These unit tests only run one tests in a single package; we need to add
@@ -293,7 +294,7 @@
 
     <!-- =================================================================== -->
 
-    
+
     <!-- Generates the last modified date file. -->
 
     <target name="gen-last-modified-file">
@@ -304,5 +305,5 @@
 
     <!-- =================================================================== -->
 
-    
+
 </project>

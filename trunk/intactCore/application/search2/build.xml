@@ -119,6 +119,7 @@
              <fileset dir="${pages.dir}">
                  <!-- Do not remove search specific files -->
                  <exclude name="noMatch.jsp"/>
+                 <exclude name="warning.jsp"/>
                  <exclude name="results.jsp"/>
                  <exclude name="sidebarInput.jsp"/>
             </fileset>
@@ -158,6 +159,7 @@
             <fileset dir="${root.config.dir}">
                 <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
+                <include name="Institution.properties"/>
             </fileset>
         </copy>
 
