@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -64,16 +64,6 @@ public interface EditorConstants {
     public static final String FORWARD_NO_MATCHES = "noMatch";
 
     /**
-     * The form to display the results from a search.
-     */
-    public static final String FORM_RESULTS = "resultForm";
-
-    /**
-     * The name of the cv info form.
-     */
-    public static final String FORM_INFO = "cvinfoForm";
-
-    /**
      * The name of the Xref edit form.
      */
     public static final String FORM_XREF_EDIT = "xrefEditForm";
@@ -82,9 +72,4 @@ public interface EditorConstants {
      * The name of the Comment (annotation) edit form.
      */
     public static final String FORM_COMMENT_EDIT = "commentEditForm";
-
-    /**
-     * The name of the BioSource form.
-     */
-    public static final String FORM_BIOSOURCE = "bioSourceForm";
 }
