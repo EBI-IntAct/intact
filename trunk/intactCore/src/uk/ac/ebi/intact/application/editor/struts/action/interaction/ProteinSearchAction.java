@@ -114,11 +114,12 @@ public class ProteinSearchAction extends AbstractEditorAction {
         Collection proteins;
 
         if (param.equals("spAc")) {
-            proteins = user.getSpliceProteinsByXref(value);
-            // Try importing Proteins via SRS
-            if (proteins.isEmpty()) {
-                proteins = user.getSPTRProteins(value);
-            }
+            proteins = user.getSPTRProteins(value);
+//            proteins = user.getSpliceProteinsByXref(value);
+//            // Try importing Proteins via SRS
+//            if (proteins.isEmpty()) {
+//                proteins = user.getSPTRProteins(value);
+//            }
         }
         else {
             proteins = user.search1(Protein.class.getName(), param, value);
