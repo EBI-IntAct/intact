@@ -84,11 +84,12 @@ public class PersistenceTutorial {
     }
 
     /**
-     *  creates interactions
+     *  creates interactors
+     *  getting the role and creating components
      *
-     * @param owner
-     * @param organism
-     * @param interaction
+     * @param owner institution which owns the interaction
+     * @param organism  the organism which belongs that interactor
+     * @param interaction interaction the interactor takes part in
      * @throws IntactException
      */
     private void createInteractors(Institution owner, BioSource organism, Interaction interaction) throws IntactException {
@@ -132,7 +133,7 @@ public class PersistenceTutorial {
     /**
      * updates IntAct with proteins from other databases like UniProt
      *
-     * @param proteinAc
+     * @param proteinAc Accession number to specify the protein
      * @throws UpdateProteinsI.UpdateException
      *
      */
@@ -173,7 +174,7 @@ public class PersistenceTutorial {
     /**
      * deletes an experiment specified by the shortlabel
      *
-     * @param shortlabel
+     * @param shortlabel  the shortlabel of the experiment which should be deleted
      * @throws IntactException
      */
     private void deleteExperiment(String shortlabel) throws IntactException {
@@ -187,7 +188,7 @@ public class PersistenceTutorial {
     /**
      * deletes an interaction specified by the shortlabel
      *
-     * @param shortlabel
+     * @param shortlabel the shortlabel of the interaction which should be deleted
      * @throws IntactException
      */
     private void deleteInteraction(String shortlabel) throws IntactException {
@@ -202,7 +203,7 @@ public class PersistenceTutorial {
     /**
      * delete a interactor (or more) specified by the shortlabel
      *
-     * @param shortlabel
+     * @param shortlabel  the shortlabel of the interactor which should be deleted
      * @throws IntactException
      */
     private void deleteInteractor(String shortlabel) throws IntactException {
