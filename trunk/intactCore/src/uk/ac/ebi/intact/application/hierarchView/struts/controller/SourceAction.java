@@ -65,6 +65,8 @@ public final class SourceAction extends IntactBaseAction {
             user = getIntactUser(session);
         } catch (SessionExpiredException see) {
             String applicationPath = request.getContextPath();
+            if (applicationPath == null) applicationPath = "";
+            logger.error("Session expired, gives a link to "+ applicationPath);
             addError ("error.session.expired", applicationPath);
             saveErrors(request);
             return (mapping.findForward("error"));
