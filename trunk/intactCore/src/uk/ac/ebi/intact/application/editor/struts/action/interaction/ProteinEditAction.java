@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinEditForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,23 +46,23 @@ public class ProteinEditAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        EditForm editform = (EditForm) form;
+        ProteinEditForm protform = (ProteinEditForm) form;
 
         // The current view of the edit session.
         InteractionViewBean viewbean =
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // The bean associated with the current action.
-        ProteinBean pb = (ProteinBean) editform.getSelectedBean();
+        ProteinBean pb = (ProteinBean) protform.getSelectedBean();
 
         // We must have the protein bean.
         assert pb != null;
 
-        if (editform.editPressed()) {
+        if (protform.editPressed()) {
             // Must save this bean.
             pb.setEditState(EditBean.SAVE);
         }
-        else if (editform.savePressed()) {
+        else if (protform.savePressed()) {
             if (viewbean.hasDuplicates(pb)) {
                 ActionErrors errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR,
@@ -69,16 +70,17 @@ public class ProteinEditAction extends AbstractEditorAction {
                                 pb.getShortLabel(), pb.getRole()));
                 saveErrors(request, errors);
                 pb.setEditState(ProteinBean.ERROR);
-                return mapping.getInputForward();
+                return mapping.findForward(FORWARD_SUCCESS);
             }
             // The protein to update.
             viewbean.addProteinToUpdate(pb);
             // Back to the view mode.
             pb.setEditState(EditBean.VIEW);
         }
-        else if (editform.deletePressed()) {
-            // Delete is pressed.
-            viewbean.delProtein(pb, editform.getIndex());
+        else if (protform.deletePressed()) {
+            // Delete is pressed; mark for deletion; see FillProteinFormAction
+            // for more details.
+            pb.markForDelete();
         }
         else {
             // Unknown operation; should never get here.
