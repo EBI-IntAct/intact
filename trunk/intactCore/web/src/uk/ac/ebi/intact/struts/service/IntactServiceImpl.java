@@ -4,23 +4,17 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.struts.service;
+package uk.ac.ebi.intact.application.cvedit.struts.service;
 
 import java.util.*;
 import java.beans.*;
 
-import uk.ac.ebi.intact.struts.framework.exceptions.InvalidLoginException;
-import uk.ac.ebi.intact.struts.framework.exceptions.MissingIntactTypesException;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.exceptions.InvalidLoginException;
+import uk.ac.ebi.intact.application.cvedit.struts.framework.exceptions.MissingIntactTypesException;
 import uk.ac.ebi.intact.persistence.*;
-import uk.ac.ebi.intact.model.Constants;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.Assert;
 import uk.ac.ebi.intact.util.Key;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.IntactException;
-
-import javax.servlet.ServletException;
 
 /**
  * Implments the IntactService interface.
@@ -28,12 +22,7 @@ import javax.servlet.ServletException;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactServiceImpl implements IntactService {
-
-    /**
-     * The data source.
-     */
-    private DAOSource myDataSource;
+public class IntactServiceImpl implements IntactServiceIF {
 
     /**
      * Intact Types.
@@ -45,69 +34,21 @@ public class IntactServiceImpl implements IntactService {
      */
     private Map myNameToClassInfo = new HashMap();
 
-    /**
-     * Reference to the Intact Helper.
-     */
-    private IntactHelper myIntactHelper;
 
     /**
-     * A cache of available topic names; most likely to remain unchanged
-     * during a session.
-     */
-    private Collection myTopicNames = new ArrayList();
-
-    /**
-     * A cache of available database names; most likely to remain unchanged
-     * during a session.
-     */
-    private Collection myDBNames = new ArrayList();
-
-    /**
-     * Constructs an instance of this class with given mapping file and
-     * the name of the data source class.
+     * Constructs an instance with given resource file.
      *
-     * @param mapping the name of the mapping file.
-     * @param dsClass the class name of the Data Source.
+     * @param types the name of the Intact types resource file.
      *
-     * @exception DataSourceException for error in getting the data source.
-     * @exception IntactException thrown for any errors in creating an Intact
-     * helper.
+     * @exception MissingIntactTypesException for errors with IntactTypes
+     * resource file. This may be for not able to find the resource file or
+     * for an empty resource file.
+     * @exception ClassNotFoundException unable to load the class for types
+     * in the resource file.
+     * @exception IntrospectionException error thrown when getting bean info for
+     * types in the resource file.
      */
-    public IntactServiceImpl(String mapping, String dsClass)
-        throws DataSourceException, IntactException {
-        myDataSource = DAOFactory.getDAOSource(dsClass);
-
-        // Pass config details to data source - don't need fast keys as only
-        // accessed once
-        Map fileMap = new HashMap();
-        fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
-        myDataSource.setConfig(fileMap);
-        myIntactHelper = new IntactHelper(myNameToClassInfo, myDataSource);
-
-        // List of available topics and database names.
-        cacheNames(myTopicNames, CvTopic.class);
-        cacheNames(myDBNames, CvDatabase.class);
-    }
-
-    // Implements business methods
-
-    public IntactUser authenticate(String username, String password)
-        throws InvalidLoginException {
-
-        // The intact user to return.
-        IntactUser user;
-
-        // Just a dummy validation.
-        if (username.equals("abc") && password.equals("abc")) {
-            user = new IntactUser(username, password);
-        }
-        else {
-            throw new InvalidLoginException();
-        }
-        return user;
-    }
-
-    public void setIntactTypes(String types) throws MissingIntactTypesException,
+    public IntactServiceImpl(String types) throws MissingIntactTypesException,
         ClassNotFoundException, IntrospectionException {
         try {
             myIntactTypes = ResourceBundle.getBundle(types);
@@ -133,7 +74,8 @@ public class IntactServiceImpl implements IntactService {
 //            }
 //        }
         // Loop through the resource bundle.
-        for (Enumeration enum = myIntactTypes.getKeys(); enum.hasMoreElements();) {
+        for (
+            Enumeration enum = myIntactTypes.getKeys(); enum.hasMoreElements();) {
             // Get the class type for the current key.
             String type = myIntactTypes.getString((String) enum.nextElement());
             // Create our own key to put into the map.
@@ -143,36 +85,26 @@ public class IntactServiceImpl implements IntactService {
             myNameToClassInfo.put(key, fieldDescs);
         }
     }
+    // Implements business methods
 
-    public IntactHelper getIntactHelper() throws IntactException {
-//        // Only create an instance if we don't have one.
-//        if (myIntactHelper == null) {
-//            createIntactHelper();
+//    public IntactUser authenticate(String username, String password)
+//        throws InvalidLoginException {
+//
+//        // The intact user to return.
+//        IntactUser user = null;
+//
+//        // Just a dummy validation.
+//        if (username.equals("abc") && password.equals("abc")) {
+//            //user = new IntactUser(username, password);
 //        }
-        return myIntactHelper;
-    }
+//        else {
+//            throw new InvalidLoginException();
+//        }
+//        return user;
+//    }
+
 
     public String getClassName(String topic) {
         return myIntactTypes.getString(topic);
-    }
-
-    public DAO getDAO() throws DataSourceException {
-        return myDataSource.getDAO();
-    }
-
-    public Collection getTopicNames() {
-        return myTopicNames;
-    }
-
-    public Collection getDatabaseNames() {
-        return myDBNames;
-    }
-
-    private void cacheNames(Collection list, Class clazz) throws IntactException {
-        // Interested in all the records for 'clazz'.
-        Collection results = myIntactHelper.search(clazz.getName(), "ac", "*");
-        for (Iterator iter = results.iterator(); iter.hasNext();) {
-            list.add(((CvObject) iter.next()).getShortLabel());
-        }
     }
 }
