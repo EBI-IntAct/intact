@@ -52,7 +52,7 @@ public class CCLineExport extends LineExport {
 
         public CcLine( String ccLine, String geneName ) {
 
-            if ( geneName == null ) {
+            if( geneName == null ) {
 
             }
 
@@ -77,15 +77,15 @@ public class CCLineExport extends LineExport {
 
             // the current string comes first if it's before in the alphabetical order
 
-            if ( gene1 == null ) {
+            if( gene1 == null ) {
                 System.out.println( this );
             }
 
-            if ( gene1.equals( "Self" ) ) {
+            if( gene1.equals( "Self" ) ) {
 
                 return -1;
 
-            } else if ( gene2.equals( "Self" ) ) {
+            } else if( gene2.equals( "Self" ) ) {
 
                 return 1;
 
@@ -145,14 +145,14 @@ public class CCLineExport extends LineExport {
 
         boolean negative = false;
 
-        if ( super.isNegative( interaction ) ) {
+        if( super.isNegative( interaction ) ) {
             negative = true;
         } else {
             //check its experiments
-            for ( Iterator iterator = interaction.getExperiments().iterator(); iterator.hasNext() && !negative; ) {
+            for( Iterator iterator = interaction.getExperiments().iterator(); iterator.hasNext() && !negative; ) {
                 Experiment experiment = (Experiment) iterator.next();
 
-                if ( isNegative( experiment ) ) {
+                if( isNegative( experiment ) ) {
                     negative = true;
                 }
             }
@@ -178,7 +178,7 @@ public class CCLineExport extends LineExport {
                                                        identityXrefQualifier,
                                                        uniprotID );
 
-        if ( proteins.size() == 0 ) {
+        if( proteins.size() == 0 ) {
             throw new IntactException( "the ID " + uniprotID + " didn't return the expected number of protein: " +
                                        proteins.size() + ". Abort." );
         }
@@ -186,7 +186,7 @@ public class CCLineExport extends LineExport {
         spliceVariants.clear();
 
         // now from that try to get splice variants (if any)
-        for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
+        for( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
             Protein protein = (Protein) iterator.next();
 
             String ac = protein.getAc();
@@ -207,7 +207,7 @@ public class CCLineExport extends LineExport {
 
         List cc4protein = (List) ccLines.remove( id );
 
-        if ( null != cc4protein && !cc4protein.isEmpty() ) {
+        if( null != cc4protein && !cc4protein.isEmpty() ) {
 
             // the the CC lines
             Collections.sort( cc4protein );
@@ -220,7 +220,7 @@ public class CCLineExport extends LineExport {
             sb.append( "CC   -!- INTERACTION:" );
             sb.append( NEW_LINE );
 
-            for ( Iterator iterator = cc4protein.iterator(); iterator.hasNext(); ) {
+            for( Iterator iterator = cc4protein.iterator(); iterator.hasNext(); ) {
                 CcLine ccLine = (CcLine) iterator.next();
 
                 sb.append( ccLine.getCcLine() );
@@ -254,17 +254,17 @@ public class CCLineExport extends LineExport {
         // produce the CC lines for the 1st protein
         CcLine cc1 = formatCCLines( uniprotID1, protein1, uniprotID2, protein2, experimentCount );
         List cc4protein1 = (List) ccLines.get( uniprotID1 );
-        if ( null == cc4protein1 ) {
+        if( null == cc4protein1 ) {
             cc4protein1 = new ArrayList();
             ccLines.put( uniprotID1, cc4protein1 );
         }
         cc4protein1.add( cc1 );
 
         // produce the CC lines for the 2nd protein
-        if ( !uniprotID1.equals( uniprotID2 ) ) {
+        if( !uniprotID1.equals( uniprotID2 ) ) {
             CcLine cc2 = formatCCLines( uniprotID2, protein2, uniprotID1, protein1, experimentCount );
             List cc4protein2 = (List) ccLines.get( uniprotID2 );
-            if ( null == cc4protein2 ) {
+            if( null == cc4protein2 ) {
                 cc4protein2 = new ArrayList();
                 ccLines.put( uniprotID2, cc4protein2 );
             }
@@ -305,7 +305,7 @@ public class CCLineExport extends LineExport {
         buffer.append( "CC       " );
 
         String geneName = null;
-        if ( uniprotID1.equals( uniprotID2 ) ) {
+        if( uniprotID1.equals( uniprotID2 ) ) {
 
             geneName = "Self";
             buffer.append( geneName );
@@ -314,7 +314,7 @@ public class CCLineExport extends LineExport {
 
             // A gene must be there ... it must have been checked before.
             geneName = getGeneName( protein2, helper );
-            if ( geneName == null ) {
+            if( geneName == null ) {
                 geneName = "-";
             }
 
@@ -322,7 +322,7 @@ public class CCLineExport extends LineExport {
         }
 
         // generated warning message if the two protein are from different organism
-        if ( !protein1.getBioSource().equals( protein2.getBioSource() ) ) {
+        if( !protein1.getBioSource().equals( protein2.getBioSource() ) ) {
             buffer.append( ' ' ).append( "(xeno)" );
         }
 
@@ -334,6 +334,8 @@ public class CCLineExport extends LineExport {
 
         return new CcLine( buffer.toString(), geneName );
     }
+
+    private static Set eligibleExperiments = new HashSet();
 
     /**
      * process a set of interaction ACs in order to find out which interaction are eligible for CC export.
@@ -379,20 +381,20 @@ public class CCLineExport extends LineExport {
      */
     private int getEligibleExperimentCount( List interactions ) {
 
-        // TODO store the confidence of a Interaction in a HashMap and serialize it, that could be reuse later ;o) hence faster.
-
-
         // TODO could be instance variable, then avoids to re-create it all the time.
-        Set eligibleExperiments = new HashSet();
+        if( !eligibleExperiments.isEmpty() ) {
+            System.err.println( "THAT COLLECTION WASN'T EMPTY !!!!!!!!!!!!!!!" );
+            eligibleExperiments.clear();
+        }
 
         final int interactionCount = interactions.size();
-        for ( int i = 0; i < interactionCount; i++ ) {
+        for( int i = 0; i < interactionCount; i++ ) {
 
             Interaction interaction = (Interaction) interactions.get( i );
 
             log( "\t\t\t\t Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc() );
 
-            if ( isNegative( interaction ) ) {
+            if( isNegative( interaction ) ) {
 
                 log( "\t\t\t\t\t That interaction or at least one of its experiments is negative, skip it." );
                 continue; // skip that interaction
@@ -403,25 +405,25 @@ public class CCLineExport extends LineExport {
             int expCount = experiments.size();
             log( "\t\t\t\t\t interaction related to " + expCount + " experiment" + ( expCount > 1 ? "s" : "" ) + "." );
 
-            for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext(); ) {
+            for( Iterator iterator2 = experiments.iterator(); iterator2.hasNext(); ) {
                 Experiment experiment = (Experiment) iterator2.next();
 
                 boolean experimentExport = false;
                 log( "\t\t\t\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc() );
 
-                ExperimentStatus experimentStatus = getExperimentExportStatus( experiment, "\t\t\t" );
-                if ( experimentStatus.doNotExport() ) {
+                ExperimentStatus experimentStatus = getCCLineExperimentExportStatus( experiment, "\t\t\t" );
+                if( experimentStatus.doNotExport() ) {
                     // forbid export for all interactions of that experiment (and their proteins).
                     log( "\t\t\t\t\t\t\t No interactions of that experiment will be exported." );
 
-                } else if ( experimentStatus.doExport() ) {
+                } else if( experimentStatus.doExport() ) {
                     // Authorise export for all interactions of that experiment (and their proteins),
                     // This overwrite the setting of the CvInteraction concerning the export.
                     log( "\t\t\t\t\t\t\t All interaction of that experiment will be exported." );
 
                     experimentExport = true;
 
-                } else if ( experimentStatus.isLargeScale() ) {
+                } else if( experimentStatus.isLargeScale() ) {
 
                     // if my interaction has one of those keywords as annotation for DR line export, do export.
                     Collection keywords = experimentStatus.getKeywords();
@@ -429,25 +431,25 @@ public class CCLineExport extends LineExport {
                     boolean annotationFound = false;
 
                     // We assume here that an interaction has only one Annotation( uniprot-dr-export ).
-                    for ( Iterator iterator3 = annotations.iterator(); iterator3.hasNext() && !annotationFound; ) {
+                    for( Iterator iterator3 = annotations.iterator(); iterator3.hasNext() && !annotationFound; ) {
                         final Annotation annotation = (Annotation) iterator3.next();
 
-                        if ( authorConfidenceTopic.equals( annotation.getCvTopic() ) ) {
+                        if( authorConfidenceTopic.equals( annotation.getCvTopic() ) ) {
                             String text = annotation.getAnnotationText();
 
                             log( "\t\t\t\t Interaction has " + authorConfidenceTopic.getShortLabel() + ": '" + text + "'" );
 
-                            if ( text != null ) {
+                            if( text != null ) {
                                 text = text.trim();
                             }
 
-                            for ( Iterator iterator4 = keywords.iterator(); iterator4.hasNext() && !annotationFound; ) {
+                            for( Iterator iterator4 = keywords.iterator(); iterator4.hasNext() && !annotationFound; ) {
                                 String kw = (String) iterator4.next();
                                 // NOT case sensitive
 
                                 log( "\t\t\t\t\t Compare it with '" + kw + "'" );
 
-                                if ( kw.equalsIgnoreCase( text ) ) {
+                                if( kw.equalsIgnoreCase( text ) ) {
                                     annotationFound = true;
                                     log( "\t\t\t\t\t Equals !" );
                                 }
@@ -455,7 +457,7 @@ public class CCLineExport extends LineExport {
                         }
                     }
 
-                    if ( annotationFound ) {
+                    if( annotationFound ) {
 
                         /*
                         * We don't need to check an eventual threshold on the method level because
@@ -471,7 +473,7 @@ public class CCLineExport extends LineExport {
                         log( "\t\t\t interaction not eligible" );
                     }
 
-                } else if ( experimentStatus.isNotSpecified() ) {
+                } else if( experimentStatus.isNotSpecified() ) {
 
                     log( "\t\t\t\t\t\t No experiment status, check the experimental method." );
 
@@ -479,27 +481,27 @@ public class CCLineExport extends LineExport {
                     // Nothing specified at the experiment level, check for the method (CvInteraction)
                     CvInteraction cvInteraction = experiment.getCvInteraction();
 
-                    if ( null == cvInteraction ) {
+                    if( null == cvInteraction ) {
                         // we need to check because cvInteraction is not mandatory in an experiment.
                         continue; // skip it, go to next experiment
                     }
 
                     CvInteractionStatus methodStatus = getMethodExportStatus( cvInteraction, "\t\t" );
 
-                    if ( methodStatus.doExport() ) {
+                    if( methodStatus.doExport() ) {
 
                         experimentExport = true;
 
-                    } else if ( methodStatus.doNotExport() ) {
+                    } else if( methodStatus.doNotExport() ) {
 
                         // do nothing
 
-                    } else if ( methodStatus.isNotSpecified() ) {
+                    } else if( methodStatus.isNotSpecified() ) {
 
                         // we should never get in here but just in case...
                         // do nothing
 
-                    } else if ( methodStatus.isConditionalExport() ) {
+                    } else if( methodStatus.isConditionalExport() ) {
 
                         log( "\t\t\t\t\t\t As conditional export, check the count of distinct experiment for that method." );
 
@@ -514,14 +516,14 @@ public class CCLineExport extends LineExport {
 
                         // check if there are other experiments attached to the current interaction that validate it.
                         boolean enoughExperimentFound = false;
-                        for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
+                        for( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
                             Experiment experiment1 = (Experiment) iterator.next();
 
                             log( "\t\t\t\t\t\t Experiment: Shortlabel:" + experiment1.getShortLabel() + "  AC: " + experiment1.getAc() );
 
                             CvInteraction method = experiment1.getCvInteraction();
 
-                            if ( cvInteraction.equals( method ) ) {
+                            if( cvInteraction.equals( method ) ) {
                                 experimentAcs.add( experiment1.getAc() );
 
                                 // we only update if we found one
@@ -531,9 +533,9 @@ public class CCLineExport extends LineExport {
 
                         log( "\t\t\t\t\tLooking for other interactions that support that method in other experiments..." );
 
-                        for ( int j = 0; j < interactionCount && !enoughExperimentFound; j++ ) {
+                        for( int j = 0; j < interactionCount && !enoughExperimentFound; j++ ) {
 
-                            if ( i == j ) {
+                            if( i == j ) {
                                 continue;
                             }
 
@@ -553,13 +555,13 @@ public class CCLineExport extends LineExport {
 
                             Collection experiments2 = interaction2.getExperiments();
 
-                            for ( Iterator iterator6 = experiments2.iterator(); iterator6.hasNext() && !enoughExperimentFound; ) {
+                            for( Iterator iterator6 = experiments2.iterator(); iterator6.hasNext() && !enoughExperimentFound; ) {
                                 Experiment experiment2 = (Experiment) iterator6.next();
                                 log( "\t\t\t\t\t\t Experiment: Shortlabel:" + experiment2.getShortLabel() + "  AC: " + experiment2.getAc() );
 
                                 CvInteraction method = experiment2.getCvInteraction();
 
-                                if ( cvInteraction.equals( method ) ) {
+                                if( cvInteraction.equals( method ) ) {
                                     experimentAcs.add( experiment2.getAc() );
                                     // we only update if we found one
                                     enoughExperimentFound = ( experimentAcs.size() >= threshold );
@@ -571,7 +573,7 @@ public class CCLineExport extends LineExport {
                                  ( experimentAcs == null ? "none" : "" + experimentAcs.size() ) );
                         } // j
 
-                        if ( enoughExperimentFound ) {
+                        if( enoughExperimentFound ) {
                             log( "\t\t\t\t\t\t Enough experiemnt found" );
                             experimentExport = true;
                         } else {
@@ -581,7 +583,7 @@ public class CCLineExport extends LineExport {
                     } // conditional status
                 } // experiment status not specified
 
-                if ( experimentExport ) {
+                if( experimentExport ) {
                     eligibleExperiments.add( experiment );
                 }
 
@@ -589,7 +591,10 @@ public class CCLineExport extends LineExport {
 
         } // i
 
-        return eligibleExperiments.size();
+        int count = eligibleExperiments.size();
+        eligibleExperiments.clear();
+
+        return count;
     }
 
     /**
@@ -629,16 +634,16 @@ public class CCLineExport extends LineExport {
 
         // iterate over the Uniprot ID of the protein that have been selected for DR export.
 
-        for ( Iterator iteratorUniprotId = uniprotIDs.iterator(); iteratorUniprotId.hasNext(); ) {
+        for( Iterator iteratorUniprotId = uniprotIDs.iterator(); iteratorUniprotId.hasNext(); ) {
 
             String uniprotID_1 = (String) iteratorUniprotId.next();
 
             idProcessed++;
 
-            if ( ( idProcessed % 50 ) == 0 ) {
+            if( ( idProcessed % 50 ) == 0 ) {
                 System.out.print( "..." + idProcessed );
 
-                if ( ( idProcessed % 500 ) == 0 ) {
+                if( ( idProcessed % 500 ) == 0 ) {
                     System.out.println( "" );
                 } else {
                     System.out.flush();
@@ -654,7 +659,7 @@ public class CCLineExport extends LineExport {
             // get the protein's and splice variants related to that Uniprot ID
             Collection proteinSet_1 = getProteinFromIntact( helper, uniprotID_1 );
 
-            for ( Iterator iteratorP = proteinSet_1.iterator(); iteratorP.hasNext(); ) {
+            for( Iterator iteratorP = proteinSet_1.iterator(); iteratorP.hasNext(); ) {
                 Protein protein1 = (Protein) iteratorP.next();
 
                 Collection interactionP1 = getInteractions( protein1 );
@@ -671,7 +676,7 @@ public class CCLineExport extends LineExport {
                 log( "\t" + uniprotID_1 + "(" + protein1.getBioSource().getShortLabel() + ")" + " has " + interactionP1.size() + " interaction(s)." );
 
 
-                while ( !interactionP1.isEmpty() ) {
+                while( !interactionP1.isEmpty() ) {
 
                     Iterator iterator = interactionP1.iterator(); // can't be ouside the loop
                     Interaction interaction = (Interaction) iterator.next();
@@ -682,7 +687,7 @@ public class CCLineExport extends LineExport {
                     // the cache of already processed interactions. There is no reason why those interaction
                     // would be processed again since they are binary, hence specific to P1 and P2
                     // So when we process P2 and load again those same interactions from the DB, we can skip them.
-                    if ( alreadyProcessedInteraction.contains( interaction.getAc() ) ) {
+                    if( alreadyProcessedInteraction.contains( interaction.getAc() ) ) {
 
                         log( "\t\t That interaction has been processed already ... skip it." );
                         iterator.remove(); // remove it.
@@ -690,7 +695,7 @@ public class CCLineExport extends LineExport {
                     } else {
                         alreadyProcessedInteraction.add( interaction.getAc() );
 
-                        if ( false == isBinary( interaction ) ) {
+                        if( false == isBinary( interaction ) ) {
 
                             iterator.remove();
 
@@ -700,7 +705,7 @@ public class CCLineExport extends LineExport {
                             Component component2 = null;
 
                             // here we know already that the interaction is binary
-                            if ( interaction.getComponents().size() == 1 ) {
+                            if( interaction.getComponents().size() == 1 ) {
                                 // the protein is interacting with itself (stochio = 2)
                                 Iterator iteratorC = interaction.getComponents().iterator();
                                 component2 = component1 = (Component) iteratorC.next();
@@ -732,7 +737,7 @@ public class CCLineExport extends LineExport {
                             Protein p2 = (Protein) component2.getInteractor();
                             log( "\t\t 2nd Partner found: " + p2.getShortLabel() );
 
-                            if ( protein1.equals( p1 ) ) {
+                            if( protein1.equals( p1 ) ) {
                                 protein2 = p2;
                             } else {
                                 protein2 = p1;
@@ -743,20 +748,20 @@ public class CCLineExport extends LineExport {
                             // retreive the UniProt ID of the protein or its master (is splice variant) to check if it
                             // should be exported. Reminder, only protein exported in the DR are exported in the CCs.
                             String uniprotID_2_check = null;
-                            if ( isSpliceVariant( protein2 ) ) {
+                            if( isSpliceVariant( protein2 ) ) {
                                 Protein master = getMasterProtein( protein2, helper );
-                                if ( master != null ) {
+                                if( master != null ) {
                                     uniprotID_2_check = getUniprotID( master );
                                 }
                             }
 
-                            if ( uniprotID_2_check == null ) {
+                            if( uniprotID_2_check == null ) {
                                 uniprotID_2_check = uniprotID_2;
                             }
 
                             // we check that the protein we are currently dealing with was eligible in DR
                             // if it is a splice variant, we check that the master protein was eligible.
-                            if ( !uniprotIDs.contains( uniprotID_2_check ) ) {
+                            if( !uniprotIDs.contains( uniprotID_2_check ) ) {
 
                                 log( "\n\t\t " + uniprotID_2 + " was not eligible for DR export, that interaction is not taken into account." );
                                 iterator.remove();
@@ -773,10 +778,10 @@ public class CCLineExport extends LineExport {
                                 iterator.remove();
                                 log( "\t\t Add the current one: " + interaction.getShortLabel() + "(" + interaction.getAc() + ")" );
 
-                                for ( Iterator iterator2 = interactionP1.iterator(); iterator2.hasNext(); ) {
+                                for( Iterator iterator2 = interactionP1.iterator(); iterator2.hasNext(); ) {
                                     Interaction interaction1 = (Interaction) iterator2.next();
 
-                                    if ( alreadyProcessedInteraction.contains( interaction1.getAc() ) ) {
+                                    if( alreadyProcessedInteraction.contains( interaction1.getAc() ) ) {
 
                                         log( "\t\t That interaction " + interaction1.getShortLabel() + "(" +
                                              interaction1.getAc() + ") has been processed already ... skip it." );
@@ -784,7 +789,7 @@ public class CCLineExport extends LineExport {
 
                                     } else {
 
-                                        if ( !isBinary( interaction1 ) ) {
+                                        if( !isBinary( interaction1 ) ) {
 
                                             alreadyProcessedInteraction.add( interaction1.getAc() );
                                             iterator2.remove(); // remove using the local iterator
@@ -794,7 +799,7 @@ public class CCLineExport extends LineExport {
                                             Component c1 = null;
                                             Component c2 = null;
 
-                                            if ( interaction1.getComponents().size() == 1 ) {
+                                            if( interaction1.getComponents().size() == 1 ) {
                                                 Iterator iteratorC = interaction1.getComponents().iterator();
                                                 c2 = c1 = (Component) iteratorC.next(); // same component, hence interactor
                                             } else {
@@ -810,7 +815,7 @@ public class CCLineExport extends LineExport {
                                             boolean normal = protein1.equals( p1_ ) && protein2.equals( p2_ );
                                             boolean reverse = protein1.equals( p2_ ) && protein2.equals( p1_ );
 
-                                            if ( normal || reverse ) {
+                                            if( normal || reverse ) {
 
                                                 alreadyProcessedInteraction.add( interaction1.getAc() );
 
@@ -829,7 +834,7 @@ public class CCLineExport extends LineExport {
                                 // run the algo
                                 int experimentCount = getEligibleExperimentCount( potentiallyEligibleInteraction );
 
-                                if ( experimentCount > 0 ) {
+                                if( experimentCount > 0 ) {
 
                                     createCCLine( uniprotID_1, protein1,
                                                   uniprotID_2, protein2,
@@ -847,7 +852,7 @@ public class CCLineExport extends LineExport {
         } // i (all eligible uniprot IDs)
 
         // flush and close output file
-        if ( null != writer ) {
+        if( null != writer ) {
             try {
                 writer.close();
                 System.out.println( "Output file closed." );
@@ -876,10 +881,10 @@ public class CCLineExport extends LineExport {
 
         String line = null;
         int count = 0;
-        while ( ( line = reader.readLine() ) != null ) {
+        while( ( line = reader.readLine() ) != null ) {
             count++;
             line = line.trim();
-            if ( "".equalsIgnoreCase( line ) ) {
+            if( "".equalsIgnoreCase( line ) ) {
                 continue;
             }
 
@@ -888,7 +893,7 @@ public class CCLineExport extends LineExport {
 
             StringTokenizer st = new StringTokenizer( line, "\t" ); // tab delimited field.
             String uniprotID;
-            if ( st.hasMoreTokens() ) {
+            if( st.hasMoreTokens() ) {
                 uniprotID = st.nextToken();
                 proteins.add( uniprotID );
             } else {
@@ -917,15 +922,19 @@ public class CCLineExport extends LineExport {
         // create Option objects
         Option helpOpt = new Option( "help", "print this message" );
 
-        Option drExportOpt = OptionBuilder.withArgName( "drExportFilename" ).hasArg().withDescription( "DR export input file." ).create( "drExport" );
+        Option drExportOpt = OptionBuilder.withArgName( "drExportFilename" ).hasArg()
+                .withDescription( "DR export input file." ).create( "drExport" );
         drExportOpt.setRequired( true );
 
-        Option ccExportOpt = OptionBuilder.withArgName( "ccExportFilename" ).hasArg().withDescription( "CC export output file." ).create( "ccExport" );
+        Option ccExportOpt = OptionBuilder.withArgName( "ccExportFilename" ).hasArg()
+                .withDescription( "CC export output file." ).create( "ccExport" );
 
-        Option debugOpt = OptionBuilder.withDescription( "Shows verbose output." ).create( "debug" );
+        Option debugOpt = OptionBuilder
+                .withDescription( "Shows verbose output." ).create( "debug" );
         debugOpt.setRequired( false );
 
-        Option debugFileOpt = OptionBuilder.withDescription( "Store verbose output in the specified file." ).create( "debugFile" );
+        Option debugFileOpt = OptionBuilder
+                .withDescription( "Store verbose output in the specified file." ).create( "debugFile" );
         debugFileOpt.setRequired( false );
 
         Options options = new Options();
@@ -951,7 +960,7 @@ public class CCLineExport extends LineExport {
             System.exit( 1 );
         }
 
-        if ( line.hasOption( "help" ) ) {
+        if( line.hasOption( "help" ) ) {
             displayUsage( options );
             System.exit( 0 );
         }
@@ -960,7 +969,7 @@ public class CCLineExport extends LineExport {
         boolean debugFileEnabled = line.hasOption( "debugFile" );
         String drExportFilename = line.getOptionValue( "drExport" );
         String ccExportFilename = null;
-        if ( line.hasOption( "ccExport" ) ) {
+        if( line.hasOption( "ccExport" ) ) {
             ccExportFilename = line.getOptionValue( "ccExport" );
         }
 
@@ -980,21 +989,21 @@ public class CCLineExport extends LineExport {
 
         // Prepare output file.
         File file = null;
-        if ( ccExportFilename != null ) {
+        if( ccExportFilename != null ) {
             try {
                 file = new File( ccExportFilename );
-                if ( file.exists() ) {
+                if( file.exists() ) {
                     System.err.println( "Please give a new file name for the CC output file: " + file.getAbsoluteFile() );
                     System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
                     ccExportFilename = null;
                     file = null;
                 }
-            } catch( Exception e ) {
+            } catch ( Exception e ) {
                 // nothing, the default filename will be given
             }
         }
 
-        if ( ccExportFilename == null || file == null ) {
+        if( ccExportFilename == null || file == null ) {
             String filename = "CCLineExport_" + TIME + ".txt";
             System.out.println( "Using default filename for the CC export: " + filename );
             file = new File( filename );
@@ -1020,7 +1029,7 @@ public class CCLineExport extends LineExport {
             System.exit( 1 );
 
         } finally {
-            if ( out != null ) {
+            if( out != null ) {
                 try {
                     out.close();
                 } catch ( IOException e ) {
@@ -1028,7 +1037,7 @@ public class CCLineExport extends LineExport {
                 }
             }
 
-            if ( fileWriter != null ) {
+            if( fileWriter != null ) {
                 try {
                     fileWriter.close();
                 } catch ( IOException e ) {
