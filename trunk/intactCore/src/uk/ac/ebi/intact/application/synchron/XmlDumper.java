@@ -47,11 +47,11 @@ public class XmlDumper {
 
     //information about the mapping between Java objects and XML; needed by Castor
     public static final String
-            MappingFile = "dbIoMapping.xml";
+            MappingFile = "config/dbIoMapping.xml";
 
     //information about the mapping between persistent objects and Java objects; needed by the OJB broker
     public static final String
-            RepositoryFile = "repository.xml";
+            RepositoryFile = "config/repository.xml";
 
     private static Mapping  mapping;
 
@@ -119,7 +119,7 @@ public class XmlDumper {
         mapping = new Mapping( getClass().getClassLoader() );
 
         try{
-            mapping.loadMapping( getClass().getResource( MappingFile ) );
+            mapping.loadMapping(MappingFile);
         } catch(Exception e) {
             System.out.println("[XmlDumper] [ERROR] Was not possible to load the mappingfile");
             throw e;
