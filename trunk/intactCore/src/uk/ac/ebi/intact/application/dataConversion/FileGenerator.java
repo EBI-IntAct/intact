@@ -264,17 +264,10 @@ public class FileGenerator {
                 //System.out.println("Number of interactions found: " + interactions.size());
 
                 //Lists are easier to work with...
-                List listInteractions = null;
-                if (! List.class.isAssignableFrom(interactions.getClass())) {
-                    System.out.println ( "Converting the OJB collection to a List ..." );
-                    listInteractions = new ArrayList( interactions );
-                } else {
-                    listInteractions = (List) interactions;
-                }
-
-                    while(startIndex < listInteractions.size()) {
-                        if(endIndex > listInteractions.size()) endIndex = listInteractions.size(); //check for the end
-                        itemsToProcess = listInteractions.subList(startIndex, endIndex);
+                if (List.class.isAssignableFrom(interactions.getClass())) {
+                    while(startIndex < interactions.size()) {
+                        if(endIndex > interactions.size()) endIndex = interactions.size(); //check for the end
+                        itemsToProcess = ((List) interactions).subList(startIndex, endIndex);
                         //System.out.println("number of interactions per chunk: " + itemsToProcess.size());
                         //now build the XML and generate a file for it...
                         if(!itemsToProcess.isEmpty()) {
@@ -288,8 +281,16 @@ public class FileGenerator {
                             //endIndex = endIndex + 2; //should normally be eg 1000
                         }
                         //if it is empty we have done the last one already
-                    }
 
+                        //dump the interactorList for this chunk - NB
+                        //this is not the best as it SHOULD have them all at th end but
+                        //currently it does not. Don't have time to debug this right now!!
+                        System.out.println("Dumping interactorList XML...");
+                        String protListFile = exp.getShortLabel() + "_interactorList"
+                                + chunkCount + ".xml";
+                        builder.writeData(protListFile, builder.getInteractorList());
+                    }
+                }
                 //This will only NOT be a List if someone changes the model
                 //data types!!
 
@@ -299,9 +300,9 @@ public class FileGenerator {
                 builder.writeData(expListFile, builder.getExperimentList());
 
                 //dump the interactorList - NB can only do this at the end
-                System.out.println("Dumping interactorList XML...");
-                String protListFile = exp.getShortLabel() + "_interactorList.xml";
-                builder.writeData(protListFile, builder.getInteractorList());
+                //System.out.println("Dumping interactorList XML...");
+                //String protListFile = exp.getShortLabel() + "_interactorList.xml";
+                //builder.writeData(protListFile, builder.getInteractorList());
 
             }
         }
