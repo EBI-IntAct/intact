@@ -11,11 +11,13 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.actions.LookupDispatchAction;
+import org.apache.ojb.broker.query.Query;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.OJBQueryFactory;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 
 import javax.servlet.http.HttpServletRequest;
@@ -151,6 +153,29 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
             return errors;
         }
         return null;
+    }
+
+    /**
+     * Return an array of general search queries.
+     * @param searchClass the search class
+     * @param searchString the search value
+     * @return an array of queries. The first element of the array contains
+     * the query to get the count and the second part contains the search query.
+     */
+    protected Query[] getSearchQueries(Class searchClass, String searchString) {
+        // The query factory to get a query.
+        OJBQueryFactory qf = OJBQueryFactory.getInstance();
+
+        // The array to store queries.
+        Query[] queries = new Query[2];
+
+        // The query to get a search result size.
+        queries[0] = qf.getSearchCountQuery(searchClass, searchString);
+
+        // The search query
+        queries[1] = qf.getSearchQuery(searchClass, searchString);
+
+        return queries;
     }
 
     /**
