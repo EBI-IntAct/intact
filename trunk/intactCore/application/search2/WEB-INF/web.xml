@@ -74,8 +74,18 @@
         </init-param>
 
         <load-on-startup>1</load-on-startup>
-
     </servlet>
+
+    <!-- Clear OJB cache of the application -->
+    <servlet>
+        <servlet-name>clearOJBCache</servlet-name>
+        <servlet-class>uk.ac.ebi.intact.application.commons.util.ResetOjbCacheServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>clearOJBCache</servlet-name>
+        <url-pattern>/clearOjbCache</url-pattern>
+    </servlet-mapping>
 
     <!-- Action Servlet Mapping -->
     <servlet-mapping>
