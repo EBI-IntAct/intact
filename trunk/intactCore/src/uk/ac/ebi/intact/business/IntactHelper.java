@@ -1633,13 +1633,11 @@ public class IntactHelper implements SearchI, Serializable {
                     dao.remove (i.next());
                 }
             }
-
         }
         catch(Exception de) {
 
                String msg = "intact helper: error deleting collection elements";
                throw new IntactException(msg, de);
-
         }
     }
 
@@ -1674,7 +1672,7 @@ public class IntactHelper implements SearchI, Serializable {
                           int complexExpansion,
 			              Graph graph) throws IntactException {
 
-        System.out.println("subGraph called: " + startNode.getAc() + " Depth: " + graphDepth);
+        //System.out.println("subGraph called: " + startNode.getAc() + " Depth: " + graphDepth);
 
        if (startNode instanceof Interaction) {
             graph = subGraphPartial((Interaction) startNode, graphDepth, experiments, complexExpansion, graph);
@@ -1682,7 +1680,6 @@ public class IntactHelper implements SearchI, Serializable {
             graph = subGraphPartial(startNode, graphDepth, experiments, complexExpansion, graph);
         }
         return graph;
-
     }
 
     private Graph subGraphPartial(Interactor startNode,
@@ -1696,7 +1693,7 @@ public class IntactHelper implements SearchI, Serializable {
             return partialGraph;
         }
 
-        System.out.println("subGraphPartial (Interactor) called: " + startNode.getAc() + " Depth: " + graphDepth);
+        //System.out.println("subGraphPartial (Interactor) called: " + startNode.getAc() + " Depth: " + graphDepth);
 
         /* If the Interaction has already been visited, return,
            else mark it.
@@ -1746,7 +1743,7 @@ public class IntactHelper implements SearchI, Serializable {
             return partialGraph;
         }
 
-        System.out.println("subGraphPartial (Interaction) called: " + current.getAc() + " Depth: " + graphDepth);
+        //System.out.println("subGraphPartial (Interaction) called: " + current.getAc() + " Depth: " + graphDepth);
 
         /* If the Interaction has already been visited, return,
            else mark it.
@@ -1792,7 +1789,7 @@ public class IntactHelper implements SearchI, Serializable {
         }
 
         /* Create list of preys */
-        ArrayList preys = new ArrayList(current.getComponents().size());
+        ArrayList preys = new ArrayList( current.getComponents().size() );
         Iterator i = current.getComponents().iterator();
         while (i.hasNext()) {
             preys.add(i.next());
@@ -1803,23 +1800,25 @@ public class IntactHelper implements SearchI, Serializable {
         int countPreys = preys.size();
 
         for (int j = 0; j < countBaits; j++) {
-            System.out.println("Bait: " + ((Component) baits.get(j)).getInteractor().getAc());
+            //System.out.println("Bait: " + ((Component) baits.get(j)).getInteractor().getAc());
             for (int k = j; k < countPreys; k++) {
-                System.out.println("Prey: " + ((Component) preys.get(k)).getInteractor().getAc());
+                //System.out.println("Prey: " + ((Component) preys.get(k)).getInteractor().getAc());
                 Edge edge = new Edge();
-                Interactor baitInteractor = ((Component) baits.get(j)).getInteractor();
-                Interactor preyInteractor = ((Component) preys.get(k)).getInteractor();
+                Component baitComponent = (Component) baits.get(j);
+                Interactor baitInteractor = baitComponent.getInteractor();
+                Component preyComponent = (Component) preys.get(k);
+                Interactor preyInteractor = preyComponent.getInteractor();
 
                 if (baitInteractor != preyInteractor) {
                     Node node1 = partialGraph.addNode(baitInteractor);
                     Node node2 = partialGraph.addNode(preyInteractor);
 
-                    edge.setNode1(node1);
-                    edge.setComponent1((Component) baits.get(j));
-                    edge.setNode2(node2);
-                    edge.setComponent2((Component) preys.get(k));
-                    partialGraph.addEdge(edge);
-                    System.out.println("Adding: " + node1.getAc() + " -> " + node2.getAc());
+                    edge.setNode1( node1 );
+                    edge.setComponent1( baitComponent );
+                    edge.setNode2( node2 );
+                    edge.setComponent2( preyComponent );
+                    partialGraph.addEdge( edge );
+                    //System.out.println("Adding: " + node1.getAc() + " -> " + node2.getAc());
                 }
             }
         }
