@@ -323,6 +323,24 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
                     (Interactor) IntactHelper.getRealIntactObject(comp.getInteractor()));
             copy.components.add(copyComp);
         }
+
+        // Go through Features again to reset linked Features (they are still
+        // pointing to the original Features - not cloned).
+        for (Iterator iter0 = copy.components.iterator(); iter0.hasNext(); ) {
+            Component comp = (Component) iter0.next();
+            for (Iterator iter1 = comp.getBindingDomains().iterator(); iter1.hasNext();) {
+                Feature feature = (Feature) iter1.next();
+                // Only process if linked to another feature.
+                if (feature.getBoundDomain() != null) {
+                    // Get the cloned feature for the bound domain.
+                    Feature linkedFeature = findFeature(copy.components,
+                            feature.getBoundDomain().getShortLabel() + "-x");
+                    // We must have the linked feature.
+                    assert linkedFeature != null;
+                    feature.setBoundDomain(linkedFeature);
+                }
+            }
+        }
         return copy;
     }
 
@@ -340,6 +358,26 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         }
 
         return result + "] Interaction" + NEW_LINE;
+    }
+
+    /**
+     * Returns a feature for given short label.
+     * @param comps the collection of Component objects to search for.
+     * @param label the short label to match.
+     * @return the matching Feature or null if none found for <code>label</code>
+     * in <code>comps</code>.
+     */
+    private Feature findFeature(Collection comps, String label) {
+        for (Iterator iter0 = comps.iterator(); iter0.hasNext(); ) {
+            Component comp = (Component) iter0.next();
+            for (Iterator iter1 = comp.getBindingDomains().iterator(); iter1.hasNext();) {
+                Feature feature = (Feature) iter1.next();
+                if (feature.getShortLabel().equals(label)) {
+                    return feature;
+                }
+            }
+        }
+        return null;
     }
 
 } // end Interaction

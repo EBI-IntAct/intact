@@ -9,17 +9,14 @@ package uk.ac.ebi.intact.model.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.TestCaseHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Test class for Interactions.
@@ -66,8 +63,9 @@ public class InteractionTest extends TestCase {
 
     public void testClone() {
         try {
-            doCloneTest();
+            doCloneTest0();
             doCloneTest1();
+            doCloneTest2();
         }
         catch (CloneNotSupportedException cnse) {
             fail(cnse.getMessage());
@@ -77,7 +75,8 @@ public class InteractionTest extends TestCase {
         }
     }
 
-    private void doCloneTest() throws CloneNotSupportedException {
+    // Cloning an Interaction created in the memory.
+    private void doCloneTest0() throws CloneNotSupportedException {
         InteractionImpl orig =
             (InteractionImpl) myTestHelper.getInteractions().iterator().next();
         // Make a copy.
@@ -150,6 +149,14 @@ public class InteractionTest extends TestCase {
         IntactHelper helper = myTestHelper.getHelper();
         InteractionImpl orig = (InteractionImpl) helper.getObjectByLabel(
                 Interaction.class, "ga-3");
+
+        CvTopic topic = (CvTopic) helper.getObjectByLabel(CvTopic.class, "comment");
+        orig.addAnnotation(new Annotation(orig.getOwner(), topic));
+
+        CvDatabase db = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go");
+        Xref xref = new Xref(orig.getOwner(), db, "a", "b", "c", null);
+        orig.addXref(xref);
+
         // Make a copy.
         Interaction copy = (Interaction) orig.clone();
 
@@ -172,13 +179,17 @@ public class InteractionTest extends TestCase {
         // Fullname must match.
         assertEquals(orig.getFullName(), copy.getFullName());
 
-        // Different copies of Annotations.
+        // Different copies of Annotations but same contents.
         assertNotSame(orig.getAnnotations(), copy.getAnnotations());
-        assertEquals(transform(orig.getAnnotations()), copy.getAnnotations());
+        assertTrue(CollectionUtils.isEqualCollection(
+                transform(orig.getAnnotations()), copy.getAnnotations()));
 
-        // Different copies of Xrefs.
+        // Different copies of Xrefs but same contents.
         assertNotSame(orig.getXrefs(), copy.getXrefs());
         assertEquals(transform(orig.getXrefs()), copy.getXrefs());
+        // Parent AC is not set in the copy.
+        Xref copyXref = (Xref) copy.getXrefs().iterator().next();
+        assertNull(copyXref.getParentAc());
 
         // Same KD.
         assertEquals(orig.getKD(), copy.getKD());
@@ -213,6 +224,122 @@ public class InteractionTest extends TestCase {
         // Must match the proteins and their roles.
         assertEquals(origprots, copyprots);
         assertEquals(origroles, copyroles);
+    }
+
+    // This test for an Interaction with Features.
+    public void doCloneTest2() throws IntactException, CloneNotSupportedException {
+        IntactHelper helper = myTestHelper.getHelper();
+        InteractionImpl orig = (InteractionImpl) helper.getObjectByLabel(
+                Interaction.class, "ga-1");
+
+        // Add features.
+        Institution owner = orig.getOwner();
+        Component component = (Component) orig.getComponents().iterator().next();
+        CvFeatureType ft = new CvFeatureType(owner, "ft");
+        Feature feature1 = new Feature(owner, "feature1", component, ft);
+        Range range1 = new Range(owner, 1, 2, 3, 4, "abc");
+        feature1.addRange(range1);
+        component.addBindingDomain(feature1);
+
+        // Another feature
+        Feature feature2 = new Feature(owner, "feature2", component, ft);
+        Range range2 = new Range(owner, 1, 2, 3, 4, "pqr");
+        feature2.addRange(range2);
+        component.addBindingDomain(feature2);
+
+        // Link features.
+        feature1.setBoundDomain(feature2);
+        feature2.setBoundDomain(feature1);
+
+        // Verify it.
+        assertTrue(feature1.getBoundDomain().equals(feature2));
+        assertTrue(feature2.getBoundDomain().equals(feature1));
+
+        // Should have two features.
+        assertTrue(component.getBindingDomains().size() == 2);
+
+        // Make a copy.
+        Interaction copy = (Interaction) orig.clone();
+
+        // Should have the same number of components.
+        assertEquals(orig.getComponents().size(), copy.getComponents().size());
+
+        // Extract the features - original
+        Collection origfeatures = new ArrayList();
+        for (Iterator iter0 = orig.getComponents().iterator(); iter0.hasNext();) {
+            Component comp = (Component) iter0.next();
+            for (Iterator iter1 = comp.getBindingDomains().iterator(); iter1.hasNext();) {
+                origfeatures.add(iter1.next());
+            }
+        }
+        // Extract the features - copy
+        Collection copyfeatures = new ArrayList();
+        for (Iterator iter0 = copy.getComponents().iterator(); iter0.hasNext();) {
+            Component comp = (Component) iter0.next();
+            for (Iterator iter1 = comp.getBindingDomains().iterator(); iter1.hasNext();) {
+                copyfeatures.add(iter1.next());
+            }
+        }
+
+        // Can't compare feature collections directly because a Feature uses
+        // reference equality with the component.
+
+        // Two features.
+        assertEquals(origfeatures.size(), 2);
+        assertEquals(copyfeatures.size(), 2);
+
+        // Feature 1 from the original interaction.
+        Feature origFeature1 = findFeature(orig.getComponents(), "feature1");
+        assertNotNull("Feature 1 missing", origFeature1);
+        assertEquals(origFeature1.getShortLabel(),"feature1");
+        assertEquals(origFeature1.getBoundDomain().getShortLabel(), "feature2");
+
+        // Feature 1 from the cloned interaction.
+        Feature copyFeature1 = findFeature(copy.getComponents(), "feature1-x");
+        assertNotNull("Feature 1 missing", copyFeature1);
+        assertEquals(copyFeature1.getShortLabel(),"feature1-x");
+        assertEquals(copyFeature1.getBoundDomain().getShortLabel(), "feature2-x");
+
+        // Components are set.
+        assertNotNull(origFeature1.getComponent());
+        assertNotNull(copyFeature1.getComponent());
+
+        // Both features are pointing to different components.
+        assertNotSame(origFeature1.getComponent(), copyFeature1.getComponent());
+        assertSame(origFeature1.getComponent(),
+                orig.getComponents().iterator().next());
+        assertSame(copyFeature1.getComponent(),
+                copy.getComponents().iterator().next());
+
+        // Ranges (original) are equal
+        assertEquals(origFeature1.getRanges().size(), 1);
+        Range origRange1 = (Range) origFeature1.getRanges().iterator().next();
+        assertEquals(origRange1.getFromIntervalStart(), 1);
+        assertEquals(origRange1.getFromIntervalEnd(), 2);
+
+        // Ranges (cloned) are equal
+        assertEquals(copyFeature1.getRanges().size(), 1);
+        Range copyRange1 = (Range) copyFeature1.getRanges().iterator().next();
+        assertEquals(copyRange1.getFromIntervalStart(), 1);
+        assertEquals(copyRange1.getFromIntervalEnd(), 2);
+
+        // Ranges are deep copied; change the copy.
+        copyRange1.setFromIntervalStart(-1);
+        assertTrue(copyRange1.getFromIntervalStart() == -1);
+        assertTrue(origRange1.getFromIntervalStart() == 1);
+    }
+
+    private Feature findFeature(Collection comps, String label) {
+        for (Iterator iter0 = comps.iterator(); iter0.hasNext(); ) {
+            Component comp = (Component) iter0.next();
+            for (Iterator iter1 = comp.getBindingDomains().iterator(); iter1.hasNext();) {
+                Feature feature = (Feature) iter1.next();
+                if (feature.getShortLabel().equals(label)) {
+                    return feature;
+                }
+            }
+        }
+        return null;
     }
 
     // Converts ListProxy to proper object for to compare.

@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.model.proxy.InteractionProxy;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * The specific instance of an interactor which
@@ -254,6 +255,31 @@ public class Component extends BasicObjectImpl {
         return code;
     }
 
+    /**
+     * Returns a cloned version of the current Component.
+     * @return a cloned version of the current Component. References to
+     * interactor and interaction are set to null. Features are deep cloned.
+     * @throws CloneNotSupportedException
+     */
+    public Object clone() throws CloneNotSupportedException {
+        Component copy = (Component) super.clone();
+
+        // Reset interactor and interaction.
+        copy.interaction = null;
+        copy.interactor = null;
+
+        // Make deep copies of Features.
+        copy.bindingDomains = new ArrayList(bindingDomains.size());
+        for (Iterator iter = bindingDomains.iterator(); iter.hasNext(); ) {
+            Feature feature = (Feature) iter.next();
+            Feature copyFeature = (Feature) feature.clone();
+            // Set the copy component as the component for feature copy.
+            copyFeature.setComponentForClone(copy);
+            // Add the cloned feature to the binding domains.
+            copy.bindingDomains.add(copyFeature);
+        }
+        return copy;
+    }
 
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.

@@ -238,6 +238,20 @@ public class Xref extends BasicObjectImpl {
                 + "; DB: " + cvDatabase.getShortLabel()
                 + "; PrimaryId: "+ primaryId;
     }
+
+    /**
+     * Returns a cloned version of the current object.
+     * @return a cloned version of the current Range. The Cv database and
+     * xref qualifier are not cloned (shared). The parent AC is set to null.
+     * @throws CloneNotSupportedException for errors in cloning this object.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        Xref copy = (Xref) super.clone();
+        // Reset the parent ac.
+        copy.parentAc = null;
+        return copy;
+    }
+
 } // end Xref
 
 

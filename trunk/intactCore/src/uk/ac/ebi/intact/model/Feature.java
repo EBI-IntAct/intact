@@ -9,6 +9,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * <p>
@@ -158,7 +159,10 @@ public class Feature extends AnnotatedObjectImpl {
      * @param range A new Range instance to add.
      */
     public void addRange(Range range) {
-        if (! this.ranges.contains(range)) this.ranges.add(range);
+        if (! this.ranges.contains(range)) {
+            this.ranges.add(range);
+            range.setParentAc(getAc());
+        }
     }
 
     public void removeRange(Range range) {
@@ -216,7 +220,46 @@ public class Feature extends AnnotatedObjectImpl {
         return code;
     }
 
+    /**
+     * Returns a cloned version of the current object.
+     * @return a cloned version of the current Feature with cloned ranges. The
+     * exceptions are:
+     * <ul>
+     * <li>The bound domain is not cloned (or else it will lead to recursive
+     * behaviour). It is shared with the existing Feature, to be replaced
+     * later with cloned copies</li>.
+     * <li>Component is set to null.</li>
+     * </ul>
+     * @throws CloneNotSupportedException for errors in cloning this object.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        Feature copy = (Feature) super.clone();
 
+        // Unset the existing component.
+        copy.component = null;
+
+        copy.ranges = new ArrayList(ranges.size());
+        // Make deep copies of range.
+        for (Iterator iter = ranges.iterator(); iter.hasNext(); ) {
+            copy.ranges.add(((Range) iter.next()).clone());
+        }
+
+        // Need to do more here.
+        return copy;
+    }
+
+    /**
+     * This is a package visible method specifically for the clone method
+     * of Component class. The present setComponent method changes
+     * the argument passed, thus causing changes to the source of the
+     * clone.
+     *
+     * @param component the Component to set. This simply replaces
+     * the existing component.
+     */
+    void setComponentForClone(Component component) {
+        this.component = component;
+    }
 }
 
 
