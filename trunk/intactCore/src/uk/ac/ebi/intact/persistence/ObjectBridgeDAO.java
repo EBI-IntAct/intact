@@ -21,6 +21,7 @@ import org.apache.ojb.broker.util.configuration.impl.*;
 import org.apache.ojb.broker.util.configuration.*;
 import org.apache.ojb.broker.util.ObjectModificationDefaultImpl;
 import org.apache.ojb.broker.metadata.*;
+import org.apache.ojb.broker.metadata.ClassNotPersistenceCapableException;
 
 //ODMG
 import org.odmg.*;
@@ -28,6 +29,7 @@ import org.apache.ojb.odmg.*;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.BusinessConstants;
+import uk.ac.ebi.intact.model.proxy.IntactObjectProxy;
 
 /**
  *  <p>This class provides an ObjectBridge-specific Data Access Object, which
@@ -759,11 +761,23 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      *
      * @param obj - the object to be checked
      *
-     * @return boolean - true if the object is persistent (default), false otherwise
+     * @return boolean - true if the object is persistent (default), false for
+     * all other instances.
      */
     public boolean isPersistent(Object obj) {
         checkForOpenStore();
-        ClassDescriptor cldes = getClassDescriptor(obj.getClass());
+        // Check for the proxy first; if it is an Intact proxy, we assume it is a
+        // persistent class.
+        if (IntactObjectProxy.class.isAssignableFrom(obj.getClass())) {
+            return true;
+        }
+        ClassDescriptor cldes = null;
+        try {
+            cldes = getClassDescriptor(obj.getClass());
+        }
+        catch (ClassNotPersistenceCapableException cnpce) {
+            return false;
+        }
         Object pkvalue = cldes.getPkFields()[0].getPersistentField().get(obj);
         if (pkvalue == null) {
             // Doesn't exist in the database
