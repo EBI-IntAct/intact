@@ -138,6 +138,8 @@ CREATE TABLE IA_BioSource
         , owner_ac                VARCHAR (30)    CONSTRAINT fk_BioSource_owner REFERENCES IA_Institution(ac)
         , shortLabel              VARCHAR (20)
         , fullName                VARCHAR (250)
+        , tissue_ac               VARCHAR (30)    CONSTRAINT fk_Biosource_tissue REFERENCES IA_ControlledVocab(ac)
+        , celltype_ac             VARCHAR (30)    CONSTRAINT fk_Biosource_celltype REFERENCES IA_ControlledVocab(ac)
 )
 ;
 
