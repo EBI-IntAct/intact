@@ -6,10 +6,8 @@
 
 <!--
     Tiles definitions for the StatisticView application.
-    Author: Sophie Huet (shuet@ebi.ac.uk)
-
+    Author: Sophie Huet (shuet@ebi.ac.uk), Samuel Kerrien (skerrien@ebi.ac.uk)
 -->
-
 
 <tiles-definitions>
 
@@ -30,12 +28,6 @@
         <put name="menu" value="stat.menu.links"/>
     </definition>
 
-    <!-- ============ Commons to all IntAct pplication ==================== -->
-
-    <!-- The footer layout -->
-    <definition name="intact.footer.layout" path="/pages/footer.jsp">
-    </definition>
-
     <!-- ============ Definitions of StatisticView screens ================= -->
 
     <!-- The header layout. -->
@@ -46,17 +38,10 @@
     <!-- StatisticView page description -->
     <definition name="statisticView.layout" path="/layouts/intactLayout.jsp">
         <put name="title"     value="Statistics"/>
-        <!-- just no sidebar - this must be defined -->
+        <put name="sidebar"   value="stat.sidebar.layout"/>
         <put name="header"    value="header.layout"/>
-        <!-- just no content - this must be defined -->
-        <put name="footer" value="intact.footer.layout"/>
+        <put name="content"   value="/pages/statView.jsp"/>
+        <put name="footer"    value="/pages/footer.jsp"/>
     </definition>
-
-    <!-- statView page content definition -->
-    <definition name="statView.layout" extends="statisticView.layout">
-        <put name="sidebar" value="stat.sidebar.layout"/>
-        <put name="content" value="/pages/statView.jsp"/>
-    </definition>
-
 
 </tiles-definitions>
