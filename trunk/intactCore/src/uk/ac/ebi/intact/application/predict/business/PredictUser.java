@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.application.predict.util.PredictLogger;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
@@ -65,7 +64,6 @@ public abstract class PredictUser implements IntactUserI,
     /**
      * Factory method to create different instances of Predict user instances
      * depending on the JDBC subprotocol.
-     * @param mapping the name of the mapping file.
      * @param dsClass the class name of the Data Source.
      *
      * @return an instance of this class created using the JDBC subprotocol.
@@ -76,8 +74,8 @@ public abstract class PredictUser implements IntactUserI,
      * @exception IntactException for errors in creating IntactHelper; problem with reading
      * the repository file.
      */
-    public static PredictUser create(String mapping, String dsClass)
-            throws DataSourceException, IntactException {
+    public static PredictUser create(String dsClass) throws DataSourceException,
+            IntactException {
         // The data source for given ds class.
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
@@ -156,13 +154,7 @@ public abstract class PredictUser implements IntactUserI,
 
     public String getDatabaseName() {
         if (myHelper != null) {
-            try {
-                return myHelper.getDbName();
-            }
-            catch (LookupException e) {
-            }
-            catch (SQLException e) {
-            }
+            return myHelper.getDbName();
         }
         return null;
     }
