@@ -118,6 +118,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     // Override the super method to this bean's info.
     public void persist(EditUserI user) throws IntactException, SearchException {
+        // Persists the annotations and xrefs.
+        super.persist(user);
+
         // The order is important! update super last as it does
         // the update of the object.
         Interaction intact = (Interaction) getAnnotatedObject();
@@ -145,29 +148,28 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Delete proteins and remove it from the interaction.
         for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
-//            ProteinBean pb = (ProteinBean) iter.next();
-//            Component comp = pb.getComponent();//(ProteinBean) iter.next()).getComponent();
             Component comp = ((ProteinBean) iter.next()).getComponent();
             // No need to delete from persistent storage if the link to this
             // Protein is not persisted.
             if (comp.getAc() == null) {
-//                System.out.println("Trying to delete a non persistent protein: " +
-//                        pb.getShortLabel() + " and " + pb.getEditState());
                 continue;
             }
-//            System.out.println("Deleting a persistent Protein: " +
-//                    pb.getShortLabel() + " and " + pb.getEditState());
             user.delete(comp);
             intact.removeComponent(comp);
         }
         // Update proteins.
         for (Iterator iter = getProteinsToUpdateIter(); iter.hasNext();) {
             ProteinBean pb = (ProteinBean) iter.next();
+            pb.update(user);
             Component comp = pb.getComponent(user);
             intact.addComponent(comp);
-            user.update(comp);
+            if (user.isPersistent(comp)) {
+                user.update(comp);
+            }
+            else {
+                user.create(comp);
+            }
         }
-        super.persist(user);
     }
 
     // Override to provide Experiment layout.

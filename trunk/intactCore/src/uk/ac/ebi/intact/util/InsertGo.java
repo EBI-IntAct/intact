@@ -155,7 +155,9 @@ public class InsertGo {
                              (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go"),
                              goAc,
                              goTerm, null, null));
-        dao.update(protein);
+        if (dao.isPersistent(protein)){
+            dao.update(protein);
+        }
         return protein;
     }
 
@@ -222,7 +224,8 @@ public class InsertGo {
                 // The GO terms are not essential, if anything fails,
                 // just catch the exception.
         catch (Exception e) {
-        };
+            e.printStackTrace();
+        }
 
         return goMap;
     }

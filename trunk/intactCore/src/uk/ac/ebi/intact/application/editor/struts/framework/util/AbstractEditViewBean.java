@@ -185,21 +185,6 @@ public abstract class AbstractEditViewBean {
     }
 
     /**
-     * Returns a <code>CommentBean</code> at given location.
-     * @param index the position to return <code>CommentBean</code>.
-     * @return <code>CommentBean</code> at <code>index</code>.
-     *
-     * <pre>
-     * pre: index >=0 and index < myAnnotations->size
-     * post: return != null
-     * post: return = myAnnotations->at(index)
-     * </pre>
-     */
-//    public CommentBean getAnnotation(int index) {
-//        return (CommentBean) myAnnotations.get(index);
-//    }
-
-    /**
      * Adds an annotation.
      * @param annotation the annotation to add.
      *
@@ -255,21 +240,6 @@ public abstract class AbstractEditViewBean {
     public List getXrefs() {
         return myXrefs;
     }
-
-    /**
-     * Returns a <code>XreferenceBean</code> at given location.
-     * @param index the position to return <code>XreferenceBean</code>.
-     * @return <code>XreferenceBean</code> at <code>index</code>.
-     *
-     * <pre>
-     * pre: index >=0 and index < myXrefs->size
-     * post: return != null
-     * post: return = myXrefs->at(index)
-     * </pre>
-     */
-//    public XreferenceBean getXref(int index) {
-//        return (XreferenceBean) myXrefs.get(index);
-//    }
 
     /**
      * Adds an xref.
@@ -345,23 +315,32 @@ public abstract class AbstractEditViewBean {
         myAnnotObject.setShortLabel(getShortLabel());
         myAnnotObject.setFullName(getFullName());
 
+        // Don't care whether annotated object exists or not because we don't
+        // need an AC in the annotation table. Can#t mark the parent object
+        // for create or else the annotation not created.
+
         // Create annotations and add them to CV object.
         for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation();
+            // Need this to generate the PK for the indirection table.
             user.create(annot);
             myAnnotObject.addAnnotation(annot);
         }
         // Delete annotations and remove them from CV object.
         for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation();
-            // Can do without an explcit call to delete.
-            //user.delete(annot);
+            user.delete(annot);
             myAnnotObject.removeAnnotation(annot);
         }
-        // Update annotations.
+        // Update annotations; update the object as update of annotated object
+        // ensures the sub objects are updated as well.
         for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
-            Annotation annot = updateAnnotation(user, (CommentBean) iter.next());
-            user.update(annot);
+            CommentBean cb = (CommentBean) iter.next();
+            cb.update(user);
+//            user.update(cb.getAnnotation());
+        }
+        if (!user.isPersistent(myAnnotObject)) {
+            user.create(myAnnotObject);
         }
 
         // Create xrefs and add them to CV object.
@@ -376,13 +355,16 @@ public abstract class AbstractEditViewBean {
             user.delete(xref);
             myAnnotObject.removeXref(xref);
         }
-        // Update xrefs.
+        // Update xrefs; see the comments for annotation update above.
         for (Iterator iter = getXrefsToUpdate().iterator(); iter.hasNext();) {
-            Xref xref = updateXref(user, ((XreferenceBean) iter.next()));
-            user.update(xref);
+            XreferenceBean xb = (XreferenceBean) iter.next();
+            xb.update(user);
+//            user.update(xb.getXref());
         }
-        // Update the cv object.
-        user.update(myAnnotObject);
+        // Update the cv object only for an object already persisted.
+        if (user.isPersistent(myAnnotObject)) {
+            user.update(myAnnotObject);
+        }
     }
 
     /**
@@ -683,46 +665,6 @@ public abstract class AbstractEditViewBean {
         myXrefsToAdd.clear();
         myXrefsToDel.clear();
         myXrefsToUpdate.clear();
-    }
-
-    private Annotation updateAnnotation(EditUserI user, CommentBean cb)
-            throws SearchException {
-        // Update with the new description.
-        Annotation annot = cb.getAnnotation();
-        annot.setAnnotationText(cb.getDescription());
-
-        // Only update the topic if they differ.
-        String topic = cb.getTopic();
-        if (!topic.equals(annot.getCvTopic().getShortLabel())) {
-            // Get the topic object for the new annotation.
-            CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class, topic);
-            annot.setCvTopic(cvtopic);
-        }
-        return annot;
-    }
-
-    private Xref updateXref(EditUserI user, XreferenceBean xb)
-            throws SearchException {
-        // The xref object to update
-        Xref xref = xb.getXref();
-
-        // Only update the database if it has been changed.
-        String database = xb.getDatabase();
-        if (!database.equals(xref.getCvDatabase().getShortLabel())) {
-            // The database the new xref belong to.
-            CvDatabase db = (CvDatabase) user.getObjectByLabel(
-                    CvDatabase.class, database);
-            xref.setCvDatabase(db);
-        }
-        xref.setPrimaryId(xb.getPrimaryId());
-        xref.setSecondaryId(xb.getSecondaryId());
-        xref.setDbRelease(xb.getReleaseNumber());
-
-        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
-                CvXrefQualifier.class, xb.getQualifier());
-        xref.setCvXrefQualifier(xqual);
-
-        return xref;
     }
 
     private List getTopicMenu(int mode) throws SearchException {
