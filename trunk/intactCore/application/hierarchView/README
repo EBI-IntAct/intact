@@ -1,10 +1,94 @@
-In order to have a nive display in your web application, you should read the following lines ;o)
+README for hierarchView
+**********************************************************************
 
-Before to start tomcat, you have to start a new X server to allow 
-hierarchView to access the display layer of the current system.
+DIRECTORIES
+------------
 
-In the terminal you want to start Tomcat, you have to do the following tasks :
+WEB-INF/   : config, classes and needed libraries.
+interpro/  : modification done on the interpro web application to fit our needs
+tulip/     : source files of the tulip console
 
-	Xvfb :2.0 &
-	setenv DIPLAY :2.0 (to give an adress in DIPLAY for the server X, DISPLAY is used by tomcat)
-	echo $DISPLAY (just to check)
+
+
+INSTALLATION NOTES
+------------------
+
+The command line 'Ant -projecthelp' allows you to have the description of
+needed Ant task to install hierarchView.
+
+In the following part, I will consider that :
+   - the intactCore database access is already properly configured (cf. intactCore/README)
+   - the Tulip software had been installed (www.tulip-software.org)
+   - a gcc 2.96 compiler is available on you system
+     it will allows to compile the command line tulip access software.
+   - you have already a proper installation of Tomcat (jakarta.apache.org/tomcat)
+   - you have already a proper installation of Axis (xml.apache.org/axis/)
+   - you have Interpro properly running on your tomcat server
+
+
+
+
+(1) Compile the intactCore
+    ----------------------
+    go in the intactCore directory (root of the project) and run 'ant compile-all'.
+
+
+(2) Install the tulip console
+    -------------------------
+    - in the 'tulip' directory, you will find the 'tulipRemote-scr.tar.gz' archive.
+    - Uncompress it.
+    - it creates a 'Serveur' directory in which you will have firstly to customize
+      the 'configure' script.
+      You find there also 'HELP.intact' file which explain how to customize 'configure'.
+    - run it (./configure) to create the 'Makefile'.
+    - run it (make)
+    - You obtain 'console' binary file you have now to copy in a location of your
+      choice. That file will be used by the web service to accessed the Tulip
+      library.
+
+
+(3) Configure and deploy the Tulip web service
+    ------------------------------------------
+    - edit the 'WEB-INF/config/WebService.properties' file.
+    - customize :
+        * 'webService.adress' with the url of your Axis installation.
+        * 'webService.console.location' with the absolute path to the console you
+          have compiled.
+     - run 'Ant deploy-ws', will generate needed file and deploy the web service on
+      your Axis installation
+
+
+(4) set your Linux X11 system
+    -------------------------
+    Before to start tomcat, you have to start a new X server to allow
+    hierarchView to access the display layer of the current system.
+    In the terminal you want to start Tomcat, you have to do the following tasks :
+
+	    Xvfb :2.0 &        (or an other port if it's already in use)
+	    setenv DIPLAY :2.0 (to point on the new X server)
+	    echo $DISPLAY      (just to check)
+
+
+(5) Build the application war file
+    ------------------------------
+    run 'ant undeploy war deploy', will clean Tomcat and install the web application.
+
+
+(6) Start Tomcat
+    ------------
+    run 'ant start-tomcat'
+
+
+(5) Start the web service
+    ---------------------
+    run 'ant start-ws', will make become the tulip web service available.
+    You can test if the web service is properly running by running 'ant test-ws', you should
+    get the sended TLP content and the returned list of protein's coordinates.
+
+
+(6) Try the web application
+    -----------------------
+    let's open a browser and go to http://[YOU_WEB_SERVER]/hierarchView
+
+
+
