@@ -55,7 +55,7 @@ public class LogoutAction extends AbstractEditorAction {
         session.removeAttribute(EditorConstants.INTACT_USER);
 
         if (user != null) {
-            LOGGER.info("User " + user.getUser() + " logged off at " +
+            LOGGER.info("User " + user.getUserName() + " logged off at " +
                     user.logoffTime());
             // Close the connection to the persistent storage.
             try {
