@@ -73,12 +73,6 @@ public class SubmitFormAction extends AbstractEditorAction {
             if (deletePressed(dispatch, msgres)) {
                 return mapping.findForward("delete");
             }
-//            if (dispatch.equals(msgres.getMessage("annotations.button.add"))) {
-//                return mapping.findForward("submit");
-//            }
-//            if (dispatch.equals(msgres.getMessage("xrefs.button.add"))) {
-//                return mapping.findForward("submit");
-//            }
             // None of the above actions; Let the subclass handle this
             // dispatch action.
             return handleDispatch(mapping, form, request, dispatch);
@@ -158,11 +152,12 @@ public class SubmitFormAction extends AbstractEditorAction {
     /**
      * @param title the button title to compare.
      * @param msgres the message resource to get the button label.
-     * @return true if one of the submit buttons (Submit/Adding annotation/xref)
-     * is pressed.
+     * @return true if one of the submit buttons
+     * (Submit/Save/Adding annotation/xref) is pressed.
      */
     private boolean submitPressed(String title, MessageResources msgres) {
         if (title.equals(msgres.getMessage("button.submit"))
+                || title.equals(msgres.getMessage("button.save"))
                 || title.equals(msgres.getMessage("annotations.button.add"))
                 || title.equals(msgres.getMessage("xrefs.button.add"))) {
             return true;
