@@ -175,25 +175,25 @@ public class PredictOra {
         try {
             //Create current_edge table
             S = getConnection().createStatement();
-            S.executeUpdate("delete FROM current_edge");
+            S.executeUpdate("delete FROM ia_payg_current_edge");
             fillCurrentEdgesTable(); //Get interactions from intact database
 
-            S.executeUpdate("UPDATE current_edge SET seen=0, conf=0");
+            S.executeUpdate("UPDATE ia_payg_current_edge SET seen=0, conf=0");
 
             //Setup the Pay-As-You-Go table
             S.executeUpdate("delete FROM ia_payg");
 
-            S.executeUpdate("delete FROM temp_node");
-            S.executeUpdate("INSERT INTO temp_node SELECT distinct nidA, species FROM current_edge");
-            S.executeUpdate("INSERT INTO temp_node SELECT distinct nidB, species FROM current_edge");
+            S.executeUpdate("delete FROM ia_payg_temp_node");
+            S.executeUpdate("INSERT INTO ia_payg_temp_node SELECT distinct nidA, species FROM ia_payg_current_edge");
+            S.executeUpdate("INSERT INTO ia_payg_temp_node SELECT distinct nidB, species FROM ia_payg_current_edge");
 
-            ResultSet R = S.executeQuery("SELECT distinct nid, species FROM temp_node WHERE nid IS NOT NULL");
+            ResultSet R = S.executeQuery("SELECT distinct nid, species FROM ia_payg_temp_node WHERE nid IS NOT NULL");
             for (Iterator iter = getNodes(R).iterator(); iter.hasNext();) {
                 Node tn = (Node) iter.next();
                 String nid = tn.getNid();
                 String species = tn.getSpecies();
 //                System.out.println("Inserting ia_payg value " + nid);
-                ResultSet RS = S.executeQuery("SELECT COUNT(*) FROM current_edge WHERE nidA=\'"
+                ResultSet RS = S.executeQuery("SELECT COUNT(*) FROM ia_payg_current_edge WHERE nidA=\'"
                         + nid + "\'");
                 if (RS.next()) {
                     if (RS.getInt(1) == 0) {
@@ -264,7 +264,7 @@ public class PredictOra {
                         if (role.equals("prey")) {
                             String prey = interactor.getShortLabel();
                             S.executeUpdate(
-                                    "INSERT INTO current_edge values(\'" + bait + "\',\'"
+                                    "INSERT INTO ia_payg_current_edge values(\'" + bait + "\',\'"
                                     + prey + "\',0,0,\'" + species + "\')");
 //                            System.out.println("Prey: " + prey);
                         }
@@ -387,7 +387,7 @@ public class PredictOra {
         try {
             // determine k & deltaK
             S = getConnection().createStatement();
-            ResultSet R = S.executeQuery("SELECT COUNT(*) FROM current_edge WHERE species =\'"
+            ResultSet R = S.executeQuery("SELECT COUNT(*) FROM ia_payg_current_edge WHERE species =\'"
                     + species + "\' AND (nidA=\'" + ID + "\' OR nidB=\'" + ID
                     + "\') AND (nidA!=nidB) AND nidA IS NOT NULL AND nidB IS NOT NULL");
             int k = 0;
@@ -404,19 +404,19 @@ public class PredictOra {
                     + " WHERE nID=\'" + ID + "\' AND species =\'" + species + "\'");
 
             // then mark all the adjacent edge as covered
-            S.executeUpdate("UPDATE current_edge SET conf=" + step
+            S.executeUpdate("UPDATE ia_payg_current_edge SET conf=" + step
                     + " WHERE (nidA=\'" + ID + "\' OR nidB=\'" + ID + "\')  AND species =\'"
                     + species + "\' AND nidA!=nidB AND seen>0 AND conf=0 AND nidA"
                     + " IS NOT NULL AND nidB IS NOT NULL");
 
-            S.executeUpdate("UPDATE current_edge SET seen=" + step
+            S.executeUpdate("UPDATE ia_payg_current_edge SET seen=" + step
                     + " WHERE (nidA=\'" + ID + "\' OR nidB=\'" + ID
                     + "\') AND nidA!=nidB  AND species =\'" + species + "\' AND seen=0");
 
             // conduct the virtualPullOut
             // 1. mark all the neighbours as prey
 
-            R = S.executeQuery("SELECT nidA, nidB FROM current_edge WHERE species =\'"
+            R = S.executeQuery("SELECT nidA, nidB FROM ia_payg_current_edge WHERE species =\'"
                     + species + "\' AND (nidA=\'" + ID + "\' OR nidB=\'" + ID
                     + "\') AND (nidA!=nidB) AND nidA IS NOT NULL AND nidB IS NOT NULL");
             for (Iterator iter = getEdges(R).iterator(); iter.hasNext();) {
@@ -440,7 +440,7 @@ public class PredictOra {
 //            R.close();
             // 2. compute the Nr. of edge seen & confirmed so far
             int nSeen = 0;
-            R = S.executeQuery("SELECT COUNT(*) FROM current_edge WHERE seen>0"
+            R = S.executeQuery("SELECT COUNT(*) FROM ia_payg_current_edge WHERE seen>0"
                     + " AND (nidA!=nidB) AND nidA IS NOT NULL AND nidB IS NOT"
                     + " NULL AND species =\'" + species + "\'");
             if (R.next()) {
@@ -450,7 +450,7 @@ public class PredictOra {
 //            R.close();
 
             int nConfirm = 0;
-            R = S.executeQuery("SELECT COUNT(*) FROM current_edge"
+            R = S.executeQuery("SELECT COUNT(*) FROM ia_payg_current_edge"
                     + " WHERE conf>0 AND (nidA!=nidB) AND nidA IS NOT NULL"
                     + " AND nidB IS NOT NULL AND species =\'" + species + "\'");
             if (R.next()) {
