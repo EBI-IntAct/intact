@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction;
+import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionLinkAction extends SubmitDispatchAction {
+public class InteractionLinkAction extends CommonDispatchAction {
 
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,

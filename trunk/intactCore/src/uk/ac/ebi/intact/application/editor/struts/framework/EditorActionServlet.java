@@ -72,10 +72,12 @@ public class EditorActionServlet extends ActionServlet {
         // The map to return.
         Map map = new HashMap();
 
-        // ACtions related to the buttons at the bottom of edit page. Common
-        // to all the editors.
+        // Actions related to the buttons at the bottom of edit page. Common
+        // to all the editors. First three are all directed to
         map.put(rb.getString("button.submit"), "submit");
         map.put(rb.getString("button.save.continue"), "submit");
+        map.put(rb.getString("button.clone"), "submit");
+
         map.put(rb.getString("button.cancel"), "cancel");
         map.put(rb.getString("button.delete"), "delete");
 

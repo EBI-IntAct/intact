@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.model.Constants;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -65,12 +64,11 @@ public class LoginAction extends AbstractEditorAction {
         // Save the context to avoid repeat calls.
         ServletContext ctx = super.getServlet().getServletContext();
 
-        // Name of the mapping file and data source.
-        String repfile = ctx.getInitParameter(Constants.MAPPING_FILE_KEY);
+        // Name of the data source.
         String ds = ctx.getInitParameter(theirDSKey);
 
         // Create an instance of EditorService.
-        EditUserI user = new EditUser(repfile, ds, username, password);
+        EditUserI user = new EditUser(ds, username, password);
 
         // Invalidate any previous sessions.
         HttpSession session = request.getSession(false);

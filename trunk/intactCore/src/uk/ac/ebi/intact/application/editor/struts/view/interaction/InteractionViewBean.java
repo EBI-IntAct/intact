@@ -99,13 +99,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
         setOrganism(null);
         setInteractionType(null);
         setSourceExperimentAc(null);
-
-        // Clear any left overs from previous transaction.
-        clearTransactions();
-
-        // Clear experiments and proteins.
-        makeExperimentBeans(Collections.EMPTY_LIST);
-        makeProteinBeans(Collections.EMPTY_LIST);
+//
+//        // Clear any left overs from previous transaction.
+//        clearTransactions();
+//
+//        // Clear experiments and proteins.
+//        makeExperimentBeans(Collections.EMPTY_LIST);
+//        makeProteinBeans(Collections.EMPTY_LIST);
     }
 
     protected void reset(AnnotatedObject annobj) {
@@ -113,26 +113,49 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Must be an Interaction; can cast it safely.
         Interaction intact = (Interaction) annobj;
-        setKD(intact.getKD());
 
-        // Only set the short labels if the interaction has non null values.
-        BioSource biosrc = intact.getBioSource();
-        setOrganism(biosrc != null ? biosrc.getShortLabel() : null);
+        // Reset the current interaction with the argument interaction.
+        resetInteraction(intact);
 
-        CvInteractionType inter = intact.getCvInteractionType();
-        setInteractionType(inter != null
-                ? intact.getCvInteractionType().getShortLabel() : null);
+//        setKD(intact.getKD());
+//
+//        // Only set the short labels if the interaction has non null values.
+//        BioSource biosrc = intact.getBioSource();
+//        setOrganism(biosrc != null ? biosrc.getShortLabel() : null);
+//
+//        CvInteractionType inter = intact.getCvInteractionType();
+//        setInteractionType(inter != null
+//                ? intact.getCvInteractionType().getShortLabel() : null);
 
         // Clear any left overs from previous transaction.
-        clearTransactions();
+//        clearTransactions();
 
         // Set the source experiment to null to indicate that this bean
-        // is not constructed from within an experiment.
-        setSourceExperimentAc(null);
+        // is not constructed within an experiment.
+//        setSourceExperimentAc(null);
 
         // Prepare for Proteins and Experiments for display.
         makeExperimentBeans(intact.getExperiments());
         makeProteinBeans(intact.getComponents());
+    }
+
+
+    // Reset the fields to null if we don't have values to set. Failure
+    // to do so will display the previous edit object's values as current.
+    public void resetClonedObject(AnnotatedObject copy) {
+        super.resetClonedObject(copy);
+
+        Interaction interaction = (Interaction) copy;
+
+        // Reset the interaction view.
+        resetInteraction(interaction);
+
+        // Add cloned proteins as new proteins.
+        for (Iterator iter = interaction.getComponents().iterator(); iter.hasNext();) {
+            ProteinBean pb = new ProteinBean((Component) iter.next());
+            myProteins.add(pb);
+            addProteinToUpdate(pb);
+        }
     }
 
     // Implements abstract methods
@@ -163,10 +186,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
             intact.setCvInteractionType(type);
 
             // Add experiments.
-            for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-                Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
-                intact.addExperiment(exp);
-            }
+//            for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
+//                Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+//                intact.addExperiment(exp);
+////                user.getHelper().removeFromCache(exp);
+//            }
         }
         // Get the objects using their short label.
         BioSource biosource = (BioSource) user.getObjectByLabel(
@@ -179,77 +203,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
             Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
             intact.removeExperiment(exp);
         }
-
-        // Delete proteins and remove it from the interaction.
-//        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
-//            Component comp = ((ProteinBean) iter.next()).getComponent(user);
-//            // No need to delete from persistent storage if the link to this
-//            // Protein is not persisted.
-//            if (comp != null) {
-//                intact.removeComponent(comp);
-//            }
-//        }
-//        // Update proteins.
-//        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
-//            ProteinBean pb = (ProteinBean) iter.next();
-//            pb.setInteraction((Interaction) getAnnotatedObject());
-//            Component comp = pb.getComponent(user);
-//            intact.addComponent(comp);
-//        }
     }
-
-    // Override the super method to update the current Interaction.
-//    public void updateXXX(EditUserI user) throws SearchException {
-//        super.updateXXX(user);
-//        // Get the objects using their short label.
-//        BioSource biosource = (BioSource) user.getObjectByLabel(
-//                BioSource.class, myOrganism);
-//        CvInteractionType type = (CvInteractionType) user.getObjectByLabel(
-//                CvInteractionType.class, myInteractionType);
-//
-//        // The current Interaction object we want to update
-//        Interaction intact = (Interaction) getAnnotatedObject();
-//        intact.setBioSource(biosource);
-//        intact.setCvInteractionType(type);
-//        intact.setKD(myKD);
-//
-//        // Create experiments and add them to CV object.
-//        for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-//            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
-//            intact.addExperiment(exp);
-//        }
-//        // Delete experiments and remove them from CV object.
-//        for (Iterator iter = getExperimentsToDel().iterator(); iter.hasNext();) {
-//            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
-//            intact.removeExperiment(exp);
-//        }
-//    }
-
-    // Override the super method to this bean's info.
-//    public void persist(EditUserI user) throws IntactException, SearchException {
-//        // Get the objects using their short label.
-//        BioSource biosource = (BioSource) user.getObjectByLabel(
-//                BioSource.class, myOrganism);
-//        CvInteractionType type = (CvInteractionType) user.getObjectByLabel(
-//                CvInteractionType.class, myInteractionType);
-//
-//        Interaction intact = (Interaction) getAnnotatedObject();
-//        intact.setBioSource(biosource);
-//        intact.setCvInteractionType(type);
-//        intact.setKD(myKD);
-//
-//        // Create experiments and add them to CV object.
-//        for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
-//            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
-//            intact.addExperiment(exp);
-//        }
-//        // Delete experiments and remove them from CV object.
-//        for (Iterator iter = getExperimentsToDel().iterator(); iter.hasNext();) {
-//            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
-//            intact.removeExperiment(exp);
-//        }
-//        super.persist(user);
-//    }
 
     // Override the super to persist others.
     public void persistOthers(EditUserI user) throws IntactException,
@@ -310,15 +264,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return "editor.interaction";
     }
 
-    // Override to provide set experiment from the bean.
-//    public void updateFromForm(DynaActionForm dynaform) {
-//        // Set the common values by calling super first.
-//        super.updateFromForm(dynaform);
-//
-//        setInteractionType((String) dynaform.get("interactionType"));
-//        setOrganism((String) dynaform.get("organism"));
-//        setKD((Float) dynaform.get("kD"));
-//    }
     // Override to provide set experiment from the bean.
     public void copyPropertiesFrom(EditorActionForm editorForm) {
         // Set the common values by calling super first.
@@ -649,38 +594,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * considered as unsaved.
      */
     public void removeUnsavedProteins() {
-//        // Collects unsaved proteins to remove.
-//        List unsaved = new ArrayList();
-//
-//        for (Iterator iter = myProteins.iterator(); iter.hasNext(); ) {
-//            ProteinBean pb = (ProteinBean) iter.next();
-//            if (pb.getEditState().equals(ProteinBean.SAVE_NEW)) {
-//                unsaved.add(pb);
-//            }
-//        }
-
         CollectionUtils.filter(myProteins, ProteinBeanPredicate.ourInstance);
-//        myProteins.removeAll(unsaved);
     }
-
-    /**
-     * True if given protein bean already exists among current saved proteins.
-     * @param pb the bean to compare.
-     * @return true if another 'saved' already exists.
-     */
-//    public boolean hasDuplicates(ProteinBean pb) {
-//        for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
-//            ProteinBean bean = (ProteinBean) iter.next();
-//            // Only consider committed proteins.
-//            if (!bean.getEditState().equals(ProteinBean.VIEW)) {
-//                continue;
-//            }
-//            if (bean.equals(pb)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
     /**
      * Returns a collection of <code>ProteinBean</code> objects.
@@ -751,6 +666,15 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return mySourceExperimentAc != null;
     }
 
+    /**
+     * Returns the state for this editor to clone.
+     * @return true for all the persistent interactions (i.e., false for a
+     * new interaction not yet persisted).
+     */
+    public boolean getCloneState() {
+        return getAc() != null;
+    }
+
     // Helper methods
 
     private void makeProteinBeans(Collection components) {
@@ -808,6 +732,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // The current Interaction.
         Interaction intact = (Interaction) getAnnotatedObject();
 
+        // Add experiments here. Make sure this is done after persisting the
+        // Interaction first. - IMPORTANT. don't change the order.
+        for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
+            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+            intact.addExperiment(exp);
+        }
+
         // Delete proteins and remove it from the interaction.
         for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
             Component comp = ((ProteinBean) iter.next()).getComponent(user);
@@ -835,6 +766,26 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // No need to test whether this 'intact' persistent or not because we
         // know it has been already persisted by persist() call.
         user.update(intact);
+    }
+
+    /**
+     * Resets this interaction with give interaction object.
+     * @param interaction the Interaction to set the current interaction.
+     */
+    private void resetInteraction(Interaction interaction) {
+        setKD(interaction.getKD());
+
+        // Only set the short labels if the interaction has non null values.
+        BioSource biosrc = interaction.getBioSource();
+        setOrganism(biosrc != null ? biosrc.getShortLabel() : null);
+
+        CvInteractionType inter = interaction.getCvInteractionType();
+        setInteractionType(inter != null
+                ? interaction.getCvInteractionType().getShortLabel() : null);
+
+        // Set the source experiment to null to indicate that this bean
+        // is not constructed within an experiment.
+        setSourceExperimentAc(null);
     }
 
     // Static Inner Class -----------------------------------------------------

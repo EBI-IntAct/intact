@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
@@ -117,6 +118,15 @@ public interface EditUserI extends IntactUserI, Serializable {
      * AnnotatedObject is used.
      */
     public void setView(Object obj);
+
+    /**
+     * Sets the view as a cloned object. This is different to
+     * {@link #setView(Object)}, for example a cloned object needs to set all
+     * the annotations as new annotations to add for the persistence to work
+     * correctly (these annotations need to be created first).
+     * @param obj the cloned object.
+     */
+    public void setClonedView(AnnotatedObject obj);
 
     // Search methods
 

@@ -163,10 +163,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     // Constructors.
 
     /**
-     * Constructs an instance of this class with given mapping file and
-     * the name of the data source class.
+     * Constructs an instance of this class with given data source class,
+     * the name of the user and the password.
      *
-     * @param mapping the name of the mapping file.
      * @param dsClass the class name of the Data Source.
      * @param user the user
      * @param password the password of <code>user</code>.
@@ -176,8 +175,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * @exception IntactException for errors in creating IntactHelper; possibly
      * due to an invalid user.
      */
-    public EditUser(String mapping, String dsClass, String user,
-                    String password) throws DataSourceException, IntactException {
+    public EditUser(String dsClass, String user, String password)
+            throws DataSourceException, IntactException {
         myDAOSource = DAOFactory.getDAOSource(dsClass);
 
         // Save the user info in the DS for us to access them later.
@@ -193,7 +192,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * to null. This is equivalent to calling
      * {@link EditUser(String, String, String, String)} with null values for
      * user and password.
-     * @param mapping the name of the mapping file.
      * @param dsClass the class name of the Data Source.
      * @throws DataSourceException for error in getting the data source; this
      * could be due to the errors in repository files.
@@ -201,9 +199,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      *
      * @see uk.ac.ebi.intact.application.editor.test.SessionSerializationTest
      */
-    public EditUser(String mapping, String dsClass) throws IntactException,
+    public EditUser(String dsClass) throws IntactException,
             DataSourceException {
-        this(mapping, dsClass, null, null);
+        this(dsClass, null, null);
     }
 
     // Methods to handle special serialization issues.
@@ -325,6 +323,12 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditView.reset(obj);
     }
 
+    public void setClonedView(AnnotatedObject obj) {
+        startEditing();
+        myEditView = myViewFactory.factory(IntactHelper.getRealClassName(obj));
+        myEditView.resetClonedObject(obj);
+    }
+
     public String getSelectedTopic() {
         return mySelectedTopic;
     }
@@ -386,8 +390,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         AnnotatedObject annobj = myEditView.getAnnotatedObject();
         if (isPersistent(annobj)) {
             myHelper.delete(annobj);
-            myHelper.deleteAllElements(annobj.getAnnotations());
             annobj.getAnnotations().clear();
+            // Don't want xrefs; tied to an annotated object. Delete them explicitly
             myHelper.deleteAllElements(annobj.getXrefs());
             annobj.getXrefs().clear();
         }
