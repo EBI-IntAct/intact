@@ -3,18 +3,9 @@
  	"-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
 	"http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
 
-
 <!--
-This is the Struts configuration file for the example application,
-using the proposed new syntax.
-
-NOTE:  You would only flesh out the details in the "form-bean"
-declarations if you had a generator tool that used them to create
-the corresponding Java classes for you.  Otherwise, you would
-need only the "form-bean" element itself, with the corresponding
-"name" and "type" attributes.
+        Struts v1.1 configuration file for the hierarchView application
 -->
-
 
 <struts-config>
 
@@ -64,7 +55,7 @@ need only the "form-bean" element itself, with the corresponding
             path="/init"
             type="uk.ac.ebi.intact.application.hierarchView.struts.controller.InitAction">
 
-            <forward name="success" path="hierarchView.blank.layout"/>
+            <forward name="success" path="hierarchView.layout"/>
         </action>
 
         <!-- Processes the user search -->
@@ -72,10 +63,10 @@ need only the "form-bean" element itself, with the corresponding
                 type="uk.ac.ebi.intact.application.hierarchView.struts.controller.SearchAction"
                 name="searchForm"
                 validate="true"
-                scope="request"
+                scope="session"
                 input="hierarchView.error.layout"/>
 
-        <!-- Processes the user search -->
+        <!-- Processes the user search for an external application -->
         <action path="/display"
                 type="uk.ac.ebi.intact.application.hierarchView.struts.controller.DisplayAction"
                 scope="request"
