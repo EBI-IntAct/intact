@@ -90,6 +90,13 @@ public class SearchAction extends IntactBaseAction {
 
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(session);
+        if(user == null) {
+            //browser page caching screwed up the session - need to
+            //get a user object created again by forwarding to welcome action...
+            //------- SET THIS TO THE CORRECT FORWARD VALUE -------------
+            return mapping.findForward(SearchConstants.FORWARD_RESULTS);
+
+        }
 
         //now need to try searches based on AC, label or name (only
         //ones we will accept for now) and return as soon as we get a result
@@ -135,15 +142,6 @@ public class SearchAction extends IntactBaseAction {
         //with garbage input using this approach...
         super.log("search action: attempting to search by AC first...");
         try {
-            //testing iterator version....
-//            System.out.println("trying Iterator search....");
-//            String className = AnnotatedObject.class.getPackage().getName() + "." + "Interaction";
-//            Iterator resIter = user.getHelper().iterSearch(className, "ac", searchValue);
-//            if(resIter != null) {
-//                System.out.println("Got an Iterator - its type is " + resIter.getClass().getName());
-//            }
-//
-
 
             results = doLookup(searchClass, searchValue, user);
             if (results.isEmpty()) {
@@ -172,6 +170,14 @@ public class SearchAction extends IntactBaseAction {
 
             // ************* Search was a success. ********************************
 
+            //get all the shortLabels (for AnnotatedObjects!) from the result set so we
+            //can pass them on to view beans for highlighting in web pages...
+            StringBuffer buf = new StringBuffer();
+            for(Iterator it = results.iterator(); it.hasNext();) {
+                buf.append(((AnnotatedObject)it.next()).getShortLabel());
+                if(it.hasNext()) buf.append(",");
+            }
+
             // Save the search parameters for results page to display.
             session.setAttribute(SearchConstants.SEARCH_CRITERIA,
                     user.getSearchCritera() + "=" + searchValue);
@@ -179,27 +185,34 @@ public class SearchAction extends IntactBaseAction {
             //assume search results are all the same type (we know it is not empty by here)...
             Object searchItem = results.iterator().next();
 
-            //first deal with CvObject search - only ever one match..
-            if (CvObject.class.isAssignableFrom(searchItem.getClass())) {
+            //first deal with single object search (ie single Protein view,
+            //CvObject view) - only ever one match.
+            //NB for a Protein this gives a BASIC view, ie non-contextual, and
+            //we only do this view IF the searchClass has been specified (ie from a link)
+            if (((CvObject.class.isAssignableFrom(searchItem.getClass())) ||
+                    (Protein.class.isAssignableFrom(searchItem.getClass()))) &
+                    (!searchClass.equals(""))){
 
-                    IntactViewBean bean = new IntactViewBean(searchItem, xslfile, builder, link);
+                //in this case only want a viewBean wrapping a single (non-experiment)
+                //object, expanded as necessary.....
+                IntactViewBean bean = new IntactViewBean(searchItem, xslfile, builder, link);
                 bean.createXml();
 
-                //now expand it, as CvObject views need detail...
-                String cvAc = ((CvObject) searchItem).getAc();
-                bean.modifyXml(XmlBuilder.EXPAND_NODES, cvAc);
+                //now expand it...
+                String objAc = ((BasicObject)searchItem).getAc();
+                bean.modifyXml(XmlBuilder.EXPAND_NODES, objAc);
 
-                System.out.println("CvObject: XML after initial expansion:");
+                System.out.println("Single Object View: XML after initial expansion:");
                 printBean(bean);
 
-                Collection cvObjXrefs = bean.getAcs("Xref");
-                bean.modifyXml(XmlBuilder.EXPAND_NODES, cvObjXrefs);
-                System.out.println("CvObject: XML after Xref expansion:");
+                Collection objXrefs = bean.getAcs("Xref");
+                bean.modifyXml(XmlBuilder.EXPAND_NODES, objXrefs);
+                System.out.println("Single Object View: XML after Xref expansion:");
                 printBean(bean);
 
-                Collection cvObjAnnots = bean.getAcs("Annotation");
-                bean.modifyXml(XmlBuilder.EXPAND_NODES, cvObjAnnots);
-                System.out.println("CvObject: XML after Annotation expansion:");
+                Collection objAnnots = bean.getAcs("Annotation");
+                bean.modifyXml(XmlBuilder.EXPAND_NODES, objAnnots);
+                System.out.println("Single Object View: XML after Annotation expansion:");
                 printBean(bean);
 
                 //for DAG objects, need also to expand details of parent and
@@ -231,17 +244,20 @@ public class SearchAction extends IntactBaseAction {
 
                 }
                 //add it to the session for later display
-                session.setAttribute(SearchConstants.CV_VIEW_BEAN, bean);
+                session.setAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN, bean);
                 //idToView.put(Integer.toString(counter), bean);
+
+                //tell the bean about the search details....
+                bean.setSearchInfo(buf.toString());
 
             }
             else {
 
-                //must be experiments, proteins etc...
+                //must be multiple experiments, proteins etc to be viewed...
 
                 //set the original search criteria into the session for use by
                 //the view action - needed because if the 'back' button is used from
-                //CvObject views, the original search details are lost
+                //single object views, the original search details are lost
                 session.setAttribute(SearchConstants.LAST_VALID_SEARCH, searchValue);
 
                 // Retrieve the map to add matching results.
@@ -254,7 +270,7 @@ public class SearchAction extends IntactBaseAction {
 
                     //first make sure that any earlier CvObjects are not displayed
                     //later by mistake
-                    session.setAttribute(SearchConstants.CV_VIEW_BEAN, null);
+                    session.setAttribute(SearchConstants.SINGLE_OBJ_VIEW_BEAN, null);
 
                     // Maintains the list of protein related interactions which
                     // have already processed.
@@ -361,7 +377,6 @@ public class SearchAction extends IntactBaseAction {
                                     interactionAcs.add(((Interaction) iter1.next()).getAc());
                                 }
 
-                                //**** need to rewrite this - ListUtils is deprecated....****
                                 Collection acsToKeep = CollectionUtils.intersection(resultAcs, interactionAcs);
                                 expandTree(bean, "Interaction", acsToKeep);
                                 // Interactions done so far for this bean.
@@ -374,6 +389,9 @@ public class SearchAction extends IntactBaseAction {
                                 //record that this bean has been done...
                                 doneExperiments.put(experimentAc, beanId);
                             }
+
+                            //tell the bean about the search details....
+                            bean.setSearchInfo(buf.toString());
                             super.log("view bean for related objects to " + searchItem.getClass().getName() + " built OK...");
                         }
                     }
@@ -406,6 +424,8 @@ public class SearchAction extends IntactBaseAction {
                         expandTree(bean, "Experiment", null);
                         Collection expXrefs = bean.getAcs("Xref");
                         bean.modifyXml(XmlBuilder.EXPAND_NODES, expXrefs);
+                        //tell the bean about the search details....
+                        bean.setSearchInfo(buf.toString());
 
                         // Collect the results together...
                         idToView.put(Integer.toString(counter), bean);
