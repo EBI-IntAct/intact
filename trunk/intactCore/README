@@ -135,6 +135,15 @@ There is also the 'synchron' application which is use to exchange data between i
 and not web-based. As this application matures further details will be included about it in this file
 (it is currently still under development).
 
+IMPORTANT NOTE - ORACLE USERS
+------------------------------
+There is a problem when running against an oracle database with 'open cursors' on the oracle server. If you use
+the default connection pooling provided by OJB then the cursors will not be closed properly on the server, which
+will eventually result in queries failing. This is only an issue if you want connection pooling - if not then
+no action is required; however we recommend that you use the 'OracleConnectionCacheImpl' driver, as this will
+clean up the resources used by pooled connections correctly.
+
+
 For search there is one file to customize. In the file
 
         application/search/WEB-INF/config/HierarchView.properties
