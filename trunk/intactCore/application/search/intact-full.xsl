@@ -112,7 +112,7 @@
                     <xsl:with-param name="item" select="'BioSource'"/>
                     </xsl:call-template>
 
-                    <xsl:if test="bioSource">
+                    <xsl:if test="BioSource">
                         <xsl:value-of select="BioSource/@shortLabel"/>
                     </xsl:if>
                 </td>
@@ -801,7 +801,24 @@ CvTissue | CvTopic | CvXrefQualifier">
             <xsl:with-param name="item" select="'XrefPrimaryId'"/>
             </xsl:call-template>
 
-            <xsl:value-of select="@primaryId"/>
+            <!-- now check all the CvDatabase annotations to get any relevant URLs
+            which should be built into a primaryId link...
+            NB for info, check the Annotation/CvTopic shortlabels for the Xref to find
+            the 'search-url' one, then go back to the Annotation comment to get the template-->
+            <xsl:choose>
+                <xsl:when test="CvDatabase/annotations/Annotation/CvTopic/@shortLabel='search-url'">
+                    <!-- got a template - need to build a link -->
+                    <xsl:call-template name="draw_xref_link">
+                <xsl:with-param name="label" select="@primaryId"/>
+                <xsl:with-param name="link_template" select="CvDatabase/annotations/Annotation/@annotationText"/>
+            </xsl:call-template>
+                </xsl:when>
+
+                <xsl:otherwise>
+                    <xsl:value-of select="@primaryId"/>
+                </xsl:otherwise>
+            </xsl:choose>
+
         </td>
         <td>
             <xsl:call-template name="draw_help_link">
@@ -839,5 +856,56 @@ CvTissue | CvTopic | CvXrefQualifier">
             </xsl:choose>
 
     </xsl:template>
+
+    <!--
+    ****************************************************************************
+    ** Template for drawing an Xref PrimaryID link
+    *************************************************************************-->
+    <xsl:template name="draw_xref_link">
+        <xsl:param name="label"/>
+        <xsl:param name="link_template"/>
+        <xsl:variable name="link">
+            <!-- need here to replace the '$(ac)' with the label... -->
+            <xsl:call-template name="replace_substring">
+                <xsl:with-param name="text" select="$link_template"/>
+                <xsl:with-param name="replace" select="'$(ac)'"/>
+                <xsl:with-param name="with" select="$label"/>
+            </xsl:call-template>
+        </xsl:variable>
+            <a href="{$link}" target="new">[?]</a>
+    </xsl:template>
+
+     <!--
+    ****************************************************************************
+    ** Template to replace a substring with another in some text (copied from sourceforge)
+    *************************************************************************-->
+    <xsl:template name="replace_substring">
+        <xsl:param name="text"/>
+        <xsl:param name="replace"/>
+        <xsl:param name="with"/>
+
+        <xsl:choose>
+          <xsl:when test="string-length($replace) = 0">
+            <xsl:value-of select="$text"/>
+          </xsl:when>
+          <xsl:when test="contains($text, $replace)">
+
+        <xsl:variable name="before" select="substring-before($text, $replace)"/>
+        <xsl:variable name="after" select="substring-after($text, $replace)"/>
+
+        <xsl:value-of select="$before"/>
+        <xsl:value-of select="$with"/>
+            <xsl:call-template name="replace_substring">
+          <xsl:with-param name="text" select="$after"/>
+          <xsl:with-param name="replace" select="$replace"/>
+          <xsl:with-param name="with" select="$with"/>
+        </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="$text"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:template>
+
 
 </xsl:stylesheet>
