@@ -15,8 +15,15 @@ package uk.ac.ebi.intact.util;
 import java.io.* ;
 import java.net.* ;
 
-class NetFetch {
-    
+public class NetFetch {
+
+    /**
+     * fetches the file from a given URL and outputs all text as a string.
+     * The fetched string is to be used by yasp/aristotle SPTR parser which 
+     * takes an SPTR entry as a param (not an individual line).
+     * @param url The url from which to fetch a file.
+     * @return A string 
+     */
     public static String getFile(String url) {
 	String where = "" ;
 	BufferedReader rf = null ;
