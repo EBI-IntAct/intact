@@ -133,7 +133,17 @@
     <html:link href='javascript:clearAll()'>
         Clear All
     </html:link>
-   <html:link href='http://web7-node1.ebi.ac.uk:8160/intact/displayDoc.jsp?section=ALL' target="new">
+    <%
+        //build the help link - uses the current host path information
+        //plus the filename as specified in the servlet context
+        String relativeHelpLink = this.getServletConfig().getServletContext().getInitParameter("helpLink");
+        //build the help link out of the context path - strip off the 'search' bit...
+        String ctxtPath = (request.getContextPath());
+        String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+        String helpLink = relativePath.concat(relativeHelpLink) + "TOP_DOC";
+    %>
+    <!-- 'http://web7-node1.ebi.ac.uk:8160/intact/displayDoc.jsp?section=ALL' -->
+   <html:link href="<%=helpLink %>" target="new">
         Help
     </html:link>
     <hr size=2>
