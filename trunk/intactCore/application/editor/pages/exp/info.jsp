@@ -15,9 +15,6 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
-<jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
-
 <style type="text/css">
     <%@ include file="/layouts/styles/editor.css" %>
 </style>
@@ -32,11 +29,15 @@
 
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
-        <th class="tableCellHeader">AC</th>
         <th class="tableCellHeader">
-            <bean:message key="cvinfo.label.shortlabel"/>
+            <bean:message key="label.ac"/>
         </th>
-        <th class="tableCellHeader">Full Name</th>
+        <th class="tableCellHeader">
+            <bean:message key="label.shortlabel"/>
+        </th>
+        <th class="tableCellHeader">
+            <bean:message key="label.fullname"/>
+        </th>
         <th>
             <intact:documentation section="editor.short.labels"/>
         </th>
