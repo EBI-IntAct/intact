@@ -30,7 +30,7 @@ public abstract class UpdateProteinsI {
     protected static Logger logger = Logger.getLogger( "updateProtein" );
 
     private final static String CV_TOPIC_SEARCH_URL_ASCII = "search-url-ascii";
-    public static final  String SRS_URL = "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-noSession+-e+([uniprot-acc:${ac}]|[uniprot-isoid:${ac}])+-ascii";
+    public static final String SRS_URL = "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-noSession+-e+([uniprot-acc:${ac}]|[uniprot-isoid:${ac}])+-ascii";
 
 
     public static class UpdateException extends Exception {
@@ -239,11 +239,9 @@ public abstract class UpdateProteinsI {
     /**
      * Get a CvObject based on its class name and its shortlabel.
      *
-     * @param clazz the Class we are looking for
+     * @param clazz      the Class we are looking for
      * @param shortlabel the shortlabel of the object we are looking for
-     *
      * @return the CvObject of type <code>clazz</code> and having the shortlabel <code>shorltabel<code>.
-     *
      * @throws IntactException if the search failed
      * @throws UpdateException if the object is not found.
      */
@@ -253,6 +251,7 @@ public abstract class UpdateProteinsI {
         CvObject cv = (CvObject) helper.getObjectByLabel( clazz, shortlabel );
         if( cv == null ) {
             StringBuffer sb = new StringBuffer( 128 );
+            sb.append( "Could not find " );
             sb.append( shortlabel );
             sb.append( ' ' );
             sb.append( clazz.getName() );
@@ -279,6 +278,7 @@ public abstract class UpdateProteinsI {
 
     /**
      * Set the updateprotein logger and those of 3rd party tools.
+     *
      * @param aLogger the new logger.
      */
     public void setLogger( Logger aLogger ) {
