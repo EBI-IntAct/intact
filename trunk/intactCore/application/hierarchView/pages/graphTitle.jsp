@@ -18,7 +18,8 @@
                  uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork,
                  java.util.Collection,
                  java.util.Iterator,
-                 java.util.ArrayList" %>
+                 java.util.ArrayList,
+                 uk.ac.ebi.intact.application.commons.search.CriteriaBean" %>
 
 <%
     /**
@@ -34,14 +35,17 @@
     String suffix = "</b>";
 
     ArrayList criterias = in.getCriteria();
-    int max = criterias.size();
     StringBuffer context = new StringBuffer(512);
-    for (int i=0; i < max; i++) {
-        String[] aCriteria = (String[]) criterias.get(i);
-        context.append (prefix + aCriteria[1] + ": ");
-        context.append ("<a href=\"" + user.getSearchUrl(aCriteria[0]) + "\" target=\"_blank\">" + aCriteria[0] + "</a>");
+    for ( Iterator iterator = criterias.iterator (); iterator.hasNext (); ) {
+        CriteriaBean aCriteria = (CriteriaBean) iterator.next ();
+
+        context.append (prefix + aCriteria.getTarget() + ": ");
+        context.append ("<a href=\"" + user.getSearchUrl(aCriteria.getQuery(), false) + "\" target=\"_blank\">" +
+                        aCriteria.getQuery() + "</a>");
         context.append (suffix + ", ");
     }
+
+    int max = criterias.size();
     // remove the last comma and white space
     String contextToDisplay = "";
     if ((max = context.length()) > 0) {
