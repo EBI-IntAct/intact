@@ -6,7 +6,7 @@
     Version: $Id$
 --%>
 
-<tiles:insert attribute="header"/>
+<tiles:insert attribute="info"/>
 <tiles:insert attribute="comments"/>
 <hr></hr>
 <tiles:insert attribute="xrefs"/>
