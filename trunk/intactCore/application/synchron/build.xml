@@ -25,6 +25,9 @@
     <property name="src.dir" value="src"/>
     <property name="dest.dir" value="classes"/>
 
+      <!-- The jdbc properties. -->
+    <property file="${intact.root}/config/jdbc.properties"/>
+
     <!-- Build working classpath -->
     <path id="project.class.path">
 
@@ -159,7 +162,7 @@
 			<lib dir="${root.lib.dir}">
 				<include name="jakarta-ojb-0.9.7.jar"/>
 				<include name="log4j-1.2.5.jar"/>
-				<include name="postgresql.jar"/>
+				<include name="${postgresql.jar}"/>
 			</lib>
 
             <!-- search specific classes -->

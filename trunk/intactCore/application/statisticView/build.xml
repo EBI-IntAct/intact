@@ -69,10 +69,8 @@
     <path id="project.class.path">
 
         <!-- JFreeChart -->
-        <pathelement path="${lib.dir}/jcommon-0.9.6.jar"/>
-        <pathelement path="${lib.dir}/jfreechart-0.9.21.jar"/>
-        <pathelement path="${lib.dir}/PngEncoder.jar"/>
-
+        <pathelement path="${lib.dir}/jcommon-0.8.8.jar"/>
+        <pathelement path="${lib.dir}/jfreechart-0.9.13.jar"/>
 
         <!-- Intact core at root. -->
         <pathelement path="${root.dest.dir}"/>
