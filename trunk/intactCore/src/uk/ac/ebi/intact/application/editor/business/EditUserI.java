@@ -12,10 +12,15 @@ import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Date;
 import java.io.Serializable;
+
+import org.apache.commons.beanutils.DynaBean;
 
 /**
  * Provides methods specific to a user editing an Annotated object.
@@ -205,7 +210,7 @@ public interface EditUserI extends Serializable {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(ResultBean))
      * </pre>
      */
-    public Collection getSearchCache();
+//    public Collection getSearchCache();
 
     /**
      * Caches the last search result. Each object of <code>results</code> is
@@ -261,6 +266,28 @@ public interface EditUserI extends Serializable {
      */
     public String getUniqueShortLabel(String shortlabel, String extAc)
             throws SearchException;
+
+    // Methods to create forms
+
+    /**
+     * Returns a new DynaBean instance for given form name. This new bean is
+     * stored in <code>request</code> object.
+     * @param formName the name of the form configured in the struts
+     * configuration file.
+     * @param request the HTTP request to get the application configuration.
+     * The new bean is stored in this object under <code>formName</code>.
+     * @return a <code>DynaBean</code> instance.
+     * @throws InstantiationException errors in creating the bean
+     * @throws IllegalAccessException errors in creating the bean
+     */
+    public DynaBean createForm(String formName, HttpServletRequest request)
+            throws InstantiationException, IllegalAccessException;
+
+    /**
+     * Popluate the given form with search result.
+     * @param dynaForm the form to populate.
+     */
+    public void populateSearchResult(DynaBean dynaForm);
 
     // Session methods
 
