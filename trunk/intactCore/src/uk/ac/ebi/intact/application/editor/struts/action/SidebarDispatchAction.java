@@ -216,8 +216,6 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             // Set the new object as the current edit object. This has to be
             // done before refreshList (it relies on current cv object).
             user.updateView(annobj);
-            // Added a new CV object; update the drop down list.
-            user.refreshList();
         }
         catch (IntactException ie1) {
             try {
@@ -233,16 +231,6 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             ActionErrors errors = new ActionErrors();
             errors.add(AbstractEditorAction.EDITOR_ERROR,
                     new ActionError("error.create", ie1.getMessage()));
-            super.saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
-        }
-        catch (SearchException se) {
-            // Log the stack trace.
-            super.log(ExceptionUtils.getStackTrace(se));
-            // Error with updating the drop down lists.
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.search.list", se.getMessage()));
             super.saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
