@@ -29,13 +29,25 @@ import uk.ac.ebi.intact.model.Protein;
  * @author Andreas Groscurth
  */
 public class AmbiguousBean extends ActionForm {
-    // stores all found proteins of the search
     private Collection proteins = null;
-    // stores all found interactions of the search
     private Collection interactions = null;
-    // stores all found experiments of the search
     private Collection experiments = null;
+    private String searchAc;
     private static String context;
+
+    /**
+     * @param searchAc The searchAc to set.
+     */
+    public void setSearchAc(String searchAc) {
+        this.searchAc = searchAc;
+    }
+
+    /**
+     * @return Returns the searchAc.
+     */
+    public String getSearchAc() {
+        return searchAc;
+    }
 
     /**
      * Returns the number of all found results. This is the sum of the size of
@@ -92,13 +104,6 @@ public class AmbiguousBean extends ActionForm {
         return proteins;
     }
 
-    /**
-     * Returns wether the is an ambiguous result. This happens when there are
-     * more than one protein was found or at least one experiment or
-     * interaction.
-     * 
-     * @return wether the search was ambiguous
-     */
     public boolean hasAmbiguousResult() {
         return proteins.size() > 1 || proteins.size() == 0
                 || interactions.size() != 0 || experiments.size() != 0;
@@ -121,6 +126,7 @@ public class AmbiguousBean extends ActionForm {
      */
     public void printHTML(Writer out, String contextPath) {
         try {
+            out.write(searchAc + " returned<br>");
             context = contextPath;
             int interactorNumber = getNumberOfResults();
             // if no results where found
@@ -149,6 +155,7 @@ public class AmbiguousBean extends ActionForm {
                 }
                 out.write("</table><br>\n");
             }
+            out.write("<br>");
         }
         catch (IOException e) {
             e.printStackTrace();
