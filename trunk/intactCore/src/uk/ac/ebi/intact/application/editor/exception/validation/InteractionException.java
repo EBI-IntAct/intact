@@ -15,7 +15,18 @@ package uk.ac.ebi.intact.application.editor.exception.validation;
  */
 public class InteractionException extends ValidationException {
 
+    /**
+     * Default constructor. Uses the default message and filter keys.
+     */
     public InteractionException() {
-        super("error.int.validation", "int.validation");
+        this("error.int.validation");
+    }
+
+    /**
+     * Construst with given message key
+     * @param mkey the message key.
+     */
+    public InteractionException(String mkey) {
+        super(mkey, "int.validation");
     }
 }
