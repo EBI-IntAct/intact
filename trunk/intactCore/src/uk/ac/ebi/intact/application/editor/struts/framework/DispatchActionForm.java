@@ -38,6 +38,11 @@ public class DispatchActionForm extends ValidatorForm {
     private String myDispatch;
 
     /**
+     * The index of the current dispatch (which button was pressed).
+     */
+    private int myDispatchIndex;
+
+    /**
      * Maps: method name -> method
      */
     private Map myNameToMethod = new HashMap();
@@ -48,6 +53,15 @@ public class DispatchActionForm extends ValidatorForm {
 
     public String getDispatch() {
         return myDispatch;
+    }
+
+    public int getDispatchIndex() {
+        return myDispatchIndex;
+    }
+
+    public void setDispatch(int index, String value) {
+        myDispatchIndex = index;
+        setDispatch(value);
     }
 
     public void resetDispatch() {

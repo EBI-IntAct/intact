@@ -24,6 +24,14 @@ import javax.servlet.http.HttpSession;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/logout"
+ *      validate="false"
+ *
+ * @struts.action-forward
+ *      name="success"
+ *      path="/do/welcome"
  */
 public class LogoutAction extends AbstractEditorAction {
 

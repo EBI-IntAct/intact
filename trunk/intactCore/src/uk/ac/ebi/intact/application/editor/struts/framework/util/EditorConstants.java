@@ -54,11 +54,6 @@ public interface EditorConstants {
      * The key for the severe warning messages.
      */
     public static final String SEVERE_WARN = "severe-warning";
-
-    /**
-     * The key to access the submit action mappings.
-     */
-    public static final String ACTION_MAP = "action-map";
     
     /**
      * The key to access the anchor map.

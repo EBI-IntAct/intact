@@ -22,8 +22,10 @@ import java.util.List;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.form name="cvForm"
  */
-public class EditorActionForm extends DispatchActionForm {
+public class EditorActionForm extends DispatchActionForm implements EditorFormI {
 
     /**
      * The short label.
@@ -51,11 +53,6 @@ public class EditorActionForm extends DispatchActionForm {
     private List myXrefs;
 
     /**
-     * The index of the current dispatch (which button was pressed).
-     */
-    private int myDispatchIndex;
-
-    /**
      * The page anchor to go when there is an error. Default is none.
      */
     private String myAnchor = "";
@@ -72,6 +69,17 @@ public class EditorActionForm extends DispatchActionForm {
 
     // Getter/Setter methods for form attributes.
 
+    /**
+     * @struts.validator type="required"
+     *
+     * @struts.validator type="mask" msgkey="error.shortlabel.mask"
+     * @struts.validator-args arg0resource="label.shortlabel"
+     * @struts.validator-var name="mask" value="^[a-z0-9\-:_]+ ?[a-z0-9\-:_]+$"
+     *
+     * @struts.validator type="maxlength" msgkey="error.shortlabel.maxlength"
+     * @struts.validator-args arg1value="${var:maxlength}"
+     * @struts.validator-var name="maxlength" value="20"
+     */
     public void setShortLabel(String label) {
         myShortLabel = label;
     }
@@ -109,7 +117,7 @@ public class EditorActionForm extends DispatchActionForm {
     }
 
     public CommentBean getSelectedAnnotation() {
-        return (CommentBean) myAnnotations.get(myDispatchIndex);
+        return (CommentBean) myAnnotations.get(getDispatchIndex());
     }
 
     public void setXrefs(List xrefs) {
@@ -121,12 +129,11 @@ public class EditorActionForm extends DispatchActionForm {
     }
 
     public void setXrefCmd(int index, String value) {
-        myDispatchIndex = index;
-        setDispatch(value);
+        setDispatch(index, value);
     }
 
     public XreferenceBean getSelectedXref() {
-        return (XreferenceBean) myXrefs.get(myDispatchIndex);
+        return (XreferenceBean) myXrefs.get(getDispatchIndex());
     }
 
     public CommentBean getNewAnnotation() {
@@ -148,10 +155,6 @@ public class EditorActionForm extends DispatchActionForm {
 
     public void setAnchor(String anchor) {
         myAnchor = anchor;
-    }
-
-    public int getDispatchIndex() {
-        return myDispatchIndex;
     }
 
     // Validate methods
@@ -206,8 +209,7 @@ public class EditorActionForm extends DispatchActionForm {
         return validateSubmit();
     }
 
-    // This method is protected as it is used by subclasses.
-    protected ActionErrors validateUnsavedXref() {
+    public ActionErrors validateUnsavedXref() {
         ActionErrors errors = null;
         for (Iterator iter = myXrefs.iterator(); iter.hasNext(); ) {
             XreferenceBean xb = (XreferenceBean) iter.next();
@@ -219,10 +221,5 @@ public class EditorActionForm extends DispatchActionForm {
             }
         }
         return errors;
-    }
-
-    protected void setDispatch(int index, String value) {
-        myDispatchIndex = index;
-        setDispatch(value);
     }
 }

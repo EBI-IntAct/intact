@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
@@ -552,7 +552,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @param user handler to access the persistent method calls.
      * @exception IntactException for errors in updating the persistent system.
      */
-    public void persist(EditUserI user) throws IntactException, SearchException {
+    public void persist(EditUserI user) throws IntactException {
         try {
             // Begin the transaction.
             user.begin();
@@ -573,6 +573,17 @@ public abstract class AbstractEditViewBean implements Serializable {
             }
             // Rethrow the exception to be logged.
             throw ie1;
+        }
+        catch (SearchException se) {
+            try {
+                user.rollback();
+            }
+            catch (IntactException ie) {
+                // Oops! Problems with rollback; ignore this as this
+                // error is reported via the main exception (ie1).
+            }
+            // Rethrow the exception to be logged.
+            throw new IntactException("Search exception", se);
         }
     }
 
@@ -662,7 +673,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Copies properties from given form to the bean.
      * @param form the form to update the internal data.
      */
-    public void copyPropertiesFrom(EditorActionForm form) {
+    public void copyPropertiesFrom(EditorFormI form) {
         setShortLabel(form.getShortLabel());
         setFullName(form.getFullName());
     }
@@ -671,7 +682,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Copies properties from bean to given form.
      * @param form the form to copy properties to.
      */
-    public void copyPropertiesTo(EditorActionForm form) {
+    public void copyPropertiesTo(EditorFormI form) {
         form.setAc(getAcLink());
         form.setShortLabel(getShortLabel());
         form.setFullName(getFullName());
@@ -686,11 +697,8 @@ public abstract class AbstractEditViewBean implements Serializable {
      * need to be persisted in a separate transaction for an Interaction
      * @param user handler to the user to persist sub objects.
      * @throws IntactException for errors in persisting.
-     * @throws SearchException for errors in searching for objects in the
-     * persistent system.
      */
-    public void persistOthers(EditUserI user) throws IntactException,
-            SearchException {
+    public void persistOthers(EditUserI user) throws IntactException {
     }
 
     /**

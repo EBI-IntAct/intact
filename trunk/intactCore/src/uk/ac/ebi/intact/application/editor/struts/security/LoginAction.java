@@ -9,13 +9,12 @@ package uk.ac.ebi.intact.application.editor.struts.security;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.event.LoginEvent;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -29,6 +28,34 @@ import java.io.IOException;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/login"
+ *      name="loginForm"
+ *      input="login.error.layout"
+ *
+ * @struts.action-exception
+ *      type="uk.ac.ebi.intact.business.IntactException"
+ *      key="error.invalid.user"
+ *      path="login.error.layout"
+ *
+ * @struts.action-exception
+ *      type="uk.ac.ebi.intact.persistence.DataSourceException"
+ *      key="error.datasource"
+ *      path="login.error.layout"
+ *
+ * @struts.action-exception
+ *      type="uk.ac.ebi.intact.persistence.SearchException"
+ *      key="error.init.menu"
+ *      path="login.error.layout"
+ *
+ * @struts.action-forward
+ *      name="success"
+ *      path="search.layout"
+ *
+ * @struts.action-forward
+ *      name="redirect"
+ *      path="/do/secure/edit"
  */
 public class LoginAction extends AbstractEditorAction {
 
@@ -58,9 +85,9 @@ public class LoginAction extends AbstractEditorAction {
             throws Exception {
         // Get the user's login name and password. They should have already
         // validated by the ActionForm.
-        DynaActionForm theForm = (DynaActionForm) form;
-        String username = (String) theForm.get("username");
-        String password = (String) theForm.get("password");
+        LoginForm theForm = (LoginForm) form;
+        String username = (String) theForm.getUsername();
+        String password = (String) theForm.getPassword();
 
         // Save the context to avoid repeat calls.
         ServletContext ctx = super.getServlet().getServletContext();
@@ -95,11 +122,11 @@ public class LoginAction extends AbstractEditorAction {
         // Store the server path.
         ctx.setAttribute(EditorConstants.SERVER_PATH, request.getContextPath());
 
-        String ac = (String) theForm.get("ac");
-        String type = (String) theForm.get("type");
+        String ac = (String) theForm.getAc();
+        String type = (String) theForm.getType();
 
         // Accessing an editor page directly?
-        if ((ac.length() != 0) && (type.length() != 0)) {
+        if (!isPropertyNullOrEmpty(ac) && !isPropertyNullOrEmpty(type)) {
             // Set the topic for editor to load the correct page.
             return mapping.findForward("redirect");
         }
