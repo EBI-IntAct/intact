@@ -5,8 +5,10 @@ import java.io.*;
 import gnu.regexp.* ;
 import java.net.* ;
 
-//re: for SPTR file loader. More packages called in ParseSPTR class
-import uk.ac.ebi.yasp.util.*;
+import uk.ac.ebi.sptr.flatfile.yasp.*;
+import uk.ac.ebi.sptr.flatfile.yasp.util.EmptyEntry;
+import uk.ac.ebi.interfaces.sptr.*;
+import java.util.Iterator;
 
 // re: OJB
 import uk.ac.ebi.intact.business.*;
@@ -32,61 +34,94 @@ import org.apache.ojb.broker.PersistenceBroker ;
  */
 
 
-public class UpdateProteins {
+public class UpdateProteins implements UpdateProteinsI {
     static IntactHelper helper ;
     static DAOSource dataSource ;
     static DAO dao ;
     Logger log = null ;
     PersistenceBroker login ;
 
-    //constructor
-    public UpdateProteins() throws Exception {
+    HashMap parsed = null ;
+    static String fetched = "";
+    static String url = "";
+    int numProt ; 
 
-        dataSource = DAOFactory.getDAOSource(
-        "uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource") ;
+    public final String getUrl(String sptrAC) {
+        String url = "http://www3.ebi.ac.uk/srs7bin/cgi-bin/wgetz?-e+[SWALL-acc:" 
+            + sptrAC + "]+-vn+2+-ascii" ;
 
-        Map config = new HashMap() ;
-        config.put("mappingfile", "config/repository.xml") ;
-        dataSource.setConfig(config) ;
+        return url ;
+    }
 
-        //login.open("config/repository.xml", user, psword) ;
+    
+    public String getAnEntry(String url) {
+	String where = "" ;
+	BufferedReader rf = null ;
+	String outFile = "" ;
 
+	try {
+	    where = url ; 
+	} catch( Exception u ) {
+	    System.out.println("Please supply URL to getAnEntry() method ...") ;
+	    System.out.println("If the URL returns html file, this program won't parse it.") ;
+	} ; 
+
+	try {
+	    URL u = new URL(where) ;
+	    InputStream in = u.openStream() ;
+	    InputStreamReader isr = new InputStreamReader(in) ;
+	    rf = new BufferedReader(isr) ;
+	    String line ;
+
+	    while ((line = rf.readLine()) != null ) {
+		outFile += line + "\n" ;
+	    }
+	    //outFile.toString() ;
+	} 
+	catch (MalformedURLException e) {System.err.println(e);}
+	catch (IOException e) {System.err.println(e);}
+
+        return outFile;
+    }
+
+    /**
+     * from a given string and a given pattern(string), to find all matches. The matched are  
+     * retured as a list. This method uses gnu.regexp.* package, not the org.apache.regexp.*
+     *@param textin A string from which some pattern will be matched. 
+     *@param pattern A string as a pattern.
+     *@return A list of matched pattern.
+     */
+    public REMatch[] match(String textin, String pattern ) {
+        REMatch[] allMatches = null ;
         try {
-            dao = dataSource.getDAO() ;
-            log = dataSource.getLogger() ;
-        } catch (Exception abc) {
-            abc.printStackTrace() ;
-            System.exit(1) ;
+            RE magic = new RE( pattern );
+            allMatches = magic.getAllMatches( textin );
+        } catch (Exception e_RE) {
+            e_RE.printStackTrace() ;
         }
 
-        /*
-        //for testing the function. To be moved to main() later.
-        try {
-            //hard coded now, will change to args[0], args[1] for username and psword
-            helper = new IntactHelper(dataSource, "danwu", "") ;
-            //helper = new IntactHelper(dataSource, "ops$danwu", "wedn1452") ;
-        } catch (Exception hlp) {           
-            System.out.println("\nUsage: java UpdateProteins <username> <password> <dataSource>" ) ;
-            System.out.println("dataSource = " +  "<SPTR source file or SPTR protein AC>\n") ;
-            hlp.printStackTrace() ;
-        }
-        
-        helper.addCachedClass(Institution.class) ;
-        helper.addCachedClass(Protein.class) ;
-        helper.addCachedClass(Xref.class) ;
-        helper.addCachedClass(BioSource.class) ;
-        */
-    } //constructor
+        return allMatches ;
+    }
+
+
+    public int insertSPTrProteins(String sourceUrl,
+                                  String taxid,
+                                  IntactHelper helper,
+                                  boolean update) {
+        return numProt ;
+    }
 
 
     public void addNewXref(AnnotatedObject current,
-                           Xref xref)  throws Exception {
-
+                           Xref xref)  {
         // Todo: Make sure the xref does not yet exist in the object
-
         current.addXref(xref);
         if (xref.getParentAc() == current.getAc()){
-            dao.create(xref);
+            try {
+                dao.create(xref);
+            } catch (Exception e_xref) {
+                e_xref.printStackTrace();
+            }
         }
     }
 
@@ -95,26 +130,93 @@ public class UpdateProteins {
      * add (not update) a new BioSource to the db
      *@param orgName Organism name 
      *@param taxId Taxonomy ID 
-     *@throws Exception
      */
-    public void addBioSource(String orgName, String taxId) throws Exception {
+    public void addBioSource(String orgName, String taxId) {
         BioSource bs = new BioSource() ;
-        bs.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI")) ;
-        bs.setFullName(orgName) ;
-        bs.setTaxId(taxId) ;
-        dao.create(bs) ;
+        try {
+            bs.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI")) ;
+            bs.setFullName(orgName) ;
+            bs.setTaxId(taxId) ;
+            dao.create(bs) ;
+        } catch (Exception e_bioSrc) {
+            e_bioSrc.printStackTrace() ;
+        }
     }
 
 
     public static void main(String[] args) throws Exception {
 
-
         UpdateProteins app = new UpdateProteins() ;
         String inFile = "" ;
         String source = "" ;
-        ParseSPTR ps = new ParseSPTR() ;
         Protein protein ;
         String filterTaxId = "" ;
+
+
+        System.setProperty("org.xml.sax.driver","org.apache.xerces.parsers.SAXParser");
+        
+        if (! args.length > 0 ) {
+            System.out.println("Please supply a SPTR AC, or /Path/FlatFile or a URL\n") ;
+            System.out.println("e.g. java ThisProgram P12345\n") ;
+        }
+
+        try {
+            if ((app.match(args[0], "SWALL-acc:")).length > 0) { // match a AC (External access)!
+                source = app.getUrl(args[0]) ;
+            }
+            if ((app.match(args[0], "://")).length > 0) { // match a url (External access)!
+                source = args[0] ;
+            }
+            else { // match a flatfile (internal access)!
+                source = args[0] ;
+            }
+
+
+
+
+
+            /*if args[0] a URL (not a flatfile). Bug! at the moment. Unless getEntry(url) is used*/
+            //Iterator it = YASP.parseAll(new URL("http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+[swall-des:proteinase]&[swall-org:human]+-vn+2+-lv+4+-ascii")) ;
+ 
+            /*if args[0] a file (not a string) */
+            Iterator it = YASP.parseAll(new File("/homes/danwu/download/fun.txl")) ;
+
+            /*Iterate each entry*/
+            while (it.hasNext()) {
+                SPTREntry entry = (SPTREntry) it.next();
+
+                // Print out the parsed data.
+                if (!((EntryIterator)it).hadException()) {
+                    System.out.println(entry.getID());
+                    System.out.println(entry.getCRC64());
+                    //System.out.println(entry.getGenes()); //a string reference of array of array.
+                    System.out.println(entry.getOrganismNames()[0]);
+                    System.out.println(entry.getNCBITaxonomyID((String)entry.getOrganismNames()[0]));//can be an array
+                    System.out.println("\n");
+                }
+            }
+        
+
+            //if the args[0] is a sptr AC entry
+            /*
+            //SPTREntry entry = YASP.parse(new URL(source)); //suppose to be working.
+            SPTREntry entry = YASP.parse(app.getAnEntry(source));
+
+            // Print out the ID of the entry
+            System.out.println(entry.getID());
+            System.out.println(entry.getCRC64());
+            System.out.println(entry.getSequence());
+            System.out.println(entry.getOrganismNames()[0]);
+            System.out.println(entry.getNCBITaxonomyID((String)entry.getOrganismNames()[0]));//can be array
+            */
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+/*
 
         try {
             //hard coded now, will change to args[0], args[1] for username and psword
@@ -134,6 +236,7 @@ public class UpdateProteins {
         helper.addCachedClass(BioSource.class) ;
         helper.addCachedClass(Interactor.class) ;
 
+
         // check the type of input 
         try {
             REMatch[] srcFile = match(args[2], "\\S+\\/\\S+|\\S+\\.\\S+") ; 
@@ -147,6 +250,7 @@ public class UpdateProteins {
             System.out.println("dataSource please.\n") ;
             System.exit(1) ;
         }
+
 
         source = ( inFile != "" )? inFile : args[2] ;
 
@@ -180,6 +284,9 @@ public class UpdateProteins {
 
         HashMap sptrData = new HashMap() ; 
 
+*/
+
+/*
         //source = "/tmp_mnt/net/nfs5/vol9/sp-pro3/data/trembl_wrel/fun.txl" ; 
         if (inFile != "") { //param is a file rather than a SPTR ac
             FlatFileLoader loader = new FlatFileLoader(source);
@@ -206,7 +313,8 @@ public class UpdateProteins {
                 }
             }
         }
-
+*/
+/*
         else { 
 
             sptrData = ps.parseSPTR(source) ; //entry fetched from net (given a URL)
@@ -228,6 +336,7 @@ public class UpdateProteins {
                 }
             }
         }
+*/
     } //main()
 
 
@@ -242,22 +351,10 @@ public class UpdateProteins {
 
         //a class in ../util
         NetFetch nf = new NetFetch() ;
-        String entry = nf.getFile(url) ;
+        String entry = nf.getAnEntry(url) ;
         return entry ; 
     }
 
-
-    /**
-     * from a given string and a given pattern(string), to find all matches. The matched are  
-     * retured as a list. This method uses gnu.regexp.* package, not the org.apache.regexp.*
-     */
-    public static REMatch[] match(String textin, String pattern )  throws REException {
-        
-        RE magic = new RE( pattern );
-        REMatch[] allMatches = magic.getAllMatches( textin );
-       
-        return allMatches ;
-    }
 
 
     /**
@@ -276,10 +373,12 @@ public class UpdateProteins {
      * e.g. returns 'the' from an input 'the apple is red'. 
      */
     public static String getFirstElement(String original, String pattern) {
+
+
         REMatch[] allMatches = null ;
 
         try {
-            allMatches = match(original, pattern);
+            allMatches = new UpdateProteins().match(original, pattern);
         } catch (Exception ac1) {
             ac1.printStackTrace() ;
         }
