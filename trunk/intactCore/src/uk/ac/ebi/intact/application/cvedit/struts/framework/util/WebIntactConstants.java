@@ -118,41 +118,39 @@ public interface WebIntactConstants {
     public static final String INTACT_TYPES_FILE = "intacttypesfile";
 
     /**
-     * The name of an attribute set in the session.
+     * The key to access annotations for display.
      */
-    //public static final String ATTRIBUTE_SEARCH = "search";
+    public static final String ANNOTS_TO_VIEW = "annotsToView";
 
     /**
-     * The annotations are saved under this key.
+     * The key to access annotations to add to the CV object.
      */
-    public static final String ANNOTATIONS = "annotations";
+    public static final String ANNOTS_TO_ADD = "annotsToAdd";
 
     /**
-     * Cross References are saved under this key.
+     * The key to access annotations to remove from the CV object.
      */
-    public static final String XREFS = "xrefs";
+    public static final String ANNOTS_TO_DELETE = "annotsToDel";
 
     /**
-     * Used as a key to identify the page to add/delete a comment.
+     * The key to access Cross References for display.
      */
-    //public static final String FORWARD_COMMENT = "comment";
+    public static final String XREFS_TO_VIEW = "xrefsToView";
 
     /**
-     * The current annotated bean selected from details page for edit.
+     * The key to access Cross References to add to the CV object.
      */
-    //public static final String SELECTED_COMMENT = "selectedComment";
+    public static final String XREFS_TO_ADD = "xrefsToAdd";
 
     /**
-     * A transaction has begun.
+     * The key to access Cross References to remove from the CV object.
      */
-    //public static final String TRANSACT_BEGUN = "transactBegun";
+    public static final String XREFS_TO_DELETE = "xrfesToDel";
 
     /**
      * The Intact bean to display/edit. Should have been called edit bean.
      */
     public static final String VIEW_BEAN = "viewbean";
-
-//    public static final String ERROR_BEAN = "errorBean";
 
     /**
      * The bean to display short labels when the user is adding a new CV obj.
