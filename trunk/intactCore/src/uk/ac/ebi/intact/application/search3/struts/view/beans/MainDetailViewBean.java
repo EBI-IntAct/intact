@@ -24,6 +24,13 @@ public class MainDetailViewBean extends AbstractViewBean {
     private Experiment obj;
 
     /**
+     * Flag to identify the view details to be provided - true for Interaction
+     * context, false otherwise. Assumes Experiment view by default. Avoids messing
+     * around with null values etc for a wrapped Interaction.
+     */
+    private boolean interactionView;
+
+    /**
      * Holds the URL to perform subsequent searches from JSPs - used
      * to build 'complete' URLs for use by JSPs
      */
@@ -91,9 +98,17 @@ public class MainDetailViewBean extends AbstractViewBean {
      * The List of Interations for display. For Experiments of 'small' size this is
      * the whole list - for 'large' Interactions this is a sublist that is dynamically
      * changed upon different user requests. This is marked as transient because
-     * it seems that the java sublIst is not serializable.
+     * it seems that the java subList is not serializable.
      */
     private transient Collection interactionList = new ArrayList();
+
+    /**
+     * This is only defined for 'Interaction context' views and holds the Interaction
+     * that is to be viewed in the context of its Experiment. It is returned transparently
+     * to clients wishing to display Interaction details and should be set by bean creators.
+     * (eg result Action classes)
+     */
+    private Interaction wrappedInteraction;
 
     /**
      * The maximum number of pages that can be displayed. This is only of relevance to
@@ -169,6 +184,23 @@ public class MainDetailViewBean extends AbstractViewBean {
     public void getHTML(java.io.Writer writer) {};
 
     //--------------------- useful stuff ---------------------------------------------
+
+    /**
+     * Used to tell the bean whether or not it is to be used for a 'full' Experiment
+     * view or simply an 'Interaction context' view.
+     * @param interaction The Interaction for which the context is required
+     */
+    public void setWrappedInteraction(Interaction interaction) {
+        wrappedInteraction = interaction;
+        interactionView = true; //set the boolean flag
+    }
+
+    /**
+     * Determines whether the bean is currentlly set to render a full Experiment
+     * view or an 'Interaction context@ view.
+     * @return true for a Interaction context view, false otherwise.
+     */
+    public boolean isInteractionView() { return interactionView;}
 
     /**
      * The intact name for an object is its shortLabel. Required in all view types.
@@ -346,7 +378,15 @@ public class MainDetailViewBean extends AbstractViewBean {
      * pre-defined size).
      */
     public Collection getInteractions() {
-        return interactionList;
+
+        Collection result = new ArrayList();
+        //first check for an 'Interaction context' view - if so then return that one only
+        if(isInteractionView()) {
+            result.add(wrappedInteraction);
+        }
+        else result = interactionList;
+
+        return result;
     }
 
     /**

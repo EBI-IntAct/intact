@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.CvObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,27 +76,43 @@ public class DispatcherAction extends IntactBaseAction {
         // dispatch to the right action accordingly -
         //IMPORTANT (Aug 2004): With the new views required for search, all requests
         //that do NOT contain the searchClass should go to the 'simple' initial result
-        //view. All other requests will from now on have the searchClass specified..
+        //view UNLESS there is only a SINGLE match, in which case the 'appropriate' view should
+        //be used.
+        //All other requests will from now on have the searchClass specified..
 
+        String pageSource = null;   //need this later
         String searchClass = user.getSearchClass(); //this was set in the search Action
         logger.info( "SearchClass: " + searchClass );
+
+        //check for a searchClass(ie request from an INTERNAL LINK) and process accordingly...
         if (searchClass == null || searchClass.length() == 0) {
-            //initial request - forward to the simple view Action....
-            logger.info("Dispatcher: basic search request (no search class specified) - forwarding to SimpleResultAction..");
-            return mapping.findForward(SearchConstants.FORWARD_SIMPLE_ACTION);
+
+            //initial request - first check for single result. If YES, then forward to the
+            //simple view Action; if NO then forward to the 'main' view....
+            if(results.size() == 1) {
+                logger.info("Dispatcher: initial search request (single result)...");
+                //simplest way to do this is to set the pageSource variable and force subsequent
+                //code to handle it...
+                pageSource = "simple";
+            }
+            else {
+                //handle 'normally'...
+                logger.info("Dispatcher: initial search request (no search class specified) - forwarding to SimpleResultAction..");
+                return mapping.findForward(SearchConstants.FORWARD_SIMPLE_ACTION);
+            }
         }
-
-        //search class defined - forward to relevant action
-        logger.info("Dispatcher: Search class was specified in request (so it came from a link)..");
-
-        //Need to find out HERE what page the request came from...
-        String pageSource = request.getParameter(SearchConstants.PAGE_SOURCE);
+        else {
+            //search class defined - forward to relevant action
+            logger.info("Dispatcher: Search class specified in request (so it came from a link)..");
+            //Need to find out HERE what page the request came from...
+            pageSource = request.getParameter(SearchConstants.PAGE_SOURCE);
+        }
 
         //Proteins are a special case...
         if(Protein.class.isAssignableFrom(resultItem.getClass())) {
 
             //NB here need to distinguish between a request for Protein DETAILS
-            //and a request for Protein PARTNER view (as now with the new views, BOTH have
+            //and a request for Protein PARTNER view (as now with the new views, BOTH may have
             //the search class specified!!)..
 
             if((pageSource != null) && (pageSource.equals("simple"))) {
@@ -104,31 +121,10 @@ public class DispatcherAction extends IntactBaseAction {
                 return mapping.findForward( SearchConstants.FORWARD_BINARY_ACTION );
             }
 
-            //otherwise must be a standard 'Protein beans' view..
+            //otherwise must be a standard 'Protein beans' view (link from another internal page)..
             logger.info("Dispatcher: forwarding to Protein beans action");
             return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
 
-
-            //--------------------- old code here.... -----------------------
-            //if( ( results.size() == 1 ) ) {
-                //String searchClass = user.getSearchClass();
-                //logger.info( "SearchClass: " + searchClass );
-
-                //if( searchClass.equals( "Protein" ) || searchClass.equals( "ProteinImpl" ) ) {
-                    //logger.info( "Dispatcher ask forward to SingleResultAction" );
-                    //return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
-                //}
-
-                //logger.info( "Dispatcher forwarding to BinaryResultAction (single result)" );
-                //return mapping.findForward( SearchConstants.FORWARD_BINARY_ACTION );
-            //}
-            //else logger.info( "Dispatcher forwarding to BinaryResultAction (multiple results)" );
-
-            //more than a single Protein - still need a binary result display...
-            //return mapping.findForward( SearchConstants.FORWARD_BINARY_ACTION );
-
-            //logger.info( "Dispatcher ask forward to DetailsResultAction" );
-            //return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
         }
 
         //can't be a Protein if we get to here - check for Exps/Interactions..
@@ -136,8 +132,9 @@ public class DispatcherAction extends IntactBaseAction {
         //new layout - Sept 2004: for the new layout, we can only get detail
         //information when a link is clicked from the 'simple' page. Currently
         //we just check for Experiments or Interactions..
-        //INITIAL SOLUTION - NEEDS TO BE REFACTORED PROPERLY
-        if((pageSource != null) && (pageSource.equals("simple"))) {
+        //TODO: NEEDS TO BE REFACTORED PROPERLY FROM HERE ON....
+        if(((pageSource != null) && (pageSource.equals("simple"))) &
+                (!CvObject.class.isAssignableFrom((resultItem.getClass())))) {
 
             logger.info("Dispatcher: forwarding to Details action for Experiment/Interaction..");
             return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
@@ -145,6 +142,9 @@ public class DispatcherAction extends IntactBaseAction {
         }
 
         //TODO: code below probably needs revising for the new views...
+
+        //OLD CODE FOLLOWS (still needed for CvObject/BioSource - should be revised when new
+        //view for those classes is defined)...
         //NB this code should go to a main detail unless it is a CvObject, in which
         //case it should do a single view..
         //Not a protein - deal with the others...
@@ -156,7 +156,6 @@ public class DispatcherAction extends IntactBaseAction {
             return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
         }
 
-        //OLD CODE...
         logger.info( "Dispatcher ask forward to DetailsResultAction" );
         return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
     }
