@@ -880,6 +880,9 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <!-- 'sequence features' details start here... -->
 
         <%
+                //TODO: Nov 15 2004 - the title cell has now been removed so we no longer
+                //TODO: need to partition the features. Much of this code can therefore go.
+
                 //ISSUE- It is possible that there may be zero, one or both of the linked
              //and unlinked feature beans. We have to display the title cell as long
                 //as there is at least one group to display, BUT we don't know which!
@@ -931,9 +934,11 @@ Displaying <b><%= firstDisplayIndex %></b> to
                      //need to display linked feature info
             %>
             <!-- 'interaction' title cell -->
+            <%-- NO LONGER NEEDED
             <td class="data" style="vertical-align: top;">
                 interaction<br>
             </td>
+            --%>
 
             <!-- seems to be some kind of 'summary' cell -->
             <%-- ** WHERE DOES IT COME FROM?? **
@@ -944,15 +949,14 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 text2: detected by <link 3: CvfeatureDetection (!!)>, interacts with <above again, but
                 for the Feature that is 'linked to'>
             --%>
-            <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
+            <td class="data" style="vertical-align: top;" rowspan="1" colspan="7">
 
                 <%-- link 1 --%>
                 <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
-                    <%= firstFeature.getFeatureType() %>
+                    <%= firstFeature.getFeatureType().toUpperCase() %>
                 </a>
                 &nbsp;
                 <%= firstFeature.getFeatureName() %> of <%= firstFeature.getProteinName() %>
-                &nbsp;
                 <%
                      //now do the Ranges...
                      Collection ranges = firstFeature.getFeature().getRanges();
@@ -986,7 +990,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 <%
                     }   //end of Feature Xref loop
                 %>
-                ), &nbsp;
+                ),
                 <%
                      }  //end of Xref check
                 %>
@@ -1004,7 +1008,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 %>
                 <%-- link 1 --%>
                 <a href="<%= firstBoundFeature.getCvFeatureTypeSearchURL() %>">
-                    <%= firstBoundFeature.getFeatureType() %>
+                    <%= firstBoundFeature.getFeatureType().toUpperCase() %>
                 </a>
                 &nbsp;
                 <%= firstBoundFeature.getFeatureName() %> of <%= firstBoundFeature.getProteinName() %>
@@ -1064,15 +1068,17 @@ Displaying <b><%= firstDisplayIndex %></b> to
         %>
 
                 <!-- 'mutation' title cell -->
+                <%--  NO LONGER NEEDED
                 <td class="data" style="vertical-align: top;">mutation<br>
                 </td>
+                --%>
 
 
                 <%-- feature type info, plus search link --%>
                 <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
 
                     <a href="<%= firstFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= firstFeature.getFeatureType() %>
+                        <%= firstFeature.getFeatureType().toUpperCase() %>
                     </a>
                     &nbsp;
                     <%= firstFeature.getFeatureName() %> of <%= firstFeature.getProteinName() %>
@@ -1122,15 +1128,17 @@ Displaying <b><%= firstDisplayIndex %></b> to
             %>
             <tr>
                 <!-- 'interaction' title cell -->
+                <%-- NO LONGER NEEDED
                 <td class="data" style="vertical-align: top;">
                 interaction<br>
                 </td>
+                --%>
 
                 <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
 
                     <%-- link 1 --%>
                     <a href="<%= linkedFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= linkedFeature.getFeatureType() %>
+                        <%= linkedFeature.getFeatureType().toUpperCase() %>
                     </a>
                     &nbsp;
                     <%= linkedFeature.getFeatureName() %> of <%= linkedFeature.getProteinName() %>
@@ -1185,7 +1193,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                     %>
                     <%-- link 1 --%>
                     <a href="<%= boundFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= boundFeature.getFeatureType() %>
+                        <%= boundFeature.getFeatureType().toUpperCase() %>
                     </a>
                     &nbsp;
                     <%= boundFeature.getFeatureName() %> of <%= boundFeature.getProteinName() %>
@@ -1256,15 +1264,17 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <tr>
 
                 <!-- 'mutation' title cell -->
+                <%-- NO LONGER NEEDED
                 <td class="data" style="vertical-align: top;">mutation<br>
                 </td>
+                --%>
 
 
                 <%-- feature type info, plus search link --%>
                 <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
 
                     <a href="<%= singleFeature.getCvFeatureTypeSearchURL() %>">
-                        <%= singleFeature.getFeatureType() %>
+                        <%= singleFeature.getFeatureType().toUpperCase() %>
                     </a>
                     &nbsp;
                     <%= singleFeature.getFeatureName() %> of <%= singleFeature.getProteinName() %>
