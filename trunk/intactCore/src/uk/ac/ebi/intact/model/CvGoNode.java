@@ -27,7 +27,7 @@ import java.util.Iterator;
  * @author Markus Brosch (markus @ brosch.cc)
  * @version $Id$
  */
-public class CvGoNode extends CvDagObject implements Editable {
+public class CvGoNode extends CvDagObject {
 
     // =======================================================================
     // Class and object attributes
