@@ -22,6 +22,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
+import com.sun.corba.se.internal.Activation.CommandHandler;
+
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.mine.business.Constants;
@@ -91,13 +93,16 @@ public class SearchAction extends Action {
                     search.append( tmp );
                 }
                 else if ( key.equals( Constants.PARAMETER ) ) {
-                    tok = new StringTokenizer( values[0], "," );
+                    tok = new StringTokenizer( values[0], Constants.COMMA );
                     while ( tok.hasMoreTokens() ) {
                         // the parameter can be something else
                         // than a protein -> it has to be searched for
                         tmp = tok.nextToken().trim();
                         searchAc.add( tmp );
                         search.append( tmp );
+                        if ( tok.hasMoreTokens() ) {
+                            search.append( Constants.COMMA );
+                        }
                     }
                 }
                 if ( iter.hasNext() ) {
