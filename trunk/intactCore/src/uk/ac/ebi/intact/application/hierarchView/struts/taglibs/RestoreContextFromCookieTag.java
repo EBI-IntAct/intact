@@ -19,7 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.net.URLEncoder;
+import java.net.URLDecoder;
 
 /**
  * That tag allows to restore the eventual user context of the user
@@ -67,7 +70,7 @@ public class RestoreContextFromCookieTag extends TagSupport {
 
         String method = null;
         String depth  = null;
-        String maxStr = null;
+        String query  = null;
 
         // firstly cache the cookie content to have direct access instead of traversing the collection
         HashMap cookieCache = new HashMap (cookies.length);
@@ -78,32 +81,22 @@ public class RestoreContextFromCookieTag extends TagSupport {
 
         depth  = (String) cookieCache.get ("DEPTH");
         method = (String) cookieCache.get ("METHOD");
-        maxStr = (String) cookieCache.get ("QUERY_COUNT");
+        query  = (String) cookieCache.get ("QUERY");
 
         final String contextPath = ((HttpServletRequest) pageContext.getRequest()).getContextPath();
         String url = null;
-        if (maxStr != null) {
-            int max = Integer.parseInt(maxStr);
-            // our entry points are store under Q0 .. Q8 (if QUERY_COUNT == 9)
-            StringBuffer queryBuffer = new StringBuffer(256);
-            String item;
-            for (i = 0; i < max; i++) {
-                if ((item = (String) cookieCache.get ("Q"+i)) != null) {
-                    queryBuffer.append(item).append(',');
-                }
+        if (query != null && method != null && depth != null) {
+            try {
+                query = URLDecoder.decode (query, "UTF-8");
+            } catch (UnsupportedEncodingException uee) {
+                logger.error ("Unsupported encoding system");
+                return EVAL_PAGE;
             }
-            // remove the last comma
-            int len;
-            if ((len = queryBuffer.length()) != 0) {
-                String queryString = queryBuffer.substring (0, len-1);
 
-                if (queryString != null && method != null && depth != null) {
-                    url = contextPath + "/display.do?AC="+ queryString +"&method="+ method +"&depth="+ depth;
-                } else {
-                    // simply display the current page
-                    return EVAL_PAGE;
-                }
-            }
+            url = contextPath + "/display.do?AC="+ query +"&method="+ method +"&depth="+ depth;
+        } else {
+            // simply display the current page
+            return EVAL_PAGE;
         }
 
 
@@ -113,7 +106,7 @@ public class RestoreContextFromCookieTag extends TagSupport {
             session.setAttribute ("restoreUrl", url);
 
             String forwardUrl = null;
-            if (maxStr == null) {
+            if (url == null) {
                 forwardUrl = contextPath;
                 logger.info ("No query registered in the cookie");
             } else {
