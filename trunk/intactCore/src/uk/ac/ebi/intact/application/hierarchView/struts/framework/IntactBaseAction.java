@@ -381,21 +381,16 @@ public abstract class IntactBaseAction extends Action {
                             in = gh.addInteractionNetwork (in, query, depth);
                         } catch (ProteinNotFoundException e) {
                             addMessage ("warning.protein.notFound", query);
-                            logger.info ("############################################## CRT: Message added 4 " + query);
-
                             addError   ("error.protein.notFound", query);
                         }
+                    } // for
 
-                        // if no network built, display any errors. Else any messages.
-                        if (in == null) {
-                            clearMessages(); // display errors
-                            logger.info ("############################################## clear Message");
-
-                        } else {
-                            clearErrors();   // display messages
-                            logger.info ("############################################## clear Error");
-
-                        }
+                    // if no network built after processing all sub query, display any errors.
+                    // Else any messages.
+                    if (in == null) {
+                        clearMessages(); // display errors
+                    } else {
+                        clearErrors();   // display messages
                     }
                     break;
 
@@ -408,7 +403,6 @@ public abstract class IntactBaseAction extends Action {
                             in = gh.addInteractionNetwork (in, query, depth);
                         } catch (ProteinNotFoundException e) {
                             addMessage ("warning.protein.notFound", query);
-                            logger.info ("############################################## ADD: Message added 4 " + query);
                         }
                     }
                     break;
