@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Collections;
 
 /**
  * Represents one experiment. Describes the conditions in which
@@ -263,7 +262,7 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         Experiment copy = (Experiment) super.clone();
 
         // Not copying any interactions.
-        copy.interactions = Collections.EMPTY_LIST;
+        copy.interactions = new ArrayList();
 
         return copy;
     }
