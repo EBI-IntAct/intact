@@ -47,7 +47,6 @@ public class InitTag extends TagSupport {
     public int doEndTag() throws JspException {
 
         initDataSource ();
-        initWebService ();
 
         HttpSession session = super.pageContext.getSession();
         logger.info ("Session timeout set to " + session.getMaxInactiveInterval() + " seconds.");
@@ -107,34 +106,5 @@ public class InitTag extends TagSupport {
             throw new JspException ("Fatal error: init tag could not initialize user's HTTPSession.");
         }
     } // initDataSource
-
-
-
-    /**
-     * Deploy the Tulip web service in the running time.
-     * @throws JspException
-     */
-    private void initWebService () throws JspException {
-
-        // ServletContext allows to share data for every user.
-        ServletContext servletContext = pageContext.getServletContext();
-        WebServiceManager webServiceManager =
-                (WebServiceManager) servletContext.getAttribute (Constants.WEB_SERVICE_MANAGER);
-
-        if (null == webServiceManager) {
-            try {
-                WebServiceManager WSmanager = new WebServiceManager ();
-                WSmanager.deploy();
-                logger.info ("Tulip web service deployed successfully");
-                servletContext.setAttribute (Constants.WEB_SERVICE_MANAGER, WSmanager);
-            } catch (Exception e) {
-                logger.error ("Unable to deploy the web service", e);
-                throw new JspException ("Fatal error: init tag could not deploy the Tulip web service.");
-            }
-        } else {
-            logger.info ("Web service already deployed ...");
-        }
-
-    } // initWebService
 
 } // InitTag
