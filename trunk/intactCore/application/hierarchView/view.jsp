@@ -3,7 +3,8 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
 
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.*" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.*,
+                 uk.ac.ebi.intact.application.hierarchView.business.IntactUser" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.graph.*" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.Constants" %>
@@ -14,7 +15,6 @@
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean" %>
 <%@ page import="java.util.ArrayList" %>
 <%@page import="java.io.*" %>
-<%@page import="java.util.Properties"%>
 <%@page import="java.util.Collection"%>
 
 
@@ -38,7 +38,7 @@
       * Allows to forward to a specified URL inside a frame
       */
      function forward ( absoluteUrl ) {
-        parent.frameHierarchy.location.href = absoluteUrl;
+        parent.<%=Constants.RIGHT_FRAME_NAME%>.location.href = absoluteUrl;
      }
 
      //-->
@@ -58,31 +58,22 @@
    /**
     * Retreive data from the session
     */
+   IntactUser user = (IntactUser) session.getAttribute (Constants.USER_KEY);
 
-   String AC           = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
-   String depth        = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_DEPTH);
-   Boolean depthLimit  = (Boolean) session.getAttribute (StrutsConstants.ATTRIBUTE_NO_DEPTH_LIMIT);
+
+   String AC           = user.getAC();
+   String depth        = user.getDepth();
+   Boolean depthLimit  = new Boolean(user.getHasNoDepthLimit());
    String noDepthLimit = "null";
    if (null != depthLimit) {
      noDepthLimit = depthLimit.toString();
    }
 
-   ImageBean imageBean   = (ImageBean) session.getAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN);
-
-   Collection keys       = (Collection)  session.getAttribute (StrutsConstants.ATTRIBUTE_KEYS);
-   String methodLabel    = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_METHOD_LABEL);
-   String methodClass    = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_METHOD_CLASS);
-   String behaviour      = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_BEHAVIOUR);
-   InteractionNetwork in = (InteractionNetwork) session.getAttribute (StrutsConstants.ATTRIBUTE_GRAPH);
-
-   Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE);
-   String debug = null;
-   if (null != properties) {
-      debug = properties.getProperty ("application.debug");
-   } else {
-      debug = "disable";
-   }
-
+   Collection keys       = user.getKeys();
+   String methodLabel    = user.getMethodLabel();
+   String methodClass    = user.getMethodClass();
+   String behaviour      = user.getBehaviour();
+   InteractionNetwork in = user.getInteractionNetwork();
 
    /**
     * get the data to display in the highlightment form
@@ -199,25 +190,6 @@
 <hr>
 
 
-
- <% if (debug.equalsIgnoreCase ("enable")) { %>
-
-    <p align="left">
-
-      AC = <%= AC %><br>
-      depth = <%= depth %><br>
-      noDepthLimit = <%= noDepthLimit %><br>
-      keys = <%= keys%><br>
-      methodLabel = <%= methodLabel %><br>
-      methodClass = <%= methodClass %><br>
-      behaviour = <%= behaviour %><br>
-
-    </p>
-
- <% } %>
-
-
-
 <%
 
 // Write a link to display the GO term list for the selected AC number
@@ -233,7 +205,7 @@ if (AC != null)
    * Apply an highlighting if AC != null, keys != null and behaviour != null
    */
    if ((null != AC) && (null != keys) && (behaviour != null) && (null != in)) {
-       HighlightProteins hp = new HighlightProteins(methodClass, behaviour, session, in);
+       HighlightProteins.perform (methodClass, behaviour, session, in) ;
    }
 %>
 

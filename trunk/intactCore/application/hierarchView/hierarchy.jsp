@@ -17,17 +17,6 @@
 
    <html:base/>
 
-   <script language="JavaScript">
-    <!--
-    /**
-     * Allows to forward to a specified URL inside a frame
-     */
-    function forward ( absoluteUrl ) {
-       parent.frameHierarchy.location.href = absoluteUrl;
-    }
-    //-->
-   </script>
-
 </head>
 
 <body>

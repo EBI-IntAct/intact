@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.hierarchView.highlightment.source.Highlightm
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -57,6 +58,14 @@ public final class SourceAction extends IntactBaseAction {
         // get the current session
         HttpSession session = super.getSession(request);
 
+        // retreive user fron the session
+        IntactUserIF user = super.getIntactUser(session);
+        if (null == user) {
+            super.addError ("error.datasource.notCreated");
+            super.saveErrors(request);
+            return (mapping.findForward("error"));
+        }
+
         String someKeys = request.getParameter(StrutsConstants.ATTRIBUTE_KEYS);
 
         if ((null == someKeys) || (someKeys.length() < 1)) {
@@ -66,12 +75,12 @@ public final class SourceAction extends IntactBaseAction {
         }
 
         // get the class method name to create an instance
-        String source = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_METHOD_CLASS);
+        String source = user.getMethodClass();
 
         HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(source);
         Collection keys = highlightmentSource.parseKeys(someKeys);
 
-        session.setAttribute(StrutsConstants.ATTRIBUTE_KEYS, keys);
+        user.setKeys(keys);
 
         // Print debug in the log file
         logger.info ("SourceAction: keys=" + keys +

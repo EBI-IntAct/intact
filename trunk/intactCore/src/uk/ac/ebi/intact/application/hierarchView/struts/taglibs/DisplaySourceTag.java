@@ -7,8 +7,8 @@ package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 // intact
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
 
 import javax.servlet.http.HttpSession;
@@ -49,11 +49,9 @@ public class DisplaySourceTag extends TagSupport {
         HttpSession session = pageContext.getSession();
 
         try {
-            String AC = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
-            String method_class = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_METHOD_CLASS);
-
-            logger.info ("Display highlight source items for AC = " + AC +
-                         "  SourceClass = " + method_class);
+            IntactUserIF user = (IntactUserIF) session.getAttribute (Constants.USER_KEY);
+            String AC = user.getAC();
+            String method_class = user.getMethodClass();
 
             if (null != AC) {
                 // get the implementation class of the selected source
@@ -62,26 +60,42 @@ public class DisplaySourceTag extends TagSupport {
                 if (null == source) {
                     pageContext.getOut().write ("An error occured when trying to retreive source.<br>");
                 } else {
+                    logger.info ("Display highlight source items for AC = " + AC +
+                                 " SourceClass = " + method_class);
+
                     Collection urls = source.getUrl(AC, session);
                     Iterator iterator = urls.iterator();
                     int size = urls.size();
 
                     if (0 == size) {
                         pageContext.getOut().write ("No source found for that protein (AC = " + AC + ")");
-
                     } else if (1 == size) {
                         // only one source element, let's forward to the relevant page.
                         LabelValueBean url = (LabelValueBean) iterator.next();
                         String adress = url.getValue();
                         String absoluteUrl = adress;
 
-                        /* redirection to this URL */
+                        // inject the javascript code which allow to forward in a frame
+                        String rightFrameName = Constants.RIGHT_FRAME_NAME ;
+                        String forwardFunctionCode =
+                                "<script language=\"JavaScript\">\n" +
+                                "<!--   \n" +
+                                "   /** \n" +
+                                "    * Allows to forward to a specified URL inside a frame \n" +
+                                "    */ \n" +
+                                "   function forward ( absoluteUrl ) {  \n" +
+                                "      parent." + rightFrameName + ".location.href = absoluteUrl; \n" +
+                                "   } \n" +
+                                "//--> \n" +
+                                "</script>\n\n";
+                        pageContext.getOut().write (forwardFunctionCode);
+
+                        /* forward to this URL */
                         String msg = "<script language=\"JavaScript\">\n" +
                                      "<!--\n" +
                                      "     forward ( '" + absoluteUrl + "' );\n" +
                                      "//-->\n" +
-                                     "</script>\n";
-
+                                     "</script>\n\n";
                         pageContext.getOut().write (msg);
 
                     } else {
@@ -94,8 +108,9 @@ public class DisplaySourceTag extends TagSupport {
                             String adress = url.getValue();
                             String label = url.getLabel();
                             String description = url.getDescription();
+                            String rightFrameName = Constants.RIGHT_FRAME_NAME ;
 
-                            sb.append ("<a href=" + adress +" target=\"frameHierarchy\">" + label + "</a>");
+                            sb.append ("<a href=" + adress +" target=\"" + rightFrameName + "\">" + label + "</a>");
                             if (null != description)
                                 sb.append (" : " + description);
 
@@ -108,7 +123,7 @@ public class DisplaySourceTag extends TagSupport {
             } // if
 
         } catch (Exception ioe) {
-            throw new JspException ("Fatal error: init tag could not initialize user's HTTPSession.");
+            throw new JspException ("Fatal error: could not display protein associated source.");
         }
         return EVAL_PAGE;
     } // doEndTag

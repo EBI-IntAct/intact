@@ -8,9 +8,10 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour.HighlightmentBehaviour;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -27,10 +28,10 @@ public class HighlightProteins {
      * @param session The current session
      * @param in The interaction network
      */
-    public HighlightProteins (String source,
-                              String behaviourClass,
-                              HttpSession session,
-                              InteractionNetwork in)
+    public static void perform (String source,
+                           String behaviourClass,
+                           HttpSession session,
+                           InteractionNetwork in)
             throws IOException {
         // Put the default color and default visibility in the
         // interaction network before to highlight this one
@@ -48,16 +49,16 @@ public class HighlightProteins {
 
         highlightmentBehaviour.apply (proteinsToHighlight, in);
 
-        // Rebuild the image SVG data
+        // Rebuild SVG data
         GraphToSVG svgProducer = new GraphToSVG (in);
-        if (null == svgProducer) throw new IOException ("Unable to create the image data");
         svgProducer.draw();
-
         ImageBean ib = svgProducer.getImageBean();
 
         // store data in the session
-        session.setAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN, ib);
-        session.setAttribute (StrutsConstants.ATTRIBUTE_GRAPH, in);
+        IntactUserIF user = (IntactUserIF) session.getAttribute(Constants.USER_KEY);
+        // TODO : test is user OK
+        user.setImageBean(ib);
+        user.setInteractionNetwork(in);
 
     } // highlightProteins
 

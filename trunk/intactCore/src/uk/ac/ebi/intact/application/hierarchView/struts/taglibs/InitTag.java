@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 // intact
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.WebServiceManager;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.DataSourceException;
@@ -67,10 +68,12 @@ public class InitTag extends TagSupport {
 
         HttpSession session = pageContext.getSession();
 
-        IntactUser user = (IntactUser) session.getAttribute (Constants.USER_KEY);
+        IntactUserIF user = (IntactUserIF) session.getAttribute (Constants.USER_KEY);
         if (null != user) {
             // user already exists
             logger.info ("User already exists ... don't create a new one !");
+            // set user's data field (AC, depth ...) to default value
+            user.initUserData();
             return ;
         }
 
