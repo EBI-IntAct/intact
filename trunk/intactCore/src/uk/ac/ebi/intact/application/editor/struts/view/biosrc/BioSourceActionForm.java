@@ -13,6 +13,8 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.form name="bsForm"
  */
 public class BioSourceActionForm extends EditorActionForm {
 
@@ -37,6 +39,10 @@ public class BioSourceActionForm extends EditorActionForm {
         return myTaxId;
     }
 
+    /**
+     * @struts.validator type="mask" msgkey="error.taxid.mask"
+     * @struts.validator-var name="mask" value="^[0-9\-]+$"
+     */
     public void setTaxId(String taxId) {
         myTaxId = taxId;
     }

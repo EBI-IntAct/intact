@@ -9,12 +9,10 @@ package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +24,13 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/exp/int/hold"
+ *      name="expForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
  */
 public class InteractionHoldAction extends AbstractEditorAction {
 

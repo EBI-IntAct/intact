@@ -21,6 +21,30 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/choose"
+ *      validate="false"
+ *
+ * @struts.action-forward
+ *      name="cv"
+ *      path="/do/cv/fill/form"
+ *
+ * @struts.action-forward
+ *      name="exp"
+ *      path="/do/exp/fill/form"
+ *
+ * @struts.action-forward
+ *      name="bs"
+ *      path="/do/bs/fill/form"
+ *
+ * @struts.action-forward
+ *      name="int"
+ *      path="/do/int/fill/form"
+ *
+ * @struts.action-forward
+ *      name="seq"
+ *      path="/do/seq/fill/form"
  */
 public class EditorChoiceAction extends AbstractEditorAction {
 
@@ -52,9 +76,10 @@ public class EditorChoiceAction extends AbstractEditorAction {
         // The topic to choose where to go.
         String topic = user.getSelectedTopic();
         if (topic.equals("BioSource")) {
-            return mapping.findForward("biosrc");
+            return mapping.findForward("bs");
         }
         if (topic.equals("Experiment")) {
+            System.out.println("Found an experiment");
             return mapping.findForward("exp");
         }
         if (topic.equals("Interaction")) {

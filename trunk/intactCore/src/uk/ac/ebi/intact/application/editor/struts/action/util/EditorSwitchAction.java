@@ -27,6 +27,9 @@ import javax.servlet.http.HttpSession;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/tiles/editorSwitch"
  */
 public class EditorSwitchAction extends TilesAction {
 

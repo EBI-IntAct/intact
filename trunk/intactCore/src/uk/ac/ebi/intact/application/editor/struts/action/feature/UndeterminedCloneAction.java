@@ -11,7 +11,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.DefinedFeatureBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
@@ -26,6 +26,16 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/feature/undetermined/clone"
+ *      name="featureForm"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action-forward
+ *      name="success"
+ *      path="edit.layout"
  */
 public class UndeterminedCloneAction extends AbstractEditorAction {
 
@@ -58,7 +68,7 @@ public class UndeterminedCloneAction extends AbstractEditorAction {
                 rb.getLink()));
 
         // Update the form for the display.
-        view.copyPropertiesTo((EditorActionForm) form);
+        view.copyPropertiesTo((EditorFormI) form);
 
         // Update the form and display.
         return mapping.findForward(SUCCESS);

@@ -10,7 +10,7 @@ import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
@@ -24,6 +24,48 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/cv/xref/submit"
+ *      name="cvForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/exp/xref/submit"
+ *      name="expForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/bs/xref/submit"
+ *      name="bsForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/int/xref/submit"
+ *      name="intForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/feature/xref/submit"
+ *      name="featureForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *
+ * @struts.action
+ *      path="/seq/xref/submit"
+ *      name="seqForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
  */
 public class XrefDispatchAction extends AbstractEditorAction {
 
@@ -46,7 +88,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // The editor form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // The command associated with the dispatch
         String cmd = editorForm.getDispatch();
@@ -65,7 +107,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
     }
 
     /**
-     * Action for editing the selected annotation.
+     * Action for editing the selected xref.
      *
      * @param mapping the <code>ActionMapping</code> used to select this instance
      * @param form the optional <code>ActionForm</code> bean for this request
@@ -84,7 +126,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
                                 HttpServletResponse response)
             throws Exception {
         // The editor form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // The xref we are editing at the moment.
         XreferenceBean xb = editorForm.getSelectedXref();
@@ -97,7 +139,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
     }
 
     /**
-     * Action for deleting the selected annotation.
+     * Action for deleting the selected xref.
      *
      * @param mapping the <code>ActionMapping</code> used to select this instance
      * @param form the optional <code>ActionForm</code> bean for this request
@@ -116,7 +158,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
                                 HttpServletResponse response)
             throws Exception {
         // The editor form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // The xref we are about to delete.
         XreferenceBean xb = editorForm.getSelectedXref();
@@ -132,7 +174,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
     }
 
     /**
-     * Action for saving an edited annotation.
+     * Action for saving an edited xref.
      *
      * @param mapping the <code>ActionMapping</code> used to select this instance
      * @param form the optional <code>ActionForm</code> bean for this request
@@ -151,7 +193,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
                                 HttpServletResponse response)
             throws Exception {
         // The editor form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // The xref we are about to save.
         XreferenceBean xb = editorForm.getSelectedXref();

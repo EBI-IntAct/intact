@@ -21,6 +21,15 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/secure/edit"
+ *      name="dummyForm"
+ *      validate="false"
+ *
+ * @struts.action-forward
+ *      name="success"
+ *      path="/do/choose"
  */
 public class ResultAction extends AbstractEditorAction {
 

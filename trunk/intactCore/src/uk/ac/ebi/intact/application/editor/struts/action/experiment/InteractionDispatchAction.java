@@ -26,6 +26,14 @@ import java.util.Set;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/exp/int/search"
+ *      name="expForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
+ *      parameter="dispatch"
  */
 public class InteractionDispatchAction extends AbstractEditorDispatchAction {
 

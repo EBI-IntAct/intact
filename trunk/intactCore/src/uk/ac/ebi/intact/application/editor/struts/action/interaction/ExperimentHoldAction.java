@@ -22,6 +22,13 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/int/exp/hold"
+ *      name="intForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
  */
 public class ExperimentHoldAction extends AbstractEditorAction {
 

@@ -26,6 +26,9 @@ import javax.servlet.http.HttpSession;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/tiles/headerSwitch"
  */
 public class HeaderSwitchAction extends TilesAction {
 

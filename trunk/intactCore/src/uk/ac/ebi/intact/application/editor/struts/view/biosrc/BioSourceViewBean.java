@@ -11,7 +11,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.BioSourceException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -84,7 +84,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy biosource from the form to the bean.
-    public void copyPropertiesFrom(EditorActionForm editorForm) {
+    public void copyPropertiesFrom(EditorFormI editorForm) {
         // Set the common values by calling super first.
         super.copyPropertiesFrom(editorForm);
 
@@ -97,7 +97,7 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy BS data to given form.
-    public void copyPropertiesTo(EditorActionForm form) {
+    public void copyPropertiesTo(EditorFormI form) {
         super.copyPropertiesTo(form);
 
         // Cast to the biosource form to copy biosource data.

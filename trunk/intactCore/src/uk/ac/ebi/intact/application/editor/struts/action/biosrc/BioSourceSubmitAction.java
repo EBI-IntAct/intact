@@ -4,7 +4,7 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.application.editor.struts.action.feature;
+package uk.ac.ebi.intact.application.editor.struts.action.biosrc;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -18,46 +18,42 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * The submitter action for the Feature editor.
+ * The submitter action for the CV editor.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  *
  * @struts.action
- *      path="/feature/dispatch"
- *      name="featureForm"
+ *      path="/bs/dispatch"
+ *      name="bsForm"
  *      scope="session"
  *      validate="false"
  *
  * @struts.action-forward
  *      name="submit"
- *      path="/do/feature/submit"
+ *      path="/do/bs/submit"
  *
  * @struts.action-forward
  *      name="cancel"
- *      path="/do/feature/cancel"
+ *      path="/do/cancel"
+ *
+ * @struts.action-forward
+ *      name="delete"
+ *      path="/do/delete"
+ *
+ * @struts.action-forward
+ *      name="annotation"
+ *      path="/do/bs/annot/submit"
  *
  * @struts.action-forward
  *      name="xref"
- *      path="/do/feature/xref/submit"
+ *      path="/do/bs/xref/submit"
  *
  * @struts.action-forward
- *      name="feature.mutation"
- *      path="/do/feature/mutation"
- *
- * @struts.action-forward
- *      name="feature.undetermined.clone"
- *      path="/do/feature/undetermined/clone"
- *
- * @struts.action-forward
- *      name="feature.range"
- *      path="/do/feature/range"
- *
- * @struts.action-forward
- *      name="feature.range.new"
- *      path="/do/feature/range/new"
+ *      name="taxid"
+ *      path="/do/bs/taxid"
  */
-public class FeatureSubmitAction extends AbstractSubmitAction {
+public class BioSourceSubmitAction extends AbstractSubmitAction {
 
     private static final Map ourButtonToAction = new HashMap();
 
@@ -66,18 +62,7 @@ public class FeatureSubmitAction extends AbstractSubmitAction {
         ResourceBundle rb = ResourceBundle.getBundle(
                 "uk.ac.ebi.intact.application.editor.MessageResources");
 
-        ourButtonToAction.put(rb.getString("feature.mutation.toggle.button"),
-                "feature.mutation");
-        ourButtonToAction.put(rb.getString("feature.undetermined.clone.button"),
-                "feature.undetermined.clone");
-        ourButtonToAction.put(rb.getString("feature.range.button.add"),
-                "feature.range.new");
-        ourButtonToAction.put(rb.getString("feature.range.button.edit"),
-                "feature.range");
-        ourButtonToAction.put(rb.getString("feature.range.button.save"),
-                "feature.range");
-        ourButtonToAction.put(rb.getString("feature.range.button.delete"),
-                "feature.range");
+        ourButtonToAction.put(rb.getString("biosource.button.taxid"), "taxid");
     }
 
     public ActionForward execute(ActionMapping mapping,

@@ -10,7 +10,7 @@ import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
@@ -188,7 +188,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         EditUserI user = getIntactUser(request);
 
         // The current form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // The bean to extract the values.
         CommentBean cb = editorForm.getNewAnnotation();
@@ -243,7 +243,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         EditUserI user = getIntactUser(request);
 
         // The current form.
-        EditorActionForm editorForm = (EditorActionForm) form;
+        EditorFormI editorForm = (EditorFormI) form;
 
         // The bean to extract the values.
         XreferenceBean xb = editorForm.getNewXref();
@@ -312,7 +312,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         AbstractEditViewBean view = user.getView();
 
         // The current form.
-        EditorActionForm editForm = (EditorActionForm) form;
+        EditorFormI editForm = (EditorFormI) form;
 
         // The new short label.
         String newFormLabel = getShortLabel(user, view.getEditClass(),

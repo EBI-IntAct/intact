@@ -9,15 +9,11 @@ package uk.ac.ebi.intact.application.editor.struts.action.biosrc;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +29,15 @@ import java.util.StringTokenizer;
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
+ *
+ * @struts.action
+ *      path="/bs/taxid"
+ *      name="bsForm"
+ *      input="edit.layout"
+ *      scope="session"
+ *      validate="false"
  */
-public class BioSourceAction extends SubmitFormAction {
+public class BioSourceAction extends AbstractEditorAction {
 
     /**
      * Process the specified HTTP request, and create the corresponding

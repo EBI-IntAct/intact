@@ -11,7 +11,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
-import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -198,7 +198,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Override to provide set experiment from the form.
-    public void copyPropertiesFrom(EditorActionForm editorForm) {
+    public void copyPropertiesFrom(EditorFormI editorForm) {
         // Set the common values by calling super first.
         super.copyPropertiesFrom(editorForm);
 
@@ -211,7 +211,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Override to copy Experiment data.
-    public void copyPropertiesTo(EditorActionForm form) {
+    public void copyPropertiesTo(EditorFormI form) {
         super.copyPropertiesTo(form);
 
         // Cast to the experiment form to copy experiment data.

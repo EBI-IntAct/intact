@@ -4,7 +4,7 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.application.editor.struts.action.feature;
+package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -18,46 +18,50 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * The submitter action for the Feature editor.
+ * The submitter action for the CV editor.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  *
  * @struts.action
- *      path="/feature/dispatch"
- *      name="featureForm"
+ *      path="/exp/dispatch"
+ *      name="expForm"
  *      scope="session"
  *      validate="false"
  *
  * @struts.action-forward
  *      name="submit"
- *      path="/do/feature/submit"
+ *      path="/do/exp/submit"
  *
  * @struts.action-forward
  *      name="cancel"
- *      path="/do/feature/cancel"
+ *      path="/do/cancel"
+ *
+ * @struts.action-forward
+ *      name="delete"
+ *      path="/do/delete"
+ *
+ * @struts.action-forward
+ *      name="annotation"
+ *      path="/do/exp/annot/submit"
  *
  * @struts.action-forward
  *      name="xref"
- *      path="/do/feature/xref/submit"
+ *      path="/do/exp/xref/submit"
  *
  * @struts.action-forward
- *      name="feature.mutation"
- *      path="/do/feature/mutation"
+ *      name="interaction"
+ *      path="/do/interaction"
  *
  * @struts.action-forward
- *      name="feature.undetermined.clone"
- *      path="/do/feature/undetermined/clone"
+ *      name="exp.int.hold"
+ *      path="/do/exp/int/hold"
  *
  * @struts.action-forward
- *      name="feature.range"
- *      path="/do/feature/range"
- *
- * @struts.action-forward
- *      name="feature.range.new"
- *      path="/do/feature/range/new"
+ *      name="exp.int.search"
+ *      path="/do/exp/int/search"
  */
-public class FeatureSubmitAction extends AbstractSubmitAction {
+public class ExperimentSubmitAction extends AbstractSubmitAction {
 
     private static final Map ourButtonToAction = new HashMap();
 
@@ -66,18 +70,12 @@ public class FeatureSubmitAction extends AbstractSubmitAction {
         ResourceBundle rb = ResourceBundle.getBundle(
                 "uk.ac.ebi.intact.application.editor.MessageResources");
 
-        ourButtonToAction.put(rb.getString("feature.mutation.toggle.button"),
-                "feature.mutation");
-        ourButtonToAction.put(rb.getString("feature.undetermined.clone.button"),
-                "feature.undetermined.clone");
-        ourButtonToAction.put(rb.getString("feature.range.button.add"),
-                "feature.range.new");
-        ourButtonToAction.put(rb.getString("feature.range.button.edit"),
-                "feature.range");
-        ourButtonToAction.put(rb.getString("feature.range.button.save"),
-                "feature.range");
-        ourButtonToAction.put(rb.getString("feature.range.button.delete"),
-                "feature.range");
+        ourButtonToAction.put(rb.getString("exp.int.button.edit"), "interaction");
+        ourButtonToAction.put(rb.getString("exp.int.button.del"), "interaction");
+        ourButtonToAction.put(rb.getString("exp.int.button.add"), "exp.int.hold");
+        ourButtonToAction.put(rb.getString("exp.int.button.hide"), "exp.int.hold");
+        ourButtonToAction.put(rb.getString("exp.int.button.recent"), "exp.int.search");
+        ourButtonToAction.put(rb.getString("exp.int.button.search"),"exp.int.search");
     }
 
     public ActionForward execute(ActionMapping mapping,
