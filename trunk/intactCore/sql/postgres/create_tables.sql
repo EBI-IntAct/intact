@@ -96,32 +96,30 @@ CREATE TABLE IA_ControlledVocab
 )
 ;
 
-CREATE INDEX i_ControlledVocab_shortLabel on IA_ControlledVocab(shortLabel)
-;
-CREATE UNIQUE INDEX uq_CVocab_objClass_ShortLabel on IA_ControlledVocab(objClass,shortLabel)
-;
+CREATE INDEX i_ControlledVocab_shortLabel on IA_ControlledVocab(shortLabel) ;
+CREATE UNIQUE INDEX uq_CVocab_objClass_ShortLabel on IA_ControlledVocab(objClass,shortLabel) ;
 
 
-    COMMENT ON TABLE IA_ControlledVocab IS
-    'Master table for all controlled vocabularies.';
-    COMMENT ON COLUMN IA_ControlledVocab.objClass IS
-    'The fully qualified classname of the object. This is needed for the OR mapping.';
-    COMMENT ON COLUMN IA_ControlledVocab.owner_ac IS
-    'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_ControlledVocab.ac IS
-    'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_ControlledVocab.shortLabel IS
-    'A short version of the term. Used e.g. in selection lists. ';
-    COMMENT ON COLUMN IA_ControlledVocab.fullName IS
-    'The full descriptive term. ';
-    COMMENT ON COLUMN IA_ControlledVocab.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_ControlledVocab.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_ControlledVocab.timestamp IS
-    'Date of the last update of the column.';
-    COMMENT ON COLUMN IA_ControlledVocab.userstamp IS
-    'Database user who has performed the last update of the column.';
+COMMENT ON TABLE IA_ControlledVocab IS
+'Master table for all controlled vocabularies.';
+COMMENT ON COLUMN IA_ControlledVocab.objClass IS
+'The fully qualified classname of the object. This is needed for the OR mapping.';
+COMMENT ON COLUMN IA_ControlledVocab.owner_ac IS
+'Refers to the owner of this object. ';
+COMMENT ON COLUMN IA_ControlledVocab.ac IS
+'Unique auto-generated accession number.';
+COMMENT ON COLUMN IA_ControlledVocab.shortLabel IS
+'A short version of the term. Used e.g. in selection lists. ';
+COMMENT ON COLUMN IA_ControlledVocab.fullName IS
+'The full descriptive term. ';
+COMMENT ON COLUMN IA_ControlledVocab.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_ControlledVocab.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_ControlledVocab.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_ControlledVocab.userstamp IS
+'Database user who has performed the last update of the column.';
 
 
 
@@ -145,24 +143,22 @@ CREATE TABLE IA_BioSource
 
 -- too small a table ?  CREATE INDEX i_BioSource_shortLabel on BioSource(shortLabel);
 
-
-
-    COMMENT ON TABLE IA_BioSource IS
-    'BioSource normally some kind of organism. ';
-    COMMENT ON COLUMN IA_BioSource.taxId IS
-    'The NCBI tax ID.';
-    COMMENT ON COLUMN IA_BioSource.owner_ac IS
-    'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_BioSource.ac IS
-    'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_BioSource.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_BioSource.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_BioSource.timestamp IS
-    'Date of the last update of the column.';
-    COMMENT ON COLUMN IA_BioSource.userstamp IS
-    'Database user who has performed the last update of the column.';
+COMMENT ON TABLE IA_BioSource IS
+'BioSource normally some kind of organism. ';
+COMMENT ON COLUMN IA_BioSource.taxId IS
+'The NCBI tax ID.';
+COMMENT ON COLUMN IA_BioSource.owner_ac IS
+'Refers to the owner of this object. ';
+COMMENT ON COLUMN IA_BioSource.ac IS
+'Unique auto-generated accession number.';
+COMMENT ON COLUMN IA_BioSource.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_BioSource.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_BioSource.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_BioSource.userstamp IS
+'Database user who has performed the last update of the column.';
 
 
 /* This is the key table. The class Interactor is the parent class of
@@ -205,36 +201,36 @@ CREATE index i_Interactor_fullName on IA_Interactor(fullName) ;
 CREATE index i_Interactor_formOf on IA_Interactor(formOf) ;
 
 
-    COMMENT ON TABLE IA_Interactor IS
-    'Interactor. Key table. All subclasses of Interactor are mapped to it, too.';
-    COMMENT ON COLUMN IA_Interactor.kD IS
-    'Dissociation constant of an Interaction';
-    COMMENT ON COLUMN IA_Interactor.crc64 IS
-    'CRC64 checksum of the polymerSequence. Stored in hexadecimal, not integer format.';
-    COMMENT ON COLUMN IA_Interactor.formOf IS
-    'REFERENCES IA_another Protein which the current one is a form of. Example: A fragment.';
-    COMMENT ON COLUMN IA_Interactor.objClass IS
-    'The fully qualified classname of the object. This is needed for the OR mapping.';
-    COMMENT ON COLUMN IA_Interactor.bioSource_ac IS
-    'The biological system in which the Interactor is found.';
-    COMMENT ON COLUMN IA_Interactor.interactionType_ac IS
-    'The kind of interaction, e.g. covalent binding.';
-    COMMENT ON COLUMN IA_Interactor.shortLabel IS
-    'A short string identifying the object, not necessarily unique. Could be e.g. a gene name. Used e.g. in selection lists. ';
-    COMMENT ON COLUMN IA_Interactor.fullName IS
-    'The full name of the object. ';
-    COMMENT ON COLUMN IA_Interactor.owner_ac IS
-    'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_Interactor.ac IS
-    'Unique, auto-generated accession number.';
-    COMMENT ON COLUMN IA_Interactor.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Interactor.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Interactor.timestamp IS
-    'Date of the last update of the column.';
-    COMMENT ON COLUMN IA_Interactor.userstamp IS
-    'Database user who has performed the last update of the column.';
+COMMENT ON TABLE IA_Interactor IS
+'Interactor. Key table. All subclasses of Interactor are mapped to it, too.';
+COMMENT ON COLUMN IA_Interactor.kD IS
+'Dissociation constant of an Interaction';
+COMMENT ON COLUMN IA_Interactor.crc64 IS
+'CRC64 checksum of the polymerSequence. Stored in hexadecimal, not integer format.';
+COMMENT ON COLUMN IA_Interactor.formOf IS
+'REFERENCES IA_another Protein which the current one is a form of. Example: A fragment.';
+COMMENT ON COLUMN IA_Interactor.objClass IS
+'The fully qualified classname of the object. This is needed for the OR mapping.';
+COMMENT ON COLUMN IA_Interactor.bioSource_ac IS
+'The biological system in which the Interactor is found.';
+COMMENT ON COLUMN IA_Interactor.interactionType_ac IS
+'The kind of interaction, e.g. covalent binding.';
+COMMENT ON COLUMN IA_Interactor.shortLabel IS
+'A short string identifying the object, not necessarily unique. Could be e.g. a gene name. Used e.g. in selection lists. ';
+COMMENT ON COLUMN IA_Interactor.fullName IS
+'The full name of the object. ';
+COMMENT ON COLUMN IA_Interactor.owner_ac IS
+'Refers to the owner of this object. ';
+COMMENT ON COLUMN IA_Interactor.ac IS
+'Unique, auto-generated accession number.';
+COMMENT ON COLUMN IA_Interactor.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Interactor.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Interactor.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_Interactor.userstamp IS
+'Database user who has performed the last update of the column.';
 
 
 
@@ -295,30 +291,30 @@ CREATE index i_Component_interaction_ac on IA_Component(interaction_ac) ;
 CREATE index i_Component_interactor_ac on IA_Component(interactor_ac) ;
 
 
-    COMMENT ON TABLE IA_Component IS
-    'Component. Link table from Interaction to Interactor. A Component is a particular instance of an Interactor which participates in an Interaction.';
-    COMMENT ON COLUMN IA_Component.stoichiometry IS
-    'Relative quantity of the Component participating in the Interaction.';
-    COMMENT ON COLUMN IA_Component.interactor_ac IS
-    'Refers to the Interactor which is participating in the Interaction.';
-    COMMENT ON COLUMN IA_Component.interaction_ac IS
-    'Refers to the Interaction in which the Interactor is participating.';
-    COMMENT ON COLUMN IA_Component.role IS
-    'The role of the Interactor in the Interaction. This is usually characterised by the experimental method. Examples: bait prey in Yeast 2-hybrid experiments.';
-    COMMENT ON COLUMN IA_Component.expressedIn_ac IS
-    'The biological system in which the protein has been expressed.';
-    COMMENT ON COLUMN IA_Component.owner_ac IS
-    'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_Component.ac IS
-    'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_Component.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Component.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Component.timestamp IS
-    'Date of the last update of the column.';
-    COMMENT ON COLUMN IA_Component.userstamp IS
-    'Database user who has performed the last update of the column.';
+COMMENT ON TABLE IA_Component IS
+'Component. Link table from Interaction to Interactor. A Component is a particular instance of an Interactor which participates in an Interaction.';
+COMMENT ON COLUMN IA_Component.stoichiometry IS
+'Relative quantity of the Component participating in the Interaction.';
+COMMENT ON COLUMN IA_Component.interactor_ac IS
+'Refers to the Interactor which is participating in the Interaction.';
+COMMENT ON COLUMN IA_Component.interaction_ac IS
+'Refers to the Interaction in which the Interactor is participating.';
+COMMENT ON COLUMN IA_Component.role IS
+'The role of the Interactor in the Interaction. This is usually characterised by the experimental method. Examples: bait prey in Yeast 2-hybrid experiments.';
+COMMENT ON COLUMN IA_Component.expressedIn_ac IS
+'The biological system in which the protein has been expressed.';
+COMMENT ON COLUMN IA_Component.owner_ac IS
+'Refers to the owner of this object. ';
+COMMENT ON COLUMN IA_Component.ac IS
+'Unique auto-generated accession number.';
+COMMENT ON COLUMN IA_Component.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Component.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Component.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_Component.userstamp IS
+'Database user who has performed the last update of the column.';
 
 
 
@@ -341,25 +337,24 @@ CREATE TABLE IA_Annotation
 
 -- too small a table ? CREATE index i_Annotation_topic on Annotation(topic_ac);
 
-
-    COMMENT ON TABLE IA_Annotation IS
-    'Contains the main biological annotation of the object.';
-    COMMENT ON COLUMN IA_Annotation.description IS
-    'The free text description of the annotation item.';
-    COMMENT ON COLUMN IA_Annotation.topic_ac IS
-    'Refers to the topic of the annotation item.';
-    COMMENT ON COLUMN IA_Annotation.owner_ac IS
-    'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_Annotation.ac IS
-    'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_Annotation.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Annotation.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Annotation.timestamp IS
-    'Date of the last update of the column.';
-    COMMENT ON COLUMN IA_Annotation.userstamp IS
-    'Database user who has performed the last update of the column.';
+COMMENT ON TABLE IA_Annotation IS
+'Contains the main biological annotation of the object.';
+COMMENT ON COLUMN IA_Annotation.description IS
+'The free text description of the annotation item.';
+COMMENT ON COLUMN IA_Annotation.topic_ac IS
+'Refers to the topic of the annotation item.';
+COMMENT ON COLUMN IA_Annotation.owner_ac IS
+'Refers to the owner of this object. ';
+COMMENT ON COLUMN IA_Annotation.ac IS
+'Unique auto-generated accession number.';
+COMMENT ON COLUMN IA_Annotation.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Annotation.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Annotation.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_Annotation.userstamp IS
+'Database user who has performed the last update of the column.';
 
 
 
@@ -386,32 +381,32 @@ CREATE TABLE IA_Experiment
 -- too small a table ? CREATE INDEX i_Experiment_shortLabel on Experiment(shortLabel);
 
 
-    COMMENT ON TABLE IA_Experiment IS
-    'Describes the experiment which has yielded information about Interactions';
-    COMMENT ON COLUMN IA_Experiment.bioSource_ac IS
-    'The biological system in which the experiment has been performed.';
-    COMMENT ON COLUMN IA_Experiment.identMethod_ac IS
-    'Refers to the method by which the Interactor has been detected as a participant in the Interaction.';
-    COMMENT ON COLUMN IA_Experiment.detectMethod_ac IS
-    'Refers to the method by which the interactions have been detected in the experiment.';
-    COMMENT ON COLUMN IA_Experiment.detectMethod_ac IS
-    'Refers to the method by which the interactions have been detected in the experiment.';
-    COMMENT ON COLUMN IA_Experiment.relatedExperiment_ac IS
-    'An experiment which is related to the current experiment. This serves just as a pointer all information on the type of relationship will be given in the annotation of the experiment.';
-    COMMENT ON COLUMN IA_Experiment.fullName IS
-    'The full name of the object. ';
-    COMMENT ON COLUMN IA_Experiment.owner_ac IS
-    'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_Experiment.ac IS
-    'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_Experiment.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Experiment.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Experiment.timestamp IS
-    'Date of the last update of the column.';
-    COMMENT ON COLUMN IA_Experiment.userstamp IS
-    'Database user who has performed the last update of the column.';
+COMMENT ON TABLE IA_Experiment IS
+'Describes the experiment which has yielded information about Interactions';
+COMMENT ON COLUMN IA_Experiment.bioSource_ac IS
+'The biological system in which the experiment has been performed.';
+COMMENT ON COLUMN IA_Experiment.identMethod_ac IS
+'Refers to the method by which the Interactor has been detected as a participant in the Interaction.';
+COMMENT ON COLUMN IA_Experiment.detectMethod_ac IS
+'Refers to the method by which the interactions have been detected in the experiment.';
+COMMENT ON COLUMN IA_Experiment.detectMethod_ac IS
+'Refers to the method by which the interactions have been detected in the experiment.';
+COMMENT ON COLUMN IA_Experiment.relatedExperiment_ac IS
+'An experiment which is related to the current experiment. This serves just as a pointer all information on the type of relationship will be given in the annotation of the experiment.';
+COMMENT ON COLUMN IA_Experiment.fullName IS
+'The full name of the object. ';
+COMMENT ON COLUMN IA_Experiment.owner_ac IS
+'Refers to the owner of this object. ';
+COMMENT ON COLUMN IA_Experiment.ac IS
+'Unique auto-generated accession number.';
+COMMENT ON COLUMN IA_Experiment.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Experiment.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Experiment.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_Experiment.userstamp IS
+'Database user who has performed the last update of the column.';
 
 
 CREATE TABLE IA_Xref
@@ -435,32 +430,32 @@ CREATE TABLE IA_Xref
 
 CREATE index i_Xref_parent_ac on IA_Xref(parent_ac) ;
 
-    COMMENT ON TABLE IA_Xref IS
-    'Represents a crossreference. Several objects may have crossREFERENCES IA_e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
-    COMMENT ON COLUMN IA_Xref.primaryId IS
-    'The primary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_Xref.secondaryId IS
-    'The secondary id of the object referred to in the external database.';
-    COMMENT ON COLUMN IA_Xref.dbRelease IS
-    'Highest release number of the external database in which the xref was known to be correct.';
-    COMMENT ON COLUMN IA_Xref.qualifier_ac IS
-    'Refers to an object qualifying the relationship between the object to which this crossreference belongs and the external object referred to. Example: identity generalisation.';
-    COMMENT ON COLUMN IA_Xref.database_ac IS
-    'Refers to the object describing the external database.';
-    COMMENT ON COLUMN IA_Xref.parent_ac IS
-    'Refers to the parent object this crossreference belongs to.';
-    COMMENT ON COLUMN IA_Xref.owner_ac IS
-    'Refers to the owner of this object. ';
-    COMMENT ON COLUMN IA_Xref.ac IS
-    'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_Xref.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Xref.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Xref.timestamp IS
-    'Date of the last update of the column.';
-    COMMENT ON COLUMN IA_Xref.userstamp IS
-    'Database user who has performed the last update of the column.';
+COMMENT ON TABLE IA_Xref IS
+'Represents a crossreference. Several objects may have crossREFERENCES IA_e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+COMMENT ON COLUMN IA_Xref.primaryId IS
+'The primary id of the object referred to in the external database.';
+COMMENT ON COLUMN IA_Xref.secondaryId IS
+'The secondary id of the object referred to in the external database.';
+COMMENT ON COLUMN IA_Xref.dbRelease IS
+'Highest release number of the external database in which the xref was known to be correct.';
+COMMENT ON COLUMN IA_Xref.qualifier_ac IS
+'Refers to an object qualifying the relationship between the object to which this crossreference belongs and the external object referred to. Example: identity generalisation.';
+COMMENT ON COLUMN IA_Xref.database_ac IS
+'Refers to the object describing the external database.';
+COMMENT ON COLUMN IA_Xref.parent_ac IS
+'Refers to the parent object this crossreference belongs to.';
+COMMENT ON COLUMN IA_Xref.owner_ac IS
+'Refers to the owner of this object. ';
+COMMENT ON COLUMN IA_Xref.ac IS
+'Unique auto-generated accession number.';
+COMMENT ON COLUMN IA_Xref.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Xref.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Xref.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_Xref.userstamp IS
+'Database user who has performed the last update of the column.';
 
 
 
@@ -504,22 +499,20 @@ CREATE TABLE IA_Int2Exp
 )
 ;
 
-
-
-    COMMENT ON TABLE IA_Int2Exp IS
-    'Link table from Interaction to Experiment.';
-    COMMENT ON COLUMN IA_Int2Exp.interaction_ac IS
-    'Refers to an Interation derived from an Experiment.';
-    COMMENT ON COLUMN IA_Int2Exp.experiment_ac IS
-    'Refers to an Experiment.';
-    COMMENT ON COLUMN IA_Int2Exp.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Int2Exp.userstamp IS
-    'Database user who has performed the last update of the column.';
-    COMMENT ON COLUMN IA_Int2Exp.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Int2Exp.timestamp IS
-    'Date of the last update of the column.';
+COMMENT ON TABLE IA_Int2Exp IS
+'Link table from Interaction to Experiment.';
+COMMENT ON COLUMN IA_Int2Exp.interaction_ac IS
+'Refers to an Interation derived from an Experiment.';
+COMMENT ON COLUMN IA_Int2Exp.experiment_ac IS
+'Refers to an Experiment.';
+COMMENT ON COLUMN IA_Int2Exp.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Int2Exp.userstamp IS
+'Database user who has performed the last update of the column.';
+COMMENT ON COLUMN IA_Int2Exp.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Int2Exp.timestamp IS
+'Date of the last update of the column.';
 
 
 
@@ -536,20 +529,20 @@ CREATE TABLE IA_Int2Annot
 )
 ;
 
-    COMMENT ON TABLE IA_Int2Annot IS
-    'Int2Annot. Link table from Annotation to Interactor.';
-    COMMENT ON COLUMN IA_Int2Annot.interactor_ac IS
-    'Refers to an Interactor to which the Annotation is linked.';
-    COMMENT ON COLUMN IA_Int2Annot.annotation_ac IS
-    'Refers to the annotation object linked to the Interactor.';
-    COMMENT ON COLUMN IA_Int2Annot.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Int2Annot.userstamp IS
-    'Database user who has performed the last update of the column.';
-    COMMENT ON COLUMN IA_Int2Annot.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Int2Annot.timestamp IS
-    'Date of the last update of the column.';
+COMMENT ON TABLE IA_Int2Annot IS
+'Int2Annot. Link table from Annotation to Interactor.';
+COMMENT ON COLUMN IA_Int2Annot.interactor_ac IS
+'Refers to an Interactor to which the Annotation is linked.';
+COMMENT ON COLUMN IA_Int2Annot.annotation_ac IS
+'Refers to the annotation object linked to the Interactor.';
+COMMENT ON COLUMN IA_Int2Annot.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Int2Annot.userstamp IS
+'Database user who has performed the last update of the column.';
+COMMENT ON COLUMN IA_Int2Annot.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Int2Annot.timestamp IS
+'Date of the last update of the column.';
 
 
 
@@ -565,20 +558,20 @@ CREATE TABLE IA_Exp2Annot
 )
 ;
 
-    COMMENT ON TABLE IA_Exp2Annot IS
-    'Exp2Annot. Link table from Annotation to Experiment.';
-    COMMENT ON COLUMN IA_Exp2Annot.Experiment_ac IS
-    'Refers to an Experiment to which the Annotation is linked.';
-    COMMENT ON COLUMN IA_Exp2Annot.annotation_ac IS
-    'Refers to the annotation object linked to the Experiment.';
-    COMMENT ON COLUMN IA_Exp2Annot.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Exp2Annot.userstamp IS
-    'Database user who has performed the last update of the column.';
-    COMMENT ON COLUMN IA_Exp2Annot.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Exp2Annot.timestamp IS
-    'Date of the last update of the column.';
+COMMENT ON TABLE IA_Exp2Annot IS
+'Exp2Annot. Link table from Annotation to Experiment.';
+COMMENT ON COLUMN IA_Exp2Annot.Experiment_ac IS
+'Refers to an Experiment to which the Annotation is linked.';
+COMMENT ON COLUMN IA_Exp2Annot.annotation_ac IS
+'Refers to the annotation object linked to the Experiment.';
+COMMENT ON COLUMN IA_Exp2Annot.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Exp2Annot.userstamp IS
+'Database user who has performed the last update of the column.';
+COMMENT ON COLUMN IA_Exp2Annot.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Exp2Annot.timestamp IS
+'Date of the last update of the column.';
 
 
 
@@ -597,49 +590,51 @@ CREATE TABLE IA_cvobject2Annot
 ;
 
 
-    COMMENT ON TABLE IA_cvobject2Annot IS
-    'cvobject2Annot. Link table from Annotation to Controlled vocabulary.';
-    COMMENT ON COLUMN IA_cvobject2Annot.cvobject_ac IS
-    'Refers to an Controlled vocabulary to which the Annotation is linked.';
-    COMMENT ON COLUMN IA_cvobject2Annot.annotation_ac IS
-    'Refers to the annotation object linked to the Controlled vocabulary.';
-    COMMENT ON COLUMN IA_cvobject2Annot.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_cvobject2Annot.userstamp IS
-    'Database user who has performed the last update of the column.';
-    COMMENT ON COLUMN IA_cvobject2Annot.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_cvobject2Annot.timestamp IS
-    'Date of the last update of the column.';
+COMMENT ON TABLE IA_cvobject2Annot IS
+'cvobject2Annot. Link table from Annotation to Controlled vocabulary.';
+COMMENT ON COLUMN IA_cvobject2Annot.cvobject_ac IS
+'Refers to an Controlled vocabulary to which the Annotation is linked.';
+COMMENT ON COLUMN IA_cvobject2Annot.annotation_ac IS
+'Refers to the annotation object linked to the Controlled vocabulary.';
+COMMENT ON COLUMN IA_cvobject2Annot.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_cvobject2Annot.userstamp IS
+'Database user who has performed the last update of the column.';
+COMMENT ON COLUMN IA_cvobject2Annot.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_cvobject2Annot.timestamp IS
+'Date of the last update of the column.';
 
 
 
 
 CREATE TABLE IA_Biosource2Annot
-(       biosource_ac            VARCHAR (30)    NOT NULL CONSTRAINT fk_bio2Annot_biosource   REFERENCES IA_Biosource(ac)  ON DELETE CASCADE
-     ,  annotation_ac           VARCHAR (30)    NOT NULL CONSTRAINT fk_bio2Annot_annotation  REFERENCES IA_Annotation(ac) ON DELETE CASCADE
+(       biosource_ac            VARCHAR(30)    NOT NULL CONSTRAINT fk_bio2Annot_biosource   REFERENCES IA_Biosource(ac)  ON DELETE CASCADE
+     ,  annotation_ac           VARCHAR(30)    NOT NULL CONSTRAINT fk_bio2Annot_annotation  REFERENCES IA_Annotation(ac) ON DELETE CASCADE
      ,  deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
      ,  created                 TIMESTAMP       DEFAULT  now()   NOT NULL
-     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
+     ,  userstamp               VARCHAR(30)    DEFAULT  USER    NOT NULL
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  PRIMARY KEY             (biosource_ac, annotation_ac)
 )
 ;
-    COMMENT ON TABLE IA_Biosource2Annot IS
-    'Biosource2Annot. Link table from Annotation to Biosource.';
-    COMMENT ON COLUMN IA_Biosource2Annot.Biosource_ac IS
-    'Refers to a Biosource to which the Annotation is linked.';
-    COMMENT ON COLUMN IA_Biosource2Annot.annotation_ac IS
-    'Refers to the annotation object linked to the Biosource.';
-    COMMENT ON COLUMN IA_Biosource2Annot.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Biosource2Annot.userstamp IS
-    'Database user who has performed the last update of the column.';
-    COMMENT ON COLUMN IA_Biosource2Annot.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Biosource2Annot.timestamp IS
-    'Date of the last update of the column.';
+
+COMMENT ON TABLE IA_Biosource2Annot IS
+'Biosource2Annot. Link table from Annotation to Biosource.';
+COMMENT ON COLUMN IA_Biosource2Annot.Biosource_ac IS
+'Refers to a Biosource to which the Annotation is linked.';
+COMMENT ON COLUMN IA_Biosource2Annot.annotation_ac IS
+'Refers to the annotation object linked to the Biosource.';
+COMMENT ON COLUMN IA_Biosource2Annot.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Biosource2Annot.userstamp IS
+'Database user who has performed the last update of the column.';
+COMMENT ON COLUMN IA_Biosource2Annot.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Biosource2Annot.timestamp IS
+'Date of the last update of the column.';
+
 
 /* The relation table which establishes a graph structure between CV objects */
 CREATE TABLE IA_Cv2Cv
@@ -698,19 +693,19 @@ CREATE TABLE IA_Statistics
 );
 
 COMMENT ON COLUMN IA_Statistics.timestamp IS
-    'remind the moment of record for this line';
+'remind the moment of record for this line';
 COMMENT ON COLUMN IA_Statistics.protein_number IS
-    'count how many proteins are stored in the database';
+'count how many proteins are stored in the database';
 COMMENT ON COLUMN IA_Statistics.interaction_number IS
-    'count how many interactions are referred in the database';
+'count how many interactions are referred in the database';
 COMMENT ON COLUMN IA_Statistics.binary_interactions IS
-    'how many interactions contain only 2 interactors';
+'how many interactions contain only 2 interactors';
 COMMENT ON COLUMN IA_Statistics.complex_interactions IS
-    'how many interactions contain more than 2 interactors';
+'how many interactions contain more than 2 interactors';
 COMMENT ON COLUMN IA_Statistics.experiment_number IS
-    'how many different experiments are stored in the database';
+'how many different experiments are stored in the database';
 COMMENT ON COLUMN IA_Statistics.term_number IS
-    'how many different controlled vocabularies terms are stored in the database';
+'how many different controlled vocabularies terms are stored in the database';
 
 
 
@@ -728,7 +723,7 @@ CREATE TABLE IA_alias
     ,  timestamp               TIMESTAMP      DEFAULT  now()   NOT NULL
     ,  userstamp               VARCHAR(30)    DEFAULT  USER    NOT NULL
     ,  aliastype_ac            VARCHAR(30)    CONSTRAINT fk_alias_qualifier REFERENCES IA_ControlledVocab(ac)
-    ,  parent_ac               VARCHAR(30)    -- eh missing constraint here??
+    ,  parent_ac               VARCHAR(30)    -- constraint managed by trigger.
     ,  owner_ac                VARCHAR(30)    CONSTRAINT fk_alias_owner REFERENCES IA_Institution(ac)
     ,  name                    VARCHAR(30)
 )
@@ -736,26 +731,170 @@ CREATE TABLE IA_alias
  
 CREATE index i_Alias_parent_ac on IA_Alias(parent_ac);
  
-    COMMENT ON TABLE IA_Alias IS
-    'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
-    COMMENT ON COLUMN IA_Alias.aliastype_ac IS
-    'Type of the alias. ac found in the IA_ControlledVocab table.';
-    COMMENT ON COLUMN IA_Alias.name IS
-    'Name of the alias.';
-    COMMENT ON COLUMN IA_Alias.parent_ac IS
-    'Refers to the parent object this alias describes.';
-    COMMENT ON COLUMN IA_Alias.owner_ac IS
-    'Refers to the owner of this object.';
-    COMMENT ON COLUMN IA_Alias.ac IS
-    'Unique auto-generated accession number.';
-    COMMENT ON COLUMN IA_Alias.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Alias.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Alias.timestamp IS
-    'Date of the last update of the column.';
-    COMMENT ON COLUMN IA_Alias.userstamp IS
-    'Database user who has performed the last update of the column.';
+COMMENT ON TABLE IA_Alias IS
+'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+COMMENT ON COLUMN IA_Alias.aliastype_ac IS
+'Type of the alias. ac found in the IA_ControlledVocab table.';
+COMMENT ON COLUMN IA_Alias.name IS
+'Name of the alias.';
+COMMENT ON COLUMN IA_Alias.parent_ac IS
+'Refers to the parent object this alias describes.';
+COMMENT ON COLUMN IA_Alias.owner_ac IS
+'Refers to the owner of this object.';
+COMMENT ON COLUMN IA_Alias.ac IS
+'Unique auto-generated accession number.';
+COMMENT ON COLUMN IA_Alias.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Alias.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Alias.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_Alias.userstamp IS
+'Database user who has performed the last update of the column.';
+
+
+
+/* Feature related tables */
+
+/* This is a table where we store which features are linked to a component. */
+
+CREATE TABLE IA_Feature
+(         ac                    VARCHAR(30)    NOT NULL
+                                               CONSTRAINT pk_Feature
+                                               PRIMARY KEY
+        , deprecated            DECIMAL(1)     DEFAULT  0     NOT NULL
+        , created               TIMESTAMP      DEFAULT  now() NOT NULL
+        , updated               TIMESTAMP      DEFAULT  now() NOT NULL
+        , timestamp             TIMESTAMP      DEFAULT  now() NOT NULL
+        , userstamp             VARCHAR(30)    DEFAULT  USER  NOT NULL
+        , component_ac          VARCHAR(30)    NOT NULL CONSTRAINT fk_Feature_component REFERENCES IA_Component(ac) ON DELETE CASCADE
+        , linkedfeature_ac      VARCHAR(30)    NOT NULL CONSTRAINT fk_Feature_feature REFERENCES IA_Feature(ac)
+        , identification_ac     VARCHAR(30)    CONSTRAINT fk_Feature_identification_ac REFERENCES IA_ControlledVocab(ac)
+        , featureType_ac        VARCHAR(30)    CONSTRAINT fk_Feature_featureType_ac REFERENCES IA_ControlledVocab(ac)
+        , shortLabel            VARCHAR(20)
+        , fullName              VARCHAR(250)
+)
+;
+
+CREATE INDEX i_Feature_component_ac on IA_Feature(component_ac);
+CREATE INDEX i_Feature_linkedfeature_ac on IA_Feature(linkedfeature_ac);
+CREATE INDEX i_Feature_identification_ac on IA_Feature(identification_ac);
+CREATE INDEX i_Feature_featureType_ac on IA_Feature(featureType_ac);
+
+COMMENT ON TABLE IA_Feature IS
+'Feature. Define a set of Ranges.';
+COMMENT ON COLUMN IA_Feature.ac IS
+'Unique, auto-generated accession number.';
+COMMENT ON COLUMN IA_Feature.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Feature.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Feature.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_Feature.userstamp IS
+'Database user who has performed the last update of the column.';
+COMMENT ON COLUMN IA_Feature.fullName IS
+'The full name of the object. ';
+COMMENT ON COLUMN IA_Feature.shortlabel IS
+'The Shortlabel of the object. ';
+COMMENT ON COLUMN IA_Feature.component_ac IS
+'the component to which relates that feature.';
+COMMENT ON COLUMN IA_Feature.linkedfeature_ac IS
+'The feature that bind the one we are describing.';
+
+
+
+/* This is a table where we store where is situated an interaction at the protein sequence level. */
+
+CREATE TABLE IA_Range
+(         ac                    VARCHAR(30)    NOT NULL
+                                               CONSTRAINT pk_Range
+                                               PRIMARY KEY
+        , deprecated            DECIMAL(1)     DEFAULT  0       NOT NULL
+        , created               TIMESTAMP      DEFAULT  now() NOT NULL
+        , updated               TIMESTAMP      DEFAULT  now() NOT NULL
+        , timestamp             TIMESTAMP      DEFAULT  now() NOT NULL
+        , userstamp             VARCHAR(30)    DEFAULT  USER    NOT NULL
+        , undetermined          CHAR           NOT NULL CHECK ( undetermined IN ('N','Y') )
+        , link                  CHAR           NOT NULL CHECK ( link IN ('N','Y') )
+        , feature_ac            VARCHAR(30)    NOT NULL CONSTRAINT fk_Range_feature REFERENCES IA_Feature(ac) ON DELETE CASCADE
+        , fromIntervalStart     DECIMAL(5)
+        , fromIntervalEnd       DECIMAL(5)
+        , fromFuzzyType_ac      VARCHAR(30)    CONSTRAINT fk_Range_fromFuzzyType_ac REFERENCES IA_ControlledVocab(ac)
+        , toIntervalStart       DECIMAL(5)
+        , toIntervalEnd         DECIMAL(5)
+        , toFuzzyType_ac        VARCHAR(30)    CONSTRAINT fk_Range_toFuzzyType_ac REFERENCES IA_ControlledVocab(ac)
+        , sequence              VARCHAR(100)
+)
+;
+
+CREATE INDEX i_Range_fromFuzzyType_ac on IA_Range(fromFuzzyType_ac);
+CREATE INDEX i_Range_toFuzzyType_ac on IA_Range(toFuzzyType_ac);
+CREATE INDEX i_Range_feature_ac on IA_Range(feature_ac);
+
+COMMENT ON TABLE IA_Range IS
+'Range. Represents a location on a sequence.';
+COMMENT ON COLUMN IA_Range.ac IS
+'Unique, auto-generated accession number.';
+COMMENT ON COLUMN IA_Range.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Range.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Range.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_Range.userstamp IS
+'Database user who has performed the last update of the column.';
+COMMENT ON COLUMN IA_Range.fromIntervalStart IS
+'Lower bound of the interval start.';
+COMMENT ON COLUMN IA_Range.fromIntervalEnd IS
+'Higher bound of the interval start. Can be equal to the lower bound.';
+COMMENT ON COLUMN IA_Range.fromFuzzyType_ac IS
+'Defines a type of fuzzy range (before, after ...).';
+COMMENT ON COLUMN IA_Range.toIntervalStart IS
+'Lower bound of the interval end.';
+COMMENT ON COLUMN IA_Range.toIntervalEnd IS
+'Higher bound of the interval end. Can be equal to the lower bound';
+COMMENT ON COLUMN IA_Range.toFuzzyType_ac IS
+'Defines a type of fuzzy range (before, after ...).';
+COMMENT ON COLUMN IA_Range.sequence IS
+'The first 100 amino acid of the protein sequence that binds.';
+COMMENT ON COLUMN IA_Range.undetermined IS
+'Answer the question: does that range defines boundaries on the sequence?';
+COMMENT ON COLUMN IA_Range.link IS
+'Answer the question: does that range (from and to) are related to different location of the sequence that are interacting together ?';
+
+
+/* Indirection table in which we stores which feature is linked to which annotations. */
+
+CREATE TABLE IA_Feature2Annot
+(       feature_ac              VARCHAR(30)    NOT NULL CONSTRAINT fk_Feature2Annot_feature REFERENCES IA_Feature(ac) ON DELETE CASCADE
+     ,  annotation_ac           VARCHAR(30)    NOT NULL CONSTRAINT fk_Feature2Annot_annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
+     ,  deprecated              DECIMAL(1)     DEFAULT  0     NOT NULL
+     ,  created                 TIMESTAMP      DEFAULT  now() NOT NULL
+     ,  userstamp               VARCHAR(30)    DEFAULT  USER  NOT NULL
+     ,  updated                 TIMESTAMP      DEFAULT  now() NOT NULL
+     ,  timestamp               TIMESTAMP      DEFAULT  now() NOT NULL
+     ,  PRIMARY KEY             ( feature_ac, annotation_ac )
+)
+;
+
+COMMENT ON TABLE IA_Feature2Annot IS
+'Feature2Annot. Link table from Annotation to Feature.';
+COMMENT ON COLUMN IA_Feature2Annot.feature_ac IS
+'Refers to a Feature to which the Annotation is linked.';
+COMMENT ON COLUMN IA_Feature2Annot.annotation_ac IS
+'Refers to the annotation object linked to the Feature.';
+COMMENT ON COLUMN IA_Feature2Annot.created IS
+'Date of the creation of the row.';
+COMMENT ON COLUMN IA_Feature2Annot.userstamp IS
+'Database user who has performed the last update of the column.';
+COMMENT ON COLUMN IA_Feature2Annot.updated IS
+'Date of the last update of the row.';
+COMMENT ON COLUMN IA_Feature2Annot.timestamp IS
+'Date of the last update of the column.';
+
+
+
 
 /* Tables for predict (targets) application. */
 
