@@ -25,18 +25,22 @@ public class SourceBean {
 
     private boolean selected;
 
+    private String applicationPath;
+
     // ----------------------------------------------------------- Constructors
 
     public SourceBean (String id,
                        String description,
                        String sourceBrowserUrl,
                        String directHighlightUrl,
-                       boolean clickable) {
+                       boolean clickable,
+                       String applicationPath) {
         this.id = id;
         this.description = description;
         this.SourceBrowserUrl = sourceBrowserUrl;
         this.directHighlightUrl = directHighlightUrl;
         this.selected = clickable;
+        this.applicationPath = applicationPath;
     }
 
     // ------------------------------------------------------------- Properties
@@ -80,6 +84,15 @@ public class SourceBean {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+
+    public String getApplicationPath() {
+        return applicationPath;
+    }
+
+    public void setApplicationPath(String applicationPath) {
+        this.applicationPath = applicationPath;
+    }
+
     // --------------------------------------------------------- Public Methods
 
 

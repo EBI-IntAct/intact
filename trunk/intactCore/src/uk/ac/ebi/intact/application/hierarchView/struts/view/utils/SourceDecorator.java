@@ -65,11 +65,15 @@ public class SourceDecorator extends Decorator {
         SourceBean bean = (SourceBean) this.getObject();
         if (bean == null) return "";
 
+        String applicationPath = bean.getApplicationPath();
+
         if (bean.isSelected() == false) {
             final String url = bean.getDirectHighlightUrl();
-            return "<center><a href=\"" + url + "\" target=\"_top\"><img src=\"../images/ok-grey.png\" border=\"0\" alt=\"(*)\"></a></center>";
+            return "<center><a href=\"" + url + "\" target=\"_top\"><img src=\""+ applicationPath +
+                   "/images/ok-grey.png\" border=\"0\" alt=\"(*)\"></a></center>";
         } else {
-            return "<center><img src=\"../images/ok-red.png\" border=\"0\" alt=\"(-)\"></center>";
+            return "<center><img src=\""+ applicationPath +
+                   "/images/ok-red.png\" border=\"0\" alt=\"(-)\"></center>";
         }
     }
 
