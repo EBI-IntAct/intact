@@ -24,7 +24,7 @@
     *************************************************************************-->
     <xsl:template match="/">
 
-        <!-- Styles for various rows. -->
+        <!-- Styles for various rows; change them to suit you. -->
         <style>
             <xsl:comment>
                 tr.Experiment {color: slateblue; font-weight: bold}
@@ -32,6 +32,7 @@
                 tr.Interactor {color: slategrey; font-weight: bold}
                 tr.Xref {color: darkorchid}
                 tr.Protein {color: green; font-weight: bold}
+                tr.Institution {color: blue; font-weight: bold}
             </xsl:comment>
         </style>
 
@@ -41,19 +42,6 @@
         </table>
     </xsl:template>
 
-    <!-- This is to match XML generated for classes. -->
-<!--    <xsl:template match="Interaction">-->
-<!--        <xsl:call-template name="interaction"/>-->
-<!--    </xsl:template>-->
-
-<!--    <xsl:template match="Interactor">-->
-<!--        <xsl:call-template name="interactor"/>-->
-<!--    </xsl:template>-->
-
-<!--<xsl:template match="Institution">-->
-<!--    <xsl:call-template name="institutionAtt"/>-->
-<!--</xsl:template>-->
-
     <!--
     ****************************************************************************
     ** Template for experiment attribute.
@@ -61,12 +49,10 @@
     <xsl:template match="Experiment">
         <tr class="Experiment">
             <xsl:call-template name="draw-checkbox"/>
-            <td colspan="4">Exp:
-                <xsl:value-of select="@shortLabel"/>
-            </td>
+            <td colspan="4">Experiment: <xsl:value-of select="@shortLabel"/></td>
             <xsl:apply-templates select="@ac"/>
-            <td>xx/12/2002</td>
-            <td>xx/12/2002</td>
+            <td><xsl:value-of select="substring-before(@created, 'T')"/></td>
+            <td><xsl:value-of select="substring-before(@updated, 'T')"/></td>
         </tr>
 
         <xsl:if test="@fullName">
@@ -106,15 +92,6 @@
             <xsl:with-param name="emptyCells" select="2"/>
             <xsl:with-param name="colSpan" select="3"/>
         </xsl:call-template>
-<!--        <xsl:for-each select="xref">-->
-<!--            <tr>-->
-<!--                <xsl:call-template name="draw-2-empty-cells"/>-->
-<!--                <td colspan="3"><xsl:value-of select="cvDatabase/@shortLabel"/></td>-->
-<!--                <td><xsl:value-of select="@primaryId"/></td>-->
-<!--                <td><xsl:value-of select="@secondaryId"/></td>-->
-<!--                <td><xsl:value-of select="@dbRelease"/></td>-->
-<!--            </tr>-->
-<!--        </xsl:for-each>-->
 
         <!-- Do only if status is on -->
         <xsl:if test="@status='true'">
@@ -127,20 +104,18 @@
 
     <!-- template for a protein, attribute match -->
     <xsl:template match="/Protein">
-<!--        <tr bgcolor="red">-->
         <tr class="Protein">
             <xsl:call-template name="draw-checkbox"/>
             <td></td>
-            <td colspan="4">Protein:
-                <xsl:value-of select="@shortLabel"/>
-            </td>
+            <td colspan="4">Protein: <xsl:value-of select="@shortLabel"/></td>
             <xsl:apply-templates select="@ac"/>
-            <td>xx/12/2002</td>
-            <td>xx/12/2002</td>
+            <td><xsl:value-of select="substring-before(@created, 'T')"/></td>
+            <td><xsl:value-of select="substring-before(@updated, 'T')"/></td>
         </tr>
 
         <!-- Do only if status is on -->
         <xsl:if test="@status='true'">
+            <!-- Template draw-xrefs doesn't work here properly. -->
             <xsl:for-each select="xref">
                 <tr class="Xref">
                     <xsl:call-template name="draw-4-empty-cells"/>
@@ -150,10 +125,30 @@
                     <td><xsl:value-of select="@dbRelease"/></td>
                 </tr>
             </xsl:for-each>
-<!--            <xsl:call-template name="draw-xrefs">-->
-<!--                <xsl:with-param name="emptyCells" select="2"/>-->
-<!--                <xsl:with-param name="colSpan" select="3"/>-->
-<!--            </xsl:call-template>-->
+        </xsl:if>
+    </xsl:template>
+
+    <!-- =================================================================== -->
+
+    <!-- template for an Institution, attribute match -->
+    <xsl:template match="/Institution">
+        <tr class="Institution">
+            <xsl:call-template name="draw-checkbox"/>
+            <td></td>
+            <td colspan="4">Instituion: <xsl:value-of select="@shortLabel"/></td>
+            <xsl:apply-templates select="@ac"/>
+            <td><xsl:value-of select="substring-before(@created, 'T')"/></td>
+            <td><xsl:value-of select="substring-before(@updated, 'T')"/></td>
+        </tr>
+
+        <!-- Do only if status is on -->
+        <xsl:if test="@status='true'">
+            <tr class="Xref">
+                <xsl:call-template name="draw-4-empty-cells"/>
+                <td colspan="1"><xsl:value-of select="@postalAddress"/></td>
+                <td><xsl:value-of select="@fullName"/></td>
+                <td><xsl:value-of select="@url"/></td>
+            </tr>
         </xsl:if>
     </xsl:template>
 
@@ -165,12 +160,10 @@
         <tr class="Interaction">
             <xsl:call-template name="draw-checkbox"/>
             <td></td>
-            <td colspan="3">Interaction:
-                <xsl:value-of select="@shortLabel"/>
-            </td>
+            <td colspan="3">Interaction: <xsl:value-of select="@shortLabel"/></td>
             <xsl:apply-templates select="@ac"/>
-            <td>xx/12/02</td>
-            <td>xx/12/02</td>
+            <td><xsl:value-of select="substring-before(@created, 'T')"/></td>
+            <td><xsl:value-of select="substring-before(@updated, 'T')"/></td>
         </tr>
 
         <xsl:if test="@fullName">
@@ -202,15 +195,6 @@
             <xsl:with-param name="emptyCells" select="3"/>
             <xsl:with-param name="colSpan" select="2"/>
         </xsl:call-template>
-<!--        <xsl:for-each select="xref">-->
-<!--            <tr>-->
-<!--                <xsl:call-template name="draw-3-empty-cells"/>-->
-<!--                <td colspan="2"><xsl:value-of select="cvDatabase/@shortLabel"/></td>-->
-<!--                <td><xsl:value-of select="@primaryId"/></td>-->
-<!--                <td><xsl:value-of select="@secondaryId"/></td>-->
-<!--                <td><xsl:value-of select="@dbRelease"/></td>-->
-<!--            </tr>-->
-<!--        </xsl:for-each>-->
 
         <!-- Do only if status is on -->
         <xsl:if test="@status='true'">
@@ -227,12 +211,10 @@
         <tr class="Interactor">
             <xsl:call-template name="draw-checkbox"/>
             <xsl:call-template name="draw-2-empty-cells"/>
-            <td colspan="2">Interactor:
-                <xsl:value-of select="@shortLabel"/>
-            </td>
+            <td colspan="2">Interactor: <xsl:value-of select="@shortLabel"/></td>
             <xsl:apply-templates select="@ac"/>
-            <td>xx/12/02</td>
-            <td>xx/12/02</td>
+            <td><xsl:value-of select="substring-before(@created, 'T')"/></td>
+            <td><xsl:value-of select="substring-before(@updated, 'T')"/></td>
         </tr>
 
         <xsl:if test="@fullName">
@@ -285,6 +267,7 @@
     ** Template to draw a checkbox.
     *************************************************************************-->
     <xsl:template name="draw-checkbox">
+        <!-- Checkbox name; table name + _ + ac -->
         <xsl:variable name="cbName">
             <xsl:variable name="ac">
                 <xsl:value-of select="@ac"/>
