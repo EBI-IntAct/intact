@@ -115,10 +115,12 @@ CREATE TABLE IA_Feature
         , linkedfeature_ac      VARCHAR2(30)    CONSTRAINT fk_Feature$feature REFERENCES IA_Feature(ac)
         , shortLabel            VARCHAR2(20)
         , fullName              VARCHAR2(250)
+        , owner_ac              VARCHAR2(30)    CONSTRAINT fk_Feature$owner REFERENCES IA_Institution(ac)
 )
 TABLESPACE &&intactMainTablespace
 ;
 
+CREATE INDEX i_Feature$parent_ac on IA_Feature(parent_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Feature$component_ac on IA_Feature(component_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Feature$linkedfeature_ac on IA_Feature(linkedfeature_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Feature$identification_ac on IA_Feature(identification_ac) TABLESPACE &&intactIndexTablespace;
@@ -129,6 +131,8 @@ set term off
     'Feature. Define a set of Ranges.';
     COMMENT ON COLUMN IA_Feature.ac IS
     'Unique, auto-generated accession number.';
+    COMMENT ON COLUMN IA_Alias.owner_ac IS
+    'Refers to the owner of this object.';
     COMMENT ON COLUMN IA_Feature.created IS
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Feature.updated IS
@@ -164,6 +168,7 @@ CREATE TABLE IA_Range
         , undetermined          CHAR            NOT NULL CHECK ( undetermined IN ('N','Y') )
         , link                  CHAR            NOT NULL CHECK ( link IN ('N','Y') )
         , feature_ac            VARCHAR2(30)    NOT NULL CONSTRAINT fk_Range$feature REFERENCES IA_Feature(ac) ON DELETE CASCADE
+        , owner_ac              VARCHAR2(30)    CONSTRAINT fk_Range$owner REFERENCES IA_Institution(ac)
         , fromIntervalStart     NUMBER(5)
         , fromIntervalEnd       NUMBER(5)
         , fromFuzzyType_ac      VARCHAR2(30)    CONSTRAINT fk_Range$fromFuzzyType_ac REFERENCES IA_ControlledVocab(ac)
@@ -175,6 +180,7 @@ CREATE TABLE IA_Range
 TABLESPACE &&intactMainTablespace
 ;
 
+CREATE INDEX i_Range$parent_ac on IA_Range(parent_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Range$fromFuzzyType_ac on IA_Range(fromFuzzyType_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Range$toFuzzyType_ac on IA_Range(toFuzzyType_ac) TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_Range$feature_ac on IA_Range(feature_ac) TABLESPACE &&intactIndexTablespace;
@@ -184,6 +190,8 @@ set term off
     'Range. Represents a location on a sequence.';
     COMMENT ON COLUMN IA_Range.ac IS
     'Unique, auto-generated accession number.';
+    COMMENT ON COLUMN IA_Alias.owner_ac IS
+    'Refers to the owner of this object.';
     COMMENT ON COLUMN IA_Range.created IS
     'Date of the creation of the row.';
     COMMENT ON COLUMN IA_Range.updated IS
