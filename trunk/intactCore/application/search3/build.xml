@@ -107,8 +107,6 @@
         <!-- Delete directories first -->
         <delete dir="${dest.dir}"/>
         <delete dir="${docs.dir}"/>
-        <delete dir="${layouts.dir}/styles"/>
-
 
         <!-- layout commons files -->
         <delete>
@@ -238,6 +236,8 @@
                 <exclude name="*Frame.jsp"/>
                 <!--  No EBI header for this application (yet) -->
                 <exclude name="ebiHeaderLayout.jsp"/>
+		<!-- Exclude common styles -->
+		<exclude name="styles"/>
             </fileset>
         </copy>
 
