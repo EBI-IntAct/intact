@@ -230,12 +230,12 @@ public class Range extends BasicObjectImpl {
         if(fromStart > toEnd) throw new IllegalArgumentException("The 'from' interval starts beyond the 'to' interval!");
         if(fromStart > toStart) throw new IllegalArgumentException("The 'from' interval cannot begin during the 'to' interval!");
 
-        setSequence(seq);
-        
         this.fromIntervalStart = fromStart;
         this.fromIntervalEnd = fromEnd;
         this.toIntervalStart = toStart;
         this.toIntervalEnd = toEnd;
+
+        setSequenceIntern(seq);
     }
 
     //------------------------- public methods --------------------------------------
@@ -245,7 +245,7 @@ public class Range extends BasicObjectImpl {
     }
 
     /**
-     * Sets the starting from interval. Please call {@link #setSequenceRaw(String)}
+     * Sets the starting from interval. Please call {@link #setSequence(String)}
      * after calling this method as the sequence to set is determined by this value.
      * @param posFrom
      *
@@ -307,7 +307,7 @@ public class Range extends BasicObjectImpl {
     }
 
     /**
-     * Sets the from fuzzy type. The user must ensure that {@link #setSequenceRaw(String)}
+     * Sets the from fuzzy type. The user must ensure that {@link #setSequence(String)}
      * method is called <b>after</b> calling this method because the sequence
      * to set is determined by this type.
      * @param type the fuzzy type to set.
@@ -328,20 +328,12 @@ public class Range extends BasicObjectImpl {
         this.featureAc = parentAc;
     }
 
-    public void setSequence(String seq) {
-        //don't allow default empty String to be replaced by null. Check size also
-        //to avoid unnecessary DB call for a seq that is too big...
-        if(seq != null) {
-            if(seq.length() > getMaxSequenceSize())
-                throw new IllegalArgumentException("Sequence too big! Max allowed: "
-                        + getMaxSequenceSize());
-        }
-        this.sequence = seq;
-    }
-
     /**
      * Sets the sequence using a raw string. The internal sequence is set using
      * the from fuzzy type and from start values.
+     * <b>Important</b>This method must be called after any changes either to
+     * 'from' fuzzy type ({@link #setFromCvFuzzyType(CvFuzzyType)}) or from start
+     * value ({@link #setFromIntervalStart(int)}).
      *
      * </p>
      * The logic in setting the sequence as follows (x refers to max seq size):
@@ -351,21 +343,21 @@ public class Range extends BasicObjectImpl {
      *
      * @param sequence the raw sequence (generally this string is the full sequence).
      */
-    public void setSequenceRaw(String sequence) {
+    public void setSequence(String sequence) {
         // Get the sequence from start if there is no fuzzy type.
         if (fromCvFuzzyType == null) {
-            setSequence(getSequenceStartingFrom(sequence, fromIntervalStart));
+            setSequenceIntern(getSequenceStartingFrom(sequence, fromIntervalStart));
             return;
         }
         // Truncate according to type.
         if (fromCvFuzzyType.isCTerminal()) {
-            setSequence(getLastSequence(sequence));
+            setSequenceIntern(getLastSequence(sequence));
         }
         else if (fromCvFuzzyType.isNTerminal() || fromCvFuzzyType.isUndetermined()) {
-            setSequence(getFirstSequence(sequence));
+            setSequenceIntern(getFirstSequence(sequence));
         }
         else {
-            setSequence(getSequenceStartingFrom(sequence, fromIntervalStart));
+            setSequenceIntern(getSequenceStartingFrom(sequence, fromIntervalStart));
         }
     }
 
@@ -538,6 +530,17 @@ public class Range extends BasicObjectImpl {
             seq = sequence.substring(sequence.length() - getMaxSequenceSize());
         }
         return seq;
+    }
+
+    private void setSequenceIntern(String seq) {
+        //don't allow default empty String to be replaced by null. Check size also
+        //to avoid unnecessary DB call for a seq that is too big...
+        if(seq != null) {
+            if(seq.length() > getMaxSequenceSize())
+                throw new IllegalArgumentException("Sequence too big! Max allowed: "
+                        + getMaxSequenceSize());
+        }
+        this.sequence = seq;
     }
 
     /**
