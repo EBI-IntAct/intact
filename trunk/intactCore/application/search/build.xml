@@ -162,7 +162,7 @@
 				<include name="log4j-1.2.5.jar"/>
 				<include name="commons-beanutils.jar"/>
 				<include name="commons-collections-2.0.jar"/>
-				<include name="pgjdbc2.jar"/>
+				<include name="postgresql.jar"/>
 			</lib>
 
             <!-- search specific classes -->
