@@ -7,7 +7,7 @@
 
     <project name="intact-core" basedir="." default="project">
     <property name="project.title" value="Intact Core"/>
-    <property name="project.version" value="0.1.0"/>
+    <property name="project.version" value="0.8"/>
 
     <property name="src.dir"  value="src"/>
     <property name="dest.dir" value="classes"/>
@@ -420,7 +420,7 @@
         <javadoc destdir="${jdoc.dir}" author="true" version="true" use="true"
             windowtitle="Intact core API Documentation"
             doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
-            bottom="&lt;i&gt;Chris Lewington EMBL-EBI 2002 - clewing@ebi.ac.uk&lt;/i&gt;" source="1.4">
+            bottom="&lt;i&gt;IntAct Project - EMBL-EBI 2004 - intact-help@ebi.ac.uk  &lt;/i&gt;" source="1.4">
 
             <!-- Exclude javadoc for test packages. -->
             <packageset dir="${src.dir}">
