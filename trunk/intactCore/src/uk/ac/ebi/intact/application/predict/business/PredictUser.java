@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.persistence.ObjectBridgeDAO;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -28,15 +29,13 @@ import java.sql.Statement;
 import java.util.*;
 
 /**
- * This class implements business methods for the application. For instance,
- * any database queries are performed by this class.
+ * The super class for a predict user.
  *
- * @author Konrad Paszkiewicz (konrad.paszkiewicz@ic.ac.uk)
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class PredictUser implements IntactUserI, HttpSessionBindingListener,
-        Serializable {
+public abstract class PredictUser implements IntactUserI,
+        HttpSessionBindingListener, Serializable {
 
     /**
      * The intact helper to access the database.
@@ -44,19 +43,27 @@ public class PredictUser implements IntactUserI, HttpSessionBindingListener,
     private IntactHelper myHelper;
 
     /**
-     * Constructs an instance of this class with given mapping file and
-     * the name of the data source class.
-     *
+     * The current specie (as a link).
+     */
+    private String mySpecie;
+
+    /**
+     * Factory method to create different instances of Predict user instances
+     * depending on the JDBC subprotocol.
      * @param mapping the name of the mapping file.
      * @param dsClass the class name of the Data Source.
      *
+     * @return an instance of this class created using the JDBC subprotocol.
+     * A null object is returned for an unknown JDBC subprotocol. Currently
+     * oracle and postgres are known types.
      * @exception DataSourceException for error in getting the data source; probably due to
      * missing mapping file.
      * @exception IntactException for errors in creating IntactHelper; problem with reading
      * the repository file.
      */
-    public PredictUser(String mapping, String dsClass) throws DataSourceException,
-            IntactException {
+    public static PredictUser create(String mapping, String dsClass)
+            throws DataSourceException, IntactException {
+        // The data source for given ds class.
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
         // Pass config details to data source.
@@ -64,8 +71,41 @@ public class PredictUser implements IntactUserI, HttpSessionBindingListener,
         fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
         ds.setConfig(fileMap);
 
-        // Build the Intact Helper.
-        myHelper = new IntactHelper(ds);
+        // Connection to get the JDBC url.
+        Connection conn = null;
+        try {
+            conn = ((ObjectBridgeDAO) ds.getDAO()).getJDBCConnection();
+        }
+        catch (LookupException le) {
+            new IntactException("Failed to get JDBC Connection", le);
+        }
+
+        // The URL to extract the subprotocol.
+        String url = null;
+        try {
+            url = conn.getMetaData().getURL();
+        }
+        catch (SQLException e) {
+            new IntactException("Unable to get meta data to determine the protocol");
+        }
+
+        // Extract the subprotocol; ignore the first part before ':'.
+        int start = url.indexOf(':') + 1;
+        String subprotocol = url.substring(start, url.indexOf(':', start));
+
+        // The user to return.
+        PredictUser user = null;
+
+        if (subprotocol.equals("oracle")) {
+            user = new PredictUserOra();
+        }
+        else if (subprotocol.equals("postgresql")) {
+            user = new PredictUserPg();
+        }
+        if (user != null) {
+            user.setDS(ds);
+        }
+        return user;
     }
 
     // Implements HttpSessionBindingListener
@@ -137,7 +177,7 @@ public class PredictUser implements IntactUserI, HttpSessionBindingListener,
         Statement stmt = null;
         try {
             stmt = getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery("select distinct species from ia_payg;");
+            ResultSet rs = stmt.executeQuery(getSpeciesSQL());
             while (rs.next()) {
                 String taxid = rs.getString(1);
                 species.add(myHelper.getBioSourceByTaxId(taxid).getShortLabel());
@@ -174,15 +214,13 @@ public class PredictUser implements IntactUserI, HttpSessionBindingListener,
         Statement stmt = null;
         try {
             // Get the tax id for given specie.
-            String taxId = getTaxId(specie);
+            String taxid = getTaxId(specie);
 
             stmt = getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery(
-                    "select nID from ia_payg where really_used_as_bait=FALSE and species =\'"
-                    + taxId + "\' order by indegree desc, qdegree desc limit 50;");
+            ResultSet rs = stmt.executeQuery(getDbInfoSQL(taxid));
             for (int i = 1; rs.next(); i++) {
                 String nid = rs.getString(1);
-                Protein protein = getProteinForTaxId(nid, taxId);
+                Protein protein = getProteinForTaxId(nid, taxid);
                 if (protein != null) {
                     results.add(new ResultBean(protein, i));
                 }
@@ -225,7 +263,27 @@ public class PredictUser implements IntactUserI, HttpSessionBindingListener,
         }
     }
 
-    // Helper methods
+    // Set/Get methods for the current specie.
+
+    public String getSpecieLink() {
+       return mySpecie;
+    }
+
+    public void setSpecie(String specie) {
+        mySpecie = "<a href=\"" + "javascript:show('BioSource', '" + specie
+                + "')\">" + specie + "</a>";
+    }
+
+    // To be implemented by different users.
+
+    protected abstract String getSpeciesSQL();
+    protected abstract String getDbInfoSQL(String taxid);
+
+    // Helper Methods
+
+    private void setDS(DAOSource ds) throws IntactException {
+        myHelper = new IntactHelper(ds);
+    }
 
     /**
      * The JDBC connection
