@@ -1157,6 +1157,9 @@ public class IntactHelper implements SearchI, Externalizable {
             // An empty collection if no proteins found.
             return results;
         }
+        // Add the 'primary' protein.
+        results.add(protein);
+
         // All splice proteins have 'this' protein as the primary id.
         Collection proteins = search(Xref.class.getName(), "primaryId", protein.getAc());
 
