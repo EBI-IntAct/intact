@@ -53,6 +53,25 @@ public abstract class HighlightmentSource {
 
   } // HighlightmentSource
 
+/**
+   * Return the html code for specific options of the source to integrate int the highlighting form.
+   * if the method return null, the source hasn't options.
+   *
+   * @param aSession the current session
+   * @return the html code for specific options of the source.
+   */
+  abstract public String getHtmlCodeOption(HttpSession aSession);
+
+
+/**
+   * Return a set of keys corresponding to the source and finding in the IntAct database.
+   * if the method send back no keys, the given parameter have not keys for the source.
+   *
+   * @param aProteinAC : a protein identifier (AC)
+   * @return a set of keys (this keys are a String)
+   */
+  abstract public Collection getKeysFromIntAct (String aProteinAC) throws Exception;
+
 
   /**
    * Create a set of protein we must highlight in the graph given in parameter.
@@ -62,7 +81,7 @@ public abstract class HighlightmentSource {
    * @param aGraph the graph we want to highlight
    * @return a set of nodes to highlight
    */
-  abstract public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph);
+  abstract public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) throws Exception;
 
 
   /**
@@ -116,7 +135,7 @@ public abstract class HighlightmentSource {
    * @param aProteinAC : a protein identifier (AC)
    * @return a set of URL pointing on the highlightment source
    */
-  abstract public Collection getUrl (String aProteinAC);
+  abstract public Collection getUrl (String aProteinAC) throws Exception;
 
   /**
    * Generate a key string for a particular selectable item of the highlightment source.
