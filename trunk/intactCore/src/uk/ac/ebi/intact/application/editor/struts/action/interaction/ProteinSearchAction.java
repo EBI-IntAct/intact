@@ -121,7 +121,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
             }
         }
         else {
-            proteins = user.search(Protein.class.getName(), param, value);
+            proteins = user.search1(Protein.class.getName(), param, value);
         }
         // Search found any results?
         if (proteins.isEmpty()) {

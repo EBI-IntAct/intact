@@ -31,7 +31,6 @@ import uk.ac.ebi.intact.util.*;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-import java.net.URL;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.*;
@@ -293,6 +292,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return null;
     }
 
+    public Collection search(String objectType, String searchParam,
+                             String searchValue) throws IntactException {
+        return myHelper.search(objectType, searchParam, searchValue);
+    }
+
     // Implementation of EditUserI interface.
 
     public AbstractEditViewBean getView() {
@@ -455,7 +459,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
-    public Collection search(String objectType, String searchParam,
+    public Collection search1(String objectType, String searchParam,
                              String searchValue) throws SearchException {
         // Retrieve an object...
         try {
@@ -519,17 +523,17 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         String searchParam = "ac";
 
         //try search on AC first...
-        results = search(className, searchParam, value);
+        results = search1(className, searchParam, value);
         if (results.isEmpty()) {
             // No matches found - try a search by label now...
 //            super.log("now searching for class " + className + " with label " + value);
             searchParam = "shortLabel";
-            results = search(className, searchParam, value);
+            results = search1(className, searchParam, value);
             if (results.isEmpty()) {
                 //no match on label - try by xref....
                 //super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
                 searchParam = "primaryId";
-                Collection xrefs = search(Xref.class.getName(), searchParam, value);
+                Collection xrefs = search1(Xref.class.getName(), searchParam, value);
 
                 //could get more than one xref, eg if the primary id is a wildcard search value -
                 //then need to go through each xref found and accumulate the results...
@@ -537,7 +541,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                 Collection partialResults = new ArrayList();
                 searchParam = "ac";
                 while (it.hasNext()) {
-                    partialResults = search(className, searchParam,
+                    partialResults = search1(className, searchParam,
                             ((Xref) it.next()).getParentAc());
                     results.addAll(partialResults);
                 }
@@ -545,7 +549,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                     //no match by xref - try finally by name....
 //                    super.log("trying fullname...last resort");
                     searchParam = "fullName";
-                    results = search(className, searchParam, value);
+                    results = search1(className, searchParam, value);
                 }
             }
         }
@@ -584,7 +588,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         Class clazz = annobj.getClass();
 
         // Holds the result from the search.
-        Collection results = search(clazz.getName(), "shortLabel", label);
+        Collection results = search1(clazz.getName(), "shortLabel", label);
         if (results.isEmpty()) {
             // Don't have this short label on the database.
             return false;
@@ -623,7 +627,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Flag to indicate processing of the first item.
         boolean first = true;
         // Search the database.
-        Collection results = search(className, "shortLabel", "*");
+        Collection results = search1(className, "shortLabel", "*");
         for (Iterator iter = results.iterator(); iter.hasNext();) {
             // Avoid this object's own short label.
             String label = ((AnnotatedObject) iter.next()).getShortLabel();
