@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
@@ -150,8 +150,12 @@ public class ProteinExport {
             export.exportProteinSptrAC( outputFilename, bioSource );
         } catch ( IntactException e ) {
             e.printStackTrace ();
+            System.exit( 1 );
         } catch ( SearchException e ) {
             e.printStackTrace ();
+            System.exit( 1 );
         }
+
+        System.exit( 0 );
     }
 }
