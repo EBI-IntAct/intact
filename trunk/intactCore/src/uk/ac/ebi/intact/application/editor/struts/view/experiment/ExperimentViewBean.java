@@ -48,6 +48,12 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     private boolean myHasLargeInts;
 
     /**
+     * Holds the number of interactions. This value is only set if
+     * {@link #myHasLargeInts} is true.
+     */
+    private int myLargeInts;
+
+    /**
      * The collection of Interactions. Transient as it is only valid for the
      * current display.
      */
@@ -102,9 +108,16 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
         // Check the limit for interactions.
         int maxLimit = EditorService.getInstance().getInteractionLimit();
-        if (exp.getInteractions().size() > maxLimit) {
+
+        // The number of interactions for the current experiment.
+        int intsSize = exp.getInteractions().size();
+
+        if (intsSize > maxLimit) {
             // Reached the maximum limit.
             myHasLargeInts = true;
+            // Save it as we need to returns this value for
+            // getNumberOfInteractions method.
+            myLargeInts = intsSize;
         }
         else {
             // Prepare for Interactions for display.
@@ -141,25 +154,28 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         exp.setCvInteraction(interaction);
         exp.setCvIdentification(ident);
 
-        // Delete interactions from the experiment. Do this block of code before
-        // clearing interactions or else 'this' experiment wouldn't be removed
-        // from interactions.
-        for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
-            Interaction intact = (Interaction) iter.next();
-            exp.removeInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
-        }
+        // There is no need to touch interactions for a large interaction.
+        if (!myHasLargeInts) {
+            // Delete interactions from the experiment. Do this block of code before
+            // clearing interactions or else 'this' experiment wouldn't be removed
+            // from interactions.
+            for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
+                Interaction intact = (Interaction) iter.next();
+                exp.removeInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
+            }
 
-        // --------------------------------------------------------------------
-        // Need this fix to get around the proxies.
-        // 1. Clear all the interaction proxies first.
-        exp.getInteractions().clear();
+            // --------------------------------------------------------------------
+            // Need this fix to get around the proxies.
+            // 1. Clear all the interaction proxies first.
+            exp.getInteractions().clear();
 
-        // 2. Now add the interaction as real objects.
-        for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
-            Interaction intact = (Interaction) iter.next();
-            exp.addInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
+            // 2. Now add the interaction as real objects.
+            for (Iterator iter = myInteractions.iterator(); iter.hasNext();) {
+                Interaction intact = (Interaction) iter.next();
+                exp.addInteraction((Interaction) IntactHelper.getRealIntactObject(intact));
+            }
+            // --------------------------------------------------------------------
         }
-        // --------------------------------------------------------------------
     }
 
     // Override the super method as the current experiment is added to the
@@ -442,23 +458,10 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     /**
      * Returns the number of interactions for this experiment.
-     * @return the number of interactions for this experiment if it hasn't
-     * already reached the max limit. When the maximum limit is reached,
-     * maximum value + 1 is returned to indicate.
+     * @return the number of interactions for this experiment.
      */
     public int getNumberOfInteractions() {
-        int maxLimit = EditorService.getInstance().getInteractionLimit();
-        if (myHasLargeInts) {
-            return maxLimit + 1;
-        }
-        // Save the current interactions.
-        int currentInts = myInteractions.size();
-
-        // Has it reached the limit?
-        if (currentInts > maxLimit) {
-            return maxLimit + 1;
-        }
-        return currentInts;
+        return myHasLargeInts ? myLargeInts : myInteractions.size();
     }
 
     // Helper methods
