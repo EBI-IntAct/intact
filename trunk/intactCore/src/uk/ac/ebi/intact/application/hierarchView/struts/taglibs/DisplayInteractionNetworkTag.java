@@ -21,8 +21,6 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
-
-
 /**
  * That class allows to display in the browser the current interaction network
  * and the associated HTML MAP.
@@ -53,6 +51,11 @@ public class DisplayInteractionNetworkTag extends TagSupport {
         try {
             IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
             // Retrieve user's data
+            if (user == null) {
+                logger.error("User was null, exit the tag.");
+                return EVAL_PAGE;
+            }
+
             ImageBean imageBean   = user.getImageBean();
             String behaviour      = user.getBehaviour();
             InteractionNetwork in = user.getInteractionNetwork();
@@ -75,12 +78,17 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                 // read the Graph.properties file
                 String mapName = null;
                 String format = null;
-
+                int imageHeight = 0;
+                int imageWidth = 0;
                 Properties properties = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
 
                 if (null != properties) {
                     mapName = properties.getProperty ("hierarchView.image.map.name");
                     format = properties.getProperty ("hierarchView.image.format.name");
+                    String heightStr = properties.getProperty ("hierarchView.image.size.default.image.height");
+                    String widthStr  = properties.getProperty ("hierarchView.image.size.default.image.length");
+                    imageHeight = Integer.parseInt(heightStr);
+                    imageWidth  = Integer.parseInt(widthStr);
                 } else {
                     logger.error("Unable to load properties from " +
                                  uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
@@ -113,7 +121,8 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                         + "  <center>"
                         + "     <img src=\"/hierarchView/GenerateImage?format=" + format
                         +        "&context="+ userContext +"\" "
-                        + "      USEMAP=\"#" + mapName +"\" border =\"0\">"
+                        + "      USEMAP=\"#" + mapName +"\" width=\""+ imageWidth +"\" "
+                        +        "height=\""+ imageHeight +"\"  border =\"0\">"
                         + "     <br>"
                         + "  </center>"
                         + "</p>";
