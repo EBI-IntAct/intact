@@ -433,6 +433,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
              //4) commit
              //
              logger.debug("doing update - searching for old data...");
+             broker.removeFromCache(obj);
              dummy = broker.getObjectByIdentity(new Identity(obj));
              if(dummy == null) {
                  logger.debug("unable to update " + obj.getClass().getName() + " : no object exists in store; creating it...");
