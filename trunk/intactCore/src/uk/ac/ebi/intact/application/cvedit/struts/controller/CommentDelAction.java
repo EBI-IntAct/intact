@@ -10,8 +10,7 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
-import uk.ac.ebi.intact.util.Assert;
-import uk.ac.ebi.intact.persistence.TransactionException;
+import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,17 +54,17 @@ public class CommentDelAction extends IntactBaseAction {
         CommentBean bean = findByAc(request.getParameter("ac"), collection);
 
         // We must have the bean.
-        Assert.assert(bean != null, "Unable to find the annotation bean to delete");
+        assert bean != null;
 
         // Remove it from the collection.
         collection.remove(bean);
 
         // There is no need to delete from the persistence system if this comment
         // is in a transaction.
-        if (bean.inTransaction()) {
-            super.log("Deleting an uncommitted annotation");
-            return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
-        }
+//        if (bean.inTransaction()) {
+//            super.log("Deleting an uncommitted annotation");
+//            return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
+//        }
         // Not in a transaction; we must delete it from the persistence storage.
 
         // Handler to the Intact User.
@@ -76,10 +75,10 @@ public class CommentDelAction extends IntactBaseAction {
             user.delete(bean.getAnnotation());
             super.log("Transaction after annt delete: " + user.isActive());
         }
-        catch (TransactionException te) {
+        catch (IntactException ie) {
             // Clear any previous errors.
             super.clearErrors();
-            super.addError("error.transaction", te.getMessage());
+            super.addError("error.transaction", ie.getMessage());
             super.saveErrors(request);
             return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
         }
