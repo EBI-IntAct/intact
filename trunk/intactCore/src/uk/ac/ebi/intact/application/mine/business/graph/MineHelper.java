@@ -42,12 +42,16 @@ public class MineHelper {
 	static transient Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
 	// SQL statement to select the graphid for a given interactor
-	private static final String SELECT_GRAPHKEY =
-		"SELECT DISTINCT graphid FROM ia_interactions "
-			+ "WHERE protein1_ac=? or protein2_ac=?";
+    private static final String SELECT_GRAPHKEY = "SELECT DISTINCT "+ Constants.COLUMN_graphid +
+                                                  " FROM ia_interactions" +
+                                                  " WHERE "+ Constants.COLUMN_protein1_ac +"=? or "+ Constants.COLUMN_protein2_ac +"=?";
+
 	// SQL statement to select the shortlabels for a given set of interactors
-	private static final String SELECT_SHORTLABEL =
-		"SELECT shortlabel FROM ia_interactor " + "WHERE ac IN";
+	// TODO does it still usefull as the shortlabel is stored in the interaction table ?
+    private static final String SELECT_SHORTLABEL = "SELECT shortlabel " +
+                                                    "FROM ia_interactor " +
+                                                    "WHERE ac IN";
+
 	// delimiter to build a sql string from a collection
 	private static final String SQL_DELIMITER = "'";
 
@@ -71,7 +75,8 @@ public class MineHelper {
 			stm = con.createStatement();
 			stm.setFetchSize(1);
 			ResultSet set =
-				stm.executeQuery("SELECT protein1_ac FROM ia_interactions");
+				stm.executeQuery("SELECT "+ Constants.COLUMN_protein1_ac +
+                                 " FROM "+ Constants.INTERACTION_TABLE +"");
 			if (!set.next()) {
 				throw new MineException();
 			}
@@ -140,8 +145,7 @@ public class MineHelper {
 	public Map getNetworkMap(Collection searchFor) throws SQLException {
 		Map networks = new Hashtable();
 		// statement to select the taxis and graphid for every interactor
-		PreparedStatement pstm =
-			intactUser.getDBConnection().prepareStatement(SELECT_GRAPHKEY);
+		PreparedStatement pstm = intactUser.getDBConnection().prepareStatement( SELECT_GRAPHKEY );
 
 		String ac;
 		Integer key;
@@ -168,7 +172,7 @@ public class MineHelper {
 			// the accession number is added to the other numbers belonging
 			// to the key
 			if (networks.containsKey(key)) {
-				((Collection) networks.get(key)).add(ac);
+				( (Collection) networks.get( key ) ).add( ac );
 			} else {
 				// a new collection is created to store the accession
 				// numbers

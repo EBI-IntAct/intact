@@ -100,12 +100,12 @@ public class GraphBuildThread extends Thread {
 		graph = new IncidenceListGraph();
 		while (set.next()) {
 			// the two interactors are fetched
-			protein1_ac = set.getString(1).trim().toUpperCase();
-			shortLabel1 = set.getString(2);
-			protein2_ac = set.getString(3).trim().toUpperCase();
-			shortLabel2 = set.getString(4);
+			protein1_ac = set.getString( Constants.COLUMN_protein1_ac ).trim().toUpperCase();
+			shortLabel1 = set.getString( Constants.COLUMN_shortlabel1 );
+			protein2_ac = set.getString( Constants.COLUMN_protein2_ac ).trim().toUpperCase();
+			shortLabel2 = set.getString( Constants.COLUMN_shortlabel2 );
 			// the interaction_ac of the interactions
-			interaction_ac = set.getString(6);
+			interaction_ac = set.getString( Constants.COLUMN_interaction_ac );
 			// if the map does not contain the interactor_ac
 			// this means the interactor is not yet in the graph
 			if (!nodeLabelMap.containsKey(protein1_ac)) {
@@ -134,9 +134,9 @@ public class GraphBuildThread extends Thread {
 
 			// the edge between these two nodes is inserted
 			graph.insertEdge(
-				v1,
-				v2,
-				new EdgeObject(interaction_ac, set.getDouble(7)));
+                    v1,
+                    v2,
+                    new EdgeObject(interaction_ac, set.getDouble( Constants.COLUMN_weight )));
 		}
 		set.close();
 		stm.close();
