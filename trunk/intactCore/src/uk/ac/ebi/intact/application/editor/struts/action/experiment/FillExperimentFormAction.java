@@ -12,9 +12,11 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.struts.action.FillCvFormAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Populates experiment form for display.
@@ -36,27 +38,36 @@ public class FillExperimentFormAction extends FillCvFormAction {
         ExperimentViewBean view =
                 (ExperimentViewBean) getIntactUser(request).getView();
         // Poplulate with experiment data.
-        DynaActionForm dynaForm = (DynaActionForm) form;
+        DynaActionForm dynaform = (DynaActionForm) form;
 
         // Assumption: We are creating a new record if the current view has no
         // short label. Reset the previous values.
         if (view.getShortLabel() == null) {
-            dynaForm.set("organism", null);
-            dynaForm.set("inter", null);
-            dynaForm.set("ident", null);
+            dynaform.set("organism", null);
+            dynaform.set("inter", null);
+            dynaform.set("ident", null);
         }
         else {
             // Preserve existing values of the form - only for editing.
 //            if (isPropertyNullOrEmpty(dynaForm, "organism")) {
-                dynaForm.set("organism", view.getOrganism());
+                dynaform.set("organism", view.getOrganism());
 //            }
 //            if (isPropertyNullOrEmpty(dynaForm, "inter")) {
-                dynaForm.set("inter", view.getInter());
+                dynaform.set("inter", view.getInter());
 //            }
 //            if (isPropertyNullOrEmpty(dynaForm, "ident")) {
-                dynaForm.set("ident", view.getIdent());
+                dynaform.set("ident", view.getIdent());
 //            }
         }
+        // Populate with the interaction for the experiment.
+        List ints = view.getInteractions();
+        dynaform.set("ints", ints.toArray(new InteractionBean[0]));
+        dynaform.set("intCmd", new String[ints.size()]);
+
+        // Populate with interactions on hold.
+        List intshold = view.getHoldInteractions();
+        dynaform.set("intshold", intshold.toArray(new InteractionBean[0]));
+        dynaform.set("intsholdCmd", new String[intshold.size()]);
         return mapping.findForward(SUCCESS);
     }
 }

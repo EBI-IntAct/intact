@@ -42,6 +42,9 @@
 
     <jsp:include page="info.jsp" />
     <p></p>
+    <jsp:include page="ints.jsp" />
+    <p></p>
+    <jsp:include page="intsHold.jsp" />
     <jsp:include page="intSearch.jsp" />
     <p></p>
     <jsp:include page="annots.jsp" />
