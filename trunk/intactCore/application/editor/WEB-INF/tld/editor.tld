@@ -12,17 +12,6 @@
     </info>
 
     <tag>
-        <name>displayShortLabels</name>
-        <tagclass>
-            uk.ac.ebi.intact.application.editor.struts.taglibs.DisplayShortLabelsTag
-        </tagclass>
-        <bodycontent>empty</bodycontent>
-        <info>
-            Displays all the labels bar the short label of the current edit object.
-        </info>
-    </tag>
-
-    <tag>
         <name>helpLink</name>
         <tagclass>
             uk.ac.ebi.intact.application.editor.struts.taglibs.HelpLinkTag
