@@ -43,7 +43,7 @@ public class EditorTopicsGeneratorTest extends TestCase {
         String resPath = "../../src/uk/ac/ebi/intact/application/editor/struts/framework/util/test/";
 
         // The test resource.
-        String testResource = resPath + "TestEditorTopics.properties";
+        String testResource = "../../classes/TestEditorTopics.properties";
 
         EditorTopicsGenerator gen =
                 new EditorTopicsGenerator("../../classes", testResource);
@@ -51,8 +51,11 @@ public class EditorTopicsGeneratorTest extends TestCase {
             // Generate the Intact Types resource.
             gen.doIt();
         }
-        catch (AssertionError ex) {
-            fail(ex.getMessage());
+        catch (ClassNotFoundException clnfe) {
+            fail(clnfe.getMessage());
+        }
+        catch (IOException ioe) {
+            fail(ioe.getMessage());
         }
         // The expected Intact Types resource file.
         String expResource = resPath + "ExpectedEditorTopics.properties";
