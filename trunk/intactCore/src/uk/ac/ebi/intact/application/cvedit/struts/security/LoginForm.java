@@ -98,10 +98,10 @@ public class LoginForm extends ActionForm {
             errors.add(ActionErrors.GLOBAL_ERROR,
                 new ActionError("global.required", "username"));
         }
-        if (myPassword == null || myPassword.length() < 1) {
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                new ActionError("global.required", "password"));
-        }
+//        if (myPassword == null || myPassword.length() < 1) {
+//            errors.add(ActionErrors.GLOBAL_ERROR,
+//                new ActionError("global.required", "password"));
+//        }
         if (myTopic == null || myTopic.length() < 1) {
             errors.add("topic", new ActionError("error.topic.required"));
         }
