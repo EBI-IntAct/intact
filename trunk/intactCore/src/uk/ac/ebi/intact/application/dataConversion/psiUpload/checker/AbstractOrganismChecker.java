@@ -82,6 +82,28 @@ public abstract class AbstractOrganismChecker {
         return sb.toString();
     }
 
+    private static void displayFoundMessage( BioSource bioSource ) {
+
+        StringBuffer sb = new StringBuffer( 128 );
+        sb.append( "Found BioSource by taxid " ).append( bioSource.getTaxId() );
+        sb.append( ". Shortlabel is " ).append( bioSource.getShortLabel() );
+
+        if( null != bioSource.getCvCellType() ) {
+            sb.append( ", Celltype shortlabel: " ).append( bioSource.getCvCellType().getShortLabel() );
+        } else {
+            sb.append( ", No CellType" );
+        }
+
+        if( null != bioSource.getCvTissue() ) {
+            sb.append( ", Tissue shortlabel: " ).append( bioSource.getCvTissue().getShortLabel() );
+        } else {
+            sb.append( ", No Tissue" );
+        }
+
+        System.out.println( sb.toString() );
+    }
+
+
     protected static BioSource check( final String taxid,
                                       final CellTypeTag cellType,
                                       final TissueTag tissue,
@@ -113,23 +135,7 @@ public abstract class AbstractOrganismChecker {
                                                                                     "the taxid: " + taxid ) );
                     } else {
 
-                        StringBuffer sb = new StringBuffer( 128 );
-                        sb.append( "Found BioSource by taxid " ).append( taxid );
-                        sb.append( ". Shortlabel is " ).append( bioSource.getShortLabel() );
-
-                        if( null != bioSource.getCvCellType() ) {
-                            sb.append( ", Celltype shortlabel: " ).append( bioSource.getCvCellType().getShortLabel() );
-                        } else {
-                            sb.append( ", No CellType" );
-                        }
-
-                        if( null != bioSource.getCvTissue() ) {
-                            sb.append( ", Tissue shortlabel: " ).append( bioSource.getCvTissue().getShortLabel() );
-                        } else {
-                            sb.append( ", No Tissue" );
-                        }
-
-                        System.out.println( sb.toString() );
+                        displayFoundMessage( bioSource );
                     }
                 } catch ( IntactException e ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "An error occured while searching for " +
@@ -175,9 +181,8 @@ public abstract class AbstractOrganismChecker {
 
                     MessageHolder.getInstance().addCheckerMessage( new Message( sb.toString() ) );
                 } else {
-                    if( DEBUG ) {
-                        System.out.println( "BioSource found: " + bioSource );
-                    }
+
+                    displayFoundMessage( bioSource );
                 }
             }
 
