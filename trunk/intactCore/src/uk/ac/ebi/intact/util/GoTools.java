@@ -59,35 +59,40 @@ public class GoTools {
 
         // get all objects by label. If more than one, need to modify label.
         try {
-            searchResult = (AnnotatedObject) helper.getObjectByLabel(targetClass, label);
-            if ((null == searchResult)
-                    ||
-                    (current.getAc().equals(searchResult.getAc()))) {
-                // No object has label, or only the current object.
-                // Therefore, if label is assigned to current, it will still be unique.
-                return label;
-            }
-        }
-        catch (DuplicateLabelException d) {
-        }
-        catch (IntactException e) {
-        }
+            // if there is a backslash within a label, we must escape that backslash.
+            // "\\\\" because one backslash is escaped by java AND one by sql - so in fact it is only one
+             searchResult = (AnnotatedObject)helper.getObjectByLabel(targetClass, label.replaceAll("\\\\","\\\\\\\\"));
+             if (null == searchResult)
+                 return label;
+             if (current.getAc() != null) {
+                 if (current.getAc().equals(searchResult.getAc())) {
+                     // No object has label, or only the current object.
+                     // Therefore, if label is assigned to current, it will still be unique.
+                     return label;
+                 }
+             }
+         }
+         catch (DuplicateLabelException d) {
+         }
+         catch (IntactException e) {
+         }
 
-        // Modify label to get it unique
-        label = externalAc;
+         // Modify label to get it unique
+         label = externalAc;
 
-        // Check again if label is unique. If not, throw an exception.
-        searchResult = (AnnotatedObject) helper.getObjectByLabel(targetClass, label);
-        if ((null == searchResult)
-                ||
-                (current.getAc().equals(searchResult.getAc()))) {
-            // No object has label, or only the current object.
-            // Therefore, if label is assigned to current, it will still be unique.
-            return label;
-        }
-
-        return null;
-    }
+         // Check again if label is unique. If not, throw an exception.
+         searchResult = (AnnotatedObject)helper.getObjectByLabel(targetClass, label.replaceAll("\\\\","\\\\\\\\"));
+         if (null == searchResult)
+             return label;
+         if (current.getAc() != null) {
+             if (current.getAc().equals(searchResult.getAc())) {
+                 // No object has label, or only the current object.
+                 // Therefore, if label is assigned to current, it will still be unique.
+                 return label;
+             }
+         }
+         return null;
+     }
 
     /**
      * Insert a GO term into IntAct.
