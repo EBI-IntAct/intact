@@ -649,6 +649,12 @@
        <xml name="cvXrefQualifierAc"
             node="attribute"/>
     </field>
+
+    <field name="parentAc" type="string">
+       <xml name="parentAc"
+            node="attribute"/>
+    </field>
+
   </class>
 
 

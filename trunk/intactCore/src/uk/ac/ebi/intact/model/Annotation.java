@@ -18,10 +18,10 @@ public class Annotation extends BasicObject {
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
-    public String cvTopicAc;
+    protected String cvTopicAc;
 
-
-    private String topicAc;
+    // replaced by cvTopicAc conform to synchron specifications
+    // private String topicAc;
 
     /**
      * Text describing one aspect of the annotation of
