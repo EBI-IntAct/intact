@@ -455,11 +455,6 @@ public class IntactHelper implements SearchI, Externalizable {
     public Collection paramSearch(String objectType, String searchParam, String searchValue,
                                   boolean includeSubClass,
                                   boolean matchSubString) throws IntactException {
-//        Collection result = null;
-//
-//        //implementation TBD
-//
-//        return result;
         throw new IntactException("Not Fully Implemented yet");
     }
 
@@ -471,53 +466,6 @@ public class IntactHelper implements SearchI, Externalizable {
     public List stringSearch(String objectType, String searchString,
                              boolean includeSubClass,
                              boolean matchSubString) throws IntactException {
-
-//        List result = null;
-//        Class classToSearch = null;
-//        Field[] fieldsToSearch = null;
-//        Collection searchResult = null;
-//
-//        //implementation under development.......
-//        /*
-//        * sketch: get the field names from the objectType, and search those
-//        fields either a) directly (matchSubString=false) or b)using a "like"
-//        search (matchSubString=true). If includeSubclass is true, do this recursively
-//        and collect the results until there are no more subclasses.
-//        Before return, order results in "descending relevance" (!)
-//        NB the "like" search is possible in OJB, but the DAO interface may need modifying
-//        to indicate that a "partial" type of search is required..
-//        */
-//
-//        try {
-//
-//            //NB assumes objectType is fully qualified java classname...
-//            classToSearch = Class.forName(objectType);
-//            fieldsToSearch = classToSearch.getFields();
-//
-//            if (matchSubString) {
-//            } else {
-//
-//                //standard search - need to check all fields...
-//                for (int i = 0; i < fieldsToSearch.length; i++) {
-//
-//                    Field fld = fieldsToSearch[i];
-//                    searchResult = this.search(objectType, fld.getName(), searchString);
-//                    if (!searchResult.isEmpty()) {
-//
-//                        //done
-//                        break;
-//                    }
-//                }
-//
-//                //to get the list to return, must order the collection by "relevance"...
-//            }
-//        } catch (Exception e) {
-//
-//            //probablky a ClassNotFoundException
-//            throw new IntactException("error - possible class not found for " + objectType, e);
-//        }
-//
-//        return result;
         throw new IntactException("Not Fully Implemented yet");
     }
 
@@ -542,7 +490,6 @@ public class IntactHelper implements SearchI, Externalizable {
             throws IntactException {
         try {
             return dao.iteratorFind(objectType, searchParam, searchValue);
-
         }
         catch (SearchException se) {
             //return to action servlet witha forward to error page command
@@ -611,16 +558,6 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException - thrown if problems are encountered during the search process
      */
     public Collection search(String objectType, String searchParam, String searchValue) throws IntactException {
-
-        //set up variables used during searching..
-//        Collection resultList = new ArrayList();
-
-        /* get a Data Access Object (ie a connection) for the data source
-        * NB assumed pooling is managed within the persistence layer..
-        */
-
-//        if (null == dao) connect();
-
         //now retrieve an object...
         try {
 
@@ -658,9 +595,6 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException - thrown if problems are encountered during the search process
      */
     public Collection search(Class searchClass, String searchParam, String searchValue) throws IntactException {
-//        if (null == dao) {
-//            connect();
-//        }
         //now retrieve an object...
         try {
             return dao.find(searchClass, searchParam, searchValue);
@@ -1006,15 +940,15 @@ public class IntactHelper implements SearchI, Externalizable {
      * one BioSource found
      *
      */
-    public BioSource getBioSourceByName(String name) throws IntactException {
-
-        Collection resultList = null;
-        resultList = this.search("uk.ac.ebi.intact.model.BioSource", "shortLabel", name);
-
-        if (resultList.isEmpty()) return null;
-        if (resultList.size() > 1) throw new IntactException("More than one BioSource returned by name search");
-        return (BioSource) resultList.iterator().next();
-    }
+//    public BioSource getBioSourceByName(String name) throws IntactException {
+//
+//        Collection resultList = null;
+//        resultList = this.search("uk.ac.ebi.intact.model.BioSource", "shortLabel", name);
+//
+//        if (resultList.isEmpty()) return null;
+//        if (resultList.size() > 1) throw new IntactException("More than one BioSource returned by name search");
+//        return (BioSource) resultList.iterator().next();
+//    }
 
     /**
      * Searches for a BioSource given a tax ID. Only a single BioSource is found
@@ -1086,25 +1020,25 @@ public class IntactHelper implements SearchI, Externalizable {
      * NB not tested yet!! (requires data in the DB)
      *
      */
-    public Experiment getExperimentBySource(BioSource source) throws IntactException {
-
-        Experiment result = null;
-        Collection resultList = null;
-        String bioAc = source.getAc();
-        resultList = this.search(Experiment.class.getName(), "bioSource_ac", bioAc);
-        if (resultList.isEmpty()) {
-            result = null;
-        } else {
-            Iterator i = resultList.iterator();
-            result = (Experiment) i.next();
-            if (i.hasNext()) {
-                IntactException ie = new IntactException("More than one object returned by search by bioSource.");
-                throw(ie);
-            }
-        }
-
-        return result;
-    }
+//    public Experiment getExperimentBySource(BioSource source) throws IntactException {
+//
+//        Experiment result = null;
+//        Collection resultList = null;
+//        String bioAc = source.getAc();
+//        resultList = this.search(Experiment.class.getName(), "bioSource_ac", bioAc);
+//        if (resultList.isEmpty()) {
+//            result = null;
+//        } else {
+//            Iterator i = resultList.iterator();
+//            result = (Experiment) i.next();
+//            if (i.hasNext()) {
+//                IntactException ie = new IntactException("More than one object returned by search by bioSource.");
+//                throw(ie);
+//            }
+//        }
+//
+//        return result;
+//    }
 
     /**
      *  Search for components given a role. Assumed this is unlikely to be unique.
@@ -1118,11 +1052,11 @@ public class IntactHelper implements SearchI, Externalizable {
      * NB Not tested yet!!
      *
      */
-    public Collection getComponentsByRole(CvComponentRole role) throws IntactException {
-
-        return (this.search(Component.class.getName(), "role", role.getAc()));
-
-    }
+//    public Collection getComponentsByRole(CvComponentRole role) throws IntactException {
+//
+//        return (this.search(Component.class.getName(), "role", role.getAc()));
+//
+//    }
 
     /**
      *  Search for interactions given a type. Assumed this is unlikely to be unique.
@@ -1136,10 +1070,10 @@ public class IntactHelper implements SearchI, Externalizable {
      * NB Not tested yet!!
      *
      */
-    public Collection getInteractionsByType(CvInteractionType type) throws IntactException {
-
-        return (this.search(Interaction.class.getName(), "interactionType_ac", type.getAc()));
-    }
+//    public Collection getInteractionsByType(CvInteractionType type) throws IntactException {
+//
+//        return (this.search(Interaction.class.getName(), "interactionType_ac", type.getAc()));
+//    }
 
 
     /**
@@ -1156,20 +1090,20 @@ public class IntactHelper implements SearchI, Externalizable {
      * @exception IntactException thrown if a search problem occurs
      *
      */
-    public Collection getExperimentsByInstitution(Institution institution) throws IntactException {
-
-        String ownerAc = institution.getAc();
-        if (ownerAc == null) {
-            //get it first via shortLabel
-            Collection tmpResults = this.search(Institution.class.getName(), "shortLabel", institution.getShortLabel());
-            if (!tmpResults.isEmpty()) {
-                //take the first one
-                Institution inst = (Institution) tmpResults.iterator().next();
-                ownerAc = inst.getAc();
-            }
-        }
-        return (this.search(Experiment.class.getName(), "owner_ac", ownerAc));
-    }
+//    public Collection getExperimentsByInstitution(Institution institution) throws IntactException {
+//
+//        String ownerAc = institution.getAc();
+//        if (ownerAc == null) {
+//            //get it first via shortLabel
+//            Collection tmpResults = this.search(Institution.class.getName(), "shortLabel", institution.getShortLabel());
+//            if (!tmpResults.isEmpty()) {
+//                //take the first one
+//                Institution inst = (Institution) tmpResults.iterator().next();
+//                ownerAc = inst.getAc();
+//            }
+//        }
+//        return (this.search(Experiment.class.getName(), "owner_ac", ownerAc));
+//    }
 
     /**
      *  Search for Protein given a cross reference. Assumed this is unique.
@@ -1185,48 +1119,40 @@ public class IntactHelper implements SearchI, Externalizable {
      * NB not yet tested....
      *
      */
-    public Protein getProteinByXref(Xref xref) throws IntactException {
-
-        Collection resultList = null;
-        resultList = this.search(Protein.class.getName(), "ac", xref.getParentAc());
-        if (resultList.isEmpty()) return null;
-        if (resultList.size() > 1) throw new IntactException("Got more than one Protein with Xref " + xref.getAc());
-
-        Object obj = resultList.iterator().next();
-        if (!(obj instanceof Protein))
-            throw new IntactException("Xref refers to an instance of "
-                    + obj.getClass().getName() + ", NOT a Protein!!");
-
-        return (Protein) obj;
-    }
+//    public Protein getProteinByXref(Xref xref) throws IntactException {
+//
+//        Collection resultList = null;
+//        resultList = this.search(Protein.class.getName(), "ac", xref.getParentAc());
+//        if (resultList.isEmpty()) return null;
+//        if (resultList.size() > 1) throw new IntactException("Got more than one Protein with Xref " + xref.getAc());
+//
+//        Object obj = resultList.iterator().next();
+//        if (!(obj instanceof Protein))
+//            throw new IntactException("Xref refers to an instance of "
+//                    + obj.getClass().getName() + ", NOT a Protein!!");
+//
+//        return (Protein) obj;
+//    }
 
     /**
      * @see uk.ac.ebi.intact.persistence.DAO#getTableName(Class)
      */
-    public String getTableName(Class clazz) {
-        return dao.getTableName(clazz);
-    }
+//    public String getTableName(Class clazz) {
+//        return dao.getTableName(clazz);
+//    }
 
     /**
      * Delete all elements in a collection.
      */
     public void deleteAllElements(Collection aCollection) throws IntactException {
         try {
-
-//            if (dao == null) connect();
-
-            //just to be safe, restrict write access..
-//            synchronized (this) {
-                for (Iterator i = aCollection.iterator(); i.hasNext();) {
-                    dao.remove(i.next());
-                }
-//            }
-
+            for (Iterator i = aCollection.iterator(); i.hasNext();) {
+                dao.remove(i.next());
+            }
         }
         catch (TransactionException te) {
             String msg = "intact helper: error deleting collection elements";
             throw new IntactException(msg, te);
-
         }
     }
 
@@ -1516,36 +1442,36 @@ return partialGraph;
      * @return Collection The Experiments related to the parameter item
      * (empty if none found)
      */
-    public Collection getRelatedExperiments(Object item) {
-
-        Collection results = new ArrayList();
-        if (item instanceof Protein) {
-            //collect all the related experiments (interactions can be displayed from them)
-            Protein protein = (Protein) item;
-            Collection components = protein.getActiveInstances();
-            Iterator iter1 = components.iterator();
-            while (iter1.hasNext()) {
-                Component component = (Component) iter1.next();
-                Interaction interaction = component.getInteraction();
-                Collection experiments = interaction.getExperiments();
-                Iterator iter2 = experiments.iterator();
-                while (iter2.hasNext()) {
-                    results.add(iter2.next());
-                }
-            }
-        }
-
-        if (item instanceof Interaction) {
-            //collect all experiments....
-            Collection experiments = ((Interaction) item).getExperiments();
-            Iterator iter3 = experiments.iterator();
-            while (iter3.hasNext()) {
-                results.add(iter3.next());
-            }
-        }
-
-        return results;
-    }
+//    public Collection getRelatedExperiments(Object item) {
+//
+//        Collection results = new ArrayList();
+//        if (item instanceof Protein) {
+//            //collect all the related experiments (interactions can be displayed from them)
+//            Protein protein = (Protein) item;
+//            Collection components = protein.getActiveInstances();
+//            Iterator iter1 = components.iterator();
+//            while (iter1.hasNext()) {
+//                Component component = (Component) iter1.next();
+//                Interaction interaction = component.getInteraction();
+//                Collection experiments = interaction.getExperiments();
+//                Iterator iter2 = experiments.iterator();
+//                while (iter2.hasNext()) {
+//                    results.add(iter2.next());
+//                }
+//            }
+//        }
+//
+//        if (item instanceof Interaction) {
+//            //collect all experiments....
+//            Collection experiments = ((Interaction) item).getExperiments();
+//            Iterator iter3 = experiments.iterator();
+//            while (iter3.hasNext()) {
+//                results.add(iter3.next());
+//            }
+//        }
+//
+//        return results;
+//    }
 
     /**
      * Gets the underlying JDBC connection. This is a 'useful method' rather than
@@ -1782,45 +1708,15 @@ return partialGraph;
         }
     }
 
-    /**
-     * tries to get a connection if a DAO has (somehow!) not been
-     * set.
-     *
-     * @exception IntactException thrown if obtaining a DAO failed
-     */
-//    private void connect() throws IntactException {
-//
-//        try {
-//            if (user != null) {
-//
-//                //try to create using given user details
-//                dao = dataSource.getODMGDAO(user, password);
-//            } else {
-//
-//                //create as default user
-//                dao = dataSource.getODMGDAO();
-//            }
-//        } catch (DataSourceException de) {
-//            String msg = "failed to create a DAO when it was (somehow!) originally null";
-//            throw new IntactException(msg, de);
-//        }
-//    }
-
     private void update(Object obj, boolean force) throws IntactException {
 
         try {
-
-//            if (dao == null) connect();
-
-            //just to be safe, restrict write access..
-//            synchronized (this) {
-                if (force) {
-                    dao.forceUpdate(obj);
-                }
-                else {
-                    dao.update(obj);
-                }
-//            }
+            if (force) {
+                dao.forceUpdate(obj);
+            }
+            else {
+                dao.update(obj);
+            }
         } catch (UpdateException ue) {
             ue.printStackTrace();
             String msg = "intact helper: failed to perform update on class " + obj.getClass().getName();
@@ -1830,5 +1726,3 @@ return partialGraph;
 
     }
 }
-
-
