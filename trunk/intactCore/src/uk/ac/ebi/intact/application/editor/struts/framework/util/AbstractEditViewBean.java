@@ -195,9 +195,9 @@ public abstract class AbstractEditViewBean {
      * post: return = myAnnotations->at(index)
      * </pre>
      */
-    public CommentBean getAnnotation(int index) {
-        return (CommentBean) myAnnotations.get(index);
-    }
+//    public CommentBean getAnnotation(int index) {
+//        return (CommentBean) myAnnotations.get(index);
+//    }
 
     /**
      * Adds an annotation.
@@ -267,9 +267,9 @@ public abstract class AbstractEditViewBean {
      * post: return = myXrefs->at(index)
      * </pre>
      */
-    public XreferenceBean getXref(int index) {
-        return (XreferenceBean) myXrefs.get(index);
-    }
+//    public XreferenceBean getXref(int index) {
+//        return (XreferenceBean) myXrefs.get(index);
+//    }
 
     /**
      * Adds an xref.

@@ -6,15 +6,15 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-
-import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,31 +48,30 @@ public class XrefEditAction extends AbstractEditorAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        EditForm theform = (EditForm) form;
+        EditForm editform = (EditForm) form;
 
         // The current view of the edit session.
-        EditUserI user = super.getIntactUser(request);
-        AbstractEditViewBean viewbean = user.getView();
+        AbstractEditViewBean view = getIntactUser(request).getView();
 
         // The bean associated with the current action.
-        XreferenceBean xb = (XreferenceBean) theform.getSelectedBean();
+        XreferenceBean xb = (XreferenceBean) editform.getSelectedBean();
 
         // We must have the bean.
         assert xb != null;
 
-        if (theform.editPressed()) {
+        if (editform.editPressed()) {
             // Must save this bean.
             xb.setEditState(EditBean.SAVE);
         }
-        else if (theform.savePressed()) {
+        else if (editform.savePressed()) {
             // Save button pressed. The xref to update.
-            viewbean.addXrefToUpdate(xb);
+            view.addXrefToUpdate(xb);
             // Back to the view mode again.
             xb.setEditState(EditBean.VIEW);
         }
-        else if (theform.deletePressed()) {
+        else if (editform.deletePressed()) {
             // Delete is pressed.
-            viewbean.delXref(xb);
+            view.delXref(xb);
         }
         else {
             // Unknown operation; should never get here.

@@ -31,50 +31,22 @@ public class SetUpInteractionAction  extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // Handler to the Intact User.
-        EditUserI user = getIntactUser(request);
-
         // The view of the current object we are editing at the moment.
-        InteractionViewBean view = (InteractionViewBean) user.getView();
+        InteractionViewBean view =
+                (InteractionViewBean) getIntactUser(request).getView();
 
         // Poplulate with experiment data; first try the form first, so it
         // will save the last typed values.
         DynaActionForm dynaForm = (DynaActionForm) form;
-        if (dynaForm.get("kD") == null) {
+        if (isPropertyNull(dynaForm, "kD")) {
             dynaForm.set("kD", view.getKD());
         }
-        if (dynaForm.get("organism") == null) {
+        if (isPropertyNullOrEmpty(dynaForm, "organism")) {
             dynaForm.set("organism", view.getOrganism());
         }
-        if (dynaForm.get("interactionType") == null) {
+        if (isPropertyNullOrEmpty(dynaForm, "interactionType")) {
             dynaForm.set("interactionType", view.getInteractionType());
         }
-
-        // The session to retrieve forms.
-        HttpSession session = getSession(request);
-
-        // The experiment form.
-//        String expFormName = EditorConstants.FORM_INTERACTION_EXP;
-//        EditForm expForm = user.getEditForm(expFormName);
-//        expForm.setItems(view.getExperiments());
-//        request.setAttribute(expFormName, expForm);
-
-        // The experiment hold form.
-        String expHoldFormName = EditorConstants.FORM_INTERACTION_EXP_HOLD;
-        EditForm expHoldForm = user.getEditForm(expHoldFormName);
-        expHoldForm.setItems(view.getHoldExperiments());
-        session.setAttribute(expHoldFormName, expHoldForm);
-
-        // The proteins edit form.
-        String protFormName = EditorConstants.FORM_INTERACTION_PROT;
-        if (session.getAttribute(protFormName) == null) {
-            session.setAttribute(protFormName, new ProteinEditForm());
-        }
-        EditForm protForm = (EditForm) session.getAttribute(protFormName);
-        // Populate with proteins.
-        protForm.setItems(view.getProteins());
-
         return mapping.findForward(FORWARD_SUCCESS);
-//        return mapping.findForward(EditorConstants.FORWARD_EDITOR);
     }
 }
