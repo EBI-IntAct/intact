@@ -27,14 +27,18 @@
 <%-- The anchor name for this page --%>
 <a name="feature.new"/>
 
-<table width="100%" border="0" cellspacing="1" cellpadding="2">
+<%-- The table id is for testing purposes --%>
+<table width="100%" border="0" cellspacing="1" cellpadding="2" id="new.feature">
     <tr class="tableRowHeader">
         <th class="tableCellHeader">
             <bean:message key="label.ac"/>
         </th>
-        <th class="tableCellHeader">
-            <bean:message key="label.shortlabel"/>
-        </th>
+        <%-- Short label is not needed when in mutation mode --%>
+        <c:if test="${view.inNonMutationMode}">
+            <th class="tableCellHeader">
+                <bean:message key="label.shortlabel"/>
+            </th>
+        </c:if>
         <th class="tableCellHeader">
             <bean:message key="label.fullname"/>
         </th>
@@ -52,11 +56,15 @@
         <td class="tableCell">
             <bean:write property="ac" name="featureForm" filter="false"/>
         </td>
-        <td class="tableCell">
-            <html:text property="shortLabel" size="20" maxlength="20" name="featureForm"
-                styleClass="inputRequired"/>
-            <html:errors property="shortLabel"/>
-        </td>
+
+        <%-- Short label is not needed when in mutation mode --%>
+        <c:if test="${view.inNonMutationMode}">
+            <td class="tableCell">
+                <html:text property="shortLabel" size="20" maxlength="20" name="featureForm"
+                    styleClass="inputRequired"/>
+                <html:errors property="shortLabel"/>
+            </td>
+        </c:if>
 
         <td class="tableCell">
             <html:text property="fullName" size="80" maxlength="80" name="featureForm"/>
@@ -75,6 +83,8 @@
         </td>
     </tr>
 </table>
+<html:errors property="feature.mutation.empty"/>
+<html:errors property="feature.mutation.invalid"/>
 
 <%----%>
 <%--<html:messages id="message" message="true">--%>
