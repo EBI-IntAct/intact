@@ -250,20 +250,35 @@ public class XmlBuilder implements Serializable {
                     //need to know what type to search on..
                     //Currently this is BasicObject or Institution...
 
-                    //use a user object if possible as this means we can reuse
-                    //the caller's DB connection...
                     Collection searchResults = new ArrayList();
-                    searchResults = helper.search("uk.ac.ebi.intact.model.BasicObject", "ac", (String)key);
-                    if(searchResults.isEmpty()) {
-
-                        //try Institution instead
-                        searchResults = helper.search("uk.ac.ebi.intact.model.Institution", "ac", (String)key);
+                    //searchResults = helper.search("uk.ac.ebi.intact.model.BasicObject", "ac", (String)key);
+                    System.out.println("searching by Iterator....");
+                    Iterator iter = null;
+                    iter = helper.iterSearch("uk.ac.ebi.intact.model.BasicObject", "ac", (String)key);
+                    if(iter == null) {
+                         iter = helper.iterSearch("uk.ac.ebi.intact.model.Institution", "ac", (String)key);
                     }
-                    if(searchResults.size() > 1) {
-
-                        //something odd - AC is supposed to be unique! Do something...
+//                    if(searchResults.isEmpty()) {
+//
+//                        //try Institution instead
+//                        searchResults = helper.search("uk.ac.ebi.intact.model.Institution", "ac", (String)key);
+//                    }
+//                    if(searchResults.size() > 1) {
+//
+//                        //something odd - AC is supposed to be unique! Do something...
+//                    }
+                    //Object obj = searchResults.iterator().next();
+                    if(iter == null) {
+                        System.out.println("can't build any XML - no data found!!");
+                        return dc;
                     }
-                    Object obj = searchResults.iterator().next();
+
+                    //should only be one....
+                    Object obj = iter.next();
+
+                    //debug...
+                    System.out.println("first item found: " + ((uk.ac.ebi.intact.model.BasicObject)obj).getAc());
+                    System.out.println("type: " + obj.getClass().getName());
 
                     if(mode == XmlBuilder.EXPAND_NODES) {
                         result = this.buildFullElem(obj);
@@ -273,6 +288,21 @@ public class XmlBuilder implements Serializable {
                         //default to compact
                         result = this.buildCompactElem(obj);
                         compactCache.put(key, result);
+                    }
+
+
+
+                    //need to close the data if for an odd reason more
+                    //than one item returned from search...
+                    if(iter.hasNext()) {
+                        System.out.println("something odd - search found more than one match for an ac - closing data..");
+                         //debug...
+                        System.out.println("next item found: " + ((uk.ac.ebi.intact.model.BasicObject)iter.next()).getAc());
+                        System.out.println("type: " + obj.getClass().getName());
+
+                        System.out.println("XmlBuilder: closing Result set to release resources...");
+                        helper.closeData(iter);
+
                     }
                 }
 
@@ -353,12 +383,13 @@ public class XmlBuilder implements Serializable {
      * @return Element The DOM Element representing the expanded object (empty if nothing is done)
      *
      * @exception ParserConfigurationException thrown if a document builder could not be created
+     * @exception NullPointerException if a null object parameter is supplied
      */
      public Element buildCompactElem(Object item) throws ParserConfigurationException {
 
         Element elem = null;
         //sanity check...
-        if(item == null) return null;
+        if(item == null) throw new NullPointerException("cannot create XML for a null object!");
 
         //create a dummy document to build the Element
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -415,9 +446,10 @@ public class XmlBuilder implements Serializable {
      * Strings and java.sql.Timestamps) and Collections are expanded (but each only to a 'compact' level).
      *
      * @param obj The object to expand
-     * @return Element The DOM Element representing the expanded object (empty if nothing is done)
+     * @return Element The DOM Element representing the expanded object (at least compact)
      *
-     * @exception ParserConfigurationException thron if a document builder could not be created
+     * @exception ParserConfigurationException thrown if a document builder could not be created
+     * @exception NullPointerException If the argument object is null
      */
     public Element buildFullElem(Object obj) throws ParserConfigurationException {
 
@@ -431,7 +463,7 @@ public class XmlBuilder implements Serializable {
         */
 
         //sanity check...
-        if(obj == null) return null;
+        if(obj == null) throw new NullPointerException("cannot build XML for a null object!");
 
         //do the attributes
         elem = this.buildCompactElem(obj);
@@ -441,80 +473,118 @@ public class XmlBuilder implements Serializable {
         Document doc = elem.getOwnerDocument();
 
         //now do the refs and Collections...
+        expandReferences(doc, elem, obj, null);
         //ignore Strings, Collections and Timestamps
-        Set ignored = new HashSet();
-        ignored.add(String.class);
-        ignored.add(Collection.class);
-        ignored.add(java.sql.Timestamp.class);
-
-        Collection objRefs = this.getReferences(obj, ignored);
-        Collection collectionRefs = this.getCollections(obj);
-
-        Element refElement = null;
-        Iterator it = objRefs.iterator();
-
-        //references... (NB should they be cached, as they are displayed but not explicitly referenced?)
-        while(it.hasNext()) {
-
-            try {
-                Field refField = (Field)it.next();
-                Object value = refField.get(obj);
-
-                if(value != null) {
-                    refElement = this.buildCompactElem(refField.get(obj));
-
-                    //import the new node and then we can append it
-                    Node newNode = doc.importNode(refElement, true);
-                    elem.appendChild(newNode);
-                }
-            }
-            catch(IllegalArgumentException ie) {
-                //shouldn't happen - fields obtained from opbj in the first place!
-            }
-            catch(IllegalAccessException ia) {
-                //shouldn't happen - security overriden already
-            }
-        }
+//        Set ignored = new HashSet();
+//        ignored.add(String.class);
+//        ignored.add(Collection.class);
+//        ignored.add(java.sql.Timestamp.class);
+//
+//        Collection objRefs = this.getReferences(obj, ignored);
+//        Collection collectionRefs = this.getCollections(obj);
+//
+//        Element refElement = null;
+//        Iterator it = objRefs.iterator();
+//
+//        //references... (NB should they be cached, as they are displayed but not explicitly referenced?)
+//        while(it.hasNext()) {
+//
+//            try {
+//                Field refField = (Field)it.next();
+//                Object value = refField.get(obj);
+//
+//                if(value != null) {
+//                    refElement = this.buildCompactElem(refField.get(obj));
+//
+//                    //import the new node and then we can append it
+//                    Node newNode = doc.importNode(refElement, true);
+//                    elem.appendChild(newNode);
+//                }
+//            }
+//            catch(IllegalArgumentException ie) {
+//                //shouldn't happen - fields obtained from opbj in the first place!
+//            }
+//            catch(IllegalAccessException ia) {
+//                //shouldn't happen - security overriden already
+//            }
+//        }
 
         //Collections (similar code, but not worth making a seperate method).....
-        it = collectionRefs.iterator();
-        while(it.hasNext()) {
+        expandCollections(doc, elem, obj, null);
+//        it = collectionRefs.iterator();
+//        while(it.hasNext()) {
+//
+//            try {
+//                Field collectionField = (Field)it.next();
+//                String fieldName = collectionField.getName();
+//                if(!fieldName.endsWith("s")) {
+//                    //put an 's' on the end - helps readability in most cases
+//                    //as Collections are plural but sometimes the reference names
+//                    //are not! This may sometimes give some odd results, but will mostly be OK
+//                    fieldName = fieldName + "s";
+//                }
+//
+//                //create a collector Node in the same Document as elem
+//                Element collectionElem = doc.createElement(fieldName);
+//                Collection items = (Collection)collectionField.get(obj);
+//                if(items != null) {
+//                    Iterator iter = items.iterator();
+//                    while(iter.hasNext()) {
+//                        Object item = iter.next();
+//
+//                        //reuse the refElement to access each item of the Collection,
+//                        //NB cache each one? it exists as compact but no AC references it...
+//                        refElement = this.buildCompactElem(item);
+//                        Node newItemNode = doc.importNode(refElement, true); //build returns Element from a different doc
+//                        collectionElem.appendChild(newItemNode);
+//                    }
+//                }
+//
+//                elem.appendChild(collectionElem);
+//            }
+//            catch(IllegalAccessException ia) {
+//                //shouldn't happen - security overriden already
+//            }
+//            catch(IllegalArgumentException ie) {
+//                //shouldn't happen - fields obtained from obj in the first place!
+//            }
+//        }
 
-            try {
-                Field collectionField = (Field)it.next();
-                String fieldName = collectionField.getName();
-                if(!fieldName.endsWith("s")) {
-                    //put an 's' on the end - helps readability in most cases
-                    //as Collections are plural but sometimes the reference names
-                    //are not! This may sometimes give some odd results, but will mostly be OK
-                    fieldName = fieldName + "s";
-                }
+        return elem;
 
-                //create a collector Node in the same Document as elem
-                Element collectionElem = doc.createElement(fieldName);
-                Collection items = (Collection)collectionField.get(obj);
-                if(items != null) {
-                    Iterator iter = items.iterator();
-                    while(iter.hasNext()) {
-                        Object item = iter.next();
+    }
 
-                        //reuse the refElement to access each item of the Collection,
-                        //NB cache each one? it exists as compact but no AC references it...
-                        refElement = this.buildCompactElem(item);
-                        Node newItemNode = doc.importNode(refElement, true); //build returns Element from a different doc
-                        collectionElem.appendChild(newItemNode);
-                    }
-                }
+    /**
+     * Provides a 'partial' expansion of an object. References and Collections whose
+     * fields are not in the set of ones to ingore are expanded. Note that attributes of
+     * the object (ie Strings, primitives etc) will always be defined - so a compact element
+     * will be created.
+     * @param obj The object to expand
+     * @param fieldsToIgnore The object fields which should not be expanded. Expected to be Strings.
+     * @return Element The DOM Element representing the expanded object (at least compact)
+     *
+     * @exception ParserConfigurationException thron if a document builder could not be created
+     * @exception NullPointerException If the argument object is null
+     */
+    public Element buildPartialElem(Object obj, Collection fieldsToIgnore) throws ParserConfigurationException {
 
-                elem.appendChild(collectionElem);
-            }
-            catch(IllegalAccessException ia) {
-                //shouldn't happen - security overriden already
-            }
-            catch(IllegalArgumentException ie) {
-                //shouldn't happen - fields obtained from obj in the first place!
-            }
+        Element elem = null;
+
+        //sanity checks...
+        if(obj == null) throw new NullPointerException("cannot build XML for a null object!");
+        if(fieldsToIgnore != null) {
+            Class type = fieldsToIgnore.iterator().next().getClass();
+            if(!String.class.isAssignableFrom(type)) throw new IllegalArgumentException("fields to ignore must contain Strings!");
         }
+        //do the attributes
+        elem = this.buildCompactElem(obj);
+
+        //need to get the owner Document of this Element as we need
+        //to append things to it...
+        Document doc = elem.getOwnerDocument();
+
+        expandReferences(doc, elem, obj, fieldsToIgnore);
+        expandCollections(doc, elem, obj, fieldsToIgnore);
 
         return elem;
 
@@ -624,6 +694,91 @@ public class XmlBuilder implements Serializable {
             }
         }
         return result;
+    }
+
+    private void expandReferences(Document doc, Element elem, Object obj, Collection noExpand)
+                                                    throws ParserConfigurationException {
+
+        Element refElement = null;
+
+        //ignore Strings, Collections and Timestamps
+        Set ignored = new HashSet();
+        ignored.add(String.class);
+        ignored.add(Collection.class);
+        ignored.add(java.sql.Timestamp.class);
+        Collection objRefs = this.getReferences(obj, ignored);
+
+        //references... (NB should they be cached, as they are displayed but not explicitly referenced?)
+        for (Iterator it = objRefs.iterator(); it.hasNext();) {
+            try {
+                Field refField = (Field) it.next();
+                if(noExpand != null) {
+                    //don't do this field if it is in the exclusion list
+                    if(noExpand.contains(refField.getName())) continue;
+                }
+                    Object value = refField.get(obj);
+
+                    if (value != null) {
+                        refElement = this.buildCompactElem(refField.get(obj));
+
+                        //import the new node and then we can append it
+                        Node newNode = doc.importNode(refElement, true);
+                        elem.appendChild(newNode);
+                    }
+            } catch (IllegalArgumentException ie) {
+                //shouldn't happen - fields obtained from obj in the first place!
+            } catch (IllegalAccessException ia) {
+                //shouldn't happen - security overriden already
+            }
+        }
+
+    }
+
+    private void expandCollections(Document doc, Element elem, Object obj, Collection noExpand)
+                                        throws ParserConfigurationException {
+
+        Element refElement = null;
+
+        Collection collectionRefs = getCollections(obj);
+        for (Iterator it = collectionRefs.iterator(); it.hasNext();) {
+
+            try {
+                Field collectionField = (Field) it.next();
+                String fieldName = collectionField.getName();
+                if(noExpand != null) {
+                    //don't do this field if it is in the exclusion list
+                    if(noExpand.contains(fieldName)) continue;
+                }
+                if (!fieldName.endsWith("s")) {
+                    //put an 's' on the end - helps readability in most cases
+                    //as Collections are plural but sometimes the reference names
+                    //are not! This may sometimes give some odd results, but will mostly be OK
+                    fieldName = fieldName + "s";
+                }
+
+                //create a collector Node in the same Document as elem
+                Element collectionElem = doc.createElement(fieldName);
+                Collection items = (Collection) collectionField.get(obj);
+                if (items != null) {
+                    Iterator iter = items.iterator();
+                    while (iter.hasNext()) {
+                        Object item = iter.next();
+
+                        //NB cache each one? it exists as compact but no AC references it...
+                        refElement = this.buildCompactElem(item);
+                        Node newItemNode = doc.importNode(refElement, true); //build returns Element from a different doc
+                        collectionElem.appendChild(newItemNode);
+                    }
+                }
+
+                elem.appendChild(collectionElem);
+            } catch (IllegalAccessException ia) {
+                //shouldn't happen - security overriden already
+            } catch (IllegalArgumentException ie) {
+                //shouldn't happen - fields obtained from obj in the first place!
+            }
+        }
+
     }
 
 }
