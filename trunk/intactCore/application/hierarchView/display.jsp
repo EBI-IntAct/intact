@@ -52,6 +52,8 @@
           <input type="hidden" name="AC"     value="<%= request.getParameter ("AC")     %>" />
           <input type="hidden" name="depth"  value="<%= request.getParameter ("depth")  %>" />
           <input type="hidden" name="method" value="<%= request.getParameter ("method") %>" />
+          <input type="hidden" name="network" value="<%= request.getParameter ("network") %>" />
+          <input type="hidden" name="singletons" value="<%= request.getParameter ("singletons") %>" />
     </form>
 
     <script language="JavaScript" type="text/javascript">
