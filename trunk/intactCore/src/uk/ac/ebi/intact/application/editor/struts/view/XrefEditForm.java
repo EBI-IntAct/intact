@@ -10,6 +10,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionError;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Extends from EditForm to provide validation for editing a crossreference.
@@ -18,6 +19,14 @@ import javax.servlet.http.HttpServletRequest;
  * @version $Id$
  */
 public class XrefEditForm extends EditForm {
+
+    public void setXrefs(List xrefs) {
+        setItems(xrefs);
+    }
+
+    public List getXrefs() {
+        return getItems();
+    }
 
     /**
      * Validate the primary id.
