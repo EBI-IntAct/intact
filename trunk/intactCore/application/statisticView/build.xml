@@ -166,6 +166,7 @@
             <fileset dir="${root.config.dir}">
                 <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
+                <include name="Institution.properties"/>
             </fileset>
         </copy>
 
