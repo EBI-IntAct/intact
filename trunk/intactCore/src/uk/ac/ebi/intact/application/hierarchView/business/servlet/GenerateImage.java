@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.BufferedOutputStream;
 import java.awt.image.BufferedImage;
+import java.util.Enumeration;
 
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
@@ -50,13 +51,19 @@ public class GenerateImage extends HttpServlet {
 
         try {
             // get the current user session
-            HttpSession session = aRequest.getSession ();
+            HttpSession session = aRequest.getSession (false);
+
+            if (session == null) {
+                logger.error ("No session available, don't displays interaction network");
+                return;
+            }
+
             IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+
             if (user == null) {
                 aResponse.getOutputStream().print(ERROR_MESSAGE);
-
                 logger.error ("No user in the session, don't displays interaction network");
-                return;
+                 return;
             }
 
             ImageBean imageBean = user.getImageBean();
