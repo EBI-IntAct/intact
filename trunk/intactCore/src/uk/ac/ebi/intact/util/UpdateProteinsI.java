@@ -15,9 +15,9 @@ import uk.ac.ebi.intact.model.*;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 
 
 /**
@@ -70,6 +70,8 @@ public abstract class UpdateProteinsI {
 
     protected static CvAliasType geneNameAliasType;
     protected static CvAliasType geneNameSynonymAliasType;
+    protected static CvAliasType orfNameAliasType;
+    protected static CvAliasType locusNameAliasType;
 
     protected IntactHelper helper = null;
 
@@ -292,6 +294,22 @@ public abstract class UpdateProteinsI {
                     logger.error( "Unable to find the gene-name-synonym CvAliasType in your IntAct node" );
                 }
                 throw new UpdateException( "Unable to find the gene-name-synonym CvAliasType in your IntAct node" );
+            }
+
+            orfNameAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "orf-name" );
+            if( orfNameAliasType == null ) {
+                if( logger != null ) {
+                    logger.error( "Unable to find the orf-name CvAliasType in your IntAct node" );
+                }
+                throw new UpdateException( "Unable to find the orf-name CvAliasType in your IntAct node" );
+            }
+
+            locusNameAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "locus-name" );
+            if( locusNameAliasType == null ) {
+                if( logger != null ) {
+                    logger.error( "Unable to find the locus-name CvAliasType in your IntAct node" );
+                }
+                throw new UpdateException( "Unable to find the locus-name CvAliasType in your IntAct node" );
             }
 
         } catch ( IntactException e ) {
