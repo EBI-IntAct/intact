@@ -527,7 +527,7 @@
       <field-descriptor id="6"
          name="taxId"
          column="taxId"
-         jdbc-type="INTEGER"
+         jdbc-type="VARCHAR"
       />
 
       <!-- used for class identification - OJB uses it directly -->
