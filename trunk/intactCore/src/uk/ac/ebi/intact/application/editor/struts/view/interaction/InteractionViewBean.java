@@ -194,8 +194,24 @@ public class InteractionViewBean extends AbstractEditViewBean {
     public void updateFromForm(DynaActionForm dynaform) {
         // Set the common values by calling super first.
         super.updateFromForm(dynaform);
-        setInteractionType((String) dynaform.get("interactionType"));
-        setOrganism((String) dynaform.get("organism"));
+
+        String inttype = (String) dynaform.get("interactionType");
+        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(inttype)) {
+            try {
+                inttype = getNormalizedInterationType(inttype);
+            }
+            catch (SearchException e) {
+                // Should log this exception; the validate method will fail if
+                // this exception is thrown.
+                e.printStackTrace();
+            }
+            setInteractionType(inttype);
+        }
+        String organism = (String) dynaform.get("organism");
+        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(organism)) {
+            // Set the view bean with the new values.
+            setOrganism(organism);
+        }
         setKD((Float) dynaform.get("kD"));
     }
 
@@ -240,6 +256,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public List getInteractionTypeMenu() throws SearchException {
         int mode = (myInteractionType == null) ? 1 : 0;
+//        List l = getMenuFactory().getMenu(EditorMenuFactory.INTERACTION_TYPES, mode);
+//        for (int i = 0; i < l.size(); i++) {
+//            System.out.println("Item: " + l.get(i));
+//        }
         return getMenuFactory().getMenu(EditorMenuFactory.INTERACTION_TYPES, mode);
     }
 
@@ -270,7 +290,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * characters.
      * @throws SearchException for errors in constructing the menu.
      */
-    public String getNormalizedInterationType(String item) throws SearchException {
+    private String getNormalizedInterationType(String item) throws SearchException {
         return getNormalizedMenuItem(item,
                 EditorMenuFactory.INTERACTION_TYPES);
     }

@@ -113,24 +113,36 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Set the common values by calling super first.
         super.updateFromForm(dynaform);
         String organism = (String) dynaform.get("organism");
+        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(organism)) {
+            // Set the view bean with the new values.
+            setOrganism(organism);
+        }
 
         // These two items need to be normalized.
-        String interaction = null;
-        String identification = null;
-        try {
-            interaction = getNormalizedInter((String) dynaform.get("inter"));
-            identification = getNormalizedIdent((String) dynaform.get("ident"));
+        String interaction = (String) dynaform.get("inter");
+        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(interaction)) {
+            try {
+                interaction = getNormalizedInter(interaction);
+            }
+            catch (SearchException e) {
+                // Should log this exception; the validate method will fail if
+                // this exception is thrown.
+                e.printStackTrace();
+            }
+            setInter(interaction);
         }
-        catch (SearchException e) {
-            // Should log this exception; the validate method will fail if
-            // this exception is thrown.
-            e.printStackTrace();
+        String identification = (String) dynaform.get("ident");
+        if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(identification)) {
+            try {
+                identification = getNormalizedIdent(identification);
+            }
+            catch (SearchException e) {
+                // Should log this exception; the validate method will fail if
+                // this exception is thrown.
+                e.printStackTrace();
+            }
+            setIdent(identification);
         }
-
-        // Set the view bean with the new values.
-        setOrganism(organism);
-        setInter(interaction);
-        setIdent(identification);
     }
 
     // Null for any of these values will throw an exception.
@@ -257,7 +269,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * characters.
      * @throws SearchException for errors in constructing the menu.
      */
-    public String getNormalizedInter(String item) throws SearchException {
+    private String getNormalizedInter(String item) throws SearchException {
         return getNormalizedMenuItem(item, EditorMenuFactory.INTERACTIONS);
     }
 
@@ -269,7 +281,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * @throws SearchException for errors in constructing the menu.
      * @see #getNormalizedInter(String)
      */
-    public String getNormalizedIdent(String item) throws SearchException {
+    private String getNormalizedIdent(String item) throws SearchException {
         return getNormalizedMenuItem(item, EditorMenuFactory.IDENTIFICATIONS);
     }
 }

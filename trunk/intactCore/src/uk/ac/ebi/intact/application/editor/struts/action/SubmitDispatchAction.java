@@ -97,7 +97,7 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         dynaform.set("shortLabel", newlabel);
 
         // Update the view with new values.
-        view.updateFromForm(dynaform);
+//        view.updateFromForm(dynaform);
 
         // Validate the data.
         view.validate(user);

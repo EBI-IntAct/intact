@@ -59,16 +59,10 @@ public class FillInteractionFormAction extends FillCvFormAction {
             dynaform.set("protSearchAC", null);
         }
         else {
-            if (isPropertyNull(dynaform, "kD")) {
-                dynaform.set("kD", view.getKD());
-            }
-            if (isPropertyNullOrEmpty(dynaform, "organism")) {
-                dynaform.set("organism", view.getOrganism());
-            }
-            if (isPropertyNullOrEmpty(dynaform, "interactionType")) {
-                // Special case this is a dag menu object.
-                dynaform.set("interactionType", view.getSelectedInterationType());
-            }
+            dynaform.set("kD", view.getKD());
+            dynaform.set("organism", view.getOrganism());
+            // Special case this is a dag menu object.
+            dynaform.set("interactionType", view.getSelectedInterationType());
         }
         // Populate with the experiments for the interaction.
         List exps = view.getExperiments();
