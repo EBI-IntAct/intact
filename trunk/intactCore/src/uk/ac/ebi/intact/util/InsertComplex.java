@@ -158,7 +158,7 @@ public class InsertComplex {
         // Complete the component
         comp.setInteractor(targetProtein);
         comp.setCvComponentRole(role);
-        helper.create(comp);
+//        helper.create(comp);
     }
 
 
@@ -185,7 +185,7 @@ public class InsertComplex {
         if (null == ex) {
             ex = new Experiment();
             ex.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
-            helper.create(ex);
+//            helper.create(ex);
         }
 
         // Get Interaction
@@ -196,7 +196,7 @@ public class InsertComplex {
             act = new Interaction();
             act.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
             act.setShortLabel(actLabel);
-            helper.create(act);
+//            helper.create(act);
 
             // Initialise list of proteins created
             createdProteins = new HashMap();
@@ -226,6 +226,9 @@ public class InsertComplex {
         // is handled upon committing the transaction.
         if (helper.isPersistent(ex)) {
             helper.update(ex);
+        }
+        else {
+            helper.create(ex);
         }
     }
 
