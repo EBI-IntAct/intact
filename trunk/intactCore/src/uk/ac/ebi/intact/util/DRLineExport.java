@@ -12,7 +12,10 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -40,7 +43,9 @@ public class DRLineExport {
     public static final String AUTHOR_CONFIDENCE = "author-confidence";
     public static final String NEGATIVE = "negative";
     public static final String UNIPROT = "uniprot";
+    public static final String INTACT = "intact";
     public static final String IDENTITY = "identity";
+    public static final String ISOFORM_PARENT = "isoform-parent";
 
     public static final String METHOD_EXPORT_KEYWORK_EXPORT = "yes";
     public static final String METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT = "no";
@@ -294,7 +299,9 @@ public class DRLineExport {
 
     // Vocabulary that we need for processing
     protected CvXrefQualifier identityXrefQualifier = null;
+    protected CvXrefQualifier isoformParentQualifier = null;
     protected CvDatabase uniprotDatabase = null;
+    protected CvDatabase intactDatabase = null;
     protected CvTopic uniprotDR_Export = null;
     protected CvTopic authorConfidenceTopic = null;
     protected CvTopic negativeTopic = null;
@@ -336,10 +343,22 @@ public class DRLineExport {
             throw new DatabaseContentException( "Unable to find the '" + UNIPROT + "' database in your IntAct node" );
         }
 
+        intactDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, INTACT );
+        if( intactDatabase == null ) {
+            throw new DatabaseContentException( "Unable to find the '" + INTACT + "' database in your IntAct node" );
+        }
+
         identityXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, IDENTITY );
         if( identityXrefQualifier == null ) {
             throw new DatabaseContentException( "Unable to find the '" + IDENTITY + "' CvXrefQualifier in your IntAct node" );
         }
+
+
+        isoformParentQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, ISOFORM_PARENT );
+        if( isoformParentQualifier == null ) {
+            throw new DatabaseContentException( "Unable to find the '" + ISOFORM_PARENT + "' CvXrefQualifier in your IntAct node" );
+        }
+
 
         uniprotDR_Export = (CvTopic) helper.getObjectByLabel( CvTopic.class, UNIPROT_DR_EXPORT );
         if( uniprotDR_Export == null ) {
@@ -409,6 +428,32 @@ public class DRLineExport {
         }
 
         return uniprot;
+    }
+
+
+    /**
+     * Get the intact master AC from the given Splice variant.
+     *
+     * @param protein the splice variant (Protein) for which we its intact master AC.
+     * @return the intact AC
+     */
+    public final String getMasterAc( final Protein protein ) {
+
+        String ac = null;
+
+        Collection xrefs = protein.getXrefs();
+        boolean found = false;
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
+            Xref xref = (Xref) iterator.next();
+
+            if( intactDatabase.equals( xref.getCvDatabase() ) &&
+                isoformParentQualifier.equals( xref.getCvXrefQualifier() ) ) {
+                ac = xref.getPrimaryId();
+                found = true;
+            }
+        }
+
+        return ac;
     }
 
 
@@ -710,244 +755,337 @@ public class DRLineExport {
 
 
     /**
-     * Implement the set of rules that check if Proteins are eligible for export.
+     * Implement the set of rules that check if a Protein are eligible for export.
      *
-     * @param proteins The set of proteins to be checked for eligibility to export in Swiss-Prot.
-     * @return a Set of Uniprot Protein ID that are eligible for export in Swiss-Prot.
+     * @param protein The protein to be checked for eligibility to export in Swiss-Prot.
+     * @param master  if protein is a splice variant, master is its master protein.
+     * @return the ID to be exported to Swiss-Prot.
      */
-    public final Set getProteinEligibleForExport( Collection proteins ) {
+    public final String getProteinExportStatus( Protein protein, Protein master ) {
 
-        return getProteinEligibleForExport( proteins, null );
-    }
-
-
-    /**
-     * Implement the set of rules that check if Proteins are eligible for export.
-     *
-     * @param proteins          The set of proteins to be checked for eligibility to export in Swiss-Prot.
-     * @param selectedUniprotID the set of eligible protein ID to update.
-     * @return a Set of Uniprot Protein ID that are eligible for export in Swiss-Prot.
-     */
-    public final Set getProteinEligibleForExport( Collection proteins, Set selectedUniprotID ) {
-
-        if( selectedUniprotID == null ) {
-            selectedUniprotID = new HashSet();
-        }
+        String selectedUniprotID = null;
 
         //map: method  ===>  count of distinct experiment in which the protein has been seen
         HashMap conditionalMethods = new HashMap();
 
-        for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
-            Protein protein = (Protein) iterator.next();
-            String uniprotID = getUniprotID( protein );
+        String uniprotID = getUniprotID( protein );
+        log( "\n\n" + uniprotID + " Shortlabel:" + protein.getShortLabel() + "  AC: " + protein.getAc() );
 
-            log( "\n\n" + uniprotID + " Shortlabel:" + protein.getShortLabel() + "  AC: " + protein.getAc() );
+        String masterUniprotID = null;
+        if( null != master ) {
+            masterUniprotID = getUniprotID( master );
+            log( "\n\nhaving master protein " + masterUniprotID + " Shortlabel:" + master.getShortLabel() + "  AC: " + master.getAc() );
+        }
 
-            /**
-             * In order to export a protein, it has to:
-             *   - get its interactions
-             *      - get its experiment
-             *          - if the experiment has a local annotation allowing the export
-             *          - if nothing specified: check if the CvInteraction has a local annotation allowing the export
-             *          - if yes, the protein become eligible to export.
-             */
-            Collection interactions = getInteractions( protein );
-            log( "\t related to " + interactions.size() + " interactions." );
+        /**
+         * In order to export a protein, it has to:
+         *   - get its interactions
+         *      - get its experiment
+         *          - if the experiment has a local annotation allowing the export
+         *          - if nothing specified: check if the CvInteraction has a local annotation allowing the export
+         *          - if yes, the protein become eligible to export.
+         */
+        Collection interactions = getInteractions( protein );
+        log( "\t related to " + interactions.size() + " interactions." );
 
-            boolean export = false;
-            boolean stop = false;
-            conditionalMethods.clear();
+        boolean export = false;
+        boolean stop = false;
 
-            for ( Iterator iterator1 = interactions.iterator(); iterator1.hasNext() && !stop; ) {
-                Interaction interaction = (Interaction) iterator1.next();
+        for ( Iterator iterator1 = interactions.iterator(); iterator1.hasNext() && !stop; ) {
+            Interaction interaction = (Interaction) iterator1.next();
 
-                log( "\t Interaction: Shortlabel:" + interaction.getShortLabel() +
-                     "  AC: " + interaction.getAc() );
+            log( "\t Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc() );
 
-                // if that interaction is flagged as negative, we don't take it into account
-                if( isNegative( interaction ) ) {
+            // if that interaction is flagged as negative, we don't take it into account
+            if( isNegative( interaction ) ) {
 
-                    log( "\t\t Interaction is flagged as negative, we don't take it into account." );
-                    continue; // loop to the next interaction
+                log( "\t\t Interaction is flagged as negative, we don't take it into account." );
+                continue; // loop to the next interaction
+            } else {
+                log( "\t\t Interaction is NOT flagged as negative." );
+            }
+
+            Collection experiments = interaction.getExperiments();
+
+            int count = experiments.size();
+            log( "\t\t interaction related to " + count + " experiment" + ( count > 1 ? "s" : "" ) + "." );
+
+            for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext() && !stop; ) {
+                Experiment experiment = (Experiment) iterator2.next();
+
+
+                log( "\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc() );
+
+                // if that experiment is flagged as negative, we don't take it into account
+                if( isNegative( experiment ) ) {
+
+                    log( "\t\t\t\t Experiment is flagged as negative, we don't take it into account." );
+                    continue; // loop to the next experiment
                 } else {
-                    log( "\t\t Interaction is NOT flagged as negative." );
+
+                    log( "\t\t\t\t Experiment is NOT flagged as negative." );
                 }
 
-                Collection experiments = interaction.getExperiments();
+                ExperimentStatus experimentStatus = getExperimentExportStatus( experiment );
+                if( experimentStatus.doNotExport() ) {
 
-                int count = experiments.size();
-                log( "\t\t interaction related to " + count + " experiment" + ( count > 1 ? "s" : "" ) + "." );
+                    // forbid export for all interaction of that experiment (and their proteins).
 
-                for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext() && !stop; ) {
-                    Experiment experiment = (Experiment) iterator2.next();
+                    log( "\t\t\t\t No interaction of that experiment will be exported." );
+                    export = false;
+                    stop = true;
+
+                    continue;  // go to next experiment
+
+                } else if( experimentStatus.doExport() ) {
+
+                    // Authorise export for all interactions of that experiment (and their proteins),
+                    // This overwrite the setting of the CvInteraction concerning the export.
+
+                    log( "\t\t\t\t All interaction of that experiment will be exported." );
+                    export = true;
+                    stop = true;
+
+                    continue; // go to next experiment
+
+                } else if( experimentStatus.isLargeScale() ) {
+
+                    // if my interaction has one of those keywords as annotation for DR line export, do export.
+                    Collection keywords = experimentStatus.getKeywords();
+                    Collection annotations = interaction.getAnnotations();
+                    boolean found = false;
+
+                    // We assume here that an interaction has only one Annotation( uniprot-dr-export ).
+                    for ( Iterator iterator3 = annotations.iterator(); iterator3.hasNext() && !found; ) {
+                        final Annotation annotation = (Annotation) iterator3.next();
+
+                        if( authorConfidenceTopic.equals( annotation.getCvTopic() ) ) {
+                            String text = annotation.getAnnotationText();
 
 
-                    log( "\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() +
-                         "  AC: " + experiment.getAc() );
+                            log( "\t\t\t\t Interaction has " + authorConfidenceTopic.getShortLabel() +
+                                 ": '" + text + "'" );
 
-                    // if that experiment is flagged as negative, we don't take it into account
-                    if( isNegative( experiment ) ) {
+                            if( text != null ) {
+                                text = text.trim();
+                            }
 
-                        log( "\t\t\t\t Experiment is flagged as negative, we don't take it into account." );
-                        continue; // loop to the next experiment
-                    } else {
+                            for ( Iterator iterator4 = keywords.iterator(); iterator4.hasNext() && !found; ) {
+                                String kw = (String) iterator4.next();
+                                // NOT case sensitive
 
-                        log( "\t\t\t\t Experiment is NOT flagged as negative." );
+                                log( "\t\t\t\t\t Compare it with '" + kw + "'" );
+
+                                if( kw.equalsIgnoreCase( text ) ) {
+                                    found = true;
+                                    log( "\t\t\t\t\t Equals !" );
+                                }
+                            }
+                        }
                     }
 
-                    ExperimentStatus experimentStatus = getExperimentExportStatus( experiment );
-                    if( experimentStatus.doNotExport() ) {
+                    if( found ) {
 
-                        // forbid export for all interaction of that experiment (and their proteins).
+                        /*
+                        * We don't need to check an eventual threshold on the method level because
+                        * in the current state, the annotation is on the experiment level that is
+                        * lower and hence is dominant on the method's one.
+                        */
 
-                        log( "\t\t\t\t No interaction of that experiment will be exported." );
-                        export = false;
-                        stop = true;
-
-                        continue;  // go to next experiment
-
-                    } else if( experimentStatus.doExport() ) {
-
-                        // Authorise export for all interactions of that experiment (and their proteins),
-                        // This overwrite the setting of the CvInteraction concerning the export.
-
-                        log( "\t\t\t\t All interaction of that experiment will be exported." );
                         export = true;
                         stop = true;
 
-                        continue; // go to next experiment
+                        log( "\t\t\t that interaction is eligible for export in the context of a large scale experiment" );
 
-                    } else if( experimentStatus.isLargeScale() ) {
+                    } else {
 
-                        // if my interaction has one of those keywords as annotation for DR line export, do export.
-                        Collection keywords = experimentStatus.getKeywords();
-                        Collection annotations = interaction.getAnnotations();
-                        boolean found = false;
+                        log( "\t\t\t interaction not eligible" );
+                    }
 
-                        // We assume here that an interaction has only one Annotation( uniprot-dr-export ).
-                        for ( Iterator iterator3 = annotations.iterator(); iterator3.hasNext() && !found; ) {
-                            final Annotation annotation = (Annotation) iterator3.next();
+                } else if( experimentStatus.isNotSpecified() ) {
 
-                            if( authorConfidenceTopic.equals( annotation.getCvTopic() ) ) {
-                                String text = annotation.getAnnotationText();
+                    log( "\t\t\t No experiment status, check the experimental method." );
 
+                    // Then check the experimental method (CvInteraction)
+                    // Nothing specified at the experiment level, check for the method (CvInteraction)
+                    CvInteraction cvInteraction = experiment.getCvInteraction();
+                    if( null == cvInteraction ) {
+                        // we need to check because cvInteraction is not mandatory in an experiment.
+                        continue; // skip it, go to next experiment
+                    }
 
-                                log( "\t\t\t\t Interaction has " + authorConfidenceTopic.getShortLabel() +
-                                     ": '" + text + "'" );
+                    CvInteractionStatus methodStatus = getMethodExportStatus( cvInteraction );
 
-                                if( text != null ) {
-                                    text = text.trim();
-                                }
+                    if( methodStatus.doExport() ) {
 
-                                for ( Iterator iterator4 = keywords.iterator(); iterator4.hasNext() && !found; ) {
-                                    String kw = (String) iterator4.next();
-                                    // NOT case sensitive
+                        export = true;
+                        stop = true;
 
-                                    log( "\t\t\t\t\t Compare it with '" + kw + "'" );
+                    } else if( methodStatus.doNotExport() ) {
 
-                                    if( kw.equalsIgnoreCase( text ) ) {
-                                        found = true;
-                                        log( "\t\t\t\t\t Equals !" );
-                                    }
-                                }
-                            }
+                        export = false;
+
+                    } else if( methodStatus.isNotSpecified() ) {
+
+                        // we should never get in here but just in case...
+                        export = false;
+
+                    } else if( methodStatus.isConditionalExport() ) {
+
+                        log( "\t\t\t As conditional export, check the count of distinct experiment for that method." );
+
+                        // non redundant set of experiment AC.
+                        HashSet experimentAcs = (HashSet) conditionalMethods.get( cvInteraction );
+                        int threshold = methodStatus.getMinimumOccurence();
+
+                        if( null == experimentAcs ) {
+                            // at most we will need to store $threshold Experiments.
+                            experimentAcs = new HashSet( threshold );
+
+                            // stores it back in the collection ... needs to be done only once ! We are using reference ;o)
+                            conditionalMethods.put( cvInteraction, experimentAcs );
+                            log( "\t\t\t Created a container for experiment ID for that method" );
                         }
 
-                        if( found ) {
+                        // add the experiment ID
+                        experimentAcs.add( experiment ); // we could store here the hasCode instead !!!
 
-                            /*
-                            * We don't need to check an eventual threshold on the method level because
-                            * in the current state, the annotation is on the experiment level that is
-                            * lower and hence is dominant on the method's one.
-                            */
-
+                        if( experimentAcs.size() == threshold ) {
+                            // We reached the threshold, export allowed !
+                            log( "\t\t\t Count of distinct experiment reached for that method" );
                             export = true;
                             stop = true;
-
-                            log( "\t\t\t that interaction is eligible for export in the context of a large scale experiment" );
-
-                        } else {
-
-                            log( "\t\t\t interaction not eligible" );
                         }
 
-                    } else if( experimentStatus.isNotSpecified() ) {
+                        log( "\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
+                             threshold + " #experiment: " +
+                             ( experimentAcs == null ? "none" : "" + experimentAcs.size() ) );
+                    }
+                } // experiment status not specified
+            } // experiments
+        } // interactions
 
-                        log( "\t\t\t No experiment status, check the experimental method." );
+        if( export ) {
+            // That protein is eligible for export.
+            // The ID will be still unique even if it already exists.
+            log( "Protein exported to Swiss-Prot" );
 
-                        // Then check the experimental method (CvInteraction)
-                        // Nothing specified at the experiment level, check for the method (CvInteraction)
-                        CvInteraction cvInteraction = experiment.getCvInteraction();
-                        if( null == cvInteraction ) {
-                            // we need to check because this is not mandatory.
-                            continue; // skip it, go to next experiment
-                        }
-
-                        CvInteractionStatus methodStatus = getMethodExportStatus( cvInteraction );
-
-                        if( methodStatus.doExport() ) {
-
-                            export = true;
-                            stop = true;
-
-                        } else if( methodStatus.doNotExport() ) {
-
-                            export = false;
-                            stop = true;
-
-                        } else if( methodStatus.isNotSpecified() ) {
-
-                            // we should never get in here but just in case...
-                            export = false;
-                            stop = true;
-
-                        } else if( methodStatus.isConditionalExport() ) {
-
-                            log( "\t\t\t As conditional export, check the count of distinct experiment for that method." );
-
-                            // non redundant set of experiment AC.
-                            HashSet experimentAcs = (HashSet) conditionalMethods.get( cvInteraction );
-                            int threshold = methodStatus.getMinimumOccurence();
-
-                            if( null == experimentAcs ) {
-                                // at most we will need to store $threshold Experiments.
-                                experimentAcs = new HashSet( threshold );
-
-                                // stores it back in the collection ... needs to be done only once ! We are using reference ;o)
-                                conditionalMethods.put( cvInteraction, experimentAcs );
-                                log( "\t\t\t Created a container for experiment ID for that method" );
-                            }
-
-                            // add the experiment ID
-                            experimentAcs.add( experiment ); // we could store here the hasCode instead !!!
-
-                            if( experimentAcs.size() == threshold ) {
-                                // We reached the threshold, export allowed !
-                                log( "\t\t\t Count of distinct experiment reached for that method" );
-                                export = true;
-                                stop = true;
-                            }
-
-                            log( "\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
-                                 threshold + " #experiment: " +
-                                 ( experimentAcs == null ? "none" : "" + experimentAcs.size() ) );
-                        }
-                    } // experiment status not specified
-                } // experiments
-            } // interactions
-
-            if( export ) {
-                // That protein is eligible for export.
-                // The ID will be still unique even if it already exists.
-                log( "Protein exported to Swiss-Prot" );
-                selectedUniprotID.add( uniprotID );
+            if( null != masterUniprotID ) {
+                selectedUniprotID = masterUniprotID;
             } else {
-
-                log( "Protein NOT exported to Swiss-Prot" );
+                selectedUniprotID = uniprotID;
             }
-        } // proteins
+        } else {
+
+            log( "Protein NOT exported to Swiss-Prot" );
+        }
 
         return selectedUniprotID;
+    }
+
+
+    /**
+     * Get a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
+     *
+     * @param helper access to the database
+     * @return a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
+     * @throws SQLException             error when handling the JDBC connection or query.
+     * @throws IntactException
+     * @throws DatabaseContentException if the initialisation process failed (CV not found)
+     */
+    public final Set getElibibleProteins( IntactHelper helper ) throws SQLException,
+                                                                       IntactException, DatabaseContentException {
+
+        Connection connection = helper.getJDBCConnection();
+        Statement statement = connection.createStatement();
+
+        ResultSet proteinAcs = statement.executeQuery( "SELECT ac " +
+                                                       "FROM IA_INTERACTOR " +
+                                                       "WHERE objclass like '%Protein%' " );
+
+        Runtime.getRuntime().addShutdownHook( new DRLineExport.DatabaseConnexionShutdownHook( helper ) );
+
+        // fetch necessary vocabulary
+        init( helper );
+
+        Set proteinEligible = new HashSet( 1024 );
+        Chrono globalChrono = new Chrono();
+        globalChrono.start();
+        Collection proteins = null;
+        int proteinCount = 0;
+
+        // Process the proteins one by one.
+        while ( proteinAcs.next() ) {
+
+            proteinCount++;
+
+            String ac = proteinAcs.getString( 1 );
+            proteins = helper.search( Protein.class.getName(), "ac", ac );
+
+            // only used in case the current protein is a splice variant
+            Protein protein = (Protein) proteins.iterator().next();
+            Protein master = null;
+
+            boolean skip = false;
+
+            // if this is a splice variant, we try to get its master protein
+            if( protein.getShortLabel().indexOf( '-' ) != -1 ) {
+
+                String masterAc = getMasterAc( protein );
+
+                if( masterAc == null ) {
+                    System.err.println( "The splice variant having the AC(" + protein.getAc() + ") doesn't have it's master AC." );
+                } else {
+                    Collection c = null;
+                    try {
+                        c = helper.search( Protein.class.getName(), "ac", masterAc );
+                    } catch ( IntactException e ) {
+                        e.printStackTrace();
+                    }
+
+                    if( c == null || c.size() == 0 ) {
+                        System.err.println( "Could not find the master protein of splice variant (" +
+                                            protein.getAc() + ") having the AC(" + ac + ")" );
+                    } else {
+                        // it must be one only
+                        master = (Protein) c.iterator().next();
+
+                        // check that the master hasn't been processed already
+                        String uniprot = getUniprotID( master );
+                        if( proteinEligible.contains( uniprot ) ) {
+                            // we can skip that protein
+                            skip = true;
+                        }
+                    }
+                }
+            } // splice variant handling
+
+            if( false == skip ) {
+                String id = getProteinExportStatus( protein, master );
+
+                if( null != id ) {
+                    proteinEligible.add( id );
+                }
+
+                int count = proteinEligible.size();
+                float percentage = ( (float) count / (float) proteinCount ) * 100;
+                System.out.println( count + " protein" + ( count > 1 ? "s" : "" ) +
+                                    " eligible for export out of " + proteinCount +
+                                    " processed (" + percentage + "%)." );
+            }
+        } // all proteins
+
+        try {
+            statement.close();
+            proteinAcs.close();
+        } catch ( SQLException e ) {
+            e.printStackTrace();
+        }
+
+        globalChrono.stop();
+        System.out.println( "Total time elapsed: " + globalChrono );
+
+        return proteinEligible;
     }
 
 
@@ -1060,86 +1198,10 @@ public class DRLineExport {
         System.out.println( "Database instance: " + helper.getDbName() );
         System.out.println( "User: " + helper.getDbUserName() );
 
-        Runtime.getRuntime().addShutdownHook( new DRLineExport.DatabaseConnexionShutdownHook( helper ) );
+        // get the set of Uniprot ID to be exported to Swiss-Prot
+        Set proteinEligible = exporter.getElibibleProteins( helper );
 
-        exporter.init( helper );
-
-        /**
-         *    1         2  	      3  	       4  	        5  	      6
-         *[A-N,R-Z]   [0-9]     [A-Z]      [A-Z, 0-9]   [A-Z, 0-9]  [0-9]
-         * [O,P,Q] 	  [0-9]   [A-Z, 0-9]   [A-Z, 0-9]   [A-Z, 0-9]  [0-9]
-         *
-         * which is equivalent to:
-         *
-         *[A-Z]   [0-9]     [A-Z]      [A-Z, 0-9]   [A-Z, 0-9]  [0-9]
-         *                [A-Z, 0-9]
-         *
-         * so, for a start, we will perform the following kind of queries:
-         *
-         *
-         */
-
-        CvDatabase uniprot = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
-        if( uniprot == null ) {
-            System.err.println( "Could not find uniprot in the current intact node, abort." );
-            System.exit( 0 );
-        }
-
-        Set proteinEligible = new HashSet( 1024 );
-        Chrono globalChrono = new Chrono();
-        globalChrono.start();
-        Collection proteins = null;
-        int proteinCount = 0;
-
-        // after one run we have over 60.000 proteins process.
-        // TODO: before to process a protein for eligibility, we should check if it's uniprot ID hasn't been processed already !
-        // TODO: The exporter should keep a count of the distinct protein processed. 2 HashSet: Eligible, notEligible
-
-        for ( char i = 'A'; i <= 'Z'; i++ ) {  // A .. Z
-            for ( char j = '0'; j <= '9'; j++ ) {  // 0,1,2,3,4,5,6,7,8,9
-                for ( char k = '0'; k <= '9'; k++ ) {  // 0,1,2,3,4,5,6,7,8,9
-
-                    // Note1: empty String between 'i' and 'j' avoid java to sum 'i' and 'j' as integer.
-                    // Note2: the last * allow to include also all splice variant
-                    String searchString = i + "" + j + "*" + k + "*";
-
-                    System.out.println( "\nexport protein matching: " + searchString );
-
-                    // need to select only uniprot Xref !!!!
-
-                    proteins = helper.getObjectsByXref( Protein.class, uniprot, searchString );
-                    int count = proteins.size();
-
-                    System.out.println( count + " protein" + ( count > 1 ? "s" : "" ) + " selected." );
-                    if( count > 0 ) {
-                        proteinCount += count; // TODO don't !!! you should only add those that haven't been processed !
-                        Chrono chrono = new Chrono();
-                        chrono.start();
-
-                        proteinEligible = exporter.getProteinEligibleForExport( proteins, proteinEligible );
-                        chrono.stop();
-
-                        proteins.clear();
-
-                        count = proteinEligible.size();
-                        float percentage = ( (float) count / (float) proteinCount ) * 100;
-                        System.out.println( count + " protein" + ( count > 1 ? "s" : "" ) +
-                                            " eligible for export out of " + proteinCount +
-                                            " processed (" + percentage + "%)." );
-                        System.out.println( "Time elapsed to process them: " + chrono + " total: " + globalChrono );
-                    } else {
-                        System.out.println( "No protein found." );
-                    }
-                } // 0..9 - last char of the ID
-            } // 0..9 - second char of the ID
-        } // O,P,Q - first letter
-
-        globalChrono.stop();
-        System.out.println( "Total time elapsed: " + globalChrono );
-
-        helper.closeStore();
-
-        // save it file.
+        // save it to a file.
         String filename = "export2uniprot_" + TIME + ".txt";
         File file = new File( filename );
         System.out.println( "Try to save to: " + file.getAbsolutePath() );
@@ -1148,13 +1210,10 @@ public class DRLineExport {
         try {
             fw = new FileWriter( file );
             out = new BufferedWriter( fw );
-
             writeToFile( proteinEligible, out );
 
         } catch ( IOException e ) {
             e.printStackTrace();
-            System.out.println( "" );
-
             System.err.println( "Could not save the result to :" + filename );
             System.err.println( "Displays the result on STDOUT:\n\n\n" );
 
