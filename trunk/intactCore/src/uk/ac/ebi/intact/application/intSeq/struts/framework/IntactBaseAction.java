@@ -84,7 +84,7 @@ public abstract class IntactBaseAction extends Action {
      * Clear error container.
      */
     protected void clearErrors() {
-        if (!myErrors.empty()) {
+        if (!myErrors.isEmpty()) {
             myErrors.clear();
         }
     }
@@ -127,10 +127,10 @@ public abstract class IntactBaseAction extends Action {
      * of the command line provided and to retrieve alignment results from the parsing.
      *
      * @param sequence which is aligned against sequences of the whole IntAct Database.
-     *        commLine - the alignment algorithm is run in a server thanks to this command line
+     * @param commLine - the alignment algorithm is run in a server thanks to this command line
      *                   which is defined in the web.xml file.
-     *        perc_base is the minimum percentage identity required to validate the results.
-     *        param is the maximum E Value allowed to validate the results.
+     * @param perc_base is the minimum percentage identity required to validate the results.
+     * @param param is the maximum E Value allowed to validate the results.
      *
      * @return boolean to know if the command is executed or not.
 
@@ -171,8 +171,14 @@ public abstract class IntactBaseAction extends Action {
                                 // to test if the percentage is greater than the percentage allowed.
                            Integer thePerc = new Integer(perc);
 
-                                /* the percentage identity can't be 0 %. If it is, that's means we are in
-                                the Fasta program with 1.00 = 100 % !*/
+                                /*
+                                    for a sequence with 47% of similarity,
+                                    Blast would gives us : 47
+                                    Fasta would gives us : 0.47
+
+                                    And we parse to get all after '.' ... so it cvould happen that we get
+                                    the result 0 in case Fasta gives 1.00
+                                */
                            if (thePerc.intValue() == 0) {
                                 perc = "100";
                            }

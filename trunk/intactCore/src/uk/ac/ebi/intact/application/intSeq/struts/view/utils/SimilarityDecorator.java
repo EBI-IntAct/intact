@@ -54,7 +54,7 @@ public class SimilarityDecorator extends Decorator {
             acc = "<font color=\"#898989\"> No IntAct Entry available </font>";
         } */
 
-        return "<a href=http://web7-node1.ebi.ac.uk:8160/intact/search/?searchString="  + acc + "> "+ acc +" </a>";
+        return "<a href=http://web7-node1.ebi.ac.uk:8160/intact/search/do/hvWelcome?searchString="  + acc + "> "+ acc +" </a>";
         //return acc;
         //return "<a href=\"/do/search/?searchString="  + acc + "\"> "+ acc +" </a>";
     }

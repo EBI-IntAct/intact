@@ -54,12 +54,13 @@ public final class SequenceSimilarityForm extends ActionForm {
         if (sequence == null || sequence.length() < 1) {
             errors.add("idseqerror", new ActionError("error.sequence.required"));
         }
-        else if (sequence.length() < SeqIdConstants.SMALLEST_LENGHT_PROTEIN) {
-            errors.add("idseqerror", new ActionError("error.sequence.longer"));
-        }
         else if ( (sequence.startsWith(">") == false) || (sequence.startsWith(">>") == true)) {
             errors.add("idseqerror", new ActionError("error.sequence.format"));
         }
+        else if (sequence.length() < SeqIdConstants.SMALLEST_LENGHT_PROTEIN) {
+            errors.add("idseqerror", new ActionError("error.sequence.longer"));
+        }
+
 
         /*if (VerifProtSeq(sequence) == false) {
             errors.add("errors", new ActionError("error.sequence.aa"));
