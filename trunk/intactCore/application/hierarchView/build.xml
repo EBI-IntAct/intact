@@ -60,6 +60,12 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
 
+    <property name="webService.properties.filename"   value="${config.dir}/WebService.properties"/>
+    <property name="highlighting.properties.filename" value="${config.dir}/Highlighting.properties"/>
+
+    <property resource="${webService.properties.filename}"/>
+    <property resource="${highlighting.properties.filename}"/>
+
     <!-- Build working classpath -->
     <path id="project.class.path">
         <fileset dir="${lib.dir}">
@@ -77,6 +83,83 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-logging.jar"/>
     </path>
+
+
+
+    <!-- =================================================================== -->
+
+    <!--
+        Test some configuration point to warn the user in case of configuration problem.
+        The build process is stopped if smething goes wrong.
+    -->
+    <target name="all-config-test" depends="test-config">
+        <antcall target="webService-hostname-result"/>
+        <antcall target="console-location-result"/>
+        <antcall target="console-location-available-result"/>
+        <antcall target="interpro-hostname-result"/>
+    </target>
+
+
+    <target name="test-config">
+        <echo message="${webService.properties.filename} :"/>
+
+        <condition property="webService.hostname.notCustomized">
+            <contains string="${webService.adress}" substring="[HOSTNAME]"/>
+        </condition>
+        <echo message="    webService.adress = ${webService.adress}"/>
+
+        <condition property="webService.console.location.notCustomized">
+            <contains string="${webService.console.location}" substring="[FULL_PATH_OF_THE_TULIP_COMSOLE]"/>
+        </condition>
+        <echo message="    webService.console.location = ${webService.console.location}"/>
+
+        <available file="${webService.console.location}" type="file" property="webService.console.isAvailable"/>
+
+
+        <echo message="${highlighting.properties.filename} :"/>
+
+        <condition property="interpro.hostname.notCustomized">
+            <contains string="${highlightment.source.GO.hostname}" substring="[HOSTNAME]"/>
+        </condition>
+        <echo message="    highlightment.source.GO.hostname = ${highlightment.source.GO.hostname}"/>
+    </target>
+
+
+    <target name="console-location-result" if="webService.console.location.notCustomized">
+        <fail>
+            ERROR :
+            You have to edit the following file : ${webService.properties.filename}
+            and customized the webService.console.location property.
+        </fail>
+    </target>
+
+
+    <target name="console-location-available-result" unless="webService.console.isAvailable">
+        <fail>
+            ERROR :
+            You have to edit the following file : ${webService.properties.filename}
+            and customized the webService.console.location with the right path.
+            Currently the file ${webService.console.location} is not found.
+        </fail>
+    </target>
+
+
+    <target name="webService-hostname-result" if="webService.hostname.notCustomized">
+        <fail>
+            ERROR :
+            You have to edit the following file : ${webService.properties.filename}
+            and customized the webService.adress property.
+        </fail>
+    </target>
+
+
+    <target name="interpro-hostname-result" if="interpro.hostname.notCustomized">
+        <fail>
+            ERROR :
+            You have to edit the following file : ${highlighting.properties.filename}
+            and customized the highlightment.source.GO.hostname property.
+        </fail>
+    </target>
 
     <!-- =================================================================== -->
 
@@ -364,7 +447,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-        depends="set-db-type, war-pg, war-oracle"/>
+        depends="all-config-test, set-db-type, war-pg, war-oracle"/>
 
     <!-- =================================================================== -->
 
@@ -482,7 +565,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <!-- Undeploys the war file from the Tomcat server. Also stops the web service. -->
     <target name="undeploy"
         description="Undeploys the WAR file from the Tomcat server">
-        <antcall target="stop-ws" />
         <ant dir=".." inheritAll="false" target="undeploy">
             <property name="war" value="hierarchView"/>
         </ant>
