@@ -861,30 +861,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             }
             //build a normal Criteria query, if class is cached locally or not (
             //if found locally, would have returned by here)
-            /*if(val.indexOf('*') != -1) {
+            crit = new Criteria();
+            crit.addEqualTo(col, val);
 
-                //search value contains a wildcard - check to see if 'like' or
-                //a full wildacrd search is needed
-                if(val.equals("*")) {
-
-                //wildcard search - setting a null criteria should,
-                    //according to OJB, result in all records retrieved (!)
-                    logger.info("wildcard search requested - using null criteria to get all matches..");
-                }
-                else {
-
-                    //must be a 'like' query...
-                    logger.info("search criteria: looking for " + col + " 'like' " + val);
-                    crit = new Criteria();
-                    crit.addLike(col, val);
-                }
-            }
-            else {*/
-
-                //fully specified search value
-                crit = new Criteria();
-                crit.addEqualTo(col, val);
-            //}
             logger.info("criteria built OK");
             query = new QueryByCriteria(searchClass, crit);
             logger.info("query by criteria built OK: " + type + " " + col + " " + val);
@@ -895,7 +874,12 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //System.gc();
             timer = System.currentTimeMillis();
 
+            //try using broker TXs so Connections are released when commit called -
+            //this is to avoid the oracle 'open cursors' problem. If connection
+            //pooling is used, commit should just release the connection's resources..
+            broker.beginTransaction();
             results = broker.getCollectionByQuery(query);
+            broker.commitTransaction();
 
             tmp = System.currentTimeMillis();
             timer = tmp - timer;
@@ -1450,9 +1434,12 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
     /**
      *   <p>This method provides a means to obtain an Iterator for search results. This
-     * can be useful in web applications, for example, because OJB iterators have access to
-     * results sets which may then be closed by ppassing the iterator back to the
-     * <code>closeResults</code> method. </p>
+     * can be useful if you need direct control over a result set, because OJB iterators have access to
+     * result sets which may then be closed by passing the iterator back to the
+     * <code>closeResults</code> method. Note that this approach will not tidy up
+     * open cursors on an oracle server - the only way to do this seems to be
+     * to close the connection, which is done automatically via the <code>find</code>
+     * method (this is OK if oracle connection pooling is used).</p>
      *
      * @param type - the class name (ie table) to be searched
      * @param col - the parameter (column name) to search on (usually ac number or name)
@@ -1527,7 +1514,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             query = new QueryByCriteria(searchClass, crit);
             logger.info("query by criteria built OK: " + type + " " + col + " " + val);
 
-            //do it
+            //do it - NB can't do the PB TX thing for oracle here, as the
+            //iterator is 'aware' of TXs and so committing will screw up
+            //the iterator. The user has to handle it!
             resultIterator = broker.getIteratorByQuery(query);
 
         } catch (PersistenceBrokerException pbe) {
