@@ -24,11 +24,9 @@ public class Node extends BasicGraph implements NodeI {
         return interactor;
     }
 
-
     public String getAc() {
         return interactor.getAc();
     }
-
 
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -39,8 +37,14 @@ public class Node extends BasicGraph implements NodeI {
                      _ac = node.getAc();
 
         if (ac != null ? !ac.equals(_ac) : _ac != null) return false;
-
         return true;
     }
 
+    public int hashCode() {
+        return getAc().hashCode();
+    }
+
+    public String toString() {
+        return "[Node: "+ getAc() +"]";
+    }
 }

@@ -276,11 +276,11 @@ public final class StatisticsDataSet {
                     filteredStatistics.add( statistics );
             } // for
 
-        return new StatisticsBean( filteredStatistics, databaseName, userName );
-    }
+            return new StatisticsBean( filteredStatistics, databaseName, userName );
+        }
 
-    // full dataset
-    return new StatisticsBean( statistics, databaseName, userName );
-}
+        // full dataset
+        return new StatisticsBean( statistics, databaseName, userName );
+    }
 }
 
