@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- * A simple graph class for temporary processing, e.g. to prepare output for graph analysis packages.
+ * A simple graph class for temporary processing, for example to prepare output for graph analysis packages.
  */
 public interface GraphI extends BasicGraphI {
 

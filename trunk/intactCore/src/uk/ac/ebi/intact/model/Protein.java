@@ -31,7 +31,7 @@ public class Protein extends Interactor {
 /**
  * Represents the CRC64 checksum. This checksum is used to
  * detect potential inconsistencies between the sequence the object
- * refers to and the external sequence object, e.g. when the external
+ * refers to and the external sequence object, for example when the external
  * object has been updated.
  */
     protected String crc64;

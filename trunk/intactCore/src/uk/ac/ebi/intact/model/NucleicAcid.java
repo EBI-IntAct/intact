@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * A nucleic acid sequence.
  * 
- * @todo Further specification.
+ * @intact.todo Further specification.
  * @author hhe
  */
 public class NucleicAcid extends Interactor {

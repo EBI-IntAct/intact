@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * The method by which the Interaction has been determined.
  * 
- * @example co-immunoprecipitation
+ * @intact.example co-immunoprecipitation
  * @author hhe
  */
 public class CvInteraction extends CvObject {

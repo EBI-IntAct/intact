@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * The role of the product.
  * 
- * @example In an enzymatic reaction, one product could be the "modified protein", the other the "enzyme".
+ * @intact.example In an enzymatic reaction, one product could be the "modified protein", the other the "enzyme".
  * @author hhe
  */
 public class CvProductRole extends CvObject {

@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.simpleGraph;
 import java.util.Map;
 
 /**
- * A simple graph package for temporary processing, e.g. to prepare output for graph analysis packages.
+ * A simple graph package for temporary processing, for example to prepare output for graph analysis packages.
  * Extends Map to allow easy implementation of key-value functionality.
  */
 

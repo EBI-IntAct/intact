@@ -22,7 +22,7 @@ public abstract class HighlightmentSource {
 
   /**
    * Provides a implementation of HighlightmentSource by its name.
-   * e.g. you have an implementation of this abstract class called : <b>GoHighlightmentSource</b>.
+   * for example you have an implementation of this abstract class called : <b>GoHighlightmentSource</b>.
    *      so, you could call the following method to get an instance of this class :
    *      <br>
    *      <b>HighlightmentSource.getHighlightmentSource ("mypackage.GoHighlightmentSource");</b>

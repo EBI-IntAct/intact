@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * The subcellular compartment.
  * 
- * @example nucleus
+ * @intact.example nucleus
  * @author hhe
  */
 public class CvCompartment extends CvObject {

@@ -10,8 +10,8 @@ import java.util.*;
 /**
  * An amino acid modification.
  * 
- * @example phosphorylation
- * @todo further specification
+ * @intact.example phosphorylation
+ * @intact.todo further specification
  * @author hhe
  */
 public class Modification extends BasicObject {

@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Represents a type of modification.
  * 
- * @example phosphorylation
+ * @intact.example phosphorylation
  * @author hhe
  */
 public class CvModificationType extends CvObject {

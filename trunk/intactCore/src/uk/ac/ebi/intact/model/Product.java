@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Describes products of an interaction.
  * 
- * @example In a phosphorylation, this object would link to the phosphorylated Protein.
+ * @intact.example In a phosphorylation, this object would link to the phosphorylated Protein.
  * @author hhe
  */
 public class Product extends BasicObject {

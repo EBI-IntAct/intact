@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -9,8 +9,7 @@ import java.util.*;
 
 /**
  * Represents ...
- * 
- * @see OtherClasses
+ *
  * @author Henning Hermjakob
  */
 public class JournalRef extends Reference {
@@ -33,7 +32,7 @@ public class JournalRef extends Reference {
    // associations
 
 /**
- * 
+ *
  */
     public CvJournal cvJournal;
 
@@ -63,7 +62,7 @@ public class JournalRef extends Reference {
 
     public void setCvJournal(CvJournal cvJournal) {
         this.cvJournal = cvJournal;
-    } 
+    }
 
 } // end JournalRef
 

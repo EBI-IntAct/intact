@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * The method by which the Interactors have been detected.
  * 
- * @example "mass spectrometry"
+ * @intact.example "mass spectrometry"
  * @author hhe
  */
 public class CvIdentification extends CvObject {

@@ -26,16 +26,16 @@
 
 -->
 <!-- Connection descriptor for locally running Postgres server -->
-<!-- jdbc-connection-descriptor
+<jdbc-connection-descriptor
    		platform="PostgreSQL"
    		jdbc-level="2.0"
    		driver="org.postgresql.Driver"
    		protocol="jdbc"
    		subprotocol="postgresql"
-		dbalias="DATABASE"
-   		username="USER"
-   		password="PASSWORD"
--->
+		dbalias="hhe"
+   		username="hhe"
+   		password="hhe"
+        />
 <!-- Connection descriptor for remote Oracle database -->
 <!--jdbc-connection-descriptor
    		platform="Oracle"

@@ -97,11 +97,12 @@
                  author="true"
                  version="true"
                  use="true"
-                 overview="${src.dir}/overview.html"
                  windowtitle="Intact core API Documentation"
                  doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
                  bottom="&lt;i>Chris Lewington EMBL-EBI 2002&lt;">
                  <classpath refid="project.class.path"/>
+                 <tag name="intact.todo" description="To do:"/>
+                 <tag name="intact.example" description="Example:"/>
         </javadoc>
     </target>
 
@@ -178,18 +179,18 @@
           <fileset dir="lib">
 	     <include name="struts.jar"/>
 
-	     <include name="jdbc-se2.0.jar"/>	
-	     <include name="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>	
-	     <include name="jta1.0.1.jar"/>	
-	     <include name="jakarta-ojb-0.9.2.jar"/>	
-	     <include name="log4j-1.2.5.jar"/>	
-	     <include name="commons-collections-2.0.jar"/>	
-	     <include name="commons-lang-0.1-dev.jar"/>	
-	     <include name="jdori.jar"/>	
-	     <include name="jmxri.jar"/>	
-	     <include name="jta-spec1_0_1.jar"/>	
-	     <include name="optional.jar"/>	
-	     <include name="p6spy.jar"/>	
+	     <include name="jdbc-se2.0.jar"/>
+	     <include name="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+	     <include name="jta1.0.1.jar"/>
+	     <include name="jakarta-ojb-0.9.2.jar"/>
+	     <include name="log4j-1.2.5.jar"/>
+	     <include name="commons-collections-2.0.jar"/>
+	     <include name="commons-lang-0.1-dev.jar"/>
+	     <include name="jdori.jar"/>
+	     <include name="jmxri.jar"/>
+	     <include name="jta-spec1_0_1.jar"/>
+	     <include name="optional.jar"/>
+	     <include name="p6spy.jar"/>
 
 	     <include name="PngEncoder.jar"/>
 

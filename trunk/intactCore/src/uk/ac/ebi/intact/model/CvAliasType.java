@@ -9,8 +9,8 @@ import java.util.*;
 
 /**
  * The type of the alias.
- * @example "common name"
- * @example "misspelling"
+ * @intact.example "common name"
+ * @intact.example "misspelling"
  * 
  * @author hhe
  */

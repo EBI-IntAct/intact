@@ -82,7 +82,7 @@ import java.sql.PreparedStatement;
  *
  * IDs are unique across all classes.
  *
- * @author: hhe .adapted to postgresql DBMS by Z.Tassamart
+ * @author hhe .adapted to postgresql DBMS by Z.Tassamart
  */
 
 

@@ -11,8 +11,8 @@ import java.util.*;
  * The role of the specific substrate in the
  * interaction.
  * 
- * @example bait
- * @example prey
+ * @intact.example bait
+ * @intact.example prey
  * @author hhe
  */
 public class CvComponentRole extends CvObject {

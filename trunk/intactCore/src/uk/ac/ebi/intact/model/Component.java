@@ -12,7 +12,7 @@ import java.util.*;
  * participates in an interaction.
  * 
  * The same interactor may participate more than once,
- * e.g. to describe different roles of the Interactors. 
+ * for example to describe different roles of the Interactors. 
  * However, simple multimers should be expressed by
  * the relativeQuantity attribute.
  * 
@@ -30,7 +30,7 @@ public class Component extends BasicObject {
 /**
  * Represents the relative quantitity of the interactor
  * participating in the interaction. Default is one. 
- * To describe e.g. a homodimer, an interaction might have
+ * To describe for example a homodimer, an interaction might have
  * only one substrate, but the relative quantity would be 2.
  */
     protected float stoichiometry = 1;

@@ -34,7 +34,7 @@ public class Experiment extends AnnotatedObject {
  * One experiment should group all interactions from a publication
  * which have been performed under the same conditions.
  * However, one experiment might explicitely involve different
- * conditions, e.g. a time series, or before and after a stimulus.
+ * conditions, for example a time series, or before and after a stimulus.
  * This association can establish this relation.
  *
  * This might be extended into an association class

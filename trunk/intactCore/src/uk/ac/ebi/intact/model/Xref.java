@@ -30,7 +30,7 @@ public class Xref extends BasicObject {
 
 /**
  * Secondary identifier of the database. This will usually be 
- * a meaningful name, e.g. a domain name.
+ * a meaningful name, for example a domain name.
  */
     protected String secondaryId;
 /**

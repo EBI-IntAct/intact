@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * Represents the contact details of a person. 
- * The person may be internal, e.g. a curator, or external, e.g. a submitter.
+ * The person may be internal, for example a curator, or external, e.g. a submitter.
  *
  * @author Henning Hermjakob
  */
@@ -31,13 +31,13 @@ public class Person extends BasicObject {
 
 /**
  * The full, international telephone number. Represented as a String,
- * but should contain only digits and blanks, e.g. 0049 122349 5555.
+ * but should contain only digits and blanks, for example 0049 122349 5555.
  */
     protected String telephone;
 
 /**
  * The full email address.
- * @example test@nowhere.com
+ * @intact.example test@nowhere.com
  */
     protected String email;
 
@@ -47,7 +47,7 @@ public class Person extends BasicObject {
 /**
  * Describes the relationship between a person and his/her
  * institution. A person belongs to zero or one institution,
- * if he/she should have e.g. more than one employer, one
+ * if he/she should have for example more than one employer, one
  * must be chosen.
  */
     public Institution institution;

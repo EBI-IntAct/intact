@@ -82,7 +82,7 @@ import java.sql.PreparedStatement;
  *
  * IDs are unique across all classes.
  *
- * @author: hhe
+ * @author hhe
  */
 public class DbSequenceManager implements SequenceManager {
 

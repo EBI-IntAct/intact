@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.simpleGraph;
@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.model.BasicObject;
 import java.util.*;
 
 /**
- * A simple graph class for temporary processing, e.g. to prepare output for graph analysis packages.
+ * A simple graph class for temporary processing, for example to prepare output for graph analysis packages.
  */
 public class Graph extends BasicGraph implements GraphI {
 

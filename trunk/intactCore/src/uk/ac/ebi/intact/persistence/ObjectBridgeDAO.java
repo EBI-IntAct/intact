@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -482,7 +482,7 @@ public class ObjectBridgeDAO implements DAO {
     }
 
     /**
-     *   @see uk.ac.ebi.intact.peresistence.DAO
+     *   @see uk.ac.ebi.intact.persistence.DAO
      * Note: the local cache of non-PK fields is not currently used in this method (to do)
      */
     public Collection find(Object obj) throws SearchException, TransactionException, DataSourceException {

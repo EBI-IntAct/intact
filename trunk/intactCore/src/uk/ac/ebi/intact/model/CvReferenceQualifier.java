@@ -11,11 +11,11 @@ import java.util.*;
  * Terms in this controlled vocabulary qualify the association between an
 * AnnotatedObject and a Reference.
 *
-* @example states
+* @intact.example states
 *
-* @example disputes
-* @example supports
-* @example describes
+* @intact.example disputes
+* @intact.example supports
+* @intact.example describes
 *
 * @author hhe
  */

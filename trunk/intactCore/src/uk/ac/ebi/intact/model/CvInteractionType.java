@@ -10,8 +10,8 @@ import java.util.*;
 /**
  * The type of interaction.
  * 
- * @example binary interaction
- * @example phosphorylation
+ * @intact.example binary interaction
+ * @intact.example phosphorylation
  * @author hhe
  */
 public class CvInteractionType extends CvObject {

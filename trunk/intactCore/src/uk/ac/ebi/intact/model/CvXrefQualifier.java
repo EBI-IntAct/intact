@@ -10,8 +10,8 @@ import java.util.*;
 /**
  * Terms in this controlled vocabulary class qualify the association
  * between AnnotatedObject and Xref.
- * @example identical
- * @example homologue
+ * @intact.example identical
+ * @intact.example homologue
  *
  * @author hhe
  */

@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -10,8 +10,7 @@ import java.util.*;
 
 /**
  * Represents ...
- * 
- * @see OtherClasses
+ *
  * @author Henning Hermjakob
  */
 public class SubmissionRef extends Reference {
@@ -29,7 +28,7 @@ public class SubmissionRef extends Reference {
    // associations
 
 /**
- * 
+ *
  */
     public Reference reference;
 
@@ -54,9 +53,9 @@ public class SubmissionRef extends Reference {
     public void setReference(Reference reference) {
         if (this.reference != reference) {
             this.reference = reference;
-            if (reference != null) reference.setSubmissionRef(this);  
-        }      
-    } 
+            if (reference != null) reference.setSubmissionRef(this);
+        }
+    }
 
 } // end SubmissionRef
 

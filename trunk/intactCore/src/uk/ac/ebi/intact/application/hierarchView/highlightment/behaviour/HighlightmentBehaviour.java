@@ -22,7 +22,7 @@ public abstract class HighlightmentBehaviour {
 
   /**
    * Provides a implementation of HighlightmentBehaviour by its name.
-   * e.g. you have an implementation of this abstract class called : <b>ColorHighlightmentBehaviour</b>.
+   * for example you have an implementation of this abstract class called : <b>ColorHighlightmentBehaviour</b>.
    *      so, you could call the following method to get an instance of this class :
    *      <br>
    *      <b>HighlightmentBehaviour.getHighlightmentBehaviour ("mypackage.ColorHighlightmentBehaviour");</b>
@@ -62,7 +62,7 @@ public abstract class HighlightmentBehaviour {
 
 /**
    * Allow to apply a modification on the collection. 
-   * e.g. Select all the graph protein which are not in the given collection
+   * for example Select all the graph protein which are not in the given collection
    *
    * The default behaviour of that method is to return the given Collection,
    * to change that you have to overwrite that method int your implementation.

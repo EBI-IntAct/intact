@@ -19,7 +19,7 @@ public abstract class AnnotatedObject extends BasicObject {
 
 
 /**
- * Short name for the object, not necessarily unique. To be used e.g.
+ * Short name for the object, not necessarily unique. To be used for example
  * in minimised displays of the object.
  */
     protected String shortLabel;
