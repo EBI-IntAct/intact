@@ -11,26 +11,14 @@
   --%>
 
 <%@ page language="java"%>
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/struts-nested.tld" prefix="nested"%>
-
-<jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
-
-<c:set var="viewbean" value="${user.view}"/>
-
-<%-- Class wide declarations. --%>
-<%!
-    String formName = EditorConstants.FORM_INTERACTION_EXP_HOLD;
-%>
 
 <h3>Experiments not yet added to the Interaction</h3>
 
-<c:if test="${not empty viewbean.holdExperiments}">
+<c:if test="${not empty intHoldExpForm.experiments}">
 
     <html:form action="/interaction/experiment/hold">
         <table width="100%" border="0" cellspacing="1" cellpadding="2">
@@ -43,7 +31,7 @@
             </tr>
             <%-- To calculate odd or even row --%>
             <c:set var="row"/>
-            <nested:iterate name="<%=formName%>" property="items">
+            <c:forEach var="experiments" items="${intHoldExpForm.experiments}">
                 <%-- Different styles for even or odd rows --%>
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
@@ -69,18 +57,18 @@
                     </td>
 
                     <td class="tableCell">
-                        <nested:write property="shortLabelLink" filter="false"/>
+                        <bean:write name="experiments" property="shortLabelLink" filter="false"/>
                     </td>
                     <td class="tableCell">
                     </td>
                     <td class="tableCell">
-                        <nested:write property="ac"/>
+                        <bean:write name="experiments" property="ac"/>
                     </td>
                     <td class="tableCell">
-                        <nested:write property="fullName"/>
+                        <bean:write name="experiments" property="fullName"/>
                     </td>
                 </tr>
-            </nested:iterate>
+            </c:forEach>
         </table>
     </html:form>
 </c:if>

@@ -11,25 +11,20 @@
   --%>
 
 <%@ page language="java"%>
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.view.EditBean,
-                 uk.ac.ebi.intact.application.editor.struts.view.EditForm,
-                 uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinBean,
-                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/struts-nested.tld" prefix="nested"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-<c:set var="viewbean" value="${user.view}"/>
+<c:set var="view" value="${user.view}"/>
 
 <%-- Menus to edit a Protein --%>
-<c:set var="rolelist" value="${viewbean.editProteinRoleMenu}"/>
+<c:set var="rolelist" value="${view.editProteinRoleMenu}"/>
 <%-- Menu to add a new Protein --%>
-<c:set var="rolelist_" value="${viewbean.addProteinRoleMenu}"/>
+<c:set var="rolelist_" value="${view.addProteinRoleMenu}"/>
 
 <style type="text/css">
     td.proteinEditCell {
@@ -46,18 +41,9 @@
     }
 </style>
 
-<%-- Class wide declarations. --%>
-<%!
-    String formName = EditorConstants.FORM_INTERACTION_PROT;
-    String viewState = EditBean.VIEW;
-    String saveState = EditBean.SAVE;
-    String saveNewState = ProteinBean.SAVE_NEW;
-    String errorState = ProteinBean.ERROR;
-%>
-
 <h3>Proteins</h3>
 
-<c:if test="${not empty viewbean.proteins}">
+<c:if test="${not empty intProtEditForm.proteins}">
 
     <html:form action="/interaction/protein/edit">
         <table width="100%" border="0" cellspacing="1" cellpadding="2">
@@ -76,7 +62,7 @@
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
-            <nested:iterate name="<%=formName%>" property="items">
+            <c:forEach var="proteins" items="${intProtEditForm.proteins}">
                 <%-- Different styles for even or odd rows --%>
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
@@ -87,22 +73,30 @@
                     </c:otherwise>
                 </c:choose>
 
-                    <%-- Fill with appropriate color --%>
-                    <nested:equal property="editState" value="<%=viewState%>">
-                        <td class="tableCell" rowspan="2"/>
-                    </nested:equal>
+                <c:if test="${proteins.editState == 'editing'}" var="edit"/>
+                <c:if test="${proteins.editState != 'editing'}" var="notEdit"/>
+                <c:if test="${proteins.editState == 'saving'}" var="save"/>
+                <c:if test="${proteins.editState == 'saveNew'}" var="saveNew"/>
+                <c:if test="${proteins.editState == 'error'}" var="error"/>
 
-                    <nested:equal property="editState" value="<%=saveState%>">
-                        <td class="proteinEditCell" rowspan="2"/>
-                    </nested:equal>
+                <%-- Fill with appropriate color; simply sets the color for the
+                     cell; no information is displayed yet.
+                --%>
+                <c:if test="${edit}">
+                    <td class="tableCell" rowspan="2"/>
+                </c:if>
 
-                    <nested:equal property="editState" value="<%=saveNewState%>">
-                        <td class="proteinEditCell" rowspan="2"/>
-                    </nested:equal>
+                <c:if test="${save}">
+                    <td class="proteinEditCell" rowspan="2"/>
+                </c:if>
 
-                    <nested:equal property="editState" value="<%=errorState%>">
-                        <td class="proteinErrorCell" rowspan="2"/>
-                    </nested:equal>
+                <c:if test="${saveNew}">
+                    <td class="proteinEditCell" rowspan="2"/>
+                </c:if>
+
+                <c:if test="${error}">
+                    <td class="proteinErrorCell" rowspan="2"/>
+                </c:if>
 
                    <%-- Delete button: common to all --%>
                     <td class="tableCell">
@@ -113,16 +107,16 @@
                     </td>
 
                     <td class="tableCell">
-                        <nested:write property="shortLabelLink" filter="false"/>
+                        <bean:write name="proteins" property="shortLabelLink" filter="false"/>
                     </td>
                     <td class="tableCell">
-                        <nested:write property="spAc"/>
+                        <bean:write name="proteins" property="spAc"/>
                     </td>
                     <td class="tableCell">
-                        <nested:write property="ac"/>
+                        <bean:write name="proteins" property="ac"/>
                     </td>
                     <td class="tableCell" rowspan="2">
-                        <nested:write property="fullName"/>
+                        <bean:write name="proteins" property="fullName"/>
                     </td>
                 </tr>
                     <%-- Buttons; Edit or Save depending on the bean state;
@@ -137,86 +131,75 @@
                         <tr class="tableRowOdd">
                     </c:otherwise>
                 </c:choose>
+
+                <!-- Increment row by 1 -->
                 <c:set var="row" value="${row + 1}"/>
 
                     <%-- Buttons --%>
                     <td class="tableCell">
-                        <nested:equal property="editState" value="<%=viewState%>">
+                        <c:if test="${edit}">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="int.proteins.button.edit.titleKey">
                                 <bean:message key="button.edit"/>
                             </html:submit>
-                        </nested:equal>
+                        </c:if>
 
-                        <nested:notEqual property="editState" value="<%=viewState%>">
+                        <c:if test="${notEdit}">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="int.proteins.button.save.titleKey">
                                 <bean:message key="button.save"/>
                             </html:submit>
-                        </nested:notEqual>
+                        </c:if>
                     </td>
 
                     <%-- Data --%>
-                    <nested:equal property="editState" value="<%=viewState%>">
+                    <c:if test="${edit}">
                         <td class="tableCell">
-                            <nested:write property="role"/>
+                            <bean:write name="proteins" property="role"/>
                         </td>
                         <td class="tableCell">
-                            <nested:write property="stoichiometry"/>
+                            <bean:write name="proteins" property="stoichiometry"/>
                         </td>
-                    </nested:equal>
+                    </c:if>
 
-                    <nested:equal property="editState" value="<%=saveState%>">
+                    <c:if test="${save}">
                         <td class="tableCell">
-                            <nested:select property="role">
-                                <nested:options name="rolelist" />
-                            </nested:select>
+                            <html:select name="proteins" property="role" indexed="true">
+                                <html:options name="rolelist" />
+                            </html:select>
                         </td>
                         <td class="tableCell">
-                            <nested:text size="5" property="stoichiometry"/>
+                            <html:text name="proteins" size="5" property="stoichiometry" indexed="true"/>
                         </td>
-                    </nested:equal>
+                    </c:if>
 
-                    <nested:equal property="editState" value="<%=saveNewState%>">
+                    <c:if test="${saveNew}">
                         <td class="tableCell">
-                            <nested:select property="role">
-                                <nested:options name="rolelist_" />
-                            </nested:select>
+                            <html:select name="proteins" property="role" indexed="true">
+                                <html:options name="rolelist_" />
+                            </html:select>
                         </td>
                         <td class="tableCell">
-                            <nested:text size="5" property="stoichiometry"/>
+                            <html:text name="proteins" size="5" property="stoichiometry" indexed="true"/>
                         </td>
-                    </nested:equal>
+                    </c:if>
 
-                    <nested:equal property="editState" value="<%=errorState%>">
+                    <c:if test="${error}">
                         <td class="tableCell">
-                            <nested:select property="role">
-                                <nested:options name="rolelist_" />
-                            </nested:select>
-<%--                            <html:errors property="protein.role"/>--%>
+                            <html:select name="proteins" property="role" indexed="true">
+                                <html:options name="rolelist_" />
+                            </html:select>
                         </td>
                         <td class="tableCell">
-                            <nested:text size="5" property="stoichiometry"/>
+                            <html:text name="proteins" size="5" property="stoichiometry" indexed="true"/>
                         </td>
-                    </nested:equal>
+                    </c:if>
 
                     <td class="tableCell">
-                        <nested:write property="organism"/>
+                        <bean:write name="proteins" property="organism"/>
                     </td>
                 </tr>
-
-                <%-- Error for Protein is displayed in a separate row. --%>
-<%--                <nested:equal property="editState" value="<%=errorState%>">--%>
-<%--                    <nested:notEmpty property="error">--%>
-<%--                        <tr>--%>
-<%--                            <td class="tableErrorCell" colspan="4">--%>
-<%--                                <nested:write property="error"/>--%>
-<%--                            </td>--%>
-<%--                        </tr>--%>
-<%--                    </nested:notEmpty>--%>
-<%--                </nested:equal>--%>
-
-            </nested:iterate>
+            </c:forEach>
         </table>
     </html:form>
 </c:if>

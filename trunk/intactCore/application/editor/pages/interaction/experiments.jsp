@@ -17,16 +17,6 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
-<%--<jsp:useBean id="user" scope="session"--%>
-<%--    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>--%>
-
-<%--<c:set var="viewbean" value="${user.view}"/>--%>
-
-<%-- Class wide declarations. --%>
-<%!
-//    String formName = EditorConstants.FORM_INTERACTION_EXP;
-%>
-
 <h3>Experiments</h3>
 
 <c:if test="${not empty intExpForm.experiments}">

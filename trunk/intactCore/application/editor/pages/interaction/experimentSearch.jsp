@@ -7,14 +7,13 @@
   -->
 
 <%--
-  - The page to search for Experiments.
+  - The page to search for Experiments (from an Interaction editor).
   --%>
 
 <%@ page language="java"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
 
 <html:form action="/interaction/experiment/search">
@@ -49,16 +48,5 @@
                 <html:text property="ac" size="20" maxlength="20"/>
             </td>
         </tr>
-
-        <%-- Prints all the error messages relevant to this page only. --%>
-<%--        <logic:messagesPresent property="int.exp.search">--%>
-<%--            <tr class="tableRowOdd">--%>
-<%--                <td class="tableErrorCell" colspan="5">--%>
-                    <%-- Filter out other error messages. --%>
-<%--                    <html:errors/>--%>
-<%--                </td>--%>
-<%--            </tr>--%>
-<%--        </logic:messagesPresent>--%>
-<%----%>
     </table>
 </html:form>
