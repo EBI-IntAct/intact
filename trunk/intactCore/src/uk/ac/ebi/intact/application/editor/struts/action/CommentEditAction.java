@@ -48,32 +48,48 @@ public class CommentEditAction extends AbstractEditorAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        EditForm theForm = (EditForm) form;
+        EditForm editform = (EditForm) form;
 
+//        DynaActionForm dynaform = (DynaActionForm) form;
         // The current view of the edit session.
         EditUserI user = super.getIntactUser(request);
-        AbstractEditViewBean viewbean = user.getView();
+        AbstractEditViewBean view = user.getView();
 
+//        CommentBean[] beans = (CommentBean[]) dynaform.get("comments");
+//        for (int i = 0; i < beans.length; i++) {
+//            CommentBean cb = beans[i];
+//            System.out.println("Processing bean " + cb.getTopic() + " and " + cb.getDescription());
+//            if (cb.savePressed()) {
+//                view.addAnnotationToUpdate(cb);
+//            }
+//            else if (cb.deletePressed()) {
+//                view.delAnnotation(cb);
+//            }
+//        }
         // The bean associated with the current action.
-        int index = theForm.getIndex();
-        CommentBean cb = viewbean.getAnnotation(index);
+        int index = editform.getIndex();
+//        Object[] beans = editform.getItems();
+//        for (int i = 0; i < beans.length; i++) {
+//            System.out.println("BEAN: " + i + " - " + ((CommentBean) beans[i]).getTopic());
+//        }
+        CommentBean cb = view.getAnnotation(index);
 
         // We must have the annotation bean.
         assert cb != null;
 
-        if (theForm.editPressed()) {
+        if (editform.editPressed()) {
             // Must save this bean.
             cb.setEditState(EditBean.SAVE);
         }
-        else if (theForm.savePressed()) {
+        else if (editform.savePressed()) {
             // The annotation to update.
-            viewbean.addAnnotationToUpdate(cb);
+            view.addAnnotationToUpdate(cb);
             // Back to the view mode.
             cb.setEditState(EditBean.VIEW);
         }
-        else if (theForm.deletePressed()) {
+        else if (editform.deletePressed()) {
             // Delete is pressed.
-            viewbean.delAnnotation(cb);
+            view.delAnnotation(cb);
         }
         else {
             // Unknown operation; should never get here.
