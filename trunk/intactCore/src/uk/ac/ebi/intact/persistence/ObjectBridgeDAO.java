@@ -24,9 +24,6 @@ import org.apache.ojb.broker.metadata.*;
 
 //ODMG
 import org.odmg.*;
-//import org.apache.ojb.odmg.locking.*;
-//import org.apache.ojb.odmg.collections.*;
-//import org.apache.ojb.odmg.oql.*;
 import org.apache.ojb.odmg.*;
 
 import uk.ac.ebi.intact.*;
@@ -179,7 +176,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //restored.
             //NB does this mean we lose transactions?....
             try {
-
+                logger.debug("db class is null, reopening.....before open()");
                 this.open();
 
                 //get the current transaction back as it couldn't be serialised..
@@ -280,12 +277,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             //check for a user/password override of default
             if(user != null) {
-
                 db.open(connectionDetails, Database.OPEN_READ_WRITE);
                 broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile, user, password));
             }
             else {
-
                 //should creeate based on default user details
                 db.open("config/repository.xml", Database.OPEN_READ_WRITE);
                 broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile));
@@ -358,6 +353,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         try {
 
             if(isActive()) {
+                logger.debug("Transaction already started");
 
                 //create called as part of another TX, so lock it
                 //note that the lock for write flag tells ODMG to write upon commit
@@ -368,6 +364,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 tx.lock(obj, tx.WRITE);
             }
             else {
+                logger.debug("Starting Local Transaction");
 
                 //run a local transaction
                 tx1 = odmg.newTransaction();
@@ -385,12 +382,12 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         catch(Exception e) {
 
             if (localTx) {
-
                 //local transaction failed - should rollback here..
                 logger.error("aborting local TX");
                 logger.error(e);
                 tx1.abort();
             }
+            logger.debug("Exception from create", e);
             //Question: if the op fails, should the client TX abort too?...
             String msg = "create failed for object of type " + obj.getClass().getName();
             throw new CreateException(msg, e);
@@ -435,6 +432,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
              //3) copy the new data into it (harder than it sounds!!)
              //4) commit
              //
+             broker.removeFromCache(obj);
              logger.debug("doing update - searching for old data...");
              dummy = broker.getObjectByIdentity(new Identity(obj));
              if(dummy == null) {
@@ -450,12 +448,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                      //NB ODMG associates the current thread with a TX, so we
                     //should join the TX just in case the thread has changed since
                     //the client begin() was called...
-                     logger.debug("client transaction detected - locking retrieved object for write..");
+                    logger.debug("client transaction detected - locking retrieved object for write..");
                     tx.join();
                     tx.lock(dummy, tx.WRITE);
                  }
                  else {
-
                      //start a local TX
                      logger.debug("beginning local transaction - locking object for write...");
                      tx1 = odmg.newTransaction();
@@ -465,7 +462,36 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                  }
 
                  //do some reflection/security stuff so we can set the fields to new values..
-                 Field[] fields = dummy.getClass().getDeclaredFields();
+
+                 //first though, need to get all the superclasses as we don't get them directly from a Class object...
+
+                 Collection superClasses = new ArrayList();
+                 Class tester = dummy.getClass();
+                 logger.debug("getting classes - first class is " + tester.getName());
+                 while(tester != Object.class) {
+
+                    logger.debug("superclass added to collection: " + tester.getName());
+                    superClasses.add(tester);
+
+                     //now get the next parent up
+                     tester = tester.getSuperclass();
+                 }
+
+                 logger.debug("parent classes obtained - getting all fields in hierarchy...");
+                 Collection fieldList = new ArrayList();
+                 Iterator it = superClasses.iterator();
+                 while(it.hasNext()) {
+                     Field[] superclassFields = ((Class)it.next()).getDeclaredFields();
+                     for(int i=0; i < superclassFields.length; i++) {
+                         logger.debug("field name: " + superclassFields[i].getName());
+                         fieldList.add(superclassFields[i]);
+                     }
+                 }
+
+                 //convert list of fields to an array, as EccessibleObject needs
+                 //an array of AccessibleObjects as a param
+                 logger.debug("converting field list to array for security processing...");
+                 Field[] fields = (Field[]) fieldList.toArray(new Field[0]);
 
                  try {
                      //set the permissions on the fields - if this ever fails (eg if a
@@ -480,6 +506,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                  //now update them..
                  Object value = null;
+                 logger.debug("The number of fields: " + fields.length);
                  for(int i=0; i < fields.length; i++) {
 
                      try {
@@ -936,7 +963,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         }
 
 
-
+    public void removeFromCache(Object object) {
+        broker.removeFromCache(object);
+    }
 
 
 
