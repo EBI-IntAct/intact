@@ -16,15 +16,22 @@ public interface IntactUserIF
         extends uk.ac.ebi.intact.application.commons.business.IntactUserI {
 
     public void setHelpLink(String link);
+
     public String getHelpLink();
 
     public void setSearchValue(String value);
+
     public String getSearchValue();
 
     public void setSearchClass(String searchClass);
+
     public String getSearchClass();
 
-    public int getSelectedChunk ();
+    public int getSelectedChunk();
 
-    public void setSelectedChunk ( int selectedChunk );
+    public void setSelectedChunk(int selectedChunk);
+
+    public String getBinaryValue();
+
+    public void setBinaryValue(String binaryValue);
 }
