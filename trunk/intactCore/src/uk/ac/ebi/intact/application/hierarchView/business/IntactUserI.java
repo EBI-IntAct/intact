@@ -7,14 +7,12 @@ package uk.ac.ebi.intact.application.hierarchView.business;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
 import javax.servlet.http.HttpSessionBindingListener;
 import java.util.Collection;
 import java.io.Serializable;
-import java.net.URL;
 
 /**
  * This interface stores information about an Intact Web user session. Instead of
@@ -86,7 +84,7 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener {
      * If an Interaction has more than two interactors, it has to be defined how pairwise interactions
      * are generated from the complex data. The possible values are defined in the beginning of this file.
      *
-     * @param startNode - the start node of the subgraph.
+     * @param in - the interaction network.
      * @param graphDepth - depth of the graph
      * @param experiments - Experiments which should be taken into account
      * @param complexExpansion - Mode of expansion of complexes into pairwise interactions
@@ -95,7 +93,7 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener {
      *
      * @exception IntactException - thrown if problems are encountered
      */
-    public InteractionNetwork subGraph (Interactor startNode,
+    public InteractionNetwork subGraph (InteractionNetwork in,
                                         int graphDepth,
                                         Collection experiments,
                                         int complexExpansion) throws IntactException ;

@@ -16,14 +16,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Vector;
 
 
 /**
  * Purpose :
  * -------
  *            This class allows to tranform a graph to an image (binary content)
- * 
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
@@ -240,7 +239,7 @@ public class DrawGraph {
 
 
         // get the central protein in order to apply a different font
-        Node centralProtein = graph.getCentralProtein();
+        Node centralProtein = graph.getCentralProteinNode();
 
         // update the image dimension according to the proteins coordinates and their size's label
         for (j = 0; j < numberOfProtein; j++) {
@@ -720,7 +719,7 @@ public class DrawGraph {
         int numberOfInteraction = graph.sizeEdges();
 
         ArrayList listOfProtein  = graph.getOrderedNodes();
-        Vector listOfInteraction = (Vector) graph.getEdges();
+        ArrayList listOfInteraction = (ArrayList) graph.getEdges();
 
         EdgeI interaction;
         Node proteinR, proteinL;
@@ -775,13 +774,13 @@ public class DrawGraph {
         // set the central protein as drawn to draw only all others,
         // we'll draw the central protein after
         ArrayList listOfProteins = graph.getOrderedNodes();
-        Node centralProtein = graph.getCentralProtein();
+        Node centralProtein = graph.getCentralProteinNode();
         drawnNode[listOfProteins.indexOf(centralProtein)] = true;
 
         for(int j = 0; j < numberOfProtein; j++) {
             tmp = (Node) listOfProtein.get(j);
-            if(drawnNode[j] == false &&
-                    ((Boolean) tmp.get(Constants.ATTRIBUTE_VISIBLE)).booleanValue() == true) {
+            if (drawnNode[j] == false &&
+                ((Boolean) tmp.get(Constants.ATTRIBUTE_VISIBLE)).booleanValue() == true) {
                 drawNode(tmp, g, fontLabel);
             }
         }

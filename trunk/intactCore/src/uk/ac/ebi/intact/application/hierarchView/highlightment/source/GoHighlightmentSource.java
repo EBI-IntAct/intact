@@ -100,6 +100,19 @@ public class GoHighlightmentSource extends HighlightmentSource {
         // get Xref collection
         Collection xRef = interactor.getXref();
         logger.info(xRef.size() + " Xref found");
+        listGOTerm = filterXref(xRef);
+
+        return listGOTerm;
+    } // getKeysFromIntAct
+
+
+    /**
+     * get a collection of XRef and filter to keep only GO terms
+     * @param xRef the XRef collection
+     * @return a GO term collection or an empty collection if none exists.
+     */
+    private Collection filterXref (Collection xRef) {
+        Collection listGOTerm = new ArrayList ();
         Iterator xRefIterator = xRef.iterator() ;
 
         while (xRefIterator.hasNext() ) {
@@ -115,8 +128,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         }
 
         return listGOTerm;
-    } // getKeysFromIntAct
-
+    }
 
     /**
      * Create a set of protein we must highlight in the graph given in parameter.
@@ -163,7 +175,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         for (int i=0 ; i<size ; i++) {
             Node node = (Node) listOfNode.get(i);
             String ac = node.getAc();
-            logger.info("Checking protein " + ac + " ...");
+//            logger.info("Checking protein " + ac + " ...");
             // Search all GoTerm for this ac number
             Collection listGOTerm = this.getKeysFromIntAct (ac, aSession);
 
@@ -174,10 +186,10 @@ public class GoHighlightmentSource extends HighlightmentSource {
                     goTermInfo = (String[]) list.next();
                     goTerm = goTermInfo[0];
 
-                    logger.info("    Checking if " + selectedGOTerm + ".equals(" + goTerm + ")");
+//                    logger.info("    Checking if " + selectedGOTerm + ".equals(" + goTerm + ")");
                     if (selectedGOTerm.equals(goTerm)) {
                         nodeList.add(node);
-                        logger.info(ac + " added (got " + selectedGOTerm + ")");
+//                        logger.info(ac + " added (got " + selectedGOTerm + ")");
                         break;
                     }
 
@@ -185,10 +197,10 @@ public class GoHighlightmentSource extends HighlightmentSource {
                         Iterator it = children.iterator();
                         while (it.hasNext()) {
                             String newGOTerm = (String) it.next();
-                            logger.info("    Checking if children " + newGOTerm + ".equals(" + goTerm + ")");
+//                            logger.info("    Checking if children " + newGOTerm + ".equals(" + goTerm + ")");
                             if (newGOTerm.equals(goTerm)) {
                                 nodeList.add(node);
-                                logger.info(ac + " added (got " + selectedGOTerm + ")");
+//                                logger.info(ac + " added (got " + selectedGOTerm + ")");
                                 break;
                             }
                         }
@@ -222,10 +234,10 @@ public class GoHighlightmentSource extends HighlightmentSource {
      * Return a collection of URL corresponding to the selected protein and source
      * Here it produce a list of GO terms and format URLs according to the InGO specification.<br>
      *
-     * @param aProteinAC a protein identifier (AC)
+     * @param xRef A collection of xRef
      * @return a set of URL pointing on the highlightment source
      */
-    public List getSourceUrls (String aProteinAC, HttpSession aSession)
+    public List getSourceUrls (Collection xRef)
          throws IntactException {
         List urls = new ArrayList();
 
@@ -248,11 +260,12 @@ public class GoHighlightmentSource extends HighlightmentSource {
             throw new IntactException ();
         }
 
+        // filter to keep only GO terms
+        Collection listGOTerm = filterXref(xRef);
+
         // Create a collection of label-value object (GOterm, URL to access a nice display in interpro)
         String[] goTermInfo;
         String goTerm, goTermDescription;
-
-        Collection listGOTerm = this.getKeysFromIntAct (aProteinAC, aSession);
 
         if (listGOTerm != null && !listGOTerm.isEmpty()) {
             Iterator list = listGOTerm.iterator();
@@ -261,24 +274,22 @@ public class GoHighlightmentSource extends HighlightmentSource {
                 goTerm            = goTermInfo[0];
                 goTermDescription = goTermInfo[1];
 
-                //aSession.getServletContext().getServerInfo();
                 String hierarchViewURL = null; // %24%7Bselected-children%7D%26clicked%3D%24%7Bid%7D
                 try {
+                    // TODO : make the application path found in the runtime.
                     hierarchViewURL = URLEncoder.encode("http://holbein:8080/hierarchView/source.do?keys=${selected-children}&clicked=${id}", "UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
 
                 String url = hostname + "/ingo/ego/DisplayGoTerm?selected=" + goTerm + "&intact=true&format=contentonly&url=" + hierarchViewURL + "&frame=_top"; //graphFrame";
-
-                // http://web7-node1.ebi.ac.uk:9170/ingo/ego/DisplayGoTerm?selected=GO:0005635,GO:0005622&intact=true&format=contentonly&url=http%3A%2F%2Fintact.com%2Fkeys%3D%24%7Bselected-children%7D%26clicked%3D%24%7Bid%7D&frame=framename
-
                 urls.add ( new LabelValueBean (goTerm, url, goTermDescription) );
             }
         }
 
         return urls;
     } // getSourceUrls
+
 
 
     /**
