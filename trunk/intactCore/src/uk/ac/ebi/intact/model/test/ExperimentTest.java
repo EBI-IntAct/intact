@@ -12,6 +12,13 @@ import junit.framework.TestSuite;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.TestCaseHelper;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Tests for Experiments.
@@ -45,7 +52,6 @@ public class ExperimentTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         myTestHelper.setUp();
-
     }
 
     /**
@@ -59,9 +65,13 @@ public class ExperimentTest extends TestCase {
     public void testClone() {
         try {
             doCloneTest();
+            doCloneTest1();
         }
         catch (CloneNotSupportedException cnse) {
             fail(cnse.getMessage());
+        }
+        catch (IntactException ie) {
+            fail(ie.getMessage());
         }
     }
 
@@ -107,5 +117,43 @@ public class ExperimentTest extends TestCase {
         // No related experiments.
         assertNull(orig.getRelatedExperiment());
         assertNull(copy.getRelatedExperiment());
+    }
+
+    // This test uses an experiment already stored on the database.
+    public void doCloneTest1() throws IntactException, CloneNotSupportedException {
+        IntactHelper helper = myTestHelper.getHelper();
+        Experiment orig = (Experiment) helper.getObjectByLabel(Experiment.class,
+                "gavin");
+        Experiment copy = (Experiment) orig.clone();
+        // Short label must have "-x".
+        assertTrue(copy.getShortLabel().endsWith("-x"));
+        assertEquals(orig.getShortLabel() + "-x", copy.getShortLabel());
+
+        // Different copies of Annotations.
+        assertNotSame(orig.getAnnotations(), copy.getAnnotations());
+        assertEquals(transform(orig.getAnnotations()), copy.getAnnotations());
+
+        // Different copies of Xrefs.
+        assertNotSame(orig.getXrefs(), copy.getXrefs());
+        assertEquals(transform(orig.getXrefs()), copy.getXrefs());
+
+        // We should have at least one interaction.
+        assertFalse(orig.getInteractions().isEmpty());
+
+        // The copy shouldn't have any interactions.
+        assertTrue(copy.getInteractions().isEmpty());
+
+        // No related experiments.
+        assertNull(orig.getRelatedExperiment());
+        assertNull(copy.getRelatedExperiment());
+    }
+
+    // Converts ListProxy to proper object for to compare.
+    private List transform(Collection items) {
+        List list = new ArrayList(items.size());
+        for (Iterator iter = items.iterator(); iter.hasNext();) {
+            list.add(iter.next());
+        }
+        return list;
     }
 }
