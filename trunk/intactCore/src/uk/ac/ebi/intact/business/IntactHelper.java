@@ -1951,7 +1951,19 @@ public class IntactHelper implements SearchI, Externalizable {
         return institution;
     }
 
-
+    /**
+     * Returns the real object wrapped around the proxy for given object of
+     * IntactObjectProxy type.
+     * @param obj the object to return the real object from.
+     * @return the real object wrapped around the proxy for given object of
+     * IntactObjectProxy type; otherwise, <code>obj</code> is returned.
+     */
+    public static IntactObject getRealIntactObject(IntactObject obj) {
+        if (IntactObjectProxy.class.isAssignableFrom(obj.getClass())) {
+            return (IntactObject) ((IntactObjectProxy) obj).getRealSubject();
+        }
+        return obj;
+    }
 
     /**
      * Gives the Object classname, give the real object class name if this is a VirtualProxy class
