@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.util;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.application.mine.business.Constants;
 
 import java.sql.*;
 import java.util.*;
@@ -34,9 +35,6 @@ import java.util.*;
  */
 public class MineDatabaseFill {
 
-    // MiNe relevant database table
-    private static final String INTERACTION_TABLE = "ia_interactions";
-
 
     // SQL statement to select all interactors from a specific interaction
     private static final String SELECT_INTERACTOR = "SELECT C.interactor_ac, C.role, I.objclass " +
@@ -49,8 +47,8 @@ public class MineDatabaseFill {
                                                "WHERE B.ac = I.biosource_ac AND I.ac=?";
 
     // SQL statement to insert data in the MiNe database table
-    private static final String INSERT_QUERY = "INSERT INTO " + INTERACTION_TABLE +
-                                               " VALUES(" + "?, ?, ?, ?,1, null)";
+    private static final String INSERT_QUERY = "INSERT INTO " + Constants.INTERACTION_TABLE +
+                                               " VALUES(" + "?, ?, ?, ?, 1, null)";
 
     // SQL statement to select all interactions
     private static final String SELECT_INTERACTIONS = "SELECT ac " +
@@ -76,8 +74,8 @@ public class MineDatabaseFill {
                                                              "      CV.shortlabel = 'negative'";
 
     // SQL statement to delete interactions from the MiNe database table
-    private static final String DELETE_FROM_TABLE = "DELETE FROM " + INTERACTION_TABLE + " " +
-                                                    "WHERE interaction_ac=?";
+    private static final String DELETE_FROM_TABLE = "DELETE FROM " + Constants.INTERACTION_TABLE + " " +
+                                                    "WHERE "+ Constants.COLUMN_interaction_ac +"=?";
 
     // SQL statement to get the accession number for a bait
     private static final String SELECT_BAIT_ID = "SELECT ac FROM ia_controlledvocab " +
@@ -85,18 +83,20 @@ public class MineDatabaseFill {
 
     // SQL statement to select all proteins for a given interactor to get the
     // connecting network
-    private static final String SELECT_PROT = "SELECT protein1_ac,protein2_ac " +
-                                              "FROM " + INTERACTION_TABLE +
-                                              " WHERE (protein1_ac=? OR protein2_ac=?) AND " +
-                                              "       taxid=? AND " +
-                                              "       graphid IS NULL";
+    private static final String SELECT_PROT = "SELECT "+ Constants.COLUMN_protein1_ac +", "+ Constants.COLUMN_protein2_ac +
+                                              " FROM " + Constants.INTERACTION_TABLE +
+                                              " WHERE ("+ Constants.COLUMN_protein1_ac +"=? OR "+
+                                                          Constants.COLUMN_protein2_ac +"=?) AND " +
+                                              "       "+ Constants.COLUMN_taxid +"=? AND " +
+                                              "       "+ Constants.COLUMN_graphid +" IS NULL";
 
     // SQL statement to update the table for the minimal connecting network
-    private static final String UPDATE_GRAPHID = "UPDATE " + INTERACTION_TABLE +
-                                                 " SET graphID=? " +
-                                                 "WHERE (protein1_ac=? OR protein2_ac=?) AND " +
-                                                 "      taxid=? AND " +
-                                                 "      graphid IS NULL";
+    private static final String UPDATE_GRAPHID = "UPDATE " + Constants.INTERACTION_TABLE +
+                                                 " SET "+ Constants.COLUMN_graphid +"=? " +
+                                                 "WHERE ("+ Constants.COLUMN_protein1_ac +"=? OR "+
+                                                            Constants.COLUMN_protein2_ac +"=?) AND " +
+                                                 "      "+ Constants.COLUMN_taxid +"=? AND " +
+                                                 "      "+ Constants.COLUMN_graphid +" IS NULL";
 
     // the graphid is initialised with 0 because with every call of the
     // setGraphBio method
@@ -138,8 +138,7 @@ public class MineDatabaseFill {
             bait_id = set.getString( 1 );
         }
         else {
-            System.err
-                    .println( "no identifier for a bait could be found in the database !" );
+            System.err.println( "no identifier for a bait could be found in the database !" );
             set.close();
             stm.close();
             con.close();
@@ -147,19 +146,17 @@ public class MineDatabaseFill {
         }
         set.close();
         // the existing data is truncated
-        stm.executeUpdate( "DELETE FROM " + INTERACTION_TABLE );
+        stm.executeUpdate( "DELETE FROM " + Constants.INTERACTION_TABLE );
 
         // the inserSTM is a statement to insert the MINE relevant data
-        PreparedStatement insertDataStatement = con
-                .prepareStatement( INSERT_QUERY );
+        PreparedStatement insertDataStatement = con.prepareStatement( INSERT_QUERY );
         System.out.println( "insert interaction data" );
 
         // all interactions are fetched from the interactor table
         ResultSet interactionSet = stm.executeQuery( SELECT_INTERACTIONS );
         // statement to get all interactors with its role of a particular
         // interaction
-        PreparedStatement interactorSelect = con
-                .prepareStatement( SELECT_INTERACTOR );
+        PreparedStatement interactorSelect = con.prepareStatement( SELECT_INTERACTOR );
 
         // statement to get the taxid for a particular interactor
         PreparedStatement taxidSelect = con.prepareStatement( SELECT_TAXID );
@@ -182,6 +179,7 @@ public class MineDatabaseFill {
             interactionAC = interactionSet.getString( 1 ).toUpperCase();
             if ( j++ % 100 == 0 ) {
                 System.out.print( "." );
+                System.out.flush();
             }
             // the lists with the nteractors are cleared to reuse them for the
             // next interaction
@@ -232,8 +230,7 @@ public class MineDatabaseFill {
             // for every interactor an interaction between bait and the
             // interactor is added to the table
             for (int i = interactorStart, n = interactors.size(); i < n; i++) {
-                insertDataStatement
-                        .setString( 2, (String) interactors.get( i ) );
+                insertDataStatement.setString( 2, (String) interactors.get( i ) );
                 insertDataStatement.executeUpdate();
             }
             // if there are more than one bait the interaction between the used
@@ -273,8 +270,7 @@ public class MineDatabaseFill {
         PreparedStatement deleteStm = con.prepareStatement( DELETE_FROM_TABLE );
         Statement stm = con.createStatement();
         // delete all interactions which are annotated negativ
-        System.out.println( "Delete all interactions which have "
-                + "negative information" );
+        System.out.println( "Delete all interactions which have negative information" );
         ResultSet set = stm.executeQuery( DELETE_NEGATIV_ANNOTATION );
         int j = 0;
         while ( set.next() ) {
@@ -282,14 +278,14 @@ public class MineDatabaseFill {
             deleteStm.executeUpdate();
             if ( j++ % 100 == 0 ) {
                 System.out.print( "." );
+                System.out.flush();
             }
         }
         set.close();
         System.out.println();
 
         // delete all interactions which are part of a negative experiment
-        System.out.println( "Delete all interactions which are part "
-                + "of a negative experiment" );
+        System.out.println( "Delete all interactions which are part of a negative experiment" );
 
         set = stm.executeQuery( DELETE_NEGATIV_EXPERIMENTS );
         j = 0;
@@ -298,6 +294,7 @@ public class MineDatabaseFill {
             deleteStm.executeUpdate();
             if ( j++ % 100 == 0 ) {
                 System.out.print( "." );
+                System.out.flush();
             }
         }
         set.close();
@@ -371,7 +368,7 @@ public class MineDatabaseFill {
         // query fetches all entries where the graphid is not set yet
         Statement stm = con.createStatement();
         ResultSet set = stm.executeQuery( "SELECT protein1_ac FROM "
-                + INTERACTION_TABLE + " WHERE graphid IS NULL AND taxid='"
+                + Constants.INTERACTION_TABLE + " WHERE graphid IS NULL AND taxid='"
                 + taxid + "'" );
         // if no result is available the biosource completed
         if ( !set.next() ) {
