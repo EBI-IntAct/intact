@@ -6,106 +6,255 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.application.search3.struts.view.html.HtmlBuilderManager;
-import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.*;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
- * Class allowing to handle the view for a single AnnotatedObject.
- *
- * ************ NOTE (aug 2004): THIS CLASS IS ONLY USED FOR CVOBJECTS **************************
- *
- * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @author Michael Kleen
+ * @version SingleViewBean.java Date: Nov 14, 2004 Time: 9:09:19 PM
  */
-public class SingleViewBean extends AbstractViewBean
-        implements Serializable {
 
-    //---- Attributes needed by all subclasses -----
-
-    /**
-     * Stores the object being wrapped. Mainly used for
-     * alternative display options by other views. This should be overriden
-     * by subclasses wishing to use alternative objects (eg BasicObject).
-     */
-    private AnnotatedObject wrappedObject;
+/**
+ * This class provides JSP view information for a particular AnnotatedObject. Its main purpose is to
+ * provide very simple beans for display in an initial search result page. Currenty the types that
+ * may be displayed with this bean are
+ */
+public class SingleViewBean extends AbstractViewBean {
 
     /**
-     * Constructs an instance of this class from given AnnotatedObject.
-     * @param object an AnnotatedObject to display.
-     * @param link the link to the help page.
-     * @param contextPath the application path
+     * The AnnotatedObject (currently BioSource, CvObjects)
      */
-    public SingleViewBean( AnnotatedObject object, String link, String contextPath ) {
-        super( link, contextPath );
-        if( object == null )
-            throw new NullPointerException( "cannot create view bean without an AnnotatedObject !" );
-        this.wrappedObject = object;
-    }
-
-    //------------ methhods useful to all subclasses --------------------------
+    private final AnnotatedObject obj;
 
     /**
-     * Typically subclasses will return a more 'interesting' instance than Object
-     * @return Object the instance warpped by the bean
+     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for
+     * use by JSPs
      */
-    public AnnotatedObject getWrappedObject() {
-        return this.wrappedObject;
+    private final String searchURL;
+
+    /**
+     * Cached search URL, set up on first request for it.
+     */
+    private String objSearchURL;
+
+    /**
+     * The intact type of the wrapped AnnotatedObject. Note that only the interface types are
+     * relevant for display purposes - thus any concrete 'Impl' types will be considered to be their
+     * interface types in this case (eg a wrapped ProteinImpl will have the intact type of
+     * 'Protein'). Would be nice to get rid of the proxies one day ...:-)
+     */
+    private String intactType;
+
+
+    /**
+     * The bean constructor requires an AnnotatedObject to wrap, plus beans on the context path to
+     * the search application and the help link. The object itself can be any one of Experiment,
+     * Protein, Interaction or CvObject type.
+     *
+     * @param obj         The AnnotatedObject whose beans are to be displayed
+     * @param link        The link to the help pages
+     * @param searchURL   The general URL to be used for searching (can be filled in later).
+     * @param contextPath The path to the search application.
+     */
+    public SingleViewBean(final AnnotatedObject obj, final String link, final String searchURL,
+                          final String contextPath) {
+        super(link, contextPath);
+        this.searchURL = searchURL;
+        this.obj = obj;
     }
 
-    public void setWrappedObject ( AnnotatedObject wrappedObject ) {
-        this.wrappedObject = wrappedObject;
-    }
 
-    public void getHTML( Writer writer ) {
-
-        try {
-            HtmlBuilderManager.getInstance().getHtml(writer,
-                                                     getWrappedObject(),
-                                                     getHighlightMap(),
-                                                     getHelpLink(),
-                                                     getContextPath());
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            try {
-                writer.write( "Could not produce a view for a Protein" );
-            } catch ( IOException e1 ) {
-                e1.printStackTrace ();
-            }
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            try {
-                writer.write( "Could not produce a view for a Protein" );
-            } catch ( IOException e1 ) {
-                e1.printStackTrace ();
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            try {
-                writer.write( "Could not produce a view for a Protein" );
-            } catch ( IOException e1 ) {
-                e1.printStackTrace ();
-            }
-        }
-    }
-
-    // Implements abstract method
-
+    /**
+     * not used ! just here to satified the AbstractViewBean
+     */
     public void initHighlightMap() {
-        Set set  = new HashSet( 1 );
-        set.add( this.wrappedObject.getShortLabel() );
-        setHighlightMap(set);
+
     }
 
+
+    /**
+     * Returns the help section. Needs to be reviewed.
+     */
     public String getHelpSection() {
-        return "single.view";
+        return "protein.single.view";
     }
 
+    /**
+     * This is left over from the earlier version - will be removed. It does nothing here.
+     */
+    public void getHTML(java.io.Writer writer) {
+    };
+
+
+
+    /**
+     * The intact name for an object is its shortLabel. Required in all view types.
+     *
+     * @return String the object's Intact name.
+     */
+    public String getObjIntactName() {
+        return this.obj.getShortLabel();
+    }
+
+    /**
+     * The AnnotatedObject's AC. Required in all view types.
+     *
+     * @return String the AC of the wrapped object.
+     */
+    public String getObjAc() {
+        return this.obj.getAc();
+    }
+
+    /**
+     * This is currently assumed to be the AnnotatedObject's full name. Required by all view types.
+     *
+     * @return String a description of the AnnotatedObject, or a "-" if there is none.
+     */
+    public String getObjDescription() {
+        if (this.obj.getFullName() != null) return this.obj.getFullName();
+        return "-";
+    }
+
+
+    /**
+     * Provides a String representation of a URL to perform a search on this AnnotatedObject's beans
+     * (curently via AC)
+     *
+     * @return String a String representation of a search URL link for the wrapped AnnotatedObject
+     */
+    public String getObjSearchURL() {
+
+        if (objSearchURL == null) {
+            //set it on the first call
+            //NB need to get the correct intact type of the wrapped object
+            objSearchURL = searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType();
+        }
+        return objSearchURL;
+    }
+
+
+    /**
+     * Provides direct access to the wrapped AnnotatedObject itself.
+     *
+     * @return AnnotatedObject The reference to the wrapped object.
+     */
+    public AnnotatedObject getObject() {
+        return this.obj;
+    }
+
+    /**
+     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in
+     * SingleViewBeans for the prasentation in the jsp
+     *
+     * @return Collection of all Anotations wrapped in a SingleViewBean
+     */
+    public Collection getAnnotations() {
+        final ArrayList result = new ArrayList();
+        Collection someAnnotations = this.obj.getAnnotations();
+
+        for (Iterator iterator = someAnnotations.iterator(); iterator.hasNext();) {
+            CvTopic aCvTopic = ((Annotation) iterator.next()).getCvTopic();
+            // TODO REFACTORING
+            // THIS BEAN IS NOT NEEDED ANY MORE
+            /**
+             BioSourceViewBean aSingleViewBean = new        BioSourceViewBean(aCvTopic, this.getHelpLink(),
+             this.searchURL, this.getContextPath());
+             result.add(aSingleViewBean);
+             **/
+        }
+        return result;
+    }
+
+
+    /**
+     * Provides access to Annotations of the CVTopics of the  wrraped AnnotadObject stored in
+     * SingleViewBeans for the prasentation in the jsp
+     *
+     * @return Collection with all Xrefs wrapped in a SingleViewBean
+     */
+    public Collection getXrefs() {
+        final ArrayList result = new ArrayList();
+        final Collection someXrefs = this.obj.getXrefs();
+
+        for (Iterator iterator = someXrefs.iterator(); iterator.hasNext();) {
+            final Xref aXref = ((Xref) iterator.next());
+            final CvDatabase aCvDatabase = aXref.getCvDatabase();
+
+        }
+        return result;
+    }
+
+    /**
+     * Provides the basic Intact type of the wrapped AnnotatedObject (ie no java package beans).
+     * NOTE: only the INTERFACE types are provided as these are the only ones of interest in the
+     * model - display pages are not interested in objects of type XXXImpl. For subclasses of
+     * CvObject we only need 'CvObject' for display purposes.
+     *
+     * @return String The intact type of the wrapped object (eg 'Experiment')
+     */
+    public String getIntactType() {
+
+        if (intactType == null) {
+
+            final String className = obj.getClass().getName();
+            final String basicType = className.substring(className.lastIndexOf(".") + 1);
+
+            intactType = ((basicType.indexOf("Impl") == -1) ?
+                    basicType : basicType.substring(0, basicType.indexOf("Impl")));
+
+        }
+        return intactType;
+
+    }
+
+    /**
+     * @param anAnnotatedObject
+     * @return the SearchUrl to the given AnnotatadObject
+     */
+    public String getSearchUrl(final AnnotatedObject anAnnotatedObject) {
+
+        final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType(
+                anAnnotatedObject);
+        return aSearchURL;
+
+    }
+
+    /**
+     * @return the SearchUrl to the given AnnotatadObject
+     */
+    public String getSearchUrl() {
+
+        final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType(
+                this.obj);
+        return aSearchURL;
+
+    }
+
+    /**
+     * @return the FullName to the given AnnotatedObject
+     */
+    public String getFullname() {
+        return this.obj.getFullName();
+    }
+
+    /**
+     * @param anAnnotatedObject
+     * @return String  the intact type of  the annotedObject
+     */
+    private String getIntactType(final AnnotatedObject anAnnotatedObject) {
+
+        final String objectIntactType;
+        final String className = anAnnotatedObject.getClass().getName();
+        final String basicType = className.substring(className.lastIndexOf(".") + 1);
+
+        objectIntactType = ((basicType.indexOf("Impl") == -1) ?
+                basicType : basicType.substring(0, basicType.indexOf("Impl")));
+
+        return objectIntactType;
+
+    }
 }
+
