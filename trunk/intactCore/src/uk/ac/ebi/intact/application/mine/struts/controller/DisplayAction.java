@@ -119,11 +119,11 @@ public class DisplayAction extends Action {
 				// the graphManager is responsible for building and storing the
 				// graphs it is implemented as a singleton so just one instance
 				// is allowed during runtime.
-				GraphManager graphManager = GraphManager.getInstance(user);
+				GraphManager graphManager = GraphManager.getInstance();
 				// the graph is fetched for the given graphid. As long as there
 				// is no graph given for the graphid the action waits 25ms and
 				// then tries again to retrieve the graph
-				while ((graphData = graphManager.getGraphData(graphid))
+				while ((graphData = graphManager.getGraphData(graphid, user))
 					== null) {
 					try {
 						Thread.sleep(25);
