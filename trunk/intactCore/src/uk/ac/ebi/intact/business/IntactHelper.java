@@ -604,7 +604,7 @@ public class IntactHelper implements SearchI, Serializable {
         Iterator result = null;
         try {
 
-            result = ((ObjectBridgeDAO)dao).iteratorFind(objectType, searchParam, searchValue);
+            result = dao.iteratorFind(objectType, searchParam, searchValue);
 
         } catch (SearchException se) {
 
@@ -618,12 +618,58 @@ public class IntactHelper implements SearchI, Serializable {
     }
 
     /**
+     * Allows access to column data rather than whole objects. This is more of a convenience
+     * method if you want to get at some data without retrieving complete objects.
+     * @param type The name of the object you want data from (fully qualified java name) - must be specified
+     * @param cols The columns (NOT attribute names) that you are interested in - null returns all
+     * @return Iterator an Iterator over all column values, returned as Objects (null if nothing found),
+     * NB if you do not exhaust this Iterator you should make sure datastore resources are
+     * cleaned up by passing it to the <code>closeData</code> method.
+     * @throws IntactException
+     */
+    public Iterator getColumnData(String type, String[] cols) throws IntactException {
+
+        Iterator result = null;
+
+        try {
+            result = dao.findColumnValues(type, cols);
+            return result;
+        }
+        catch(SearchException se) {
+            throw new IntactException("failed to get column data!", se);
+        }
+
+    }
+
+    /**
+     * Allows search by raw SQL String. This should only be used if you are confident
+     * with SQL syntaxt and you know what you are doing - no gurantees are made on the
+     * results (garbage in, garbage out).
+     * @param type The object you are interested in - must be specified
+     * @param sqlString The SQL string you wish to search with
+     * @return Collection The search results, empty if none found
+     * @throws IntactException
+     */
+    public Collection searchBySQL(String type, String sqlString) throws IntactException {
+
+        Collection result = new ArrayList();
+
+        try {
+            result = dao.findBySQL(type, sqlString);
+            return result;
+        }
+        catch(SearchException se) {
+            throw new IntactException("failed to execute SQL string " + sqlString, se);
+        }
+    }
+
+    /**
      * Closes result data.
      * @param items The Iterator used to retrieve the data originally.
      * @exception IllegalArgumentException thrown if the Iterator is an invalid type
      */
     public void closeData(Iterator items) {
-        ((ObjectBridgeDAO)dao).closeResults(items);
+        dao.closeResults(items);
     }
 
 
