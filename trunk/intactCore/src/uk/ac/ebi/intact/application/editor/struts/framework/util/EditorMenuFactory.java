@@ -9,8 +9,11 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
 
 import java.util.*;
+
+import org.apache.ojb.broker.query.Query;
 
 /**
  * The menu factory to generate various menus.
@@ -200,9 +203,7 @@ public class EditorMenuFactory {
         if (mode == 1) {
             menu = convertToAddMenu(key, menu);
         }
-        String[] items = (String[]) menu.toArray(new String[0]);
-        Arrays.sort(items);
-        return Arrays.asList(items);
+        return menu;
     }
 
     /**
@@ -224,15 +225,18 @@ public class EditorMenuFactory {
      */
     private List getMenuList(Class targetClass, IntactHelper helper)
             throws IntactException {
-        // Get all elements of the class
-        Collection elements = helper.search(targetClass.getName(), "ac", "*");
+        // The menu to return.
+        List menu = new ArrayList();
 
-        // The menus to return
-        List menu = new ArrayList(elements.size());
+        // The query factory to get a query.
+        ObjectBridgeQueryFactory qf = ObjectBridgeQueryFactory.getInstance();
 
-        // save all shortLabels
-        for (Iterator i = elements.iterator(); i.hasNext();) {
-            menu.add(((AnnotatedObject) i.next()).getShortLabel());
+        Query query = qf.getMenuBuildQuery(targetClass);
+        Iterator iter = helper.getIteratorByReportQuery(query);
+        
+        while (iter.hasNext()) {
+            Object[] row = (Object[])iter.next();
+            menu.add(row[0]);
         }
         return menu;
     }
