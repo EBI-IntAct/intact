@@ -449,12 +449,4 @@
         <ant dir=".." inheritAll="false" target="stop-tomcat"/>
     </target>
 
-    <!-- =================================================================== -->
-
-    <!-- Restarts the Tomcat server. -->
-
-    <target name="restart-tom">
-        <ant dir=".." inheritAll="false" target="restart-tomcat"/>
-    </target>
-
 </project>
