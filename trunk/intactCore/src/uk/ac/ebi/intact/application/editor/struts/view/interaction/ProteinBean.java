@@ -219,6 +219,13 @@ public class ProteinBean extends EditBean implements Serializable {
         return myDeleteFlag;
     }
 
+    public void update(EditUserI user) throws SearchException {
+        CvComponentRole role = (CvComponentRole) user.getObjectByLabel(
+                    CvComponentRole.class, myRole);
+        myComponent.setCvComponentRole(role);
+        myComponent.setStoichiometry(myStoichiometry);
+    }
+
     // Helper methods
 
     private void setOrganism(Interactor interact) {
