@@ -12,11 +12,9 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.XrefTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.DOMUtil;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.CvInteractionType;
 
 /**
- * That class .
+ * That class converts the XML DOM to an object.
  * 
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -24,34 +22,14 @@ import uk.ac.ebi.intact.model.CvInteractionType;
 public class InteractionTypeParser {
 
     /**
-     * Process a <interactionType>.
+     * Process a &lt;interactionType&gt;.
      * <br>
      * In order to map it to the IntAct data, we look for the psi-mi <code>primaryRef</code>,
      * and look-up in intact using its <code>id</code>.
-     * <br>
-     * If that <code>CvInteractionType</code> exists, return it.
-     * Else throw an Exception.
-     * <p/>
-     * <pre>
-     * &lt;interactionType&gt;
-     *      &lt;names&gt;
-     *          &lt;shortLabel&gt;popipo&lt;/shortLabel&gt;
-     *          &lt;fullName&gt;tralala&lt;/fullName&gt;
-     *      &lt;/names&gt;
-     *      &lt;xref&gt;
-     *       <b>   &lt;primaryRef db="psi-mi" id="<font color="red">MI:0123</font>"
-     *              secondary="" version="" /&gt; </b>
-     *          &lt;secondaryRef db="pubmed" id="10504710"
-     *              secondary="" version="" /&gt;
-     *      &lt;/xref&gt;
-     * &lt;/interactionType&gt;
-     * </pre>
-     * Here, we should be looking for a CvInteractionType that have a psi Xref and a primaryId equals to MI:0123.
      *
      * @param element &lt;interactionType&gt;.
-     * @return an IntAct <code>CvInteractionType</code> if the XML contains a walid psi-mi descriptor.
-     * @throws IntactException
-     * @see CvInteractionType
+     * @return a <code>InteractionTypeTag</code> if the XML contains a walid psi-mi descriptor.
+     * @see uk.ac.ebi.intact.application.dataConversion.psiUpload.model.InteractionTypeTag
      */
     public static InteractionTypeTag process( final Element element ) {
 
