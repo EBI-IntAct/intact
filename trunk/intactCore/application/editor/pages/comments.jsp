@@ -11,13 +11,10 @@
   --%>
 
 <%@ page language="java"%>
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
-                 uk.ac.ebi.intact.application.editor.struts.view.EditBean"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/struts-nested.tld" prefix="nested"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
@@ -26,16 +23,9 @@
 <c:set var="view" value="${user.view}"/>
 <c:set var="topiclist" value="${view.editTopicMenu}"/>
 
-<%-- Class wide declarations. --%>
-<%!
-    String formName = EditorConstants.FORM_COMMENT_EDIT;
-    String viewState = EditBean.VIEW;
-    String saveState = EditBean.SAVE;
-%>
-
 <h3>Annotations</h3>
 
-<c:if test="${not empty view.annotations}">
+<c:if test="${not empty commentEditForm.items}">
 
     <html:form action="/comment/edit">
         <table width="80%" border="0" cellspacing="1" cellpadding="2">
@@ -52,8 +42,6 @@
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
-<%--            <logic:iterate id="annots" name="commentEditForm" property="items">--%>
-<%--                type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean">--%>
             <c:forEach var="items" items="${commentEditForm.items}">
                 <!-- Different styles for even or odd rows -->
                 <c:choose>
@@ -64,64 +52,60 @@
                         <tr class="tableRowOdd">
                     </c:otherwise>
                 </c:choose>
+
+                <!-- Increment row by 1 -->
                 <c:set var="row" value="${row + 1}"/>
 
-                    <%-- Buttons; Edit or Save depending on the bean state;
-                         Delete is visible regardless of the state.
-                     --%>
-                    <td class="tableCell">
-<%--                        <logic:equal property="editState" value="<%=viewState%>">--%>
-                        <c:if test="${items.editState == 'editing'}">
-                            <html:submit indexed="true" property="cmd"
-                                titleKey="annotations.button.edit.titleKey">
-                                <bean:message key="button.edit"/>
-                            </html:submit>
-                        </c:if>
-<%--                        </logic:equal>--%>
+                <c:if test="${items.editState == 'editing'}" var="edit"/>
+                <c:if test="${items.editState == 'saving'}" var="save"/>
 
-                        <c:if test="${items.editState == 'saving'}">
-<%--                        <logic:equal property="editState" value="<%=saveState%>">--%>
-                            <html:submit indexed="true" property="cmd"
-                                titleKey="annotations.button.save.titleKey">
-                                <bean:message key="button.save"/>
-                            </html:submit>
-                        </c:if>
-<%--                        </logic:equal>--%>
-                    </td>
-
-                    <td class="tableCell">
+                <%-- Buttons; Edit or Save depending on the bean state;
+                     Delete is visible regardless of the state.
+                 --%>
+                <td class="tableCell">
+                    <c:if test="${edit}">
                         <html:submit indexed="true" property="cmd"
-                            titleKey="annotations.button.delete.titleKey">
-                            <bean:message key="button.delete"/>
+                            titleKey="annotations.button.edit.titleKey">
+                            <bean:message key="button.edit"/>
                         </html:submit>
+                    </c:if>
+
+                    <c:if test="${save}">
+                        <html:submit indexed="true" property="cmd"
+                            titleKey="annotations.button.save.titleKey">
+                            <bean:message key="button.save"/>
+                        </html:submit>
+                    </c:if>
+                </td>
+
+                <td class="tableCell">
+                    <html:submit indexed="true" property="cmd"
+                        titleKey="annotations.button.delete.titleKey">
+                        <bean:message key="button.delete"/>
+                    </html:submit>
+                </td>
+
+                <c:if test="${edit}">
+                    <td class="tableCell">
+                        <bean:write name="items" property="topicLink" filter="false"/>
                     </td>
+                    <td class="tableCell">
+                        <bean:write name="items" property="description"/>
+                    </td>
+                </c:if>
 
-<%--                    <logic:equal property="editState" value="<%=viewState%>">--%>
-                        <c:if test="${items.editState == 'editing'}">
-                        <td class="tableCell">
-                            <bean:write name="items" property="topicLink" filter="false"/>
-                        </td>
-                        <td class="tableCell">
-                            <bean:write name="items" property="description"/>
-                        </td>
-                        </c:if>
-<%--                    </logic:equal>--%>
-
-                        <c:if test="${items.editState == 'saving'}">
-<%--                    <logic:equal property="editState" value="<%=saveState%>">--%>
-                        <td class="tableCell">
-                            <html:select name="items" property="topic" indexed="true">
-                                <html:options name="topiclist" />
-                            </html:select>
-                        </td>
-                        <td class="tableCell">
-                            <html:textarea name="items" cols="70" rows="3" property="description" indexed="true"/>
-                        </td>
-                        </c:if>
-<%--                    </logic:equal>--%>
-                </tr>
-                </c:forEach>
-<%--            </logic:iterate>--%>
+                <c:if test="${save}">
+                    <td class="tableCell">
+                        <html:select name="items" property="topic" indexed="true">
+                            <html:options name="topiclist" />
+                        </html:select>
+                    </td>
+                    <td class="tableCell">
+                        <html:textarea name="items" cols="70" rows="3" property="description" indexed="true"/>
+                    </td>
+                </c:if>
+            </tr>
+            </c:forEach>
         </table>
     </html:form>
 </c:if>
