@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Calendar;
+import java.util.Iterator;
 
 /**
  * The form to edit cv data. This form also is the super class for other
@@ -74,18 +75,12 @@ public class EditorActionForm extends ValidatorForm {
     /**
      * The annotation to add.
      */
-    private CommentBean myNewAnnotation;
+    private CommentBean myNewAnnotation = new CommentBean();
 
     /**
      * The cross reference to add.
      */
-    private XreferenceBean myNewXref;
-
-    public EditorActionForm() {
-        // Initialize them to avoid Edit Experiment/Interaction error.
-        myNewAnnotation = new CommentBean();
-        myNewXref = new XreferenceBean();
-    }
+    private XreferenceBean myNewXref = new XreferenceBean();
 
     // Getter/Setter methods for form attributes.
 
@@ -114,14 +109,7 @@ public class EditorActionForm extends ValidatorForm {
     }
 
     public void setAnnotations(List annotations) {
-        if (myAnnotations != null) {
-            // No need to create a new proteins if both collections contain same.
-            // This might be the case for page refresh for other than proteins.
-            if (CollectionUtils.isEqualCollection(myAnnotations, annotations)) {
-                return;
-            }
-        }
-        myAnnotations = new ArrayList(annotations);
+        myAnnotations = annotations;
     }
 
     public List getAnnotations() {
@@ -137,13 +125,7 @@ public class EditorActionForm extends ValidatorForm {
     }
 
     public void setXrefs(List xrefs) {
-        if (myXrefs != null) {
-            // See the comment for setAnnotations(List)
-            if (CollectionUtils.isEqualCollection(myXrefs, xrefs)) {
-                return;
-            }
-        }
-        myXrefs = new ArrayList(xrefs);
+        myXrefs = xrefs;
     }
 
     public List getXrefs() {
