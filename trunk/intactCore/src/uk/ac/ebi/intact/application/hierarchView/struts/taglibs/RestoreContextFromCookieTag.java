@@ -48,13 +48,13 @@ public class RestoreContextFromCookieTag extends TagSupport {
 
         logger.warn("Try to restore the last user context");
 
-        HttpSession session = pageContext.getSession();
+        final HttpSession session = pageContext.getSession();
         if (session == null) {
             logger.warn("Could not create a new session to restore the setting");
             return EVAL_PAGE;
         }
 
-        IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+        final IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
         // no point to restore the environment if the user already exists
         if (user != null) {
             logger.info("The user exists, exit the restore procedure");
@@ -65,9 +65,9 @@ public class RestoreContextFromCookieTag extends TagSupport {
         if (cookies == null) return EVAL_PAGE;
 
 
-        String method      = null;
-        String depth       = null;
-        String maxStr      = null;
+        String method = null;
+        String depth  = null;
+        String maxStr = null;
 
         // firstly cache the cookie content
         HashMap cookieCache = new HashMap (cookies.length);
@@ -80,33 +80,41 @@ public class RestoreContextFromCookieTag extends TagSupport {
         method = (String) cookieCache.get ("METHOD");
         maxStr = (String) cookieCache.get ("QUERY_COUNT");
 
-        int max = Integer.parseInt(maxStr);
-
-        // our entry points are store under Q0 .. Q8 (if QUERY_COUNT == 9)
-        String queryString = "";
-        for (i = 0; i < max; i++) {
-            queryString += (String) cookieCache.get ("Q"+i) + ",";
-        }
-        // remove the last comma
-        queryString = queryString.substring (0, queryString.length()-1);
-
-        String contextPath = ((HttpServletRequest) pageContext.getRequest()).getContextPath();
+        final String contextPath = ((HttpServletRequest) pageContext.getRequest()).getContextPath();
         String url = null;
-        if (queryString != null && method != null && depth != null) {
+        if (maxStr != null) {
+            int max = Integer.parseInt(maxStr);
+            // our entry points are store under Q0 .. Q8 (if QUERY_COUNT == 9)
+            String queryString = "";
+            for (i = 0; i < max; i++) {
+                queryString += (String) cookieCache.get ("Q"+i) + ",";
+            }
+            // remove the last comma
+            queryString = queryString.substring (0, queryString.length()-1);
 
-            url = contextPath + "/display.do?AC="+ queryString +"&method="+ method +"&depth="+ depth;
-        } else {
-            // simply display the current page
-            return EVAL_PAGE;
+
+            if (queryString != null && method != null && depth != null) {
+                url = contextPath + "/display.do?AC="+ queryString +"&method="+ method +"&depth="+ depth;
+            } else {
+                // simply display the current page
+                return EVAL_PAGE;
+            }
         }
+
 
         try {
             // save the URL to forward to
             pageContext.getRequest().setAttribute ("restoreUrl", url);
             session.setAttribute ("restoreUrl", url);
 
-            // redirect to the forward page (with waiting message)
-            String forwardUrl = contextPath + "/pages/restoreContext.jsp";
+            String forwardUrl = null;
+            if (maxStr == null) {
+                forwardUrl = contextPath;
+                logger.info ("No query registered in the cookie");
+            } else {
+                // redirect to the forward page (with waiting message)
+                forwardUrl = contextPath + "/pages/restoreContext.jsp";
+            }
 
             logger.info("forward to: " + forwardUrl);
 
