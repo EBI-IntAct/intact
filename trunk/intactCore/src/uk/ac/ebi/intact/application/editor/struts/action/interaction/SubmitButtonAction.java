@@ -124,27 +124,34 @@ public class SubmitButtonAction extends CommonDispatchAction {
                               HttpServletRequest request,
                               HttpServletResponse response)
             throws Exception {
+        // Save the form first. Analyze the forward path.
+        ActionForward forward = super.save(mapping, form, request, response);
+
+        // Return the forward if it isn't a success.
+        if (!forward.equals(mapping.findForward(SUCCESS))) {
+            return forward;
+        }
         // Do the cloning. Save the forward to return later.
-        ActionForward forward = super.clone(mapping, form, request, response);
+        return super.clone(mapping, form, request, response);
 
         // Handler to the user object.
-        EditUserI user = getIntactUser(request);
-
-        // The current view.
-        InteractionViewBean view = (InteractionViewBean) user.getView();
-
-        // Check to see that a cloned feature already exists.
-        if (view.hasDuplicateFeatures(user)) {
-            view.markDuplicateFeatures(user);
-            // The errors to display.
-            ActionErrors errors = new ActionErrors();
-            errors.add("int.duplicate.feature",
-                    new ActionError("error.int.sanity.duplicate.feature"));
-            saveErrors(request, errors);
-            // Display the error in the input page.
-            forward = mapping.getInputForward();
-        }
-        return forward;
+////        EditUserI user = getIntactUser(request);
+////
+////        // The current view.
+////        InteractionViewBean view = (InteractionViewBean) user.getView();
+////
+////        // Check to see that a cloned feature already exists.
+////        if (view.hasDuplicateFeatures(user)) {
+////            view.markDuplicateFeatures(user);
+////            // The errors to display.
+////            ActionErrors errors = new ActionErrors();
+////            errors.add("int.duplicate.feature",
+////                    new ActionError("error.int.sanity.duplicate.feature"));
+////            saveErrors(request, errors);
+////            // Display the error in the input page.
+////            forward = mapping.getInputForward();
+////        }
+//        return forward;
     }
 
     /**
