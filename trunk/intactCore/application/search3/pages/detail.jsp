@@ -27,13 +27,14 @@
 <%@ page autoFlush="true" %>
 
 <%-- Intact classes needed --%>
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants,
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
                  uk.ac.ebi.intact.application.search3.business.Constants,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailViewBean,
                  uk.ac.ebi.intact.business.IntactException,
                  uk.ac.ebi.intact.model.*,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.FeatureViewBean"%>
+                 uk.ac.ebi.intact.application.search3.struts.view.beans.FeatureViewBean,
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
 
 <%-- Standard Java classes --%>
 <%@ page import="java.util.*"%>
@@ -71,9 +72,8 @@
 <%@ include file="jscript.html" %>
 
 <!-- top line info -->
-<h3>Search Results for
-    <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
-</h3>
+    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
+     <br/>
 
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
@@ -165,13 +165,13 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 if(currentPage > 1) {
             %>
                     <a href="<%= bean.getObjSearchURL() +
-                        "&selectedChunk=1" + "&"+ SearchConstants.PAGE_SOURCE + "=simple" %>">
+                        "&selectedChunk=1" + "&"+ SearchConstants.PAGE_SOURCE + "=partner" %>">
                         <strong>&lt;First</strong>
                     </a>
                     &nbsp;&nbsp;
                     <a href="<%= bean.getObjSearchURL() +
                         "&selectedChunk=" + (currentPage -1) +
-                        "&"+ SearchConstants.PAGE_SOURCE + "=simple" %>">
+                        "&"+ SearchConstants.PAGE_SOURCE + "=partner" %>">
                         <strong>&lt;&lt;Previous</strong>
                     </a>&nbsp;
             <%
@@ -188,7 +188,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                     else {
                     %>
                     <a href="<%= bean.getObjSearchURL() + "&selectedChunk=" + i +
-                                "&"+ SearchConstants.PAGE_SOURCE + "=simple" %>"><%= i%></a>&nbsp;
+                                "&"+ SearchConstants.PAGE_SOURCE + "=partner" %>"><%= i%></a>&nbsp;
 
 
             <%
@@ -199,12 +199,12 @@ Displaying <b><%= firstDisplayIndex %></b> to
                 if(currentPage < (bean.getMaxPage())) {
             %>
                     <a href="<%= bean.getObjSearchURL() + "&selectedChunk=" + (currentPage +1) +
-                                "&"+ SearchConstants.PAGE_SOURCE + "=simple" %>">
+                                "&"+ SearchConstants.PAGE_SOURCE + "=partner" %>">
                         <strong>Next&gt;&gt;</strong>
                     </a>
                     &nbsp;&nbsp;
                     <a href="<%= bean.getObjSearchURL() + "&selectedChunk=" + bean.getMaxPage() +
-                                "&"+ SearchConstants.PAGE_SOURCE + "=simple" %>">
+                                "&"+ SearchConstants.PAGE_SOURCE + "=partner" %>">
                         <strong>Last&gt;</strong>
                     </a>
             <%
@@ -343,7 +343,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <!-- 'Description' title, linked to help -->
             <td class="headerdarkmid" style="font-weight: bold;">
-                <a href="<%= bean.getHelpLink() + "DESC_HELP_SECTION" %>" class="tdlink">
+                <a href="<%= bean.getHelpLink() + "AnnotatedObject.fullName" %>" class="tdlink">
                  Description
                 </a>
             </td>
@@ -365,7 +365,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- 'Annotation' title cell (linked to help) -->
             <%-- <td width="10%" class="headerdarkmid" rowspan="<%= annotations.size() %>" colspan="1"> --%>
             <td class="headerdarkmid" rowspan="<%= annotations.size() %>" colspan="1">
-                <a href="<%= bean.getHelpLink() + "ANNOT_HELP_SECTION" %>" class="tdlink">
+                <a href="<%= bean.getHelpLink() + "AnnotatedObject.Annotation" %>" class="tdlink">
                     Annotation<br>
                 </a>
             </td>
@@ -434,7 +434,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <%-- <td width="10%" class="headerdarkmid" rowspan="<%= xrefs.size()%>" colspan="1" --%>
             <td class="headerdarkmid" rowspan="<%= xrefs.size()%>" colspan="1"
                 style="text-align: justify;">
-                <a href="<%= bean.getHelpLink() + "XREF_HELP_SECTION"%>" class="tdlink">
+                <a href="<%= bean.getHelpLink() + "AnnotatedObject.Xref"%>" class="tdlink">
                     Xref<br>
                 </a>
             </td>
@@ -487,7 +487,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
 
             <%-- CvXrefQualifier, linked to search for CV --%>
             <td style="vertical-align: top;" rowspan="1" colspan="4">
-                <a href="<%= bean.getHelpLink() + "Xref.cvXrefType"%>" target="new">
+                <a href="<%= bean.getHelpLink() + "AnnotatedObject.Xref"%>" target="new">
                     Type:</a>
                 &nbsp;
                 <a href="<%= bean.getCvQualifierURL(xref)%>">
@@ -617,7 +617,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <%-- NB this was LINKED to help in Experiment!! --%>
             <%-- <td width="10%" class="headerlight">Description</td> --%>
             <td class="headerlight">
-             <a href="<%= bean.getHelpLink() + "DESC_HELP_SECTION" %>" class="tdlink">
+             <a href="<%= bean.getHelpLink() + "AnnotatedObject.fullName" %>" class="tdlink">
                  Description
                 </a>
             </td>
@@ -642,7 +642,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <!-- 'Annotation' title cell (linked to help) -->
             <%-- <td width="10%" class="headerlight" rowspan="<%= intAnnots.size() %>" colspan="1"> --%>
             <td class="headerlight" rowspan="<%= intAnnots.size() %>" colspan="1">
-                <a href="<%= bean.getHelpLink() + "ANNOT_HELP_SECTION" %>" class="tdlink">
+                <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel" %>" class="tdlink">
                     Annotation<br>
                 </a>
             </td>
@@ -708,7 +708,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
             <%-- <td width="10%" class="headerlight" rowspan="<%= intXrefs.size()%>" colspan="1" --%>
             <td class="headerlight" rowspan="<%= intXrefs.size()%>" colspan="1"
                 style="text-align: justify;">
-                <a href="<%= bean.getHelpLink() + "XREF_HELP_SECTION"%>" class="tdlink">
+                <a href="<%= bean.getHelpLink() + "AnnotatedObject.Xref"%>" class="tdlink">
                     Xref<br>
                 </a>
             </td>
@@ -903,7 +903,14 @@ Displaying <b><%= firstDisplayIndex %></b> to
             </td>
 
             <!-- gene name(s), not linked -->
-           <td class="data"><%= bean.getGeneNames(protein)%></td>
+           <td class="data"><%// bean.getGeneNames(protein)%>
+
+              <% Collection somePartnerGeneNames = bean.getGeneNames(protein);
+                       for (Iterator it2 =  somePartnerGeneNames.iterator(); it2.hasNext();) {
+                           String aGeneName =  (String) it2.next();    %>
+                            <%=aGeneName%><br>
+                  <%     } %>
+        </td>
 
             <!-- role, linked CvComponentRole search -->
             <%-- *** ROW POSITION SWAPPED - SEE 'UNIPROT DESCRIPTION' COMMENT *** --%>
@@ -938,8 +945,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
         <!-- 'sequence features' details start here... -->
 
         <%
-                //TODO: Nov 15 2004 - the title cell has now been removed so we no longer
-                //TODO: need to partition the features. Much of this code can therefore go.
+              //TODO much of this code has to gone, it's not maintable
 
                 //ISSUE- It is possible that there may be zero, one or both of the linked
              //and unlinked feature beans. We have to display the title cell as long
@@ -961,6 +967,7 @@ Displaying <b><%= firstDisplayIndex %></b> to
                  //as before, the first item gets displayed on the same row as the title cell
                  //(should be linked features, if there are any, first)
                 FeatureViewBean firstFeature = null;
+
                 if(!linkedFeatures.isEmpty())
                     firstFeature = (FeatureViewBean)linkedFeatures.iterator().next();
                 else
