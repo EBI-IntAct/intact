@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.business;
 
+import uk.ac.ebi.intact.persistence.SearchException;
+
 /**
  *  <p>Exception class to provide more meaningful error messages.
  *  There is an extra constructor to allow other exceptions to
@@ -15,6 +17,7 @@ public class IntactException extends Exception {
 
 
     private String nestedMessage;
+    private Exception rootCause;
 
     public IntactException() {
     }
@@ -29,6 +32,14 @@ public class IntactException extends Exception {
         super(msg);
         e.fillInStackTrace();
         nestedMessage = e.getMessage();
+        if(e instanceof SearchException) {
+
+            //filter to intiital cause up...
+            rootCause = ((SearchException)e).getRootCause();
+        }
+        else {
+            rootCause = e;
+        }
 
     }
 
@@ -42,6 +53,10 @@ public class IntactException extends Exception {
 
             return "No nested messages have been passed on.";
         }
+    }
+
+    public Exception getRootCause() {
+        return rootCause;
     }
 
 
