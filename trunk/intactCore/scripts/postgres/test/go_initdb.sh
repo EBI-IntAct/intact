@@ -56,6 +56,14 @@ then
 fi
 
 echo ""
+echo "Insert CvAliasType"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvAliasType - $3/CvAliasType.def
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
+echo ""
 echo "Insert CvDatabase"
 scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase - $3/CvDatabase.def
 if [ $? != 0 ]
