@@ -2,7 +2,7 @@
 <%@ page buffer="none"    %>
 <%@ page autoFlush="true" %>
 
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants"%>
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
