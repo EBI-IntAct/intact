@@ -31,7 +31,8 @@ public interface IntactServiceIF {
 
     /**
      * Returns a collection of Intact types.
-     * @return an <code>ArrayList</code> of Intact types.
+     * @return an <code>ArrayList</code> of Intact types. The list sorted in
+     * alphabetical order.
      */
     public Collection getIntactTypes();
 }
