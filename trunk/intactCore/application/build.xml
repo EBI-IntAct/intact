@@ -110,7 +110,7 @@
         <!-- Copy the file across to the deploy dir. -->
         <copy file="${war}" todir="${tomcat.home}/webapps" overwrite="yes"/>
 
-        <echo message="Please restart Tomcat to take effect (ant restart-tomcat)"/>
+        <echo message="Please start Tomcat to take effect (ant start-tomcat)"/>
     </target>
 
     <!-- =================================================================== -->
@@ -126,8 +126,6 @@
         <delete file="${tomcat.home}/webapps/${war}.war" quiet="true"/>
         <!-- Delete the dircectory. -->
         <delete dir="${tomcat.home}/webapps/${war}" quiet="true"/>
-
-        <echo message="Please start Tomcat (ant start-tomcat)"/>
     </target>
 
     <!-- =================================================================== -->
