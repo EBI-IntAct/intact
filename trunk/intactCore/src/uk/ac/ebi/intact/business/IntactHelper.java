@@ -1664,7 +1664,9 @@ public class IntactHelper implements SearchI, Serializable {
                     Node node2 = partialGraph.addNode(preyInteractor);
 
                     edge.setNode1(node1);
+                    edge.setComponent1((Component) baits.get(j));
                     edge.setNode2(node2);
+                    edge.setComponent2((Component) preys.get(k));
                     partialGraph.addEdge(edge);
                     System.out.println("Adding: " + node1.getAc() + " -> " + node2.getAc());
                 }
