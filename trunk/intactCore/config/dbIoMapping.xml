@@ -218,6 +218,10 @@
            <bind-xml auto-naming="deriveByClass" node="element" />
     </field>
    -->
+   <field name="ownerAc" type="string">
+       <xml name="ownerAc"
+            node="attribute"/>
+    </field>
   </class>
 
 
