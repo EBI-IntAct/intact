@@ -134,21 +134,28 @@
     </form-beans>
 
     <!-- ========== Global Exceptions ======================================= -->
+
     <global-exceptions>
         <exception
             key="error.session.expired"
             path="login.error.layout"
-            scope="request"
-            type="uk.ac.ebi.intact.application.editor.exception.SessionExpiredException"
-            />
+            type="uk.ac.ebi.intact.application.editor.exception.SessionExpiredException"/>
+
+        <!-- Failure to search the database -->
+        <exception
+            handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+            type="uk.ac.ebi.intact.application.editor.exception.SearchException"
+            key="error.search"
+            path="error.layout"/>
     </global-exceptions>
 
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
         <!-- Need this global forward from the index.jsp -->
         <forward name="login" path="/do/welcome"/>
-        <forward name="success" path="edit.layout"/>
+        <forward name="success" path="/do/setUpEditorForm"/>
         <forward name="failure" path="error.layout"/>
+        <forward name="input" path="/do/setUpEditorForm"/>
     </global-forwards>
 
     <!-- ========== Action Mapping Definitions ============================== -->
@@ -172,7 +179,6 @@
             name="loginForm"
             scope="request"
             input="login.error.layout">
-
             <!-- Invalid user -->
             <exception key="error.invalid.user"
                 type="uk.ac.ebi.intact.business.IntactException"
@@ -185,7 +191,6 @@
             <exception key="error.init.menu"
                 type="uk.ac.ebi.intact.persistence.SearchException"
                 path="login.error.layout"/>
-
             <forward name="failure" path="login.error.layout"/>
             <!-- Successful login; present the search page. -->
             <forward name="success" path="search.layout"/>
@@ -213,8 +218,6 @@
             <forward name="noMatch" path="no.match.layout"/>
             <!-- Multiple results found -->
             <forward name="results" path="match.layout"/>
-            <!-- Success; directly take to the edit page -->
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Process a new search for a Editor Object. -->
@@ -234,8 +237,9 @@
             name="resultForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.ResultAction"
             scope="request">
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
+
+        <!-- ==================== Actions for setting up editors ========== -->
 
         <!-- Populates editor common forms. Editor specific forms are set by forwards -->
         <action path="/setUpEditorForm"
@@ -244,6 +248,7 @@
             <forward name="biosource" path="/do/setUpBioSourceForm"/>
             <forward name="experiment" path="/do/setUpExperimentForm"/>
             <forward name="interaction" path="/do/setUpInteractionForm"/>
+            <forward name="editor" path="edit.layout"/>
         </action>
 
         <!-- Populates the biosource form. -->
@@ -252,6 +257,7 @@
             name="bioSourceForm"
             validate="false"
             scope="request">
+            <forward name="editor" path="edit.layout"/>
         </action>
 
         <!-- Populates the experiment form. -->
@@ -260,6 +266,7 @@
             name="experimentForm"
             validate="false"
             scope="request">
+            <forward name="editor" path="edit.layout"/>
         </action>
 
         <!-- Populates the interaction form. -->
@@ -268,6 +275,7 @@
             name="interactionForm"
             validate="false"
             scope="request">
+            <forward name="editor" path="edit.layout"/>
         </action>
 
         <!-- Process selection of Submit, Cancel or Delete buttons from edit.jsp. We need
@@ -279,22 +287,19 @@
         <action path="/edit"
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorDispatchAction"
             name="dummyForm"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="request"
             parameter="dispatch">
             <forward name="results" path="match.layout"/>
             <forward name="search" path="search.layout"/>
-            <forward name="input" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Handles when the user changes the short label or the full name. -->
         <action path="/cv/info"
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorInfoAction"
             name="cvInfoForm"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="request">
-            <forward name="success" path="/do/setUpEditorForm"/>
-            <forward name="input" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Handles when the user clicks on auto complete for tax id. -->
@@ -302,19 +307,18 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceAction"
             name="bioSourceForm"
             scope="request"
-            input="edit.layout">
-            <forward name="success" path="/do/setUpEditorForm"/>
-            <forward name="input" path="/do/setUpEditorForm"/>
+            input="/do/setUpEditorForm">
         </action>
+
+        <!-- ==================== Actions for Experiment ================= -->
 
         <!-- Handles when the user clicks to save Experiment info. -->
         <action path="/experiment/info"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.ExperimentAction"
             name="experimentForm"
             validate="true"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="request">
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- ============= Action paths related to an Interaction ========= -->
@@ -324,38 +328,32 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionAction"
             name="interactionForm"
             validate="true"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="request">
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Handles when the user selectes to add or hide an experiment (Interaction). -->
         <action path="/interaction/experiment"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentAction"
             name="intExperimentForm"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="request">
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Handles when the user selectes to add or hide an experiment (Interaction). -->
         <action path="/interaction/experiment/hold"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentHoldAction"
             name="intExperimentHoldForm"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="request">
-            <forward name="success" path="/do/setUpEditorForm"/>
-            <forward name="input" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Handles when the user clicks to search an experiment in an Interaction. -->
         <action path="/interaction/experiment/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentSearchAction"
             name="intExperimentSearchForm"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="request">
-            <forward name="success" path="/do/setUpEditorForm"/>
-            <forward name="input" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Handles when the user clicks to save Interaction info. -->
@@ -363,28 +361,27 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinEditAction"
             name="intProteinEditForm"
             validate="true"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="session">
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Handles when the user clicks to save Interaction info. -->
         <action path="/interaction/protein/search"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinSearchAction"
             name="intProteinSearchForm"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="request">
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
+
+        <!-- ==================== Actions for Annotations ================= -->
 
         <!-- Adds a new comment or annotation; updates the edit contents -->
         <action path="/comment/add"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommentAddAction"
             name="commentAddForm"
             validate="true"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="request">
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Edits or Deletes an existing annotation. -->
@@ -392,17 +389,17 @@
             name="commentEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommentEditAction"
             scope="session">
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
+
+        <!-- ==================== Actions for Xrefs ======================= -->
 
         <!-- Adds a new xref. -->
         <action path="/xref/add"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefAddAction"
             name="xrefAddForm"
             validate="true"
-            input="edit.layout"
+            input="/do/setUpEditorForm"
             scope="request">
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Edits or Delete an existing xref. -->
@@ -410,7 +407,6 @@
             name="xrefEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefEditAction"
             scope="session">
-            <forward name="success" path="/do/setUpEditorForm"/>
         </action>
 
         <!-- Displays a read only view of an edit object. -->
