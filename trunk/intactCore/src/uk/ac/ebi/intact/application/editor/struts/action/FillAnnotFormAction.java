@@ -6,12 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.CommentEditForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +33,7 @@ public class FillAnnotFormAction extends AbstractEditorAction {
         AbstractEditViewBean view = getIntactUser(request).getView();
 
         // Populate the form.
-        PropertyUtils.setSimpleProperty(form, "annotations", view.getAnnotations());
+        ((CommentEditForm) form).setAnnotations(view.getAnnotations());
 
         return mapping.findForward(FORWARD_SUCCESS);
     }
