@@ -1,0 +1,1129 @@
+
+<mapping>
+
+ <class name="uk.ac.ebi.intact.model.IntactNode"
+         identity="ac"
+	 key-generator="INTACTSEQUENCE">
+    <description>One intact node</description>
+    <cache-type type="count-limited" capacity="100"/>
+    <map-to xml="IntactNode" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="ftpDirectory" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="ftpAddress" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="ftpLogin" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="ftpPassword" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="ownerPrefix" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+     <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  </class>
+
+
+
+ <!--  Mapping for an Annotation  -->
+  <class name="uk.ac.ebi.intact.model.Annotation"
+         identity="ac">
+    <description>One annotation</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="Annotation" />
+    <field name="ac" type="string" >
+        <xml node="attribute"/>
+    </field>
+    <field name="annotationText" type="string" >
+        <xml node="attribute"/>
+    </field>
+    <field name="created" type="date" >
+        <xml node="attribute"/>
+    </field>
+    <field name="updated" type="date" >
+        <xml node="attribute"/>
+    </field>
+
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+           <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to ControlledVocab -->
+    <field name="cvTopic" type="uk.ac.ebi.intact.model.CvTopic">
+           <xml node="attribute"
+		reference="true"/>
+    </field>
+  </class>
+
+  <!--  Mapping for a Biosource  -->
+  <class name="uk.ac.ebi.intact.model.BioSource"
+         identity="ac">
+    <description>One biosource</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="BioSource" />
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+    <field name="scientificName" type="string" >
+       <xml node="attribute"/>
+    </field>
+    <field name="taxId" type="integer" >
+       <xml node="element"/>
+    </field>
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  </class>
+
+   <!--  Mapping for a Basic Object  -->
+  <class name="uk.ac.ebi.intact.model.BasicObject"
+         identity="ac">
+    <description>One basic object</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="BasicObject" />
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+  </class>
+
+  <!--  Mapping for an anotated oject  -->
+  <class name="uk.ac.ebi.intact.model.AnnotatedObject"
+         identity="ac">
+    <description>One anotated object</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="AnnotatedObject" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+        <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  </class>
+
+  <!--  Mapping for an institution-->
+  <class name="uk.ac.ebi.intact.model.Institution"
+         identity="ac">
+    <description>One institution</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="Institution" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+  <!--  <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+         -->
+    <field name="postalAddress" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+          <!-- Reference to Institution -->
+<!--    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>  -->
+
+   </class>
+
+
+<!--  Mapping for an CvTopic ? -->
+  <class name="uk.ac.ebi.intact.model.CvTopic"
+         identity="ac">
+    <description>One CvTopic</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="CvTopic" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+        <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  </class>
+
+<!--  Mapping for an Interactor  -->
+  <class name="uk.ac.ebi.intact.model.Interactor"
+         identity="ac">
+    <description>One interactor</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="Interactor" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="product" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="activeInstance" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+        <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+      <!-- Reference to BioSource -->
+    <field name="bioSource" type="uk.ac.ebi.intact.model.BioSource">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  </class>
+
+<!--  Mapping for an Protein  -->
+  <class name="uk.ac.ebi.intact.model.Protein"
+         identity="ac">
+    <description>One protein</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="Protein" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="crc64" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="sequence" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="feature" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="modification" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="product" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="activeInstance" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+        <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+      <!-- Reference to BioSource -->
+    <field name="bioSource" type="uk.ac.ebi.intact.model.BioSource">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+      <!-- Reference to Protein -->
+    <field name="formOf" type="uk.ac.ebi.intact.model.Protein">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  </class>
+
+  <!--  Mapping for an Interaction  -->
+  <class name="uk.ac.ebi.intact.model.Interaction"
+         identity="ac">
+    <description>One interaction</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="Interaction" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="kD" type="float">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="experiment" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="product" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="activeInstance" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+        <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+      <!-- Reference to BioSource -->
+    <field name="bioSource" type="uk.ac.ebi.intact.model.BioSource">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  <!-- Reference to CvInteraction -->
+    <field name="CvInteractionType" type="uk.ac.ebi.intact.model.CvInteractionType">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  </class>
+
+<!--  Mapping for an cvInteractionType  -->
+  <class name="uk.ac.ebi.intact.model.CvInteractionType"
+         identity="ac">
+    <description>One CvInteractionType</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="CvInteractionType" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+        <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  </class>
+
+   <!--  Mapping for a Component -->
+  <class name="uk.ac.ebi.intact.model.Component"
+         identity="ac">
+    <description>One component</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="BasicObject" />
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="bindingDomain" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="stoichiometry" type="float">
+       <xml node="attribute"/>
+    </field>
+
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to BioSource -->
+    <field name="expressedIn" type="uk.ac.ebi.intact.model.BioSource">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to Interaction -->
+    <field name="interaction" type="uk.ac.ebi.intact.model.Interaction">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to Interactor -->
+    <field name="interactor" type="uk.ac.ebi.intact.model.Interactor">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to CvComponentRole -->
+    <field name="cvComponentRole" type="uk.ac.ebi.intact.model.CvComponentRole">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  </class>
+
+  <!--  Mapping for an CvComponentRole  -->
+  <class name="uk.ac.ebi.intact.model.CvComponentRole"
+         identity="ac">
+    <description>One CvComponentRole</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="CvComponentRole" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+        <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+  </class>
+
+   <!--  Mapping for an Xref  -->
+  <class name="uk.ac.ebi.intact.model.Xref"
+         identity="ac">
+    <description>One Xref</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="Xref" />
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="dbRelease" type="string" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="primaryId" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="secondaryId" type="string" >
+       <xml node="attribute"/>
+    </field>
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to CvDatabase -->
+    <field name="cvDatabase" type="uk.ac.ebi.intact.model.CvDatabase">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to CvXrefQualifier -->
+    <field name="cvXrefQualifier" type="uk.ac.ebi.intact.model.CvXrefQualifier">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+  </class>
+
+
+  <!--  Mapping for a CvXrefQualifier  -->
+  <class name="uk.ac.ebi.intact.model.CvXrefQualifier"
+         identity="ac">
+    <description>One CvXrefQualifier</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="CvXrefQualifier" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to  CvProteinForm-->
+    <field name="cvProteinForm" type="uk.ac.ebi.intact.model.CvProteinForm">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+  </class>
+
+  <!--  Mapping for a CvXrefQualifier  -->
+  <class name="uk.ac.ebi.intact.model.CvDatabase"
+         identity="ac">
+    <description>One CvDatabase</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="CvDatabase" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to  CvProteinForm-->
+    <field name="cvProteinForm" type="uk.ac.ebi.intact.model.CvProteinForm">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+  </class>
+
+  <!--  Mapping for a CvObject  -->
+  <class name="uk.ac.ebi.intact.model.CvObject"
+         identity="ac">
+    <description>One CvObject</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="CvXrefQualifier" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to  CvProteinForm-->
+    <field name="cvProteinForm" type="uk.ac.ebi.intact.model.CvProteinForm">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+  </class>
+
+  <!--  Mapping for a CvIdentification  -->
+  <class name="uk.ac.ebi.intact.model.CvIdentification"
+         identity="ac">
+    <description>One CvIdentification</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="CvXrefQualifier" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to  CvProteinForm-->
+    <field name="cvProteinForm" type="uk.ac.ebi.intact.model.CvProteinForm">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+  </class>
+
+
+  <!--  Mapping for a CvInteraction  -->
+  <class name="uk.ac.ebi.intact.model.CvInteraction"
+         identity="ac">
+    <description>One CvInteraction</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="CvInteraction" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to  CvProteinForm-->
+    <field name="cvProteinForm" type="uk.ac.ebi.intact.model.CvProteinForm">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+  </class>
+
+
+  <!--  Mapping for an Experiment  -->
+  <class name="uk.ac.ebi.intact.model.Experiment"
+         identity="ac">
+    <description>One experiment</description>
+    <cache-type type="count-limited" capacity="10000"/>
+    <map-to xml="Experiment" />
+
+    <field name="ac" type="string" >
+      <xml node="attribute"/>
+    </field>
+
+    <field name="created" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="updated" type="date" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="evidence" type="java.util.Collection" >
+       <xml node="attribute"/>
+    </field>
+
+    <field name="annotation" type="java.util.Collection">
+       <xml node="attribute"/>
+	</field>
+
+    <field name="reference" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="referenceQualifier" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="shortLabel" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="fullName" type="string">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="xref" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <field name="interaction" type="java.util.Collection">
+       <xml node="attribute"/>
+    </field>
+
+    <!-- Reference to Institution -->
+    <field name="owner" type="uk.ac.ebi.intact.model.Institution" required="true">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to BioSource -->
+    <field name="bioSource" type="uk.ac.ebi.intact.model.BioSource">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to CvIdentification -->
+    <field name="cvIdentification" type="uk.ac.ebi.intact.model.CvIdentification">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+
+    <!-- Reference to CvInteraction -->
+    <field name="cvInteraction" type="uk.ac.ebi.intact.model.CvInteraction">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+    <!-- Reference to Experiment -->
+    <field name="relatedExperiment" type="uk.ac.ebi.intact.model.Experiment">
+       <xml node="attribute"
+		reference="true"/>
+    </field>
+
+  </class>
+
+
+</mapping>

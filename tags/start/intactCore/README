@@ -1,0 +1,99 @@
+README for Intact Core
+**********************************************************************
+
+DIRECTORIES:
+classes/	: Java classes
+config/		: Configuration files
+doc/		: Documentation
+ide/		: project files of Java IDEs
+lib/		: third-party libraries needed in addition to the
+		: standard JDK
+notes/		: -
+scripts/	: auxiliary scripts, ant files, make files.
+src/		: Java sources
+uml/		: UML modeling files.
+
+
+INSTALLATION
+- edit the file config/repository.xml. You need to enter the access
+  parameters for the database you are using. IntAct has been tested
+  under Oracle 8.1.6 and PostGres 7.2.
+- edit the file config/OJB.properties. You need to uncomment either
+  SequenceManagerClass=uk.ac.ebi.intact.persistence.PostgresSequenceManager or
+  SequenceManagerClass=uk.ac.ebi.intact.persistence.DbSequenceManager (for Oracle).
+
+
+BUILD:
+cd intactCore
+ant compile
+
+
+DOCUMENTATION:
+doc/api/index.html
+
+
+TEST APPLICATION:
+This performs a full cycle of 
+- database deletion
+- database initialisation
+- database fill
+- simple query possibility:
+
+scripts/testfill.sh user/password database small|large
+
+"small" is for minimal tests, will need < 5 minutes.
+"large" if full, real data from the Ho and Gavin experiments, 
+will run > 1 hour.  
+
+UNIT TESTS
+Currently there are only unit tests for the IntactHelper class - specifically
+for various ways of searching. The test itself can be run standalone using:
+
+scripts/runHelperTests.sh IntactHelperTest
+
+from the intactCore directory.
+
+These should be OK - however if something goes wrong between the test
+setUp/tearDown phases (eg test run interruption etc) then you will
+need to remove the example test data from your database. Note that due
+to integrity constraints on the data this must be done in the correct
+order. 
+
+There is an SQL script to do this - simply run cleanup_test_data.sql
+in the usual way. However if for some reason this script fails, it is
+still possible to remove the data manually, as follows:  
+
+To delete the test items, perform the following:
+
+1) connect to your DB as usual
+2) run the SQL command
+
+    delete from <tablename> where ac like 'EBITEST%';
+
+for each relevant table. The <tablename> should be as follows, *in order*:
+
+interactor
+experiment
+biosource
+xref
+controlledvocab
+institution
+
+
+PLEASE NOTE - it is not a good idea to run the test cases on the
+full-blown intacttest database - one of the tests may result in pretty
+much the whole DB being returned in that case!! Please just stick to
+your own DB and the example data provided with intactCore and you
+should be fine. 
+
+
+REPORT DB CONTENTS:
+sqlplus user/password@databaseInstance @sql/oracle/list_interactions.sql
+
+
+ACKNOWLEDGEMENTS
+This product includes software developed by
+the Apache Software Foundation (http://www.apache.org), 
+Ed Hill (ed-hill@uiowa.edu), and 
+the ExoLab project (http://www.exolab.org).
+

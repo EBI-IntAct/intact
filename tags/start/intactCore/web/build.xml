@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT build configuration file for webIntact module.
+     Author: Sugath Mudali, smudali@ebi.ac.uk.
+-->
+<project name="struts-intact" basedir="." default="compile">
+    <property name="project.title" value="Web Intact"/>
+    <property name="project.version" value="1.0"/>
+
+    <property name="src.dir" value="src"/>
+    <property name="dest.dir" value="WEB-INF/classes"/>
+    <property name="docs.dir" value="doc/api"/>
+
+    <!-- Build working classpath -->
+    <path id="project.class.path">
+        <fileset dir="WEB-INF/lib">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <pathelement path ="../lib/junit.jar"/>
+        <pathelement path ="${dest.dir}"/>
+    </path>
+
+    <!-- Sets the time stamp and 'intact.jar.present' property if intact core
+         jar file is found.
+    -->
+    <target name="prepare">
+        <tstamp/>
+        <available file="WEB/lib/intact-core.jar" type="file" property="intact.jar.present"/>
+    </target>
+
+    <!-- Creates the 'docs' directory. -->
+    <target name="mk-docs">
+        <mkdir dir="${docs.dir}" />
+    </target>
+
+    <!-- Remove 'dest' and docs directories for clean build -->
+    <target name="clean" description="Prepare for clean build">
+        <!-- Delete directories first -->
+        <delete dir="${dest.dir}"/>
+        <delete dir="${docs.dir}"/>
+    </target>
+
+    <!-- Calls the jar task from core build file if intact core jar file
+         is missing.
+    -->
+    <target name="make-jar" depends="prepare" unless="intact.jar.present">
+        <ant dir=".." target="jar" inheritAll="false"/>
+    </target>
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile" depends="make-jar">
+        <mkdir dir="${dest.dir}" />
+
+        <javac srcdir="${src.dir}" destdir="${dest.dir}" deprecation="on" debug="on">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy any configuration files -->
+        <copy todir="${dest.dir}/config" filtering="on">
+            <fileset dir="WEB-INF/config">
+                <include name="*.properties"/>
+                <include name="*.xml"/>
+                <include name="*.dtd"/>
+            </fileset>
+        </copy>
+
+        <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
+        <copy todir="${dest.dir}" file="WEB-INF/config/OJB.properties"/>
+        <copy todir="${dest.dir}" file="WEB-INF/config/log4j.properties"/>
+
+    </target>
+
+    <!-- These unit tests only run one tests in a single package; we need to add
+         a utility class which can run all the unit tests together.
+     -->
+    <!-- Runs tests using junit. -->
+    <target name="junit-test" depends="compile" description="Run JUnit tests">
+        <junit printsummary="withOutAndErr">
+            <test name="uk.ac.ebi.intact.struts.framework.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </junit>
+    </target>
+
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+    <target name="junit-test-stdout" depends="compile"
+            description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner">
+            <arg value="uk.ac.ebi.intact.struts.framework.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+    <target name="filterDemo">
+        <filter filtersfile="junk.properties"/>
+        <copy file="A.java" tofile="WEB-INF/A.java" filtering="true"/>
+
+        <filter token="NL" value="${line.separator}"/>
+        <copy file="WEB-INF/A.java" tofile="A1.java" filtering="true"/>
+
+    </target>
+</project>
