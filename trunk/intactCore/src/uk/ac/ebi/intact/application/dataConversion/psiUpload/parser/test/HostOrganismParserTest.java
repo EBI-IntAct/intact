@@ -6,7 +6,6 @@
 package uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.test;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -24,16 +23,7 @@ import uk.ac.ebi.intact.util.test.mocks.MockInputStream;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class HostOrganismParserTest extends TestCase {
-
-    /**
-     * Constructs a NewtServerProxyTest instance with the specified name.
-     *
-     * @param name the name of the test.
-     */
-    public HostOrganismParserTest( final String name ) {
-        super( name );
-    }
+public class HostOrganismParserTest extends ParserTest {
 
     /**
      * Returns this test suite. Reflection is used here to add all
@@ -45,12 +35,17 @@ public class HostOrganismParserTest extends TestCase {
 
     private HostOrganismTag parse( String xmlContent ) {
 
+        clearParserMessages();
+
         final MockInputStream is = new MockInputStream();
         is.setBuffer( xmlContent );
         final Document document = MockDocumentBuilder.build( is );
         final Element element = document.getDocumentElement();
 
-        return HostOrganismParser.process( element );
+        HostOrganismTag hostOrganism = HostOrganismParser.process( element );
+        displayExistingMessages();
+
+        return hostOrganism;
     }
 
     public void testProcessWithCellTypeAndTissue() {
@@ -63,10 +58,12 @@ public class HostOrganismParserTest extends TestCase {
         CellTypeTag cellType = bioSource.getCellType();
         assertNotNull( cellType );
         assertEquals( "MI:987", cellType.getPsiDefinition().getId() );
+        assertEquals( "9876", cellType.getShortlabel() );
 
         TissueTag tissue = bioSource.getTissue();
         assertNotNull( tissue );
         assertEquals( "MI:123", tissue.getPsiDefinition().getId() );
+        assertEquals( "1234", tissue.getShortlabel() );
     }
 
     public void testProcessOnlyTaxId() {
@@ -96,6 +93,7 @@ public class HostOrganismParserTest extends TestCase {
         TissueTag tissue = bioSource.getTissue();
         assertNotNull( tissue );
         assertEquals( "MI:123", tissue.getPsiDefinition().getId() );
+        assertEquals( "1234", tissue.getShortlabel() );
     }
 
     public void testProcessWithCellType() {
@@ -108,6 +106,7 @@ public class HostOrganismParserTest extends TestCase {
         CellTypeTag cellType = bioSource.getCellType();
         assertNotNull( cellType );
         assertEquals( "MI:987", cellType.getPsiDefinition().getId() );
+        assertEquals( "1234", cellType.getShortlabel() );
 
         TissueTag tissue = bioSource.getTissue();
         assertNull( tissue );

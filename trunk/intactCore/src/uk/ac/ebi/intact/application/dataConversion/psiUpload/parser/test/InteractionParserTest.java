@@ -164,6 +164,8 @@ public class InteractionParserTest extends TestCase {
             fail( "multiple bait found where only one should exist." );
         }
 
+        assertNull( proteinParticipant.getExpressedIn() );
+
         ProteinInteractorTag protein = proteinParticipant.getProteinInteractor();
         assertNotNull( protein );
 
@@ -185,6 +187,11 @@ public class InteractionParserTest extends TestCase {
         } catch ( MultipleParticipantFound multipleParticipantFound ) {
             fail( "multiple prey found where only one should exist." );
         }
+
+        ExpressedInTag expressedIn = proteinParticipant.getExpressedIn();
+        assertNotNull( expressedIn );
+        assertEquals( "EBI-222", expressedIn.getProteinInteractorID() );
+        assertEquals( "rat", expressedIn.getBioSourceShortlabel() );
 
         protein = proteinParticipant.getProteinInteractor();
         assertNotNull( protein );
