@@ -51,11 +51,12 @@ public class ResultAction extends AbstractEditorAction {
         // Handler to the Intact User.
         EditUserI user = super.getIntactUser(request);
 
-        // The topic selected by the user.
-        String topic = user.getSelectedTopic();
-
         // The class name to search.
-        String className = super.getService().getClassName(topic);
+        String className = user.getLastSearchClass();
+
+        // Strip the package bit from the name.
+        int lastPos = className.lastIndexOf('.');
+        user.setSelectedTopic(className.substring(lastPos + 1));
 
         // The short label to search
         String shortLabel = request.getParameter("shortLabel");
