@@ -210,7 +210,7 @@ public final class InteractionPersister {
             final ConfidenceTag confidence = interactionTag.getConfidence();
             if( confidence != null ) {
                 // TODO look after that unit parameter, we might have to adapt the CvTopic accordingly later.
-                final CvTopic authorConfidence = ControlledVocabularyRepository.getAuthorConfidence();
+                final CvTopic authorConfidence = ControlledVocabularyRepository.getAuthorConfidenceTopic();
 
                 // check if that annotation could not be shared.
                 Collection _annotations = helper.search( Annotation.class.getName(),
