@@ -1,4 +1,4 @@
-<%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants"%>
+<%@ page import="uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants"%>
  <%--
    /**
     * no matches page.
@@ -14,14 +14,14 @@
 <jsp:include page="header.jsp" flush="true" />
 
 <%
-    String info = (String)session.getAttribute(WebIntactConstants.SEARCH_CRITERIA);
+    String info = (String)session.getAttribute(SearchConstants.SEARCH_CRITERIA);
 %>
 
 <h1>Search Results: No Matches!!</h1>
 <!-- a line to separate the header -->
 <hr size=2>
 
-<h2>Sorry - could not find any <%= session.getAttribute(WebIntactConstants.SEARCH_TYPE) %>
+<h2>Sorry - could not find any <%= session.getAttribute(SearchConstants.SEARCH_TYPE) %>
   by trying to match <%= info.substring(info.indexOf('=') + 1) %> with: </h2>
   <ul>
       <li>AC,
