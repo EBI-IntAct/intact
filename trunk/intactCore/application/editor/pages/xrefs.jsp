@@ -11,13 +11,10 @@
   --%>
 
 <%@ page language="java"%>
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
-                 uk.ac.ebi.intact.application.editor.struts.view.EditBean"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/struts-nested.tld" prefix="nested"%>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
@@ -29,16 +26,10 @@
 <%--<c:set var="dblist" value="${menus['DatabaseNames']}"/>--%>
 <c:set var="qlist" value="${menus['QualifierNames']}"/>
 
-<%-- Class wide declarations. --%>
-<%!
-    String formName = EditorConstants.FORM_XREF_EDIT;
-    String viewState = EditBean.VIEW;
-    String saveState = EditBean.SAVE;
-%>
-
 <h3>Crossreferences</h3>
 
-<c:if test="${not empty view.xrefs}">
+<%--<c:if test="${not empty view.xrefs}">--%>
+<c:if test="${not empty xrefEditForm.items}">
 
     <html:form action="/xref/edit">
         <table width="80%">
@@ -64,7 +55,7 @@
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
-            <nested:iterate name="<%=formName%>" property="items">
+            <c:forEach var="xrefs" items="${xrefEditForm.xrefs}">
                 <!-- Different styles for even or odd rows -->
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
@@ -75,25 +66,29 @@
                     </c:otherwise>
                 </c:choose>
                 <c:set var="row" value="${row + 1}"/>
+
+                <c:if test="${xrefs.editState == 'editing'}" var="edit"/>
+                <c:if test="${xrefs.editState == 'saving'}" var="save"/>
+
                 <%-- The following loop is under <tr> tag --%>
 
                     <%-- Buttons; Edit or Save depending on the bean state;
                          Delete is visible regardless of the state.
                      --%>
                     <td class="tableCell">
-                        <nested:equal property="editState" value="<%=viewState%>">
+                        <c:if test="${edit}">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="xrefs.button.edit.titleKey">
                                 <bean:message key="button.edit"/>
                             </html:submit>
-                        </nested:equal>
+                        </c:if>
 
-                        <nested:equal property="editState" value="<%=saveState%>">
+                        <c:if test="${save}">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="xrefs.button.save.titleKey">
                                 <bean:message key="button.save"/>
                             </html:submit>
-                        </nested:equal>
+                        </c:if>
                     </td>
 
                     <td class="tableCell">
@@ -104,48 +99,48 @@
                     </td>
 
                     <%-- In view mode --%>
-                    <nested:equal property="editState" value="<%=viewState%>">
+                    <c:if test="${edit}">
                         <td class="tableCell">
-                            <nested:write property="databaseLink" filter="false"/>
+                            <bean:write name="xrefs" property="databaseLink" filter="false"/>
                         </td>
                         <td class="tableCell">
-                            <nested:write property="primaryId"/>
+                            <bean:write name="xrefs" property="primaryId"/>
                         </td>
                         <td class="tableCell">
-                            <nested:write property="secondaryId"/>
+                            <bean:write name="xrefs" property="secondaryId"/>
                         </td>
                         <td class="tableCell">
-                            <nested:write property="releaseNumber"/>
+                            <bean:write name="xrefs" property="releaseNumber"/>
                         </td>
                         <td class="tableCell">
-                            <nested:write property="qualifierLink" filter="false"/>
+                            <bean:write name="xrefs" property="qualifierLink" filter="false"/>
                         </td>
-                    </nested:equal>
+                    </c:if>
 
                     <%-- In save mode --%>
-                    <nested:equal property="editState" value="<%=saveState%>">
+                    <c:if test="${save}">
                         <td class="tableCell">
-                            <nested:select property="database">
-                                <nested:options name="dblist" />
-                            </nested:select>
+                            <html:select name="xrefs" property="database" indexed="true">
+                                <html:options name="dblist" />
+                            </html:select>
                         </td>
                         <td class="tableCell">
-                            <nested:text size="15" property="primaryId"/>
+                            <html:text name="xrefs" size="15" property="primaryId" indexed="true"/>
                         </td>
                         <td class="tableCell">
-                            <nested:text size="15" property="secondaryId"/>
+                            <html:text name="xrefs" size="15" property="secondaryId" indexed="true"/>
                         </td>
                         <td class="tableCell">
-                            <nested:text size="15" property="releaseNumber"/>
+                            <html:text name="xrefs" size="15" property="releaseNumber" indexed="true"/>
                         </td>
                         <td class="tableCell">
-                            <nested:select property="qualifier">
-                                <nested:options name="qlist" />
-                            </nested:select>
+                            <html:select name="xrefs" property="qualifier" indexed="true">
+                                <html:options name="qlist" />
+                            </html:select>
                         </td>
-                    </nested:equal>
+                    </c:if>
                 </tr>
-            </nested:iterate>
+            </c:forEach>
         </table>
     </html:form>
 </c:if>
