@@ -67,10 +67,12 @@ For each of your input parameters, please select the appropriate IntAct object(s
 	}
  %>
 <br>
-Additional search terms can be entered in the box below: <br>
+<bean:message key="ambiguous.additional.text"/><br>
 <input name="AC" size="50"><br><br>
 <hr size="2">
 <table cellpadding="1" cellspacing="0" border="1" width="100%">
-<tr><td align="center">&nbsp;
-<input type="button" value="Find connecting network" onclick="check()"></td></tr></table>
+<tr><td align="center">
+<html:button titleKey="sidebar.search.button.submit.title" property="" onclick="check()">
+  <bean:message key="sidebar.search.button.submit"/>
+</html:button></td></tr></table>
 </form><br>

@@ -9,12 +9,14 @@
 -->
 
 <%@ page language="java"%>
+<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+
 <style type="text/css">
 .headline {font-weight: bold; font-size:20px; text-decoration:underline;}
 </style>
 
 <!-- Introduction -->
-
 <p class="headline">Introduction</p>
 <p>To understand the connection of proteins to each other it is possible to consider
 the interactions in which one can find them. Though there is an existing problem that those protein –

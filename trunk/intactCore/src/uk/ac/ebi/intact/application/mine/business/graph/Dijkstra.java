@@ -12,6 +12,7 @@ import jdsl.core.ref.NodeSequence;
 import jdsl.graph.algo.IntegerDijkstraPathfinder;
 import jdsl.graph.api.Edge;
 import jdsl.graph.api.Vertex;
+import uk.ac.ebi.intact.application.mine.business.IntactUserI;
 import uk.ac.ebi.intact.application.mine.business.graph.model.EdgeElement;
 import uk.ac.ebi.intact.application.mine.business.graph.model.SearchObject;
 
@@ -26,8 +27,9 @@ import uk.ac.ebi.intact.application.mine.business.graph.model.SearchObject;
  */
 public class Dijkstra extends IntegerDijkstraPathfinder {
     // the maximal depth to search for the path
-    //TODO: PUT THIS INTO A PROPERTIES FILE !!
-    private static final int MAX_LEVEL = 5;
+    private static final int MAX_LEVEL = Integer
+            .parseInt( IntactUserI.MINE_PROPERTIES.getProperty(
+                    "dijkstra.maxDepth", "5" ) );
     // the structure to store the additional information needed by the algorithm
     private Storage storage;
     // the map with the nodes -> search objects

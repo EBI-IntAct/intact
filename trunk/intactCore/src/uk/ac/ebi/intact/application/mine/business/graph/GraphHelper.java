@@ -13,6 +13,7 @@ import java.util.Map;
 import jdsl.graph.api.Vertex;
 import jdsl.graph.ref.IncidenceListGraph;
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
+import uk.ac.ebi.intact.application.mine.business.MineException;
 import uk.ac.ebi.intact.application.mine.business.graph.model.EdgeObject;
 import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
 

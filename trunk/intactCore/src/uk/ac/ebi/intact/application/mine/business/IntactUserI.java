@@ -9,10 +9,12 @@ package uk.ac.ebi.intact.application.mine.business;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Collection;
+import java.util.Properties;
 
 import javax.servlet.http.HttpSessionBindingListener;
 
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.util.PropertyLoader;
 
 /**
  * A can implement the interface <tt>IntactUserI</tt> if it wants to act as
@@ -22,6 +24,17 @@ import uk.ac.ebi.intact.business.IntactHelper;
  */
 public interface IntactUserI extends Serializable, HttpSessionBindingListener,
         uk.ac.ebi.intact.application.commons.business.IntactUserI {
+
+    // properties file which contains informations which are needed for the mine
+    // application. E.g. the maximal depth to search in the graph
+    public static final Properties MINE_PROPERTIES = PropertyLoader
+            .load( "/config/Mine.properties" );
+
+    // properties file which contains the link and information to forward the
+    // results of MiNe to the HierarchView application
+    public static final Properties HIERARCHVIEW_PROPERTIES = PropertyLoader
+            .load( "/config/HierarchView.properties" );
+
     /**
      * Returns the underlying database connection.
      * 

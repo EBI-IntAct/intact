@@ -8,17 +8,21 @@
 <%@ page import="uk.ac.ebi.intact.application.mine.business.IntactUserI,
 				uk.ac.ebi.intact.application.mine.business.Constants" %>
 
+<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <form action="<%=request.getContextPath()%>/do/search" focus="AC">
     <table>
      <tr>
-        <th align="left"><strong>Interactor</strong>
-        <intact:documentation section="hierarchView.PPIN.expand" /></th>
+        <th align="left"><bean:message key="sidebar.search.title"/></th>
      </tr>
      <tr>
-        <td><input type="text" name="AC" size="16" value=""></td>
+        <td><html:text property="AC" value="" size="12"/></td>
      </tr>
      <tr>
-        <td><input type="submit" value="Find network"></td>
+        <td><html:submit property="action" titleKey="sidebar.search.button.submit.title">
+                  <bean:message key="sidebar.search.button.submit"/>
+            </html:submit>
+		</td>
       </tr>
     </table>
 </form>

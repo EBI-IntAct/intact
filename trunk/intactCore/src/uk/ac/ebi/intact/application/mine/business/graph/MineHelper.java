@@ -88,8 +88,7 @@ public class MineHelper {
             // there should be an entry for the given accession number
             // so if not -> an exception is thrown.
             if ( node == null ) {
-                throw new MineException( "No node in the graph could be "
-                        + "found for the accession number " + accessionNumber );
+                throw new MineException();
             }
             // a new SearchObject is stored
             map.put( node, new SearchObject( i++, size ) );
@@ -167,7 +166,7 @@ public class MineHelper {
      * @throws SQLException
      */
     public void computeMiNe(GraphData graphData, Collection searchAc)
-            throws SQLException, MineException {
+            throws MineException {
         // the map which maps the nodes of the graph and the SearchObjects is
         // created (Vertex -> SearchObject)
         Map searchMap = getSearchNodes( graphData.getAccMap(), searchAc );
@@ -243,12 +242,22 @@ public class MineHelper {
         // if no path was found the search accession numbers are added with
         // their shortlabels to the singletons of the user
         if ( miNe.isEmpty() ) {
-            intactUser.addToSingletons( getShortLabels( searchAc ) );
+            try {
+                intactUser.addToSingletons( getShortLabels( searchAc ) );
+            }
+            catch ( SQLException e ) {
+                intactUser.addToSingletons( searchAc );
+            }
         }
         // if a path was found the shortlabels of the accession numbers in
         // this path are added to the path of the user
         else {
-            intactUser.addToPath( getShortLabels( miNe ) );
+            try {
+                intactUser.addToPath( getShortLabels( miNe ) );
+            }
+            catch ( SQLException e ) {
+                intactUser.addToPath( miNe );
+            }
         }
     }
 

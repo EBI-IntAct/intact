@@ -27,11 +27,12 @@ import uk.ac.ebi.intact.model.Protein;
  * @author Andreas Groscurth
  */
 public class AmbiguousBean {
+    private static final String HELP_LINK = "/displayDoc.jsp?section=";
     private Collection proteins = null;
     private Collection interactions = null;
     private Collection experiments = null;
     private String searchAc;
-    private static String context;
+    private String context;
 
     public int hashCode() {
         return searchAc.hashCode();
@@ -262,18 +263,18 @@ public class AmbiguousBean {
         out.write( ">" );
 
         out.write( "<b>Protein</b>" );
-        out.write( "<a href=\"" + context + Constants.HELP_LINK
+        out.write( "<a href=\"" + context + HELP_LINK
                 + "search.TableLayout\"" );
         out.write( " target=\"new\"><sup><b><font color=\"red\">?</font>" );
         out.write( "</b></sup></a></nobr></td>" );
 
         // the ac number is added
-        out.write( "<td><a href=\"" + context + Constants.HELP_LINK
+        out.write( "<td><a href=\"" + context + HELP_LINK
                 + "BasicObject.ac\"" );
         out.write( "target=\"new\">Ac:</a>" + ac + "</td>" );
 
         // the shortlabel is added
-        out.write( "<td><a href=\"" + context + Constants.HELP_LINK
+        out.write( "<td><a href=\"" + context + HELP_LINK
                 + "AnnotatedObject.shortLabel\"" );
         out.write( " target=\"new\">Name:</a> " );
         out.write( "<a href=\"" + context + "/search/do/search?searchString="
