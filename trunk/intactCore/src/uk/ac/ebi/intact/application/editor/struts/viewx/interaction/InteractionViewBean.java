@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.viewx.interaction;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
@@ -144,23 +145,21 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Returns the menus for a Protein.
-     * @return a map name -> menu.
+     * Returns the edit menu for a Protein role.
+     * @return the Protein role menu.
      * @throws SearchException for errors in constructing the menu.
-     * @see
-     * uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory#getProteinMenus(int)
      */
-    public Map getProteinMenus() throws SearchException {
-        // Always an edit menu as we are editing existing Proteins.
-        return getMenuFactory().getProteinMenus(0);
+    public List getEditProteinRoleMenu() throws SearchException {
+        return getMenuFactory().getMenu(EditorMenuFactory.ROLES, 0);
     }
 
-    public Map getEditProteinMenus() throws SearchException {
-        return getMenuFactory().getProteinMenus(0);
-    }
-
-    public Map getAddProteinMenus() throws SearchException {
-        return getMenuFactory().getProteinMenus(1);
+    /**
+     * Returns the add menu for a Protein role.
+     * @return the Protein role menu.
+     * @throws SearchException for errors in constructing the menu.
+     */
+    public List getAddProteinRoleMenu() throws SearchException {
+        return getMenuFactory().getMenu(EditorMenuFactory.ROLES, 0);
     }
 
     public void setKD(Float kd) {
