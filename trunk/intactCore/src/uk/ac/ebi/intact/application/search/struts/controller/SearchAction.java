@@ -189,6 +189,9 @@ public class SearchAction extends IntactBaseAction {
             }
             super.log("search action: search results retrieved OK");
 
+            //set up a viewbean to hold the results for display
+            IntactViewBean viewbean = super.getViewBean(session);
+
             // If we retrieved one object then we can go straight to edit page.
             if (results.size() == 1) {
                 // Found a single match only; save it to determine which page to
@@ -197,15 +200,14 @@ public class SearchAction extends IntactBaseAction {
 
                 // The object to display.
                 Object obj = results.iterator().next();
-                IntactViewBean viewbean = super.getViewBean(session);
                 viewbean.initialise(obj);
 
                 //marshal the results into XML and put the data into the view bean
                 if(marshaller != null) {
                     try{
 
-                        super.log("Object about to be converted to XML");
-                        super.log(viewbean.getWrappedObject().toString());
+                        /*super.log("Object about to be converted to XML");
+                        super.log(viewbean.getWrappedObject().toString());*/
 
                         marshaller.marshal(viewbean.getWrappedObject());
 
@@ -220,6 +222,10 @@ public class SearchAction extends IntactBaseAction {
 
                         //set the raw XML data into the bean
                         viewbean.setAsXml(buf.toString());
+
+                        /*super.log("XML generated: ");
+                        super.log(viewbean.getAsXml());*/
+
 
                     }
                     catch(MarshalException e){
@@ -247,12 +253,78 @@ public class SearchAction extends IntactBaseAction {
             }
             else {
                 // Found multiple results.
+                super.log("multiple results - performing XML conversion...");
                 session.setAttribute(WebIntactConstants.SINGLE_MATCH, Boolean.FALSE);
 
                 // The collection to hold our List objects for display tag API.
                 Collection container = new ArrayList();
                 for (Iterator iter = results.iterator(); iter.hasNext();) {
-                    container.add(new ListObject((AnnotatedObject)iter.next()));
+
+                    //for each search result, convert it to XML then put into
+                    // a viewbean and collect them together....
+                    //NB move the null check to outside!
+                    if(marshaller != null) {
+                        try{
+
+                            Object resultItem = iter.next();
+
+                            /*super.log("Object about to be converted to XML");
+                            super.log(resultItem.toString());*/
+
+                            //NB have to use the same Writer object every time, as
+                            //Castor's method to use other writers is static and
+                            //will ignore the mapping file!!
+
+                            //first we need to 'flush' the Writer if necessary - as
+                            //StringWriter simply wraps a StringBuffer, just get the buffer
+                            //and empty it (because the StringWriter flush method is a no-op)
+                            if(writer.getBuffer().length() > 0) {
+
+                                //need to 'flush' to avoid memory problems
+                                writer.getBuffer().delete(0, writer.getBuffer().length()-1);
+                            }
+                            marshaller.marshal(resultItem);
+
+                            super.log("object marshalled - now building view bean...");
+                            //now get the XML result from the writer and put it into a bean...
+                            StringBuffer buffer = writer.getBuffer();
+                            if(buffer.charAt(0) == '>') {
+
+                                //Annoying Castor bug which starts the XML with a
+                                //closed bracket when using the same marshaller more
+                                //than once. It needs to be removed otherwise parsing
+                                //will fail later!!
+                                buffer.delete(0,1);
+                            }
+                            IntactViewBean bean = new IntactViewBean();
+                            bean.initialise(resultItem);
+                            bean.setAsXml(buffer.toString());
+
+
+                            /*super.log("XML created:");
+                            super.log(bean.getAsXml());
+                            super.log("");
+*/
+                            //collect the results together...
+                            container.add(bean);
+
+                        }
+                        catch(MarshalException e){
+                            super.log("SearchAction [ERROR] failed to marshal results into XML format!");
+                            super.log(ExceptionUtils.getStackTrace(e));
+                        }
+                        catch(org.exolab.castor.xml.ValidationException ve){
+                            super.log("SearchAction [ERROR] marshalling failed - validation problem...");
+                            super.log(ExceptionUtils.getStackTrace(ve));
+                        }
+                    }
+                    else {
+
+                        //no marshaller - just write the object as a modified string
+                        super.log("no marshaller to write as XML - will use as string instead..");
+
+                    }
+
                 }
                 // Save it in a session for a JSP to display.
                 session.setAttribute(WebIntactConstants.FORWARD_MATCHES, container);
