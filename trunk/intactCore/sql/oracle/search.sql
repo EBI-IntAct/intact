@@ -8,8 +8,12 @@
   Package:    IntAct reports
 
   Purpose:    materialized view for search3 for the initial request
+              after creating that view you have to grant right to user
+              on it and to create a public view
 
-  Usage:      psql -f progname.sql
+  Usage:      psql -f search.sql
+
+  Update:     EXECUTE DBMS_MVIEW.REFRESH('IA_SEARCH', 'C');
 
   $Date$
   $Author$
@@ -17,75 +21,49 @@
 
   *************************************************************/
 
-CREATE OR REPLACE MATERIALIZED VIEW IA_SEARCH (
-    SELECT ac,
-           shortlabel as value,
-           objclass,
-           'shortlabel' as type
-       FROM ia_interactor
+DROP MATERIALIZED VIEW IA_SEARCH;
+
+CREATE MATERIALIZED VIEW IA_SEARCH AS (
+    SELECT ac, shortlabel as value, objclass, 'shortlabel' as type
+    FROM ia_interactor
 UNION
-    SELECT ac,
-       LOWER(fullname) as value,
-       objclass,
-       'fullname' as type
-       FROM ia_interactor
+    SELECT ac, LOWER(fullname) as value, objclass, 'fullname' as type
+    FROM ia_interactor
 UNION
-    SELECT I.ac,
-       X.primaryid as value,
-       objclass,
-       'xref' as type
-       FROM ia_interactor I, ia_xref X
-       WHERE I.ac = X.parent_ac
+    SELECT I.ac, X.primaryid as value, objclass, 'xref' as type
+    FROM ia_interactor I, ia_xref X
+    WHERE I.ac = X.parent_ac
 UNION
-    SELECT I.ac,
-       A.name as value,
-       I.objclass,
-       CV.shortlabel as type
-       FROM ia_interactor I, ia_alias A, ia_controlledvocab CV
-       WHERE I.ac = A.parent_ac and
-             A.aliastype_ac = CV.ac
+    SELECT I.ac, A.name as value, I.objclass, CV.shortlabel as type
+    FROM ia_interactor I, ia_alias A, ia_controlledvocab CV
+    WHERE I.ac = A.parent_ac and
+          A.aliastype_ac = CV.ac
 UNION
-    SELECT E.ac,
-       X.primaryid as value,
-       'uk.ac.ebi.intact.model.Experiment',
-       'xref' as type
-       FROM ia_experiment E, ia_xref X
-       WHERE E.ac = X.parent_ac
+    SELECT E.ac, X.primaryid as value, 'uk.ac.ebi.intact.model.Experiment', 'xref' as type
+    FROM ia_experiment E, ia_xref X
+    WHERE E.ac = X.parent_ac
 UNION
-    SELECT ac,
-       shortlabel as value,
-       'uk.ac.ebi.intact.model.Experiment',
-       'shortlabel' as type
-       FROM ia_experiment
+    SELECT ac, shortlabel as value, 'uk.ac.ebi.intact.model.Experiment', 'shortlabel' as type
+    FROM ia_experiment
 UNION
-    SELECT ac,
-       LOWER(fullname) as value,
-       'uk.ac.ebi.intact.model.Experiment',
-       'fullname' as type
-       FROM ia_experiment
+    SELECT ac, LOWER(fullname) as value, 'uk.ac.ebi.intact.model.Experiment', 'fullname' as type
+    FROM ia_experiment
 UNION
-    SELECT ac,
-       LOWER(fullname) as value,
-       objclass,
-       'fullname' as type
-       FROM ia_controlledvocab
+    SELECT ac, LOWER(fullname) as value, objclass, 'fullname' as type
+    FROM ia_controlledvocab
 UNION
-    SELECT ac,
-       shortlabel as value,
-       objclass,
-       'shortlabel' as type
-       FROM ia_controlledvocab
+    SELECT ac, shortlabel as value, objclass, 'shortlabel' as type
+    FROM ia_controlledvocab
 UNION
-    SELECT CV.ac,
-       X.primaryid as value,
-       objclass,
-       'xref' as type
-       FROM ia_controlledvocab CV, ia_xref X
-       WHERE CV.ac = X.parent_ac
+    SELECT CV.ac, X.primaryid as value, objclass, 'xref' as type
+    FROM ia_controlledvocab CV, ia_xref X
+    WHERE CV.ac = X.parent_ac
 UNION
-    SELECT CV.ac,
-       A.name as value,
-       objclass,
-       'alias' as type
-       FROM ia_controlledvocab CV, ia_alias A
-       WHERE CV.ac = A.parent_ac)
+    SELECT CV.ac, LOWER(A.name) as value, objclass, 'alias' as type
+    FROM ia_controlledvocab CV, ia_alias A
+    WHERE CV.ac = A.parent_ac
+);
+
+-- Rights management.
+GRANT select ON ia_search to INTACT_SELECT ;
+GRANT select,insert,update,delete ON ia_search to INTACT_CURATOR ;
