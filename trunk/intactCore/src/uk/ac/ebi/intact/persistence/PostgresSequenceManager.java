@@ -160,7 +160,7 @@ public class PostgresSequenceManager implements SequenceManager {
 
             rs = _stmt.executeQuery();
             rs.next();
-            result = rs.getInt(1);
+            return rs.getInt(1);
         } catch (Throwable t) {
             LoggerFactory.getDefaultLogger().error(t);
             throw new PersistenceBrokerException(t);
@@ -172,7 +172,7 @@ public class PostgresSequenceManager implements SequenceManager {
                 LoggerFactory.getDefaultLogger().error(e);
                 throw new PersistenceBrokerSQLException(e);
             }
-            return result;
+            //return result; removed - this means no excpetions ever get thrown!!
         }
     }
 
