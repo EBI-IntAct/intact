@@ -44,7 +44,7 @@ public class IntactHelper implements SearchI, Serializable {
     /**
      * used internally to manage transaction creation
      */
-    private boolean isInTransaction;
+//    private boolean isInTransaction;
 
     /** cache to be used for caching by shortLabel.
      *  shortLabel is not a primary key, therefore the caching
@@ -65,6 +65,14 @@ public class IntactHelper implements SearchI, Serializable {
             dao.addCachedClass(clazz);
         }
     }
+
+    /**
+     * Wipe the whole cache.
+     */
+    public void clearCache () {
+        if (dao != null) dao.clearCache();
+    }
+
 
     /*
     public boolean isCachedClass(Class clazz) {
@@ -248,7 +256,7 @@ public class IntactHelper implements SearchI, Serializable {
      * validates a user's credentials against the data store.
      *
      * @param user the username
-     * @param passowrd the user password (may be null)
+     * @param password the user password (may be null)
      *
      * @return boolean true if valid details, false if not (including a null username).
      */
@@ -266,7 +274,7 @@ public class IntactHelper implements SearchI, Serializable {
      * Note that any previous data may be lost, and a subsequent call to open()
      * will result in a new connection being established to the persitent store.
      *
-     * @exception thrown if the store was unable to be closed.
+     * @exception IntactException if the store was unable to be closed.
      */
     public void closeStore() throws IntactException {
 
@@ -358,7 +366,7 @@ public class IntactHelper implements SearchI, Serializable {
     /**
      *  This method provides a create operation for intact objects.
      *
-     * @param types - a collection of intact objects to be created
+     * @param objects - a collection of intact objects to be created
      *
      * @exception IntactException - thrown if a problem arises during the creation process
      *
@@ -748,7 +756,7 @@ public class IntactHelper implements SearchI, Serializable {
 
         pr.info("intact helper: in getRelations, non-null root object..");
 
-        Method targetMethod = null;
+//        Method targetMethod = null;
 
         //holds return value of invoked method
         Object methodResult = null;
@@ -874,7 +882,7 @@ public class IntactHelper implements SearchI, Serializable {
 
         for (int i = 0; i < fields.length; i++) {
 
-            Class fieldType = fields[i].getType();
+//            Class fieldType = fields[i].getType();
 
             //NB can't use the Field 'get' method as the field is declared private...
 
@@ -1381,7 +1389,7 @@ public class IntactHelper implements SearchI, Serializable {
             //just to be safe, restrict write access..
             synchronized(this) {
                 for (Iterator i = aCollection.iterator(); i.hasNext();) {
-                    dao.remove((Object) i.next());
+                    dao.remove (i.next());
                 }
             }
 
@@ -1423,7 +1431,7 @@ public class IntactHelper implements SearchI, Serializable {
                           int graphDepth,
                           Collection experiments,
                           int complexExpansion,
-			  Graph graph) throws IntactException {
+			              Graph graph) throws IntactException {
 
         System.out.println("subGraph called: " + startNode.getAc() + " Depth: " + graphDepth);
 
@@ -1439,8 +1447,7 @@ public class IntactHelper implements SearchI, Serializable {
                                   int complexExpansion,
                                   Graph partialGraph) throws IntactException {
 
-        /* This should not occur, but is ok.
-        */
+        /* This should not occur, but is ok. */
         if (null == startNode) {
             return partialGraph;
         }
@@ -1456,31 +1463,28 @@ public class IntactHelper implements SearchI, Serializable {
             partialGraph.addVisited(startNode);
         }
 
-        /* End of recursion, return
-        */
+        /* End of recursion, return */
         if (0 == graphDepth) {
             return partialGraph;
         }
 
         Iterator i = startNode.getActiveInstance().iterator();
 
+        Component current = null;
         while (i.hasNext()) {
-            Component current = (Component) i.next();
+            current = (Component) i.next();
 
             if (null == current) {
                 continue;
             }
 
-            /* Explore the next Interaction*/
-            partialGraph = subGraphPartial(current.getInteraction(),
-                    graphDepth,
-                    experiments,
-                    complexExpansion,
-                    partialGraph);
-
-
+            /* Explore the next Interaction */
+            partialGraph = subGraphPartial (current.getInteraction(),
+                                            graphDepth,
+                                            experiments,
+                                            complexExpansion,
+                                            partialGraph);
         }
-
 
         return partialGraph;
     }
@@ -1509,12 +1513,14 @@ public class IntactHelper implements SearchI, Serializable {
             partialGraph.addVisited(current);
         }
 
-        /* Create list of baits */
-        Vector baits = new Vector();
+        /* Create list of baits - the size is set later according to what we have to store */
+        ArrayList baits = null;
 
         switch (complexExpansion) {
             case Constants.EXPANSION_ALL:
                 {
+                    baits = new ArrayList (current.getComponent().size());
+
                     /* all components are considered as baits */
                     Iterator i = current.getComponent().iterator();
                     while (i.hasNext()) {
@@ -1525,35 +1531,40 @@ public class IntactHelper implements SearchI, Serializable {
             case Constants.EXPANSION_BAITPREY:
                 {
                     /* only report bait-prey relations.
-                    If there is no bait, select one arbitrarily. Choose the first.
-                    */
-                    Component bait = (Component) current.getBait();
+                     * If there is no bait, select one arbitrarily. Choose the first.
+                     */
+                    Component bait = current.getBait();
                     if (null == bait) {
+                        baits = new ArrayList (current.getComponent().size());
                         Iterator i = current.getComponent().iterator();
                         if (i.hasNext()) {
                             baits.add(i.next());
                         }
                     } else {
+                        baits = new ArrayList (1);
                         baits.add(bait);
                     }
                 }
         }
 
         /* Create list of preys */
-        Vector preys = new Vector();
+        ArrayList preys = new ArrayList(current.getComponent().size());
         Iterator i = current.getComponent().iterator();
         while (i.hasNext()) {
             preys.add(i.next());
         }
 
         /* Generate all bait-prey pairs */
-        for (int j = 0; j < baits.size(); j++) {
-            System.out.println("Bait: " + ((Component) baits.elementAt(j)).getInteractor().getAc());
-            for (int k = j; k < preys.size(); k++) {
-                System.out.println("Prey: " + ((Component) preys.elementAt(k)).getInteractor().getAc());
+        int countBaits = baits.size();
+        int countPreys = preys.size();
+
+        for (int j = 0; j < countBaits; j++) {
+            System.out.println("Bait: " + ((Component) baits.get(j)).getInteractor().getAc());
+            for (int k = j; k < countPreys; k++) {
+                System.out.println("Prey: " + ((Component) preys.get(k)).getInteractor().getAc());
                 Edge edge = new Edge();
-                Interactor baitInteractor = ((Component) baits.elementAt(j)).getInteractor();
-                Interactor preyInteractor = ((Component) preys.elementAt(k)).getInteractor();
+                Interactor baitInteractor = ((Component) baits.get(j)).getInteractor();
+                Interactor preyInteractor = ((Component) preys.get(k)).getInteractor();
 
                 if (baitInteractor != preyInteractor) {
                     Node node1 = partialGraph.addNode(baitInteractor);
@@ -1570,12 +1581,12 @@ public class IntactHelper implements SearchI, Serializable {
         /* recursively explore all Interactors linked to current Interaction */
         for (Iterator iterator = current.getComponent().iterator(); iterator.hasNext();) {
             Component component = (Component) iterator.next();
-            partialGraph = subGraphPartial(component.getInteractor(),
-                            graphDepth - 1,
-                            experiments,
-                            complexExpansion,
-                            partialGraph);
-            }
+            partialGraph = subGraphPartial (component.getInteractor(),
+                                            graphDepth - 1,
+                                            experiments,
+                                            complexExpansion,
+                                            partialGraph);
+        }
 
         return partialGraph;
     }

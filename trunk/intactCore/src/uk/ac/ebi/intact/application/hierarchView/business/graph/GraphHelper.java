@@ -13,10 +13,12 @@ import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundExcept
 import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.simpleGraph.Node;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
@@ -56,23 +58,142 @@ public class GraphHelper  {
     } // GraphHelper
 
 
+
+
+
+
+
+
     /**
      * Create an interaction graph according to a protein AC
      *
      * @param queryString the given protein AC.
      * @param depth The level of BAIT-BAIT interaction in the interaction graph.
      */
-    public InteractionNetwork getInteractionNetwork (String queryString, int depth)
-            throws ProteinNotFoundException, SearchException,
-                   IntactException, MultipleResultException  {
-
-        InteractionNetwork in = null;
+    public InteractionNetwork createInteractionNetwork (String queryString, int depth)
+            throws ProteinNotFoundException,
+                   SearchException,
+                   IntactException,
+                   MultipleResultException  {
 
         // Retreiving interactor from the database according to the given AC
         logger.info ("retrieving Interactor ...");
         Collection results = null;
 
-//        results = user.getHelper().search("uk.ac.ebi.intact.model.Interactor", "ac", queryString);
+        results = find (queryString);
+
+        InteractionNetwork in = null;
+
+        switch (results.size()) {
+            case 0 :
+                logger.error ("nothing found for: " + queryString);
+                throw new ProteinNotFoundException ();
+
+            case 1 :
+                Interactor interactor = (Interactor) results.iterator().next();
+
+                in = new InteractionNetwork (interactor);
+
+                // foundBy has been updated by doLookup
+                in.addCriteria (queryString, foundBy);
+
+                in = this.user.subGraph (in,
+                                         depth,
+                                         null,
+                                         uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY);
+
+                break;
+
+            default : // more than 1
+                logger.error (queryString + " gave us multiple results");
+                throw new MultipleResultException();
+        }
+
+        return in;
+    }
+
+
+    /**
+     * Create an interaction graph according to a protein AC
+     *
+     * @param queryString the given protein AC.
+     * @param depth The level of BAIT-BAIT interaction in the interaction graph.
+     */
+    public InteractionNetwork addInteractionNetwork (InteractionNetwork in, String queryString, int depth)
+            throws ProteinNotFoundException,
+                   SearchException,
+                   IntactException,
+                   MultipleResultException  {
+
+        // Retreiving interactor from the database according to the given AC
+        logger.info ("retrieving Interactor ...");
+        Collection results = null;
+
+        results = find (queryString);
+
+        switch (results.size()) {
+            case 0 :
+                logger.error ("nothing found for: " + queryString);
+                throw new ProteinNotFoundException ();
+
+            case 1 :
+                Interactor interactor = (Interactor) results.iterator().next();
+                InteractionNetwork tmp = null;
+                if (in != null) {
+                    // in the case that interactor is already registered as central in
+                    // the current network, no need to retrieve the network, just send
+                    // back the current one.
+                    String ac = interactor.getAc();
+                    ArrayList centrals = in.getCentralProteins();
+                    int max = centrals.size();
+                    for (int i=0; i<max; i++) {
+                        Node node = (Node) centrals.get(i);
+                        if (ac.equals(node.getAc())) {
+                           return in;
+                        }
+                    }
+
+                    // this is not the case, so retreive that network and fusion them.
+                    tmp = in;
+                }
+
+                in = new InteractionNetwork (interactor);
+
+                // foundBy has been updated by doLookup
+                in.addCriteria (queryString, foundBy);
+
+                in = this.user.subGraph (in,
+                                         depth,
+                                         null,
+                                         uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY);
+
+                if (tmp != null) {
+                    logger.info ("Fusion interaction network");
+                    tmp.fusion(in);
+                    in = tmp;
+                }
+
+                break;
+
+            default : // more than 1
+                logger.error (queryString + " gave us multiple results");
+                throw new MultipleResultException();
+        }
+
+        return in;
+    }
+
+
+    /**
+     * Search in the database Interactor related to the query string.
+     *
+     * @param queryString the criteria to search for.
+     * @return a collection of interactor or empty if none are found.
+     * @throws IntactException in case of search error.
+     */
+    private Collection find (String queryString) throws IntactException {
+
+        Collection results;
 
         //first try search string 'as is' - some DBs allow mixed case....
         results = doLookup ("uk.ac.ebi.intact.model.Interactor", queryString);
@@ -93,28 +214,7 @@ public class GraphHelper  {
             }
         }
 
-
-        switch (results.size()) {
-            case 0 :
-                logger.error ("nothing found for: " + queryString);
-                throw new ProteinNotFoundException ();
-
-            case 1 :
-                Interactor interactor = (Interactor) results.iterator().next();
-                in = new InteractionNetwork(interactor);
-                in.addCriteria(queryString, foundBy);
-                in = this.user.subGraph (in,
-                                         depth,
-                                         null,
-                                         uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY);
-                break;
-
-            default : // more than 1
-                logger.error (queryString + " gave us multiple results");
-                throw new MultipleResultException();
-        }
-
-        return in;
+        return results;
     }
 
 
@@ -165,6 +265,68 @@ public class GraphHelper  {
             } else foundBy = SHORT_LABEL;
         } else foundBy = AC;
         return results;
+    }
+
+    public InteractionNetwork updateInteractionNetwork (InteractionNetwork network, int depth)
+            throws ProteinNotFoundException,
+                   SearchException,
+                   IntactException,
+                   MultipleResultException {
+
+        // Retreiving interactor from the database according to the given AC
+        logger.info ("updating interaction network ...");
+        Collection results = null;
+
+        InteractionNetwork newNetwork = null;
+
+        ArrayList centrals = network.getCentralProteins();
+        String ac;
+        int max = centrals.size();
+        for (int i=0; i<max; i++) {
+            Node node = (Node) centrals.get(i);
+            ac = node.getAc();
+
+            logger.info ("Retrieving Interactor "+ ac +" ...");
+            results = find (ac);
+
+            switch (results.size()) {
+                case 0 : // should not happen
+                    logger.error ("nothing found for ac: " + ac);
+                    throw new ProteinNotFoundException ();
+
+                case 1 :
+                    Interactor interactor = (Interactor) results.iterator().next();
+                    InteractionNetwork tmp = new InteractionNetwork (interactor);
+
+                    tmp = this.user.subGraph (tmp,
+                                              depth,
+                                              null,
+                                              uk.ac.ebi.intact.model.Constants.EXPANSION_BAITPREY);
+                    if (newNetwork == null) {
+                        // first network
+                        newNetwork = tmp;
+                    } else {
+                        logger.info ("Fusion interaction network");
+                        newNetwork.fusion (tmp);
+                    }
+
+                    // add the central node to the new network
+                    HashMap nodes = newNetwork.getNodes();
+                    Node aNode = (Node) nodes.get(node.getAc());
+                    newNetwork.addCentralProtein(aNode);
+
+                    break;
+
+                default : // more than 1 - should not happen
+                    logger.error (ac + " gave us multiple results");
+                    throw new MultipleResultException();
+            } // switch
+        } // for each central proteins
+
+        // to finish, copy criterias
+        newNetwork.getCriteria().addAll (network.getCriteria());
+
+        return newNetwork;
     }
 }
 

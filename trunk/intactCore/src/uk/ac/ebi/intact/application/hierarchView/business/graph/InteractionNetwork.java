@@ -14,15 +14,13 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageDimension;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.simpleGraph.EdgeI;
-import uk.ac.ebi.intact.simpleGraph.Graph;
-import uk.ac.ebi.intact.simpleGraph.Node;
-import uk.ac.ebi.intact.simpleGraph.NodeI;
+import uk.ac.ebi.intact.simpleGraph.*;
 
 import java.rmi.RemoteException;
 import java.awt.Color;
@@ -69,7 +67,12 @@ public class InteractionNetwork extends Graph {
      */
     private Interactor centralProtein;
     private String centralProteinAC; // avoid numerous call to interactor.getAc()
-    private Node centralProteinNode;
+//    private Node centralProteinNode;
+
+    /**
+     * Stores a set of central nodes. There is one by fusioned interaction network
+     */
+    private ArrayList centralNodes;
 
     /**
      * Describe how the interaction network has been built,
@@ -87,6 +90,7 @@ public class InteractionNetwork extends Graph {
         centralProtein   = aCentralProtein;
         centralProteinAC = aCentralProtein.getAc();
         criteriaList     = new ArrayList();
+        centralNodes     = new ArrayList();
 
         // wait the user to add some node to reference the central one
         dimension        = new ImageDimension();
@@ -98,13 +102,25 @@ public class InteractionNetwork extends Graph {
         return centralProteinAC;
     }
 
-    public Node getCentralProteinNode() {
-        return centralProteinNode;
-    }
+//    public Node getCentralProteinNode() {
+//        return centralProteinNode;
+//    }
 
     public Interactor getCentralProtein() {
         return centralProtein;
     }
+
+
+
+    public void addCentralProtein (Node node) {
+        if (! centralNodes.contains(node))
+            centralNodes.add (node);
+    }
+
+    public ArrayList getCentralProteins () {
+        return centralNodes;
+    }
+
 
     public ArrayList getCriteria() {
         return criteriaList;
@@ -153,12 +169,15 @@ public class InteractionNetwork extends Graph {
         // initialization of the node
         if (null != aNode) {
             if (anInteractor.equals(centralProtein)) {
-                centralProteinNode = aNode;
+//                centralProteinNode = aNode;
+                addCentralProtein(aNode);
             }
             aNode.put (Constants.ATTRIBUTE_LABEL, anInteractor.getAc ());
 
             initNodeDisplay (aNode);
         }
+
+        isInitialized = false;
 
         return aNode;
     } // addNode
@@ -185,7 +204,7 @@ public class InteractionNetwork extends Graph {
 
         while (iterator.hasNext ()) {
             aNode = (Node) someNodes.get(iterator.next());
-            this.initNodeDisplay (aNode);
+            initNodeDisplay (aNode);
         }
     } // initNodes
 
@@ -276,26 +295,28 @@ public class InteractionNetwork extends Graph {
         EdgeI edge;
         StringBuffer out = new StringBuffer();
         String separator = System.getProperty ("line.separator");
-        int i;
+        int i, max;
 
         if (false == this.isInitialized)
             this.init();
 
         out.append("(nodes ");
 
-        for (i = 1; i <= this.nodeList.size(); i++)
+        max = nodeList.size();
+        for (i = 1; i <= max; i++)
             out.append(i + " ");
 
         out.append(")" + separator);
 
         ArrayList myEdges = (ArrayList) super.getEdges();
 
-        for (i = 1; i <= sizeEdges(); i++) {
+        max = sizeEdges();
+        for (i = 1; i <= max; i++) {
             edge = (EdgeI) myEdges.get (i - 1);
             out.append("(edge "+ i + " "  +
-                    (this.nodeList.indexOf (edge.getNode1 ()) + 1) + " " +
-                    (this.nodeList.indexOf (edge.getNode2 ()) + 1) + ")" +
-                    separator);
+                      (nodeList.indexOf (edge.getNode1 ()) + 1) + " " +
+                      (nodeList.indexOf (edge.getNode2 ()) + 1) + ")" +
+                      separator);
         }
 
         return out.toString();
@@ -314,14 +335,14 @@ public class InteractionNetwork extends Graph {
         EdgeI edge;
         StringBuffer out        = new StringBuffer();
         String separator = System.getProperty ("line.separator");
-        int i;
+        int i, max;
 
         if (false == this.isInitialized)
             this.init();
 
         Vector  myEdges = (Vector)  super.getEdges();
-
-        for (i = 1; i <= sizeEdges(); i++) {
+        max = sizeEdges();
+        for (i = 1; i <= max; i++) {
             edge = (EdgeI) myEdges.get (i - 1);
             String label1 = ((Node) edge.getNode1 ()).getLabel () ;
             String label2 = ((Node) edge.getNode2 ()).getLabel () ;
@@ -343,6 +364,9 @@ public class InteractionNetwork extends Graph {
      */
     public String[] importDataToImage (String dataTlp)
           throws RemoteException {
+
+        if (false == this.isInitialized)
+            this.init();
 
         ProteinCoordinate[] result;
         TulipClient client  = new TulipClient();
@@ -368,6 +392,7 @@ public class InteractionNetwork extends Graph {
 
             for (int i = 0; i < result.length; i++) {
                 p = result[i];
+
                 x  = new Float (p.getX());
                 y  = new Float (p.getY());
 
@@ -384,6 +409,93 @@ public class InteractionNetwork extends Graph {
 
         return null;
     } //importDataToImage
+
+    /**
+     * Fusion a interaction network to the current one.<br>
+     *
+     * For each edge of the new network we check if it exists in the current one.<br>
+     * If the edge already exists : continue.<br>
+     * If not, we check if the two Nodes of the edge already exists in the current network :
+     * <blockquote>
+     *     if the node exists, update the edge with its reference<br>
+     *     if not add it to the current network
+     * </blockquote>
+     * finally we add the up-to-date edge to the current network<br>
+     *
+     * @param network the interaction network we want to fusioned to the current one.
+     */
+    public void fusion (InteractionNetwork network) {
+
+        logger.info ("BEGIN fusion");
+        Chrono chrono = new Chrono ();
+        chrono.start();
+
+        Collection newEdges = network.getEdges();
+        Collection edges    = getEdges();
+        HashMap    nodes    = getNodes();
+        Edge aNewEdge;
+        NodeI aNode;
+        String ACNode;
+
+        Iterator iterator = newEdges.iterator();
+        while (iterator.hasNext()) {
+            aNewEdge = (Edge) iterator.next();
+
+            // see also the equals method of Edge
+            if (false == edges.contains (aNewEdge)) {
+                // check if both nodes are present
+                aNode = aNewEdge.getNode1 ();
+                ACNode = aNode.getAc();
+                // see also the equals method of Node
+                if (false == nodes.containsKey(ACNode)) {
+                    nodes.put (ACNode, aNode);
+                    logger.info ("fusion: add node " + ACNode);
+                } else {
+                    aNewEdge.setNode1 ((Node) nodes.get(ACNode));
+                }
+
+                aNode = aNewEdge.getNode2 ();
+                ACNode = aNode.getAc();
+                if (false == nodes.containsKey(ACNode)) {
+                    nodes.put (ACNode, aNode);
+                    logger.info ("fusion: add node " + ACNode);
+                } else {
+                    aNewEdge.setNode2 ((Node) nodes.get(ACNode));
+                }
+
+                edges.add (aNewEdge);
+                logger.info ("fusion: add edge " + aNewEdge.getNode1().getAc() + "<->"
+                             + aNewEdge.getNode2().getAc());
+            }
+        }
+
+        // update internal reference
+        init();
+        initNodes();
+
+        // fusion central proteins
+        ArrayList _centralNodes = network.getCentralProteins();
+        int max = _centralNodes.size();
+        for (int i=0; i<max; i++) {
+            Node node = (Node) _centralNodes.get(i);
+            /*
+             * We get the reference of that node (from the AC)
+             * in the current network to keep consistancy.
+             */
+            Node node2 = (Node) nodes.get(node.getAc());
+            centralNodes.add(node2);
+        }
+
+        // fusion search criteria
+        criteriaList.addAll (network.getCriteria());
+
+        chrono.stop();
+        String msg = "Network Fusion took " + chrono;
+        logger.info(msg);
+
+        logger.info ("END fusion");
+    }
+
 }
 
 

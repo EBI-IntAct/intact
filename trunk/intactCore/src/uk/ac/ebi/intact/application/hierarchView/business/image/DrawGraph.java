@@ -17,6 +17,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * Purpose :
@@ -29,11 +31,15 @@ import java.util.Properties;
 
 
 public class DrawGraph {
+
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
+
+
     /********** CONSTANTS ************/
     private final static String DEFAULT_BORDER_SIZE  = "5";
-    private final static String DEFAULT_IMAGE_LENGTH ="300";
-    private final static String DEFAULT_IMAGE_HEIGHT ="300";
-    private final static String DEFAULT_MAP_NAME     ="networkMap";
+    private final static String DEFAULT_IMAGE_LENGTH = "300";
+    private final static String DEFAULT_IMAGE_HEIGHT = "300";
+    private final static String DEFAULT_MAP_NAME     = "networkMap";
 
     private final static int DEFAULT_COLOR_BACKGROUND_RED   = 255;
     private final static int DEFAULT_COLOR_BACKGROUND_GREEN = 255;
@@ -183,7 +189,7 @@ public class DrawGraph {
 
         // Initialization of drawnNode
         int numberOfProtein = in.sizeNodes();
-        drawnNode  = new boolean [numberOfProtein];
+        drawnNode = new boolean [numberOfProtein];
 
         for(int k = 0 ; k < numberOfProtein; k++){
             drawnNode[k] = false;
@@ -239,7 +245,7 @@ public class DrawGraph {
 
 
         // get the central protein in order to apply a different font
-        Node centralProtein = graph.getCentralProteinNode();
+        ArrayList centrals = graph.getCentralProteins();
 
         // update the image dimension according to the proteins coordinates and their size's label
         for (j = 0; j < numberOfProtein; j++) {
@@ -253,13 +259,13 @@ public class DrawGraph {
                 float proteinX = ((Float) protein.get(Constants.ATTRIBUTE_COORDINATE_X)).floatValue();
                 float proteinY = ((Float) protein.get(Constants.ATTRIBUTE_COORDINATE_Y)).floatValue();
 
-                if (protein == centralProtein) {
+                if (centrals.contains(protein)) {
                     g.setFont (boldFontLabel);
-                    fontMetrics = g.getFontMetrics ();
-                }else{
+                } else {
                     g.setFont (fontLabel);
-                    fontMetrics = g.getFontMetrics ();
                 }
+
+                fontMetrics = g.getFontMetrics ();
 
                 // calculate heigth and width
                 float height = fontMetrics.getHeight() +
@@ -575,6 +581,9 @@ public class DrawGraph {
      */
     private void drawNode (Node protein, Graphics2D g, Font labelFont) {
 
+
+        Float f = (Float) protein.get(Constants.ATTRIBUTE_LENGTH);
+
         String proteinLabel  = protein.getLabel();
 
         float proteinLength  = ((Float) protein.get(Constants.ATTRIBUTE_LENGTH)).floatValue();
@@ -627,7 +636,7 @@ public class DrawGraph {
                 RenderingHints.VALUE_ANTIALIAS_OFF);
 
         // Write the map
-        mapCode.append("<AREA SHAPE=\"RECT\" HREF=\"/hierarchView/centered.do?AC=" + protein.getAc() +
+        mapCode.append("<AREA SHAPE=\"RECT\" HREF=\"/hierarchView/click.do?AC=" + protein.getAc() +
                 " \" COORDS=" + (int)x1 + "," + (int)y1 + "," + x2 + "," + y2 + ">");
 
         // Write label
@@ -652,13 +661,11 @@ public class DrawGraph {
      * @param interaction The interaction to draw
      * @param g The graphic where we draw
      */
-    private void drawEdge(EdgeI interaction, Graphics2D g)
-    {
+    private void drawEdge(EdgeI interaction, Graphics2D g) {
         Node proteinR, proteinL;
         float xline1, xline2, yline1, yline2;
 
-        float proteinRx, proteinRy,
-                proteinLx, proteinLy;
+        float proteinRx, proteinRy, proteinLx, proteinLy;
 
         ImageDimension dimension = graph.getImageDimension();
 
@@ -774,8 +781,14 @@ public class DrawGraph {
         // set the central protein as drawn to draw only all others,
         // we'll draw the central protein after
         ArrayList listOfProteins = graph.getOrderedNodes();
-        Node centralProtein = graph.getCentralProteinNode();
-        drawnNode[listOfProteins.indexOf(centralProtein)] = true;
+
+        ArrayList centrals = graph.getCentralProteins();
+        int max = centrals.size();
+        for (int x = 0; x<max; x++) {
+            // don't draw central protein now
+            Node centralProtein = (Node) centrals.get(x);
+            drawnNode[listOfProteins.indexOf(centralProtein)] = true;
+        }
 
         for(int j = 0; j < numberOfProtein; j++) {
             tmp = (Node) listOfProtein.get(j);
@@ -786,7 +799,13 @@ public class DrawGraph {
         }
 
         // Draw the central node with a bold font to be sure it is visible and distinguishable.
-        drawNode(centralProtein, g, boldFontLabel);
+        for (int x = 0; x<max; x++) {
+            // draw visible central protein over the rest, with bold font.
+            Node centralProtein = (Node) centrals.get(x);
+            if (((Boolean) centralProtein.get(Constants.ATTRIBUTE_VISIBLE)).booleanValue() == true) {
+                drawNode(centralProtein, g, boldFontLabel);
+            }
+        }
 
         mapCode.append("</MAP>");
 

@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import java.util.HashMap;
@@ -54,6 +55,11 @@ public class IntactUser implements IntactUserI {
      * The current network with which the user is working
      */
     private InteractionNetwork interactionNetwork;
+
+    /**
+     * The current click behaviour
+     */
+    private ClickBehaviourForm clickBehaviour;
 
     /**
      * Set of highlight options (key/value) given by the user via the web interface
@@ -151,6 +157,29 @@ public class IntactUser implements IntactUserI {
      */
     public boolean InteractionNetworkReadyToBeHighlighted(){
         return (null != queryString) && (null != keys) && (behaviour != null) && (null != interactionNetwork);
+    }
+
+
+    public void setClickBehaviour (ClickBehaviourForm form) {
+           clickBehaviour = form;
+    }
+
+    /**
+     * is the current behaviour is to Add when the user click on the image map
+     * @return true if Add the view is the current behaviour
+     */
+    public boolean clickBehaviourIsAdd () {
+        if (clickBehaviour == null) return false;
+        return clickBehaviour.addSelected();
+    }
+
+    /**
+     * is the current behaviour is to Center the view when the user click on the image map
+     * @return true if Center the view is the current behaviour
+     */
+    public boolean clickBehaviourIsCenter () {
+        if (clickBehaviour == null) return true;
+        return clickBehaviour.centerSelected();
     }
 
     public InteractionNetwork getInteractionNetwork() {
@@ -353,14 +382,23 @@ public class IntactUser implements IntactUserI {
                                         int complexExpansion) throws IntactException {
 
         logger.info("Starting graph generation (" + in.getCentralProteinAC() + ", depth=" + graphDepth + ")");
-//        InteractionNetwork in = new InteractionNetwork (startNode);
         Graph graph = in;
 
-        graph = intactHelper.subGraph (in.getCentralProtein(),
-                                       graphDepth,
-                                       experiments,
-                                       complexExpansion,
-			                           graph);
+//        intactHelper.clearCache();
+//        logger.info ("Cache is wiped");
+
+        Chrono chrono = new Chrono ();
+        chrono.start();
+
+        graph = intactHelper.subGraph ( in.getCentralProtein(),
+                                        graphDepth,
+                                        experiments,
+                                        complexExpansion,
+                                        graph);
+
+        chrono.stop();
+        String msg = "Creating the interaction network took: " + chrono;
+        logger.info(msg);
 
         logger.info("Graph generation complete\n" + graph);
 
