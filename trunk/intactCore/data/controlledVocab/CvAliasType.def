@@ -6,3 +6,7 @@ shortlabel: gene-name-synonym
 term: Gene name synonym
 definition: A synonym for a gene name.
 
+shortlabel: isoform-synonym
+term: Isoform synonym
+definition: A synonym for an protein isoform.
+
