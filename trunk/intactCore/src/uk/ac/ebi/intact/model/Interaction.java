@@ -60,14 +60,4 @@ public interface Interaction extends Interactor {
     public int hashCode();
 
     public String toString();
-
-    /**
-     * Returns a copy of the current interaction with few exceptions as utlined
-     * below.
-     * @return the copy of the current interaction. The copy inherits
-     * values for Interaction type and host organism of the current interaction. 'x' will
-     * be appneded to the short label. The copy also inherits same Proteins with
-     * new components and a copy of new Xrefs. Annotations are not inherited.   
-     */
-    public Interaction copy();
 }
