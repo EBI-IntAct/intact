@@ -146,15 +146,6 @@ INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
 INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || nextval('Intact_ac'),
 	      'uk.ac.ebi.intact.model.CvTopic',
-	      'GO term',
-	      'The term imported from GO formatted CV',
-	      ac
-         FROM Institution
-        WHERE shortLabel='EBI';
-
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
-       SELECT 'EBI-' || nextval('Intact_ac'),
-	      'uk.ac.ebi.intact.model.CvTopic',
 	      'GO comment',
 	      'Comment imported from GO formatted CV',
 	      ac
