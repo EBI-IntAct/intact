@@ -47,7 +47,7 @@
     <!-- The search link -->
     <context-param>
         <param-name>searchLink</param-name>
-        <param-value>http://localhost:8080/search/do/search?searchString=</param-value>
+        <param-value>/do/search?searchString=</param-value>
     </context-param>
 
       <!-- Action Servlet Configuration -->
