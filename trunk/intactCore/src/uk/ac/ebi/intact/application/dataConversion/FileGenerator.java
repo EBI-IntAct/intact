@@ -230,7 +230,7 @@ public class FileGenerator {
             if(exp.getInteractions().size() > FileGenerator.LARGESCALESIZE) {
                 System.err.println("processing large experiment "
                         + exp.getShortLabel() + " ....");
-                FileGenerator.processLargeExperiment(exp);
+                FileGenerator.processLargeExperiment(exp, fileName);
                 return;     //done
             }
         }
@@ -243,7 +243,7 @@ public class FileGenerator {
 
     }
 
-    public static void processLargeExperiment(Experiment exp) throws Exception {
+    public static void processLargeExperiment(Experiment exp, String fileName) throws Exception {
 
         //Too many statics - now we have to create lots of unnecessary objects..
         PsiDataBuilder builder = new PsiDataBuilder(); //need a specific one here
@@ -273,7 +273,7 @@ public class FileGenerator {
         //build the interactionList files..
         System.out.println("generating Interaction files for experiment "
                 + exp.getShortLabel() + ": Blocks completed: ");
-        mainFileName = exp.getShortLabel() + "_interactions_";  //chunk number added later
+        //mainFileName = exp.getShortLabel() + "_interactions_";  //chunk number added later
         Collection interactions = exp.getInteractions();
         //System.out.println("Number of interactions found: " + interactions.size());
         //System.out.println("Type of interaction Collection: " + interactions.getClass().getName());
@@ -319,10 +319,18 @@ public class FileGenerator {
                     entry.appendChild(interactionRoot);
 
                     //interactionList = builder.buildInteractionsOnly(itemsToProcess);
-                    String fileName = mainFileName + chunkCount + ".xml";
+                    //String fileName = mainFileName + chunkCount + ".xml";
+                    //add a leading zero to the chunk count and use the fileName
+                    //if it is given - otherwise use the shortlabel
+                    if(fileName != null) {
+                        mainFileName = fileName.substring(0, fileName.indexOf(".")) + "_0" + chunkCount + ".xml";
+                    }
+                    else {
+                         mainFileName = mainFileName + "0" + chunkCount + ".xml";
+                    }
                     //builder.writeData(fileName, interactionList);
                     System.out.println("Dumping chunk data...");
-                    builder.writeData(fileName, singleFileDoc);
+                    builder.writeData(mainFileName, singleFileDoc);
                     System.out.println("chunk " + chunkCount + " complete.");
                     System.out.println();
 
