@@ -53,14 +53,11 @@ public final class ProteinInteractorTag {
                                                 " for an ProteinInteractor" );
         }
 
-        if( organism == null ) {
-            throw new IllegalArgumentException( "You must give a non null organism for a proteinInteractor" );
-        }
-
         this.organism = organism;
         this.uniprotXref = uniprotXref;
     }
 
+    
     ////////////////////////
     // Getters
 
@@ -75,8 +72,8 @@ public final class ProteinInteractorTag {
 
     ////////////////////////
     // Equality
-    
-    public boolean equals( final Object o ) {
+
+    public boolean equals( Object o ) {
         if( this == o ) {
             return true;
         }
@@ -86,7 +83,7 @@ public final class ProteinInteractorTag {
 
         final ProteinInteractorTag proteinInteractorTag = (ProteinInteractorTag) o;
 
-        if( !organism.equals( proteinInteractorTag.organism ) ) {
+        if( organism != null ? !organism.equals( proteinInteractorTag.organism ) : proteinInteractorTag.organism != null ) {
             return false;
         }
         if( !uniprotXref.equals( proteinInteractorTag.uniprotXref ) ) {
@@ -99,16 +96,15 @@ public final class ProteinInteractorTag {
     public int hashCode() {
         int result;
         result = uniprotXref.hashCode();
-        result = 29 * result + organism.hashCode();
+        result = 29 * result + ( organism != null ? organism.hashCode() : 0 );
         return result;
     }
 
+
     public String toString() {
-        final StringBuffer buf = new StringBuffer();
-        buf.append( "ProteinInteractorTag" );
-        buf.append( "{organism=" ).append( organism );
-        buf.append( ",uniprotXref=" ).append( uniprotXref );
-        buf.append( '}' );
-        return buf.toString();
+        return "ProteinInteractorTag{" +
+               "organism=" + organism +
+               ", uniprotXref=" + uniprotXref +
+               "}";
     }
 }
