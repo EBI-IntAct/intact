@@ -248,7 +248,7 @@ public class IntactHelper implements SearchI, Serializable {
      * validates a user's credentials against the data store.
      *
      * @param user the username
-     * @param passowrd the user password (may be null)
+     * @param password the user password (may be null)
      *
      * @return boolean true if valid details, false if not (including a null username).
      */
@@ -368,7 +368,7 @@ public class IntactHelper implements SearchI, Serializable {
     /**
      *  This method provides a create operation for intact objects.
      *
-     * @param types - a collection of intact objects to be created
+     * @param objects - a collection of intact objects to be created
      *
      * @exception IntactException - thrown if a problem arises during the creation process
      *
