@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.util.Collection;
 import java.io.Serializable;
+import java.net.URL;
 
 /**
  * This interface stores information about an Intact Web user session. Instead of
@@ -28,25 +29,36 @@ import java.io.Serializable;
 public interface IntactUserI extends Serializable, HttpSessionBindingListener {
 
     public String  getAC();
-    public String  getDepth();
-    public boolean getHasNoDepthLimit();
+    public int     getCurrentDepth();
+    public boolean minimalDepthReached();
+    public boolean maximalDepthReached();
+
     public String  getMethodLabel();
     public String  getMethodClass();
     public String  getBehaviour();
     public ImageBean getImageBean();
     public Collection getKeys();
     public InteractionNetwork getInteractionNetwork();
+    public boolean InteractionNetworkReadyToBeDisplayed();
+    public boolean InteractionNetworkReadyToBeHighlighted();
     public IntactHelper getHelper ();
+    public String getSourceURL ();
+    public boolean hasSourceUrlToDisplay();
 
     public void setAC (String AC);
-    public void setDepth (String depth);
-    public void setHasNoDepthLimit (boolean flag);
+    public void increaseDepth();
+    public void desacreaseDepth();
+    public void setDepthToDefault();
     public void setMethodLabel (String methodLabel);
     public void setMethodClass (String methodClass);
     public void setBehaviour (String behaviour);
     public void setImageBean (ImageBean imageBean);
     public void setKeys (Collection keys);
     public void setInteractionNetwork (InteractionNetwork in);
+
+    public void setSourceURL(String url);
+    public void resetSourceURL();
+
 
     /**
      * Set the default value of user's data
@@ -103,4 +115,4 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener {
      */
     public Object getHighlightOption (String name);
 
-} // IntactUser
+}

@@ -212,15 +212,15 @@ public class GoHighlightmentSource extends HighlightmentSource {
      * @param aProteinAC a protein identifier (AC)
      * @return a set of URL pointing on the highlightment source
      */
-    public Collection getSourceUrls (String aProteinAC, HttpSession aSession)
+    public List getSourceUrls (String aProteinAC, HttpSession aSession)
          throws IntactException {
-        Collection urls = new Vector();
+        List urls = new ArrayList();
 
         // get in the Highlightment properties file where is hosted interpro
-        Properties props = PropertyLoader.load (StrutsConstants.PROPERTY_FILE_HIGHLIGHTING);
+        Properties props = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
         if (null == props) {
             String msg = "Unable to find the interpro hostname. "+
-                         "The properties file '" + StrutsConstants.PROPERTY_FILE_HIGHLIGHTING + "' couldn't be loaded.";
+                         "The properties file '" + StrutsConstants.HIGHLIGHTING_PROPERTY_FILE + "' couldn't be loaded.";
             logger.error (msg);
             throw new IntactException ();
         }
@@ -230,7 +230,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         if (null == hostname) {
             String msg = "Unable to find the interpro hostname. "+
                          "Check the 'highlightment.source.GO.hostname' property in the '" +
-                         StrutsConstants.PROPERTY_FILE_HIGHLIGHTING + "' properties file";
+                         StrutsConstants.HIGHLIGHTING_PROPERTY_FILE + "' properties file";
             logger.error (msg);
             throw new IntactException ();
         }

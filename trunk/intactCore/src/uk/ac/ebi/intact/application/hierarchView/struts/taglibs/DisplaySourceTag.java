@@ -16,8 +16,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.net.URL;
 
 import org.apache.log4j.Logger;
 
@@ -64,7 +65,7 @@ public class DisplaySourceTag extends TagSupport {
                     logger.info ("Display highlight source items for AC = " + AC +
                                  " SourceClass = " + method_class);
 
-                    Collection urls = null;
+                    List urls = null;
 
                     try {
                         urls = source.getSourceUrls(AC, session);
@@ -74,7 +75,6 @@ public class DisplaySourceTag extends TagSupport {
                         return EVAL_PAGE;
                     }
 
-
                     Iterator iterator = urls.iterator();
                     int size = urls.size();
 
@@ -83,60 +83,24 @@ public class DisplaySourceTag extends TagSupport {
                     } else if (1 == size) {
                         // only one source element, let's forward to the relevant page.
                         LabelValueBean url = (LabelValueBean) iterator.next();
-                        String adress = url.getValue();
-                        String absoluteUrl = adress;
+                        String absoluteUrl = url.getValue();
 
-                        // inject the javascript code which allow to forward in a frame
-                        String rightFrameName = Constants.RIGHT_FRAME_NAME ;
-                        String forwardFunctionCode =
-                                "<script language=\"JavaScript\">\n" +
-                                "<!--   \n" +
-                                "   /** \n" +
-                                "    * Allows to forward to a specified URL inside a frame \n" +
-                                "    */ \n" +
-                                "   function forward ( absoluteUrl ) {  \n" +
-                                "      parent." + rightFrameName + ".location.href = absoluteUrl; \n" +
-                                "   } \n" +
-                                "//--> \n" +
-                                "</script>\n\n";
-                        pageContext.getOut().write (forwardFunctionCode);
-
-                        /* forward to this URL */
-                        String msg = "<script language=\"JavaScript\">\n" +
-                                     "<!--\n" +
-                                     "     forward ( '" + absoluteUrl + "' );\n" +
-                                     "//-->\n" +
-                                     "</script>\n\n";
-                        pageContext.getOut().write (msg);
-
+                        user.setSourceURL (absoluteUrl);
                     } else {
-                        // more than 1 source available : display a list of link
-                        StringBuffer sb = new StringBuffer();
-                        sb.append ("Select an element in the list : <br>");
-
-                        while (iterator.hasNext()) {
-                            LabelValueBean url = (LabelValueBean) iterator.next();
-                            String adress = url.getValue();
-                            String label = url.getLabel();
-                            String description = url.getDescription();
-                            String rightFrameName = Constants.RIGHT_FRAME_NAME ;
-
-                            sb.append ("<a href=" + adress +" target=\"" + rightFrameName + "\">" + label + "</a>");
-                            if (null != description)
-                                sb.append (" : " + description);
-
-                            sb.append("<br>");
-                        } // while
-
-                        pageContext.getOut().write (sb.toString());
+                        /* More than 1 source available : display a list of link
+                         * So, store the List of item to display in the session and
+                         * call in the JSP display:table tag.
+                         */
+                        session.setAttribute("sources", urls);
                     } // else
                 } // else
             } // if
 
         } catch (Exception ioe) {
+            ioe.printStackTrace();
             throw new JspException ("Fatal error: could not display protein associated source.");
         }
         return EVAL_PAGE;
     } // doEndTag
 
-} // DisplaySourceTag
+}
