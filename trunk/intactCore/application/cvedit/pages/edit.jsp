@@ -83,19 +83,22 @@ Topic: <b><c:out value="${viewbean.topic}"/></b>
                     <td class="tableCell">
                         <nested:equal name="<%=CvEditConstants.COMMENT_EDIT_FORM%>"
                             property="editState" value="<%=EditBean.VIEW%>">
-                            <html:image indexed="true" property="cmd"
-                                value="Edit" srcKey="button.edit.img"/>
+                            <html:submit indexed="true" property="cmd">
+                                <bean:message key="button.edit"/>
+                            </html:submit>
                         </nested:equal>
 
                         <nested:equal property="editState" value="<%=EditBean.SAVE%>">
-                            <html:image indexed="true" property="cmd"
-                                value="Save" srcKey="button.save.img"/>
+                            <html:submit indexed="true" property="cmd">
+                                <bean:message key="button.save"/>
+                            </html:submit>
                         </nested:equal>
                     </td>
 
                     <td class="tableCell">
-                        <html:image indexed="true" property="cmd"
-                            value="Delete" srcKey="button.del.img"/>
+                        <html:submit indexed="true" property="cmd">
+                            <bean:message key="button.delete"/>
+                        </html:submit>
                     </td>
                 </tr>
             </nested:iterate>
@@ -218,20 +221,23 @@ Topic: <b><c:out value="${viewbean.topic}"/></b>
                     <td class="tableCell">
                         <nested:equal name="<%=CvEditConstants.XREF_EDIT_FORM%>"
                             property="editState" value="<%=EditBean.VIEW%>">
-                            <html:image indexed="true" property="cmd"
-                                value="Edit" srcKey="button.edit.img"/>
+                            <html:submit indexed="true" property="cmd">
+                                <bean:message key="button.edit"/>
+                            </html:submit>
                         </nested:equal>
 
                         <nested:equal name="<%=CvEditConstants.XREF_EDIT_FORM%>"
                             property="editState" value="<%=EditBean.SAVE%>">
-                            <html:image indexed="true" property="cmd"
-                                value="Save" srcKey="button.save.img"/>
+                            <html:submit indexed="true" property="cmd">
+                                <bean:message key="button.save"/>
+                            </html:submit>
                         </nested:equal>
                     </td>
 
                     <td class="tableCell">
-                        <html:image indexed="true" property="cmd"
-                                    value="Delete" srcKey="button.del.img"/>
+                        <html:submit indexed="true" property="cmd">
+                            <bean:message key="button.delete"/>
+                        </html:submit>
                     </td>
                 </tr>
             </nested:iterate>
