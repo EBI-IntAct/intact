@@ -43,6 +43,12 @@
             <tiles:insert attribute="psi" ignore="true"/>
         </td>
 	</tr>
+	
+	<tr>
+		<td>
+			<tiles:insert attribute="mine" ignore="true"/>
+		</td>
+	</tr>	
 
 </table>
 
