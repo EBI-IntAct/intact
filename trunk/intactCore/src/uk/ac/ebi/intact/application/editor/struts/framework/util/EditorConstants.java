@@ -47,6 +47,11 @@ public interface EditorConstants {
     public static final String FORWARD_FAILURE = "failure";
 
     /**
+     * Forwards to the input page.
+     */
+    public static final String FORWARD_INPUT = "input";
+
+    /**
      * Forward to the search page.
      */
     public static final String FORWARD_SEARCH = "search";
@@ -69,6 +74,11 @@ public interface EditorConstants {
     public static final String FORWARD_NO_MATCHES = "noMatch";
 
     /**
+     * The name of the CV info form.
+     */
+    public static final String FORM_CVINFO = "cvInfoForm";
+
+    /**
      * The name of the Xref edit form.
      */
     public static final String FORM_XREF_EDIT = "xrefEditForm";
@@ -77,4 +87,21 @@ public interface EditorConstants {
      * The name of the Comment (annotation) edit form.
      */
     public static final String FORM_COMMENT_EDIT = "commentEditForm";
+
+    // Forms related to Interaction.
+
+    /**
+     * The name of the experiment form in an Interaction.
+     */
+    public static final String FORM_INTERACTION_EXP = "intExperimentForm";
+
+    /**
+     * The name of the experiment hold form in an Interaction.
+     */
+    public static final String FORM_INTERACTION_EXP_HOLD = "intExperimentHoldForm";
+
+    /**
+     * The name of the protein form in an Interaction.
+     */
+    public static final String FORM_INTERACTION_PROT = "intProteinEditForm";
 }
