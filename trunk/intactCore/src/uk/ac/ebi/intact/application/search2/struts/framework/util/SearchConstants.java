@@ -129,4 +129,10 @@ public interface SearchConstants {
      * from a search.
      */
     public static final String FORWARD_NO_MATCHES = "noMatch";
+
+    /**
+     * Used as a key to identify a page to display when warning are raised
+     * from a search.
+     */
+    public static final String FORWARD_WARNING    = "warning";
 }

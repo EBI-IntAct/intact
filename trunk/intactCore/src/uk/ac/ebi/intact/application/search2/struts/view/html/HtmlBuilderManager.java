@@ -5,8 +5,11 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.search2.struts.view.html;
 
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.search2.business.Constants;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,6 +43,8 @@ import java.util.Set;
  * @version $Id$
  */
 public class HtmlBuilderManager {
+
+    protected transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
     private static HtmlBuilderManager ourInstance;
 
@@ -111,9 +116,8 @@ public class HtmlBuilderManager {
     private void buildHtml( HtmlBuilder builder, Object object )
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        // TODO use a proper logger
         if (object.getClass().isAssignableFrom( AnnotatedObject.class ))
-            System.out.println ( ((AnnotatedObject) object).getShortLabel() + "  " +
+            logger.info ( ((AnnotatedObject) object).getShortLabel() + "  " +
                                  object.getClass().getName() );
 
         try {
@@ -124,5 +128,31 @@ public class HtmlBuilderManager {
             e.getTargetException().printStackTrace();
             throw e;
         }
+    }
+
+
+    /**
+     *
+     * @param writer
+     * @param object
+     * @param highlights
+     * @param link
+     * @param contextPath
+     * @param currentChunk
+     * @param maxChunk
+     */
+    public void getChunkIndexHtml ( Writer writer,
+                                    AnnotatedObject object,
+                                    Set highlights,
+                                    String link,
+                                    String contextPath,
+                                    int currentChunk,
+                                    int maxChunk,
+                                    int objectCount,
+                                    String chunkedObjectType) throws IOException {
+
+        HtmlBuilder builder = new HtmlBuilder(writer, highlights, link, contextPath);
+        builder.buildChunkIndex( object, link, currentChunk, maxChunk, objectCount, chunkedObjectType );
+
     }
 }

@@ -6,9 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search2.struts.framework;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
+import uk.ac.ebi.intact.application.search2.business.Constants;
 import uk.ac.ebi.intact.application.search2.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.search2.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants;
@@ -24,10 +26,16 @@ import javax.servlet.http.HttpSession;
  */
 public abstract class IntactBaseAction extends Action {
 
-    /** The global Intact error key. */
+    protected transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+
+    /**
+     * The global Intact error key.
+     */
     public static final String INTACT_ERROR = "IntactError";
 
-    /** Error container */
+    /**
+     * Error container
+     */
     private ActionErrors myErrors = new ActionErrors();
 
     /**
@@ -51,15 +59,6 @@ public abstract class IntactBaseAction extends Action {
         IntactUserIF service = (IntactUserIF)
             session.getAttribute(SearchConstants.INTACT_USER);
         return service;
-    }
-
-    /**
-     * Convenience method that logs for agiven message.
-     * @param message string that describes the error or exception
-     */
-    protected void log(String message) {
-       if (super.servlet.getDebug() >= 1)
-           super.servlet.log(message);
     }
 
     /**

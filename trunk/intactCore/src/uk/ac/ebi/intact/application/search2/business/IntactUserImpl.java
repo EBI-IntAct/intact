@@ -39,16 +39,17 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      */
     private IntactHelper helper;
 
-    /**
-     * The search criteria.
-     */
-//    private String searchCriteria;
-
     private String myHelpLink;
 
     private String searchValue;
 
     private String searchClass;
+
+    /**
+     * Managment of the object chunk - Chunk to display
+     */
+    private int selectedChunk;
+
 
 
     /**
@@ -79,6 +80,14 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
         // build a helper and XmlBuilder for use throughout a session
         this.helper = new IntactHelper(ds);
+    }
+
+    public int getSelectedChunk () {
+        return selectedChunk;
+    }
+
+    public void setSelectedChunk ( int selectedChunk ) {
+        this.selectedChunk = selectedChunk;
     }
 
     // Implements HttpSessionBindingListener

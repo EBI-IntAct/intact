@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.search2.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search2.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.proxy.ProteinProxy;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,38 +54,48 @@ public class DispatcherAction extends IntactBaseAction {
         //get the search results from the request
         Collection results = (Collection)request.getAttribute(SearchConstants.SEARCH_RESULTS);
 
-        super.log("dispatcher action: analysing user's query...");
+        logger.info("dispatcher action: analysing user's query...");
 
         // Handler to the Intact User.
-        IntactUserIF user = super.getIntactUser(getSession(request));
-        if(user == null) {
+        IntactUserIF user = super.getIntactUser( getSession( request ) );
+        if( user == null ) {
             //browser page caching screwed up the session - need to
             //get a user object created again by forwarding to welcome action...
-            return mapping.findForward(SearchConstants.FORWARD_SESSION_LOST);
+            return mapping.findForward( SearchConstants.FORWARD_SESSION_LOST );
 
         }
+
         // The first element of the search result.
         Object resultItem = results.iterator().next();
 
         // dispatch to the right action accordingly
-        if (resultItem.getClass().isAssignableFrom(Protein.class)) {
+        logger.info( "First item className: " + resultItem.getClass().getName() );
+        if ( resultItem.getClass().isAssignableFrom( ProteinProxy.class ) ||
+             resultItem.getClass().isAssignableFrom( Protein.class ) ) {
+
             if ((results.size() == 1)) {
-                if (user.getSearchClass().equals("Protein")) {
-                    super.log( "Dispatcher ask forward to SingleResultAction" );
+                String searchClass = user.getSearchClass();
+                logger.info( "SearchClass: "+ searchClass );
+
+                if ( searchClass.equals( "Protein" ) || searchClass.equals( "ProteinImpl" ) ) {
+                    logger.info( "Dispatcher ask forward to SingleResultAction" );
                     return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
                 }
-                super.log( "Dispatcher ask forward to BinaryResultAction" );
+
+                logger.info( "Dispatcher ask forward to BinaryResultAction" );
                 return mapping.findForward( SearchConstants.FORWARD_BINARY_ACTION );
             }
-            super.log( "Dispatcher ask forward to DetailsResultAction" );
+
+            logger.info( "Dispatcher ask forward to DetailsResultAction" );
             return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
         }
 
         if (results.size() == 1) {
-            super.log( "Dispatcher ask forward to SingleResultAction" );
+            logger.info( "Dispatcher ask forward to SingleResultAction" );
             return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
         }
-        super.log( "Dispatcher ask forward to DetailsResultAction" );
+
+        logger.info( "Dispatcher ask forward to DetailsResultAction" );
         return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
     }
 }

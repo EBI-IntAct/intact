@@ -6,25 +6,26 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search2.struts.controller;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.search2.business.IntactUserIF;
+import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
+import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.search2.business.Constants;
+import uk.ac.ebi.intact.application.search2.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search2.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants;
-import uk.ac.ebi.intact.application.commons.search.SearchHelper;
-import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * This class provides the actions required to carry out search operations
@@ -40,15 +41,12 @@ import java.util.*;
 
 public class SearchAction extends IntactBaseAction {
 
-    private static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    public static final int MAXIMUM_DISPLAYABLE_INTERACTION = 50;
+    public static final int MAXIMUM_DISPLAYABLE_PROTEIN     = 30;
 
     /**
      * The search order. The search is done in this order.
      */
-//    public static final String[] SEARCH_ORDER = new String[]{
-//        "Protein", "Interaction", "Experiment"
-//    };
-
     public static final ArrayList SEARCH_CLASSES = new ArrayList(3);
     static {
         SEARCH_CLASSES.add( "Protein" );
@@ -92,20 +90,32 @@ public class SearchAction extends IntactBaseAction {
         }
 
         DynaActionForm dyForm = (DynaActionForm) form;
-        String searchValue = (String) dyForm.get("searchString");
-        String searchClass = (String) dyForm.get("searchClass");
+        String searchValue   = (String) dyForm.get( "searchString") ;
+        String searchClass   = (String) dyForm.get( "searchClass" );
+        String selectedChunk = (String) dyForm.get( "selectedChunk" );
+
+        int selectedChunkInt = Constants.NO_CHUNK_SELECTED;
+        try {
+            if ( null != selectedChunk && !selectedChunk.equals("") )
+                selectedChunkInt = Integer.parseInt( selectedChunk );
+        } catch( NumberFormatException nfe ) {
+            logger.warn( "The selected chunk is not an Integer value, it can't be parsed.", nfe );
+        }
 
         user.setSearchValue( searchValue );
         user.setSearchClass( searchClass );
+        user.setSelectedChunk( selectedChunkInt );
 
-        System.out.println("searchValue: " + searchValue);
-        System.out.println("searchClass: " + searchClass);
+        logger.info( "searchValue: " + searchValue);
+        logger.info( "searchClass: " + searchClass);
+        logger.info( "selectedChunk: " + (selectedChunkInt == Constants.NO_CHUNK_SELECTED ? "none" : selectedChunk));
 
         //reset the class string in the form for the next request
         dyForm.set("searchClass", "");
+        dyForm.set("selectedChunk", "-1");
 
         //clean out previous single object views
-        session.setAttribute(SearchConstants.VIEW_BEAN, null);
+        session.setAttribute( SearchConstants.VIEW_BEAN, null );
 
         // Holds the result from the initial search.
         Collection results = null;
@@ -114,7 +124,7 @@ public class SearchAction extends IntactBaseAction {
         //ones we will accept for now) and return as soon as we get a result
         //NB obviously can't distinguish between a zero return and a search
         //with garbage input using this approach...
-        super.log("search action: attempting to search by AC first...");
+        logger.info( "search action: attempting to search by AC first..." );
         try {
             SearchHelper searchHelper = new SearchHelper( logger );
             boolean noClass = false;
@@ -137,38 +147,94 @@ public class SearchAction extends IntactBaseAction {
 
                 if (results.isEmpty()) {
                     //finished all current options, and still nothing - return a failure
-                    super.log("No matches were found for the specified search criteria");
+                    logger.info( "No matches were found for the specified search criteria" );
 
                     // Save the search parameters for results page to display.
-                    session.setAttribute( SearchConstants.SEARCH_CRITERIA,
-                                          searchHelper.getSearchCritera() + "=" + searchValue);
+                    session.setAttribute( SearchConstants.SEARCH_CRITERIA, searchValue);
 
                     return mapping.findForward( SearchConstants.FORWARD_NO_MATCHES );
                 }
             }
-            super.log("search action: search results retrieved OK");
+            logger.info("search action: search results retrieved OK");
 
             // ************* Search was a success. ********************************
+            // ************* Check if the retreived collection not too big to be displayed. ************
+
+            IntactObject firstItem = (IntactObject) results.iterator().next();
+            Class firsItemClass = IntactHelper.getRealClassName( firstItem );
+            boolean overTheThreshold = false;
+            int currentThreshold     = -1;
+
+            if( firsItemClass.equals( Protein.class ) ||
+                    firsItemClass.equals( ProteinImpl.class ) ) {
+
+                if( results.size() > MAXIMUM_DISPLAYABLE_PROTEIN ) {
+                    overTheThreshold = true;
+                    currentThreshold = MAXIMUM_DISPLAYABLE_PROTEIN;
+                }
+
+            } else if( firsItemClass.equals( Interaction.class ) ||
+                    firsItemClass.equals( InteractionImpl.class ) ){
+
+                if( results.size() > MAXIMUM_DISPLAYABLE_INTERACTION ) {
+                    overTheThreshold = true;
+                    currentThreshold = MAXIMUM_DISPLAYABLE_INTERACTION;
+                }
+
+            }
+
+            if( overTheThreshold ) {
+                logger.warn("Process stopped, the collection retreived is too big to be processed.");
+                super.clearErrors();
+
+                String objectsType = IntactHelper.getDisplayableClassName( firstItem );
+                objectsType = objectsType.toLowerCase();
+                if( objectsType.charAt( objectsType.length() - 1 ) != 's' ) {
+                    objectsType += "s";
+                }
+
+                String message = "<b><font color=\"orange\">" + results.size() + "</font></b> "+ objectsType +
+                                 " were found. The threshold is currently set to " +
+                                 "<b><font color=\"orange\">" + currentThreshold +"</font></b>.";
+
+                super.addError( "warning.collection.too.big.to.be.displayed", message ) ;
+                super.saveErrors( request );
+                return mapping.findForward( SearchConstants.FORWARD_WARNING);
+            }
+
+
+            // ***************** The collection size is ok ****************************
 
             // Save the search parameters for results page to display.
             Collection criterias = searchHelper.getSearchCritera();
             StringBuffer buf = new StringBuffer( 128 );
             Iterator it = criterias.iterator ();
-            CriteriaBean criteriaBean = (CriteriaBean) it.next ();
+            CriteriaBean criteriaBean = null;
+            // Only add criteria if the target is not null.
+            while (  it.hasNext () ) {
+                criteriaBean = (CriteriaBean) it.next();
+                if( criteriaBean.getTarget() != null ) break;
+            }
+
+            // one criteria has been selected
             buf.append( criteriaBean.getTarget() ).append( '=' ).append( criteriaBean.getQuery() );
             while (  it.hasNext () ) {
-                criteriaBean = (CriteriaBean) it.next ();
-                buf.append( ", " ).append( criteriaBean.getTarget() ).append( '=' ).append( criteriaBean.getQuery() );
+                criteriaBean = (CriteriaBean) it.next();
+                if( criteriaBean.getTarget() != null ){
+                    buf.append( ", " ).append( criteriaBean.getTarget() ).append( '=' ).append( criteriaBean.getQuery() );
+                }
             }
 
             session.setAttribute( SearchConstants.SEARCH_CRITERIA, buf.toString() );
 
+            logger.info("found results - forwarding to relevant Action for processing...");
 
-            super.log("found results - forwarding to relevant Action for processing...");
-
-            for (Iterator iterator = results.iterator(); iterator.hasNext();) {
-                AnnotatedObject annotatedObject = (AnnotatedObject) iterator.next();
-                System.out.println("Search result: " + annotatedObject.getShortLabel());
+            if( logger.isInfoEnabled() ) {
+                for (Iterator iterator = results.iterator(); iterator.hasNext();) {
+                    // Beware that letting that loop would load the real object in case it is proxied !
+                    AnnotatedObject annotatedObject = (AnnotatedObject) iterator.next();
+                    logger.info("Search result: " + annotatedObject.getShortLabel());
+                }
             }
             request.setAttribute(SearchConstants.SEARCH_RESULTS, results);
 
@@ -178,25 +244,29 @@ public class SearchAction extends IntactBaseAction {
             session.setAttribute(SearchConstants.LAST_VALID_SEARCH, searchValue);
 
             // dispatch to the relevant action
-            String relativeHelpLink = getServlet ().getServletContext().getInitParameter("helpLink");
+            String relativeHelpLink = getServlet().getServletContext().getInitParameter( "helpLink" );
 
             //build the help link out of the context path - strip off the 'search' bit...
             String ctxtPath = request.getContextPath();
-            String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
-            String helpLink = relativePath.concat(relativeHelpLink);
-            user.setHelpLink(helpLink);
-            return mapping.findForward(SearchConstants.FORWARD_DISPATCHER_ACTION);
+            String relativePath = ctxtPath.substring( 0, ctxtPath.lastIndexOf( "search" ) );
+            String helpLink = relativePath.concat( relativeHelpLink );
+            user.setHelpLink( helpLink );
+            return mapping.findForward( SearchConstants.FORWARD_DISPATCHER_ACTION );
         }
-        catch (IntactException se) {
+        catch ( IntactException se ) {
             // Something failed during search...
-            super.log(ExceptionUtils.getStackTrace(se));
-            super.log(se.getNestedMessage());
-            super.log(se.getRootCause().toString());
-            super.log(se.getLocalizedMessage());
+            logger.info( se );
+            logger.info(se.getNestedMessage());
+            logger.info(se.getRootCause().toString());
+            logger.info(se.getLocalizedMessage());
+
+            // clear in case there is some old errors in there.
+            super.clearErrors();
+
             // The errors to report back.
-            super.addError("error.search", se.getMessage());
-            super.saveErrors(request);
-            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
+            super.addError( "error.search", se.getMessage() );
+            super.saveErrors( request );
+            return mapping.findForward( SearchConstants.FORWARD_FAILURE  );
         }
     }
 }

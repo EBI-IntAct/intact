@@ -58,7 +58,7 @@ public class WelcomeAction extends IntactBaseAction {
 
         // Save the context to avoid repeat calls.
         ServletContext ctx = super.getServlet().getServletContext();
-        super.log("IN WELCOME ACTION");
+        logger.info("IN WELCOME ACTION");
 
         // Name of the mapping file and data source.
         String repfile = ctx.getInitParameter(Constants.MAPPING_FILE_KEY);
@@ -68,11 +68,11 @@ public class WelcomeAction extends IntactBaseAction {
         IntactUserIF user = null;
         try {
             user = new IntactUserImpl(repfile, ds);
-            super.log("new user created..");
+            logger.info("new user created..");
         }
         catch (DataSourceException de) {
             // Unable to get a data source...can't proceed
-            super.log(ExceptionUtils.getStackTrace(de));
+            logger.info(ExceptionUtils.getStackTrace(de));
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
             errors.add(super.INTACT_ERROR, new ActionError("error.invalid.user"));
@@ -81,7 +81,7 @@ public class WelcomeAction extends IntactBaseAction {
         }
         catch (IntactException se) {
             // Unable to construct lists such as topics, db names etc.
-            super.log(ExceptionUtils.getStackTrace(se));
+            logger.info(ExceptionUtils.getStackTrace(se));
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
             errors.add(super.INTACT_ERROR, new ActionError("error.search"));
@@ -89,8 +89,8 @@ public class WelcomeAction extends IntactBaseAction {
             return mapping.findForward(SearchConstants.FORWARD_FAILURE);
         }
         catch(Exception e) {
-            super.log("failed to create user - unexpected error!!");
-            super.log(ExceptionUtils.getStackTrace(e));
+            logger.info("failed to create user - unexpected error!!");
+            logger.info(ExceptionUtils.getStackTrace(e));
         }
 
         // Save the user. For the moment, create a new session.

@@ -57,22 +57,25 @@ public abstract class AbstractResulltAction extends IntactBaseAction {
         if( user == null ) {
             //browser page caching screwed up the session - need to
             //get a user object created again by forwarding to welcome action...
-            return mapping.findForward(SearchConstants.FORWARD_SESSION_LOST);
+            return mapping.findForward( SearchConstants.FORWARD_SESSION_LOST );
         }
 
         //get the search results from the request
         Collection results = (Collection) request.getAttribute( SearchConstants.SEARCH_RESULTS );
 
+        logger.info("Collection contains " + results.size() + " items.");
+
         AbstractViewBean bean = getAbstractViewBean( results, user, request.getContextPath());
 
         if ( bean == null ) {
-            super.log("No bean instanciated for empty collection");
+            logger.warn("No bean instanciated for empty collection");
+            super.clearErrors();
             super.addError("error.search", "No data collected in the database.");
             super.saveErrors(request);
             return mapping.findForward(SearchConstants.FORWARD_FAILURE);
         }
 
-        super.log( bean.getClass() + " created" );
+        logger.info( bean.getClass() + " created" );
         session.setAttribute( SearchConstants.VIEW_BEAN, bean );
         return mapping.findForward( SearchConstants.FORWARD_RESULTS );
     }
