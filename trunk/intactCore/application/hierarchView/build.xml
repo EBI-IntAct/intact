@@ -13,6 +13,8 @@
     <property name="root.src.dir" value="${intact.root}/src"/>
     <property name="root.dest.dir" value="${intact.root}/classes"/>
     <property name="root.config.dir" value="${intact.root}/config"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
     <property name="lib.dir" value="WEB-INF/lib"/>
     <property name="dest.dir" value="WEB-INF/classes"/>
@@ -79,7 +81,7 @@
     -->
     <target name="prepare">
         <tstamp/>
-        <available file="${lib.dir}/intact-core.jar" type="file" property="intact.jar.present"/>
+        <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
 
         <!-- These targets are called to display messages if tomcat or axis
              are not present.
