@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.*" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.graph.*" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.Constants" %>
 
@@ -213,6 +214,16 @@
 
 
 <% 
+
+// Write a link to display the GO term list for the selected AC number
+if (AC != null)
+{
+%>
+<a href="/hierarchView/hierarchy.jsp" target="frameHierarchy"> Display the source element list for the current AC number </a> <br>
+<%
+
+}
+
    /**
    * Apply an highlighting if AC != null, keys != null and behaviour != null
    */
@@ -271,7 +282,7 @@
 	  <!-- Insert your title here -->
 
 	    <font class="tableTitle">
-	      Highlightment's behaviour and options
+	      Highlighting's behaviour and options
 	    </font>
 
 	  <!-- End of title section -->
@@ -309,13 +320,27 @@
 		<tr>
 		  <!-- Highlightment option available for the selected method -->
 		  <td align="right">
-		      <bean:message key="hierarchView.view.highlightmentForm.options.prompt"/>
+		 
+		     <bean:message key="hierarchView.view.highlightmentForm.options.prompt"/>
+		      
 		  </td>
 		  <td align="left">
+		  <br>
 
+		  <%
 
-		     <input type="text" name="option">
-		      <!--html:text name="option" property="" size="6" maxlength="5"/-->
+		  // Search the list of protein to highlight
+		   HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(methodClass);
+		   String htmlCode = null;
+		   if (null != highlightmentSource) {
+		   htmlCode = highlightmentSource.getHtmlCodeOption(session);
+		   }
+		   out.println(htmlCode);
+
+		  //   <input type="text" name="option">
+		   //   <!--html:text name="option" property="" size="6" maxlength="5"/-->
+		  %>
+		   
 		  </td>
 		</tr>
 
