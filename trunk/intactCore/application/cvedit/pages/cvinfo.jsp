@@ -29,7 +29,7 @@
                 <html:text property="shortLabel" name="cvinfoForm" size="10" maxlength="16"/>
             </td>
             <td class="tableCell">
-                <html:text property="fullName" name="cvinfoForm" size="80"/>
+                <html:text property="fullName" name="cvinfoForm" size="80" maxlength="250"/>
             </td>
         </tr>
     </table>
