@@ -87,6 +87,16 @@
             <form-property name="inter" type="java.lang.String"/>
             <form-property name="ident" type="java.lang.String"/>
 
+            <!-- Interactions for this experiment -->
+            <form-property name="ints"
+                type="uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean[]"/>
+            <form-property name="intCmd" type="java.lang.String[]"/>
+
+            <!-- Interactions for this experiment -->
+            <form-property name="intshold"
+                type="uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean[]"/>
+            <form-property name="intsholdCmd" type="java.lang.String[]"/>
+
             <!-- Search parameters for an experiment -->
             <form-property name="intSearchLabel" type="java.lang.String"/>
             <form-property name="intSearchAC" type="java.lang.String"/>
@@ -458,6 +468,8 @@
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/expAnnotSubmit"/>
             <forward name="xref" path="/do/expXrefSubmit"/>
+            <forward name="intDel" path="/do/intDel"/>
+            <forward name="intHold" path="/do/intHold"/>
             <forward name="intSearch" path="/do/intSearch"/>
         </action>
 
@@ -501,6 +513,28 @@
             input="/do/fillExpForm"
             validate="false"
             scope="session" />
+
+        <!-- Action to handle when an interaction is deleted from the Experiment.
+        -->
+        <action path="/intDel"
+            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionAction"
+            name="expForm"
+            validate="false"
+            scope="session" >
+            <forward name="success" path="/do/fillExpForm"/>
+        </action>
+
+        <!-- Action to handle when an experiment is added to an Interaction
+             hidden from the current view.
+        -->
+        <action path="/intHold"
+            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionHoldAction"
+            name="expForm"
+            input="/do/fillExpForm"
+            validate="false"
+            scope="session" >
+            <forward name="success" path="/do/fillExpForm"/>
+        </action>
 
         <!-- Action to handle when an interaction is added to the experiment or
              hidden from the current view.

@@ -14,14 +14,13 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentExcept
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Experiment edit view bean.
@@ -51,6 +50,18 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * current display.
      */
     private transient List myInteractions = new ArrayList();
+
+    /**
+     * Holds Interactions to add. This collection is cleared once the user
+     * commits the transaction.
+     */
+    private transient List myInteractionsToAdd = new ArrayList();
+
+    /**
+     * Holds Interactions to del. This collection is cleared once the user
+     * commits the transaction.
+     */
+    private transient List myInteractionsToDel = new ArrayList();
 
     /**
      * Holds Interaction to not yet added. Only valid for the current session.
@@ -83,6 +94,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         else {
             myIdent = null;
         }
+        // Clear any left overs from previous transaction.
+        clearTransactions();
+
+        // Prepare for Interactions for display.
+        makeInteractionBeans(exp.getInteractions());
     }
 
     // Override the super method to this bean's info.
@@ -229,6 +245,53 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     /**
+     * Adds an Interaction.
+     * @param intbean the Interaction bean to add.
+     *
+     * <pre>
+     * post: myInteractionsToAdd = myInteractionsToAdd@pre + 1
+     * post: myInteractions = myInteractions@pre + 1
+     * </pre>
+     */
+    public void addInteraction(InteractionBean intbean) {
+        // Interaction to add.
+        myInteractionsToAdd.add(intbean);
+        // Add to the view as well.
+        myInteractions.add(intbean);
+    }
+
+    /**
+     * True if given interaction exists in this object's interaction collection.
+     * @param intbean the bean to compare.
+     * @return true <code>intbean</code> exists in this object's interaction
+     * collection. The comparision uses the equals method of
+     * <code>InteractionBean</code> class.
+     *
+     * <pre>
+     * post: return->true implies myInteractionsToAdd.exists(intbean)
+     * </pre>
+     */
+    public boolean interactionExists(InteractionBean intbean) {
+        return myInteractions.contains(intbean);
+    }
+
+    /**
+     * Removes an Interaction
+     * @param intbean the Interaction bean to remove.
+     *
+     * <pre>
+     * post: myInteractionsToDel = myInteractionsToDel@pre - 1
+     * post: myInteractions = myInteractions@pre - 1
+     * </pre>
+     */
+    public void delInteraction(InteractionBean intbean) {
+        // Add to the container to delete interactions.
+        myInteractionsToDel.add(intbean);
+        // Remove from the view as well.
+        myInteractions.remove(intbean);
+    }
+
+    /**
      * Adds an Interaction bean to hold if the new interaction doesn't
      * already exists in the interaction hold collection and in the
      * current interaction collection for this interaction.
@@ -246,6 +309,69 @@ public class ExperimentViewBean extends AbstractEditViewBean {
                     && !myInteractions.contains(expbean)) {
                 myInteractionsToHold.add(expbean);
             }
+        }
+    }
+
+    /**
+     * Returns a collection of <code>InteractionBean</code> objects.
+     *
+     * <pre>
+     * post: return != null
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(InteractionBean))
+     * </pre>
+     */
+    public List getInteractions() {
+        return myInteractions;
+    }
+
+    /**
+     * Returns a collection of <code>InteractionBean</code> objects on hold.
+     *
+     * <pre>
+     * post: return != null
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(InteractionBean))
+     * </pre>
+     */
+    public List getHoldInteractions() {
+        return myInteractionsToHold;
+    }
+
+    /**
+     * Hides an Interaction bean from hold.
+     * @param intbean an <code>InteractionBean</code> to hide.
+     * <pre>
+     * pre: myInteractionsToHold->includes(intbean)
+     * post: myInteractionsToHold = myInteractionsToHold@pre - 1
+     * </pre>
+     */
+    public void hideInteractionToHold(InteractionBean intbean) {
+        myInteractionsToHold.remove(intbean);
+    }
+
+    /**
+     * Clears all the interactions on hold.
+     */
+    public void clearInteractionToHold() {
+        myInteractionsToHold.clear();
+    }
+
+    // Override super to add extra.
+    public void clearTransactions() {
+        super.clearTransactions();
+
+        // Clear experiments.
+//        myInteractionsToAdd.clear();
+//        myInteractionsToDel.clear();
+        myInteractionsToHold.clear();
+    }
+
+    // Helper methods
+
+    private void makeInteractionBeans(Collection ints) {
+        myInteractions.clear();
+        for (Iterator iter = ints.iterator(); iter.hasNext();) {
+            Interaction interaction  = (Interaction) iter.next();
+            myInteractions.add(new InteractionBean(interaction));
         }
     }
 }

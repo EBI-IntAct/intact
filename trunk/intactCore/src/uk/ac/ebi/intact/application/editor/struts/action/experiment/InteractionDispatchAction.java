@@ -9,9 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
-import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,14 +119,15 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
             return mapping.getInputForward();
         }
         // The number of Interactions retrieved from the search.
-        int size = ints.size();
+        int intsize = ints.size();
 
-        // Just an arbitrary number for the moment.
-        if (size > 10) {
+        // The interaction search limit.
+        String intlimit = getService().getResource("int.search.limit");
+        if (intsize > Integer.parseInt(intlimit)) {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.exp.int.search.many",
-                            Integer.toString(size), searchParam, "10"));
+                            Integer.toString(intsize), searchParam, intlimit));
             saveErrors(request, errors);
             return mapping.getInputForward();
         }
