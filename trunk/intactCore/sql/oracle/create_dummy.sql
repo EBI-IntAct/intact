@@ -69,6 +69,9 @@ INSERT INTO IA_ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
          FROM IA_Institution
         WHERE shortLabel='EBI';
 
+INSERT INTO IA_biosource (ac, taxid, shortlabel)
+values (SELECT 'EBI-' || Intact_ac.nextval, '-1', 'in vitro');        
+
 commit;
 exit;
 
