@@ -182,7 +182,7 @@ public class Dijkstra extends IntegerDijkstraPathfinder {
 	
 	/**
 	 * Checks wether a new shortest path was found.
-	 * 
+	 *
 	 * @param path the new found path
 	 * @param search1 node one
 	 * @param search2 node two
