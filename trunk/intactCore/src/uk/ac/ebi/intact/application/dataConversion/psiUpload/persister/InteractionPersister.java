@@ -27,32 +27,90 @@ import java.util.*;
  */
 public final class InteractionPersister {
 
-    private static class InteractionAlreadyExistsException extends Exception {
-
-        public InteractionAlreadyExistsException( String message ) {
-            super( message );
-        }
-    }
+    ////////////////////////////////
+    // Constants
 
     private static int MAX_LENGTH_INTERACTION_SHORTLABEL = 20;
 
     private static boolean DEBUG = CommandLineOptions.getInstance().isDebugEnabled();
 
 
-    public static Interaction persist( final InteractionTag interactionTag,
-                                       final IntactHelper helper )
+    ////////////////////////////////
+    // Private classes
+
+    /**
+     * Carries the result of the search for the non already existing interaction
+     * based on the data found in the PSI file.
+     * it contains:
+     * - a new shortlabel if the interaction doesn't exists.
+     * - the experiment to link to.
+     */
+    private static class ExperimentWrapper {
+
+        private String shortlabel = null;
+        private final ExperimentDescriptionTag experiment;
+
+        public ExperimentWrapper( ExperimentDescriptionTag experiment ) {
+            this.experiment = experiment;
+        }
+
+        public ExperimentDescriptionTag getExperiment() {
+            return experiment;
+        }
+
+        public void setShortlabel( String shortlabel ) {
+            this.shortlabel = shortlabel;
+        }
+
+        public String getShortlabel() {
+            return shortlabel;
+        }
+
+        public boolean hasShortlabel() {
+            return shortlabel != null;
+        }
+
+        public String toString() {
+            return "ExperimentWrapper{" +
+                   "experiment=" + experiment.getShortlabel() +
+                   ", shortlabel='" + shortlabel + "'" +
+                   "}";
+        }
+    }
+
+
+    /////////////////////////////
+    // Methods
+
+    public static Collection persist( final InteractionTag interactionTag,
+                                      final IntactHelper helper )
             throws IntactException {
 
-        // Shortlabel
-        String shortlabel = interactionTag.getShortlabel();
-        if( shortlabel == null || "".equals( shortlabel.trim() ) ) {
-            // Generating a shortlabel
-            try {
-                shortlabel = createShortlabel( interactionTag, helper );
-                System.out.print( "New Interaction: " + shortlabel + " status: " );
-            } catch ( InteractionAlreadyExistsException e ) {
-                System.err.println( e.getMessage() );
-                return null;
+        Collection interactions = new ArrayList( 1 );
+
+        // Generating shortlabels
+        Collection e = interactionTag.getExperiments();
+        Collection experiments = new ArrayList( e.size() );
+        for ( Iterator iterator = e.iterator(); iterator.hasNext(); ) {
+            ExperimentDescriptionTag experimentDescription = (ExperimentDescriptionTag) iterator.next();
+            experiments.add( new ExperimentWrapper( experimentDescription ) );
+        }
+
+        if( DEBUG ) {
+            System.out.println( "Before createShortlabel() " );
+            for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
+                ExperimentWrapper experimentWrapper = (ExperimentWrapper) iterator.next();
+                System.out.println( experimentWrapper );
+            }
+        }
+
+        createShortlabel( interactionTag, experiments, helper );
+
+        if( DEBUG ) {
+            System.out.println( "After createShortlabel() " );
+            for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
+                ExperimentWrapper experimentWrapper = (ExperimentWrapper) iterator.next();
+                System.out.println( experimentWrapper );
             }
         }
 
@@ -84,9 +142,7 @@ public final class InteractionPersister {
         /**
          * According to the curation rule we have to use as gene name:
          *  - if there: first gene name (flagged as uniprot/identity in IntAct)
-         *  - else, if there:
-         *
-         * TODO: check that when we use the shortlabel, we try to remove any _organism !
+         *  - else, use the shortlabel of the protein (without the organism suffix)
          *
          * Protein without gene name:
          *    > Q8IWZ2
@@ -95,92 +151,99 @@ public final class InteractionPersister {
          *    > Q96HB3
          */
 
-        // Experiments
-        final Collection experiments = new ArrayList( interactionTag.getExperiments().size() );
-        for ( Iterator iterator = interactionTag.getExperiments().iterator(); iterator.hasNext(); ) {
-            ExperimentDescriptionTag experimentDescription = (ExperimentDescriptionTag) iterator.next();
-            experiments.add( ExperimentDescriptionPersister.persist( experimentDescription, helper ) );
-        }
 
-        /* Components
-         * The way to create an Interaction is NOT TRIVIAL: we have firstly to create an
-         * Interaction Object with an empty collection of Component. and Then we have to
-         * use the interaction.addComponent( Component c ) to fill it up.
-         */
-        final Collection components = new ArrayList( interactionTag.getParticipants().size() );
+        // LOOP HERE OVER THE RESULT COLLECTION(shortlabel, experiment)
+        for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
+            ExperimentWrapper experimentWrapper = (ExperimentWrapper) iterator.next();
+            ExperimentDescriptionTag psiExperiment = experimentWrapper.getExperiment();
+            Collection myExperiments = new ArrayList( 1 );
+            Experiment intactExperiment = ExperimentDescriptionPersister.persist( psiExperiment, helper );
+            myExperiments.add( intactExperiment );
+            final String shortlabel = experimentWrapper.getShortlabel();
 
-        // CvInteractionType
-        final String cvInteractionTypeId = interactionTag.getInteractionType().getPsiDefinition().getId();
-        CvInteractionType cvInteractionType = InteractionTypeChecker.getCvInteractionType( cvInteractionTypeId );
 
-        // Creation of the Interaction
-        Interaction interaction = new InteractionImpl( experiments,
-                                                       components,
-                                                       cvInteractionType,
-                                                       shortlabel,
-                                                       helper.getInstitution() );
+            /* Components
+             * The way to create an Interaction is NOT TRIVIAL: we have firstly to create an
+             * Interaction Object with an empty collection of Component. and Then we have to
+             * use the interaction.addComponent( Component c ) to fill it up.
+             */
+            final Collection components = new ArrayList( interactionTag.getParticipants().size() );
 
-        interaction.setFullName( interactionTag.getFullname() );
-        helper.create( interaction );
+            // CvInteractionType
+            final String cvInteractionTypeId = interactionTag.getInteractionType().getPsiDefinition().getId();
+            CvInteractionType cvInteractionType = InteractionTypeChecker.getCvInteractionType( cvInteractionTypeId );
 
-        // Annotations
-        final Collection annotations = interactionTag.getAnnotations();
-        for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
-            final AnnotationTag annotationTag = (AnnotationTag) iterator.next();
-            final CvTopic cvTopic = AnnotationChecker.getCvTopic( annotationTag.getType() );
+            // Creation of the Interaction
+            Interaction interaction = new InteractionImpl( myExperiments,
+                                                           components,
+                                                           cvInteractionType,
+                                                           shortlabel,
+                                                           helper.getInstitution() );
 
-            // search for an annotation to re-use, instead of creating a new one.
-            Annotation annotation = searchIntactAnnotation( annotationTag, helper );
+            interaction.setFullName( interactionTag.getFullname() );
+            helper.create( interaction );
 
-            if( annotation == null ) {
-                // doesn't exist, then create a new Annotation
-                annotation = new Annotation( helper.getInstitution(), cvTopic );
-                annotation.setAnnotationText( annotationTag.getText() );
-                helper.create( annotation );
-            }
+            interactions.add( interaction );
+            System.out.println( "Interaction " + shortlabel + " created under experiment " +
+                                intactExperiment.getShortLabel() );
 
-            interaction.addAnnotation( annotation );
-        }
+            // Annotations
+            final Collection annotations = interactionTag.getAnnotations();
+            for ( Iterator iterator2 = annotations.iterator(); iterator2.hasNext(); ) {
+                final AnnotationTag annotationTag = (AnnotationTag) iterator2.next();
+                final CvTopic cvTopic = AnnotationChecker.getCvTopic( annotationTag.getType() );
 
-        // Confidence data
-        final ConfidenceTag confidence = interactionTag.getConfidence();
-        if( confidence != null ) {
-            // TODO look after that unit parameter, we might have to adapt the CvTopic accordingly later.
-            final CvTopic authorConfidence = ControlledVocabularyRepository.getAuthorConfidence();
+                // search for an annotation to re-use, instead of creating a new one.
+                Annotation annotation = searchIntactAnnotation( annotationTag, helper );
 
-            // check if that annotation could not be shared.
-            Collection _annotations = helper.search( Annotation.class.getName(),
-                                                     "description",
-                                                     confidence.getValue() );
-            Annotation annotation = null;
-            for ( Iterator iterator = _annotations.iterator(); iterator.hasNext() && annotation == null; ) {
-                Annotation _annotation = (Annotation) iterator.next();
-                if( authorConfidence.equals( _annotation.getCvTopic() ) ) {
-                    annotation = _annotation;
+                if( annotation == null ) {
+                    // doesn't exist, then create a new Annotation
+                    annotation = new Annotation( helper.getInstitution(), cvTopic );
+                    annotation.setAnnotationText( annotationTag.getText() );
+                    helper.create( annotation );
                 }
+
+                interaction.addAnnotation( annotation );
             }
 
-            if( annotation == null ) {
-                // create it !
-                annotation = new Annotation( helper.getInstitution(), authorConfidence );
-                annotation.setAnnotationText( confidence.getValue() );
-                helper.create( annotation );
+            // Confidence data
+            final ConfidenceTag confidence = interactionTag.getConfidence();
+            if( confidence != null ) {
+                // TODO look after that unit parameter, we might have to adapt the CvTopic accordingly later.
+                final CvTopic authorConfidence = ControlledVocabularyRepository.getAuthorConfidence();
+
+                // check if that annotation could not be shared.
+                Collection _annotations = helper.search( Annotation.class.getName(),
+                                                         "description",
+                                                         confidence.getValue() );
+                Annotation annotation = null;
+                for ( Iterator iterator3 = _annotations.iterator(); iterator3.hasNext() && annotation == null; ) {
+                    Annotation _annotation = (Annotation) iterator3.next();
+                    if( authorConfidence.equals( _annotation.getCvTopic() ) ) {
+                        annotation = _annotation;
+                    }
+                }
+
+                if( annotation == null ) {
+                    // create it !
+                    annotation = new Annotation( helper.getInstitution(), authorConfidence );
+                    annotation.setAnnotationText( confidence.getValue() );
+                    helper.create( annotation );
+                }
+
+                interaction.addAnnotation( annotation );
             }
 
-            interaction.addAnnotation( annotation );
+            helper.update( interaction );
+
+            // Now process the components...
+            final Collection participants = interactionTag.getParticipants();
+            for ( Iterator iterator4 = participants.iterator(); iterator4.hasNext(); ) {
+                ProteinParticipantTag proteinParticipant = (ProteinParticipantTag) iterator4.next();
+                ProteinParticipantPersister.persist( proteinParticipant, interaction, helper );
+            }
         }
-
-        helper.update( interaction );
-
-        // Now process the components...
-        final Collection participants = interactionTag.getParticipants();
-        for ( Iterator iterator = participants.iterator(); iterator.hasNext(); ) {
-            ProteinParticipantTag proteinParticipant = (ProteinParticipantTag) iterator.next();
-            ProteinParticipantPersister.persist( proteinParticipant, interaction, helper );
-        }
-
-        System.out.println( "created" );
-        return interaction;
+        return interactions;
     }
 
 
@@ -259,14 +322,14 @@ public final class InteractionPersister {
      * @return
      * @throws IntactException
      */
-    private static String createShortlabel( final InteractionTag interaction,
-                                            final IntactHelper helper )
-            throws IntactException,
-                   InteractionAlreadyExistsException {
+    private static void createShortlabel( final InteractionTag interaction,
+                                          final Collection experiments,
+                                          final IntactHelper helper )
+            throws IntactException {
 
-        Collection baits = new ArrayList();
-        Collection preys = new ArrayList();
-        Collection neutrals = new ArrayList();
+        Collection baits = new ArrayList( 2 );
+        Collection preys = new ArrayList( 2 );
+        Collection neutrals = new ArrayList( 2 );
 
         /**
          * Search for a gene name in the set, if none exist, take the protein ID.
@@ -287,24 +350,17 @@ public final class InteractionPersister {
             } else if( role.equals( "neutral" ) ) {
                 neutrals.add( geneName );
             } else {
-                // TODO log that in the MessageHolder !
-                System.err.println( "Could not handle the role: " + role + ". " +
-                                    "Currently, only bait, prey and neutral are supported" );
+                // we should never get in here if RoleChecker plays its role !
             }
         } // for proteins
 
-        String baitShortlabel = getLabelFromCollection( baits, true );
-        String preyShortlabel = getLabelFromCollection( preys, false );
+        String baitShortlabel = getLabelFromCollection( baits, true ); // fail on error
+        String preyShortlabel = getLabelFromCollection( preys, false ); // don't fail on error
         if( preyShortlabel == null ) {
-            preyShortlabel = getLabelFromCollection( neutrals, true );
+            preyShortlabel = getLabelFromCollection( neutrals, true ); // fail on error
         }
 
-        if( baitShortlabel == null || preyShortlabel == null ) {
-            System.out.println( "Could not find either a bait, prey or neutral protein's gene name " +
-                                "in the interaction: " + interaction );
-        }
-
-        return createInteractionShortLabel( interaction, baitShortlabel, preyShortlabel, helper );
+        createInteractionShortLabels( interaction, experiments, baitShortlabel, preyShortlabel, helper );
     }
 
 
@@ -360,12 +416,12 @@ public final class InteractionPersister {
      * @param prey
      * @return
      */
-    private static String createInteractionShortLabel( final InteractionTag interaction,
-                                                       String bait,
-                                                       String prey,
-                                                       final IntactHelper helper )
-            throws IntactException,
-                   InteractionAlreadyExistsException {
+    private static void createInteractionShortLabels( final InteractionTag psiInteraction,
+                                                      final Collection experiments,
+                                                      String bait,
+                                                      String prey,
+                                                      final IntactHelper helper )
+            throws IntactException {
 
         // convert bad characters ('-', ' ', '.') to '_'
         bait = bait.toLowerCase();
@@ -381,14 +437,14 @@ public final class InteractionPersister {
         int count = 0;
         String _bait = bait;
         String _prey = prey;
-        boolean foundLabel = false;
+        boolean allLabelFound = false;
         String label = null;
         String suffix = null;
 
         // check out the curation rules to know how to create an interaction shortlabel.
         // http://www3.ebi.ac.uk/internal/seqdb/curators/intact/Intactcurationrules_000.htm
 
-        while ( !foundLabel ) {
+        while ( !allLabelFound ) {
 
             if( count == 0 ) {
                 suffix = null;
@@ -417,11 +473,67 @@ public final class InteractionPersister {
             } // while
 
             // we have the right label's size now ... search for existing one !
+            if( DEBUG ) {
+                System.out.println( "Search interaction by label: " + label );
+            }
             Collection interactions = helper.search( Interaction.class.getName(), "shortlabel", label );
             if( interactions.size() == 0 ) {
-                // This label is not used yet, exit the loop
-                foundLabel = true;
+
+                if( DEBUG ) {
+                    System.out.println( "No interaction found with the label: " + label );
+                }
+
+                // Give the remaining experiment a shortlabel.
+                // takes care of gaps in the shortlabel sequence.
+                // could create new gaps if some already exists.
+                boolean atLeastOneInteractionWithoutShortlabel = false;
+                boolean oneExperimentHasAlreadyBeenUpdated = false;
+                for ( Iterator iterator = experiments.iterator(); iterator.hasNext() && !atLeastOneInteractionWithoutShortlabel; ) {
+                    ExperimentWrapper experimentWrapper = (ExperimentWrapper) iterator.next();
+                    // we want to associate only one shortlabel per loop and check if there is at least one
+                    // more experiment to update.
+                    if( DEBUG ) {
+                        System.out.println( "Work on " + experimentWrapper );
+                    }
+                    if( oneExperimentHasAlreadyBeenUpdated ) {
+                        if( !experimentWrapper.hasShortlabel() ) {
+                            atLeastOneInteractionWithoutShortlabel = true; // exit the loop.
+                            if( DEBUG ) {
+                                System.out.println( "At least one more experiment to which we have to give a shortlabel" );
+                            }
+                        } else {
+                            if( DEBUG ) {
+                                System.out.println( "has already a shortlabel" );
+                            }
+                        }
+                    } else {
+                        if( !experimentWrapper.hasShortlabel() ) {
+                            experimentWrapper.setShortlabel( label );
+                            oneExperimentHasAlreadyBeenUpdated = true;
+                            if( DEBUG ) {
+                                System.out.println( "Experiment " + experimentWrapper.getExperiment().getShortlabel()
+                                                    + " has been given the interaction shortlabel: " + label );
+                            }
+                        } else {
+                            if( DEBUG ) {
+                                System.out.println( "none has been set up to now and the current one has already a shortlabel" );
+                            }
+                        }
+                    }
+                }
+
+                if( DEBUG ) {
+                    if( atLeastOneInteractionWithoutShortlabel == true ) {
+                        System.out.println( "All experiment have been given an interaction shortlabel." );
+                    }
+                }
+
+                allLabelFound = !atLeastOneInteractionWithoutShortlabel;
             } else {
+
+                if( DEBUG ) {
+                    System.out.println( interactions.size() + " interactions found with the label: " + label );
+                }
 
                 /**
                  * An interaction already exists in an experiment if:
@@ -447,44 +559,16 @@ public final class InteractionPersister {
                 for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
                     Interaction intactInteraction = (Interaction) iterator.next();
 
-                    boolean interactionAlreadyExists = alreadyExistsInIntact( interaction, intactInteraction );
+                    alreadyExistsInIntact( psiInteraction, experiments, intactInteraction ); // update experiments !
 
-                    // if so abort !
-                    if( interactionAlreadyExists ) {
-
-                        // TODO we could throw that in the method: alreadyExistsInIntact and specify in which experiment !!!
-
-                        // create a message
-                        StringBuffer sb = new StringBuffer( 256 );
-                        sb.append( "An interaction having the shortlabel " ).append( intactInteraction.getShortLabel() );
-                        sb.append( " and involving as components: " );
-                        for ( Iterator iterator2 = interaction.getParticipants().iterator(); iterator2.hasNext(); ) {
-                            ProteinParticipantTag psiComponent = (ProteinParticipantTag) iterator2.next();
-                            sb.append( '[' );
-                            sb.append( psiComponent.getProteinInteractor().getUniprotXref().getId() );
-                            sb.append( ',' );
-                            sb.append( psiComponent.getRole() );
-                            sb.append( ']' ).append( ' ' );
-                        }
-                        sb.append( "already exists in IntAct." );
-
-                        throw new InteractionAlreadyExistsException( sb.toString() );
-                    }
                 } // intact interaction
             }
         } // while
-
-        return label;
     }
 
 
     /**
      * Allows to check if the data carried by an InteractionTag are already existing in the IntAct node.
-     * <p/>
-     * TODO if an interaction is linked to several experiment, we currently don't create one interaction per experiment
-     * TODO or at least link them together.
-     * <p/>
-     * <p/>
      * <pre>
      * <b>Reminder</b>:
      *  - an interaction (as a set of components) must be unique in the experiment scope.
@@ -499,12 +583,14 @@ public final class InteractionPersister {
      *                                                    for that experiment
      * </pre>
      *
-     * @param psi    the PSI data materialised as an Object
-     * @param intact an Intact Interaction.
-     * @return true if the PSI interaction has already an instance in Intact, otherwise false.
+     * @param psi         the PSI data materialised as an Object
+     * @param intact      an Intact Interaction.
+     * @param experiments it reflects the collection of experiments linked to the PSI interaction and we will
+     *                    update it in order to leave only those for which we need to create a new interaction.
      */
-    private static boolean alreadyExistsInIntact( final InteractionTag psi,
-                                                  final Interaction intact ) {
+    private static void alreadyExistsInIntact( final InteractionTag psi,
+                                               final Collection experiments,
+                                               final Interaction intact ) {
 
         // this is in theory a pretty heavy computation but in practice an interaction doesn't have much experiment
         // and few interaction have a lot of components.
@@ -513,7 +599,7 @@ public final class InteractionPersister {
             System.out.println( "Compare interactions: " + psi + "\n and " + intact );
         }
 
-        Collection psiExperiments = psi.getExperiments();
+        Collection psiExperiments = psi.getExperiments(); // TODO could be experiments
         for ( Iterator iterator = psiExperiments.iterator(); iterator.hasNext(); ) {
             ExperimentDescriptionTag psiExperiment = (ExperimentDescriptionTag) iterator.next();
 
@@ -528,7 +614,7 @@ public final class InteractionPersister {
                                         intactExperiment.getShortLabel() + ")" );
                 }
 
-                // compare two experiments using their shortlabel (TODO is this enough ?)
+                // compare two experiments using their shortlabel - TODO is this enough ?
                 if( intactExperiment.getShortLabel().equals( psiExperiment.getShortlabel() ) ) {
                     // they are the same ... check on the conponents
 
@@ -571,6 +657,7 @@ public final class InteractionPersister {
                                     System.out.println( "EQUALS" );
                                 }
                                 found = true;
+
                             } else {
                                 // special case, a same protein can be bait and prey in the same interaction.
                                 // Hence, we have to browse the whole intact Component set until we find the
@@ -595,7 +682,40 @@ public final class InteractionPersister {
                             System.out.println( "All component have been found, hence there is an instance of " +
                                                 "that interaction in intact" );
                         }
-                        return true;
+
+                        // create a warning message
+                        StringBuffer sb = new StringBuffer( 256 );
+                        sb.append( "WARNING" ).append( '\n' );
+                        sb.append( "An interaction having the shortlabel " ).append( intact.getShortLabel() );
+                        sb.append( '\n' );
+                        sb.append( "and involving as components: " );
+                        for ( Iterator iterator2 = psi.getParticipants().iterator(); iterator2.hasNext(); ) {
+                            ProteinParticipantTag psiComponent = (ProteinParticipantTag) iterator2.next();
+                            sb.append( '[' );
+                            sb.append( psiComponent.getProteinInteractor().getUniprotXref().getId() );
+                            sb.append( ',' );
+                            sb.append( psiComponent.getRole() );
+                            sb.append( ']' ).append( ' ' );
+                        }
+                        sb.append( '\n' );
+                        sb.append( "already exists in IntAct under the experiment " );
+                        sb.append( intactExperiment.getShortLabel() );
+                        sb.append( '\n' );
+
+                        System.out.println( sb.toString() );
+
+                        // update the experiment collection (remove the corresponding item).
+                        ExperimentWrapper experimentWrapper = null;
+                        boolean found = false;
+                        for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext() && !found; ) {
+                            experimentWrapper = (ExperimentWrapper) iterator2.next();
+                            if( experimentWrapper.getExperiment().equals( psiExperiment ) ) {
+                                found = true;
+                            }
+                        }
+                        if( found == true ) {
+                            experiments.remove( experimentWrapper );
+                        }
                     }
 
                     // else ... just carry on searching.
@@ -608,8 +728,7 @@ public final class InteractionPersister {
             } // intact experiments
         } // psi experiments
 
-        // nothing instance of that interaction have been found in intact.
-        return false;
+        // no instance of that interaction have been found in intact.
     }
 
 
@@ -661,9 +780,16 @@ public final class InteractionPersister {
         }
 
         if( geneName == null ) {
-            System.err.println( "NOTICE: protein " + protein.getShortLabel() +
-                                " does not have a gene name, we will use it's SPTR ID." );
             geneName = protein.getShortLabel();
+
+            // remove any _organism in case it exists
+            int index = geneName.indexOf( '_' );
+            if( index != -1 ) {
+                geneName = geneName.substring( 0, index );
+            }
+
+            System.err.println( "NOTICE: protein " + protein.getShortLabel() +
+                                " does not have a gene name, we will use it's SPTR ID: " + geneName );
         }
 
         return geneName;
