@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 
 /**
  * BioSource edit view bean.
@@ -26,16 +27,16 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     private String myTaxId;
 
     // Override the super method to initialize this class specific resetting.
-    public void reset(Class clazz) {
+    protected void reset(Class clazz) {
         super.reset(clazz);
         // Set fields to null.
         setTaxId(null);
     }
 
     // Override the super method to set the tax id.
-    public void reset(BioSource biosrc) {
-        super.reset(biosrc);
-        setTaxId(biosrc.getTaxId());
+    protected void reset(AnnotatedObject annobj) {
+        super.reset(annobj);
+        setTaxId(((BioSource) annobj).getTaxId());
     }
 
     // Implements abstract methods
