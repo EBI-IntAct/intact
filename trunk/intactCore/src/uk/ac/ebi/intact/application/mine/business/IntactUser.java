@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.apache.ojb.broker.accesslayer.LookupException;
 
+import uk.ac.ebi.intact.application.mine.business.graph.model.NodeObject;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 
@@ -214,7 +215,7 @@ public class IntactUser implements IntactUserI {
             path = (Collection) it.next();
             // the current path is added to the link
             for (Iterator iter = path.iterator(); iter.hasNext();) {
-                link.append( iter.next() );
+                link.append( ((NodeObject)iter.next()).getShortLabel() );
                 if ( iter.hasNext() ) {
                     link.append( Constants.COMMA );
                 }
