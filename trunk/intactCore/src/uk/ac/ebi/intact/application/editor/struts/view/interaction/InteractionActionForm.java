@@ -213,14 +213,12 @@ public class InteractionActionForm extends EditorActionForm {
         // Must select from the drop down list.
         if (getInteractionType().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.int.cvtype"));
+            errors.add("int.interaction", new ActionError("error.int.cvtype"));
             return errors;
         }
         if (getOrganism().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.int.biosrc"));
+            errors.add("int.organism", new ActionError("error.int.biosrc"));
             return errors;
         }
         // Must have at least one experiment. This is a business decision.

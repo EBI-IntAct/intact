@@ -70,10 +70,6 @@ public class EditorActionServlet extends ActionServlet {
         // Editing short label.
         map.put("error.cvinfo.label", "info");
 
-        // Protein search in the Interaction editor.
-        map.put("error.int.protein.edit.role", "int.protein");
-        map.put(rb.getString("int.proteins.button.search"), "int.protein");
-
         // Adding annotation.
         map.put("error.annotation.topic", "annotation");
         map.put(rb.getString("annotations.button.add"), "annotation");
@@ -83,7 +79,23 @@ public class EditorActionServlet extends ActionServlet {
         map.put("error.xref.pid", "xref");
         map.put(rb.getString("xrefs.button.add"), "xref");
 
+        // Experiment page anchors
+        map.put("error.exp.biosrc", "info");
+        map.put("error.exp.inter", "info");
+        map.put("error.exp.ident", "info");
 
+        // Protein search in the Interaction editor.
+        map.put("error.int.protein.edit.role", "int.protein.search");
+        map.put(rb.getString("int.proteins.button.search"), "int.protein.search");
+        map.put("error.int.sanity.unsaved.prot", "int.protein.search");
+        // Experiment search in the Interaction editor.
+        map.put("error.int.sanity.exp", "int.exp.search");
+        // General Interaction page anchors.
+        map.put("int.interaction", "info");
+        map.put("int.organism", "info");
+
+        // Biosource anchors
+        map.put("error.taxid.mask", "info");
         return map;
     }
 }

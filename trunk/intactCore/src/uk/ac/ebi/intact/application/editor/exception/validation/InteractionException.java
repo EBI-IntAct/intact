@@ -27,6 +27,15 @@ public class InteractionException extends ValidationException {
      * @param mkey the message key.
      */
     public InteractionException(String mkey) {
-        super(mkey, "int.validation");
+        this("int.validation", mkey);
+    }
+
+    /**
+     * Construst with given filter key and message key.
+     * @param fkey the filter key.
+     * @param mkey the message key.
+     */
+    public InteractionException(String fkey, String mkey) {
+        super(mkey, fkey);
     }
 }

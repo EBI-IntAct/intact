@@ -23,6 +23,9 @@
 <c:set var="intermenu" value="${view.interMenu}"/>
 <c:set var="identmenu" value="${view.identMenu}"/>
 
+<%-- The anchor name for this page --%>
+<a name="info"/>
+
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
         <th class="tableCellHeader">
@@ -52,6 +55,7 @@
         </td>
     </tr>
 </table>
+<html:errors property="shortLabel"/>
 
 <p></p>
 
@@ -79,3 +83,6 @@
         </td>
     </tr>
 </table>
+<html:errors property="exp.biosrc"/>
+<html:errors property="exp.inter"/>
+<html:errors property="exp.ident"/>

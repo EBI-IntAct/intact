@@ -104,9 +104,7 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         // Must define a role for the Protein.
         if (pb.getRole() == null) {
             ActionErrors errors = new ActionErrors();
-            // Make sure the name the key (intProtRole) has no dots in it or
-            // else JSP compilation will fail.
-            errors.add("intProtRole",
+            errors.add("int.prot.role",
                     new ActionError("error.int.protein.edit.role"));
             saveErrors(request, errors);
             pb.setEditState(ProteinBean.ERROR);

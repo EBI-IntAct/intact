@@ -33,7 +33,7 @@
 <%--</logic:messagesPresent>--%>
 
 <%-- The anchor name for this page --%>
-<a name="annotation"></a>
+<a name="annotation"/>
 
 <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
@@ -56,7 +56,6 @@
             <html:select property="newAnnotation.topic">
                 <html:options name="topiclist"/>
             </html:select>
-            <br/><html:errors property="annotation"/>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:textarea property="newAnnotation.description" rows="3" cols="70"/>
@@ -74,3 +73,4 @@
 <%--        </table>--%>
 <%--    </logic:messagesPresent>--%>
 </table>
+<html:errors property="annotation"/>
