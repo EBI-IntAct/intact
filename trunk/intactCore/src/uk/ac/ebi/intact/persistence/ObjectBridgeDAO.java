@@ -963,12 +963,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         }
 
 
-    public void removeFromCache(Object object) {
-        broker.removeFromCache(object);
-    }
-
-
-
 //-------------------------- private helper methods ----------------------------------------
 
     /**
