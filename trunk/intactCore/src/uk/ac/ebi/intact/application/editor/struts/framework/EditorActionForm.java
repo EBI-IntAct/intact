@@ -6,20 +6,15 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
-import org.apache.struts.validator.ValidatorForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * The form to edit cv data. This form also is the super class for other
@@ -28,7 +23,7 @@ import java.util.Iterator;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class EditorActionForm extends ValidatorForm {
+public class EditorActionForm extends DispatchActionForm {
 
     /**
      * The short label.
@@ -59,11 +54,6 @@ public class EditorActionForm extends ValidatorForm {
      * The index of the current dispatch (which button was pressed).
      */
     private int myDispatchIndex;
-
-    /**
-     * The label of the last dispatch action.
-     */
-    private String myDispatch;
 
     /**
      * The page anchor to go when there is an error. Default is none.
@@ -152,18 +142,6 @@ public class EditorActionForm extends ValidatorForm {
         myNewXref.clear();
     }
 
-    public void setDispatch(String dispatch) {
-        myDispatch = dispatch;
-    }
-
-    public String getDispatch() {
-        return myDispatch;
-    }
-
-    public void resetDispatch() {
-        myDispatch = "";
-    }
-
     public String getAnchor() {
         return myAnchor;
     }
@@ -176,80 +154,68 @@ public class EditorActionForm extends ValidatorForm {
         return myDispatchIndex;
     }
 
-    /**
-     * Validate the properties that have been set from the HTTP request.
-     *
-     * @param mapping the mapping used to select this instance
-     * @param request the servlet request we are processing
-     * @return <tt>ActionErrors</tt> object that contains validation errors. If
-     * no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
-     * object is returned.
-     */
-    public ActionErrors validate(ActionMapping mapping,
-                                 HttpServletRequest request) {
-        ActionErrors errors = super.validate(mapping, request);
+    // Validate methods
 
-        // Only proceed if super method does not find any errors.
-        if ((errors != null) && !errors.isEmpty()) {
-            return errors;
+    public ActionErrors validateAddAnnotation() {
+        ActionErrors errors = null;
+        // The bean to extract the values.
+        if (getNewAnnotation().getTopic().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            // Set the anchor for the page to scroll.
+            errors = new ActionErrors();
+            errors.add("annotation", new ActionError("error.annotation.topic"));
         }
-        // The dispatch parameter to find out which button was pressed.
-        String dispatch = getDispatch();
+        return errors;
+    }
 
-        if (dispatch != null) {
-            // Message resources to access button labels.
-            MessageResources msgres =
-                    ((MessageResources) request.getAttribute(Globals.MESSAGES_KEY));
+    public ActionErrors validateAddCrossreference() {
+        ActionErrors errors = null;
+        // The bean to extract the values.
+        XreferenceBean xb = getNewXref();
+        if (xb.getDatabase().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            errors = new ActionErrors();
+            errors.add("xref.db", new ActionError("error.xref.database"));
+        }
+        // Primary id is required.
+        if (errors == null && AbstractEditorAction.isPropertyEmpty(xb.getPrimaryId())) {
+            errors = new ActionErrors();
+            errors.add("xref.pid", new ActionError("error.xref.pid"));
+        }
+        return errors;
+    }
 
-            // Adding an annotation?
-            if (dispatch.equals(msgres.getMessage("annotations.button.add"))) {
-                // The bean to extract the values.
-                if (getNewAnnotation().getTopic().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-                    // Set the anchor for the page to scroll.
-                    errors = new ActionErrors();
-                    errors.add("annotation", new ActionError("error.annotation.topic"));
-                    return errors;
-                }
+    public ActionErrors validateSubmit() {
+        ActionErrors errors = null;
+        // Look for unsaved annotations.
+        for (Iterator iter = myAnnotations.iterator(); iter.hasNext(); ) {
+            CommentBean cb = (CommentBean) iter.next();
+            if (!cb.getEditState().equals(AbstractEditBean.VIEW)) {
+                errors = new ActionErrors();
+                errors.add("annotation.unsaved",
+                        new ActionError("error.annotation.unsaved"));
+                break;
             }
-            // Adding an Xref?
-            if (dispatch.equals(msgres.getMessage("xrefs.button.add"))) {
-                // The bean to extract the values.
-                XreferenceBean xb = getNewXref();
-                if (xb.getDatabase().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-                    errors = new ActionErrors();
-                    errors.add("xref.db", new ActionError("error.xref.database"));
-                    return errors;
-                }
-                // Primary id is required.
-                if (AbstractEditorAction.isPropertyEmpty(xb.getPrimaryId())) {
-                    errors = new ActionErrors();
-                    errors.add("xref.pid", new ActionError("error.xref.pid"));
-                    return errors;
-                }
-            }
-            // Submitting or saving the form
-            if (dispatch.equals(msgres.getMessage("button.submit"))
-                    || dispatch.equals(msgres.getMessage("button.save.continue"))) {
-                // Look for unsaved annotations.
-                for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
-                    CommentBean cb = (CommentBean) iter.next();
-                    if (!cb.getEditState().equals(AbstractEditBean.VIEW)) {
-                        errors = new ActionErrors();
-                        errors.add("annotation.unsaved",
-                                new ActionError("error.annotation.unsaved"));
-                        return errors;
-                    }
-                }
-                // Look for unsaved xrefs.
-                for (Iterator iter = myXrefs.iterator(); iter.hasNext();) {
-                    XreferenceBean xb = (XreferenceBean) iter.next();
-                    if (!xb.getEditState().equals(AbstractEditBean.VIEW)) {
-                        errors = new ActionErrors();
-                        errors.add("xref.unsaved",
-                                new ActionError("error.xref.unsaved"));
-                        return errors;
-                    }
-                }
+        }
+        // Look for unsaved xrefs.
+        if (errors == null) {
+            errors = validateUnsavedXref();
+        }
+        return errors;
+    }
+
+    public ActionErrors validateSaveAndContinue() {
+        return validateSubmit();
+    }
+
+    // This method is protected as it is used by subclasses.
+    protected ActionErrors validateUnsavedXref() {
+        ActionErrors errors = null;
+        for (Iterator iter = myXrefs.iterator(); iter.hasNext(); ) {
+            XreferenceBean xb = (XreferenceBean) iter.next();
+            if (!xb.getEditState().equals(AbstractEditBean.VIEW)) {
+                errors = new ActionErrors();
+                errors.add("xref.unsaved",
+                        new ActionError("error.xref.unsaved"));
+                break;
             }
         }
         return errors;
