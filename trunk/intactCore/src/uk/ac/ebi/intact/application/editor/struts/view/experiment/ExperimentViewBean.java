@@ -6,22 +6,20 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
+import org.apache.struts.tiles.ComponentContext;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
-import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentException;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
-import org.apache.struts.tiles.ComponentContext;
+import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.CvIdentification;
+import uk.ac.ebi.intact.model.CvInteraction;
+import uk.ac.ebi.intact.model.Experiment;
 
-import java.util.Map;
 import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
  * Experiment edit view bean.
@@ -39,27 +37,38 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     /**
      * The interaction with the experiment.
      */
-    private String myInteraction;
+    private String myInter;
 
     /**
      * The experiment identification.
      */
-    private String myIdentification;
+    private String myIdent;
 
+    // Reset the fields to null if we don't have values to set. Failure
+    // to do so will display the previous edit object's values as current.
     public void setAnnotatedObject(Experiment exp) {
         super.setAnnotatedObject(exp);
         // Only set the short labels if the experiment has the objects.
         BioSource biosrc = exp.getBioSource();
         if (biosrc != null) {
-            setOrganism(biosrc.getShortLabel());
+            myOrganism = biosrc.getShortLabel();
+        }
+        else {
+            myOrganism = null;
         }
         CvInteraction inter = exp.getCvInteraction();
         if (inter != null) {
-            setInteraction(exp.getCvInteraction().getShortLabel());
+            myInter = inter.getShortLabel();
+        }
+        else {
+            myInter = null;
         }
         CvIdentification ident = exp.getCvIdentification();
         if (ident != null) {
-            setIdentification(exp.getCvIdentification().getShortLabel());
+            myIdent = ident.getShortLabel();
+        }
+        else {
+            myIdent = null;
         }
     }
 
@@ -73,9 +82,9 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         BioSource biosource = (BioSource) user.getObjectByLabel(
                 BioSource.class, myOrganism);
         CvInteraction interaction = (CvInteraction) user.getObjectByLabel(
-                CvInteraction.class, myInteraction);
+                CvInteraction.class, myInter);
         CvIdentification ident = (CvIdentification) user.getObjectByLabel(
-                CvIdentification.class, myIdentification);
+                CvIdentification.class, myIdent);
 
         // Update the experiment object.
         exp.setBioSource(biosource);
@@ -101,28 +110,12 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         if (myOrganism == null) {
             throw new ExperimentException("error.exp.bio.validation");
         }
-        else if (myInteraction == null) {
+        else if (myInter == null) {
             throw new ExperimentException("error.exp.cvint.validation");
         }
-        else if (myIdentification == null) {
+        else if (myIdent == null) {
             throw new ExperimentException("error.exp.ident.validation");
         }
-    }
-
-    public Map getEditorMenus() throws SearchException {
-        // The map to return.
-        Map map = null;
-        // The object we are editing at the moment.
-        Experiment exp = (Experiment) getAnnotatedObject();
-        if (exp.getBioSource() == null) {
-            // Adding a new Experiment.
-            map = getMenuFactory().getExperimentMenus(1);
-        }
-        else {
-            // Editing an existing experiment.
-            map = getMenuFactory().getExperimentMenus(0);
-        }
-        return map;
     }
 
     /**
@@ -144,8 +137,8 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * interaction is not set.
      * @throws SearchException for errors in generating menus.
      */
-    public List getInteractionMenu() throws SearchException {
-        int mode = (myInteraction == null) ? 1 : 0;
+    public List getInterMenu() throws SearchException {
+        int mode = (myInter == null) ? 1 : 0;
         return getMenuFactory().getMenu(EditorMenuFactory.INTERACTIONS, mode);
     }
 
@@ -156,8 +149,8 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * idetification is not set.
      * @throws SearchException for errors in generating menus.
      */
-    public List getIdentificationMenu() throws SearchException {
-        int mode = (myIdentification == null) ? 1 : 0;
+    public List getIdentMenu() throws SearchException {
+        int mode = (myIdent == null) ? 1 : 0;
         return getMenuFactory().getMenu(EditorMenuFactory.IDENTIFICATIONS, mode);
     }
 
@@ -171,64 +164,130 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Getter/Setter methods for Interaction.
-    public String getInteraction() {
-        return myInteraction;
+    public String getInter() {
+        return myInter;
     }
 
-    public void setInteraction(String interaction) {
-        myInteraction = interaction;
+    public void setInter(String interaction) {
+        myInter = interaction;
     }
 
     // Getter/Setter methods for Identification.
-    public String getIdentification() {
-        return myIdentification;
+    public String getIdent() {
+        return myIdent;
     }
 
-    public void setIdentification(String identification) {
-        myIdentification = identification;
+    public void setIdent(String identification) {
+        myIdent = identification;
     }
 
-    public String getSelectedInteraction() {
-        if (myInteraction == null) {
+    /**
+     * Returns the selected interaction. It is necessary to macth the
+     * current interaction to what is given in the drop down list. For example,
+     * the match for current interaction 'xyz' could be '...xyz'. If we don't
+     * peform this mapping, the hightlighted menu always defaults to the first
+     * item in the list.
+     * @return the mapped menu item as it appears in the drop down list. If there
+     * is no Interaction for this experiment (i.e, null) or the current inteaction
+     * is not found (highly unlikely), the selected menu defaults to the first
+     * item in the list (doesn't mean that the first item is the selected one).
+     * @throws SearchException for errors in constructing the menu.
+     */
+    public String getSelectedInter() throws SearchException {
+        return getSelectedMenuItem(myInter, EditorMenuFactory.INTERACTIONS);
+    }
+
+    /**
+     * Returns the selected identification
+     * @return the mapped menu item as it appears in the drop down list.
+     * @throws SearchException for errors in constructing the menu.
+     * @see #getSelectedInter()
+     */
+    public String getSelectedIdent() throws SearchException {
+        return getSelectedMenuItem(myIdent,
+                EditorMenuFactory.IDENTIFICATIONS);
+    }
+
+    /**
+     * Returns the normalized interaction. This is the opposite of
+     * {@link #getSelectedInter()} method. Given an item from the drop
+     * sown list, this method returns the normalized version of it. For example,
+     * the match for current interaction '..xyz' this method returns 'xyz'.
+     * @param item the menu item to normalize.
+     * @return the normalized menu item as without menu level indicator
+     * characters.
+     * @throws SearchException for errors in constructing the menu.
+     */
+    public String getNormalizedInter(String item) throws SearchException {
+        return getNormalizedMenuItem(item, EditorMenuFactory.INTERACTIONS);
+    }
+
+    /**
+     * Returns the normalized identification.
+     * @param item the menu item to normalize.
+     * @return the normalized menu item as without menu level indicator
+     * characters.
+     * @throws SearchException for errors in constructing the menu.
+     * @see #getNormalizedInter(String)
+     */
+    public String getNormalizedIdent(String item) throws SearchException {
+        return getNormalizedMenuItem(item, EditorMenuFactory.IDENTIFICATIONS);
+    }
+
+    /**
+     * Returns the selected menu item after mapping the current item to the
+     * normalized menu.
+     * @param item the selected item
+     * @param type the menu type e.g., INTERACTIONS or IDENTIFICATIONS
+     * @return the displaued menu item for given <code>item</code>.
+     * @throws SearchException for errors in constructing the menu.
+     */
+    private String getSelectedMenuItem(String item, String type)
+            throws SearchException {
+        if (item == null) {
             return "";
         }
-        // The interaction menu.
-        List list;
-        try {
-            list = (List) getEditorMenus().get(EditorMenuFactory.INTERACTIONS);
-        }
-        catch (SearchException e) {
-            e.printStackTrace();
-            return "";
-        }
-        // Get the normalize version of the interaction list.
-        List normalList = normalize(list);
+        // The factory to get access to menus.
+        EditorMenuFactory factory = getMenuFactory();
+
+        // The menu for the type.
+        List list = factory.getMenu(type, 0);
+
+        // Get the normalized version of the interaction list.
+        List normalList = factory.getDagMenu(type, 0);
+
         // The position where the current interaction ocurrs.
-        int pos = normalList.indexOf(myInteraction);
-//        System.out.println("pos is " + pos + " Interaction is " + myInteraction);
+        int pos = normalList.indexOf(item);
         if (pos != -1) {
-//            String s = (String) list.get(pos);
-//            System.out.println("Found " + s);
             return (String) list.get(pos);
         }
-//        System.out.println("NOT FOUND");
         return "";
     }
 
-    private List normalize(List list) {
-        List newList = new ArrayList();
-        Pattern pat = Pattern.compile("\\.+");
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            String listItem = iter.next().toString();
-            Matcher match = pat.matcher(listItem);
-            if (match.find()) {
-                newList.add(match.replaceAll(""));
-            }
-            else {
-                // No need to do any replacements.
-                newList.add(listItem);
-            }
+    /**
+     * Returns the normalized menu item after stripping off menu level characters
+     * from gievn menu item.
+     * @param item the selected item from the menu.
+     * @param type the menu type e.g., INTERACTIONS or IDENTIFICATIONS
+     * @return the normalized menu item for given <code>item</code>.
+     * @throws SearchException for errors in constructing the menu.
+     */
+    private String getNormalizedMenuItem(String item, String type)
+            throws SearchException {
+        // The factory to get access to menus.
+        EditorMenuFactory factory = getMenuFactory();
+
+        // Get the normalized version of the interaction list.
+        List normalList = factory.getDagMenu(type, 0);
+
+        // The menu for the type.
+        List list = factory.getMenu(type, 0);
+
+        // The position where the current interaction ocurrs.
+        int pos = list.indexOf(item);
+        if (pos != -1) {
+            return (String) normalList.get(pos);
         }
-        return newList;
+        return "";
     }
 }

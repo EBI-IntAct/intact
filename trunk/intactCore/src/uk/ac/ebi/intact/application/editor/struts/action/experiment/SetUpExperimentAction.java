@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class SetUpExperimentAction  extends AbstractEditorAction {
+public class SetUpExperimentAction extends AbstractEditorAction {
 
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
@@ -33,15 +33,28 @@ public class SetUpExperimentAction  extends AbstractEditorAction {
 
         // Poplulate with experiment data.
         DynaActionForm dynaForm = (DynaActionForm) form;
-        if (dynaForm.get("organism") == null) {
+
+        // Preserve existing values of the form.
+
+        if (isPropertyEmpty(dynaForm, "organism")) {
             dynaForm.set("organism", view.getOrganism());
         }
-        if (dynaForm.get("interaction") == null) {
-            dynaForm.set("interaction", view.getInteraction());
+        if (isPropertyEmpty(dynaForm, "inter")) {
+            dynaForm.set("inter", view.getSelectedInter());
         }
-        if (dynaForm.get("identification") == null) {
-            dynaForm.set("identification", view.getIdentification());
+        if (isPropertyEmpty(dynaForm, "ident")) {
+            dynaForm.set("ident", view.getSelectedIdent());
         }
         return mapping.findForward(EditorConstants.FORWARD_EDITOR);
+    }
+
+    /**
+     * Returns true if the property for given name is empty.
+     * @param form the form to check.
+     * @param name the name of the property to check.
+     * @return true if <code>name</code> is empty in <code>form</code>.
+     */
+    private boolean isPropertyEmpty(DynaActionForm form, String name) {
+        return ((String) form.get(name)).length() == 0;
     }
 }
