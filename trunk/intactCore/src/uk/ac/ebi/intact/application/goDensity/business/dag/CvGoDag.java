@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.goDensity.exception.KeyNotFoundException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.CvGoNode;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -37,7 +38,7 @@ public class CvGoDag {
     // Class and object attributes
     // =======================================================================
 
-    static Logger logger = Logger.getLogger("CvGoDag");
+    static Logger logger = Logger.getLogger("goDensity");
 
     /**
      * IntactHelper class to retrieve data from the IntAct model / database

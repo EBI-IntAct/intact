@@ -45,7 +45,7 @@ public class CalcBinInteractionData extends Key2HashSet {
     // Class and object attributes
     // =======================================================================
 
-    static Logger logger = Logger.getLogger("CalcBinInteractionData");
+    static Logger logger = Logger.getLogger("goDensity");
 
     /**
      * IntactHelper for search

@@ -34,8 +34,6 @@ public class TwoMaps {
     // Class and object attributes
     // =======================================================================
 
-    static Logger logger = Logger.getLogger("TwoMaps");
-
     /**
      * represents key to value (ONE single value) mapping
      */

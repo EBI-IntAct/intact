@@ -37,7 +37,7 @@ import java.util.List;
 
 public final class goInputAction extends Action {
 
-     static Logger logger = Logger.getLogger("goInputAction");
+     static Logger logger = Logger.getLogger("goDensity");
 
     /**
      * Action execute

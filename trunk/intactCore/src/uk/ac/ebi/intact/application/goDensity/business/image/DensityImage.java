@@ -42,7 +42,7 @@ public class DensityImage {
     // Class and object attributes
     // =======================================================================
 
-    static Logger logger = Logger.getLogger("DensityImage");
+    static Logger logger = Logger.getLogger("goDensity");
 
     /**
      * Buffered Image for output
