@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstant
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.Protein;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,21 +70,8 @@ public class SearchAction extends IntactBaseAction {
         // Clear any previous errors.
         super.clearErrors();
 
-        DynaActionForm dyForm = (DynaActionForm) form;
-        String searchValue = (String) dyForm.get("searchString");
-        String searchClass = (String) dyForm.get("searchClass");
-
-        System.out.println("searchValue: " + searchValue);
-        System.out.println("searchClass: " + searchClass);
-
-        //reset the class string in the form for the next request
-        dyForm.set("searchClass", "");
-
         // Session to access various session objects.
         HttpSession session = super.getSession(request);
-
-        //clean out previous single object views
-        session.setAttribute(SearchConstants.VIEW_BEAN, null);
 
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(session);
@@ -94,6 +80,22 @@ public class SearchAction extends IntactBaseAction {
             //get a user object created again by forwarding to welcome action...
             return mapping.findForward(SearchConstants.FORWARD_SESSION_LOST);
         }
+
+        DynaActionForm dyForm = (DynaActionForm) form;
+        String searchValue = (String) dyForm.get("searchString");
+        String searchClass = (String) dyForm.get("searchClass");
+
+        user.setSearchValue(searchValue);
+        user.setSearchClass(searchClass);
+
+        System.out.println("searchValue: " + searchValue);
+        System.out.println("searchClass: " + searchClass);
+
+        //reset the class string in the form for the next request
+        dyForm.set("searchClass", "");
+
+        //clean out previous single object views
+        session.setAttribute(SearchConstants.VIEW_BEAN, null);
 
         // Holds the result from the initial search.
         Collection results = null;
@@ -148,63 +150,15 @@ public class SearchAction extends IntactBaseAction {
             session.setAttribute(SearchConstants.LAST_VALID_SEARCH, searchValue);
 
             // dispatch to the relevant action
-            if( ( results.size() == 1 ) && ( ! searchClass.equals("") ) ) {
+            String relativeHelpLink =
+                    getServlet().getServletContext().getInitParameter("helpLink");
 
-                System.out.println("Forward to linkSearchAction");
-                return mapping.findForward(SearchConstants.FORWARD_LINK_SEARCH_ACTION);
-//            } else if ( results.iterator().next().getClass().isAssignableFrom(Protein.class)) {
-//
-//                System.out.println("Forward to ComplexAction");
-//                return mapping.findForward(SearchConstants.FORWARD_PROTEIN_BINARY_ACTION);
-            } else {
-
-                System.out.println("Forward to freeTextSearchAction");
-                return mapping.findForward(SearchConstants.FORWARD_FREE_TEXT_SEARCH_ACTION);
-            }
-
-
-
-
-
-//            //Two places to go now:
-//            //1) do a single item view if the request was from a link rather than a search
-//            //   query (ie a searchClass was specified) - DOES NOT apply to Interactions,
-//            // because we wnat to see the Protein shortlabels in that case (ie normal view);
-//            //2) A single object view of a Protein not attached to any Interaction;
-//            //3) All other requests go to the 'detail view' for the complex processing
-//            if((results.size() == 1) & (!searchClass.equals("")) &
-//                    (!searchClass.equals("Interaction"))) {
-//                System.out.println("single view requested from page link (type given)...");
-//                return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
-//
-//            }
-//            else if ((results.size() == 1) & (searchClass.equals("")) &
-//                    (results.iterator().next() instanceof Protein)){
-//                //apparently it is possible for the DB to contain Proteins
-//                //which are not attached to Interactions - assume for now
-//                //that these will be individual (ie SPECIFIC) searches and hence
-//                //require single object views.
-//                //NB **** most complex case is where the results are > 1 Protein
-//                //but a *MIX* of ones that are attached and not attached. This could
-//                //happen if eg the shortlabels are similar! Then not all the displays
-//                //are the same...would have to be handled in the ProteinPartnerAction
-//                //somehow.....
-//
-//                //check the Protein for no attached Interactions....
-//                Protein protein = (Protein)results.iterator().next();
-//                if(protein.getActiveInstance().isEmpty()) {
-//                    System.out.println("single view for a non-attached Protein requested..");
-//                    return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
-//                }
-//
-//            }
-//
-//            //set the original search criteria into the session for use by
-//            //the view action - needed because if the 'back' button is used from
-//            //single object views, the original search details are lost
-//            session.setAttribute(SearchConstants.LAST_VALID_SEARCH, searchValue);
-//            return mapping.findForward(SearchConstants.FORWARD_DETAIL_ACTION);
-
+            //build the help link out of the context path - strip off the 'search' bit...
+            String ctxtPath = request.getContextPath();
+            String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+            String helpLink = relativePath.concat(relativeHelpLink);
+            user.setHelpLink(helpLink);
+            return mapping.findForward(SearchConstants.FORWARD_DISPATCHER_ACTION);
         }
         catch (IntactException se) {
             // Something failed during search...

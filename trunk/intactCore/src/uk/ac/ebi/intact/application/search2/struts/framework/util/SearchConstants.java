@@ -14,69 +14,9 @@ package uk.ac.ebi.intact.application.search2.struts.framework.util;
  */
 public interface SearchConstants {
 
-    /**
-     * The key to store an Intact Service object.
-     */
-    public static final String INTACT_SERVICE = "IntactService";
-
-    /**
-     * The key to access a user session object.
-     */
-    public static final String INTACT_USER = "user";
-
-    /**
-     * The key to success action.
-     */
-    public static final String FORWARD_SUCCESS = "success";
-
-    /**
-     * Used in various action classes to define where to forward
-     * to on different conditions.  See the struts-config.xml file
-     * to see where the page that is using this forwards to.
-     */
-    public static final String FORWARD_FAILURE = "failure";
-
-    /**
-     * Forward to the results page.
-     */
-    public static final String FORWARD_RESULTS = "results";
-
-    /**
-     * Forward to the results page.
-     */
-    public static final String FORWARD_SESSION_LOST = "sessionLost";
-
-    /**
-     * Forward to the Action responsible for setting up a view when using the search box
-     */
-    public static final String FORWARD_FREE_TEXT_SEARCH_ACTION = "freeTextSearchAction";
-
-    /**
-     * Forward to the Action responsible for setting up a view when using the search box
-     */
-    public static final String FORWARD_PROTEIN_BINARY_ACTION = "proteinBinaryAction";
-
-    /**
-     * Forward to the Action responsible for setting up a view when clicking on a link
-     */
-    public static final String FORWARD_LINK_SEARCH_ACTION = "linkSearchAction";
-
-    /**
-     * Used as a key to identify a page to display when matches are found
-     * from a search.
-     */
-    public static final String FORWARD_MATCHES = "match";
-
-    /**
-     * Used as a key to identify a page to display when no matches are found
-     * from a search.
-     */
-    public static final String FORWARD_NO_MATCHES = "noMatch";
-
-    /**
-     * The search criteria key to display in the results JSP.
-     */
-    public static final String SEARCH_CRITERIA = "searchCriteria";
+    ////////////////////////////////////////////////////
+    // Configuration keys (web.xml, properties files)
+    ////////////////////////////////////////////////////
 
     /**
      * The key to access configuration directory.
@@ -94,6 +34,27 @@ public interface SearchConstants {
      */
     public static final String DATA_SOURCE = "datasource";
 
+
+
+    ///////////////////////
+    // Session keys
+    ///////////////////////
+
+    /**
+     * The key to store an Intact Service object.
+     */
+    public static final String INTACT_SERVICE = "IntactService";
+
+    /**
+     * The key to access a user session object.
+     */
+    public static final String INTACT_USER = "user";
+
+    /**
+     * The search criteria key to display in the results JSP.
+     */
+    public static final String SEARCH_CRITERIA = "searchCriteria";
+
     /**
      * The view bean for a single CvObject.
      */
@@ -108,4 +69,64 @@ public interface SearchConstants {
      * The label used to identify the search results Collection (often saved in a request)
      */
     public static final String SEARCH_RESULTS = "searchResults";
+
+
+
+    ///////////////////////
+    // STRUTS forwards
+    ///////////////////////
+
+    /**
+     * The key to success action.
+     */
+    public static final String FORWARD_SUCCESS = "success";
+
+    /**
+     * Used in various action classes to define where to forward
+     * to on different conditions.  See the struts-config.xml file
+     * to see where the page that is using this forwards to.
+     */
+    public static final String FORWARD_FAILURE = "failure";
+
+    /**
+     * Forward to the results page.
+     */
+    public static final String FORWARD_SESSION_LOST = "sessionLost";
+
+    /**
+     * Key to the dispatcher action.
+     */
+    public static final String FORWARD_DISPATCHER_ACTION = "dispatcher";
+
+    /**
+     * Forward to the Action responsible for setting up a view when using the search box
+     */
+    public static final String FORWARD_DETAILS_ACTION = "details";
+
+    /**
+     * Forward to the Action responsible for setting up a view when using the search box
+     */
+    public static final String FORWARD_BINARY_ACTION = "binary";
+
+    /**
+     * Forward to the Action responsible for setting up a view when clicking on a link
+     */
+    public static final String FORWARD_SINGLE_ACTION = "single";
+
+    /**
+     * Forward to the Action responsible for setting up a view when clicking on a link
+     */
+    public static final String FORWARD_RESULTS = "results";
+
+    /**
+     * Used as a key to identify a page to display when matches are found
+     * from a search.
+     */
+    public static final String FORWARD_MATCHES = "match";
+
+    /**
+     * Used as a key to identify a page to display when no matches are found
+     * from a search.
+     */
+    public static final String FORWARD_NO_MATCHES = "noMatch";
 }

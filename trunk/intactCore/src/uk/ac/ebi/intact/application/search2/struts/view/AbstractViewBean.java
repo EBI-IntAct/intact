@@ -72,6 +72,12 @@ public abstract class AbstractViewBean implements Serializable {
         return false;
     }
 
+
+
+    ///////////////////////
+    // Abstract methods
+    ///////////////////////
+
     /**
      * Instructs the bean to create an HTML content for the object that it wraps.
      */

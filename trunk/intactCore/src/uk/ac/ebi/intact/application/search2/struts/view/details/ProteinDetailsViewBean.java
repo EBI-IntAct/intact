@@ -17,6 +17,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
+ * Displays a collection of Protein in the context of their Experiment.
+ *
+ * @see uk.ac.ebi.intact.model.Protein
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -33,8 +36,6 @@ public class ProteinDetailsViewBean extends DetailsViewBean {
     public ProteinDetailsViewBean( Collection objects, String link ) {
         super(objects, link);
     }
-
-
 
 
     /**

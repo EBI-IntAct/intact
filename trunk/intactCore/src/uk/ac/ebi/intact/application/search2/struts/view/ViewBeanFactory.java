@@ -16,10 +16,10 @@ in the root directory of this distribution.
  */
 package uk.ac.ebi.intact.application.search2.struts.view;
 
+import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.details.DetailsViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.details.InteractionDetailsViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.details.ProteinDetailsViewBean;
-import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.ExperimentSingleViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.InteractionSingleViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.ProteinSingleViewBean;
@@ -54,7 +54,7 @@ public class ViewBeanFactory {
     /**
      * Maps: Model class -> binary view bean
      */
-    private static Map ourBeanToBinaryView = new HashMap();
+    private static Map ourBeanToBinaryView = new HashMap ();
 
     // Stores the beans to create in a map.
     static {
@@ -76,7 +76,7 @@ public class ViewBeanFactory {
         ourBeanToSingleItemView.put ( BioSource.class, SingleViewBean.class );
 
         // Binary views.
-        ourBeanToBinaryView.put ( Protein.class, BinaryDetailsViewBean.class);
+        ourBeanToBinaryView.put ( Protein.class, BinaryDetailsViewBean.class );
     }
 
 
@@ -100,6 +100,7 @@ public class ViewBeanFactory {
     }
 
 
+
     /**
      * Returns the appropriate view bean for given <code>Collection<code> object.
      * @param objects the <code>Collection</code> of objects to return the view for.
@@ -108,38 +109,35 @@ public class ViewBeanFactory {
      * returned if there is no mapping or an error in creating an
      * instance of the view.
      */
-    public AbstractViewBean getViewBean ( Collection objects, String link ) {
+    public AbstractViewBean getBinaryViewBean ( Collection objects, String link ) {
 
-        Object object = objects.iterator ().next ();
+        Object firstItem = objects.iterator ().next ();
+        Class objsClass = firstItem.getClass ();
 
-        Class objsClass = object.getClass ();
         System.out.println ( objsClass );
-        Class clazz = null;
 
-//        if (objsClass.isAssignableFrom(Protein.class)) {
-//           clazz = (Class) ourBeanToBinaryView.get( objsClass );
-//        }
-//        else {
-            clazz = (Class) ourBeanToDetailsView.get ( objsClass );
-//        }
+        Class clazz = (Class) ourBeanToBinaryView.get ( objsClass );
+        return getViewBean( clazz, objects, link);
+    }
 
-        if ( clazz != null ) {
-            try {
-                Constructor constructor = clazz.getConstructor (
-                        new Class[]{Collection.class, String.class} );
-                return (AbstractViewBean) constructor.newInstance (
-                        new Object[]{objects, link} );
-            } catch ( InstantiationException e ) {
-                e.printStackTrace ();
-            } catch ( IllegalAccessException e ) {
-                e.printStackTrace ();
-            } catch ( NoSuchMethodException e ) {
-                e.printStackTrace ();
-            } catch ( InvocationTargetException e ) {
-                e.printStackTrace ();
-            }
-        }
-        return null;
+
+    /**
+     * Returns the appropriate view bean for given <code>Collection<code> object.
+     * @param objects the <code>Collection</code> of objects to return the view for.
+     * @param link the link to help page.
+     * @return the appropriate view for <code>object</code>; null is
+     * returned if there is no mapping or an error in creating an
+     * instance of the view.
+     */
+    public AbstractViewBean getDetailsViewBean ( Collection objects, String link ) {
+
+        Object firstItem = objects.iterator().next ();
+        Class objsClass = firstItem.getClass ();
+
+        System.out.println ( objsClass );
+
+        Class clazz = (Class) ourBeanToDetailsView.get ( objsClass );
+        return getViewBean( clazz, objects, link );
     }
 
 
@@ -152,28 +150,63 @@ public class ViewBeanFactory {
      * returned if there is no mapping or an error in creating an
      * instance of the view.
      */
-    public AbstractViewBean getViewBean ( AnnotatedObject object, String link ) {
+    public AbstractViewBean getSingleViewBean ( AnnotatedObject object, String link ) {
 
-        if ( object != null ) {
+        System.out.println ( object.getClass () );
+        Class beanClass = (Class) ourBeanToSingleItemView.get ( object.getClass () );
 
-            System.out.println ( object.getClass () );
-            Class clazz = (Class) ourBeanToSingleItemView.get ( object.getClass () );
-            if ( clazz != null ) {
-                try {
-                    Constructor constructor = clazz.getConstructor (
-                            new Class[]{AnnotatedObject.class, String.class} );
-                    return (AbstractViewBean) constructor.newInstance (
-                            new Object[]{object, link} );
-                } catch ( InstantiationException e ) {
-                    e.printStackTrace ();
-                } catch ( IllegalAccessException e ) {
-                    e.printStackTrace ();
-                } catch ( NoSuchMethodException e ) {
-                    e.printStackTrace ();
-                } catch ( InvocationTargetException e ) {
-                    e.printStackTrace ();
-                }
+        return getViewBean( beanClass, object, link );
+    }
+
+
+    /**
+     * Returns the appropriate view bean for given object.
+     * The object can be either a <code>Collection</code> or an
+     * <code>AnnotatedObject</code>.
+     *
+     * @param beanClazz
+     * @param objectToWrap
+     * @param link the link to help page.
+     * @return the appropriate view for <code>object</code>; null is
+     * returned if there is no mapping or an error in creating an
+     * instance of the view.
+     */
+    private AbstractViewBean getViewBean ( Class beanClazz,
+                                           Object objectToWrap,
+                                           String link ) {
+
+        if (beanClazz == null) {
+            return null;
+        }
+
+        try {
+            Class classToWrap = null;
+
+            if ( objectToWrap instanceof AnnotatedObject ){
+                classToWrap = AnnotatedObject.class;
+            } else {
+                classToWrap = Collection.class;
             }
+
+            System.out.println ( "CLassToWrap affected to: " + classToWrap);
+
+            System.out.println ( "Ask constructor to: " + beanClazz.getName());
+            System.out.println ( "Param1: " + classToWrap.getName() );
+            System.out.println ( "Param2: " + String.class.getName() );
+
+            Constructor constructor = beanClazz.getConstructor (
+                    new Class[]{ classToWrap, String.class } );
+
+            return (AbstractViewBean) constructor.newInstance (
+                    new Object[]{ objectToWrap, link } );
+        } catch ( InstantiationException e ) {
+            e.printStackTrace ();
+        } catch ( IllegalAccessException e ) {
+            e.printStackTrace ();
+        } catch ( NoSuchMethodException e ) {
+            e.printStackTrace ();
+        } catch ( InvocationTargetException e ) {
+            e.printStackTrace ();
         }
         return null;
     }

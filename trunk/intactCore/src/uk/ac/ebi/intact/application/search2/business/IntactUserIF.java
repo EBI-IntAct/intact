@@ -40,4 +40,13 @@ public interface IntactUserIF
      */
     public Collection search(String objectType, String searchParam,
                               String searchValue) throws IntactException;
+
+    public void setHelpLink(String link);
+    public String getHelpLink();
+
+    public void setSearchValue(String value);
+    public String getSearchValue();
+
+    public void setSearchClass(String searchClass);
+    public String getSearchClass();
 }

@@ -5,50 +5,68 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.search2.struts.view.html;
 
+import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
-import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * This class generates an HTML view of search results.
  *
+ * <p>
  * This should be used from within the Web framework. The main method only serves
  * as a usage example and for quick development.
+ * </p>
  *
+ * <p>
  * For each request, one HtmlBuilder object should be instantiated.
+ * </p>
  *
- * There is one public htmlView method for each of the major IntAct classes:
- * AnnotatedObject, Experiment, Interaction, Protein.
- * Each of these normally call
- * htmlViewHead: Display the object's "administrative data"
- * htmlViewData: Display the object's attributes
- * htmlViewAnnotation: Display annotation
- * htmlViewXref: Display xrefs
- * Rest of the htmlView method: Display additional "bulk" data,
+ * <p>
+ * There is one public htmlView method for each of the major IntAct classes:<br>
+ * AnnotatedObject, Experiment, Interaction, Protein.<br>
+ * Each of these normally call<br>
+ * htmlViewHead: Display the object's "administrative data"<br>
+ * htmlViewData: Display the object's attributes<br>
+ * htmlViewAnnotation: Display annotation <br>
+ * htmlViewXref: Display xrefs<br>
+ * Rest of the htmlView method: Display additional "bulk" data,<br>
  * e.g. the list of interactors for an Interaction, or
  * the amino acid sequence for a Protein.
+ * </p>
  *
+ * <p>
  * Private html* methods display partial objects which need to be
  * surrounded by the appropriate context.
+ * </p>
  *
+ * <p>
  * htmlViewPartial methods indicate that this method only displays an object
  * partially, usually used in the context of another htmlView.
  * Example: htmlViewPartial(CvObject) will only display the hyperlinked
  * shortLabel, while htmlView(CvObject) shows the full object on its own.
+ * </p>
  *
+ * <p>
  * Layout:
  * The Layout is based on a table layout with four columns in all tables.
+ * </p>
  *
+ * <p>
  * Status: The "experiment" view is produced.
+ * </p>
  *
- * todo: Produce the binary view.
+ *
  * todo: specific htmlView for BioSource, CvDagObject
  *
  * @author Henning Hermjakob, hhe@ebi.ac.uk
+ * @version $Id$
  */
 public class HtmlBuilder {
 
@@ -237,7 +255,7 @@ public class HtmlBuilder {
                 }
                 dbUrls.put(anXref.getCvDatabase(), searchUrl);
             }
-            if (!searchUrl.equals("-")) {
+            if ( ! searchUrl.equals( "-" ) ) {
                 // we have a proper search URL.
                 // Hyperlink the id
                 rs.write("<a href=\"");
@@ -291,7 +309,6 @@ public class HtmlBuilder {
             rs.write("-");
         }
         rs.write("</td>");
-        // TODO check if that </tr> was right
         rs.write("</tr>\n");
     }
 
@@ -337,9 +354,26 @@ public class HtmlBuilder {
         endTable(anAnnotatedObject);
     }
 
-
-    private void processLine (Interactor query,
+    /**
+     * Display a table line for an interaction partner: <code>partner</code>.
+     * We display a link allowing to search for the interactions <code>partner</code>
+     * is appearing in.
+     * <code>prefix</code> and <code>postfix</code> allows to wrap all string of that line
+     * with HTML code (for highlight purpose).
+     *
+     * @param partner the partner we displays in that line
+     * @param interactions all interactions that partner is interaction in.
+     * @param rowColor the backgroung color of the row.
+     * @param binaryLink if true, the link (Query with <code>Protein.shortLabel</code>) will
+     *                   gives an other binary view. <b>false</b> will gives the Protein view.
+     * @param prefix wrapping prefix for the text off all cells.
+     * @param postfix wrapping postfix for the text off all cells.
+     * @throws IOException
+     */
+    private void processLine (Interactor partner,
                               Collection interactions,
+                              String rowColor,
+                              boolean binaryLink,
                               String prefix,
                               String postfix)
             throws IOException {
@@ -347,8 +381,10 @@ public class HtmlBuilder {
         // build the column 'view # interactions'
         StringBuffer buf = new StringBuffer(128);
         int interactionCount;
-        buf.append( "<a href=\">" );
 
+
+        String acList = null;
+        String text = null;
         if ( interactions != null ) { // we are processing a partner
             interactionCount = interactions.size();
             for ( Iterator iterator = interactions.iterator (); iterator.hasNext (); ) {
@@ -356,58 +392,62 @@ public class HtmlBuilder {
                 buf.append( interaction.getAc() );
                 buf.append( ',' );
             }
-            buf.deleteCharAt( buf.length() - 1 );
-        } else { // we are processing the query
+            int length = buf.length() - 1;
+            buf.deleteCharAt( length );
+            acList = buf.toString();
 
-            Collection components = query.getActiveInstance();
-            interactionCount = 0;
-            for ( Iterator iterator = components.iterator (); iterator.hasNext (); ) {
-                Component component = (Component) iterator.next ();
-                Interaction interaction = component.getInteraction();
-                if (interaction != null) {
-                    interactionCount++;
-                    buf.append( interaction.getAc() );
-                    buf.append( ',' );
-                }
-            }
+            buf.append( prefix );
+            buf.append( "View " + interactionCount +
+                        " Interaction" + (interactionCount > 1 ? "s" : "") );
+            buf.append( postfix );
 
-            int lastChar = buf.length() - 1;
-            if ( buf.charAt(lastChar) == ',' )
-                buf.deleteCharAt( lastChar );
+            /* buf = "ebi-1,ebi2,ebi3" + "View # Interactions"
+             *                         |
+             *                       length
+             */
+            text = buf.substring( length, buf.length() );
         }
 
-        buf.append( "\">" );
-        buf.append( prefix );
-        buf.append( "View " + interactionCount +
-                " Interaction" + (interactionCount > 1 ? "s" : "") );
-        buf.append( postfix );
-
-
         // write the line
-        rs.write("<tr bgcolor=\"" + tableCellColor + "\">" );
+        rs.write("<tr bgcolor=\"" + rowColor + "\">" );
         rs.write( "<td>" );
-        htmlCheckBox( query );
+        htmlCheckBox( partner );
         rs.write( "</td><td>" );
+
         rs.write( prefix );
-        rs.write( query.getShortLabel() );
+        rs.write( partner.getShortLabel() );
         rs.write( postfix );
 
         rs.write( "</td><td>" );
+
         rs.write( prefix );
-        rs.write( query.getFullName() );
+        rs.write( partner.getFullName() );
         rs.write( postfix );
 
         rs.write( "</td><td>" );
-        rs.write( buf.toString() ); // interaction link
+        if (text != null) {
+            htmlSearch( acList, "Interaction", text); // interaction link
+        }
         rs.write( "</td><td>" );
-        rs.write( prefix );
 
-        rs.write( "Query with " + query.getShortLabel() );
+        rs.write( prefix );
+        if ( binaryLink == true ) {
+            htmlSearch( partner.getShortLabel(), "Protein", "Query with " + partner.getShortLabel() );
+        } else {
+            htmlSearch( partner.getShortLabel(), null, "Query with " + partner.getShortLabel() );
+        }
         rs.write( postfix );
+
         rs.write( "</td></tr>" );
         rs.write( "\n" );
     }
 
+    /**
+     * Displays a interaction partner table for <code>BinaryData</code> data structure.
+     *
+     * @param binaryData representation of the interaction partners.
+     * @throws IOException
+     */
     public void htmlView( BinaryDetailsViewBean.BinaryData binaryData ) throws IOException {
 
         HashMap results = binaryData.getData();
@@ -420,18 +460,20 @@ public class HtmlBuilder {
         while (i.hasNext()){
             Interactor query = (Interactor) i.next();
 
-            processLine( query, null,"<b>", "</b>" );
+            /* display that line with all field bold,
+             * The last cell displays the Protein view.
+             */
+            processLine( query, null, tableHeaderColor, true, "<b>", "</b>" );
+            rs.write( "<tr bgcolor=\"" + tableHeaderColor + "\"><td colspan=\"5\">interacts with</td></tr>" );
 
             HashMap currentResults = (HashMap) results.get(query);
-
             Iterator j = currentResults.keySet().iterator();
             while(j.hasNext()){
                 Interactor partner = (Interactor) j.next();
-
-                processLine( partner,
-                        (Collection) currentResults.get(partner),
-                        "", // no bold font
-                        "" );
+                /* display that line without highlight on the text,
+                 * The last cell displays the binary view for that partner.
+                 */
+                processLine( partner, (Collection) currentResults.get(partner), tableCellColor, false, "", "" );
             }
         }
 
@@ -580,7 +622,6 @@ public class HtmlBuilder {
                 + tableHeaderColor
                 + ">");
 
-
         // kD
         rs.write("<td>");
         if (null!= anInteraction.getKD()){
@@ -651,16 +692,26 @@ public class HtmlBuilder {
                             String searchClass,
                             String text) throws IOException {
 
+        // TODO: don't hard code the application path !! Try to give it in the constructor.
         rs.write("<a href=\"/intact/search/do/search?searchString=");
         rs.write(target);
-        rs.write("&amp;" + "searchClass=");
-        rs.write(searchClass);
+
+        if (searchClass != null) {
+            rs.write("&amp;" );
+            rs.write( "searchClass=");
+            rs.write(searchClass);
+        }
+
         rs.write("\">");
-        if (toHighlight.contains( text )){
+
+        boolean doHighlight = toHighlight.contains( text );
+        if ( doHighlight ){
             rs.write("<b><i>");
         }
+
         rs.write(text);
-        if (toHighlight.contains( text )){
+
+        if ( doHighlight ){
             rs.write("</i></b>");
         }
         rs.write("</a>");

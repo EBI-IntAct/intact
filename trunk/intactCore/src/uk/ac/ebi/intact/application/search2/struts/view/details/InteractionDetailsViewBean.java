@@ -5,14 +5,18 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.search2.struts.view.details;
 
-import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 
 import java.io.Writer;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
+ * Displays a collection of Interactions in the context of their Experiment.
+ *
+ * @see uk.ac.ebi.intact.model.Interaction
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$

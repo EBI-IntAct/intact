@@ -5,19 +5,28 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.search2.struts.view.details;
 
+import uk.ac.ebi.intact.application.search2.struts.view.html.HtmlBuilderManager;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.application.search2.struts.view.html.HtmlBuilderManager;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-import java.io.IOException;
-import java.util.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
+ * Displays a binary view for a collection of Protein.
+ * For each protein of the collection, we'll display a table of all its partners
+ * with links to the related Interaction objects.
+ *
+ * @see uk.ac.ebi.intact.model.Protein
+ * @see uk.ac.ebi.intact.model.Interaction
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -118,80 +127,6 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
         } // if
     } // addInteractor
 
-
-    public String buildHtml( HashMap results ){
-        StringBuffer buf = new StringBuffer();
-
-        // The resultset might be empty.
-        if (null == results) {
-            return "";
-        }
-
-        Iterator i = results.keySet().iterator();
-
-        while (i.hasNext()){
-            Interactor query = (Interactor) i.next();
-            HashMap currentResults = (HashMap) results.get(query);
-
-            Iterator j = currentResults.keySet().iterator();
-            while(j.hasNext()){
-                Interactor partner = (Interactor) j.next();
-                buf.append("Query: " + query.getShortLabel()
-                           +
-                           " Interactor: " + partner.getShortLabel()
-                           +
-                           " Interactions: ");
-
-                HashSet interactionsOfQueryAndResult = (HashSet) currentResults.get(partner);
-                Iterator k = interactionsOfQueryAndResult.iterator();
-                while (k.hasNext()){
-                    Interaction act = (Interaction) k.next();
-                    buf.append(act.getShortLabel() + ", ");
-                }
-                buf.append("<br>");
-            }
-        }
-
-        return buf.toString();
-    }
-
-    public String buildTextVersion( HashMap results ){
-        StringBuffer buf = new StringBuffer();
-
-        // The resultset might be empty.
-        if (null == results) {
-            return "";
-        }
-
-        Iterator i = results.keySet().iterator();
-        while (i.hasNext()){
-            Interactor query = (Interactor) i.next();
-            HashMap currentResults = (HashMap) results.get(query);
-
-            Iterator j = currentResults.keySet().iterator();
-            while(j.hasNext()){
-                Interactor partner = (Interactor) j.next();
-                buf.append("Query: " + query.getShortLabel()
-                           +
-                           " Interactor: " + partner.getShortLabel()
-                           +
-                           " Interactions: ");
-
-                HashSet interactionsOfQueryAndResult = (HashSet) currentResults.get(partner);
-                Iterator k = interactionsOfQueryAndResult.iterator();
-                while (k.hasNext()){
-                    Interaction act = (Interaction) k.next();
-                    buf.append(act.getShortLabel() + ", ");
-                }
-                buf.append("<br>");
-            }
-        }
-
-        return buf.toString();
-    }
-
-
-
     /**
      * Building the Protein view in the comtext of the wrapped Proteins' Experiment.
      *
@@ -209,26 +144,28 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
         setHighlightMap( new HashSet(1) );
 
         try {
-            HtmlBuilderManager.getInstance().getHtml( writer, binaryData,
-                                                      getHighlightMap(), getHelpLink());
+            HtmlBuilderManager.getInstance().getHtml( writer,
+                                                      binaryData,
+                                                      getHighlightMap(),
+                                                      getHelpLink());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             try {
-                writer.write( "Could not produce a view for a Protein" );
+                writer.write( "Could not produce binary view" );
             } catch ( IOException e1 ) {
                 e1.printStackTrace ();
             }
         } catch (InvocationTargetException e) {
             e.printStackTrace();
             try {
-                writer.write( "Could not produce a view for a Protein" );
+                writer.write( "Could not produce binary view" );
             } catch ( IOException e1 ) {
                 e1.printStackTrace ();
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             try {
-                writer.write( "Could not produce a view for a Protein" );
+                writer.write( "Could not produce binary view" );
             } catch ( IOException e1 ) {
                 e1.printStackTrace ();
             }

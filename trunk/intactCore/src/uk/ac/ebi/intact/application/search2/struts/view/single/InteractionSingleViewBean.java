@@ -8,7 +8,9 @@ package uk.ac.ebi.intact.application.search2.struts.view.single;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 /**
- * View bean responsible for the display of a single protein.
+ * View bean responsible for the display of a single Interaction.
+ *
+ * @see uk.ac.ebi.intact.model.Interaction
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
