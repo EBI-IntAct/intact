@@ -130,8 +130,8 @@
     }
 </script>
 
-<h1>Search Results for
-    <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %></h1>
+<h3>Search Results for
+    <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %></h3>
 
     <br>
 <span class="smalltext">(short labels of search criteria matches are

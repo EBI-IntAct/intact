@@ -70,9 +70,9 @@
 <%@ include file="jscript.html" %>
 
 <!-- top line info -->
-<h1>Search Results for
+<h3>Search Results for
     <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
-</h1>
+</h3>
 <br>
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>

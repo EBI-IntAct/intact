@@ -52,9 +52,9 @@
 <%-- The javascript for the button bars.... --%>
 <%@ include file="jscript.html" %>
 
-<h1>Search Results for
+<h3>Search Results for
     <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
-</h1>
+</h3>
 
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
