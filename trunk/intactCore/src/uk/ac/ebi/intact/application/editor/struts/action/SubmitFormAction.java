@@ -64,7 +64,6 @@ public class SubmitFormAction extends AbstractEditorAction {
 
         // The action path from the map.
         String path = (String) map.get(dispatch);
-
         if (path != null) {
             return mapping.findForward(path);
         }
