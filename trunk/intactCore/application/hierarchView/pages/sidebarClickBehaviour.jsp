@@ -38,12 +38,14 @@
        String radio    = "<img src=\""+ applicationContext +"/images/select.gif\" border=\"0\">";
        String radioChk = "<img src=\""+ applicationContext +"/images/select-chk.gif\" border=\"0\">";
 
+       long timestamp = System.currentTimeMillis();
+
        if (user.clickBehaviourIsAdd ()) {
            addItem = radioChk;
-           centerItem = "<a href=\""+ applicationContext +"/clickBehaviour.do?action=center\" target=\"sidebarFrame\">" + radio + "</a>";
+           centerItem = "<a href=\""+ applicationContext +"/clickBehaviour.do?action=center&timestamp="+timestamp+"\" target=\"sidebarFrame\">" + radio + "</a>";
        } else {
            // default
-           addItem = "<a href=\""+ applicationContext +"/clickBehaviour.do?action=add\" target=\"sidebarFrame\">" + radio + "</a>";
+           addItem = "<a href=\""+ applicationContext +"/clickBehaviour.do?action=add&timestamp="+timestamp+"\" target=\"sidebarFrame\">" + radio + "</a>";
            centerItem = radioChk;
        }
 %>

@@ -17,6 +17,10 @@
     Version: $Id$
 --%>
 
+<%
+    long timestamp = System.currentTimeMillis();
+%>
+
 <html:html>
 
 <head>
@@ -31,12 +35,12 @@
 
     <frameset cols="12%,*" border=0>
 
-       <frame src="<%=request.getContextPath()%>/<tiles:getAsString name="sidebar"/>" name="sidebarFrame">
+       <frame src="<%=request.getContextPath()%>/<tiles:getAsString name="sidebar"/>?<%= timestamp %>" name="sidebarFrame">
 
        <frameset rows="8%,*, 9%">
-          <frame src="<%=request.getContextPath()%>/<tiles:getAsString name="header"/>"  name="headerFrame">
-          <frame src="<%=request.getContextPath()%>/<tiles:getAsString name="content"/>" name="contentFrame">
-          <frame src="<%=request.getContextPath()%>/layouts/footerFrame.jsp"  name="footerFrame">
+          <frame src="<%=request.getContextPath()%>/<tiles:getAsString name="header"/>?<%= timestamp %>"  name="headerFrame">
+          <frame src="<%=request.getContextPath()%>/<tiles:getAsString name="content"/>?<%= timestamp %>" name="contentFrame">
+          <frame src="<%=request.getContextPath()%>/layouts/footerFrame.jsp?<%= timestamp %>"  name="footerFrame">
        </frameset>
 
        <noframes>

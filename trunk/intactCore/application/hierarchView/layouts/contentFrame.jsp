@@ -12,6 +12,10 @@
    - @version: $Id$
 -->
 
+<%
+    long timestamp = System.currentTimeMillis();
+%>
+
 <html:html>
 
 <head>
@@ -25,11 +29,11 @@
 
 <frameset cols="63%,*" border=0>
 
-   <frame src="<%=request.getContextPath()%>/layouts/graphFrame.jsp" name="FOO">
+   <frame src="<%=request.getContextPath()%>/layouts/graphFrame.jsp?<%= timestamp %>" name="FOO">
 
    <frameset ROWS="31%,*">
-      <frame src="<%=request.getContextPath()%>/layouts/sourceListFrame.jsp"     name="sourceListFrame">
-      <frame src="<%=request.getContextPath()%>/layouts/selectedSourceFrame.jsp" name="selectedSourcetFrame">
+      <frame src="<%=request.getContextPath()%>/layouts/sourceListFrame.jsp?<%= timestamp %>"     name="sourceListFrame">
+      <frame src="<%=request.getContextPath()%>/layouts/selectedSourceFrame.jsp?<%= timestamp %>" name="selectedSourcetFrame">
    </frameset>
 
    <noframes>
