@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.util.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.util.uniprotExport.test.DRLineExportTest;
 
 /**
  * Testsuite that is composed of the individual JUnit test suites. Any new test
@@ -50,7 +49,8 @@ public class AllJUnitTests extends TestCase {
         suite.addTest( NewtServerProxyTest.suite() );
         suite.addTest( GoServerProxyTest.suite() );
         suite.addTest( UpdateProteinsTest.suite() );
-
+        // Need to run initdb_go_testing script in scripts/postgres dir first.
+//        suite.addTest(GoToolsTest.suite());
         // Add your test suite here.
 
         return suite;
