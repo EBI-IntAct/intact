@@ -55,7 +55,7 @@
 
     <!-- The edit CV page layout. -->
     <definition name="edit.cv.layout" path="/layouts/cvLayout.jsp">
-        <put name="info" value="/pages/cvinfo.jsp"/>
+        <put name="cv-info" value="/pages/cvInfo.jsp"/>
         <put name="comments" value="/pages/comments.jsp"/>
         <put name="add-comments" value="/pages/commentsAdd.jsp"/>
         <put name="xrefs" value="/pages/xrefs.jsp"/>
@@ -64,14 +64,13 @@
     </definition>
 
     <!-- The edit Biosource page layout. -->
-    <definition name="edit.biosrc.layout" path="/layouts/biosrcLayout.jsp">
-        <put name="info" value="/pages/cvinfo.jsp"/>
-        <put name="taxid" value="/pages/biosource/taxId.jsp"/>
-        <put name="comments" value="/pages/comments.jsp"/>
-        <put name="add-comments" value="/pages/commentsAdd.jsp"/>
-        <put name="xrefs" value="/pages/xrefs.jsp"/>
-        <put name="add-xrefs" value="/pages/xrefsAdd.jsp"/>
-        <put name="action" value="/pages/editAction.jsp"/>
+    <definition name="edit.biosrc.layout" extends="edit.cv.layout">
+        <put name="editor-info" value="/pages/extra/biosource.jsp"/>
+    </definition>
+
+    <!-- The edit Experiment page layout. -->
+    <definition name="edit.exp.layout" extends="edit.cv.layout">
+        <put name="editor-info" value="/pages/extra/experiment.jsp"/>
     </definition>
 
     <!-- =============== Definitions related to pages ================= -->
@@ -81,13 +80,13 @@
     -->
     <definition name="header.layout" path="/layouts/headerLayout.jsp"
         controllerUrl="/do/tiles/headerSwitch">
-        <put name="header.title" value="IntAct - Control Vocabulary Editor"/>
+        <put name="header.title" value="IntAct Editor"/>
     </definition>
 
     <!-- Login page description  -->
     <definition name="login.layout" path="/layouts/intactLayout.jsp">
 <!--        <put name="stylesheet" value="layouts/styles/cvedit.css"/>-->
-        <put name="title"  value="IntAct - Control Vocabulary Editor"/>
+        <put name="title"  value="IntAct Editor"/>
         <put name="sidebar" value="login.sidebar.layout"/>
         <put name="header" value="header.layout"/>
         <put name="footer" value="/pages/footer.jsp"/>
