@@ -96,15 +96,6 @@ public class XrefHelper {
     }
 
     /**
-     * True if given link is an empty link.
-     * @param link the link to check for.
-     * @return true if <code>link</code> equals to {@link #ourEmptyPidLink}.
-     */
-    public boolean isLinkEmpty(String link) {
-        return link.equals(ourEmptyPidLink);
-    }
-
-    /**
      * Returns the identifier for the empty primary id link.
      * @return the identifier for the empty primary id link.
      */
