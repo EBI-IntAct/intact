@@ -35,6 +35,6 @@ public class FillResultFormAction  extends AbstractEditorAction {
         user.fillSearchResult((DynaActionForm) form);
 
         // Straight to the results page.
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 }

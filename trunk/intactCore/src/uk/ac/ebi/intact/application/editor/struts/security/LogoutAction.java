@@ -72,6 +72,6 @@ public class LogoutAction extends AbstractEditorAction {
         // Session is no longer valid.
         session.invalidate();
 
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 }

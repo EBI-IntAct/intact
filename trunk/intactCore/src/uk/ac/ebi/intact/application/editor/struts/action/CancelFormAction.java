@@ -48,7 +48,7 @@ public class CancelFormAction extends AbstractEditorAction {
         // Cancel the current edit session.
         user.cancelEdit();
 
-        // Either search or results.
-        return mapping.findForward(getForwardAction(user));
+        // Back to the search page.
+        return mapping.findForward(SEARCH);
     }
 }

@@ -79,12 +79,12 @@ public class BioSourceAction extends SubmitFormAction {
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.taxid.mask", taxid));
             saveErrors(request, errors);
-            return mapping.findForward(FORWARD_FAILURE);
+            return mapping.findForward(FAILURE);
         }
 
         // Validate the tax id; it should be unique.
         if (!validateTaxId(user, taxid, request)) {
-            return mapping.findForward(FORWARD_FAILURE);
+            return mapping.findForward(FAILURE);
         }
         // This shouldn't crash the application as we had
         // already created the correct editor view bean.
@@ -96,7 +96,7 @@ public class BioSourceAction extends SubmitFormAction {
 
         // Any errors?
         if (hasErrors(request)) {
-            return mapping.findForward(FORWARD_FAILURE);
+            return mapping.findForward(FAILURE);
         }
         // Values from newt.
         String newtLabel = newtResponse.getShortLabel();
@@ -136,7 +136,7 @@ public class BioSourceAction extends SubmitFormAction {
         bioview.setFullName(newtName);
         bioview.setTaxId(taxid);
 
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 
     /**

@@ -67,6 +67,6 @@ public class ExperimentAction extends AbstractEditorAction {
         // Wants to delete the selected experiment from the Interaction.
         view.delExperiment(eb);
 
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 }

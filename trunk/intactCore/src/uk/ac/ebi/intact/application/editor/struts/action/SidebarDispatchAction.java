@@ -12,16 +12,15 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -96,7 +95,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         if (results.isEmpty()) {
             // No matches found - forward to a suitable page
             LOGGER.info("No matches were found for the specified search criteria");
-            return mapping.findForward(EditorConstants.FORWARD_NO_MATCHES);
+            return mapping.findForward(NO_MATCH);
         }
         // If we retrieved one object then we can go strainght to edit page.
         if (results.size() == 1) {
@@ -104,14 +103,14 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             AnnotatedObject annobj = (AnnotatedObject) results.iterator().next();
             user.updateView(annobj);
 
-            // Straight to the edit jsp.
+            // Single item found
             return mapping.findForward("single");
         }
         // Cache the search results.
         user.addToSearchCache(results);
 
         // Move to the results page.
-        return mapping.findForward(EditorConstants.FORWARD_RESULTS);
+        return mapping.findForward(RESULT);
     }
 
     /**
@@ -154,7 +153,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
 //        user.addToSearchCache(annobj);
         // Started creating a new record.
 //        user.setEditNew(true);
-        return mapping.findForward("created");
+        return mapping.findForward("create");
     }
 
     // Helper methods

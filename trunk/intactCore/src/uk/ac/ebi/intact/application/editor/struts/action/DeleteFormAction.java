@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +47,8 @@ public class DeleteFormAction extends AbstractEditorAction {
 
         // No need to delete if the object is not yet persisted.
         if (!user.isPersistent()) {
-            return mapping.findForward(getForwardAction(user));
+            // Back to the search page.
+            return mapping.findForward(SEARCH);
         }
 
         try {
@@ -69,12 +71,12 @@ public class DeleteFormAction extends AbstractEditorAction {
             LOGGER.info(ie1);
             // Error with deleting the object.
             ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.delete", ie1.getNestedMessage()));
+            errors.add(EDITOR_ERROR, new ActionError(
+                    "error.delete", ie1.getNestedMessage()));
             saveErrors(request, errors);
-            return mapping.findForward(FORWARD_FAILURE);
+            return mapping.findForward(FAILURE);
         }
-        // Deleted successfully; either search or results.
-        return mapping.findForward(getForwardAction(user));
+        // Back to the search page.
+        return mapping.findForward(SEARCH);
     }
 }

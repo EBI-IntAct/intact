@@ -57,6 +57,6 @@ public class FillExperimentFormAction extends FillCvFormAction {
                 dynaForm.set("ident", view.getIdent());
 //            }
         }
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 }

@@ -78,6 +78,6 @@ public class FillInteractionFormAction extends FillCvFormAction {
         dynaform.set("proteins", proteins.toArray(new ProteinBean[0]));
         dynaform.set("protCmd", new String[proteins.size()]);
 
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 }
