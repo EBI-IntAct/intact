@@ -25,15 +25,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BioSourceSubmitAction extends SubmitFormAction {
 
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-            throws Exception {
-        // Update the bean with form values.
-        getIntactUser(request).getView().updateFromForm((DynaActionForm) form);
-        return super.execute(mapping, form, request, response);
-    }
+//    public ActionForward execute(ActionMapping mapping,
+//                                 ActionForm form,
+//                                 HttpServletRequest request,
+//                                 HttpServletResponse response)
+//            throws Exception {
+//        // Update the bean with form values.
+//        getIntactUser(request).getView().updateFromForm((DynaActionForm) form);
+//        return super.execute(mapping, form, request, response);
+//    }
 
     // Override the super method to handle the event for pressing the tax id.
     protected ActionForward handleDispatch(ActionMapping mapping,

@@ -10,6 +10,7 @@ import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.model.Experiment;
 
 import javax.servlet.http.HttpServletRequest;
@@ -86,14 +87,21 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
 
-        // The search parameter.
-        String searchParam = getSearchParam(dynaform);
+        // Search AC has high priority.
+        String searchValue = intform.getExpSearchAC();
 
-        // The search value.
-        String searchValue = (String) dynaform.get(searchParam);
+        // Assume search parameter is AC.
+        String searchParam = "ac";
+
+        // Search for short label if 'ac' is empty.
+        if (searchValue.length() == 0) {
+            searchValue = intform.getExpSearchLabel();
+            searchParam = "shortLabel";
+        }
+
         if (searchValue.length() == 0) {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
@@ -103,9 +111,6 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         }
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
-
-        // Normalize the search parameter.
-        searchParam = searchParam.endsWith("AC") ? "ac" : "shortLabel";
 
         // The collection to hold experiments.
         Collection experiments = user.search1(Experiment.class.getName(), searchParam,
@@ -137,20 +142,5 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         view.addExperimentToHold(experiments);
 
         return mapping.findForward(SUCCESS);
-    }
-
-    /**
-     * Returns the search parameter.
-     * @param form the form to get search parameter values.
-     * @return the search parameter; the most sepecific search
-     * is preferred over the least specific one. For example, 'ac' is preferred
-     * over any other value.
-     */
-    private String getSearchParam(DynaActionForm form) {
-        String ac = (String) form.get("expSearchAC");
-        if ((ac != null) && (ac.length() > 0)) {
-            return "expSearchAC";
-        }
-        return "expSearchLabel";
     }
 }

@@ -6,12 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.biosrc;
 
-import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.exception.validation.BioSourceException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -82,12 +82,29 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         bs.setCvCellType(getCellType(user));
     }
 
-    // Override to provide set experiment from the bean.
-    public void updateFromForm(DynaActionForm dynaform) {
+    // Override to copy biosource from the form to the bean.
+    public void copyPropertiesFrom(EditorActionForm editorForm) {
         // Set the common values by calling super first.
-        super.updateFromForm(dynaform);
-        setTissue((String) dynaform.get("tissue"));
-        setCellType((String) dynaform.get("cellType"));
+        super.copyPropertiesFrom(editorForm);
+
+        // Cast to the biosource form to get biosource data.
+        BioSourceActionForm bsform = (BioSourceActionForm) editorForm;
+
+        setTaxId(bsform.getTaxId());
+        setTissue(bsform.getTissue());
+        setCellType(bsform.getCellType());
+    }
+
+    // Override to copy BS data to given form.
+    public void copyPropertiesTo(EditorActionForm form) {
+        super.copyPropertiesTo(form);
+
+        // Cast to the biosource form to copy biosource data.
+        BioSourceActionForm bsform = (BioSourceActionForm) form;
+
+        bsform.setTaxId(getTaxId());
+        bsform.setTissue(getTissue());
+        bsform.setCellType(getCellType());
     }
 
     // Override to provide BioSource layout.

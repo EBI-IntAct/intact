@@ -7,12 +7,12 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
@@ -626,12 +626,24 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * Updates the internal data from given form.
-     * @param dynaform the form to update the internal data.
+     * Copies properties from given form to the bean.
+     * @param form the form to update the internal data.
      */
-    public void updateFromForm(DynaActionForm dynaform) {
-        setShortLabel((String) dynaform.get("shortLabel"));
-        setFullName((String) dynaform.get("fullName"));
+    public void copyPropertiesFrom(EditorActionForm form) {
+        setShortLabel(form.getShortLabel());
+        setFullName(form.getFullName());
+    }
+
+    /**
+     * Copies properties from bean to given form.
+     * @param form the form to copy properties to.
+     */
+    public void copyPropertiesTo(EditorActionForm form) {
+        form.setAc(getAcLink());
+        form.setShortLabel(getShortLabel());
+        form.setFullName(getFullName());
+        form.setAnnotations(getAnnotations());
+        form.setXrefs(getXrefs());
     }
 
     // Empty methods to be overriden by sub classes.

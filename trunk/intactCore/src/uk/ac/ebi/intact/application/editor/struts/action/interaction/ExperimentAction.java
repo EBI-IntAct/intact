@@ -9,9 +9,9 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,18 +48,15 @@ public class ExperimentAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
-
         // The current view of the edit session.
         InteractionViewBean view =
                 (InteractionViewBean) getIntactUser(request).getView();
 
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
+
         // The bean associated with the current action.
-        ExperimentBean eb = ((ExperimentBean[]) dynaform.get("exps"))[idx];
+        ExperimentBean eb = intform.getSelectedExperiment();
 
         // We must have the experiment bean.
         assert eb != null;

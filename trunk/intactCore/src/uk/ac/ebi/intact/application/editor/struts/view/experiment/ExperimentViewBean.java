@@ -6,12 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
-import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -199,12 +199,29 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         return "editor.experiment";
     }
 
-    // Override to provide set experiment from the bean.
-    public void updateFromForm(DynaActionForm dynaform) {
-        super.updateFromForm(dynaform);
-        setOrganism((String) dynaform.get("organism"));
-        setInter((String) dynaform.get("inter"));
-        setIdent((String) dynaform.get("ident"));
+    // Override to provide set experiment from the form.
+    public void copyPropertiesFrom(EditorActionForm editorForm) {
+        // Set the common values by calling super first.
+        super.copyPropertiesFrom(editorForm);
+
+        // Cast to the experiment form to get experiment data.
+        ExperimentActionForm expform = (ExperimentActionForm) editorForm;
+
+        setOrganism(expform.getOrganism());
+        setInter(expform.getInter());
+        setIdent(expform.getIdent());
+    }
+
+    // Override to copy Experiment data.
+    public void copyPropertiesTo(EditorActionForm form) {
+        super.copyPropertiesTo(form);
+
+        // Cast to the experiment form to copy experiment data.
+        ExperimentActionForm expform = (ExperimentActionForm) form;
+
+        expform.setOrganism(getOrganism());
+        expform.setInter(getInter());
+        expform.setIdent(getIdent());
     }
 
     // Override to check for a large experiment.

@@ -13,6 +13,7 @@ import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,10 +35,12 @@ public class InteractionAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
+//        DynaActionForm dynaform = (DynaActionForm) form;
+        ExperimentActionForm expform = (ExperimentActionForm) form;
 
         // Are we editing an Interaction?
-        if (dynaform.get("dispatch").equals(
+//        if (dynaform.get("dispatch").equals(
+        if (expform.getDispatch().equals(
                 getResources(request).getMessage("exp.int.button.edit"))) {
             // Pass the control to another action to edit an interaction.
             return mapping.findForward("editInt");
@@ -49,7 +52,7 @@ public class InteractionAction extends AbstractEditorAction {
 
         // The interaction to delete.
         Interaction inter = (Interaction) user.getObjectByAc(
-                Interaction.class, (String) dynaform.get("intac"));
+                Interaction.class, (String) expform.getIntac());//dynaform.get("intac"));
 
         // We must have the interaction bean.
         assert inter != null;

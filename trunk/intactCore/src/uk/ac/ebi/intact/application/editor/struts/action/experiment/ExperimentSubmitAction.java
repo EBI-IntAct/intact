@@ -9,12 +9,10 @@ package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * An action to handle Experiment specific events.
@@ -23,16 +21,6 @@ import javax.servlet.http.HttpServletResponse;
  * @version $Id$
  */
 public class ExperimentSubmitAction extends SubmitFormAction {
-
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-            throws Exception {
-        // Update the bean with form values.
-        getIntactUser(request).getView().updateFromForm((DynaActionForm) form);
-        return super.execute(mapping, form, request, response);
-    }
 
     // Handle events with dispatch parameter.
     protected ActionForward handleDispatch(ActionMapping mapping,

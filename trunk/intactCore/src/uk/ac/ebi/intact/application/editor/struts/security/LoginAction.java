@@ -10,6 +10,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
+import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
@@ -22,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Implements the logic to authenticate a user for the editor application.
@@ -86,6 +89,33 @@ public class LoginAction extends AbstractEditorAction {
         // Store the server path.
         ctx.setAttribute(EditorConstants.SERVER_PATH, request.getContextPath());
 
+        // Sets the submit map.
+        session.setAttribute("formSubmitMap", getSubmitMap(request));
+
         return mapping.findForward(SUCCESS);
+    }
+
+    private Map getSubmitMap(HttpServletRequest request) {
+        // The map to return.
+        Map map = new HashMap();
+
+        // The message resources to get keys.
+        MessageResources msgres = getResources(request);
+
+        map.put(msgres.getMessage("button.submit"), "submit");
+        map.put(msgres.getMessage("button.save.continue"), "submit");
+        map.put(msgres.getMessage("button.cancel"), "cancel");
+        map.put(msgres.getMessage("button.delete"), "delete");
+
+        map.put(msgres.getMessage("annotations.button.add"), "submit");
+        map.put(msgres.getMessage("annotations.button.edit"), "annotation");
+        map.put(msgres.getMessage("annotations.button.save"), "annotation");
+        map.put(msgres.getMessage("annotations.button.delete"), "annotation");
+
+        map.put(msgres.getMessage("xrefs.button.add"), "submit");
+        map.put(msgres.getMessage("xrefs.button.edit"), "xref");
+        map.put(msgres.getMessage("xrefs.button.save"), "xref");
+        map.put(msgres.getMessage("xrefs.button.delete"), "xref");
+        return map;
     }
 }

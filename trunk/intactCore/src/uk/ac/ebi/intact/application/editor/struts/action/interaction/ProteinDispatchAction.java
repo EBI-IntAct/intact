@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,14 +43,11 @@ public class ProteinDispatchAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
 
-        // The index position of the xref.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
-
-        // The command associated with the index.
-        String cmd = ((String[]) dynaform.get("protCmd"))[idx];
+        // The command associated with the dispatch
+        String cmd = intform.getDispatch();
 
         // Message resources to access button labels.
         MessageResources msgres = getResources(request);
@@ -69,14 +67,11 @@ public class ProteinDispatchAction extends AbstractEditorAction {
                               HttpServletRequest request,
                               HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
 
         // The protein we are editing at the moment.
-        ProteinBean pb = ((ProteinBean[]) dynaform.get("proteins"))[idx];
+        ProteinBean pb = intform.getSelectedProtein();
 
         // We must have the protein bean.
         assert pb != null;
@@ -93,18 +88,15 @@ public class ProteinDispatchAction extends AbstractEditorAction {
                               HttpServletRequest request,
                               HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
 
         // The current view of the edit session.
         InteractionViewBean viewbean =
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // The protein we are editing at the moment.
-        ProteinBean pb = ((ProteinBean[]) dynaform.get("proteins"))[idx];
+        ProteinBean pb = intform.getSelectedProtein();
 
         // We must have the protein bean.
         assert pb != null;
@@ -136,24 +128,21 @@ public class ProteinDispatchAction extends AbstractEditorAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
 
         // The current view of the edit session.
         InteractionViewBean view =
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // The protein we are editing at the moment.
-        ProteinBean pb = ((ProteinBean[]) dynaform.get("proteins"))[idx];
+        ProteinBean pb = intform.getSelectedProtein();
 
         // We must have the protein bean.
         assert pb != null;
 
         // Delete this Protein from the view.
-        view.delProtein(idx);
+        view.delProtein(intform.getDispatchIndex());
 
         // Update the form.
         return mapping.findForward(SUCCESS);

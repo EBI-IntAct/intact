@@ -11,14 +11,17 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -62,15 +65,17 @@ public class BioSourceAction extends SubmitFormAction {
         ActionErrors errors;
 
         // Extract the tax id from the form.
-        DynaActionForm theForm = (DynaActionForm) form;
+        BioSourceActionForm bsform = (BioSourceActionForm) form;
 
         // The tax id to search the Newt database.
-        String taxid = (String) theForm.get("taxId");
+        String taxid = bsform.getTaxId();
 
         // Handler to the user.
         EditUserI user = getIntactUser(request);
 
-        // Must be an integer.
+        // Need to validate here because we have set the validate to false.
+        // Can't reply on form validation here because it validates the short
+        // label as well (the short label is derived from this action!).
         try {
             Integer.parseInt(taxid);
         }
