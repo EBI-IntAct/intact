@@ -20,9 +20,14 @@
 <script language="JavaScript" type="text/javascript">
 
     function confirmDelete() {
+        skipValidation();
         return window.confirm("Do you want to delete this CV? Press OK to confirm");
     }
 
+    // Skip client-side javascript validation
+    function skipValidation() {
+        bCancel = true;
+    }
 </script>
 
 <jsp:useBean id="user" scope="session"
@@ -61,7 +66,7 @@
         </c:if>
 
         <td align="center" bgcolor="yellow">
-            <html:submit property="dispatch">
+            <html:submit property="dispatch" onclick="skipValidation();">
                 <bean:message key="button.cancel"/>
             </html:submit>
             <br/><bean:message key="button.cancel.titleKey"/>

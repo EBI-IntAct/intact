@@ -221,31 +221,31 @@ public class InteractionActionForm extends EditorActionForm {
      * no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
      * object is returned.
      */
-    public ActionErrors validate(ActionMapping mapping,
-                                 HttpServletRequest request) {
-        ActionErrors errors = super.validate(mapping, request);
-
-        // Only proceed if super method does not find any errors.
-        if ((errors != null) && !errors.isEmpty()) {
-            return errors;
-        }
-        // Must select from the drop down list.
-        if (getInteractionType().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors = new ActionErrors();
-            errors.add("int.interaction", new ActionError("error.int.cvtype"));
-            return errors;
-        }
-        if (getOrganism().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors = new ActionErrors();
-            errors.add("int.organism", new ActionError("error.int.biosrc"));
-            return errors;
-        }
-        // Must have at least one experiment. This is a business decision.
-//        if (getExperiments().isEmpty()) {
-//            errors = new ActionErrors();
-//            errors.add(ActionErrors.GLOBAL_ERROR,
-//                    new ActionError("error.int.validation.exp"));
+//    public ActionErrors validate(ActionMapping mapping,
+//                                 HttpServletRequest request) {
+//        ActionErrors errors = super.validate(mapping, request);
+//
+//        // Only proceed if super method does not find any errors.
+//        if ((errors != null) && !errors.isEmpty()) {
+//            return errors;
 //        }
-        return errors;
-    }
+//        // Must select from the drop down list.
+//        if (getInteractionType().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+//            errors = new ActionErrors();
+//            errors.add("int.interaction", new ActionError("error.int.cvtype"));
+//            return errors;
+//        }
+//        if (getOrganism().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+//            errors = new ActionErrors();
+//            errors.add("int.organism", new ActionError("error.int.biosrc"));
+//            return errors;
+//        }
+//        // Must have at least one experiment. This is a business decision.
+////        if (getExperiments().isEmpty()) {
+////            errors = new ActionErrors();
+////            errors.add(ActionErrors.GLOBAL_ERROR,
+////                    new ActionError("error.int.validation.exp"));
+////        }
+//        return errors;
+//    }
 }

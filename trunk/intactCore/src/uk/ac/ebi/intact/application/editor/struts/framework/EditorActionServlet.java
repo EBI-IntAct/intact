@@ -123,7 +123,7 @@ public class EditorActionServlet extends ActionServlet {
         Map map = new HashMap();
 
         // Editing short label.
-        map.put("error.cvinfo.label", "info");
+        map.put("error.label", "info");
 
         // Adding annotation.
         map.put("error.annotation.topic", "annotation");

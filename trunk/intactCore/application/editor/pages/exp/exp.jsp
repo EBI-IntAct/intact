@@ -24,7 +24,7 @@
 
 <jsp:include page="../js.jsp" />
 
-<html:form action="/expDispatch">
+<html:form action="/expDispatch" onsubmit="return validateExpForm(this)">
     <html:hidden property="intac" />
     <html:hidden property="anchor" />
 
@@ -44,3 +44,4 @@
     <jsp:include page="../action.jsp" />
 
 </html:form>
+<html:javascript formName="expForm"/>

@@ -16,7 +16,7 @@
 
 <jsp:include page="../js.jsp" />
 
-<html:form action="/bsDispatch" focus="shortLabel">
+<html:form action="/bsDispatch" focus="shortLabel" onsubmit="return validateBsForm(this)">
     <html:hidden property="anchor" />
 
     <jsp:include page="info.jsp" />
@@ -29,3 +29,4 @@
     <jsp:include page="../action.jsp" />
 
 </html:form>
+<html:javascript formName="bsForm"/>

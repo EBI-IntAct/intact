@@ -16,7 +16,7 @@
 
 <jsp:include page="../js.jsp" />
 
-<html:form action="/cvDispatch">
+<html:form action="/cvDispatch" onsubmit="return validateCvForm(this)">
     <html:hidden property="anchor" />
 
     <jsp:include page="info.jsp" />
@@ -29,3 +29,4 @@
     <jsp:include page="../action.jsp" />
 
 </html:form>
+<html:javascript formName="cvForm"/>

@@ -251,7 +251,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                     + "', '" + formlabel + "')\">here</a>";
             ActionErrors errors = new ActionErrors();
             errors.add("shortLabel",
-                    new ActionError("error.cvinfo.label", formlabel, link));
+                    new ActionError("error.label", formlabel, link));
             saveErrors(request, errors);
             // Display the errors in the input page.
             return mapping.getInputForward();

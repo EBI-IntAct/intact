@@ -187,6 +187,7 @@
                 for (x in oMasked) {
                     if ((form[oMasked[x][0]].type == 'text' ||
                          form[oMasked[x][0]].type == 'textarea' ||
+                         form[oMasked[x][0]].type == 'select-one' ||
                          form[oMasked[x][0]].type == 'password') &&
                         (form[oMasked[x][0]].value.length > 0)) {
                         if (!matchPattern(form[oMasked[x][0]].value, oMasked[x][2]("mask"))) {

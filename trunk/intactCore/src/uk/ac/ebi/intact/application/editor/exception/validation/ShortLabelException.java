@@ -17,6 +17,6 @@ package uk.ac.ebi.intact.application.editor.exception.validation;
 public class ShortLabelException extends ValidationException {
 
     public ShortLabelException() {
-        super("errors.required", "cvinfo.label.shortlabel");
+        super("error.shortlabel.mask", "shortlabel");
     }
 }
