@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 
 import java.util.Collection;
 import java.util.Date;
@@ -37,6 +38,11 @@ public interface IntactUserIF extends Serializable {
      * The name of qualifier list.
      */
     public static final String QUALIFIER_NAMES = "QualifierNames";
+
+    /**
+     * Return the view of what the user sees on the screen.
+     */
+    public CvViewBean getView();
 
     /**
      * Returns the user id of the user used to login into cvedit application.
@@ -110,7 +116,7 @@ public interface IntactUserIF extends Serializable {
     /**
      * Wrapper to begin a transaction via OJB layer.
      *
-     * @exception TransactionException for errors in starting a transaction.
+     * @exception IntactException for errors in starting a transaction.
      */
     public void begin() throws IntactException;
 
@@ -120,11 +126,6 @@ public interface IntactUserIF extends Serializable {
      * @exception IntactException for errors in committing a transaction.
      */
     public void commit() throws IntactException;
-
-    /**
-     * Returns the state of the transaction via OJB layer.
-     */
-    public boolean isActive();
 
     /**
      * A wrapper to roll back a transaction vi OJB layer.
@@ -198,13 +199,6 @@ public interface IntactUserIF extends Serializable {
      */
     public Object getObjectByLabel(Class clazz, String label)
         throws SearchException;
-
-    /**
-     * Removes the given object from cache of the underlying persistence system.
-     *
-     * @param object the object to clear from the cache.
-     */
-//    public void removeFromCache(Object object);
 
     /**
      * This method provides a means of searching intact objects, within the constraints
