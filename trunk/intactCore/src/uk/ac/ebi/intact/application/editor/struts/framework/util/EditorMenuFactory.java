@@ -14,7 +14,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import java.util.*;
 
 /**
- * The menu factory.
+ * The menu factory to generate various menus.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -127,7 +127,7 @@ public class EditorMenuFactory {
      * in the cache or else new menu is created and stored in the cache before
      * returning it.
      * @param name the name of the menu; the valid values are: {@link #TOPICS},
-     * {@link #DATABASES} and {@link #QUALIFIERS}.
+     * {@link #DATABASES}, {@link #QUALIFIERS} and {@link #ROLES}.
      * @param mode 0 for and edit menu and 1 for an add menu; the difference is
      * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
      * @return the menu for given <code>name</code>; <code><label/code> is
@@ -141,7 +141,8 @@ public class EditorMenuFactory {
                 // Cache it for later use.
                 list = makeList(name, mode);
                 myNameToEditItems.put(name, list);
-            } else {
+            }
+            else {
                 // Retrieve it from cache.
                 list = (List) myNameToEditItems.get(name);
             }
@@ -151,7 +152,8 @@ public class EditorMenuFactory {
             // Cache it for later use.
             list = makeList(name, mode);
             myNameToAddItems.put(name, list);
-        } else {
+        }
+        else {
             // Retrieve it from cache.
             list = (List) myNameToAddItems.get(name);
         }
@@ -189,22 +191,6 @@ public class EditorMenuFactory {
         storeMenu(map, ORGANISMS, mode);
         storeMenu(map, INTERACTION_TYPES, mode);
         storeMenu(map, EXPERIMENTS, mode);
-        return map;
-    }
-
-    /**
-     * Returns the menus for a Protein.
-     * @param mode 1 for add or 0 for edit; see the documentation for
-     * {@link #getMenu(String, int)}
-     * @return a map name -> menu; the valid names (keys) are: {@link #ORGANISMS}
-     * and {@link #ROLES}.
-     * @throws SearchException for errors in constructing the menu.
-     */
-    public Map getProteinMenus(int mode) throws SearchException {
-        // The map to put menus.
-        Map map = new HashMap();
-        storeMenu(map, ORGANISMS, mode);
-        storeMenu(map, ROLES, mode);
         return map;
     }
 
@@ -258,7 +244,8 @@ public class EditorMenuFactory {
         Class clazz = (Class) theirNameToType.get(key);
         try {
             v = AnnotatedObject.getMenuList(clazz, myHelper, true);
-        } catch (IntactException ie) {
+        }
+        catch (IntactException ie) {
             throw new SearchException("Search failed: " + ie.getNestedMessage());
         }
         // Guard against the null pointer.
