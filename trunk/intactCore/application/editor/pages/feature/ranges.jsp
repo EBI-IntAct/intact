@@ -133,6 +133,9 @@
         </c:forEach>
     </table>
 </c:if>
+
+<%-- Invalid values for from and to --%>
+<html:errors property="edit.range"/>
 <html:errors property="feature.range.unsaved"/>
 <html:errors property="feature.range.exists"/>
 <html:errors property="feature.range.empty"/>
