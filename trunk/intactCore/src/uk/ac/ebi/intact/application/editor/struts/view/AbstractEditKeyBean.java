@@ -6,6 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view;
 
+import uk.ac.ebi.intact.application.editor.business.EditorService;
+
 /**
  * Generic edit bean with keys. Acts as a super class for CommentBean and
  * XreferenceBean classes.
@@ -104,6 +106,16 @@ public abstract class AbstractEditKeyBean extends AbstractEditBean implements Cl
      */
     public long getKey() {
         return myKey;
+    }
+
+    // Protected methods
+
+    /**
+     * Helper method for subclasses to access the editor service.
+     * @return the only editor service for the application.
+     */
+    protected EditorService getService() {
+        return EditorService.getInstance();
     }
 
     /**

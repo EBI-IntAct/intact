@@ -210,9 +210,6 @@ public class BioSourceAction extends AbstractEditorAction {
     }
 
     private Xref createTaxXref(String taxid, String label) throws IntactException {
-        // The owner of the object we are editing.
-        Institution owner = EditUser.getInstitution();
-
         IntactHelper helper = new IntactHelper();
         CvDatabase db;
         CvXrefQualifier xqual;
@@ -227,7 +224,7 @@ public class BioSourceAction extends AbstractEditorAction {
         finally {
             helper.closeStore();
         }
-        return new Xref(owner, db, taxid, label, null, xqual);
+        return new Xref(getService().getOwner(), db, taxid, label, null, xqual);
     }
 
     /**

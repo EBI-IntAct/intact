@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
@@ -136,7 +135,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         }
         // Component is null if this bean constructed from a Protein.
         if (myComponent == null) {
-            myComponent = new Component(EditUser.getInstitution(), myInteraction,
+            myComponent = new Component(getService().getOwner(), myInteraction,
                     myInteractor, newrole);
         }
         else {

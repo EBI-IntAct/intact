@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
@@ -219,7 +218,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         finally {
             helper.closeStore();
         }
-        Annotation annot = new Annotation(EditUser.getInstitution(), cvtopic);
+        Annotation annot = new Annotation(getService().getOwner(), cvtopic);
         annot.setAnnotationText(cb.getDescription());
 
         // Add the bean to the view; new bean is wrapped around the annotation.
@@ -296,7 +295,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         finally {
             helper.closeStore();
         }
-        Xref xref = new Xref(EditUser.getInstitution(), db, xb.getPrimaryId(),
+        Xref xref = new Xref(getService().getOwner(), db, xb.getPrimaryId(),
                 xb.getSecondaryId(), xb.getReleaseNumber(), xqual);
         // Add the bean to the view; new bean is wrapped around the xref.
         view.addXref(new XreferenceBean(xref));

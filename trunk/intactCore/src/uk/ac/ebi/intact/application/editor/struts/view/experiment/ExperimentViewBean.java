@@ -7,9 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import org.apache.struts.tiles.ComponentContext;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -100,7 +98,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         resetExperiment(exp);
 
         // Check the limit for interactions.
-        int maxLimit = EditorService.getInstance().getInteractionLimit();
+        int maxLimit = getService().getInteractionLimit();
 
         // The number of interactions for the current experiment.
         int intsSize = exp.getInteractions().size();
@@ -135,7 +133,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Have we set the annotated object for the view?
         if (exp == null) {
             // Can't read from the persistent system. Create a new Experiment.
-            exp = new Experiment(EditUser.getInstitution(), getShortLabel(), biosource);
+            exp = new Experiment(getService().getOwner(), getShortLabel(), biosource);
             setAnnotatedObject(exp);
         }
         else {

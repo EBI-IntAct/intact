@@ -10,7 +10,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.apache.struts.tiles.ComponentContext;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
@@ -191,7 +190,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
             }
             // Not persisted. Create a new Interaction.
             intact = new InteractionImpl(exps, new ArrayList(),
-                    type, getShortLabel(), EditUser.getInstitution());
+                    type, getShortLabel(), getService().getOwner());
             // Set this interaction as the annotated object.
             setAnnotatedObject(intact);
         }
