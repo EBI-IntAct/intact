@@ -1,4 +1,8 @@
-/*SET DOC OFF*/
+/*
+  Copyright (c) 2002 The European Bioinformatics Institute, and others.  
+  All rights reserved. Please see the file LICENSE 
+  in the root directory of this distribution.
+*/
 /*************************************************************
 
   Package:    IntAct reports
@@ -16,11 +20,7 @@
   *************************************************************/
 
 --- Setup layout
-/*
-SET PAGESIZE 50
-SET LINESIZE 79
-SET NEWPAGE 0
-*/
+
 --- Main query
 SELECT e.shortlabel Experiment, i.shortLabel Interaction, 
        m.shortLabel Molecule, r.shortLabel Role
@@ -32,8 +32,3 @@ SELECT e.shortlabel Experiment, i.shortLabel Interaction,
    AND e.ac=i2e.experiment_ac 
    AND i.ac=i2e.interaction_ac;
 
---- Exit
-/*
-exit;
-*/
---- End
