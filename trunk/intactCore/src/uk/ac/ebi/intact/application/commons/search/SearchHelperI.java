@@ -7,9 +7,12 @@ package uk.ac.ebi.intact.application.commons.search;
 
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.util.Collection;
 import java.util.List;
+
+import org.apache.ojb.broker.query.Query;
 
 /**
  * Interface describing how to search data in IntAct.
@@ -29,8 +32,8 @@ public interface SearchHelperI {
      * @return the result wrapper which contains the result of the search
      * @throws IntactException for any errors in searching the persistent <.
      */
-    public ResultWrapper doLookupSimple(Class searchClass, String query, int max)
-            throws IntactException;
+//    public ResultWrapper doLookupSimple(Class searchClass, String query, int max)
+//            throws IntactException;
 
     /**
      * Search in the IntAct data for a colleciton of object (type=searchClass). The objects found
@@ -81,6 +84,21 @@ public interface SearchHelperI {
      */
     public ResultWrapper searchByQuery(Class searchClass, String searchParam, String searchValue,
                                        int max) throws IntactException;
+
+    /**
+     * Returns a result wrapper which contains the result for given search type. The search uses the
+     * OQL.
+     *
+     * @param helper the helper to run the queries.
+     * @param queries an array of queries, The first query is the query to count
+     * the search result. The second query is to do the actual search.
+     * @param max the maximum number of entries to retrieve
+     * @return the result wrapper which may contain the iterator to the search result.
+     * @throws IntactException for errors in searching for persistent system.
+     * This is not thrown if the search produces no output.
+     */
+    public ResultIterator searchByQuery(IntactHelper helper, Query[] queries, int max)
+            throws IntactException;
 
     /**
      * Returns true if the DataResource behind the SearchHelper is available, return false if not

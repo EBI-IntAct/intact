@@ -9,9 +9,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.log4j.Logger;
+import org.apache.ojb.broker.query.Query;
+import org.apache.ojb.broker.query.Criteria;
+import org.apache.ojb.broker.query.ReportQueryByCriteria;
+import org.apache.ojb.broker.query.QueryFactory;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
+import uk.ac.ebi.intact.application.commons.search.ResultIterator;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -99,12 +104,22 @@ public class SearchHelperTest extends TestCase {
         }
     }
 
-    public void testSimpleLookup() {
+    public void testGetInteractions2() {
+        IntactHelper helper = null;
         try {
-            doTestSimpleLookup();
+            helper = new IntactHelper();
+            doTestGetInteractions2(helper);
         }
         catch (IntactException e) {
             fail(e.getMessage());
+        }
+        finally {
+            if (helper != null) {
+                try {
+                    helper.closeStore();
+                }
+                catch (IntactException ie) {}
+            }
         }
     }
 
@@ -164,6 +179,54 @@ public class SearchHelperTest extends TestCase {
         // Too large
         assertTrue(rw.isTooLarge());
         assertEquals(rw.getPossibleResultSize(), 8);
+    }
+
+    private void doTestGetInteractions2(IntactHelper helper) throws IntactException {
+        Logger logger = Logger.getLogger(EditorConstants.LOGGER);
+        SearchHelperI searchHelper = new SearchHelper(logger);
+
+        // within max size
+        Query[] queries = getSearchQueries(InteractionImpl.class, "ga-*");
+        ResultIterator ri = searchHelper.searchByQuery(helper, queries, 20);
+
+        // Not too large
+        assertFalse(ri.isTooLarge());
+        assertEquals(ri.getPossibleResultSize(), 8);
+        assertTrue(ri.isNonEmptyAndWithinBounds());
+
+        for (Iterator iter = ri.getIterator(); iter.hasNext();) {
+            Object[] row = (Object[]) iter.next();
+            assertTrue(((String) row[1]).startsWith("ga-"));
+        }
+
+        // equals to max size
+        ri = searchHelper.searchByQuery(helper, queries, 8);
+        // Not too large
+        assertFalse(ri.isTooLarge());
+        assertEquals(ri.getPossibleResultSize(), 8);
+        assertTrue(ri.isNonEmptyAndWithinBounds());
+
+        for (Iterator iter = ri.getIterator(); iter.hasNext();) {
+            Object[] row = (Object[]) iter.next();
+            assertTrue(((String) row[1]).startsWith("ga-"));
+        }
+
+        // greater than max size
+        ri = searchHelper.searchByQuery(helper, queries, 5);
+        // Too large
+        assertTrue(ri.isTooLarge());
+        assertEquals(ri.getPossibleResultSize(), 8);
+        // Out of bounds
+        assertFalse(ri.isNonEmptyAndWithinBounds());
+
+        // No results
+        queries = getSearchQueries(InteractionImpl.class, "xx-*");
+        ri = searchHelper.searchByQuery(helper, queries, 5);
+
+        // None found
+        assertTrue(ri.isEmpty());
+        assertEquals(ri.getPossibleResultSize(), 0);
+        assertFalse(ri.isNonEmptyAndWithinBounds());
     }
 
     private void doTestGetProteins() throws IntactException {
@@ -233,29 +296,58 @@ public class SearchHelperTest extends TestCase {
         }
     }
 
-    private void doTestSimpleLookup() throws IntactException {
-        // Any valid logger will do fine here.
-        Logger logger = Logger.getLogger(EditorConstants.LOGGER);
-        SearchHelperI searchHelper = new SearchHelper(logger);
-
-        ResultWrapper rw = searchHelper.doLookupSimple(Experiment.class, "*", 2);
-
-        List results = rw.getResult();
-        assertEquals(results.size(), 2);
-        // Not too large
-        assertFalse(rw.isTooLarge());
-        assertEquals(rw.getPossibleResultSize(), 2);
-
-        List labels = extractShortLabels(results);
-        assertTrue(labels.contains("gavin"));
-        assertTrue(labels.contains("ho"));
-    }
-
     private List extractShortLabels(List annobjs) {
         List labels = new ArrayList();
         for (Iterator iter = annobjs.iterator(); iter.hasNext();) {
             labels.add(((AnnotatedObject) iter.next()).getShortLabel());
         }
         return labels;
+    }
+
+    // Some examples for queries (copied from editor OJBQueryFatory class).
+
+    private Query[] getSearchQueries(Class clazz, String value) {
+        Query[] queries = new Query[2];
+
+        // Replace * with % for SQL
+        String sqlValue = value.replaceAll("\\*", "%");
+
+        Criteria crit1 = new Criteria();
+        crit1.addLike("ac", sqlValue);
+        Criteria crit2 = new Criteria();
+        crit2.addLike("shortLabel", sqlValue);
+
+        // Looking for either AC or shortlabel
+        crit1.addOrCriteria(crit2);
+
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit1);
+        query.setAttributes(new String[] {"count(ac)"});
+
+        // Set it as the first iterm.
+        queries[0] = query;
+        queries[1] = getSearchQuery(clazz, value);
+
+        return queries;
+    }
+
+    private Query getSearchQuery(Class clazz, String value) {
+        // Replace * with % for SQL
+        String sqlValue = value.replaceAll("\\*", "%");
+
+        Criteria crit1 = new Criteria();
+        // Need all records for given class.
+        crit1.addLike("ac", sqlValue);
+        Criteria crit2 = new Criteria();
+        crit2.addLike("shortLabel", sqlValue);
+
+        // Looking for both ac and shortlabel
+        crit1.addOrCriteria(crit2);
+
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit1);
+        // Limit to ac and shortlabel
+        query.setAttributes(new String[] {"ac", "shortLabel"});
+        // Sorts on shortlabel
+        query.addOrderByAscending("shortLabel");
+        return query;
     }
 }
