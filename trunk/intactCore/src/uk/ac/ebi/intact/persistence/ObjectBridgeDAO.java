@@ -154,6 +154,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         return cachedClasses.contains(clazz);
     }
 
+    public void clearCache() throws PersistenceBrokerException {
+        broker.clearCache();
+    }
+
     public void setLogger(org.apache.ojb.broker.util.logging.Logger p) {
 
         logger = p;
