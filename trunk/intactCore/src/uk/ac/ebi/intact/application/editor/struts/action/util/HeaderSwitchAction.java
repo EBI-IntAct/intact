@@ -79,7 +79,7 @@ public class HeaderSwitchAction extends TilesAction {
                 String title = "<sup><font size=\"-1\">"
                         + EditorConstants.HELP_TITLE + "</font></sup>";
                 newtitle += service.getHelpLinkAsHTML(
-                        request.getContextPath(), tag, title);
+                        service.getHelpLink(request), tag, title);
             }
             context.putAttribute("header.title", newtitle);
         }

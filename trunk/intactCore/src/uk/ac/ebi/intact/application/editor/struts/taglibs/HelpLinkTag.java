@@ -6,20 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.taglibs;
 
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 
-import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
-import java.util.Collection;
-import java.util.Iterator;
+import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 /**
@@ -70,11 +64,9 @@ public class HelpLinkTag extends TagSupport {
         EditorService service = (EditorService) ctx.getAttribute(
                 EditorConstants.EDITOR_SERVICE);
 
-        // The server path.
-        String serverPath = (String) ctx.getAttribute(EditorConstants.SERVER_PATH);
-
         // The help link to write out.
-        String helpLink = service.getHelpLinkAsHTML(serverPath, myTag, myTitle);
+        String helpLink = service.getHelpLinkAsHTML(
+                service.getHelpLink(pageContext.getRequest()), myTag, myTitle);
 
         // JSP writer to write the output.
         JspWriter out = pageContext.getOut();
