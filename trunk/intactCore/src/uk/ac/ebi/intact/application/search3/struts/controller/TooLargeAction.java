@@ -20,10 +20,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * User: Michael Kleen
- * Date: 16.12.2004
- * Time: 21:22:38
+ * This class provides the actions to handle the case if the retriving resultset from the
+ * searchaction is too big. The Action creates a basic statistic which gives an overview over the
+ * resultsset. this statistics will be shown in the web-interface.
+ *
+ * @author Michael Kleen (mkleen@ebi.ac.uk)
  */
+
 public class TooLargeAction extends AbstractResultAction {
 
     public ActionForward execute(ActionMapping mapping, ActionForm form,
@@ -31,7 +34,7 @@ public class TooLargeAction extends AbstractResultAction {
                                  HttpServletResponse response) {
 
         logger.info("tooLarge action: the result contains to many objects");
-        System.out.println("Enter toolarge action");
+
         // create help link
         String relativeHelpLink = getServlet().getServletContext().getInitParameter("helpLink");
         String ctxtPath = request.getContextPath();
@@ -45,15 +48,16 @@ public class TooLargeAction extends AbstractResultAction {
         // this is necessary because all controlled vocabulary terms should
         // count in the same category
 
+        Collection someKeys = resultInfo.keySet();
+
         int cvCount = 0;
         int proteinCount = 0;
         int experimentCount = 0;
         int interactionCount = 0;
 
-        Collection someKeys = resultInfo.keySet();
-
         for (Iterator iterator = someKeys.iterator(); iterator.hasNext();) {
             String className = (String) iterator.next();
+            logger.info("tooLarge action: searching for class" + className);
             Class clazz = null;
             try {
                 clazz = Class.forName(className);
@@ -73,38 +77,48 @@ public class TooLargeAction extends AbstractResultAction {
                     }
                 }
             } catch (ClassNotFoundException e) {
-                // something went wrong here, go to the errorpage
-                // maybe use an exception here ?
-                logger.info("tooLarge action: the result contains to an unkwon object");
+
+                logger.info(
+                        "tooLarge action: the resultset contains to an object which is no assignable from an intactType");
+                logger.info("tooLarge action: forward to an errorpage");
                 return mapping.findForward(SearchConstants.FORWARD_FAILURE);
+
             }
         } // for
                  
-        // now create a couple of viewbeans with the results from for the jsp
+        // now create a couple of viewbeans with the results for the jsp
         Collection result = new ArrayList(4);
         if (experimentCount > 0) {
-            result.add(new SingleResultViewBean("Experiment", new Integer(experimentCount).toString(), helpLink));
+            result.add(
+                    new SingleResultViewBean("Experiment", new Integer(experimentCount).toString(),
+                            helpLink));
         }
         if (interactionCount > 0) {
-            result.add(new SingleResultViewBean("Interaction", new Integer(interactionCount).toString(), helpLink));
+            result.add(
+                    new SingleResultViewBean("Interaction",
+                            new Integer(interactionCount).toString(), helpLink));
         }
         if (proteinCount > 0) {
-            result.add(new SingleResultViewBean("Protein", new Integer(proteinCount).toString(), helpLink));
+            result.add(
+                    new SingleResultViewBean("Protein", new Integer(proteinCount).toString(),
+                            helpLink));
         }
         if (cvCount > 0) {
             result.add(
-                    new SingleResultViewBean("Controlled vocabulary term", new Integer(cvCount).toString(), helpLink));
+                    new SingleResultViewBean("Controlled vocabulary term",
+                            new Integer(cvCount).toString(), helpLink));
         }
-        System.out.println("results = " + result);
-        // add the viewsbean to the request and forward to the jsp
+
+        // add the viewbean to the request and forward to the jsp
         request.setAttribute(SearchConstants.VIEW_BEAN, result);
         return mapping.findForward("results");
     }
 
     /*
-    * only to satify the interface
+    * only here to satify the interface
     */
-    protected AbstractViewBean getAbstractViewBean(Object result, IntactUserIF user, String contextPath) {
+    protected AbstractViewBean getAbstractViewBean(Object result, IntactUserIF user,
+                                                   String contextPath) {
         return null;
     }
 

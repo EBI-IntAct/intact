@@ -144,7 +144,6 @@ public class DetailsResultAction extends AbstractResultAction {
         //OLD CODE....
         //first check we have a Collection type...
         if(!Collection.class.isAssignableFrom(result.getClass())) return null;
-
         return ViewBeanFactory.getInstance().getDetailsViewBean ( (Collection)result, user.getHelpLink(), contextPath );
     }
 }
