@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.cv.CvViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.sequence.SequenceViewBean;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 
@@ -71,6 +72,9 @@ public class EditViewBeanFactory {
         }
         else if (Feature.class.isAssignableFrom(clazz)) {
             viewbean = new FeatureViewBean();
+        }
+        else if (Protein.class.isAssignableFrom(clazz)) {
+            viewbean = new SequenceViewBean();
         }
         else {
             // Assume it is an CV object.
