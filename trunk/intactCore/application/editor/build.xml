@@ -23,7 +23,7 @@
 
     <!-- context path for editor store in the application level -->
     <property name="intact.context.dir" value="${intact.app.dir}/context"/>
-    <property name="editor-context-file"    value="editor-context.xml"/>
+    <property name="editor-context-file" value="editor-context.xml"/>
 
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
@@ -248,7 +248,7 @@
         <!-- The welcome file at the root. -->
         <copy file="welcome.jsp" todir="${temp.web}"/>
 
-         <!-- Common struts standard tld files -->
+        <!-- Common struts standard tld files -->
         <copy todir="${temp.web}/WEB-INF/tld">
             <fileset dir="${intact.app.dir}/tld">
                 <include name="*.tld"/>
@@ -283,26 +283,12 @@
             </fileset>
         </copy>
 
-        <!-- Create the distribution dir if it doesn't exist. -->
-        <mkdir dir="${dist.dir}"/>
+        <!-- The web.xml file. -->
+        <copy file="WEB-INF/web.xml" todir="${temp.web}/WEB-INF"/>
 
-        <!-- Delete the war file or else it will keep the old one -->
-        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+        <available file="${basedir}/dev-mode" property="dev.mode"/>
+        <antcall target="war-gen"/>
 
-        <!-- Generate editor topics -->
-        <antcall target="gen-editor-topics"/>
-
-        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
-            <fileset dir="${temp.web}">
-                <include name="welcome.jsp"/>
-                <include name="images/*"/>
-                <include name="pages/**"/>
-                <include name="layouts/**"/>
-                <include name="editor.html"/>
-            </fileset>
-
-            <webinf dir="${temp.web}/WEB-INF"/>
-        </war>
     </target>
 
     <!-- =================================================================== -->
@@ -346,6 +332,31 @@
 
     <!-- =================================================================== -->
 
+    <target name="war-gen" description="Generates the war file" unless="dev.mode">
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}"/>
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+        <!-- Generate editor topics -->
+        <antcall target="gen-editor-topics"/>
+
+        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+            <fileset dir="${temp.web}">
+                <include name="welcome.jsp"/>
+                <include name="images/*"/>
+                <include name="pages/**"/>
+                <include name="layouts/**"/>
+                <include name="editor.html"/>
+            </fileset>
+
+            <webinf dir="${temp.web}/WEB-INF"/>
+        </war>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Deploys the war file on the Tomcat server. -->
     <target name="deploy" description="Deploys the WAR file on the Tomcat server">
         <ant dir=".." inheritAll="false" target="deploy">
@@ -354,7 +365,7 @@
 
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${intact.context.dir}/${editor-context-file}"
-              todir="${webapps.dir}" overwrite="yes"/>
+            todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
