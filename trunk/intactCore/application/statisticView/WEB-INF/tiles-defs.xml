@@ -19,7 +19,7 @@
     <definition name="stat.menu.links" path="/layouts/menu.jsp">
         <put name="title" value="Links"/>
         <putList name="items">
-            <item value="Home" link="../welcome.jsp"/>
+            <item value="Refresh" link="../init.jsp"/>
         </putList>
     </definition>
 
