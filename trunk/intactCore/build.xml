@@ -69,12 +69,6 @@
             <include name="*.jar"/>
         </fileset>
 
-        <!-- search specific jar files. -->
-        <pathelement location="${app.dir}/search2/WEB-INF/classes"/>
-        <fileset dir="${app.dir}/search2/WEB-INF/lib">
-            <include name="*.jar"/>
-        </fileset>
-
         <!-- hv specific jar files. -->
         <pathelement location="${app.dir}/hierarchView/WEB-INF/classes"/>
         <fileset dir="${app.dir}/hierarchView/WEB-INF/lib">
