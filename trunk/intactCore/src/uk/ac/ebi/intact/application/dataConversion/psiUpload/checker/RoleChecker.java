@@ -36,6 +36,17 @@ public final class RoleChecker {
         if( !cache.keySet().contains( role ) ) {
             CvComponentRole cvComponentRole = null;
             try {
+
+                if( !( "bait".equals( role ) ||
+                       "prey".equals( role ) ||
+                       "neutral".equals( role ) ) ) {
+
+                    final String msg = "The role: " + role +
+                                       " is not supported by PSI. It should be either bait, pery or neutral";
+                    MessageHolder.getInstance().addCheckerMessage( new Message( msg ) );
+                }
+
+
                 cvComponentRole = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, role );
 
                 if( cvComponentRole != null ) {
