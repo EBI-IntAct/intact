@@ -23,7 +23,7 @@
 
 <%-- The list of topics --%>
 <c:set var="view" value="${user.view}"/>
-<c:set var="topiclist" value="${view.editTopicMenu}"/>
+<c:set var="topiclist" value="${view.menus['Topic']}"/>
 
 <h3>Annotations</h3>
 

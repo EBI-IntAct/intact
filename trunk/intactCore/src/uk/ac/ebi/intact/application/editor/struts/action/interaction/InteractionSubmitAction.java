@@ -39,7 +39,7 @@ import java.util.ResourceBundle;
  *
  * @struts.action-forward
  *      name="delete"
- *      path="/do/delete"
+ *      path="/do/int/delete"
  *
  * @struts.action-forward
  *      name="annotation"

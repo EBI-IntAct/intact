@@ -20,16 +20,15 @@
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/tld/struts-nested.tld" prefix="nested"%>
 
-<c:set var="view" value="${user.view}"/>
+<%-- The menus --%>
+<c:set var="menus" value="${user.view.menus}"/>
 
 <%-- Menus to edit a Protein --%>
-<c:set var="rolelist" value="${view.editProteinRoleMenu}"/>
-
+<c:set var="rolelist" value="${menus['Role']}"/>
 <%-- Menu to add a new Protein --%>
-<c:set var="rolelist_" value="${view.addProteinRoleMenu}"/>
-
-<%-- BioSource menu lists --%>
-<c:set var="biosrclist_" value="${view.addBioSourceMenu}"/>
+<c:set var="rolelist_" value="${menus['Role_']}"/>
+<%-- BioSource menu --%>
+<c:set var="biosrclist_" value="${menus['Organism']}"/>
 
 <%
     PropertyMessageResources msgres = (PropertyMessageResources)

@@ -7,12 +7,12 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
@@ -128,15 +128,15 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     // Read only properties.
 
-    public Component getComponent(EditUserI user) throws SearchException {
-        CvComponentRole newrole = getRole(user);
+    public Component getComponent(IntactHelper helper) throws IntactException {
+        CvComponentRole newrole = getCvRole(helper);
         // Must have a non null role and interaction for a valid component
         if ((newrole == null) || (myInteraction == null)) {
             return null;
         }
         // Component is null if this bean constructed from a Protein.
         if (myComponent == null) {
-            myComponent = new Component(user.getInstitution(), myInteraction,
+            myComponent = new Component(EditUser.getInstitution(), myInteraction,
                     myInteractor, newrole);
         }
         else {
@@ -147,8 +147,8 @@ public class ComponentBean extends AbstractEditKeyBean {
         // The expressed in to set in the component.
         BioSource expressedIn = null;
         if (myExpressedIn != null) {
-            expressedIn = (BioSource) user.getObjectByLabel(
-                    BioSource.class, myExpressedIn);
+            expressedIn = (BioSource) helper.getObjectByLabel(BioSource.class,
+                    myExpressedIn);
         }
         myComponent.setExpressedIn(expressedIn);
 
@@ -384,9 +384,9 @@ public class ComponentBean extends AbstractEditKeyBean {
         return "";
     }
 
-    private CvComponentRole getRole(EditUserI user) throws SearchException  {
+    private CvComponentRole getCvRole(IntactHelper helper) throws IntactException  {
         if (myRole != null) {
-            return (CvComponentRole) user.getObjectByLabel(
+            return (CvComponentRole) helper.getObjectByLabel(
                     CvComponentRole.class, myRole);
         }
         return null;

@@ -21,12 +21,11 @@
     beanName="uk.ac.ebi.intact.application.editor.business.EditUser"
     type="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-<c:set var="menus" value="${user.view.addXrefMenus}"/>
+<c:set var="menus" value="${user.view.menus}"/>
 
 <%-- Individual menu lists --%>
-<c:set var="view" value="${user.view}"/>
-<c:set var="dblist" value="${view.addDatabaseMenu}"/>
-<c:set var="qlist" value="${menus['Qualifier']}"/>
+<c:set var="dblist" value="${menus['Database_']}"/>
+<c:set var="qlist" value="${menus['Qualifier_']}"/>
 
 <%-- Service handler to get the default xref qualifier --%>
 

@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.IntactObject;
 
@@ -83,10 +84,16 @@ public class ResultAction extends AbstractEditorAction {
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
+        IntactHelper helper = new IntactHelper();
         // The selected Annotated object.
-        AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
+        AnnotatedObject annobj;
+        try {
+            annobj= (AnnotatedObject) helper.getObjectByAc(
                 getModelClass(type), ac);
-
+        }
+        finally {
+            helper.closeStore();
+        }
         // Set the object and the type we are about to edit.
         user.setSelectedTopic(type);
         user.setView(annobj);

@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.feature;
 
 import org.apache.struts.action.*;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
@@ -38,11 +37,8 @@ public class FeatureNewRangeAction extends AbstractEditorAction {
         // The form to extract values.
         FeatureActionForm featureForm = ((FeatureActionForm) form);
 
-        // Handler to the current user.
-        EditUserI user = getIntactUser(request);
-
         // The current view of the edit session.
-        FeatureViewBean view = (FeatureViewBean) user.getView();
+        FeatureViewBean view = (FeatureViewBean) getIntactUser(request).getView();
 
         // The bean to extract values.
         RangeBean rbnew = featureForm.getNewRange();
@@ -57,7 +53,7 @@ public class FeatureNewRangeAction extends AbstractEditorAction {
             return mapping.getInputForward();
         }
         // Add a copy of the new range
-        view.addRange(new RangeBean(user, rbnew.getFromRange(), rbnew.getToRange(),
+        view.addRange(new RangeBean(rbnew.getFromRange(), rbnew.getToRange(),
                 rbnew.getLink()));
 
         // Back to the input form.

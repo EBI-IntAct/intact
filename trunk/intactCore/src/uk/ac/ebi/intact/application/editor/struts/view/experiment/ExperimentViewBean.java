@@ -7,20 +7,18 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import org.apache.struts.tiles.ComponentContext;
+import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Experiment edit view bean.
@@ -73,6 +71,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     private transient List myInteractionsToHold = new ArrayList();
 
+    /**
+     * The map of menus for this view.
+     */
+    private transient Map myMenus = new HashMap();
+
     // Override the super method to initialize this class specific resetting.
     protected void reset(Class clazz) {
         super.reset(clazz);
@@ -117,13 +120,13 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     // Implements abstract methods
 
-    protected void updateAnnotatedObject(EditUserI user) throws SearchException {
+    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // Get the objects using their short label.
-        BioSource biosource = (BioSource) user.getObjectByLabel(
+        BioSource biosource = (BioSource) helper.getObjectByLabel(
                 BioSource.class, myOrganism);
-        CvInteraction interaction = (CvInteraction) user.getObjectByLabel(
+        CvInteraction interaction = (CvInteraction) helper.getObjectByLabel(
                 CvInteraction.class, myInter);
-        CvIdentification ident = (CvIdentification) user.getObjectByLabel(
+        CvIdentification ident = (CvIdentification) helper.getObjectByLabel(
                 CvIdentification.class, myIdent);
 
         // The current experiment.
@@ -132,7 +135,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Have we set the annotated object for the view?
         if (exp == null) {
             // Can't read from the persistent system. Create a new Experiment.
-            exp = new Experiment(user.getInstitution(), getShortLabel(), biosource);
+            exp = new Experiment(EditUser.getInstitution(), getShortLabel(), biosource);
             setAnnotatedObject(exp);
         }
         else {
@@ -167,6 +170,9 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         }
     }
 
+    protected void clearMenus() {
+        myMenus.clear();
+    }
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
@@ -227,8 +233,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         return myHasLargeInts ? Boolean.TRUE : Boolean.FALSE;
     }
 
-    public void sanityCheck(EditUserI user) throws ValidationException,
-            SearchException {
+    public void sanityCheck() throws ValidationException, IntactException {
         // COMMENTED OUT these checks as they need to be warning!
 
         /// keeps track of pubmed xrefs.
@@ -283,39 +288,44 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * The organism menu list.
-     * @return the organism menu consisting of organism short labels. The first
-     * item in the menu may contain '---Select---' if the current organism is
-     * not set.
-     * @throws SearchException for errors in generating menus.
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref, organism (add or edit), CV interaction (add or edit) and
+     * CV identification (add or edit).
+     * @throws IntactException for errors in accessing the persistent system.
      */
-    public List getOrganismMenu() throws SearchException {
-        int mode = (myOrganism == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISM, mode);
-    }
+    public Map getMenus() throws IntactException {
+        if (!myMenus.isEmpty()) {
+            return myMenus;
+        }
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-    /**
-     * The interaction menu list.
-     * @return the interaction menu consisting of interaction short labels.
-     * The first item in the menu may contain '---Select---' if the current
-     * interaction is not set.
-     * @throws SearchException for errors in generating menus.
-     */
-    public List getInterMenu() throws SearchException {
-        int mode = (myInter == null) ? 1 : 0;
-        return getMenuFactory().getDagMenu(EditorMenuFactory.INTERACTION, mode);
-    }
+        // The Intact helper to construct menus.
+        IntactHelper helper = new IntactHelper();
 
-    /**
-     * The idetification menu list.
-     * @return the idetification menu consisting of idetification short labels.
-     * The first item in the menu may contain '---Select---' if the current
-     * idetification is not set.
-     * @throws SearchException for errors in generating menus.
-     */
-    public List getIdentMenu() throws SearchException {
-        int mode = (myIdent == null) ? 1 : 0;
-        return getMenuFactory().getDagMenu(EditorMenuFactory.IDENTIFICATION, mode);
+        try {
+            myMenus.putAll(super.getMenus(helper));
+
+            // The organism menu
+            String name = EditorMenuFactory.ORGANISM;
+            int mode = (myOrganism == null) ? 1 : 0;
+            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+
+            // The CVInteraction menu.
+            name = EditorMenuFactory.INTERACTION;
+            mode = (myInter == null) ? 1 : 0;
+            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+
+            // The CVIdentification menu.
+            name = EditorMenuFactory.IDENTIFICATION;
+            mode = (myIdent == null) ? 1 : 0;
+            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+        }
+        finally {
+            helper.closeStore();
+        }
+        return myMenus;
     }
 
     // Getter/Setter methods for Organism.

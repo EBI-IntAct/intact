@@ -15,11 +15,11 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
-<%-- The current view --%>
-<c:set var="view" value="${user.view}"/>
+<%-- The menus --%>
+<c:set var="menus" value="${user.view.menus}"/>
 
 <%-- Individual menu lists --%>
-<c:set var="organismmenu" value="${view.organismMenu}"/>
+<c:set var="organismmenu" value="${menus['Organism']}"/>
 
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">

@@ -7,7 +7,8 @@
   -->
 
 <%--
-  - This page accepts changes to an Annotated object's short label and full name.
+  - The information page for BioSource editor. This page displays (accepts changes)
+  - shortlabel, fullname, tax id, cell type and tissue.
   --%>
 
 <%@ page language="java"%>
@@ -17,12 +18,12 @@
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
-<%-- The current view --%>
-<c:set var="view" value="${user.view}"/>
+<%-- The menus --%>
+<c:set var="menus" value="${user.view.menus}"/>
 
 <%-- Individual menu lists --%>
-<c:set var="tissuemenu" value="${view.tissueMenu}"/>
-<c:set var="cellmenu" value="${view.cellTypeMenu}"/>
+<c:set var="tissuemenu" value="${menus['Tissue']}"/>
+<c:set var="cellmenu" value="${menus['Cell']}"/>
 
 <%-- The anchor name for this page --%>
 <a name="info"/>

@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.action.CancelFormAction;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,24 +52,30 @@ public class InteractionCancelAction extends CancelFormAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
+        // Do the common cancel stuff.
+        ActionForward forward = super.execute(mapping, form, request, response);
+
         EditUserI user = getIntactUser(request);
 
         // The current view of the edit session.
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
-        // Delete any features that have been added.
-        view.delFeaturesAdded(user);
+        IntactHelper helper = user.getIntactHelper();
+        try {
+            // Delete any features that have been added.
+            view.delFeaturesAdded(helper);
 
-        // Check and see if we have to go to the experiment page.
-        if (view.isSourceFromAnExperiment()) {
-            // Release the lock before going back to the experiment.
-            getLockManager().release(view.getAc());
-            // Set the experiment to go back.
-            setDestinationExperiment(request);
-            // Back to the experiment editor.
-            return mapping.findForward(EXP);
+            // Check and see if we have to go to the experiment page.
+            if (view.isSourceFromAnExperiment()) {
+                // Set the experiment to go back.
+                setDestinationExperiment(request, helper);
+                // Back to the experiment editor.
+                forward = mapping.findForward(EXP);
+            }
         }
-        // As a result of accessing an Interaction through the search.
-        return super.execute(mapping, form, request, response);
+        finally {
+            helper.closeStore();
+        }
+        return forward;
     }
 }

@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.action.feature;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.DefinedFeatureBean;
@@ -44,11 +43,8 @@ public class UndeterminedCloneAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // Handler to the user.
-        EditUserI user = getIntactUser(request);
-
         // The current view.
-        FeatureViewBean view = (FeatureViewBean) user.getView();
+        FeatureViewBean view = (FeatureViewBean) getIntactUser(request).getView();
 
         // Reset the view.
         view.reset(Feature.class);
@@ -64,8 +60,7 @@ public class UndeterminedCloneAction extends AbstractEditorAction {
         RangeBean rb = dfb.getDefinedRange();
 
         // Add a copy of the new range (as rb is shared among all users)
-        view.addRange(new RangeBean(user, rb.getFromRange(), rb.getToRange(),
-                rb.getLink()));
+        view.addRange(new RangeBean(rb.getFromRange(), rb.getToRange(), rb.getLink()));
 
         // Update the form for the display.
         view.copyPropertiesTo((EditorFormI) form);

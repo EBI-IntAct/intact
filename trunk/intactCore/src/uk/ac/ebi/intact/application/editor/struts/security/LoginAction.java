@@ -35,18 +35,8 @@ import java.io.IOException;
  *      input="login.error.layout"
  *
  * @struts.action-exception
- *      type="uk.ac.ebi.intact.business.IntactException"
+ *      type="uk.ac.ebi.intact.application.editor.exception.AuthenticateException"
  *      key="error.invalid.user"
- *      path="login.error.layout"
- *
- * @struts.action-exception
- *      type="uk.ac.ebi.intact.persistence.DataSourceException"
- *      key="error.datasource"
- *      path="login.error.layout"
- *
- * @struts.action-exception
- *      type="uk.ac.ebi.intact.persistence.SearchException"
- *      key="error.init.menu"
  *      path="login.error.layout"
  *
  * @struts.action-forward
@@ -83,11 +73,14 @@ public class LoginAction extends AbstractEditorAction {
         String username = (String) theForm.getUsername();
         String password = (String) theForm.getPassword();
 
-        // Save the context to avoid repeat calls.
-        ServletContext ctx = super.getServlet().getServletContext();
+        // Validate the user.
+        EditUserI user = UserAuthenticator.authenticate(username, password);
 
-        // Create an instance of EditorService.
-        EditUserI user = new EditUser(username, password);
+        // Must have a valid user.
+        assert user != null: "User must exist!";
+
+//        // Create an instance of EditorService.
+//        EditUserI user = new EditUser(username, password);
 
         // Invalidate any previous sessions.
         HttpSession session = request.getSession(false);
@@ -104,6 +97,9 @@ public class LoginAction extends AbstractEditorAction {
 
         // Need to access the user later.
         session.setAttribute(EditorConstants.INTACT_USER, user);
+
+        // Save the context to avoid repeat calls.
+        ServletContext ctx = super.getServlet().getServletContext();
 
         // Notify the event listener.
         EventListener listener = (EventListener) ctx.getAttribute(

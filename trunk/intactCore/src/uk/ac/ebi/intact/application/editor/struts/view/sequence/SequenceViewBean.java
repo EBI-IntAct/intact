@@ -7,20 +7,21 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.sequence;
 
 import org.apache.struts.tiles.ComponentContext;
+import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.util.Crc64;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Sequence edit view bean.
@@ -39,6 +40,11 @@ public class SequenceViewBean extends AbstractEditViewBean {
      * The organism for the sequence.
      */
     private String myOrganism;
+
+    /**
+     * The map of menus for this view.
+     */
+    private transient Map myMenus = new HashMap();
 
     // Override the super method to initialize this class specific resetting.
     protected void reset(Class clazz) {
@@ -62,10 +68,10 @@ public class SequenceViewBean extends AbstractEditViewBean {
 
     // Implements abstract methods
 
-    protected void updateAnnotatedObject(EditUserI user) throws SearchException {
+    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // Get the objects using their short label.
-        BioSource biosrc = (BioSource) user.getObjectByLabel(
-                BioSource.class, myOrganism);
+        BioSource biosrc = (BioSource) helper.getObjectByLabel(BioSource.class,
+                myOrganism);
 
         // The current protein
         Protein prot = (Protein) getAnnotatedObject();
@@ -73,7 +79,7 @@ public class SequenceViewBean extends AbstractEditViewBean {
         // Have we set the annotated object for the view?
         if (prot == null) {
             // Not persisted; create a new Protein
-            prot = new ProteinImpl(user.getInstitution(), biosrc, getShortLabel());
+            prot = new ProteinImpl(EditUser.getInstitution(), biosrc, getShortLabel());
             setAnnotatedObject(prot);
         }
         else {
@@ -85,6 +91,10 @@ public class SequenceViewBean extends AbstractEditViewBean {
         // upon submitting the form (or save & continue).
         // prot.setSequence(user.getIntactHelper(), getSequence());
         prot.setCrc64(Crc64.getCrc64(mySequence));
+    }
+
+    protected void clearMenus() {
+        myMenus.clear();
     }
 
     // Override to copy sequence data from the form to the bean.
@@ -131,32 +141,40 @@ public class SequenceViewBean extends AbstractEditViewBean {
         if (getSequence().length() > 0) {
             // The current protein.
             Protein prot = (Protein) getAnnotatedObject();
-            IntactHelper helper = null;
+            IntactHelper helper = user.getIntactHelper();
             try {
                 // Only set the sequence for when we have a seq.
-                helper = user.getIntactHelper();
                 prot.setSequence(helper, getSequence());
             }
             finally {
-                if (helper != null) {
-                    helper.closeStore();
-                }
+                helper.closeStore();
             }
         }
     }
 
-    // For JSPs
-
     /**
-     * The organism menu list.
-     *
-     * @return the organism menu consisting of organism short labels. The first
-     *         item in the menu may contain '---Select---' if the current organism is
-     *         not set.
-     * @throws SearchException for errors in generating menus.
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref and organism (add or edit).
+     * @throws IntactException for errors in accessing the persistent system.
      */
-    public List getOrganismMenu() throws SearchException {
-        int mode = (myOrganism == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISM, mode);
+    public Map getMenus() throws IntactException {
+        if (!myMenus.isEmpty()) {
+            return myMenus;
+        }
+        // The Intact helper to construct menus.
+        IntactHelper helper = new IntactHelper();
+
+        try {
+            myMenus.putAll(super.getMenus(helper));
+
+            String name = EditorMenuFactory.ORGANISM;
+            int mode = (myOrganism == null) ? 1 : 0;
+            myMenus.put(name, EditorMenuFactory.getInstance().getMenu(name, mode, helper));
+        }
+        finally {
+            helper.closeStore();
+        }
+        return myMenus;
     }
 }

@@ -13,6 +13,7 @@ import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.editor.test.LoginTest;
 import uk.ac.ebi.intact.application.editor.test.pg.biosource.BioSourceDisplayTest;
 import uk.ac.ebi.intact.application.editor.test.pg.biosource.BioSourceTests;
+import uk.ac.ebi.intact.application.editor.test.pg.feature.FeatureTests;
 
 /**
  * Testsuite for Postgres database.
@@ -39,7 +40,8 @@ public class AllJUnitTests extends TestCase {
         TestSuite suite = new TestSuite();
 //        suite.addTest(LoginTest.suite());
 //        suite.addTest(SearchTest.suite());
-        suite.addTest(BioSourceTests.suite());
+//        suite.addTest(BioSourceTests.suite());
+        suite.addTest(FeatureTests.suite());
         return suite;
     }
 }

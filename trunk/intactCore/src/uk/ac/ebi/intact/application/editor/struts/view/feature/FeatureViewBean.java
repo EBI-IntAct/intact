@@ -8,13 +8,14 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.tiles.ComponentContext;
+import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
@@ -100,6 +101,11 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * True if the mutation mode is requested.
      */
     private boolean myMutationMode;
+
+    /**
+     * The map of menus for this view.
+     */
+    private transient Map myMenus = new HashMap();
 
     // Override to provide the Feature layout.
     public void setLayout(ComponentContext context) {
@@ -248,27 +254,37 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * The CvFeatureType menu list.
-     * @return the CvFeatureType menu consisting of CvFeatureType short labels.
-     * The first item in the menu may contain '---Select---' if the current
-     * CvFeatureType is not set (a Feature not yet persisted).
-     * @throws SearchException for errors in generating menus.
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref, feature type (add or edit), feature identification (add).
+     * @throws IntactException for errors in accessing the persistent system.
      */
-    public List getCvFeatureTypeMenu() throws SearchException {
-        int mode = (getCvFeatureType() == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.FEATURE_TYPE, mode);
-    }
+    public Map getMenus() throws IntactException {
+        if (!myMenus.isEmpty()) {
+            return myMenus;
+        }
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-    /**
-     * The CvFeatureIdentification menu list.
-     * @return the CvFeatureIdentification menu consisting of
-     * CvFeatureIdentification short labels. The first item in the menu
-     * contains '---Select---' if the current CvFeatureIdentification is
-     * not set (a Feature not yet persisted).
-     * @throws SearchException for errors in generating menus.
-     */
-    public List getCvFeatureIdentificationMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.FEATURE_IDENTIFICATION, 1);
+        // The Intact helper to construct menus.
+        IntactHelper helper = new IntactHelper();
+
+        try {
+            myMenus.putAll(super.getMenus(helper));
+
+            // The feature type menu
+            String name = EditorMenuFactory.FEATURE_TYPE;
+            int mode = (getCvFeatureType() == null) ? 1 : 0;
+            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+
+            // The feature identification menu.
+            name = EditorMenuFactory.FEATURE_IDENTIFICATION;
+            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
+        }
+        finally {
+            helper.closeStore();
+        }
+        return myMenus;
     }
 
     /**
@@ -350,20 +366,21 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
     // Override the super to persist others.
     public void persistOthers(EditUserI user) throws IntactException {
+        IntactHelper helper = user.getIntactHelper();
         try {
             // Begin the transaction.
-            user.begin();
+            user.startTransaction(helper);
 
             // persist the view.
-            persistCurrentView(user);
+            persistCurrentView(helper);
 
             // Commit the transaction.
-            user.commit();
+            user.commit(helper);
         }
         catch (IntactException ie1) {
             ie1.printStackTrace();
             try {
-                user.rollback();
+                user.rollback(helper);
             }
             catch (IntactException ie2) {
                 // Oops! Problems with rollback; ignore this as this
@@ -372,14 +389,8 @@ public class FeatureViewBean extends AbstractEditViewBean {
             // Rethrow the exception to be logged.
             throw ie1;
         }
-        catch (SearchException se) {
-            try {
-                user.rollback();
-            }
-            catch (IntactException ie) {
-            }
-            // Rethrow the exception to be logged.
-            throw new IntactException("Search exception", se);
+        finally {
+            helper.closeStore();
         }
     }
 
@@ -439,9 +450,9 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
     // Implements abstract methods
 
-    protected void updateAnnotatedObject(EditUserI user) throws SearchException {
+    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // The feature type for the current feature.
-        CvFeatureType featureType = (CvFeatureType) user.getObjectByLabel(
+        CvFeatureType featureType = (CvFeatureType) helper.getObjectByLabel(
                 CvFeatureType.class, getCvFeatureType());
 
         // The current feature.
@@ -450,7 +461,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         // null if creating a new Feature.
         if (feature == null) {
             // Not persisted; create a new feature object.
-            feature = new Feature(user.getInstitution(), getShortLabel(),
+            feature = new Feature(EditUser.getInstitution(), getShortLabel(),
                     myComponent, featureType);
             setAnnotatedObject(feature);
         }
@@ -458,7 +469,11 @@ public class FeatureViewBean extends AbstractEditViewBean {
             // Update the existing feature.
             feature.setCvFeatureType(featureType);
         }
-        feature.setCvFeatureIdentification(getCvFeatureIndent(user));
+        feature.setCvFeatureIdentification(getCvFeatureIndent(helper));
+    }
+
+    protected void clearMenus() {
+        myMenus.clear();
     }
 
     // Helper methods.
@@ -484,11 +499,12 @@ public class FeatureViewBean extends AbstractEditViewBean {
         }
     }
 
-    private CvFeatureIdentification getCvFeatureIndent(EditUserI user) throws SearchException {
+    private CvFeatureIdentification getCvFeatureIndent(IntactHelper helper)
+            throws IntactException {
         if (myCvFeatureIdent == null) {
             return null;
         }
-        return (CvFeatureIdentification) user.getObjectByLabel(
+        return (CvFeatureIdentification) helper.getObjectByLabel(
                 CvFeatureIdentification.class, myCvFeatureIdent);
     }
 
@@ -524,7 +540,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         return CollectionUtils.subtract(myRangesToDel, common);
     }
     
-    private void persistCurrentView(EditUserI user) throws IntactException, SearchException {
+    private void persistCurrentView(IntactHelper helper) throws IntactException {
         // The current feature.
         Feature feature = (Feature) getAnnotatedObject();
 
@@ -534,30 +550,30 @@ public class FeatureViewBean extends AbstractEditViewBean {
         // Add new ranges.
         for (Iterator iter = getRangesToAdd().iterator(); iter.hasNext();) {
             // Create the updated range.
-            Range range = ((RangeBean) iter.next()).getRange(user);
+            Range range = ((RangeBean) iter.next()).getUpdatedRange();
             // Set the sequence for the range.
             range.setSequence(sequence);
             // Avoid creating duplicate Ranges.
             if (feature.getRanges().contains(range)) {
                 continue;
             }
-            user.create(range);
+            helper.create(range);
             feature.addRange(range);
         }
         
         // Delete ranges.
         for (Iterator iter = getRangesToDel().iterator(); iter.hasNext();) {
             Range range = ((RangeBean) iter.next()).getRange();
-            user.delete(range);
+            helper.delete(range);
             feature.removeRange(range);
         }
 
         // Update existing ranges.
         for (Iterator iter = myRangesToUpdate.iterator(); iter.hasNext();) {
             // Update the 'updated' range.
-            Range range = ((RangeBean) iter.next()).getRange(user);
+            Range range = ((RangeBean) iter.next()).getUpdatedRange();
             range.setSequence(sequence);
-            user.update(range);
+            helper.update(range);
         }
         // No need to test whether this 'feature' persistent or not because we
         // know it has been already persisted by persist() call.

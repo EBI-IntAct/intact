@@ -9,11 +9,10 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.cv.CvViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.sequence.SequenceViewBean;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,19 +31,6 @@ public class EditViewBeanFactory {
      *  rather than creating a new instance for each selection.
      */
     private Map myNameToView = new HashMap();
-
-    /**
-     * The factory to create various menus (single menu factory for a user).
-     */
-    private EditorMenuFactory myMenuFactory;
-
-    /**
-     * Creates the factory with an instnce of the Intact helper.
-     * @param helper the Intact helper to create the menu factory.
-     */
-    public EditViewBeanFactory(IntactHelper helper) {
-        myMenuFactory = new EditorMenuFactory(helper);
-    }
 
     /**
      * Returns a view bean constructed from given class.
@@ -80,8 +66,7 @@ public class EditViewBeanFactory {
             // Assume it is an CV object.
             viewbean = new CvViewBean();
         }
-        // New view bean, set the factory and cache it.
-        viewbean.setMenuFactory(myMenuFactory);
+        // New view bean, cache it.
         myNameToView.put(clazz, viewbean);
         return viewbean;
     }

@@ -10,7 +10,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
@@ -104,12 +103,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     private Set myXrefsToUpdate = new HashSet();
 
-    /**
-     * The factory to create various menus; this is transient as it is set from
-     * the view bean factory when it creates a new instance of a view bean.
-     */
-    private transient EditorMenuFactory myMenuFactory;
-
     // Override Objects's equal method.
 
     /**
@@ -188,6 +181,9 @@ public abstract class AbstractEditViewBean implements Serializable {
     public void reset(Object obj) {
         // Clear any left overs from previous transaction.
         clearTransactions();
+
+        // Refresh menus.
+        clearMenus();
 
         // Check for annotated object.
         if (AnnotatedObject.class.isAssignableFrom(obj.getClass())) {
@@ -269,14 +265,6 @@ public abstract class AbstractEditViewBean implements Serializable {
             addXref(new XreferenceBean((Xref) iter.next()));
         }
         copy.getXrefs().clear();
-    }
-
-    /**
-     * Sets the menu factory to create menus.
-     * @param factory the factory to create menus.
-     */
-    public final void setMenuFactory(EditorMenuFactory factory) {
-        myMenuFactory = factory;
     }
 
     /**
@@ -553,19 +541,20 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @exception IntactException for errors in updating the persistent system.
      */
     public void persist(EditUserI user) throws IntactException {
+        IntactHelper helper = user.getIntactHelper();
         try {
             // Begin the transaction.
-            user.begin();
+            user.startTransaction(helper);
 
             // Persiste the current view.
-            persistCurrentView(user);
+            persistCurrentView(helper);
 
             // Commit the transaction.
-            user.commit();
+            user.commit(helper);
         }
         catch (IntactException ie1) {
             try {
-                user.rollback();
+                user.rollback(helper);
             }
             catch (IntactException ie2) {
                 // Oops! Problems with rollback; ignore this as this
@@ -574,16 +563,8 @@ public abstract class AbstractEditViewBean implements Serializable {
             // Rethrow the exception to be logged.
             throw ie1;
         }
-        catch (SearchException se) {
-            try {
-                user.rollback();
-            }
-            catch (IntactException ie) {
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
-            // Rethrow the exception to be logged.
-            throw new IntactException("Search exception", se);
+        finally {
+            helper.closeStore();
         }
     }
 
@@ -596,57 +577,41 @@ public abstract class AbstractEditViewBean implements Serializable {
     }
 
     /**
-     * Returns the topic menu for editing an existing annotation.
-     * @return the topic menu for annotations
-     * @throws SearchException thrown for failures with database access.
+     * Returns the map of menus which are common to all the editors.
+     * @param helper the helper to get the menu lables from the persistent system.
+     * @return map of menus. This consists of edit/add menus for Topic, Database
+     * and Qualifiers.
+     * @throws IntactException for errors in accessing the persistent system.
      */
-    public List getEditTopicMenu() throws SearchException {
-        return getTopicMenu(0);
-    }
+    protected Map getMenus(IntactHelper helper) throws IntactException {
+        // The map containing the menus.
+        Map map = new HashMap();
 
-    /**
-     * Returns the add menu for annotations.
-     * @return the add menu for annotations
-     * @throws SearchException thrown for failures with database access.
-     */
-    public List getAddTopicMenu() throws SearchException {
-        return getTopicMenu(1);
-    }
+        // The short label to remove from the list.
+        String label = getShortLabel();
 
-    public List getEditDatabaseMenu() throws SearchException {
-        return getDatabaseMenu(0);
-    }
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-    public List getAddDatabaseMenu() throws SearchException {
-        return getDatabaseMenu(1);
-    }
+        // The topic edit/add menu
+        String name = EditorMenuFactory.TOPIC;
+        List menu = getMenu(name, label, 0, helper);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
 
-    /**
-     * Returns the edit menu for xrefs.
-     * @return the edit menu for xrefs.
-     * @throws SearchException thrown for failures with database access.
-     */
-    public Map getEditXrefMenus() throws SearchException {
-        return getXrefMenus(0);
-    }
+        // The database edit/add menu.
+        name = EditorMenuFactory.DATABASE;
+        menu = getMenu(name, label, 0, helper);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
 
-    /**
-     * Returns the add menu for xrefs.
-     * @return the add menu for xrefs
-     * @throws SearchException thrown for failures with database access.
-     */
-    public Map getAddXrefMenus() throws SearchException {
-        return getXrefMenus(1);
-    }
+        // The qualifier edit/add menu.
+        name = EditorMenuFactory.QUALIFIER;
+        menu = getMenu(name, label, 0, helper);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(name, menu));
 
-    /**
-     * Returns the editor specific menus. All the editors must override this
-     * method to provide its own implementation.
-     * @return the editor specific menus.
-     * @throws SearchException thrown for failures with database access.
-     */
-    public Map getEditorMenus() throws SearchException {
-        return null;
+        return map;
     }
 
     /**
@@ -720,11 +685,10 @@ public abstract class AbstractEditViewBean implements Serializable {
      * checks. Subclass must override this method to provide checks relevant to
      * a view bean.
      * @throws ValidationException if sanity check fails.
-     * @throws SearchException for errors in searching for objects in the
+     * @throws IntactException for errors in searching for objects in the
      * persistent system.
      */
-    public void sanityCheck(EditUserI user) throws ValidationException,
-            SearchException {
+    public void sanityCheck() throws ValidationException, IntactException {
     }
 
     /**
@@ -759,7 +723,7 @@ public abstract class AbstractEditViewBean implements Serializable {
     /**
      * By default editor objects can be saved by selecting Save & Continue button from
      * edit screen. However, Mutation Features cannot save and continue.
-     * @return true as by default editor objects should be saved.
+      * @return true as by default editor objects should be saved.
      */
     public boolean getSaveState() {
         return true;
@@ -781,23 +745,20 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Gathers values in the view bean and updates the existing AnnotatedObject
      * if it exists or create a new annotated object for the view and sets the
      * annotated object.
-     * @param user to access the persistent system.
-     * @throws SearchException for errors in searching the persistent system.
+     * @param helper the IntactHelper to search the database.
+     * @throws IntactException for errors in searching the persistent system.
      *
      * <pre>
      * post: getAnnotatedObject() != null
      * </pre>
      */
-    protected abstract void updateAnnotatedObject(EditUserI user)
-            throws SearchException;
+    protected abstract void updateAnnotatedObject(IntactHelper helper) throws
+            IntactException;
 
     /**
-     * Allows access to menu factory.
-     * @return the menu factory for sub classes to create menus.
+     * Clears menus.
      */
-    protected EditorMenuFactory getMenuFactory() {
-        return myMenuFactory;
-    }
+    protected abstract void clearMenus();
 
     // Helper Methods
 
@@ -937,29 +898,29 @@ public abstract class AbstractEditViewBean implements Serializable {
         myXrefsToUpdate.clear();
     }
 
-    private List getTopicMenu(int mode) throws SearchException {
-        return getMenu(EditorMenuFactory.TOPIC, getShortLabel(), mode);
-    }
+//    private List getTopicMenu(int mode) throws IntactException {
+//        return getMenu(EditorMenuFactory.TOPIC, getShortLabel(), mode);
+//    }
 
-    private List getDatabaseMenu(int mode) throws SearchException {
-        return getMenu(EditorMenuFactory.DATABASE, getShortLabel(), mode);
-    }
+//    private List getDatabaseMenu(int mode) throws IntactException {
+//        return getMenu(EditorMenuFactory.DATABASE, getShortLabel(), mode);
+//    }
 
-    private Map getXrefMenus(int mode) throws SearchException {
-        Map map = new HashMap();
-        String name;
-        // The short label to remove from the list.
-        String label = getShortLabel();
-
-        // The database menu.
-        name = EditorMenuFactory.DATABASE;
-        map.put(name, getMenu(name, label, mode));
-
-        // The qualifier menu.
-        name = EditorMenuFactory.QUALIFIER;
-        map.put(name, getMenu(name, label, mode));
-        return map;
-    }
+//    private Map getXrefMenus(int mode) throws IntactException {
+//        Map map = new HashMap();
+//        String name;
+//        // The short label to remove from the list.
+//        String label = getShortLabel();
+//
+//        // The database menu.
+//        name = EditorMenuFactory.DATABASE;
+//        map.put(name, getMenu(name, label, mode));
+//
+//        // The qualifier menu.
+//        name = EditorMenuFactory.QUALIFIER;
+//        map.put(name, getMenu(name, label, mode));
+//        return map;
+//    }
 
     /**
      * Returns a menu for <code>name</code> without <code>label</code>; the menu
@@ -967,28 +928,30 @@ public abstract class AbstractEditViewBean implements Serializable {
      * @param name the name of the menu to get.
      * @param label the label to strip off from the returning menu.
      * @param mode 0 for edit or 1 for add.
+     * @param helper the Intact helper to access the persistent system.
      * @return menu for <code>name</code> without <code>label</code> if applicable.
-     * @throws SearchException for database search error when constructing the
+     * @throws IntactException for database search error when constructing the
      * menu.
      */
-    private List getMenu(String name, String label, int mode) throws SearchException {
+    private List getMenu(String name, String label, int mode,
+                         IntactHelper helper) throws IntactException {
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
         // Remove the current label from menus (to stop recursive calls to db)!
-        if (myMenuFactory.isMenuType(getEditClass())) {
+        if (menuFactory.isMenuType(getEditClass())) {
             // Remove my short label to avoid circular reference. We create a
             // new list so the remove method wouldn't affect the original list.
-            List list = new ArrayList(myMenuFactory.getMenu(name, mode));
+            List list = new ArrayList(menuFactory.getMenu(name, mode, helper));
             list.remove(label);
             return list;
         }
-        return myMenuFactory.getMenu(name, mode);
+        return menuFactory.getMenu(name, mode, helper);
     }
 
     // Persist the current annotated object.
 
-    private void persistCurrentView(EditUserI user) throws IntactException,
-            SearchException {
+    private void persistCurrentView(IntactHelper helper) throws IntactException {
         // First create/update the annotated object by the view.
-        updateAnnotatedObject(user);
+        updateAnnotatedObject(helper);
 
         // Update the short label and full name as they are common to all.
         myAnnotObject.setShortLabel(getShortLabel());
@@ -1004,59 +967,59 @@ public abstract class AbstractEditViewBean implements Serializable {
 
         // Create annotations and add them to CV object.
         for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
+            Annotation annot = ((CommentBean) iter.next()).getAnnotation(helper);
             // Need this to generate the PK for the indirection table.
-            user.create(annot);
+            helper.create(annot);
             myAnnotObject.addAnnotation(annot);
             changed = true;
         }
         // Delete annotations and remove them from CV object.
         for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-            user.delete(annot);
+            Annotation annot = ((CommentBean) iter.next()).getAnnotation(helper);
+            helper.delete(annot);
             myAnnotObject.removeAnnotation(annot);
             changed = true;
         }
         // Update annotations; update the object with values from the bean.
         // The update of annotated object ensures the sub objects are updated as well.
         for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-            user.update(annot);
+            Annotation annot = ((CommentBean) iter.next()).getAnnotation(helper);
+            helper.update(annot);
             changed = true;
         }
         // Xref has a parent_ac column which is not a foreign key. So, the parent needs
         // to be persistent before we can create the Xrefs.
-        if (!user.isPersistent(myAnnotObject)) {
-            user.create(myAnnotObject);
+        if (!helper.isPersistent(myAnnotObject)) {
+            helper.create(myAnnotObject);
         }
 
         // Create xrefs and add them to CV object.
         for (Iterator iter = getXrefsToAdd().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-            user.create(xref);
+            Xref xref = ((XreferenceBean) iter.next()).getXref(helper);
+            helper.create(xref);
             myAnnotObject.addXref(xref);
         }
         // Delete xrefs and remove them from CV object.
         for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-            user.delete(xref);
+            Xref xref = ((XreferenceBean) iter.next()).getXref(helper);
+            helper.delete(xref);
             myAnnotObject.removeXref(xref);
         }
         // Update xrefs; see the comments for annotation update above.
         for (Iterator iter = getXrefsToUpdate().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
-            user.update(xref);
+            Xref xref = ((XreferenceBean) iter.next()).getXref(helper);
+            helper.update(xref);
         }
         // Update the cv object only for an object already persisted.
-        if (user.isPersistent(myAnnotObject)) {
+        if (helper.isPersistent(myAnnotObject)) {
             // If collection sizes are same but modified; force update. Need
             // this OJB update strategy doesn't mark the object as dirty.
             if ((myAnnotations.size() == initSize) && changed) {
-                user.forceUpdate(myAnnotObject);
+                helper.forceUpdate(myAnnotObject);
             }
             else {
                 // Ordinary update
-                user.update(myAnnotObject);
+                helper.update(myAnnotObject);
             }
         }
     }

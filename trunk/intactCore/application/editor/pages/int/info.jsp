@@ -7,7 +7,7 @@
   -->
 
 <%--
-  - Experiment specific editor.
+  - Interaction editor.
   --%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -15,12 +15,12 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
-<%-- The current view --%>
-<c:set var="view" value="${user.view}"/>
+<%-- The menus --%>
+<c:set var="menus" value="${user.view.menus}"/>
 
 <%-- Individual menu lists --%>
-<c:set var="organismmenu" value="${view.organismMenu}"/>
-<c:set var="intertypemenu" value="${view.interactionTypeMenu}"/>
+<c:set var="organismmenu" value="${menus['Organism']}"/>
+<c:set var="intertypemenu" value="${menus['InteractionType']}"/>
 
 <%-- The anchor name for this page --%>
 <a name="info"/>

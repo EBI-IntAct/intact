@@ -13,17 +13,16 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.model.Feature;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Enumeration;
 
 /**
  * The action class to handle events related to add/edit a
@@ -136,17 +135,13 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         ComponentBean selectedComp = intform.getSelectedComponent();
 
         // The component for the feature.
-        featureView.setComponent(selectedComp.getComponent(user));
-
-//        request.getSession().setAttribute("featureForm", new FeatureActionForm());
-
-        System.out.println("Just about to succeed");
-//        System.out.println("At the end of featuredispatchaction");
-//        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-//            String para = (String) e.nextElement();
-//            System.out.println("parameter: " + para + " - " + request.getParameter(para));
-//        }
-
+        IntactHelper helper = new IntactHelper();
+        try {
+            featureView.setComponent(selectedComp.getComponent(helper));
+        }
+        finally {
+            helper.closeStore();
+        }
         return mapping.findForward(SUCCESS);
     }
 }

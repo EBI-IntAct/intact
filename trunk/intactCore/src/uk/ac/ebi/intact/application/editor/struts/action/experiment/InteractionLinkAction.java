@@ -6,12 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
-import org.apache.struts.action.*;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,10 +62,17 @@ public class InteractionLinkAction extends CommonDispatchAction {
         // The AC of the interaction we are about to edit.
         String intAc = (String) ((ExperimentActionForm) form).getIntac();
 
-        // The interaction we are about to edit.
-        Interaction inter = (Interaction) user.getObjectByAc(
-                Interaction.class, intAc);
+        // The Intact helper to access the Interaction.
+        IntactHelper helper = new IntactHelper();
 
+        // The interaction we are about to edit.
+        Interaction inter;
+        try {
+            inter = (Interaction) helper.getObjectByAc(Interaction.class, intAc);
+        }
+        finally {
+            helper.closeStore();
+        }
         // We must have this Interaction.
         assert inter != null;
 
@@ -73,7 +84,7 @@ public class InteractionLinkAction extends CommonDispatchAction {
         }
         // Try to acuire the lock.
         // Set the topic.
-        user.setSelectedTopic(getService().getTopic(Interaction.class));
+        user.setSelectedTopic(EditorService.getTopic(Interaction.class));
 
         // Set the interaction as the new view.
         user.setView(inter);
