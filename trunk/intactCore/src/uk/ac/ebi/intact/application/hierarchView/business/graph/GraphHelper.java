@@ -59,13 +59,14 @@ public class GraphHelper {
     // for the available sources
     public static final List SOURCES;
 
-    // the JDBC connection to retrieve data from the database
-    private Connection con;
-    private static final String MINE = "mine";
     // flag whether the graph was built with the mine database table
     public static final boolean BUILT_WITH_MINE_TABLE;
 
+    // the JDBC connection to retrieve data from the database
+    private Connection con;
+
     static {
+        // the default size should be big enough
         SOURCES = new ArrayList();
 
         // the properties which holds the information about the sources to
@@ -80,6 +81,8 @@ public class GraphHelper {
             String delimiter = IntactUserI.HIGHLIGHTING_PROPERTIES
                     .getProperty( "highlightment.source.token" );
 
+            // if sources are found and if a delimiter token was found
+            // the sources are split and each source is added to the source list
             if ( null != allowedSources ) {
                 if ( null != delimiter ) {
                     StringTokenizer tokens = new StringTokenizer(
@@ -109,7 +112,7 @@ public class GraphHelper {
             String mineBuildStr = properties
                     .getProperty( "hierarchView.graph.build.method" );
             // wheter the property equals "mine"
-            BUILT_WITH_MINE_TABLE = MINE.equals( mineBuildStr );
+            BUILT_WITH_MINE_TABLE = "mine".equalsIgnoreCase( mineBuildStr );
         }
         else {
             BUILT_WITH_MINE_TABLE = false;
@@ -144,7 +147,8 @@ public class GraphHelper {
         if ( BUILT_WITH_MINE_TABLE ) {
             // create the central node with the informations given by the
             // interactor
-            BasicGraphI centralNode = new BasicGraph(interactor.getAc(), interactor.getShortLabel());
+            BasicGraphI centralNode = new BasicGraph( interactor.getAc(),
+                    interactor.getShortLabel() );
             try {
                 return addInteractionNetwork( in, centralNode, depth );
             }
@@ -233,6 +237,9 @@ public class GraphHelper {
             // iteration.
         }
         else {
+            // I had problems when there was just one interaction network
+            // so that the fusion method was never called -> the nodes werent
+            // initialised -> call the method initNodes manually
             in.initNodes();
         }
         return in;
@@ -309,7 +316,8 @@ public class GraphHelper {
             else {
                 // a new node is created and the accession number and the
                 // shortlabel are set
-                preyNode = new BasicGraph(set.getString( "protein2_ac" ), set.getString( "shortlabel2" ));
+                preyNode = new BasicGraph( set.getString( "protein2_ac" ), set
+                        .getString( "shortlabel2" ) );
                 // the new node is added to the the set of the interactors of
                 // the central node
                 interactors.add( preyNode );
@@ -369,7 +377,8 @@ public class GraphHelper {
                 preyNode = (BasicGraphI) nodes.get( ac );
             }
             else {
-                preyNode = new BasicGraph(set.getString("protein1_ac"), set.getString("shortlabel1"));
+                preyNode = new BasicGraph( set.getString( "protein1_ac" ), set
+                        .getString( "shortlabel1" ) );
 
                 network.addNode( preyNode );
                 interactors.add( preyNode );
@@ -407,6 +416,21 @@ public class GraphHelper {
      */
     private void addSourcesToNode(BasicGraphI node, boolean central,
             InteractionNetwork network) throws SQLException {
+        /*
+         * The method stores the source informations in two different ways
+         * depending whether a central node is given or not.
+         * 
+         * In both cases the source highlighting information is stored in a map
+         * structure provided by the network. So that one can easily and fast
+         * retrieve all nodes for a source (e.g. GO) and a specific source ID
+         * (e.g. GO:000190)
+         * 
+         * If the node is a central node. The source information is also stored
+         * directly in the node. This provides easy and fast access to display
+         * all available source to highlight on the right top corner of the HV
+         * result page.
+         */
+
         PreparedStatement sourceStm = con.prepareStatement( SOURCE_QUERY );
         sourceStm.setString( 2, node.getAc() );
 
@@ -441,7 +465,7 @@ public class GraphHelper {
                 sourceID = set.getString( "primaryId" );
                 /*
                  * the retrieved information is added to the highlight map of
-                 * network.
+                 * the network.
                  */
                 network.addToSourceHighlightMap( source, sourceID, node );
 

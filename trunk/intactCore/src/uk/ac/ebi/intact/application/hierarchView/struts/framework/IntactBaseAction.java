@@ -523,7 +523,7 @@ public abstract class IntactBaseAction extends Action {
             }
 
             chrono.stop();
-            logger.warn("building took " + chrono);
+
             String msg = null;
             if ( in == null ) {
                 msg = new StringBuffer( 128 ).append(
