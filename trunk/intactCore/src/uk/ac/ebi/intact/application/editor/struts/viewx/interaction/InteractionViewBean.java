@@ -155,6 +155,14 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return getMenuFactory().getProteinMenus(0);
     }
 
+    public Map getEditProteinMenus() throws SearchException {
+        return getMenuFactory().getProteinMenus(0);
+    }
+
+    public Map getAddProteinMenus() throws SearchException {
+        return getMenuFactory().getProteinMenus(1);
+    }
+
     public void setKD(Float kd) {
         myKD = kd;
     }
@@ -173,15 +181,15 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     /**
      * Adds an Protein.
-     * @param component the Component to add.
+     * @param protein the Protein to add.
      *
      * <pre>
      * post: myProteinsToAdd = myProteinsToAdd@pre + 1
      * post: myProteins = myProteins@pre + 1
      * </pre>
      */
-    public void addProtein(Component component) {
-        ProteinBean pb = new ProteinBean(component);
+    public void addProtein(Protein protein) {
+        ProteinBean pb = new ProteinBean(protein);
         // Protein to add.
         myProteinsToAdd.add(pb);
         // Add to the view as well.
