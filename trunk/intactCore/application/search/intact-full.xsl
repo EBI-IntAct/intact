@@ -872,7 +872,7 @@ CvTissue | CvTopic | CvXrefQualifier">
                 <xsl:with-param name="with" select="$label"/>
             </xsl:call-template>
         </xsl:variable>
-            <a href="{$link}" target="new">[?]</a>
+            <a href="{$link}" target="new"><xsl:value-of select="$label"/></a>
     </xsl:template>
 
      <!--
