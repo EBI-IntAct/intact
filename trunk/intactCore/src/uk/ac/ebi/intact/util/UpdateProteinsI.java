@@ -7,18 +7,15 @@
  */
 package uk.ac.ebi.intact.util;
 
-import gnu.regexp.* ;
-
-//re: IntAct OJB
+import gnu.regexp.REMatch;
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.model.*;
 
-import java.util.Collection;
 import java.io.InputStream;
-
-import org.apache.log4j.Logger;
-
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -28,10 +25,17 @@ public abstract class UpdateProteinsI {
 
     protected final static org.apache.log4j.Logger logger = Logger.getLogger( "updateProtein" );
 
+    private final static String CV_TOPIC_SEARCH_URL_ASCII = "search-url-ascii";
+
+    // TODO remove it after the April 2004 release
+    // explanation: the ControlledVocab necessary for that feature to work will not be available under CVS before.
+    private final static String SRS_SEARCH_URL = "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+([uniprot-acc:${ac}]|" +
+                                                 "[uniprot-isoid:${ac}])+-vn+2+-ascii";
 
     public static class UpdateException extends Exception {
+
         public UpdateException( String message ) {
-            super( message) ;
+            super( message );
         }
     }
 
@@ -47,6 +51,7 @@ public abstract class UpdateProteinsI {
      * Xref databases
      */
     protected static CvDatabase uniprotDatabase;
+    protected static String srsUrl;
     protected static CvDatabase intactDatabase;
     protected static CvDatabase sgdDatabase;
     protected static CvDatabase goDatabase;
@@ -88,19 +93,19 @@ public abstract class UpdateProteinsI {
 
     public UpdateProteinsI( boolean setOutputOn ) {
         try {
-            if( setOutputOn )
-                HttpProxyManager.setup( );
-            else
+            if( setOutputOn ) {
+                HttpProxyManager.setup();
+            } else {
                 HttpProxyManager.setup( null );
+            }
 
         } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
-            proxyConfigurationNotFound.printStackTrace ();
+            proxyConfigurationNotFound.printStackTrace();
         }
     }
 
     /**
-     *
-     * @param helper IntactHelper object to access (read/write) the database.
+     * @param helper    IntactHelper object to access (read/write) the database.
      * @param cacheSize the number of valid biosource to cache during the update process.
      * @throws UpdateException
      */
@@ -134,7 +139,7 @@ public abstract class UpdateProteinsI {
      * @param helper IntactHelper object to access (read/write) the database.
      * @throws UpdateException
      */
-    public UpdateProteinsI ( IntactHelper helper ) throws UpdateException {
+    public UpdateProteinsI( IntactHelper helper ) throws UpdateException {
         this( helper, true );
     }
 
@@ -142,100 +147,132 @@ public abstract class UpdateProteinsI {
     //////////////////////////////////
     // Methods
 
-    private void collectDefaultObject (IntactHelper helper) throws UpdateException{
+    private void collectDefaultObject( IntactHelper helper ) throws UpdateException {
 
         try {
-            myInstitution = (Institution) helper.getObjectByLabel(Institution.class, "EBI");
-            if (myInstitution == null) {
-                logger.error ("Unable to find the Institution");
-                throw new UpdateException ("Unable to find the Institution");
+            myInstitution = (Institution) helper.getObjectByLabel( Institution.class, "EBI" );
+            if( myInstitution == null ) {
+                logger.error( "Unable to find the Institution" );
+                throw new UpdateException( "Unable to find the Institution" );
             }
 
-            sgdDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sgd");
-            if (sgdDatabase == null) {
-                logger.error ("Unable to find the SGD database in your IntAct node");
-                throw new UpdateException ("Unable to find the SGD database in your IntAct node");
+            sgdDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sgd" );
+            if( sgdDatabase == null ) {
+                logger.error( "Unable to find the SGD database in your IntAct node" );
+                throw new UpdateException( "Unable to find the SGD database in your IntAct node" );
             }
 
-            uniprotDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "uniprot");
-            if (uniprotDatabase == null) {
-                logger.error ("Unable to find the UNIPROT database in your IntAct node");
-                throw new UpdateException ("Unable to find the UNIPROT database in your IntAct node");
+            uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
+            if( uniprotDatabase == null ) {
+                logger.error( "Unable to find the UNIPROT database in your IntAct node" );
+                throw new UpdateException( "Unable to find the UNIPROT database in your IntAct node" );
             }
 
-            intactDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "intact");
-            if (intactDatabase == null) {
-                logger.error ("Unable to find the INTACT database in your IntAct node");
-                throw new UpdateException ("Unable to find the INTACT database in your IntAct node");
+            // search for the SRS link.
+            Collection annotations = uniprotDatabase.getAnnotations();
+            if( annotations != null ) {
+                // find the CvTopic search-url-ascii
+                Annotation searchedAnnotation = null;
+                for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
+                    Annotation annotation = (Annotation) iterator.next();
+                    if( CV_TOPIC_SEARCH_URL_ASCII.equals( annotation.getCvTopic().getShortLabel() ) ) {
+                        searchedAnnotation = annotation;
+                    }
+                }
+
+                if( searchedAnnotation != null ) {
+                    srsUrl = searchedAnnotation.getAnnotationText();
+                    logger.info( "Found SRS URL in the Uniprot CvDatabase: " + srsUrl );
+                } else {
+                    String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
+                                 " in the UNIPROT database";
+                    logger.error( msg );
+
+                    // TODO remove that after the release of April 2004
+                    srsUrl = SRS_SEARCH_URL;
+//                    throw new UpdateException( msg );
+                }
+            } else {
+                String msg = "No Annotation in the UNIPROT database, could not get the SRS URL.";
+                logger.error( msg );
+
+                // TODO remove that after the release of April 2004
+                srsUrl = SRS_SEARCH_URL;
+//                throw new UpdateException( msg );
             }
 
-            goDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go");
-            if (goDatabase == null) {
-                logger.error ("Unable to find the GO database in your IntAct node");
-                throw new UpdateException ("Unable to find the GO database in your IntAct node");
+            intactDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "intact" );
+            if( intactDatabase == null ) {
+                logger.error( "Unable to find the INTACT database in your IntAct node" );
+                throw new UpdateException( "Unable to find the INTACT database in your IntAct node" );
             }
 
-            interproDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "interpro");
-            if (interproDatabase == null) {
-                logger.error ("Unable to find the interpro database in your IntAct node");
-                throw new UpdateException ("Unable to find the interpro database in your IntAct node");
+            goDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "go" );
+            if( goDatabase == null ) {
+                logger.error( "Unable to find the GO database in your IntAct node" );
+                throw new UpdateException( "Unable to find the GO database in your IntAct node" );
             }
 
-            flybaseDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "flybase");
-            if (flybaseDatabase == null) {
-                logger.error ("Unable to find the flybase database in your IntAct node");
-                throw new UpdateException ("Unable to find the flybase database in your IntAct node");
+            interproDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "interpro" );
+            if( interproDatabase == null ) {
+                logger.error( "Unable to find the interpro database in your IntAct node" );
+                throw new UpdateException( "Unable to find the interpro database in your IntAct node" );
             }
 
-            identityXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class, "identity");
-            if (identityXrefQualifier == null) {
-                logger.error ("Unable to find the identity CvXrefQualifier in your IntAct node");
-                throw new UpdateException ("Unable to find the identity CvXrefQualifier in your IntAct node");
+            flybaseDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "flybase" );
+            if( flybaseDatabase == null ) {
+                logger.error( "Unable to find the flybase database in your IntAct node" );
+                throw new UpdateException( "Unable to find the flybase database in your IntAct node" );
             }
 
-            secondaryXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class, "secondary-ac");
-            if (secondaryXrefQualifier == null) {
-                logger.error ("Unable to find the identity CvXrefQualifier in your IntAct node");
-                throw new UpdateException ("Unable to find the identity CvXrefQualifier in your IntAct node");
+            identityXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "identity" );
+            if( identityXrefQualifier == null ) {
+                logger.error( "Unable to find the identity CvXrefQualifier in your IntAct node" );
+                throw new UpdateException( "Unable to find the identity CvXrefQualifier in your IntAct node" );
             }
 
-            isoFormParentXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class, "isoform-parent");
-            if (secondaryXrefQualifier == null) {
-                logger.error ("Unable to find the isoform-parent CvXrefQualifier in your IntAct node");
-                throw new UpdateException ("Unable to find the identity CvXrefQualifier in your IntAct node");
+            secondaryXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "secondary-ac" );
+            if( secondaryXrefQualifier == null ) {
+                logger.error( "Unable to find the identity CvXrefQualifier in your IntAct node" );
+                throw new UpdateException( "Unable to find the identity CvXrefQualifier in your IntAct node" );
             }
 
-            isoformComment = (CvTopic) helper.getObjectByLabel(CvTopic.class, "isoform-comment");
-            if (isoformComment == null) {
-                logger.error ("Unable to find the isoform-comment CvTopic in your IntAct node");
-                throw new UpdateException ("Unable to find the isoform-comment CvTopic in your IntAct node");
+            isoFormParentXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "isoform-parent" );
+            if( secondaryXrefQualifier == null ) {
+                logger.error( "Unable to find the isoform-parent CvXrefQualifier in your IntAct node" );
+                throw new UpdateException( "Unable to find the identity CvXrefQualifier in your IntAct node" );
             }
 
-            isoformSynonym = (CvAliasType) helper.getObjectByLabel(CvAliasType.class, "isoform-synonym");
-            if (isoformSynonym == null) {
-                logger.error ("Unable to find the isoform-synonym CvAliasType in your IntAct node");
-                throw new UpdateException ("Unable to find the isoform-synonym CvAliasType in your IntAct node");
+            isoformComment = (CvTopic) helper.getObjectByLabel( CvTopic.class, "isoform-comment" );
+            if( isoformComment == null ) {
+                logger.error( "Unable to find the isoform-comment CvTopic in your IntAct node" );
+                throw new UpdateException( "Unable to find the isoform-comment CvTopic in your IntAct node" );
             }
 
-            geneNameAliasType = (CvAliasType) helper.getObjectByLabel(CvAliasType.class, "gene-name");
-            if (geneNameAliasType == null) {
-                logger.error ("Unable to find the gene-name CvAliasType in your IntAct node");
-                throw new UpdateException ("Unable to find the gene-name CvAliasType in your IntAct node");
+            isoformSynonym = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "isoform-synonym" );
+            if( isoformSynonym == null ) {
+                logger.error( "Unable to find the isoform-synonym CvAliasType in your IntAct node" );
+                throw new UpdateException( "Unable to find the isoform-synonym CvAliasType in your IntAct node" );
             }
 
-            geneNameSynonymAliasType = (CvAliasType) helper.getObjectByLabel(CvAliasType.class, "gene-name-synonym");
-            if (geneNameSynonymAliasType == null) {
-                logger.error ("Unable to find the gene-name-synonym CvAliasType in your IntAct node");
-                throw new UpdateException ("Unable to find the gene-name-synonym CvAliasType in your IntAct node");
+            geneNameAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "gene-name" );
+            if( geneNameAliasType == null ) {
+                logger.error( "Unable to find the gene-name CvAliasType in your IntAct node" );
+                throw new UpdateException( "Unable to find the gene-name CvAliasType in your IntAct node" );
             }
 
-        } catch (IntactException e) {
-            logger.error (e);
-            throw new UpdateException ("Couldn't find needed object in IntAct, cause: " + e.getMessage());
+            geneNameSynonymAliasType = (CvAliasType) helper.getObjectByLabel( CvAliasType.class, "gene-name-synonym" );
+            if( geneNameSynonymAliasType == null ) {
+                logger.error( "Unable to find the gene-name-synonym CvAliasType in your IntAct node" );
+                throw new UpdateException( "Unable to find the gene-name-synonym CvAliasType in your IntAct node" );
+            }
+
+        } catch ( IntactException e ) {
+            logger.error( e );
+            throw new UpdateException( "Couldn't find needed object in IntAct, cause: " + e.getMessage() );
         }
 
     }
-
 
 
     /**
@@ -244,13 +281,13 @@ public abstract class UpdateProteinsI {
      * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism,
      * unless the taxid parameter is not null.
      *
-     * @param inputStream  The straem from which YASP will read the ENtries content.
-     * @param taxid        Of all entries retrieved from sourceURL, insert only those which have this
-     *                     taxid.
-     *                     If taxid is empty, insert all protein objects.
-     * @param update       If true, update existing Protein objects according to the retrieved data.
-     *                     else, skip existing Protein objects.
-     * @return             Collection of protein objects created/updated.
+     * @param inputStream The straem from which YASP will read the ENtries content.
+     * @param taxid       Of all entries retrieved from sourceURL, insert only those which have this
+     *                    taxid.
+     *                    If taxid is empty, insert all protein objects.
+     * @param update      If true, update existing Protein objects according to the retrieved data.
+     *                    else, skip existing Protein objects.
+     * @return Collection of protein objects created/updated.
      */
     public abstract Collection insertSPTrProteins( InputStream inputStream, String taxid, boolean update );
 
@@ -260,15 +297,15 @@ public abstract class UpdateProteinsI {
      * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism,
      * unless the taxid parameter is not null.
      *
-     * @param sourceUrl  The URL which delivers zero or more SPTR flat file formatted entries.
-     * @param taxid      Of all entries retrieved from sourceURL, insert only those which have this
-     *                   taxid.
-     *                   If taxid is empty, insert all protein objects.
-     * @param update     If true, update existing Protein objects according to the retrieved data.
-     *                   else, skip existing Protein objects.
-     * @return           The number of protein objects created.
+     * @param sourceUrl The URL which delivers zero or more SPTR flat file formatted entries.
+     * @param taxid     Of all entries retrieved from sourceURL, insert only those which have this
+     *                  taxid.
+     *                  If taxid is empty, insert all protein objects.
+     * @param update    If true, update existing Protein objects according to the retrieved data.
+     *                  else, skip existing Protein objects.
+     * @return The number of protein objects created.
      */
-    public abstract int insertSPTrProteinsFromURL ( String sourceUrl, String taxid, boolean update );
+    public abstract int insertSPTrProteinsFromURL( String sourceUrl, String taxid, boolean update );
 
     /**
      * Inserts zero or more proteins created from SPTR entries which are retrieved from an SPTR Accession number.
@@ -276,9 +313,9 @@ public abstract class UpdateProteinsI {
      * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism.
      *
      * @param proteinAc SPTR Accession number of the protein to insert/update
-     * @return          a set of created/updated protein.
+     * @return a set of created/updated protein.
      */
-    public abstract Collection insertSPTrProteins (String proteinAc);
+    public abstract Collection insertSPTrProteins( String proteinAc );
 
     /**
      * Inserts zero or more proteins created from SPTR entries which are retrieved from an SPTR Accession number.
@@ -289,9 +326,9 @@ public abstract class UpdateProteinsI {
      * @param taxId     The tax id the protein should have
      * @param update    If true, update existing Protein objects according to the retrieved data.
      *                  else, skip existing Protein objects.
-     * @return          a set of created/updated protein.
+     * @return a set of created/updated protein.
      */
-    public abstract Collection insertSPTrProteins (String proteinAc, String taxId, boolean update);
+    public abstract Collection insertSPTrProteins( String proteinAc, String taxId, boolean update );
 
     /**
      * Creates a simple Protein object for entries which are not in SPTR.
@@ -302,7 +339,7 @@ public abstract class UpdateProteinsI {
      * @param aTaxId    The tax id the protein should have
      * @return the protein created or retrieved from the IntAct database
      */
-    public abstract Protein insertSimpleProtein ( String anAc, CvDatabase aDatabase, String aTaxId )
+    public abstract Protein insertSimpleProtein( String anAc, CvDatabase aDatabase, String aTaxId )
             throws IntactException;
 
     /**
@@ -314,7 +351,7 @@ public abstract class UpdateProteinsI {
      * @param sptrAC a SPTR AC
      * @return a full URL.
      */
-    public abstract String getUrl (String sptrAC) ;
+    public abstract String getUrl( String sptrAC );
 
     /**
      * From a given URL, returns a string of a SPTR entry.
@@ -322,132 +359,146 @@ public abstract class UpdateProteinsI {
      * @param url a URL which outputs flatfile of
      * @return a full URL.
      */
-    public abstract String getAnEntry (String url) ;
+    public abstract String getAnEntry( String url );
 
     /**
      * from a given string and a given pattern(string), to find all matches. The matched are
      * retured as a list. This method uses gnu.regexp.* package, not the org.apache.regexp.*
-     * @param textin A string from which some pattern will be matched.
+     *
+     * @param textin  A string from which some pattern will be matched.
      * @param pattern A string as a pattern.
      * @return A list of matched pattern.
      */
-    public abstract REMatch[] match (String textin, String pattern) ;
+    public abstract REMatch[] match( String textin, String pattern );
 
     /**
      * add (not update) a new Xref to the given Annotated object and write
      * it in the database.
      *
      * @param current the object to which we add a new Xref
-     * @param xref the Xref to add to the AnnotatedObject
-     *
+     * @param xref    the Xref to add to the AnnotatedObject
      * @return true if the object as been added, else false.
      */
-    public abstract boolean addNewXref (AnnotatedObject current, final Xref xref );
+    public abstract boolean addNewXref( AnnotatedObject current, final Xref xref );
 
     /**
      * add (not update) a new Xref to the given Annotated object and write it in the database.
+     *
      * @param current the object to which we add a new Xref
-     * @param alias the Alias to add to the AnnotatedObject
+     * @param alias   the Alias to add to the AnnotatedObject
      */
-    public abstract void addNewAlias (AnnotatedObject current, final Alias alias);
+    public abstract void addNewAlias( AnnotatedObject current, final Alias alias );
 
     /**
      * Gives the count of created protein
+     *
      * @return created protein count
      */
-    public abstract int getProteinCreatedCount () ;
+    public abstract int getProteinCreatedCount();
 
     /**
      * Gives the count of updated protein
+     *
      * @return updated protein count
      */
-    public abstract int getProteinUpdatedCount () ;
+    public abstract int getProteinUpdatedCount();
 
     /**
      * Gives the count of up-to-date protein
      * (i.e. existing in IntAct but don't need to be updated)
+     *
      * @return up-to-date protein count
      */
-    public abstract int getProteinUpToDateCount () ;
+    public abstract int getProteinUpToDateCount();
 
     /**
      * Gives the count of all potential protein
      * (i.e. for an SPTREntry, we can create/update several IntAct protein. One by entry's taxid)
+     *
      * @return potential protein count
      */
-    public abstract int getProteinCount () ;
+    public abstract int getProteinCount();
 
     /**
      * Gives the count of protein which gaves us errors during the processing.
+     *
      * @return
      */
-    public abstract int getProteinSkippedCount () ;
+    public abstract int getProteinSkippedCount();
 
 
     /**
      * Gives the count of created splice variant
+     *
      * @return created protein count
      */
-    public abstract int getSpliceVariantCreatedCount () ;
+    public abstract int getSpliceVariantCreatedCount();
 
     /**
      * Gives the count of updated splice variant
+     *
      * @return updated protein count
      */
-    public abstract int getSpliceVariantUpdatedCount () ;
+    public abstract int getSpliceVariantUpdatedCount();
 
     /**
      * Gives the count of up-to-date splice variant
      * (i.e. existing in IntAct but don't need to be updated)
+     *
      * @return up-to-date protein count
      */
-    public abstract int getSpliceVariantUpToDateCount () ;
+    public abstract int getSpliceVariantUpToDateCount();
 
     /**
      * Gives the count of all potential splice variant
      * (i.e. for an SPTREntry, we can create/update several IntAct protein. One by entry's taxid)
+     *
      * @return potential protein count
      */
-    public abstract int getSpliceVariantCount () ;
+    public abstract int getSpliceVariantCount();
 
     /**
      * Gives the count of splice variant which gaves us errors during the processing.
+     *
      * @return
      */
-    public abstract int getSpliceVariantSkippedCount () ;
-
-
+    public abstract int getSpliceVariantSkippedCount();
 
 
     /**
      * Gives the number of entry found in the given URL
+     *
      * @return entry count
      */
-    public abstract int getEntryCount () ;
+    public abstract int getEntryCount();
 
     /**
      * Gives the number of entry successfully processed.
+     *
      * @return entry successfully processed count.
      */
-    public abstract int getEntryProcessededCount () ;
+    public abstract int getEntryProcessededCount();
 
     /**
      * Gives the number of entry skipped during the process.
+     *
      * @return skipped entry count.
      */
-    public abstract int getEntrySkippedCount () ;
+    public abstract int getEntrySkippedCount();
 
     /**
      * Allows to displays on the screen what's going on during the update process.
+     *
      * @param debug <b>true</b> to enable, <b>false</b> to disable
      */
-    public abstract void setDebugOnScreen (boolean debug);
+    public abstract void setDebugOnScreen( boolean debug );
 
     /**
      * return the filename in which have been saved all Entries which gaves us processing errors.
+     *
      * @return the filename or null if not existing
      */
-    public abstract String getErrorFileName ();
+    public abstract String getErrorFileName();
 
     /**
      * If true, each protein is updated in a distinct transaction.
@@ -455,6 +506,7 @@ public abstract class UpdateProteinsI {
      * control is left with the calling class.
      * This can be used e.g. to have transctions span the insertion of all
      * proteins of an entire complex.
+     *
      * @return current value of localTransactionControl
      */
     public abstract boolean isLocalTransactionControl();
@@ -465,8 +517,9 @@ public abstract class UpdateProteinsI {
      * control is left with the calling class.
      * This can be used e.g. to have transctions span the insertion of all
      * proteins of an entire complex.
+     *
      * @param localTransactionControl New value for localTransactionControl
      */
-    public abstract void setLocalTransactionControl(boolean localTransactionControl);
+    public abstract void setLocalTransactionControl( boolean localTransactionControl );
 
 }
