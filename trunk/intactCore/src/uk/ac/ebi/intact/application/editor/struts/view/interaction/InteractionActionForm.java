@@ -6,7 +6,6 @@
 
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
@@ -157,15 +156,7 @@ public class InteractionActionForm extends EditorActionForm {
     }
 
     public void setComponents(List comps) {
-        if (myComponents != null) {
-            // No need to create a new proteins if both collections contain
-            // same.
-            // This might be the case for page refresh for other than proteins.
-            if (CollectionUtils.isEqualCollection(myComponents, comps)) {
-                return;
-            }
-        }
-        myComponents = new ArrayList(comps);
+        myComponents = comps;
     }
 
     public List getComponents() {
@@ -214,20 +205,20 @@ public class InteractionActionForm extends EditorActionForm {
         }
     }
 
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
-        super.reset(mapping, request);
-        if (myComponents == null) {
-            return;
-        }
-        for (Iterator iterator = myComponents.iterator(); iterator.hasNext();) {
-            ComponentBean compBean = (ComponentBean) iterator.next();
-            for (Iterator iterator1 = compBean.getFeatures().iterator(); iterator1
-                    .hasNext();) {
-                FeatureBean featureBean = (FeatureBean) iterator1.next();
-                featureBean.setChecked(false);
-            }
-        }
-    }
+//    public void reset(ActionMapping mapping, HttpServletRequest request) {
+//        super.reset(mapping, request);
+//        if (myComponents == null) {
+//            return;
+//        }
+//        for (Iterator iterator = myComponents.iterator(); iterator.hasNext();) {
+//            ComponentBean compBean = (ComponentBean) iterator.next();
+//            for (Iterator iterator1 = compBean.getFeatures().iterator(); iterator1
+//                    .hasNext();) {
+//                FeatureBean featureBean = (FeatureBean) iterator1.next();
+//                featureBean.setChecked(false);
+//            }
+//        }
+//    }
 
     /**
      * Returns the selected component bean by way of selecting edit/delete/
