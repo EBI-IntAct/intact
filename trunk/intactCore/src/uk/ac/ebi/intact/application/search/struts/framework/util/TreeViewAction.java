@@ -20,6 +20,8 @@ import java.util.Arrays;
  */
 public abstract class TreeViewAction {
 
+    // Constants.
+
     /**
      * A list of element names we want the status attributes for.
      */
@@ -41,6 +43,25 @@ public abstract class TreeViewAction {
      */
     public static final String FALSE_STR = Boolean.FALSE.toString();
 
+    // Class Data
+
+    /**
+     * An instance of ExpandContractAction.
+     */
+    private static final TreeViewAction expandContactAction =
+            new ExpandContractAction();
+
+    /**
+     * An instance of ExpandAllAction.
+     */
+    private static final TreeViewAction expandAllAction = new ExpandAllAction();
+
+    /**
+     * An instance of ContractAllAction.
+     */
+    private static final TreeViewAction contactAllAction =
+            new ContractAllAction();
+
     /**
      * Creates an instance of User Action.
      * @param form contains the user action type.
@@ -49,13 +70,13 @@ public abstract class TreeViewAction {
      */
     public static TreeViewAction factory(ViewForm form) {
         if (form.expandContractSelected()) {
-            return new ExpandContractAction();
+            return expandContactAction;
         }
         else if (form.expandAllSelected()) {
-            return new ExpandAllAction();
+            return expandAllAction;
         }
         else if (form.contractAllSelected()) {
-            return new ContractAllAction();
+            return contactAllAction;
         }
         else if (form.graphSelected()) {
 //            return new GraphAction();
