@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 
 import uk.ac.ebi.intact.application.search3.struts.view.beans.*;
-import uk.ac.ebi.intact.application.search3.struts.view.beans.SingleViewBean;
+import uk.ac.ebi.intact.application.search3.struts.view.beans.BioSourceViewBean;
 import uk.ac.ebi.intact.model.*;
 
 import java.lang.reflect.Constructor;
@@ -81,14 +81,14 @@ public class ViewBeanFactory {
 //        ourBeanToSingleItemView.put ( InteractionImpl.class, InteractionSingleViewBean.class );
 //        ourBeanToSingleItemView.put ( ProteinImpl.class, ProteinSingleViewBean.class );
 
-        ourBeanToSingleItemView.put ( CvDatabase.class, SingleViewBean.class );
-        ourBeanToSingleItemView.put ( CvXrefQualifier.class, SingleViewBean.class );
-        ourBeanToSingleItemView.put ( CvTopic.class, SingleViewBean.class );
-        ourBeanToSingleItemView.put ( CvInteraction.class, SingleViewBean.class );
-        ourBeanToSingleItemView.put ( CvInteractionType.class, SingleViewBean.class );
-        ourBeanToSingleItemView.put ( CvComponentRole.class, SingleViewBean.class );
-        ourBeanToSingleItemView.put ( CvIdentification.class, SingleViewBean.class );
-        ourBeanToSingleItemView.put ( BioSource.class, SingleViewBean.class );
+        ourBeanToSingleItemView.put ( CvDatabase.class, BioSourceViewBean.class );
+        ourBeanToSingleItemView.put ( CvXrefQualifier.class, BioSourceViewBean.class );
+        ourBeanToSingleItemView.put ( CvTopic.class, BioSourceViewBean.class );
+        ourBeanToSingleItemView.put ( CvInteraction.class, BioSourceViewBean.class );
+        ourBeanToSingleItemView.put ( CvInteractionType.class, BioSourceViewBean.class );
+        ourBeanToSingleItemView.put ( CvComponentRole.class, BioSourceViewBean.class );
+        ourBeanToSingleItemView.put ( CvIdentification.class, BioSourceViewBean.class );
+        ourBeanToSingleItemView.put ( BioSource.class, BioSourceViewBean.class );
 
         // Binary views.
 //        ourBeanToBinaryView.put ( Protein.class, BinaryDetailsViewBean.class );
