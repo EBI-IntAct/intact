@@ -172,6 +172,20 @@ public class Range extends BasicObjectImpl {
     }
 
     /**
+     * This is a convenient constructor to create Range with from and end values.
+     *
+     * @param owner the owner of this range.
+     * @param fromStart The starting point of the 'from' interval for the Range.
+     * The 'from' end value is set to this value.
+     * @param toStart The starting point of the 'to' interval of the Range. The
+     * 'to' end value is set to this value.
+     * @param seq The sequence - maximum of 100 characters (null allowed)
+     */
+    public Range(Institution owner, int fromStart, int toStart, String seq) {
+        this(owner, fromStart, fromStart, toStart, toStart, seq);
+    }
+
+    /**
      * Sets up a valid Range instance. Range is dependent on the feature and
      * hence it cannot exist on its own. Currently a valid Range must have at least
      * the following defined:
