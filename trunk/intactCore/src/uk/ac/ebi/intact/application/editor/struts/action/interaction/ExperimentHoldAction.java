@@ -73,6 +73,8 @@ public class ExperimentHoldAction extends AbstractEditorAction {
             else {
                 // Wants to add the selected experiment to the Interaction.
                 view.addExperiment(expbean);
+                // Clear all the experiments in the hold section.
+                view.clearExperimentToHold();
             }
         }
         else {
