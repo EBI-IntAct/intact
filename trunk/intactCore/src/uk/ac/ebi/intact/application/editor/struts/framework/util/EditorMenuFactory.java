@@ -105,14 +105,9 @@ public class EditorMenuFactory {
     private IntactHelper myHelper;
 
     /**
-     * Maps: Menu name -> edit menu list.
+     * Reference to the Menu manager.
      */
-    private Map myNameToEditItems = new HashMap();
-
-    /**
-     * Maps: Menu name -> add menu list.
-     */
-    private Map myNameToAddItems = new HashMap();
+    private MenuManager myMenuManager;
 
     // Static initializer.
 
@@ -140,6 +135,7 @@ public class EditorMenuFactory {
      * @param helper the Intact Helper to build menus.
      */
     public EditorMenuFactory(IntactHelper helper) {
+        myMenuManager = MenuManager.getInstance();
         myHelper = helper;
     }
 
@@ -147,7 +143,7 @@ public class EditorMenuFactory {
      * Returns a menu for given name. This is retrieved from cache if it is
      * in the cache or else new menu is created and stored in the cache before
      * returning it.
-     * @param name the name of the menu; the valid values are: {@link #TOPICS},
+     * @param key the name of the menu; the valid values are: {@link #TOPICS},
      * {@link #DATABASES}, {@link #QUALIFIERS}, {@link #ORGANISMS},
      * {@link #INTERACTIONS}, {@link #IDENTIFICATIONS}, {@link #INTERACTION_TYPES},
      * {@link #EXPERIMENTS} and {@link #ROLES}.
@@ -157,30 +153,42 @@ public class EditorMenuFactory {
      * removed if it exists.
      * @throws SearchException for errors in contructing the menu.
      */
-    public List getMenu(String name, int mode) throws SearchException {
-        List list;
-        if (mode == 0) {
-            if (!myNameToEditItems.containsKey(name)) {
-                list = makeList(name, mode);
-                // Cache it for later use.
-                myNameToEditItems.put(name, list);
+    public List getMenu(String key, int mode) throws SearchException {
+        // The collection to return.
+        List menu = null;
+
+        Class clazz = (Class) theirNameToType.get(key);
+        try {
+            menu = myMenuManager.getMenuList(clazz, myHelper);
+        }
+        catch (IntactException ie) {
+            throw new SearchException("Failed to get menu list for "
+                    + clazz.getName());
+        }
+        if (menu.isEmpty()) {
+            // Special list when we don't have any menu items.
+            menu.add(SELECT_LIST_ITEM);
+            return menu;
+        }
+        if (mode == 1) {
+            // The default value for add menu.
+            String  defvalue = SELECT_LIST_ITEM;
+            // -- select list -- for add menus only if there is no default value.
+            if (hasDefaultValue(key)) {
+                // eg., Qualifier menu has a default value.
+                defvalue = getDefaultValue(key);
+                // Remove the default value to avoid adding it twice.
+                menu.remove(defvalue);
             }
-            else {
-                // Retrieve it from cache.
-                list = (List) myNameToEditItems.get(name);
-            }
-            return list;
+            menu.add(defvalue);
         }
-        if (!myNameToAddItems.containsKey(name)) {
-            list = makeList(name, mode);
-            // Cache it for later use.
-            myNameToAddItems.put(name, list);
+        // Special case for dag menu items.
+        if (key.startsWith(DAG_PREFIX)) {
+            menu = normalize(menu);
         }
-        else {
-            // Retrieve it from cache.
-            list = (List) myNameToAddItems.get(name);
-        }
-        return list;
+        String[] items = (String[]) menu.toArray(new String[0]);
+        Arrays.sort(items);
+        return Arrays.asList(items);
     }
 
     /**
@@ -207,7 +215,7 @@ public class EditorMenuFactory {
     }
 
     /**
-     * Returns the menus for an interaction.
+     * Returns the menus for the Interaction editor.
      * @param mode 1 for add or 0 for edit; see the documentation for
      * {@link #getMenu(String, int)}
      * @return a map name -> menu; the valid names (keys) are: {@link #ORGANISMS},
@@ -232,91 +240,7 @@ public class EditorMenuFactory {
         return theirNameToType.containsValue(clazz);
     }
 
-    /**
-     * Removes given menu item from the internal cache;
-     * @param clazz the <code>Class</code> of the menu to remove
-     * from the internal cache.
-     */
-    public void removeMenu(Class clazz) {
-        if (!theirNameToType.containsValue(clazz)) {
-            // Doesn't contain;
-            return;
-        }
-        for (Iterator iter = theirNameToType.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            if (entry.getValue().equals(clazz)) {
-                String key = (String) entry.getKey();
-                // Remove from both caches.
-                myNameToEditItems.remove(key);
-                myNameToAddItems.remove(key);
-                // It is possible for a class to associate with more than obe
-                // key as with normalized dag menus. So, ca't break from here.
-            }
-        }
-    }
-
     // Helper methods
-
-    /**
-     * This method creates a list for given class.
-     *
-     * @param key the key to look in the map.
-     * @param mode 0 for edit menus or 1 for add menus.
-     * @return list made of short labels for given class type. A special
-     * list with <code>theirEmptyListItem</code> is returned if there
-     * are no items found for <code>clazz</code>.
-     */
-    private List makeList(String key, int mode) throws SearchException {
-        // The collection to return.
-        List list = new ArrayList();
-
-        Vector v = null;
-        Class clazz = (Class) theirNameToType.get(key);
-        try {
-
-            v = MenuManager.getInstance().getMenuList( clazz, myHelper, true );
-
-//            // Use a different construction for a CvDagObject.
-//            if (clazz.getSuperclass().equals(CvDagObject.class)) {
-//                v = CvDagObject.getMenuList(clazz, myHelper, true);
-//            }
-//            else {
-//                v = AnnotatedObject.getMenuList(clazz, myHelper, true);
-//            }
-        }
-        catch (IntactException ie) {
-            throw new SearchException("Failed to get menu list for "
-                    + clazz.getName());
-        }
-        // Guard against the null pointer.
-        if ((v == null) || v.isEmpty()) {
-            // Special list when we don't have any menu items.
-            list.add(SELECT_LIST_ITEM);
-            return list;
-        }
-        if (mode == 1) {
-            // The default value for add menu.
-            String  defvalue = SELECT_LIST_ITEM;
-            // -- select list -- for add menus only if there is no default value.
-            if (hasDefaultValue(key)) {
-                defvalue = getDefaultValue(key);
-                // Remove the default value to avoid adding it twice.
-                v.remove(defvalue);
-            }
-            list.add(defvalue);
-        }
-
-        for (Iterator iter = v.iterator(); iter.hasNext();) {
-            list.add(iter.next());
-        }
-        // Special case for dag menu items.
-        if (key.startsWith(DAG_PREFIX)) {
-            list = normalize(list);
-        }
-        String[] items = (String[]) list.toArray(new String[0]);
-        Arrays.sort(items);
-        return Arrays.asList(items);
-    }
 
     /**
      * Normalizes a dag menu by remving all the prefix '.' characeters from
