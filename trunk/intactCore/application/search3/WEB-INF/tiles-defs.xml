@@ -120,4 +120,11 @@
         <put name="sidebar" value="search.sidebar.layout"/>
     </definition>
 
+      <!-- Binary Layout for testing  -->
+    <!-- not needed any more --> 
+    <definition name="binaryProtein.layout" extends="search.layout">
+        <put name="content" value="/pages/binaryProtein.jsp"/>
+        <put name="sidebar" value="search.sidebar.layout"/>
+    </definition>
+
 </tiles-definitions>
