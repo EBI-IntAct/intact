@@ -644,7 +644,7 @@
             <forward name="cancel" path="/do/feature/cancel"/>
             <forward name="delete" path="/do/feature/delete"/>
 
-            <!-- Cloning a feature for given AC -->
+            <!-- Cloning a undetermined feature -->
             <forward name="feature.clone" path="/do/feature/clone"/>
 
             <!-- Changing an existing range (edit/save/delete) -->
@@ -707,6 +707,15 @@
             input="edit.layout"
             validate="false"
             scope="session" />
+
+        <!-- Action to handle when cloning a feature for given AC -->
+        <action path="/feature/clone"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureCloneAction"
+            name="featureForm"
+            validate="false"
+            scope="session">
+            <forward name="success" path="/do/feature/fill/form"/>
+        </action>
 
         <!-- Action to handle for adding a new  range -->
         <action path="/feature/range/new"
