@@ -15,8 +15,9 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Xref;
 
 import java.util.*;
 
@@ -367,6 +368,11 @@ public abstract class AbstractEditViewBean {
         if (user.isPersistent(myAnnotObject)) {
             user.update(myAnnotObject);
         }
+        // Need to rebuild the menu again as the short label may have been
+        // changed. Remove it from cache.
+        removeMenu();
+        // Clear transaction containers as we are already finished with them.
+        clearTransactions();
     }
 
     /**
@@ -376,6 +382,10 @@ public abstract class AbstractEditViewBean {
         // Delete all the annotations and xrefs.
         myAnnotObject.getAnnotation().clear();
         myAnnotObject.getXref().clear();
+        // Need to rebuild the menu again. Remove it from cache.
+        removeMenu();
+        // Clear Transaction containers.
+        clearTransactions();
     }
 
     /**

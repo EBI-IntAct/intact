@@ -64,6 +64,23 @@ public interface EditUserI extends IntactUserI, Serializable {
 
     public void delete(Object object) throws IntactException;
 
+    /**
+     * Persists the object the user is editing.
+     * @exception IntactException for errors in updating the persistent system.
+     * @exception SearchException for search errors (unable to find an object
+     * to update).
+     */
+    public void persist() throws IntactException, SearchException;
+
+    /**
+     * This method clears the view of the current edit object, remove it from
+     * the search cache, deletes from the experiment list (if the current edit
+     * is an instance of an Experiment class),  tand finally delete the current
+     * edit object.
+     * @exception IntactException for errors in deleting the current edit object.
+     */
+    public void delete() throws IntactException;
+
     public void cancelEdit();
 
     public boolean isPersistent(Object obj);
@@ -227,11 +244,6 @@ public interface EditUserI extends IntactUserI, Serializable {
     public void updateSearchCache();
 
     /**
-     * Removes the current edit object from the search cache.
-     */
-    public void removeFromSearchCache();
-
-    /**
      * Returns a unique short label.
      * @param shortlabel the new short label.
      * @return a unique short label as a <code>String</code> instance. This
@@ -291,11 +303,17 @@ public interface EditUserI extends IntactUserI, Serializable {
     public Date logoffTime();
 
     /**
-     * Adds the experiment to the list of currently edited/
-     * added experiment list.
-     * @param exp the experiment to add.
+     * Adds the experiment to the currently edited/added experiment list.
+     * @param exp the experiment to add to the list.
      */
     public void addToCurrentExperiment(Experiment exp);
+
+    /**
+     * Removes the current experiment from the currently edited/added
+     * experiment list.
+     * @param exp the experiment to remove from the list.
+     */
+    public void removeFromCurrentExperiment(Experiment exp);
 
     /**
      * Returns a list of currently edited/added experiments.

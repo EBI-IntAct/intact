@@ -6,35 +6,34 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.business;
 
-import java.util.*;
-import java.net.URL;
-import java.sql.SQLException;
-
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpServletRequest;
-
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.DuplicateLabelException;
-import uk.ac.ebi.intact.business.BusinessConstants;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.*;
-import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.util.GoTools;
-import uk.ac.ebi.intact.util.NewtServerProxy;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
-import uk.ac.ebi.intact.util.UpdateProteins;
-import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.persistence.DAOSource;
-import uk.ac.ebi.intact.persistence.DAOFactory;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.beanutils.DynaBean;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.accesslayer.LookupException;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.*;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
+import uk.ac.ebi.intact.business.BusinessConstants;
+import uk.ac.ebi.intact.business.DuplicateLabelException;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.DAOFactory;
+import uk.ac.ebi.intact.persistence.DAOSource;
+import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.util.GoTools;
+import uk.ac.ebi.intact.util.NewtServerProxy;
+import uk.ac.ebi.intact.util.UpdateProteins;
+import uk.ac.ebi.intact.util.UpdateProteinsI;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -328,7 +327,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void commit() throws IntactException {
         myHelper.finishTransaction();
         this.endEditing();
-        // Clear the cache.
+        // Clear the cache; this will force the OJB to read from the database.
         myHelper.removeFromCache(myEditView.getAnnotatedObject());
     }
 
@@ -347,6 +346,21 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public void delete(Object object) throws IntactException {
         myHelper.delete(object);
+    }
+
+    public void persist() throws IntactException, SearchException {
+        myEditView.persist(this);
+    }
+
+    public void delete() throws IntactException {
+        myEditView.clear();
+        // Remove the current edit object from the cache.
+        removeFromSearchCache();
+        // Remove this from the experiment list.
+        if (myEditView.getClass().isAssignableFrom(ExperimentViewBean.class)) {
+            removeFromCurrentExperiment((Experiment) myEditView.getAnnotatedObject());
+        }
+        delete(myEditView.getAnnotatedObject());
     }
 
     public void cancelEdit() {
@@ -472,11 +486,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         this.addToSearchCache(annobj);
     }
 
-    public void removeFromSearchCache() {
-        String ac = myEditView.getAc();
-        CollectionUtils.filter(mySearchCache, ResultBean.getPredicate(ac));
-    }
-
     public Collection lookup(String className, String value, boolean cache)
             throws SearchException {
         // The result to return.
@@ -576,11 +585,20 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myCurrentExperiments.add(exp);
     }
 
+    public void removeFromCurrentExperiment(Experiment exp) {
+        myCurrentExperiments.remove(exp);
+    }
+
     public Set getCurrentExperiments() {
         return myCurrentExperiments;
     }
 
     // Helper methods.
+
+    private void removeFromSearchCache() {
+        String ac = myEditView.getAc();
+        CollectionUtils.filter(mySearchCache, ResultBean.getPredicate(ac));
+    }
 
     /**
      * Starts the editing session.

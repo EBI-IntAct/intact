@@ -7,19 +7,17 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
-
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Dispatcher action which dispatches according to 'dispatch' parameter. This
@@ -100,14 +98,8 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
             saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
-        finally {
-            // Clear containers; regardless of the outcome.
-            view.clearTransactions();
-        }
         // Update the search cache.
         user.updateSearchCache();
-        // Need to rebuild the menu again. Remove it from cache.
-        view.removeMenu();
         // All changes are committed successfully; either search or results.
         return mapping.findForward(getForwardAction(user));
     }
@@ -133,17 +125,11 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // The current view.
-        AbstractEditViewBean view = user.getView();
-
-        // The object to delete.
-        AnnotatedObject annot = view.getAnnotatedObject();
-
         try {
             // Begin the transaction.
             user.begin();
             // Delete the object we are editing at the moment.
-            user.delete(annot);
+            user.delete();
             // Commit all the changes.
             user.commit();
         }
@@ -164,16 +150,6 @@ public class EditorDispatchAction extends AbstractEditorDispatchAction {
             saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
-        finally {
-            // Clear containers; regardless of the outcome.
-            user.getView().clearTransactions();
-        }
-        // Delete any sub objects.
-        view.clear();
-        // Remove the current edit object from the cache.
-        user.removeFromSearchCache();
-        // Need to rebuild the menu again. Remove it from cache.
-        user.getView().removeMenu();
         // Deleted successfully; either search or results.
         return mapping.findForward(getForwardAction(user));
     }
