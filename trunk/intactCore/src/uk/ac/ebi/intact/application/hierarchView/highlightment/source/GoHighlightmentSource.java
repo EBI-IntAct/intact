@@ -234,19 +234,16 @@ public class GoHighlightmentSource extends HighlightmentSource {
             boolean searchForChildren, IntactUserI user) throws SQLException,
             IntactException {
 
-        if ( !aGraph.isSourceHighlightMapEmpty() ) {
-            return proteinToHighlightSourceMap( aGraph, children,
-                    selectedGOTerm, searchForChildren );
-        }
+        if ( aGraph.isSourceHighlightMapEmpty() ) {
+            GraphHelper gh = new GraphHelper( user );
 
-        GraphHelper gh = new GraphHelper( user );
+            ArrayList listOfNode = aGraph.getOrderedNodes();
+            int size = listOfNode.size();
 
-        ArrayList listOfNode = aGraph.getOrderedNodes();
-        int size = listOfNode.size();
-
-        for (int i = 0; i < size; i++) {
-            BasicGraphI node = (BasicGraphI) listOfNode.get( i );
-            gh.addSourcesToNode( node, false, aGraph );
+            for (int i = 0; i < size; i++) {
+                BasicGraphI node = (BasicGraphI) listOfNode.get( i );
+                gh.addSourcesToNode( node, false, aGraph );
+            }
         }
         return proteinToHighlightSourceMap( aGraph, children, selectedGOTerm,
                 searchForChildren );
