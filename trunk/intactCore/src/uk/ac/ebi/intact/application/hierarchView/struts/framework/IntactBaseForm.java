@@ -133,8 +133,8 @@ public class IntactBaseForm extends ActionForm {
      * @param request the request to save errors.
      */
     protected void saveMessages(HttpServletRequest request) {
+        // TODO: replace it by a non deprecated constant
         request.setAttribute (org.apache.struts.action.Action.MESSAGE_KEY, getMessages());
-        logger.info ("FORM MESSAGES SAVED");
     }
 
 

@@ -114,8 +114,9 @@ public abstract class IntactBaseAction extends Action {
 
 
 
-     /////////////////////
+    /////////////////////
     // Error management
+    /////////////////////
 
     /**
      * Clear error container.
@@ -174,11 +175,9 @@ public abstract class IntactBaseAction extends Action {
     }
 
 
-
-
-
-     //////////////////////
+    //////////////////////
     // Message management
+    //////////////////////
 
     /**
      * Clear Message container.
@@ -197,7 +196,6 @@ public abstract class IntactBaseAction extends Action {
      */
     protected void addMessage (String key) {
         myMessages.add(INTACT_MESSAGE, new ActionMessage (key));
-//        myMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage (key));
     }
 
     /**
@@ -210,7 +208,6 @@ public abstract class IntactBaseAction extends Action {
      */
     protected void addMessage (String key, String value) {
         myMessages.add(INTACT_MESSAGE, new ActionMessage (key, value));
-//        myMessages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage (key, value));
     }
 
     /**
@@ -220,7 +217,6 @@ public abstract class IntactBaseAction extends Action {
      */
     protected void saveMessages(HttpServletRequest request) {
         super.saveMessages(request, myMessages);
-        logger.info ("################################ MESSAGES SAVED");
     }
 
     /**
@@ -234,8 +230,9 @@ public abstract class IntactBaseAction extends Action {
 
 
 
-     /////////////////////
+    /////////////////////
     // Helper methods.
+    /////////////////////
 
     /**
      * Create a new IntactUser and store it in the session.<br>
