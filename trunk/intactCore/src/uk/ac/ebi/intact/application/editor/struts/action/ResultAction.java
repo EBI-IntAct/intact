@@ -54,9 +54,6 @@ public class ResultAction extends AbstractEditorAction {
         String ac = request.getParameter("ac");
         // The class name to search.
         String className = request.getParameter("searchClass");
-        // This should override any previous topic (may be same but it could
-        // be diffrent (avoid class cast exception).
-        user.setSelectedTopic(className);
 
         LOGGER.info("AC: " + ac + " class: " + className);
 
@@ -69,6 +66,6 @@ public class ResultAction extends AbstractEditorAction {
         LOGGER.info("Numner of annotations: " + annobj.getAnnotations().size());
         LOGGER.info("Number of xrefs: " + annobj.getXrefs().size());
 
-        return mapping.findForward(FORWARD_SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 }
