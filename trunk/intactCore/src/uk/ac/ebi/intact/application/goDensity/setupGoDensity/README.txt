@@ -5,10 +5,13 @@ All scripts must be executed from ROOT of Intact
 
 #scripts/postgres/testfill.sh user db small
 
+#prepare
+download ontology flatfiles from geneontology and store them in data/controlledVocab/goDensity/
+
 #import of go in intact
-scripts/goDensity.sh InsertGoFromFlatfile data/component.ontology
-scripts/goDensity.sh InsertGoFromFlatfile data/process.ontology
-scripts/goDensity.sh InsertGoFromFlatfile data/function.ontology
+scripts/goDensity.sh InsertGoFromFlatfile data/controlledVocab/goDensity/component.ontology
+scripts/goDensity.sh InsertGoFromFlatfile data/controlledVocab/goDensity/process.ontology
+scripts/goDensity.sh InsertGoFromFlatfile data/controlledVocab/goDensity/function.ontology
 
 #create tables for goDensity
 
@@ -25,4 +28,6 @@ scripts/goDensity.sh SetupGoDensityTables
 scripts/goDensity.sh CalcBinaryInteractions true true false
 
 #precalculate densities of go-go-pairs
-scripts/goDensity.sh PrecalcGoGoDensities data/goSlim.ontology
+scripts/goDensity.sh PrecalcGoGoDensities data/controlledVocab/goDensity/component.slim
+scripts/goDensity.sh PrecalcGoGoDensities data/controlledVocab/goDensity/process.slim
+scripts/goDensity.sh PrecalcGoGoDensities data/controlledVocab/goDensity/function.slim
