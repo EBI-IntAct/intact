@@ -12,6 +12,8 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * The menu factory to generate various menus.
@@ -84,6 +86,16 @@ public class EditorMenuFactory {
      */
     private static final Map theirNameToType = new HashMap();
 
+    /**
+     * The prefix for Normalized Dag menu items.
+     */
+    private static final String DAG_PREFIX = "_";
+
+    /**
+     * The pattern to normalize dag menu items (dag menus).
+     */
+    private static final Pattern DAGMENU_PATTERN = Pattern.compile("\\.+");
+
     // Instance Data
 
     /**
@@ -101,12 +113,6 @@ public class EditorMenuFactory {
      */
     private Map myNameToAddItems = new HashMap();
 
-    /**
-     * Maps: Menu name -> normalized (stripped of leading dots) dag menu
-     * list items.
-     */
-    private Map myNameToDagItems = new HashMap();
-
     // Static initializer.
 
     // Fill the maps with list names and their associated classes.
@@ -116,7 +122,9 @@ public class EditorMenuFactory {
         theirNameToType.put(QUALIFIERS, CvXrefQualifier.class);
         theirNameToType.put(ORGANISMS, BioSource.class);
         theirNameToType.put(INTERACTIONS, CvInteraction.class);
+        theirNameToType.put(DAG_PREFIX + INTERACTIONS, CvInteraction.class);
         theirNameToType.put(IDENTIFICATIONS, CvIdentification.class);
+        theirNameToType.put(DAG_PREFIX + IDENTIFICATIONS, CvIdentification.class);
         theirNameToType.put(INTERACTION_TYPES, CvInteractionType.class);
         theirNameToType.put(EXPERIMENTS, Experiment.class);
         theirNameToType.put(ROLES, CvComponentRole.class);
@@ -135,7 +143,9 @@ public class EditorMenuFactory {
      * in the cache or else new menu is created and stored in the cache before
      * returning it.
      * @param name the name of the menu; the valid values are: {@link #TOPICS},
-     * {@link #DATABASES}, {@link #QUALIFIERS} and {@link #ROLES}.
+     * {@link #DATABASES}, {@link #QUALIFIERS}, {@link #ORGANISMS},
+     * {@link #INTERACTIONS}, {@link #IDENTIFICATIONS}, {@link #INTERACTION_TYPES},
+     * {@link #EXPERIMENTS} and {@link #ROLES}.
      * @param mode 0 for and edit menu and 1 for an add menu; the difference is
      * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
      * @return the menu for given <code>name</code>; <code><label/code> is
@@ -146,8 +156,8 @@ public class EditorMenuFactory {
         List list;
         if (mode == 0) {
             if (!myNameToEditItems.containsKey(name)) {
-                // Cache it for later use.
                 list = makeList(name, mode);
+                // Cache it for later use.
                 myNameToEditItems.put(name, list);
             }
             else {
@@ -157,8 +167,8 @@ public class EditorMenuFactory {
             return list;
         }
         if (!myNameToAddItems.containsKey(name)) {
-            // Cache it for later use.
             list = makeList(name, mode);
+            // Cache it for later use.
             myNameToAddItems.put(name, list);
         }
         else {
@@ -169,23 +179,26 @@ public class EditorMenuFactory {
     }
 
     /**
-     * Returns the menus for an experiment.
-     * @param mode 1 for add or 0 for edit; see the documentation for
-     * {@link #getMenu(String, int)}
-     * @return a map name -> menu; the valid names (keys) are: {@link #ORGANISMS},
-     * {@link #INTERACTIONS} and {@link #IDENTIFICATIONS}.
-     * @throws SearchException for errors in constructing the menu.
+     * Returns a menu for given name without leading '.' characters. This is
+     * retrieved from cache if it is in the cache or else new menu is created
+     * and stored in the cache before returning it. This is done by first
+     * creating a nornmal menu for given name and then removing leading '.'
+     * chacaters. So, two new menus are created when this method is called
+     * for the first time.
+     * @param name the name of the menu; the valid values are: {@link #TOPICS},
+     * {@link #DATABASES}, {@link #QUALIFIERS}, {@link #ORGANISMS},
+     * {@link #INTERACTIONS}, {@link #IDENTIFICATIONS}, {@link #INTERACTION_TYPES},
+     * {@link #EXPERIMENTS} and {@link #ROLES}. Although all the above names are
+     * valid, you should only use this method for Dag menu items (i.e,
+     * {@link #INTERACTIONS} and {@link #IDENTIFICATIONS}).
+     * @param mode 0 for and edit menu and 1 for an add menu; the difference is
+     * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
+     * @return the menu for given <code>name</code>; <code><label/code> is
+     * removed if it exists.
+     * @throws SearchException for errors in contructing the menu.
      */
-    public Map getExperimentMenus(int mode) throws SearchException {
-        // The map to put menus.
-        Map map = new HashMap();
-        map.put(ORGANISMS, getMenu(ORGANISMS, mode));
-//        storeMenu(map, ORGANISMS, mode);
-        map.put(INTERACTIONS, getMenu(INTERACTIONS, mode));
-//        storeMenu(map, INTERACTIONS, mode);
-        map.put(IDENTIFICATIONS, getMenu(IDENTIFICATIONS, mode));
-//        storeMenu(map, IDENTIFICATIONS, mode);
-        return map;
+    public List getDagMenu(String name, int mode) throws SearchException {
+        return getMenu(DAG_PREFIX + name, mode);
     }
 
     /**
@@ -202,9 +215,6 @@ public class EditorMenuFactory {
         map.put(ORGANISMS, getMenu(ORGANISMS, mode));
         map.put(INTERACTION_TYPES, getMenu(INTERACTION_TYPES, mode));
         map.put(EXPERIMENTS, getMenu(EXPERIMENTS, mode));
-//        storeMenu(map, ORGANISMS, mode);
-//        storeMenu(map, INTERACTION_TYPES, mode);
-//        storeMenu(map, EXPERIMENTS, mode);
         return map;
     }
 
@@ -234,7 +244,8 @@ public class EditorMenuFactory {
                 // Remove from both caches.
                 myNameToEditItems.remove(key);
                 myNameToAddItems.remove(key);
-                break;
+                // It is possible for a class to associate with more than obe
+                // key as with normalized dag menus. So, ca't break from here.
             }
         }
     }
@@ -282,18 +293,33 @@ public class EditorMenuFactory {
         for (Iterator iter = v.iterator(); iter.hasNext();) {
             list.add(iter.next());
         }
+        // Special case for dag menu items.
+        if (key.startsWith(DAG_PREFIX)) {
+            return normalize(list);
+        }
         return list;
     }
 
     /**
-     * Stores the menu in the given map.
-     * @param map the map to store a menu.
-     * @param name the name of the menu.
-     * @param mode 0 for an edit menu; 1 for an add menu.
-     * @throws SearchException for errors in constructing the menu.
+     * Normalizes a dag menu by remving all the prefix '.' characeters from
+     * the menu items.
+     * @param list the menu list to normalize
+     * @return the normalized list identical to the source list ecept for '.'
+     * removed from all the list items.
      */
-//    private void storeMenu(Map map, String name, int mode)
-//            throws SearchException {
-//        map.put(name, getMenu(name, mode));
-//    }
+    private List normalize(List list) {
+        List newList = new ArrayList();
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            String listItem = iter.next().toString();
+            Matcher match = DAGMENU_PATTERN.matcher(listItem);
+            if (match.find()) {
+                newList.add(match.replaceAll(""));
+            }
+            else {
+                // No need to do any replacements.
+                newList.add(listItem);
+            }
+        }
+        return newList;
+    }
 }

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -51,15 +51,20 @@ public class ExperimentAction extends AbstractEditorAction {
 
         // This shouldn't crash the application as we had
         // already created the correct editor view bean.
-        ExperimentViewBean expview = (ExperimentViewBean) user.getView();
+        ExperimentViewBean view = (ExperimentViewBean) user.getView();
+
+        String organism = (String) theForm.get("organism");
+
+        // These two items need to be normalized.
+        String interaction = view.getNormalizedInter(
+                (String) theForm.get("inter"));
+        String identification = view.getNormalizedIdent(
+                (String) theForm.get("ident"));
 
         // Set the view bean with the new values.
-        expview.setOrganism((String) theForm.get("organism"));
-        expview.setInteraction((String) theForm.get("interaction"));
-        expview.setIdentification((String) theForm.get("identification"));
-
-        // Clear previous entries and reset to the default values.
-        theForm.reset(mapping, request);
+        view.setOrganism(organism);
+        view.setInter(interaction);
+        view.setIdent(identification);
 
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
     }

@@ -33,64 +33,23 @@ public class ExperimentDynaForm extends DynaValidatorForm {
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
-        String organism = removeDots((String) get("organism"));
-        String interaction = removeDots((String) get("interaction"));
-        String identification = removeDots((String) get("identification"));
+        String organism = (String) get("organism");
+        String interaction = (String) get("inter");
+        String identification = (String) get("ident");
 
         // Must select from the drop down list.
         if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors.add("exp.organism", new ActionError("error.dropdown.list"));
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.biosrc.list"));
         }
         else if (interaction.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors.add("exp.interaction", new ActionError("error.dropdown.list"));
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.inter.list"));
         }
         else if (identification.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors.add("exp.identification", new ActionError("error.dropdown.list"));
-        }
-        if (errors.isEmpty()) {
-            // No errors; set the trimmed values (no need to trim again in the
-            // action class.
-            set("organism", organism);
-            set("interaction", interaction);
-            set("identification", identification);
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.ident.list"));
         }
         return errors;
-    }
-
-    /**
-     * Reset all properties to their default values.
-     *
-     * @param mapping the mapping used to select this instance
-     * @param request the servlet request we are processing
-     */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
-        set("organism", EditorMenuFactory.SELECT_LIST_ITEM);
-        set("interaction", EditorMenuFactory.SELECT_LIST_ITEM);
-        set("identification", EditorMenuFactory.SELECT_LIST_ITEM);
-    }
-
-    /**
-     * Removes leading '.' characters from given string.
-     * @param s the string to remove leading '.' characters.
-     * @return a string without leading '.' characters. This my equivalent to
-     * the given string if it has no leading '.' characters.
-     */
-    private String removeDots(String s) {
-        if (s.charAt(0) != '.') {
-            return s;
-        }
-        // At least the first psotion contains '.'
-
-        // Holds the first non dot position.
-        int pos = 0;
-        int size = s.length();
-        // Search for non dot position, if found exit the loop.
-        for (int i = 1; i < size; i++) {
-            if (s.charAt(i) != '.') {
-                pos = i;
-                break;
-            }
-        }
-        return s.substring(pos);
     }
 }
