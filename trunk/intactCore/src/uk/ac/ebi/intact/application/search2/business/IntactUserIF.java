@@ -6,10 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search2.business;
 
-import uk.ac.ebi.intact.business.IntactException;
-
-import java.util.Collection;
-
 /**
  * This interface represents an Intact user.
  *
@@ -27,4 +23,8 @@ public interface IntactUserIF
 
     public void setSearchClass(String searchClass);
     public String getSearchClass();
+
+    public int getSelectedChunk ();
+
+    public void setSelectedChunk ( int selectedChunk );
 }

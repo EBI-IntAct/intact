@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.search2.struts.view.details;
 import uk.ac.ebi.intact.application.search2.struts.view.AbstractViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.html.HtmlBuilderManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Experiment;
 
 import java.io.IOException;
 import java.io.Serializable;

@@ -16,6 +16,8 @@ in the root directory of this distribution.
  */
 package uk.ac.ebi.intact.application.search2.struts.view;
 
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.search2.business.Constants;
 import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.details.DetailsViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.details.InteractionDetailsViewBean;
@@ -24,7 +26,10 @@ import uk.ac.ebi.intact.application.search2.struts.view.single.ExperimentSingleV
 import uk.ac.ebi.intact.application.search2.struts.view.single.InteractionSingleViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.ProteinSingleViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.SingleViewBean;
+import uk.ac.ebi.intact.application.search2.struts.view.single.chunked.ExperimentChunkedSingleViewBean;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.proxy.InteractionProxy;
+import uk.ac.ebi.intact.model.proxy.ProteinProxy;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +39,8 @@ import java.util.Map;
 
 
 public class ViewBeanFactory {
+
+    private transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
     private static ViewBeanFactory ourInstance;
 
@@ -56,18 +63,27 @@ public class ViewBeanFactory {
      */
     private static Map ourBeanToBinaryView = new HashMap ();
 
+    /**
+     * Maps: Model class -> chunked view bean
+     */
+    private static Map ourBeanToChunkedView = new HashMap ();
+
     // Stores the beans to create in a map. Make sure to update HtmlBuilder when you
     // add a new view bean.
     static {
         // Details view beans.
         ourBeanToDetailsView.put ( Experiment.class, DetailsViewBean.class );
-        ourBeanToDetailsView.put ( Interaction.class, InteractionDetailsViewBean.class );
-        ourBeanToDetailsView.put ( Protein.class, ProteinDetailsViewBean.class );
+//        ourBeanToDetailsView.put ( Interaction.class, InteractionDetailsViewBean.class );
+//        ourBeanToDetailsView.put ( Protein.class, ProteinDetailsViewBean.class );
+        ourBeanToDetailsView.put ( InteractionProxy.class, InteractionDetailsViewBean.class );
+        ourBeanToDetailsView.put ( ProteinProxy.class, ProteinDetailsViewBean.class );
 
         // Single view bean.
         ourBeanToSingleItemView.put ( Experiment.class, ExperimentSingleViewBean.class );
-        ourBeanToSingleItemView.put ( Interaction.class, InteractionSingleViewBean.class );
-        ourBeanToSingleItemView.put ( Protein.class, ProteinSingleViewBean.class );
+//        ourBeanToSingleItemView.put ( Interaction.class, InteractionSingleViewBean.class );
+//        ourBeanToSingleItemView.put ( Protein.class, ProteinSingleViewBean.class );
+        ourBeanToSingleItemView.put ( InteractionProxy.class, InteractionSingleViewBean.class );
+        ourBeanToSingleItemView.put ( ProteinProxy.class, ProteinSingleViewBean.class );
         ourBeanToSingleItemView.put ( CvDatabase.class, SingleViewBean.class );
         ourBeanToSingleItemView.put ( CvXrefQualifier.class, SingleViewBean.class );
         ourBeanToSingleItemView.put ( CvTopic.class, SingleViewBean.class );
@@ -78,7 +94,11 @@ public class ViewBeanFactory {
         ourBeanToSingleItemView.put ( BioSource.class, SingleViewBean.class );
 
         // Binary views.
-        ourBeanToBinaryView.put ( Protein.class, BinaryDetailsViewBean.class );
+//        ourBeanToBinaryView.put ( Protein.class, BinaryDetailsViewBean.class );
+        ourBeanToBinaryView.put ( ProteinProxy.class, BinaryDetailsViewBean.class );
+
+        // chunked view
+        ourBeanToChunkedView.put( Experiment.class, ExperimentChunkedSingleViewBean.class );
     }
 
 
@@ -116,7 +136,7 @@ public class ViewBeanFactory {
         Object firstItem = objects.iterator ().next ();
         Class objsClass = firstItem.getClass ();
 
-        System.out.println ( objsClass );
+        logger.info ( objsClass );
 
         Class clazz = (Class) ourBeanToBinaryView.get ( objsClass );
         return getViewBean( clazz, objects, link, contextPath);
@@ -136,7 +156,7 @@ public class ViewBeanFactory {
         Object firstItem = objects.iterator().next ();
         Class objsClass = firstItem.getClass ();
 
-        System.out.println ( objsClass );
+        logger.info ( objsClass );
 
         Class clazz = (Class) ourBeanToDetailsView.get ( objsClass );
         return getViewBean( clazz, objects, link, contextPath );
@@ -154,10 +174,98 @@ public class ViewBeanFactory {
      */
     public AbstractViewBean getSingleViewBean ( AnnotatedObject object, String link, String contextPath ) {
 
-        System.out.println ( object.getClass () );
+        logger.info ( object.getClass () );
         Class beanClass = (Class) ourBeanToSingleItemView.get ( object.getClass () );
 
         return getViewBean( beanClass, object, link, contextPath );
+    }
+
+
+    /**
+     *
+     * @param object
+     * @param link
+     * @param contextPath
+     * @return
+     */
+    public AbstractViewBean getChunkedSingleViewBean ( AnnotatedObject object, String link, String contextPath, int maxChunk, int selectedChunk ) {
+
+        logger.info ( object.getClass () );
+        Class beanClass = (Class) ourBeanToChunkedView.get ( object.getClass () );
+
+        return getViewBean( beanClass, object, link, contextPath, maxChunk, selectedChunk );
+    }
+
+    /**
+     * Returns the appropriate view bean for given object.
+     * The object can be either a <code>Collection</code> or an
+     * <code>AnnotatedObject</code>.
+     *
+     * @param beanClazz the type of the bean which will wrap the object to display
+     * @param objectToWrap the object to display
+     * @param link the link to help page.
+     * @param contextPath the context path of the appliction
+     * @param maxChunk the count of displayable chunk for that bean
+     * @param selectedChunk the chunk we are going to display (0 <= selectedChunk < maxChunk)
+
+     * @return the appropriate view for <code>object</code>; null is
+     * returned if there is no mapping or an error in creating an
+     * instance of the view.
+     *
+     * @return
+     */
+    private AbstractViewBean getViewBean ( Class beanClazz,
+                                           AnnotatedObject objectToWrap,
+                                           String link,
+                                           String contextPath,
+                                           int maxChunk,
+                                           int selectedChunk ) {
+
+        if (beanClazz == null) {
+            return null;
+        }
+
+        try {
+            Class classToWrap = null;
+
+            /* TODO: would be nice to get rid of it
+             * If an Experiment (ArrayList) is given, it's not automatically
+             * casted to AnnotatedObject (Collection) as required in the constructor
+             * of the Bean.
+             * So we get a NoSuchMethodException.
+             */
+            if ( objectToWrap instanceof AnnotatedObject ) {
+                classToWrap = AnnotatedObject.class;
+            } else {
+                classToWrap = Collection.class;
+            }
+
+            logger.info ( "ClassToWrap affected to: " + classToWrap);
+
+            logger.info ( "Ask constructor to: " + beanClazz.getName());
+            logger.info ( "Param1: " + Class.class.getName()   + " value: " + objectToWrap.getClass().getName() );
+            logger.info ( "Param2: " + String.class.getName()  + " value: " + link );
+            logger.info ( "Param3: " + String.class.getName()  + " value: " + contextPath );
+            logger.info ( "Param4: " + Integer.class.getName() + " value: " + maxChunk );
+            logger.info ( "Param5: " + Integer.class.getName() + " value: " + selectedChunk );
+
+            Constructor constructor = beanClazz.getConstructor (
+                    new Class[]{ classToWrap, String.class, String.class, Integer.class, Integer.class } );
+
+            return (AbstractViewBean) constructor.newInstance (
+                    new Object[]{ objectToWrap, link, contextPath, new Integer( maxChunk ), new Integer( selectedChunk ) } );
+        } catch ( InstantiationException e ) {
+            e.printStackTrace ();
+        } catch ( IllegalAccessException e ) {
+            e.printStackTrace ();
+        } catch ( NoSuchMethodException e ) {
+            e.printStackTrace ();
+        } catch ( InvocationTargetException e ) {
+            e.printStackTrace ();
+        }
+        return null;
+
+
     }
 
 
@@ -166,9 +274,10 @@ public class ViewBeanFactory {
      * The object can be either a <code>Collection</code> or an
      * <code>AnnotatedObject</code>.
      *
-     * @param beanClazz
-     * @param objectToWrap
+     * @param beanClazz the type of the bean which will wrap the object to display
+     * @param objectToWrap the object to display
      * @param link the link to help page.
+     *
      * @return the appropriate view for <code>object</code>; null is
      * returned if there is no mapping or an error in creating an
      * instance of the view.
@@ -197,12 +306,12 @@ public class ViewBeanFactory {
                 classToWrap = Collection.class;
             }
 
-            System.out.println ( "CLassToWrap affected to: " + classToWrap);
+            logger.info ( "ClassToWrap affected to: " + classToWrap);
 
-            System.out.println ( "Ask constructor to: " + beanClazz.getName());
-            System.out.println ( "Param1: " + classToWrap.getName() );
-            System.out.println ( "Param2: " + String.class.getName() );
-            System.out.println ( "Param3: " + String.class.getName() );
+            logger.info ( "Ask constructor to: " + beanClazz.getName());
+            logger.info ( "Param1: " + classToWrap.getName() + " value: " + objectToWrap );
+            logger.info ( "Param2: " + String.class.getName() + " value: " + link );
+            logger.info ( "Param3: " + String.class.getName() + " value: " + contextPath );
 
             Constructor constructor = beanClazz.getConstructor (
                     new Class[]{ classToWrap, String.class, String.class } );
@@ -220,4 +329,5 @@ public class ViewBeanFactory {
         }
         return null;
     }
+
 }

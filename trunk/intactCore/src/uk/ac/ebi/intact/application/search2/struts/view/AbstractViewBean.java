@@ -6,6 +6,9 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search2.struts.view;
 
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.search2.business.Constants;
+
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.Set;
@@ -20,6 +23,8 @@ import java.util.Set;
  * @version $Id$
  */
 public abstract class AbstractViewBean implements Serializable {
+
+    protected transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
 
     //---- Attributes needed by all subclasses - protected to allow easy access -----
 

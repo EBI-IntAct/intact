@@ -40,6 +40,7 @@ public class SingleViewBean extends AbstractViewBean
      * Constructs an instance of this class from given AnnotatedObject.
      * @param object an AnnotatedObject to display.
      * @param link the link to the help page.
+     * @param contextPath the application path
      */
     public SingleViewBean( AnnotatedObject object, String link, String contextPath ) {
         super( link, contextPath );
@@ -56,6 +57,10 @@ public class SingleViewBean extends AbstractViewBean
      */
     public AnnotatedObject getWrappedObject() {
         return this.wrappedObject;
+    }
+
+    public void setWrappedObject ( AnnotatedObject wrappedObject ) {
+        this.wrappedObject = wrappedObject;
     }
 
     public void getHTML( Writer writer ) {

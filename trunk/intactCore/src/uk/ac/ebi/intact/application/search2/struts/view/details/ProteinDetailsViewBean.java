@@ -60,20 +60,20 @@ public class ProteinDetailsViewBean extends DetailsViewBean {
 
             Collection components = protein.getActiveInstances();
 
-//            System.out.println("Protein: " + protein.getShortLabel());
+//            logger.info("Protein: " + protein.getShortLabel());
 
             // get all Interaction involving that Protein
             for (Iterator iterator = components.iterator(); iterator.hasNext();) {
                 Component component = (Component) iterator.next();
                 Interaction interaction = component.getInteraction();
-//                System.out.println("Interaction " + interaction.getShortLabel());
+//                logger.info.println("Interaction " + interaction.getShortLabel());
                 // get all Experiment involving that interaction
 
                 // keep a copy of distinct Experiment
                 for (Iterator iterator2 = interaction.getExperiments().iterator(); iterator2.hasNext();) {
                     Experiment experiment = (Experiment) iterator2.next();
                     // add a copy of the experiment
-//                    System.out.println("Distinct Experiment: " + experiment.getShortLabel());
+//                    logger.info("Distinct Experiment: " + experiment.getShortLabel());
                     if ( ! experiments.containsKey( experiment.getAc() )){
                         Experiment ex = Experiment.getShallowCopy( experiment );
                         experiments.put( experiment.getAc(), ex );

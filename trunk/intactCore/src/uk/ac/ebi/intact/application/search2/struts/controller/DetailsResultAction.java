@@ -26,7 +26,7 @@ public class DetailsResultAction extends AbstractResulltAction {
 
     protected AbstractViewBean getAbstractViewBean ( Collection results, IntactUserIF user, String contextPath ) {
 
-        super.log( "details action: building view beans..." );
+        logger.info( "details action: building view beans..." );
         return ViewBeanFactory.getInstance().getDetailsViewBean ( results, user.getHelpLink(), contextPath );
     }
 }

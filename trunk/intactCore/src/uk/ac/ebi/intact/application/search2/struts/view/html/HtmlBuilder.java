@@ -5,8 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.search2.struts.view.html;
 
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.search2.business.Constants;
 import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.proxy.InteractionProxy;
+import uk.ac.ebi.intact.model.proxy.ProteinProxy;
 import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.io.IOException;
@@ -69,6 +74,9 @@ import java.util.Set;
  * @version $Id$
  */
 public class HtmlBuilder {
+
+    private transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+
 
     // Cache database access URLs
     // These are frequenly used, so cache them.
@@ -139,10 +147,10 @@ public class HtmlBuilder {
      */
     private void write(String aString) throws IOException {
         if(aString == null) {
-            rs.write("-");
+            rs.write( "-" );
         }
         else {
-            rs.write(aString);
+            rs.write( aString );
         }
 
     }
@@ -161,6 +169,7 @@ public class HtmlBuilder {
                     + tableBackgroundColor
                     + "\">");
             tableLevel = anObject.getClass();
+            logger.info("HtmlBuilder starts table level: " + tableLevel);
         }
     }
 
@@ -175,6 +184,7 @@ public class HtmlBuilder {
     private void endTable(AnnotatedObject anObject) throws IOException {
         if (anObject.getClass().equals(tableLevel)) {
             write("</table>");
+            logger.info("HtmlBuilder stops table level: " + tableLevel);
             tableLevel = null;
         }
     }
@@ -195,10 +205,10 @@ public class HtmlBuilder {
      */
     private void htmlHelp(String target) throws IOException {
 
-        write("<a href=\"");
-        write(helpLink);
-        write(target);
-        write("\" target=\"new\"/><sup><b><font color=red>?</font></b></sup></a>");
+        write( "<a href=\"" );
+        write( helpLink );
+        write( target );
+        write( "\" target=\"new\"/><sup><b><font color=red>?</font></b></sup></a>" );
     }
 
     /**
@@ -207,12 +217,12 @@ public class HtmlBuilder {
      */
     private void htmlHelp(String displayString, String target) throws IOException {
 
-        write("<a href=\"");
-        write(helpLink);
-        write(target);
-        write("\" target=\"new\"/>");
-        write(displayString);
-        write("</a>");
+        write( "<a href=\"" );
+        write( helpLink );
+        write( target );
+        write( "\" target=\"new\"/>" );
+        write( displayString );
+        write( "</a>" );
     }
 
     /**
@@ -551,8 +561,8 @@ public class HtmlBuilder {
      * Write the header of an AnnotatedObject to html
      *
      */
-    private void htmlViewHead(AnnotatedObject anAnnotatedObject,
-                              boolean checkBox) throws IOException {
+    private void htmlViewHead( AnnotatedObject anAnnotatedObject,
+                               boolean checkBox ) throws IOException {
 
         write("<tr bgcolor="
                 + tableHeaderColor
@@ -569,9 +579,10 @@ public class HtmlBuilder {
 
         // Class name
         write("<b>");
-        String className = anAnnotatedObject.getClass().getName();
-        className = className.substring(className.lastIndexOf('.')+1, className.length());
-        write(className);
+
+        String className = getObjectName( anAnnotatedObject );
+
+        write( className );
         write("</b>");
 
         // Link to online help
@@ -619,7 +630,6 @@ public class HtmlBuilder {
                 + tableHeaderColor
                 + ">");
 
-
         // empty cell to get to the total of three cells per row
         write("<td colspan=3>");
         write("&nbsp;");
@@ -627,6 +637,7 @@ public class HtmlBuilder {
 
         write("</tr>\n");
     }
+
 
     /**
      * Shows the attributes of a Protein object.
@@ -639,7 +650,6 @@ public class HtmlBuilder {
         write("<tr bgcolor="
                 + tableHeaderColor
                 + ">");
-
 
         // Biosource
         htmlViewPartial(aProtein.getBioSource(), "Source:", "Interactor.bioSource");
@@ -793,14 +803,22 @@ public class HtmlBuilder {
      * @param obj
      * @throws java.io.IOException
      */
-    private void htmlSearch(AnnotatedObject obj) throws IOException {
+    private void htmlSearch( AnnotatedObject obj ) throws IOException {
 
-        String className = obj.getClass().getName();
-        className = className.substring(className.lastIndexOf('.')+1, className.length());
-
+        String className = getObjectName( obj );
         htmlSearch(obj.getAc(), className, obj.getShortLabel());
     }
 
+
+    /**
+     * From the real className of an object, gets a displayable name.
+     *
+     * @param obj the object for which we want the class name to display
+     * @return the classname to display in the view.
+     */
+    private String getObjectName( Object obj ) {
+        return IntactHelper.getDisplayableClassName( obj );
+    }
 
     /**
      * Provies text as a hyperlink to the object obj.
@@ -811,9 +829,7 @@ public class HtmlBuilder {
      */
     private void htmlSearch(AnnotatedObject obj, String text) throws IOException {
 
-        String className = obj.getClass().getName();
-        className = className.substring(className.lastIndexOf('.')+1, className.length());
-
+        String className = getObjectName( obj );
         htmlSearch(obj.getAc(), className, text);
     }
 
@@ -823,11 +839,11 @@ public class HtmlBuilder {
      * @param comp
      * @throws java.io.IOException
      */
-    private void htmlViewPartial(Component comp) throws IOException {
+    private void htmlViewPartial(Component comp, boolean hasNext) throws IOException {
 
         // Get data
         Interactor act = comp.getInteractor();
-        String label = act.getShortLabel();
+        String label   = act.getShortLabel();
         CvComponentRole componentRole = comp.getCvComponentRole();
         String role = componentRole.getShortLabel();
 
@@ -835,16 +851,18 @@ public class HtmlBuilder {
         write("<nobr>");
 
         // Checkbox
-        htmlCheckBox(act);
+        htmlCheckBox( act );
 
         // Hyperlinked object reference
-        htmlSearch(act);
+        htmlSearch( act );
 
         // The component role (e.g. bait or prey)
-        htmlSearch(componentRole,
-                "<sup>" + role.substring(0,1) + "</sup>");
+        htmlSearch( componentRole,
+                    "<sup>" + role.substring( 0, 1 ) + "</sup>");
 
-        write(",");
+        // displays a comma only if there is an other one coming after.
+        if ( hasNext ) write(",");
+
         // avoid that a checkbox appears at the end of a line
         write("</nobr>");
 
@@ -854,6 +872,18 @@ public class HtmlBuilder {
             write("&nbsp;");
         }
         write("\n");
+    }
+
+    /**
+     * HTML view of a ProteinProxy object.
+     * <br>
+     * Just forward to the Protein view.
+     *
+     * @param aProtein
+     * @throws java.io.IOException
+     */
+    public void htmlView(ProteinProxy aProtein) throws IOException {
+        htmlView( (Protein) aProtein );
     }
 
     /**
@@ -980,6 +1010,17 @@ public class HtmlBuilder {
     }
 
     /**
+     * HTML view of an InteractionProxy object.
+     * <br>
+     * Just forward to the Interaction view.
+     * @param act
+     * @throws java.io.IOException
+     */
+    public void htmlView(InteractionProxy act) throws IOException {
+        htmlView( (Interaction) act );
+    }
+
+    /**
      * HTML view of an Interaction object.
      *
      * @param act
@@ -1005,7 +1046,8 @@ public class HtmlBuilder {
         write("<code>");
         Iterator c = act.getComponents().iterator();
         while (c.hasNext()) {
-            htmlViewPartial((Component) c.next());
+            Component component = (Component) c.next();
+            htmlViewPartial( component, c.hasNext() );
         }
         write("</code>");
 
@@ -1053,6 +1095,98 @@ public class HtmlBuilder {
         endTable(ex);
     }
 
+    public static final int MAX_CHUNK_IN_INDEX = 20;
+
+    /**
+     * Display the chunk index.
+     * <br>
+     * 1. displays the context: "Results x to y of about z objects."
+     * 2. displays the chunk index table, it contains MAX_CHUNK_IN_INDEX chunk maximum.
+     *
+     * @param object the object for which we create that index of its chunk.
+     * @param link the help link
+     * @param currentChunk the user selected chunk to display
+     * @param maxChunk the maximum number of chunk (ie. <code>objectCount /
+     *                 uk.ac.ebi.intact.application.search2.business.Constants.MAX_CHUNK_SIZE)
+     * @param objectCount the count of object (those we display in chunks).
+     * @param chunkedObjectType the type of the object we chunk. Used to give a context to the user.
+     * @throws IOException
+     */
+    public void buildChunkIndex ( Object object,
+                                  String link,
+                                  int currentChunk,
+                                  int maxChunk,
+                                  int objectCount,
+                                  String chunkedObjectType ) throws IOException {
+
+        int sub = MAX_CHUNK_IN_INDEX / 2; // count of chunk we display before and after the current one.
+
+        // first chunk of the table
+        int first = Math.max( ( currentChunk - sub ), 1 );
+
+        // last chunk of the table
+        int last  = Math.min( ( currentChunk + sub ), maxChunk );
+
+        write("<p>");
+
+        // give the range of object (those we decided to display in chaunk) we display in the page.
+        // ie. if we process an Experiment, we give the range of Interactions.
+        int from = ( (currentChunk - 1) * uk.ac.ebi.intact.application.search2.business.Constants.MAX_CHUNK_SIZE ) + 1;
+        int to   = Math.min( (from + MAX_CHUNK_IN_INDEX), objectCount );
+
+        // 1. context
+        write( "Results <b>" + from + "</b> to <b>" + to + "</b> of <b>" +
+               objectCount + "</b> " + chunkedObjectType );
+        htmlHelp("search.display.chuncked");
+        write( ".<br>" );
+
+        // 2. the chunk index table
+        write("<table width=100% bgcolor=\""
+                    + tableBackgroundColor
+                    + "\">");
+
+        write("<tr bgcolor="
+              + tableCellColor
+              + ">");
+
+        write("<td width=\"100%\" align=\"center\">");
+
+        String prefixUrl = "<a href=\""+ contextPath +"/do/search?searchString=" + ((IntactObject)object).getAc() + "&selectedChunk=";
+
+        if (currentChunk > 1) {
+            write( prefixUrl + (currentChunk - 1) + "\">");
+            write("<font color=\""+ tableBackgroundColor +"\"><strong>Previous</strong></font>");
+            write("</a>");
+            write("&nbsp;&nbsp;&nbsp;&nbsp;"); // spaces
+        }
+
+        for( int idx=first; idx <= last; idx++) {
+
+            if( idx == currentChunk ) {
+                // the selected chunk is not a link, and is highlighted
+                write("<font color=\"red\"><strong>" + idx + "</strong></font>");
+            } else {
+                write( prefixUrl + idx + "\">");
+                write("<font color=\""+ tableBackgroundColor +"\">" + idx + "</font>");
+                write("</a>");
+            }
+
+            write("&nbsp;");
+        }
+
+        if ( currentChunk < maxChunk ) {
+            write("&nbsp;&nbsp;&nbsp;&nbsp;"); // spaces
+            write( prefixUrl + (currentChunk + 1) + "\">");
+            write("<font color=\""+ tableBackgroundColor +"\"><strong>Next</strong></font>");
+            write("</a>");
+        }
+
+        write("</td>");
+        write("</tr>");
+        write("</table>");
+        write("</p>");
+    }
+
     /** Write an experiment view to html
      *
      * @param args [0] The shortlabel of the experiment
@@ -1068,8 +1202,7 @@ public class HtmlBuilder {
 //
 //            //something failed with type map or datasource...
 //            String msg = "unable to create intact helper class";
-//            System.out.println(msg);
-//            ie.printStackTrace();
+//            logger.info( msg, ie);
 //        }
 //
 //        // Create a new Writer, associate it with system.out
