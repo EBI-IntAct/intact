@@ -97,9 +97,6 @@ public class PredictOra {
         DAOSource ds = DAOFactory.getDAOSource(
                 "uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
         //set the config details, ie repository file for OJB in this case
-        Map config = new HashMap();
-        config.put("mappingfile", "temp-web/WEB-INF/classes/config/repository.xml");
-        ds.setConfig(config);
         myHelper = new IntactHelper(ds);
     }
 
