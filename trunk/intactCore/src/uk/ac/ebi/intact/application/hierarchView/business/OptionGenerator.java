@@ -52,7 +52,7 @@ public class OptionGenerator {
 	if ((null == label) || (label.length() < 1))
 	  continue;
     
-	sources.add (new LabelValueBean(label, sourceKey));
+	sources.add (new LabelValueBean(label, sourceKey, ""));
       } // while
     }
  
@@ -107,7 +107,7 @@ public class OptionGenerator {
     	if ((null == label) || (label.length() < 1) || (null == value) || (value.length() < 1))
 	  continue; // don't add this element
     
-	behaviours.add (new LabelValueBean(label, value));
+	behaviours.add (new LabelValueBean(label, value, ""));
       } // while
 	      
     } // if
