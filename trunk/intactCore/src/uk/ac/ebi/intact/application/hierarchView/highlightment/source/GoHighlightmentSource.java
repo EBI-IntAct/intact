@@ -4,7 +4,7 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Xref;
@@ -115,7 +115,7 @@ public class GoHighlightmentSource
      */
     public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) {
         Collection nodeList = new Vector ();
-        Collection keys     = (Collection)  aSession.getAttribute (Constants.ATTRIBUTE_KEYS);
+        Collection keys     = (Collection)  aSession.getAttribute (StrutsConstants.ATTRIBUTE_KEYS);
 
         // Read source option in the session
         String  check = (String)  aSession.getAttribute (ATTRIBUTE_OPTION_CHILDREN);
@@ -204,7 +204,7 @@ public class GoHighlightmentSource
         Collection urls = new Vector();
 
         // get in the Highlightment properties file where is hosted interpro
-        Properties props = PropertyLoader.load (Constants.PROPERTY_FILE_HIGHLIGHTING);
+        Properties props = PropertyLoader.load (StrutsConstants.PROPERTY_FILE_HIGHLIGHTING);
         if (null == props) {
            // Log that error
         }

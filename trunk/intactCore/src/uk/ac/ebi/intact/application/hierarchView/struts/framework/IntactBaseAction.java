@@ -63,7 +63,7 @@ public abstract class IntactBaseAction extends Action {
      * Clear error container.
      */
     protected void clearErrors() {
-        if (!myErrors.empty()) {
+        if (!myErrors.isEmpty()) {
             myErrors.clear();
         }
     }
@@ -105,7 +105,7 @@ public abstract class IntactBaseAction extends Action {
      * @return boolean false is there are any error registered, else true
      */
     protected boolean isErrorsEmpty () {
-        return myErrors.empty();
+        return myErrors.isEmpty();
     }
 
     // Helper methods.

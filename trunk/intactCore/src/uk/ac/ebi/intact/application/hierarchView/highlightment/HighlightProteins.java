@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour.HighlightmentBehaviour;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -61,10 +61,10 @@ public class HighlightProteins{
             errors.add("ImageBean", new ActionError("error.ImageBean.build"));
 
         // store the bean
-        session.setAttribute (Constants.ATTRIBUTE_IMAGE_BEAN, ib);
+        session.setAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN, ib);
 
         // store the graph
-        session.setAttribute (Constants.ATTRIBUTE_GRAPH, in);
+        session.setAttribute (StrutsConstants.ATTRIBUTE_GRAPH, in);
 
 
     } // highlightProteins

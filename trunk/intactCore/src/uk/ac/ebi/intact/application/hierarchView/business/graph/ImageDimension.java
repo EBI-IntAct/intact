@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
 
 public class ImageDimension
 {
-    // ---------------------------------------------------------------- Constants
+    // ---------------------------------------------------------------- StrutsConstants
     public static float DEFAULT_BORDER = 5f;
 
     // ---------------------------------------------------------------- Instance Variables

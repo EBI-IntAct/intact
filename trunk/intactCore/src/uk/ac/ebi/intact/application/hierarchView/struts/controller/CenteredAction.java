@@ -13,7 +13,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 
 import javax.servlet.ServletException;
@@ -75,7 +75,7 @@ public final class CenteredAction extends IntactBaseAction {
             return (new ActionForward(mapping.getInput()));
         }
 
-        String currentAC = (String)  session.getAttribute (Constants.ATTRIBUTE_AC);
+        String currentAC = (String)  session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
 
         if (!AC.equals(currentAC)) {
 
@@ -83,7 +83,7 @@ public final class CenteredAction extends IntactBaseAction {
             InteractionNetwork in = null;
 
             int depthInt = 0;
-            String depth = (String) session.getAttribute (Constants.ATTRIBUTE_DEPTH);
+            String depth = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_DEPTH);
 
             try {
                 // retreive datasource fron the session
@@ -132,12 +132,12 @@ public final class CenteredAction extends IntactBaseAction {
             }
 
             // Save our data in the session
-            session.setAttribute(Constants.ATTRIBUTE_AC, AC);
+            session.setAttribute(StrutsConstants.ATTRIBUTE_AC, AC);
 
             // store the bean
-            session.setAttribute (Constants.ATTRIBUTE_IMAGE_BEAN, ib);
+            session.setAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN, ib);
             // store the graph
-            session.setAttribute (Constants.ATTRIBUTE_GRAPH, in);
+            session.setAttribute (StrutsConstants.ATTRIBUTE_GRAPH, in);
         }
 
         // Print debug in the log file

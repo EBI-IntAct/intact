@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.application.hierarchView.business.servlet;
 
 import org.w3c.dom.Document;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ConvertSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
@@ -53,7 +55,7 @@ public class GenerateImage extends HttpServlet {
             String format = aRequest.getParameter("format");
 
             String className = null;
-            Properties propertiesBusiness = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
+            Properties propertiesBusiness = PropertyLoader.load (Constants.PROPERTY_FILE);
 
             if (null != propertiesBusiness) {
                 className = propertiesBusiness.getProperty ("hierarchView.image.format." + format + ".class" );
@@ -69,7 +71,7 @@ public class GenerateImage extends HttpServlet {
 
             // get the current user session
             HttpSession session = aRequest.getSession();
-            ImageBean ib = (ImageBean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_IMAGE_BEAN);
+            ImageBean ib = (ImageBean) session.getAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN);
 
             if (null == ib) {
                 System.out.println("ib == null");

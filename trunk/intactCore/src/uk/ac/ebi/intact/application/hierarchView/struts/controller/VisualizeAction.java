@@ -14,7 +14,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.VisualizeForm;
 import uk.ac.ebi.intact.business.IntactHelper;
@@ -78,7 +78,7 @@ public final class VisualizeAction extends IntactBaseAction {
             methodLabel     = ((VisualizeForm) form).getMethod ();
 
             // read the ApplicationResource.proterties file
-            Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE_HIGHLIGHTING);
+            Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE_HIGHLIGHTING);
 
             if (null != properties) {
                 methodClass = properties.getProperty ("highlightment.source." + methodLabel + ".class");
@@ -107,19 +107,19 @@ public final class VisualizeAction extends IntactBaseAction {
         } else {
 
             if (hasNoDepthLimit == true) {
-                Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+                Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE);
                 if (null != properties) {
                     depth = properties.getProperty ("hierarchView.view.form.default.value.nodepthlimit");
                 }
             }
 
             // Save our data in the session
-            session.setAttribute(Constants.ATTRIBUTE_AC, AC);
-            session.setAttribute(Constants.ATTRIBUTE_DEPTH, depth);
-            session.setAttribute(Constants.ATTRIBUTE_NO_DEPTH_LIMIT, new Boolean (hasNoDepthLimit));
-            session.setAttribute(Constants.ATTRIBUTE_METHOD_LABEL, methodLabel);
-            session.setAttribute(Constants.ATTRIBUTE_METHOD_CLASS, methodClass);
-            session.setAttribute(Constants.ATTRIBUTE_BEHAVIOUR, behaviourDefault);
+            session.setAttribute (StrutsConstants.ATTRIBUTE_AC, AC);
+            session.setAttribute (StrutsConstants.ATTRIBUTE_DEPTH, depth);
+            session.setAttribute (StrutsConstants.ATTRIBUTE_NO_DEPTH_LIMIT, new Boolean (hasNoDepthLimit));
+            session.setAttribute (StrutsConstants.ATTRIBUTE_METHOD_LABEL, methodLabel);
+            session.setAttribute (StrutsConstants.ATTRIBUTE_METHOD_CLASS, methodClass);
+            session.setAttribute (StrutsConstants.ATTRIBUTE_BEHAVIOUR, behaviourDefault);
 
 
             // Creation of the graph and the image
@@ -179,9 +179,9 @@ public final class VisualizeAction extends IntactBaseAction {
             }
 
             // store the bean
-            session.setAttribute (Constants.ATTRIBUTE_IMAGE_BEAN, ib);
+            session.setAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN, ib);
             // store the graph
-            session.setAttribute (Constants.ATTRIBUTE_GRAPH, in);
+            session.setAttribute (StrutsConstants.ATTRIBUTE_GRAPH, in);
         }
 
         super.log(" Populating form from " + visualizeForm);
