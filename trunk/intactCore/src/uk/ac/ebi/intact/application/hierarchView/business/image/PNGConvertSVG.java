@@ -17,9 +17,10 @@ import java.io.OutputStream;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 
 /**
- * Interface allowing convert a SVG document to an other format (JPEG, TIFF, PNG)
+ * Allows to convert a SVG document to PNG format.
  *
- * @author Emilie FROT
+ * @author Emilie Frot & Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 
 public class PNGConvertSVG extends ConvertSVG {
@@ -27,8 +28,11 @@ public class PNGConvertSVG extends ConvertSVG {
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /**
-     * Convert an object Document to a byte []
+     * Convert an object Document to a byte array.
+     * This is relying on the Batik API which provide lots of facilities to handle SVG.
      *
+     * @param doc the SVG DOM to convert (not null)
+     * @return the generated JPEG image byte code for the given DOM
      */
     public byte[] convert(Document doc) throws Exception {
 
@@ -61,4 +65,4 @@ public class PNGConvertSVG extends ConvertSVG {
         return "image/png";
     }
 
-} // PNGConvertSVG
+}

@@ -5,7 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
-// intact
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
@@ -18,7 +17,6 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Iterator;
 import java.util.List;
-import java.net.URL;
 
 import org.apache.log4j.Logger;
 
@@ -29,17 +27,17 @@ import org.apache.log4j.Logger;
  * with what will be neededlater by the user of the web application.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public class DisplaySourceTag extends TagSupport {
 
     private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     /**
-     * Evaluate the tag's body content.
+     * Skip the body content.
      */
     public int doStartTag() throws JspTagException {
-        // evaluate the tag's body content and any sub-tag
-        return EVAL_BODY_INCLUDE;
+        return SKIP_BODY;
     } // doStartTag
 
 

@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ConvertSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -24,12 +23,18 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- Purpose: <br>
- For a bean given in the session, forward an image (png) to be displayed.
+ * Purpose: <br>
+ * For a bean given in the session, forward an image to be displayed.
+ * The image format is parameterized in the Graph.properties file.
+ *
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
+
 public class GenerateImage extends HttpServlet {
 
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
+    private final static String ERROR_MESSAGE = "Unable to produce the interaction network, please warn your administrator";
 
     /**
      * Servlet allowing to get SVG data, convert them into the user wanted format
@@ -62,15 +67,16 @@ public class GenerateImage extends HttpServlet {
                 className = propertiesBusiness.getProperty ("hierarchView.image.format." + format + ".class" );
             }
 
-            // Create a SVG Rasterizer to convert the SVG DOM to an image
+            /*
+            * Create a SVG Rasterizer to convert the SVG DOM to an image
+            * The ConvertSVG abstract instanciate one of its implementation
+            * according to the class name.
+            */
             ConvertSVG convert = ConvertSVG.getConvertSVG (className);
 
             if (null == convert) {
                 logger.error ("Unable to create the rasterizer " + className);
-                String errorMsg = "Unable to produce the interaction network, please warn your administrator";
-                out.println (errorMsg);
-                out.flush ();
-                out.close ();
+                out.println (ERROR_MESSAGE);
             }
 
             logger.info (className + " created");
@@ -90,14 +96,20 @@ public class GenerateImage extends HttpServlet {
                         logger.info ("Image file size: " + imageData.length + " bytes");
                         out.write (imageData);
                     }
-                    else logger.error ("No data produced by " + className);
+                    else {
+                        logger.error ("No data produced by " + className);
+                        out.println (ERROR_MESSAGE);
+                    }
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
                     logger.error ("Couldn't convert the DOM document", e);
+                    out.println (ERROR_MESSAGE);
                 }
             }
-            else logger.error ("SVG DOM document is null");
+            else {
+                logger.error ("SVG DOM document is null");
+                out.println (ERROR_MESSAGE);
+            }
 
             out.flush ();
             out.close ();
@@ -106,9 +118,8 @@ public class GenerateImage extends HttpServlet {
             logger.error ("Error during the image producing process", e);
             return;
         }
-
     } // doGet
 
-} // GenerateImage
+}
 
 
