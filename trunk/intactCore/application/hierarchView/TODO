@@ -6,45 +6,33 @@ T O   D O
 	+ currently under progress
 
 
+
++ Check if the current use of Struts couldn't be improved
+  + refactoring the package architecture
+  - Storing the ActionBean instead of each data separetly
+
++ Contact David Binns to go on colaboration
+  + mail sent on 29.1.2003 to ask for a talk
+  - See the current state of Interpro and how it's possible to integrate our features
+
++ Remove all internal links in Interpro
+  + modifying the simple.xsl file to customize our displaying (given to David Binns)
+
+- Detect during the Build process if every configuration file have been customized
+  if not don't allow to start Tomcat and display a meaningfull message.
+
+- IntAct software workshop notes
+  - Hierarchview: Database timeouts and limited number of connections need to be caught.
+
 + See with Florian Iragne (forian.iragne@labri.fr, Bordeaux)
-   + test the Turender web service
-   + definition of the future web service interface
-
-- put in every source package  'package.html' file which describe that package !
-
-- Update libraries :
-    - install Struts 1.1 and check if everything ok
-      - bean:message tag send an exception :
-
-         java.lang.IllegalStateException: getAttribute: Session already invalidated
-             at org.apache.catalina.session.StandardSession.getAttribute(StandardSession.java:942)
-             at org.apache.catalina.session.StandardSessionFacade.getAttribute(StandardSessionFacade.java:171)
-             at org.apache.catalina.session.StandardSessionFacade.getAttribute(StandardSessionFacade.java:171)
-             at org.apache.jasper.runtime.PageContextImpl.getAttribute(PageContextImpl.java:222)
-             at org.apache.struts.util.RequestUtils.retrieveUserLocale(RequestUtils.java:758)
-             at org.apache.struts.util.RequestUtils.message(RequestUtils.java:828)
-             at org.apache.struts.taglib.bean.MessageTag.doStartTag(MessageTag.java:295)
-             at org.apache.jsp.view_jsp._jspx_meth_bean_message_1(view_jsp.java:315)
-
-    - Installing the latest stable release of Axis
-
-- check if the current use of Struts couldn't be improved
-  - storing the ActionBean instead of each data separetly
-
-- add some Graph properties :
-  - color of highlighted and non highlighted proteins
-  - color of selected (the one given in the form) and non selected proteins
-  - eventually boldness of them all
+   + Test the Turender web service
+   + Definition of the future web service interface
+   + implementation of a basic web service to begin test
 
 + SVG integration 
   + SVG producing (batik)
   + SVG displaying (batik, CSIRO applet)
   - SVG handling (real zoom, panning, text searching, centering via URL ...)
-
-+ Remove all internal links in Interpro
-  + modifying the simple.xsl file to customize our displaying (given to David Binns)
-
-- add logging facilities in the web service
 
 + Work on the SVG applet
    - create or reuse an existing one (CSIRO, Batik) 
@@ -84,17 +72,35 @@ T O   D O
   cf. HighlightProteins when it call proteinToHighlight ()
 
 
+WAIT FOR INTEGRATION IN BORDEAUX ...
 
++ Update libraries :
+   - Installing the latest stable release of Axis
 
+- add logging facilities in the web service
 
-
-
-
-
+- Add some Graph properties :
+  - Color of highlighted and non highlighted proteins
+  - Color of selected (the one given in the form) and non selected proteins
+  - Cventually boldness of them all
 
 ====================================
               D O N E
 ====================================
+
+
+
++ Create a Custom Tag to initialize the session at startup of the application
+  + Store in the session an IntactHelper (cf. Sugath) to solve the current
+    data access problem. CRASH after 12 submission of highlight form.
+  + Clean the rest of the application to make use the IntactHelper stored in the session.
+
++ Update libraries :
+    + Install Struts 1.1 and check if everything ok
+
++ write an Ant task to undeploy the web service
+
++ put in every source package  'package.html' file which describe that package !
 
 + Write an ant task to test if the web service is properly running
 
