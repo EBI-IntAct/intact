@@ -5,16 +5,14 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
-import java.util.*;
-import java.io.*;
-
-import uk.ac.ebi.intact.business.*;
-import uk.ac.ebi.intact.persistence.*;
+import uk.ac.ebi.intact.business.BusinessConstants;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
 
-//as good a logging facility as any other....
-import org.apache.ojb.broker.util.logging.Logger;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.*;
 
 /**
  * Insert complex data for Ho and Gavin publications.
@@ -37,57 +35,51 @@ public class InsertComplex {
      */
     HashMap createdProteins = null;
 
-    Logger log = null;
-
     /**
      * basic constructor - sets up intact helper and protein factory
      */
     public InsertComplex() throws Exception {
+        try {
+            helper = new IntactHelper();
+        }
+        catch (IntactException ie) {
 
-       try {
-           helper = new IntactHelper();
+            //something failed with type map or datasource...
+            String msg = "unable to create intact helper class";
+            System.out.println(msg);
+            ie.printStackTrace();
+        }
+        try {
+            proteinFactory = new UpdateProteins(helper);
 
-       } catch (IntactException ie) {
-
-           //something failed with type map or datasource...
-           String msg = "unable to create intact helper class";
-           System.out.println(msg);
-           ie.printStackTrace();
-       }
-
-       try {
-           proteinFactory = new UpdateProteins(helper);
-
-           // Transactions are controlled by this class, not by UpdateProteins.
-           // Set local transaction control to false.
-           proteinFactory.setLocalTransactionControl(false);
-
-       } catch (UpdateProteinsI.UpdateException e) {
-
-           //something failed with type map or datasource...
-           String msg = "unable to create protein factory";
-           System.out.println(msg);
-           e.printStackTrace();
-       }
+            // Transactions are controlled by this class, not by UpdateProteins.
+            // Set local transaction control to false.
+            proteinFactory.setLocalTransactionControl(false);
+        }
+        catch (UpdateProteinsI.UpdateException e) {
+            //something failed with type map or datasource...
+            String msg = "unable to create protein factory";
+            System.out.println(msg);
+            e.printStackTrace();
+        }
     }
-
 
     /** Add a new xref to an annotatedObject.
      *
      */
-    public void addNewXref(AnnotatedObject current,
-                           Xref xref)  throws Exception {
-
-        current.addXref(xref);
-
-        /* The temporary xref will only be added to the object
-           if it does not yet exist in it.
-           Only if it is added it will be made persistent.
-        */
-        if (xref.getParentAc() == current.getAc()){
-            helper.create(xref);
-        }
-    }
+//    public void addNewXref(AnnotatedObject current,
+//                           Xref xref) throws Exception {
+//
+//        current.addXref(xref);
+//
+//        /* The temporary xref will only be added to the object
+//           if it does not yet exist in it.
+//           Only if it is added it will be made persistent.
+//        */
+//        if (xref.getParentAc() == current.getAc()) {
+//            helper.create(xref);
+//        }
+//    }
 
     /**
      * Insert a Component object linking an Interactor to an Interaction.
@@ -99,10 +91,10 @@ public class InsertComplex {
      * @param role Role of the protein in the interaction.
      * @throws Exception
      */
-    public void insertComponent (Interaction act,
-                                 String spAc,
-                                 String taxId,
-                                 CvComponentRole role) throws Exception {
+    public void insertComponent(Interaction act,
+                                String spAc,
+                                String taxId,
+                                CvComponentRole role) throws Exception {
 
         Component comp = new Component();
         comp.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
@@ -111,9 +103,10 @@ public class InsertComplex {
         Collection proteins = null;
 
         // The relevant proteins might already have been created for the current complex.
-        if (createdProteins.containsKey(spAc)){
+        if (createdProteins.containsKey(spAc)) {
             proteins = (Collection) createdProteins.get(spAc);
-        } else {
+        }
+        else {
             proteins = helper.getObjectsByXref(Protein.class, spAc);
 
             if (0 == proteins.size()) {
@@ -129,8 +122,8 @@ public class InsertComplex {
                             (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sgd"),
                             taxId));
                 }
-
-            } else {
+            }
+            else {
                 System.err.print("p");
             }
 
@@ -145,7 +138,8 @@ public class InsertComplex {
             if (tmp.getBioSource().getTaxId().equals(taxId)) {
                 if (null == targetProtein) {
                     targetProtein = tmp;
-                } else {
+                }
+                else {
                     throw new IntactException("More than one target protein found for: " + spAc);
                 }
             }
@@ -158,7 +152,7 @@ public class InsertComplex {
         // Complete the component
         comp.setInteractor(targetProtein);
         comp.setCvComponentRole(role);
-//        helper.create(comp);
+        helper.create(comp);
     }
 
 
@@ -179,13 +173,12 @@ public class InsertComplex {
                               Vector preys,
                               String taxId,
                               String experimentLabel) throws Exception {
-
         // Get experiment
         Experiment ex = (Experiment) helper.getObjectByLabel(Experiment.class, experimentLabel);
         if (null == ex) {
             ex = new Experiment();
             ex.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
-//            helper.create(ex);
+            helper.create(ex);
         }
 
         // Get Interaction
@@ -196,18 +189,21 @@ public class InsertComplex {
             act = new Interaction();
             act.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
             act.setShortLabel(actLabel);
-//            helper.create(act);
+            helper.create(act);
 
             // Initialise list of proteins created
             createdProteins = new HashMap();
 
             // add bait
-            insertComponent(act, bait, taxId, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "bait"));
+            insertComponent(act, bait, taxId,
+                    (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "bait"));
 
+            CvComponentRole role = (CvComponentRole) helper.getObjectByLabel(
+                    CvComponentRole.class, "prey");
             // add preys
             for (int i = 0; i < preys.size(); i++) {
                 String prey = (String) preys.elementAt(i);
-                insertComponent(act, prey, taxId, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "prey"));
+                insertComponent(act, prey, taxId, role);
             }
 
             // link interaction to experiment
@@ -216,42 +212,43 @@ public class InsertComplex {
             // No need to do an update here because we have created a new Interaction.
             // In fact, it is an error to do so because you can only update objects that
             // are already in the DB.
-//                helper.update(act);
+//            helper.update(act);
             System.err.print("C");
-        } else {
+        }
+        else {
             System.err.print("c");
         }
         // Only update if the object exists in the database. Since
         // the transaction is outside this method, do nothing for creation as it
         // is handled upon committing the transaction.
-        if (helper.isPersistent(ex)) {
-            helper.update(ex);
-        }
-        else {
-            helper.create(ex);
-        }
+        // NOTE: This update causes problem with the postgres driver. It seems to be OK
+        // with the oracle though. The indirection table is properly updated irrespective
+        // of this statement (probably by adding interaction to the experiment).
+//        if (helper.isPersistent(ex)) {
+//            helper.update(ex);
+//        }
     }
 
     /** Read complex data from flat file and insert it into the database.
      *
-     * @param args[0] InputFileName
-     * @param args[1] taxid. The tax id of the target proteins.
-     * @throws Exception
+     * @param args the command line arguments. The first argument is the
+     * InputFileName and the second argument is the the tax id of the target
+     * proteins.
+     * @throws Exception for any errors.
      */
     public static void main(String[] args) throws Exception {
-
-        InsertComplex app = new InsertComplex();
 
         if (args.length != 2) {
             System.err.println("Usage: InsertComplex complexFileName targetTaxId");
             return;
         }
 
+        InsertComplex app = new InsertComplex();
+
         // Parse input file line by line
 
         BufferedReader file = new BufferedReader(new FileReader(args[0]));
         String line;
-        Protein protein;
         int lineCount = 0;
 
         System.out.print("Lines processed: ");
@@ -264,7 +261,7 @@ public class InsertComplex {
             String bait = st.nextToken();
             Vector preys = new Vector();
 
-            while (st.hasMoreTokens()){
+            while (st.hasMoreTokens()) {
                 preys.add(st.nextToken());
             }
 
@@ -274,10 +271,12 @@ public class InsertComplex {
 
             // Insert results into database
             try {
-		        app.helper.startTransaction( BusinessConstants.OBJECT_TX );
+                app.helper.startTransaction(BusinessConstants.OBJECT_TX);
                 app.insertComplex(interactionNumber, bait, preys, args[1], experimentLabel);
-		        app.helper.finishTransaction();
-            } catch (Exception ie) {
+                app.helper.finishTransaction();
+            }
+            catch (Exception ie) {
+                ie.printStackTrace();
                 System.err.println();
                 System.err.println("Error while processing input line: ");
                 System.err.println(line);
@@ -285,9 +284,10 @@ public class InsertComplex {
             }
 
             // Progress report
-            if((++lineCount % 1) == 0){
+            if ((++lineCount % 1) == 0) {
                 System.out.print(lineCount + " ");
-            } else {
+            }
+            else {
                 System.out.println(".");
             }
         }

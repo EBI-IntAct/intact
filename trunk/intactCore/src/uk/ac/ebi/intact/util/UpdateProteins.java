@@ -934,7 +934,10 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // update database
         try {
-            helper.update (protein);
+            // Only update if the protein exists in the DB.
+            if (helper.isPersistent(protein)) {
+                helper.update (protein);
+            }
             // keep that protein
             proteins.add(protein);
 
