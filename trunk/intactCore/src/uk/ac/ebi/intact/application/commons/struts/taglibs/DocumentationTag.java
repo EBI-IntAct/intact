@@ -28,7 +28,7 @@ public class DocumentationTag extends TagSupport {
     public static final int ERROR         = 4;
     public static final int SERVER_ERROR  = 5;
 
-    private static final String DEFAULT_TITLE = "<b><font color=\"red\">[?]</font></b></a>";
+    private static final String DEFAULT_TITLE = "<sup><b><font color=\"red\">?</font></b><sup></a>";
 
     private static final String PAGE      = "/intact/displayDoc.jsp";
     private static final String URL_BEGIN = "<a name=\"#\" onClick=\"w=window.open('";
