@@ -83,6 +83,13 @@ public class InteractionTest extends TestCase {
         // Make a copy.
         Interaction copy = (Interaction) orig.clone();
 
+        // No AC.
+        assertNull(copy.getAc());
+
+        // Time stamps are different.
+        assertFalse(orig.getCreated().equals(copy.getCreated()));
+        assertFalse(orig.getUpdated().equals(copy.getUpdated()));
+
         // Short label must have "-x".
         assertTrue(copy.getShortLabel().endsWith("-x"));
         assertEquals(orig.getShortLabel() + "-x", copy.getShortLabel());
@@ -145,6 +152,13 @@ public class InteractionTest extends TestCase {
                 Interaction.class, "ga-3");
         // Make a copy.
         Interaction copy = (Interaction) orig.clone();
+
+        // No AC.
+        assertNull(copy.getAc());
+
+        // Time stamps are different.
+        assertFalse(orig.getCreated().equals(copy.getCreated()));
+        assertFalse(orig.getUpdated().equals(copy.getUpdated()));
 
         // Short label must have "-x".
         assertTrue(copy.getShortLabel().endsWith("-x"));

@@ -125,7 +125,13 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
      * cloned.
      */
     public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+        IntactObjectImpl copy =  (IntactObjectImpl) super.clone();
+        // Reset the AC.
+        copy.ac = null;
+        // Reset the created and updated time stamps.
+        copy.created = new java.sql.Timestamp(System.currentTimeMillis());
+        copy.updated = new java.sql.Timestamp(System.currentTimeMillis());
+        return copy;
     }
 
     ///////////////////////////////////////
