@@ -186,6 +186,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @throws SearchException for errors in searching for proteins.
      */
     public Collection getSpliceProteinsByXref(String pid) throws SearchException;
+
     /**
      * This method provides a means of searching intact objects, within the constraints
      * provided by the parameters to the method.
