@@ -1,10 +1,12 @@
 shortlabel: secondary-ac
 term: Secondary accession number
-definition: This qualifier is used when the object referred to by the crossreference describes the same object, and the identifier used is a seconcary identifier in the external database. Crossreferences using secondary accession numbers are only included in IntAct to allow to retrieve imported proteins by their secondary accession numbers.
+definition: This qualifier is used when the object referred to by the crossreference describes the same object, and the identifier used is a secondary identifier in the external database. Crossreferences using secondary accession numbers are only included in IntAct to allow to retrieve imported proteins by their secondary accession numbers.
+remark: Normally not used in manual curation.
 
 shortlabel: go-definition-ref
 term: GO definition reference
 definition: This qualifier is used when the crossreference is imported from the GO tag definition_reference.
+remark: Normally not used in manual curation.
 
 shortlabel: identity
 term: Reference to the identical object in another database
@@ -20,20 +22,14 @@ term: GO term for cellular component
 shortlabel: process
 term: GO term for biological process in which the complex is involved.
 
-shortlabel: secondary-ref-ex
-term: reference referring to a method in another paper which was used in the current experiment.
-
-shortlabel: secondary reference
+shortlabel: secondary-reference
 term: refers to a related paper.
 
 shortlabel: isoform-parent
-term: Reference to the original protein from which is derived that isoform
-definition: This qualifier is used when an isoform is created, the object refered is the protein to which belongs the original sequence. 
+term: Reference to the master sequence from which this isoform has been derived.
+definition: This qualifier is used when an isoform is created, the object refered is the protein to which the original sequence belongs. 
 
 shortlabel: function
 term: GO term denoting function of the complex
-definition: GO term denoting function or process of complex
-
-shortlabel: location
-term: GO term denoting subcellular location of complex
+definition: GO term denoting function of the complex.
 
