@@ -117,9 +117,6 @@
 
     <!-- =================================================================== -->
 
-
-    <!-- =================================================================== -->
-
     <!-- Calls the jar task from core build file if intact core jar file
          is missing.
     -->
@@ -194,21 +191,16 @@
     <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
-    <target name="compile-all" depends="make-jar"
-        description="Compiles all the source files">
-
-        <!-- Create the dest dir if it doesn't exist. -->
-        <mkdir dir="${dest.dir}"/>
+    <target name="compile-all" depends="compile" description="Compiles all the source files">
 
         <!-- Only compile dataConversion sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.4"
-            includes="**/application/dataConversion/**, **/application/psiUpload/**">
-            <classpath refid="project.test.class.path"/>
+            includes="**/application/dataConversion/**">
+
+            <classpath refid="project.class.path"/>
         </javac>
 
-        <!-- Copy configuration files -->
-        <antcall target="cp-config-files"/>
     </target>
 
     <!-- =================================================================== -->
@@ -307,10 +299,10 @@
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
 
-    <target name="junit-test-stdout" depends="clean, compile-test"
+    <target name="junit-test-stdout" depends="compile-test"
         description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
-            <arg value="uk.ac.ebi.intact.application.psiUpload.test.AllJUnitTests"/>
+            <arg value="uk.ac.ebi.intact.application.dataConversion.psiUpload.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </java>
     </target>
