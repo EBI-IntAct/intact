@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-     ANT build configuration file for search module.
-     Author: Sugath Mudali, smudali@ebi.ac.uk.
-     Version: $Id$
--->
 
 <project name="search" basedir="." default="compile">
     <property name="project.version" value="1.0"/>
@@ -30,7 +25,7 @@
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
-    
+
      <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
@@ -76,7 +71,9 @@
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-lang.jar"/>
-        
+        <pathelement path="${intact.app.dir}/lib/commons-beanutils.jar"/>
+        <pathelement path="${intact.app.dir}/lib/concurrent.jar"/>
+
     </path>
 
     <!-- =================================================================== -->
