@@ -57,7 +57,6 @@ public class CommentAddForm extends IntactBaseForm {
 
     /**
      * Sets the topic.
-     *
      * @param topic sets the id of the topic.
      */
     public void setTopic(String topic) {
@@ -65,24 +64,12 @@ public class CommentAddForm extends IntactBaseForm {
     }
 
     /**
-     * Return a collection of topics.
-     *
-     * <pre>
-     * post: return != null
-     * post: return->forall(obj : Object | obj.oclIsTypeOf(String))
-     * </pre>
-     */
-//    public Collection getTopicNames() {
-//        return super.getList(IntactUserIF.TOPIC_NAMES);
-//    }
-
-    /**
      * Resets the form to their defualt values. Called from action classes
-     * to reset the forms or else it will display the user entered values.
+     * to reset the forms or else it will display the last entered values.
      */
     public void reset() {
-        myAnnotatedText = "";
-        myTopic = "";
+        myAnnotatedText = null;
+        myTopic = null;
     }
 
     /**
