@@ -4,9 +4,21 @@
 
 <form-validation>
     <formset>
+
         <form name="loginForm">
             <field property="username" depends="required">
          	    <arg0 key="loginForm.label.username"/>
+            </field>
+        </form>
+
+        <form name="cvInfoForm">
+            <field property="shortLabel" depends="required, mask">
+                <msg name="mask" key="cvinfo.label.mask"/>
+         	    <arg0 key="cvinfo.label.shortlabel"/>
+                <var>
+                    <var-name>mask</var-name>
+                    <var-value>^\w*$</var-value>
+                </var>
             </field>
         </form>
     </formset>
