@@ -16,10 +16,6 @@
 
 <jsp:include page="../js.jsp" />
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
-</style>
-
 <html:form action="/bsDispatch" focus="shortLabel">
 
     <jsp:include page="info.jsp" />

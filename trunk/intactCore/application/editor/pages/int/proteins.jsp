@@ -23,10 +23,6 @@
 <%-- Menu to add a new Protein --%>
 <c:set var="rolelist_" value="${view.addProteinRoleMenu}"/>
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
-</style>
-
 <h3>Proteins</h3>
 
 <c:if test="${not empty intForm.map.proteins}">
