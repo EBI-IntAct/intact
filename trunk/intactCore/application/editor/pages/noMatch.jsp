@@ -21,8 +21,8 @@
 
 <h1>Search Results: No Matches!</h1>
 
-<h2>Sorry - could not find any <%= user.getSearchClass() %>
-  by trying to match <%= info.substring(info.indexOf('=') + 1) %> with: </h2>
+<h2>Sorry - could not find any <%= user.getSelectedTopic() %>(s)
+  by trying to match <span style="color: red;"><%= info.substring(info.indexOf('=') + 1) %></span> with: </h2>
 <ul>
   <li>AC,
   <li>short label,
