@@ -6,21 +6,22 @@ in the root directory of this distribution.
 
 <!-- Page to display a single Object view.This page view will display single CvObjects and BioSource Objects.
 
-    @author Michael Kleen
+    @author Chris Lewington
     @version $Id$
 -->
 
 <%@ page language="java" %>
 
 <%-- Intact classes needed --%>
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants,
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  java.util.Iterator,
                  uk.ac.ebi.intact.model.Annotation,
                  uk.ac.ebi.intact.model.Xref,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.BioSourceViewBean,                 
                  uk.ac.ebi.intact.application.search3.struts.view.beans.XrefViewBean,
                  java.util.Collection,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.AnnotationViewBean"
+                 uk.ac.ebi.intact.application.search3.struts.view.beans.AnnotationViewBean,
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"
     %>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -32,9 +33,8 @@ in the root directory of this distribution.
 
 <span class="smalltext"> </span>
 
-<h3>Search Results for
-    <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%>
-</h3>
+    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
+     <br/>
 <!-- show the searched object ac -->
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
@@ -66,22 +66,21 @@ in the root directory of this distribution.
                      </td>
 
 
-                    <!-- shortlabel -->
-                    <td class="headerdarkmid" colspan="4">
-                        <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>"
-                            class="tdlink"
-                            target="new"><span style="color: rgb(102, 102, 204);">IntAct </span>name:</a>
-                        <a href="<%= bean.getObjSearchURL() %>" class="tdlink" style="font-weight: bold;">
-                        <b><span style="color: rgb(255, 0, 0);"><%= bean.getObjIntactName() %></span></b></a>
-                    </td>
+                       <!-- shortlabel -->
+                <td class="headerdarkmid">
+                    <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>"
+                        class="tdlink"
+                        target="new">IntAct name:</a>
+                    <b><span style="color: rgb(255, 0, 0);"><%= bean.getObjIntactName() %></span></b>
+                </td>
 
 <%  Collection someXrefBeans =  bean.getXrefs();
     Collection someAnnotations = bean.getFilteredAnnotations();
-    if(someXrefBeans.size() != 0 && someAnnotations.size() != 0 )  {
+    if(someXrefBeans.size() != 0 || someAnnotations.size() != 0 )  {
 %>
 
                     <!-- space for the table -->
-                    <td class="headerdarkmid">
+                    <td colspan="2" class="headerdarkmid">
                          &nbsp;
                      </td>
 
@@ -89,16 +88,16 @@ in the root directory of this distribution.
  <% } %>
                 </tr>
 
-                <!-- Shortname of the object -->
+                <!-- Description of the object -->
                  <tr bgcolor="white">
                  <td class="headerdarkmid">
-                            <a href="<%=bean.getHelpLink() + "AnnotatedObject.shortLabel" %>" class="tdlink">
-                               Name
-
+                            <a href="<%=bean.getHelpLink() + "AnnotatedObject.fullName" %>" class="tdlink">
+                               Description
                             </a>
                       </td>
                     <!-- Fullname of the object -->
-                    <td colspan="4" >
+                    <!-- changed -->
+                    <td colspan="4" class="tdlink" >
                         <%= bean.getFullname() %>
                     </td>
 
@@ -117,7 +116,7 @@ in the root directory of this distribution.
      <tr bgcolor="white">
           <!-- Annotation Help Section -->
          <td class="headerdarkmid" rowspan="<%= someAnnotations.size() %>">
-                    <a href="<%= bean.getHelpLink() + "ANNOT_HELP_SECTION" %>" class="tdlink">
+                    <a href="<%= bean.getHelpLink() + "AnnotatedObject.Annotation" %>" class="tdlink">
                     Annotations <br>
                     </a>
                 </td>
@@ -157,7 +156,7 @@ in the root directory of this distribution.
      <tr bgcolor="white">
                        <!-- Xref Name + help secion -->
                        <td class="headerdarkmid" rowspan="<%= someXrefBeans.size() %>">
-                            <a href="<%= bean.getHelpLink() + "XREF_HELP_SECTION" %>" class="tdlink">
+                            <a href="<%= bean.getHelpLink() + "Xref.cvrefType" %>" class="tdlink">
                             Xref
                             </a>
                         </td>
@@ -197,8 +196,13 @@ in the root directory of this distribution.
                      <td class="data">
                           <%=aXref.getSecondaryId()%>
                      </td>
-          <%  }    %>
+          <%  } else {   %>
 
+                      <!-- Xref secondary Id -->
+                     <td class="data">
+                        &nbsp
+                     </td>
+          <% } %>
                       <!-- type -->
                      <td class="data">
                         <a href="<%=bean.getHelpLink() + "Xref.cvrefType" %>" target="new"/>
