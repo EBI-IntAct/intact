@@ -91,7 +91,7 @@
 
 <c:if test="${not empty intForm.components}">
 
-    <table width="100%" border="0" cellspacing="1" cellpadding="2">
+    <table width="100%" border="0" cellspacing="1" cellpadding="2" id="proteins">
         <%-- Protein headings --%>
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="2%" rowspan="2"></th>
