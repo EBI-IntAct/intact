@@ -137,5 +137,8 @@ public class DocumentationIntegrityChecker {
             // I/O error
             ioe.printStackTrace();
         }
+
+        // we get here in case an exception occured ...
+        System.exit(1);
     }
 }
