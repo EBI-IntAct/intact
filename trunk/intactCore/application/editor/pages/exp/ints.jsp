@@ -1,5 +1,5 @@
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean,
-                 org.apache.struts.action.DynaActionForm"%><!--
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean"%>
+<!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -18,9 +18,33 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
+<%-- Need these for beans for to get argumnets to display a message when
+     the number of interactions exceed the allowed limit
+--%>
+<jsp:useBean id="user" scope="session"
+    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+
+<jsp:useBean id="service" scope="application"
+    class="uk.ac.ebi.intact.application.editor.business.EditorService"/>
+
 <h3>Interactions</h3>
 
-<c:if test="${not empty expForm.map.ints}">
+<%-- Check the limit --%>
+<c:if test="${user.view.numberOfInteractions gt service.interactionLimit}">
+    <div class="warning">
+        <bean:message key="message.ints.limit"
+            arg0='<%=Integer.toString(
+                    ((ExperimentViewBean) user.getView()).getNumberOfInteractions())%>'
+            arg1='<%=service.getResource("exp.interaction.limit")%>'/>
+    </div>
+    <%-- Set a flag to not to display any interactions --%>
+    <c:set var="noDisplayInts" value="yes"/>
+</c:if>
+
+<%-- Don't display an empty table if there are no interactions to display or too
+     many interactions to display.
+--%>
+<c:if test="${not empty expForm.map.ints and empty noDisplayInts}">
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="29%">
