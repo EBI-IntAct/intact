@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.cvedit.struts.security;
 import java.io.IOException;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.cvedit.exception.InvalidLoginException;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl;
@@ -77,66 +76,36 @@ public class LoginAction extends IntactBaseAction {
         }
         // Create a new session.
         session = request.getSession(true);
-//        if (session.isNew()) {
-//            // New session.
-//            Date createTime = new Date(session.getCreationTime());
-//            super.log("Starting a new session; created at: " + createTime);
-//        }
-//        else {
-//            // Using an existing session.
-//            Date startTime = new Date(session.getCreationTime());
-//            Date endTime = new Date(session.getLastAccessedTime());
-//            super.log("Using a session created on time: " + startTime +
-//                " and last accessed at " + endTime);
-//            super.log("Starting a new session (invalidating the previous one)");
-//            session.invalidate();
-//            //user = super.getIntactUser(session);
-//        }
-        // user could be null if the user was logged off.
-//        if (user == null) {
-            super.log("Creating a new user");
-            try {
-                user = new IntactUserImpl(repfile, ds, username, password);
-            }
-            catch (DataSourceException de) {
-                // Unable to get a data source...can't proceed
-                super.log(ExceptionUtils.getStackTrace(de));
-                // The errors to report back.
-                super.addError("error.invalid.user", de.getMessage());
-                super.saveErrors(request);
-                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-            }
-            catch (IntactException ie) {
-                // Unable to access the intact helper.
-                super.log(ExceptionUtils.getStackTrace(ie));
-                // The errors to report back.
-                super.addError("error.helper", ie.getMessage());
-                super.saveErrors(request);
-                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-            }
-            catch (InvalidLoginException ile) {
-                super.log("User " + user + " with " + password +
-                    " is rejected by the user as an invalid user");
-                // The errors to report back.
-                super.addError("error.invalid.user", "Unauthorised user");
-                super.saveErrors(request);
-                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-            }
-            catch (SearchException se) {
-                // Unable to construct lists such as topics, db names etc.
-                super.log(ExceptionUtils.getStackTrace(se));
-                // The errors to report back.
-                super.addError("error.search", se.getMessage());
-                super.saveErrors(request);
-                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-            }
-//        }
-//        else {
-//            super.log("Previous sessions stats");
-//            super.log("Logged in at: " + user.loginTime() + " logged off at: " +
-//                user.logoffTime());
-//            //super.log("Was working on: " + user.getSelectedTopic());
-//        }
+        super.log("Creating a new user");
+        try {
+            user = new IntactUserImpl(repfile, ds, username, password);
+        }
+        catch (DataSourceException de) {
+            System.out.println("Rep: " + repfile + " DS: " + ds);
+            // Unable to get a data source...can't proceed
+            super.log(ExceptionUtils.getStackTrace(de));
+            // The errors to report back.
+            super.addError("error.datasource", de.getMessage());
+            super.saveErrors(request);
+            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+        }
+        catch (IntactException ie) {
+            // Unable to access the intact helper.
+            super.log(ExceptionUtils.getStackTrace(ie));
+            // The errors to report back.
+            super.addError("error.invalid.user");
+            super.saveErrors(request);
+            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+        }
+        catch (SearchException se) {
+            // Unable to construct lists such as topics, db names etc.
+            super.log(ExceptionUtils.getStackTrace(se));
+            // The errors to report back.
+            super.addError("error.invalid.user");
+//            super.addError("error.search", se.getMessage());
+            super.saveErrors(request);
+            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+        }
         // Save the info in the user session object for us to retrieve later.
         super.log("user selected " + theForm.getTopic());
 

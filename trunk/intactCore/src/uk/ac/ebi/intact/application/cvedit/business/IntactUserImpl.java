@@ -15,8 +15,6 @@ import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.application.cvedit.exception.InvalidLoginException;
-import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.struts.view.ListObject;
 import org.apache.commons.collections.CollectionUtils;
@@ -188,15 +186,14 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      *
      * @exception DataSourceException for error in getting the data source; this
      *  could be due to the errors in repository files.
-     * @exception IntactException for errors in creating IntactHelper.
-     * @exception InvalidLoginException the underlying persistent mechanism
-     *  rejected <code>user</code> and <code>password</code> combination.
+     * @exception IntactException for errors in creating IntactHelper; possibly
+     * due to an invalid user.
      * @exception SearchException for error in creating lists such as topics,
      *  database names etc.
      */
     public IntactUserImpl(String mapping, String dsClass, String user,
             String password) throws DataSourceException, IntactException,
-            InvalidLoginException, SearchException {
+            SearchException {
         myUser = user;
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
