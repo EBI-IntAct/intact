@@ -45,15 +45,17 @@ public class ParticipantListParser {
     public void process( final Element entry ) {
 
         final Element proteinsList = DOMUtil.getFirstElement( entry, "interactorList" );
-        final NodeList someProteins = proteinsList.getElementsByTagName( "proteinInteractor" );
-        for ( int i = 0; i < someProteins.getLength(); i++ ) {
-            final Node interactor = someProteins.item( i );
-            final ProteinInteractorParser proteinInteractor = new ProteinInteractorParser( this, (Element) interactor );
+        if( proteinsList != null ) {
+            final NodeList someProteins = proteinsList.getElementsByTagName( "proteinInteractor" );
+            for ( int i = 0; i < someProteins.getLength(); i++ ) {
+                final Node interactor = someProteins.item( i );
+                final ProteinInteractorParser proteinInteractor = new ProteinInteractorParser( this, (Element) interactor );
 
-            final LabelValueBean lvb = proteinInteractor.process();
-            if( lvb != null ) {
-                interactors.put( lvb.getLabel(), lvb.getValue() );
-            }
-        } // interactors
+                final LabelValueBean lvb = proteinInteractor.process();
+                if( lvb != null ) {
+                    interactors.put( lvb.getLabel(), lvb.getValue() );
+                }
+            } // interactors
+        }
     }
 }
