@@ -56,7 +56,7 @@
                 <html:errors property="int.interaction"/>
             </td>
         <tr class="tableRowEven">
-            <th class="tableCellHeader">Organisms Type</th>
+            <th class="tableCellHeader">Organism</th>
             <td class="tableCell" align="left" valign="top">
                 <html:select property="organism" name="<%=formName%>">
                     <html:options name="organismlist" />
