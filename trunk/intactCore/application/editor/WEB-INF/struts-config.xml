@@ -271,7 +271,7 @@
         <action path="/cv/submit"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction"
             name="cvForm"
-            input="/do/cv/fill/form"
+            input="edit.layout"
             validate="true"
             scope="session"
             parameter="dispatch">
@@ -642,7 +642,6 @@
 
             <forward name="submit" path="/do/feature/submit"/>
             <forward name="cancel" path="/do/feature/cancel"/>
-            <forward name="delete" path="/do/feature/delete"/>
 
             <!-- Cloning a undetermined feature -->
             <forward name="feature.clone" path="/do/feature/clone"/>
@@ -686,18 +685,6 @@
             <forward name="delete" path="/do/feature/delete"/>
         </action>
 
-        <!--
-             Handles when the Delete button is selected from the Feature editor.
-        -->
-        <action path="/feature/delete"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.DeleteFeatureAction"
-            name="featureForm"
-            validate="false"
-            scope="session">
-            <!-- Back to the interaction editor -->
-            <forward name="success" path="/do/int/fill/form"/>
-        </action>
-
         <!-- Action to handle when a button (edit/save/delete) related to xref
              is activated
         -->
@@ -714,29 +701,25 @@
             name="featureForm"
             validate="false"
             scope="session">
-            <forward name="success" path="/do/feature/fill/form"/>
+            <forward name="success" path="edit.layout"/>
         </action>
 
         <!-- Action to handle for adding a new  range -->
         <action path="/feature/range/new"
             type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureNewRangeAction"
             name="featureForm"
-            input="/do/feature/fill/form"
+            input="edit.layout"
             validate="true"
-            scope="session"
-            parameter="dispatch">
-            <!-- A success for Save/Continue -->
-            <forward name="success" path="edit.layout"/>
+            scope="session">
         </action>
 
         <!-- Action to handle when a Feature is saved/deleted or edited. -->
         <action path="/feature/range"
             type="uk.ac.ebi.intact.application.editor.struts.action.feature.RangeDispatchAction"
             name="featureForm"
-            input="/do/feature/fill/form"
+            input="edit.layout"
             validate="true"
-            scope="session"
-            parameter="dispatch">
+            scope="session">
         </action>
 
         <!-- ========== Common actions shared by various editors ========== -->

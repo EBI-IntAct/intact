@@ -88,12 +88,15 @@
             <br/><bean:message key="button.cancel.titleKey"/>
         </td>
 
-        <td align="center" bgcolor="red">
-            <html:submit property="dispatch" onclick="return confirmDelete()"
-                disabled="<%=disable.equals(Boolean.TRUE)%>">
-                <bean:message key="button.delete"/>
-            </html:submit>
-            <br/><bean:message key="button.delete.titleKey"/>
-        </td>
+        <%-- Delete button if the view says so --%>
+        <c:if test="${view.deleteState}">
+            <td align="center" bgcolor="red">
+                <html:submit property="dispatch" onclick="return confirmDelete()"
+                    disabled="<%=disable.equals(Boolean.TRUE)%>">
+                    <bean:message key="button.delete"/>
+                </html:submit>
+                <br/><bean:message key="button.delete.titleKey"/>
+            </td>
+        </c:if>
     </tr>
 </table>
