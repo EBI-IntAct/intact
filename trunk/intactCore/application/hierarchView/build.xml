@@ -210,8 +210,12 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <delete>
              <fileset dir="${layouts.dir}">
                  <!-- Do not remove hv specific files -->
+                 <exclude name="index.jsp"/>
                  <exclude name="sidebar.jsp"/>
-                 <exclude name="content.jsp"/>
+                 <exclude name="contentFrame.jsp"/>
+                 <exclude name="graphFrame.jsp"/>
+                 <exclude name="sourceListFrame.jsp"/>
+                 <exclude name="selectedSourceFrame.jsp"/>
             </fileset>
         </delete>
 
@@ -220,12 +224,15 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <delete>
              <fileset dir="${pages.dir}">
                  <!-- Do not remove hv specific files -->
+                 <exclude name="index.jsp"/>
+                 <exclude name="blank.jsp"/>
+                 <exclude name="sidebarSearch.jsp"/>
+                 <exclude name="sidebarGraph.jsp"/>
                  <exclude name="graphTitle.jsp"/>
                  <exclude name="highlightTitle.jsp"/>
                  <exclude name="graph.jsp"/>
                  <exclude name="highlight.jsp"/>
-                 <exclude name="sidebarSearch.jsp"/>
-                 <exclude name="sidebarGraph.jsp"/>
+                 <exclude name="selectedSource.jsp"/>
             </fileset>
         </delete>
     </target>
@@ -271,7 +278,8 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <mkdir dir="${dest.dir}" />
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            includes="**/application/hierarchView/**"
+            includes="**/application/hierarchView/**,
+                      **/application/commons/**"
             debug="on">
             <classpath refid="project.class.path"/>
         </javac>
