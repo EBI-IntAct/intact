@@ -1,3 +1,33 @@
+shortlabel: de novo protein sequ
+term: de novo protein sequencing by mass spectrometry
+goid: MI:0032
+definition: The strategy to determine the complete amino acid sequence of a protein by mass spectrometry relies on the generation of a nested set of fragments differing by one amino acid. This permits to reveal the identity of the residue that has been removed at each degradation step by measuring the mass difference of fragments differing of one residue. Peptide fragments can be obtained by protease treatment combined with the fragmentation promoted by collision (or other methods) within a tandem mass spectrometer. This approach can be carried out with LC MS/MS (Liquid Chromatography Tandem Mass Spectrometry), nanoESI MS/MS (nanoElectrospray Ionisation tandem mass spectrometry), or FTMS (Fourier Transform mass spectrometry) instruments.
+definition_reference: PMID:10984529
+
+shortlabel: edman degradation
+term: edman degradation
+goid: MI:0039
+definition: In this procedure the N-terminus amino acid is cleaved from a polypeptide and identified by high-pressure liquid chromatography. The cycle is repeated on the evershortening polypeptide until all the residues are identified. On average only 20-30 consecutive cycles can be performed and lead to amino acid identification. Longer polypeptides or full length proteins must be cleaved by specific protease before Edman degradation and their sequences built by fragment overlapping.
+
+shortlabel: full identification
+term: full identification by sequencing
+goid: MI:0056
+
+shortlabel: monoclonal antibody
+term: monoclonal antibody
+goid: MI:0072
+definition: monoclonal antibodies are monospecific antibodies produced in the supernatant of a cell line obtained by fusing a lymphocyte B to a myeloma cell line or selected by phage display technology.
+
+shortlabel: nucleotide sequence
+term: nucleotide sequence identification
+goid: MI:0078
+definition: Identification of a nucleotide sequence.
+
+shortlabel: partial dna sequence
+term: partial dna sequence identification by hybridization
+goid: MI:0080
+definition: Genes are recognised by hybridization of a probe with a fragment of the gene sequence.
+
 shortlabel: participant detectio
 term: participant detection
 goid: MI:0002
@@ -14,10 +44,29 @@ shortlabel: peptide synthesis
 term: peptide synthesis
 goid: MI:0083
 
+shortlabel: polyclonal antibody
+term: polyclonal antibody
+goid: MI:0086
+definition: Polyclonal antibodies are a mixture of different antibodies that represent the immune response, normally in an experimental animal, to any given antigen.
+
+shortlabel: predetermined
+term: predetermined
+goid: MI:0221
+definition_reference: PMID:7940758
+
+shortlabel: primer specific pcr
+term: primer specific pcr
+goid: MI:0088
+definition: Sequences can be identified in a DNA mixture by launching a PCR (Polymerase Chain Reaction) controlled by sequence specific primers. Such reaction starts only when the hybridization of the primer with a complementary sequence occurs.
+
 shortlabel: protein sequence ide
 term: protein sequence identification
 goid: MI:0093
-definition: Single amino acid identification along a protein sequence. 
+definition: Single amino acid identification along a protein sequence.
+
+shortlabel: radio-labelled prote
+term: radio-labelled protein
+goid: MI:0222
 
 shortlabel: sequence tag identif
 term: sequence tag identification
@@ -26,46 +75,6 @@ definition: This approach leads to protein identification by combining mass meas
 definition_reference: PMID:10967324
 definition_reference: PMID:11752590
 
-shortlabel: de novo protein sequ
-term: de novo protein sequencing by mass spectrometry
-goid: MI:0032
-definition: The strategy to determine the complete amino acid sequence of a protein by mass spectrometry relies on the generation of a nested set of fragments differing by one amino acid. This permits to reveal the identity of the residue that has been removed at each degradation step by measuring the mass difference of fragments differing of one residue. Peptide fragments can be obtained by protease treatment combined with the fragmentation promoted by collision (or other methods) within a tandem mass spectrometer. This approach can be carried out with LC MS/MS (Liquid Chromatography Tandem Mass Spectrometry), nanoESI MS/MS (nanoElectrospray Ionisation tandem mass spectrometry), or FTMS (Fourier Transform mass spectrometry) instruments.
-definition_reference: PMID:10984529
-
-shortlabel: edman degradation
-term: edman degradation
-goid: MI:0039
-definition: In this procedure the N-terminus amino acid is cleaved from a polypeptide and identified by high-pressure liquid chromatography. The cycle is repeated on the evershortening polypeptide until all the residues are identified. On average only 20-30 consecutive cycles can be performed and lead to amino acid identification. Longer polypeptides or full length proteins must be cleaved by specific protease before Edman degradation and their sequences built by fragment overlapping. 
-
-shortlabel: full identification 
-term: full identification by sequencing
-goid: MI:0056
-
-shortlabel: monoclonal antibody
-term: monoclonal antibody
-goid: MI:0072
-definition: monoclonal antibodies are monospecific antibodies produced in the supernatant of a cell line obtained by fusing a lymphocyte B to a myeloma cell line or selected by phage display technology.
-
-shortlabel: nucleotide sequence 
-term: nucleotide sequence identification
-goid: MI:0078
-definition: Identification of a nucleotide sequence.
-
-shortlabel: partial dna sequence
-term: partial dna sequence identification by hybridization
-goid: MI:0080
-definition: Genes are recognised by hybridization of a probe with a fragment of the gene sequence. 
-
-shortlabel: polyclonal antibody
-term: polyclonal antibody
-goid: MI:0086
-definition: Polyclonal antibodies are a mixture of different antibodies that represent the immune response, normally in an experimental animal, to any given antigen.
-
-shortlabel: primer specific pcr
-term: primer specific pcr
-goid: MI:0088
-definition: Sequences can be identified in a DNA mixture by launching a PCR (Polymerase Chain Reaction) controlled by sequence specific primers. Such reaction starts only when the hybridization of the primer with a complementary sequence occurs.
-
 shortlabel: southern blot
 term: southern blot
 goid: MI:0103
@@ -73,14 +82,5 @@ goid: MI:0103
 shortlabel: western blot
 term: western blot
 goid: MI:0113
-definition: Western blot is a procedure to identify and quantify proteins. A mixture of protein is first submitted to an electrophoresis in denaturant condition and then electro-transferred from the gel to a membrane. The membrane is then incubated with a primary antibody specific for a given protein or a specific residue modification in the sample under analysis. A secondary antibody, radiolabelled or fused to a chromogenic enzyme, targets the first antibody and allows the visualisation of the protein band on the membrane. 
-
-shortlabel: predetermined
-term: predetermined
-goid: MI:0221
-definition_reference: PMID:7940758
-
-shortlabel: radio-labelled prote
-term: radio-labelled protein
-goid: MI:0222
+definition: Western blot is a procedure to identify and quantify proteins. A mixture of protein is first submitted to an electrophoresis in denaturant condition and then electro-transferred from the gel to a membrane. The membrane is then incubated with a primary antibody specific for a given protein or a specific residue modification in the sample under analysis. A secondary antibody, radiolabelled or fused to a chromogenic enzyme, targets the first antibody and allows the visualisation of the protein band on the membrane.
 

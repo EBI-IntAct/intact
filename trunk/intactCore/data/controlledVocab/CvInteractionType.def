@@ -1,109 +1,143 @@
-shortlabel: aggregation
-term: aggregation
-
 shortlabel: acetylation reaction
 term: acetylation reaction
+goid: MI:0192
 definition: Reaction, that can affect K,C,A,D,E,Q,G,I,K,M,P,S,T,Y,V residues.
+
+shortlabel: aggregation
+term: aggregation
+goid: MI:0191
 
 shortlabel: amidation reaction
 term: amidation reaction
+goid: MI:0193
 definition: Irreversible reaction that can affect A,R,N,D,C,Q,E,G,H,I,L,K,M,F,P,S,T,W,Y or V residues.
 
 shortlabel: cleavage
 term: cleavage
+goid: MI:0194
 
 shortlabel: covalent binding
 term: covalent binding
+goid: MI:0195
 
 shortlabel: covalent interaction
 term: covalent interaction
+goid: MI:0196
 definition: Physical interaction mediated by covalent bond rearrangement.
 
 shortlabel: deacetylation reacti
 term: deacetylation reaction
-definition: N6-acetyl-L-lysine or S-acetyl-L-cysteine are cleaved and return K or C residues. 
+goid: MI:0197
+definition: N6-acetyl-L-lysine or S-acetyl-L-cysteine are cleaved and return K or C residues.
 
 shortlabel: defarnesylation reac
 term: defarnesylation reaction
+goid: MI:0198
 
 shortlabel: deformylation reacti
 term: deformylation reaction
+goid: MI:0199
 
 shortlabel: degeranylation
 term: degeranylation
+goid: MI:0200
 definition: S-geranylgeranyl-L-cysteine is cleaved and returns a C residue.
 
 shortlabel: demyristoylation
 term: demyristoylation
+goid: MI:0201
 
 shortlabel: depalmitoylation
 term: depalmitoylation
+goid: MI:0202
 definition: S-palmitoyl-L-cysteine, N6-palmitoyl-L-lysine, O-palmitoyl-L-threonine or O-palmitoyl-L-serine are cleaved and return C,K,T or S residues
 
 shortlabel: dephosphorylation re
 term: dephosphorylation reaction
+goid: MI:0203
 definition: Phosphoresidues are cleaved and return D,C,H,S,T,Y or R residues.
 
 shortlabel: deubiquitination rea
 term: deubiquitination reaction
+goid: MI:0204
 definition: Cleavage of the G-K bond and release of ubiquitin or ubiquitin like proteins.
 
 shortlabel: disaggregation
 term: disaggregation
+goid: MI:0205
 
 shortlabel: farnesylation reacti
 term: farnesylation reaction
+goid: MI:0206
 
 shortlabel: formylation reaction
 term: formylation reaction
+goid: MI:0207
 definition: Reaction that can affect K or G residues.
 
 shortlabel: genetic interaction
 term: genetic interaction
+goid: MI:0208
 
 shortlabel: geranylation reactio
 term: geranylation reaction
+goid: MI:0209
 definition: Reversible reaction that can affect C residue.
 
 shortlabel: hydroxylation reacti
 term: hydroxylation reaction
+goid: MI:0210
 definition: Irreversible reaction that can affect K,P,Y  or R residues.
+
+shortlabel: interaction type
+term: interaction type
+
+shortlabel: interaction type 
+term: interaction type 
+goid: MI:0190
 
 shortlabel: lipid addition
 term: lipid addition
+goid: MI:0211
 definition: Covalent binding of lipid group on a protein residue.
 
 shortlabel: lipid cleavage
 term: lipid cleavage
+goid: MI:0212
 
 shortlabel: methylation reaction
 term: methylation reaction
+goid: MI:0213
 
 shortlabel: myristoylation react
 term: myristoylation reaction
+goid: MI:0214
 
 shortlabel: non covalent interac
 term: non covalent interaction
+goid: MI:0215
 
 shortlabel: palmitoylation react
 term: palmitoylation reaction
+goid: MI:0216
 definition: Reversible reaction that can affect C,K,T or S residues.
 
 shortlabel: phosphorylation reac
 term: phosphorylation reaction
+goid: MI:0217
 definition: Reversible reaction that can affect D,C,H,S,T,Y,R residues.
 
 shortlabel: physical interaction
 term: physical interaction
-definition: Interaction that requires atoms proximity. 
+goid: MI:0218
+definition: Interaction that requires atoms proximity.
 
 shortlabel: synthetic lethal
 term: synthetic lethal
+goid: MI:0219
 
 shortlabel: ubiquitination react
 term: ubiquitination reaction
+goid: MI:0220
 definition: Reversible reaction that create a covalent bond between a C-terminus G of ubiquitin or ubiquitin like proteins and a K residue of the target.
-
-shortlabel: interaction type 
-term: interaction type 
 

@@ -1,3 +1,10 @@
+shortlabel: component
+term: GO term for cellular component
+
+shortlabel: function
+term: GO term denoting function of the complex
+definition: GO term denoting function of the complex.
+
 shortlabel: go-definition-ref
 term: GO definition reference
 definition: This qualifier is used when the crossreference is imported from the GO tag definition_reference.
@@ -8,29 +15,23 @@ term: Reference to the identical object in another database
 example: The same protein, described in two different databases.
 definition: This qualifier is used when the object referred to by the crossreference describes the same object. The reference will usually be done by primary accession number of the external database.
 
-shortlabel: function
-term: GO term denoting function of the complex
-definition: GO term denoting function of the complex.
+shortlabel: isoform-parent
+term: Reference to the master sequence from which this isoform has been derived.
+definition: This qualifier is used when an isoform is created, the object refered is the protein to which the original sequence belongs.
+
+shortlabel: primary-reference
+term: Used to indicate the PMID from which the experimental data is taken
+
+shortlabel: process
+term: GO term for biological process in which the complex is involved.
 
 shortlabel: secondary-ac
 term: Secondary accession number
 definition: This qualifier is used when the object referred to by the crossreference describes the same object, and the identifier used is a secondary identifier in the external database. Crossreferences using secondary accession numbers are only included in IntAct to allow to retrieve imported proteins by their secondary accession numbers.
 remark: Normally not used in manual curation.
 
-shortlabel: primary-reference
-term: Used to indicate the PMID from which the experimental data is taken 
-
-shortlabel: component
-term: GO term for cellular component
-
-shortlabel: process
-term: GO term for biological process in which the complex is involved.
-
-shortlabel: isoform-parent
-term: Reference to the master sequence from which this isoform has been derived.
-definition: This qualifier is used when an isoform is created, the object refered is the protein to which the original sequence belongs. 
-
 shortlabel: see-also
 term: Related object in IntAct
 definition: Related object in IntAct, usually of the same class.
 example: Two experiments published by the same author in different papers, where the author refers to his previous work in one of them. In this case, the second experiment can optionally use an IntAct crossreference to the first experiment, using the reference qualifier "see-also".
+

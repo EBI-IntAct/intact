@@ -1,31 +1,31 @@
-$interaction type 
- %genetic interaction
-  %synthetic lethal
- %physical interaction
-  %covalent interaction
-   %cleavage
-    %deacetylation reaction
-    %deformylation reaction
-    %dephosphorylation reaction
-    %deubiquitination reaction
-    %lipid cleavage
-     %defarnesylation reaction
-     %degeranylation
-     %demyristoylation
-     %depalmitoylation
-   %covalent binding
-    %acetylation reaction
-    %amidation reaction
-    %formylation reaction
-    %hydroxylation reaction
-    %lipid addition
-     %farnesylation reaction
-     %geranylation reaction
-     %myristoylation reaction
-     %palmitoylation reaction
-    %methylation reaction
-    %phosphorylation reaction
-    %ubiquitination reaction
-  %non covalent interaction
-   %aggregation
-   %disaggregation
+$interaction type  ; MI:0190
+ %genetic interaction ; MI:0208
+  %synthetic lethal ; MI:0219
+ %physical interaction ; MI:0218
+  %covalent interaction ; MI:0196
+   %cleavage ; MI:0194
+    %deacetylation reaction ; MI:0197
+    %deformylation reaction ; MI:0199
+    %dephosphorylation reaction ; MI:0203
+    %deubiquitination reaction ; MI:0204
+    %lipid cleavage ; MI:0212
+     %defarnesylation reaction ; MI:0198
+     %degeranylation ; MI:0200
+     %demyristoylation ; MI:0201
+     %depalmitoylation ; MI:0202
+   %covalent binding ; MI:0195
+    %acetylation reaction ; MI:0192
+    %amidation reaction ; MI:0193
+    %formylation reaction ; MI:0207
+    %hydroxylation reaction ; MI:0210
+    %lipid addition ; MI:0211
+     %farnesylation reaction ; MI:0206
+     %geranylation reaction ; MI:0209
+     %myristoylation reaction ; MI:0214
+     %palmitoylation reaction ; MI:0216
+    %methylation reaction ; MI:0213
+    %phosphorylation reaction ; MI:0217
+    %ubiquitination reaction ; MI:0220
+  %non covalent interaction ; MI:0215
+   %aggregation ; MI:0191
+   %disaggregation ; MI:0205
