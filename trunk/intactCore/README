@@ -79,12 +79,26 @@ have Windows then everything can still be used provided you have cygwin installe
 a) Firstly download the intact software from http://sourceforge.net/projects/intact, by following the
 instructions for anonymous download on the CVS pages. All of what follows assumes a root directory of 'intactCore'.
 
-b) You must then ensure that the configuration files are set correctly for you environment. A lot of
-this is automated for you, via the 'config/build.properties' file. Edit that file and uncomment the target environment
-that you have (ie currently for oracle or postgres). Note that you need to have a file in the config directory called
-'oracle.properties' (respectivly 'postgres.properties') containing your password (eg 'password=abcd'), username...
-In the 'template' directory you will find a file called 'oracle.template' ('postgres.template') - edit this
-file to define database access, then save it as 'oracle.properties' ('postgres.properties') in the 'config' directory.
+b) You must then ensure that the configuration files are set correctly for you environment. A lot of this is automated
+for you, via the 'config/build.properties' file.
+
+Features:
+        - Target database:
+          Uncomment the target environment that you have (ie currently for oracle or postgres)
+          Note that you need to have a file in the config directory called 'oracle.properties' (respectivly
+          'postgres.properties') containing your password (eg 'password=abcd'), username...
+          In the 'template' directory you will find a file called 'oracle.template' ('postgres.template') -
+          edit this file to define database access, then save it as 'oracle.properties' ('postgres.properties')
+          in the 'config' directory.
+
+        - Caching:
+          you can enable/disable database caching by modifying the property: ojb.ObjectCacheClass
+
+        - IntAct URL:
+          you can customise the URL at which the intact applications will be available by editing
+          the property: server.name
+          If you set it to 'intact', all applications will be reachable from the following URL pattern:
+          http://www.myserver.com/intact/<application>
 
 In the intactCore directory, type
 
