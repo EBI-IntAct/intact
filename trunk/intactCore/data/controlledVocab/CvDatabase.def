@@ -2,25 +2,29 @@ shortlabel: sptr
 term: Swiss-Prot/TrEMBL protein sequence database
 definition: The Swiss-Prot/TrEMBL protein sequence database.
 url: http://www.ebi.ac.uk/swissprot/
+search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+[SWALL-acc:${ac}]+-view+SwissEntry
 
 shortlabel: pubmed
 term: PubMed
 definition: Citation database of the National Library of Medicine, US.
 url: http://www.ncbi.nlm.nih.gov/PubMed/
+search-url: http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=${ac}&dopt=Abstract
 
 shortlabel: sgd
 term: Saccharomyces Genome Database
 url: http://genome-www.stanford.edu/Saccharomyces/
+search-url: http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=${ac}
 
 shortlabel: go
 term: Gene Ontology
 url: http://www.geneontology.org/
 definition: The Gene Ontology.
+search-url: http://www.ebi.ac.uk/ego/DisplayGoTerm?id=${ac}
 
 shortlabel: newt
 term: New EBI Web Taxonomy
 url: http://www.ebi.ac.uk/newt/index.html
-search-url: http://www.ebi.ac.uk/newt/display?search=
+search-url: http://www.ebi.ac.uk/newt/display?search=${ac}
 definition: NEWT is the taxonomy database maintained by the Swiss-Prot group. It integrates taxonomy data compiled in the NCBI database and data specific to the Swiss-Prot protein knowledgebase. 
 
 shortlabel: interpro
