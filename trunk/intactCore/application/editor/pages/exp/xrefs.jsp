@@ -7,7 +7,7 @@
   -->
 
 <%--
-  - Presents crossreference information for an Annotated object.
+  - For editing/saving a Xref for an Experiment.
   --%>
 
 <%@ page language="java"%>
@@ -116,7 +116,7 @@
                         <bean:write name="xrefs" property="databaseLink" filter="false"/>
                     </td>
                     <td class="tableCell">
-                        <bean:write name="xrefs" property="primaryId" filter="false"/>
+                        <bean:write name="xrefs" property="primaryIdLink" filter="false"/>
                     </td>
                     <td class="tableCell">
                         <bean:write name="xrefs" property="secondaryId"/>
