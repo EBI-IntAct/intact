@@ -50,6 +50,8 @@ public class AllJUnitTests extends TestCase {
         suite.addTest( ProteinInteractorParserTest.suite() );
         suite.addTest( InteractionTypeParserTest.suite() );
         suite.addTest( InteractionParserTest.suite() );
+        suite.addTest( TissueParserTest.suite() );
+        suite.addTest( CellTypeParserTest.suite() );
         return suite;
     }
 }
