@@ -803,12 +803,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private void initialize() throws IntactException, DataSourceException {
         DAOSource dao = DAOFactory.getDAOSource(myDSClass);
 
-        // Save the user info in the DS for us to access them later.
-        dao.setUser(myUserName);
-        dao.setPassword(myPassword);
-
         // Construct the the helper.
-        myHelper = new IntactHelper(dao);
+        myHelper = new IntactHelper(dao, myUserName, myPassword);
 
         try {
             myDatabaseName = myHelper.getDbName();
