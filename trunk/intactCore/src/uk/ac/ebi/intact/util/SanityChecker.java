@@ -24,7 +24,6 @@ import java.util.Iterator;
 public class SanityChecker {
 
     //Keep the helper at object level - may need it for other tests later
-    private IntactHelper helper;
     private PrintWriter writer;
 
     //Holds the statements for finding userstamps in various tables
@@ -69,7 +68,6 @@ public class SanityChecker {
 
 
     public SanityChecker(IntactHelper helper, PrintWriter writer) throws IntactException, SQLException {
-        this.helper = helper;
         this.writer = writer;
 
         //set up statements to get user info...
@@ -539,7 +537,7 @@ public class SanityChecker {
                 filename = args[0];
             }
 
-            out = new PrintWriter(new BufferedWriter(new FileWriter(args[0])));
+            out = new PrintWriter(new BufferedWriter(new FileWriter( filename )));
             helper = new IntactHelper();
             System.out.println("Helper created (User: " + helper.getDbUserName() + " " +
                                "Database: " + helper.getDbName() + ")");
