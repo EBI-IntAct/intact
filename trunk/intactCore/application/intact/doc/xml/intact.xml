@@ -69,13 +69,13 @@
                             <dt><a href="#BioSource">BioSource</a></dt>
                             <dd>The biological system in which the interaction took place in the experiment.</dd>
 
-                            <dt>identificationMethod</dt>
+                            <dt><a name="Experiment.cvIdentification"></a>identificationMethod</dt>
                             <dd>The experimental method by which the molecules participating in the
                                 interaction have been detected.
                                 <br/>Example: Mass spectrometry.
                             </dd>
 
-                            <dt>interactionMethod</dt>
+                            <dt><a name="Experiment.cvInteraction"></a>interactionMethod</dt>
                             <dd>The experimental method by which the interaction has been detected.
                                 <br/>
                                 Example: yeast two hybrid.
@@ -432,12 +432,20 @@
                             <img SRC="./images/search/binary.png" height="768" width="1024"/>
                         </p>
                         <p>
+                            <a NAME="interaction.details.view"></a>Viewing the interactions for a particular protein can also be done from the binary view - an
+                            example screen displayed by clicking on the 'view 1 interaction' link is shown below:
+                        </p>
+                        <p>
+                            <img SRC="./images/search/interaction_details.png" height="768" width="1024"/>
+                        </p>
+                        <p>
                             <a NAME="protein.single.view"></a>The details for an individual protein are displayed as below:
                         </p>
                         <p>
                             <img SRC="./images/search/protein_single.png" height="768" width="1024"/>
                         </p>
                         <br/>
+
                         <p>
                             <a NAME="single.view"></a>If for example in the above screen you click
                             on 'SPTR', this will display the controlled vocabulary information for
