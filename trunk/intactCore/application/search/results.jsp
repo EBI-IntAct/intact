@@ -82,7 +82,7 @@
         var link = "<%=service.getHierarchViewProp("hv.url")%>"
             + "?AC=" + ac + "&depth=" + <%=service.getHierarchViewProp("hv.depth")%>
             + "&method=" + "<%=service.getHierarchViewProp("hv.method")%>";
-        window.alert(link);
+        //window.alert(link);
         makeNewWindow(link);
     }
 
