@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -9,6 +9,11 @@ package uk.ac.ebi.intact.struts.view;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletContext;
+import java.util.Collection;
+
+import uk.ac.ebi.intact.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.struts.service.IntactService;
 
 /**
  * The form to fill when adding an annotated text.
@@ -58,6 +63,21 @@ public class CommentAddForm extends ActionForm {
      */
     public void setTopic(String topic) {
         myTopic = topic;
+    }
+
+    /**
+     * Return a collection of topics.
+     *
+     * <pre>
+     * post: return != null
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(String))
+     * </pre>
+     */
+    public Collection getTopicNames() {
+        ServletContext ctx = super.getServlet().getServletContext();
+        IntactService service = (IntactService) ctx.getAttribute(
+            WebIntactConstants.SERVICE_INTERFACE);
+        return service.getTopicNames();
     }
 
     /**
