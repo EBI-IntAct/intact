@@ -4,6 +4,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 <class-descriptor
     class="uk.ac.ebi.intact.model.IntactObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <extent-class class-ref="uk.ac.ebi.intact.model.BasicObject"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/>
@@ -11,6 +12,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 <class-descriptor
     class="uk.ac.ebi.intact.model.BasicObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <extent-class class-ref="uk.ac.ebi.intact.model.Annotation"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.IntactNode"/>
@@ -23,6 +25,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 <class-descriptor
     class="uk.ac.ebi.intact.model.AnnotatedObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <extent-class class-ref="uk.ac.ebi.intact.model.BioSource"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Experiment"/>
@@ -33,6 +36,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <extent-class class-ref="uk.ac.ebi.intact.model.CvComponentRole" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvDatabase" />
@@ -44,6 +48,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 <class-descriptor
     class="uk.ac.ebi.intact.model.Interactor"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <extent-class class-ref="uk.ac.ebi.intact.model.Interaction" />
     <extent-class class-ref="uk.ac.ebi.intact.model.Protein" />
@@ -51,6 +56,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvDagObject"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <extent-class class-ref="uk.ac.ebi.intact.model.CvInteraction" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvIdentification" />
@@ -64,6 +70,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 <class-descriptor
     class="uk.ac.ebi.intact.model.Protein"
     table="ia_Interactor"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <!-- ***************** fields from superclasses ********************* -->
     <!-- fields from BasicObject... -->
@@ -218,6 +225,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 <class-descriptor
     class="uk.ac.ebi.intact.model.Interaction"
     table="ia_Interactor"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ***************** fields from superclasses ********************* -->
@@ -391,6 +399,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 <class-descriptor
     class="uk.ac.ebi.intact.model.Experiment"
     table="ia_Experiment"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ************** fields inherited from BasicObject **************** -->
@@ -547,6 +556,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 <class-descriptor
     class="uk.ac.ebi.intact.model.BioSource"
     table="ia_BioSource"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <field-descriptor id="1"
         name="ac"
@@ -643,7 +653,7 @@ to AnnotatedObject and Experiment
    -->
 <class-descriptor
     class="uk.ac.ebi.intact.model.Annotation"
-
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     table="ia_Annotation"
     >
 
@@ -719,6 +729,7 @@ to AnnotatedObject and Experiment
 <class-descriptor
     class="uk.ac.ebi.intact.model.Institution"
     table="ia_Institution"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <!-- *********** fields identical to BasicObject ************** -->
     <field-descriptor id="1"
@@ -774,6 +785,7 @@ to AnnotatedObject and Experiment
 <class-descriptor
     class="uk.ac.ebi.intact.model.IntactNode"
     table="ia_IntactNode"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <field-descriptor id="1"
         name="ac"
@@ -853,8 +865,8 @@ to AnnotatedObject and Experiment
 <!-- Definitions for Xref -->
 <class-descriptor
     class="uk.ac.ebi.intact.model.Xref"
-
     table="ia_Xref"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <!-- ************** fields inherited from BasicObject ******************* -->
     <!-- fields from BasicObject... -->
@@ -952,6 +964,7 @@ to AnnotatedObject and Experiment
 <class-descriptor
     class="uk.ac.ebi.intact.model.Alias"
     table="ia_Alias"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <!-- ************** fields inherited from BasicObject ******************* -->
     <!-- fields from BasicObject... -->
@@ -1028,6 +1041,7 @@ to AnnotatedObject and Experiment
 <class-descriptor
     class="uk.ac.ebi.intact.model.Component"
     table="ia_Component"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ***************** inherited from BasicObject ************** -->
@@ -1138,8 +1152,8 @@ to AnnotatedObject and Experiment
 <!-- Definitions for CvXrefQualifier....-->
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvXrefQualifier"
-
     table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ******** fields inherited from BasicObject *****************-->
@@ -1244,6 +1258,7 @@ to AnnotatedObject and Experiment
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvAliasType"
     table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ******** fields inherited from BasicObject *****************-->
@@ -1347,8 +1362,8 @@ to AnnotatedObject and Experiment
 <!-- Definitions for CvDatabase....-->
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvDatabase"
-
     table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ******** fields inherited from BasicObject *****************-->
@@ -1450,8 +1465,8 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 -->
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvTopic"
-
     table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ******** fields inherited from BasicObject *****************-->
@@ -1552,6 +1567,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvInteraction"
     table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ******** fields inherited from BasicObject *****************-->
@@ -1675,6 +1691,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvInteractionType"
     table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ******** fields inherited from BasicObject *****************-->
@@ -1798,6 +1815,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvIdentification"
     table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ******** fields inherited from BasicObject *****************-->
@@ -1921,6 +1939,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvComponentRole"
     table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ******** fields inherited from BasicObject *****************-->
@@ -2022,6 +2041,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 <class-descriptor
     class="uk.ac.ebi.intact.util.IntactStatistics"
     table="ia_statistics"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <field-descriptor id="1"
         name="ac"
@@ -2080,8 +2100,8 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 <!-- Definitions for Sequence Chunk -->
 <class-descriptor
     class="uk.ac.ebi.intact.model.SequenceChunk"
-
     table="ia_Sequence_Chunk"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
     <!-- ************* fields declared for this class ******************* -->
     <field-descriptor id="1"
@@ -2117,6 +2137,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 <class-descriptor
     class="uk.ac.ebi.intact.model.CvGoNode"
     table="ia_ControlledVocab"
+    row-reader="uk.ac.ebi.intact.persistence.IntactRowReaderImpl"
     >
 
     <!-- ******** fields inherited from BasicObject *****************-->
