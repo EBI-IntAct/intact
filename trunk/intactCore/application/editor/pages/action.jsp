@@ -21,7 +21,7 @@
 
     function confirmDelete() {
         skipValidation();
-        return window.confirm("Do you want to delete this CV? Press OK to confirm");
+        return window.confirm("Do you want to delete this entry? Press OK to confirm");
     }
 
     // Skip client-side javascript validation

@@ -335,6 +335,8 @@
             scope="session"
             parameter="dispatch">
             <forward name="success" path="edit.layout"/>
+            <!-- Reload with cloned data -->
+            <forward name="reload" path="/do/exp/fill/form"/>
 
             <!-- Back to the results page as we got here from a search result (global) -->
         </action>
@@ -512,7 +514,9 @@
             validate="true"
             scope="session"
             parameter="dispatch">
-            <!-- Back to the display page -->
+            <!-- Reload with cloned data -->
+            <forward name="reload" path="/do/int/fill/form"/>
+            <!-- Back to the edit page via a display -->
             <forward name="success" path="/do/display"/>
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the experiment editor (where we came from) -->
@@ -761,7 +765,7 @@
         </action>
 
         <!-- This common action is for displaying the current edit page.
-             Need this separate action to distinguish from input and success
+             Need this separate action to distinguish between input and success
              actions.
         -->
         <action path="/display"

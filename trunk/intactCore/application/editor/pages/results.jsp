@@ -31,16 +31,6 @@
 <%-- Javascript code to link to the search page. --%>
 <jsp:include page="js.jsp" />
 
-<logic:messagesPresent>
-    <table width="100%" border="0" cellspacing="1" cellpadding="2">
-        <html:messages id="error">
-            <tr class="tableRowEven">
-                <td class="tableErrorCell"><bean:write name="error"/></td>
-            </tr>
-        </html:messages>
-    </table>
-</logic:messagesPresent>
-
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
@@ -60,3 +50,9 @@
         <display:column property="lock" title="Lock" />
     </display:table>
 </html:form>
+
+<%--<html:messages id="message" message="true">--%>
+<%--	<span class="warning">--%>
+<%--		<bean:write name="message" filter="false"/>--%>
+<%--	</span>--%>
+<%--</html:messages>--%>
