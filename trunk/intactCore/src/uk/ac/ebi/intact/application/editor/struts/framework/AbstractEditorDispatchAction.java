@@ -6,20 +6,19 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
-import org.apache.struts.actions.LookupDispatchAction;
+import org.apache.log4j.Logger;
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.Globals;
-import org.apache.log4j.Logger;
-
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-
-import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
+import org.apache.struts.actions.LookupDispatchAction;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
+import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * The super class for all the CV edit actions.
@@ -38,6 +37,11 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction 
      * The key to success action.
      */
     protected static final String FORWARD_SUCCESS = "success";
+
+    /**
+     * The key to failure action.
+     */
+    protected static final String FORWARD_FAILURE = "failure";
 
     /**
      * Returns the only instance of Intact Service instance.
