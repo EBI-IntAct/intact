@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.ArrayList;
 import java.io.Serializable;
 
 /**
@@ -141,6 +142,11 @@ public interface IntactUserIF extends Serializable {
     public void update(Object object) throws IntactException;
 
     /**
+     * Cancels the update for the current CV object.
+     */
+    public void cancelUpdate();
+
+    /**
      * Wrapper to delete an object from the underlying persistence system.
      *
      * @param object the object to delete.
@@ -226,20 +232,20 @@ public interface IntactUserIF extends Serializable {
 
     /**
      * Caches the last search result. Each object of <code>results</code> is
-     * wrapped as a <code>ListObject</code>.
+     * wrapped as a <code>ResultBean</code>.
      * @param results holds the results from the search.
      *
      * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(ListObject))
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(ResultBean))
      * </pre>
      */
     public void cacheSearchResult(Collection results);
 
     /**
      * Returns the cached search result.
-     * @return the cached search result.
+     * @return the cached search result as an <code>ArrayList</code>.
      */
-    public Collection getCacheSearchResult();
+    public ArrayList getCacheSearchResult();
 
     /**
      * Removes the object with matching AC from search cache.
