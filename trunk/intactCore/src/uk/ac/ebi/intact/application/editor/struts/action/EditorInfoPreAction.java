@@ -17,8 +17,8 @@ import javax.servlet.http.*;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.biosource.BioSourceEditViewBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 
 /**
  * Fills the forms with info data (short label & full name) for edit.jsp to
@@ -50,28 +50,20 @@ public class EditorInfoPreAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // Session to access various session objects.
-        HttpSession session = super.getSession(request);
-
-        // Handler to the Intact User.
-        EditUserI user = super.getIntactUser(session);
+        HttpSession session = getSession(request);
 
         // The current user view.
-        AbstractEditViewBean viewbean = user.getView();
+        AbstractEditViewBean viewbean = getIntactUser(session).getView();
 
         // Fill the form to edit short label and full name.
-        DynaBean infoForm = getDynaForm(EditorConstants.CV_INFO_FORM,
-                request, session);
+        DynaBean infoForm = getDynaForm("cvinfoForm", request, session);
         infoForm.set("ac", viewbean.getAc());
         infoForm.set("shortLabel", viewbean.getShortLabel());
         infoForm.set("fullName", viewbean.getFullName());
 
-        // Need to fix this instanceof business later.
-        if (viewbean instanceof BioSourceEditViewBean) {
-            BioSourceEditViewBean bioview = (BioSourceEditViewBean) viewbean;
-            DynaBean bioForm = getDynaForm(EditorConstants.BIO_SOURCE_FORM,
-                    request, session);
-            log("Setting the tax id to: " + bioview.getTaxId());
-            bioForm.set("taxId", bioview.getTaxId());
+        if (viewbean.getEditorType().equals(EditViewBeanFactory.BIOSRC_EDITOR)) {
+            DynaBean bioForm = getDynaForm("bioSourceForm", request, session);
+            bioForm.set("taxId", ((BioSourceEditViewBean) viewbean).getTaxId());
         }
         // Move to the results page.
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
@@ -106,7 +98,7 @@ public class EditorInfoPreAction extends AbstractEditorAction {
                     DynaActionFormClass.createDynaActionFormClass(config);
             dynaForm = dynaClass.newInstance();
             session.setAttribute(formName, dynaForm);
-            super.log("Created cvinfo instance ");
+            super.log("Created " + formName + " instance ");
         }
         return dynaForm;
     }
