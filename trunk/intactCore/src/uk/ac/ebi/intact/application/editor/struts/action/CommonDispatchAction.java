@@ -114,7 +114,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
     }
 
     /**
-     * Action for cloning the edit form.
+     * Action for cloning the edit form. The current object is saved before
+     * cloning it.
      * @param mapping the <code>ActionMapping</code> used to select this instance
      * @param form the optional <code>ActionForm</code> bean for this request
      * (if any).
@@ -131,6 +132,13 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                               HttpServletRequest request,
                               HttpServletResponse response)
             throws Exception {
+        // Save the form first. Analyze the forward path.
+        ActionForward forward = save(mapping, form, request, response);
+
+        // Return the forward if it isn't a success.
+        if (!forward.equals(mapping.findForward(SUCCESS))) {
+            return forward;
+        }
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 

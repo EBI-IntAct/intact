@@ -91,69 +91,6 @@ public class SubmitButtonAction extends CommonDispatchAction {
         return mapping.findForward(RESULT);
     }
 
-    // Override to provide a way to get back to the experiment editor when
-    // an interaction is submitted.
-//    public ActionForward save(ActionMapping mapping,
-//                                ActionForm form,
-//                                HttpServletRequest request,
-//                                HttpServletResponse response)
-//            throws Exception {
-//        // Submit the form. Analyze the forward path.
-//        ActionForward forward = super.save(mapping, form, request, response);
-//
-//        // Return the forward if it isn't a success.
-//        if (!forward.equals(mapping.findForward(SUCCESS))) {
-//            return forward;
-//        }
-//        // The current view.
-//        InteractionViewBean view = (InteractionViewBean) getIntactUser(request).getView();
-//
-//        // Check for feature that have been saved with -x (as a result of cloning).
-//        if (view.hasFeatureWithClonedSuffix()) {
-//            // Just a warning to the user.
-//            ActionMessages msgs = new ActionMessages();
-//            msgs.add(ActionMessages.GLOBAL_MESSAGE,
-//                    new ActionMessage("message.feature.label"));
-//            saveMessages(request, msgs);
-//        }
-//        return forward;
-//    }
-
-    public ActionForward clone(ActionMapping mapping,
-                              ActionForm form,
-                              HttpServletRequest request,
-                              HttpServletResponse response)
-            throws Exception {
-        // Save the form first. Analyze the forward path.
-        ActionForward forward = super.save(mapping, form, request, response);
-
-        // Return the forward if it isn't a success.
-        if (!forward.equals(mapping.findForward(SUCCESS))) {
-            return forward;
-        }
-        // Do the cloning. Save the forward to return later.
-        return super.clone(mapping, form, request, response);
-
-        // Handler to the user object.
-////        EditUserI user = getIntactUser(request);
-////
-////        // The current view.
-////        InteractionViewBean view = (InteractionViewBean) user.getView();
-////
-////        // Check to see that a cloned feature already exists.
-////        if (view.hasDuplicateFeatures(user)) {
-////            view.markDuplicateFeatures(user);
-////            // The errors to display.
-////            ActionErrors errors = new ActionErrors();
-////            errors.add("int.duplicate.feature",
-////                    new ActionError("error.int.sanity.duplicate.feature"));
-////            saveErrors(request, errors);
-////            // Display the error in the input page.
-////            forward = mapping.getInputForward();
-////        }
-//        return forward;
-    }
-
     /**
      * Returns true if the next forward action is back to the experiment editor.
      * This is applicable to the InteractionView bean only.
