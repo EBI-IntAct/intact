@@ -1,5 +1,3 @@
-<%@ page import="org.apache.struts.action.ActionErrors,
-                 org.apache.struts.action.ActionMessages"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -16,9 +14,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <logic:messagesPresent>
     <table width="80%" border="0" cellspacing="1" cellpadding="2">
@@ -39,5 +35,3 @@
         </html:messages>
     </table>
 </logic:messagesPresent>
-
-
