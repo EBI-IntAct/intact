@@ -30,6 +30,10 @@
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
+
+    <!-- IntAct dynamic application should not be indexed by search engines -->
+    <meta name='ROBOTS' content='NOINDEX'>
+
     <link rel="stylesheet" type="text/css" href="layouts/styles/intact.css"/>
 </head>
 
