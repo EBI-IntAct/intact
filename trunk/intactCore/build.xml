@@ -19,6 +19,7 @@
     <property name="rep.dest.file" value="${config.dir}/repository.xml"/>
     <property name="ojb.template.file" value="${template.dir}/OJB.template"/>
     <property name="ojb.dest.file" value="${config.dir}/OJB.properties"/>
+    <property name="ora.props.file" value="${config.dir}/oracle.properties"/>
 
     <!-- The non core files. -->
     <property name="non.core.files" value="**/intact/application/**"/>
@@ -175,10 +176,20 @@
 
     <!-- Convert repository.template to oracle format. -->
     <target name="set-oracle-env" description="Sets oracle environment">
+        <condition property="oracle.property.missing">
+            <not>
+                <available file="${ora.props.file}"/>
+            </not>
+        </condition>
+
+        <fail if="oracle.property.missing">
+    Unable to find ${ora.props.file} file; see oracle.template file for the format.
+        </fail>
+
         <!-- Copy the template to config directory first -->
         <copy file="${rep.template.file}" tofile="${rep.dest.file}"/>
 
-        <replace file="${rep.dest.file}" propertyfile="config/oracle.properties">
+        <replace file="${rep.dest.file}" propertyfile="${ora.props.file}">
             <replacefilter token="@DBMS_NAME@" value="Oracle" />
             <replacefilter token="@DRIVER_NAME@" value="oracle.jdbc.pool.OracleConnectionCacheImpl"/>
             <replacefilter token="@URL_SUBPROTOCOL@" value="oracle:thin:@vodka.ebi.ac.uk:1521"/>
