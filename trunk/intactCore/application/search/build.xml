@@ -229,6 +229,7 @@
                 <include name="jakarta-ojb-0.9.7.jar"/>
                 <include name="log4j-1.2.5.jar"/>
                 <include name="${db}"/>
+                <include name="commons-pool.jar"/>
             </lib>
 
             <!-- search specific classes -->
