@@ -32,36 +32,36 @@ function callUnLoadMethods()
   <script language="javascript"
  src="http://www.ebi.ac.uk/include/master.js"></script>
 </head>
-<body marginwidth="0" marginheight="0" leftmargin="0" topmargin="0"
- rightmargin="0" bottommargin="0" onunload="callUnLoadMethods()"
- onload="EbiPreloadImages('services');">
-<table width="100%" border="0" cellspacing="0" cellpadding="0"
- class="tabletop">
+<body leftmargin="0" topmargin="0" rightmargin="0" bottommargin="0"
+ onunload="callUnLoadMethods()" onload="EbiPreloadImages('services');"
+ marginheight="0" marginwidth="0">
+<table class="tabletop" border="0" cellpadding="0" cellspacing="0"
+ width="100%">
   <tbody>
     <tr>
-      <td width="270" height="85" align="right"><img
- src="http://www.ebi.ac.uk/services/images/ebi_banner_1.jpg" width="270"
- height="85"></td>
-      <td valign="top" align="right" width="100%">
-      <table border="0" cellspacing="0" cellpadding="0" class="tabletop"
- width="100%" height="85">
+      <td align="right" height="85" width="270"><img
+ src="http://www.ebi.ac.uk/services/images/ebi_banner_1.jpg" height="85"
+ width="270"></td>
+      <td align="right" valign="top" width="100%">
+      <table class="tabletop" border="0" cellpadding="0" cellspacing="0"
+ height="85" width="100%">
         <tbody>
           <tr>
-            <td valign="top" align="right" colspan="2"> <input
- type="hidden" value="sr" name="ui">
-            <table border="0" cellspacing="0" cellpadding="0"
- height="28" class="tablehead">
+            <td colspan="2" align="right" valign="top"> <input
+ value="sr" name="ui" type="hidden">
+            <table class="tablehead" border="0" cellpadding="0"
+ cellspacing="0" height="28">
               <tbody>
                 <tr>
                   <td class="tablehead" align="left" valign="bottom"><img
- src="http://www.ebi.ac.uk/services/images/top_corner.gif" width="28"
- height="28"></td>
+ src="http://www.ebi.ac.uk/services/images/top_corner.gif" height="28"
+ width="28"></td>
                   <form name="Text1293FORM"
  action="javascript:querySRS(document.forms[0].db[document.forms[0].db.selectedIndex].value, document.forms[0].qstr.value)"
  method="post"></form>
-                  <td align="center" valign="middle" class="small"
- nowrap="nowrap"><span class="smallwhite"><nobr>Get&nbsp;</nobr></span></td>
-                  <td align="center" valign="middle" class="small"><span
+                  <td class="small" align="center" nowrap="nowrap"
+ valign="middle"><span class="smallwhite"><nobr>Get&nbsp;</nobr></span></td>
+                  <td class="small" align="center" valign="middle"><span
  class="small">
                   <select id="FormsComboBox2" name="db" class="small">
                   <option value="EMBL" selected="selected">Nucleotide
@@ -72,33 +72,33 @@ sequences</option>
                   <option value="MEDLINE">Literature</option>
                   </select>
                   </span></td>
-                  <td align="center" valign="middle" class="small"
- nowrap="nowrap"><span class="smallwhite">&nbsp;for&nbsp;</span></td>
-                  <td align="center" valign="middle" class="small"> <span
+                  <td class="small" align="center" nowrap="nowrap"
+ valign="middle"><span class="smallwhite">&nbsp;for&nbsp;</span></td>
+                  <td class="small" align="center" valign="middle"> <span
  class="small"> <input id="FormsEditField3" maxlength="50" size="7"
  name="qstr" class="small"> </span></td>
-                  <td align="center" valign="middle" class="small">&nbsp;</td>
-                  <td align="center" valign="middle" class="small"> <span
- class="small"> <input id="FormsButton3" type="submit" value="Go"
- name="FormsButton1" class="small"> </span></td>
-                  <td align="center" valign="middle" class="small"
- width="10" nowrap="nowrap"><a href="#" class="small"
+                  <td class="small" align="center" valign="middle">&nbsp;</td>
+                  <td class="small" align="center" valign="middle"> <span
+ class="small"> <input id="FormsButton3" value="Go" name="FormsButton1"
+ class="small" type="submit"> </span></td>
+                  <td class="small" align="center" nowrap="nowrap"
+ valign="middle" width="10"><a href="#" class="small"
  onclick="openWindow('http://www.ebi.ac.uk/help/DBhelp/dbhelp_frame.html')">
                   <nobr>&nbsp;?&nbsp;</nobr></a></td>
                   <form name="Text1295FORM"
  action="http://search.ebi.ac.uk/compass" method="get"
  onsubmit="if (document.Text1295FORM.scope.value=='') { alert('Please enter query.'); return false;}"></form>
-                  <td align="center" valign="middle" class="smallwhite"
- nowrap="nowrap"><span class="smallwhite"><nobr>&nbsp;Site search&nbsp;</nobr></span></td>
-                  <td align="center" valign="middle" class="small"> <span
+                  <td class="smallwhite" align="center" nowrap="nowrap"
+ valign="middle"><span class="smallwhite"><nobr>&nbsp;Site search&nbsp;</nobr></span></td>
+                  <td class="small" align="center" valign="middle"> <span
  class="small"> <input id="FormsEditField4" maxlength="50" size="7"
  name="scope" class="small"> </span></td>
-                  <td align="center" valign="middle" class="small">&nbsp;</td>
-                  <td align="center" valign="middle" class="small"> <span
- class="small"> <input id="FormsButton2" type="submit" value="Go"
- name="FormsButton2" class="small"> </span></td>
-                  <td align="center" valign="middle" class="small"
- nowrap="nowrap"><nobr> <a href="#" class="small"
+                  <td class="small" align="center" valign="middle">&nbsp;</td>
+                  <td class="small" align="center" valign="middle"> <span
+ class="small"> <input id="FormsButton2" value="Go" name="FormsButton2"
+ class="small" type="submit"> </span></td>
+                  <td class="small" align="center" nowrap="nowrap"
+ valign="middle"><nobr> <a href="#" class="small"
  onclick="openWindow('http://www.ebi.ac.uk/help/help/sitehelp_frame.html')">&nbsp;?&nbsp;</a></nobr></td>
                 </tr>
               </tbody>
@@ -107,11 +107,11 @@ sequences</option>
           </tr>
           <tr>
             <td align="left" valign="bottom"><img
- src="http://www.ebi.ac.uk/services/images/ebi_banner_2.jpg" width="169"
- height="29"></td>
+ src="http://www.ebi.ac.uk/services/images/ebi_banner_2.jpg" height="29"
+ width="169"></td>
             <td align="right" valign="top"><img
- src="http://www.ebi.ac.uk/Groups/images/topbar3.gif" width="156"
- height="25" usemap="#Map" border="0"></td>
+ src="http://www.ebi.ac.uk/Groups/images/topbar3.gif" usemap="#Map"
+ border="0" height="25" width="156"></td>
           </tr>
         </tbody>
       </table>
@@ -119,81 +119,75 @@ sequences</option>
     </tr>
     <tr>
       <td colspan="2"><img
- src="http://www.ebi.ac.uk/services/images/trans.gif" width="1"
- height="5"></td>
+ src="http://www.ebi.ac.uk/services/images/trans.gif" height="5"
+ width="1"></td>
     </tr>
   </tbody>
 </table>
-<table width="100%" border="0" cellspacing="0" cellpadding="0"
- class="tabletop">
+<table class="tabletop" border="0" cellpadding="0" cellspacing="0"
+ width="100%">
   <tbody>
     <tr>
       <td width="100%">
-      <table width="679" border="0" cellspacing="0" cellpadding="0">
+      <table border="0" cellpadding="0" cellspacing="0" width="679">
         <tbody>
           <tr>
-            <td width="97" height="18"><a
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/index.html" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image8','','http://www.ebi.ac.uk/services/images/home_o.gif',1)"><img
- name="Image8" border="0"
- src="http://www.ebi.ac.uk/services/images/home.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image8" src="http://www.ebi.ac.uk/services/images/home.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/Information"
  onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image9','','http://www.ebi.ac.uk/services/images/about_o.gif',1)"><img
- name="Image9" border="0"
- src="http://www.ebi.ac.uk/services/images/about.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image9" src="http://www.ebi.ac.uk/services/images/about.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/Groups" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image10','','http://www.ebi.ac.uk/services/images/research_o.gif',1)"><img
- name="Image10" border="0"
- src="http://www.ebi.ac.uk/services/images/research.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image10" src="http://www.ebi.ac.uk/services/images/research.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/services" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image11','','http://www.ebi.ac.uk/services/images/services_o.gif',1)"><img
- name="Image11" border="0"
- src="http://www.ebi.ac.uk/services/images/services.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image11" src="http://www.ebi.ac.uk/services/images/services.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/Tools" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image12','','http://www.ebi.ac.uk/services/images/utilities_o.gif',1)"><img
- name="Image12" border="0"
- src="http://www.ebi.ac.uk/services/images/utilities.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image12" src="http://www.ebi.ac.uk/services/images/utilities.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/Databases" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image13','','http://www.ebi.ac.uk/services/images/databases_o.gif',1)"><img
- name="Image13" border="0"
- src="http://www.ebi.ac.uk/services/images/databases_o.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image13"
+ src="http://www.ebi.ac.uk/services/images/databases_o.gif" border="0"
+ height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/FTP" onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image14','','http://www.ebi.ac.uk/services/images/downloads_o.gif',1)"><img
- name="Image14" border="0"
- src="http://www.ebi.ac.uk/services/images/downloads.gif" width="97"
- height="18"></a></td>
-            <td width="97" height="18"><a
+ name="Image14" src="http://www.ebi.ac.uk/services/images/downloads.gif"
+ border="0" height="18" width="97"></a></td>
+            <td height="18" width="97"><a
  href="http://www.ebi.ac.uk/Submissions"
  onmouseout="MM_swapImgRestore()"
  onmouseover="MM_swapImage('Image15','','http://www.ebi.ac.uk/services/images/submissions_o.gif',1)"><img
- name="Image15" border="0"
- src="http://www.ebi.ac.uk/services/images/submissions.gif" width="97"
- height="18"></a></td>
+ name="Image15"
+ src="http://www.ebi.ac.uk/services/images/submissions.gif" border="0"
+ height="18" width="97"></a></td>
           </tr>
         </tbody>
       </table>
       </td>
     </tr>
     <tr>
-      <td width="100%" height="5" class="tablehead">
-      <table width="100%" height="5" border="0" cellspacing="0"
- cellpadding="0">
+      <td class="tablehead" height="5" width="100%">
+      <table border="0" cellpadding="0" cellspacing="0" height="5"
+ width="100%">
         <tbody>
           <tr>
-            <td width="100%" height="20" align="center"><!-- topnav START --><nobr><a
+            <td align="center" height="20" width="100%"><!-- topnav START --><nobr><a
  href="http://www.ebi.ac.uk/" class="white" target="_top"></a></nobr><nobr><a
  href="http://www.ebi.ac.uk/" class="white" target="_top">HOME PAGE</a></nobr><!-- topnav END --></td>
           </tr>
@@ -208,28 +202,27 @@ sequences</option>
     </tr>
   </tbody>
 </table>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tbody>
     <tr>
       <td colspan="6" class="tablebody" height="6"><img
- src="http://www.ebi.ac.uk/services/images/trans.gif" width="1"
- height="6"></td>
+ src="http://www.ebi.ac.uk/services/images/trans.gif" height="6"
+ width="1"></td>
     </tr>
     <tr>
-      <td class="tablebody" width="1%" height="20"><img
+      <td class="tablebody" height="20" width="1%"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="20"
  width="160"></td>
-      <td width="20" height="20" valign="top" align="left"
- bgcolor="#ffffff"><img
- src="http://www.ebi.ac.uk/services/images/corner.gif" width="20"
- height="20"></td>
+      <td align="left" bgcolor="#ffffff" height="20" valign="top"
+ width="20"><img src="http://www.ebi.ac.uk/services/images/corner.gif"
+ height="20" width="20"></td>
       <td>&nbsp;</td>
-      <td width="100%" colspan="3"><img
+      <td colspan="3" width="100%"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="1"
  width="1"></td>
     </tr>
     <tr>
-      <td width="160" valign="top" align="left"><!-- leftnav START -->
+      <td align="left" valign="top" width="160"><!-- leftnav START -->
       <table class="tablebody" border="0" cellpadding="4"
  cellspacing="0" width="160">
         <tbody>
@@ -319,27 +312,27 @@ submission<br>
         </tbody>
       </table>
 <!-- leftnav END -->
-      <table width="160" height="100%" border="0" cellspacing="0"
- cellpadding="0">
+      <table border="0" cellpadding="0" cellspacing="0" height="100%"
+ width="160">
         <tbody>
           <tr>
-            <td class="tablebody" valign="top" width="140" height="20"><img
+            <td class="tablebody" height="20" valign="top" width="140"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="20"
  width="140"></td>
-            <td align="right" valign="top" width="20" height="20"><img
- src="http://www.ebi.ac.uk/services/images/right.gif" width="20"
- height="20"></td>
+            <td align="right" height="20" valign="top" width="20"><img
+ src="http://www.ebi.ac.uk/services/images/right.gif" height="20"
+ width="20"></td>
           </tr>
           <tr>
             <td colspan="2" bgcolor="#ffffff">&nbsp;</td>
           </tr>
         </tbody>
       </table>
-      <table width="160" height="100%" border="0" cellspacing="0"
- cellpadding="0">
+      <table border="0" cellpadding="0" cellspacing="0" height="100%"
+ width="160">
         <tbody>
           <tr valign="top">
-            <td valign="top" height="20">
+            <td height="20" valign="top">
             <div align="center"></div>
             <br>
             </td>
@@ -349,33 +342,33 @@ submission<br>
       </td>
       <td width="20">&nbsp;</td>
       <td align="left" valign="top" width="593">
-      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
         <tbody>
           <tr>
             <td valign="top"><!-- contents START -->
-            <table width="434" border="0" cellspacing="0"
- cellpadding="0">
+            <table border="0" cellpadding="0" cellspacing="0"
+ width="434">
               <tbody>
                 <tr>
                   <td>
-                  <table width="434" border="0" cellspacing="0"
- cellpadding="4">
+                  <table border="0" cellpadding="4" cellspacing="0"
+ width="434">
                     <tbody>
                       <tr>
-                        <td class="tablegreen" nowrap="nowrap"
- align="center"><nobr>&nbsp;<span class="whitetitle">IntAct Project</span>&nbsp;</nobr></td>
+                        <td class="tablegreen" align="center"
+ nowrap="nowrap"><nobr>&nbsp;<span class="whitetitle">IntAct Project</span>&nbsp;</nobr></td>
                         <td class="pagetitle" width="100%"><nobr>&nbsp;</nobr></td>
                       </tr>
                     </tbody>
                   </table>
-                  <table width="434" border="0" cellspacing="0"
- cellpadding="0">
+                  <table border="0" cellpadding="0" cellspacing="0"
+ width="434">
                     <tbody>
                       <tr>
-                        <td height="3"
- background="http://www.ebi.ac.uk/Groups/images/hor.gif"><img
- src="http://www.ebi.ac.uk/Groups/images/trans.gif" width="25"
- height="3"></td>
+                        <td
+ background="http://www.ebi.ac.uk/Groups/images/hor.gif" height="3"><img
+ src="http://www.ebi.ac.uk/Groups/images/trans.gif" height="3"
+ width="25"></td>
                       </tr>
                     </tbody>
                   </table>
@@ -404,7 +397,8 @@ rr44_yeast</span></li>
                                 <li><span class="text">InterPro Ac:
 IPR001900</span></li>
                                 <li><span class="text">GO Id: GO:0000176</span></li>
-                                <li><span class="text">PubMed Id: 10831611</span></li>
+                                <li><span class="text">PubMed Id:
+10831611</span></li>
                               </ul>
                             </li>
                           </ul>
@@ -733,10 +727,10 @@ by Sourceforge.net</span></li>
             </table>
 <!-- contents END --> </td>
             <td><img
- src="http://www.ebi.ac.uk/services/images/trans.gif" width="6"
- height="8"></td>
-            <td width="3"
- background="http://www.ebi.ac.uk/services/images/vert.gif"><img
+ src="http://www.ebi.ac.uk/services/images/trans.gif" height="8"
+ width="6"></td>
+            <td
+ background="http://www.ebi.ac.uk/services/images/vert.gif" width="3"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="3"
  width="3"></td>
             <td width="20"><img
@@ -775,8 +769,15 @@ by Sourceforge.net</span></li>
                   <td class="tablebody"> <br>
                   </td>
                   <td colspan="3" class="tablebody"><!-- News contents -->
-                  <span class="psmall">October 1, 2004:</span>
-                  <span class="psmall"><span
+                  <span class="psmall">November 1, 2004:<br>
+                  <span
+ style="font-weight: bold; text-decoration: underline;">New datasets</span>:<br>
+Target of Arabidopsis thioredoxin revealed,<br>
+                  <a
+ href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=15352244&amp;searchClass=Experiment">Marchand
+et. al</a>.<br>
+                  <br>
+October 1, 2004:</span> <span class="psmall"><span
  style="text-decoration: underline;"><span style="font-weight: bold;"><br>
 New datasets</span></span>:<br>
                   </span><span class="psmall">Tumor suppressor LATS1
@@ -892,10 +893,10 @@ pull-down experiments.</span><span class="psmall"><br>
 <!-- rightnav END --></td>
           </tr>
           <tr>
-            <td width="500" class="tablebody"
- background="http://www.ebi.ac.uk/services/images/hor.gif" height="3"><img
- src="http://www.ebi.ac.uk/services/images/trans.gif" height="3"
- width="3"></td>
+            <td class="tablebody"
+ background="http://www.ebi.ac.uk/services/images/hor.gif" height="3"
+ width="500"><img src="http://www.ebi.ac.uk/services/images/trans.gif"
+ height="3" width="3"></td>
             <td colspan="2"><img
  src="http://www.ebi.ac.uk/services/images/trans.gif" height="1"
  width="1"></td>
