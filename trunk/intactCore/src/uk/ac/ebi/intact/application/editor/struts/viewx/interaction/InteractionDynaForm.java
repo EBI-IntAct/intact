@@ -4,9 +4,10 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.application.editor.struts.viewx.interaction;
+package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.struts.action.*;
+import org.apache.struts.validator.DynaValidatorForm;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,7 +19,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionDynaForm extends DynaActionForm {
+public class InteractionDynaForm extends DynaValidatorForm {
 
     /**
      * Validate the properties that have been set from the HTTP request.
