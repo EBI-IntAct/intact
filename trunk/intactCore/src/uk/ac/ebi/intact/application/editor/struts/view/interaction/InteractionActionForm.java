@@ -7,21 +7,20 @@
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
-import org.apache.struts.Globals;
-import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * The form to edit bio experiment data.
@@ -88,19 +87,10 @@ public class InteractionActionForm extends EditorActionForm {
     private List myExpsOnHold;
 
     /**
-     * List of checked link items.
-     */
-    //    private List myLinkedItems;
-    /**
      * Stores the feature dispatch action (to determine what course of action to
      * take when Edit/Delete Feature button selected).
      */
     private String myFeatureDispatch;
-
-    /**
-     * The AC of the selected feature.
-     */
-    private String mySelectedFeatureAc;
 
     // Setter / Getter methods.
     public void setKd(Float kd) {
@@ -260,14 +250,6 @@ public class InteractionActionForm extends EditorActionForm {
         myFeatureDispatch = "";
     }
 
-//    public void setSelectedFeatureAc(String ac) {
-//        mySelectedFeatureAc = ac;
-//    }
-
-//    public String getSelectedFeatureAc() {
-//        return mySelectedFeatureAc;
-//    }
-
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
         if (myComponents == null) {
@@ -278,7 +260,7 @@ public class InteractionActionForm extends EditorActionForm {
             for (Iterator iterator1 = compBean.getFeatures().iterator(); iterator1
                     .hasNext();) {
                 FeatureBean featureBean = (FeatureBean) iterator1.next();
-                featureBean.setLinked(false);//"off");
+                featureBean.setLinked(false);
             }
         }
     }
@@ -367,49 +349,6 @@ public class InteractionActionForm extends EditorActionForm {
         return null;
     }
 
-//    public void updateFeature(FeatureBean fb) {
-//        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
-//            ComponentBean cb = (ComponentBean) iter.next();
-//            List features = cb.getFeatures();
-//            if (features.contains(fb)) {
-//                int idx = features.indexOf(fb);
-//                features.remove(idx);
-//                features.add(idx, fb);
-//                break;
-//            }
-//        }
-//    }
-
-    //    public String getLinked() {
-    //        return "true";
-    //    }
-    //
-    //    public void setLinked(int index, String value) {
-    //        System.out.println("Index: " + index + " value: " + value);
-    //    }
-    //
-    //    public ComponentBean getProteins(int idx) {
-    //        System.out.println("Getting the protein at: " + idx);
-    //        return (ComponentBean) myComponents.get(idx);
-    //    }
-    //
-    //    public void setProteins(int idx) {
-    //        System.out.println("Setting the protein at: " + idx);
-    //    }
-    //
-    //    public FeatureBean getFeatures(int x) {
-    //        System.out.println("in get features");
-    //        return null;
-    //    }
-    //    public void setFeatureCmd(int index, int y, String value) {
-    //        System.out.println("Received in the interaction action form: " + index +
-    // " value: " + value);
-    //    }
-    //
-    //    public void setFeatureCmd(String value) {
-    //        System.out.println("Received in the interaction action form: " + value);
-    //    }
-    //
     /**
      * Validates Interaction info page.
      * 

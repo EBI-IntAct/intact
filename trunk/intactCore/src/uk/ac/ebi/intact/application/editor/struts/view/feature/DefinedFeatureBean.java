@@ -6,43 +6,37 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactHelper;
-
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-
 /**
  * Bean to store a defined feature.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class DefinedFeatureBean extends FeatureBean {
+public class DefinedFeatureBean {
     // Class Data
 
-    private static String DEFAULT_SOURCE = "-";
-    private static String EXISTING_SOURCE = "Existing Feature";
+    /**
+     * The only instance of this class.
+     */
+    private static DefinedFeatureBean ourInstance = new DefinedFeatureBean();
 
     // Instance Data
 
-    /**
-     * Where is coming from. Init with the default source.
-     */
-    private String mySource = DEFAULT_SOURCE;
+    private FeatureBean myFeatureBean = new FeatureBean();
 
     /**
-     * Creates an instance of undefined feature type. The source is set to
-     * {@link #DEFAULT_SOURCE}.
+     * Returns the only instance of this class. Visibility is limited to this
+     * package as it is accessible via {@link FeatureViewBean#getDefinedFeature()}.
+     * @return the only instance of this class.
      */
-    public DefinedFeatureBean() {
+    static DefinedFeatureBean getInstance() {
+        return ourInstance;
+    }
+
+    /**
+     * Creates an instance of undefined feature type.
+     */
+    private DefinedFeatureBean() {
         // Sets the range as undefined.
         RangeBean rb = new RangeBean();
         rb.setFromRange("?");
@@ -52,35 +46,30 @@ public class DefinedFeatureBean extends FeatureBean {
         rb.setFromFuzzyTypeAsUndetermined();
         rb.setToFuzzyTypeAsUndetermined();
 
-        addRange(rb);
-        setShortLabel("undetermined");
-        setFullName("Undetermined feature position");
+        myFeatureBean.addRange(rb);
+        myFeatureBean.setShortLabel("undetermined");
+        myFeatureBean.setFullName("Undetermined feature position");
+    }
+
+    // Read only methods
+
+    public String getRanges() {
+        return myFeatureBean.getRanges();
+    }
+
+    public String getShortLabel() {
+        return myFeatureBean.getShortLabel();
+    }
+
+    public String getFullName() {
+        return myFeatureBean.getFullName();
     }
 
     /**
-     * Instantiate an instance of existing Feature from a given Feature.
-     * @param feature the feature to be created as an existing feature. The
-     * source is set to {@link #EXISTING_SOURCE}.
+     * Returns the first element (only) of the ranges.
+     * @return the only range element as a bean.
      */
-    public DefinedFeatureBean(Feature feature) {
-        this(feature, EXISTING_SOURCE);
-    }
-
-    /**
-     * Instantiate an object of this class from a Feature instance and its
-     * source.
-     *
-     * @param feature the <code>Feature</code> object.
-     * @param source  where this feature from.
-     */
-    public DefinedFeatureBean(Feature feature, String source) {
-        super(feature);
-        mySource = source;
-    }
-
-    // Read only properties.
-
-    public String getSource() {
-        return mySource;
+    public RangeBean getDefinedRange() {
+        return (RangeBean) myFeatureBean.getRangeList().next();
     }
 }

@@ -39,11 +39,6 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
      */
     static final String SAVE_NEW = "saveNew";
 
-    /**
-     * Identifier for an error bean.
-     */
-    public static final String ERROR = "error";
-
     // Instance Data
 
     /**

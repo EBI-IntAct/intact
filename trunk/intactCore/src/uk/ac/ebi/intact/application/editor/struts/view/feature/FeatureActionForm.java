@@ -45,19 +45,9 @@ public class FeatureActionForm extends EditorActionForm {
     private String myParentFullName;
 
     /**
-     * List of defined features.
-     */
-    private List myDefinedFeatures;
-
-    /**
      * The selected defined feature (hidden field attribute).
      */
     private String mySelectedDefinedFeature;
-
-    /**
-     * The AC of the Feature to clone.
-     */
-    private String myCloneAc;
 
     /**
      * The feature type.
@@ -105,33 +95,12 @@ public class FeatureActionForm extends EditorActionForm {
         myParentFullName = fullname;
     }
 
-    /**
-     * Sets defined features.
-     *
-     * @param features a list of defined features.
-     *                 <p/>
-     *                 <pre>
-     *                 pre:  forall(obj : Object | obj.oclIsTypeOf(DefinedFeatureBean))
-     *                 </pre>
-     */
-    public void setDefinedFeatures(List features) {
-        myDefinedFeatures = features;
-    }
-
     public void setDefinedFeature(String label) {
         mySelectedDefinedFeature = label;
     }
 
     public String getDefinedFeature() {
         return mySelectedDefinedFeature;
-    }
-
-    public void setCloneAc(String ac) {
-        myCloneAc = ac;
-    }
-
-    public String getCloneAc() {
-        return myCloneAc;
     }
 
     public String getFeatureType() {
@@ -165,10 +134,10 @@ public class FeatureActionForm extends EditorActionForm {
      * Sets ranges for the feature.
      *
      * @param ranges a list of ranges for a <code>Feature</code>.
-     *               <p/>
-     *               <pre>
-     *               pre:  forall(obj : Object | obj.oclIsTypeOf(RangeBean))
-     *               </pre>
+     * <p/>
+     * <pre>
+     * pre:  forall(obj : Object | obj.oclIsTypeOf(RangeBean))
+     * </pre>
      */
     public void setRanges(Collection ranges) {
         if (myRanges != null) {

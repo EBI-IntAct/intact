@@ -48,11 +48,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
     private Component myComponent;
 
     /**
-     * The list of defined features.
-     */
-    private List myDefinedFeatures = new ArrayList();
-
-    /**
      * The CvFeature type; null for a feature not yet persisted.
      */
     private String myCvFeatureType;
@@ -126,9 +121,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
         featureForm.setParentShortLabel(getParentShortLabel());
         featureForm.setParentFullName(getParentFullName());
 
-        // Properties related to the defined features.
-        featureForm.setDefinedFeatures(getDefinedFeatures());
-
         // Properties related to feature.
         featureForm.setShortLabel(getShortLabel());
         featureForm.setAc(getAc());
@@ -171,16 +163,16 @@ public class FeatureViewBean extends AbstractEditViewBean {
         myComponent = component;
     }
 
+    public Component getComponent() {
+        return myComponent;
+    }
+
     /**
-     * Returns a list of defined features.
-     * @return a list of defined features.
-     *
-     * <pre>
-     * post:  result->forall(obj : Object | obj.oclIsTypeOf(DefinedFeatureBean))
-     * </pre>
+     * Returns a defined feature instance. Needed by JSPs.
+     * @return the defined feature instance.
      */
-    public List getDefinedFeatures() {
-        return myDefinedFeatures;
+    public DefinedFeatureBean getDefinedFeature() {
+        return DefinedFeatureBean.getInstance();
     }
 
     public String getCvFeatureType() {
@@ -357,64 +349,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Updates the defined feature for the current the feature with given range.
-     * Assume this feature is at the second position of the defined feature
-     * list (the first position is the default feature).
-     *
-     * <p/>
-     * For a new feature (ie., only one feature exists), a new bean is simply
-     * added and the <code>rb</code> is added to its range. In this instance, as a
-     * pre-requisite there should be a Feature associated with the view (i.e.
-     * {@link #getAnnotatedObject()} must not return null).
-     *
-     * @param rb the range bean to add to the current defined feature.
-     */
-    public void updateDefinedFeature(RangeBean rb) {
-        if (myDefinedFeatures.size() == 1) {
-            // The current feature.
-            Feature feature = (Feature) getAnnotatedObject();
-
-            // No need to update. It is a new feature. Add it.
-            DefinedFeatureBean dfb = new DefinedFeatureBean(feature);
-            dfb.addRange(rb);
-            myDefinedFeatures.add(dfb);
-            return;
-        }
-        // The first position must contain the existing defined feature.
-        assert DefinedFeatureBean.class.isAssignableFrom(
-                myDefinedFeatures.get(1).getClass());
-
-        // Add the new range to the defined bean
-        ((DefinedFeatureBean) myDefinedFeatures.get(1)).addRange(rb);
-    }
-
-    /**
-     * Refersh the existing defined feature. No action taken if there
-     * is no existing defined feature.
-     */
-    public void refreshDefinedFeature() {
-        if (myDefinedFeatures.size() == 1) {
-            return;
-        }
-        // The first position must contain the existing defined feature.
-        assert DefinedFeatureBean.class.isAssignableFrom(
-                myDefinedFeatures.get(1).getClass());
-
-        DefinedFeatureBean dfb = (DefinedFeatureBean) myDefinedFeatures.get(1);
-
-        // Update shortlabel and fullname.
-        dfb.setShortLabel(getShortLabel());
-        dfb.setFullName(getFullName());
-
-        // Clear existing ranges.
-        dfb.resetRanges();
-        // Add the updated ranges.
-        for (Iterator iter = myRanges.iterator(); iter.hasNext();) {
-            dfb.addRange((RangeBean) iter.next());
-        }
-    }
-
-    /**
      * Return the status (new or old) of the current feature.
      * @return true if this is a new feature (Add Feature); for all other
      * instances false is returned.
@@ -427,16 +361,11 @@ public class FeatureViewBean extends AbstractEditViewBean {
     protected void reset(Class clazz) {
         super.reset(clazz);
 
-        setParentView(null);
         setCvFeatureType(null);
         setCvFeatureIdentification(null);
 
-        // Clear defined features and ranges
-        myDefinedFeatures.clear();
+        // Clear ranges
         myRanges.clear();
-
-        // Add the default defined feature.
-        addDefaultDefinedFeature();
 
         // Mark it as a new feature.
         myNewFeature = true;
@@ -449,14 +378,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
         // Must be a feature.
         Feature feature = (Feature) annobj;
-
-        // Clear defined features.
-        myDefinedFeatures.clear();
-
-        // Add the default defined feature.
-        addDefaultDefinedFeature();
-        // Add the existing feature.
-        addDefinedFeature(feature);
 
         setComponent(feature.getComponent());
 
@@ -531,22 +452,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Adds the default defined feature.
-     */
-    private void addDefaultDefinedFeature() {
-        // Add the default defined feature.
-        myDefinedFeatures.add(new DefinedFeatureBean());
-    }
-
-    /**
-     * Adds an existing defined feature.
-     * @param feature the existing feature.
-     */
-    private void addDefinedFeature(Feature feature) {
-        myDefinedFeatures.add(new DefinedFeatureBean(feature));
-    }
-
-    /**
      * Returns a collection of ranges to add.
      * @return the collection of ranges to add to the current Feature.
      * Could be empty if there are no ranges to add.
@@ -578,13 +483,13 @@ public class FeatureViewBean extends AbstractEditViewBean {
         return CollectionUtils.subtract(myRangesToDel, common);
     }
     
-    private void persistCurrentView(EditUserI user) throws IntactException,
-            SearchException {
+    private void persistCurrentView(EditUserI user) throws IntactException, SearchException {
         // The current feature.
         Feature feature = (Feature) getAnnotatedObject();
         
         // Add new ranges.
         for (Iterator iter = getRangesToAdd().iterator(); iter.hasNext();) {
+            // Create the updated range.
             Range range = ((RangeBean) iter.next()).getRange(user);
             // Avoid creating duplicate Ranges.
             if (feature.getRanges().contains(range)) {
@@ -603,6 +508,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
         // Update existing ranges.
         for (Iterator iter = myRangesToUpdate.iterator(); iter.hasNext();) {
+            // Update the 'updated' range.
             Range range = ((RangeBean) iter.next()).getRange(user);
             user.update(range);
         }
@@ -610,5 +516,4 @@ public class FeatureViewBean extends AbstractEditViewBean {
         // know it has been already persisted by persist() call.
         user.update(feature);
     }
-
 }

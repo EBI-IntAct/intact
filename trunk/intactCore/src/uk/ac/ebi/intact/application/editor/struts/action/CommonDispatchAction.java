@@ -65,7 +65,6 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-        System.out.println("In the common submit action");
         ActionForward forward = submitForm(mapping, form, request, true);
 
         // Only return to the result page for a successful submission.
@@ -321,19 +320,6 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                 user.releaseLock();
             }
         }
-
-//        if (submit) {
-//            // Update the search cache.
-//            user.updateSearchCache(view.getAnnotatedObject());
-//
-//            // Add the current edited object to the recent list.
-//            view.addToRecentList(user);
-//
-//            // Only show the submitted record.
-//            return mapping.findForward(RESULT);
-//        }
-        // Refresh the current view
-//        view.refresh();
         // Clear any left overs from previous transaction.
         view.clearTransactions();
 

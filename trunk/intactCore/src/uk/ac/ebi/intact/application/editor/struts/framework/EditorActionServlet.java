@@ -130,7 +130,6 @@ public class EditorActionServlet extends ActionServlet {
         map.put(rb.getString("biosource.button.taxid"), "taxid");
 
         // Actions related to Feature.
-        map.put(rb.getString("button.auto.complete"), "feature.autocomplete");
         map.put(rb.getString("feature.clone.button"), "feature.clone");
         map.put(rb.getString("feature.range.button.add"), "feature.range.new");
         map.put(rb.getString("feature.range.button.edit"), "feature.range");

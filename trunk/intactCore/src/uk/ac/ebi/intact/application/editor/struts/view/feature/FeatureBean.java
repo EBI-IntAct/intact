@@ -74,9 +74,9 @@ public class FeatureBean implements Serializable, Cloneable {
     private boolean mySelected;
     
     /**
-     * Default constructor. Only visible to subclasses.
+     * Default constructor. Only visible to classes in the same package.
      */
-    protected FeatureBean() {}
+    FeatureBean() {}
 
     /**
      * Instantiate an object of this class from a Feature instance.
@@ -221,7 +221,7 @@ public class FeatureBean implements Serializable, Cloneable {
         }
         return myFeature;
     }
-    
+
     // Override Objects's hashCode and equals method.
 
     /**
@@ -268,21 +268,21 @@ public class FeatureBean implements Serializable, Cloneable {
         return copy;
     }
 
-    // Write methods.
+    // Write methods. Only visible within this package.
 
-    protected void setShortLabel(String label) {
+    void setShortLabel(String label) {
         myShortLabel = label;
     }
 
-    protected void setFullName(String fullname) {
+    void setFullName(String fullname) {
         myFullName = fullname;
     }
 
-    protected void addRange(RangeBean rb) {
+    void addRange(RangeBean rb) {
         myRanges.add(rb);
     }
 
-    protected void resetRanges() {
-        myRanges.clear();
+    Iterator getRangeList() {
+        return myRanges.iterator();
     }
 }

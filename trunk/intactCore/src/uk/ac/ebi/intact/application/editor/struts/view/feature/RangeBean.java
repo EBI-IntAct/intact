@@ -6,20 +6,14 @@
 
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactHelper;
-
-import java.io.Serializable;
-import java.util.Iterator;
-
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import uk.ac.ebi.intact.model.CvFuzzyType;
+import uk.ac.ebi.intact.model.Range;
 
 /**
  * Bean to store a range for a feature.
@@ -178,18 +172,6 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
     }
 
     /**
-     * Resets fields to blanks, so the addXref form doesn't display previous
-     * values.
-     */
-    public void reset() {
-        super.reset();
-        myFromRange = "";
-        myToRange = "";
-        myLink = false;
-        myUndetermined = false;
-    }
-
-    /**
      * Returns true if given bean is equivalent to the current bean.
      * @param rb the bean to compare.
      * @return true if ranges, link and undetermined are equivalent
@@ -338,13 +320,14 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
     }
 
     /**
-     * Construts a new Range using the current values in the bean.
-     * <b>Must </b> call {@link #validate(String)} method prior to calling
-     * this method.
+     * Construts a new Range or updates the existing range using the current
+     * values in the bean. <b>Must </b> call {@link #validate(String)} method
+     * prior to calling this method.
      * 
      * @param user the user object to access <code>CvFuzzyType</code>s.
      * 
-     * @return a new Range using values from the bean.
+     * @return a new Range using values from the bean if this is a new range or
+     * else the existing range is updated.
      * @exception SearchException unable to find code>CvFuzzyType</code>s.
      * @exception IllegalArgumentException for errors in constructing a Range
      * object (ie., thrown from the constructor of the Range class).
@@ -423,86 +406,29 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
             throw new IllegalArgumentException(
                     "The 'from' interval cannot begin during the 'to' interval!");
         }
-        // Update the ranges for the existing range.
-        myRange.setFromIntervalStart(fromStart);
-        myRange.setFromIntervalEnd(fromEnd);
-        myRange.setToIntervalStart(toStart);
-        myRange.setToIntervalEnd(toEnd);
+        // The range to rturn.
+        Range range = myRange;
 
-        // Set the fuzzy types.
-        myRange.setFromCvFuzzyType(fromFuzzyType);
-        myRange.setToCvFuzzyType(toFuzzyType);
-
-        myRange.setLink(myLink);
-        myRange.setUndetermined(myUndetermined);
-
-        return myRange;
-    }
-
-    /**
-     * Makes a new Range instance.
-     * @param user handler to access the persistent system.
-     * @return a new Range constructed using values in the bean.
-     * @throws SearchException for errors in searching the persistent system.
-     * @throws IllegalArgumentException for validation errors.
-     */ 
-    public Range makeRange(EditUserI user) throws SearchException,
-            IllegalArgumentException {
-        // The from fuzzy type as a string.
-        String fromType = denormalizeFuzzyType(myFromRange);
-        // From range as a string.
-        String fromRange = getRange(fromType, myFromRange);
-
-        int fromStart = 0;
-        int fromEnd = 0;
-        // Need special parsing for fuzzy types.
-        if (fromType.equals(CvFuzzyType.FUZZY)) {
-            int pos = fromRange.indexOf('.');
-            fromStart = Integer.parseInt(fromRange.substring(0, pos));
-            // Skip two positions to be on the first character of the end level.
-            pos += 2;
-            fromEnd = Integer.parseInt(fromRange.substring(pos));
+        // Create a new range object if the current range is null (for new range)
+        if (range == null) {
+            // Construct a range object to return.
+            range = new Range(user.getInstitution(), fromStart, fromEnd, toStart,
+                    toEnd, null);
         }
         else {
-            // Non fuzzy types.
-            fromStart = Integer.parseInt(fromRange);
-            fromEnd = fromStart;
+            // Update the ranges for the existing range.
+            range.setFromIntervalStart(fromStart);
+            range.setFromIntervalEnd(fromEnd);
+            range.setToIntervalStart(toStart);
+            range.setToIntervalEnd(toEnd);
         }
-
-        // The to fuzzy type as a string.
-        String toType = denormalizeFuzzyType(myToRange);
-        // To range as a string.
-        String toRange = getRange(toType, myToRange);
-
-        int toStart = 0;
-        int toEnd = 0;
-        // Need special parsing for fuzzy types.
-        if (toType.equals(CvFuzzyType.FUZZY)) {
-            int pos = toRange.indexOf('.');
-            toStart = Integer.parseInt(toRange.substring(0, pos));
-            // Skip two positions to be on the first character of the end level.
-            pos += 2;
-            toEnd = Integer.parseInt(toRange.substring(pos));
-        }
-        else {
-            // Non fuzzy types.
-            toStart = Integer.parseInt(toRange);
-            toEnd = toStart;
-        }
-        // The from/to fuzzy types.
-        CvFuzzyType fromFuzzyType = getFuzzyType(fromType, user);
-        CvFuzzyType toFuzzyType = getFuzzyType(toType, user);
-
-        // Construct a range object to return.
-        Range range = new Range(user.getInstitution(), fromStart,
-                fromEnd, toStart, toEnd, null);
-
         // Set the fuzzy types.
         range.setFromCvFuzzyType(fromFuzzyType);
         range.setToCvFuzzyType(toFuzzyType);
 
         range.setLink(myLink);
         range.setUndetermined(myUndetermined);
+
         return range;
     }
 
@@ -516,6 +442,26 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
         RangeBean copy = (RangeBean) super.clone();
         // Reset to view mode.
         copy.setEditState(AbstractEditBean.VIEW);
+        return copy;
+    }
+
+    /**
+     * Make a copy of the current object. The key is set to a different key. Apart
+     * from that this method is similar to the {@link #clone()} method.
+     * @return a copy of the current object with key reset to a different key.
+     */
+    public RangeBean copy() {
+        RangeBean copy = null;
+        try {
+            copy = (RangeBean) clone();
+        }
+        catch (CloneNotSupportedException e) {
+            return null;
+        }
+        // Reset the key to a different key.
+        System.out.println("Before reset: " + copy.getFromRange() + " key: " + copy.getKey());
+        copy.reset();
+        System.out.println("After reset: " + copy.getFromRange() + " key: " + copy.getKey());
         return copy;
     }
 
