@@ -62,15 +62,17 @@ public class XrefAddAction extends CvAbstractAction {
 
             // The database the new xref belong to.
             CvDatabase db = (CvDatabase) user.getObjectByLabel(
-                CvDatabase.class, (String) theForm.get("database"));
+                CvDatabase.class, ((String) theForm.get("database")).trim());
 
             xref = new Xref(owner, db, (String) theForm.get("primaryId"),
-                (String) theForm.get("secondaryId"), (String) theForm.get("releaseNumber"));
+                (String) theForm.get("secondaryId"),
+                (String) theForm.get("releaseNumber"));
 
             // Only set it if we have a non empty list for qualifiers.
             if (!user.isQualifierListEmpty()) {
                 CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
-                    CvXrefQualifier.class, (String) theForm.get("qualifer"));
+                    CvXrefQualifier.class,
+                    ((String) theForm.get("qualifer")).trim());
                 xref.setCvXrefQualifier(xqual);
             }
         }

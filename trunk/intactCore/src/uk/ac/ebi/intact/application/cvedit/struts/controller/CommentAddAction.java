@@ -63,7 +63,7 @@ public class CommentAddAction extends CvAbstractAction {
         try {
             // Get the topic object for the new annotation.
             cvtopic = (CvTopic) user.getObjectByLabel(
-                CvTopic.class, (String) theForm.get("topic"));
+                CvTopic.class, ((String) theForm.get("topic")).trim());
 
             // The owner of the object we are editing.
             owner = user.getInstitution();
