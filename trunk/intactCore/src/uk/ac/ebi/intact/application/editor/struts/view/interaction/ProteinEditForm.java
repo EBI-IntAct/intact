@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -17,7 +17,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
 
 /**
  * The form to edit Proteins. Overrides the validate method to provide Protein
- * specific validation.
+ * specific validation. No validation is performed if 'Delete' button was pressed.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -35,11 +35,10 @@ public class ProteinEditForm extends EditForm {
      */
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
-        ActionErrors errors = new ActionErrors();
 
         // No need for validation if delete button is pressed.
         if (deletePressed()) {
-            return errors;
+            return null;
         }
         // The bean associated with the current action.
         int index = getIndex();
@@ -47,10 +46,12 @@ public class ProteinEditForm extends EditForm {
 
         // Must select from the drop down list.
         if (pb.getRole().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            ActionErrors errors = new ActionErrors();
             errors.add("protein.role", new ActionError("error.dropdown.list"));
             // This is an error protein.
             pb.setEditState(ProteinBean.ERROR);
+            return errors;
         }
-        return errors;
+        return null;
     }
 }
