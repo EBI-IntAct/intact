@@ -15,17 +15,22 @@ import uk.ac.ebi.intact.model.*;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
 /**
  * Defines the functionality of protein import utilities.
+ *
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
  */
 public abstract class UpdateProteinsI {
 
     protected static Logger logger = Logger.getLogger( "updateProtein" );
 
     private final static String CV_TOPIC_SEARCH_URL_ASCII = "search-url-ascii";
+    public static final  String SRS_URL = "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-noSession+-e+([uniprot-acc:${ac}]|[uniprot-isoid:${ac}])+-ascii";
 
 
     public static class UpdateException extends Exception {
@@ -170,38 +175,37 @@ public abstract class UpdateProteinsI {
             uniprotDatabase = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "uniprot" );
 
             // search for the SRS link.
-            srsUrl = "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-noSession+-e+([uniprot-acc:${ac}]|[uniprot-isoid:${ac}])+-ascii";
-//            Collection annotations = uniprotDatabase.getAnnotations();
-//            if( annotations != null ) {
-//                // find the CvTopic search-url-ascii
-//                Annotation searchedAnnotation = null;
-//                for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
-//                    Annotation annotation = (Annotation) iterator.next();
-//                    if( CV_TOPIC_SEARCH_URL_ASCII.equals( annotation.getCvTopic().getShortLabel() ) ) {
-//                        searchedAnnotation = annotation;
-//                    }
-//                }
-//
-//                if( searchedAnnotation != null ) {
-//                    srsUrl = searchedAnnotation.getAnnotationText();
-//                    if( logger != null ) {
-//                        logger.info( "Found SRS URL in the Uniprot CvDatabase: " + srsUrl );
-//                    }
-//                } else {
-//                    String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
-//                                 " in the UNIPROT database";
-//                    if( logger != null ) {
-//                        logger.error( msg );
-//                    }
-//                    throw new UpdateException( msg );
-//                }
-//            } else {
-//                String msg = "No Annotation in the UNIPROT database, could not get the SRS URL.";
-//                if( logger != null ) {
-//                    logger.error( msg );
-//                }
-//                throw new UpdateException( msg );
-//            }
+            Collection annotations = uniprotDatabase.getAnnotations();
+            if( annotations != null ) {
+                // find the CvTopic search-url-ascii
+                Annotation searchedAnnotation = null;
+                for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
+                    Annotation annotation = (Annotation) iterator.next();
+                    if( CV_TOPIC_SEARCH_URL_ASCII.equals( annotation.getCvTopic().getShortLabel() ) ) {
+                        searchedAnnotation = annotation;
+                    }
+                }
+
+                if( searchedAnnotation != null ) {
+                    srsUrl = searchedAnnotation.getAnnotationText();
+                    if( logger != null ) {
+                        logger.info( "Found SRS URL in the Uniprot CvDatabase: " + srsUrl );
+                    }
+                } else {
+                    String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
+                                 " in the UNIPROT database";
+                    if( logger != null ) {
+                        logger.error( msg );
+                    }
+                    throw new UpdateException( msg );
+                }
+            } else {
+                String msg = "No Annotation in the UNIPROT database, could not get the SRS URL.";
+                if( logger != null ) {
+                    logger.error( msg );
+                }
+                throw new UpdateException( msg );
+            }
 
             intactDatabase = (CvDatabase) getCvObject( CvDatabase.class, "intact" );
             goDatabase = (CvDatabase) getCvObject( CvDatabase.class, "go" );
