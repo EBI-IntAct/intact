@@ -322,7 +322,7 @@ public class UpdateProteins extends UpdateProteinsI {
         // the taxId can be different in obsoleteness case.
         bioSource.setTaxId ( "" + response.getTaxId() );
         bioSource.setFullName ( response.getFullName() );
-        bioSource.setShortLabel ( response.getShortLabel() );
+        bioSource.setShortLabel ( response.getShortLabel().toLowerCase() );
         bioSource.setOwner ( myInstitution );
 
         return bioSource;
@@ -356,7 +356,7 @@ public class UpdateProteins extends UpdateProteinsI {
             needUpdate = true;
         }
 
-        String shortLabel = newtBioSource.getShortLabel();
+        String shortLabel = newtBioSource.getShortLabel().toLowerCase();
         if (false == shortLabel.equals(bioSource.getShortLabel())) {
             bioSource.setShortLabel (shortLabel);
             needUpdate = true;
@@ -745,7 +745,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
         // get the protein info we need
         String fullName    = sptrEntry.getProteinName();
-        String shortLabel  = sptrEntry.getID();
+        String shortLabel  = sptrEntry.getID().toLowerCase();
         String proteinAC[] = sptrEntry.getAccessionNumbers();
         String sequence    = sptrEntry.getSequence();
         String crc64       = sptrEntry.getCRC64();
@@ -856,7 +856,7 @@ public class UpdateProteins extends UpdateProteinsI {
         protein.setOwner (myInstitution);
 
         // get the protein info we need
-        String shortLabel  = sptrEntry.getID();
+        String shortLabel  = sptrEntry.getID().toLowerCase();
 
         helper.create(protein);
 

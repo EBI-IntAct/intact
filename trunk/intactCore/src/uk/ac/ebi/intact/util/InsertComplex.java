@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
@@ -11,6 +11,7 @@ import java.io.*;
 import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.UpdateProteinsI;
 
 //as good a logging facility as any other....
 import org.apache.ojb.broker.util.logging.Logger;
@@ -30,25 +31,36 @@ import org.apache.ojb.broker.util.logging.Logger;
 public class InsertComplex {
 
     IntactHelper helper;
+    UpdateProteins proteinFactory;
 
     /** All proteins which have been created for the current complex.
      */
-    HashMap newProteins = new HashMap();
     Logger log = null;
 
     /**
-     * basic constructor - sets up intact helper
+     * basic constructor - sets up intact helper and protein factory
      */
     public InsertComplex() throws Exception {
 
        try {
            helper = new IntactHelper();
+
        } catch (IntactException ie) {
 
            //something failed with type map or datasource...
            String msg = "unable to create intact helper class";
            System.out.println(msg);
            ie.printStackTrace();
+       }
+
+       try {
+            proteinFactory = new UpdateProteins(helper);
+       } catch (UpdateProteinsI.UpdateException e) {
+
+           //something failed with type map or datasource...
+           String msg = "unable to create protein factory";
+           System.out.println(msg);
+           e.printStackTrace();
        }
     }
 
@@ -76,43 +88,60 @@ public class InsertComplex {
      * @param act The interaction to add the Interactor to
      * @param spAc Swiss-Prot accession number of the Protein to add.
      *             If the protein does not yet exist, it will be created.
+     * @param taxId The tax Id of the target proteins.
      * @param role Role of the protein in the interaction.
      * @throws Exception
      */
     public void insertComponent (Interaction act,
                                  String spAc,
+                                 String taxId,
                                  CvComponentRole role) throws Exception {
 
         Component comp = new Component();
         comp.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
         comp.setInteraction(act);
-        Protein protein = (Protein) helper.getObjectByXref(Protein.class, spAc);
+        Collection proteins = helper.getObjectsByXref(Protein.class, spAc);
 
-        /* Check if the protein has already been created during the creation of this complex.
-           See Note: transaction in main() for documentation.
-        */
-        if (null == protein){
-            protein = (Protein) this.newProteins.get(spAc);
+        if (0 == proteins.size()) {
+            // * If the protein does not exist, create it
+
+            // if it is an sptr protein, create a full protein object
+            Collection newProteins = proteinFactory.insertSPTrProteins(spAc);
+
+            // if it looks like an sgd protein, create it with an xref to sgd
+            if ((0 == newProteins.size()) && (spAc.substring(0,1).equals("S"))) {
+                proteinFactory.insertSimpleProtein(spAc,
+                                                   (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sgd"),
+                                                    taxId);
+            }
+
+            // ERROR: This contains all recently created proteins, not only the SGD one.
+            proteins = helper.getObjectsByXref(Protein.class, spAc);
         }
 
-        // If the protein does not exist, create it
-        if (null == protein){
-            protein = new Protein();
-            protein.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
-            protein.setShortLabel(spAc);
-            helper.create(protein);
-            this.newProteins.put(spAc,protein);
-            addNewXref(protein,
-                       new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                                (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sptr"),
-                                spAc,
-                                null, null, null));
+        Protein targetProtein = null;
+
+        // Filter for the correct protein
+        for (Iterator i = proteins.iterator(); i.hasNext();) {
+            Protein tmp = (Protein) i.next();
+            if (tmp.getBioSource().getTaxId().equals(taxId)) {
+                if (null == targetProtein) {
+                    targetProtein = tmp;
+                } else {
+                    throw new IntactException("More than one target protein found for: " + spAc);
+                }
+            }
+        }
+
+        if (null == targetProtein) {
+            throw new IntactException("No target protein found for: " + spAc);
         }
 
         // Complete the component
-        comp.setInteractor(protein);
+        comp.setInteractor(targetProtein);
         comp.setCvComponentRole(role);
         helper.create(comp);
+        System.err.print("P");
     }
 
 
@@ -124,11 +153,13 @@ public class InsertComplex {
      * @param bait Swiss-Prot accession number of the bait protein.
      * @param preys Swiss-Prot accession numbers of the prey proteins.
      * @param experimentLabel The short label of the experiment the complex belongs to.
+     * @param taxId The tax id of the target proteins.
      * @throws Exception
      */
     public void insertComplex(String interactionNumber,
                               String bait,
                               Vector preys,
+                              String taxId,
                               String experimentLabel) throws Exception {
 
         // Get experiment
@@ -150,12 +181,12 @@ public class InsertComplex {
             helper.create(act);
         }
         // add bait
-        insertComponent(act, bait, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "bait"));
+        insertComponent(act, bait, taxId, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "bait"));
 
         // add preys
         for (int i = 0; i < preys.size(); i++) {
             String prey = (String) preys.elementAt(i);
-            insertComponent(act, prey, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "prey"));
+            insertComponent(act, prey, taxId, (CvComponentRole) helper.getObjectByLabel(CvComponentRole.class, "prey"));
         }
 
         // link interaction to experiment
@@ -167,12 +198,18 @@ public class InsertComplex {
 
     /** Read complex data from flat file and insert it into the database.
      *
-     * @param args InputFileName
+     * @param args[0] InputFileName
+     * @param args[1] taxid. The tax id of the target proteins.
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
 
         InsertComplex app = new InsertComplex();
+
+        if (args.length != 2) {
+            System.err.println("Usage: InsertComplex complexFileName targetTaxId");
+            return;
+        }
 
         // Parse input file line by line
 
@@ -201,33 +238,20 @@ public class InsertComplex {
 
             // Insert results into database
             try {
-                // Start transaction.
-                // The transaction range is the interaction.
 
-                /* Note: transaction
-                Within one transaction, relational systems provide so-called READ CONSISTENCY.
-                This means that the same query always returns the same result within one transaction.
-                In this application, this has the follwing effect:
-                If a complex contains the same protein more than once, and this protein does
-                not yet exist, it will be created when the first occurrence is encoutered.
-                Due to the read consistency, the getObjectByXref would return null when the protein
-                occurs for the second time and is queried for. As a result, it would be created twice.
-                Therefore it is necessary to maintain newProteins, a HashMap listing all proteins
-                created in the current transaction.
-                */
-
-                app.helper.startTransaction();
-                app.newProteins.clear();
-                app.insertComplex(interactionNumber, bait, preys, experimentLabel);
-                app.helper.finishTransaction();
+                app.insertComplex(interactionNumber, bait, preys, args[1], experimentLabel);
             } catch (Exception ie) {
-                System.err.println("\nError: " + ie.getMessage() + "\nIgnoring:\n" + line);
-                app.helper.undoTransaction();
+                System.err.println();
+                System.err.println("Error while processing input line: ");
+                System.err.println(line);
+                System.err.println(ie.getMessage());
             }
 
             // Progress report
             if((++lineCount % 1) == 0){
                 System.out.print(lineCount + " ");
+            } else {
+                System.out.println(".");
             }
         }
         System.out.println("\n");
