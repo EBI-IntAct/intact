@@ -5,14 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.commons.struts.taglibs;
 
-import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import org.apache.log4j.Logger;
 
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMessages;
@@ -28,8 +24,6 @@ import org.apache.struts.Globals;
  */
 
 public class RestoreErrorsTag extends TagSupport {
-
-    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /**
      * Skip the body content.
@@ -50,7 +44,7 @@ public class RestoreErrorsTag extends TagSupport {
 
         HttpSession session = pageContext.getSession();
 
-        ActionErrors errors     = (ActionErrors)   session.getAttribute (Globals.ERROR_KEY);
+        ActionErrors errors = (ActionErrors) session.getAttribute (Globals.ERROR_KEY);
         if ( null != errors ) {
             pageContext.setAttribute (Globals.ERROR_KEY, errors);
             session.removeAttribute (Globals.ERROR_KEY);
