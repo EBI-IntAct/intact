@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
-import uk.ac.ebi.intact.application.cvedit.struts.view.CommentAddForm;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.model.*;
@@ -50,7 +49,7 @@ public class CommentAddAction extends IntactBaseAction {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         // Need the form to get data entered by the user.
-        CommentAddForm theForm = (CommentAddForm) form;
+        DynaActionForm theForm = (DynaActionForm) form;
 
         // The topic for the annotation.
         CvTopic cvtopic = null;
@@ -64,7 +63,7 @@ public class CommentAddAction extends IntactBaseAction {
         try {
             // Get the topic object for the new annotation.
             cvtopic = (CvTopic) user.getObjectByLabel(
-                CvTopic.class, theForm.getTopic());
+                CvTopic.class, (String) theForm.get("topic"));
 
             // The owner of the object we are editing.
             owner = user.getInstitution();
@@ -81,7 +80,7 @@ public class CommentAddAction extends IntactBaseAction {
         }
         // The new annotation to add to database.
         Annotation annot = new Annotation();
-        annot.setAnnotationText(theForm.getText());
+        annot.setAnnotationText((String) theForm.get("description"));
         annot.setCvTopic(cvtopic);
         annot.setOwner(owner);
 
@@ -89,10 +88,8 @@ public class CommentAddAction extends IntactBaseAction {
         CvViewBean viewbean = user.getView();
         viewbean.addAnnotation(annot);
 
-        theForm.reset();
-
-        // Remove the obsolete form bean.
-        //super.removeFormBean(mapping, request);
+        // Clear previous entries.
+        theForm.reset(mapping, request);
 
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }

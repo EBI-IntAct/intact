@@ -48,7 +48,7 @@ public class XrefAddAction extends IntactBaseAction {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         // Need the form to get data entered by the user.
-        XrefAddForm theForm = (XrefAddForm) form;
+        DynaActionForm theForm = (DynaActionForm) form;
 
         // Handler to the IntactUserIF.
         IntactUserIF user = super.getIntactUser(request);
@@ -62,15 +62,15 @@ public class XrefAddAction extends IntactBaseAction {
 
             // The database the new xref belong to.
             CvDatabase db = (CvDatabase) user.getObjectByLabel(
-                CvDatabase.class, theForm.getDatabase());
+                CvDatabase.class, (String) theForm.get("database"));
 
-            xref = new Xref(owner, db, theForm.getPrimaryId(),
-                theForm.getSecondaryId(), theForm.getReleaseNumber());
+            xref = new Xref(owner, db, (String) theForm.get("primaryId"),
+                (String) theForm.get("secondaryId"), (String) theForm.get("releaseNumber"));
 
             // Only set it if we have a non empty list for qualifiers.
             if (!user.isQualifierListEmpty()) {
                 CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
-                    CvXrefQualifier.class, theForm.getQualifer());
+                    CvXrefQualifier.class, (String) theForm.get("qualifer"));
                 xref.setCvXrefQualifier(xqual);
             }
         }
@@ -89,8 +89,8 @@ public class XrefAddAction extends IntactBaseAction {
         CvViewBean viewbean = user.getView();
         viewbean.addXref(xref);
 
-        // Reset the form
-        theForm.reset();
+        // Clear previous entries.
+        theForm.reset(mapping, request);
 
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }
