@@ -15,19 +15,9 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
-<jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
-
 <%-- Class wide declarations. --%>
 <%!
     String formName = "bioSourceForm";
-%>
-
-<%-- Fill the form before the display --%>
-<%
-//    DynaBean form = user.getDynaBean(formName, request);
-//    user.getView().fillEditorSpecificInfo(form);
-//    request.setAttribute(formName, form);
 %>
 
 <html:form action="/biosource/info">
