@@ -11,9 +11,7 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConsta
 import uk.ac.ebi.intact.application.cvedit.struts.view.*;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.CreateException;
 import uk.ac.ebi.intact.persistence.SearchException;
-import uk.ac.ebi.intact.util.Assert;
 import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
 
@@ -86,7 +84,7 @@ public class XrefAddAction extends IntactBaseAction {
         catch (IntactException ie) {
             // This shoudn't be thrown at all; declared to throw from the
             // Xref constructor
-            Assert.fail(ie);
+            assert false;
         }
         // The current CV object we are editing.
         CvObject cvobj = user.getCurrentEditObject();
@@ -98,9 +96,9 @@ public class XrefAddAction extends IntactBaseAction {
         try {
             user.create(xref);
         }
-        catch (CreateException ce) {
+        catch (IntactException ie) {
             // Unable to create an annotation; no nested message provided.
-            super.addError("error.create", ce.getMessage());
+            super.addError("error.create", ie.getMessage());
             super.saveErrors(request);
             return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
         }
