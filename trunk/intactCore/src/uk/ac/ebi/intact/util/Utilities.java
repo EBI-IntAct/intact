@@ -34,6 +34,19 @@ public class Utilities {
 	return properties;
     }
 
+    /** compares two objects.
+     * This is a workaround for the case where o is null
+     * and o.equals(p) returns exceptions.
+     *
+     * @param o
+     * @param p
+     * @return
+     */
+    public static boolean equals(Object o, Object p){
+        if (o == p) return true;
+        if (null == o && null != p) return false;
+        return (o.equals(p));
+    }
 }
 
 
