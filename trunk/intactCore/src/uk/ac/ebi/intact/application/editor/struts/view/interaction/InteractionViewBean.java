@@ -403,6 +403,14 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return getMenuFactory().getMenu(EditorMenuFactory.ROLES, 1);
     }
 
+    public List getEditBioSourceMenu() throws SearchException {
+        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISMS, 0);
+    }
+
+    public List getAddBioSourceMenu() throws SearchException {
+        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISMS, 1);
+    }
+
     public void setKD(Float kd) {
         myKD = kd;
     }
