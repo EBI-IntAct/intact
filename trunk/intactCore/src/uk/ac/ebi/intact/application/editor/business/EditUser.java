@@ -567,33 +567,39 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public boolean shortLabelExists(String label) throws SearchException {
+        return doesShortLabelExist(myEditView.getEditClass(), label, myEditView.getAc());
         // The class of the object we are editing at the moment.
-        Class clazz = myEditView.getEditClass();
+//        Class clazz = myEditView.getEditClass();
+//
+//        // Holds the result from the search.
+//        Collection results = search1(clazz.getName(), "shortLabel", label);
+//        if (results.isEmpty()) {
+//            // Don't have this short label on the database.
+//            return false;
+//        }
+//        // If we found a single record then it could be the current record.
+//        if (results.size() == 1) {
+//            // Found an object with similar short label; is it as same as the
+//            // current record?
+//            String currentAc = myEditView.getAc();
+//            // ac is null until a record is persisted; current ac is null
+//            // for a new object.
+//            if (currentAc != null) {
+//                // Editing an existing record.
+//                String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
+//                if (currentAc.equals(resultAc)) {
+//                    // We have retrieved the same record from the DB.
+//                    return false;
+//                }
+//            }
+//        }
+//        // There is another record exists with the same short label.
+//        return true;
+    }
 
-        // Holds the result from the search.
-        Collection results = search1(clazz.getName(), "shortLabel", label);
-        if (results.isEmpty()) {
-            // Don't have this short label on the database.
-            return false;
-        }
-        // If we found a single record then it could be the current record.
-        if (results.size() == 1) {
-            // Found an object with similar short label; is it as same as the
-            // current record?
-            String currentAc = myEditView.getAc();
-            // ac is null until a record is persisted; current ac is null
-            // for a new object.
-            if (currentAc != null) {
-                // Eediting an existing record.
-                String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
-                if (currentAc.equals(resultAc)) {
-                    // We have retrieved the same record from the DB.
-                    return false;
-                }
-            }
-        }
-        // There is another record exists with the same short label.
-        return true;
+    public boolean shortLabelExists(Class clazz, String label, String ac)
+            throws SearchException {
+        return doesShortLabelExist(clazz, label, ac);
     }
 
     public void fillSearchResult(DynaBean dynaForm) {
@@ -758,5 +764,45 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private void endEditing() {
         myEditState = false;
+    }
+
+    /**
+     * Returns true if given label exists in the persistent system.
+     * @param clazz the Class to search for (ie., scope)
+     * @param label the label to search for.
+     * @param ac the AC to exclude match for the retrieved record. This criteia
+     * is taken into consideration only when a single record was found. If the
+     * retieved object's AC matches this value then we conclude that we have
+     * retrieved the the same entry.
+     * @return true if <code>label</code> exists for <code>clazz</code>. False
+     * is returned for all other instances.
+     * @throws SearchException
+     */
+    private boolean doesShortLabelExist(Class clazz, String label, String ac)
+            throws SearchException {
+        // Holds the result from the search.
+        Collection results = search1(clazz.getName(), "shortLabel", label);
+        if (results.isEmpty()) {
+            // Don't have this short label on the database.
+            return false;
+        }
+        // If we found a single record then it could be the current record.
+        if (results.size() == 1) {
+            // Found an object with similar short label; is it as same as the
+            // current record?
+//            String currentAc = myEditView.getAc();
+            // ac is null until a record is persisted; current ac is null
+            // for a new object.
+            if (ac != null) {
+                // Editing an existing record.
+                String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
+                if (ac.equals(resultAc)) {
+                    // We have retrieved the same record from the DB.
+                    return false;
+                }
+            }
+        }
+        // There is another record exists with the same short label.
+        return true;
     }
 }

@@ -6,9 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
@@ -49,17 +47,26 @@ public class SubmitButtonAction extends CommonDispatchAction {
         EditUserI user = getIntactUser(request);
 
         // The current view.
-        AbstractEditViewBean view = user.getView();
+        InteractionViewBean view = (InteractionViewBean) user.getView();
+
+        // Check for feature that have been saved with -x (as a result of cloning).
+//        if (view.hasFeatureWithClonedSuffix()) {
+//            // Just a warning to the user.
+//            ActionMessages msgs = new ActionMessages();
+//            msgs.add(ActionMessages.GLOBAL_MESSAGE,
+//                    new ActionMessage("message.feature.label"));
+//            saveMessages(request, msgs);
+//        }
 
         // TODO debuuging statement to monitor why submitting an interaction
         // is not returning back to the experiment as it should.
         LOGGER.error("Current interaction: " + view.getAc() + " Source exp: "
-                + ((InteractionViewBean) view).getSourceExperimentAc());
+                + view.getSourceExperimentAc());
 
         // Do we have to return to the experiment editor?
         if (returnToExperiment(request)) {
             // The AC of the experiment.
-            String ac = ((InteractionViewBean) view).getSourceExperimentAc();
+            String ac = view.getSourceExperimentAc();
 
             // The experiment we have been editing.
             AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
@@ -82,6 +89,62 @@ public class SubmitButtonAction extends CommonDispatchAction {
 
         // Only show the submitted record.
         return mapping.findForward(RESULT);
+    }
+
+    // Override to provide a way to get back to the experiment editor when
+    // an interaction is submitted.
+//    public ActionForward save(ActionMapping mapping,
+//                                ActionForm form,
+//                                HttpServletRequest request,
+//                                HttpServletResponse response)
+//            throws Exception {
+//        // Submit the form. Analyze the forward path.
+//        ActionForward forward = super.save(mapping, form, request, response);
+//
+//        // Return the forward if it isn't a success.
+//        if (!forward.equals(mapping.findForward(SUCCESS))) {
+//            return forward;
+//        }
+//        // The current view.
+//        InteractionViewBean view = (InteractionViewBean) getIntactUser(request).getView();
+//
+//        // Check for feature that have been saved with -x (as a result of cloning).
+//        if (view.hasFeatureWithClonedSuffix()) {
+//            // Just a warning to the user.
+//            ActionMessages msgs = new ActionMessages();
+//            msgs.add(ActionMessages.GLOBAL_MESSAGE,
+//                    new ActionMessage("message.feature.label"));
+//            saveMessages(request, msgs);
+//        }
+//        return forward;
+//    }
+
+    public ActionForward clone(ActionMapping mapping,
+                              ActionForm form,
+                              HttpServletRequest request,
+                              HttpServletResponse response)
+            throws Exception {
+        // Do the cloning. Save the forward to return later.
+        ActionForward forward = super.clone(mapping, form, request, response);
+
+        // Handler to the user object.
+        EditUserI user = getIntactUser(request);
+
+        // The current view.
+        InteractionViewBean view = (InteractionViewBean) user.getView();
+
+        // Check to see that a cloned feature already exists.
+        if (view.hasDuplicateFeatures(user)) {
+            view.markDuplicateFeatures(user);
+            // The errors to display.
+            ActionErrors errors = new ActionErrors();
+            errors.add("int.duplicate.feature",
+                    new ActionError("error.int.sanity.duplicate.feature"));
+            saveErrors(request, errors);
+            // Display the error in the input page.
+            forward = mapping.getInputForward();
+        }
+        return forward;
     }
 
     /**

@@ -15,7 +15,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -27,7 +26,7 @@ import java.util.List;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class ComponentBean extends AbstractEditKeyBean implements Serializable {
+public class ComponentBean extends AbstractEditKeyBean {
 
     // Class Data
 
@@ -96,6 +95,12 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
     private transient List myFeaturesToDel = new ArrayList();
 
     /**
+     * Default constructor. Need this construtor to set from a cloned
+     * object. Visibility is set to package.
+     */
+    ComponentBean() {}
+
+    /**
      * Instantiate an object of this class from a Protein instance.
      * @param protein the <code>Protein</code> object.
      */
@@ -111,16 +116,7 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
      * @param component the <code>Component</code> object.
      */
     public ComponentBean(Component component) {
-        myComponent = component;
-        myInteraction = (Interaction) IntactHelper.getRealIntactObject(
-                component.getInteraction());
-        myInteractor = (Interactor) IntactHelper.getRealIntactObject(
-                component.getInteractor());
-        mySPAc = getSPAc();
-        myRole = component.getCvComponentRole().getShortLabel();
-        myStoichiometry = component.getStoichiometry();
-        setOrganism();
-        setExpressedIn();
+        initialize(component);
 
         // Set the feature for this bean.
         for (Iterator iter = myComponent.getBindingDomains().iterator(); iter.hasNext();) {
@@ -295,24 +291,19 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
         return CollectionUtils.subtract(myFeaturesToAdd, common);
     }
 
-    public void saveFeature(Feature feature) {
-        // Create the feature bean to compare.
-        FeatureBean fb = new FeatureBean(feature);
-
+    /**
+     * Saves the given bean. This method takes care of saving the bean to the
+     * correct collection. For example, if this is a new bean, then it will be
+     * added to the 'FeaturesToAdd' collection.
+     * @param fb the Feature bean to save.
+     */
+    public void saveFeature(FeatureBean fb) {
         // Find the feature bean within the component bean.
         if (myFeatures.contains(fb)) {
             // Update an existing feature; remove it and add the new bean.
             int idx = myFeatures.indexOf(fb);
             myFeatures.remove(idx);
             myFeatures.add(idx, fb);
-
-            // Update the new feature list if it exist in there. This is important
-            // or else getFeatue() wouldn't return an up todate Feature object.
-            if (myFeaturesToAdd.contains(fb)) {
-                // Update an existing feature; remove it and add the new bean.
-                myFeaturesToAdd.remove(fb);
-                myFeaturesToAdd.add(fb);
-            }
         }
         else {
             // New feature; just add it.
@@ -326,7 +317,44 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
         myFeaturesToDel.clear();
     }
 
+    // Reset the fields to null if we don't have values to set. Failure
+    // to do so will display the previous edit object's values as current.
+    void setFromClonedObject(Component copy) {
+        initialize(copy);
+        clearTransactions();
+
+        // Clear existing features in the view.
+        myFeatures.clear();
+
+        // All the Features need to be added.
+        for (Iterator iter = myComponent.getBindingDomains().iterator(); iter.hasNext();) {
+            // Blank out any link among features.
+            FeatureBean fb = new FeatureBean((Feature) iter.next());
+            // Add to the view.
+            myFeatures.add(fb);
+            // Features need to be added to the component.
+            myFeaturesToAdd.add(fb);
+        }
+    }
+
     // Helper methods
+
+    /**
+     * Intialize the member variables using the given Component object.
+     * @param component <code>Component</code> object to populate this bean.
+     */
+    private void initialize(Component component) {
+        myComponent = component;
+        myInteraction = (Interaction) IntactHelper.getRealIntactObject(
+                component.getInteraction());
+        myInteractor = (Interactor) IntactHelper.getRealIntactObject(
+                component.getInteractor());
+        mySPAc = getSPAc();
+        myRole = component.getCvComponentRole().getShortLabel();
+        myStoichiometry = component.getStoichiometry();
+        setOrganism();
+        setExpressedIn();
+    }
 
     private void setOrganism() {
         BioSource biosource = myInteractor.getBioSource();

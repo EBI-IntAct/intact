@@ -279,6 +279,21 @@ public interface EditUserI extends IntactUserI, Serializable {
     public boolean shortLabelExists(String shortlabel) throws SearchException;
 
     /**
+     * Check for duplicity of short label for the current edit object.
+     * @param clazz the Class to limit the search.
+     * @param shortlabel the short label to check for duplicity.
+     * @param ac the AC to exclude match for the retrieved record. This criteia
+     * is taken into consideration only when a single record was found. If the
+     * retieved object's AC matches this value then we conclude that we have
+     * retrieved the the same entry.
+     * @return true if <code>shortlabel</code> already exists for given <code>clazz</code>
+     * in the database.
+     * @exception SearchException for errors in acccessing the database.
+     */
+    public boolean shortLabelExists(Class clazz, String shortlabel, String ac)
+            throws SearchException;
+
+    /**
      * Popluate the given form with search result.
      * @param dynaForm the form to populate.
      */

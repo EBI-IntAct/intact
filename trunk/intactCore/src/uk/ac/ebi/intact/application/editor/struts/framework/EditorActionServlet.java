@@ -108,6 +108,7 @@ public class EditorActionServlet extends ActionServlet {
         // Related to add/edit feature.
         map.put(rb.getString("int.proteins.button.feature.add"), "int.feature");
         map.put(rb.getString("int.proteins.button.feature.edit"), "int.feature");
+        map.put(rb.getString("int.proteins.button.feature.save"), "int.feature");
 
         // Feature delete/link/unlink.
         map.put(rb.getString("int.proteins.button.feature.delete"), "int.feature.link");
