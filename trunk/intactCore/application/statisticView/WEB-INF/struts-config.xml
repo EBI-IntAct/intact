@@ -5,67 +5,47 @@
           "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
 
 <!--
-This is the Struts configuration file for the example application,
-using the proposed new syntax.
-
-NOTE:  You would only flesh out the details in the "form-bean"
-declarations if you had a generator tool that used them to create
-the corresponding Java classes for you.  Otherwise, you would
-need only the "form-bean" element itself, with the corresponding
-"name" and "type" attributes.
+This is the Struts configuration file for the statisticView  application,
+Author: Michael Kleen
 -->
 
 <struts-config>
 
     <!-- ========== Form Bean Definitions =================================== -->
+
     <form-beans>
-
-        <!-- The filter form -->
         <form-bean name="filterForm"
-                   type="uk.ac.ebi.intact.application.statisticView.struts.view.FilterForm"/>
-
+            type="uk.ac.ebi.intact.application.statisticView.struts.view.FilterForm"/>
     </form-beans>
 
     <!-- ========== Global Forward Definitions ============================== -->
+
     <global-forwards>
-
-        <forward name="start"   path="/do/init" />
-
+        <forward name="statistics" path="/do/statistics"/>
     </global-forwards>
 
     <!-- ========== Action Mapping Definitions ============================== -->
+
     <action-mappings>
-
-        <!-- Action mapping for the Statistic application -->
-        <!-- Entrance of the application -->
-        <action path="/init"
-                type="org.apache.struts.actions.ForwardAction"
-                parameter="statisticView.layout">
+        <action path="/statistics"
+            type="uk.ac.ebi.intact.application.statisticView.struts.controller.IntactStatisticsAction"
+            name="filterForm"
+            validate="false"
+            scope="request">
+            <forward name="sucess" path="intact.chart.layout"/>
+            <forward name="error" path="intact.chart.layout"/>
         </action>
-
-        <!-- data filtering -->
-        <action path="/filter"
-                type="uk.ac.ebi.intact.application.statisticView.struts.controller.FilterAction"
-                name="filterForm"
-                validate="false"
-                scope="request">
-
-            <forward name="success" path="statisticView.layout"/>
-
-        </action>
-
     </action-mappings>
 
     <!-- ========== Plug Ins Configuration ================================== -->
 
-    <plug-in className="org.apache.struts.tiles.TilesPlugin" >
+    <plug-in className="org.apache.struts.tiles.TilesPlugin">
         <set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
-        <set-property property="moduleAware" value="true" />
+        <set-property property="moduleAware" value="true"/>
     </plug-in>
 
     <!-- ========== Message Resources Definitions =========================== -->
 
     <message-resources
         parameter="uk.ac.ebi.intact.application.statisticView.MessageResources"/>
-
 </struts-config>
