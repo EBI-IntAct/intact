@@ -55,7 +55,7 @@ public class StatisticsSet {
      * @param loggername the name of your Log4J logger
      */
     public StatisticsSet (String loggername) {
-         logger = Logger.getLogger(loggername);
+        logger = Logger.getLogger(loggername);
     }
 
 
@@ -114,12 +114,12 @@ public class StatisticsSet {
                 int termNumber     = intStat.getNumberOfGoTerms();
 
                 if (null != logger) logger.info (timestamp + " " +
-                                                 protNumber + " " +
-                                                 interNumber + " " +
-                                                 binInterNumber + " " +
-                                                 complexNumber + " "+
-                                                 expNumber +" " +
-                                                 termNumber);
+                        protNumber + " " +
+                        interNumber + " " +
+                        binInterNumber + " " +
+                        complexNumber + " "+
+                        expNumber +" " +
+                        termNumber);
 
                 statCollection.add (oneRow);
 
@@ -139,13 +139,16 @@ public class StatisticsSet {
      * Retrieve the latest timestamp of the Statistics table
      *
      * @param helper to call the getAllStatisticsIntAct method
-     * @return Timestamp the timestamp of the last line in the Statistics table
+     * @return Timestamp the timestamp of the last line in the Statistics table or null if no data found.
      */
     public Timestamp getLastTimestamp(IntactHelper helper)
             throws IntactException{
-            ArrayList stats = getAllStatisticsIntAct(helper);
-            ArrayList lastRow = (ArrayList) stats.get (stats.size()-1);
-            return (Timestamp) lastRow.get(0);
+        ArrayList stats = getAllStatisticsIntAct(helper);
+        if (stats.isEmpty()) {
+            return null;
+        }
+        ArrayList lastRow = (ArrayList) stats.get (stats.size()-1);
+        return (Timestamp) lastRow.get(0);
     }
 
     /**
@@ -156,8 +159,8 @@ public class StatisticsSet {
      */
     public Collection getLastRow (IntactHelper helper)
             throws IntactException {
-            ArrayList stats = getAllStatisticsIntAct(helper);
-            return (ArrayList) stats.get (stats.size()-1);
+        ArrayList stats = getAllStatisticsIntAct(helper);
+        return (ArrayList) stats.get (stats.size()-1);
     }
 
     /**
@@ -168,20 +171,20 @@ public class StatisticsSet {
      * @return Collection which contains the list of data of one column of the Statistics table
      */
     public Collection getListOfOneField (IntactHelper helper,
-                                                      int fieldToRetrieve)
+                                         int fieldToRetrieve)
             throws IntactException {
 
-            ArrayList stats = getAllStatisticsIntAct(helper);
+        ArrayList stats = getAllStatisticsIntAct(helper);
 
-            ArrayList theDataList = new ArrayList();
+        ArrayList theDataList = new ArrayList();
 
-            int i = 0;
-            while ( i < stats.size() ) {
-                ArrayList getOneRow = (ArrayList) stats.get(i);
-                theDataList.add(getOneRow.get(fieldToRetrieve));
-                i++;
-            }
-            return theDataList;
+        int i = 0;
+        while ( i < stats.size() ) {
+            ArrayList getOneRow = (ArrayList) stats.get(i);
+            theDataList.add(getOneRow.get(fieldToRetrieve));
+            i++;
+        }
+        return theDataList;
     }
 
 

@@ -43,7 +43,7 @@ public class DataManagement {
     public DataManagement() throws IntactException {
         try {
             helper = new IntactHelper();
-            statisticsSet = new StatisticsSet();
+            statisticsSet = new StatisticsSet(Constants.LOGGER_NAME);
         }
         catch (IntactException ie) {
             logger.error("Could not connect to the intact database, cause:" + ie.getRootCause(), ie);
@@ -71,6 +71,10 @@ public class DataManagement {
     public String getLastTimestamp() throws IntactException {
 
         Timestamp timestamp = statisticsSet.getLastTimestamp (helper);
+        if (timestamp == null) {
+            throw new IntactException ("There is no statistics to display");
+        }
+
         String time = timestamp.toString();
         String[] tabString = time.split("\\s");
         String theDate = tabString[0];

@@ -20,11 +20,21 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/display.tld"     prefix="display" %>
+<%@ taglib uri="/WEB-INF/tld/intact.tld"      prefix="intact" %>
 
 
 
 <%
     String applicationPath = request.getContextPath();
+    DataManagement dat = new DataManagement();
+    boolean noData = false;
+    String lastDate = "";
+
+    try {
+        lastDate = dat.getLastTimestamp();
+    } catch (IntactException ie) {
+        noData = true;
+    }
 %>
 
 <table width="100%" height="100%">
@@ -33,12 +43,17 @@
         <tr>
             <td valign="top" height="*">
             <br>
+           <%
+            if (noData) {
+               out.println("Sorry, right now there is no statistics available in your IntAct node.");
+               out.println("</td></tr></table>");
+               return; // terminate right here the execution of the JSP.
+            }
+           %>
+
             <bean:message key="stat.present.content.string"/>
-            <%
-                DataManagement dat = new DataManagement();
-                String lastDate = dat.getLastTimestamp();
-                out.println(lastDate);
-            %>
+            <%= lastDate %>
+
             <br>
             </td>
         </tr>
@@ -46,8 +61,9 @@
         <tr>
             <td valign="top" height="*">
 
-
 <%
+
+
     ArrayList rows = new ArrayList();
     try {
         Collection listDataTable = dat.getLastStatistics();
@@ -93,11 +109,10 @@
        </display:table>
 
 
-<%
-
+      <%
         // will be added to each servlet URL to avoid browser caching
         long time = System.currentTimeMillis();
-%>
+      %>
 
             </td>
         </tr>
@@ -138,15 +153,11 @@
             </td>
         </tr>
 
-    </tbody>
-</table>
-
-<%
+    <%
    } catch (IntactException ie) {
-
         out.println ("Error when trying to get the latest statistics.");
+   }
+ %>
 
-    }
-%>
-
-
+   </tbody>
+</table>
