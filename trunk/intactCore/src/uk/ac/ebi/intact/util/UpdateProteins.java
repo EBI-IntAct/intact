@@ -33,8 +33,8 @@ import org.apache.ojb.broker.PersistenceBroker ;
 
 
 public class UpdateProteins {
-    IntactHelper helper ;
-    DAOSource dataSource ;
+    static IntactHelper helper ;
+    static DAOSource dataSource ;
     static DAO dao ;
     Logger log = null ;
     PersistenceBroker login ;
@@ -59,6 +59,7 @@ public class UpdateProteins {
             System.exit(1) ;
         }
 
+        /*
         //for testing the function. To be moved to main() later.
         try {
             //hard coded now, will change to args[0], args[1] for username and psword
@@ -74,7 +75,7 @@ public class UpdateProteins {
         helper.addCachedClass(Protein.class) ;
         helper.addCachedClass(Xref.class) ;
         helper.addCachedClass(BioSource.class) ;
-
+        */
     } //constructor
 
 
@@ -115,6 +116,24 @@ public class UpdateProteins {
         Protein protein ;
         String filterTaxId = "" ;
 
+        try {
+            //hard coded now, will change to args[0], args[1] for username and psword
+            helper = new IntactHelper(dataSource, args[0], args[1]) ;
+            //helper = new IntactHelper(dataSource, "ops$danwu", "wedn1452") ;
+        } catch (Exception hlp) {           
+            System.out.println("\nUsage: java UpdateProteins <username> <password> <dataSource> <TaxID>?" ) ;
+            System.out.println("dataSource = " +  "<SPTR path/flatfile or SPTR protein AC>") ;
+            System.out.println("TaxID is cumpulsary if the dataSourcce is a flatfile rather than a SPTR ac\n") ;
+            System.out.println("Now, most likely your login details were not right.\n") ;
+            System.exit(1) ;
+        }
+        
+        helper.addCachedClass(Institution.class) ;
+        helper.addCachedClass(Protein.class) ;
+        helper.addCachedClass(Xref.class) ;
+        helper.addCachedClass(BioSource.class) ;
+        helper.addCachedClass(Interactor.class) ;
+
         // check the type of input 
         try {
             REMatch[] srcFile = match(args[2], "\\S+\\/\\S+|\\S+\\.\\S+") ; 
@@ -123,8 +142,9 @@ public class UpdateProteins {
             }
         } catch (Exception arg0) {
             System.out.println("\nUsage: java UpdateProteins <username> <password> <dataSource> <TaxID>?" ) ;
-            System.out.println("dataSource = " +  "<SPTR source file or SPTR protein AC>\n") ;
-            System.out.println("TaxID is cumpulsary if the SPTR source is a flatfile rather than a SPTR ac\n") ;
+            System.out.println("dataSource = " +  "<SPTR path/flatfile or SPTR protein AC>.\n") ;
+            System.out.println("TaxID is cumpulsary if the dataSourcce is a flatfile rather than a SPTR ac.\n") ;
+            System.out.println("dataSource please.\n") ;
             System.exit(1) ;
         }
 
@@ -136,7 +156,7 @@ public class UpdateProteins {
                 filterTaxId = args[3] ;
             } catch (Exception taxidParam) {
                 System.out.println("\nUsage: java UpdateProteins <username> <password> <dataSource> <TaxID>?") ;
-                System.out.println("You need to specify the TaxID\n") ;
+                System.out.println("You need to specify the TaxID (e.g. 4932 for Baker's yeast).\n") ;
                 taxidParam.printStackTrace() ;
                 System.exit(1) ;
             }
@@ -147,6 +167,14 @@ public class UpdateProteins {
 
         if (inFile == "" ) {//param is a protein AC, not a flat file.
             source = getSPTRDateOnNet( source ) ;
+            
+            REMatch[] warnMsg = match(source, "<B>no entries found</B>") ;            
+
+            if (warnMsg.length >0 ) {
+                System.out.println("The SPTR AC doesn't exist!") ;
+                System.exit(1) ;
+            }
+            else
             System.out.println("\nThe SPTR entry: \n\n" + source) ;
         }
 
@@ -180,6 +208,7 @@ public class UpdateProteins {
         }
 
         else { 
+
             sptrData = ps.parseSPTR(source) ; //entry fetched from net (given a URL)
             
             if ( sptrData != null ) {
@@ -272,7 +301,7 @@ public class UpdateProteins {
         Xref SpXref = null ;
         Protein protein  = null ;
         BioSource biosrcID = null ;
-        BioSource biosrcName = null ;
+        BioSource bioSrc = null ;
 
         ac = getFirstElement(ac, "[A-Za-z0-9]+") ;
         gn = (gn.equals (""))?  "" : getFirstElement(gn, "[A-Za-z0-9\\'\\-\\.]+") ;
@@ -313,11 +342,12 @@ public class UpdateProteins {
 
         try {
             //add bioSource. cannot use taxId as param.
-            biosrcName = (BioSource) helper.getBioSourceByName(orgName) ;
+            bioSrc = (BioSource) helper.getBioSourceByName(orgName) ;
 
             System.out.println("taxID: " + taxId + ", orgName: " + orgName) ;
-            if (biosrcName == null) {
+            if (bioSrc == null) {
                 addBioSource(orgName, taxId) ;
+                dao.commit() ;
             }
 
             //add/update Protein 
@@ -339,8 +369,8 @@ public class UpdateProteins {
                 protein.setFullName(de) ;
                 protein.setCrc64(crc) ;
                 protein.setUpdated(new Date()) ;
-                // protein.setFormOfAc("EBI-14") ;//just a test!
-               //other data for a given protein may be updated here. 
+                protein.setBioSource(bioSrc) ;
+                //other data for a given protein may be updated here. 
 
                 dao.begin();
                 dao.update(protein);
@@ -361,6 +391,8 @@ public class UpdateProteins {
                 
                 protein.setFullName(de) ;
                 protein.setCrc64(crc) ;
+                protein.setBioSource(bioSrc) ;
+                //other data for a given protein can be added too.
 
                 dao.begin() ;
                 dao.create(protein) ;
