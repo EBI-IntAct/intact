@@ -465,7 +465,7 @@ public abstract class AbstractEditViewBean {
      * @return the tag as a String for the current view bean.
      */
     public String getHelpTag() {
-        return "cv.editors";
+        return "editor.cv.editors";
     }
 
     /**

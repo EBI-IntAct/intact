@@ -100,7 +100,7 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
     // Override to provide Experiment help tag.
     public String getHelpTag() {
-        return "experiment";
+        return "editor.experiment";
     }
 
     // Null for any of these values will throw an exception.
