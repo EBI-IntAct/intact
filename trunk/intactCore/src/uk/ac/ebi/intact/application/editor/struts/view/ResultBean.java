@@ -96,6 +96,14 @@ public class ResultBean implements Serializable {
     }
 
     /**
+     * The class name of the wrapped object.
+     * @return he class name of the wrapped object as a string object.
+     */
+    public String getClassName() {
+        return myAnnotObject.getClass().getName();
+    }
+
+    /**
      * True if the given object and this object's annotated object are of safe type.
      * @param obj the object to compare for type.
      * @return true if <code>obj.getClass()</code> equals the class of the annotated

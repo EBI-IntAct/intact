@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
+import java.util.List;
 
 /**
  * Provides methods specific to a user editing an Annotated object.
@@ -119,10 +120,23 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @param label the short label to search for.
      *
      * @exception SearchException thrown for a search failure; also thrown
-     * if <code>label</code> already exists in <code>clazz</code>.
+     * if <code>label</code> occurrs more than once for <code>clazz</code>.
      */
     public Object getObjectByLabel(Class clazz, String label)
             throws SearchException;
+
+    /**
+     * Return an Object by ac for given class.
+     *
+     * @param clazz the class to search for.
+     * @param ac the accession number to search for.
+     * @return an Object of <code>clazz</code> type for <code>ac</code>.
+     *
+     * @exception SearchException thrown for a search failure; also thrown
+     * if <code>ac</code> occurs more than once for <code>clazz</code>; highly
+     * unlikely given that <code>ac</code> is the primary key!
+     */
+    public Object getObjectByAc(Class clazz, String ac) throws SearchException;
 
     /**
      * Gets SPTR Proteins via SRS.
@@ -249,6 +263,18 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @param dynaForm the form to populate.
      */
     public void fillSearchResult(DynaBean dynaForm);
+
+    /**
+     * Returns the search result as a list.
+     * @return the search result; an empty list is returned if there are no search
+     * results.
+     *
+     * <pre>
+     * post: return != Null
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(ResultBean))
+     * </pre>
+     */
+    public List getSearchResult();
 
     /**
      * Returns the Newt server proxy assigned for the current session.
