@@ -116,9 +116,9 @@ public interface SearchConstants {
     public static final String XML_BUILDER = "xmlBuilder";
 
     /**
-     * The latest set of items in a view page which have been requested as expanded
+     * The map of items in a view page and their current mode (eg expanded or contracted)
      */
-    public static final String EXPANDED_AC_SET = "expandedAcs";
+    public static final String VIEW_MODE_MAP = "modeMap";
 
     /**
      * To access intact types
