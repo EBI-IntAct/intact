@@ -61,7 +61,9 @@ public class DisplayAction extends Action {
         // the accession numbers for the minimal connecting network are fetched
         Collection searchFor = (Collection) request
                 .getAttribute( Constants.SEARCH );
-
+        
+        Constants.LOGGER.info("to search for " + searchFor);
+        
         MessageResources mr = getResources( request );
 
         // if no user is in the current session an excepion is thrown
@@ -102,8 +104,6 @@ public class DisplayAction extends Action {
             // the key stores the taxid and graphid for the current search
             graphid = (Integer) iter.next();
             search = (Collection) networks.get( graphid );
-
-            Constants.LOGGER.info( "start with graph nr " + graphid );
 
             // if the current search ac are in a graph in the database
             if ( graphid != Constants.SINGLETON_GRAPHID && search.size() > 1 ) {

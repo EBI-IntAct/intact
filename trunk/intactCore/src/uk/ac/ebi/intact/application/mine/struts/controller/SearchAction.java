@@ -51,6 +51,7 @@ public class SearchAction extends Action {
             HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession( true );
         IntactUserI user = (IntactUserI) session.getAttribute( Constants.USER );
+        
         try {
             // if no user exists in the session a new user is created
             // this is done because via the external management this action
@@ -63,7 +64,6 @@ public class SearchAction extends Action {
                 // clear all former found paths and singletons
                 user.clearAll();
             }
-            Constants.LOGGER.info( "start searching" );
 
             // the collection stores all values provided by the
             // parametername 'AC'. Because it is not sure if these values are
@@ -132,12 +132,13 @@ public class SearchAction extends Action {
             AmbiguousBean ab;
             // collection stores the final ac to use for the dijkstra algorithm
             Collection mineSearchAc = new HashSet();
-
+            
             // the search helper provides the search for the ac numbers
             SearchHelper sh = new SearchHelper( Constants.LOGGER );
             // for every ac number of the list a search is done
             for (Iterator iter = searchAc.iterator(); iter.hasNext();) {
                 searchPhrase = (String) iter.next();
+                
                 // the given search phrase is searched in proteins, interactions
                 // and experiments
                 ab = searchForAll( searchPhrase, sh, user );
@@ -163,7 +164,7 @@ public class SearchAction extends Action {
             // if the results are ambiguous the application is forwarded to a
             // special page to display all search results.
             if ( ambiguous ) {
-                Constants.LOGGER.info( "forward to the ambiguous page" );
+                Constants.LOGGER.warn( "forward to the ambiguous page" );
                 // because we want also the information of the proteins
                 // which were not used in the first search - the informations
                 // are now fetched
@@ -181,7 +182,7 @@ public class SearchAction extends Action {
                 // the other proteins are added to the mine search collection
                 mineSearchAc.addAll( notSearchAc );
             }
-
+            
             Constants.LOGGER.info( "forward to the algorithm" );
             request.setAttribute( Constants.SEARCH, mineSearchAc );
             return mapping.findForward( Constants.SUCCESS );
