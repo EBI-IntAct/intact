@@ -99,10 +99,4 @@
         <taglib-location>/WEB-INF/tld/fmt.tld</taglib-location>
     </taglib>
 
-    <!-- Display tag library -->
-    <taglib>
-        <taglib-uri>http://jakarta.apache.org/taglibs/display</taglib-uri>
-        <taglib-location>/WEB-INF/tld/display.tld</taglib-location>
-    </taglib>
-
 </web-app>
