@@ -20,7 +20,7 @@
     <!-- Intact application location. -->
     <property name="intact.app.dir" value=".."/>
 
-    <!-- context path for editor store in the application level -->
+    <!-- context path for graph2MIF store in the application level -->
     <property name="intact.context.dir" value="${intact.app.dir}/context"/>
 
     <property environment="env"/>
@@ -32,7 +32,7 @@
 
     <property name="dist.dir" value="dist"/>
 	<property name="docs.dir" value="doc/api"/>
-    <property name="war.file" value="${ant.project.name}.war"/>
+    <property name="war.file" value="graph2mif.war"/>
 	<property name="test-ac" value="EBI-42"/>
 	<property name="test-depth" value="1"/>
 	<property name="test-strictmif" value="false"/>
@@ -79,6 +79,7 @@
         <pathelement path="${root.lib.dir}/commons-logging.jar"/>
         <pathelement path="${root.lib.dir}/jaxrpc.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-1.0.jar"/>
+        <pathelement path="${root.lib.dir}/commons-cli-1.0.jar"/>
         <pathelement path="${root.lib.dir}/commons-pool.jar"/>
         <pathelement path="${root.lib.dir}/xercesImpl.jar"/>
         <pathelement path="${root.lib.dir}/xml-apis.jar"/>
@@ -141,7 +142,9 @@
         <!-- Copy repository files -->
         <copy todir="${dest.dir}/config">
             <fileset dir="${root.config.dir}">
-                <include name="repository*.xml"/>
+                <include name="repository.xml"/>
+                <include name="repository_internal.xml"/>
+                <include name="repository_user.xml"/>
                 <include name="repository.dtd"/>
             </fileset>
         </copy>
@@ -160,11 +163,11 @@
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}"/>
 
-        <!-- Only compile editor sources only. -->
+        <!-- Only compile graph2MIF sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.4"
             includes="**/application/graph2MIF/**"
-            excludes="**/test/** **/graph2MIF/client/**">
+            excludes="**/graph2MIF/client/**">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -181,7 +184,7 @@
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}"/>
 
-        <!-- Only compile editor sources only. -->
+        <!-- Only compile graph2MIF sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.4"
             includes="**/application/graph2MIF/**">
@@ -345,13 +348,13 @@
 	</target>
     <!-- =================================================================== -->
     <!-- Run example webservice client application. -->
-    <target name="run-wsclient" 
+    <target name="run-wsclient" depends="wsclient"
         description="Copies properties and runs the webservice client for testing.">
         <copy todir="${root.dest.dir}" file="graph2MIF.properties"/>
 		<java classname="uk.ac.ebi.intact.application.graph2MIF.client.Graph2MIFWSClient" fork="yes">
-		      <arg line="${test-ac}"/>
-			  <arg line="${test-depth}"/>
-			  <arg line="${test-strictmif}"/>
+		      <arg line="-ac ${test-ac}"/>
+			  <arg line="-depth ${test-depth}"/>
+			  <arg line="-strict ${test-strictmif}"/>
 			  <classpath refid="intact.class.path"/>
 			  <classpath refid="project.class.path"/>
 		</java>
@@ -368,12 +371,12 @@
 	</target>
     <!-- =================================================================== -->
     <!-- Run example webservice client application. -->
-    <target name="run-console" 
+    <target name="run-console" depends="console"
         description="Runs the console for testing.">
 		<java classname="uk.ac.ebi.intact.application.graph2MIF.client.Graph2MIFConsole" fork="yes">
-		      <arg line="${test-ac}"/>
-			  <arg line="${test-depth}"/>
-			  <arg line="${test-strictmif}"/>
+		      <arg line="-ac ${test-ac}"/>
+			  <arg line="-depth ${test-depth}"/>
+			  <arg line="-strict ${test-strictmif}"/>
 			  <classpath refid="intact.class.path"/>
 			  <classpath refid="project.class.path"/>
 		</java>
