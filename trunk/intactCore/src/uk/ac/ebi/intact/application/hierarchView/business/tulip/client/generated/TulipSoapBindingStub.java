@@ -39,14 +39,7 @@ public class TulipSoapBindingStub extends org.apache.axis.client.Stub implements
             Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;
             Class simplesf = org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory.class;
             Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
-            qName = new javax.xml.rpc.namespace.QName("urn:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService", "ProteinCoordinate");
-            cachedSerQNames.add(qName);
-            cls = uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.rpc.namespace.QName("urn:tulip", "ArrayOf_tns1_ProteinCoordinate");
+            qName = new javax.xml.rpc.namespace.QName("urn:tulip", "ArrayOf_tns2_ProteinCoordinate");
             cachedSerQNames.add(qName);
             cls = uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate[].class;
             cachedSerClasses.add(cls);
@@ -59,6 +52,13 @@ public class TulipSoapBindingStub extends org.apache.axis.client.Stub implements
             cachedSerClasses.add(cls);
             cachedSerFactories.add(arraysf);
             cachedDeserFactories.add(arraydf);
+
+            qName = new javax.xml.rpc.namespace.QName("http://webService.tulip.business.hierarchView.application.intact.ebi.ac.uk", "ProteinCoordinate");
+            cachedSerQNames.add(qName);
+            cls = uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
 
         }
         catch(java.lang.Exception t) {
@@ -125,7 +125,7 @@ public class TulipSoapBindingStub extends org.apache.axis.client.Stub implements
         call.addParameter(p0QName, new javax.xml.rpc.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, javax.xml.rpc.ParameterMode.IN);
         javax.xml.rpc.namespace.QName p1QName = new javax.xml.rpc.namespace.QName("", "in1");
         call.addParameter(p1QName, new javax.xml.rpc.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, javax.xml.rpc.ParameterMode.IN);
-        call.setReturnType(new javax.xml.rpc.namespace.QName("urn:tulip", "ArrayOf_tns1_ProteinCoordinate"));
+        call.setReturnType(new javax.xml.rpc.namespace.QName("urn:tulip", "ArrayOf_tns2_ProteinCoordinate"));
         call.setUseSOAPAction(true);
         call.setSOAPActionURI("");
         call.setOperationStyle("rpc");
