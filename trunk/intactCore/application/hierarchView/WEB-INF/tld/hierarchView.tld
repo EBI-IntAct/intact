@@ -27,6 +27,17 @@
 
 
     <tag>
+        <name>createFrames</name>
+        <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.CreateFramesTag</tagclass>
+        <bodycontent>JSP</bodycontent>
+        <info>
+            Create application frames, and in case the index page receive a query,
+            it's forwarded to the left frame.
+        </info>
+    </tag>
+
+
+    <tag>
         <name>checkInit</name>
         <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.CheckInitTag</tagclass>
         <bodycontent>empty</bodycontent>

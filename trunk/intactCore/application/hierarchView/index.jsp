@@ -11,23 +11,17 @@
   <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
   <META HTTP-EQUIV="Expires" CONTENT="-1">
 
+  <!-- Initialize User's session -->
+  <hierarchView:init/>
 
+  <!-- Save needed request parameter -->
+  <%
+      pageContext.setAttribute("AC",    request.getParameter("AC"),    PageContext.PAGE_SCOPE);
+      pageContext.setAttribute("depth", request.getParameter("depth"), PageContext.PAGE_SCOPE);
+  %>
 
-  <frameset cols="50%, 50%">
-    <frame name="frameView"      src="view.jsp">
-    <frame name="frameHierarchy" src="hierarchy.jsp">
-  </frameset>
-
-  <noframes>
-    <p>This frameset document contains:
-    <ul>
-      <li><a href="view.jsp"> Visualization page </a>
-      <li><a href="hierarchy.jsp"> Hierarchy page </a>
-    </ul>
-  </noframes>
-
- <!-- Initialize User's session with data access layer -->
- <hierarchView:init/>
+ <!-- Create frames and forward any query to the left frame (in one is passed) -->
+ <hierarchView:createFrames/>
 
 </head>
 <body bgcolor="white">
