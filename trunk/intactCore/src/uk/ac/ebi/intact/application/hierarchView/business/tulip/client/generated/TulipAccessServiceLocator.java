@@ -10,7 +10,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generate
 public class TulipAccessServiceLocator extends org.apache.axis.client.Service implements uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessService {
 
     // Use to get a proxy class for Tulip
-    private final java.lang.String Tulip_address = "http://localhost:8080/axis/services/tulip";
+    private final java.lang.String Tulip_address = " http://localhost:8080/axis/services/tulip";
 
     public String getTulipAddress() {
         return Tulip_address;
