@@ -121,6 +121,7 @@ public class EditorMenuFactory {
         theirNameToType.put(IDENTIFICATIONS, CvIdentification.class);
         theirNameToType.put(DAG_PREFIX + IDENTIFICATIONS, CvIdentification.class);
         theirNameToType.put(INTERACTION_TYPES, CvInteractionType.class);
+        theirNameToType.put(DAG_PREFIX + INTERACTION_TYPES, CvInteractionType.class);
         theirNameToType.put(EXPERIMENTS, Experiment.class);
         theirNameToType.put(ROLES, CvComponentRole.class);
     }
