@@ -15,13 +15,13 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
-<%-- The current view --%>
-<c:set var="view" value="${user.view}"/>
+<%-- The menus --%>
+<c:set var="menus" value="${user.view.menus}"/>
 
 <%-- Individual menu lists --%>
-<c:set var="organismmenu" value="${view.organismMenu}"/>
-<c:set var="intermenu" value="${view.interMenu}"/>
-<c:set var="identmenu" value="${view.identMenu}"/>
+<c:set var="organismmenu" value="${menus['Organism']}"/>
+<c:set var="intermenu" value="${menus['Interaction']}"/>
+<c:set var="identmenu" value="${menus['Identification']}"/>
 
 <%-- The anchor name for this page --%>
 <a name="info"/>

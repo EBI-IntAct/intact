@@ -6,9 +6,9 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
 
@@ -211,19 +211,16 @@ public class FeatureBean extends AbstractEditKeyBean {
 
     /**
      * Updates the internal Feature with the new values from the form.
-     *
-     * @param user the user instance to search database.
-     * @throws IllegalArgumentException
-     * @throws SearchException for errors in searching the database.
+     * @throws IntactException for errors in searching the database.
      */
-    public Feature getFeature(EditUserI user) throws SearchException {
+    public Feature getUpdatedFeature(IntactHelper helper) throws IntactException {
         // Need to update the short label because cloning an interaction also
         // clones a Feature (changes it shortlabel).
         myFeature.setShortLabel(getShortLabel());
         // Set the bound domain if it isn't empty.
         if (hasBoundDomain()) {
-            Feature boumdDomain = (Feature) user.getObjectByAc(
-                    Feature.class, myBoundDomainAc);
+            Feature boumdDomain = (Feature) helper.getObjectByAc(Feature.class,
+                    myBoundDomainAc);
             myFeature.setBoundDomain(boumdDomain);
         }
         return myFeature;

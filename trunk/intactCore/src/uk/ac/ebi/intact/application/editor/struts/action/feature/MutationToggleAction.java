@@ -11,7 +11,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvFeatureType;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,11 +40,8 @@ public class MutationToggleAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // The user.
-        EditUserI user = getIntactUser(request);
-
         // The current view.
-        FeatureViewBean view = (FeatureViewBean) user.getView();
+        FeatureViewBean view = (FeatureViewBean) getIntactUser(request).getView();
 
         if (view.isInMutationMode()) {
             // Going from Mutation -> Normal mode.
@@ -60,10 +57,16 @@ public class MutationToggleAction extends AbstractEditorAction {
             // Set this dummy value to get through the validation.
             view.setShortLabel("xyz");
 
+            IntactHelper helper = new IntactHelper();
             // Preset the CvFeature type.
-            CvFeatureType featureType = (CvFeatureType) user.getObjectByLabel(
+            CvFeatureType featureType;
+            try {
+                featureType = (CvFeatureType) helper.getObjectByLabel(
                     CvFeatureType.class, "hotspot");
-
+            }
+            finally {
+                helper.closeStore();
+            }
             // We shouldn't be getting a null object. But.... just in case.
             if (featureType != null) {
                 view.setCvFeatureType("hotspot");

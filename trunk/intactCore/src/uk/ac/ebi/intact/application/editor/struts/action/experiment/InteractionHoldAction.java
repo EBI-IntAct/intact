@@ -9,10 +9,10 @@ package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,17 +58,21 @@ public class InteractionHoldAction extends AbstractEditorAction {
         // The dyna form.
         ExperimentActionForm expForm = (ExperimentActionForm) form;
 
-        // Handler to the current user.
-        EditUserI user = getIntactUser(request);
-
-        Interaction inter = (Interaction) user.getObjectByAc(
-                Interaction.class, expForm.getIntac());
-
+        // Helper to access the interaction.
+        IntactHelper helper = new IntactHelper();
+        Interaction inter;
+        try {
+            inter = (Interaction) helper.getObjectByAc(Interaction.class,
+                    expForm.getIntac());
+        }
+        finally {
+            helper.closeStore();
+        }
         // We must have the interaction bean.
         assert inter != null;
 
         // The current view of the edit session.
-        ExperimentViewBean view = (ExperimentViewBean) user.getView();
+        ExperimentViewBean view = (ExperimentViewBean) getIntactUser(request).getView();
 
         // Adding interactions in the hold section?
         if (expForm.getDispatch().equals(

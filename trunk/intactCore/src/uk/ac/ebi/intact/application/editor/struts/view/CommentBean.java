@@ -6,9 +6,9 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view;
 
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 
@@ -67,13 +67,13 @@ public class CommentBean extends AbstractEditKeyBean {
 
     /**
      * Updates the internal annotation with the new values from the form.
-     * @param user the user instance to search for a CvTopic object.
+     * @param helper the IntactHelper to search the database
      * @return an Annotation created or updated using values in the bean.
-     * @throws SearchException for errors in searching for a CvTopic.
+     * @throws IntactException for errors in searching for a CvTopic.
      */
-    public Annotation getAnnotation(EditUserI user) throws SearchException {
+    public Annotation getAnnotation(IntactHelper helper) throws IntactException {
         // The topic for the annotation.
-        CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class,
+        CvTopic cvtopic = (CvTopic) helper.getObjectByLabel(CvTopic.class,
                 getTopic());
         // Update the existing annotation object.
         myAnnotation.setCvTopic(cvtopic);

@@ -8,17 +8,20 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.log4j.Logger;
 import org.apache.struts.tiles.ComponentContext;
+import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
@@ -107,6 +110,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     private transient ItemLinkSorter myFeatureSorter;
 
+    /**
+     * The map of menus for this view.
+     */
+    private transient Map myMenus = new HashMap();
+
     // Override the super method to initialize this class specific resetting.
     protected void reset(Class clazz) {
         super.reset(clazz);
@@ -166,9 +174,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     // Implements abstract methods
 
-    protected void updateAnnotatedObject(EditUserI user) throws SearchException {
+    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // The cv interaction type for the interaction.
-        CvInteractionType type = (CvInteractionType) user.getObjectByLabel(
+        CvInteractionType type = (CvInteractionType) helper.getObjectByLabel(
                 CvInteractionType.class, myInteractionType);
 
         // The current Interaction.
@@ -183,7 +191,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
             }
             // Not persisted. Create a new Interaction.
             intact = new InteractionImpl(exps, new ArrayList(),
-                    type, getShortLabel(), user.getInstitution());
+                    type, getShortLabel(), EditUser.getInstitution());
             // Set this interaction as the annotated object.
             setAnnotatedObject(intact);
         }
@@ -193,7 +201,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
         // Get the objects using their short label.
         if (myOrganism != null) {
-            BioSource biosource = (BioSource) user.getObjectByLabel(
+            BioSource biosource = (BioSource) helper.getObjectByLabel(
                     BioSource.class, myOrganism);
             intact.setBioSource(biosource);
         }
@@ -206,71 +214,18 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
     }
 
+    protected void clearMenus() {
+        myMenus.clear();
+    }
+
     // Override the super to persist others.
     public void persistOthers(EditUserI user) throws IntactException {
-        // First transaction for
+        IntactHelper helper = user.getIntactHelper();
         try {
-            // Begin the transaction.
-            user.begin();
-
-            // persist the view.
-            persistCurrentView(user);
-
-            // Commit the transaction.
-            user.commit();
+            doPersistOthers(user, helper);
         }
-        catch (IntactException ie1) {
-            ie1.printStackTrace();
-            try {
-                user.rollback();
-            }
-            catch (IntactException ie2) {
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
-            // Rethrow the exception to be logged.
-            throw ie1;
-        }
-        catch (SearchException se) {
-            try {
-                user.rollback();
-            }
-            catch (IntactException ie) {
-            }
-            // Rethrow the exception to be logged.
-            throw new IntactException("Search exception", se);
-        }
-        // Need another transaction to delete features.
-        try {
-            // Begin the transaction.
-            user.begin();
-
-            // persist the view in a second transaction
-            persistCurrentView2(user);
-
-            // Commit the transaction.
-            user.commit();
-        }
-        catch (IntactException ie1) {
-            ie1.printStackTrace();
-            try {
-                user.rollback();
-            }
-            catch (IntactException ie2) {
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
-            // Rethrow the exception to be logged.
-            throw ie1;
-        }
-        catch (SearchException se) {
-            try {
-                user.rollback();
-            }
-            catch (IntactException ie) {
-            }
-            // Rethrow the exception to be logged.
-            throw new IntactException("Search exception", se);
+        finally {
+            helper.closeStore();
         }
     }
 
@@ -334,8 +289,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         intform.setComponents(getComponents());
     }
 
-    public void sanityCheck(EditUserI user) throws ValidationException,
-            SearchException {
+    public void sanityCheck() throws ValidationException, IntactException {
         // Look for any unsaved or error proteins.
         for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
             ComponentBean pb = (ComponentBean) iter.next();
@@ -353,52 +307,53 @@ public class InteractionViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * The organism menu list.
-     *
-     * @return the organism menu consisting of organism short labels. The first
-     *         item in the menu may contain '---Select---' if the current organism is
-     *         not set.
-     * @throws SearchException for errors in generating menus.
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref, organism (add), interaction type and role (add & edit).
+     * @throws IntactException for errors in accessing the persistent system.
      */
-    public List getOrganismMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISM, 1);
-    }
+    public Map getMenus() throws IntactException {
+        if (!myMenus.isEmpty()) {
+            return myMenus;
+        }
+        // Holds the menu name.
+        String name;
 
-    /**
-     * The interaction type menu list.
-     *
-     * @return the interaction type menu consisting of interaction type short
-     *         labels. The first item in the menu may contain '---Select---' if the
-     *         current interaction type is not set.
-     * @throws SearchException for errors in generating menus.
-     */
-    public List getInteractionTypeMenu() throws SearchException {
-        int mode = (myInteractionType == null) ? 1 : 0;
-        return getMenuFactory().getDagMenu(EditorMenuFactory.INTERACTION_TYPE, mode);
-    }
+        // Temp variable to hold a menu.
+        List menu;
 
-    /**
-     * Returns the edit menu for a Protein role.
-     *
-     * @return the Protein role menu.
-     * @throws SearchException for errors in constructing the menu.
-     */
-    public List getEditProteinRoleMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.ROLE, 0);
-    }
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-    /**
-     * Returns the add menu for a Protein role.
-     *
-     * @return the Protein role menu.
-     * @throws SearchException for errors in constructing the menu.
-     */
-    public List getAddProteinRoleMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.ROLE, 1);
-    }
+        // The Intact helper to construct menus.
+        IntactHelper helper = new IntactHelper();
 
-    public List getAddBioSourceMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISM, 1);
+        try {
+            myMenus.putAll(super.getMenus(helper));
+
+            // The organism menu
+            name = EditorMenuFactory.ORGANISM;
+            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
+
+            // The interactiontype menu.
+            name = EditorMenuFactory.INTERACTION_TYPE;
+            int mode = (myInteractionType == null) ? 1 : 0;
+            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+
+            // Protein role edit menu
+            name = EditorMenuFactory.ROLE;
+            menu = menuFactory.getMenu(name, 0, helper);
+            myMenus.put(name, menu);
+        }
+        finally {
+            helper.closeStore();
+        }
+        // Add the Role add menu.
+        name = EditorMenuFactory.ROLE;
+        menu = (List) myMenus.get(name);
+        myMenus.put(name + "_", menuFactory.convertToAddMenu(name, menu));
+
+        return myMenus;
     }
 
     public void setKD(Float kd) {
@@ -867,14 +822,14 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * is cancelled after adding features (these features are submitted via the
      * Feature editor).
      *
-     * @param user to delete feature.
+     * @param helper to delete feature.
      * @throws IntactException for errors in deleting features.
      */
-    public void delFeaturesAdded(EditUserI user) throws IntactException {
+    public void delFeaturesAdded(IntactHelper helper) throws IntactException {
         // Search among the updated and deleted components.
-        deleteFeaturesAdded(myComponentsToUpdate, user);
+        deleteFeaturesAdded(myComponentsToUpdate, helper);
         // Could be that newly added Feature was deleted.
-        deleteFeaturesAdded(myComponentsToDel, user);
+        deleteFeaturesAdded(myComponentsToDel, helper);
     }
 
     /**
@@ -1050,8 +1005,57 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return CollectionUtils.subtract(myExperimentsToDel, common);
     }
 
-    private void persistCurrentView(EditUserI user) throws IntactException,
-            SearchException {
+    private void doPersistOthers(EditUserI user, IntactHelper helper)
+            throws IntactException {
+        // First transaction for
+        try {
+            // Begin the transaction.
+            user.startTransaction(helper);
+
+            // persist the view.
+            persistCurrentView(helper);
+
+            // Commit the transaction.
+            user.commit(helper);
+        }
+        catch (IntactException ie1) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
+            try {
+                user.rollback(helper);
+            }
+            catch (IntactException ie2) {
+                // Oops! Problems with rollback; ignore this as this
+                // error is reported via the main exception (ie1).
+            }
+            // Rethrow the exception to be logged.
+            throw ie1;
+        }
+        // Need another transaction to delete features.
+        try {
+            // Begin the transaction.
+            user.startTransaction(helper);
+
+            // persist the view in a second transaction
+            persistCurrentView2(helper);
+
+            // Commit the transaction.
+            user.commit(helper);
+        }
+        catch (IntactException ie1) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
+            try {
+                user.rollback(helper);
+            }
+            catch (IntactException ie2) {
+                // Oops! Problems with rollback; ignore this as this
+                // error is reported via the main exception (ie1).
+            }
+            // Rethrow the exception to be logged.
+            throw ie1;
+        }
+    }
+
+    private void persistCurrentView(IntactHelper helper) throws IntactException {
         // The current Interaction.
         Interaction intact = (Interaction) getAnnotatedObject();
 
@@ -1063,18 +1067,17 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
 
         // Delete components and remove it from the interaction.
-        deleteComponents(intact, user);
+        deleteComponents(intact, helper);
 
         // Update components.
-        updateComponents(intact, user);
+        updateComponents(intact, helper);
 
         // No need to test whether this 'intact' persistent or not because we
         // know it has been already persisted by persist() call.
-        user.update(intact);
+        helper.update(intact);
     }
 
-    private void persistCurrentView2(EditUserI user) throws SearchException,
-            IntactException {
+    private void persistCurrentView2(IntactHelper helper) throws IntactException {
         // Keeps a track of Features to update. This avoids multiple updates to the
         // same feature.
         Set featuresToUpdate = new HashSet();
@@ -1084,24 +1087,24 @@ public class InteractionViewBean extends AbstractEditViewBean {
         sorter.doIt(myLinkFeatures, myUnlinkFeatures);
 
         // Links features.
-        linkFeatures(featuresToUpdate, sorter.getItemsToLink().iterator(), user);
+        linkFeatures(helper, featuresToUpdate, sorter.getItemsToLink().iterator());
 
         // Unlinks features.
         unlinkFeatures(featuresToUpdate, sorter.getItemsToUnLink().iterator());
 
         // Update the feature in the Set.
         for (Iterator iter = featuresToUpdate.iterator(); iter.hasNext();) {
-            user.update(iter.next());
+            helper.update(iter.next());
         }
 
         for (Iterator iter1 = myComponentsToUpdate.iterator(); iter1.hasNext();) {
             ComponentBean cb = (ComponentBean) iter1.next();
-            Component comp = cb.getComponent(user);
+            Component comp = cb.getComponent(helper);
 
             // Process features deleted from the current component.
             for (Iterator iter2 = cb.getFeaturesToDelete().iterator(); iter2.hasNext();) {
                 FeatureBean fb1 = (FeatureBean) iter2.next();
-                Feature featureToDel = fb1.getFeature(user);
+                Feature featureToDel = fb1.getUpdatedFeature(helper);
                 // Remove from the component and delete the feature
                 comp.removeBindingDomain(featureToDel);
 //                user.delete(featureToDel);
@@ -1118,11 +1121,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
                     continue;
                 }
                 // The linked feature.
-                Feature linkedFeature = fb2.getFeature(user);
+                Feature linkedFeature = fb2.getUpdatedFeature(helper);
                 linkedFeature.setBoundDomain(null);
-                user.update(linkedFeature);
+                helper.update(linkedFeature);
             }
-            user.update(comp);
+            helper.update(comp);
         }
     }
 
@@ -1175,15 +1178,15 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Deletes added featues from given collection.
      * @param componets the components to search for Features
-     * @param user the user to delete added features.
+     * @param helper the helper to delete added features.
      * @throws IntactException for errors in deleting a Feature.
      */
-    private void deleteFeaturesAdded(Collection componets, EditUserI user)
+    private void deleteFeaturesAdded(Collection componets, IntactHelper helper)
             throws IntactException {
         for (Iterator iter0 = componets.iterator(); iter0.hasNext();) {
             ComponentBean cb = (ComponentBean) iter0.next();
             for (Iterator iter1 = cb.getFeaturesAdded().iterator(); iter1.hasNext();) {
-                user.delete(((FeatureBean) iter1.next()).getFeature());
+                helper.delete(((FeatureBean) iter1.next()).getFeature());
             }
         }
     }
@@ -1191,24 +1194,23 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Deletes all the components in the components to delete collection.
      * @param intact the current Interaction
-     * @param user the user to delete a Component.
-     * @throws SearchException for retrieving a Component or a Feature.
-     * @throws IntactException for errors in creating a Component.
+     * @param helper the helper to delete a Component.
+     * @throws IntactException for errors in creating or retrieving a Component.
      */
-    private void deleteComponents(Interaction intact, EditUserI user)
-            throws SearchException, IntactException {
+    private void deleteComponents(Interaction intact, IntactHelper helper)
+            throws IntactException {
         for (Iterator iter = myComponentsToDel.iterator(); iter.hasNext();) {
             ComponentBean cb = (ComponentBean) iter.next();
-            Component comp = cb.getComponent(user);
+            Component comp = cb.getComponent(helper);
             // No need to delete from persistent storage if the link to this
             // Protein is not persisted.
             if ((comp == null) || (comp.getAc() == null)) {
                 continue;
             }
             // Disconnect any links between features in the component.
-            disconnectLinkedFeatures(cb, user);
+            disconnectLinkedFeatures(cb, helper);
 
-            user.delete(comp);
+            helper.delete(comp);
             intact.removeComponent(comp);
         }
     }
@@ -1216,33 +1218,32 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Updates Components.
      * @param intact the current Interaction
-     * @param user the user to create objects if they don't exist.
-     * @throws IntactException for errors in creating a Feature or a Range
-     * @throws SearchException for errors in retrieving a Feature.
+     * @param helper the helper to create objects if they don't exist.
+     * @throws IntactException for errors in creating/retrieving a Feature or a Range
      */
-    private void updateComponents(Interaction intact, EditUserI user)
-            throws IntactException, SearchException {
+    private void updateComponents(Interaction intact, IntactHelper helper)
+            throws IntactException {
         // Update components.
         for (Iterator iter1 = myComponentsToUpdate.iterator(); iter1.hasNext();) {
             ComponentBean cb = (ComponentBean) iter1.next();
             cb.setInteraction((Interaction) getAnnotatedObject());
 
             // Disconnect any links between features in the component which are
-            disconnectLinkedFeatures(cb, user);
+            disconnectLinkedFeatures(cb, helper);
 
-            Component comp = cb.getComponent(user);
+            Component comp = cb.getComponent(helper);
 
             // Add features
             for (Iterator iter2 = cb.getFeaturesToAdd().iterator(); iter2.hasNext();) {
-                Feature feature = ((FeatureBean) iter2.next()).getFeature(user);
+                Feature feature = ((FeatureBean) iter2.next()).getUpdatedFeature(helper);
                 // Feature AC is null for a cloned interaction.
                 if (feature.getAc() == null) {
                     // Create a new Feature.
-                    user.create(feature);
+                    helper.create(feature);
 
                     // Create ranges for the feature.
                     for (Iterator iter3 = feature.getRanges().iterator(); iter3.hasNext();) {
-                        user.create((Range) iter3.next());
+                        helper.create((Range) iter3.next());
                     }
                 }
                 // Add to the component.
@@ -1250,23 +1251,24 @@ public class InteractionViewBean extends AbstractEditViewBean {
             }
             intact.addComponent(comp);
 
-            if (user.isPersistent(comp)) {
-                user.update(comp);
+            if (helper.isPersistent(comp)) {
+                helper.update(comp);
             }
             else {
-                user.create(comp);
+                helper.create(comp);
             }
         }
     }
 
     /**
      * Links features.
+     * @param helper the intact helper to access the persistent system
      * @param set collects Features to update.
-     * @param user the user to get a Feature.
-     * @throws SearchException error in accessing a Feature.
+     * @param iter an iterator to iterate throgh feature beans.
+     * @throws IntactException error in accessing a Feature.
      */
-    private void linkFeatures(Set set, Iterator iter, EditUserI user)
-            throws SearchException {
+    private void linkFeatures(IntactHelper helper, Set set, Iterator iter)
+            throws IntactException {
         while (iter.hasNext()) {
             // The feature bean to link.
             FeatureBean fb = (FeatureBean) iter.next();
@@ -1279,8 +1281,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
             }
             // The Feature objets to link together. Use 'user' to get changes
             // to the bound domain.
-            Feature srcFeature = fb.getFeature(user);
-            Feature toFeature = getFeatureBean(fb.getBoundDomainAc()).getFeature(user);
+            Feature srcFeature = fb.getUpdatedFeature(helper);
+            Feature toFeature = getFeatureBean(fb.getBoundDomainAc()).getUpdatedFeature(helper);
 
             // Sets the links.
             srcFeature.setBoundDomain(toFeature);
@@ -1312,17 +1314,16 @@ public class InteractionViewBean extends AbstractEditViewBean {
     /**
      * Disconnects the link between two Features.
      * @param cb the bean to search among the Features to delete
-     * @param user the user to update a Feature
-     * @throws SearchException for errors in accessing a Feature.
+     * @param helper the helper to update a Feature
      * @throws IntactException for update errors.
      */
-    private void disconnectLinkedFeatures(ComponentBean cb, EditUserI user)
-            throws SearchException, IntactException {
+    private void disconnectLinkedFeatures(ComponentBean cb, IntactHelper helper)
+            throws IntactException {
         // Delete any links among features to delete. This should be done
         // first before deleting a feature. Actual deleting a feature is
         // done in a separate transaction.
         for (Iterator iter = cb.getFeaturesToDelete().iterator(); iter.hasNext();) {
-            Feature feature = ((FeatureBean) iter.next()).getFeature(user);
+            Feature feature = ((FeatureBean) iter.next()).getUpdatedFeature(helper);
             // Remove any links if this feature is linked to another feature.
             if (feature.getBoundDomain() != null) {
                 Feature toFeature = feature.getBoundDomain();
@@ -1331,7 +1332,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 }
                 // Disconnect the links between two features.
                 toFeature.setBoundDomain(null);
-                user.update(toFeature);
+                helper.update(toFeature);
             }
         }
     }

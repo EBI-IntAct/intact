@@ -22,9 +22,8 @@
     type="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <c:set var="view" value="${user.view}"/>
-<c:set var="dblist" value="${view.editDatabaseMenu}"/>
-<c:set var="menus" value="${view.editXrefMenus}"/>
-<c:set var="qlist" value="${menus['Qualifier']}"/>
+<c:set var="dblist" value="${view.menus['Database']}"/>
+<c:set var="qlist" value="${view.menus['Qualifier']}"/>
 
 <h3>Crossreferences</h3>
 

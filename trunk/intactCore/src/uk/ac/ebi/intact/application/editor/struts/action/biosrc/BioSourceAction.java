@@ -7,12 +7,14 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.biosrc;
 
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
@@ -125,7 +127,7 @@ public class BioSourceAction extends AbstractEditorAction {
             bioview.delXref(taxXref);
         }
         // Add the nex Xref.
-        Xref xref = createTaxXref(user, taxid, newtLabel);
+        Xref xref = createTaxXref(taxid, newtLabel);
         bioview.addXref(new XreferenceBean(xref));
 
         // Set the view with the new inputs.
@@ -137,9 +139,15 @@ public class BioSourceAction extends AbstractEditorAction {
         bioview.copyPropertiesTo(bsform);
 
         // Collection of biosources for the current taxid.
-        Collection results = user.search1(BioSource.class.getName(),
-                "taxId", taxid);
+        Collection results;
 
+        IntactHelper helper = new IntactHelper();
+        try {
+           results = helper.search(BioSource.class.getName(), "taxId", taxid);
+        }
+        finally {
+            helper.closeStore();
+        }
         // AC of the current biosource.
         String ac = user.getView().getAc();
 
@@ -201,16 +209,24 @@ public class BioSourceAction extends AbstractEditorAction {
         return newlabel;
     }
 
-    private Xref createTaxXref(EditUserI user, String taxid, String label)
-            throws SearchException {
+    private Xref createTaxXref(String taxid, String label) throws IntactException {
         // The owner of the object we are editing.
-        Institution owner = user.getInstitution();
+        Institution owner = EditUser.getInstitution();
 
-        // The database the new xref belong to.
-        CvDatabase db = (CvDatabase) user.getObjectByLabel(CvDatabase.class,
-                getService().getResource("taxid.db"));
+        IntactHelper helper = new IntactHelper();
+        CvDatabase db;
+        CvXrefQualifier xqual;
+        try {
+            // The database the new xref belong to.
+            db = (CvDatabase) helper.getObjectByLabel(CvDatabase.class,
+                    getService().getResource("taxid.db"));
 
-        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(CvXrefQualifier.class, "identity");
+            xqual = (CvXrefQualifier) helper.getObjectByLabel(
+                    CvXrefQualifier.class, "identity");
+        }
+        finally {
+            helper.closeStore();
+        }
         return new Xref(owner, db, taxid, label, null, xqual);
     }
 

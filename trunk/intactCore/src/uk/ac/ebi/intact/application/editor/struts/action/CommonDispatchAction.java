@@ -7,14 +7,15 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -208,10 +209,17 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             // Display the error in the edit page.
             return mapping.getInputForward();
         }
+        IntactHelper helper = new IntactHelper();
         // The topic for the annotation.
-        CvTopic cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class,
+        CvTopic cvtopic;
+        try {
+            cvtopic = (CvTopic) helper.getObjectByLabel(CvTopic.class,
                 cb.getTopic());
-        Annotation annot = new Annotation(user.getInstitution(), cvtopic);
+        }
+        finally {
+            helper.closeStore();
+        }
+        Annotation annot = new Annotation(EditUser.getInstitution(), cvtopic);
         annot.setAnnotationText(cb.getDescription());
 
         // Add the bean to the view; new bean is wrapped around the annotation.
@@ -264,7 +272,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         }
         // For Go database, set values from the Go server.
         if (xb.getDatabase().equals("go")) {
-            ActionErrors errors = xb.setFromGoServer(user);
+            ActionErrors errors = xb.setFromGoServer(user.getGoProxy());
             // Non null error indicates errors.
             if (errors != null) {
                 saveErrors(request, errors);
@@ -276,12 +284,22 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         }
         // We need to create a Xref here because getPrimaryIdLink() returns
         // the primary key with out the link if Xref is null.
-        CvDatabase db = (CvDatabase) user.getObjectByLabel(CvDatabase.class, xb.getDatabase());
-        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(CvXrefQualifier.class, xb.getQualifier());
-        Xref xref = new Xref(user.getInstitution(), db, xb.getPrimaryId(),
+        IntactHelper helper = new IntactHelper();
+        CvDatabase db;
+        CvXrefQualifier xqual;
+        try {
+            db = (CvDatabase) helper.getObjectByLabel(CvDatabase.class,
+                    xb.getDatabase());
+            xqual = (CvXrefQualifier) helper.getObjectByLabel(
+                CvXrefQualifier.class, xb.getQualifier());
+        }
+        finally {
+            helper.closeStore();
+        }
+        Xref xref = new Xref(EditUser.getInstitution(), db, xb.getPrimaryId(),
                 xb.getSecondaryId(), xb.getReleaseNumber(), xqual);
         // Add the bean to the view; new bean is wrapped around the xref.
-        user.getView().addXref(new XreferenceBean(xref));
+        view.addXref(new XreferenceBean(xref));
 
         return mapping.getInputForward();
     }
@@ -324,7 +342,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             editForm.setShortLabel(newFormLabel);
         }
         // Runs the editor sanity checking
-        view.sanityCheck(user);
+        view.sanityCheck();
 
         try {
             // Persist my current state (this takes care of updating the wrapped
@@ -371,10 +389,10 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
      * @param formlabel the short label from the form.
      * @return the new short label if <code>formlabel</code> is not unique or else
      * it is as same as <code>formlabel</code>
-     * @throws SearchException for errors in searching the database.
+     * @throws IntactException for errors in searching the database.
      */
     protected String getShortLabel(EditUserI user, Class editClass,
-                                   String formlabel) throws SearchException {
+                                   String formlabel) throws IntactException {
         // No need to get the next available short label if it is unique.
         if (!user.shortLabelExists(formlabel)) {
             return formlabel;

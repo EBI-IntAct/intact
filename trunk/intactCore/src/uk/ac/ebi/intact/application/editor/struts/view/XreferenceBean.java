@@ -6,14 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.commons.util.XrefHelper;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
@@ -91,15 +91,14 @@ public class XreferenceBean extends AbstractEditKeyBean {
 
     /**
      * Updates the internal xref with the new values from the form.
-     *
-     * @param user the user instance to search for a cv database and xref qualifier.
-     * @throws SearchException for errors in searching the database.
+     * @param helper the IntactHelper to search the database
+     * @throws IntactException for errors in searching the database.
      */
-    public Xref getXref(EditUserI user) throws SearchException {
+    public Xref getXref(IntactHelper helper) throws IntactException {
         // The CV objects to set.
-        CvDatabase db = (CvDatabase) user.getObjectByLabel(
+        CvDatabase db = (CvDatabase) helper.getObjectByLabel(
                 CvDatabase.class, myDatabaseName);
-        CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
+        CvXrefQualifier xqual = (CvXrefQualifier) helper.getObjectByLabel(
                 CvXrefQualifier.class, myReferenceQualifer);
         // Update the existing xref with new values.
         myXref.setCvDatabase(db);
@@ -240,12 +239,12 @@ public class XreferenceBean extends AbstractEditKeyBean {
     /**
      * Sets Secondary id and Qualifier values from the Go Server using PrimaryId.
      *
-     * @param user the user to access the Go server.
+     * @param proxy the GO Proxy to get the GO response
      * @return non null for errors in accessing the Go server.
      */
-    public ActionErrors setFromGoServer(EditUserI user) {
+    public ActionErrors setFromGoServer(GoServerProxy proxy) {
         // Get the response from the Go server.
-        GoResult result = getGoResponse(user);
+        GoResult result = getGoResponse(proxy);
 
         if (result.myGoErrors != null) {
             // Found errors; return them.
@@ -307,10 +306,10 @@ public class XreferenceBean extends AbstractEditKeyBean {
         }
     }
 
-    private GoResult getGoResponse(EditUserI user) {
+    private GoResult getGoResponse(GoServerProxy proxy) {
         GoResult result = new GoResult();
         try {
-            result.myGoResponse = user.getGoProxy().query(getPrimaryId());
+            result.myGoResponse = proxy.query(getPrimaryId());
         }
         catch (IOException ioe) {
             ioe.printStackTrace();

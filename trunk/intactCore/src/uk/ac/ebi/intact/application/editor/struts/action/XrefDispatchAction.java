@@ -224,7 +224,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
 
         // For Go database, set values from the Go server.
         if (xb.getDatabase().equals("go")) {
-            ActionErrors errors = xb.setFromGoServer(user);
+            ActionErrors errors = xb.setFromGoServer(user.getGoProxy());
             // Non null error indicates errors.
             if (errors != null) {
                 saveErrors(request, errors);

@@ -7,22 +7,23 @@
 package uk.ac.ebi.intact.application.editor.struts.action.feature;
 
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.StringTokenizer;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 
 /**
@@ -137,11 +138,23 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
     // Override the super method to allow duplicate short labels for feature.
     protected String getShortLabel(EditUserI user, Class editClass,
-                                   String formlabel) throws SearchException {
+                                   String formlabel) throws IntactException {
         return formlabel;
     }
 
-    private List persistMutations(EditUserI user) throws SearchException, IntactException {
+    private List persistMutations(EditUserI user) throws IntactException {
+        IntactHelper helper = user.getIntactHelper();
+        try {
+            return persistMutations(user, helper);
+        }
+        finally {
+            helper.closeStore();
+        }
+    }
+
+    // Does persisting of the mutations in here. Need  a separate method for it
+    // wrap around a try / finally block.
+    private List persistMutations(EditUserI user, IntactHelper helper) throws IntactException{
         // The list of features to return.
         List features = new ArrayList();
 
@@ -149,18 +162,18 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         FeatureViewBean view = ((FeatureViewBean) user.getView());
 
         // The owner for new Features.
-        Institution owner = user.getInstitution();
+        Institution owner = EditUser.getInstitution();
 
         // Cache CV objects.
 
         // CvFeature types.
-        CvFeatureType featureType = (CvFeatureType) user.getObjectByLabel(
+        CvFeatureType featureType = (CvFeatureType) helper.getObjectByLabel(
                 CvFeatureType.class, view.getCvFeatureType());
 
         // CvFeatureIdent is optional.
         CvFeatureIdentification featureIdent = null;
         if (view.getCvFeatureIdentification() != null) {
-            featureIdent = (CvFeatureIdentification) user.getObjectByLabel(
+            featureIdent = (CvFeatureIdentification) helper.getObjectByLabel(
                     CvFeatureIdentification.class, view.getCvFeatureIdentification());
         }
         StringTokenizer stk = new StringTokenizer(view.getFullName(),
@@ -184,13 +197,13 @@ public class FeatureDispatchAction extends CommonDispatchAction {
             }
             // Create a Feature in a separate transaction.
             try {
-                user.begin();
-                user.create(feature);
-                user.endTransaction();
+                user.startTransaction(helper);
+                helper.create(feature);
+                helper.finishTransaction();
             }
             catch (IntactException ie) {
                 try {
-                    user.rollback();
+                    helper.undoTransaction();
                 }
                 catch (IntactException ie1) {
                     // Oops! Problems with rollback.
@@ -201,18 +214,18 @@ public class FeatureDispatchAction extends CommonDispatchAction {
             features.add(feature);
 
             try {
-                user.begin();
+                user.startTransaction(helper);
                 for (Iterator iter = rangesToCreate(token, owner, sequence); iter.hasNext(); ) {
                     Range range = (Range) iter.next();
-                    user.create(range);
+                    helper.create(range);
                     feature.addRange(range);
                 }
-                user.update(feature);
-                user.endTransaction();
+                helper.update(feature);
+                helper.finishTransaction();
             }
             catch (IntactException ie) {
                 try {
-                    user.rollback();
+                    helper.undoTransaction();
                 }
                 catch (IntactException ie1) {
                     // Oops! Problems with rollback.

@@ -6,17 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.business;
 
-import org.apache.commons.beanutils.DynaBean;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
@@ -39,11 +38,6 @@ public interface EditUserI extends IntactUserI, Serializable {
     public void setSelectedTopic(String topic);
 
     /**
-     * Returns the Institution.
-     */
-    public Institution getInstitution();
-
-    /**
      * Returns the state of editing.
      * @return <code>true</code> if the user is in edit screen;
      * <code>false</code> is returned for all other instances.
@@ -58,21 +52,11 @@ public interface EditUserI extends IntactUserI, Serializable {
 
     // Transaction Methods
 
-    public void begin() throws IntactException;
-
-    public void endTransaction() throws IntactException;
-    public void commit() throws IntactException;
-
-    public void rollback() throws IntactException;
+    public void startTransaction(IntactHelper helper) throws IntactException;
+    public void commit(IntactHelper helper) throws IntactException;
+    public void rollback(IntactHelper helper) throws IntactException;
 
     // Persistent Methods
-
-    public void create(Object object) throws IntactException;
-
-    public void update(Object object) throws IntactException;
-    public void forceUpdate(Object object) throws IntactException;
-
-    public void delete(Object object) throws IntactException;
 
     /**
      * Persists the object the user is editing.
@@ -80,32 +64,19 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @exception SearchException for search errors (unable to find an object
      * to update).
      */
-    public void persist() throws IntactException, SearchException;
+//    public void persist() throws IntactException, SearchException;
 
     /**
      * This method clears the view of the current edit object, remove it from
      * the search cache, deletes from the experiment list (if the current edit
      * is an instance of an Experiment class),  tand finally delete the current
      * edit object.
+     * @param helper the helper to delete the current view.
      * @exception IntactException for errors in deleting the current edit object.
      */
-    public void delete() throws IntactException;
+    public void delete(IntactHelper helper) throws IntactException;
 
     public void cancelEdit();
-
-    /**
-     * True if given object is persistent.
-     * @param obj the object to check for persistency.
-     * @return true if <code>obj</code> is persistent.
-     */
-    public boolean isPersistent(Object obj);
-
-    /**
-     * True if the current edit object is persistent. When a new edit object
-     * is created, it is not persistent until the form is submitted.
-     * @return true if the current edit object is persistent.
-     */
-    public boolean isPersistent();
 
     // The current view.
 
@@ -144,73 +115,18 @@ public interface EditUserI extends IntactUserI, Serializable {
     // Search methods
 
     /**
-     * Return an Object by classname and shortLabel.
-     *
-     * @param className the name of the class to search.
-     * @param label the short label to search for.
-     *
-     * @exception SearchException thrown for a search failure; also thrown
-     * if <code>label</code> already exists in <code>className</code>.
-     */
-    public Object getObjectByLabel(String className, String label)
-            throws SearchException;
-
-    /**
-     * Return an Object by classname and shortLabel.
-     *
-     * @param clazz the class object to search.
-     * @param label the short label to search for.
-     *
-     * @exception SearchException thrown for a search failure; also thrown
-     * if <code>label</code> occurrs more than once for <code>clazz</code>.
-     */
-    public Object getObjectByLabel(Class clazz, String label)
-            throws SearchException;
-
-    /**
-     * Return an Object by ac for given class.
-     *
-     * @param clazz the class to search for.
-     * @param ac the accession number to search for.
-     * @return an Object of <code>clazz</code> type for <code>ac</code>.
-     *
-     * @exception SearchException thrown for a search failure; also thrown
-     * if <code>ac</code> occurs more than once for <code>clazz</code>; highly
-     * unlikely given that <code>ac</code> is the primary key!
-     */
-    public Object getObjectByAc(Class clazz, String ac) throws SearchException;
-
-    /**
      * Gets SPTR Proteins via SRS.
      * @param pid the primary id to search for.
      * @param max the maximum number of proteins allowed.
      * @return a wrapper containing<code>Protein</code> instances for <code>pid</code>.
      */
-    public ResultWrapper getSPTRProteins(String pid, int max);
+    public ResultWrapper getSPTRProteins(String pid, int max) throws IntactException;
 
     /**
      * Returns the last protein parse exception.
      * @return the last protein parse exception`.
      */
     public Exception getProteinParseException();
-
-    /**
-     * This method provides a means of searching intact objects, within the constraints
-     * provided by the parameters to the method.
-     * <p>
-     * This method is named as search1 to avoid conflict with the similar named
-     * method (with diffrent exception) of the super interface.
-     *
-     * @param objectType the object type to be searched
-     * @param searchParam the parameter to search on (eg field)
-     * @param searchValue the search value to match with the parameter
-     * @return the results of the search (empty if no matches were found).
-     * @exception SearchException thrown if problems are encountered during the
-     * search process.
-     */
-    public Collection search1(String objectType, String searchParam,
-                             String searchValue) throws SearchException;
-
 
     /**
      * Utility method to handle the logic for lookup.
@@ -267,24 +183,9 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @param shortlabel the short label to check for duplicity.
      * @return true if <code>shortlabel</code> already exists (for the current edit object)
      * in the database.
-     * @exception SearchException for errors in acccessing the database.
+     * @exception IntactException for errors in acccessing the database.
      */
-    public boolean shortLabelExists(String shortlabel) throws SearchException;
-
-    /**
-     * Check for duplicity of short label for the current edit object.
-     * @param clazz the Class to limit the search.
-     * @param shortlabel the short label to check for duplicity.
-     * @param ac the AC to exclude match for the retrieved record. This criteia
-     * is taken into consideration only when a single record was found. If the
-     * retieved object's AC matches this value then we conclude that we have
-     * retrieved the the same entry.
-     * @return true if <code>shortlabel</code> already exists for given <code>clazz</code>
-     * in the database.
-     * @exception SearchException for errors in acccessing the database.
-     */
-    public boolean shortLabelExists(Class clazz, String shortlabel, String ac)
-            throws SearchException;
+    public boolean shortLabelExists(String shortlabel) throws IntactException;
 
     /**
      * Returns the next available short label from the persistent system.
@@ -304,7 +205,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * Popluate the given form with search result.
      * @param dynaForm the form to populate.
      */
-    public void fillSearchResult(DynaBean dynaForm);
+//    public void fillSearchResult(DynaBean dynaForm);
 
     /**
      * Returns the search result as a list.
@@ -406,31 +307,6 @@ public interface EditUserI extends IntactUserI, Serializable {
      * </pre>
      */
     public Set getCurrentInteractions();
-
-    /**
-     * Returns an <code>Annotation</code> constructed from the given bean.
-     * @param cb the bean to extract information to construct an Anotation.
-     * @return an Annotation constructed from <code>cb</code>.
-     * @exception SearchException for errors in searching the database.
-     */
-    public Annotation getAnnotation(CommentBean cb) throws SearchException;
-
-    /**
-     * Returns a new instance of <code>Xref</code> constructed from the given bean.
-     * @param xb the bean to extract information to construct an Xref.
-     * @return an instance of <code>Xref</code> constructed from <code>xb</code>.
-     * @exception SearchException for errors in searching the database.
-     */
-    public Xref getXref(XreferenceBean xb) throws SearchException;
-    
-    /**
-     * Returns the BioSource for given tax id.
-     * @param taxId the tax id to get the BioSOurce for.
-     * @return the BioSource for <code>taxid</code> or <code>null</code> if
-     * none found. 
-     * @throws SearchException for errors in searching for the tax id.
-     */
-	public BioSource getBioSourceByTaxId(String taxId) throws SearchException;
 
     /**
      * Allows access to Intact helper.

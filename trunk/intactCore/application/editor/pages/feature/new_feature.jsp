@@ -17,9 +17,12 @@
 <%-- The current view --%>
 <c:set var="view" value="${user.view}"/>
 
+<%-- The menus --%>
+<c:set var="menus" value="${view.menus}"/>
+
 <%-- Individual menu lists --%>
-<c:set var="type_menu" value="${view.cvFeatureTypeMenu}"/>
-<c:set var="ident_menu" value="${view.cvFeatureIdentificationMenu}"/>
+<c:set var="type_menu" value="${menus['FeatureType']}"/>
+<c:set var="ident_menu" value="${menus['FeatureIdentification']}"/>
 
 <h3>New feature</h3>
 

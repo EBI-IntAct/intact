@@ -1,4 +1,5 @@
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory"%><!--
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory"%>
+<!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -32,7 +33,7 @@
 </script>
 
 <%-- The list of topics --%>
-<c:set var="topiclist" value="${user.view.addTopicMenu}"/>
+<c:set var="topiclist" value="${user.view.menus['Topic_']}"/>
 
 <%-- The anchor name for this page --%>
 <a name="annotation"/>
@@ -63,17 +64,6 @@
             <html:textarea property="newAnnotation.description" rows="3" cols="70"/>
         </td>
     </tr>
-<%----%>
-<%--    <!-- Displays error messages for the short label -->--%>
-<%--    <logic:messagesPresent>--%>
-<%--        <table width="100%" border="0" cellspacing="1" cellpadding="2">--%>
-<%--            <html:messages id="topic">--%>
-<%--                <tr class="tableRowEven">--%>
-<%--                    <td class="tableErrorCell"><bean:write name="topic"/></td>--%>
-<%--                </tr>--%>
-<%--            </html:messages>--%>
-<%--        </table>--%>
-<%--    </logic:messagesPresent>--%>
 </table>
 <html:errors property="annotation"/>
 <html:errors property="new.annotation"/>

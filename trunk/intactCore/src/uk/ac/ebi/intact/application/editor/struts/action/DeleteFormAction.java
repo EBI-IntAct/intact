@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,61 +46,51 @@ public class DeleteFormAction extends AbstractEditorAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // No need to delete if the object is not yet persisted.
-        if (!user.isPersistent()) {
-            // Back to the search page.
-            return mapping.findForward(SEARCH);
-        }
         // The current view.
         AbstractEditViewBean view = user.getView();
 
+        // The intact helper to access the persistent layer.
+        IntactHelper helper = user.getIntactHelper();
         try {
-            // Begin the transaction.
-            user.begin();
+            // No need to delete if the object is not yet persisted.
+            if (!helper.isPersistent(view.getAnnotatedObject())) {
+                // Back to the search page.
+                return mapping.findForward(SEARCH);
+            }
+            // Start the transaction.
+            user.startTransaction(helper);
             // Delete the object we are editing at the moment.
-            user.delete();
+            user.delete(helper);
             // Commit all the changes.
-            user.commit();
+            user.commit(helper);
         }
         catch (IntactException ie1) {
             try {
-                user.rollback();
+                user.rollback(helper);
             }
             catch (IntactException ie2) {
                 // Oops! Problems with rollback; ignore this as this
                 // error is reported via the main exception (ie1).
             }
             // Log the stack trace.
-            LOGGER.info(ie1);
+            LOGGER.error("", ie1);
             // Error with deleting the object.
             ActionErrors errors = new ActionErrors();
-            errors.add(EDITOR_ERROR, new ActionError(
-                    "error.delete", ie1.getNestedMessage()));
+            errors.add(EDITOR_ERROR, new ActionError("error.delete",
+                    ie1.getNestedMessage()));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
         finally {
             // Release the lock.
             getLockManager().release(view.getAc());
+            // Close the helper.
+            helper.closeStore();
         }
         // Remove this current bean from the recent lists.
         view.removeFromRecentList(user);
 
-        // The next forward action.
-        ActionForward forward;
-
-        // Check and see if we have to go to the experiment page (only
-        // applicable for an Interaction editor).
-        if (returnToExperiment(request)) {
-            // Sets the destination experiment to return to.
-            setDestinationExperiment(request);
-            // Back to the experiment editor.
-            forward = mapping.findForward(EXP);
-        }
-        else {
-            // Back to the search page.
-            forward = mapping.findForward(SEARCH);
-        }
-        return forward;
+        // Back to the search page.
+        return mapping.findForward(SEARCH);
     }
 }

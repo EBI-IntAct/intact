@@ -7,19 +7,21 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.biosrc;
 
 import org.apache.struts.tiles.ComponentContext;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.exception.validation.BioSourceException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvCellType;
 import uk.ac.ebi.intact.model.CvTissue;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * BioSource edit view bean.
@@ -36,6 +38,11 @@ public class BioSourceViewBean extends AbstractEditViewBean {
 
     private String myCellType;
     private String myTissue;
+
+    /**
+     * The map of menus for this view.
+     */
+    private transient Map myMenus = new HashMap();
 
     // Override the super method to initialize this class specific resetting.
     protected void reset(Class clazz) {
@@ -65,22 +72,26 @@ public class BioSourceViewBean extends AbstractEditViewBean {
 
     // Implements abstract methods
 
-    protected void updateAnnotatedObject(EditUserI user) throws SearchException {
+    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
         // The current biosource.
         BioSource bs = (BioSource) getAnnotatedObject();
 
         // Have we set the annotated object for the view?
         if (bs == null) {
             // Not persisted; create a new biosource object.
-            bs = new BioSource(user.getInstitution(), getShortLabel(), getTaxId());
+            bs = new BioSource(EditUser.getInstitution(), getShortLabel(), getTaxId());
             setAnnotatedObject(bs);
         }
         else {
             bs.setTaxId(getTaxId());
         }
         // Set tissue and cell objects.
-        bs.setCvTissue(getTissue(user));
-        bs.setCvCellType(getCellType(user));
+        bs.setCvTissue(getCvTissue(helper));
+        bs.setCvCellType(getCvCellType(helper));
+    }
+
+    protected void clearMenus() {
+        myMenus.clear();
     }
 
     // Override to copy biosource from the form to the bean.
@@ -119,12 +130,18 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     // Override to provide biosource specific sanity checking.
-    public void sanityCheck(EditUserI user) throws ValidationException,
-            SearchException {
+    public void sanityCheck() throws ValidationException, IntactException {
         // There should be one unique bisosurce.
         if ((getCellType() == null) && (getTissue() == null)) {
-            BioSource bs = user.getBioSourceByTaxId(myTaxId);
-            if (bs !=null) {
+            IntactHelper helper = new IntactHelper();
+            BioSource bs;
+            try {
+                bs = helper.getBioSourceByTaxId(myTaxId);
+            }
+            finally {
+                helper.closeStore();
+            }
+            if (bs != null) {
                 // A BioSource found.
                 if (!bs.getAc().equals(getAc())) {
                     // Different biosources.
@@ -162,48 +179,61 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * The cell type menu list.
-     * @return the cell type menu consisting of CvCellType short labels.
-     * The first item in the menu contains the '---Select---' item.
-     * @throws SearchException for errors in generating menus.
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref, cell (add) and tissue (add).
+     * @throws IntactException for errors in accessing the persistent system.
      */
-    public List getCellTypeMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.CELL, 1);
-    }
+    public Map getMenus() throws IntactException {
+        if (!myMenus.isEmpty()) {
+            return myMenus;
+        }
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
 
-    /**
-     * The tissue menu list.
-     * @return the tissue menu consisting of CvTissue short labels.
-     * The first item in the menu contains the '---Select---' item.
-     * @throws SearchException for errors in generating menus.
-     */
-    public List getTissueMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.TISSUE, 1);
+        // The Intact helper to construct menus.
+        IntactHelper helper = new IntactHelper();
+
+        try {
+            myMenus.putAll(super.getMenus(helper));
+
+            // The cell type menu
+            String name = EditorMenuFactory.CELL;
+            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
+
+            // The tissue menu.
+            name = EditorMenuFactory.TISSUE;
+            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
+        }
+        finally {
+            helper.closeStore();
+        }
+        return myMenus;
     }
 
     /**
      * Returns the CvTissue object using the current tissue.
-     * @param user the user to get the CvTissue object from a persistent system.
+     * @param helper the helper to search the database.
      * @return CvTissue object or null if the current tissue is null.
-     * @throws SearchException for errors in retrieving the CvTisue object.
+     * @throws IntactException for errors in retrieving the CvTisue object.
      */
-    private CvTissue getTissue(EditUserI user) throws SearchException {
+    private CvTissue getCvTissue(IntactHelper helper) throws IntactException {
         if (myTissue == null) {
             return null;
         }
-        return (CvTissue) user.getObjectByLabel(CvTissue.class, myTissue);
+        return (CvTissue) helper.getObjectByLabel(CvTissue.class, myTissue);
     }
 
     /**
      * Returns the CvCellType object using the current cell type.
-     * @param user the user to get the CvCellType object from a persistent system.
+     * @param helper the helper to search the database.
      * @return CvCellType object or null if the current cell type is null.
-     * @throws SearchException for errors in retrieving the CvCellType object.
+     * @throws IntactException for errors in retrieving the CvCellType object.
      */
-    private CvCellType getCellType(EditUserI user) throws SearchException {
+    private CvCellType getCvCellType(IntactHelper helper) throws IntactException {
         if (myCellType == null) {
             return null;
         }
-        return (CvCellType) user.getObjectByLabel(CvCellType.class, myCellType);
+        return (CvCellType) helper.getObjectByLabel(CvCellType.class, myCellType);
     }
 }

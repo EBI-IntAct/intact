@@ -6,12 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
-import org.apache.struts.action.*;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 
@@ -73,12 +77,19 @@ public class InteractionDispatchAction extends CommonDispatchAction {
             // The AC of the experiment.
             String ac = view.getSourceExperimentAc();
 
-            // The experiment we have been editing.
-            AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
-                    Experiment.class, ac);
+            // The helper to access to object for given ac.
+            IntactHelper helper = new IntactHelper();
 
+            // The experiment we have been editing.
+            AnnotatedObject annobj;
+            try {
+                annobj = (AnnotatedObject) helper.getObjectByAc(Experiment.class, ac);
+            }
+            finally {
+                helper.closeStore();
+            }
             // Set the topic.
-            user.setSelectedTopic(getService().getTopic(Experiment.class));
+            user.setSelectedTopic(EditorService.getTopic(Experiment.class));
 
             // The experiment we going back to.
             user.setView(annobj);

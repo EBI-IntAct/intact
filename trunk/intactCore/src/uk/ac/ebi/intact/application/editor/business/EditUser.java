@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.commons.beanutils.DynaBean;
 import org.apache.log4j.Logger;
-import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
@@ -19,14 +18,14 @@ import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.BusinessConstants;
-import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
@@ -38,7 +37,6 @@ import javax.servlet.http.HttpSessionBindingListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -163,10 +161,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private static final Pattern ourClonedSLPattern = Pattern.compile("^(.+)?\\-(\\d+)$");
 
     /**
-     * Reference to the Intact Helper. This is transient as it is reconstructed
-     * using the data source.
+     * The institution; only one instance among many users.
      */
-    private transient IntactHelper myHelper;
+    private static Institution ourInstitution;
 
     /**
      * The session start time. This info is reset at deserialization.
@@ -205,12 +202,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * only for a session, hence it is transient. One factory per user.
      */
     private transient EditViewBeanFactory myViewFactory;
-
-    /**
-     * The institution; transient as it will be retrieved from the persistent
-     * system if not set.
-     */
-    private transient Institution myInstitution;
 
     /**
      * The name of the current user.
@@ -286,8 +277,15 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public EditUser(String user, String password) throws IntactException {
         myUserName = user;
         myPassword = password;
-        // Initialize the object.
-        initialize();
+        IntactHelper helper = new IntactHelper();
+        try {
+            // Initialize the object.
+            initialize(helper);
+        }
+        finally {
+            helper.closeStore();
+            myProteinFactory.setIntactHelper(null);
+        }
     }
 
     // Methods to handle special serialization issues.
@@ -295,11 +293,22 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
+        IntactHelper helper = null;
         try {
-            initialize();
+            helper = new IntactHelper();
+            initialize(helper);
         }
         catch (IntactException ie) {
             throw new IOException(ie.getMessage());
+        }
+        finally {
+            if (helper != null) {
+                try {
+                    helper.closeStore();
+                }
+                catch (IntactException e) {}
+            }
+            myProteinFactory.setIntactHelper(null);
         }
     }
 
@@ -327,12 +336,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Not an error, just a logging statemet to see values are unbound or not
         getLogger().error("User unbound: " + getUserName());
-        try {
-            logoff(lm);
-        }
-        catch (IntactException ie) {
-            // Just ignore this exception. Where to log this?
-        }
+        logoff(lm);
     }
 
     // Override Objects's equal method.
@@ -370,7 +374,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public Collection search(String objectType, String searchParam,
                              String searchValue) throws IntactException {
-        return myHelper.search(objectType, searchParam, searchValue);
+        throw new IntactException("Not implemented");
     }
 
     // Implementation of EditUserI interface.
@@ -413,8 +417,12 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         mySelectedTopic = topic;
     }
 
-    public Institution getInstitution() {
-        return myInstitution;
+    public static Institution getInstitution() throws IntactException {
+        if (ourInstitution == null) {
+            IntactHelper helper = new IntactHelper();
+            ourInstitution = helper.getInstitution();
+        }
+        return ourInstitution;
     }
 
     public boolean isEditing() {
@@ -430,63 +438,41 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditState = true;
     }
 
-    public void begin() throws IntactException {
-        myHelper.startTransaction(BusinessConstants.OBJECT_TX);
+    public void startTransaction(IntactHelper helper) throws IntactException {
+        helper.startTransaction(BusinessConstants.OBJECT_TX);
     }
 
-    public void endTransaction() throws IntactException {
-        myHelper.finishTransaction();
-    }
-
-    public void commit() throws IntactException {
-        myHelper.finishTransaction();
+    public void commit(IntactHelper helper) throws IntactException {
+        helper.finishTransaction();
         endEditing();
         // Clear the cache; this will force the OJB to read from the database.
-        myHelper.removeFromCache(myEditView.getAnnotatedObject());
+        helper.removeFromCache(myEditView.getAnnotatedObject());
     }
 
-    public void rollback() throws IntactException {
-        myHelper.undoTransaction();
+    public void rollback(IntactHelper helper) throws IntactException {
+        helper.undoTransaction();
         endEditing();
     }
 
-    public void create(Object object) throws IntactException {
-        myHelper.create(object);
-    }
+//    public void persist() throws IntactException, SearchException {
+//        myEditView.persist(this);
+//    }
 
-    public void update(Object object) throws IntactException {
-        myHelper.update(object);
-    }
-
-    public void forceUpdate(Object object) throws IntactException {
-        myHelper.forceUpdate(object);
-    }
-
-    public void delete(Object object) throws IntactException {
-        // Only delete if it is persistent.
-        if (isPersistent(object)) {
-            myHelper.delete(object);
-        }
-    }
-
-    public void persist() throws IntactException, SearchException {
-        myEditView.persist(this);
-    }
-
-    public void delete() throws IntactException {
+    public void delete(IntactHelper helper) throws IntactException {
         // Clear the view.
         myEditView.clear();
         AnnotatedObject annobj = myEditView.getAnnotatedObject();
-        if (isPersistent(annobj)) {
-            myHelper.delete(annobj);
-
-            // Clear annotation and xref collections
-            myHelper.deleteAllElements(annobj.getAnnotations());
-            annobj.getAnnotations().clear();
-            // Don't want xrefs; tied to an annotated object. Delete them explicitly
-            myHelper.deleteAllElements(annobj.getXrefs());
-            annobj.getXrefs().clear();
+        if (!helper.isPersistent(annobj)) {
+            return;
         }
+        helper.delete(annobj);
+
+        // Clear annotation and xref collections
+        helper.deleteAllElements(annobj.getAnnotations());
+        annobj.getAnnotations().clear();
+        // Don't want xrefs; tied to an annotated object. Delete them explicitly
+        helper.deleteAllElements(annobj.getXrefs());
+        annobj.getXrefs().clear();
     }
 
     public void cancelEdit() {
@@ -494,64 +480,22 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditView.clearTransactions();
     }
 
-    public boolean isPersistent(Object obj) {
-        if (obj != null) {
-            return myHelper.isPersistent(obj);
-        }
-        return false;
-    }
-
-    public boolean isPersistent() {
-        return isPersistent(myEditView.getAnnotatedObject());
-    }
-
-    public Object getObjectByLabel(String className, String label)
-            throws SearchException {
-        try {
-            return getObjectByLabel(Class.forName(className), label);
-        }
-        catch (ClassNotFoundException cnfe) {
-            throw new SearchException("Class not found for " + className);
-        }
-    }
-
-    public Object getObjectByLabel(Class clazz, String label)
-            throws SearchException {
-        try {
-            return myHelper.getObjectByLabel(clazz, label);
-        }
-        catch (IntactException ie) {
-            String msg;
-            if (ie instanceof DuplicateLabelException) {
-                msg = "More than one record exists for " + label;
-            }
-            else {
-                msg = "Failed to find a record for " + label;
-            }
-            throw new SearchException(msg);
-        }
-    }
-
-    public Object getObjectByAc(Class clazz, String ac) throws SearchException {
-        try {
-            return myHelper.getObjectByAc(clazz, ac);
-        }
-        catch (IntactException ie) {
-            String msg;
-            if (ie instanceof DuplicateLabelException) {
-                msg = ac + " already exists";
-            }
-            else {
-                msg = "Failed to find a record for " + ac;
-            }
-            throw new SearchException(msg);
-        }
-    }
-
-    public ResultWrapper getSPTRProteins(String pid, int max) {
+    public ResultWrapper getSPTRProteins(String pid, int max) throws IntactException {
+        // The helper to insert proteins.
+        IntactHelper helper = getIntactHelper();
         // The result wrapper to return.
         ResultWrapper rw = null;
-        Collection prots = myProteinFactory.insertSPTrProteins(pid);
+
+        // Set the helper as it has already been closed.
+        myProteinFactory.setIntactHelper(helper);
+        Collection prots;
+        try {
+            prots = myProteinFactory.insertSPTrProteins(pid);
+        }
+        finally {
+            helper.closeStore();
+            myProteinFactory.setIntactHelper(null);
+        }
         if (prots.size() > max) {
             // Exceeds the maximum size.
             rw = new ResultWrapper(prots.size(), max);
@@ -575,19 +519,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             return (Exception) map.values().iterator().next();
         }
         return null;
-    }
-
-    public Collection search1(String objectType, String searchParam,
-                              String searchValue) throws SearchException {
-        // Retrieve an object...
-        try {
-            return myHelper.search(objectType, searchParam, searchValue);
-        }
-        catch (IntactException ie) {
-            String msg = "Failed to find any " + objectType + " records for "
-                    + searchValue + " as " + searchParam;
-            throw new SearchException(msg);
-        }
     }
 
     public CriteriaBean getSearchCriteria() {
@@ -621,7 +552,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         catch (IntactException e) {
             // This is an internal error. Log it.
-            getLogger().error(e);
+            getLogger().error("", e);
             // Rethrow it again for the presentaion layer to handle it
             throw e;
         }
@@ -642,24 +573,19 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         catch (ClassNotFoundException e) {
             // This is an internal error. Log it.
-            getLogger().error(e);
+            getLogger().error("", e);
             throw new IntactException(e.getMessage());
         }
         catch (IntactException e) {
             // This is an internal error. Log it.
-            getLogger().error(e);
+            getLogger().error("", e);
             // Rethrow it again for the presentaion layer to handle it
             throw e;
         }
     }
 
-    public boolean shortLabelExists(String label) throws SearchException {
+    public boolean shortLabelExists(String label) throws IntactException {
         return doesShortLabelExist(myEditView.getEditClass(), label, myEditView.getAc());
-    }
-
-    public boolean shortLabelExists(Class clazz, String label, String ac)
-            throws SearchException {
-        return doesShortLabelExist(clazz, label, ac);
     }
 
     /**
@@ -675,19 +601,21 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * invalid format.
      */
     public String getNextAvailableShortLabel(Class clazz, String label) {
+        IntactHelper helper;
         try {
-            return doGetNextAvailableShortLabel(clazz, label);
+            helper = new IntactHelper();
+            return doGetNextAvailableShortLabel(helper, clazz, label);
         }
-        catch (SearchException se) {
+        catch (IntactException ie) {
             // Error in searching, just return the original name for user to
             // decide.
         }
         return label;
     }
 
-    public void fillSearchResult(DynaBean dynaForm) {
-        dynaForm.set("items", mySearchCache);
-    }
+//    public void fillSearchResult(DynaBean dynaForm) {
+//        dynaForm.set("items", mySearchCache);
+//    }
 
     public List getSearchResult() {
         return (List) mySearchCache;
@@ -754,72 +682,19 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myCurrentInteractions;
     }
 
-    public Annotation getAnnotation(CommentBean cb) throws SearchException {
-        // The topic for the new annotation.
-        CvTopic cvtopic = (CvTopic) getObjectByLabel(CvTopic.class, cb.getTopic());
-
-        // The new annotation to return.
-        Annotation annot = new Annotation(getInstitution(), cvtopic);
-        annot.setAnnotationText(cb.getDescription());
-        return annot;
-    }
-
-    public Xref getXref(XreferenceBean xb) throws SearchException {
-        // The owner of the object we are editing.
-        Institution owner = getInstitution();
-
-        // The database the new xref belong to.
-        CvDatabase cvdb = (CvDatabase) getObjectByLabel(CvDatabase.class,
-                xb.getDatabase());
-
-        // The CV xref qualifier.
-        CvXrefQualifier cvxref = (CvXrefQualifier) getObjectByLabel(
-                CvXrefQualifier.class, xb.getQualifier());
-
-        // The new xref to add to the current cv object.
-        Xref xref = new Xref(owner, cvdb, xb.getPrimaryId(), xb.getSecondaryId(),
-                xb.getReleaseNumber(), cvxref);
-        return xref;
-    }
-
-	public BioSource getBioSourceByTaxId(String taxId) throws SearchException {
-		try {
-			return myHelper.getBioSourceByTaxId(taxId);
-		}
-		catch (IntactException ie) {
-			throw new SearchException("Failed to get a BioSource for " + taxId);
-		}
-	}
-
     // Helper methods.
 
     /**
      * Called by the constructors to initialize the object.
+     * @param helper the Intact helper to access the persistent system.
      * @throws IntactException for errors in accessing the persistent system.
      */
-    private void initialize() throws IntactException {
-//        DAOSource dao = DAOFactory.getDAOSource(myDSClass);
-
-        // Construct the the helper.
-        myHelper = new IntactHelper(myUserName, myPassword);
-
-        try {
-            myDatabaseName = myHelper.getDbName();
-        }
-        catch (LookupException e) {
-            throw new IntactException("Unable to initialize the database name", e);
-        }
-        catch (SQLException e) {
-            throw new IntactException("Unable to initialize the database name", e);
-        }
-
-        // Initialize the institution; this ensures that a connection is made
-        // as a valid user.
-        myInstitution = myHelper.getInstitution();
+    private void initialize(IntactHelper helper) throws IntactException {
+        myDatabaseName = helper.getDbName();
 
         // Initialize the Protein factory.
         try {
-            myProteinFactory = new UpdateProteins(myHelper);
+            myProteinFactory = new UpdateProteins(helper);
         }
         catch (UpdateProteinsI.UpdateException e) {
             throw new IntactException("Unable to create the Protein factory");
@@ -828,7 +703,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         mySessionStartTime = Calendar.getInstance().getTime();
 
         // Create the factories.
-        myViewFactory = new EditViewBeanFactory(myHelper);
+        myViewFactory = new EditViewBeanFactory();
     }
 
     /**
@@ -853,12 +728,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditState = false;
     }
 
-    private void logoff(LockManager lm) throws IntactException {
+    private void logoff(LockManager lm) {
         mySessionEndTime = Calendar.getInstance().getTime();
         getLogger().info("User is logging off at: " + mySessionEndTime);
         // Release all the locks held by this user.
         lm.releaseAllLocks(getUserName());
-        myHelper.closeStore();
     }
 
     /**
@@ -871,12 +745,20 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * retrieved the the same entry.
      * @return true if <code>label</code> exists for <code>clazz</code>. False
      * is returned for all other instances.
-     * @throws SearchException
+     * @throws IntactException unable to create an Intact helper or error in
+     * searching the persistent system.
      */
     private boolean doesShortLabelExist(Class clazz, String label, String ac)
-            throws SearchException {
+            throws IntactException {
+        IntactHelper helper = new IntactHelper();
         // Holds the result from the search.
-        Collection results = search1(clazz.getName(), "shortLabel", label);
+        Collection results;
+        try {
+           results = helper.search(clazz.getName(), "shortLabel", label);
+        }
+        finally {
+            helper.closeStore();
+        }
         if (results.isEmpty()) {
             // Don't have this short label on the database.
             return false;
@@ -895,8 +777,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return true;
     }
 
-    private String doGetNextAvailableShortLabel(Class clazz, String label)
-            throws SearchException {
+    private String doGetNextAvailableShortLabel(IntactHelper helper, Class clazz,
+                                                String label) throws IntactException {
         // The formatter to analyse the short label.
         ShortLabelFormatter formatter = new ShortLabelFormatter(label);
 
@@ -911,7 +793,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         if (formatter.isRootOnly()) {
             // case: abc
-            if (getObjectByLabel(clazz, label) == null) {
+            if (helper.getObjectByLabel(clazz, label) == null) {
                 // Label is not found in the DB.
                 return label;
             }
@@ -928,13 +810,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                     ? prefix + "-" + (formatter.getBranchNumber() + 1)
                     : prefix + "-1";
         }
-        if (getObjectByLabel(clazz, nextLabel) == null) {
+        if (helper.getObjectByLabel(clazz, nextLabel) == null) {
             return nextLabel;
         }
         // AT this point: no success with incrementing the branch number.
 
         // Get all the short labels with the prefix.
-        results = search1(clazz.getName(), "shortLabel", prefix + "-*");
+        results = helper.search(clazz.getName(), "shortLabel", prefix + "-*");
         if (results.isEmpty()) {
             // No matches found for the longest match. The first clone entry.
             return prefix + "-1";

@@ -9,12 +9,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.struts.action.ActionErrors;
-import uk.ac.ebi.intact.application.editor.business.EditUser;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvFuzzyType;
 
 /**
@@ -59,19 +57,19 @@ public class RangeBeanTest extends TestCase {
      * Tests the constructor.
      */
     public void testConstructor1() {
-        EditUserI user = null;
+        IntactHelper helper = null;
         try {
-            user = new EditUser();
-            doTestConstructor1(user);
+            helper = new IntactHelper();
+            doTestConstructor1(helper);
         }
         catch (Exception ex) {
             ex.printStackTrace();
             fail(ex.getMessage());
         }
         finally {
-            if (user != null) {
+            if (helper != null) {
                 try {
-                    user.logoff();
+                    helper.closeStore();
                 }
                 catch (IntactException e) {}
             }
@@ -427,19 +425,19 @@ public class RangeBeanTest extends TestCase {
      * Tests the getRange(user).
      */
     public void testGetRange() {
-        EditUserI user = null;
+        IntactHelper helper = null;
         try {
-            user = new EditUser();
-            doTestGetRange(user);
+            helper = new IntactHelper();
+            doTestGetRange(helper);
         }
         catch (Exception ex) {
             ex.printStackTrace();
             fail(ex.getMessage());
         }
         finally {
-            if (user != null) {
+            if (helper != null) {
                 try {
-                    user.logoff();
+                    helper.closeStore();
                 }
                 catch (IntactException e) {}
             }
@@ -448,31 +446,31 @@ public class RangeBeanTest extends TestCase {
 
     // Helper methods
 
-    private void doTestConstructor1(EditUserI user) throws SearchException {
-        CvFuzzyType lessThan = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+    private void doTestConstructor1(IntactHelper helper) throws IntactException {
+        CvFuzzyType lessThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.LESS_THAN);
-        CvFuzzyType greaterThan = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+        CvFuzzyType greaterThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.GREATER_THAN);
-        CvFuzzyType undetermined = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+        CvFuzzyType undetermined = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.UNDETERMINED);
-        CvFuzzyType range = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+        CvFuzzyType range = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.RANGE);
-        CvFuzzyType ct = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+        CvFuzzyType ct = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.C_TERMINAL);
-        CvFuzzyType nt = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+        CvFuzzyType nt = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.N_TERMINAL);
 
         RangeBean bean = null;
 
         // No fuzzy type
-        bean = new RangeBean(user, "2", "3", false);
+        bean = new RangeBean("2", "3", false);
         assertEquals(bean.toString(), "2-3");
         // No fuzzy type associated.
         assertNull(bean.getRange().getFromCvFuzzyType());
         assertNull(bean.getRange().getToCvFuzzyType());
 
         // < fuzzy type for from range
-        bean = new RangeBean(user, "<2", "3", false);
+        bean = new RangeBean("<2", "3", false);
         assertEquals(bean.toString(), "<2-3");
         // Fuzzy type is greater for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), lessThan);
@@ -480,7 +478,7 @@ public class RangeBeanTest extends TestCase {
         assertNull(bean.getRange().getToCvFuzzyType());
 
         // > fuzzy type for from range
-        bean = new RangeBean(user, ">2", "3", false);
+        bean = new RangeBean(">2", "3", false);
         assertEquals(bean.toString(), ">2-3");
         // Fuzzy type is greater for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), greaterThan);
@@ -488,7 +486,7 @@ public class RangeBeanTest extends TestCase {
         assertNull(bean.getRange().getToCvFuzzyType());
 
         // < for both ranges
-        bean = new RangeBean(user, "<2", "<3", false);
+        bean = new RangeBean("<2", "<3", false);
         assertEquals(bean.toString(), "<2-<3");
         // Fuzzy type is greater for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), lessThan);
@@ -496,7 +494,7 @@ public class RangeBeanTest extends TestCase {
         assertEquals(bean.getRange().getToCvFuzzyType(), lessThan);
 
         // > for both ranges
-        bean = new RangeBean(user, ">2", ">3", false);
+        bean = new RangeBean(">2", ">3", false);
         assertEquals(bean.toString(), ">2->3");
         // Fuzzy type is greater for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), greaterThan);
@@ -504,7 +502,7 @@ public class RangeBeanTest extends TestCase {
         assertEquals(bean.getRange().getToCvFuzzyType(), greaterThan);
 
         // < for both ranges
-        bean = new RangeBean(user, "<2", "<3", false);
+        bean = new RangeBean("<2", "<3", false);
         assertEquals(bean.toString(), "<2-<3");
         // Fuzzy type is greater for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), lessThan);
@@ -512,7 +510,7 @@ public class RangeBeanTest extends TestCase {
         assertEquals(bean.getRange().getToCvFuzzyType(), lessThan);
 
         // > for from and < for to ranges
-        bean = new RangeBean(user, ">2", "<3", false);
+        bean = new RangeBean(">2", "<3", false);
         assertEquals(bean.toString(), ">2-<3");
         // Fuzzy type is greater for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), greaterThan);
@@ -520,7 +518,7 @@ public class RangeBeanTest extends TestCase {
         assertEquals(bean.getRange().getToCvFuzzyType(), lessThan);
 
         // fuzzy type is undetermined
-        bean = new RangeBean(user, "?", "?", false);
+        bean = new RangeBean("?", "?", false);
         assertEquals(bean.toString(), "?-?");
         // Fuzzy type is undetermined for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), undetermined);
@@ -530,7 +528,7 @@ public class RangeBeanTest extends TestCase {
         assertTrue(bean.getRange().isUndetermined());
 
         // One fuzzy type is undetermined
-        bean = new RangeBean(user, "?", "3", true);
+        bean = new RangeBean("?", "3", true);
         assertEquals(bean.toString(), "?-3");
         // Fuzzy type is undetermined for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), undetermined);
@@ -542,7 +540,7 @@ public class RangeBeanTest extends TestCase {
         assertTrue(bean.getRange().isLinked());
 
         // from fuzzy type is range
-        bean = new RangeBean(user, "1..2", "2", false);
+        bean = new RangeBean("1..2", "2", false);
         assertEquals(bean.toString(), "1..2-2");
         // Fuzzy type is range for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), range);
@@ -550,7 +548,7 @@ public class RangeBeanTest extends TestCase {
         assertNull(bean.getRange().getToCvFuzzyType());
 
         // to fuzzy type is range
-        bean = new RangeBean(user, "1", "2..3", false);
+        bean = new RangeBean("1", "2..3", false);
         assertEquals(bean.toString(), "1-2..3");
         // Fuzzy type is unknown for from type.
         assertNull(bean.getRange().getFromCvFuzzyType());
@@ -558,7 +556,7 @@ public class RangeBeanTest extends TestCase {
         assertEquals(bean.getRange().getToCvFuzzyType(), range);
 
         // from and to fuzzy types are ranges
-        bean = new RangeBean(user, "1..2", "2..3", false);
+        bean = new RangeBean("1..2", "2..3", false);
         assertEquals(bean.toString(), "1..2-2..3");
         // Fuzzy type is range for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), range);
@@ -566,7 +564,7 @@ public class RangeBeanTest extends TestCase {
         assertEquals(bean.getRange().getToCvFuzzyType(), range);
 
         // c for for range
-        bean = new RangeBean(user, "c", "3", false);
+        bean = new RangeBean("c", "3", false);
         assertEquals(bean.toString(), "c-3");
         // Fuzzy type is c-terminal for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), ct);
@@ -574,7 +572,7 @@ public class RangeBeanTest extends TestCase {
         assertNull(bean.getRange().getToCvFuzzyType());
 
         // n for for range
-        bean = new RangeBean(user, "n", "n", false);
+        bean = new RangeBean("n", "n", false);
         assertEquals(bean.toString(), "n-n");
         // Fuzzy type is n-terminal for from type.
         assertEquals(bean.getRange().getFromCvFuzzyType(), nt);
@@ -582,114 +580,114 @@ public class RangeBeanTest extends TestCase {
         assertEquals(bean.getRange().getToCvFuzzyType(), nt);
     }
 
-    private void doTestGetRange(EditUserI user) throws SearchException {
-        CvFuzzyType lessThan = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+    private void doTestGetRange(IntactHelper helper) throws IntactException {
+        CvFuzzyType lessThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.LESS_THAN);
-        CvFuzzyType greaterThan = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+        CvFuzzyType greaterThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.GREATER_THAN);
-        CvFuzzyType undetermined = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+        CvFuzzyType undetermined = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.UNDETERMINED);
-        CvFuzzyType range = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+        CvFuzzyType range = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.RANGE);
-        CvFuzzyType ct = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+        CvFuzzyType ct = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.C_TERMINAL);
-        CvFuzzyType nt = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
+        CvFuzzyType nt = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
                 CvFuzzyType.N_TERMINAL);
 
         RangeBean bean = null;
 
         // from and to fuzzy types are ranges
-        bean = new RangeBean(user, "1..2", "2..3", false);
+        bean = new RangeBean("1..2", "2..3", false);
         assertEquals(bean.toString(), "1..2-2..3");
         // Fuzzy type is range for from type.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), range);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), range);
         // Fuzzy type is range for to type.
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), range);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), range);
         // Change it to non fuzzy type.
         bean.setFromRange("2");
         // No fuzzy type associated with the from range
-        assertNull(bean.getRange(user).getFromCvFuzzyType());
+        assertNull(bean.getUpdatedRange().getFromCvFuzzyType());
         // Fuzzy type is range for to type.
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), range);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), range);
 
         // from and to fuzzy types are ranges
-        bean = new RangeBean(user, "1..2", "2..3", false);
+        bean = new RangeBean("1..2", "2..3", false);
         assertEquals(bean.toString(), "1..2-2..3");
         // Fuzzy type is range for from type.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), range);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), range);
         // Fuzzy type is range for to type.
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), range);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), range);
         // Change both to undetermined.
         bean.setFromRange("?");
         bean.setToRange("?");
         // Both have undetermined types.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), undetermined);
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), undetermined);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), undetermined);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), undetermined);
 
         // from and to fuzzy types are ranges
-        bean = new RangeBean(user, "1..2", "2..3", false);
+        bean = new RangeBean("1..2", "2..3", false);
         assertEquals(bean.toString(), "1..2-2..3");
         // Fuzzy type is range for from type.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), range);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), range);
         // Fuzzy type is range for to type.
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), range);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), range);
         // Change to < and from to >.
         bean.setFromRange("<1");
         bean.setToRange(">2");
         // To have less than type.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), lessThan);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), lessThan);
         // From have greater than type.
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), greaterThan);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), greaterThan);
 
         // n for for range
-        bean = new RangeBean(user, "n", "n", false);
+        bean = new RangeBean("n", "n", false);
         assertEquals(bean.toString(), "n-n");
         // Fuzzy type is n-terminal for from type.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), nt);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), nt);
         // Fuzzy type is n-terminal for to type.
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), nt);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), nt);
         // Change the to range.
         bean.setToRange("c");
         assertEquals(bean.toString(), "n-c");
         // Fuzzy type is n-terminal for from type.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), nt);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), nt);
         // Fuzzy type is c-terminal for to type.
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), ct);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), ct);
 
         // n for for range
-        bean = new RangeBean(user, "n", "n", false);
+        bean = new RangeBean("n", "n", false);
         assertEquals(bean.toString(), "n-n");
         // Fuzzy type is n-terminal for from type.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), nt);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), nt);
         // Fuzzy type is n-terminal for to type.
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), nt);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), nt);
         // Change both to c terminals.
         bean.setFromRange("c");
         bean.setToRange("c");
         assertEquals(bean.toString(), "c-c");
         // Fuzzy type are c-terminals for both types.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), ct);
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), ct);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), ct);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), ct);
 
         // fuzzy type is undetermined
-        bean = new RangeBean(user, "?", "?", false);
+        bean = new RangeBean("?", "?", false);
         assertEquals(bean.toString(), "?-?");
         // Fuzzy type is undetermined for from type.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), undetermined);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), undetermined);
         // Fuzzy type is undetermined for to type.
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), undetermined);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), undetermined);
         // Range is undetermined type.
-        assertTrue(bean.getRange(user).isUndetermined());
+        assertTrue(bean.getUpdatedRange().isUndetermined());
         // Change the to range.
         bean.setToRange("c");
         assertEquals(bean.toString(), "?-c");
         // Fuzzy type is undetermined for from type.
-        assertEquals(bean.getRange(user).getFromCvFuzzyType(), undetermined);
+        assertEquals(bean.getUpdatedRange().getFromCvFuzzyType(), undetermined);
         // Fuzzy type is c-terminal for to type.
-        assertEquals(bean.getRange(user).getToCvFuzzyType(), ct);
+        assertEquals(bean.getUpdatedRange().getToCvFuzzyType(), ct);
         // Range is no longer undetermined type.
-        assertFalse(bean.getRange(user).isUndetermined());
+        assertFalse(bean.getUpdatedRange().isUndetermined());
         // Link is still false.
-        assertFalse(bean.getRange(user).isLinked());
+        assertFalse(bean.getUpdatedRange().isLinked());
     }
 }
