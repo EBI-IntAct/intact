@@ -263,11 +263,16 @@ public abstract class AbstractEditViewBean implements Serializable {
         for (Iterator iter = copy.getAnnotations().iterator(); iter.hasNext();) {
             addAnnotation(new CommentBean((Annotation) iter.next()));
         }
+        // This is not persisted yet and there aren't any previous annots or
+        // xrefs. Annotations need to be cleared or else deleting an annotation
+        // after cloning causes persistence problems. see bug: 1011416
+        copy.getAnnotations().clear();
 
         // Add the xrefs in the cloned as new xrefs to add.
         for (Iterator iter = copy.getXrefs().iterator(); iter.hasNext();) {
             addXref(new XreferenceBean((Xref) iter.next()));
         }
+        copy.getXrefs().clear();
     }
 
     /**
@@ -955,7 +960,6 @@ public abstract class AbstractEditViewBean implements Serializable {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
             // Need this to generate the PK for the indirection table.
             user.create(annot);
-            System.out.println("After the create: " + annot);
             myAnnotObject.addAnnotation(annot);
             changed = true;
         }
@@ -970,7 +974,6 @@ public abstract class AbstractEditViewBean implements Serializable {
         // The update of annotated object ensures the sub objects are updated as well.
         for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
             Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
-            System.out.println("Before the update AC: " + annot);
             user.update(annot);
             changed = true;
         }
