@@ -392,14 +392,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Returns the number of interactions in the interaction collection.
-     * @return the number of interactions in the interaction collection.
-     */
-    public int getInteractionCount() {
-        return myInteractions.size();
-    }
-
-    /**
      * Returns a collection of <code>Interaction</code> objects on hold.
      *
      * <pre>
