@@ -66,6 +66,7 @@ public class Xref extends BasicObjectImpl {
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     private Xref() {
@@ -80,32 +81,33 @@ public class Xref extends BasicObjectImpl {
      * <li>an owner (Institution)</li>
      * <li>database details (controlled vocabulary instance)</li>
      * <li>a Primary ID</li>
-     * @param anOwner Owner of the cross-reference (non-null)
-     * @param aDatabase Controlled vocabulary instance defining the database details (non-null)
-     * @param aPrimaryId primary identifier for the cross-reference (non-null), this should be 30 characters maximum
-     * if it's more it will be truncated. if not done, Oracle would throw an error.
-     * @param aSecondaryId secondary identifier (eg a domain name), this should be 30 characters maximum
-     * if it's more it will be truncated. if not done, Oracle would throw an error.
+     *
+     * @param anOwner          Owner of the cross-reference (non-null)
+     * @param aDatabase        Controlled vocabulary instance defining the database details (non-null)
+     * @param aPrimaryId       primary identifier for the cross-reference (non-null), this should be 30 characters maximum
+     *                         if it's more it will be truncated. if not done, Oracle would throw an error.
+     * @param aSecondaryId     secondary identifier (eg a domain name), this should be 30 characters maximum
+     *                         if it's more it will be truncated. if not done, Oracle would throw an error.
      * @param aDatabaseRelease database version
      * @param aCvXrefQualifier controlled vocabulary for any qualifiers (may be null)
-     * @exception NullPointerException thrown if any mandatory parameters are not specified
+     * @throws NullPointerException thrown if any mandatory parameters are not specified
      */
-    public Xref (Institution anOwner,
+    public Xref( Institution anOwner,
                  CvDatabase aDatabase,
                  String aPrimaryId,
                  String aSecondaryId,
                  String aDatabaseRelease,
-                 CvXrefQualifier aCvXrefQualifier) {
+                 CvXrefQualifier aCvXrefQualifier ) {
 
         //super call sets creation time data
-        super(anOwner);
+        super( anOwner );
 
-        setPrimaryId(aPrimaryId);
-        setSecondaryId(aSecondaryId);
-        setCvDatabase(aDatabase);
+        setPrimaryId( aPrimaryId );
+        setSecondaryId( aSecondaryId );
+        setCvDatabase( aDatabase );
 
-        setDbRelease(aDatabaseRelease);
-        setCvXrefQualifier(aCvXrefQualifier);
+        setDbRelease( aDatabaseRelease );
+        setCvXrefQualifier( aCvXrefQualifier );
     }
 
     
@@ -116,12 +118,12 @@ public class Xref extends BasicObjectImpl {
         return primaryId;
     }
 
-    public void setPrimaryId(String aPrimaryId) {
-        if(aPrimaryId == null) throw new NullPointerException("valid Xref must have a primary ID!");
+    public void setPrimaryId( String aPrimaryId ) {
+        if( aPrimaryId == null ) throw new NullPointerException( "valid Xref must have a primary ID!" );
 
 
-        if (aPrimaryId != null && aPrimaryId.length() > 30) {
-            aPrimaryId = aPrimaryId.substring(0,30);
+        if( aPrimaryId != null && aPrimaryId.length() > 30 ) {
+            aPrimaryId = aPrimaryId.substring( 0, 30 );
         }
         this.primaryId = aPrimaryId;
     }
@@ -130,9 +132,9 @@ public class Xref extends BasicObjectImpl {
         return secondaryId;
     }
 
-    public void setSecondaryId(String aSecondaryId) {
-        if (aSecondaryId != null && aSecondaryId.length() > 30) {
-            aSecondaryId = aSecondaryId.substring(0,30);
+    public void setSecondaryId( String aSecondaryId ) {
+        if( aSecondaryId != null && aSecondaryId.length() > 30 ) {
+            aSecondaryId = aSecondaryId.substring( 0, 30 );
         }
         this.secondaryId = aSecondaryId;
     }
@@ -141,7 +143,7 @@ public class Xref extends BasicObjectImpl {
         return dbRelease;
     }
 
-    public void setDbRelease(String aDbRelease) {
+    public void setDbRelease( String aDbRelease ) {
         this.dbRelease = aDbRelease;
     }
 
@@ -149,7 +151,7 @@ public class Xref extends BasicObjectImpl {
         return parentAc;
     }
 
-    public void setParentAc(String parentAc) {
+    public void setParentAc( String parentAc ) {
         this.parentAc = parentAc;
     }
 
@@ -160,15 +162,16 @@ public class Xref extends BasicObjectImpl {
         return cvXrefQualifier;
     }
 
-    public void setCvXrefQualifier(CvXrefQualifier cvXrefQualifier) {
+    public void setCvXrefQualifier( CvXrefQualifier cvXrefQualifier ) {
         this.cvXrefQualifier = cvXrefQualifier;
     }
+
     public CvDatabase getCvDatabase() {
         return cvDatabase;
     }
 
-    public void setCvDatabase(CvDatabase cvDatabase) {
-        if(cvDatabase == null) throw new NullPointerException("valid Xref must have non-null database details!");
+    public void setCvDatabase( CvDatabase cvDatabase ) {
+        if( cvDatabase == null ) throw new NullPointerException( "valid Xref must have non-null database details!" );
         this.cvDatabase = cvDatabase;
     }
 
@@ -178,7 +181,7 @@ public class Xref extends BasicObjectImpl {
         return cvXrefQualifierAc;
     }
 
-    public void setCvXrefQualifierAc(String ac) {
+    public void setCvXrefQualifierAc( String ac ) {
         this.cvXrefQualifierAc = ac;
     }
 
@@ -186,7 +189,7 @@ public class Xref extends BasicObjectImpl {
         return cvDatabaseAc;
     }
 
-    public void setCvDatabaseAc(String ac) {
+    public void setCvDatabaseAc( String ac ) {
         this.cvDatabaseAc = ac;
     }
 
@@ -194,55 +197,42 @@ public class Xref extends BasicObjectImpl {
     ///////////////////////////////////////
     // instance methods
 
-    /**
-     * Equality for Xrefs is currently based on equality for
-     * <code>CvDatabases</code> and primaryIds.
-     * @see uk.ac.ebi.intact.model.CvDatabase
-     * @param o The object to check
-     * @return true if the parameter equals this object, false otherwise
-     */
-    public boolean equals(Object o){
-        if (this == o) return true;
-        if (!(o instanceof Xref)) return false;
+    public boolean equals( Object o ) {
+        if( this == o ) return true;
+        if( !( o instanceof Xref ) ) return false;
 
         final Xref xref = (Xref) o;
 
-        if(cvDatabase != null) {
-             if (!cvDatabase.equals(xref.cvDatabase)) return false;
-        }
-        else {
-            if (xref.cvDatabase != null) return false;
-        }
+        if( !primaryId.equals( xref.primaryId ) ) return false;
+        if( !cvDatabase.equals( xref.cvDatabase ) ) return false;
 
-        if(primaryId != null) {
-             return (primaryId.equals(xref.primaryId));
-        }
-        return (xref.primaryId == null);
+        if( cvXrefQualifier != null ? !cvXrefQualifier.equals( xref.cvXrefQualifier ) : xref.cvXrefQualifier != null ) return false;
+        if( dbRelease != null ? !dbRelease.equals( xref.dbRelease ) : xref.dbRelease != null ) return false;
+
+        return true;
     }
 
-    /** This class overwrites equals. To ensure proper functioning of HashTable,
-     * hashCode must be overwritten, too.
-     * @return  hash code of the object.
-     */
-    public int hashCode(){
-        int code = 29;
-        if(cvDatabase != null) code = 29*code + cvDatabase.hashCode();
-        if(primaryId != null) code = 29 * code + primaryId.hashCode();
-
-        return code;
+    public int hashCode() {
+        int result;
+        result = primaryId.hashCode();
+        result = 29 * result + cvDatabase.hashCode();
+        result = 29 * result + ( cvXrefQualifier != null ? cvXrefQualifier.hashCode() : 0 );
+        result = 29 * result + ( dbRelease != null ? dbRelease.hashCode() : 0 );
+        return result;
     }
 
-    public String toString(){
+    public String toString() {
         return " Xref: " + getAc()
-                + "; Owner: " + getOwner().getShortLabel()
-                + "; DB: " + cvDatabase.getShortLabel()
-                + "; PrimaryId: "+ primaryId;
+               + "; Owner: " + getOwner().getShortLabel()
+               + "; DB: " + cvDatabase.getShortLabel()
+               + "; PrimaryId: " + primaryId;
     }
 
     /**
      * Returns a cloned version of the current object.
+     *
      * @return a cloned version of the current Range. The Cv database and
-     * xref qualifier are not cloned (shared). The parent AC is set to null.
+     *         xref qualifier are not cloned (shared). The parent AC is set to null.
      * @throws CloneNotSupportedException for errors in cloning this object.
      */
     public Object clone() throws CloneNotSupportedException {
