@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstant
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.util.Chrono;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -105,27 +106,21 @@ public class SearchAction extends IntactBaseAction {
         super.log("search action: attempting to search by AC first...");
         try {
             results = doLookup(searchClass, searchValue, user);
+
             if (results.isEmpty()) {
-                //try searching first using all uppercase, then all lower case if it returns nothing...
-                //NB this would be better done at the DB level, but keep it here for now
-                String upperCaseValue = searchValue.toUpperCase();
-                results = doLookup(searchClass, upperCaseValue, user);
+                //now try all lower case....
+                String lowerCaseValue = searchValue.toLowerCase();
+                results = doLookup(searchClass, lowerCaseValue, user);
+
                 if (results.isEmpty()) {
+                    //finished all current options, and still nothing - return a failure
+                    super.log("No matches were found for the specified search criteria");
 
-                    //now try all lower case....
-                    String lowerCaseValue = searchValue.toLowerCase();
-                    results = doLookup(searchClass, lowerCaseValue, user);
+                    // Save the search parameters for results page to display.
+                    session.setAttribute( SearchConstants.SEARCH_CRITERIA,
+                                          user.getSearchCritera() + "=" + searchValue);
 
-                    if (results.isEmpty()) {
-                        //finished all current options, and still nothing - return a failure
-                        super.log("No matches were found for the specified search criteria");
-
-                        // Save the search parameters for results page to display.
-                        session.setAttribute( SearchConstants.SEARCH_CRITERIA,
-                                              user.getSearchCritera() + "=" + searchValue);
-
-                        return mapping.findForward( SearchConstants.FORWARD_NO_MATCHES );
-                    }
+                    return mapping.findForward( SearchConstants.FORWARD_NO_MATCHES );
                 }
             }
             super.log("search action: search results retrieved OK");
@@ -134,7 +129,7 @@ public class SearchAction extends IntactBaseAction {
 
             // Save the search parameters for results page to display.
             session.setAttribute( SearchConstants.SEARCH_CRITERIA,
-                    user.getSearchCritera() + "=" + searchValue);
+                                  user.getSearchCritera() + "=" + searchValue);
             super.log("found results - forwarding to relevant Action for processing...");
 
             for (Iterator iterator = results.iterator(); iterator.hasNext();) {
@@ -149,8 +144,7 @@ public class SearchAction extends IntactBaseAction {
             session.setAttribute(SearchConstants.LAST_VALID_SEARCH, searchValue);
 
             // dispatch to the relevant action
-            String relativeHelpLink =
-                    getServlet().getServletContext().getInitParameter("helpLink");
+            String relativeHelpLink = getServlet ().getServletContext().getInitParameter("helpLink");
 
             //build the help link out of the context path - strip off the 'search' bit...
             String ctxtPath = request.getContextPath();
@@ -230,7 +224,6 @@ public class SearchAction extends IntactBaseAction {
 
             String className = null;
             boolean itemFound = false;
-            int x = 0;
             for ( Iterator iterator = queries.iterator (); iterator.hasNext (); ) {
                 String subQuery = (String) iterator.next ();
                 super.log( "Search for subquery: " + subQuery );
