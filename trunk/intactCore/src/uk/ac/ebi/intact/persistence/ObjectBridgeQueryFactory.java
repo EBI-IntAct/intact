@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.persistence;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.Criteria;
+import org.apache.ojb.broker.query.ReportQueryByCriteria;
 
 /**
  * This factory class builds common queries for IntAct.
@@ -28,6 +29,13 @@ public class ObjectBridgeQueryFactory {
         return OUR_INSTANCE;
     }
 
+    /**
+     * Returns a query to search for given parameters
+     * @param clazz the class to search. Eg., CvTopic.class
+     * @param param ac or shortlabel
+     * @param value value for search. Eg., abc*
+     * @return the query.
+     */
     public Query getLikeQuery(Class clazz, String param, String value) {
         // Replace * with % for SQL
         String sqlValue = value.replaceAll("\\*", "%");
@@ -35,5 +43,21 @@ public class ObjectBridgeQueryFactory {
         Criteria crit = new Criteria();
         crit.addLike(param, sqlValue);
         return QueryFactory.newQuery(clazz, crit);
+    }
+    
+    /**
+     * Returns a query to build menus
+     * @param clazz the class to construct menus. Eg., CvTopic.class
+     * @return a query to build menus. The menus are sorted in ascending order.
+     */
+    public Query getMenuBuildQuery(Class clazz) {
+        Criteria crit = new Criteria();
+        // Need all records for given class.
+        crit.addLike("ac", "%");
+        ReportQueryByCriteria query = QueryFactory.newReportQuery(clazz, crit);
+        // Limit to shortlabel
+        query.setAttributes(new String[] {"shortLabel"});
+        query.addOrderByAscending("shortLabel");
+        return query;
     }
 }
