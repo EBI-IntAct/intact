@@ -145,7 +145,9 @@
 
     <!-- Target for the hierarchView application module
          Allows to build the web application (war file) -->
-    <target name="hierarchView" depends="init-hierarchView, compile">
+    <target name="hv" 
+	    description="Build the hierarchView web application"
+            depends="init-hierarchView, compile">
 
         <delete dir="${hierarchView.build.dir}"/>
         <mkdir  dir="${hierarchView.build.dir}"/>
@@ -179,6 +181,7 @@
           <fileset dir="lib">
 	     <include name="struts.jar"/>
 
+	     <!-- Misc. JAR files -->
 	     <include name="jdbc-se2.0.jar"/>
 	     <include name="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
 	     <include name="jta1.0.1.jar"/>
@@ -194,6 +197,7 @@
 
 	     <include name="PngEncoder.jar"/>
 
+	     <!-- Include for Axis & Web Service -->
 	     <include name="axis.jar"/>
 	     <include name="commons-logging.jar"/>
 	     <include name="tt-bytecode.jar"/>
@@ -201,19 +205,43 @@
 	     <include name="jaxrpc.jar"/>
 	     <include name="xercesImpl.jar"/>
 
+	     <!-- Include JAR for Batik Framework -->
+	     <include name="batik-awt-util.jar"/>
+	     <include name="batik-bridge.jar"/>
+	     <include name="batik-css.jar"/>
+	     <include name="batik-dom.jar"/>
+	     <include name="batik-ext.jar"/>
+	     <include name="batik-extension.jar"/>
+	     <include name="batik-gui-util.jar"/>
+	     <include name="batik-gvt.jar"/>
+	     <include name="batik-parser.jar"/>
+	     <include name="batik-script.jar"/>
+	     <include name="batik-svg-dom.jar"/>
+	     <include name="batik-svggen.jar"/>
+	     <include name="batik-swing.jar"/>
+	     <include name="batik-transcoder.jar"/>
+	     <include name="batik-util.jar"/>
+	     <include name="batik-xml.jar"/>
+	     <include name="crimson-parser.jar"/>
+	     <include name="js.jar"/>
+
           </fileset>
 	</copy>
 
-	<echo message="fini !"/>
+	<echo message="done !"/>
 
     </target>
 
 
     <!-- Build the hierarchView webapp file -->
-    <target name="hierarchView-war" depends="hierarchView">
-       <jar    basedir="${hierarchView.build.dir}"
-               jarfile="hierarchView.war"
+    <target name="hv-war" 
+            description="Build the hierarchView Web Application Archive"
+            depends="hv">
+
+       <jar basedir="${hierarchView.build.dir}"
+            jarfile="hierarchView.war"
        />
+
     </target>
 
     <!-- END : hierarchView -->
