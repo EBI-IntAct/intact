@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.HighlightProteins;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -108,6 +109,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
 
                 String userContext = queryString + depth + method + highlightContext;
 
+                String contextPath = ((HttpServletRequest) pageContext.getRequest()).getContextPath();
                 /* The context parameter in the URL is also given to prevent some browser
                  * (eg. Netscape 4.7) to cache image wrongly.
                  * If the image link were /hierarchView/GenerateImage, netscape don't even
@@ -115,7 +117,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                  */
                 String msg = "<p align=\"left\">\n"
                         + "  <center>"
-                        + "     <img src=\"/hierarchView/GenerateImage?format=" + format
+                        + "     <img src=\""+ contextPath +"/GenerateImage?format=" + format
                         +        "&context="+ userContext +"\" "
                         + "      USEMAP=\"#" + mapName +"\" width=\""+ imageWidth +"\" "
                         +        "height=\""+ imageHeight +"\"  border =\"0\">"

@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.simpleGraph.Node;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -105,8 +106,11 @@ public class DisplaySourceTag extends TagSupport {
 
                     try {
                         ServletRequest request = pageContext.getRequest();
-                        String serverPath = "http://" + request.getServerName() + ":" + request.getServerPort();
-                        urls = source.getSourceUrls(xRefs, serverPath);
+                        String applicationPath = "http://" +
+                                                 request.getServerName() + ":" +
+                                                 request.getServerPort() +
+                                                 ((HttpServletRequest)request).getContextPath();
+                        urls = source.getSourceUrls(xRefs, applicationPath);
                     } catch (IntactException ie) {
                         String msg = "ERROR<br>The hierarchView system is not properly configured. Please warn your administrator.";
                         pageContext.getOut().write (msg);
