@@ -1,7 +1,7 @@
 
 /*
-  Copyright (c) 2003 The European Bioinformatics Institute, and others.  
-  All rights reserved. Please see the file LICENSE 
+  Copyright (c) 2003 The European Bioinformatics Institute, and others.
+  All rights reserved. Please see the file LICENSE
   in the root directory of this distribution.
 */
 /*************************************************************
@@ -11,15 +11,16 @@
   Purpose:    Drop all Postgres components for IntAct
 
   Usage:      psql - f drop_tables.sql
-              
+
 
   $Date$
   $Locker$
 
   *************************************************************/
 
-  drop table ia_cvobject2annot cascade ;
---  drop table ia_cvobject2annot_audit cascade ;
+
+  drop table ia_cvobject2annot ;
+--  drop table ia_cvobject2annot_audit ;
 
   drop table ia_int2annot cascade ;
 --  drop table ia_int2annot_audit cascade ;
@@ -53,15 +54,14 @@
 
   drop table ia_sequence_chunk cascade ;
 
-
   drop table ia_interactor cascade ;
---  drop table ia_interactor_audit cascade ; 
+--  drop table ia_interactor_audit cascade ;
 
   drop table ia_biosource cascade ;
 --  drop table ia_biosource_audit cascade ;
 
   drop table ia_controlledvocab cascade ;
---  drop table ia_controlledvocab_audit cascade ; 
+--  drop table ia_controlledvocab_audit cascade ;
 
   drop table ia_institution cascade ;
 --  drop table ia_institution_audit cascade ;
