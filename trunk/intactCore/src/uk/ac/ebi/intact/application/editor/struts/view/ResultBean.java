@@ -6,11 +6,10 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view;
 
-import java.io.Serializable;
-
 import org.apache.commons.collections.Predicate;
-
 import uk.ac.ebi.intact.model.AnnotatedObject;
+
+import java.io.Serializable;
 
 /**
  * This class contains information for a single search result.

@@ -10,8 +10,8 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Editable;
 
 import java.io.*;
-import java.util.Properties;
 import java.lang.reflect.Modifier;
+import java.util.Properties;
 
 /**
  * This utility class generates EditorTopics.properties file using the

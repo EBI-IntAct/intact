@@ -6,18 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
-
-import org.apache.struts.action.ActionServlet;
 import org.apache.commons.lang.exception.ExceptionUtils;
-
+import org.apache.struts.action.ActionServlet;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 
-import java.util.MissingResourceException;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import java.net.MalformedURLException;
+import java.util.MissingResourceException;
 
 /**
  * This is Intact editor specific action servlet class. This class is
