@@ -56,99 +56,67 @@ public class FeatureLinkAction extends AbstractEditorAction {
         // The dispatch command
         String cmd = intform.getDispatch();
 
-//        System.out.println("Command is: " + cmd);
         // Message resources to access button labels.
         MessageResources msgres = getResources(request);
 
-//        if (cmd.equals(msgres.getMessage("int.proteins.button.feature.add"))) {
-//            return add(mapping, intform, request, response);
-//        }
+        // The current view to link/unlink features.
+        InteractionViewBean view =
+                (InteractionViewBean) getIntactUser(request).getView();
+
         if (cmd.equals(msgres.getMessage("int.proteins.button.feature.link"))) {
-            return link(mapping, intform, request, response);
+            link(intform, request, view);
         }
-        // default is unlink.
-        return unlink(mapping, intform, request, response);
-    }
-
-    private ActionForward link(ActionMapping mapping,
-                               InteractionActionForm form,
-                               HttpServletRequest request,
-                               HttpServletResponse response)
-            throws Exception {
-//        System.out.println("In the LINK feature");
-//        // The two ACs to interact.
-        FeatureBean[] fbs = form.getFeatureACsForLink();
-
-        // Update the domain.
-        fbs[0].setBoundDomain(fbs[1].getShortLabel());
-//
-//        int idx = 0;
-//        // Get the feature ACs for two linked items.
-//        for (Iterator iter0 = form.getComponents().iterator();
-//             iter0.hasNext() && acs[1] == null;) {
-//            ComponentBean compBean = (ComponentBean) iter0.next();
-//            for (Iterator iter1 = compBean.getFeatures().iterator();
-//                 iter1.hasNext() && acs[1] == null;) {
-//                FeatureBean featureBean = (FeatureBean) iter1.next();
-//                if (featureBean.isLinked()) {
-//                    acs[idx] = featureBean.getAc();
-//                    ++idx;
-//                }
-//            }
-//        }
-//        // We should have those two links.
-//        assert ((acs[0] == null) && (acs[1] == null));
-
-//        System.out.println("Linking feature ac: " + acs[0] + " and " + acs[1]);
-//        LOGGER.debug("Selected bean is: " + form.getSelectedFeatureAc());
-        // Handler to the Intact User.
-        EditUserI user = getIntactUser(request);
-
-        // The first feature to interact with.
-//        Feature feature1 = (Feature) user.getObjectByAc(Feature.class, acs[0]);
-//
-//        // The second feature to interact with.
-//        Feature feature2 = (Feature) user.getObjectByAc(Feature.class, acs[1]);
-//
-//        feature1.setBoundDomain(feature2);
-//
-//        // Still with the interaction view.
-        // The current view.
-        InteractionViewBean view = (InteractionViewBean)
-                getIntactUser(request).getView();
-        view.addFeatureLink(fbs[0].getAc(), fbs[1].getAc());
-//
-//        // Save the interaction ac to get back to.
-//        String ac = intView.getAc();
-//
-//        // Set the selected topic as other operation use it for various tasks.
-//        user.setSelectedTopic("Feature");
-//
-//        // The feature we are about to edit.
-//        Feature feature = (Feature) user.getObjectByAc(
-//                Feature.class, form.getSelectedFeatureAc());
-//
-//        // Set the new object as the current edit object.
-//        user.setView(feature);
+        else {
+            // default is unlink.
+            unlink(intform, request, view);
+        }
         return mapping.getInputForward();
     }
 
-    public ActionForward unlink(ActionMapping mapping,
-                                InteractionActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response)
+    private void link(InteractionActionForm form,
+                      HttpServletRequest request,
+                      InteractionViewBean view)
             throws Exception {
-        System.out.println("I am in the unlink feature");
-//        // Handler to the Intact User.
-//        EditUserI user = getIntactUser(request);
-//
-//        // The feature we are about to delete.
-//        Feature feature = (Feature) user.getObjectByAc(
-//                Feature.class, form.getSelectedFeatureAc());
-//
-//        // Delete the feature.
-//        ((InteractionViewBean) user.getView()).deleteFeature(feature);
-//
-        return mapping.getInputForward();
+        // The two Features to link.
+        FeatureBean[] fbs = form.getFeaturesForLink();
+
+        // Check if they already have bound domains.
+        if ((fbs[0].getBoundDomain().length() != 0)
+                || (fbs[1].getBoundDomain().length() != 0)) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("feature.link",
+                    new ActionError("error.int.feature.link.error"));
+            saveErrors(request, errors);
+//            return mapping.getInputForward();
+        }
+        else {
+            // The feature to link.
+            view.addFeatureLink(fbs[0], fbs[1]);
+        }
+
+//        return mapping.getInputForward();
+    }
+
+    public void unlink(InteractionActionForm form,
+                       HttpServletRequest request,
+                       InteractionViewBean view)
+            throws Exception {
+        // The Feature to unlink.
+        FeatureBean fb = form.getFeatureForUnlink();
+
+        // Check if they already have bound domains.
+        if (fb.getBoundDomain().length() == 0) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("feature.link",
+                    new ActionError("error.int.feature.unlink.error"));
+            saveErrors(request, errors);
+//            return mapping.getInputForward();
+        }
+        else {
+            // This feature is linked.
+            view.addFeatureToUnlink(fb, getIntactUser(request));
+        }
+        // Back to the edit page.
+//        return mapping.getInputForward();
     }
 }

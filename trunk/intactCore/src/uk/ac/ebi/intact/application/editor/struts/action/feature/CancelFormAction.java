@@ -52,7 +52,7 @@ public class CancelFormAction extends AbstractEditorAction {
         // Release the lock.
         user.releaseLock();
 
-        LOGGER.debug("Cancel pressed for Feature");
+//        LOGGER.debug("Cancel pressed for Feature");
         // Sets the destination interaction to return to.
         setDestinationInteraction(request);
 

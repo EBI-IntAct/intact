@@ -112,6 +112,15 @@ public interface EditUserI extends IntactUserI, Serializable {
     public AbstractEditViewBean getView();
 
     /**
+     * Sets the view. This is usefult in a situation where the last edited
+     * state is restored without reinitialising the view. For example,
+     * the Interaction editor state is restored when returning from the
+     * Feature editor.
+     * @param view the view to set as the current editor view.
+     */
+    public void setView(AbstractEditViewBean view);
+
+    /**
      * Sets the view using given object.
      * @param obj either an Annotated object or a Class. The class type is used
      * when creating a view for a new object. For an existing object,

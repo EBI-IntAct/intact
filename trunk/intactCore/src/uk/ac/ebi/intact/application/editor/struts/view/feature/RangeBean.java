@@ -258,16 +258,25 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
     }
 
     /**
-     * Construts a new or updates an existing Range using the current values in
-     * the bean. <b>Must </b> call {@link #validate()}method prior to calling
+     * Allows access to the range object this bean is created with.
+     * @return the Range instance this bean is wrapped.
+     * <p>
+     * <b>Notde:</b> The range is not updated. This method is used to
+     * delete existing ranges.
+     */
+    public Range getRange() {
+        return myRange;
+    }
+
+    /**
+     * Construts a new Range using the current values in the bean.
+     * <b>Must </b> call {@link #validate()}method prior to calling
      * this method.
      * 
-     * @param parent the parent of the range to return. Only required for a new
-     * range. For all other instances, the parent of the Range this bean
-     * constructed is used.
+     * @param parent the parent of the range to return.
      * @param user the user object to access <code>CvFuzzyType</code>s.
      * 
-     * @return a new or an updated Range using values from the bean.
+     * @return a new Range using values from the bean.
      * @exception SearchException unable to find code>CvFuzzyType</code>s.
      * @exception IllegalArgumentException for errors in constructing a Range
      * object (ie., thrown from the constructor of the Range class).
@@ -323,13 +332,17 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
         CvFuzzyType fromFuzzyType = getFuzzyType(fromType, user);
         CvFuzzyType toFuzzyType = getFuzzyType(toType, user);
 
+        // Construct a range object to return.
+//        Range range = new Range(user.getInstitution(), parent, fromStart,
+//                fromEnd, toStart, toEnd, null);
+
         // myRange is null for a new range.
-        if (myRange == null) {
-            // Construct a range object to return.
-            myRange = new Range(user.getInstitution(), parent, fromStart,
-                    fromEnd, toStart, toEnd, null);
-        }
-        else {
+//        if (myRange == null) {
+//            // Construct a range object to return.
+//            myRange = new Range(user.getInstitution(), parent, fromStart,
+//                    fromEnd, toStart, toEnd, null);
+//        }
+//        else {
             // Need to validate the from and start ranges. These validations are
             // copied from Range constructor. Alternative is to create a dummy
             // range object to validate inputs.
@@ -358,7 +371,7 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
             myRange.setFromIntervalEnd(fromEnd);
             myRange.setToIntervalStart(toStart);
             myRange.setToIntervalEnd(toEnd);
-        }
+//        }
         //
         //        // Important: Set the owner (or persistent will fail)
         //        range.setOwner(user.getInstitution());
@@ -371,6 +384,66 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
         myRange.setUndetermined(myUndetermined);
 
         return myRange;
+    }
+
+    public Range makeRange(Feature parent, EditUserI user)
+            throws SearchException, IllegalArgumentException {
+        // The from fuzzy type as a string.
+        String fromType = denormalizeFuzzyType(myFromRange);
+        // From range as a string.
+        String fromRange = getRange(fromType, myFromRange);
+
+        int fromStart = 0;
+        int fromEnd = 0;
+        // Need special parsing for fuzzy types.
+        if (fromType.equals(CvFuzzyType.FUZZY)) {
+            int pos = fromRange.indexOf('.');
+            fromStart = Integer.parseInt(fromRange.substring(0, pos));
+            // Skip two positions to be on the first character of the end level.
+            pos += 2;
+            fromEnd = Integer.parseInt(fromRange.substring(pos));
+        }
+        else {
+            // Non fuzzy types.
+            fromStart = Integer.parseInt(fromRange);
+            fromEnd = fromStart;
+        }
+
+        // The to fuzzy type as a string.
+        String toType = denormalizeFuzzyType(myToRange);
+        // To range as a string.
+        String toRange = getRange(toType, myToRange);
+
+        int toStart = 0;
+        int toEnd = 0;
+        // Need special parsing for fuzzy types.
+        if (toType.equals(CvFuzzyType.FUZZY)) {
+            int pos = toRange.indexOf('.');
+            toStart = Integer.parseInt(toRange.substring(0, pos));
+            // Skip two positions to be on the first character of the end level.
+            pos += 2;
+            toEnd = Integer.parseInt(toRange.substring(pos));
+        }
+        else {
+            // Non fuzzy types.
+            toStart = Integer.parseInt(toRange);
+            toEnd = toStart;
+        }
+        // The from/to fuzzy types.
+        CvFuzzyType fromFuzzyType = getFuzzyType(fromType, user);
+        CvFuzzyType toFuzzyType = getFuzzyType(toType, user);
+
+        // Construct a range object to return.
+        Range range = new Range(user.getInstitution(), parent, fromStart,
+                fromEnd, toStart, toEnd, null);
+
+        // Set the fuzzy types.
+        range.setFromCvFuzzyType(fromFuzzyType);
+        range.setToCvFuzzyType(toFuzzyType);
+
+        range.setLink(myLink);
+        range.setUndetermined(myUndetermined);
+        return range;
     }
 
     /**
@@ -517,7 +590,7 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
     private void setFromRange(Range range) {
         // Undetermined?
         if (myFromFuzzyType.equals("?")) {
-            myFromRange = "0";
+            myFromRange = "?";
         }
         // Fuzzy type?
         else if (myFromFuzzyType.equals(CvFuzzyType.FUZZY)) {
@@ -555,7 +628,7 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
     private void setToRange(Range range) {
         // Undetermined?
         if (myToFuzzyType.equals("?")) {
-            myToRange = "0";
+            myToRange = "?";
         }
         // Fuzzy type?
         else if (myToFuzzyType.equals(CvFuzzyType.FUZZY)) {

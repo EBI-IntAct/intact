@@ -260,7 +260,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
     /**
      * Adds a range.
-     * @param rb the range to add.
+     * @param range the range to add.
      *
      * <pre>
      * post: myRangesToAdd = myRangesToAdd@pre + 1
@@ -268,7 +268,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
      * </pre>
      */
     public void addRange(Range range) {
-        // Construct a new bean (ie., don't share the form's bean.
+        // Wraps it around a bean to add to the collections.
         RangeBean rb = new RangeBean(range);
         // Add to the container to add a range.
         myRangesToAdd.add(rb);
@@ -352,16 +352,35 @@ public class FeatureViewBean extends AbstractEditViewBean {
         }
     }
 
+    /**
+     * Updates an existing defined feature.
+     * @param feature the feature to update. Assume this feature is at the
+     * second position of the defined feature list (the first position is the
+     * default feature). For a new feature (ie., only one feature exists), a
+     * new bean is simply added.
+     */
+    public void updateDefinedFeature(Feature feature) {
+        if (myDefinedFeatures.size() == 1) {
+            // No need to update. It is a new feature. Add it.
+            myDefinedFeatures.add(new DefinedFeatureBean(feature));
+            return;
+        }
+        // Assume position 1 is for existing defined feature.
+        if (DefinedFeatureBean.class.isAssignableFrom(
+                myDefinedFeatures.get(1).getClass())) {
+            myDefinedFeatures.remove(1);
+            myDefinedFeatures.add(1, new DefinedFeatureBean(feature));
+        }
+        else {
+            System.out.println("Multiple defined features; need to address this issue");
+        }
+    }
+
     // Override the super method to initialize this class specific resetting.
     protected void reset(Class clazz) {
         super.reset(clazz);
         setParentView(null);
-//        setSourceInteractionAc(null);
         // Add the default defined feature.
-        addDefaultDefinedFeature();
-        // Remove the rest after testing.
-        addDefaultDefinedFeature();
-        addDefaultDefinedFeature();
         addDefaultDefinedFeature();
     }
 
@@ -501,20 +520,30 @@ public class FeatureViewBean extends AbstractEditViewBean {
         // Add new ranges.
         for (Iterator iter = getRangesToAdd().iterator(); iter.hasNext();) {
             Range range = ((RangeBean) iter.next()).getRange(feature, user);
+            // Avoid creating duplicate Ranges.
+            if (feature.getRanges().contains(range)) {
+                System.out.println("A duplicate range");
+                continue;
+            }
+            System.out.println("Adding range: " + range.getFromIntervalStart());
             user.create(range);
             feature.addRange(range);
         }
         
         // Delete ranges.
         for (Iterator iter = getRangesToDel().iterator(); iter.hasNext();) {
-            Range range = ((RangeBean) iter.next()).getRange(feature, user);
+            Range range = ((RangeBean) iter.next()).getRange();
+            System.out.println("Deleting range: " + range.getAc());
             user.delete(range);
             feature.removeRange(range);
         }
 
         // Update existing ranges.
         for (Iterator iter = myRangesToUpdate.iterator(); iter.hasNext();) {
-            Range range = ((RangeBean) iter.next()).getRange(feature, user);
+            RangeBean rb = (RangeBean) iter.next();
+            Range range = rb.getRange(feature, user);
+            range.setAc(rb.getRange().getAc());
+//            System.out.println("Updating range " + range.getFromIntervalStart());
             user.update(range);
         }
         // No need to test whether this 'feature' persistent or not because we

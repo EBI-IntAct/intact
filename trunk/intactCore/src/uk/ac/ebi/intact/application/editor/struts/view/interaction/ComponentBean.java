@@ -17,10 +17,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Collections;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
@@ -95,6 +92,11 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
     private List myFeatures = new ArrayList();
 
     /**
+     * A list of features to add.
+     */
+    private transient List myFeaturesToAdd = new ArrayList();
+
+    /**
      * A list of features to delete.
      */
     private transient List myFeaturesToDel = new ArrayList();
@@ -158,11 +160,11 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
                     BioSource.class, myExpressedIn);
         }
         myComponent.setExpressedIn(expressedIn);
-
-        // Update the binding domain by removing the 'deleted' features.
-        for (Iterator iter = myFeaturesToDel.iterator(); iter.hasNext();) {
-            myComponent.removeBindingDomain((Feature) iter.next());
-        }
+//
+//        // Update the binding domain by removing the 'deleted' features.
+//        for (Iterator iter = myFeaturesToDel.iterator(); iter.hasNext();) {
+//            myComponent.removeBindingDomain((Feature) iter.next());
+//        }
         return myComponent;
     }
 
@@ -301,10 +303,10 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
      */
     public List getFeatures() {
 //        Logger.getLogger(EditorConstants.LOGGER).debug("Getting features");
-        for (Iterator iter = myFeatures.iterator(); iter.hasNext();) {
-            FeatureBean element = (FeatureBean) iter.next();
-            System.out.println("Getting the feature: " + element.getAc() + " - " + element.getRanges());
-        }
+//        for (Iterator iter = myFeatures.iterator(); iter.hasNext();) {
+//            FeatureBean element = (FeatureBean) iter.next();
+//            System.out.println("Getting the feature: " + element.getAc() + " - " + element.getRanges());
+//        }
         return myFeatures;
     }
 
@@ -321,19 +323,37 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
         myFeatures.remove(fb);
         
         // Add the feature to delete.
-        myFeaturesToDel.add(feature);
+        myFeaturesToDel.add(fb);
     }
 
     /**
-     * Returns a collection of Features to delete
-     * @return a collection of Features to delete
+     * Returns a collection of Feature beans to delete
+     * @return a collection of Feature beans to delete
      *
      * <pre>
-     * post: return->forall(obj : Object | obj.oclIsTypeOf(Feature))
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(FeatureBean))
      * </pre>
      */
-    public List getFeaturesToDelete() {
-        return myFeaturesToDel;
+    public Collection getFeaturesToDelete() {
+        // Features common to both add and delete.
+        Collection common = CollectionUtils.intersection(myFeaturesToDel, myFeaturesToAdd);
+        // All the features only found in 'features to delete' collection.
+        return CollectionUtils.subtract(myFeaturesToDel, common);
+    }
+
+    /**
+     * Returns a collection of Feature to add
+     * @return a collection of Feature to add
+     *
+     * <pre>
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(FeatureBean))
+     * </pre>
+     */
+    public Collection getFeaturesToAdd() {
+        // Features common to both add and delete.
+        Collection common = CollectionUtils.intersection(myFeaturesToAdd, myFeaturesToDel);
+        // All the features only found in 'features to add' collection.
+        return CollectionUtils.subtract(myFeaturesToAdd, common);
     }
 
     public void saveFeature(Feature feature) {
@@ -346,10 +366,21 @@ public class ComponentBean extends AbstractEditKeyBean implements Serializable {
             int idx = myFeatures.indexOf(fb);
             myFeatures.remove(idx);
             myFeatures.add(idx, fb);
+
+            // Update the new feature list if it exist in there. This is important
+            // or else getFeatue() wouldn't return an up todate Feature object.
+            if (myFeaturesToAdd.contains(fb)) {
+                System.out.println("Updating existing new feature bean");
+                // Update an existing feature; remove it and add the new bean.
+                myFeaturesToAdd.remove(fb);
+                myFeaturesToAdd.add(fb);
+            }
         }
         else {
+            System.out.println("Adding a new feature as: " + fb.getAc());
             // New feature; just add it.
             myFeatures.add(fb);
+            myFeaturesToAdd.add(fb);
         }
     }
 

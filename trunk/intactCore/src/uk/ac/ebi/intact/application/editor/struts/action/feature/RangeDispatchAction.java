@@ -81,7 +81,7 @@ public class RangeDispatchAction extends AbstractEditorAction {
             RangeBean updated = new RangeBean(bean.getRange(feature, user),
                     bean.getKey());
 
-            System.out.println("Updated range: " + updated.getFromRange() + " - " + updated.getToRange());
+//            System.out.println("Updated range: " + updated.getFromRange() + " - " + updated.getToRange());
             // Save the bean in the view.
             view.saveRange(bean, updated);
 
