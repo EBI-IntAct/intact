@@ -4,6 +4,7 @@
 
 package uk.ac.ebi.intact.util;
 
+import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 
@@ -32,6 +33,9 @@ import java.util.*;
  * @author Andreas Groscurth
  */
 public class MineDatabaseFill {
+
+    public static final String INTERACTION_TABLE = "ia_interactions";
+
 	/**
 	 * Fills the database needed for the MiNe project. <br>
 	 * <br>
@@ -44,15 +48,25 @@ public class MineDatabaseFill {
 	public static void buildDatabase() throws SQLException, IntactException {
 		// the helper and the database connection is fetched
 		IntactHelper helper = new IntactHelper();
-		Connection con = helper.getJDBCConnection();
+
+        // Displays the user and instance against which we are working.
+        try {
+            String db = helper.getDbName();
+            System.out.println( "Database: " + db );
+            System.out.println( "User:     " + helper.getDbUserName() );
+        } catch ( LookupException e ) {
+            e.printStackTrace();
+        }
+
+        Connection con = helper.getJDBCConnection();
 		Statement stm = con.createStatement();
 
 		// the existing data is truncated
 		System.out.println("Truncate existing table");
-		stm.executeUpdate("TRUNCATE TABLE ia_interactions");
+		stm.executeUpdate("TRUNCATE TABLE " + INTERACTION_TABLE );
 		// the inserSTM is a statement to insert the MINE relevant data
 		PreparedStatement insertStm = con
-				.prepareStatement("INSERT INTO ia_interactions " + "VALUES("
+				.prepareStatement("INSERT INTO " + INTERACTION_TABLE + " VALUES("
 						+ "?, ?, ?, ?,1, null)");
 
 		System.out.println("insert interaction data");
@@ -62,12 +76,12 @@ public class MineDatabaseFill {
 		// statement to get all interactors with its role of a particular
 		// interaction
 		PreparedStatement selectStm = con
-				.prepareStatement("SELECT C.interactor_ac, C.role from ia_component C, "
+				.prepareStatement("SELECT C.interactor_ac, C.role FROM ia_component C, "
 						+ "ia_interactor I WHERE C.interaction_ac=? AND C.interactor_ac = I.ac "
 						+ "AND I.objclass LIKE '%Protein%'");
 		// statement to get the taxid for a particular interactor
 		PreparedStatement taxidStm = con
-				.prepareStatement("SELECT B.taxid from ia_biosource B, "
+				.prepareStatement("SELECT B.taxid FROM ia_biosource B, "
 						+ "ia_interactor I WHERE B.ac = I.biosource_ac AND I.ac=?");
 		boolean bait = false;
 		List interactor;
@@ -141,7 +155,7 @@ public class MineDatabaseFill {
 		set = stm.executeQuery(query);
 
 		PreparedStatement deleteStm = con
-				.prepareStatement("DELETE FROM ia_interactions WHERE interaction_ac=?");
+				.prepareStatement("DELETE FROM "+ INTERACTION_TABLE +" WHERE interaction_ac=?");
 		j = 0;
 		while (set.next()) {
 			deleteStm.setString(1, set.getString(1));
@@ -194,7 +208,7 @@ public class MineDatabaseFill {
 			throws SQLException {
 		System.out.print(".");
 		// query fetches all entries where the graphid is not set yet
-		String query = "SELECT protein1_ac FROM ia_interactions WHERE graphid IS NULL "
+		String query = "SELECT protein1_ac FROM "+ INTERACTION_TABLE +" WHERE graphid IS NULL "
 				+ "AND taxid='" + bioAcc + "'";
 		Statement stm = con.createStatement();
 		ResultSet set = stm.executeQuery(query);
@@ -208,16 +222,16 @@ public class MineDatabaseFill {
 		stack.push(ac);
 
 		PreparedStatement selectprotein1_ac = con.prepareStatement("SELECT "
-				+ "protein1_ac FROM ia_interactions WHERE protein2_ac=? " + "AND taxid='"
+				+ "protein1_ac FROM "+ INTERACTION_TABLE +" WHERE protein2_ac=? " + "AND taxid='"
 				+ bioAcc + "' AND graphid IS NULL");
 		PreparedStatement selectprotein2_ac = con.prepareStatement("SELECT "
-				+ "protein2_ac FROM ia_interactions WHERE protein1_ac=? " + "AND taxid='"
+				+ "protein2_ac FROM "+ INTERACTION_TABLE +" WHERE protein1_ac=? " + "AND taxid='"
 				+ bioAcc + "' AND graphid IS NULL");
 
 		PreparedStatement updatePST = con
-				.prepareStatement("UPDATE ia_interactions "
-						+ "SET graphID=? WHERE protein1_ac=? OR protein2_ac=? AND taxid='"
-						+ bioAcc + "' AND graphid IS NULL");
+				.prepareStatement("UPDATE "+ INTERACTION_TABLE +
+						"SET graphID=? WHERE protein1_ac=? OR protein2_ac=? AND taxid='" +
+						bioAcc + "' AND graphid IS NULL");
 
 		// the stack stores each element which is
 		// part of the current connection network
