@@ -48,11 +48,11 @@
 
     <!-- visualization form bean -->
     <form-bean      name="visualizeForm"
-                    type="uk.ac.ebi.intact.core.application.hierarchView.struts.VisualizeForm"/>
+                    type="uk.ac.ebi.intact.application.hierarchView.struts.VisualizeForm"/>
 
     <!-- highlightment form bean -->
     <form-bean      name="highlightmentForm"
-                    type="uk.ac.ebi.intact.core.application.hierarchView.struts.HighlightmentForm"/>
+                    type="uk.ac.ebi.intact.application.hierarchView.struts.HighlightmentForm"/>
 
   </form-beans>
 
@@ -72,7 +72,7 @@
 
     <!-- Processes the main form which allow to define the interaction network you want to visualize -->
     <action   path="/visualize"
-              type="uk.ac.ebi.intact.core.application.hierarchView.struts.VisualizeAction"
+              type="uk.ac.ebi.intact.application.hierarchView.struts.VisualizeAction"
               name="visualizeForm"
               scope="request"
 	      input="/view.jsp">
@@ -84,7 +84,7 @@
 
     <!-- Processes the highlightment form -->
     <action   path="/highlightment"
-              type="uk.ac.ebi.intact.core.application.hierarchView.struts.HighlightmentAction"
+              type="uk.ac.ebi.intact.application.hierarchView.struts.HighlightmentAction"
               name="highlightmentForm"
               scope="request"
               input="/view.jsp">
@@ -95,7 +95,7 @@
 
     <!-- Processes the user's action allowing to select an object in an external application -->
     <action   path="/source"
-              type="uk.ac.ebi.intact.core.application.hierarchView.struts.SourceAction"
+              type="uk.ac.ebi.intact.application.hierarchView.struts.SourceAction"
               scope="request"
               input="/hierarchy.jsp">
 	
@@ -105,7 +105,7 @@
 
     <!-- Processes the centered view action -->
     <action   path="/centered"
-              type="uk.ac.ebi.intact.core.application.hierarchView.struts.CenteredAction"
+              type="uk.ac.ebi.intact.application.hierarchView.struts.CenteredAction"
               scope="request"
               input="/view.jsp">
 	

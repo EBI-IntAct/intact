@@ -17,17 +17,17 @@ content of the scripts directory :
 
 
     (1) Writing interface and implementation (package tulip)
-	  uk/ac/ebi/intact/core/application/hierarchView/business/tulip/webService/TulipAccess.java
-	  uk/ac/ebi/intact/core/application/hierarchView/business/tulip/webService/TulipAccessImpl.java
+	  uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/TulipAccess.java
+	  uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/TulipAccessImpl.java
 
 
     (2) Generated a WSDL file (here : tulip.wsdl)
 
 	java org.apache.axis.wsdl.Java2WSDL
 	     -o tulip.wsdl -l"http://localhost:8080/axis/services/tulip" -n urn:tulip
-	     -p"uk.ac.ebi.intact.core.application.hierarchView.business.tulip.webService"
-	     urn:uk.ac.ebi.intact.core.application.hierarchView.business.tulip.webService
-	     uk.ac.ebi.intact.core.application.hierarchView.business.tulip.webService.TulipAccess
+	     -p"uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"
+	     urn:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService
+	     uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.TulipAccess
 
 
     (3) Generated WSDD files (the only thing we'll kept), Stub ...
@@ -36,7 +36,7 @@ content of the scripts directory :
 	     -o . 
 	     -d Session 
 	     -s 
-	     -p uk.ac.ebi.intact.core.application.hierarchView.business.tulip.webService.generated 
+	     -p uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.generated 
 	     tulip.wsdl
 
 
@@ -58,9 +58,9 @@ content of the scripts directory :
 
 	      <service name="tulip" provider="java:RPC">
 
- * remove *       <parameter name="className" value="uk.ac.ebi.intact.core.application.hierarchView.business.tulip.webService.generated.TulipSoapBindingImpl"/>
+ * remove *       <parameter name="className" value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.generated.TulipSoapBindingImpl"/>
 	    
- * replace by *   <parameter name="className" value="uk.ac.ebi.intact.core.application.hierarchView.business.tulip.webService.TulipAccessImpl"/>
+ * replace by *   <parameter name="className" value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.TulipAccessImpl"/>
 	    
 		  <operation name="getComputedTlpContent" returnQName="return" >
 		    <parameter name="in0" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>
@@ -75,7 +75,7 @@ content of the scripts directory :
 
 
     (4) Created a jar file with inside my class files : interface and implementation in a package 
-	(uk/ac/ebi/intact/core/application/hierarchView/business/tulip/webService/*.class).
+	(uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/*.class).
 
 
     (5) Then I copy this jar file in the proper directory (${AXIS_HOME/WEB-INF/lib}),
@@ -109,7 +109,7 @@ content of the scripts directory :
 		java org.apache.axis.wsdl.WSDL2Java 
 		     -o . 
 		     -d Session 
-		     -p uk.ac.ebi.intact.core.application.hierarchView.business.tulip.client.generated 
+		     -p uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated 
 		     tulip.wsdl
 
         (9b) It create a new directory with the java file you have now to compile

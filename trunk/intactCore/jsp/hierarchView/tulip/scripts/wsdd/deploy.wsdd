@@ -13,7 +13,7 @@
   <!-- Services from TulipAccessService WSDL service -->
 
   <service name="tulip" provider="java:RPC">
-      <parameter name="className" value="uk.ac.ebi.intact.core.application.hierarchView.business.tulip.webService.TulipAccessImpl"/>
+      <parameter name="className" value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.TulipAccessImpl"/>
       <operation name="getComputedTlpContent" returnQName="return" >
         <parameter name="in0" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>
       </operation>

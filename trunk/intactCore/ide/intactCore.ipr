@@ -231,7 +231,7 @@
       <option name="PORT" value="5000" />
     </configuration>
     <configuration name="IntactCoreApp" type="Application" default="false" selected="true">
-      <option name="MAIN_CLASS_NAME" value="uk.ac.ebi.intact.core.IntactCoreApp" />
+      <option name="MAIN_CLASS_NAME" value="uk.ac.ebi.intact.IntactCoreApp" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
