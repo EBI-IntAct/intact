@@ -336,12 +336,10 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             if (submit) {
                 getLockManager().release(view.getAc());
             }
+            // Clear any left overs from previous transaction.
+            view.clearTransactions();
         }
-        // Clear any left overs from previous transaction.
-        view.clearTransactions();
-
-        // All are upto date except for AC which still can be null for a new
-        // object.
+        // All are up todate except for AC which still can be null for a new object.
         editForm.setAc(view.getAcLink());
 
         // We can't use mapping.getInputForward here as this return value
