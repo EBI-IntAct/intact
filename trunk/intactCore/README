@@ -104,8 +104,8 @@ In the intactCore directory, type
 
 	ant set-target-env
 
-Afterwards you should check the config/repository.xml file to ensure that your correct DB connection details have been
-generated. If not you should edit 'repository.xml' manually to set the DB URL, user/password etc by using
+Afterwards you should check the config/repository_database.xml file to ensure that your correct DB connection details have been
+generated. If not you should edit 'repository_database.xml' manually to set the DB URL, user/password etc by using
 the template in that file as a guide.
 
 c) As IntAct is using HTTP connexion to communicate with external resources (eg. SRS, ego, Newt...),
@@ -131,10 +131,10 @@ build everything in one go - 'ant compile-all' - if you so wish).
 e) the final step for the intact core setup is to load the database. There are sample data files in the data directory,
 and to populate your database with this data simply type
 
-	scripts/postgres/testfill.sh 'user/pwd' <dbname> small | medium | large  (postgres - quotes can be omitted if no password)
+	scripts/postgres/testfill.sh 'user/pwd' <dbname> small | medium | large | onlyCV  (postgres - quotes can be omitted if no password)
 
 or
-	scripts/oracle/testfill.sh 'user/pwd' <dbname> small | medium | large (oracle)
+	scripts/oracle/testfill.sh 'user/pwd' <dbname> small | medium | large | onlyCV (oracle)
 
 "small" is for minimal tests, will need < 5 minutes. "large" is full, real data from the Ho and Gavin experiments,
 will run ca. 30 minutes.
