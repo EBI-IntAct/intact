@@ -32,7 +32,7 @@
        <%=query %>
    </h3>
 
-     <span class="largetext">Sorry the query returns to many hits. No details will be
+     <span class="largetext">Sorry the query returns too many hits. No details will be
    displayed, please refine your query.<br></span>
    <span class="smalltext"><br></span>
 
