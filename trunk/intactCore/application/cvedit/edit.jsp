@@ -24,18 +24,23 @@
 
 <jsp:include page="header.jsp" flush="true" />
 
-<jsp:useBean id="IntactUser" scope="session"
+<jsp:useBean id="intactuser" scope="session"
     class="uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl"/>
 
-<c:set var="viewbean" value="${IntactUser.view}"/>
+<c:set var="viewbean" value="${intactuser.view}"/>
 <c:set var="emptycoll" value="${viewbean.emptyCollection}"/>
+
+<!-- Set the drop down lists -->
+<c:set var="topiclist" value="${intactuser.topicList}"/>
+<c:set var="dblist" value="${intactuser.databaseList}"/>
+<c:set var="qlist" value="${intactuser.qualifierList}"/>
 
 <%
     // The keys to save annotations and xrefs.
     String annotations = "annotations";
     String xrefs = "xrefs";
 
-    CvViewBean viewbean = IntactUser.getView();
+    CvViewBean viewbean = intactuser.getView();
 
     // Need to save in a session to access them later.
     Collection annotcoll = viewbean.getAnnotations();
@@ -122,8 +127,6 @@ Accession Number: <b><c:out value="${viewbean.ac}"/></b>
 
 <hr></hr>
 
-<intact:createNameList name="<%=IntactUserIF.TOPIC_NAMES%>" />
-
 <!-- Adds a new comment. This will invoke addComment action. -->
 <html:form action="/addComment">
     <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
@@ -134,7 +137,7 @@ Accession Number: <b><c:out value="${viewbean.ac}"/></b>
     <tr class="tableRowOdd">
         <td class="tableCell" align="left" valign="top">
             <html:select property="topic">
-                <html:options name="<%=IntactUserIF.TOPIC_NAMES%>" />
+                <html:options name="topiclist" />
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
@@ -166,9 +169,6 @@ Accession Number: <b><c:out value="${viewbean.ac}"/></b>
 
 <hr></hr>
 
-<intact:createNameList name="<%=IntactUserIF.DB_NAMES%>"/>
-<intact:createNameList name="<%=IntactUserIF.QUALIFIER_NAMES%>"/>
-
 <!-- Adds a new xreferece. This will invoke addXref action. -->
 <html:form action="/addXref">
     <table class="table" width="90%" border="0" cellspacing="1" cellpadding="2">
@@ -182,7 +182,7 @@ Accession Number: <b><c:out value="${viewbean.ac}"/></b>
     <tr class="tableRowOdd">
         <td class="tableCell" align="left" valign="top">
             <html:select property="database">
-                <html:options name="<%=IntactUserIF.DB_NAMES%>" />
+                <html:options name="dblist" />
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
@@ -196,7 +196,7 @@ Accession Number: <b><c:out value="${viewbean.ac}"/></b>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:select property="qualifer">
-                <html:options name="<%=IntactUserIF.QUALIFIER_NAMES%>" />
+                <html:options name="qlist" />
             </html:select>
         </td>
     </tr>
