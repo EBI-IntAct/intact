@@ -6,10 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
-import org.apache.struts.action.*;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.PageValueBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.model.Interaction;
 
@@ -52,11 +54,8 @@ public class InteractionHoldAction extends AbstractEditorAction {
         // Handler to the current user.
         EditUserI user = getIntactUser(request);
 
-        // PV bean to extract values from the cmd string.
-        PageValueBean pvb = new PageValueBean((String) dynaform.get("intCmd"));
-
         Interaction inter = (Interaction) user.getObjectByAc(
-                Interaction.class, pvb.getAc());
+                Interaction.class, (String) dynaform.get("intac"));
 
         // We must have the interaction bean.
         assert inter != null;
@@ -65,7 +64,9 @@ public class InteractionHoldAction extends AbstractEditorAction {
         ExperimentViewBean view = (ExperimentViewBean) user.getView();
 
         // Adding interactions in the hold section?
-        if (pvb.isMinor("add")) {
+        if (dynaform.get("dispatch").equals(
+                getResources(request).getMessage("exp.int.button.add"))) {
+
             // No need to check for duplicates because it has already been
             // checked when adding to the hold section.
             view.addInteraction(inter);

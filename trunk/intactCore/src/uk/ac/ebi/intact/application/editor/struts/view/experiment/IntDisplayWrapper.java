@@ -6,10 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
-import org.apache.taglibs.display.TableDecorator;
-import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.PageValueBean;
-import uk.ac.ebi.intact.model.Interaction;
+import org.apache.struts.util.MessageResources;
+import org.apache.struts.Globals;
 
 /**
  * This class is a decorator of the Interaction objects that we keep in our
@@ -23,17 +21,16 @@ import uk.ac.ebi.intact.model.Interaction;
 public class IntDisplayWrapper extends AbstractIntDisplayWrapper {
 
     public String getAction() {
-        PageValueBean pvbEdit = new PageValueBean("interaction", "edit", getAc());
-        PageValueBean pvbDel = new PageValueBean("interaction", "delete", getAc());
-        return "<button type=\"submit\" name=\"intCmd\" "
-                + pvbEdit + "\">Edit Interaction</button>"
-                + "<button type=\"submit\" name=\"intCmd\" "
-                + pvbDel + "\">Delete Interaction</button>";
-//        return "<input type=\"submit\" name=\"intCmd[" + getIndex() + "]"
-//                + "\" value=\"Edit Interaction\" title=\"Edit this Interaction\">"
-//                + "<input type=\"submit\" name=\"intCmd[" + getIndex() + "]"
-//                + "\" value=\"Delete Interaction\" "
-//                + "title=\"Delete this Interaction from the Experiment\">";
+        // Resource to get labels.
+        MessageResources msgres = (MessageResources)
+                getPageContext().getServletContext().getAttribute(Globals.MESSAGES_KEY);
+
+        return "<input type=\"submit\" name=\"dispatch\" value=\""
+                + msgres.getMessage("exp.int.button.edit") + "\""
+                + " onclick=\"setIntAc('" + getAc() + "');\">"
+                + "<input type=\"submit\" name=\"dispatch\" value=\""
+                + msgres.getMessage("exp.int.button.del") + "\""
+                + " onclick=\"setIntAc('" + getAc() + "');\">";
     }
 
 //    private int getIndex() {

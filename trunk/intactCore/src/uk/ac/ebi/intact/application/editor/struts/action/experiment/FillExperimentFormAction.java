@@ -58,7 +58,7 @@ public class FillExperimentFormAction extends FillCvFormAction {
 //            }
         }
         // Reset the intCmd as it may contain the previous value.
-        dynaform.set("intCmd", null);
+//        dynaform.set("intCmd", null);
 
         return mapping.findForward(SUCCESS);
     }

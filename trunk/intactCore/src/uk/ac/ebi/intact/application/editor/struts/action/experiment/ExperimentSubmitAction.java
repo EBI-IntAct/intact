@@ -12,7 +12,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.PageValueBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,25 +34,6 @@ public class ExperimentSubmitAction extends SubmitFormAction {
         return super.execute(mapping, form, request, response);
     }
 
-    // Override the super method to handle the event for pressing the tax id.
-    protected ActionForward handle(ActionMapping mapping,
-                                   ActionForm form,
-                                   HttpServletRequest request)
-            throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // PV bean to extract values from the cmd string.
-        PageValueBean pvb = new PageValueBean((String) dynaform.get("intCmd"));
-
-        // Is to do with Edit/Delete existing ints?
-        if (pvb.isMajor("interaction")) {
-            return mapping.findForward("interaction");
-        }
-        // Assume the request is with hold interactions.
-        return mapping.findForward("intHold");
-    }
-
     // Handle events with dispatch parameter.
     protected ActionForward handleDispatch(ActionMapping mapping,
                                            ActionForm form,
@@ -63,6 +43,14 @@ public class ExperimentSubmitAction extends SubmitFormAction {
         // Message resources to access button labels.
         MessageResources msgres = getResources(request);
 
+        if (dispatch.equals(msgres.getMessage("exp.int.button.edit"))
+                || dispatch.equals(msgres.getMessage("exp.int.button.del"))) {
+            return mapping.findForward("interaction");
+        }
+        if (dispatch.equals(msgres.getMessage("exp.int.button.add"))
+                || dispatch.equals(msgres.getMessage("exp.int.button.hide"))) {
+            return mapping.findForward("intHold");
+        }
         if (dispatch.equals(msgres.getMessage("exp.int.button.recent"))) {
             return mapping.findForward("intSearch");
         }
