@@ -18,12 +18,21 @@
 
 <!-- Adds a new comment. This will invoke addComment action. -->
 <html:form action="/cv/comment/add">
-    <table class="table" width="70%" border="0" cellspacing="1" cellpadding="2">
+    <table class="table" width="80%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
-        <th width="13%" class="tableCellHeader">Topic</th>
-        <th width="70%" class="tableCellHeader">Description</th>
+        <th class="tableCellHeader" colspan="2">Action</th>
+        <th class="tableCellHeader">Topic</th>
+        <th class="tableCellHeader">Description</th>
     </tr>
     <tr class="tableRowOdd">
+        <td class="tableCell" align="left" valign="bottom">
+            <html:submit>
+                <bean:message key="button.add"/>
+            </html:submit>
+        </td>
+        <td class="tableCell" align="left" valign="bottom">
+            <html:reset/>
+        </td>
         <td class="tableCell" align="left" valign="top">
             <html:select property="topic">
                 <html:options name="topiclist" />
@@ -31,14 +40,6 @@
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:textarea property="description" rows="3" cols="70" value=""/>
-        </td>
-        <td class="tableCell" align="left" valign="bottom">
-            <html:submit>
-                <bean:message key="button.add"/>
-            </html:submit>
-        <td class="tableCell" align="left" valign="bottom">
-            <html:reset/>
-        </td>
         </td>
     </tr>
     </table>
