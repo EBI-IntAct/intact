@@ -43,7 +43,7 @@
  width="28"></td>
                   <form name="Text1293FORM"
  action="javascript:querySRS(document.forms[0].db[document.forms[0].db.selectedIndex].value, document.forms[0].qstr.value)"
- method="post">
+ method="post"></form>
                   <td class="small" align="center" nowrap="nowrap"
  valign="middle"><span class="smallwhite"><nobr>Get&nbsp;</nobr></span></td>
                   <td class="small" align="center" valign="middle"><span
@@ -68,10 +68,10 @@ sequences</option>
  class="small" type="submit"></span></td>
                   <td class="small" align="center" nowrap="nowrap"
  valign="middle" width="10"><a href="#" class="small"
- onclick="openWindow('http://www.ebi.ac.uk/help/DBhelp/dbhelp_frame.html')"><nobr>&nbsp;?&nbsp;</nobr></a></td></form>
+ onclick="openWindow('http://www.ebi.ac.uk/help/DBhelp/dbhelp_frame.html')"><nobr>&nbsp;?&nbsp;</nobr></a></td>
                   <form name="Text1295FORM"
  action="http://search.ebi.ac.uk/compass" method="get"
- onsubmit="if (document.Text1295FORM.scope.value=='') { alert('Please enter query.'); return false;}">
+ onsubmit="if (document.Text1295FORM.scope.value=='') { alert('Please enter query.'); return false;}"></form>
                   <td class="smallwhite" align="center" nowrap="nowrap"
  valign="middle"><span class="smallwhite"><nobr>&nbsp;Site search&nbsp;</nobr></span></td>
                   <td class="small" align="center" valign="middle"><span
@@ -83,7 +83,7 @@ sequences</option>
  class="small" type="submit"></span></td>
                   <td class="small" align="center" nowrap="nowrap"
  valign="middle"><nobr><a href="#" class="small"
- onclick="openWindow('http://www.ebi.ac.uk/help/help/sitehelp_frame.html')">&nbsp;?&nbsp;</a></nobr></td></form>
+ onclick="openWindow('http://www.ebi.ac.uk/help/help/sitehelp_frame.html')">&nbsp;?&nbsp;</a></nobr></td>
                 </tr>
               </tbody>
             </table>
@@ -231,7 +231,7 @@ DATABASES</a></nobr><!-- TOP LINK HERE --><!-- InstanceEndEditable --> </td>
           <tr align="left" valign="top">
             <td>&nbsp;<img
  src="http://www.ebi.ac.uk/services/images/bullet.gif" height="8"
- width="6">&nbsp;<a href="#aims" class="large"><nobr>Aims</nobr></a></td>
+ width="6"> <a href="#aims" class="large"><nobr>Project</nobr></a></td>
           </tr>
           <tr align="left" valign="top">
             <td>&nbsp;<img
@@ -252,17 +252,31 @@ DATABASES</a></nobr><!-- TOP LINK HERE --><!-- InstanceEndEditable --> </td>
           <tr>
             <td style="vertical-align: top;">&nbsp;<img
  src="http://www.ebi.ac.uk/services/images/bullet.gif" height="8"
- width="6">&nbsp;<a class="large" href="#data"><nobr>Data</nobr></a></td>
+ width="6">&nbsp;<a class="large" href="#data"><nobr>Data</nobr></a><br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&nbsp;<img
+ src="http://www.ebi.ac.uk/services/images/bullet.gif" height="8"
+ width="6">&nbsp;<a class="large" href="doc/html/statistics/index.html"><nobr>Statistics</nobr></a><a
+ class="large" href="#availability"><nobr></nobr></a></td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&nbsp;<img
+ src="http://www.ebi.ac.uk/services/images/bullet.gif" height="8"
+ width="6"> <a class="large" href="#availability"><nobr>Availability</nobr></a></td>
           </tr>
           <tr align="left" valign="top">
             <td>&nbsp;<img
  src="http://www.ebi.ac.uk/services/images/bullet.gif" height="8"
- width="6">&nbsp;<a href="#stat" class="large"><nobr>Status</nobr></a></td>
+ width="6">&nbsp;<a href="#status" class="large"><nobr>Status</nobr></a></td>
           </tr>
-          <tr align="left" valign="top">
-            <td>&nbsp;<img
+          <tr>
+            <td style="vertical-align: top;">&nbsp;<img
  src="http://www.ebi.ac.uk/services/images/bullet.gif" height="8"
- width="6">&nbsp;<a href="doc/html/statistics/index.html" class="large"><nobr>Statistics</nobr></a></td>
+ width="6">&nbsp;<a href="#submission" class="large"><nobr>Data
+submission<br>
+            </nobr></a></td>
           </tr>
           <tr align="left" valign="top">
             <td>&nbsp;<img
@@ -354,24 +368,15 @@ IntAct:</span>
                       </li>
                     </ul>
                   </form>
-                  <span class="pbold"><a name="aims"></a>The IntAct
-project aims are to:</span>
+                  <span class="pbold"><a name="aims"></a>Project
+description</span>
                   <ul>
-                    <li class="greenboldsmalllist"><span class="text">define
-a standard for the representation and annotation of protein-protein
-interaction data</span></li>
-                    <li class="greenboldsmalllist"><span class="text">provide
-a public repository</span></li>
-                    <li class="greenboldsmalllist"><span class="text">populate
-the repository with experimental data from project partners and curated
-literature data</span></li>
-                    <li class="greenboldsmalllist"><span class="text">provide
-modular analysis tools</span></li>
-                    <li class="greenboldsmalllist"><span class="text">provide
-portable versions of the software to allow installation of local IntAct
-nodes</span></li>
+                    <li class="greenboldsmalllist"><span class="text">IntAct
+provides a freely available, open source database system and analysis
+tools for protein interaction data. All interactions are derived from
+literature curation or direct user submissions and are freely available.<br>
+                      </span></li>
                   </ul>
-                  <br>
                   <div align="right"><a href="#a0"><img
  src="http://www.ebi.ac.uk/Information/images/arrow_up2.gif" border="0"
  height="21" width="19"></a>
@@ -476,6 +481,12 @@ project: </p>
 graph visualisation system.</li>
                       <li><a href="targets/">Targets</a> application to
 predict targets for pull-down experiments</li>
+                      <li><a href="mine/">MiNe</a> application computes
+minimal connecting network for protein sets.<br>
+                        <span class="psmall"> <span
+ style="text-decoration: underline;">Example</span>: <a
+ href="mine/display.jsp?AC=EBI-1389,EBI-1765">Q12277
+and Q08491</a></span><span class="psmall">.</span></li>
                     </ul>
                   </ul>
                   <span class="pbold"><a name="data" id="stat"></a>Data:</span><br>
@@ -489,11 +500,21 @@ current release is available from <br>
  href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current">ftp://ftp.ebi.ac.uk/pub/databases/intact/current</a></span></li>
                     <li class="greenboldsmalllist"><span class="text">More
 detailed information is available in the <a
- href="doc/html/documentation.html#download">user manual</a><br>
+ href="doc/html/documentation.html#download">user manual</a></span></li>
+                    <li class="greenboldsmalllist"><a
+ href="doc/html/statistics/index.html"><span class="text">Statistics<br>
+                      </span></a></li>
+                  </ul>
+                  <span class="pbold"><a name="availability"></a>Availability:</span><br>
+                  <ul>
+                    <li class="greenboldsmalllist"><span class="text">All
+IntAct data and software is freely available to all users, academic or
+commercial, under the terms of the </span><a
+ href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License,
+Version 2.0.</a><span class="text"><br>
                       </span></li>
                   </ul>
-                  <br>
-                  <span class="pbold"><a name="stat" id="stat"></a>Status:</span>
+                  <span class="pbold"><a name="status"></a>Status:</span>
                   <br>
                   <ul>
                     <li class="greenboldsmalllist"><span class="text">Source
@@ -504,9 +525,17 @@ XML data release since February 1st, 2004. </span></li>
                     <li class="greenboldsmalllist"><span class="text">Production
 since summer 2003.</span></li>
                   </ul>
-                  <span class="pbold"><br>
-                  <a name="mail"></a>Mailing lists, bug reports:</span>
-                  <br>
+                  <span class="pbold"><a name="submission"></a>Direct
+data submission:</span> <br>
+                  <ul>
+                    <li class="greenboldsmalllist"><span class="text">IntAct
+encourages and welcomes direct user submissions of protein interaction
+data described in peer-reviewed publications. Please contact <a
+ href="mailto:datasubs@ebi.ac.uk">datasubs@ebi.ac.uk</a> for curator
+assistance.</span></li>
+                  </ul>
+                  <span class="pbold"> <a name="mail"></a>Mailing
+lists, bug reports:</span> <br>
 The following mailing lists have been set up:
                   <ul>
                     <li class="greenboldsmalllist"><span class="text">intact-announce@lists.sourceforge.net
@@ -694,12 +723,33 @@ by Sourceforge.net</span></li>
                 <tr>
                   <td class="tablebody"> <br>
                   </td>
-                  <td colspan="3" class="tablebody"><!-- News contents -->
-                  <span class="psmall"><a
- href="doc/html/statistics/index.html"><b>Current statistics</b></a></span><br>
+                  <td colspan="3" class="tablebody"><!-- News contents --><span
+ class="psmall"><br>
+September 1, 2004: </span><br>
+                  <span class="psmall"><span
+ style="text-decoration: underline;"><span style="font-weight: bold;">New
+datasets</span></span>:<br>
+                  </span><span class="psmall">Detailed analysis of the
+mediator complex:<br>
+                  <a
+ href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=12149480&amp;searchClass=Experiment">Brower
+et al</a>,<br>
+                  </span><span class="psmall"><a
+ href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=12963728&amp;searchClass=Experiment">Cai
+et al</a>,<br>
+                  </span><span class="psmall"><a
+ href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=14638676&amp;searchClass=Experiment">Tomomori
+et al</a>,<br>
+                  </span><span class="psmall"><a
+ href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=12584197,14576168,15175163&amp;searchClass=Experiment">Sato
+et al</a>.</span><span class="psmall"></span><br>
+                  <span class="psmall"><br>
+                  </span><span class="psmall"><span
+ style="text-decoration: underline;"><span style="font-weight: bold;">Next
+release</span></span> will be October 1, 2004. We expect the server
+to be down from 10:00-10:30AM British Summer Time.<br>
                   <br>
-                  <br>
-                  <span class="psmall">August 1, 2004: </span><br>
+                  </span><span class="psmall">August 1, 2004: </span><br>
                   <span class="psmall"><span
  style="text-decoration: underline;"><span style="font-weight: bold;">New
 datasets</span></span>:<br>
@@ -728,12 +778,7 @@ selected set
 of proteins.<br>
                   <span style="text-decoration: underline;">example</span>:
                   <a href="mine/display.jsp?AC=EBI-1389,EBI-1765">Q12277
-and Q08491</a><br>
-                  </span><span class="psmall"><br>
-                  </span><span class="psmall"><span
- style="text-decoration: underline;"><span style="font-weight: bold;">Next
-release</span></span> will be September 1, 2004. We expect the server
-to be down from 10:00-10:30AM British Summer Time.<br>
+and Q08491</a></span><span class="psmall">.<br>
                   <br>
                   </span><span class="psmall">July 1, 2004: <br>
                   <span style="text-decoration: underline;"><span
