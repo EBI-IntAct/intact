@@ -4,6 +4,10 @@ definition: This qualifier is used when the crossreference is imported from the 
 
 shortlabel: identity
 term: Reference to the identical object in another database
-definition: This qualifier is used when the object referred to by the crossreference describes the same object.
+definition: This qualifier is used when the object referred to by the crossreference describes the same object. The reference will usually be done by primary accession number of the external database.
 example: The same protein, described in two different databases.
+
+shortlabel: secondary-ac
+term: Secondary accession number
+definition: This qualifier is used when the object referred to by the crossreference describes the same object, and the identifier used is a seconcary identifier in the external database. Crossreferences using secondary accession numbers are only included in IntAct to allow to retrieve imported proteins by their secondary accession numbers.
 
