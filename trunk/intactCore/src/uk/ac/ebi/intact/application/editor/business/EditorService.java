@@ -15,6 +15,9 @@ import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -62,38 +65,31 @@ public class EditorService {
      */
     private String myHelpUrl;
 
+    /**
+     * The institution; only one instance among many users.
+     */
+    private static Institution myInstitution;
+
+    // Static initializer
+
+    static {
+        try {
+            ourInstance = new EditorService(
+                    "uk.ac.ebi.intact.application.editor.EditorResources");
+        }
+        catch (Exception ex) {
+            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
+
     // Class Methods
 
     /**
-     * Returns the only instance of this class using the default resources file.
-     * However, if this instance has already been initialized by
-     * {@link #getInstance(String)}, it will be returned instead (i.e, the default
-     * resource is ignored).
-     * @return the only instance of this class or null for any errors.
-     * @see #getInstance(String)
+     * Returns the only instance of this class.
+     * @return the only instance of this class. The instance can never be null.
      */
     public static EditorService getInstance() {
-        try {
-            return getInstance("uk.ac.ebi.intact.application.editor.EditorResources");
-        }
-        catch (EmptyTopicsException ete) {
-            Logger.getLogger(EditorConstants.LOGGER).info(ete);
-        }
-        return null;
-    }
-
-    /**
-     * Returns the only instance of this class using given resources file. This
-     * method not synchronized because it is only invoked by EditorActionServlet at
-     * the init stage.
-     * @param name the resource file name.
-     * @return the only instance of this class.
-     * @throws EmptyTopicsException thrown for an empty resource file.
-     */
-    public static EditorService getInstance(String name) throws EmptyTopicsException {
-        if (ourInstance == null) {
-            ourInstance = new EditorService(name);
-        }
         return ourInstance;
     }
 
@@ -121,9 +117,10 @@ public class EditorService {
      * @exception MissingResourceException thrown when the resource file is
      * not found.
      * @exception EmptyTopicsException thrown for an empty resource file.
+     * @exception IntactException for errors in initializing the institution.
      */
     private EditorService(String name) throws MissingResourceException,
-            EmptyTopicsException {
+            EmptyTopicsException, IntactException {
         myResources = ResourceBundle.getBundle(name);
         myTopics = ResourceBundle.getBundle(myResources.getString("topics"));
         // Must have Intact Types to edit.
@@ -140,6 +137,16 @@ public class EditorService {
         // we want the Experiment to be at the top.
         moveToFront(getTopic(Interaction.class));
         moveToFront(getTopic(Experiment.class));
+
+        // Initialize the institution.
+        IntactHelper helper = new IntactHelper();
+        try {
+            myInstitution = helper.getInstitution();
+        }
+        finally {
+            helper.closeStore();
+        }
+        assert myInstitution != null: "Institution not set";
     }
 
     /**
@@ -255,6 +262,17 @@ public class EditorService {
      */
     public String getDefaultXrefQualifier() {
         return getResource("default.xref.qualifier");
+    }
+
+    /**
+     * @return the institution or the owner for new objects.
+     *
+     * <pre>
+     * post: return != null
+     * </pre>
+     */
+    public Institution getOwner() {
+        return myInstitution;
     }
 
     /**
