@@ -5,25 +5,27 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
-// intact
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.highlightment.HighlightProteins;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Properties;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
 
 
 /**
- * That class allow to initialize properly the HTTPSession object
- * with what will be neededlater by the user of the web application.
+ * That class allows to display in the browser the current interaction network
+ * and the associated HTML MAP.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
@@ -41,8 +43,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
 
 
     /**
-     * Called when the JSP encounters the end of a tag. This will create the
-     * option list.
+     * Called when the JSP encounters the end of a tag.
      */
     public int doEndTag() throws JspException {
         HttpSession session = pageContext.getSession();
@@ -51,6 +52,17 @@ public class DisplayInteractionNetworkTag extends TagSupport {
             IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
             ImageBean imageBean = user.getImageBean();
             String AC = user.getAC();
+            Collection keys = user.getKeys();
+            String behaviour = user.getBehaviour();
+            InteractionNetwork in = user.getInteractionNetwork();
+
+            /**
+             * Apply an highlight if needed
+             */
+            if ((null != AC) && (null != keys) && (behaviour != null) && (null != in)) {
+                String methodClass = user.getMethodClass();
+                HighlightProteins.perform (methodClass, behaviour, session, in) ;
+            }
 
             /**
              *  Display only the picture if an AC is in the session
@@ -60,7 +72,7 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                 // Display the HTML code map
                 pageContext.getOut().write (imageBean.getMapCode());
 
-                // read the Graph.proterties file
+                // read the Graph.properties file
                 String mapName = null;
                 String format = null;
 
@@ -86,13 +98,10 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                         + "</p>";
 
                 pageContext.getOut().write (msg);
-            } else {
-                if (null == AC) logger.info ("Don't enter the servlet calling: AC == null");
-                if (null == imageBean) logger.info ("Don't enter the servlet calling: imageBean == null");
             }
 
         } catch (Exception ioe) {
-            throw new JspException ("Fatal error: init tag could not initialize user's HTTPSession.");
+            throw new JspException ("Error: could not display interaction network.");
         }
         return EVAL_PAGE;
     } // doEndTag
