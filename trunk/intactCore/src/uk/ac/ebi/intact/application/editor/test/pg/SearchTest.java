@@ -5,13 +5,13 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.editor.test.pg;
 
-import com.meterware.httpunit.SubmitButton;
-import com.meterware.httpunit.WebForm;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.httpunit.WebTable;
+import com.meterware.httpunit.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.xml.sax.SAXException;
+import uk.ac.ebi.intact.application.editor.test.EditorTestCase;
+
+import java.io.IOException;
 
 /**
  * Search test case for Postgres database.
@@ -30,7 +30,7 @@ public class SearchTest extends EditorTestCase {
 
     public void testSearchPage() throws Exception {
         // Login as a default user.
-        WebResponse response = login("x");
+        WebResponse response = login();
         try {
             verifySidebar(response);
         }
@@ -41,7 +41,7 @@ public class SearchTest extends EditorTestCase {
 
     public void testExperimentSearch() throws Exception {
         // Login first.
-        WebResponse response = login("x");
+        WebResponse response = login();
         try {
             // Validate the sidebar first.
             verifySidebar(response);
@@ -55,7 +55,7 @@ public class SearchTest extends EditorTestCase {
 
     public void testCvDatabaseSearch() throws Exception {
         // Login first.
-        WebResponse response = login("x");
+        WebResponse response = login();
         try {
             // Validate the sidebar first.
             verifySidebar(response);
@@ -69,11 +69,25 @@ public class SearchTest extends EditorTestCase {
 
     public void testCvTopicSearch() throws Exception {
         // Login first.
-        WebResponse response = login("x");
+        WebResponse response = login();
         try {
             // Validate the sidebar first.
             verifySidebar(response);
             cvTopicSearch(response);
+        }
+        finally {
+            // Logout from the session.
+            logout(response);
+        }
+    }
+
+    public void testBioSourceSearch() throws Exception {
+        // Login first.
+        WebResponse response = login();
+        try {
+            // Validate the sidebar first.
+            verifySidebar(response);
+            bsSearch(response);
         }
         finally {
             // Logout from the session.
@@ -88,18 +102,13 @@ public class SearchTest extends EditorTestCase {
         // Verify the basic result form.
         verifyResultForm(response);
 
-        // Get the result table.
-        WebTable tab = response.getTableStartingWith("AC");
+        // Should have the links for gavin and ho experiments.
+        assertNotNull("gavin link not found", response.getLinkWith("gavin"));
+        assertNotNull("gavin AC link not found", response.getLinkWith("EBI-12"));
+        assertNotNull("ho link not found", response.getLinkWith("ho"));
+        assertNotNull("ho AC link not found", response.getLinkWith("EBI-13"));
 
-        // Two experiments + heading.
-        assertEquals(tab.getRowCount(), 3);
-
-        // Skip the headings.
-        assertEquals(tab.getCellAsText(1, 1).trim(), "gavin");
-        assertEquals(tab.getCellAsText(2, 1).trim(), "ho");
-
-        // The topic is still the selected topic.
-        verifySidebar(response, "Experiment", "*");
+        verifySearchSidebar(response, "Experiment");
 
         // Search for a single experiment.
         response = submitSearch(response, "Experiment", "ho");
@@ -108,8 +117,7 @@ public class SearchTest extends EditorTestCase {
         WebForm expForm = response.getFormWithName("expForm");
         assertNotNull("Experiment form not found", expForm);
 
-        // The sidebar has the searched string.
-        verifySidebar(response, "Experiment", "ho");
+        verifySidebar(response);
     }
 
     private void cvDatabaseSearch(WebResponse webResponse) throws Exception {
@@ -119,18 +127,13 @@ public class SearchTest extends EditorTestCase {
         // Verify the basic result form.
         verifyResultForm(response);
 
-        // Get the result table.
-        WebTable tab = response.getTableStartingWith("AC");
+        // Should have the links for flybase and go databases.
+        assertNotNull("flybase link not found", response.getLinkWith("flybase"));
+        assertNotNull("flybase AC link not found", response.getLinkWith("EBI-59"));
+        assertNotNull("go link not found", response.getLinkWith("go"));
+        assertNotNull("go AC link not found", response.getLinkWith("EBI-62"));
 
-        // 9 Items + heading
-        assertEquals(tab.getRowCount(), 10);
-
-        // Skip the headings.
-        assertEquals(tab.getCellAsText(1, 1).trim(), "flybase");
-        assertEquals(tab.getCellAsText(2, 1).trim(), "go");
-
-        // The topic is still the selected topic.
-        verifySidebar(response, "CvDatabase", "*");
+        verifySearchSidebar(response, "CvDatabase");
 
         // Search for a single cvdatabase.
         response = submitSearch(response, "CvDatabase", "go");
@@ -139,8 +142,7 @@ public class SearchTest extends EditorTestCase {
         WebForm cvForm = response.getFormWithName("cvForm");
         assertNotNull("Cv form not found", cvForm);
 
-        // The sidebar has the searched string.
-        verifySidebar(response, "CvDatabase", "go");
+        verifySidebar(response);
     }
 
     private void cvTopicSearch(WebResponse webResponse) throws Exception {
@@ -150,18 +152,13 @@ public class SearchTest extends EditorTestCase {
         // Verify the basic result form.
         verifyResultForm(response);
 
-        // Get the result table.
-        WebTable tab = response.getTableStartingWith("AC");
+        // Should have the links for caution and comment.
+        assertNotNull("caution link not found", response.getLinkWith("caution"));
+        assertNotNull("caution AC link not found", response.getLinkWith("EBI-16"));
+        assertNotNull("comment link not found", response.getLinkWith("comment"));
+        assertNotNull("comment AC link not found", response.getLinkWith("EBI-15"));
 
-        // 13 topics + heading.
-        assertEquals(tab.getRowCount(), 14);
-
-        // Skip the headings.
-        assertEquals(tab.getCellAsText(1, 1).trim(), "caution");
-        assertEquals(tab.getCellAsText(2, 1).trim(), "comment");
-
-        // The topic is still the selected topic.
-        verifySidebar(response, "CvTopic", "*");
+        verifySearchSidebar(response, "CvTopic");
 
         // Search for a single cvdatabase.
         response = submitSearch(response, "CvTopic", "remark");
@@ -170,8 +167,32 @@ public class SearchTest extends EditorTestCase {
         WebForm cvForm = response.getFormWithName("cvForm");
         assertNotNull("Cv form not found", cvForm);
 
-        // The sidebar has the searched string.
-        verifySidebar(response, "CvTopic", "remark");
+        verifySidebar(response);
+    }
+
+    private void bsSearch(WebResponse webResponse) throws Exception {
+        // Response after submitting the form.
+        WebResponse response = submitSearch(webResponse, "BioSource");
+
+        // Verify the basic result form.
+        verifyResultForm(response);
+
+        // Should have the links for yeast and canal.
+        assertNotNull("yeast link not found", response.getLinkWith("yeast"));
+        assertNotNull("yeast AC link not found", response.getLinkWith("EBI-541"));
+        assertNotNull("canal link not found", response.getLinkWith("canal"));
+        assertNotNull("canal AC link not found", response.getLinkWith("EBI-1026"));
+
+        verifySearchSidebar(response, "BioSource");
+
+        // Search for a single cvdatabase.
+        response = submitSearch(response, "BioSource", "yeast");
+
+        // Gone directly to the edit screen.
+        WebForm cvForm = response.getFormWithName("bsForm");
+        assertNotNull("Bs form not found", cvForm);
+
+        verifySidebar(response);
     }
 
     private WebResponse submitSearch(WebResponse response, String topic)
@@ -179,44 +200,21 @@ public class SearchTest extends EditorTestCase {
         return submitSearch(response, topic, "*");
     }
 
-    private WebResponse submitSearch(WebResponse response, String topic,
-                                     String searchStr)
-            throws Exception {
-        // Should have the sidebar form.
-        WebForm sidebarForm = response.getFormWithName("sidebarForm");
-
-        // Set the search topic and the search value.
-        sidebarForm.setParameter("topic", topic);
-        sidebarForm.setParameter("searchString", searchStr);
-
-        // Press Search button.
-        SubmitButton searchButton = sidebarForm.getSubmitButton("dispatch",
-                "Search");
-        assertNotNull("Search button not found", searchButton);
-
-        // Response after search button.
-        return sidebarForm.submit(searchButton);
-    }
-
-    private void verifyResultForm(WebResponse response) throws SAXException {
-        // Must have the result form.
-        WebForm resultForm = response.getFormWithName("resultForm");
+    private void verifyResultForm(WebResponse response) throws SAXException, IOException {
+        // A dummy form is associated with the result.
+        WebForm resultForm = response.getFormWithName("dummyForm");
         assertNotNull("Result form not found", resultForm);
 
         // Check the action.
         assertEquals(resultForm.getAction(), "/intact/editor/do/result");
 
-        // Get the result table.
-        WebTable tab = response.getTableStartingWith("AC");
-
-        // We should have the table.
-        assertNotNull("Missing results table", tab);
+        // Response as a string.
+        String resptxt = response.getText();
 
         // Must have columns.
-        assertEquals(tab.getColumnCount(), 4);
-        assertEquals(tab.getCellAsText(0, 0), "AC");
-        assertEquals(tab.getCellAsText(0, 1), "Short Label");
-        assertEquals(tab.getCellAsText(0, 2), "Full Name");
-        assertEquals(tab.getCellAsText(0, 3), "Lock");
+        assertTrue(resptxt.indexOf("<th class=\"tableCellHeader\">AC</th>") != -1);
+        assertTrue(resptxt.indexOf("<th class=\"tableCellHeader\">Short Label</th>") != -1);
+        assertTrue(resptxt.indexOf("<th class=\"tableCellHeader\">Full Name</th>") != -1);
+        assertTrue(resptxt.indexOf("<th class=\"tableCellHeader\">Lock</th>") != -1);
     }
 }
