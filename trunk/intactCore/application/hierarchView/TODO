@@ -6,9 +6,20 @@ T O   D O
 	+ currently under progress
 
 
-+ interact with EGO (e.g. GOTerm.isAParent(GOTerm))
-   - take over with Sugath
-   - make meet Sugath and David Binns
+
+- install Struts 1.1 and check if everything ok
+  - bean:message tag send an exception :
+
+     java.lang.IllegalStateException: getAttribute: Session already invalidated
+	     at org.apache.catalina.session.StandardSession.getAttribute(StandardSession.java:942)
+	     at org.apache.catalina.session.StandardSessionFacade.getAttribute(StandardSessionFacade.java:171)
+	     at org.apache.catalina.session.StandardSessionFacade.getAttribute(StandardSessionFacade.java:171)
+	     at org.apache.jasper.runtime.PageContextImpl.getAttribute(PageContextImpl.java:222)
+	     at org.apache.struts.util.RequestUtils.retrieveUserLocale(RequestUtils.java:758)
+	     at org.apache.struts.util.RequestUtils.message(RequestUtils.java:828)
+	     at org.apache.struts.taglib.bean.MessageTag.doStartTag(MessageTag.java:295)
+	     at org.apache.jsp.view_jsp._jspx_meth_bean_message_1(view_jsp.java:315)
+
 
 
 + SVG integration 
@@ -19,15 +30,10 @@ T O   D O
 + Remove all internal links in Interpro
   -> modifying the simple.xsl file to customize our displaying
 
-+ take over the application with Sugath
-  + overview of the application
-  + how to play with the web service
-  - image processing
-  - highlighting process
 
-+ add logging facilities in the web service
+- add logging facilities in the web service
 
-- Presents to Sugath the new architecture to generate picture !
++ Presents to Sugath the new architecture to generate picture !
   generate svg and the servlet build on the fly the image according to parameters (format ...)
 
 + Work on the SVG applet 
@@ -56,8 +62,6 @@ T O   D O
 
 - building a script allowing to do the tedious task of managing the web service !
 
-- create then an external build.xml for hierarchView
-
 - Find a way to check if a web service is currently running (in the runtime)
 
 - solve browser behaviour problem
@@ -83,6 +87,18 @@ T O   D O
    D O N E
 ==============
 
+
++ create then an external build.xml for hierarchView
+
++ interact with EGO (e.g. GOTerm.isAParent(GOTerm))
+   + take over with Sugath
+   + make meet Sugath and David Binns
+
++ take over the application with Sugath
+  + overview of the application
+  + how to play with the web service
+  + image processing
+  + highlighting process
 
 + Modify the SVG generation class to fit the improvement of the drawing process (GraphToImage)
   + test it !
