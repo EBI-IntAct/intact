@@ -3,7 +3,7 @@
  * User: hhe
  * Date: Apr 11, 2003
  * Time: 1:31:41 PM
- * To change this template use Options | File Templates.
+ * To change this prediction use Options | File Templates.
  */
 package uk.ac.ebi.intact.util;
 
@@ -14,12 +14,9 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.model.*;
 
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
-import org.apache.commons.collections.LRUMap;
 
 
 
@@ -29,8 +26,6 @@ import org.apache.commons.collections.LRUMap;
 public abstract class UpdateProteinsI {
 
     protected final static org.apache.log4j.Logger logger = Logger.getLogger("updateProtein");
-
-    private final static int DEFAULT_CACHE_SIZE = 200;
 
 
     public class UpdateException extends Exception {
@@ -62,14 +57,9 @@ public abstract class UpdateProteinsI {
     protected static CvXrefQualifier secondaryXrefQualifier;
 
 
-    /**
-     * Cache valid BioSource objects for taxIds.
-     */
-    protected static LRUMap bioSourceCache = null;
-
-    protected NewtServerProxy newtProxy;
-
     protected IntactHelper helper = null;
+
+    protected BioSourceFactory bioSourceFactory;
 
     /**
      * If true, each protein is updated in a distinct transaction.
@@ -87,8 +77,31 @@ public abstract class UpdateProteinsI {
      * @param cacheSize the number of valid biosource to cache during the update process.
      * @throws UpdateException
      */
-    public UpdateProteinsI (IntactHelper helper, int cacheSize) throws UpdateException {
-         this.helper = helper;
+    public UpdateProteinsI( IntactHelper helper, int cacheSize ) throws UpdateException {
+        this.helper = helper;
+        collectDefaultObject( helper );
+
+        bioSourceFactory = new BioSourceFactory( helper, myInstitution, cacheSize );
+        bioSourceFactory.setLogger( logger );
+    }
+
+
+    /**
+     * Default constructor which initialize the bioSource cache to default.
+     *
+     * @param helper IntactHelper object to access (read/write) the database.
+     * @throws UpdateException
+     */
+    public UpdateProteinsI ( IntactHelper helper ) throws UpdateException {
+        this.helper = helper;
+        collectDefaultObject( helper );
+
+        bioSourceFactory = new BioSourceFactory( helper, myInstitution );
+        bioSourceFactory.setLogger( logger );
+    }
+
+
+    private void collectDefaultObject (IntactHelper helper) throws UpdateException{
 
         try {
             myInstitution = (Institution) helper.getObjectByLabel(Institution.class, "EBI");
@@ -132,52 +145,25 @@ public abstract class UpdateProteinsI {
             throw new UpdateException ("Couldn't find needed object in IntAct, cause: " + e.getMessage());
         }
 
-        this.helper = helper;
-
-        URL url = null;
-        try {
-            url = new URL("http://www.ebi.ac.uk/newt/display");
-//            url = new URL("http://web7-node1.ebi.ac.uk:9120/newt/display");
-        } catch (MalformedURLException e) {
-            logger.error ("Newt URL is invalid", e);
-            throw new UpdateException ("Unable to create Newt proxy, invalid URL: " + url);
-        }
-
-        newtProxy = new NewtServerProxy(url);
-        newtProxy.disableCaching();
-
-        bioSourceCache = new LRUMap( cacheSize );
     }
 
 
+
     /**
-     * Default constructor which initialize the bioSource cache to default.
+     * Inserts zero or more proteins created from SPTR entries which are retrieved from a URL.
+     * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
+     * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism,
+     * unless the taxid parameter is not null.
      *
-     * @param helper IntactHelper object to access (read/write) the database.
-     * @throws UpdateException
+     *
+     * @param sourceUrl  The URL which delivers zero or more SPTR flat file formatted entries.
+     * @param taxid      Of all entries retrieved from sourceURL, insert only those which have this
+     *                   taxid.
+     *                   If taxid is empty, insert all protein objects.
+     * @param update     If true, update existing Protein objects according to the retrieved data.
+     *                   else, skip existing Protein objects.
+     * @return           The number of protein objects created.
      */
-    public UpdateProteinsI (IntactHelper helper) throws UpdateException {
-
-        this (helper, DEFAULT_CACHE_SIZE);
-    }
-
-
-
-    /**
-    * Inserts zero or more proteins created from SPTR entries which are retrieved from a URL.
-    * IntAct Protein objects represent a specific amino acid sequence in a specific organism.
-    * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism,
-    * unless the taxid parameter is not null.
-    *
-    *
-    * @param sourceUrl  The URL which delivers zero or more SPTR flat file formatted entries.
-    * @param taxid      Of all entries retrieved from sourceURL, insert only those which have this
-    *                   taxid.
-    *                   If taxid is empty, insert all protein objects.
-    * @param update     If true, update existing Protein objects according to the retrieved data.
-    *                   else, skip existing Protein objects.
-    * @return           The number of protein objects created.
-    */
     public abstract int insertSPTrProteins (String sourceUrl,
                                             String taxid,
                                             boolean update);
@@ -312,13 +298,6 @@ public abstract class UpdateProteinsI {
      * @return the filename or null if not existing
      */
     public abstract String getErrorFileName ();
-
-    /**
-     * Create or update a BioSource object from a taxid.
-     * @param aTaxId The tax id to create/update a biosource for
-     * @return a valid, persistent BioSource
-     */
-    public abstract BioSource getValidBioSource (String aTaxId) throws IntactException;
 
     /**
      * If true, each protein is updated in a distinct transaction.
