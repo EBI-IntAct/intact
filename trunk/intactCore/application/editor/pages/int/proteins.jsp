@@ -75,10 +75,6 @@
             document.forms[0].dispatchFeature.value='<%=msgres.getMessage(
                     "int.proteins.button.feature.add")%>';
         }
-        else if (label == 'save') {
-            document.forms[0].dispatchFeature.value='<%=msgres.getMessage(
-                    "int.proteins.button.feature.save")%>';
-        }
         else {
             document.forms[0].dispatchFeature.value='<%=msgres.getMessage(
                     "int.proteins.button.feature.delete")%>';
@@ -312,15 +308,7 @@
                 --%>
                 <tr class="tableFeatureRow">
 
-                    <%-- Display the error bar for errors --%>
-                    <nested:match property="editState" value="error">
-                        <td class="errorCell" rowspan="2"/>
-                    </nested:match>
-
-                    <%-- No errors --%>
-                    <nested:notMatch property="editState" value="error">
-                        <td class="tableCell" rowspan="2"/>
-                    </nested:notMatch>
+                    <td class="tableCell" rowspan="2"/>
 
                     <%-- Empty cells for error/link boxes --%>
                     <td class="tableCell" rowspan="2">
@@ -329,39 +317,15 @@
 
                    <%-- Edit feature button --%>
                     <td class="tableCell" rowspan="2">
-                        <%-- Feature edit button when there are no errors--%>
-                        <nested:notMatch property="editState" value="error">
-                            <nested:submit property="featureCmd" onclick="setFeatureDispatch('edit');"
-                                titleKey="int.proteins.button.feature.edit.titleKey">
-                                <bean:message key="int.proteins.button.feature.edit"/>
-                            </nested:submit>
-                        </nested:notMatch>
-
-                        <%-- Feature save button when there are errors (clone)--%>
-                        <nested:match property="editState" value="error">
-                            <nested:submit property="featureCmd" onclick="setFeatureDispatch('save');"
-                                titleKey="int.proteins.button.feature.save.titleKey">
-                                <bean:message key="int.proteins.button.feature.save"/>
-                            </nested:submit>
-                        </nested:match>
+                        <nested:submit property="featureCmd" onclick="setFeatureDispatch('edit');"
+                            titleKey="int.proteins.button.feature.edit.titleKey">
+                            <bean:message key="int.proteins.button.feature.edit"/>
+                        </nested:submit>
                     </td>
 
-                    <nested:match property="editState" value="error">
-                        <td class="tableCell">
-                            <nested:text property="shortLabel" size="20" maxlength="20"
-                                styleClass="inputRequired"/>
-                        </td>
-                    </nested:match>
-
-                    <nested:notMatch property="editState" value="error">
-                        <td class="tableCell">
-                            <nested:write property="shortLabel"/>
-                        </td>
-                    </nested:notMatch>
-
-<%--                    <td class="tableCell">--%>
-<%--                        <nested:write property="shortLabel"/>--%>
-<%--                    </td>--%>
+                    <td class="tableCell">
+                        <nested:write property="shortLabel"/>
+                    </td>
 
                     <td class="tableCell">
                         <nested:write property="ac"/>
@@ -398,6 +362,3 @@
 </c:if>
 <html:errors property="int.prot.role"/>
 <html:errors property="int.unsaved.prot"/>
-<html:errors property="int.error.feature"/>
-<html:errors property="int.duplicate.feature"/>
-<html:errors property="int.feature.shortlabel"/>
