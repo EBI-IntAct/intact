@@ -57,3 +57,4 @@
     </tr>
 </table>
 <html:errors property="int.sanity.exp"/>
+<html:errors property="int.exp.search"/>
