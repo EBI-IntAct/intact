@@ -1,34 +1,34 @@
 /**************************************************************************************************************************
 
-  Package:    IntAct PostgreSQL DDL step 1  
+  Package:    IntAct PostgreSQL DDL step 1
 
   Purpose:    Create PostgreSQL components (tables and sequence) for IntAct
 
   Usage:      Prepare :
               - connect to Postgres as an administrator using the utility 'psql'
               - create a user ('intact' for example) to own the intact components
-              
+
               Run :
               - with psql, connect to Postgres using the intact account (or the account you created)
-              - suppose this script resides in /tmp , then give this command in psql :    
-                     \i /tmp/create_tables.sql 
+              - suppose this script resides in /tmp , then give this command in psql :
+                     \i /tmp/create_tables.sql
 
               Evaluate:
               - You then have a set of Intact main tables,
                 which you can verify by typing:
                      \dt
-                     
+
 
   $Date$
   $Auth: hhe / markr  $
-  
-  Change Log :
-  26/03/2003   MR  : - changed composite primary key syntax to comply with version 7.0.x 
-                     - changed polymerSeq to datatype TEXT
-                      
 
-  Copyright (c) 2003 The European Bioinformatics Institute, and others.  
-  All rights reserved. Please see the file LICENSE 
+  Change Log :
+  26/03/2003   MR  : - changed composite primary key syntax to comply with version 7.0.x
+                     - changed polymerSeq to datatype TEXT
+
+
+  Copyright (c) 2003 The European Bioinformatics Institute, and others.
+  All rights reserved. Please see the file LICENSE
   in the root directory of this distribution.
 
   **************************************************************************************************************************/
@@ -82,23 +82,23 @@ all controlled vocabularies. */
 
 CREATE TABLE IA_ControlledVocab
 (       ac                      VARCHAR (30)    NOT NULL
-                                                CONSTRAINT pk_ControlledVocab 
-                                                PRIMARY KEY 
+                                                CONSTRAINT pk_ControlledVocab
+                                                PRIMARY KEY
      ,  deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
      ,  created                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  owner_ac                VARCHAR (30)    CONSTRAINT fk_ControlledVocab_owner REFERENCES IA_Institution(ac)
-     ,  objClass                VARCHAR (255)   
-     ,  shortLabel              VARCHAR (20)    
+     ,  objClass                VARCHAR (255)
+     ,  shortLabel              VARCHAR (20)
      ,  fullName                VARCHAR (250)
 )
 ;
 
-CREATE INDEX i_ControlledVocab_shortLabel on IA_ControlledVocab(shortLabel) 
+CREATE INDEX i_ControlledVocab_shortLabel on IA_ControlledVocab(shortLabel)
 ;
-CREATE UNIQUE INDEX uq_CVocab_objClass_ShortLabel on IA_ControlledVocab(objClass,shortLabel) 
+CREATE UNIQUE INDEX uq_CVocab_objClass_ShortLabel on IA_ControlledVocab(objClass,shortLabel)
 ;
 
 
@@ -127,14 +127,14 @@ CREATE UNIQUE INDEX uq_CVocab_objClass_ShortLabel on IA_ControlledVocab(objClass
 
 CREATE TABLE IA_BioSource
 (         ac                      VARCHAR (30)    NOT NULL
-                                                  CONSTRAINT pk_BioSource 
-                                                  PRIMARY KEY 
+                                                  CONSTRAINT pk_BioSource
+                                                  PRIMARY KEY
         , deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
         , created                 TIMESTAMP       DEFAULT  now()   NOT NULL
         , updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
         , timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
         , userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
-        , taxId                   VARCHAR (30)    CONSTRAINT uq_BioSource_taxId UNIQUE 
+        , taxId                   VARCHAR (30)    CONSTRAINT uq_BioSource_taxId UNIQUE
         , owner_ac                VARCHAR (30)    CONSTRAINT fk_BioSource_owner REFERENCES IA_Institution(ac)
         , shortLabel              VARCHAR (20)
         , fullName                VARCHAR (250)
@@ -172,7 +172,7 @@ CREATE TABLE IA_BioSource
 CREATE TABLE IA_Interactor
 (         ac                    VARCHAR (30)    NOT NULL
                                                 CONSTRAINT pk_Interactor
-                                                PRIMARY KEY 
+                                                PRIMARY KEY
         , deprecated            DECIMAL(1)      DEFAULT  0       NOT NULL
         , created               TIMESTAMP       DEFAULT  now()   NOT NULL
         , updated               TIMESTAMP       DEFAULT  now()   NOT NULL
@@ -185,7 +185,7 @@ CREATE TABLE IA_Interactor
         , formOf                VARCHAR (30)    CONSTRAINT fk_Interactor_formOf REFERENCES IA_Interactor(ac)
         , proteinForm_ac        VARCHAR (30)    CONSTRAINT fk_Interactor_proteinForm_ac REFERENCES IA_ControlledVocab(ac)
         /* Colums belonging to Interactor */
-        , objClass              VARCHAR (255)   
+        , objClass              VARCHAR (255)
         , bioSource_ac          VARCHAR (30)    CONSTRAINT fk_Interactor_bioSource REFERENCES IA_BioSource(ac)
         , interactionType_ac    VARCHAR (30)    CONSTRAINT fk_Interactor_interactionType REFERENCES IA_ControlledVocab(ac)
         /* Colums belonging to AnnotatedObject */
@@ -236,49 +236,54 @@ CREATE index i_Interactor_formOf on IA_Interactor(formOf) ;
 
 
 
+/* The table which contains proteins' chunked sequence */
+
 CREATE TABLE IA_Sequence_Chunk
-(         interactor_ac         VARCHAR(30)    NOT NULL CONSTRAINT fk_sequence_interactor REFERENCES IA_Interactor(ac)
-        , order_in_sequence     DECIMAL(3)     NOT NULL
-        , sequence_chunk        VARCHAR(1000)  NOT NULL
-        , created               TIMESTAMP      DEFAULT  now()   NOT NULL  
-        , updated               TIMESTAMP      DEFAULT  now()   NOT NULL  
-        , timestamp             TIMESTAMP      DEFAULT  now()   NOT NULL  
-        , userstamp             VARCHAR(30)    DEFAULT  USER    NOT NULL  
-        , PRIMARY KEY           (interactor_ac , order_in_sequence)
+(       ac                      VARCHAR (30)    NOT NULL
+                                                CONSTRAINT pk_Sequence_Chunk
+                                                PRIMARY KEY
+     ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
+     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
+     ,  parent_ac               VARCHAR (30)    NOT NULL
+                                                CONSTRAINT fk_Sequence_chunk_parent_ac REFERENCES IA_Interactor(ac)
+                                                ON DELETE CASCADE
+     ,  sequence_chunk          VARCHAR (1000)
+     ,  sequence_index          DECIMAL (3)
 )
 ;
 
+CREATE index i_Sequence_chunk_parent_ac on IA_Sequence_Chunk(parent_ac) ;
+
+COMMENT ON TABLE IA_Sequence_Chunk IS
+'Sequence chunk. To avoid CLOB columns the sequences are split into chunks of 1000 characters';
+COMMENT ON COLUMN IA_Sequence_Chunk.ac IS
+'chunk unique identifier.';
+COMMENT ON COLUMN IA_Sequence_Chunk.parent_ac IS
+'Refers to the Interactor to which this bit of sequence belongs.';
+COMMENT ON COLUMN IA_Sequence_Chunk.timestamp IS
+'Date of the last update of the column.';
+COMMENT ON COLUMN IA_Sequence_Chunk.userstamp IS
+'Database user who has performed the last update of the column.';
+COMMENT ON COLUMN IA_Sequence_Chunk.sequence_chunk IS
+'1000 charcacters max size Sequence chunk.';
+COMMENT ON COLUMN IA_Sequence_Chunk.sequence_index IS
+'Order of the chunk within the sequence of the Interactor.';
 
 
-    COMMENT ON TABLE IA_Sequence_Chunk IS
-    'Sequence chunk. To avoid CLOB columns the sequences are split into chunks of 1000 characters';
-    COMMENT ON COLUMN IA_Sequence_Chunk.interactor_ac IS
-    'Refers to the Interactor to which this bit of sequence belongs.';
-    COMMENT ON COLUMN IA_Sequence_Chunk.order_in_sequence IS
-    'Order of the chunk within the sequence of the Interactor';
-    COMMENT ON COLUMN IA_Sequence_Chunk.sequence_chunk IS
-    '1000 charcacters max size Sequence chunk';
-    COMMENT ON COLUMN IA_Sequence_Chunk.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Sequence_Chunk.updated IS
-    'Date of the last update of the row.';
-    COMMENT ON COLUMN IA_Sequence_Chunk.timestamp IS
-    'Date of the last update of the column.';
-    COMMENT ON COLUMN IA_Sequence_Chunk.userstamp IS
-    'Database user who has performed the last update of the column.';
+
 
 CREATE TABLE IA_Component
 (         ac                      VARCHAR (30)    NOT NULL
                                                   CONSTRAINT pk_Component
-                                                  PRIMARY KEY 
+                                                  PRIMARY KEY
         , deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
         , created                 TIMESTAMP       DEFAULT  now()   NOT NULL
         , updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
         , timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
-        , userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL 
+        , userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
         , interactor_ac           VARCHAR (30)    CONSTRAINT fk_Component_interactor REFERENCES IA_Interactor(ac)  ON DELETE CASCADE
         , interaction_ac          VARCHAR (30)    CONSTRAINT fk_Component_interaction REFERENCES IA_Interactor(ac) ON DELETE CASCADE
-        , role                    VARCHAR (30)    CONSTRAINT fk_Component_role REFERENCES IA_ControlledVocab(ac)   
+        , role                    VARCHAR (30)    CONSTRAINT fk_Component_role REFERENCES IA_ControlledVocab(ac)
         , expressedIn_ac          VARCHAR (30)    CONSTRAINT fk_Component_expressedIn REFERENCES IA_BioSource(ac)
         , owner_ac                VARCHAR (30)    CONSTRAINT fk_Component_owner REFERENCES IA_Institution(ac)
         , stoichiometry           DECIMAL (4,1)
@@ -320,7 +325,7 @@ CREATE index i_Component_interactor_ac on IA_Component(interactor_ac) ;
 CREATE TABLE IA_Annotation
 (         ac                      VARCHAR (30)    NOT NULL
                                                   CONSTRAINT pk_Annotation
-                                                  PRIMARY KEY 
+                                                  PRIMARY KEY
         , deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
         , created                 TIMESTAMP       DEFAULT  now()   NOT NULL
         , updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
@@ -328,7 +333,7 @@ CREATE TABLE IA_Annotation
         , userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
         , topic_ac                VARCHAR (30)    CONSTRAINT fk_Annotation_topic REFERENCES IA_ControlledVocab(ac)
         , owner_ac                VARCHAR (30)    CONSTRAINT fk_Annotation_owner REFERENCES IA_Institution(ac)
-        , description             VARCHAR (4000)  
+        , description             VARCHAR (4000)
 )
 ;
 
@@ -360,7 +365,7 @@ CREATE TABLE IA_Annotation
 CREATE TABLE IA_Experiment
 (       ac                      VARCHAR (30)    NOT NULL
                                                 CONSTRAINT pk_Experiment
-                                                PRIMARY KEY 
+                                                PRIMARY KEY
       , deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
       , created                 TIMESTAMP       DEFAULT  now()   NOT NULL
       , updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
@@ -372,7 +377,7 @@ CREATE TABLE IA_Experiment
       , relatedExperiment_ac    VARCHAR (30)    CONSTRAINT fk_Experiment_relatedExp REFERENCES IA_Experiment(ac)
       , owner_ac                VARCHAR (30)    CONSTRAINT fk_Experiment_owner REFERENCES IA_Institution(ac)
       , shortLabel              VARCHAR (20)
-      , fullName                VARCHAR (250) 
+      , fullName                VARCHAR (250)
 )
 ;
 
@@ -410,7 +415,7 @@ CREATE TABLE IA_Experiment
 CREATE TABLE IA_Xref
 (       ac                      VARCHAR (30)    NOT NULL
                                                 CONSTRAINT pk_Xref
-                                                PRIMARY KEY 
+                                                PRIMARY KEY
      ,  deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
      ,  created                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
@@ -465,7 +470,7 @@ storing informations about servers. */
 CREATE TABLE IA_IntactNode
 (       ac                          VARCHAR (30) NOT NULL
                                     CONSTRAINT pk_IntactNode
-                                    PRIMARY KEY 
+                                    PRIMARY KEY
       , lastCheckId                 DECIMAL(5)     DEFAULT  0              NOT NULL
       , lastProvidedId              DECIMAL(5)     DEFAULT  0              NOT NULL
       , lastProvidedDate            Date           DEFAULT  TIMESTAMP '1970-01-01'  NOT NULL
@@ -523,7 +528,7 @@ CREATE TABLE IA_Int2Annot
      ,  annotation_ac           VARCHAR (30)    NOT NULL CONSTRAINT fk_Int2Annot_annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
      ,  deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
      ,  created                 TIMESTAMP       DEFAULT  now()   NOT NULL
-     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL  
+     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  PRIMARY KEY             (interactor_ac, annotation_ac)
@@ -552,7 +557,7 @@ CREATE TABLE IA_Exp2Annot
      ,  annotation_ac           VARCHAR (30)    NOT NULL CONSTRAINT fk_Exp2Annot_annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
      ,  deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
      ,  created                 TIMESTAMP       DEFAULT  now()   NOT NULL
-     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL  
+     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  PRIMARY KEY             (experiment_ac, annotation_ac)
@@ -583,7 +588,7 @@ CREATE TABLE IA_cvobject2Annot
      ,  annotation_ac           VARCHAR (30)    NOT NULL CONSTRAINT fk_cvobj2Annot_annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
      ,  deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
      ,  created                 TIMESTAMP       DEFAULT  now()   NOT NULL
-     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL  
+     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  PRIMARY KEY             (cvobject_ac, annotation_ac)
@@ -614,7 +619,7 @@ CREATE TABLE IA_Biosource2Annot
      ,  annotation_ac           VARCHAR (30)    NOT NULL CONSTRAINT fk_bio2Annot_annotation  REFERENCES IA_Annotation(ac) ON DELETE CASCADE
      ,  deprecated              DECIMAL(1)      DEFAULT  0       NOT NULL
      ,  created                 TIMESTAMP       DEFAULT  now()   NOT NULL
-     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL  
+     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  updated                 TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp               TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  PRIMARY KEY             (biosource_ac, annotation_ac)
@@ -644,7 +649,7 @@ CREATE TABLE IA_Cv2Cv
     ,  created                 TIMESTAMP        DEFAULT  now()   NOT NULL
     ,  updated                 TIMESTAMP        DEFAULT  now()   NOT NULL
     ,  timestamp               TIMESTAMP        DEFAULT  now()   NOT NULL
-    ,  userstamp               VARCHAR(30)      DEFAULT  USER    NOT NULL 
+    ,  userstamp               VARCHAR(30)      DEFAULT  USER    NOT NULL
     ,  PRIMARY KEY             (parent_ac, child_ac)
 )
 ;
@@ -666,9 +671,8 @@ COMMENT ON COLUMN IA_Cv2Cv.userstamp IS
 'Database user who has performed the last update of the column.';
 
 
-
 -- Sequences
 
-CREATE SEQUENCE Intact_ac start 10; 
+CREATE SEQUENCE Intact_ac start 10;
 
 

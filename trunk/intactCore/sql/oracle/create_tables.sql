@@ -70,7 +70,7 @@ all controlled vocabularies. */
 PROMPT Creating table "IA_ControlledVocab"
 CREATE TABLE IA_ControlledVocab
 (       ac                      VARCHAR2(30)    NOT NULL
-                                                CONSTRAINT pk_ControlledVocab 
+                                                CONSTRAINT pk_ControlledVocab
                                                 PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
      ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
@@ -78,8 +78,8 @@ CREATE TABLE IA_ControlledVocab
      ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
      ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_ControlledVocab$owner REFERENCES IA_Institution(ac)
-     ,  objClass                VARCHAR2(255)   
-     ,  shortLabel              VARCHAR2(20)    
+     ,  objClass                VARCHAR2(255)
+     ,  shortLabel              VARCHAR2(20)
      ,  fullName                VARCHAR2(250)
 )
 TABLESPACE &&intactMainTablespace
@@ -87,7 +87,7 @@ TABLESPACE &&intactMainTablespace
 
 CREATE INDEX i_ControlledVocab$shortLabel on IA_ControlledVocab(shortLabel) TABLESPACE &&intactIndexTablespace
 ;
-CREATE UNIQUE INDEX uq_CVocab$objClass_ShortLabel on IA_ControlledVocab(objClass,shortLabel) TABLESPACE &&intactIndexTablespace 
+CREATE UNIQUE INDEX uq_CVocab$objClass_ShortLabel on IA_ControlledVocab(objClass,shortLabel) TABLESPACE &&intactIndexTablespace
 ;
 
 set term off
@@ -111,12 +111,12 @@ set term off
     'Date of the last update of the column.';
     COMMENT ON COLUMN IA_ControlledVocab.userstamp IS
     'Database user who has performed the last update of the column.';
-set term on 
+set term on
 
 PROMPT Creating table "IA_BioSource"
 CREATE TABLE IA_BioSource
 (         ac                      VARCHAR2(30)    NOT NULL
-                                                  CONSTRAINT pk_BioSource 
+                                                  CONSTRAINT pk_BioSource
                                                   PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
         , deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
         , created                 DATE            DEFAULT  SYSDATE NOT NULL
@@ -179,7 +179,7 @@ CREATE TABLE IA_Interactor
         , formOf                VARCHAR2(30)    CONSTRAINT fk_Interactor$formOf REFERENCES IA_Interactor(ac)
         , proteinForm_ac        VARCHAR2(30)    CONSTRAINT fk_Interactor$proteinForm_ac REFERENCES IA_ControlledVocab(ac)
         /* Colums belonging to Interactor */
-        , objClass              VARCHAR2(255)   
+        , objClass              VARCHAR2(255)
         , bioSource_ac          VARCHAR2(30)    CONSTRAINT fk_Interactor$bioSource REFERENCES IA_BioSource(ac)
         , interactionType_ac    VARCHAR2(30)    CONSTRAINT fk_Interactor$interactionType REFERENCES IA_ControlledVocab(ac)
         /* Colums belonging to AnnotatedObject */
@@ -195,7 +195,7 @@ CREATE index i_Interactor$crc64 on IA_Interactor(crc64) TABLESPACE &&intactIndex
 CREATE index i_Interactor$bioSource_ac on IA_Interactor(bioSource_ac) TABLESPACE &&intactIndexTablespace;
 CREATE index i_Interactor$shortLabel on IA_Interactor(shortLabel) TABLESPACE &&intactIndexTablespace;
 CREATE index i_Interactor$fullName on IA_Interactor(fullName) TABLESPACE &&intactIndexTablespace;
-CREATE index i_Interactor$formOf on IA_Interactor(formOf) TABLESPACE &&intactIndexTablespace; 
+CREATE index i_Interactor$formOf on IA_Interactor(formOf) TABLESPACE &&intactIndexTablespace;
 
 set term off
     COMMENT ON TABLE IA_Interactor IS
@@ -231,49 +231,45 @@ set term off
 set term on
 
 
-
 /* This is a table where we store chunks of sequence so there is no reason for a CLOB; the CLOB usage is limited in OJB.
-   Index organization gives fast access to table data for queries involving exact match and/or range search on a primary key 
+   Index organization gives fast access to table data for queries involving exact match and/or range search on a primary key
    and in this case we always access the table by interactor_ac.
  */
 
 PROMPT Creating table "IA_Sequence_Chunk"
 CREATE TABLE IA_Sequence_Chunk
-(         interactor_ac         VARCHAR2(30)    NOT NULL CONSTRAINT fk_sequence$interactor REFERENCES IA_Interactor(ac)
-        , order_in_sequence     number(3)       NOT NULL
-        , sequence_chunk        VARCHAR2(1000)  NOT NULL
-        , created               DATE            DEFAULT  SYSDATE NOT NULL
-        , updated               DATE            DEFAULT  SYSDATE NOT NULL
-        , timestamp             DATE            DEFAULT  SYSDATE NOT NULL
-        , userstamp             VARCHAR2(30)    DEFAULT  USER    NOT NULL
-        ,CONSTRAINT             pk_IA_Sequence_Chunk
-                                PRIMARY KEY (interactor_ac,order_in_sequence)
+(       ac                      VARCHAR (30)    NOT NULL
+                                                CONSTRAINT pk_Sequence_Chunk
+                                                PRIMARY KEY  USING INDEX TABLESPACE &&intactIndexTablespace
+     ,  timestamp               DATE            DEFAULT  SYSDATE   NOT NULL
+     ,  userstamp               VARCHAR (30)    DEFAULT  USER    NOT NULL
+     ,  parent_ac               VARCHAR (30)    NOT NULL
+                                                CONSTRAINT fk_Sequence_chunk_parent_ac REFERENCES IA_Interactor(ac)
+                                                ON DELETE CASCADE
+     ,  sequence_chunk          VARCHAR (1000)
+     ,  sequence_index          DECIMAL (3)
 )
-ORGANIZATION INDEX
 TABLESPACE &&intactMainTablespace
 ;
 
+CREATE index i_Sequence_chunk_parent_ac on IA_Sequence_Chunk(parent_ac) TABLESPACE &&intactIndexTablespace;
+
 set term off
     COMMENT ON TABLE IA_Sequence_Chunk IS
-    'Sequence chunks; to avoid CLOB columns the sequences are split into chunks of 1000 characters'
-    COMMENT ON COLUMN IA_Sequence_Chunk.interactor_ac IS
+    'Sequence chunks; to avoid CLOB columns the sequences are split into chunks of 1000 characters.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.ac IS
+    'chunk unique identifier.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.parent_ac IS
     'Refers to the Interactor to which this bit of sequence belongs.';
-    COMMENT ON COLUMN IA_Sequence_Chunk.order_in_sequence IS
-    'Order of the chunk within the sequence of the Interactor';
-    COMMENT ON COLUMN IA_Sequence_Chunk.sequence_chunk IS
-    '1000 charcacters max size Sequence chunk';
-    'Unique, auto-generated accession number.';
-    COMMENT ON COLUMN IA_Sequence_Chunk.created IS
-    'Date of the creation of the row.';
-    COMMENT ON COLUMN IA_Sequence_Chunk.updated IS
-    'Date of the last update of the row.';
     COMMENT ON COLUMN IA_Sequence_Chunk.timestamp IS
     'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Sequence_Chunk.userstamp IS
     'Database user who has performed the last update of the column.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.sequence_chunk IS
+    '1000 charcacters max size Sequence chunk';
+    COMMENT ON COLUMN IA_Sequence_Chunk.sequence_index IS
+    'Order of the chunk within the sequence of the Interactor.';
 set term on
-
-
 
 
 
@@ -286,10 +282,10 @@ CREATE TABLE IA_Component
         , created                 DATE            DEFAULT  SYSDATE NOT NULL
         , updated                 DATE            DEFAULT  SYSDATE NOT NULL
         , timestamp               DATE            DEFAULT  SYSDATE NOT NULL
-        , userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL 
+        , userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
         , interactor_ac           VARCHAR2(30)    CONSTRAINT fk_Component$interactor REFERENCES IA_Interactor(ac)  ON DELETE CASCADE
         , interaction_ac          VARCHAR2(30)    CONSTRAINT fk_Component$interaction REFERENCES IA_Interactor(ac) ON DELETE CASCADE
-        , role                    VARCHAR2(30)    CONSTRAINT fk_Component$role REFERENCES IA_ControlledVocab(ac)   
+        , role                    VARCHAR2(30)    CONSTRAINT fk_Component$role REFERENCES IA_ControlledVocab(ac)
         , expressedIn_ac          VARCHAR2(30)    CONSTRAINT fk_Component$expressedIn REFERENCES IA_BioSource(ac)
         , owner_ac                VARCHAR2(30)    CONSTRAINT fk_Component$owner REFERENCES IA_Institution(ac)
         , stoichiometry           NUMBER(4,1)
@@ -341,7 +337,7 @@ CREATE TABLE IA_Annotation
         , userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
         , topic_ac                VARCHAR2(30)    CONSTRAINT fk_Annotation$topic REFERENCES IA_ControlledVocab(ac)
         , owner_ac                VARCHAR2(30)    CONSTRAINT fk_Annotation$owner REFERENCES IA_Institution(ac)
-        , description             VARCHAR2(4000)  
+        , description             VARCHAR2(4000)
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -386,7 +382,7 @@ CREATE TABLE IA_Experiment
       , relatedExperiment_ac    VARCHAR2(30)    CONSTRAINT fk_Experiment$relatedExp REFERENCES IA_Experiment(ac)
       , owner_ac                VARCHAR2(30)    CONSTRAINT fk_Experiment$owner REFERENCES IA_Institution(ac)
       , shortLabel              VARCHAR2(20)
-      , fullName                VARCHAR2(250) 
+      , fullName                VARCHAR2(250)
 )
 TABLESPACE &&intactMainTablespace
 ;
@@ -556,7 +552,7 @@ CREATE TABLE IA_Int2Annot
      ,  annotation_ac           VARCHAR2(30)    NOT NULL CONSTRAINT fk_Int2Annot$annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
      ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL  
+     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
 )
@@ -596,7 +592,7 @@ CREATE TABLE IA_Exp2Annot
      ,  annotation_ac           VARCHAR2(30)    NOT NULL CONSTRAINT fk_Exp2Annot$annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
      ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL  
+     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
 )
@@ -637,7 +633,7 @@ CREATE TABLE IA_cvobject2Annot
      ,  annotation_ac           VARCHAR2(30)    NOT NULL CONSTRAINT fk_cvobj2Annot$annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
      ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL  
+     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
 )
@@ -677,7 +673,7 @@ CREATE TABLE IA_Biosource2Annot
      ,  annotation_ac           VARCHAR2(30)    NOT NULL CONSTRAINT fk_bio2Annot$annotation  REFERENCES IA_Annotation(ac) ON DELETE CASCADE
      ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
      ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
-     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL  
+     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
      ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
      ,  timestamp               DATE            DEFAULT  SYSDATE NOT NULL
 )
@@ -722,9 +718,9 @@ CREATE TABLE IA_Cv2Cv
 	 ,  created			            DATE		    DEFAULT  sysdate NOT NULL
 	 ,  updated			            DATE		    DEFAULT  sysdate NOT NULL
 	 ,  timestamp		            DATE		    DEFAULT  sysdate NOT NULL
-	 ,  userstamp		            VARCHAR2(30)	DEFAULT	 USER	 NOT NULL  
+	 ,  userstamp		            VARCHAR2(30)	DEFAULT	 USER	 NOT NULL
 )
-TABLESPACE &&intactMainTablespace 
+TABLESPACE &&intactMainTablespace
 ;
 
 PROMPT Creating composite primary Key on 'IA_Cv2Cv'
