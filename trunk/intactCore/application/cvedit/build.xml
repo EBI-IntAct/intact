@@ -13,6 +13,7 @@
     <property name="intact.root" value="../.."/>
     <property name="root.lib.dir" value="${intact.root}/lib"/>
     <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.dest.dir" value="${intact.root}/classes"/>
     <property name="root.config.dir" value="${intact.root}/config"/>
     <property name="root.dist.dir" value="${intact.root}/dist"/>
     <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
@@ -39,11 +40,11 @@
         <pathelement path="${dest.dir}"/>
 
         <!-- Intact core at root. -->
-        <pathelement path="${root.jar.file}"/>
+        <pathelement path="${root.dest.dir}"/>
 
         <!-- Common jar files. -->
         <pathelement path="${root.lib.dir}/junit.jar"/>
-        <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.2.jar"/>
+        <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
         <pathelement path="${root.lib.dir}/struts.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
     </path>
@@ -54,9 +55,6 @@
     <target name="prepare">
         <tstamp/>
         <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
-        <!-- Display a message if tomcat or axis is not present.
-        -->
-        <ant dir=".." inheritAll="false" target="check-tom"/>
     </target>
 
     <!-- =================================================================== -->
@@ -156,7 +154,7 @@
 
 			<!-- Include common jar files from intact core. -->
 			<lib dir="${root.lib.dir}">
-				<include name="jakarta-ojb-0.9.2.jar"/>
+				<include name="jakarta-ojb-0.9.7.jar"/>
 				<include name="struts.jar"/>
 				<include name="log4j-1.2.5.jar"/>
 				<include name="commons-beanutils.jar"/>
@@ -196,7 +194,8 @@
     <!-- Runs tests using junit. -->
     <target name="junit-test" depends="compile" description="Run JUnit tests">
         <junit printsummary="withOutAndErr">
-            <test name="uk.ac.ebi.intact.struts.framework.util.test.AllJUnitTests"/>
+            <test name=
+                "uk.ac.ebi.intact.application.cvedit.struts.framework.util.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </junit>
     </target>
@@ -207,7 +206,8 @@
     <target name="junit-test-stdout" depends="compile"
             description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner">
-            <arg value="uk.ac.ebi.intact.struts.framework.util.test.AllJUnitTests"/>
+            <arg value=
+                "uk.ac.ebi.intact.application.cvedit.struts.framework.util.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </java>
     </target>
@@ -216,32 +216,32 @@
 
     <!-- Starts the Tomcat server. -->
 
-    <target name="start-tom">
-        <ant dir=".." inheritAll="false" target="start-tom"/>
+    <target name="start-tomcat">
+        <ant dir=".." inheritAll="false" target="start-tomcat"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Stops the Tomcat server. -->
 
-    <target name="stop-tom">
-        <ant dir=".." inheritAll="false" target="stop-tom"/>
+    <target name="stop-tomcat">
+        <ant dir=".." inheritAll="false" target="stop-tomcat"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Restarts the Tomcat server. -->
 
-    <target name="restart-tom">
-        <ant dir=".." inheritAll="false" target="restart-tom"/>
+    <target name="restart-tomcat">
+        <ant dir=".." inheritAll="false" target="restart-tomcat"/>
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Displays the status of Tomcat server. -->
 
-    <target name="status-tom">
-        <ant dir=".." inheritAll="false" target="status-tom"/>
+    <target name="status-tomcat">
+        <ant dir=".." inheritAll="false" target="status-tomcat"/>
     </target>
 
 </project>
