@@ -223,7 +223,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
         // Release any locks.
-        releaseLock();
+//        releaseLock();
         try {
             logoff();
         }
@@ -561,7 +561,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // The current edit object's short label.
         String editLabel = myEditView.getShortLabel();
         // The class name of the current edit object.
-        String className = myEditView.getClass().getName();
+        String className = myEditView.getEditClass().getName();
 
         // The list to return.
         List list = new ArrayList();
@@ -597,6 +597,8 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void logoff() throws IntactException {
         mySessionEndTime = Calendar.getInstance().getTime();
         myHelper.closeStore();
+        // Release all the locks held by this user.
+        LockManager.getInstance().releaseAllLocks(getUserName());
     }
 
     public Date loginTime() {
@@ -687,6 +689,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void releaseLock() {
         // Release any locks the user is holding.
         if (myEditView != null) {
+            System.out.println("Just about to release the lock: " + myEditView.getAc());
             LockManager.getInstance().release(myEditView.getAc());
         }
     }
