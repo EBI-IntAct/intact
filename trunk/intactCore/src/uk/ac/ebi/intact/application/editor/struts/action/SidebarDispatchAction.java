@@ -72,6 +72,9 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         String topic = (String) theForm.get("topic");
         String searchString = (String) theForm.get("searchString");
 
+        // The current topic.
+        user.setSelectedTopic(topic);
+
         LOGGER.info("search action: topic is " + topic);
 
         // Try searching as it is.
@@ -113,7 +116,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // Set the selected topic, so the sidebar displays the currently
         // selected type (not rquired for a single result as setView method
         // sets the topic).
-        user.setSelectedTopic(topic);
+//        user.setSelectedTopic(topic);
 
         // Move to the results page.
         return mapping.findForward(RESULT);
