@@ -1,5 +1,6 @@
 <%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
-                 uk.ac.ebi.intact.application.editor.business.EditorService"
+                 uk.ac.ebi.intact.application.editor.business.EditorService,
+                 org.apache.struts.action.ActionMessages"
 %>
  <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
@@ -17,7 +18,6 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor"%>
 
 <jsp:useBean id="user" scope="session"
@@ -83,7 +83,7 @@
                 <bean:write property="ac" name="<%=formName%>"/>
             </td>
             <td class="tableCell">
-                <html:text property="shortLabel"  size="20" maxlength="20"
+                <html:text property="shortLabel"  size="20" maxlength="25"
                     name="<%=formName%>"/>
             </td>
             <td class="tableCell">
@@ -91,48 +91,6 @@
                     name="<%=formName%>"/>
             </td>
         </tr>
-
-        <%-- These errors are shown when the client side validation is
-             turned off.
-        --%>
-        <logic:messagesPresent>
-            <logc:messages id="error">
-                <tr class="tableRowOdd">
-                    <td class="tableErrorCell" colspan="4">
-                        <html:errors/>
-                    </td>
-                </tr>
-            </logic:messages>
-        </logic:messagesPresent>
-
-        <%-- Filter error messages relevant to this page only. --%>
-        <logic:messagesPresent property="cvinfo">
-            <tr class="tableRowOdd">
-                <td class="tableErrorCell" colspan="4">
-                    <html:errors/>
-                </td>
-            </tr>
-        </logic:messagesPresent>
-
-        <%-- Filter error messages relevant to the short label. --%>
-        <logic:messagesPresent property="cvinfo.label">
-            <tr class="tableRowOdd">
-                <td class="tableErrorCell" colspan="4">
-                    <html:errors/>
-                </td>
-            </tr>
-            <tr class="tableRowEven">
-                <td class="tableCell" colspan="4">
-                    The existing short labels are:
-                </td>
-            </tr>
-            <tr class="tableRowOdd">
-                <td class="tableCell" colspan="4">
-                    <editor:displayShortLabels/>
-                </td>
-            </tr>
-        </logic:messagesPresent>
-
     </table>
 </html:form>
 <html:javascript formName="cvInfoForm"/>
