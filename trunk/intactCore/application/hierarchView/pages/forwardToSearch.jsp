@@ -1,7 +1,8 @@
 <%@ page language="java"%>
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
-                 uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
+                 uk.ac.ebi.intact.application.hierarchView.business.Constants,
+                 uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 
@@ -27,12 +28,12 @@
     * Retreive user's data from the session
     */
    IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
-
+   int maxInteractor = InteractionNetwork.getMaxCentralProtein();
    // Displays Http content if URL updated in the session -->
     String searchUrl = user.getSearchUrl();
     if (searchUrl != null) {
 %>
-       <META HTTP-EQUIV="REFRESH" CONTENT="0; URL=<%= searchUrl %>">
+       <META HTTP-EQUIV="REFRESH" CONTENT="1; URL=<%= searchUrl %>">
 <%
     }
 %>
@@ -44,7 +45,6 @@
 <%
     if (searchUrl != null) {
 %>
-
         <blockquote>
             <blockquote>
                 <blockquote>
@@ -56,8 +56,11 @@
                         <td>
                             <strong>
                                 <font color="#000080">
-                                    Your request give multiple results, please wait whilst your query is
-                                    forwarded to the search application.
+                                    Your request gave too many results, hierarchView is configured to handle a
+                                    maximum of <%= maxInteractor %> interactor<%= (maxInteractor > 1 ? "s" : "") %>
+                                    simultaneously.
+                                    <br>
+                                    Please wait whilst your query is forwarded to the search application.
                                     <br>
                                     If the screen is not refreshed, please click
                                     <a href="<%= searchUrl %>" target="_top">here</a>.
@@ -69,7 +72,6 @@
                 </blockquote>
             </blockquote>
         </blockquote>
-
 <%
     } else {
 %>
