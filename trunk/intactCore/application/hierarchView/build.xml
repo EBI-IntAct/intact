@@ -34,14 +34,14 @@
     <property name="ws.dir" value="ws"/>
     <property name="ws.wsdd.dir" value="ws/wsdd"/>
     <property name="ws.wsdl.dir" value="ws/wsdl"/>
-    <property name="ws.tulip.wsdl" value="tulip.wsdl"/>
+    <property name="ws.tulip.wsdl" value="${ws.wsdl.dir}/tulip.wsdl"/>
 
     <!-- Properties related to Tulip server -->
     <property name="ws.tulip.server.pkg"
         value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"/>
     <property name="ws.tulip.server.dir"
         value="uk/ac/ebi/intact/application/hierarchView/business/tulip/webService"/>
-    <property name="ws.tulip.jar" value="tulipService.jar"/>
+    <property name="ws.tulip.jar" value="${ws.dir}/tulipService.jar"/>
     <property name="ws.props.file" value="WebService.properties"/>
     <property name="ws.deploy.file" value="${ws.wsdd.dir}/deploy.wsdd"/>
     <property name="ws.undeploy.file" value="${ws.wsdd.dir}/undeploy.wsdd"/>
@@ -95,10 +95,14 @@
 
     <!-- Remove 'dest' and 'jdoc' directories for clean build. -->
     <target name="clean"
-        description="Prepare for clean build; removes api docs and classes dirs">
+            description="Prepare for clean build; removes api docs and classes dirs">
         <delete dir="${dest.dir}"/>
         <delete dir="${jdoc.dir}"/>
+        <delete dir="${ws.dir}"/>
+        <delete dir="${dist.dir}"/>
     </target>
+
+
 
     <!-- =================================================================== -->
 
@@ -136,7 +140,9 @@
     <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
-    <target name="compile" depends="prepare">
+    <target name="compile"
+            description="Compile the source tree and copy the configuration files"
+            depends="prepare">
         <mkdir dir="${dest.dir}" />
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
@@ -160,7 +166,7 @@
          error from Ant.
     -->
 
-    <target name="run-once"  unless="tomcat.present">
+    <target name="run-once" unless="tomcat.present">
         <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
         <available file="${tomcat.home}/webapps/axis/WEB-INF/web.xml" property="axis.present"/>
     </target>
@@ -168,7 +174,8 @@
     <!-- =================================================================== -->
 
     <!-- Compile the web service source tree. -->
-    <target name="deploy-ws" depends="run-once, compile" if="axis.present">
+    <target name="deploy-ws" description="Create and deploy the web service"
+            depends="run-once, compile" if="axis.present">
         <!-- Create ws specific directories. -->
         <mkdir dir="${ws.dir}"/>
         <mkdir dir="${ws.wsdd.dir}"/>
@@ -288,8 +295,11 @@
 
     <!-- =================================================================== -->
 
-    <!-- Start the web service by using the modified deployment file. -->
-    <target name="start-ws">
+    <!-- Start the web service by using the modified deployment file.
+         TODO : check if the deployment file is in the right place.
+      -->
+    <target name="start-ws"
+            description="Start the web service by using the deployment file">
 
        <echo message="Starting the web service" />
        <java classname="org.apache.axis.client.AdminClient" fork="yes">
@@ -301,7 +311,8 @@
     <!-- =================================================================== -->
 
     <!-- Stop the web service by using the undeployment file -->
-    <target name="stop-ws">
+    <target name="stop-ws"
+            description="Stop the web service by using the undeployment file">
 
        <echo message="Stopping the web service" />
        <java classname="org.apache.axis.client.AdminClient" fork="yes">
@@ -313,20 +324,12 @@
     <!-- =================================================================== -->
 
     <!-- Tests the web service  -->
-    <target name="test-ws">
+    <target name="test-ws"
+            description="Test the web service and display results on the screen">
 
        <echo message="Testing the web service" />
        <java classname="uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient" fork="yes">
             <classpath refid="project.class.path"/>
-
-            <!-- Add the Axis library -->
-            <classpath>
-                <pathelement location="${lib.dir}/axis.jar"/>
-                <pathelement location="${lib.dir}/jaxrpc.jar"/>
-                <pathelement location="${lib.dir}/tt-bytecode.jar"/>
-                <pathelement location="${lib.dir}/wsdl4j.jar"/>
-                <pathelement location="${lib.dir}/xml-apis.jar"/>
-            </classpath>
        </java>
     </target>
 
@@ -405,7 +408,7 @@
         Builds a war file with postgres; should be called only after calling
         set-db-type. -->
 
-    <target name="war-pg" description="Builds a war file" if="postgres">
+    <target name="war-pg" if="postgres">
         <echo message="Building a war for postgres"/>
         <antcall target="build-war">
             <param name="db" value="postgresql.jar"/>
@@ -418,7 +421,7 @@
         Builds a war file with oracle; should be called only after calling
         set-db-type. -->
 
-    <target name="war-oracle" description="Builds a war file" if="oracle">
+    <target name="war-oracle" if="oracle">
         <echo message="Building a war for oracle"/>
         <antcall target="build-war">
             <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
@@ -449,7 +452,7 @@
 
     <!-- Starts the Tomcat server. -->
 
-    <target name="start-tomcat">
+    <target name="start-tomcat" description="Start the Tomcat server" >
         <ant dir=".." inheritAll="false" target="start-tomcat"/>
     </target>
 
@@ -457,7 +460,8 @@
 
     <!-- Stops the Tomcat server. -->
 
-    <target name="stop-tomcat">
+
+    <target name="stop-tomcat" description="Stop the Tomcat server" >
         <antcall target="stop-ws" />
         <ant dir=".." inheritAll="false" target="stop-tomcat"/>
     </target>
