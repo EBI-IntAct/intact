@@ -24,7 +24,8 @@
 <%-- The anchor name for this page --%>
 <a name="feature.save.range"/>
 
-<table width="50%" border="0" cellspacing="1" cellpadding="2">
+<%-- The table id is for testing purposes --%>
+<table width="50%" border="0" cellspacing="1" cellpadding="2" id="add.range">
     <tr class="tableRowHeader">
         <th class="tableCellHeader">
             <bean:message key="label.action"/>
