@@ -172,7 +172,7 @@ public class PsiDataBuilder implements DataBuilder {
                     TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer();
             transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
+            //transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
 
 
             StreamResult result = new StreamResult(f);
@@ -375,16 +375,18 @@ public class PsiDataBuilder implements DataBuilder {
      * is most likely to be of use for experiments which have very large numbers
      * of Interactions (eg over 1000), and allows the caller to obtain XML in manageable
      * 'chunks' for further processing. It is up to the caller to provide a reasonably
-     * well sized Collection - more than 1000 will be rejected.
+     * well sized Collection - more than 'limit' (see below) will be rejected.
      * @param interactions A Collections of Interactions to be proceesed
+     * @param limit The maximum number of interactions allowed to be processed
+     * as a single chunk.
      * @return  an XML DOM Element containing the relevant elements for the Interactions
      * @throws ElementNotParseableException thrown if the Document could not be created.
      * @throws DataConversionException thrown if the parameter size is tooo big to be processed in one chunk.
      */
-    public Element buildInteractionsOnly(Collection interactions) throws
+    public Element buildInteractionsOnly(Collection interactions, int limit) throws
                                                 DataConversionException, ElementNotParseableException {
 
-        if(interactions.size() > 1000)
+        if(interactions.size() > limit)
             throw new DataConversionException("Too many interactions to process!");
         //NB the globalExperimentList etc will not have been set here, but are used
         //further donw in the processing!!
