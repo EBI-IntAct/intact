@@ -1,4 +1,6 @@
-<%@ page import="org.apache.commons.beanutils.DynaBean"%>
+<%@ page import="org.apache.commons.beanutils.DynaBean,
+                 uk.ac.ebi.intact.application.editor.business.EditorService,
+                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -15,6 +17,13 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
+<%
+    // To Allow access to Editor Service.
+    EditorService service = (EditorService)
+            application.getAttribute(EditorConstants.EDITOR_SERVICE);
+    String helpLink = service.getHelpLinkAsHTML("int.proteins");
+%>
+
 <html:form action="/interaction/protein/search">
     <table width="50%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
@@ -22,6 +31,9 @@
             <th class="tableCellHeader" width="10%">Short Label</th>
             <th class="tableCellHeader" width="10%">SP AC</th>
             <th class="tableCellHeader" width="10%">IntAct AC</th>
+            <th class="tableCellHeader" width="2%">
+                <%=helpLink%>
+            </th>
         </tr>
         <tr class="tableRowEven">
             <td class="tableCell">

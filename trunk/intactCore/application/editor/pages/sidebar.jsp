@@ -12,10 +12,17 @@
 --%>
 
 <%@ page language="java" %>
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%>
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
+                 uk.ac.ebi.intact.application.editor.business.EditorService"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+
+<%
+    // To Allow access to Editor Service.
+    EditorService service = (EditorService)
+            application.getAttribute(EditorConstants.EDITOR_SERVICE);
+%>
 
 <html:form action="/sidebar" focus="AC">
     <table>
@@ -37,12 +44,18 @@
                             </html:submit>
                         </td>
                         <td><html:text property="searchString" size="12"/></td>
+                        <td>
+                            <%=service.getHelpLinkAsHTML("search")%>
+                        </td>
                     </tr>
                     <tr>
                         <td>
                             <html:submit property="dispatch" onclick="return validate()">
                                 <bean:message key="button.create"/>
                             </html:submit>
+                        </td>
+                        <td>
+                            <%=service.getHelpLinkAsHTML("cv.editors")%>
                         </td>
                     </tr>
                 </table>

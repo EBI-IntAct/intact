@@ -1,4 +1,5 @@
-<!--
+<%@ page import="uk.ac.ebi.intact.application.editor.business.EditorService,
+                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%><!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -25,6 +26,12 @@
 <c:set var="dblist" value="${menus['DatabaseNames']}"/>
 <c:set var="qlist" value="${menus['QualifierNames']}"/>
 
+<%
+    // To Allow access to Editor Service.
+    EditorService service = (EditorService)
+            application.getAttribute(EditorConstants.EDITOR_SERVICE);
+%>
+
 <%-- Adds a new xreferece. This will invoke addXref action. --%>
 <html:form action="/xref/add">
     <table class="table" width="80%" border="0">
@@ -35,6 +42,9 @@
             <th class="tableCellHeader">Secondary ID</th>
             <th class="tableCellHeader">Release Number</th>
             <th class="tableCellHeader">Reference Qualifier</th>
+            <th>
+                <a target="help" href="<%=service.getHelpLink("xrefs")%>">[?]</a>
+            </th>
         </tr>
         <tr class="tableRowOdd">
             <td class="tableCell" align="right" valign="top">

@@ -1,4 +1,5 @@
-<!--
+<%@ page import="uk.ac.ebi.intact.application.editor.business.EditorService,
+                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%><!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -14,6 +15,13 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
+<%
+    // To Allow access to Editor Service.
+    EditorService service = (EditorService)
+            application.getAttribute(EditorConstants.EDITOR_SERVICE);
+    String helpLink = service.getHelpLinkAsHTML("int.experiments");
+%>
+
 <html:form action="/interaction/experiment/search">
     <table width="50%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
@@ -21,6 +29,9 @@
             <th class="tableCellHeader" width="30%">Short Label</th>
             <th class="tableCellHeader" width="30%">SP AC</th>
             <th class="tableCellHeader" width="30%">IntAct AC</th>
+            <th>
+                <%=helpLink%>
+            </th>
         </tr>
         <tr class="tableRowEven">
             <td class="tableCell">
