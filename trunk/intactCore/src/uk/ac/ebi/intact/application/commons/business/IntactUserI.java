@@ -6,10 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.commons.business;
 
+import uk.ac.ebi.intact.business.IntactException;
+
+import java.util.Collection;
+
 /**
  * This interface defines methods common to all Intact WEB applications. Typically,
  * each WEB application has its own user and that specific user must extend from this
- * class (this common interfaced is used for sidebar footer).
+ * class.
  *
  * @version $Id$
  * @author Sugath Mudali (smudali@ebi.ac.uk)
@@ -17,17 +21,34 @@ package uk.ac.ebi.intact.application.commons.business;
 public interface IntactUserI {
 
     /**
+     * This method provides a means of searching intact objects, within the constraints
+     * provided by the parameters to the method.
+     *
+     * @param objectType the object type to be searched
+     * @param searchParam the parameter to search on (eg field)
+     * @param searchValue the search value to match with the parameter
+     *
+     * @return the results of the search (empty if no matches were found).
+     *
+     * @exception uk.ac.ebi.intact.business.IntactException thrown if problems are encountered during the
+     * search process.
+     */
+    public Collection search( String objectType,
+                              String searchParam,
+                              String searchValue ) throws IntactException;
+
+    /**
      * Returns the Intact user.
      * @return the Intact user currently logged in. This methods could return null
      * if there is no user associated with the current session (e.g., Editor) or
      * for errors in retrieving user information from the database.
      */
-    public String getUserName();
+    public String getUserName( );
 
     /**
      * The name of the database connected to.
      * @return the name of the database. Could be null for an error in getting
      * the information from the database.
      */
-    public String getDatabaseName();
+    public String getDatabaseName( );
 }
