@@ -13,6 +13,9 @@ import uk.ac.ebi.intact.application.editor.exception.SearchException;
 
 import java.io.Serializable;
 import java.util.Iterator;
+import java.text.MessageFormat;
+
+import org.apache.struts.action.ActionError;
 
 /**
  * Bean to store data for an Interactor (Protein).
@@ -35,6 +38,12 @@ public class ProteinBean extends EditBean implements Serializable {
      * Identifier for an error bean.
      */
     public static final String ERROR = "error";
+
+    /**
+     * The formatter to format Protein error messages.
+     */
+    private static final MessageFormat FORMATTER =
+            new MessageFormat("Protein ({0}) with similar role ({1}) already exists!");
 
     // Instance Data
 
@@ -78,6 +87,11 @@ public class ProteinBean extends EditBean implements Serializable {
      * prevent Null pointer exception in validate method of ProteinEditForm.
      */
     private String myOrganism;
+
+    /**
+     * Holds error arguments.
+     */
+    private Object[] myErrorArgs;
 
     /**
      * Instantiate an object of this class from a Protein instance.
@@ -174,6 +188,24 @@ public class ProteinBean extends EditBean implements Serializable {
 
     public void setOrganism(String organism) {
         myOrganism = organism;
+    }
+
+    public void setError(String label, String role) {
+        if (myErrorArgs == null) {
+            myErrorArgs = new Object[]{label, role};
+        }
+        else {
+            myErrorArgs[0] = label;
+            myErrorArgs[1] = role;
+        }
+    }
+
+    /**
+     * The formatted error message
+     * @return the error message after applying the formatter.
+     */
+    public String getError() {
+        return FORMATTER.format(myErrorArgs);
     }
 
     // Override Objects's equal method.
