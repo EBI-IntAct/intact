@@ -16,7 +16,7 @@ T O   D O
   - SVG handling (real zoom, panning, text searching, centering via URL ...)
 
 + Remove all internal links in Interpro
-  -> modifiing the simple.xsl file to customize our displaying
+  -> modifying the simple.xsl file to customize our displaying
 
 + take over the application with Sugath
   + overview of the application
@@ -25,6 +25,24 @@ T O   D O
 
 
 
+
+- building a script allowing to do the tedious task of managing the web service !
+
+- update INTACTCORE/build.xml with the description flag to make some target visible from
+  ant -projecthelp
+
+- create then an external build.xml for hierarchView
+
+- add some comments in properties files with #
+
+- add logging facilities in the web service
+
+- Find a way to check if a web service is currently running (in the runtime)
+
+- update jsp/hierarchView/tulip/scripts/startService.sh with right messages
+  don't speak anymore about 'Serveur' unless Bordeaux solve that problem !
+
+- write a proper test directory for the web service
 
 - solve browser behaviour problem
 	o Netscape, remove frames
@@ -70,7 +88,7 @@ T O   D O
 - Correcting the displaying if the interaction network :
 	o label out of the image range
 
-
+- cleaning the web.xml to avoid Tomcat exception in its startup
 
 
 
