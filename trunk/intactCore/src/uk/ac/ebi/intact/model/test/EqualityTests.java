@@ -85,9 +85,9 @@ public class EqualityTests extends TestCase {
         exp3 = new Experiment(inst1, "exp1", bio1);
 
         //three equal Proteins
-        prot1 = new Protein(inst1, bio1, "prot1");
-        prot2 = new Protein(inst1, bio1, "prot1");
-        prot3 = new Protein(inst1, bio1, "prot1");
+        prot1 = new ProteinImpl(inst1, bio1, "prot1");
+        prot2 = new ProteinImpl(inst1, bio1, "prot1");
+        prot3 = new ProteinImpl(inst1, bio1, "prot1");
 
         //three equal Xrefs -
         //NB only the CvDatabase and primaryId are checked for equality
@@ -112,18 +112,18 @@ public class EqualityTests extends TestCase {
         //create some valid Interactions (should be equal), then some Components,
         //then add the Components into the Interactions
         exps.add(exp1); //Interaction needs at least one Experiment
-        int1 = new Interaction(exps, comps,
-                new CvInteractionType(inst1, "interaction type"),
-                "interaction1", inst1);
-        int2 = new Interaction(exps, comps,
-                new CvInteractionType(inst1, "interaction type"),
-                "interaction1", inst1);
-        int3 = new Interaction(exps, comps,
-                new CvInteractionType(inst1, "interaction type"),
-                "interaction1", inst1);
+        int1 = new InteractionImpl(exps, comps,
+                                   new CvInteractionType(inst1, "interaction type"),
+                                   "interaction1", inst1);
+        int2 = new InteractionImpl(exps, comps,
+                                   new CvInteractionType(inst1, "interaction type"),
+                                   "interaction1", inst1);
+        int3 = new InteractionImpl(exps, comps,
+                                   new CvInteractionType(inst1, "interaction type"),
+                                   "interaction1", inst1);
 
         Component comp1 = new Component(inst1, int1, prot1,
-                new CvComponentRole(inst1, "bait"));   //Components should not exist without an Interaction
+                                        new CvComponentRole(inst1, "bait"));   //Components should not exist without an Interaction
         Component comp2 = new Component(inst1, int1, prot1,
                 new CvComponentRole(inst1, "prey"));
 
