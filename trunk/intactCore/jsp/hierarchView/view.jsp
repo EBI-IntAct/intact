@@ -246,18 +246,20 @@ if (AC != null)
 
        // read the ApplicationResource.proterties file
        String mapName = null;
+       String format = null;
 
        Properties propertiesBusiness = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
 
        if (null != propertiesBusiness) {
 	  mapName = propertiesBusiness.getProperty ("hierarchView.image.map.name");
+	  format = propertiesBusiness.getProperty ("hierarchView.image.format.name");
        }
        
 %>
 
        <p align="left">
 	 <center>          
-             <img src="/hierarchView/GenerateImage" USEMAP="#<%= mapName %>" border ="0">
+             <img src="/hierarchView/GenerateImage?format=<%= format %>" USEMAP="#<%= mapName %>" border ="0">
            <br>
 	 </center>
        </p>
@@ -376,6 +378,8 @@ if (AC != null)
 
 </body>
 </html:html>
+
+
 
 
 
