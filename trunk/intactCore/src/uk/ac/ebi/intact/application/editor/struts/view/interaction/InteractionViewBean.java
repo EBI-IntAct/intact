@@ -156,7 +156,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Add cloned proteins as new proteins.
         for (Iterator iter = interaction.getComponents().iterator(); iter.hasNext();) {
             ComponentBean cb = new ComponentBean();
-            cb.setFromClonedObject((Component) iter.next(), user);
+            cb.setFromClonedObject((Component) iter.next());
             // Add to the view.
             myComponents.add(cb);
             // The componen needs to be updated as well.
@@ -328,24 +328,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
             }
         }
 
-        // Look for any unsaved or error features.
-        if (hasErrorFeatures()) {
-            throw new InteractionException("int.error.feature",
-                    "error.int.sanity.error.feature");
-        }
-
         // Any missing experiments (check 7).
         if (myExperiments.isEmpty()) {
             throw new InteractionException("int.sanity.exp",
                     "error.int.sanity.exp");
-        }
-
-        // Check to see that a cloned feature already exists.
-        if (hasDuplicateFeatures(user)) {
-            markDuplicateFeatures(user);
-            // The errors to display.
-            throw new InteractionException("int.duplicate.feature",
-                    "error.int.sanity.duplicate.feature");
         }
     }
 
@@ -991,65 +977,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return null;
     }
 
-//    private boolean hasFeatureWithClonedSuffix() {
-//        for (Iterator iter1 = myComponents.iterator(); iter1.hasNext();) {
-//            ComponentBean cb = (ComponentBean) iter1.next();
-//            for (Iterator iter2 = cb.getFeatures().iterator(); iter2.hasNext();) {
-//                FeatureBean fb = (FeatureBean) iter2.next();
-//                if (fb.getShortLabel().endsWith("-x")) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
-
-    // Helper methods
-
-    /**
-     * Returns true if a Feature in the components already exists (comparision is
-     * made on a Feature's short label).
-     * @param user the user to do the searching the persistent system.
-     * @return true if a Feature in the current Interaction already exists. True
-     * is also returned for errors in searching the persistent system.
-     */
-    private boolean hasDuplicateFeatures(EditUserI user) {
-        try {
-            for (Iterator iter1 = myComponents.iterator(); iter1.hasNext();) {
-                ComponentBean cb = (ComponentBean) iter1.next();
-                for (Iterator iter2 = cb.getFeatures().iterator(); iter2.hasNext();) {
-                    FeatureBean fb = (FeatureBean) iter2.next();
-                    if (user.shortLabelExists(Feature.class, fb.getShortLabel(), fb.getAc())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        catch (SearchException se) {
-            // Assume the worst (feature exists).
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Marks a Feature as duplicate if its short label already exists in the
-     * database.
-     * @param user the user to check the existence of the short label.
-     * @throws SearchException error is searching the persistent system.
-     */
-    private void markDuplicateFeatures(EditUserI user) throws SearchException {
-        for (Iterator iter1 = myComponents.iterator(); iter1.hasNext();) {
-            ComponentBean cb = (ComponentBean) iter1.next();
-            for (Iterator iter2 = cb.getFeatures().iterator(); iter2.hasNext();) {
-                FeatureBean fb = (FeatureBean) iter2.next();
-                if (user.shortLabelExists(Feature.class, fb.getShortLabel(), fb.getAc())) {
-                    fb.setEditState(AbstractEditBean.ERROR);
-                }
-            }
-        }
-    }
-
     private void makeProteinBeans(Collection components) {
         myComponents.clear();
         for (Iterator iter = components.iterator(); iter.hasNext();) {
@@ -1385,19 +1312,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 user.update(toFeature);
             }
         }
-    }
-
-    private boolean hasErrorFeatures() {
-        for (Iterator iter1 = myComponents.iterator(); iter1.hasNext();) {
-            ComponentBean cb = (ComponentBean) iter1.next();
-            for (Iterator iter2 = cb.getFeatures().iterator(); iter2.hasNext();) {
-                FeatureBean fb = (FeatureBean) iter2.next();
-                if (fb.getEditState().equals(AbstractEditBean.ERROR)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private ItemLinkSorter getFeatureSorter() {
