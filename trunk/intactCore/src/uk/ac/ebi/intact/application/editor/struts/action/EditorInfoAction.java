@@ -11,10 +11,13 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.business.DuplicateLabelException;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 
 /**
  * Action class when the use presses Save button to save short label and full
@@ -56,8 +59,36 @@ public class EditorInfoAction extends AbstractEditorAction {
         // Handler to the current user.
         EditUserI user = super.getIntactUser(request);
 
+        // The object we are editing at the moment.
+        AnnotatedObject annobj = user.getView().getAnnotatedObject();
+        Class clazz = annobj.getClass();
+
+        // Holds the result from the search.
+        Collection result = null;
+
+        try {
+            result = user.search(clazz.getName(), "shortLabel", formlabel);
+        }
+        catch (SearchException se) {
+            // Can't query the database.
+            LOGGER.info(se);
+            ActionErrors errors = new ActionErrors();
+            errors.add(AbstractEditorAction.EDITOR_ERROR,
+                    new ActionError("error.search", se.getNestedMessage()));
+            saveErrors(request, errors);
+            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
+        }
+        // result is not empty if we have this label on the database.
+        if (!result.isEmpty()) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("cvinfo.label",
+                    new ActionError("error.duplicate", annobj.getAc()));
+            saveErrors(request, errors);
+            return new ActionForward(mapping.getInput());
+        }
         // Holds the unique short label.
         String newlabel = null;
+        LOGGER.info("Got this far");
         try {
             newlabel = user.getUniqueShortLabel(formlabel);
         }
