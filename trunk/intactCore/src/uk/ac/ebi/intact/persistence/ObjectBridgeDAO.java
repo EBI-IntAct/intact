@@ -125,8 +125,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         // set up the logging facilities
         try {
             logger = Logger.getLogger(OJB_LOGGER_NAME);
-        }
-        catch (Exception c) {
+        } catch (Exception c) {
 
             //  try and set up a simple logger instead here....
         }
@@ -143,8 +142,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             connectionDetails = "config/repository.xml#" + user + "#" + password;
             db.open(connectionDetails, Database.OPEN_READ_WRITE);
 
-        }
-        catch (ODMGException e) {
+        } catch (ODMGException e) {
 
             logger.error("failed to open database!!", e);
         }
@@ -221,8 +219,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //get the current transaction back as it couldn't be serialised..
                 tx = odmg.currentTransaction();
 
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 logger.error("unable to reconnect to store after serialization", e);
             }
             //return true;
@@ -239,7 +236,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
         //NB simple validation for now, probably to be enhanced later -
         //just validate against user details in OJB repository.xml..
-        if (userName == null) return false;
+        if (userName == null)
+            return false;
 
         String knownUser = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection().getUserName();
         String knownPassword = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection().getPassWord();
@@ -262,7 +260,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     public String getDbName() throws LookupException, SQLException {
         String dbName = "";
         JdbcConnectionDescriptor jDesc = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection();
-        if (jDesc.getDbAlias() != null) dbName = jDesc.getDbAlias();
+        if (jDesc.getDbAlias() != null)
+            dbName = jDesc.getDbAlias();
 //        Connection conn = broker.getConnectionManager().getConnection();
 //        DatabaseMetaData metaInfo = conn.getMetaData();
 //        dbName = metaInfo.getDatabaseProductName();
@@ -285,6 +284,15 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     }
 
     /**
+     * Method to get a direct SQL connection which can be used by JDBC
+     * @return java.sql.Connection to database
+     * @throws LookupException
+     */
+    public Connection getJDBCConnection() throws LookupException {
+        return broker.getConnectionManager().getConnection();
+    }
+
+    /**
      *   Used to begin a transaction. The transaction level (object or JDBC) should be
      * specified. Defaults to JDBC level.
      * @param txType The type of transaction to begin (JDBC or object)
@@ -304,14 +312,12 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                 //broker.beginTransaction();
                 logger.debug("STARTED the transaction");
-            }
-            catch (org.odmg.TransactionInProgressException pe) {
+            } catch (org.odmg.TransactionInProgressException pe) {
                 //transaction already open - do something
                 String msg = "failed begin: cannot begin a transaction as one is already open";
                 throw new TransactionException(msg, pe);
             }
-        }
-        else {
+        } else {
             //JDBC transaction.
             broker.beginTransaction();
             transactionType = BusinessConstants.JDBC_TX;  //flag it
@@ -327,7 +333,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * @exception org.odmg.TransactionNotInProgressException thrown if no object TX is running
      */
     public void lock(Object obj) throws org.odmg.TransactionNotInProgressException {
-        if((tx == null) || (!tx.isOpen())) throw new org.odmg.TransactionNotInProgressException();
+        if ((tx == null) || (!tx.isOpen()))
+            throw new org.odmg.TransactionNotInProgressException();
         tx.lock(obj, Transaction.WRITE);
     }
 
@@ -348,8 +355,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             //clean up the ODMG stuff too
             db.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new DataSourceException("failed to close datasource!", e);
         }
 
@@ -374,15 +380,13 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             if (user != null) {
                 db.open(connectionDetails, Database.OPEN_READ_WRITE);
                 broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile, user, password));
-            }
-            else {
+            } else {
                 //should creeate based on default user details
                 db.open("config/repository.xml", Database.OPEN_READ_WRITE);
                 broker = PersistenceBrokerFactory.createPersistenceBroker(new PBKey(repositoryFile));
             }
 
-        }
-        catch (ODMGException e) {
+        } catch (ODMGException e) {
 
             throw new DataSourceException("failed to open database!!", e);
         }
@@ -405,8 +409,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 //            if (tx != null) {
                 try {
                     tx.commit();
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     throw (TransactionException) ex;
                 }
@@ -415,21 +418,18 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //reset the transaction type flag ready for next time
                 tx = null;
                 transactionType = NULL_TX_TYPE;
-            }
-            else if (isJDBCTransaction()) {
+            } else if (isJDBCTransaction()) {
 //            else if (transactionType == BusinessConstants.JDBC_TX) {
                 //it's a PB transaction instead
                 broker.commitTransaction();
                 //reset the transaction type flag ready for next time
                 transactionType = NULL_TX_TYPE;
-            }
-            else {
+            } else {
                 //error - trying to close a non-existent TX
                 throw new TransactionException("error during commit - no transaction exists!");
             }
             //broker.commitTransaction();
-        }
-        catch (org.odmg.TransactionAbortedException tae) {
+        } catch (org.odmg.TransactionAbortedException tae) {
 
             logger.error(tae.getCause());
             logger.error(tae.getMessage(), tae);
@@ -437,8 +437,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //couldn't commit for some reason - do something
             String msg = "transaction commit failed";
             throw new TransactionException(msg, tae);
-        }
-        catch (org.odmg.TransactionNotInProgressException tne) {
+        } catch (org.odmg.TransactionNotInProgressException tne) {
             tne.getCause().printStackTrace();
             logger.error(tne.getCause());
             logger.error(tne.getMessage(), tne);
@@ -479,13 +478,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     //do the ODMG thing - otherwsie don't do anything!
                     tx.join();
                     tx.lock(obj, tx.WRITE);
-                }
-                else {
+                } else {
                     // JDBC Transaction.
                     broker.store(obj);
                 }
-            }
-            else {
+            } else {
                 logger.debug("Starting Local Transaction - default to JDBC type");
 
                 //run a local transaction **** NB local TX is JDBC level *****
@@ -509,8 +506,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 broker.store(obj);
                 broker.commitTransaction();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
             if (localTx) {
                 //local transaction failed - should rollback here..
@@ -580,8 +576,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     tx.join();
                     tx.lock(dummy, tx.WRITE);
                 }
-            }
-            else {
+            } else {
                 //start a local TX - NB **** local TXs default to JDBC ****
                 broker.beginTransaction();
                 localTx = true;
@@ -624,8 +619,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //go via the AccessController...
                 logger.debug("setting fields to be accessible for write...");
                 AccessibleObject.setAccessible(fields, true);
-            }
-            catch (SecurityException se) {
+            } catch (SecurityException se) {
                 logger.error("failure during update - field access denied!!", se);
             }
 
@@ -638,15 +632,15 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     value = fields[i].get(obj);
 
                     // skip final field
-                    if (Modifier.isFinal(fields[i].getModifiers())) continue;
+                    if (Modifier.isFinal(fields[i].getModifiers()))
+                        continue;
 
                     logger.debug("field: " + fields[i].getName());
                     logger.debug("old value: " + fields[i].get(dummy));
                     logger.debug("new value: " + value);
                     fields[i].set(dummy, value);
                     logger.debug("field updated OK...");
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     logger.error("failed to update field " + fields[i].getName(), e);
                 }
             }
@@ -660,16 +654,14 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 mod.setNeedsUpdate(true);
                 broker.store(obj, mod);
                 broker.commitTransaction();
-            }
-            else if (isJDBCTransaction()) {
+            } else if (isJDBCTransaction()) {
 //            else if (transactionType == BusinessConstants.JDBC_TX) {
                 // Not a local transaction; JDBC transaction.
                 ObjectModificationDefaultImpl mod = new ObjectModificationDefaultImpl();
                 mod.setNeedsUpdate(true);
                 broker.store(obj, mod);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (localTx) {
                 //local transaction failed - should rollback here..
                 logger.error("aborting local TX");
@@ -719,7 +711,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         checkForOpenStore();
         Configuration con = OjbConfigurator.getInstance().getConfigurationFor(null);
         OjbConfiguration ojbCon = (OjbConfiguration) con;
-        if (ojbCon.useAutoCommit() == 1) return true;
+        if (ojbCon.useAutoCommit() == 1)
+            return true;
         return false;
     }
 
@@ -733,8 +726,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         checkForOpenStore();
         try {
             broker.getConnectionManager().getConnection().setAutoCommit(val);
-        }
-        catch (Exception se) {
+        } catch (Exception se) {
 
             logger.error("unable to reset autocommit value - reset failed", se);
         }
@@ -751,8 +743,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         checkForOpenStore();
         if (tx != null) {
             return tx.isOpen();
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -778,7 +769,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         Identity ident = new Identity(obj, broker);
         Object dummy = broker.getObjectByIdentity(ident);
         if (dummy == null) {
-           return false;
+            return false;
         }
         return true;
     }
@@ -819,8 +810,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 tx.join();
                 db.deletePersistent(obj);
                 logger.debug("object " + obj.getClass().getName() + " successfully locked for delete...");
-            }
-            else {
+            } else {
                 //do a PB delete
                 broker.delete(obj);
             }
@@ -832,8 +822,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 broker.commitTransaction();
                 logger.debug("local TX committed successfully");
             }
-        }
-        catch (Exception pbe) {
+        } catch (Exception pbe) {
 
             if (localTx) {
 
@@ -864,17 +853,14 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //make sure the current thread is associated with the TX first, to be safe
                 tx.join();
                 tx.abort();
-            }
-            else if (isJDBCTransaction()) {
+            } else if (isJDBCTransaction()) {
 //            else if (transactionType == BusinessConstants.JDBC_TX) {
                 broker.abortTransaction();
-            }
-            else {
+            } else {
                 //error - no TX exists...
                 throw new TransactionException("error - cannto perform rollback: no transaction exists!");
             }
-        }
-        catch (org.odmg.TransactionNotInProgressException e) {
+        } catch (org.odmg.TransactionNotInProgressException e) {
             String msg = "rollback failed: see OJB exception details";
             throw new TransactionException(msg, e);
         }
@@ -916,20 +902,17 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                     commit();
                 }
-            }
-            catch (TransactionException te) {
+            } catch (TransactionException te) {
 
                 rollback();
                 throw te;
 
-            }
-            catch (CreateException ce) {
+            } catch (CreateException ce) {
 
                 rollback();
                 throw ce;
             }
-        }
-        else {
+        } else {
 
             String msg = "creation error - no objects specified to be created!";
             throw new CreateException(msg);
@@ -965,7 +948,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         long timer = 0;
 
         //first check the params
-        if (type == null) throw new NullPointerException("can't search with a null type!");
+        if (type == null)
+            throw new NullPointerException("can't search with a null type!");
 
         if (col == null) {
 
@@ -1049,8 +1033,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             logger.info("time in OJB query execute (ms): " + timer);
             logger.info("******************************************");
 
-        }
-        catch (PersistenceBrokerException pbe) {
+        } catch (PersistenceBrokerException pbe) {
             pbe.printStackTrace();
             //problem doing the query....
             String msg = "search failed: problem executing query";
@@ -1061,8 +1044,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 //            logger.info("attribute requested: " + query.getRequestedAttribute() + "\n");
             throw new SearchException(msg, pbe);
 
-        }
-        catch (ClassNotFoundException c) {
+        } catch (ClassNotFoundException c) {
 
             //problem finding the class to search on....
             String msg = "search failed: problem executing query - class to search not found! ";
@@ -1130,8 +1112,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             logger.info("search by object: time in OJB query execute (ms): " + timer);
             logger.info("******************************************");
 
-        }
-        catch (PersistenceBrokerException pbe) {
+        } catch (PersistenceBrokerException pbe) {
 
             //problem doing the query....
             String msg = "search failed: problem executing query " + query.toString();
@@ -1162,7 +1143,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      */
     public Iterator findColumnValues(String type, String[] cols) throws SearchException {
 
-        if (type == null) throw new NullPointerException("can't query with a null type!!");
+        if (type == null)
+            throw new NullPointerException("can't query with a null type!!");
         ReportQueryByCriteria query = null;
         try {
 
@@ -1170,9 +1152,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             query = new ReportQueryByCriteria(Class.forName(type), cols, new Criteria());
             Iterator results = broker.getReportQueryIteratorByQuery(query);
             return results;
-        }
-
-        catch (PersistenceBrokerException pbe) {
+        } catch (PersistenceBrokerException pbe) {
 
             //problem doing the query....
             String msg = "search failed: problem finding column details";
@@ -1183,8 +1163,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             }
             throw new SearchException(msg, pbe);
 
-        }
-        catch (ClassNotFoundException c) {
+        } catch (ClassNotFoundException c) {
 
             //problem finding the class to search on....
             String msg = "search failed: problem executing query - class to search not found! ";
@@ -1206,7 +1185,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      */
     public Collection findBySQL(String type, String sqlString) throws SearchException {
 
-        if (type == null) throw new NullPointerException("can't query with a null type!!");
+        if (type == null)
+            throw new NullPointerException("can't query with a null type!!");
         Collection results = new ArrayList();
         QueryBySQL query = null;
         try {
@@ -1214,9 +1194,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             query = new QueryBySQL(Class.forName(type), sqlString);
             results = broker.getCollectionByQuery(query);
             return results;
-        }
-
-        catch (PersistenceBrokerException pbe) {
+        } catch (PersistenceBrokerException pbe) {
 
             //problem doing the query....
             String msg = "search failed: problem doing raw SQL string search";
@@ -1227,8 +1205,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             }
             throw new SearchException(msg, pbe);
 
-        }
-        catch (ClassNotFoundException c) {
+        } catch (ClassNotFoundException c) {
 
             //problem finding the class to search on....
             String msg = "search failed: problem executing query - class to search not found! ";
@@ -1265,7 +1242,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         Collection results = new ArrayList();
 
         //first check the params
-        if (type == null) throw new NullPointerException("can't search with an empty type!");
+        if (type == null)
+            throw new NullPointerException("can't search with an empty type!");
         if (col == null) {
 
             //no table column
@@ -1312,8 +1290,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //the iterator. The user has to handle it!
             resultIterator = broker.getIteratorByQuery(query);
 
-        }
-        catch (PersistenceBrokerException pbe) {
+        } catch (PersistenceBrokerException pbe) {
 
             //problem doing the query....
             String msg = "search failed: problem executing query";
@@ -1323,8 +1300,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             logger.info("attribute requested: " + query.getRequestedAttribute() + "\n");
             throw new SearchException(msg, pbe);
 
-        }
-        catch (ClassNotFoundException c) {
+        } catch (ClassNotFoundException c) {
 
             //problem finding the class to search on....
             String msg = "search failed: problem executing query - class to search not found! ";
@@ -1428,8 +1404,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     criteria.addEqualTo(field.getName(), value);
                     logger.debug("value: " + value.toString());
                 }
-            }
-            catch (Throwable ex) {
+            } catch (Throwable ex) {
 
                 logger.error(ex);
             }
@@ -1479,8 +1454,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                         //only need ONE collection example....
                         break;
-                    }
-                    else {
+                    } else {
 
                         buildCollectionCriteria(cld, collectionDesc, criteria, obj);
 
@@ -1489,8 +1463,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                         break;
                     }
                 }
-            }
-            catch (Throwable ex) {
+            } catch (Throwable ex) {
 
                 logger.error(ex);
             }
@@ -1588,8 +1561,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                             //now get the FK value...
                             val = persistentField.get(dbElement);
-                        }
-                        else {
+                        } else {
                             // We shouldn't get here because we have already chekced for persistence
                             // above.
                             logger.debug("error - no collection element found in DB either.");
@@ -1617,8 +1589,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 }
             }
 
-        }
-        else {
+        } else {
 
             //something wrong - Collection descriptor is not 1:n or m:n, so unknown!!
             throw new PersistenceBrokerException("object search (collection): collection is not 1:n or m:n relation, and so invalid!!");
@@ -1699,8 +1670,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                     logger.debug("PK field for element class " + elemDesc.getClassOfObject().getName() + " : " + elemPk);
                     criteria.addEqualTo(indirectionTable + "." + (String) elemClassFks[0], elemPk);
-                }
-                else {
+                } else {
 
                     //must have at least the PK of the example element set, otherwise can't search...
                     throw new PersistenceBrokerException("search by object (m:n collection): collection element must have at least its Primary Key set to perofrm a search");
@@ -1709,8 +1679,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //now build the m:n query
                 query = new QueryByMtoNCriteria(targetDesc.getClassOfObject(), indirectionTable, criteria);
 
-            }
-            else {
+            } else {
 
                 //error - can't work with an empty collection...
                 throw new PersistenceBrokerException("search by object (m:n collection): empty collection in search example!!");
@@ -1762,8 +1731,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                     //something odd - reference object has zero or more than one PK
                     logger.error("object-based search: contained reference object has zero or more than one PK!!");
-                }
-                else {
+                } else {
 
                     //also need the FK in the target that this PK is held in..
                     //the ID of the FK field can be obtained from the ObjectReferenceDescriptor
@@ -1773,8 +1741,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                         //something odd - reference has zero or more than one FK attribute in the target!!
                         logger.error("object-based search: zero or more than one FK attribute present for an object reference!!");
-                    }
-                    else {
+                    } else {
 
                         int fkId = ((Integer) fkIds.firstElement()).intValue();
 
@@ -1789,8 +1756,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 }
 
             }
-        }
-        catch (Throwable ex) {
+        } catch (Throwable ex) {
 
             logger.error(ex);
         }
@@ -1816,8 +1782,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             if (!classDesc.isExtent()) {
                 //concrete already - just return it
                 result.add(classToCheck);
-            }
-            else {
+            } else {
                 //get all of the concrete classes we can find
                 Vector subClasses = classDesc.getExtentClasses();
                 for (Iterator it = subClasses.iterator(); it.hasNext();) {
