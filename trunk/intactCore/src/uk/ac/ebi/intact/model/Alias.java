@@ -65,13 +65,8 @@ public class Alias extends BasicObjectImpl {
      */
     public Alias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
         setOwner( anOwner );
-        String ac = annotatedObject.getAc();
-        if( ac == null ) {
-            throw new IllegalArgumentException( "The given Annotated object doesn't have an AC." );
-        }
-
-        this.parentAc = annotatedObject.getAc();
-        this.cvAliasType = cvAliasType;
+        setParentAc( annotatedObject.getAc() );
+        setCvAliasType( cvAliasType );
         setName( name );
     }
 
@@ -102,6 +97,11 @@ public class Alias extends BasicObjectImpl {
     }
 
     public void setParentAc( String parentAc ) {
+
+        if( null == parentAc ) {
+            throw new IllegalArgumentException( "The given Annotated object doesn't have an AC." );
+        }
+
         this.parentAc = parentAc;
     }
 
