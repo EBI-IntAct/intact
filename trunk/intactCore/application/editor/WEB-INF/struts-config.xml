@@ -155,9 +155,6 @@
             name="loginForm"
             scope="request"
             input="login.error.layout">
-            <forward name="failure" path="login.error.layout"/>
-            <!-- Successful login; present the search page. -->
-            <forward name="success" path="search.layout"/>
 
             <!-- Invalid user -->
             <exception key="error.invalid.user"
@@ -171,6 +168,10 @@
             <exception key="error.init.menu"
                 type="uk.ac.ebi.intact.persistence.SearchException"
                 path="login.error.layout"/>
+
+            <forward name="failure" path="login.error.layout"/>
+            <!-- Successful login; present the search page. -->
+            <forward name="success" path="search.layout"/>
         </action>
 
         <!-- This action is called by tiles when displaying the header. The
