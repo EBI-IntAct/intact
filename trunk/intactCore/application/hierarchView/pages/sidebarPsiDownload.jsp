@@ -15,9 +15,9 @@
 
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants,
+                 uk.ac.ebi.intact.simpleGraph.BasicGraphI,
                  java.util.Collection,
                  java.util.Iterator,
-                 uk.ac.ebi.intact.model.Interactor,
                  java.util.ArrayList"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -40,9 +40,10 @@
    if (user.InteractionNetworkReadyToBeDisplayed()) {
        String graph2mif = user.GRAPH2MIF_PROPERTIES.getProperty( "graph2mif.url" );
        StringBuffer ac = new StringBuffer( 32 );
-       Iterator iterator = user.getInteractionNetwork().getCentralInteractors().iterator();
+       Iterator iterator = user.getInteractionNetwork().getCentralProteins().iterator();
        while ( iterator.hasNext() ) {
-           Interactor interactor = (Interactor) iterator.next();
+           BasicGraphI interactor = (BasicGraphI) iterator.next();
+           
            ac.append( interactor.getAc() ).append( "%2C" ); // %2C <=> ,
        }
        int l = ac.length();
