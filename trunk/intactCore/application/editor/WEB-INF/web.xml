@@ -96,6 +96,11 @@
         <url-pattern>/do/*</url-pattern>
     </servlet-mapping>
 
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
     <!-- The Welcome File List -->
     <welcome-file-list>
         <welcome-file>welcome.jsp</welcome-file>
