@@ -19,6 +19,16 @@ INSTALLATION
     from intactCore directory. The target environment is specified in the
     build.properties file (intactCore directory). 'search' has been tested
     under Oracle 8.1.6 and PostGres 7.2 (local and remote).
+    
+DATABASE:
+    Oracle:
+        Search 3 using for better performance in oracle an materialized view. to generate
+        this view you have to run /sql/oracle/search.sql.
+
+    Postgres:
+        We don't find an fancy soultion for postgres in the moment. We are using simply
+        an table. In that case the data resource for search3 is static. you have to update
+        manually the table. for creating an updating run /sql/postgres/search.sql.
 
 BUILD
     ant war
