@@ -119,9 +119,11 @@ public class ExperimentDescriptionParser {
         // CAUTION - MAY NOT BE THERE
         final Element bibref = DOMUtil.getFirstElement( root, "bibref" );
         XrefTag bibXref = null;
+        Collection secondaryBibXrefs = null;
         if( bibref != null ) {
             final Element bibXrefElement = DOMUtil.getFirstElement( bibref, "xref" );
             bibXref = XrefParser.processPrimaryRef( bibXrefElement );
+            secondaryBibXrefs = XrefParser.processSecondaryRef( bibXrefElement );
         }
 
 
@@ -204,6 +206,7 @@ public class ExperimentDescriptionParser {
             experiment = new ExperimentDescriptionTag( shortLabel,
                                                        fullName,
                                                        bibXref,
+                                                       secondaryBibXrefs,
                                                        xrefs,
                                                        annotations,
                                                        hostOrganism,
