@@ -305,8 +305,11 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // The current view.
         AbstractEditViewBean view = user.getView();
 
+        // The current form.
+        EditorActionForm editForm = (EditorActionForm) form;
+
         // Extract the short label for us to check for its uniqueness.
-        String formlabel = (String) ((EditorActionForm) form).getShortLabel();
+        String formlabel = (String) editForm.getShortLabel();
 
         // Validate the short label.
         if (user.shortLabelExists(formlabel)) {
@@ -321,14 +324,14 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             return mapping.getInputForward();
         }
         // Does the shortlabel ends with -x?
-//        if (formlabel.endsWith("-x")) {
-//            // Just a warning to the user.
-//            ActionMessages msgs = new ActionMessages();
-//            msgs.add("shortlabel", new ActionMessage("warning.shortlabel.suffix"));
-//            saveMessages(request, msgs);
-//        }
-        // Validate the data.
-//        view.validate(user);
+        if (formlabel.endsWith("-x")) {
+            String newSL = user.getNextAvailableShortLabel(view.getEditClass(),
+                    formlabel);
+            // Update the view and the form.
+            view.setShortLabel(newSL);
+            editForm.setShortLabel(newSL);
+        }
+        // Runs the editor sanity checking
         view.sanityCheck(user);
 
         try {
@@ -367,6 +370,10 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         }
         // Clear any left overs from previous transaction.
         view.clearTransactions();
+
+        // All are upto date except for AC which still can be null for a new
+        // object.
+        editForm.setAc(view.getAcLink());
 
         // We can't use mapping.getInputForward here as this return value
         // is used by subclasses (they need to distinguish between a success or
