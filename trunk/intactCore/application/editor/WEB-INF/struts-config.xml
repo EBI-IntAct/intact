@@ -221,13 +221,21 @@
             <!-- No match is found -->
             <forward name="noMatch" path="no.match.layout"/>
             <!-- Multiple results found -->
-            <forward name="results" path="match.layout"/>
+            <forward name="results" path="/do/fillResultForm"/>
         </action>
 
         <!-- Process a new search for a Editor Object. -->
         <action path="/search/new"
             type="org.apache.struts.actions.ForwardAction"
             parameter="search.layout">
+        </action>
+
+        <!-- Fill the form with search results for the JSP to display. -->
+        <action path="/fillResultForm"
+            name="resultForm"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillResultFormAction"
+            scope="request">
+            <forward name="success" path="match.layout"/>
         </action>
 
         <!---
@@ -361,7 +369,7 @@
                 key="dummy.key"/>
 
             <!-- Back to the results page as we got here from a search result -->
-            <forward name="results" path="match.layout"/>
+            <forward name="results" path="/do/fillResultForm"/>
             <!-- Back to the search page. -->
             <forward name="search" path="search.layout"/>
         </action>
