@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.business.servlet;
@@ -20,6 +20,8 @@ import java.io.IOException;
 
 import uk.ac.ebi.intact.application.statisticView.business.graphic.GraphSkeleton;
 import uk.ac.ebi.intact.application.statisticView.business.StatGraphConstants;
+import uk.ac.ebi.intact.application.statisticView.business.Constants;
+import org.apache.log4j.Logger;
 
 
 
@@ -32,17 +34,17 @@ import uk.ac.ebi.intact.application.statisticView.business.StatGraphConstants;
  */
 public class StatisticGraphicServlet extends HttpServlet {
 
-    //static Logger logger = Logger.getLogger ("statisticView");
-     //  private final static String ERROR_MESSAGE = "Unable to produce the interaction network, please warn your administrator";
+    static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     /**
      * This method create an instance of the right class!
      */
-      public static GraphSkeleton getGraphInstance (String aClassName) {
+    public static GraphSkeleton getGraphInstance (String aClassName) {
 
         Object object = null;
 
         try {
+            logger.info("Try to instanciate Graph: " + aClassName);
 
             // create a class by its name
             Class cls = Class.forName(aClassName);
@@ -52,14 +54,18 @@ public class StatisticGraphicServlet extends HttpServlet {
 
             if (false == (object instanceof GraphSkeleton)) {
                 // my object is not from the proper type
+                logger.error ("The Graph object generated ("+ aClassName + ")is not a GraphSkeleton");
                 return null;
             }
+
+            logger.info("instanciation done");
         } catch (Exception e) {
+            logger.error ("Could not The Graph object generated ("+ aClassName + ")is not a GraphSkeleton");
             // nothing to do, object is already setted to null
         }
 
         return (GraphSkeleton) object;
-      } // getGraphInstance
+    } // getGraphInstance
 
 
     /**
@@ -69,77 +75,57 @@ public class StatisticGraphicServlet extends HttpServlet {
     public void doGet (HttpServletRequest aRequest, HttpServletResponse aResponse)
             throws ServletException{
 
-       OutputStream outputStream = null;
+        OutputStream outputStream = null;
 
-       try {
+        try {
+            String type = aRequest.getParameter("TYPE");
+            GraphSkeleton graph = getGraphInstance("uk.ac.ebi.intact.application.statisticView.business.graphic.Graph"+type);
 
-           // get the current user session
-                HttpSession session = aRequest.getSession ();
-            /*    IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
-                if (user == null) {
-                    aResponse.getOutputStream().print(ERROR_MESSAGE);
+            if (graph == null) {
+                logger.info("Graph is null");
+                aResponse.getOutputStream().println("Could not create graphics.");
+                aResponse.getOutputStream().flush();
+                return;
+            }
 
-                    logger.error ("No user in the session, don't displays interaction network");
-                    return;
-                }
+            graph.setSizeImage (StatGraphConstants.IMAGE_PROTEIN_WIDTH,
+                                StatGraphConstants.IMAGE_PROTEIN_HEIGHT);
 
-                ImageBean imageBean = user.getImageBean();
+            graph.drawSkeleton();
+            logger.info("Drawing done");
 
-                if (null == imageBean) {
-                    logger.error ("ImageBean in the session is null");
-                    return;
-                }
-                  */
+            BufferedImage image = graph.getImageData();
+            outputStream = new BufferedOutputStream(aResponse.getOutputStream(), 1024);
 
-           String type = aRequest.getParameter("TYPE");
-           GraphSkeleton graph = getGraphInstance("uk.ac.ebi.intact.application.statisticView.business.graphic.Graph"+type);
-           if (graph == null) {
-                System.err.println("none instance created");
-           }
+            // Send image to browser, set MIME type
+            aResponse.setContentType("image/jpg");
 
-           //GraphSkeleton graph = new GraphProtein()
-          graph.setSizeImage(StatGraphConstants.IMAGE_PROTEIN_WIDTH,
-                                                    StatGraphConstants.IMAGE_PROTEIN_HEIGHT);
+            // JPEG encoding
+            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(outputStream);
+            encoder.encode(image);
+            logger.info("Image encoded");
 
-
-        // create the graph and initialize the graph size
-        //graph = new GraphProtein();
-        graph.drawSkeleton();
-
-        //graph.drawCurve();
-
-        BufferedImage image = graph.getImageData();
-
-        outputStream = new BufferedOutputStream(aResponse.getOutputStream(), 1024);
-
-        // Send image to browser
-        aResponse.setContentType("image/jpg");
-
-           // JPEG encoding
-           // JPEGEncodeParam  jpegEncodeParam  = null;
-           // jpegEncodeParam  = JPEGCodec.getDefaultJPEGEncodeParam (image);
-       /*
-        *  Encode the produced image in JPEG.
-        *   Quality range : 0.0 .. 1.0
-        *   0.7  : high quality   (good compromise between file size and quality)
-        *   0.5  : medium quality
-        *   0.25 : low quality
-        */
-        //jpegEncodeParam.setQuality (0.7F, false);
-        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(outputStream);
-        encoder.encode(image);
-
-        outputStream.close();
-
+            outputStream.flush();
+            outputStream.close();
         }
-        catch (IOException e) {
-          try {
-                outputStream.close();
+        catch (IOException ioe) {
+            logger.error ("Error during the image producing process, cause: " + ioe.getCause(), ioe);
+            /*
+            * Could be possible to send back an image saying that we can't show a graph.
+            */
+
+        } catch (NoClassDefFoundError se) {
+            logger.error ("Could not create graphic probably due to a connection problem with the X server", se);
+            /*
+             * Could be possible to send back an image saying that we can't show a graph.
+             */
+
+        } finally {
+            try {
+                if (outputStream != null) outputStream.close();
             }
             catch (IOException ioe) {}
-            //logger.error ("Error during the image producing process", e);
-            return;
         }
-
+        return;
     }
 }
