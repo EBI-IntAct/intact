@@ -15,7 +15,6 @@ import javax.servlet.http.*;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.CvAbstractAction;
-import uk.ac.ebi.intact.application.cvedit.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 
 /**
@@ -28,11 +27,6 @@ import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
  */
 
 public class ResultPreAction extends CvAbstractAction {
-
-    /**
-     * A single element array to be used by toArray() method.
-     */
-    private static final ResultBean[] RESULT_BEAN_ARRAY = new ResultBean[0];
 
     /**
      * Process the specified HTTP request, and create the corresponding
@@ -59,7 +53,7 @@ public class ResultPreAction extends CvAbstractAction {
             DynaActionFormClass.createDynaActionFormClass(config);
 
         DynaBean dynaForm = dynaClass.newInstance();
-        dynaForm.set("items", user.getCacheSearchResult().toArray(RESULT_BEAN_ARRAY));
+        dynaForm.set("items", user.getSearchCache());
         request.setAttribute("resultForm", dynaForm);
         // Move to the results page.
         return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
