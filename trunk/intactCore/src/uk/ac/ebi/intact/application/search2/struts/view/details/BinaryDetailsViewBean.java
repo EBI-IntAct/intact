@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Displays a binary view for a collection of Protein.
@@ -62,6 +59,22 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
     }
 
 
+    /**
+     * Build incrementaly the data structure allowing to display the binary view.
+     *
+     * <pre>
+     * Interactor 1 -> Interactor partner 1 -> interaction 1
+     * Interactor 1 -> Interactor partner 1 -> interaction 2
+     * Interactor 1 -> Interactor partner 1 -> interaction 3
+     * Interactor 1 -> Interactor partner 2 -> interaction 1
+     * Interactor 1 -> Interactor partner 2 -> interaction 2
+     * Interactor 2 -> Interactor partner 1 -> interaction List
+     * ...
+     * </pre>
+     *
+     * @param query the interactor to add in the binary view.
+     * @param binaryData the binary data to fill in.
+     */
     private void addInteractor (Interactor query, BinaryData binaryData){
 
         HashMap results = binaryData.getData();
@@ -71,28 +84,27 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
 
             // Check if the current query is already in the result set
             if (null != results.get(query)) {
-                // This query has already been added to the result set before,
-                // igonore.
+                // This query has already been added to the result set before, ignore.
                 return;
             }
 
             // Create the hash map which holds interaction partners.
             HashMap currentResults = new HashMap();
-            results.put(query, currentResults);
-
+            results.put( query, currentResults );
 
             // The current query could have more than one Component
             // linking it to the same Interaction, e.g. for Homodimers.
             // Therefore we need to keep track of Interactions already processed.
+            // TODO: could be set to the maximum size.
             HashSet processedInteractions = new HashSet();
 
             while (i.hasNext()){
                 Component c1 = (Component) i.next();
                 Interaction interaction = c1.getInteraction();
-                if (! processedInteractions.contains(interaction)) {
+                if ( ! processedInteractions.contains( interaction ) ) {
 
                     // Keep list of processed Interactions
-                    processedInteractions.add(interaction);
+                    processedInteractions.add( interaction );
 
                     // Insert all Interactors of the current interaction
                     Iterator j = interaction.getComponent().iterator();
@@ -101,25 +113,23 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
                         Interactor result = c2.getInteractor();
 
                         /* The query should not be added as a result.
-                        However, if e.g. the query interacts with itself,
-                        it should be listed. Therefore, compare the components.
-                        If getStoichiometry >= 2, we have a homodimer,
-                        which should also be listed as a self-interaction.
-                        */
-                        if ((c1 != c2)
-                                ||
-                            (c2.getStoichiometry() >= 2.0)) {
+                         * However, if e.g. the query interacts with itself,
+                         * it should be listed. Therefore, compare the components.
+                         * If getStoichiometry >= 2, we have a homodimer,
+                         * which should also be listed as a self-interaction.
+                         */
+                        if (( c1 != c2 ) || (c2.getStoichiometry () >= 2.0 )) {
                             // Now insert the current interaction appropriately
                             HashSet interactionsOfQueryAndResult =
-                                    (HashSet) currentResults.get(result);
+                                    (HashSet) currentResults.get( result );
                             if (null == interactionsOfQueryAndResult) {
                                 interactionsOfQueryAndResult = new HashSet();
 
                                 // add a new, empty HashSet
-                                currentResults.put(result, interactionsOfQueryAndResult);
+                                currentResults.put( result, interactionsOfQueryAndResult );
                             }
 
-                            interactionsOfQueryAndResult.add(interaction);
+                            interactionsOfQueryAndResult.add( interaction );
                         } // if
                     } // while
                 } // if
@@ -147,7 +157,7 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
             HtmlBuilderManager.getInstance().getHtml( writer,
                                                       binaryData,
                                                       getHighlightMap(),
-                                                      getHelpLink());
+                                                      getHelpLink() );
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             try {
