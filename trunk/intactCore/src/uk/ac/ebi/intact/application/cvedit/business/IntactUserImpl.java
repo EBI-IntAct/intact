@@ -120,11 +120,6 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     private Date myEndTime;
 
     /**
-     * The selected topic.
-     */
-//    private String mySelectedTopic;
-
-    /**
      * Maps list name -> list of items. Made it transient
      */
     private transient Map myNameToItems = new HashMap();
@@ -153,6 +148,11 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      * Stores the last query result.
      */
     private String myLastQuery;
+
+    /**
+     * Stores the class name of the last search.
+     */
+    private String myLastQueryClass;
 
     // Static initializer.
 
@@ -252,12 +252,10 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public void setSelectedTopic(String topic) {
         myView.setTopic(topic);
-//        mySelectedTopic = topic;
     }
 
     public String getSelectedTopic() {
         return myView.getTopic();
-//        return mySelectedTopic;
     }
 
     public Institution getInstitution() throws SearchException {
@@ -352,6 +350,11 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public Collection search(String objectType, String searchParam,
                               String searchValue) throws SearchException {
+        // Cache the last search details.
+        this.myLastQuery = searchParam + "=" + searchValue;
+        this.myLastQueryClass = objectType;
+
+        //now retrieve an object...
         try {
             return myHelper.search(objectType, searchParam, searchValue);
         }
@@ -368,12 +371,12 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         return  mySearchResultStatus == theirSingleEntry;
     }
 
-    public void setSearchQuery(String query) {
-        myLastQuery = query;
+    public String getLastSearchQuery() {
+        return myLastQuery;
     }
 
-    public String getSearchQuery() {
-        return myLastQuery;
+    public String getLastSearchClass() {
+        return myLastQueryClass;
     }
 
     public void cacheSearchResult(Collection results) {
@@ -475,17 +478,5 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         }
         // No modifcations to the list; just return the cache list.
         return list;
-    }
-
-    /**
-     * Update the drop down lists for the current CV edit object. This involves
-     *  contruction of a new list by retrieveing matching records from the
-     *  persistent system. No action is taken if the current edit object
-     * is not involved with drop down lists.
-     *
-     * @exception SearchException for errors in searching the persistent system
-     * to update the list.
-     */
-    private void updateList() throws SearchException {
     }
 }
