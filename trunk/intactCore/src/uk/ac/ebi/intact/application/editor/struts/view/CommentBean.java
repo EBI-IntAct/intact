@@ -79,6 +79,14 @@ public class CommentBean extends EditBean implements Serializable {
     }
 
     /**
+     * Returns the topic with a link to show its contents in a window.
+     * @return the topic as a browsable link.
+     */
+    public String getTopicLink() {
+        return getLink("CvTopic", myTopic);
+    }
+
+    /**
      * Sets the topic.
      * @param topic the new topic as a <code>String</code>.
      */
