@@ -37,12 +37,8 @@ public class CommentAddDynaForm extends DynaValidatorForm {
 
         // They must have selected a topic.
         if (topic.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors.add("comment.topic", new ActionError("error.dropdown.list"));
-        }
-        if (errors.isEmpty()) {
-            // No errors; set the trimmed values (no need to trim again in the
-            // action class.
-            set("topic", topic);
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.cvinfo.annotation"));
         }
         return errors;
     }
