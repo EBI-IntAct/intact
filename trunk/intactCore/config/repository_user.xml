@@ -150,6 +150,7 @@
      <collection-descriptor
          name="xref"
          proxy="true"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
      >
 
@@ -162,6 +163,7 @@
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          proxy="true"
+         auto-delete="true"
          indirection-table="ia_INT2ANNOT"
 
       >
@@ -296,6 +298,7 @@
       <collection-descriptor
       proxy="true"
          name="xref"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
        <inverse-foreignkey field-id-ref="10"/>
@@ -306,6 +309,7 @@
      <collection-descriptor
          proxy="true"
          name="annotation"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_INT2ANNOT"
       >
@@ -462,6 +466,7 @@
       <collection-descriptor
       proxy="true"
          name="xref"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
           <inverse-foreignkey field-id-ref="10"/>
@@ -470,8 +475,9 @@
       <!-- Experiments and Annotations are linked via a (non-qualified) indirection
             table EXP2ANNOT..... -->
       <collection-descriptor
-      proxy="true"
+         proxy="true"
          name="annotation"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_EXP2ANNOT"
       >
@@ -555,9 +561,10 @@
       </reference-descriptor>
 
      <collection-descriptor
-            proxy="true"
-            name="xref"
-            element-class-ref="uk.ac.ebi.intact.model.Xref"
+        proxy="true"
+        name="xref"
+        auto-delete="true"
+        element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
         <inverse-foreignkey field-id-ref="10"/>
       </collection-descriptor>
@@ -566,6 +573,7 @@
    <collection-descriptor
          proxy="true"
          name="annotation"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_BIOSOURCE2ANNOT"
       >
@@ -1064,8 +1072,9 @@
       <!-- ************ fields inherited from AnnotatedObject ********* -->
 
     <collection-descriptor
-    proxy="true"
+        proxy="true"
          name="xref"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="10"/>
@@ -1074,8 +1083,9 @@
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
             table CVOBJECT2ANNOT -->
       <collection-descriptor
-      proxy="true"
+         proxy="true"
          name="annotation"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_CVOBJECT2ANNOT"
       >
@@ -1150,8 +1160,9 @@
       </reference-descriptor>
 
     <collection-descriptor
-    proxy="true"
+         proxy="true"
          name="xref"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="10"/>
@@ -1162,6 +1173,7 @@
      <collection-descriptor
      proxy="true"
          name="annotation"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_CVOBJECT2ANNOT"
       >
@@ -1241,8 +1253,9 @@
       <!-- ************ fields inherited from AnnotatedObject ********* -->
 
       <collection-descriptor
-      proxy="true"
+         proxy="true"
          name="xref"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="10"/>
@@ -1251,8 +1264,9 @@
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
             table CVOBJECT2ANNOT -->
      <collection-descriptor
-     proxy="true"
+         proxy="true"
          name="annotation"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_CVOBJECT2ANNOT"
       >
@@ -1350,8 +1364,9 @@
       <!-- ************ fields inherited from AnnotatedObject ********* -->
 
       <collection-descriptor
-      proxy="true"
+         proxy="true"
          name="xref"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="10"/>
@@ -1360,8 +1375,9 @@
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
             table CVOBJECT2ANNOT -->
      <collection-descriptor
-     proxy="true"
+         proxy="true"
          name="annotation"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_CVOBJECT2ANNOT"
       >
@@ -1459,8 +1475,9 @@
       <!-- ************ fields inherited from AnnotatedObject ********* -->
 
       <collection-descriptor
-      proxy="true"
+         proxy="true"
          name="xref"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="10"/>
@@ -1469,8 +1486,9 @@
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
             table CVOBJECT2ANNOT -->
      <collection-descriptor
-     proxy="true"
+         proxy="true"
          name="annotation"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_CVOBJECT2ANNOT"
       >
@@ -1568,8 +1586,9 @@
       <!-- ************ fields inherited from AnnotatedObject ********* -->
 
       <collection-descriptor
-      proxy="true"
+         proxy="true"
          name="xref"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
       >
          <inverse-foreignkey field-id-ref="10"/>
@@ -1578,8 +1597,9 @@
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
             table CVOBJECT2ANNOT -->
      <collection-descriptor
-     proxy="true"
+         proxy="true"
          name="annotation"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_CVOBJECT2ANNOT"
       >
@@ -1652,8 +1672,9 @@
       <!-- ************ fields inherited from AnnotatedObject ********* -->
 
      <collection-descriptor
-     proxy="true"
+         proxy="true"
          name="xref"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Xref"
 
       >
@@ -1663,8 +1684,9 @@
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
             table CVOBJECT2ANNOT -->
      <collection-descriptor
-     proxy="true"
+         proxy="true"
          name="annotation"
+         auto-delete="true"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_CVOBJECT2ANNOT"
       >
