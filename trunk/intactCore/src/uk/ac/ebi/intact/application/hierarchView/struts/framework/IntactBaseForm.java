@@ -5,9 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
-import org.apache.struts.action.*;
 import org.apache.log4j.Logger;
-
+import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +22,7 @@ public class IntactBaseForm extends ActionForm {
 
     public static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
+
     /** The global Intact error key. */
     public static final String INTACT_ERROR = "IntactError";
 
@@ -33,7 +33,7 @@ public class IntactBaseForm extends ActionForm {
     /** The global Intact message key. */
     public static final String INTACT_MESSAGE = "IntactMessage";
 
-    /** Error container */
+    /** Message container */
     private ActionMessages myMessages = new ActionMessages();
 
 
@@ -48,7 +48,6 @@ public class IntactBaseForm extends ActionForm {
     protected ActionErrors getErrors () {
         return myErrors;
     }
-
 
     /**
      * Adds an error with given key.
@@ -69,7 +68,7 @@ public class IntactBaseForm extends ActionForm {
      * IntactResources.properties bundle.
      */
     protected void addError(String key, String value) {
-        myErrors.add(INTACT_ERROR, new ActionError(key, value));
+        myErrors.add( INTACT_ERROR, new ActionError( key, value ) );
     }
 
     /**
@@ -80,7 +79,6 @@ public class IntactBaseForm extends ActionForm {
     protected boolean isErrorsEmpty () {
         return myErrors.isEmpty();
     }
-
 
 
     /**
@@ -95,7 +93,6 @@ public class IntactBaseForm extends ActionForm {
         return myMessages;
     }
 
-
     /**
      * Adds an error with given key.
      *
@@ -103,7 +100,7 @@ public class IntactBaseForm extends ActionForm {
      * IntactResources.properties bundle.
      */
     protected void addMessage (String key) {
-        myMessages.add (INTACT_MESSAGE, new ActionMessage(key));
+        myMessages.add( INTACT_MESSAGE, new ActionMessage( key ) );
     }
 
     /**
@@ -115,7 +112,7 @@ public class IntactBaseForm extends ActionForm {
      * IntactResources.properties bundle.
      */
     protected void addMessage (String key, String value) {
-        myMessages.add (INTACT_MESSAGE, new ActionMessage (key, value));
+        myMessages.add( INTACT_MESSAGE, new ActionMessage( key, value ) );
     }
 
     /**
@@ -133,9 +130,6 @@ public class IntactBaseForm extends ActionForm {
      * @param request the request to save errors.
      */
     protected void saveMessages(HttpServletRequest request) {
-        // TODO: replace it by a non deprecated constant
-        request.setAttribute (org.apache.struts.action.Action.MESSAGE_KEY, getMessages());
+        request.setAttribute( org.apache.struts.action.ActionMessages.GLOBAL_MESSAGE, getMessages() );
     }
-
-
 }

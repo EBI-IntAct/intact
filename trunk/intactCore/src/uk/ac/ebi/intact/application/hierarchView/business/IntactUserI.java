@@ -5,18 +5,18 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.business;
 
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.util.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
-import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import javax.servlet.http.HttpSessionBindingListener;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Properties;
-import java.io.Serializable;
 
 /**
  * This interface stores information about an Intact Web user session. Instead of
@@ -29,8 +29,10 @@ import java.io.Serializable;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public interface IntactUserI extends Serializable, HttpSessionBindingListener,
-        uk.ac.ebi.intact.application.commons.business.IntactUserI {
+public interface IntactUserI
+        extends Serializable,
+                HttpSessionBindingListener,
+                uk.ac.ebi.intact.application.commons.business.IntactUserI {
 
     // All the properties needed by the user (Session scope !)
     public static final Properties GRAPH_PROPERTIES        = PropertyLoader.load (StrutsConstants.GRAPH_PROPERTY_FILE);
@@ -63,7 +65,7 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener,
     public IntactHelper getHelper ();
     public String getSourceURL ();
     public boolean hasSourceUrlToDisplay();
-    public String getSearchUrl (String query);
+    public String getSearchUrl (String query, boolean addFullContext);
     public String getSearchUrl ();
 
     public void setQueryString (String aQueryString);

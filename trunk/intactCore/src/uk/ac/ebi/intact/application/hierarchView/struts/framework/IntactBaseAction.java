@@ -5,30 +5,32 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
-import uk.ac.ebi.intact.application.hierarchView.business.*;
-import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-import uk.ac.ebi.intact.application.hierarchView.business.image.DrawGraph;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
-import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
-import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundException;
-import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
-import uk.ac.ebi.intact.persistence.SearchException;
-import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.util.Chrono;
-
-
-import org.apache.struts.action.*;
 import org.apache.log4j.Logger;
+import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
+import uk.ac.ebi.intact.application.commons.search.SearchHelper;
+import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.business.image.DrawGraph;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.util.Chrono;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 import java.rmi.RemoteException;
-import java.util.StringTokenizer;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Super class for all hierarchView related action classes.
@@ -39,7 +41,8 @@ import java.util.ArrayList;
 
 public abstract class IntactBaseAction extends Action {
 
-    public static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
+    public static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+
 
     /** The global Intact error key. */
     public static final String INTACT_ERROR = "IntactError";
@@ -53,6 +56,8 @@ public abstract class IntactBaseAction extends Action {
 
     /** Message container */
     private ActionMessages myMessages = new ActionMessages();
+
+    private SearchHelperI searchHelper = new SearchHelper( logger );
 
     /**
      * Says if an IntactUser object is currently available in the session.
@@ -246,18 +251,13 @@ public abstract class IntactBaseAction extends Action {
      */
     protected IntactUser createIntactUser (HttpSession session, HttpServletRequest aRequest) {
         IntactUser user = null;
-        ServletContext servletContext = getServlet().getServletContext();
-
-        // Name of the mapping file and data source class.
-        String repositoryfile  = servletContext.getInitParameter (Constants.MAPPING_FILE);
-        String datasourceClass = servletContext.getInitParameter (Constants.DATA_SOURCE);
 
         // Create an instance of IntactUser which we'll store in the Session
         try {
             String applicationPath = aRequest.getContextPath();
 
-            user = new IntactUser (applicationPath);
-            session.setAttribute (Constants.USER_KEY, user);
+            user = new IntactUser ( applicationPath );
+            session.setAttribute ( Constants.USER_KEY, user );
         }
         catch (DataSourceException de) {
             // Unable to get a data source...can't proceed
@@ -333,7 +333,6 @@ public abstract class IntactBaseAction extends Action {
         user.setImageBean (ib);
     }
 
-
     /**
      * Update the interaction network according to the specified action type:
      * <blockquote>
@@ -350,92 +349,133 @@ public abstract class IntactBaseAction extends Action {
      *
      * @throws MultipleResultException in case your query gives multiple results
      */
-    public void updateInteractionNetwork (IntactUserI user, int action)
+    public void updateInteractionNetwork ( IntactUserI user, int action )
               throws MultipleResultException {
 
-        InteractionNetwork in = null;
-        String queryString = user.getQueryString();
-        int depth = user.getCurrentDepth();
+        InteractionNetwork in  = user.getInteractionNetwork();
+        String queryString     = user.getQueryString();
+        int depth              = user.getCurrentDepth();
+        GraphHelper gh         = new GraphHelper( user );
+        Collection interactors = null;
+        Collection criterias   = null;
+        String query           = null;
 
-        StringTokenizer st = new StringTokenizer (queryString, ",");
-        ArrayList queries = new ArrayList(30);
-        String aQuery;
-        while (st.hasMoreElements()) {
-            aQuery = st.nextToken().trim(); // remove front and back blank space
-            if (aQuery.length() > 0)
-               queries.add (aQuery);
-        }
-        int max = queries.size();
+        Chrono chrono  = new Chrono();
+        chrono.start();
 
         try {
-            GraphHelper gh = new GraphHelper(user);
-            String query = null;
-            Chrono chrono = new Chrono ();
-            chrono.start();
+            if (action != StrutsConstants.UPDATE_INTERACTION_NETWORK) {
+                interactors = find( queryString, user, searchHelper );
+                criterias   = searchHelper.getSearchCritera();
 
-            switch (action) {
+                /**
+                 * Check feasability number-of-interactor wise
+                 */
+                int maxInteractor    = InteractionNetwork.getMaxCentralProtein();
+                int interactorsFound = interactors.size();
+                int currentCount     = 0;
+                if (in != null)
+                    currentCount = in.getCurrentCentralProteinCount();
+
+                if ( ( interactorsFound + currentCount ) > maxInteractor ) {
+
+                    logger.error (queryString + " gave us too many results (max set to "+ maxInteractor +")");
+                    throw new MultipleResultException();
+
+                } else if ( interactorsFound == 0 ) {
+
+                    logger.error ("nothing found for: " + queryString);
+                    if (in == null)
+                        addError ( "error.protein.notFound", query );
+                    else
+                        addMessage ("warning.protein.notFound", query );
+
+                    return; // stop there !
+                }
+            } // if
+
+
+            switch( action ) {
                 case StrutsConstants.CREATE_INTERACTION_NETWORK:
-                    for (int i = 0; i < max; i++) {
-                        query = (String) queries.get(i);
-                        try {
-                            in = gh.addInteractionNetwork (in, query, depth);
-                        } catch (ProteinNotFoundException e) {
-                            addMessage ("warning.protein.notFound", query);
-                            addError   ("error.protein.notFound", query);
+                    in = null; // it should be null already but wipe the current network out if it does exist.
+                    for ( Iterator iterator = interactors.iterator (); iterator.hasNext (); ) {
+                        Interactor interactor = (Interactor) iterator.next ();
+                        in = gh.addInteractionNetwork ( in, interactor, depth );
+                    }
+
+                    for ( Iterator iterator = criterias.iterator (); iterator.hasNext (); ) {
+                        CriteriaBean criteria = (CriteriaBean) iterator.next ();
+                        if ( criteria.hasGivenResults() )
+                            in.addCriteria( criteria );
+                        else {
+                            addMessage ( "warning.protein.notFound", criteria.getQuery() );
+                            addError ( "error.protein.notFound", criteria.getQuery() );
                         }
-                    } // for
+                    }
 
                     // if no network built after processing all sub query, display any errors.
                     // Else any messages.
                     if (in == null) {
-                        clearMessages(); // display errors
+                        clearMessages(); // display only errors
                     } else {
-                        clearErrors();   // display messages
+                        clearErrors();   // display only messages
                     }
+
+                    user.setInteractionNetwork( in );
                     break;
 
 
                 case StrutsConstants.ADD_INTERACTION_NETWORK:
-                    in = user.getInteractionNetwork();
-                    for (int i = 0; i < max; i++) {
-                        query = (String) queries.get(i);
-                        try {
-                            in = gh.addInteractionNetwork (in, query, depth);
-                        } catch (ProteinNotFoundException e) {
-                            addMessage ("warning.protein.notFound", query);
-                        }
+                    for ( Iterator iterator = interactors.iterator (); iterator.hasNext (); ) {
+                        Interactor interactor = (Interactor) iterator.next ();
+                        in = gh.addInteractionNetwork ( in, interactor, depth );
+                    }
+
+                    for ( Iterator iterator = criterias.iterator (); iterator.hasNext (); ) {
+                        CriteriaBean criteria = (CriteriaBean) iterator.next ();
+                        if ( criteria.hasGivenResults() )
+                            in.addCriteria( criteria );
+                        else
+                            addMessage ( "warning.protein.notFound", criteria.getQuery() );
                     }
                     break;
 
+
                 case StrutsConstants.UPDATE_INTERACTION_NETWORK:
-                    in = user.getInteractionNetwork();
-                    try {
-                        in = gh.updateInteractionNetwork (in, depth);
-                    } catch (ProteinNotFoundException e) {
-                        addError ("error.protein.notFound", queryString);
+                    interactors = in.getCentralInteractors();
+                    criterias   = in.getCriteria();
+                    in = null;
+                    for ( Iterator iterator = interactors.iterator (); iterator.hasNext (); ) {
+                        Interactor interactor = (Interactor) iterator.next ();
+                        in = gh.addInteractionNetwork ( in, interactor, depth );
+                    }
+
+                    for ( Iterator iterator = criterias.iterator (); iterator.hasNext (); ) {
+                        CriteriaBean criteria = (CriteriaBean) iterator.next ();
+                        in.addCriteria( criteria );
                     }
                     break;
 
                 default:
-                    return;
+                    logger.error( "That option is not supported by that method !" );
+                    return; // other choice ? nothing to be done !
             }
 
             chrono.stop();
             String msg = null;
             if (in == null) {
-                msg = new StringBuffer().append("No interaction network retreived, took ").append (chrono).toString();
+                msg = new StringBuffer( 128 ).append("No interaction network retreived, took ").append (chrono).toString();
             } else {
-                msg = new StringBuffer().append("Time for retreiving the interaction network ( ").append (
+                msg = new StringBuffer( 128 ).append("Time for retreiving the interaction network ( ").append (
                         in.sizeNodes()).append(" proteins, ").append(in.sizeEdges()).append(" edges) :").append(
                         chrono).toString();
             }
-            logger.info(msg);
+            logger.info( msg );
 
             if (in == null) {
                 // no protein found
                 return;
             }
-
 
         }  catch (SearchException e) {
             addError ("error.search.process", e.getMessage());
@@ -454,7 +494,33 @@ public abstract class IntactBaseAction extends Action {
             return;
         }
 
-        user.setInteractionNetwork (in);
+        user.setInteractionNetwork( in );
     }
 
+    /**
+     * Search in the database Interactor related to the query string.
+     *
+     * @param queryString the criteria to search for.
+     * @return a collection of interactor or empty if none are found.
+     * @throws IntactException in case of search error.
+     */
+    private Collection find( String queryString, IntactUserI user, SearchHelperI searchHelper ) throws IntactException {
+
+        Collection results;
+
+        //first try search string 'as is' - some DBs allow mixed case....
+        results = searchHelper.doLookup( "Interactor", queryString, user );
+
+        if (results.isEmpty()) {
+            //now try all lower case....
+            String lowerCaseValue = queryString.toLowerCase();
+            results = searchHelper.doLookup( "Interactor", lowerCaseValue, user );
+            if (results.isEmpty()) {
+                //finished all current options, and still nothing - return a failure
+                logger.info( "No matches were found for the specified search criteria" );
+            }
+        }
+
+        return results;
+    }
 }

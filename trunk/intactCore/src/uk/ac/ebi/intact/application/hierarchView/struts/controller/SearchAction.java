@@ -5,16 +5,15 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
-import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.SearchForm;
-import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
-import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
+import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.SearchForm;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -70,8 +69,8 @@ public final class SearchAction extends IntactBaseAction {
 
         if (null != form) {
             // read form values from the bean
-            queryString = searchForm.getQueryString ();
-            methodLabel = searchForm.getMethod ();
+            queryString = searchForm.getQueryString().trim();
+            methodLabel = searchForm.getMethod();
 
             // read the highlighting.proterties file
             Properties properties = IntactUserI.HIGHLIGHTING_PROPERTIES;;

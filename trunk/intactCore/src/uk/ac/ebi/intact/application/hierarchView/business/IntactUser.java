@@ -5,25 +5,21 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.business;
 
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.simpleGraph.Graph;
+import org.apache.log4j.Logger;
+import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.ClickBehaviourForm;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.util.Chrono;
 
 import javax.servlet.http.HttpSessionBindingEvent;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Collection;
-import java.util.Properties;
 import java.sql.SQLException;
-
-
-import org.apache.log4j.Logger;
-import org.apache.ojb.broker.accesslayer.LookupException;
+import java.util.*;
 
 /**
  * This class stores information about an Intact Web user session. <br>
@@ -276,23 +272,20 @@ public class IntactUser implements IntactUserI {
         sourceURL = null;
     }
 
-
     /**
      * Constructs an instance of this class with given mapping file and
      * the name of the data source class.
      *
-     * @param repositoryfile the name of the mapping file.
-     * @param datasourceClass the class name of the Data Source.
      * @param applicationPath the current application path
      *
      * @exception DataSourceException for error in getting the data source; this
-     *  could be due to the errors in repository files or the underlying
-     *  persistent mechanism rejected <code>user</code> and
-     *  <code>password</code> combination.
+     *            could be due to the errors in repository files or the underlying
+     *            persistent mechanism rejected <code>user</code> and
+     *            <code>password</code> combination.
      * @exception IntactException thrown for any error in creating lists such
-     *  as topics, database names etc.
+     *            as topics, database names etc.
      */
-    public IntactUser (String applicationPath) throws DataSourceException, IntactException {
+    public IntactUser( String applicationPath ) throws DataSourceException, IntactException {
 
         init ();
 
@@ -424,7 +417,7 @@ public class IntactUser implements IntactUserI {
     }
 
 
-   public String getSearchUrl (String query) {
+   public String getSearchUrl ( String query, boolean addFullContext ) {
         String searchURL = null;
 
         // read the Search.properties file
@@ -433,10 +426,20 @@ public class IntactUser implements IntactUserI {
         if (null != properties) {
             String url = properties.getProperty ("search.url");
             String queryParameter = properties.getProperty ("search.parameter.query.name");
-//            String classParameter = properties.getProperty ("search.parameter.class.name");
-//            String classValue     = properties.getProperty ("search.parameter.class.value");
+            if ( addFullContext ) {
+                StringBuffer buffer = new StringBuffer(64);
+                Collection interactors = interactionNetwork.getCentralInteractors();
+                for ( Iterator iterator = interactors.iterator (); iterator.hasNext (); ) {
+                    Interactor interactor = (Interactor) iterator.next ();
+                    buffer.append( ',' ).append( interactor.getAc() );
+                }
 
-            searchURL = url + "?" + queryParameter + "=" + query; //  + "&" + classParameter + "=" + classValue
+                // forward to search giving the spec of the current interaction network plus the current query.
+                searchURL = url + "?" + queryParameter + "=" + query + buffer.toString(); //  + "&" + classParameter + "=" + classValue
+            } else {
+                // forward to search giving the spec of the current interaction network plus the current query.
+                searchURL = url + "?" + queryParameter + "=" + query; //  + "&" + classParameter + "=" + classValue
+            }
         }
 
         logger.info ("search URL = " + searchURL);
@@ -445,7 +448,7 @@ public class IntactUser implements IntactUserI {
 
 
     public String getSearchUrl () {
-        return getSearchUrl (queryString);
+        return getSearchUrl (queryString, true);
     }
 
 
@@ -473,6 +476,12 @@ public class IntactUser implements IntactUserI {
     }
 
     // Implementation of IntactUserI interface.
+
+    public Collection search ( String objectType,
+                               String searchParam,
+                               String searchValue ) throws IntactException {
+        return intactHelper.search( objectType, searchParam, searchValue );
+    }
 
     public String getUserName() {
         if (this.intactHelper != null) {

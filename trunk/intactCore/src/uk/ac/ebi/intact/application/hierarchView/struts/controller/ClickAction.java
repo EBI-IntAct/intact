@@ -9,10 +9,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
-import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
-import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
+import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
+import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -86,15 +86,14 @@ public final class ClickAction extends IntactBaseAction {
             }
         }
 
-        if (user.clickBehaviourIsCenter()) {
+        if ( user.clickBehaviourIsCenter() ) {
             // Save our data
-            user.setInteractionNetwork (null);
-            user.setQueryString (AC);
+            user.setInteractionNetwork( null );
+            user.setQueryString( AC );
             user.setDepthToDefault();
             user.resetSourceURL();
 
             // Center the view
-
             // Creation of the graph and the image
             try {
                 updateInteractionNetwork (user, StrutsConstants.CREATE_INTERACTION_NETWORK);
@@ -103,14 +102,14 @@ public final class ClickAction extends IntactBaseAction {
                 return (mapping.findForward("displayWithSearch"));
             }
 
-        } else if (user.clickBehaviourIsAdd()) {
+        } else if ( user.clickBehaviourIsAdd() ) {
             // Add the network for which the central protein is the one the user clicked
             user.setQueryString (AC);
 
             // Creation of the graph and the image
             try {
-                updateInteractionNetwork (user, StrutsConstants.ADD_INTERACTION_NETWORK);
-                produceImage (user);
+                updateInteractionNetwork( user, StrutsConstants.ADD_INTERACTION_NETWORK );
+                produceImage( user );
             } catch (MultipleResultException e) {
                 // should not happen
                 return (mapping.findForward("displayWithSearch"));

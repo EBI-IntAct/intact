@@ -12,25 +12,28 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
  * @version $Id$
  */
 
-import uk.ac.ebi.intact.application.hierarchView.business.*;
-import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageDimension;
+import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.simpleGraph.*;
 import uk.ac.ebi.intact.util.Chrono;
 
+import java.awt.*;
 import java.rmi.RemoteException;
-import java.awt.Color;
 import java.util.*;
-
-import org.apache.log4j.Logger;
 
 
 public class InteractionNetwork extends Graph {
 
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
+
+    public static final int DEFAULT_MAX_CENTRAL_PROTEIN = 7;
 
     /*********************************************************************** StrutsConstants */
     private static int DEFAULT_COLOR_NODE_RED   = 0;
@@ -46,7 +49,6 @@ public class InteractionNetwork extends Graph {
     private static String DEFAULT_COLOR_LABEL = DEFAULT_COLOR_LABEL_RED + "," +
                                                 DEFAULT_COLOR_LABEL_GREEN + "," +
                                                 DEFAULT_COLOR_LABEL_BLUE;
-
 
     /*********************************************************************** Instance variables */
 
@@ -94,62 +96,70 @@ public class InteractionNetwork extends Graph {
         criteriaList       = new ArrayList();
         centralNodes       = new ArrayList();
         centralInteractors = new ArrayList();
-        centralInteractors.add (aCentralProtein); // can be an Interaction or a Protein
+        centralInteractors.add( aCentralProtein ); // can be an Interaction or a Protein
 
         // wait the user to add some node to reference the central one
-        dimension        = new ImageDimension();
-        isInitialized    = false;
+        dimension     = new ImageDimension();
+        isInitialized = false;
     }
 
+    private static String maxCentralProtein = null;
+    public static int getMaxCentralProtein() {
+
+        if ( maxCentralProtein == null ) {
+            maxCentralProtein = IntactUserI.GRAPH_PROPERTIES.getProperty( "hierarchView.graph.max.cental.protein" );
+        }
+
+        try {
+            return Integer.parseInt( maxCentralProtein );
+        } catch ( NumberFormatException e ) {
+            return DEFAULT_MAX_CENTRAL_PROTEIN;
+        }
+    }
+
+    public int getCurrentCentralProteinCount(){
+        return centralNodes.size();
+    }
 
     public String getCentralProteinAC() {
         return centralProteinAC;
     }
 
-
     public Interactor getCentralProtein() {
         return centralProtein;
     }
 
-
     public void addCentralProtein (Node node) {
-        if (node == null) logger.info ("!!!!!!!!!!!!!!!!!!!!!!! Node == NULL");
         if ((! centralNodes.contains(node)) && (node != null))
             centralNodes.add (node);
-        else {
-            logger.info("Node not inserted in the central nodes");
-            logger.info("centralNodes.contains(node) == " + centralNodes.contains(node));
-            logger.info("(node == null) == " + (node == null));
-        }
     }
-
 
     public ArrayList getCentralProteins () {
         return centralNodes;
     }
 
-
     public ArrayList getCentralInteractors () {
         return centralInteractors;
     }
-
 
     public ArrayList getCriteria() {
         return criteriaList;
     }
 
-
     /**
      * Add a new criteria to the interaction network<br>
-     * Reminder: a criteria is a String[2].
-     * @param queryString the new queryString
-     * @param target the new target (AC, SHORT_LABEL ...)
+     * @param aCriteria the criteria to add if it doesn't exist in the collection already
      */
-    public void addCriteria (String queryString, String target) {
-        String[] aCriteria = {queryString, target};
-        criteriaList.add (aCriteria);
+    public void addCriteria ( CriteriaBean aCriteria ) {
+        logger.info( "\n\nCurrent set" );
+        for ( Iterator iterator = criteriaList.iterator (); iterator.hasNext (); ) {
+            CriteriaBean criteriaBean = (CriteriaBean) iterator.next ();
+            logger.info ( criteriaBean );
+        }
+        logger.info( "Try to add: " + aCriteria );
+        if ( ! criteriaList.contains( aCriteria ) )
+            criteriaList.add( aCriteria );
     }
-
 
     /**
      * remove all existing criteria from the interaction network
@@ -157,7 +167,6 @@ public class InteractionNetwork extends Graph {
     public void resetCriteria () {
         criteriaList.clear();
     }
-
 
     /**
      * Initialization of the interaction network
@@ -171,7 +180,6 @@ public class InteractionNetwork extends Graph {
         this.isInitialized = true;
     }
 
-
     /**
      * add the initialization part to the super class method
      *
@@ -182,25 +190,18 @@ public class InteractionNetwork extends Graph {
         Node aNode = super.addNode (anInteractor);
 
         // initialization of the node
-        if (null != aNode) {
-           logger.info("Comparing interactors: ("+ anInteractor.getAc() +") and ("+ centralProtein.getAc() +")");
-            if (anInteractor.equals(centralProtein)) {
-                logger.info("They are equals");
-                addCentralProtein(aNode);
+        if ( null != aNode ) {
+            if( anInteractor.equals( centralProtein ) ) {
+                addCentralProtein( aNode );
                 // TODO: could add the interactor in a Collection ... would solve the problem of an interaction
-
-            } else logger.info("They are different");
-
+            }
             aNode.put (Constants.ATTRIBUTE_LABEL, anInteractor.getAc ());
-
             initNodeDisplay (aNode);
         }
 
         isInitialized = false;
-
         return aNode;
     } // addNode
-
 
     /**
      * return a list of nodes ordered
@@ -208,7 +209,6 @@ public class InteractionNetwork extends Graph {
     public ArrayList getOrderedNodes () {
         return this.nodeList;
     }
-
 
     /**
      * Allow to put the default color and default visibility for each
@@ -226,7 +226,6 @@ public class InteractionNetwork extends Graph {
             initNodeDisplay (aNode);
         }
     } // initNodes
-
 
     /**
      * initialisation of one Node about its color, its visible attribute
@@ -265,7 +264,6 @@ public class InteractionNetwork extends Graph {
         ((Node) aNode).put (Constants.ATTRIBUTE_VISIBLE, new Boolean (true));
     }
 
-
     /**
      * Return the number of node
      *
@@ -274,7 +272,6 @@ public class InteractionNetwork extends Graph {
     public int sizeNodes () {
         return super.getNodes().size();
     }
-
 
     /**
      * Return the number of edge
@@ -285,7 +282,6 @@ public class InteractionNetwork extends Graph {
         return super.getEdges().size();
     }
 
-
     /**
      * Return the object ImageDimension which correspond to the graph
      *
@@ -294,7 +290,6 @@ public class InteractionNetwork extends Graph {
     public ImageDimension getImageDimension () {
         return this.dimension;
     }
-
 
     /**
      * Create a String giving informations for the Tulip treatment
@@ -341,7 +336,6 @@ public class InteractionNetwork extends Graph {
         return out.toString();
     } // exportTlp
 
-
     /**
      * Create a String giving informations for the bioLayout EMBL software
      * the informations are just pairwise of protein label.
@@ -370,7 +364,6 @@ public class InteractionNetwork extends Graph {
 
         return out.toString();
     } // exportBioLayout
-
 
     /**
      * Send a String to Tulip to calculate coordinates
@@ -427,7 +420,6 @@ public class InteractionNetwork extends Graph {
         return null;
     } //importDataToImage
 
-
     /**
      * Fusion a interaction network to the current one.<br>
      *
@@ -442,7 +434,7 @@ public class InteractionNetwork extends Graph {
      *
      * @param network the interaction network we want to fusioned to the current one.
      */
-    public void fusion (InteractionNetwork network) {
+    public void fusion( InteractionNetwork network ) {
 
         logger.info ("BEGIN fusion");
         Chrono chrono = new Chrono ();
@@ -501,18 +493,24 @@ public class InteractionNetwork extends Graph {
              * in the current network to keep consistancy.
              */
             Node node2 = (Node) nodes.get(node.getAc());
-            centralNodes.add(node2);
+            // TODO: does it needs to check the non redondancy ?!
+            centralNodes.add( node2 );
         }
 
-        // fusion search criteria
-        criteriaList.addAll (network.getCriteria());
+        // fusion search criteria using the addCriteria method to avois duplicates (addAll would not !)
+        Collection criterias = network.getCriteria();
+        for ( Iterator iterator2 = criterias.iterator (); iterator2.hasNext (); ) {
+            CriteriaBean criteriaBean = (CriteriaBean) iterator2.next ();
+            addCriteria( criteriaBean );
+        }
 
         // fusion interactor list
+        // TODO: does it needs to check the non redondancy ?!
         centralInteractors.addAll (network.getCentralInteractors());
 
         chrono.stop();
         String msg = "Network Fusion took " + chrono;
-        logger.info(msg);
+        logger.info( msg );
 
         logger.info ("END fusion");
     }
