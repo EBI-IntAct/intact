@@ -69,7 +69,7 @@ public class SearchAction extends IntactBaseAction {
         super.clearErrors();
 
         // The search link for links (used by style sheet).
-        String link = (String) getServlet().getServletContext().getAttribute("searchLink");
+        String link = getServlet().getServletContext().getInitParameter("searchLink");
 
         DynaActionForm dyForm = (DynaActionForm) form;
         String searchValue = ((String) dyForm.get("searchString")).toUpperCase();
