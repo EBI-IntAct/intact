@@ -6,13 +6,11 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.commons.search;
 
 import org.apache.log4j.Logger;
-
+import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
-import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 
 import java.util.*;
 
@@ -41,6 +39,27 @@ public class  SearchHelper implements SearchHelperI {
 
     public Collection getSearchCritera () {
         return searchCriteria;
+    }
+
+    public Collection doLookupSimple(String searchClass, String query,
+                                     IntactUserI user) throws IntactException {
+        searchCriteria.clear();
+        String packageName = AnnotatedObject.class.getPackage().getName() + ".";
+
+        logger.info("className supplied in request - going straight to search...");
+        String className = packageName + searchClass;
+        logger.info("attempting search for " + className + " with query " + query);
+
+        Collection results = doSearchSimple(className, query, user);
+
+        if (results.isEmpty()) {
+            logger.info("no search results found for class: " + className +", query: " + query);
+        } else {
+            logger.info("found search match - class: " + className +", value: " + query);
+        }
+        logger.info( "Item count: " + results.size());
+
+        return results;
     }
 
     public Collection doLookup (String searchClass, String values, IntactUserI user) throws IntactException {
@@ -206,4 +225,37 @@ public class  SearchHelper implements SearchHelperI {
         searchCriteria.add( cb );
         return results;
     }  // doSearch
+
+    /**
+     * utility method to handle the logic for a simple lookup, ie trying AC and label only.
+     *
+     * @param className The class to search on.
+     * @param value the user-specified value
+     * @param user The object holding the IntactHelper for a given user/session
+     * (passed as a parameter to avoid using an instance variable, which may
+     *  cause thread problems).
+     *
+     * @return Collection the results of the search - an empty Collection if
+     * no results found
+     *
+     * @exception uk.ac.ebi.intact.business.IntactException thrown if there were
+     * any search problems
+     */
+    private Collection doSearchSimple( String className, String value,
+                                       IntactUserI user ) throws IntactException {
+        //try search on AC first...
+        Collection results = user.search( className, "ac", value );
+        String currentCriteria = "ac";
+
+        if (results.isEmpty()) {
+            // No matches found - try a search by label now...
+            logger.info("no match found for " + className + " with ac= " + value);
+            logger.info("now searching for class " + className + " with label " + value);
+            results = user.search( className, "shortLabel", value );
+            currentCriteria = "shortLabel";
+        }
+        CriteriaBean cb = new CriteriaBean( value, currentCriteria );
+        searchCriteria.add( cb );
+        return results;
+    }
 }
