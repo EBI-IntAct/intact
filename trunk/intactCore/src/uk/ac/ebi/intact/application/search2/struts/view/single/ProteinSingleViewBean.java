@@ -10,6 +10,8 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 /**
  * View bean responsible for the display of a single protein.
  *
+ * @see uk.ac.ebi.intact.model.Protein
+ *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */

@@ -44,6 +44,13 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      */
     private String searchCriteria;
 
+    private String myHelpLink;
+
+    private String searchValue;
+
+    private String searchClass;
+
+
     /**
      * Constructs an instance of this class with given mapping file and
      * the name of the data source class. Side-effects of this constructor
@@ -131,5 +138,29 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
         //now retrieve an object...
         return helper.search(objectType, searchParam, searchValue);
+    }
+
+    public String getSearchClass () {
+        return searchClass;
+    }
+
+    public void setSearchClass ( String searchClass ) {
+        this.searchClass = searchClass;
+    }
+
+    public String getSearchValue () {
+        return searchValue;
+    }
+
+    public void setSearchValue ( String searchValue ) {
+        this.searchValue = searchValue;
+    }
+
+    public void setHelpLink(String link) {
+        myHelpLink = link;
+    }
+
+    public String getHelpLink() {
+        return myHelpLink;
     }
 }

@@ -3,19 +3,8 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-/**
- * This class is ...
- * TODO it
- * <p>
- * This is a singleton class.
- * </p>
- *
- * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
- */
 package uk.ac.ebi.intact.application.search2.struts.view.html;
 
-import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import java.io.Writer;
@@ -25,7 +14,31 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-
+/**
+ * <p>
+ * This class gives the access to the HtmlBuilder methods by calling the appropriate one
+ * according to the objects (one or a collection) given.
+ * </p>
+ *
+ * <p>
+ * If you give:
+ *    <blockquote>
+ *    - a single object (e.g. Experiment),
+ *      the method HtmlBuilder (Experiment) will be called
+ *    </blockquote>
+ *    <blockquote>
+ *    - a collection of object (e.g. Interaction)
+ *      the method HtmlBuilder (Interaction) will be called iteratively on each item
+ *      of the given collection.
+ *    </blockquote>
+ * </p>
+ *
+ * <p>
+ * This is a singleton class.
+ * </p>
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ */
 public class HtmlBuilderManager {
 
     private static HtmlBuilderManager ourInstance;
@@ -50,37 +63,52 @@ public class HtmlBuilderManager {
     }
 
 
-    public void getHtml(Writer writer, AnnotatedObject object, Set highlights, String link)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        HtmlBuilder builder = new HtmlBuilder(writer, highlights, link);
-        this.buildHtml(builder, object, highlights);
-    }
-
-
-    public void getHtml(Writer writer, Collection objects, Set highlights, String link)
+    /**
+     * Write the HTML code related the the collection of object given in the the writer.
+     * It highlights all string given in the highlights set and integrates <code>link</code>
+     * as an help link.
+     *
+     * @param writer where to write the produced HTML code
+     * @param objects the collection of object to convert in HTML
+     * @param highlights which String to highlight in the HTML content
+     * @param link where is the help page.
+     * @throws NoSuchMethodException if the method called by reflexion is not yet implemented
+     * @throws InvocationTargetException If an exception occured in the method called by reflexion.
+     * @throws IllegalAccessException
+     */
+    public void getHtml( Writer writer, Collection objects, Set highlights, String link)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         HtmlBuilder builder = new HtmlBuilder(writer, highlights, link);
         for (Iterator iterator = objects.iterator(); iterator.hasNext();) {
                 AnnotatedObject  obj = (AnnotatedObject) iterator.next();
-                this.buildHtml(builder, obj, highlights);
+                this.buildHtml( builder, obj );
         }
     }
 
-    public void getHtml(Writer writer,
-                        BinaryDetailsViewBean.BinaryData object,
-                        Set highlights,
-                        String link)
+
+    /**
+     * Write the HTML code related the the single object given in the the writer.
+     * It highlights all string given in the highlights set and integrates <code>link</code>
+     * as an help link.
+     *
+     * @param writer where to write the produced HTML code
+     * @param object the single object to convert in HTML
+     * @param highlights which String to highlight in the HTML content
+     * @param link where is the help page.
+     * @throws NoSuchMethodException if the method called by reflexion is not yet implemented
+     * @throws InvocationTargetException If an exception occured in the method called by reflexion.
+     * @throws IllegalAccessException
+     */
+    public void getHtml( Writer writer, Object object, Set highlights, String link )
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         HtmlBuilder builder = new HtmlBuilder(writer, highlights, link);
-        this.buildHtml(builder, object, highlights);
-
+        this.buildHtml(builder, object );
     }
 
 
-    public void buildHtml(HtmlBuilder builder, Object object, Set highlights)
+    private void buildHtml( HtmlBuilder builder, Object object )
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         // TODO use a proper logger
@@ -89,9 +117,9 @@ public class HtmlBuilderManager {
                                  object.getClass().getName() );
 
         try {
-            Class[] paras = new Class[]{object.getClass()};
-            Method m = HtmlBuilder.class.getMethod("htmlView", paras);
-            m.invoke(builder, new Object[]{object});
+            Class[] paras = new Class[]{ object.getClass() };
+            Method m = HtmlBuilder.class.getMethod( "htmlView", paras );
+            m.invoke(builder, new Object[]{ object });
         } catch ( InvocationTargetException e ) {
             e.getTargetException().printStackTrace();
             throw e;

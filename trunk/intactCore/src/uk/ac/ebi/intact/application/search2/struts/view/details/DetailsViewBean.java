@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Abstract class allowing to handle the view for a collection of AnnotatedObject.
+ * Class allowing to handle the view for a collection of AnnotatedObject.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$

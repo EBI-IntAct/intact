@@ -5,16 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.search2.struts.view.single;
 
-import uk.ac.ebi.intact.application.search2.struts.view.AbstractViewBean;
-import uk.ac.ebi.intact.application.search2.struts.view.ViewBeanFactory;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-
 /**
- * View bean responsible for the display of a single protein.
+ * View bean responsible for the display of a single experiment.
+ *
+ * @see uk.ac.ebi.intact.model.Experiment
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -38,15 +34,5 @@ public class ExperimentSingleViewBean extends SingleViewBean {
      */
     public boolean showGraphButtons() {
         return true;
-    }
-
-    public void getHTML( Writer writer ) {
-
-        Collection collection = new ArrayList(1);
-        collection.add( getWrappedObject() );
-        AbstractViewBean bean = ViewBeanFactory.getInstance().getViewBean(
-                collection, getHelpLink() );
-        bean.initHighlightMap();
-        bean.getHTML( writer );
     }
 }
