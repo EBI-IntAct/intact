@@ -141,11 +141,10 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // Remove any locks held by the user.
-//        user.releaseLock();
-
+        // Set the topic as the selected topic.
         DynaActionForm theForm = (DynaActionForm) form;
         String topic = (String) theForm.get("topic");
+        user.setSelectedTopic(topic);
 
         // The class name associated with the topic.
         String classname = getService().getClassName(topic);
