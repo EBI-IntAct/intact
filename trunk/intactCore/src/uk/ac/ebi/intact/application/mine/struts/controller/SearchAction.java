@@ -39,6 +39,9 @@ import uk.ac.ebi.intact.model.Interactor;
  * @author Andreas Groscurth
  */
 public class SearchAction extends Action {
+    private static final String[] SEARCHES = { "Protein", "Interaction",
+            "Experiment" };
+
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(true);
@@ -173,9 +176,9 @@ public class SearchAction extends Action {
     private AmbiguousBean searchFor(String ac, SearchHelperI sh,
             IntactUserI user) throws IntactException {
         AmbiguousBean ab = new AmbiguousBean();
-        ab.setProteins(sh.doLookup("Protein", ac, user));
-        ab.setInteractions(sh.doLookup("Interaction", ac, user));
-        ab.setExperiments(sh.doLookup("Experiment", ac, user));
+        ab.setProteins(sh.doLookup(SEARCHES[0], ac, user));
+        ab.setInteractions(sh.doLookup(SEARCHES[1], ac, user));
+        ab.setExperiments(sh.doLookup(SEARCHES[2], ac, user));
         return ab;
     }
 }
