@@ -12,7 +12,7 @@ export ROOT=../../../..
 javac ${ROOT}/src/uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/*.java \
       -d ${ROOT}/classes
 
-export SERVICE_URL=http://arafel:8080/axis/services/tulip
+export SERVICE_URL=http://localhost:8080/axis/services/tulip
 echo ""
 echo "     Service will be available there : ${SERVICE_URL}"
 echo ""
@@ -26,7 +26,8 @@ java -cp ${ROOT}/classes:${CLASSPATH} org.apache.axis.wsdl.Java2WSDL \
      urn:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService \
      uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.TulipAccess
 
-export SESSION_TYPE=Session
+#export SESSION_TYPE=Session
+export SESSION_TYPE=Application
 echo ""
 echo "     Session scope = ${SESSION_TYPE}"
 echo ""
