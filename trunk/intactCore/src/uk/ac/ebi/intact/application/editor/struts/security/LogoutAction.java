@@ -53,24 +53,8 @@ public class LogoutAction extends AbstractEditorAction {
         // Retrieve the user object from the session.
         EditUserI user = super.getIntactUser(session);
 
-        // Remove the user from the session.
-        session.removeAttribute(EditorConstants.INTACT_USER);
-
-        if (user != null) {
-            LOGGER.info("User " + user.getUserName() + " logged off at " +
-                    user.logoffTime());
-            // Close the connection to the persistent storage.
-            try {
-                user.logoff();
-            }
-            catch (IntactException ie) {
-                // Problems with logging off. Just log the errors as there
-                // is little point in informing the user.
-                LOGGER.info(ie);
-            }
-        }
-        // Remove any locks held by the user.
-//        user.releaseLock();
+        LOGGER.info("User " + user.getUserName() + " logged off at " +
+                user.logoffTime());
 
         // Session is no longer valid.
         session.invalidate();
