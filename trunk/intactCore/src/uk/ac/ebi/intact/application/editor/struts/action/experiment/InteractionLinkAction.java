@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.PageValueBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.Interaction;
@@ -53,8 +52,7 @@ public class InteractionLinkAction extends SubmitDispatchAction {
         String expAc = user.getView().getAc();
 
         // The AC of the interaction we are about to edit.
-        PageValueBean pvb = new PageValueBean((String) dynaform.get("intCmd"));
-        String intAc = pvb.getAc();
+        String intAc = (String) dynaform.get("intac");
 
         // The interaction we are about to edit.
         Interaction inter = (Interaction) user.getObjectByAc(

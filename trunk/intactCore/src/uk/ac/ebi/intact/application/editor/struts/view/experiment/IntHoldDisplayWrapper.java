@@ -6,7 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.util.PageValueBean;
+import org.apache.struts.util.MessageResources;
+import org.apache.struts.Globals;
 
 /**
  * This class is a decorator for the Interaction objects in the hold section.
@@ -17,11 +18,15 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.PageValueBean;
 public class IntHoldDisplayWrapper extends AbstractIntDisplayWrapper {
 
     public String getAction() {
-        PageValueBean pvbEdit = new PageValueBean("hold", "add", getAc());
-        PageValueBean pvbDel = new PageValueBean("hold", "hide", getAc());
-        return "<button type=\"submit\" name=\"intCmd\" "
-                + pvbEdit + "\">Add Interaction</button>"
-                + "<button type=\"submit\" name=\"intCmd\" "
-                + pvbDel + "\">Hide Interaction</button>";
+        // Resource to get labels.
+        MessageResources msgres = (MessageResources)
+                getPageContext().getServletContext().getAttribute(Globals.MESSAGES_KEY);
+
+        return "<input type=\"submit\" name=\"dispatch\" value=\""
+                + msgres.getMessage("exp.int.button.add") + "\""
+                + " onclick=\"setIntAc('" + getAc() + "');\">"
+                + "<input type=\"submit\" name=\"dispatch\" value=\""
+                + msgres.getMessage("exp.int.button.hide") + "\""
+                + " onclick=\"setIntAc('" + getAc() + "');\">";
     }
 }

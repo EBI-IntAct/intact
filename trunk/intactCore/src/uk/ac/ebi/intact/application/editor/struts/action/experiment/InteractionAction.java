@@ -10,10 +10,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.PageValueBean;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,11 +36,9 @@ public class InteractionAction extends AbstractEditorAction {
         // The dyna form.
         DynaActionForm dynaform = (DynaActionForm) form;
 
-        // PV bean to extract values from the cmd string.
-        PageValueBean pvb = new PageValueBean((String) dynaform.get("intCmd"));
-
         // Are we editing an Interaction?
-        if (pvb.isMinor("edit")) {
+        if (dynaform.get("dispatch").equals(
+                getResources(request).getMessage("exp.int.button.edit"))) {
             // Pass the control to another action to edit an interaction.
             return mapping.findForward("editInt");
         }
@@ -52,7 +49,7 @@ public class InteractionAction extends AbstractEditorAction {
 
         // The interaction to delete.
         Interaction inter = (Interaction) user.getObjectByAc(
-                Interaction.class, pvb.getAc());
+                Interaction.class, (String) dynaform.get("intac"));
 
         // We must have the interaction bean.
         assert inter != null;
