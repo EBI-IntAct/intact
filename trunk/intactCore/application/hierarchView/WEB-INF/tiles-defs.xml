@@ -85,7 +85,7 @@
     <!-- ============ Commons to all IntAct pplication ==================== -->
 
     <!-- The header layout. -->
-    <definition name="intact.header.layout" path="/layouts/headerLayout.jsp">
+    <definition name="intact.header.layout" path="/layouts/hvHeaderLayout.jsp">
         <put name="header.title" value="HierarchView"/>
     </definition>
 
