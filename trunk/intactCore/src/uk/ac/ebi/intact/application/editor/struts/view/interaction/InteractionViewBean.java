@@ -836,6 +836,98 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
     }
 
+    /**
+     * Returns a list of selected (checkboxes) Feature beans.
+     * @return a list of selected features beans. The list is empty if no items
+     * were selected.
+     */
+    public List getFeaturesToDelete() {
+        // The array to collect features to delete.
+        List fbs = new ArrayList();
+
+        // Loop through components collecting checked features.
+        for (Iterator iter0 = myComponents.iterator(); iter0.hasNext();) {
+            ComponentBean compBean = (ComponentBean) iter0.next();
+            for (Iterator iter1 = compBean.getFeatures().iterator();
+                 iter1.hasNext();) {
+                FeatureBean featureBean = (FeatureBean) iter1.next();
+                if (featureBean.isChecked()) {
+                    fbs.add(featureBean);
+                }
+            }
+        }
+        return fbs;
+    }
+
+    /**
+     * Returns an array that contains two selected (checkboxes) Feature beans.
+     * This method assumes that the form has been validated.
+     * @return an array containing two selected features beans. The array contains
+     * null items if none were selected.
+     */
+    public FeatureBean[] getFeaturesForLink() {
+        // The two feature beans to return.
+        FeatureBean[] fbs = new FeatureBean[2];
+
+        // For array indexing.
+        int idx = 0;
+
+        // Loop through components until we found two items.
+        for (Iterator iter0 = myComponents.iterator(); iter0.hasNext()
+                && fbs[1] == null;) {
+            ComponentBean compBean = (ComponentBean) iter0.next();
+            for (Iterator iter1 = compBean.getFeatures().iterator(); iter1
+                    .hasNext()
+                    && fbs[1] == null;) {
+                FeatureBean featureBean = (FeatureBean) iter1.next();
+                if (featureBean.isChecked()) {
+                    fbs[idx] = featureBean;
+                    ++idx;
+                }
+            }
+        }
+        return fbs;
+    }
+
+    /**
+     * Returns the selected feature for selecting a checkbox. This method
+     * @return the selected feature or null if none was selected.
+     */
+    public FeatureBean getFeatureForUnlink() {
+        // Loop till we found the selected feature.
+        for (Iterator iter0 = myComponents.iterator(); iter0.hasNext();) {
+            ComponentBean compBean = (ComponentBean) iter0.next();
+            for (Iterator iter1 = compBean.getFeatures().iterator();
+                 iter1.hasNext();) {
+                FeatureBean fb = (FeatureBean) iter1.next();
+                if (fb.isChecked()) {
+                    return fb;
+                }
+            }
+        }
+        // None found so far, return null.
+        return null;
+    }
+
+    /**
+     * Returns the selected feature bean by way of selecting edit/delete feature
+     * buttons.
+     * @return the selected feature bean. <code>null</code> is returned
+     * if a Feature wasn't selected.
+     */
+    public FeatureBean getSelectedFeature() {
+        for (Iterator iter1 = myComponents.iterator(); iter1.hasNext();) {
+            ComponentBean cb = (ComponentBean) iter1.next();
+            for (Iterator iter2 = cb.getFeatures().iterator(); iter2.hasNext();) {
+                FeatureBean fb = (FeatureBean) iter2.next();
+                if (fb.isSelected()) {
+                    return fb;
+                }
+            }
+        }
+        return null;
+    }
+
     // Helper methods
 
     private void makeProteinBeans(Collection components) {
