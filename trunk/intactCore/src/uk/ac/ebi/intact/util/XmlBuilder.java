@@ -192,7 +192,9 @@ public class XmlBuilder implements Serializable {
     /**
      * This method allows for modification of a given Document. Specifically, the
      * Document tree has specific nodes changed as determined by the set
-     * of ACs provided as a parameter and also the operation mode.
+     * of ACs provided as a parameter and also the operation mode. Note that if a particular
+     * AC occurs more than once in the DOM tree then *all* DOM Elements found with that
+     * AC will be amodified with the same specified mode.
      *
      * @param dc The Document to be expanded
      * @param ids A list of the items (identified by AC) to be expanded
@@ -218,6 +220,9 @@ public class XmlBuilder implements Serializable {
 
         Iterator it = ids.iterator();
 
+        //This is actually inefficient - the tree is traversed for each AC in the List.
+        //A better solution (maybe later) would be to traverse the tree only once and check
+        //for any AC match at each node. Just needs a little reorganising of the code...
         try {
             while(it.hasNext()) {
 
@@ -283,6 +288,7 @@ public class XmlBuilder implements Serializable {
                 TreeWalker walker = ((DocumentTraversal)dc).createTreeWalker(dc, NodeFilter.SHOW_ALL,null,true);
                 Node n = null;
                 Node oldNode = null;
+                boolean hasMatchedBefore = false;
 
                 while((n = walker.nextNode()) != null) {
 
@@ -300,19 +306,24 @@ public class XmlBuilder implements Serializable {
                         System.out.println("New child: AC =: " + ((Element)newNode).getAttribute("ac"));
                         System.out.println("New child: Type =: " + ((Element)newNode).getTagName());
 
-                        parent.replaceChild(newNode, oldNode);
-                        System.out.println("Where I am in the tree: " + ((Element)walker.getCurrentNode()).getTagName());
-                        System.out.println("Where I am in the tree: " + ((Element)walker.getCurrentNode()).getAttribute("ac"));
-                        System.out.println("setting walker back to replaced node.....");
-                        walker.setCurrentNode(newNode);
+                        //have to use a copy to avoid the walker building references to only
+                        //one
+                        if(hasMatchedBefore) {
+                            Node copy = newNode.cloneNode(true);
+                            parent.replaceChild(copy, oldNode);
+                            System.out.println("setting walker back to replaced node.....");
+                            walker.setCurrentNode(copy);
+                        }
+                        else {
+                            parent.replaceChild(newNode, oldNode);
+                            System.out.println("setting walker back to replaced node.....");
+                            walker.setCurrentNode(newNode);
+                        }
+                        System.out.println("Where I am in the tree - Tag:" + ((Element)walker.getCurrentNode()).getTagName());
+                        System.out.println("AC: " + ((Element)walker.getCurrentNode()).getAttribute("ac"));
 
-                        //finish - design decision to end on first match
-                        //BUT this means that if later the second or later occurrence
-                        //of this AC in the tree is clicked, then only the
-                        //first (wrong) one (and not the one we picked!) will change!!
-                        //If we don't break though, only the last one gets changed
-                        //and all the others disappear!!
-                        break;
+                        //flag that we already have a match
+                        hasMatchedBefore = true;
                     }
                     //carry on - may be more than one element with this AC...
                 }
