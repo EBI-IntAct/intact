@@ -433,7 +433,6 @@ CREATE TABLE IA_Xref
 
 CREATE index i_Xref_parent_ac on IA_Xref(parent_ac) ;
 
-
     COMMENT ON TABLE IA_Xref IS
     'Represents a crossreference. Several objects may have crossREFERENCES IA_e.g. Interactor Experiment. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
     COMMENT ON COLUMN IA_Xref.primaryId IS
@@ -710,4 +709,49 @@ COMMENT ON COLUMN IA_Statistics.experiment_number IS
     'how many different experiments are stored in the database';
 COMMENT ON COLUMN IA_Statistics.term_number IS
     'how many different controlled vocabularies terms are stored in the database';
+
+
+
+ 
+ 
+/* Alias */
+ 
+CREATE TABLE IA_alias
+(       ac                     VARCHAR(30)    NOT NULL
+                                              CONSTRAINT pk_alias
+                                              PRIMARY KEY
+    ,  deprecated              DECIMAL(1)     DEFAULT  0       NOT NULL
+    ,  created                 DATE           DEFAULT  now()   NOT NULL
+    ,  updated                 DATE           DEFAULT  now()   NOT NULL
+    ,  timestamp               DATE           DEFAULT  now()   NOT NULL
+    ,  userstamp               VARCHAR(30)    DEFAULT  USER    NOT NULL
+    ,  aliastype_ac            VARCHAR(30)    CONSTRAINT fk_alias_qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR(30)    -- eh missing constraint here??
+    ,  owner_ac                VARCHAR(30)    CONSTRAINT fk_alias_owner REFERENCES IA_Institution(ac)
+    ,  name                    VARCHAR(30)
+)
+;
+ 
+CREATE index i_Alias_parent_ac on IA_Alias(parent_ac);
+ 
+    COMMENT ON TABLE IA_Alias IS
+    'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_Alias.aliastype_ac IS
+    'Type of the alias. ac found in the IA_ControlledVocab table.';
+    COMMENT ON COLUMN IA_Alias.name IS
+    'Name of the alias.';
+    COMMENT ON COLUMN IA_Alias.parent_ac IS
+    'Refers to the parent object this alias describes.';
+    COMMENT ON COLUMN IA_Alias.owner_ac IS
+    'Refers to the owner of this object.';
+    COMMENT ON COLUMN IA_Alias.ac IS
+    'Unique auto-generated accession number.';
+    COMMENT ON COLUMN IA_Alias.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_Alias.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_Alias.timestamp IS
+    'Date of the last update of the column.';
+    COMMENT ON COLUMN IA_Alias.userstamp IS
+    'Database user who has performed the last update of the column.';
 
