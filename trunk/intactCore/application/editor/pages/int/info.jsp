@@ -56,7 +56,7 @@
             <bean:write property="ac" name="intForm" filter="false"/>
         </td>
         <td class="tableCell">
-            <html:text property="shortLabel" size="20" maxlength="25"
+            <html:text property="shortLabel" size="20" maxlength="20"
                 name="intForm" styleClass="inputRequired"/>
         </td>
 
