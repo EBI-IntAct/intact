@@ -830,7 +830,7 @@ public class IntactHelperTest extends TestCase {
             componentSearch();
 
             checkSerialization();
-
+/*
             System.out.println("Do you wish to run the user validation test? [y/n]");
             System.out.println("Please note that this test will FAIL if you do not have " +
                         "DB users testuser1, testuser2, testuser3 defined (all with pwd = username),"
@@ -845,6 +845,7 @@ public class IntactHelperTest extends TestCase {
                 System.out.println("The dummy objects created for this test must be deleted manually (otherwise you could not check the userstamp!!)");
                 System.out.println();
             }
+*/
         }
         catch(Exception e) {
             System.out.println("IntactHelperTest: test(s) failed...see stack trace.");
