@@ -17,8 +17,5 @@ scripts/javaRun.sh InsertGo data/go_$3.dat
 echo "Inserting Complexes ..."
 scripts/javaRun.sh InsertComplex data/ho_gavin_$3.dat
 
-echo "Try querying for Experiment, ac, EBI-17 or EBI-18 now:"
-scripts/javaRun.sh IntactCoreApp
-
 #end
 
