@@ -7,8 +7,6 @@ package uk.ac.ebi.intact.application.commons.search;
 
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
-import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search3.exception.TooLargeDataException;
 import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
