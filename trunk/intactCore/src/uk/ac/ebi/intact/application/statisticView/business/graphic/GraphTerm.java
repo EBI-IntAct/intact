@@ -8,9 +8,8 @@ package uk.ac.ebi.intact.application.statisticView.business.graphic;
 import uk.ac.ebi.intact.application.statisticView.business.StatGraphConstants;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  *
@@ -20,7 +19,7 @@ import java.util.Collection;
  */
 public class GraphTerm extends GraphSkeleton {
 
-        //---------- CONSTANTS -------------------//
+    //---------- CONSTANTS -------------------//
 
     private final static int DEFAULT_COLOR_FILLCURVETERM_RED   = 67;
     private final static int DEFAULT_COLOR_FILLCURVETERM_GREEN = 219;
@@ -28,81 +27,32 @@ public class GraphTerm extends GraphSkeleton {
 
     private final static int COLUMN_TERM_NUMBER_STAT_TABLE = 6;
 
-        //---------- CONSTRUCTOR -------------------//
+    private Collection statistics = null;
+
+    //---------- CONSTRUCTOR -------------------//
 
     public GraphTerm() {
+        super ();
         titleString = StatGraphConstants.TITLE_GRAPH_TERM;
-        // statisticListFromDatabase = DataManagement.getProteinNumberList();
-    }
-
-        //---------- ABSTRACT METHODS IMPLEMENTATION -------------------//
-
-
-     protected void setTitle() {
-
-            g2d.setColor(DEFAULT_COLOR_TITLE);
-            String graphTitle = titleString;
-            g2d.drawString(graphTitle, DEFAULT_TITLE_X, DEFAULT_TITLE_Y);
-        }
-
-
-    protected Collection fullCollectionWithGoodField(int theTermField) {
-
-        ArrayList theTermList = new ArrayList();
-        theTermList = (ArrayList)getOneStatisticCollection(theTermField);
-
-        return theTermList;
-
     }
 
 
-    protected void getCollectionAndDesignYAxis(int sizeToSet) {
+    //---------- ABSTRACT METHODS IMPLEMENTATION -------------------//
 
-            // after, this method will be called in the drawCurve() method.
-            // A method to retrieve the greatest and the lowest numbers will be implemented
-        //this.getStatisticCollection();
-        statisticListFromDatabase = this.fullCollectionWithGoodField(COLUMN_TERM_NUMBER_STAT_TABLE);
-        this.getMinMaxAmountFromList();
 
-            // end y axis fitting
-        int plus = sizeToSet - (theGreatestYaxis % sizeToSet);
-        theGreatestYaxis = theGreatestYaxis + plus;
-
-            // start y axis fitting
-        int moins = theLowestYaxis % sizeToSet;
-        theLowestYaxis = theLowestYaxis - moins;
-
-        g2d.drawString(""+theGreatestYaxis, (int)origine.getX()-30, (int)ordinateEnd.getY());
-        g2d.drawString(""+theLowestYaxis, (int)origine.getX()-30, (int)origine.getY());
-
+    protected Collection getStatistics () {
+        ArrayList list =  new ArrayList (1);
+        statistics = getSelectedStatistics(COLUMN_TERM_NUMBER_STAT_TABLE);
+        list.add (statistics);
+        return list;
     }
 
+    protected void drawCurves() {
 
-    protected void drawEveryCurve() {
+        Color theTermColor = new Color (DEFAULT_COLOR_FILLCURVETERM_RED,
+                                        DEFAULT_COLOR_FILLCURVETERM_GREEN,
+                                        DEFAULT_COLOR_FILLCURVETERM_BLUE);
 
-        Color theTermColor = this.specifyColorFillCurve(DEFAULT_COLOR_FILLCURVETERM_RED,
-                                                            DEFAULT_COLOR_FILLCURVETERM_GREEN,
-                                                                DEFAULT_COLOR_FILLCURVETERM_BLUE);
-
-        this.drawCurve(statisticListFromDatabase, theGreatestYaxis, theLowestYaxis, theTermColor);
-
+        this.drawCurve(statistics, theGreatestYaxis, theLowestYaxis, theTermColor);
     }
-
-
-    /**
-     *
-     * Let each curve choosing its color.
-     *
-     * @param red
-     * @param green
-     * @param blue
-     * @return Color which fills all polygones components of the curve
-     */
-    protected Color specifyColorFillCurve(int red, int green, int blue) {
-
-        Color fillCurve    = new Color(red, green, blue);
-
-        return fillCurve;
-    }
-
 }

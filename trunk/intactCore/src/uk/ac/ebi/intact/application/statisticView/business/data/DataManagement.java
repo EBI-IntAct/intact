@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.business.data;
@@ -8,10 +8,13 @@ package uk.ac.ebi.intact.application.statisticView.business.data;
 import uk.ac.ebi.intact.util.StatisticsSet;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.application.statisticView.business.Constants;
 
 import java.util.Collection;
 import java.util.ArrayList;
 import java.sql.Timestamp;
+
+import org.apache.log4j.Logger;
 
 /**
  * This class provides an access to the IA_Statistic table of the IntAct database.
@@ -23,27 +26,37 @@ import java.sql.Timestamp;
  */
 public class DataManagement {
 
+    static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
+
     /**
      * Helper to manage the request in the database
      */
     private IntactHelper helper;
+
+    private StatisticsSet statisticsSet = null;
 
     //---------- CONSTRUCTOR -------------------//
 
     /**
      * Constructor which create an instance of the IntactHelper object
      */
-    public DataManagement() {
+    public DataManagement() throws IntactException {
         try {
-            this.helper = new IntactHelper();
+            helper = new IntactHelper();
+            statisticsSet = new StatisticsSet();
         }
-        catch(IntactException ie) {
-            System.out.println(ie);
+        catch (IntactException ie) {
+            logger.error("Could not connect to the intact database, cause:" + ie.getRootCause(), ie);
+            throw ie;
         }
     }
 
+    public void closeDataStore () throws IntactException{
+        helper.closeStore();
+    }
 
-    //---------- PROTECTED METHODS -------------------//
+
+    //---------- PUBLIC METHODS -------------------//
 
 
     /**
@@ -55,15 +68,13 @@ public class DataManagement {
      *
      * @return String The date of the last data stored in the Statistics table
      */
-    public String getLastTimestamp() {
+    public String getLastTimestamp() throws IntactException {
 
-            Timestamp timestamp = StatisticsSet.getLastTimestamp(helper);
-            String time = timestamp.toString();
-            String[] tabString = time.split("\\s");
-            String theDate = tabString[0];
-            return theDate;
-
-
+        Timestamp timestamp = statisticsSet.getLastTimestamp (helper);
+        String time = timestamp.toString();
+        String[] tabString = time.split("\\s");
+        String theDate = tabString[0];
+        return theDate;
     }
 
 
@@ -78,12 +89,13 @@ public class DataManagement {
      *
      * @return Collection The 6 items of the last row are stored in this collection
      */
-    public Collection getLastStatistics () {
+    public Collection getLastStatistics () throws IntactException {
 
-            ArrayList statData = (ArrayList) StatisticsSet.getLastRow(helper);
-                // to delete the first item which is the timestamp!
-            statData.remove(0);
-            return (Collection)statData;
+        ArrayList statData = (ArrayList) statisticsSet.getLastRow(helper);
+
+        // to delete the first item which is the timestamp!
+        statData.remove(0);
+        return statData;
     }
 
 
@@ -98,12 +110,7 @@ public class DataManagement {
      * @param fieldRequired Number which specifies from which column the data list will be retrieved.
      * @return Collection The 6 items of the last row are stored in this collection
      */
-    public Collection getAllDataFromOneFieldStatistics(int fieldRequired) {
-
-            Collection coll = StatisticsSet.getListOfOneField(helper, fieldRequired);
-
-            return coll;
-
+    public Collection getAllDataFromOneFieldStatistics (int fieldRequired) throws IntactException {
+        return statisticsSet.getListOfOneField (helper, fieldRequired);
     }
-
 }

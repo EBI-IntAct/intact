@@ -1,12 +1,14 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.business.graphic;
 
 
 import uk.ac.ebi.intact.application.statisticView.business.data.DataManagement;
+import uk.ac.ebi.intact.application.statisticView.business.Constants;
+import uk.ac.ebi.intact.business.IntactException;
 
 import java.awt.image.BufferedImage;
 import java.awt.*;
@@ -16,6 +18,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 /**
  * 
  *
@@ -23,6 +27,8 @@ import java.util.ArrayList;
  * @version : $Id$
  */
 public abstract class GraphSkeleton {
+
+    static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     /********** CONSTANTS ************/
 
@@ -59,11 +65,11 @@ public abstract class GraphSkeleton {
     protected static final int DEFAULT_TITLE_X = 200;
     protected static final int DEFAULT_TITLE_Y = 20;
 
+    boolean notDone = true;
+    int spaceTimeCaption = 0;
 
 
-
-
-        //---------- INSTANCE VARIABLES -------------//
+    //---------- INSTANCE VARIABLES -------------//
 
     /**
      * define the size of images created from an instance of a graphic class.
@@ -82,7 +88,7 @@ public abstract class GraphSkeleton {
 
     protected String titleString = "";
 
-    //protected Collection statisticListFromDatabase = null;
+    //protected Collection of statistics, one by curve to draw;
     protected Collection statisticListFromDatabase = null;
 
     protected int theGreatestYaxis = 0;
@@ -90,57 +96,50 @@ public abstract class GraphSkeleton {
 
 
 
-        //---------- ABSTRACT METHODS -------------------//
+    //---------- ABSTRACT METHODS -------------------//
 
-    // TOUTES CES METHODES DANS UNE AUTRE CLASSE, CELLE QUI RECUPERE LES DONNEES DANS INTACT
+    abstract protected Collection getStatistics ();
 
-
-    /**
-     * This method defines the color of the title and its place.
-     * The title string must be define calling the abstract method <code>this.specifyTitleGraph()</code>.
-     *
-     */
-    abstract protected void setTitle();
-
-    /**
-     * To set the color of the graph ant to make it different according to the Graphic
-     * @return Color for this graphic
-     */
-    abstract protected Color specifyColorFillCurve(int red, int green, int blue);
-
-    abstract protected void getCollectionAndDesignYAxis(int sizeToSet);
-
-    /**
-     * this method fills the <code>statisticListFromDatabase</code> attributes with the statistics data
-     * stored in the database.
-     *
-     */
-    abstract protected Collection fullCollectionWithGoodField(int theField);
-
-    abstract protected void drawEveryCurve();
+    abstract protected void drawCurves();
 
 
-        //---------- PROTECTED METHODS -------------------//
+    //---------- PROTECTED METHODS -------------------//
 
-    /**
-     * Each diagrams will be in the same page.
-     * They will have the same background color and the same size.
-     */
-    protected void getDrawingContext () {
+    public GraphSkeleton () {
+        // Create graphs axis
+        origine = new Point2D.Double();
+        abscisseEnd = new Point2D.Double();
+        ordinateEnd = new Point2D.Double();
 
-        // Get drawing context
-        Graphics g = image.getGraphics();
-        g2d = (Graphics2D) g ;
-
-        // Produce a better quality of image
-        g2d.setRenderingHint (RenderingHints.KEY_ANTIALIASING,
-                              RenderingHints.VALUE_ANTIALIAS_ON);
-
-        g2d.setRenderingHint (RenderingHints.KEY_ANTIALIASING,
-                              RenderingHints.VALUE_ANTIALIAS_ON);
-
+        // values to change if you need to translate the graph
+        // don't touch anything else!
+        origine.setLocation (DEFAULT_ORIGINE_X, DEFAULT_ORIGINE_Y);
+        ordinateEnd.setLocation (DEFAULT_YEND_X, DEFAULT_YEND_Y);
+        abscisseEnd.setLocation (DEFAULT_XEND_X, DEFAULT_XEND_Y);
     }
 
+    protected void setTitle() {
+
+        g2d.setColor(DEFAULT_COLOR_TITLE);
+        String graphTitle = titleString;
+        g2d.drawString(graphTitle, DEFAULT_TITLE_X, DEFAULT_TITLE_Y);
+    }
+
+    protected void designYAxis(int sizeToSet) {
+
+        this.getMinMaxAmountFromList();
+
+        // end y axis fitting
+        int plus = sizeToSet - (theGreatestYaxis % sizeToSet);
+        theGreatestYaxis = theGreatestYaxis + plus;
+
+        // start y axis fitting
+        int moins = theLowestYaxis % sizeToSet;
+        theLowestYaxis = theLowestYaxis - moins;
+
+        g2d.drawString ("" + theGreatestYaxis, (int) origine.getX()-30, (int) ordinateEnd.getY());
+        g2d.drawString ("" + theLowestYaxis, (int) origine.getX()-30, (int) origine.getY());
+    }
 
     /**
      * This method defines the color of the background and the part to be colored.
@@ -160,41 +159,38 @@ public abstract class GraphSkeleton {
     }
 
 
-
-
-
     /**
      * Draw the both axis of a graphic: X axis and Y axis, without the caption.
      * The caption is going to move according to the max and min numbers retrieved in IntAct.
      */
     protected void drawAxis() {
-
-        // Create graphs axis
-        origine = new Point2D.Double();
-        abscisseEnd = new Point2D.Double();
-        ordinateEnd = new Point2D.Double();
-
-        // values to change if you need to translate the graph
-        // don't touch anything else!
-        origine.setLocation(DEFAULT_ORIGINE_X, DEFAULT_ORIGINE_Y);
-        ordinateEnd.setLocation(DEFAULT_YEND_X, DEFAULT_YEND_Y);
-        abscisseEnd.setLocation (DEFAULT_XEND_X, DEFAULT_XEND_Y);
-
         // draw Line2D.Double
-        g2d.setColor(DEFAULT_COLOR_AXIS);
-        g2d.draw(new Line2D.Double(origine, abscisseEnd));
-        g2d.draw(new Line2D.Double(origine, ordinateEnd));
+        g2d.setColor (DEFAULT_COLOR_AXIS);
+        g2d.draw (new Line2D.Double (origine, abscisseEnd));
+        g2d.draw (new Line2D.Double (origine, ordinateEnd));
 
-        // write the caption at the axis extremities.
-        g2d.drawString("Time", (int)abscisseEnd.getX()-5, (int)abscisseEnd.getY()+15);
+        // write the label at the axis extremities.
+        g2d.drawString("Time",     (int)abscisseEnd.getX()-5,  (int)abscisseEnd.getY()+15);
         g2d.drawString("Quantity", (int)ordinateEnd.getX()-10, (int)ordinateEnd.getY()-15);
-
     }
 
-    protected Collection getOneStatisticCollection(int fieldOfOneColumn) {
 
-        DataManagement dat = new DataManagement();
-        Collection oneStatTableField = dat.getAllDataFromOneFieldStatistics(fieldOfOneColumn);
+    protected Collection getSelectedStatistics (int fieldOfOneColumn) {
+
+        DataManagement dat = null;
+        Collection oneStatTableField = null;
+
+        try {
+            dat = new DataManagement();
+            oneStatTableField = dat.getAllDataFromOneFieldStatistics(fieldOfOneColumn);
+
+            logger.info("Column " + fieldOfOneColumn + "  SIZE:" + oneStatTableField.size()) ;
+            dat.closeDataStore();
+
+        } catch (IntactException e) {
+            logger.error ("When trying to get the data, cause: " + e.getRootCause(), e);
+        }
+
         return oneStatTableField;
     }
 
@@ -207,38 +203,23 @@ public abstract class GraphSkeleton {
      *                                      the other is the maximum number retrieved in the list
      *
      */
-    protected void getMinMaxAmountFromList() {
+    protected void getMinMaxAmountFromList () {
 
-        this.theGreatestYaxis = 0;
+        theGreatestYaxis = Integer.MIN_VALUE;
+        theLowestYaxis   = Integer.MAX_VALUE;
 
-            // to get the maximum.
-        for (Iterator iterator1 = this.statisticListFromDatabase.iterator(); iterator1.hasNext();) {
-            Integer theQuantityNum = (Integer)iterator1.next();
-            int quantNum = theQuantityNum.intValue();
-            if (quantNum > this.theGreatestYaxis) {
-                this.theGreatestYaxis = quantNum;
+        for (Iterator iterator = statisticListFromDatabase.iterator(); iterator.hasNext();) {
+            Collection curve = (Collection) iterator.next();
+
+            // to get the maximum and minimum.
+            for (Iterator iterator1 = curve.iterator(); iterator1.hasNext();) {
+                int stat = ((Integer)iterator1.next()).intValue();
+
+                theGreatestYaxis = Math.max (theGreatestYaxis, stat);
+                theLowestYaxis   = Math.min (theLowestYaxis, stat);
             }
-            else
-                continue;
         }
-
-        this.theLowestYaxis = 100;
-
-            // to get the minimum.
-        for (Iterator iterator2 = this.statisticListFromDatabase.iterator(); iterator2.hasNext();) {
-            Integer theSameQuantityNum = (Integer)iterator2.next();
-            int valueNum = theSameQuantityNum.intValue();
-            if (valueNum < this.theLowestYaxis) {
-                this.theLowestYaxis = valueNum;
-            }
-            else
-                continue;
-        }
-
-    }
-
-
-
+   }
 
 
     /**
@@ -249,101 +230,100 @@ public abstract class GraphSkeleton {
      */
     protected void drawCurve (Collection theStatList, int theGreatest, int theLowest, Color theColor) {
 
-        // to resize the x axis caption
-        int statisticListSize = theStatList.size();
-        int xAxisLength = (int)abscisseEnd.getX() - (int)origine.getX();
-        int spaceTimeCaption = 0;
-        if (statisticListSize > 1)
-            spaceTimeCaption = xAxisLength/(statisticListSize-1);
+        if (notDone) {
+            // to resize the x axis caption
+            int statisticListSize = theStatList.size();
+            int xAxisLength = (int)abscisseEnd.getX() - (int)origine.getX();
+            if (statisticListSize > 1)
+                spaceTimeCaption = xAxisLength/(statisticListSize-1);
+
+            notDone = false;
+        }
+
 
         float convertedY = 0;
 
         if (theGreatest - theLowest > 0) {
 
-                //the first point need to be retrieved separately.
+            //the first point need to be retrieved separately.
             Point2D.Double prot1;
             prot1 = new Point2D.Double();
-            for (Iterator iterator = theStatList.iterator(); iterator.hasNext();) {
 
+            Iterator iterator = theStatList.iterator();
+            if (iterator.hasNext()) {
                 Integer theFirstItem = (Integer)iterator.next();
                 int first = theFirstItem.intValue();
 
                 convertedY = ( ((float)(theGreatest - first)/(float)(theGreatest - theLowest))
-                                 * ((int)origine.getY()-(int)ordinateEnd.getY())) + (int)ordinateEnd.getY();
+                              * ((int)origine.getY()-(int)ordinateEnd.getY())) + (int)ordinateEnd.getY();
 
                 prot1.setLocation((int)origine.getX(), convertedY);
-
-                break;
             }
 
-                // spaces between two points.
+            // spaces between two points.
             int nextSpaceTimeCaption = spaceTimeCaption;
 
             ArrayList other = new ArrayList();
-            for (Iterator iterator = theStatList.iterator(); iterator.hasNext();) {
+            for (iterator = theStatList.iterator(); iterator.hasNext();) {
 
-                    // the spot value to put into the graph..
+                // the spot value to put into the graph..
                 Integer theProtNum = (Integer)iterator.next();
                 int protNum = theProtNum.intValue();
 
-                    // the first point has already been retrieved, just take the next one.
+                // the first point has already been retrieved, just take the next one.
                 other.add(theProtNum);
                 if (other.size() == 1) {
                     theProtNum = (Integer)iterator.next();
                     protNum = theProtNum.intValue();
                 }
 
-                    // y axis conversion.
-                convertedY = (
-                                    ((float)(theGreatest-protNum)/(float)(theGreatest-theLowest))
-                                                * ((int)origine.getY()-(int)ordinateEnd.getY())
-                              ) +
-                                    (int)ordinateEnd.getY();
+                // y axis conversion.
+                convertedY = (((float)(theGreatest-protNum)/(float)(theGreatest-theLowest))
+                              * ((int)origine.getY()-(int)ordinateEnd.getY())
+                             ) + (int)ordinateEnd.getY();
 
 
                 Point2D.Double prot2;
                 prot2 = new Point2D.Double();
                 prot2.setLocation((int)origine.getX()+nextSpaceTimeCaption, convertedY);
 
-                    // drawing a polygone between the two closest points.
+                // drawing a polygone between the two closest points.
                 Polygon poly1 = new Polygon();
                 poly1.addPoint((int)prot1.getX(), (int)origine.getY());
                 poly1.addPoint((int)prot1.getX(), (int)prot1.getY());
                 poly1.addPoint((int)prot2.getX(), (int)prot2.getY());
                 poly1.addPoint((int)prot2.getX(), (int)origine.getY());
 
-                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+                g2d.setComposite (AlphaComposite.getInstance (AlphaComposite.SRC_OVER, 0.7f));
                 g2d.setColor(theColor);
                 g2d.drawPolygon(poly1);
                 g2d.fillPolygon(poly1);
 
                 prot1.setLocation(prot2);
 
-                    // X axis caption
+                // X axis caption
                 g2d.setColor(Color.black);
-                g2d.drawLine((int)origine.getX()+nextSpaceTimeCaption, (int)abscisseEnd.getY()-2,
-                                    (int)origine.getX()+nextSpaceTimeCaption, (int)abscisseEnd.getY()+3);
+                g2d.drawLine ((int)origine.getX()+nextSpaceTimeCaption, (int)abscisseEnd.getY()-2,
+                              (int)origine.getX()+nextSpaceTimeCaption, (int)abscisseEnd.getY()+3);
 
                 if ( (convertedY != theGreatest) && (convertedY != theLowest) ) {
-                    g2d.drawString(""+protNum, (int)prot2.getX(), (int)prot2.getY());
+                    String s = ""+protNum;
+                    int width = g2d.getFontMetrics().stringWidth (s) / 2;
+                    g2d.drawString(s, (int)prot2.getX() - width, (int)prot2.getY());
                 }
 
                 nextSpaceTimeCaption = nextSpaceTimeCaption + spaceTimeCaption;
             }
             other.clear();
-
         }
-
-        // Dispose context
-        g2d.dispose();
     }
 
 
-        //---------- PUBLIC METHODS -------------------//
+    //---------- PUBLIC METHODS -------------------//
 
     /*
-     * It defines the size of the image in the web page.
-     */
+    * It defines the size of the image in the web page.
+    */
     public void setSizeImage(int width, int height) {
         this.widthImage = width;
         this.heightImage = height;
@@ -353,21 +333,36 @@ public abstract class GraphSkeleton {
         if (DEFAULT_ORIGINE_Y > heightImage) {
             this.heightImage = DEFAULT_ORIGINE_Y + 50;
         }
-        image = new BufferedImage(widthImage, heightImage, BufferedImage.TYPE_INT_RGB);
+        image = new BufferedImage (widthImage, heightImage, BufferedImage.TYPE_INT_RGB);
     }
 
     /*
-     * This method is public. It generates the skeleton of the graph, calling the previous protected
-     * method. This method must be called by the servlet.
-     */
+    * This method is public. It generates the skeleton of the graph, calling the previous protected
+    * method. This method must be called by the servlet.
+    */
     public void drawSkeleton () {
 
-        this.getDrawingContext();
-        this.backgroundFeatures(DEFAULT_COLOR_BACKGROUND, DEFAULT_BACKGROUND_COLOR_X, DEFAULT_BACKGROUND_COLOR_Y);
+        statisticListFromDatabase = this.getStatistics ();
+
+        // Get drawing context
+        Graphics g = image.getGraphics();
+        g2d = (Graphics2D) g ;
+
+        // Produce a better quality of image
+        g2d.setRenderingHint (RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint (RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        this.backgroundFeatures (DEFAULT_COLOR_BACKGROUND, DEFAULT_BACKGROUND_COLOR_X, DEFAULT_BACKGROUND_COLOR_Y);
+        this.designYAxis (10);
+
+        this.drawCurves();
+
+        // draw the last to overlap the curves
         this.setTitle();
         this.drawAxis();
-        this.getCollectionAndDesignYAxis(10);
-        this.drawEveryCurve();
+
+        // Dispose context
+        g2d.dispose();
     }
 
 
