@@ -96,7 +96,6 @@
         <pathelement path="${httpunit.install.dir}/jars/xmlParserAPIs.jar"/>
 
 
-
         <fileset dir="${root.lib.dir}">
             <include name="junit.jar"/>
         </fileset>
@@ -433,6 +432,13 @@
 
     <!-- =================================================================== -->
 
+    <
+    <
+    <
+    <
+    <
+    <
+    < build.xml
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
     <target name="junit-test" depends="compile"
@@ -445,66 +451,102 @@
     </target>
 
     <!-- =================================================================== -->
+=======
+>>>>>>> 1.9
 
-    <!-- Starts the Tomcat server. -->
+    <
+    <
+    <
+    <
+    <
+    <
+    < build.xml
 
-    <target name="start-tomcat">
-        <ant dir=".." inheritAll="false" target="start-tomcat"/>
-    </target>
+    <!-- Runs the HttpJUnit tester directly. The output is redirected to std out -->
+    <target name="httpunit-test" depends="compile"
+=======
+<!-- Runs the JUnit tester directly. The output is redirected to std out -->
+<target name="junit-test" depends="compile"
+    >>>>>>> 1.9
+        description="Runs JUnit directly with output directed to stdout">
+    <java classname="junit.textui.TestRunner">
+        <arg value=
+        <
+        <
+        <
+        <
+        <
+        <
+        < build.xml
+            " uk.ac.ebi.intact.application.search3.test.HttpUnitTests"/>
+=======
+                "uk.ac.ebi.intact.application.search3.test.AllJUnitTests"/>
+>>>>>>> 1.9
+        <classpath refid="project.class.path"/>
+    </java>
+</target>
 
-    <!-- =================================================================== -->
+<!-- =================================================================== -->
 
-    <!-- Stops the Tomcat server. -->
+<!-- Starts the Tomcat server. -->
 
-    <target name="stop-tomcat">
-        <ant dir=".." inheritAll="false" target="stop-tomcat"/>
-    </target>
+<target name="start-tomcat">
+    <ant dir=".." inheritAll="false" target="start-tomcat"/>
+</target>
 
-    <!-- =================================================================== -->
+<!-- =================================================================== -->
 
-    <!-- Restarts the Tomcat server. -->
+<!-- Stops the Tomcat server. -->
 
-    <target name="restart-tomcat">
-        <ant dir=".." inheritAll="false" target="restart-tomcat"/>
-    </target>
+<target name="stop-tomcat">
+    <ant dir=".." inheritAll="false" target="stop-tomcat"/>
+</target>
 
-    <!-- =================================================================== -->
+<!-- =================================================================== -->
 
-    <!-- Displays the status of Tomcat server. -->
+<!-- Restarts the Tomcat server. -->
 
-    <target name="status-tomcat">
-        <ant dir=".." inheritAll="false" target="status-tomcat"/>
-    </target>
+<target name="restart-tomcat">
+    <ant dir=".." inheritAll="false" target="restart-tomcat"/>
+</target>
 
-    <!-- =================================================================== -->
+<!-- =================================================================== -->
 
-    <!-- Generates the last modified date file. -->
+<!-- Displays the status of Tomcat server. -->
 
-    <target name="gen-last-modified-file">
-        <ant dir=".." inheritAll="false" target="gen-last-modified-file">
-            <property name="file" value="search3/${last.modified.file}"/>
-        </ant>
-    </target>
+<target name="status-tomcat">
+    <ant dir=".." inheritAll="false" target="status-tomcat"/>
+</target>
 
-    <!-- =================================================================== -->
+<!-- =================================================================== -->
 
-    <!-- Create the context file. -->
+<!-- Generates the last modified date file. -->
 
-    <target name="gen-context-file">
-        <echo message="Creating the context file..."/>
+<target name="gen-last-modified-file">
+    <ant dir=".." inheritAll="false" target="gen-last-modified-file">
+        <property name="file" value="search3/${last.modified.file}"/>
+    </ant>
+</target>
 
-        <!-- Copy the template file -->
-        <copy todir="${dist.dir}"
-            file="${intact.context.dir}/${search-context-file}"
-            overwrite="true"/>
+<!-- =================================================================== -->
 
-        <!-- Customize the context file -->
-        <replace file="${dist.dir}/${search-context-file}"
-            token="[WAR.FILE.NAME]"
-            value="${war.file}"/>
-        <replace file="${dist.dir}/${search-context-file}"
-            token="[server.name]"
-            value="${server.name}"/>
-    </target>
+<!-- Create the context file. -->
+
+<target name="gen-context-file">
+    <echo message="Creating the context file..."/>
+
+    <!-- Copy the template file -->
+    <copy todir="${dist.dir}"
+        file="${intact.context.dir}/${search-context-file}"
+        overwrite="true"/>
+
+    <!-- Customize the context file -->
+    <replace file="${dist.dir}/${search-context-file}"
+        token="[WAR.FILE.NAME]"
+        value="${war.file}"/>
+    <replace file="${dist.dir}/${search-context-file}"
+        token="[server.name]"
+        value="${server.name}"/>
+</target>
 
 </project>
