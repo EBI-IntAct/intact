@@ -18,7 +18,8 @@
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
 <jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+    beanName="uk.ac.ebi.intact.application.editor.business.EditUser"
+    type="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <c:set var="menus" value="${user.view.addXrefMenus}"/>
 
@@ -28,8 +29,10 @@
 <c:set var="qlist" value="${menus['Qualifier']}"/>
 
 <%-- Service handler to get the default xref qualifier --%>
+
 <jsp:useBean id="service" scope="application"
-    class="uk.ac.ebi.intact.application.editor.business.EditorService"/>
+    beanName="uk.ac.ebi.intact.application.editor.business.EditorService"
+    type="uk.ac.ebi.intact.application.editor.business.EditorService"/>
 <bean:define id="defXrefQualifier" name="service" property="defaultXrefQualifier"
     type="java.lang.String"/>
 

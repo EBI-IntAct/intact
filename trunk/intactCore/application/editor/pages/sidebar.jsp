@@ -21,7 +21,8 @@
 <jsp:include page="misc/user_js.jsp" />
 
 <jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+    beanName="uk.ac.ebi.intact.application.editor.business.EditUser"
+    type="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <html:form action="/sidebar" focus="searchString">
     <table>

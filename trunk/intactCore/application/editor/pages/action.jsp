@@ -31,7 +31,8 @@
 </script>
 
 <jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+    beanName="uk.ac.ebi.intact.application.editor.business.EditUser"
+    type="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <bean:define id="view" name="user" property="view"
     type="uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean"/>
