@@ -329,7 +329,7 @@ public class UpdateProteins {
         try {
             SpXref = new Xref( (Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                                (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR"),
-                               ac, null, null ) ;
+                               ac, null, null, null) ;
 
             ////next line not working
             //System.out.println("ParentAC: "   + SpXref.getParentAc()) ; //all null!
@@ -402,7 +402,7 @@ public class UpdateProteins {
                            new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                                      (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR"),
                                      ac,
-                                     null, null));
+                                     null, null, null));
 
 
                 //xref in terms of SGD db
@@ -411,7 +411,7 @@ public class UpdateProteins {
                                new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                                         (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SGD"),
                                         sgd,
-                                        null, null));
+                                        null, null, null));
                 }
 
                 //xref in terms of XXX db

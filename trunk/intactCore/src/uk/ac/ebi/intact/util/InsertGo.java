@@ -113,7 +113,7 @@ public class InsertGo {
         spXref = new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                           (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR"),
                           spAc,
-                          null, null);
+                          null, null, null);
 
         try {
             protein = (Protein) helper.getObjectByXref(Protein.class, spAc);
@@ -142,7 +142,7 @@ public class InsertGo {
                    new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                             (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SGD"),
                             sgdAc,
-                            null, null));
+                            null, null, null));
         // Get GO term
         String goTerm = (String) this.goTerms.get(goAc);
         if (null != goTerm){
@@ -154,7 +154,7 @@ public class InsertGo {
                     new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                              (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "GO"),
                              goAc,
-                             goTerm, null));
+                             goTerm, null, null));
         dao.update(protein);
         return protein;
     }

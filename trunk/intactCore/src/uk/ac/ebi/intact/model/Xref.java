@@ -56,7 +56,7 @@ public class Xref extends BasicObject {
                  CvDatabase aDatabase,
                  String aPrimaryId,
                  String aSecondaryId,
-                 String aDatabaseRelease) throws IntactException {
+                 String aDatabaseRelease, CvXrefQualifier aCvXrefQualifier) throws IntactException {
 
         super();
         this.owner = anOwner;
@@ -64,6 +64,7 @@ public class Xref extends BasicObject {
         this.primaryId = aPrimaryId;
         this.secondaryId = aSecondaryId;
         this.dbRelease = aDatabaseRelease;
+        this.cvXrefQualifier = aCvXrefQualifier;
     }
 
     ///////////////////////////////////////
