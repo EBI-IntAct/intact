@@ -30,10 +30,7 @@ public class ListObject implements Serializable {
 
     /**
      * Constructs with an AnnotatedObject.
-     *
      * @param anObj the object to extract information.
-     *
-     * @pre anObj != null
      */
     public ListObject(AnnotatedObject anObj) {
         myObject = anObj;
