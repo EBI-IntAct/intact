@@ -204,7 +204,7 @@
     <!-- =================================================================== -->
 
     <!-- Build javadocs -->
-    <target name="javadoc" depends="compile"
+    <target name="javadoc" depends="compile-all"
         description="Creates Intact core API Documentation">
         <mkdir dir="${jdoc.dir}" />
         <javadoc packagenames="uk.ac.ebi.intact.**"
