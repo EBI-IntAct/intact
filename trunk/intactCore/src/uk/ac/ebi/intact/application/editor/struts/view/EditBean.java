@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -42,10 +42,13 @@ public class EditBean implements Serializable {
 
     /**
      * Sets this bean's edit state.
-     * @param state the bean's edit state; <code>true</code> if in editing or
-     * <code>false</code> for all other instances.
+     * @param state the bean's edit state.
+     *
+     * <pre>
+     * post: getEditState() = state
+     * </pre>
      */
-    public void setEditState(boolean state) {
-        myEditState = state ? VIEW : SAVE;
+    public void setEditState(String state) {
+        myEditState = state;
     }
 }
