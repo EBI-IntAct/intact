@@ -32,7 +32,7 @@
     <!-- The build properties. -->
     <property resource="build.properties"/>
 
-    <!-- Build working classpath -->
+    <!-- Project classpath. -->
     <path id="project.class.path">
         <fileset dir="lib">
             <include name="**/*.jar"/>
@@ -40,10 +40,31 @@
         <pathelement path ="${dest.dir}"/>
     </path>
 
-    <path id="runtime.class.path">
-        <pathelement path="${dest.dir}"/>
-        <fileset dir="lib">
-            <include name="**/*.jar"/>
+    <!-- javadoc classpath. -->
+    <path id="javadoc.class.path">
+        <path refid="project.class.path"/>
+
+        <!-- Common jar files for applications -->
+        <fileset dir="application/lib">
+            <include name="*.jar"/>
+        </fileset>
+
+        <!-- cvedit specific jar files. -->
+        <pathelement location="application/cvedit/WEB-INF/classes"/>
+        <fileset dir="application/cvedit/WEB-INF/lib">
+            <include name="*.jar"/>
+        </fileset>
+
+        <!-- search specific jar files. -->
+        <pathelement location="application/search/WEB-INF/classes"/>
+        <fileset dir="application/search/WEB-INF/lib">
+            <include name="*.jar"/>
+        </fileset>
+
+        <!-- hv specific jar files. -->
+        <pathelement location="application/hierarchView/WEB-INF/classes"/>
+        <fileset dir="application/hierarchView/WEB-INF/lib">
+            <include name="*.jar"/>
         </fileset>
     </path>
 
@@ -90,6 +111,8 @@
 
     <!-- Copy mapping files for castor and ojb in synchron class directory. -->
     <target name="copySynchronMappings">
+        <echo message="This target to be moved to synchron package - avoid using it"/>
+
         <copy todir="${dest.dir}/uk/ac/ebi/intact/application/synchron" >
             <fileset dir="${config.dir}" >
                 <include name="**/*.xml"/>
@@ -278,17 +301,8 @@
     <!-- =================================================================== -->
 
     <!-- Compiles all the sources. -->
-    <target name="compile-all" description="Compiles all the sources for Intact">
-
-        <!-- Make sure core jar is up to date first (this will compile core
-             as well).
-        -->
-        <antcall target="jar-core"/>
-
-        <!-- Call other modules as they rely on intact core. -->
-        <antcall target="compile-hv"/>
-        <antcall target="compile-cvedit"/>
-        <antcall target="compile-search"/>
+    <target name="compile-all" description="Compiles all the sources for Intact"
+        depends="compile-core, compile-hv, compile-cvedit, compile-search">
     </target>
 
     <!-- =================================================================== -->
@@ -303,31 +317,35 @@
     <!-- Build javadocs -->
     <target name="javadoc" depends="compile-all"
         description="Creates Intact core API Documentation">
+
+        <!-- Start with a fresh directory. -->
+        <delete dir="${jdoc.dir}" quiet="true"/>
         <mkdir dir="${jdoc.dir}" />
-        <javadoc packagenames="uk.ac.ebi.intact.**"
-                 sourcepath="${src.dir}"
-                 destdir="${jdoc.dir}"
-                 author="true"
-                 version="true"
-                 use="true"
-                 windowtitle="Intact core API Documentation"
-                 doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
-                 bottom="&lt;i>Chris Lewington EMBL-EBI 2002&lt;">
-                 <classpath refid="project.class.path"/>
-                 <tag name="intact.todo" description="To do:"/>
-                 <tag name="intact.example" description="Example:"/>
+
+        <javadoc destdir="${jdoc.dir}" author="true" version="true" use="true"
+            windowtitle="Intact core API Documentation"
+            doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;h1&gt;"
+            bottom="&lt;i&gt;Chris Lewington EMBL-EBI 2002&lt;i&gt;" source="1.4">
+
+            <!-- Exclude javadoc for test packages. -->
+            <packageset dir="${src.dir}" defaultexcludes="yes">
+                <exclude name="**/test/**" />
+            </packageset>
+            <classpath refid="javadoc.class.path"/>
+            <tag name="intact.todo" description="To do:"/>
+            <tag name="intact.example" description="Example:"/>
         </javadoc>
     </target>
 
     <target name="demo" depends="compile">
         <pathconvert targetos="unix"
                  property="class.path.name"
-                 refid="runtime.class.path"
+                 refid="project.class.path"
         />
         <echo message="${class.path.name}"/>
         <java classname="uk.ac.ebi.intact.model.IntactCoreApp"
             dir="." failonerror="true" >
-            <classpath refid="runtime.class.path"/>
+            <classpath refid="project.class.path"/>
         </java>
     </target>
 
