@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 // intact
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
 import uk.ac.ebi.intact.business.IntactException;
@@ -50,7 +50,7 @@ public class DisplaySourceTag extends TagSupport {
         HttpSession session = pageContext.getSession();
 
         try {
-            IntactUserIF user = (IntactUserIF) session.getAttribute (Constants.USER_KEY);
+            IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
             String AC = user.getAC();
             String method_class = user.getMethodClass();
 

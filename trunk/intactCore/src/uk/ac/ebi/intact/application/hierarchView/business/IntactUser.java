@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
-public class IntactUser implements IntactUserIF {
+public class IntactUser implements IntactUserI {
 
     static Logger logger = Logger.getLogger(uk.ac.ebi.intact.application.hierarchView.business.Constants.LOGGER_NAME);
 

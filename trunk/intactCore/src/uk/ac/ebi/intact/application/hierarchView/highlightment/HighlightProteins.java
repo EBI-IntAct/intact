@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwo
 import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.behaviour.HighlightmentBehaviour;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 
@@ -55,7 +55,7 @@ public class HighlightProteins {
         ImageBean ib = svgProducer.getImageBean();
 
         // store data in the session
-        IntactUserIF user = (IntactUserIF) session.getAttribute(Constants.USER_KEY);
+        IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER_KEY);
         // TODO : test is user OK
         user.setImageBean(ib);
         user.setInteractionNetwork(in);

@@ -6,7 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.WebServiceManager;
 
 import javax.servlet.ServletContext;
@@ -54,7 +54,7 @@ public class CheckInitTag  extends TagSupport {
 
         // check the datasource
         HttpSession session = pageContext.getSession();
-        IntactUserIF user = (IntactUserIF) session.getAttribute (Constants.USER_KEY);
+        IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
 
         if (null == user) {
             logger.error ("Data source unavailable, forward to " + this.forwardOnError);

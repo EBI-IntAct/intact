@@ -2,7 +2,7 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUserIF;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
@@ -72,7 +72,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
         Collection result = null;
         Iterator iterator;
         Collection listGOTerm = new ArrayList();
-        IntactUserIF user = (IntactUserIF) aSession.getAttribute (uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY);
+        IntactUserI user = (IntactUserI) aSession.getAttribute (uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY);
 
         if (null == user) {
             logger.error("No user found in the session, unable to search for GO terms");
@@ -128,7 +128,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
     public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) {
         Collection nodeList = new Vector ();
 
-        IntactUserIF user = (IntactUserIF) aSession.getAttribute(Constants.USER_KEY);
+        IntactUserI user = (IntactUserI) aSession.getAttribute(Constants.USER_KEY);
         Collection keys   = user.getKeys();
 
         // get source option
@@ -195,7 +195,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
      */
     public void saveOptions (HttpServletRequest aRequest, HttpSession aSession) {
 
-        IntactUserIF user = (IntactUserIF) aSession.getAttribute(Constants.USER_KEY);
+        IntactUserI user = (IntactUserI) aSession.getAttribute(Constants.USER_KEY);
         String[] result = aRequest.getParameterValues(ATTRIBUTE_OPTION_CHILDREN);
 
         if (result != null)

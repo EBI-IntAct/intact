@@ -25,7 +25,7 @@ import java.io.Serializable;
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
-public interface IntactUserIF extends Serializable, HttpSessionBindingListener {
+public interface IntactUserI extends Serializable, HttpSessionBindingListener {
 
     public String getAC();
     public String getDepth();
