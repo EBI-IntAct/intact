@@ -1,4 +1,3 @@
-<%@ page import="org.apache.commons.beanutils.DynaBean"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
