@@ -89,14 +89,16 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         Collection results = null;
 
         try {
-            // try searching first using all uppercase, then all lower case if it returns nothing...
-            // NB this would be better done at the DB level, but keep it here for now
-            String upperCaseValue = searchString.toUpperCase();
-            results = doLookup(classname, upperCaseValue, user);
+            // Try searching as it is.
+            results = doLookup(classname, searchString, user);
             if (results.isEmpty()) {
-                // now try all lower case....
-                String lowerCaseValue = searchString.toLowerCase();
-                results = doLookup(classname, lowerCaseValue, user);
+                // try searching first using all uppercase, then all lower case if it returns nothing...
+                // NB this would be better done at the DB level, but keep it here for now
+                results = doLookup(classname, searchString.toUpperCase(), user);
+                if (results.isEmpty()) {
+                    // now try all lower case....
+                    results = doLookup(classname, searchString.toLowerCase(), user);
+                }
             }
         }
         catch (SearchException ie) {
