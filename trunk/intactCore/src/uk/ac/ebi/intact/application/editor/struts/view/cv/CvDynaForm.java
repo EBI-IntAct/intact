@@ -86,8 +86,15 @@ public class CvDynaForm extends DynaValidatorForm {
                     errors = new ActionErrors();
                     errors.add(ActionErrors.GLOBAL_ERROR,
                             new ActionError("error.xref.database"));
+                    return errors;
                 }
-                return errors;
+                String pid = xb.getPrimaryId();
+                // Primary id is required.
+                if (pid.trim().length() == 0) {
+                    errors = new ActionErrors();
+                    errors.add(ActionErrors.GLOBAL_ERROR,
+                            new ActionError("error.xref.pid"));
+                }
             }
         }
         return errors;
