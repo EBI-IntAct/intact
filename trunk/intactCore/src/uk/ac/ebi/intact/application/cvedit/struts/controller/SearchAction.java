@@ -95,7 +95,6 @@ public class SearchAction extends IntactBaseAction {
                 labels = getAllShortLabels(user, classname);
             }
             catch (SearchException se) {
-                // Something failed during search...
                 super.log(ExceptionUtils.getStackTrace(se));
                 // The errors to report back.
                 super.addError("error.search", se.getNestedMessage());
@@ -111,14 +110,9 @@ public class SearchAction extends IntactBaseAction {
             assert false;
         }
 
-        //super.log("search action: action value is " + action);
         super.log("search action: search param is " + searchParam);
         super.log("search action: search value is " + searchValue);
         super.log("search action: topic is " + topic);
-
-        // Remove the current edit object from the cache to retrieve
-        // only the committed data.
-        user.removeFromCache(user.getCurrentEditObject());
 
         // Holds the result from the search.
         Collection results = null;
@@ -142,8 +136,7 @@ public class SearchAction extends IntactBaseAction {
             super.saveErrors(request);
             return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
         }
-        //super.log("search action: search results retrieved OK");
-        // Save the serahc parameters for results page to display.
+        // Save the search parameters for results page to display.
         session.setAttribute(WebIntactConstants.SEARCH_CRITERIA,
             searchParam + "=" + searchValue);
 
