@@ -47,6 +47,27 @@ public interface SearchConstants {
     public static final String FORWARD_RESULTS = "results";
 
     /**
+     * Forward to the results page.
+     */
+    public static final String FORWARD_SESSION_LOST = "sessionLost";
+
+    /**
+     * Forward to the Action responsible for setting up a single item view
+     */
+    public static final String FORWARD_SINGLE_ACTION = "singleItemAction";
+
+    /**
+     * Forward to the ACtion responsible for setting up a detailed view
+     */
+    public static final String FORWARD_DETAIL_ACTION = "detailAction";
+
+    /**
+     * Forward to the Action responsible for processing request from a
+     * special Protein view.
+     */
+    public static final String FORWARD_PROTEIN_ACTION = "proteinAction";
+
+    /**
      * Used as a key to identify a page to display when matches are found
      * from a search.
      */
@@ -111,9 +132,11 @@ public interface SearchConstants {
     public static final String XSL_FILE = "xslFile";
 
     /**
-     * The name of the XML builder instance
+     * The name of the file containing the XSL stylesheet for the
+     * Protein Partners view
      */
-    public static final String XML_BUILDER = "xmlBuilder";
+    public static final String PROTEIN_XSL_FILE = "proteinXslFile";
+
 
     /**
      * The map of items in a view page and their current mode (eg expanded or contracted)
@@ -144,5 +167,44 @@ public interface SearchConstants {
      * The label used to identify the search form in a session (specified in struts-config.xml)
      */
     public static final String SEARCH_FORM = "sidebarForm";
+
+    /**
+     * The label used to identify the search results Collection (often saved in a request)
+     */
+    public static final String SEARCH_RESULTS = "searchResults";
+
+    /**
+     * The label used to identify a Map from search item ACs to lists of experiment ACs. Used
+     * in a request passed on the ProteinAction.
+     */
+    public static final String RESULT_EXP_MAP = "resultExpMap";
+
+    /**
+     * The label used to identify a Map of experiment ACs to experiment view beans. Usually
+     * used in a request passed on to ProteinAction.
+     */
+    public static final String EXP_BEAN_MAP = "expBeanMap";
+
+    /**
+     * The label used to identify a Set of beans filtered by some criteria
+     */
+    public static final String BEAN_FILTER = "BeanFilter";
+
+    /**
+     * The label used to identify a String of bean IDs - used mainly by protein partner view
+     * This will appear as an attribute in the XML tree.
+     */
+    public static final String BEAN_LIST = "beanList";
+
+    /**
+     * The label used to identify a map of IDs to Protein partner beans (different display)
+     */
+    public static final String PARTNER_BEAN_MAP = "partnerBeanMap";
+
+    /**
+     * The label used to identify a request parameter from a protein partner
+     * view link for Experiment details
+     */
+    public static final String VIEW_EXPS_LINK = "viewExpsLink";
 
 }
