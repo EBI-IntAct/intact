@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
+import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 
 import java.util.Collection;
 import java.util.Date;
@@ -54,18 +55,7 @@ public interface IntactUserIF extends Serializable {
      */
     public Institution getInstitution() throws SearchException;
 
-    /**
-     * Update lists for given name. This involves contruction of a new list
-     * by retrieveing matching records from the persistent system. No action
-     * is taken if <code>clazz</code> is not of valid list type.
-     *
-     * @param clazz the type to update the list. The list only updates for
-     * the following types: CvTopic, CvDatabase and CvXrefQualifier.
-     *
-     * @exception SearchException for errors in searching the persistent system
-     * to update the list.
-     */
-    public void updateList(Class clazz) throws SearchException;
+    // Methods releated to drop down lists
 
     /**
      * Returns a list of topic names.
@@ -94,6 +84,17 @@ public interface IntactUserIF extends Serializable {
      * @return true if there are no qualifier names or else true is returned.
      */
     public boolean isQualifierListEmpty();
+
+    /**
+     * Refresh the drop down list for the current CV edit object. This involves
+     * contruction of a new list by retrieveing matching records from the
+     * persistent system. No action is taken if the current edit object
+     * is not involved with drop down lists.
+     *
+     * @exception SearchException for errors in searching the persistent system
+     * to update the list.
+     */
+    public void refreshList() throws SearchException;
 
     // Transaction Methods
 
@@ -199,6 +200,55 @@ public interface IntactUserIF extends Serializable {
      */
     public Collection search(String objectType, String searchParam,
                               String searchValue) throws SearchException;
+
+    /**
+     * Sets the status of last search.
+     * @param size the size to determine the last search. If size is 1 then
+     * the last search is a single entry search. For any other value, the
+     * last search produces multiple entries.
+     */
+    public void setSearchResultStatus(int size);
+
+    /**
+     * Returns true if the last search produced a single entry.
+     * @return true if the last search produced a single entry.
+     */
+    public boolean hasSingleSearchResult();
+
+    /**
+     * Sets the last search criteria.
+     * @param query the last search query.
+     */
+    public void setSearchQuery(String query);
+
+    /**
+     * Returns the last search query.
+     * @return the last search query.
+     */
+    public String getSearchQuery();
+
+    /**
+     * Caches the last search result. Each object of <code>results</code> is
+     * wrapped as a <code>ListObject</code>.
+     * @param results holds the results from the search.
+     *
+     * <pre>
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(ListObject))
+     * </pre>
+     */
+    public void cacheSearchResult(Collection results);
+
+    /**
+     * Returns the cached search result.
+     * @return the cached search result.
+     */
+    public Collection getCacheSearchResult();
+
+    /**
+     * Removes the object with matching AC from search cache.
+     * @param ac the accession number of the object to filter.
+     */
+    public void removeFromSearchCache(String ac);
 
     // Session methods
 

@@ -16,7 +16,10 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.cvedit.exception.InvalidLoginException;
+import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
+import uk.ac.ebi.intact.application.cvedit.struts.view.ListObject;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -86,6 +89,16 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      */
     private static final Map theirNameToType = new HashMap();
 
+    /**
+     * Single result found with the last search.
+     */
+    private static final int theirSingleEntry = 0;
+
+    /**
+     * Multiple results found with the last search.
+     */
+    private static final int theirMultipleEntries = 1;
+
     // End of static data
 
     /**
@@ -127,6 +140,21 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      * The current view of the user. Not saving the state of the view yet.
      */
     private transient CvViewBean myView;
+
+    /**
+     * Stores the status of last search: multiple results or a single result.
+     */
+    private transient int mySearchResultStatus;
+
+    /**
+     * Holds the last search results. No need to save search results.
+     */
+    private transient Collection mySearchResults = new ArrayList();
+
+    /**
+     * Stores the last query result.
+     */
+    private String myLastQuery;
 
     // Static initializer.
 
@@ -195,7 +223,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     /**
      * Will call this method when an object is bound to a session.
-     * Not doing anything.
+     * Starts the user view.
      */
     public void valueBound(HttpSessionBindingEvent event) {
         // Create my initial view.
@@ -239,46 +267,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         return (Institution) getObjectByLabel(Institution.class, "EBI");
     }
 
-    public void updateList(Class clazz) throws SearchException {
-        if (!theirNameToType.containsValue(clazz)) {
-            return;
-        }
-        // Valid type; must update the list. First get the name of the list to
-        // update.
-        for (Iterator iter = theirNameToType.entrySet().iterator();
-             iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            if (clazz.equals(entry.getValue())) {
-                String name = (String) entry.getKey();
-                // Remove this from the existing map.
-                myNameToItems.remove(name);
-                myNameToItems.put(name, makeList((Class) entry.getValue()));
-            }
-        }
-    }
-
     public Collection getTopicList() {
-//        // The topic list.
-//        Collection list = (Collection) myNameToItems.get(theirTopicNames);
-//
-//        // The class of the current edit object.
-//        Class clazz = myEditCvObject.getClass();
-//
-//        // Remove the short label from the list (only for CvTopics).
-//        if (clazz.equals(CvTopic.class)) {
-//            // The short label of the CV object we are editing at the moment.
-//            String label = myEditCvObject.getShortLabel();
-//
-//            // New collection because we are modifying the list.
-//            Collection topics = new ArrayList(list);
-//
-//            // Remove the short label from the drop down list.
-//            topics.remove(label);
-//            return topics;
-//        }
-//        // No modifcations to the list; jsut return the cache list.
-//        return list;
-        //return getList((Collection) myNameToItems.get(theirTopicNames));
         return getList(theirTopicNames);
     }
 
@@ -292,6 +281,26 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public boolean isQualifierListEmpty() {
         return isListEmpty(theirQualifierNames);
+    }
+
+    public void refreshList() throws SearchException {
+        Class clazz = myEditCvObject.getClass();
+        if (!theirNameToType.containsValue(clazz)) {
+            return;
+        }
+        // Valid type; must update the list. First get the name of the list to
+        // update.
+        for (Iterator iter = theirNameToType.entrySet().iterator();
+             iter.hasNext();) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            if (clazz.equals(entry.getValue())) {
+                // The list to update.
+                String name = (String) entry.getKey();
+                // Remove this from the existing map.
+                myNameToItems.remove(name);
+                myNameToItems.put(name, makeList((Class) entry.getValue()));
+            }
+        }
     }
 
     public void begin() throws IntactException {
@@ -320,8 +329,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public void setCurrentEditObject(CvObject cvobj) {
         myEditCvObject = cvobj;
-
-        // Update the view to using the new CV edit object.
+        // Update the view using the current CV edit object.
         myView.initialise(cvobj);
     }
 
@@ -331,16 +339,13 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public Object getObjectByLabel(Class clazz, String label)
         throws SearchException {
-
-        Object result = null;
-
         Collection resultList = search(clazz.getName(), "shortLabel", label);
 
         if (resultList.isEmpty()) {
             return null;
         }
         Iterator i = resultList.iterator();
-        result = i.next();
+        Object result = i.next();
         if (i.hasNext()) {
             throw new SearchException(
                 "More than one object returned by search by label.");
@@ -356,6 +361,40 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         catch (IntactException ie) {
             throw new SearchException("Search failed: " + ie.getNestedMessage());
         }
+    }
+
+    public void setSearchResultStatus(int size) {
+        mySearchResultStatus = (size == 1) ? theirSingleEntry : theirMultipleEntries;
+    }
+
+    public boolean hasSingleSearchResult() {
+        return  mySearchResultStatus == theirSingleEntry;
+    }
+
+    public void setSearchQuery(String query) {
+        myLastQuery = query;
+    }
+
+    public String getSearchQuery() {
+        return myLastQuery;
+    }
+
+    public void cacheSearchResult(Collection results) {
+        // Clear previous results.
+        mySearchResults.clear();
+
+        // Wrap as ListObjects for tag library to display.
+        for (Iterator iter = results.iterator(); iter.hasNext();) {
+            mySearchResults.add(new ListObject((CvObject) iter.next()));
+        }
+    }
+
+    public Collection getCacheSearchResult() {
+        return mySearchResults;
+    }
+
+    public void removeFromSearchCache(String ac) {
+        CollectionUtils.filter(mySearchResults, ListObject.getPredicate(ac));
     }
 
     public void logoff() throws IntactException {
@@ -439,5 +478,17 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         }
         // No modifcations to the list; just return the cache list.
         return list;
+    }
+
+    /**
+     * Update the drop down lists for the current CV edit object. This involves
+     *  contruction of a new list by retrieveing matching records from the
+     *  persistent system. No action is taken if the current edit object
+     * is not involved with drop down lists.
+     *
+     * @exception SearchException for errors in searching the persistent system
+     * to update the list.
+     */
+    private void updateList() throws SearchException {
     }
 }
