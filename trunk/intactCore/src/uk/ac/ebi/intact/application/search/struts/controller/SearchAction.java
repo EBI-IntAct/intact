@@ -124,7 +124,50 @@ public class SearchAction extends IntactBaseAction {
             results = user.search(classname, searchParam, searchValue);
             if (results.isEmpty()) {
                 // No matches found - try a search by label now...
-                Object result = null;
+                super.log("now searching for class " + classname + " with label " + searchValue);
+                results = user.search(classname, "shortLabel", searchValue);
+                if(results.isEmpty()) {
+                    //no match on label - try by xref....
+                    super.log("no match on label - looking for: " + classname + " with primary xref ID " + searchValue);
+                    Collection xrefs = user.search(Xref.class.getName(), "primaryId", searchValue);
+
+                    //could get more than one xref, eg if the primary id is a wildcard search value -
+                    //then need to go through each xref found and accumulate the results...
+                    Iterator it = xrefs.iterator();
+                    Collection partialResults = new ArrayList();
+                    while(it.hasNext()) {
+                        partialResults = user.search(classname, "ac", ((Xref) it.next()).getParentAc());
+                        results.addAll(partialResults);
+                    }
+
+                    if(results.isEmpty()) {
+
+                        //no match by xref - try finally by name....
+                        super.log("no matches found using ac, shortlabel or xref - trying fullname...");
+                        results = user.search(classname, "fullName", searchValue);
+                        if(results.isEmpty()) {
+
+                            //finished all current options - return a failure
+                            super.log("No matches were found for the specified search criteria");
+                            // Save the search parameters for results page to display.
+                            session.setAttribute(WebIntactConstants.SEARCH_CRITERIA,
+                            searchParam + "=" + searchValue);
+                            session.setAttribute(WebIntactConstants.SEARCH_TYPE, searchClass);
+                            return mapping.findForward(WebIntactConstants.FORWARD_NO_MATCHES);
+                        }
+                        else {
+
+                            //got a match on name - flag it for info later
+                            searchParam = "name";
+                        }
+                    }
+                    else {
+
+                        //got a match on xref - save for later info
+                        searchParam = "primary ID";
+                    }
+                }
+                /*Object result = null;
                 try {
                     result = user.getObjectByLabel(Class.forName(classname), searchValue);
                 }
@@ -149,33 +192,7 @@ public class SearchAction extends IntactBaseAction {
                         super.addError("error.search", "the error [" + se.getMessage() + "] occurred. There may be no reference to " + searchClass + " objects from an xref");
                         super.saveErrors(request);
                         return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-                    }
-                    if(result == null) {
-
-                        //no match by xref - try finally by name....
-                        results = user.search(classname, "fullName", searchValue);
-                        if(results.isEmpty()) {
-
-                            //finished all current options - return a failure
-                            super.log("No matches were found for the specified search criteria");
-                            // Save the search parameters for results page to display.
-                            session.setAttribute(WebIntactConstants.SEARCH_CRITERIA,
-                            searchParam + "=" + searchValue);
-                            session.setAttribute(WebIntactConstants.SEARCH_TYPE, searchClass);
-                            return mapping.findForward(WebIntactConstants.FORWARD_NO_MATCHES);
-                        }
-                        else {
-
-                            //got a match on name - flag it for info later
-                            searchParam = "name";
-                        }
-                    }
-                    else {
-
-                        //got a match on xref - save for later info
-                        searchParam = "primary ID";
-                    }
-                }
+                    }*/
                 else {
 
                     //matched on a label - flag it for later info
@@ -183,9 +200,9 @@ public class SearchAction extends IntactBaseAction {
                 }
 
                 //whatever way we got an object, add it to the collection
-                if(result != null) {
-                    results.add(result);
-                }
+                //if(result != null) {
+                  //  results.add(result);
+               // }
             }
             super.log("search action: search results retrieved OK");
 
