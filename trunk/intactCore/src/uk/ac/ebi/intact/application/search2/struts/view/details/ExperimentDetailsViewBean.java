@@ -185,7 +185,7 @@ public class ExperimentDetailsViewBean extends DetailsViewBean {
 
                 //now build the Experiment copy for display (start at first item)...
                 //int start = (selected - 1) * Constants.MAX_CHUNK_SIZE;
-                int start = 0;
+                int start = 1;
                 int stop = Math.min(start + Constants.MAX_CHUNK_SIZE,
                         size);
 
