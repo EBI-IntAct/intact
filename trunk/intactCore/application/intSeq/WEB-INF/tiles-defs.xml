@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+ <!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<!--
+    Tiles definitions for intSequence.
+    Author: Sophie Huet (shuet@ebi.ac.uk)
+
+    The header and footer are common to all IntAct application and just need to
+    receive proper value in defined key
+    (e.g. display the String defined in the header.title property)
+
+
+
+    Main layout :
+     __________________________________________
+    |       |                                 |
+    |       |           header                |
+    | side  |_________________________________|
+    | bar   |                                 |
+    |       |                                 |
+    | see   |           content               |     (!) each part is a frame
+    | below |         (see below)             |
+    |       |                                 |
+    |       |                                 |
+    |       |_________________________________|
+    |       |           footer                |
+    |_______|_________________________________|
+
+
+ -->
+
+<tiles-definitions>
+
+    <!-- =============== Menu Links ====================================== -->
+
+    <!-- Menu links for the search page. -->
+    <definition name="similarity.page.links" path="/layouts/menu.jsp">
+        <put name="title" value="Links"/>
+        <putList name="items">
+            <!--<item value="Home" link="../../search/welcome.jsp"/>-->
+            <item value="Similarity search" link="../initSim.jsp"/>
+        </putList>
+    </definition>
+
+    <!-- Menu links for the search page. -->
+    <definition name="srs.page.links" path="/layouts/menu.jsp">
+        <put name="title" value="Links"/>
+        <putList name="items">
+            <!--<item value="Home" link="../../search/welcome.jsp"/>-->
+            <item value="SRS search" link="../init.jsp"/>
+        </putList>
+    </definition>
+
+    <!-- Menu links for the search page.  -->
+    <definition name="both.page.links" path="/layouts/menu.jsp">
+        <put name="title" value="Links"/>
+        <putList name="items">
+            <!--<item value="Home" link="../../search/welcome.jsp"/>-->
+            <item value="SRS search" link="../init.jsp"/>
+            <item value="Similarity search" link="../initSim.jsp"/>
+        </putList>
+    </definition>
+
+    <!-- ============ Sidebars ============================================ -->
+
+    <!-- Sidebar for the SrsSearchResults and SimilaritySearchResults pages -->
+    <definition name="srs.sidebar.layout" path="/layouts/sidebar.jsp">
+        <!--<put name="input-dialog" value="/pages/sidebarInput.jsp"/>-->
+        <put name="menu" value="similarity.page.links"/>
+    </definition>
+
+    <!-- Sidebar for the SrsSearchResults and SimilaritySearchResults pages -->
+    <definition name="sim.sidebar.layout" path="/layouts/sidebar.jsp">
+        <!--<put name="input-dialog" value="/pages/sidebarInput.jsp"/>-->
+        <put name="menu" value="srs.page.links"/>
+    </definition>
+
+    <!-- Sidebar for the SrsSearchResults and SimilaritySearchResults pages -->
+    <definition name="results.sidebar.layout" path="/layouts/sidebar.jsp">
+        <!--<put name="input-dialog" value="/pages/sidebarInput.jsp"/>-->
+        <put name="menu" value="both.page.links"/>
+    </definition>
+
+    <!-- ============ Headers ============================================ -->
+
+    <!-- The header layout. -->
+    <definition name="header.srs.layout" path="/layouts/headerLayout.jsp">
+        <put name="header.title" value="IntAct - SRS search"/>
+    </definition>
+    <!-- The header layout. -->
+    <definition name="header.srsres.layout" path="/layouts/headerLayout.jsp">
+        <put name="header.title" value="IntAct - SRS search results"/>
+    </definition>
+    <!-- The header layout. -->
+    <definition name="header.sim.layout" path="/layouts/headerLayout.jsp">
+        <put name="header.title" value="IntAct - Similarity search"/>
+    </definition>
+    <!-- The header layout. -->
+    <definition name="header.simres.layout" path="/layouts/headerLayout.jsp">
+        <put name="header.title" value="IntAct - Similarity search results"/>
+    </definition>
+
+    <!-- ============ Commons to all IntAct pplication ==================== -->
+
+
+    <!-- The footer layout -->
+    <definition name="intact.footer.layout" path="/pages/footer.jsp">
+    </definition>
+
+    <!-- ============ Definitions of IntSeq screens ================= -->
+
+
+    <!-- intSeq page description -->
+    <definition name="intSeq.layout" path="/layouts/intactLayout.jsp">
+        <put name="title"     value="IntAct - Database Search"/>
+        <!-- just no sidebar - this must be defined -->
+        <!-- just no header - this must be defined -->
+        <!-- just no content - this must be defined -->
+        <put name="footer" value="intact.footer.layout"/>
+    </definition>
+
+
+    <definition name="srs.layout" extends="intSeq.layout">
+        <put name="sidebar" value="srs.sidebar.layout"/>
+        <put name="header"    value="header.srs.layout"/>
+        <put name="content" value="/pages/srsSearch.jsp"/>
+    </definition>
+
+    <definition name="srsResults.layout" extends="intSeq.layout">
+        <put name="sidebar" value="results.sidebar.layout"/>
+        <put name="header"    value="header.srsres.layout"/>
+        <put name="content" value="/pages/srsSearchResults.jsp"/>
+    </definition>
+
+    <definition name="similarity.layout" extends="intSeq.layout">
+        <put name="sidebar" value="sim.sidebar.layout"/>
+        <put name="header"    value="header.sim.layout"/>
+        <put name="content" value="/pages/similaritySearch.jsp"/>
+    </definition>
+
+    <definition name="simResults.layout" extends="intSeq.layout">
+        <put name="sidebar" value="results.sidebar.layout"/>
+        <put name="header"    value="header.simres.layout"/>
+        <put name="content" value="/pages/similaritySearchResults.jsp"/>
+    </definition>
+
+           <!-- Login failure page description  -->
+    <definition name="srs.error.layout" extends="intSeq.layout">
+        <put name="sidebar" value="results.sidebar.layout"/>
+        <put name="header"    value="header.srs.layout"/>
+        <put name="content" value="/pages/error.jsp"/>
+    </definition>
+
+
+
+    <!-- ===== Definition of the forward page to the search application ===
+
+    <definition name="search.result.layout" path="/pages/forwardToSearch.jsp">
+    </definition>
+    -->
+
+</tiles-definitions>
