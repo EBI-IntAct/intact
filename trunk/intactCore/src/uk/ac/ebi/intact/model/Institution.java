@@ -60,11 +60,35 @@ public class Institution implements Serializable {
 
     ///////////////////////////////////////
     // Constructors
+
+    /**
+     * no-arg constructor. Hope to replace with a private one as it should
+     * not be used by applications because it will result in objects with invalid
+     * states.
+     */
     public Institution (){
         //this.created = new java.util.Date(System.currentTimeMillis());
         //this.updated = new java.util.Date(System.currentTimeMillis());
+
+        //this to be moved to the proper constructor - onley here for code compatibility
+        //in the short term...
         this.created = new java.sql.Timestamp(System.currentTimeMillis());
         this.updated = new java.sql.Timestamp(System.currentTimeMillis());
+    }
+
+    /**
+     * This constructor ensures creation of a valid Institution. Specifically
+     * it must have at least a shortLabel defined since this is indexed in persistent store.
+     * Note that a side-effect of this constructor is to set the <code>created</code> and
+     * <code>updated</code> fields of the instance to the current time.
+     * @param shortLabel The short label used to refer to this Institution.
+     * @exception NullPointerException if an attempt is made to create an Instiution without
+     * defining a shortLabel.
+     */
+    public Institution (String shortLabel){
+        this();
+        if(shortLabel == null) throw new NullPointerException("Must define a short label to create an Institution!");
+        this.shortLabel = shortLabel;
     }
 
 

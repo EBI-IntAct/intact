@@ -46,17 +46,37 @@ public class Xref extends BasicObject {
     ///////////////////////////////////////
     // constructors
     public Xref() {
+        //super call sets creation time data
         super();
     }
 
 
+    /**
+     * Creates a valid Xref instance. Items which must be defined are:
+     * <ul>
+     * <li>an owner (Institution)</li>
+     * <li>database details (controlled vocabulary instance)</li>
+     * <li>a Primary ID</li>
+     * @param anOwner Owner of the cross-reference (non-null)
+     * @param aDatabase Controlled vocabulary instance defining the database details (non-null)
+     * @param aPrimaryId primary identifier for the corss-reference (non-null)
+     * @param aSecondaryId secondary identifier (eg a domain name)
+     * @param aDatabaseRelease database version
+     * @param aCvXrefQualifier controlled vocabulary for any qualifiers
+     * @exception NullPointerException thrown if any mandatory parameters are not specified
+     */
     public Xref (Institution anOwner,
                  CvDatabase aDatabase,
                  String aPrimaryId,
                  String aSecondaryId,
                  String aDatabaseRelease, CvXrefQualifier aCvXrefQualifier) {
 
+        //super call sets creation time data
         super();
+        if(anOwner == null) throw new NullPointerException("valid Xref must have an owner (Institution)!");
+        if(aDatabase == null) throw new NullPointerException("valid Xref must have non-null database details!");
+        if(aPrimaryId == null) throw new NullPointerException("valid Xref must have a primary ID!");
+
         this.owner = anOwner;
         this.cvDatabase = aDatabase;
         if (aPrimaryId != null && aPrimaryId.length() > 30) {
@@ -70,6 +90,7 @@ public class Xref extends BasicObject {
         this.secondaryId = aSecondaryId;
         this.dbRelease = aDatabaseRelease;
         this.cvXrefQualifier = aCvXrefQualifier;
+
     }
 
     ///////////////////////////////////////

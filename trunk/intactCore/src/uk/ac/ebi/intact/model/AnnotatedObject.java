@@ -63,6 +63,32 @@ public abstract class AnnotatedObject extends BasicObject {
      */
     public Collection reference = new Vector();
 
+    /**
+     * no-arg constructor provided for compatibility with subclasses
+     * that have no-arg constructors.
+     */
+    protected AnnotatedObject() {
+        //super call sets creation time data
+        super();
+    }
+
+    /**
+     * Constructor for subclass use only. Ensures that AnnotatedObjects cannot be
+     * created without at least a shortLabel and an owner specified.
+     * @param shortLabel The memorable label to identify this AnnotatedObject
+     * @param owner The Institution which owns this AnnotatedObject
+     * @exception NullPointerException thrown if either parameters are not specified
+     */
+    protected AnnotatedObject(String shortLabel, Institution owner) {
+
+        //super call sets creation time data
+        super();
+        if(shortLabel == null) throw new NullPointerException("Must define a short label for a " +getClass().getName());
+        if(owner == null) throw new NullPointerException("valid " +getClass().getName()+" must have an owner (Institution)!");
+        this.shortLabel = shortLabel;
+        this.owner = owner;
+
+    }
     // Class methods
 
     /** Return a Vector of all shortLabels of the class, e.g. for menus.

@@ -73,7 +73,39 @@ public class Protein extends Interactor implements Editable {
      */
     private Collection sequenceChunks = new Vector();
 
+    /**
+     * no-arg constructor. Hope to replace with a private one as it should
+     * not be used by applications because it will result in objects with invalid
+     * states.
+     */
+    public Protein() {
 
+        //super call sets creation time data
+        super();
+    }
+    /**
+     * Creates a valid Protein instance. A valid Protein must have at least an onwer, a
+     * short label to refer to it and a biological source specified. A side-effect of this constructor is to
+     * set the <code>created</code> and <code>updated</code> fields of the instance
+     * to the current time.
+     * @param owner The 'owner' of the Protein (what does this mean in real terms??)
+     * @param source The biological source of the Protein observation
+     * @param shortLabel A memorable label used to refer to the Protein instance
+     * @exception NullPointerException thrown if any parameters are null.
+     */
+    public Protein(Institution owner, BioSource source, String shortLabel) {
+
+        //Q: what about crc64, fullName, formOf - they are all indexed...
+        //ALSO..A Protein can have an interaction type IF it is an Interactor,
+        //but if it isn't then it doesn't need an interaction type. This does not
+        //match with the classes - Interaction has a type, not Interactor...
+
+        //super call sets up a valid AnnotatedObject (should an Interactor be better defined?)
+        super(shortLabel, owner);
+        if(source == null) throw new NullPointerException("valid Protein must have a BioSource!");
+        this.bioSource = source;
+
+    }
 
 
     ///////////////////////////////////////

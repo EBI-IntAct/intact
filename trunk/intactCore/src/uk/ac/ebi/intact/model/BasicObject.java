@@ -45,9 +45,11 @@ public abstract class BasicObject implements Serializable {
       */
     protected Timestamp updated;
 
-    ///////////////////////////////////////
-    // Constructors
-    public BasicObject() {
+    /**
+     * Protected constructor for use by subclasses - used to set
+     * the creation data for instances
+     */
+    protected BasicObject() {
 
         this.ojbConcreteClass = this.getClass().getName();
         this.created = new java.sql.Timestamp(System.currentTimeMillis());
@@ -76,6 +78,13 @@ public abstract class BasicObject implements Serializable {
         return ac;
     }
 
+    /**
+     * This method should not be used by applications, as the AC
+     * is a primary key which is auto-generated. If we move
+     * to an application server it may then be needed.
+     * @param ac
+     * @deprecated No replacement - should not be used by applications
+     */
     public void setAc(String ac) {
         this.ac = ac;
     }

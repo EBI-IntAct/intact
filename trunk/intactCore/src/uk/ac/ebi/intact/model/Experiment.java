@@ -58,6 +58,39 @@ public class Experiment extends AnnotatedObject implements Editable {
      */
     public BioSource bioSource;
 
+    /**
+     * no-arg constructor. Hope to replace with a private one as it should
+     * not be used by applications because it will result in objects with invalid
+     * states.
+     */
+    public Experiment() {
+        //super call sets creation time data
+        super();
+    };
+
+    /**
+     * Creates a valid Experiment instance. A valid Experiment must contain at least
+     * a shortLabel that refers to it, an owner of the Experiment and also the biological
+     * source of the experiment data (ie organism). A side-effect of this constructor is to
+     * set the <code>created</code> and <code>updated</code> fields of the instance
+     * to the current time.
+     * @param owner The <code>Institution</code> which owns this Experiment (non-null)
+     * @param shortLabel A String which can be used to refer to the Expperiment (non-null)
+     * @param source The biological source of the experimental data (non-null)
+     * @exception NullPointerException thrown if any of the parameters are not set
+     */
+    public Experiment(Institution owner, String shortLabel, BioSource source) {
+
+        //Q: does it make sense to create an Experiment without interactions? If not
+        //then all the Cv stuff (eg ident method etc) needs to be set also...
+        super(shortLabel, owner);
+        if(source == null) throw new NullPointerException("valid Experiment must have a BioSource!");
+        this.owner = owner;
+        this.shortLabel = shortLabel;
+        this.bioSource = source;
+
+    }
+
 
     ///////////////////////////////////////
     // access methods for associations
