@@ -142,4 +142,12 @@ public class ProteinProxy extends InteractorProxy implements Protein {
     public void setFormOfAc ( String ac ) {
         realSubject().setFormOfAc( ac );
     }
+
+    public boolean equals ( Object o ) {
+        return realSubject().equals( o );
+    }
+
+    public int hashCode () {
+        return realSubject().hashCode();
+    }
 }

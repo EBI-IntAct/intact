@@ -166,4 +166,12 @@ public class AnnotatedObjectProxy  extends BasicObjectProxy implements Annotated
     public Annotation updateUniqueAnnotation ( CvTopic topic, String description, Institution owner ) {
         return realSubject().updateUniqueAnnotation( topic, description, owner );
     }
+
+    public boolean equals ( Object o ) {
+        return realSubject().equals( o );
+    }
+
+    public int hashCode () {
+        return realSubject().hashCode();
+    }
 }
