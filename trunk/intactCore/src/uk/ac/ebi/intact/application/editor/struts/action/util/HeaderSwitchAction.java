@@ -6,21 +6,20 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.util;
 
-import org.apache.struts.tiles.actions.TilesAction;
-import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
+import uk.ac.ebi.intact.application.commons.struts.taglibs.DocumentationTag;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
+import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.business.EditorService;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
-import uk.ac.ebi.intact.application.commons.struts.taglibs.DocumentationTag;
 
 /**
  * This action class is responsible for appending the class type to the header.
