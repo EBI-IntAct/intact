@@ -14,9 +14,10 @@
 <%@ page autoFlush="true" %>
 
 <!-- Intact classes needed -->
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants,
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
                  uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean"%>
+                 uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean,
+                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
 
 <!-- Standard Java classes -->
 <%@ page import="java.util.*"%>
@@ -53,9 +54,8 @@
 <%-- The javascript for the button bars.... --%>
 <%@ include file="jscript.html" %>
 
-<h3>Search Results for
-    <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %>
-</h3>
+    <span class="middletext">Search Results for <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA)%> <br></span
+     <br/>
 
 <span class="smalltext">(short labels of search criteria matches are
     <span style="color: rgb(255, 0, 0);">highlighted</span>
@@ -83,13 +83,13 @@
                 //match will come through to here so we need the check)
                 if(bean.getInteractionPartners().isEmpty()) {
                     hasPartners = false;
-    %>
-    <br>
-     <h4>The Protein with Intact name
-        <b><span style="color: rgb(255, 0, 0);"><%= bean.getIntactName() %></span></b>
-        and AC <%= bean.getAc()%> has no Interaction partners </h4>
-     <br>
-    <%
+                    %>
+                    <br>
+                     <h4>The Protein with Intact name
+                        <b><span style="color: rgb(255, 0, 0);"><%= bean.getIntactName() %></span></b>
+                        and AC <%= bean.getAc()%> has no Interaction partners </h4>
+                     <br>
+                    <%
                 }
                 else {
                     //process as normal...
@@ -139,8 +139,8 @@
                 </td>
 
                 <!-- shortlabel with link: seems to be back to this page (!!)... -->
-                <td nowrap="nowrap" class="objectClass" style="background-color: rgb(255, 255, 255);">
-                    <code><a href="<%= bean.getSimpleSearchURL()%>">
+                 <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">           
+                    <code><a href="<%= bean.getProteinPartnerURL()%>">
                         <% if(highlightList.contains(bean.getIntactName())) { %>
                             <b><span style="color: rgb(255, 0, 0);"><%= bean.getIntactName()%></span></b>
                         <%
@@ -156,7 +156,7 @@
                 </td>
 
                 <!-- AC, with link to single Protein details page -->
-                <td nowrap="nowrap" style="background-color: rgb(255, 255, 255);">
+                 <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <a href="<%= bean.getProteinSearchURL()%>"><%= bean.getAc()%></a><br>
                 </td>
 
@@ -169,7 +169,7 @@
                     DECISION: link to the 'front' search page instead, then users can choose
                     what detail they want.
                 --%>
-                <td align="center" style="background-color: rgb(255, 255, 255);">
+                <td nowrap="nowrap"  align="center" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <a href="<%= bean.getInteractionsSearchURL()%>"><%= bean.getNumberOfInteractions()%></a>
                 </td>
 
@@ -205,12 +205,14 @@
 
                 <!-- heading, spans the table width (6 columns) -->
                 <td class="data" rowspan="1" colspan="6" style="background-color: rgb(255, 255, 255);">
-                    interacts with             
+                    interacts with
                     <br>
                 </td>
 
             </tr>
 
+            <!-- 1. Protein is done, now look at the partners -->
+            
             <!-- partner rows:
                 NB: Each interaction partner needs to be displayed with a summary
                 viewbean format itself - we can get a Set of view beans from the
@@ -218,7 +220,7 @@
 
             -->
             <%
-                Set partners = bean.getInteractionPartners();
+                Collection partners = bean.getInteractionPartners();
                 for(Iterator iter = partners.iterator(); iter.hasNext();) {
                     PartnersViewBean partner = (PartnersViewBean)iter.next();
             %>
@@ -295,9 +297,6 @@
     <%
             } //ends button bar check
         }   //ends the loop
-    %>
-
-    <!-- line seperator -->
-    <hr size="2">
+    %>  
 
 </form>
