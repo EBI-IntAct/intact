@@ -21,7 +21,7 @@ then
 fi
 
 echo "Inserting Proteins and their Xrefs ..."
-scripts/javaRun.sh InsertGo data/go_$3.dat
+scripts/javaRun.sh InsertGo data/go_$3.dat "http://www.geneontology.org/doc/GO.defs"
 
 echo "Inserting Complexes ..."
 scripts/javaRun.sh InsertComplex data/ho_gavin_$3.dat

@@ -1,16 +1,19 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
 import java.util.*;
 import java.io.*;
+import java.net.URL;
 
 import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
 
 
 /**
@@ -29,9 +32,12 @@ import uk.ac.ebi.intact.model.*;
  */
 public class InsertGo {
 
+    public static int MAX_ID_LEN = 30;
+
     IntactHelper helper;
     DAOSource dataSource;
     DAO dao;
+    HashMap goTerms;
 
     /**
      * basic constructor - sets up (hard-coded) data source and an intact helper
@@ -44,6 +50,8 @@ public class InsertGo {
         Map config = new HashMap();
         config.put("mappingfile", "config/repository.xml");
         dataSource.setConfig(config);
+
+        goTerms = new HashMap();
 
         try {
             dao = dataSource.getDAO();
@@ -140,18 +148,101 @@ public class InsertGo {
                             (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SGD"),
                             sgdAc,
                             null, null));
+        // Get GO term
+        String goTerm = (String) this.goTerms.get(goAc);
+        if (null != goTerm){
+            goTerm = goTerm.substring(0,Math.min(goTerm.length(), MAX_ID_LEN));
+        }
+
+
         addNewXref(protein,
                     new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                              (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "GO"),
                              goAc,
-                             null, null));
+                             goTerm, null));
         return protein;
     }
+
+    /** Reads a GO definition file from a URL.
+     *
+     */
+    public HashMap parseGoDefs(String aUrl){
+
+        String goId = null;
+        String goTerm = null;
+        HashMap goMap = new HashMap();
+
+        try {
+            // Parse input line by line
+            URL goServer = new URL(aUrl);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            goServer.openStream()));
+
+
+            String line;
+            Protein protein;
+            int lineCount = 0;
+
+            System.err.println("GO definition file lines processed: ");
+
+            RE idPat = new RE("goid: (GO:\\d+)");
+            RE termPat =  new RE("term: (.*)");
+
+
+            while (null != (line = in.readLine())) {
+
+                // Progress report
+                if((++lineCount % 1000) == 0){
+                    System.err.print(lineCount + " ");
+                }
+
+                // parse GoId
+                if (idPat.match(line)){
+                    goId = idPat.getParen(1);
+                    continue;
+                }
+
+                // parse term
+                if (termPat.match(line)){
+                    goTerm = termPat.getParen(1);
+                    continue;
+                }
+
+                // empty line marks end of record, save current record
+                if(line.length() == 0){
+                    if ((null != goId) && (null != goTerm)){
+                        goMap.put(goId,goTerm);
+                    }
+                    goId=null;
+                    goTerm=null;
+                }
+
+                // ignore comments and all other lines by doing nothing
+
+            }
+
+        }
+                // The GO terms are not essential, if anything fails,
+                // just catch the exception.
+        catch (Exception e) {
+        };
+
+        return goMap;
+    }
+
+
 
 
     public static void main(String[] args) throws Exception {
 
         InsertGo app = new InsertGo();
+
+        // parse GO definition file
+        if (null != args[1]){
+            app.goTerms = app.parseGoDefs(args[1]);
+        }
+
 
         // Parse input file line by line
 

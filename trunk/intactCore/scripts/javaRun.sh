@@ -20,7 +20,7 @@ CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
 
 fi
 
-java -classpath $CLASSPATH uk.ac.ebi.intact.util.$1 $2
+java -classpath $CLASSPATH uk.ac.ebi.intact.util.$1 $2 $3 $4 $5
 
 # end
  
