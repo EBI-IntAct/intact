@@ -1,0 +1,334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <title>Editor</title>
+</head>
+<body>
+<h1>Editor</h1>
+<h2><a name="toc"></a>Table of Contents</h2>
+<h2><a class="mozTocH2" name="overview"></a>Overview</h2>
+The editor is a web based tool to edit IntAct database.&nbsp;
+Presently, it supports following IntAct objects: CvTopic, CvCellCycle,
+CvDatabase, CvTissue, CvModificationType,&nbsp; CvCellType, Protein,
+CvComponentRole, CvFeatureType, CvCompartment, CvProductRole,
+CvFeatureIdentification, CvInteraction, BioSource, NucleicAcid,
+CvAliasType, SmallMolecule, CvProteinForm, CvInteractionType,
+Experiment, Complex, CvReferenceQualifier, CvXrefQualifier,
+CvEvidenceType, CvIdentification, Interaction, CvDevelopmentalStage<br>
+<br>
+<span style="font-weight: bold;">Note:</span> Any IntAct type name
+beginning with Cv is referred to as Cv type from here onwards.<br>
+<h2><a name="access" class="mozTocH2"></a>Access</h2>
+The URL to access the editor is dependent upon the server where the
+editor is installed. The general format to access the editor takes the
+form of:<br>
+http://server/intact/editor, where the server part may contain the port
+depending upon the configuration of the web server.<br>
+<br>
+To use the editor, you must have a valid account to access the Intact
+database. The user is presented with a login screen as shown below:<br>
+<br>
+<img src="./images/editor-login.jpg" title="" alt="Login Screen"
+ style="width: 1055px; height: 292px;"><br>
+<br>
+<br>
+Failure to login with a valid account results in the following error
+display:<br>
+<br>
+<img src="./images/editor-login-error.jpg" title="" alt="Login error"
+ style="width: 1050px; height: 316px;"><br>
+<br>
+<h2><a name="intact.types" class="mozTocH2"></a>IntAct Types</h2>
+This list defines the types available for edit. Before proceeding with
+any action (search or create), you must select an appropriate type
+first. <br>
+<br>
+<img src="images/editor-types.jpg" title="" alt="IntAct Types"
+ style="width: 772px; height: 459px;"><br>
+<br>
+<img
+ src="file:///tmp_mnt/net_nfs6/vol1/homes/smudali/intact/intactCore/application/editor/images/warning.gif"
+ title="" alt="" style="width: 40px; height: 40px;" align="left">The
+IntAct type list defaults to the first item (e.g., BioSource) if a type
+wasn't selected.<br>
+<br>
+<h2><a name="search" class="mozTocH2"></a>Search</h2>
+The user must select the type to edit from the drop down list (defaults
+to the first item in the list if none specified). <br>
+<br>
+The input field under the drop down list accepts the search criteria.
+The search is performed first on accession number (ac), and then on
+short label, primary id and full name respectively. So, it is faster to
+search by an accession number than by a short label.<br>
+<br>
+<img src="images/editor-sidebar.jpg" title="" alt="IntAct Types"
+ style="width: 1055px; height: 350px;"><br>
+<br>
+<br>
+You can accept the default search value (*) by simply clicking on the
+search button. This may take some time depending on the database size as
+it retrieves all records for given IntAct type. However, you can also
+use more restrictive filtering such as EBI-3* to restrieve a subset of
+records. The following screen provides an example to this.<br>
+<br>
+<img src="images/editor-results.jpg" title="" alt="Results page"
+ style="width: 1055px; height: 370px;"><br>
+<br>
+An appropriate message is displayed if a search fails to find any
+matching records. Click on the AC link to edit individual entry.
+Alternatively, you can enter the short label directly in the search box
+and it will take you to the edit screen if a matching record wasn't
+found for given short label and type as shown below.<br>
+<br>
+<img src="images/editor-search-error.jpg" title="" alt="No Mtach"
+ style="width: 1044px; height: 200px;"><br>
+<br>
+<img src="images/warning.gif" title="" alt=""
+ style="width: 40px; height: 40px;" align="left"> The search is carried
+out against the value in the drop down list. So, ensure that you
+correctly select the type first before the search.<br>
+<br>
+<h2><a name="cv.editors" class="mozTocH2"></a>Cv Editors<br>
+</h2>
+The create button creates a record for the selected IntAct type. As
+with the search, it is important to select the appropriate type before
+clicking on the create button. The following screen shows the result of
+creating a new CvDatabase record. <br>
+<br>
+<img src="images/editor-new-cv.jpg" title="" alt="New CvDatabase"
+ style="width: 1054px; height: 506px;"><br>
+<br>
+<h3><a name="short.labels" class="mozTocH3"></a>Short Labels</h3>
+The current edit type is appended to the main heading (CvDatabase) as
+shown above. All the drop down list items (topic, database and&nbsp;
+reference qualifier) are shown as short labels.&nbsp; Except for the
+short label other fields are optional. The user must select 'Save'
+button to validate the short label. All short labels should be one to
+twenty characters from the character set blank, 0..9, a-z, : (colon) and
+-(dash). A&nbsp; dialog box similar to the following will&nbsp; appear
+for an syntaxically invalid short label.<br>
+<br>
+<img src="images/editor-label-client-error.jpg" title=""
+ alt="Incorrect short label" style="width: 416px; height: 130px;"><br>
+<br>
+Submitting&nbsp; the form without entering a syntaxically invalid short
+label results in a server side validation. The error response from the
+server is shown under the short label. The following screenshot
+illustrates this.<br>
+<br>
+<img src="images/editor-label-server-error.jpg" title=""
+ alt="Short label server validation"
+ style="width: 1038px; height: 136px;"><br>
+<br>
+&nbsp;Although both validations are similar in nature, they server two
+different purposes. The first validation is performed on the client side
+(browser) and hence faster of the two. However, the browser must be
+enabled to accept Javascript for it to work (no dialog window if
+Javascript is not enabled). This is the preferred validation as it saves
+extra load in communication with the server. Alternatively, the other
+validation is not dependent on Javascript and hence guranteed to work on
+any browser. However, since it involves around a round trip to the
+server, it is slower.<br>
+<br>
+For a short label to be valid it must be syntactically correct and
+unique (i.e, no simlar label for the current edit type exists in the
+database). All the existing short lables for the current edit types are
+shown along with an error message for a non unique short label entry. <br>
+<br>
+<img src="images/editor-label-dup-error.jpg" title=""
+ alt="Duplicate label" style="width: 1041px; height: 182px;"><br>
+<br>
+<h3><a name="annotations" class="mozTocH3"></a>Annotations</h3>
+Annotations are added by clicking on the Add button in the Annotation
+section. Associated with each Annotation is a topic which is one of
+CvTopics available in the database. An error message is displayed when
+trying to add an annotation without selecting an appropriate type from
+the drop down lists.<br>
+<br>
+<img src="images/editor-annot-error.jpg" title="" alt="Annotation error"
+ style="width: 1046px; height: 108px;"><br>
+<br>
+The editing an annotation is similar to adding a new Annotation except
+for topic and description are already set to their existing values. The
+screen snapshot given below shows two annotations with one in the
+editing mode.<br>
+<br>
+<img src="images/editor-annot-edit.jpg" title=""
+ alt="Editing an Annotation" style="width: 884px; height: 152px;"><br>
+<br>
+<h3><a name="xrefs" class="mozTocH3"></a>Crossreferences</h3>
+Similar to Annotations, Crossreferences are added by clicking on the
+Add button in the Crossreference section. The database drop list
+consists of short labels for CvDatbase itsm from the IntAct database and
+the reference qualifier consists of short labels for CvXrefQualifier.<br>
+<br>
+<img src="images/editor-new-xref.jpg" title="" alt="New Xref"
+ style="width: 854px; height: 80px;"><br>
+<br>
+As with annotations, the values from drop down lists must be selected
+prior to adding a crossreference. Editing an existing Crossreference
+similar to adding a new one except for existing values are shown instead
+of empty values.<br>
+<br>
+Any changes to the form are not saved until the form is submitted. So
+for a new IntAct type, a record is created on the database until the
+Submit button is clicked and the server reports no errors.<br>
+<br>
+Editing an existing record is similar to the above except the form is
+populated with existing data. As shown below, the short label and full
+name already have their existing values.<br>
+<br>
+<img src="images/editor-edit-cv.jpg" title=""
+ alt="Editing an existing CV object"
+ style="width: 1054px; height: 594px;"><br>
+<br>
+<h2><a name="other.editors" class="mozTocH2"></a>Other Editors</h2>
+Since Cv editor layout is common to all other editors, only the
+differences are shown for other editors.<br>
+<h3><a name="biosource" class="mozTocH3"></a>BioSource</h3>
+The biosource editor uses the Newt server to auto-complete the short
+label and the full name.<br>
+<br>
+<img src="images/editor-new-bs.jpg" title="" alt="Biosource editor"
+ style="width: 636px; height: 70px;"><br>
+<br>
+<h3><a name="experiment" class="mozTocH3"></a>Experiment</h3>
+<img src="images/editor-new-exp.jpg" title="" alt="New Experiment"
+ style="width: 895px; height: 75px;"><br>
+<br>
+All the above three fields must contain values for a valid Experiment.
+Need to add more here... <br>
+<br>
+<h3><a name="interaction" class="mozTocH3"></a>Interaction</h3>
+<img src="images/editor-int.jpg" title="" alt="Interaction Editor"
+ style="width: 1026px; height: 586px;"><br>
+<br>
+<h4><a name="int.experiments" class="mozTocH4"></a>Experiments</h4>
+This section describes Experiments already part of the current
+Interaction. The area below holds experiments not yet added to the
+Interaction as shown below.<br>
+<br>
+<img src="images/editor-int-exp.jpg" title=""
+ alt="Experiments not yet added" style="width: 1026px; height: 196px;"> <br>
+<br>
+Select Add button to add an experiment or Hide to remove from the
+collection. Duplcate experiments not allowed.<br>
+<h4><a name="int.proteins" class="mozTocH4"></a>Proteins </h4>
+This section lists all the Proteins participated in the cirrent
+Interaction. For a new Interaction, this section is empty. To add a
+Protein, you must search for existing Proteins first by provide
+appropriate values for search fields.&nbsp; Only the most specific
+value is taken into consideration if multiple values are provided for
+search. Since IntAct AC is the most specific, other search values are
+ignored if a value was specified for IntAct AC.<br>
+<br>
+<img src="images/editor-int-prot.jpg" title="" alt="Adding Proteins"
+ style="width: 1026px; height: 298px;"><br>
+<br>
+The orange colour bar on the left Protein identfies as new Proteins not
+yet added to the Interaction. The first Protein is already part of the
+Interaction and hence for absence of color bar next to it.&nbsp; These
+'color coded' Proteins do not form part of the current Interaction until
+the user save them by selecting 'Save' button.<br>
+<br>
+Any errors in adding Proteins are shown red colour as shown below. <br>
+<br>
+<img src="images/editor-int-prot-error.jpg" title=""
+ alt="Error in adding Proteins" style="width: 1028px; height: 294px;"><br>
+<br>
+It is an error to add two identical Proteins with similar role. As
+illustrated in the above example, Protein ABD1 already exists as a bait
+of the Interaction and&nbsp; adding ABD1 again as a bait caused the
+above error. The only alternative in this instance is to assign a
+different role (other than bait) for the new Protein.<br>
+<br>
+<h2><a name="faq" class="mozTocH2"></a>FAQ</h2>
+<span style="font-weight: bold;">What browsers Editor supports?<br>
+</span>It has been tested using Mozilla (1.4a), Explorer (6.0) and
+Konqueror (2.1.1 or above). With the Konqueror it has been noted that
+pop up windows do not get the focus (need to bring them manually). Also,
+the footer is almost at the top when a page does not contain much
+information.<br>
+<br>
+<span style="font-weight: bold;">Do I need a JRE installed to run the
+Editor?</span><br>
+No, you don't need Java Runtime to run the Editor as it is designed to
+run on thin clients (see the next question about JavaScript).<br>
+<br>
+<span style="font-weight: bold;">Do I need JavaScript to run the Editor?</span><br
+ style="font-weight: bold;">
+No but it helps a lot. For example, some validations such as short
+label syntax are faster as they are peformed via JavaScript. The links
+to pop up windows wouldn't work when JavaScript is not enabled. However,
+the overall functionality of the Editor shouldn't be affected if
+JavaScript is not enabled.<br>
+<br>
+<span style="font-weight: bold;">Do I need to logout when I am finished?</span><br>
+There is no need to logout because your session will timeout if it has
+been inactive for 30 or more minutes. However, by explicitly logging out
+you are releasing the resources (good thing to do). So, we recommend
+explicit logouts.<br>
+&nbsp; <br>
+<span style="font-weight: bold;">Can I connect to my last session when
+my session expires?</span><br>
+No. Once your session expires you need to login again and this in turn
+will start a new session.<br>
+<br>
+<span style="font-weight: bold;">I get an exception stack trace for
+some IntAct types.</span><br>
+Not to worry because these types are not implemented yet. This
+exception shouldn't appear at all once we have implemented all the
+IntAct types.<br>
+<br>
+<span style="font-weight: bold;">Sometimes I get an exception when
+Enter key is pressed for a search string in the sidebar.<br>
+</span>This behaviour was observed with Explorer and Konqueror but not
+with Mozilla. The simple solution is to click on Search button instead.<br>
+<br>
+<span style="font-weight: bold;">After entering 'abc' as a short label,
+I pressed Save and it accepted 'abc' as the short label. Now I entered
+'ab%' and the form is submitted without any complaints.&nbsp; I thought
+'ab%' is an invalid short label and the expected error message didn't
+appear.&nbsp; What is happening?</span><br>
+As far as the system is concerned it remembers the value associated
+with the last 'Save' action. Since you pressed 'Save' after 'abc' but
+not after 'ab%', it has already assigned 'abc' as the short label. In a
+nut shell, it is not even aware of 'ab%' because it hasn't seen it.<br>
+<br>
+<span style="font-weight: bold;">It hangs for a tax id in BioSource
+editor.</span><br>
+Either Newt server is not accessible or down. There is no way to get
+around this problem; you need to access the Newt server to do the
+auto-completion.<br>
+<br>
+<span style="font-weight: bold;">Not allowed to save an experiment as
+it fails with validation errors for drop down lists.</span><br>
+Those drop down lists must contain at least a single item for an
+Experiment to save. Ensure that host organism, interaction detection and
+participant detection have at least one value in each one of them. If
+not then use the editor to create values for these (BioSource,
+CvInteraction and CvIndetification) and return to the Experiment editor.
+In summary, if you are caught in this situation you need to leave the
+Experiment editor, create proper entries and then return to it later.<br>
+<br>
+<span style="font-weight: bold;">The parameter to search for Proteins
+given as short label is ignored when a value is provided for IntactAc in
+the Interaction editor.</span><br>
+By default, IntAct AC is the most specific and it is followed by SP AC
+and finally the short label. Given two values for  short label and
+IntAct AC, the latter is always given the priority.<br>
+<br>
+<span style="font-weight: bold;">Is there a way to save or delete all
+Proteins in one single click?</span><br>
+Not at the moment. We may add this behaviour later.<br>
+<hr style="width: 100%; height: 2px;">
+<div style="text-align: right;">Sugath Mudali (<a
+ href="mailto:smudali@ebi.ac.uk">smudali@ebi.ac.uk</a>), <span
+ style="font-style: italic;">Last update: 01/07/03</span><br>
+</div>
+<br>
+<br>
+</body>
+</html>
