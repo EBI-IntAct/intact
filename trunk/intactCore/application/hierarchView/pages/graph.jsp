@@ -21,6 +21,8 @@
 
       <tr>
              <td>
+                   <jsp:include page="warning.jsp" />
+
                    <!--
                          Displays the interaction network if the picture
                          has been generated and stored in the session.
