@@ -12,7 +12,7 @@ package uk.ac.ebi.intact.model;
  *
  * @author hhe
  */
-public class CvAliasType extends CvObject implements Editable {
+public class CvAliasType extends CvObject {
 
     /**
      * no-arg constructor which will hopefully be removed later...
