@@ -24,10 +24,11 @@
 
                    <!-- Displays the available highlightment source -->
                    <display:table
-                        name="sources" width="95%"
+                        name="sources" width="98%"
                         decorator="uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceDecorator">
-                           <display:column property="label" title="ID" width="25%"/>
-                           <display:column property="description" width="75%" />
+                           <display:column property="id"                 title="ID"          width="20%"/>
+                           <display:column property="description"        title="Description" width="70%" />
+                           <display:column property="directHighlightUrl" title="Use"         width="10%" align="center"/>
 
                            <display:setProperty name="basic.msg.empty_list"
                                                 value="No source available for that interaction network" />

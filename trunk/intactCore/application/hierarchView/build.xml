@@ -283,6 +283,8 @@ Verison: $Id$
                  <exclude name="clockT.gif"/>
                  <exclude name="select.gif"/>
                  <exclude name="select-chk.gif"/>
+                 <exclude name="ok-grey.png"/>
+                 <exclude name="ok-red.png"/>
             </fileset>
         </delete>
     </target>
