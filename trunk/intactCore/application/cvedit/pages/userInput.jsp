@@ -10,28 +10,27 @@
     Version: $Id$
 -->
 
-<script language="JavaScript" type="text/javascript">
+<%--<script language="JavaScript" type="text/javascript">--%>
+<%----%>
+<%--    function set(target) {--%>
+<%--        document.forms[0].dispatch.value=target;--%>
+<%--        if (target == "create") {--%>
+<%--            return validate();--%>
+<%--        }--%>
+<%--    }--%>
+<%----%>
+<%--    // Validate the short label.--%>
+<%--    function validate() {--%>
+<%--        var re = /\W+/;--%>
+<%--        if (re.test(document.forms[0].shortLabel.value)) {--%>
+<%--            window.alert("Only word characters are allowed for a short label");--%>
+<%--            return false;--%>
+<%--        }--%>
+<%--    }--%>
+<%----%>
+<%--</script>--%>
 
-    function set(target) {
-        document.forms[0].dispatch.value=target;
-        if (target == "create") {
-            return validate();
-        }
-    }
-
-    // Validate the short label.
-    function validate() {
-        var re = /\W+/;
-        if (re.test(document.forms[0].shortLabel.value)) {
-            window.alert("Only word characters are allowed for a short label");
-            return false;
-        }
-    }
-
-</script>
-
-<html:form action="/cv/choice" focus="AC">
-    <html:hidden property="dispatch" value="error"/>
+<html:form action="/cv/sidebar" focus="AC">
     <table>
         <tr>
             <td align="left">
@@ -47,7 +46,7 @@
                     <tr>
                         <td><html:text property="searchString" size="15"/></td>
                         <td>
-                            <html:submit tabindex="1" onclick="return set('search')">
+                            <html:submit tabindex="1" property="dispatch">
                                 <bean:message key="button.search"/>
                             </html:submit>
                         </td>
@@ -55,7 +54,8 @@
                     <tr>
                         <td><html:text property="shortLabel" size="15"/></td>
                         <td>
-                            <html:submit onclick="return set('create')">
+<%--                            <html:submit onclick="return set('create')">--%>
+                            <html:submit property="dispatch">
                                 <bean:message key="button.create"/>
                             </html:submit>
                         </td>
