@@ -9,8 +9,7 @@ package uk.ac.ebi.intact.application.cvedit.struts.controller;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvEditForm;
-import uk.ac.ebi.intact.application.cvedit.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvObject;
@@ -51,9 +50,9 @@ public class CvEditAction extends IntactBaseAction {
      * or HttpServletResponse.sendRedirect() to, as a result of processing
      * activities of an <code>Action</code> class
      */
-    public ActionForward perform (ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response) {
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         // Determine the action taken by the user.
         CvEditForm theForm = (CvEditForm) form;
 
@@ -93,24 +92,14 @@ public class CvEditAction extends IntactBaseAction {
         // The object we are editing at the moment.
         CvObject cvobj = user.getCurrentEditObject();
 
-        // Save the session to access session objects.
-        HttpSession session = super.getSession(request);
-
         // Holds the annotations to add.
-        Collection addcomments = (Collection) session.getAttribute(
-            WebIntactConstants.ANNOTS_TO_ADD);
+        CvViewBean viewbean = user.getView();
 
-        // Holds the annotations to delete.
-        Collection delcomments = (Collection) session.getAttribute(
-            WebIntactConstants.ANNOTS_TO_DELETE);
-
-        // Holds the xrefs to add.
-        Collection addxrefs = (Collection) session.getAttribute(
-            WebIntactConstants.XREFS_TO_ADD);
-
-        // Holds the xrefs to delete.
-        Collection delxrefs = (Collection) session.getAttribute(
-            WebIntactConstants.XREFS_TO_DELETE);
+        // The annotations/xrefs to add and delete to/from persistent system.
+        Collection addcomments = viewbean.getAnnotationsToAdd();
+        Collection delcomments = viewbean.getAnnotationsToDel();
+        Collection addxrefs = viewbean.getXrefsToAdd();
+        Collection delxrefs = viewbean.getXrefsToDel();
 
         // Clear any previous errors.
         super.clearErrors();
@@ -121,26 +110,25 @@ public class CvEditAction extends IntactBaseAction {
 
             // Create annotations and add them to CV object.
             for (Iterator iter = addcomments.iterator(); iter.hasNext();) {
-                Annotation annot = ((CommentBean)iter.next()).getAnnotation();
+                Annotation annot = (Annotation) iter.next();
                 user.create(annot);
                 cvobj.addAnnotation(annot);
             }
             // Delete annotations and remove them from CV object.
             for (Iterator iter = delcomments.iterator(); iter.hasNext();) {
-                Annotation annot = ((CommentBean)iter.next()).getAnnotation();
+                Annotation annot = (Annotation) iter.next();
                 user.delete(annot);
                 cvobj.removeAnnotation(annot);
             }
-
             // Create xrefs and add them to CV object.
             for (Iterator iter = addxrefs.iterator(); iter.hasNext();) {
-                Xref xref = ((XreferenceBean)iter.next()).getXref();
+                Xref xref = (Xref) iter.next();
                 user.create(xref);
                 cvobj.addXref(xref);
             }
             // Delete xrefs and remove them from CV object.
             for (Iterator iter = delxrefs.iterator(); iter.hasNext();) {
-                Xref xref = ((XreferenceBean)iter.next()).getXref();
+                Xref xref = (Xref) iter.next();
                 user.delete(xref);
                 cvobj.removeXref(xref);
             }
@@ -173,10 +161,8 @@ public class CvEditAction extends IntactBaseAction {
         }
         finally {
             // Clear containers; regradless of the outcome.
-            addcomments.clear();
-            delcomments.clear();
-            addxrefs.clear();
-            delxrefs.clear();
+            viewbean.clearTransAnnotations();
+            viewbean.clearTransXrefs();
         }
     }
 }
