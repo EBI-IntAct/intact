@@ -26,12 +26,6 @@
         <param-value>uk.ac.ebi.intact.application.editor.EditorResources</param-value>
     </context-param>
 
-    <!--  Class name of the data source object to be used    -->
-    <context-param>
-        <param-name>datasource</param-name>
-        <param-value>uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource</param-value>
-    </context-param>
-
     <!-- This filter is to stop users accessing edit pages without login first -->
    <filter>
       <filter-name>Security Filter</filter-name>
