@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.persistence;
 
 import org.apache.ojb.broker.PBKey;
 import org.apache.ojb.broker.PersistenceBroker;
-import org.apache.ojb.broker.PersistenceBrokerFactory;
 import org.apache.ojb.odmg.OJB;
 import org.apache.ojb.odmg.TransactionImpl;
 import org.odmg.*;
@@ -56,7 +55,7 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
         //connect using the user details supplied to the broker
         //NB ODMG expects jcdAlias, user, password to be seperated by #
         db.open(connDetails, Database.OPEN_READ_WRITE);
-        System.out.println("Using the ObjectBridge ODMG version");
+//        System.out.println("Using the ObjectBridge ODMG version");
     }
 
     /**
@@ -70,7 +69,7 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
         try {
             tx = odmg.newTransaction();
             tx.begin();
-            ourLogger.debug("STARTED the transaction");
+            ourLogger.debug("Started the transaction");
         }
         catch (TransactionInProgressException pe) {
             //transaction already open - do something
@@ -88,8 +87,9 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
      * @throws org.odmg.TransactionNotInProgressException thrown if no object TX is running
      */
     public void lock(Object obj) throws TransactionNotInProgressException {
-        if ((tx == null) || (!tx.isOpen()))
+        if ((tx == null) || (!tx.isOpen())) {
             throw new TransactionNotInProgressException();
+        }
         tx.lock(obj, Transaction.WRITE);
     }
 
@@ -99,15 +99,7 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
      * @throws DataSourceException - thrown if the DAO cannot be closed (details in specific errors)
      */
     public void close() throws DataSourceException {
-        //this releases the broker instance - assumes doing this also
-        //releases the DB connection....(may need changing for OJB 0.9.7)
-        //PersistenceBrokerFactory.releaseInstance(broker);
-//        checkForOpenStore();
-        PersistenceBrokerFactory.releaseAllInstances();
-//            if (!broker.isClosed()) {
-//                broker.close();
-//            }
-
+        super.close();
         //clean up the ODMG stuff too
         try {
             db.close();
@@ -157,7 +149,7 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
         ourLogger.debug("Doing a object transaction");
         tx.lock(obj, Transaction.WRITE);
 
-        // Comit only for a local transaction.
+        // Commit only for a local transaction.
         if (localTransaction) {
             try {
                 commit();
@@ -169,7 +161,7 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
     }
 
     public void forceUpdate(Object obj) throws UpdateException {
-        update(obj, true);
+        throw new UpdateException("Not implemented, not required");
     }
 
     /**
@@ -306,35 +298,4 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
             commit();
         }
     }
-
-//    public List executeOQLQuery(Class clazz, String searchParam, String searchValue)
-//            throws OQLQueryException {
-//        System.out.println("Doing OQL using ODMG");
-//        OQLQuery query = odmg.newOQLQuery();
-//        try {
-//            System.out.println("I am doing the count");
-//            query.create("select count(" + searchParam + ") from " + clazz.getName()
-//                    + " where " + searchParam + " like $1");
-//        }
-//        catch (QueryInvalidException e) {
-//            throw new OQLQueryException("Query invalid", e);
-//        }
-//        // Replace * with % for SQL
-//        String sqlValue = searchValue.replaceAll("\\*", "%");
-//        try {
-//            query.bind(sqlValue);
-//        }
-//        catch (QueryParameterCountInvalidException e) {
-//            throw new OQLQueryException("Query invalid parameter count", e);
-//        }
-//        catch (QueryParameterTypeInvalidException e) {
-//            throw new OQLQueryException("Query invalid parameter type", e);
-//        }
-//        try {
-//            return (List) query.execute();
-//        }
-//        catch (QueryException e) {
-//            throw new OQLQueryException("Query execute error", e);
-//        }
-//    }
 }
