@@ -137,7 +137,7 @@ public class DRLineExport extends LineExport {
 
                         } else if ( methodStatus.doNotExport() ) {
 
-                            System.out.println( "\t\t Method specified as non exportable" );
+                            log( "\t\t Method specified as non exportable" );
                             isLowConfidence = true;
 
                         } else if ( methodStatus.isNotSpecified() ) {
@@ -542,7 +542,7 @@ public class DRLineExport extends LineExport {
 
             if ( !isLowConfidence( protein ) ) {
 
-                System.out.println( "Wasn't low confidence ... export it ;o)" );
+                log( "Wasn't low confidence ... export it ;o)" );
 
                 // means a protein is low-confidence if it has at least one low-confidence interaction.
 
@@ -644,7 +644,7 @@ public class DRLineExport extends LineExport {
         // create Option objects
         Option helpOpt = new Option( "help", "print this message" );
 
-        Option drExportOpt = OptionBuilder.withArgName( "drExportFilename" ).hasArg().withDescription( "DR export output filename." ).create( "file" );
+        Option drExportOpt = OptionBuilder.withArgName( "drExportFilename" ).hasArg().withDescription( "DR export output filename." ).create( "drExport" );
 
         Option debugOpt = OptionBuilder.withDescription( "Shows verbose output." ).create( "debug" );
         debugOpt.setRequired( false );
@@ -686,12 +686,32 @@ public class DRLineExport extends LineExport {
         exporter.setDebugEnabled( debugEnabled );
         exporter.setDebugFileEnabled( debugFileEnabled );
 
-        boolean filenameGiven = line.hasOption( "file" );
+        boolean filenameGiven = line.hasOption( "drExport" );
         String filename = null;
-        if ( filenameGiven ) {
-            filename = line.getOptionValue( "file" );
-        } else {
+        if ( filenameGiven == true ) {
+            filename = line.getOptionValue( "drExport" );
+        }
+
+        // Prepare CC output file.
+        File file = null;
+        if ( filename != null ) {
+            try {
+                file = new File( filename );
+                if ( file.exists() ) {
+                    System.err.println( "Please give a new file name for the DR output file: " + file.getAbsoluteFile() );
+                    System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
+                    filename = null;
+                    file = null;
+                }
+            } catch( Exception e ) {
+                // nothing, the default filename will be given
+            }
+        }
+
+        if ( filename == null || file == null ) {
             filename = "DRLineExport_" + TIME + ".txt";
+            System.out.println( "Using default filename for the DR export: " + filename );
+            file = new File( filename );
         }
 
         System.out.println( "DR export will be saved in: " + filename );
@@ -711,8 +731,6 @@ public class DRLineExport extends LineExport {
         BufferedWriter out = null;
         FileWriter fw = null;
         try {
-            File file = new File( filename );
-            System.out.println( "Try to save to: " + file.getAbsolutePath() );
             fw = new FileWriter( file );
             out = new BufferedWriter( fw );
             writeToFile( proteinEligible, out );

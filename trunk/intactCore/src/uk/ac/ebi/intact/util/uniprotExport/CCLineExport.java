@@ -179,7 +179,7 @@ public class CCLineExport extends LineExport {
                                                        uniprotID );
 
         if ( proteins.size() == 0 ) {
-            throw new IntactException( "the ID " + uniprotID + " didn't returned the expected number of proteins: " +
+            throw new IntactException( "the ID " + uniprotID + " didn't return the expected number of protein: " +
                                        proteins.size() + ". Abort." );
         }
 
@@ -231,15 +231,11 @@ public class CCLineExport extends LineExport {
 
             String ccs = sb.toString();
 
-            // D E B U G
-            System.out.println( ccs );
+            log( ccs );
 
             // write the content in the output file.
             writer.write( ccs );
             writer.flush();
-
-            // clean the cache.
-//            ccLines.remove( id );
         }
     }
 
@@ -334,7 +330,7 @@ public class CCLineExport extends LineExport {
         buffer.append( "IntAct=" ).append( protein1.getAc() ).append( ',' ).append( ' ' ).append( protein2.getAc() ).append( ';' );
         buffer.append( NEW_LINE );
 
-//        System.out.println( "\t\t\t\t" + buffer.toString() );
+        log( "\t\t\t\t" + buffer.toString() );
 
         return new CcLine( buffer.toString(), geneName );
     }
@@ -632,11 +628,22 @@ public class CCLineExport extends LineExport {
         List potentiallyEligibleInteraction = new ArrayList( 16 );
 
         // iterate over the Uniprot ID of the protein that have been selected for DR export.
+
         for ( Iterator iteratorUniprotId = uniprotIDs.iterator(); iteratorUniprotId.hasNext(); ) {
 
             String uniprotID_1 = (String) iteratorUniprotId.next();
 
             idProcessed++;
+
+            if ( ( idProcessed % 50 ) == 0 ) {
+                System.out.print( "..." + idProcessed );
+
+                if ( ( idProcessed % 500 ) == 0 ) {
+                    System.out.println( "" );
+                } else {
+                    System.out.flush();
+                }
+            }
 
             log( NEW_LINE + "Protein selected: " + uniprotID_1 );
 
@@ -649,12 +656,6 @@ public class CCLineExport extends LineExport {
 
             for ( Iterator iteratorP = proteinSet_1.iterator(); iteratorP.hasNext(); ) {
                 Protein protein1 = (Protein) iteratorP.next();
-
-//                if( getGeneName( protein1, helper ) == null ) {
-//
-//                    System.err.println( protein1.getShortLabel() + " has no gene name." );
-//                    continue;
-//                }
 
                 Collection interactionP1 = getInteractions( protein1 );
 
@@ -737,13 +738,6 @@ public class CCLineExport extends LineExport {
                                 protein2 = p1;
                             }
 
-//                            if( getGeneName( protein2, helper ) == null ) {
-//
-//                                System.err.println( protein2.getShortLabel() + " has no gene name, skip that interaction." );
-//                                iterator.remove(); // remove it.
-//                                continue;
-//                            }
-
                             uniprotID_2 = getUniprotID( protein2 );
 
                             // retreive the UniProt ID of the protein or its master (is splice variant) to check if it
@@ -760,12 +754,8 @@ public class CCLineExport extends LineExport {
                                 uniprotID_2_check = uniprotID_2;
                             }
 
-                            // here, we are excluding the splice variant !! we have to check first that protein2 is not a splice variant
-                            // it it is so, get the master and check with the master's ID
-
-
-
-                            // We don't take into account interactions that involve proteins not eligible for DR export.
+                            // we check that the protein we are currently dealing with was eligible in DR
+                            // if it is a splice variant, we check that the master protein was eligible.
                             if ( !uniprotIDs.contains( uniprotID_2_check ) ) {
 
                                 log( "\n\t\t " + uniprotID_2 + " was not eligible for DR export, that interaction is not taken into account." );
@@ -931,7 +921,6 @@ public class CCLineExport extends LineExport {
         drExportOpt.setRequired( true );
 
         Option ccExportOpt = OptionBuilder.withArgName( "ccExportFilename" ).hasArg().withDescription( "CC export output file." ).create( "ccExport" );
-//        ccExportOpt.setRequired( true );
 
         Option debugOpt = OptionBuilder.withDescription( "Shows verbose output." ).create( "debug" );
         debugOpt.setRequired( false );
@@ -992,21 +981,24 @@ public class CCLineExport extends LineExport {
         // Prepare output file.
         File file = null;
         if ( ccExportFilename != null ) {
-            file = new File( ccExportFilename );
-            if ( file.exists() ) {
-                System.err.println( "Please give a new file name for the CC output file: " + file.getAbsoluteFile() );
-                System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
-                ccExportFilename = null;
-                file = null;
+            try {
+                file = new File( ccExportFilename );
+                if ( file.exists() ) {
+                    System.err.println( "Please give a new file name for the CC output file: " + file.getAbsoluteFile() );
+                    System.err.println( "We will use the default filename instead (instead of overwritting the existing file)." );
+                    ccExportFilename = null;
+                    file = null;
+                }
+            } catch( Exception e ) {
+                // nothing, the default filename will be given
             }
         }
 
-        if ( ccExportFilename == null ) {
+        if ( ccExportFilename == null || file == null ) {
             String filename = "CCLineExport_" + TIME + ".txt";
             System.out.println( "Using default filename for the CC export: " + filename );
             file = new File( filename );
         }
-
 
         System.out.println( "Try to save to: " + file.getAbsolutePath() );
         BufferedWriter out = null;
