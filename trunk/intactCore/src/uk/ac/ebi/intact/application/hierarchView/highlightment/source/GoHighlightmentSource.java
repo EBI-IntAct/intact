@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 
 // JDK
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
+import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
@@ -202,6 +203,14 @@ public class GoHighlightmentSource
     public Collection getUrl (String aProteinAC, HttpSession aSession) {
         Collection urls = new Vector();
 
+        // get in the Highlightment properties file where is hosted interpro
+        Properties props = PropertyLoader.load (Constants.PROPERTY_FILE_HIGHLIGHTING);
+        if (null == props) {
+           // Log that error
+        }
+
+        String hostname = props.getProperty("highlightment.source.GO.hostname");
+
         // Search in Intact data Base all Go term for the AC accession number
         // Enter in urls all adress int interpro for each Go term
 
@@ -223,7 +232,7 @@ public class GoHighlightmentSource
                 goTermDescription = goTermInfo[1];
 
                 // TODO : put that server name as a parameter, eventually in a properties file !
-                urls.add (new LabelValueBean(goTerm, "http://holbein:8080/interpro/DisplayGoTerm?id=" + goTerm + "&format=simple", goTermDescription));
+                urls.add (new LabelValueBean(goTerm, hostname + "/interpro/DisplayGoTerm?id=" + goTerm + "&format=simple", goTermDescription));
             }
         }
         return urls;
