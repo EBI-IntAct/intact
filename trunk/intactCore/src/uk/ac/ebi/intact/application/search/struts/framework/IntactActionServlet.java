@@ -15,7 +15,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import uk.ac.ebi.intact.application.search.business.IntactServiceImpl;
 import uk.ac.ebi.intact.application.search.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
-import uk.ac.ebi.intact.application.search.exception.MissingIntactTypesException;
 
 import java.io.IOException;
 
@@ -48,13 +47,7 @@ public class IntactActionServlet extends ActionServlet {
             super.log(ExceptionUtils.getStackTrace(ioe));
             throw new ServletException();
         }
-        catch (MissingIntactTypesException mite) {
-            // An empty intact types file.
-            super.log(ExceptionUtils.getStackTrace(mite));
-            throw new ServletException();
-        }
         // Store the service into the session scope.
         ctx.setAttribute(SearchConstants.INTACT_SERVICE, service);
-        ctx.setAttribute(SearchConstants.INTACT_TYPES, service.getIntactTypes());
     }
 }

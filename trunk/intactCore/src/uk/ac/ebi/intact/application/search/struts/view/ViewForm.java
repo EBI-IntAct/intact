@@ -19,19 +19,14 @@ public class ViewForm extends ActionForm {
     // Class Data
 
     /**
-     * Identifier for when Expand/Contract button is pressed.
+     * Identifier for when Expand Protein button is pressed.
      */
-    private static final int EXPAND_CONTRACT = 0;
+    private static final int EXPAND = 0;
 
     /**
-     * Identifier for when Expand All button is pressed.
+     * Identifier for when Contract Protein button is pressed.
      */
-    private static final int EXPAND_ALL = 1;
-
-    /**
-     * Identifier for when Contract All button is pressed.
-     */
-    private static final int CONTRACT_ALL = 2;
+    private static final int CONTRACT = 1;
 
     /**
      * Identifier for when Graph button is pressed.
@@ -46,19 +41,28 @@ public class ViewForm extends ActionForm {
     private int myAction;
 
     /**
+     * AC - stored when a link is clicked to have data expanded
+     */
+    private String ac;
+
+    public void setAc(String ac) {
+        this.ac = ac;
+    }
+    public String getAc() {
+        return this.ac;
+    }
+
+    /**
      * Sets the action.
      * @param action the action for the form. If this contains the word
      * 'AC' then the search is by AC otherwise the search is by label.
      */
     public void setAction(String action) {
-        if (action.equals("View Detail")) {
-            myAction = EXPAND_CONTRACT;
+        if (action.equals("Detail View")) {
+            myAction = EXPAND;
         }
-        else if (action.equals("Full Expand")) {
-            myAction = EXPAND_ALL;
-        }
-        else if (action.equals("Contract All")) {
-            myAction = CONTRACT_ALL;
+        else if (action.equals("Compact View")) {
+            myAction = CONTRACT;
         }
         else {
             // Assume graph button is pressed.
@@ -67,26 +71,18 @@ public class ViewForm extends ActionForm {
     }
 
     /**
-     * True if Expand/Contract button is pressed.
+     * True if Expand button is pressed.
      */
-    public boolean expandContractSelected() {
-        return myAction == EXPAND_CONTRACT;
+    public boolean expandSelected() {
+        return myAction == EXPAND;
     }
 
     /**
-     * True if Expand All button is pressed.
+     * True if Contract button is pressed.
      */
-    public boolean expandAllSelected() {
-        return myAction == EXPAND_ALL;
+    public boolean contractSelected() {
+        return myAction == CONTRACT;
     }
-
-    /**
-     * True if Contract All button is pressed.
-     */
-    public boolean contractAllSelected() {
-        return myAction == CONTRACT_ALL;
-    }
-
 
     /**
      * True if Graph button is pressed.
