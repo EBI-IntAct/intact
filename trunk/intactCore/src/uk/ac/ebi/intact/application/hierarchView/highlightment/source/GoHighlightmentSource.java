@@ -2,9 +2,10 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.util.SearchReplace;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
-import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceBean;
 
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.Interactor;
@@ -226,15 +227,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
     } // saveOptions
 
 
-    /**
-     * Return a collection of URL corresponding to the selected protein and source
-     * Here it produce a list of GO terms and format URLs according to the InGO specification.<br>
-     *
-     * @param xRef A collection of xRef
-     * @param applicationPath our application path
-     * @return a set of URL pointing on the highlightment source
-     */
-    public List getSourceUrls (Collection xRef, String applicationPath)
+    public List getSourceUrls (Collection xRefs, Collection selectedXRefs, String applicationPath)
          throws IntactException {
 
         // get in the Highlightment properties file where is interpro
@@ -258,32 +251,50 @@ public class GoHighlightmentSource extends HighlightmentSource {
         }
 
         // filter to keep only GO terms
-        Collection listGOTerm = filterXref (xRef);
+        Collection listGOTerm = filterXref (xRefs);
 
         // create url collection with exact size
         List urls = new ArrayList (listGOTerm.size());
 
         // Create a collection of label-value object (GOterm, URL to access a nice display in interpro)
         String[] goTermInfo;
-        String goTerm, goTermDescription;
+        String goTermId, goTermDescription;
 
         if (listGOTerm != null && (false == listGOTerm.isEmpty())) {
             Iterator list = listGOTerm.iterator();
             while (list.hasNext()) {
                 goTermInfo        = (String[]) list.next();
-                goTerm            = goTermInfo[0];
+                goTermId          = goTermInfo[0];
                 goTermDescription = goTermInfo[1];
 
+                String directHighlightUrl = applicationPath + "/source.do?keys=${selected-children}&clicked=${id}";
                 String hierarchViewURL = null;
+
                 try {
-                    hierarchViewURL = URLEncoder.encode (applicationPath + "/source.do?keys=${selected-children}&clicked=${id}", "UTF-8");
+                    hierarchViewURL = URLEncoder.encode (directHighlightUrl, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     logger.error(e);
                 }
 
-                String url = goPath + "/DisplayGoTerm?selected=" + goTerm + "&intact=true&format=contentonly&url=" + hierarchViewURL + "&frame=_top";
-                logger.info ("Xref: " + goTerm);
-                urls.add ( new LabelValueBean (goTerm, url, goTermDescription) );
+                // replace ${selected-children} and ${id} by the GO id.
+                logger.info ("direct highlight URL: " + directHighlightUrl);
+                directHighlightUrl = SearchReplace.replace (directHighlightUrl, "${selected-children}", goTermId);
+                directHighlightUrl = SearchReplace.replace (directHighlightUrl, "${id}", goTermId);
+                logger.info ("direct highlight URL (modified): " + directHighlightUrl);
+
+                String quickGoUrl = goPath + "/DisplayGoTerm?selected=" + goTermId + "&intact=true&format=contentonly&url=" + hierarchViewURL + "&frame=_top";
+                logger.info ("Xref: " + goTermId);
+
+                boolean selected = false;
+                if (selectedXRefs != null && selectedXRefs.contains (goTermId)) {
+                    logger.info(goTermId + " SELECTED");
+                    selected = true;
+                }
+                urls.add ( new SourceBean (goTermId,
+                                           goTermDescription,
+                                           quickGoUrl,
+                                           directHighlightUrl,
+                                           selected) );
             }
         }
 

@@ -114,11 +114,12 @@ public abstract class HighlightmentSource {
      * eg. produce a list of GO terms if GO is the source.<br>
      * if the method send back no URL, the given parameter is wrong.
      *
-     * @param xRef The collection of XRef from which we want to get the list of corresponding URL
+     * @param xRefs The collection of XRef from which we want to get the list of corresponding URL
+     * @param selectedXRefs The collection of selected XRef
      * @param applicationPath our application path
      * @return a set of URL pointing on the highlightment source.
      */
-    abstract public List getSourceUrls (Collection xRef, String applicationPath)
+    abstract public List getSourceUrls (Collection xRefs, Collection selectedXRefs,String applicationPath)
             throws IntactException;
 
 
