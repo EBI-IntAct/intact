@@ -60,8 +60,8 @@ public class ExperimentSearchAction extends AbstractEditorAction {
             errors.add("int.exp.search",
                     new ActionError("error.int.exp.search.input"));
             saveErrors(request, errors);
-//            return new ActionForward(mapping.getInput());
-            return mapping.findForward(EditorConstants.FORWARD_INPUT);
+            return mapping.getInputForward();
+//            return mapping.findForward(EditorConstants.FORWARD_INPUT);
         }
         // Handler to the current user.
         EditUserI user = super.getIntactUser(request);
@@ -77,8 +77,8 @@ public class ExperimentSearchAction extends AbstractEditorAction {
             errors.add("int.exp.search",
                     new ActionError("error.search", se.getMessage()));
             saveErrors(request, errors);
-//            return new ActionForward(mapping.getInput());
-            return mapping.findForward(EditorConstants.FORWARD_INPUT);
+            return mapping.getInputForward();
+//            return mapping.findForward(EditorConstants.FORWARD_INPUT);
         }
         // Search found any results?
         if (experiments.isEmpty()) {
@@ -86,8 +86,8 @@ public class ExperimentSearchAction extends AbstractEditorAction {
             errors.add("int.exp.search",
                     new ActionError("error.int.exp.search.empty", searchParam));
             saveErrors(request, errors);
-//            return new ActionForward(mapping.getInput());
-            return mapping.findForward(EditorConstants.FORWARD_INPUT);
+            return mapping.getInputForward();
+//            return mapping.findForward(EditorConstants.FORWARD_INPUT);
         }
         // The number of Experiments retrieved from the search.
         int size = experiments.size();
@@ -99,8 +99,8 @@ public class ExperimentSearchAction extends AbstractEditorAction {
                     new ActionError("error.int.exp.search.many",
                             Integer.toString(size), searchParam, "10"));
             saveErrors(request, errors);
-//            return new ActionForward(mapping.getInput());
-            return mapping.findForward(EditorConstants.FORWARD_INPUT);
+            return mapping.getInputForward();
+//            return mapping.findForward(EditorConstants.FORWARD_INPUT);
         }
         // Can safely cast it as we have the correct editor view bean.
         InteractionViewBean view = (InteractionViewBean) user.getView();

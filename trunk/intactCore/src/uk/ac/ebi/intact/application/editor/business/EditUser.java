@@ -23,6 +23,8 @@ import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.util.GoTools;
 import uk.ac.ebi.intact.util.NewtServerProxy;
+import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DAOFactory;
@@ -169,6 +171,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      */
     private transient NewtServerProxy myNewtServer;
 
+    /**
+     * Reference to the Protein factory.
+     */
+    private transient UpdateProteinsI myProteinFactory;
+
     // Static Methods.
 
     /**
@@ -212,6 +219,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // A dummy read to ensure that a connection is made as a valid user.
         myHelper.search("uk.ac.ebi.intact.model.Institution", "ac", "*");
 
+        // Initialize the Protein factory.
+        try {
+            myProteinFactory = new UpdateProteins(myHelper);
+        }
+        catch (UpdateProteinsI.UpdateException e) {
+            throw new IntactException("Unable to create the Protein factory");
+        }
         // Record the time started.
         mySessionStartTime = Calendar.getInstance().getTime();
     }
@@ -353,9 +367,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
-    public Protein getProteinByXref(String pid) throws SearchException {
+    public Collection getSPTRProteins(String pid) {
+        return myProteinFactory.insertSPTrProteins(pid);
+    }
+
+    public Collection getProteinsByXref(String pid) throws SearchException {
         try {
-            return (Protein) myHelper.getObjectByXref(Protein.class, pid);
+            return myHelper.getObjectsByXref(Protein.class, pid);
         }
         catch (IntactException e) {
             throw new SearchException(e.getMessage());
