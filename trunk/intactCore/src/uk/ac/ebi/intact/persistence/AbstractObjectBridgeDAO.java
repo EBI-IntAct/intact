@@ -176,6 +176,12 @@ public abstract class AbstractObjectBridgeDAO implements DAO {
         return myBroker.serviceConnectionManager().getConnection();
     }
 
+    public void close() throws DataSourceException {
+        // DataSourceException is not thrown from here but it may be thrown from
+        // a subclass.
+        myBroker.close();
+    }
+
     /**
      * opens a DAO (connection). Note that connections are opened also via
      * the DAO constructor method, so this method should not be called unless
