@@ -29,6 +29,7 @@ import java.io.Serializable;
 public interface IntactUserI extends Serializable, HttpSessionBindingListener {
 
     public String  getQueryString();
+    public String  getApplicationPath();
     public int     getCurrentDepth();
     public boolean minimalDepthReached();
     public boolean maximalDepthReached();

@@ -72,7 +72,7 @@ public final class DisplayAction extends IntactBaseAction {
              * order to perform a search.
              * e.g. by using http://server/hierarchView/display.do?AC=EBI-foo
              */
-            user = createIntactUser (session);
+            user = createIntactUser (session, request);
 
             if (false == isErrorsEmpty()) {
                 // Report any errors we have discovered back to the original form
