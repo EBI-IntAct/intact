@@ -5,16 +5,14 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
-
 /**
  * The type of the alias.
  * @intact.example "common name"
  * @intact.example "misspelling"
- * 
+ *
  * @author hhe
  */
-public class CvAliasType extends CvObject {
+public class CvAliasType extends CvObject implements Editable {
 
 
 } // end CvAliasType

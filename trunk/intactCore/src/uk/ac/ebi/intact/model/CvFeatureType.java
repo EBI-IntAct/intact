@@ -10,7 +10,7 @@ import java.util.*;
 /**
 
  */
-public class CvFeatureType extends CvObject {
+public class CvFeatureType extends CvObject implements Editable {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.

@@ -5,15 +5,11 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
-
 /**
  * The subcellular compartment.
- * 
- * @intact.example nucleus
  * @author hhe
  */
-public class CvCompartment extends CvObject {
+public class CvCompartment extends CvObject implements Editable {
 
 
 } // end CvCompartment

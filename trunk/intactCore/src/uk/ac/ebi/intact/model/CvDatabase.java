@@ -14,7 +14,7 @@ import java.util.*;
  * 
  * @author hhe
  */
-public class CvDatabase extends CvObject {
+public class CvDatabase extends CvObject implements Editable {
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
