@@ -88,7 +88,7 @@ public class CommentAddAction extends AbstractEditorAction {
         viewbean.addAnnotation(annot);
 
         // Clear previous entries and reset to the default values.
-        theForm.reset(mapping, request);
+//        theForm.reset(mapping, request);
 
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
     }
