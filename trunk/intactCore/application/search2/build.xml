@@ -50,10 +50,11 @@
     <!-- Build working classpath -->
     <path id="project.class.path">
 
+        <!-- Currently no JAR file use in search -->
         <!-- Project specific jar files. -->
-        <fileset dir="${lib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
+<!--        <fileset dir="${lib.dir}">-->
+<!--            <include name="**/*.jar"/>-->
+<!--        </fileset>-->
 
         <!-- Where the classes are compiled to. -->
         <pathelement path="${dest.dir}"/>
@@ -267,11 +268,12 @@
                 <include name="${last.modified.file}"/>
             </fileset>
 
-            <!-- Include cvedit specific jar files. -->
-            <lib dir="${lib.dir}">
-                <!-- Avoid NFS temp files (occationally) -->
-                <include name="*.jar"/>
-            </lib>
+
+            <!-- Currently no JAR file use in search -->
+            <!-- Include search specific jar files. -->
+<!--            <lib dir="${lib.dir}">-->
+<!--                <include name="*.jar"/>-->
+<!--            </lib>-->
 
             <!-- Inlcude the intact core -->
             <lib dir="${root.dist.dir}"/>
