@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
-import uk.ac.ebi.intact.application.commons.struts.action.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
+import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpSession;
  * @author Michael Kleen
  * @version SearchBaseAction.java Date: Feb 17, 2005 Time: 4:13:44 PM
  *          <p/>
- *          SearchBaseAction is the superclass of all search actions. It provides some basic operations to make life easier.
+ *          SearchBaseAction is the superclass of all search actions. It provides some basic methods to make life easier.
  */
 public abstract class SearchBaseAction extends IntactBaseAction {
 
@@ -19,7 +19,6 @@ public abstract class SearchBaseAction extends IntactBaseAction {
     public void setRequest(final HttpServletRequest request) {
         this.myRequest = request;
     }
-
 
     public IntactUserIF getIntactUser() {
 
