@@ -254,6 +254,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
                  <!-- Do not remove hv specific files -->
                  <exclude name="index.jsp"/>
                  <exclude name="blank.jsp"/>
+                 <exclude name="errorFrame.jsp"/>
                  <exclude name="forwardToSearch.jsp"/>
                  <exclude name="restoreContext.jsp"/>
                  <exclude name="sidebarSearch.jsp"/>
