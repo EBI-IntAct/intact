@@ -35,4 +35,9 @@ public class InteractionSingleViewBean extends SingleViewBean {
     public boolean showGraphButtons() {
         return true;
     }
+
+    public String getHelpSection() {
+        return "interaction.single.view";
+    }
+
 }

@@ -36,4 +36,8 @@ public class ProteinSingleViewBean extends SingleViewBean {
         return true;
     }
 
+    public String getHelpSection() {
+        return "protein.single.view";
+    }
+
 }

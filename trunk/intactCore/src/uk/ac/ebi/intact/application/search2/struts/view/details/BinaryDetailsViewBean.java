@@ -181,4 +181,8 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
             }
         }
     }
+
+    public String getHelpSection() {
+        return "binary.view";
+    }
 }

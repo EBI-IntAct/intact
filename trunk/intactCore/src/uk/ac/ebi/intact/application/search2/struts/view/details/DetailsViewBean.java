@@ -138,4 +138,9 @@ public class DetailsViewBean extends AbstractViewBean
     public boolean showGraphButtons() {
         return true;
     }
+
+    public String getHelpSection() {
+        return "details.view";
+    }
+
 }

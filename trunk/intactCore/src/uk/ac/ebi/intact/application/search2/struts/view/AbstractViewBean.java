@@ -84,4 +84,9 @@ public abstract class AbstractViewBean implements Serializable {
     public abstract void getHTML( Writer writer );
 
     public abstract void initHighlightMap();
+
+    /**
+     * Returns the help section.
+     */
+    public abstract String getHelpSection();
 }

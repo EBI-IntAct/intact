@@ -118,4 +118,8 @@ public class ProteinDetailsViewBean extends DetailsViewBean {
         // write the HTML content
         super.getHTML( writer );
     }
+
+    public String getHelpSection() {
+        return "protein.details.view";
+    }
 }
