@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
-import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 
 import java.util.Collection;
 import java.util.Date;
@@ -192,9 +191,7 @@ public interface IntactUserIF extends Serializable {
      * @param objectType the object type to be searched
      * @param searchParam the parameter to search on (eg field)
      * @param searchValue the search value to match with the parameter
-     *
      * @return the results of the search (empty if no matches were found).
-     *
      * @exception SearchException thrown if problems are encountered during the
      * search process.
      */
@@ -216,16 +213,16 @@ public interface IntactUserIF extends Serializable {
     public boolean hasSingleSearchResult();
 
     /**
-     * Sets the last search criteria.
-     * @param query the last search query.
-     */
-    public void setSearchQuery(String query);
-
-    /**
      * Returns the last search query.
      * @return the last search query.
      */
-    public String getSearchQuery();
+    public String getLastSearchQuery();
+
+    /**
+     * Returns the class name of the last search.
+     * @return the class name of the last search as a <code>String</code>.
+     */
+    public String getLastSearchClass();
 
     /**
      * Caches the last search result. Each object of <code>results</code> is
