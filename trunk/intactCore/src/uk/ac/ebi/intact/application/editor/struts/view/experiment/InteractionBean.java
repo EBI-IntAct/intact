@@ -60,6 +60,16 @@ public class InteractionBean extends AbstractEditBean implements Serializable {
         return getLink("Interaction", myInteraction.getShortLabel());
     }
 
+//    public String getEditActionLink() {
+//        return "<input type=\"submit\" name=\"" + getAc()
+//                + "\" value=\"Edit Interaction\" title=\"Edit this Interaction\">";
+//    }
+//
+//    public String getDeleteActionLink() {
+//        return "<input type=\"submit\" name=\"" + getAc()
+//                + "\" value=\"Delete Interaction\" title=\"Delete this Interaction from the Experiment\">";
+//    }
+//
     // Override Objects's equal method.
 
     /**
