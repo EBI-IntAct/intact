@@ -70,12 +70,26 @@ public final class ExperimentDescriptionChecker {
         final ParticipantDetectionTag participantDetection = experimentDescription.getParticipantDetection();
         ParticipantDetectionChecker.check( participantDetection, helper );
 
+        // bibrefs - primary and secondary.
         XrefChecker.check( experimentDescription.getBibRef(), helper );
+        Collection additionalBibRef = experimentDescription.getAdditionalBibRef();
+        for ( Iterator iterator = additionalBibRef.iterator(); iterator.hasNext(); ) {
+            XrefTag bibRef = (XrefTag) iterator.next();
+            XrefChecker.check( bibRef, helper );
+        }
 
+        // Xrefs
         final Collection xrefs = experimentDescription.getXrefs();
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             XrefTag xref = (XrefTag) iterator.next();
             XrefChecker.check( xref, helper );
+        }
+
+        // annotations
+        final Collection annotations = experimentDescription.getAnnotations();
+        for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
+            AnnotationTag annotation = (AnnotationTag) iterator.next();
+            AnnotationChecker.check( annotation, helper );
         }
     }
 }
