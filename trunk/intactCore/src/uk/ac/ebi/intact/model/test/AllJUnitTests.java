@@ -38,10 +38,12 @@ public class AllJUnitTests extends TestCase {
     public static Test suite() {
         TestSuite suite = new TestSuite();
         // Add tests one by one.
-        //suite.addTest(AnnotatedObjectTest.suite());
+        suite.addTest(AnnotatedObjectTest.suite());
         suite.addTest(EqualityTests.suite());
         suite.addTest(ExperimentTest.suite());
         suite.addTest(InteractionTest.suite());
+        suite.addTest(RangeTest.suite());
+        suite.addTest(CvFuzzyTypeTest.suite());
         return suite;
     }
 }
