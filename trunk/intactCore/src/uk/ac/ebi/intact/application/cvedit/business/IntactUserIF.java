@@ -11,11 +11,9 @@ import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
-import uk.ac.ebi.intact.application.cvedit.struts.view.ResultBean;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.ArrayList;
 import java.io.Serializable;
 
 /**
@@ -60,6 +58,13 @@ public interface IntactUserIF extends Serializable {
      *  thrown if the search produced more than a single Institution.
      */
     public Institution getInstitution() throws SearchException;
+
+    /**
+     * Returns the state of editing.
+     * @return <code>true</code> if the user is in edit screen;
+     * <code>false</code> is returned for all other instances.
+     */
+    public boolean isEditing();
 
     // Methods releated to drop down lists
 
@@ -157,25 +162,19 @@ public interface IntactUserIF extends Serializable {
      */
     public void delete(Object object) throws IntactException;
 
+    /**
+     * Cancels the current editing session.
+     */
+    public void cancelEdit();
+
     // Other misc methods
 
     /**
-     * Sets the given CV Object as the current object the user is working
-     * presently.
-     *
+     * Updates the current CV object with the new CV object.
      * @param cvobj the CV object to set as the current object the user is
      *  working presently.
-     *
-     * <pre>
-     * post: getCurrentEditObject = cvobj
-     * </pre>
      */
-    public void setCurrentEditObject(CvObject cvobj);
-
-    /**
-     * Returns the current object the user is working presently.
-     */
-    public CvObject getCurrentEditObject();
+    public void updateView(CvObject cvobj);
 
     // Search methods
 
@@ -240,7 +239,7 @@ public interface IntactUserIF extends Serializable {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(ResultBean))
      * </pre>
      */
-    public ResultBean[] getSearchCache();
+    public Collection getSearchCache();
 
     /**
      * Caches the last search result. Each object of <code>results</code> is
@@ -260,10 +259,36 @@ public interface IntactUserIF extends Serializable {
     public void addToSearchCache(CvObject cvobj);
 
     /**
+     * Updates the search cache; this is equivalent to removing the presvious
+     * cache result (using getAC()) and adding <code>cvobj</code> again.
+     * @param cvobj the CV object to update the search cache. The cache must
+     * contain an object whose AC matches with this instance's AC.
+     *
+     * <pre>
+     * pre: searchCache->includes(cvobj.ac)
+     * </pre>
+     */
+    public void updateSearchCache(CvObject cvobj);
+
+    /**
      * Removes the object with matching AC from search cache.
      * @param ac the accession number of the object to filter.
      */
     public void removeFromSearchCache(String ac);
+
+    /**
+     * Returns a unique short label.
+     * @param clazz the <code>Class</code> to get the unique short label for.
+     * @param shortlabel the new short label.
+     * @return a unique short label as a <code>String</code> instance.
+     * @exception SearchException for problems with searching the database.
+     *
+     * @see uk.ac.ebi.intact.util.GoTools#getUniqueShortLabel(
+     * uk.ac.ebi.intact.business.IntactHelper, Class,
+     * uk.ac.ebi.intact.model.AnnotatedObject, String, String)
+     */
+    public String getUniqueShortLabel(Class clazz, String shortlabel)
+            throws SearchException;
 
     // Session methods
 
