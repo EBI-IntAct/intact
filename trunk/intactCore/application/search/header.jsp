@@ -56,8 +56,6 @@
                                             </td>
                                             <td><html:text property="searchString" size="10" maxlength="10"/></td>
                                         </tr>
-
-
                                     </table>
                                 </html:form>
                                 </td>
@@ -67,7 +65,7 @@
                <td bgcolor="#ffeeaa" align="right" valign="bottom">
                <table border="0" cellspacing="7" cellpadding="0">
                <tr>
-               <td align="right" valign="bottom" nowrap>Version: 0.2 (28/11/2002)</td>
+               <td align="right" valign="bottom" nowrap>Version: 0.3 (24/01/2003)</td>
                </tr>
                </table>
                </td>
@@ -76,21 +74,18 @@
 		</td>
 	</tr>
 	<tr>
-		<td bgcolor="#000000" width="100"><img src="./images/px.gif" border="0" width="1" height="1"></td>
-		<td bgcolor="#000000" width="1"><img src="./images/px.gif" border="0" width="1" height="1"></td>
-		<td bgcolor="#000000" width="100%"><img src="./images/px.gif" border="0" width="1" height="1"></td>
+		<td bgcolor="#000000" width="100"></td>
+		<td bgcolor="#000000" width="1"></td>
+		<td bgcolor="#000000" width="100%"></td>
 	</tr>
 
 	<tr>
 		<td colspan="3" align="left" valign="top">
       <table width="100%" cellspacing="0" cellpadding="0" border="0">
       <tr>
-      <td width="1" bgcolor="#ffffff" valign="top" align="left">
-         <img src="./images/px.gif" border="0" width="1" height="1">
-		</td>
-		<td bgcolor="#ffffff" width="1"><img src="./images/px.gif" border="0" width="1" height="1"></td>
+      <td width="1" bgcolor="#ffffff" valign="top" align="left"></td>
+		<td bgcolor="#ffffff" width="1"></td>
         <td width="*" height="100%" valign="top">
 			<table height="100%" border="0" cellspacing="0" cellpadding="15" >
 				<tr>
 					<td valign="top" width="100%" height="600" >
-
