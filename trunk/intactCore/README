@@ -4,17 +4,22 @@ README for Intact Core
 DIRECTORIES
 ------------
 
-application/	: standard structures for the web applications, including JSPs etc
-classes/	: Java classes
-config/		: Configuration files
-doc/		: Documentation
-ide/		: project files of Java IDEs
-lib/		: third-party libraries needed in addition to the
-		: standard JDK
-notes/		: -
-scripts/	: auxiliary scripts, ant files, make files.
-src/		: Java sources
-uml/		: UML modeling files.
+application/    : standard structures for the web applications, including JSPs etc
+classes/	    : Java classes
+config/		    : Configuration files
+data/           : data to fill the database
+doc/		    : Documentation
+ide/		    : project files of Java IDEs
+lib/		    : third-party libraries needed in addition to the standard JDK
+notes/		    : -
+perl/           :
+scripts/	    : auxiliary scripts, ant files, make files.
+specifications/ :
+sql/            : sql scripts for Oracle and Postgres
+src/		    : Java sources
+template/       : configuration files template
+uml/		    : UML modeling files.
+web/            :
 
 Other directories under intactCore not mentioned above are currently not relevant to installing/running intact.
 
@@ -28,16 +33,22 @@ To install and run the intact software you must have the following installed in 
 environment (or, for the DBs, at least have access to them over the network):
 
 	- java JDK 1.4
+	  see http://java.sun.com/j2se/downloads.html
 	- ant 1.5 or above (all the intact build process relies on ant)
+	  see http://ant.apache.org/bindownload.cgi
 	- Tomcat Light Edition, for JDK 1.4 (preferably 4.1.1.8 LE)
+      see http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.1.18/bin/
 	- either Postgres 7.2 or Oracle 8.1.6 (or higher)
+      for postgres see http://www.postgresql.org/mirrors-ftp.html
 
 For hierarchView:
 
 	- Apache Axis web application (1.0) for web services (for use with the HierarchView application)
+	  see http://ws.apache.org/axis/
 	- Tulip (available from Bordeaux), which is needed by HierarchView
+	  see http://www.tulip-software.org/
 	- gcc++ 2.96 AND NO OTHER RELEASE to build the Console executable to access Tulip
-	- the interpro web application, installed on tomcat (to view GO terms from hierarchView)
+	- the interpro web application, installed on tomcat (to view GO terms)
 
 If you plan to run hierarchView, then Tulip needs the following environment variables to be set:
 
@@ -51,6 +62,12 @@ In general, it will also help to have the following environment variables set to
 $CATALINA_HOME - the home directory of your tomcat installation
 $JAVA_HOME - the home directory of your JDK
 $CLASSPATH should contains, at least, the current directory (i.e. : .). It allows Ant to find build.properties.
+
+All those variable settings could be done by sourcing one of the following scripts :
+  - scripts/setEnv.sh  (for bash environment)
+    type: . scripts/setEnv.sh
+  - scripts/setEnv.csh (for csh environment)
+    type: source scripts/setEnv.csh
 
 Intact has been tested on both Linux (7.1 and 8.0) and Windows2000 running inside cygwin, and with both local and
 remote postgres databases as well as a remote oracle DB. Thus intact is based around a linux/unix environment, but if you
@@ -129,34 +146,25 @@ to build the main classes for the web applications. For search there is one furt
 
 the hostname of the machine running hierarchView must be set correctly. The default is set to 'localhost', but
 if you wish to view graphs using the search application from remote machines then the hostname in this file
-should be set to a correct DNS value (ie your machine name where hierarchView resides). If you do not do this then browsers on remote machines will try to find
-the hierarchView application on their own machine!
+should be set to a correct DNS value (ie your machine name where hierarchView resides). If you do not do this then
+browsers on remote machines will try to find the hierarchView application on their own machine!
 
 The next step is to put the web applications into your tomcat server and start it, as follows:
 
-a) cd applications/<webapp-name> (for cvedit and search), then type
+a) cd applications/<webapp-name>, then type
 
-	ant war deploy
+	ant war deploy (for cvedit and search)
 
 This will build a war file and copy it to your tomcat webapps directory (assuming you have $CATALINA_HOME set as an environment variable).
 Just to check things worked OK, you should see a collection of <appname>.war files in your $CATALINIA_HOME/webapps directory.
 
+HierarchView requires a little more effort. The web service for hierarchView needs to first be deployed.
+please read the README file in the application/hierarchView directory for more details about how to install
+the web service and the hierarchView application.
+
 b) For search and cvedit, type ant start-tomcat (once)- if this fails, simply go to your tomcat bin directory and start it manually from there.
 
-c) HierarchView requires a little more effort. The web service for hierarchView needs to first be delpoyed: from the application/hierarchView 
-directory, type
-
-	ant deploy-ws
-
-(there is also an 'undeploy' for hierarchView, which undeploys hierarchView and stops the web service and tomcat too).
-
-Now proceed as in b), but once tomcat has been started the web service needs to be started as well
-(hierarchView runs as a web service). simply type (from the application/hierarchView directory)
-
-	ant start-ws
-
-
-d) to start a web application, open a web browser and type
+c) to start a web application, open a web browser and type
 
 	http://<hostname>:8080/<webapp-name>
 
@@ -164,9 +172,9 @@ Note that from the search application it is also possible to generate a graph of
 installed the components for hierarchView (ie Tulip and axis). Note that Tulip is a C++ application and it may not run on Windows, but it seems
 to work OK with intact on a Linux machine (tested on Redhat 7.1 and 8.0).
 
+
 4. Hints and Tips
 ------------------
-
 a) If you find that you get OutOfMemoryErrors with large queries through tomcat, increasing the heap size that tomcat uses can help. You can
 do this simply by setting the envirnoment variable JAVA_OPTS as follows:
 
@@ -193,6 +201,7 @@ find in the $CATALINA_HOME/logs directory (this is usually timestamped).
 d) hierarchView can be very memory intensive, and will probably be refactored over time - so be aware that
 you may experience some of the above when submitting many requests to hierarchView.
 
+
 5. Simple Test Application
 ---------------------------
 This performs a full cycle of
@@ -205,6 +214,7 @@ This performs a full cycle of
 The application may be started by typing (in the intactCore directory):
 
 	ant demo
+
 
 6. Unit Tests
 -------------
