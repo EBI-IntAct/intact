@@ -20,6 +20,7 @@ CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
 
 fi
  
+echo "starting MiNe preprocessing..."
 java -classpath $CLASSPATH uk.ac.ebi.intact.util.MineDatabaseFill
 
 # end
