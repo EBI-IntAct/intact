@@ -8,10 +8,7 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import uk.ac.ebi.intact.model.*;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class provides JSP view information for a particular AnnotatedObject. Its main purpose is to
@@ -56,6 +53,15 @@ public class SimpleViewBean extends AbstractViewBean {
      */
     private String intactType;
 
+    private static ArrayList geneNameFilter = new ArrayList();
+
+    static {
+        geneNameFilter.add("gene-name");
+        geneNameFilter.add("gene-name-synonym");
+        geneNameFilter.add("orf-name");
+        geneNameFilter.add("locus-name");
+    }
+
 
     /**
      * The bean constructor requires an AnnotatedObject to wrap, plus beans on the context path to
@@ -73,7 +79,6 @@ public class SimpleViewBean extends AbstractViewBean {
         this.obj = obj;
     }
 
-    //---------------- basic abstract methods that need implementing --------------
     /**
      * Adds the shortLabel of the AnnotatedObject to an internal list used later for highlighting in
      * a display. NOT SURE IF WE STILL NEED THIS!!
@@ -86,26 +91,35 @@ public class SimpleViewBean extends AbstractViewBean {
 
 
     /**
-     * Returns the help section. Needs to be reviewed.
+     * Returns a string  represents the url of the help section
+     *
+     * @return string contains the url link to the help section
+     * @deprecated use getHelpUrl instead
      */
     public String getHelpSection() {
         return "protein.single.view";
     }
 
-    // TODO reimplement this method
+    /**
+     * Returns a string  represents the url of the help section
+     *
+     * @return string contains the url link to the help section
+     */
     public String getHelpUrl() {
         String helpUrl = this.getHelpLink();
 
-
         if (Protein.class.isAssignableFrom(obj.getClass())) {
             return helpUrl + "Interactor";
-        } else {
+        }
+        else {
             if (Experiment.class.isAssignableFrom(obj.getClass())) {
                 return helpUrl + "Experiment";
-            } else {
+            }
+            else {
                 if (Interaction.class.isAssignableFrom(obj.getClass())) {
                     return helpUrl + "Interaction";
-                } else {
+                }
+                else {
                     if (CvObject.class.isAssignableFrom(obj.getClass())) {
                         return helpUrl + "CVS";
                     }
@@ -114,14 +128,6 @@ public class SimpleViewBean extends AbstractViewBean {
         }
         return helpUrl;
     }
-
-    /**
-     * This is left over from the earlier version - will be removed. It does nothing here.
-     */
-    public void getHTML(java.io.Writer writer) {
-    };
-
-    //--------------------- useful stuff ---------------------------------------------
 
 
     /**
@@ -154,10 +160,13 @@ public class SimpleViewBean extends AbstractViewBean {
 
     /**
      * Provides a String representation of the the Number of particapting interactions of a Protein
-     * @param aProtein a Intact Protein 
-     * @return  String a String representation of a s Number of particapting interactions
+     *
+     * @param aProtein a Intact Protein
+     * @return String a String representation of a s Number of particapting interactions
      */
     public String getNumberOfInteractions(Protein aProtein) {
+
+        //TODO Remoove this with ProteinUtils
         Set someComponents = new HashSet(aProtein.getActiveInstances());
         Collection uniqueInteractions = new HashSet();
 
@@ -168,7 +177,7 @@ public class SimpleViewBean extends AbstractViewBean {
 
         }
 
-        return Integer.toString( uniqueInteractions.size());
+        return Integer.toString(uniqueInteractions.size());
     }
 
 
@@ -212,11 +221,11 @@ public class SimpleViewBean extends AbstractViewBean {
                 relatedItemsSize = Integer.toString(size);
             }
 
-//just check to be sure!!
+            //just check to be sure!!
             if (Interaction.class.isAssignableFrom(clazz)) {
                 Interaction interaction = (Interaction) obj;
 
-//this should check for complexes also....
+                //this should check for complexes also....
                 size = countProteins(interaction.getComponents());
                 relatedItemsSize = Integer.toString(size);
             }
@@ -234,37 +243,31 @@ public class SimpleViewBean extends AbstractViewBean {
         return obj;
     }
 
-    public String getGeneNames(Protein protein) {
+    /**
+     * @param protein
+     * @return
+     */
+    public Collection getGeneNames(Protein protein) {
 
-        //populate on first request
-        Set nameSet = new HashSet();    //useful because sometimes they are repeated!! (eg GIOT)
-        StringBuffer geneNames = new StringBuffer();
-
-//the gene names are obtained from the Aliases for the Protein
-//which are of type 'gene name'...
+        Collection geneNames = new HashSet(); 
+        //geneNames = new StringBuffer();
+        //the gene names are obtained from the Aliases for the Protein
+        //which are of type 'gene name'...
         Collection aliases = protein.getAliases();
         for (Iterator it = aliases.iterator(); it.hasNext();) {
             Alias alias = (Alias) it.next();
 
-//NB check the type String in this!!
-            if (alias.getCvAliasType().getShortLabel().equals("gene-name")) {
-//don't know how many gene names there are - also
-//there may be more aliases than gene names, so we can't
-//tell here if we are done or not
-                nameSet.add(alias.getName());
+            if (geneNameFilter.contains(alias.getCvAliasType().getShortLabel())) {
+                geneNames.add(alias.getName());
             }
         }
-//now convert to a String - if there are any names....
-        if (nameSet.size() > 0) {
-            for (Iterator it = nameSet.iterator(); it.hasNext();) {
-                geneNames.append(it.next());
-                if (it.hasNext()) geneNames.append(",");
-            }
-        } else
-            geneNames.append("-");
-
-        return geneNames.toString();
+        //now strip off trailing comma - if there are any names....
+        if (geneNames.size() == 0) {
+            geneNames.add("-");
+        }
+        return geneNames;
     }
+
 
     /**
      * Provides the basic Intact type of the wrapped AnnotatedObject (ie no java package beans).
@@ -277,23 +280,21 @@ public class SimpleViewBean extends AbstractViewBean {
     public String getIntactType() {
 
         if (intactType == null) {
-            //set on first call
-            if (obj instanceof CvObject)
-                intactType = "CvObject";
-            else {
-                String className = obj.getClass().getName();
-                String basicType = className.substring(className.lastIndexOf(".") + 1);
 
-//now check for 'Impl' and ignore it...
-                intactType = ((basicType.indexOf("Impl") == -1) ?
-                        basicType : basicType.substring(0, basicType.indexOf("Impl")));
-            }
+            //   if (obj instanceof CvObject)
+            //            intactType = "CvObject";
+            //   else {
+            String className = obj.getClass().getName();
+            String basicType = className.substring(className.lastIndexOf(".") + 1);
+
+            //now check for 'Impl' and ignore it...
+            intactType = ((basicType.indexOf("Impl") == -1) ?
+                    basicType : basicType.substring(0, basicType.indexOf("Impl")));
+            //    }
         }
         return intactType;
 
     }
-
-//------------------------ private helper methods ------------------------------
 
     /**
      * This method will count up the number of Proteins that a List of Components contains. It will
@@ -310,13 +311,15 @@ public class SimpleViewBean extends AbstractViewBean {
             Component comp = (Component) it.next();
             interactor = comp.getInteractor();
 
-//if the interactor is another Interaction then we need to
-//go deeper until we get to some Proteins.....
+            //if the interactor is another Interaction then we need to
+            //go deeper until we get to some Proteins.....
             if (interactor instanceof Interaction) {
                 Interaction interaction = (Interaction) interactor;
                 count = count + countProteins(interaction.getComponents());
-            } else
+            }
+            else {
                 count = count + 1;
+            }
         }
 
         return count;

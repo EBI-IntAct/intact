@@ -6,7 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.business;
 
-import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 
 import java.io.IOException;
 import java.util.MissingResourceException;
@@ -29,11 +29,11 @@ public class IntactServiceImpl implements IntactServiceIF {
      * Constructs an instance with given resource file.
      *
      * @param configdir the configuartion directory.
-     * @exception IOException if the method fails to load the properties file.
-     * @exception MissingResourceException unable to load a resource file.
+     * @throws IOException              if the method fails to load the properties file.
+     * @throws MissingResourceException unable to load a resource file.
      */
     public IntactServiceImpl(String configdir) throws IOException,
-            MissingResourceException {
+                                                      MissingResourceException {
         myHvProps = ResourceBundle.getBundle(configdir + SearchConstants.HV_PROPS);
     }
 

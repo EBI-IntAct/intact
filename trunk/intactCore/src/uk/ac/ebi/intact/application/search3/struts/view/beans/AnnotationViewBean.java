@@ -11,48 +11,34 @@ public class AnnotationViewBean {
     private final Annotation anAnnotation;
     private final String searchURL;
 
-    /**
-     * @param anAnnotation
-     * @param searchURL
-     */
+
     public AnnotationViewBean(final Annotation anAnnotation, final String searchURL) {
         this.anAnnotation = anAnnotation;
         this.searchURL = searchURL;
     }
 
-    /**
-     * @return
-     */
+
     public String getText() {
         return this.anAnnotation.getAnnotationText();
     }
 
-    /**
-     * @return
-     */
+
     public String getName() {
         return this.anAnnotation.getCvTopic().getShortLabel();
 
     }
 
-    /**
-     * @return
-     */
+
     public String getSearchUrl() {
         return this.searchURL;
     }
 
-    /**
-     * @return
-     */
+
     public Annotation getObject() {
         return this.anAnnotation;
     }
 
-    /**
-     * @param anAnnotatedObject
-     * @return
-     */
+
     private String getIntactType(final AnnotatedObject anAnnotatedObject) {
 
         final String objectIntactType;

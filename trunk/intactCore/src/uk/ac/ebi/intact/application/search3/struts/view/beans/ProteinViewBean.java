@@ -6,39 +6,28 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.application.search3.struts.view.beans.AbstractViewBean;
-import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.util.*;
 
 /**
- * <p>
- * A bean used to support display of a single Protein. This view is different to
- * other AnnotatedObjects and so must be handled seperately. The bean is used by
- * JSPs to provide easy access to the Protein's data in a form suitable for
- * display in a web page. Xrefs of the Protein are an exception, because they each
- * contain detailed String data and therefore the JSP itself should extract what
- * it requires from each Xref for display.
- * </p>
- * <p>
- * The methods available from this bean are based on the data  required by new search
- * interface mock pages, created June 2004. According to that simple web page, the
- * information to be supplied from this bean is as follows:
- * <ul>
- * <li>Intact name</li>
- * <li>Source (ie BioSource beans)</li>
- * <li>Description (ie the full name)</li>
- * <li>gene names (found via the Aliases)</li>
- * <li>Xrefs</li>
- * <li>sequence length</li>
- * <li>CRC64 checksum</li>
- * <li>the Protein sequence itself</li>
- * </ul>
- * </p>
+ * <p/>
+ * A bean used to support display of a single Protein. This view is different to other
+ * AnnotatedObjects and so must be handled seperately. The bean is used by JSPs to provide easy
+ * access to the Protein's data in a form suitable for display in a web page. Xrefs of the Protein
+ * are an exception, because they each contain detailed String data and therefore the JSP itself
+ * should extract what it requires from each Xref for display. </p>
+ * <p/>
+ * The methods available from this bean are based on the data  required by new search interface mock
+ * pages, created June 2004. According to that simple web page, the information to be supplied from
+ * this bean is as follows: <ul> <li>Intact name</li> <li>Source (ie BioSource beans)</li>
+ * <li>Description (ie the full name)</li> <li>gene names (found via the Aliases)</li>
+ * <li>Xrefs</li> <li>sequence length</li> <li>CRC64 checksum</li> <li>the Protein sequence
+ * itself</li> </ul> </p>
  *
  * @author Chris Lewington
  * @version $Id$
@@ -56,19 +45,16 @@ public class ProteinViewBean extends AbstractViewBean {
     private StringBuffer geneNames;
 
     /**
-     * Holds the URL to perform subsequent searches from JSPs - used
-     * to build 'complete' URLs for use by JSPs
+     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for
+     * use by JSPs
      */
     private String searchURL;
 
     /**
-     * Map of retrieved DB URLs already retrieved from the DB. This
-     * is basically a cache to avoid recomputation every time a CvDatabase URL
-     * is requested.
+     * Map of retrieved DB URLs already retrieved from the DB. This is basically a cache to avoid
+     * recomputation every time a CvDatabase URL is requested.
      */
     private Map dbUrls;
-
-    //----------------- a selection of particular URLs of use -----------------
 
     /**
      * String URL for searching on the Protein itself
@@ -80,14 +66,26 @@ public class ProteinViewBean extends AbstractViewBean {
      */
     private String bioSearchURL;
 
+    /**
+     * List of Gene Names which should be filtered on. The values are set in the bean's
+     * constructor.
+     */
+    private static ArrayList geneNameFilter = new ArrayList();
 
+    static {
+        geneNameFilter.add("gene-name");
+        geneNameFilter.add("gene-name-synonym");
+        geneNameFilter.add("orf-name");
+        geneNameFilter.add("locus-name");
+    }
 
     /**
-     * The bean constructor requires a Protein to wrap, plus beans on
-     * the context path to the search application and the help link.
-     * @param prot The Protein whose beans are to be displayed
-     * @param link The link to the help pages
-     * @param searchURL The general URL to be used for searching (can be filled in later).
+     * The bean constructor requires a Protein to wrap, plus beans on the context path to the search
+     * application and the help link.
+     *
+     * @param prot        The Protein whose beans are to be displayed
+     * @param link        The link to the help pages
+     * @param searchURL   The general URL to be used for searching (can be filled in later).
      * @param contextPath The path to the search application.
      */
     public ProteinViewBean(Protein prot, String link, String searchURL, String contextPath) {
@@ -97,18 +95,15 @@ public class ProteinViewBean extends AbstractViewBean {
         protein = prot;
     }
 
-
-    //---------------- basic abstract methods that need implementing --------------
     /**
-     * Adds the shortLabel of the Protein to an internal list used
-     * later for highlighting in a display.
-     * NOT SURE IF WE STILL NEED THIS!!
+     * Adds the shortLabel of the Protein to an internal list used later for highlighting in a
+     * display. NOT SURE IF WE STILL NEED THIS!!
      */
     public void initHighlightMap() {
-            Set set  = new HashSet( 1 );
-            set.add( protein.getShortLabel() );
-            setHighlightMap(set);
-        }
+        Set set = new HashSet(1);
+        set.add(protein.getShortLabel());
+        setHighlightMap(set);
+    }
 
 
     /**
@@ -119,43 +114,44 @@ public class ProteinViewBean extends AbstractViewBean {
     }
 
     /**
-     * This is left over from the earlier version - will be removed.
-     * It does nothing here.
-     */
-    public void getHTML( java.io.Writer writer ){};
-
-    //----------------- the useful stuff for the JSPs -----------------------------
-
-    /**
      * Basic accessor, provided in case anything ever needs access to the wrapped object.
+     *
      * @return Protein the Protein instance wrapped by this view bean.
      */
     public Protein getProtein() {
         return protein;
     }
 
+    /**
+     * Returns the shortlabel of the Protein as String
+     *
+     * @return String the shortlabel of the Protein
+     */
     public String getProteinIntactName() {
         return protein.getShortLabel();
     }
 
-    public String  getProteinAc() {
+    /**
+     * Returns the Ac of the wrapped Protein Object
+     *
+     * @return String the Ac of the Protein
+     */
+    public String getProteinAc() {
         return protein.getAc();
     }
 
     /**
-     * NB In the webpage mockup, this is a hyperlink to the BioSource
-     * help page...
-     * @return
+     * NB In the webpage mockup, this is a hyperlink to the BioSource help page...
+     *
+     * @return String the fullname of the Protein
      */
     public String getProteinDescription() {
         return protein.getFullName();
     }
 
-
-    //--------------- Useful BioSource data --------------------
-
     /**
      * Provides the AC for this Protein's BioSource.
+     *
      * @return String the BioSource AC
      */
     public String getBioAc() {
@@ -164,6 +160,7 @@ public class ProteinViewBean extends AbstractViewBean {
 
     /**
      * Provides the Intact Name used to identify this Protein's BioSource.
+     *
      * @return String the BioSource's intact name (ie shortLabel)
      */
     public String getBioIntactName() {
@@ -172,21 +169,22 @@ public class ProteinViewBean extends AbstractViewBean {
 
     /**
      * Provides the full name of this Protein's BioSource.
+     *
      * @return String the BioSource's 'common' name.
      */
-    public String getBioFullName() {
-        return protein.getBioSource().getFullName();
+    public String getBioSourceName() {
+        return protein.getBioSource().getShortLabel();
     }
 
-    //------------------- useful URL data --------------------------------
     /**
-     * Provides a String representation of a URL to perform a search on
-     * this Protein's BioSource beans (curently via AC)
+     * Provides a String representation of a URL to perform a search on this Protein's BioSource
+     * beans (curently via AC)
+     *
      * @return String a String representation of a search URL link for BioSource
      */
     public String getBioSearchURL() {
 
-        if(bioSearchURL == null) {
+        if (bioSearchURL == null) {
             //set it on the first call
             bioSearchURL = searchURL + getBioAc() + "&amp;searchClass=BioSource";
         }
@@ -195,50 +193,56 @@ public class ProteinViewBean extends AbstractViewBean {
     }
 
     /**
-     * Provides a String representation of a URL to perform a search on
-     * this Protein's beans (curently via AC)
+     * Provides a String representation of a URL to perform a search on this Protein's beans
+     * (curently via AC)
+     *
      * @return String a String representation of a search URL link for Protein
      */
     public String getProteinSearchURL() {
 
-        if(protSearchURL == null) {
+        if (protSearchURL == null) {
             //set it on the first call
-            protSearchURL = searchURL + protein.getAc() + "&amp;searchClass=Protein";
+            protSearchURL = searchURL + protein.getAc() + "&amp;searchClass=Protein" +
+                    "&filter=ac";
         }
         return protSearchURL;
     }
 
     /**
-     * Provides a String representation of a URL to access the CV related to the Xref
-     * (ie the Cv beans describing the Xref's database).
+     * Provides a String representation of a URL to access the CV related to the Xref (ie the Cv
+     * beans describing the Xref's database).
+     *
      * @param xref The Xref for which the URL is required
      * @return String a String representation of a URL link for the Xref beans (CvDatabase)
      */
     public String getCvDbURL(Xref xref) {
 
-        return (searchURL + xref.getCvDatabase().getAc() + "&amp;searchClass=CvDatabase");
+        return (searchURL + xref.getCvDatabase().getAc() + "&amp;searchClass=CvDatabase" +
+                "&filter=ac");
     }
 
     /**
-     * Provides a String representation of a URL to access the CV qualifier
-     * info related to the Xref
+     * Provides a String representation of a URL to access the CV qualifier info related to the Xref
      * (ie the Cv beans describing the Xref's qualifier info).
+     *
      * @param xref The Xref for which the URL is required
      * @return String a String representation of a URL link for the Xref beans (CvXrefQualifier)
      */
     public String getCvQualifierURL(Xref xref) {
 
-        return (searchURL + xref.getCvXrefQualifier().getAc() + "&amp;searchClass=CvXrefQualifier");
+        return (searchURL + xref.getCvXrefQualifier().getAc() + "&amp;searchClass=CvXrefQualifier" +
+                "&filter=ac");
     }
 
 
     /**
-     * Provides a String representation of a URL to provide acces to an Xrefs'
-     * database (curently via AC). The URL is at present stored via an
-     * Annotation for the Xref in the Intact DB itself.
+     * Provides a String representation of a URL to provide acces to an Xrefs' database (curently
+     * via AC). The URL is at present stored via an Annotation for the Xref in the Intact DB
+     * itself.
+     *
      * @param xref The Xref for which the DB URL is required
-     * @return String a String representation of a DB URL link for the Xref, or a '-'
-     * if there is no stored URL link for this Xref
+     * @return String a String representation of a DB URL link for the Xref, or a '-' if there is no
+     *         stored URL link for this Xref
      */
     public String getPrimaryIdURL(Xref xref) {
 
@@ -271,43 +275,23 @@ public class ProteinViewBean extends AbstractViewBean {
         return searchUrl;
     }
 
-    //------------------- other Protein display data ----------------------------
+    public Collection getGeneNames() {
 
-    /**
-     * Provides a comma-separated list of gene names for this Protein.
-     * @return String al list of gene names as a String.
-     */
-    public String getGeneNames() {
+        Collection geneNames = new HashSet();
 
-        //populate on first request
-        if(geneNames == null) {
-            Set nameSet = new HashSet();    //useful because sometimes they are repeated!! (eg GIOT)
-            geneNames = new StringBuffer();
-            //the gene names are obtained from the Aliases for the Protein
-            //which are of type 'gene name'...
-            Collection aliases = protein.getAliases();
-            for(Iterator it = aliases.iterator(); it.hasNext();) {
-                Alias alias = (Alias)it.next();
+        Collection aliases = protein.getAliases();
+        for (Iterator it = aliases.iterator(); it.hasNext();) {
+            Alias alias = (Alias) it.next();
 
-                //NB check the type String in this!!
-                if(alias.getCvAliasType().getShortLabel().equals("gene-name")) {
-                    //don't know how many gene names there are - also
-                    //there may be more aliases than gene names, so we can't
-                    //tell here if we are done or not
-                    nameSet.add(alias.getName());
-                }
+            if (geneNameFilter.contains(alias.getCvAliasType().getShortLabel())) {
+                geneNames.add(alias.getName());
             }
-            //now create a String - if there are any names....
-            if(nameSet.size() > 0) {
-                for(Iterator it = nameSet.iterator(); it.hasNext();) {
-                    geneNames.append(it.next());
-                    if(it.hasNext()) geneNames.append(",");
-                }
-            }
-            else geneNames.append("-");
         }
-
-        return geneNames.toString();
+        //now strip off trailing comma - if there are any names....
+        if (geneNames.size() == 0) {
+            geneNames.add("-");
+        }
+        return geneNames;
     }
 
     /**
@@ -318,7 +302,6 @@ public class ProteinViewBean extends AbstractViewBean {
     }
 
     /**
-     *
      * @return String the Protein's sequence.
      */
     public String getSequence() {
@@ -326,7 +309,6 @@ public class ProteinViewBean extends AbstractViewBean {
     }
 
     /**
-     *
      * @return String the Protein's sequence checksum
      */
     public String getCheckSum() {
@@ -335,9 +317,10 @@ public class ProteinViewBean extends AbstractViewBean {
     }
 
     /**
-     * Provides access to the Xrefs of the Protein. Note that because these are
-     * complex objects containing their own display data, the calling JSP must
-     * access the beans that it requires from each Xref.
+     * Provides access to the Xrefs of the Protein. Note that because these are complex objects
+     * containing their own display data, the calling JSP must access the beans that it requires
+     * from each Xref.
+     *
      * @return The Protein's Xrefs.
      */
     public Collection getXrefs() {

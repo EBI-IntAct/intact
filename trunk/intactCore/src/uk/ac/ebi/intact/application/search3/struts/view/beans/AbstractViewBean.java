@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 
 import java.io.Serializable;
-import java.io.Writer;
 import java.util.Set;
 
 /**
@@ -24,9 +23,7 @@ import java.util.Set;
  */
 public abstract class AbstractViewBean implements Serializable {
 
-    protected transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
-
-    //---- Attributes needed by all subclasses - protected to allow easy access -----
+    protected transient static final Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     /**
      * The default link to help pages (to localhost). Typically used in stylesheets.
@@ -39,15 +36,13 @@ public abstract class AbstractViewBean implements Serializable {
     private String contextPath;
 
     /**
-     *  A collection of short labels to highlight.
+     * A collection of short labels to highlight.
      */
     private Set highlightMap;
 
-
-    //------------ methhods useful to all subclasses --------------------------
-
     /**
      * Construst an instance of this class with help link.
+     *
      * @param link the link to help page.
      */
     public AbstractViewBean(String link, String contextPath) {
@@ -57,6 +52,7 @@ public abstract class AbstractViewBean implements Serializable {
 
     /**
      * Returns the higlight map.
+     *
      * @return map consists of short labels for the current bean.
      */
     public Set getHighlightMap() {
@@ -70,34 +66,37 @@ public abstract class AbstractViewBean implements Serializable {
         this.highlightMap = highlightMap;
     }
 
+    /**
+     * Returns the url based link to the help section based on the servlet context path
+     *
+     * @return String which represents the url based link to the intact help section
+     */
     public String getHelpLink() {
         return helpLink;
     }
 
-    public String getContextPath () {
+    /**
+     * Returns the context path as string based on the servlet context path
+     *
+     * @return String which represents the context path
+     */
+    public String getContextPath() {
         return contextPath;
     }
 
     /**
      * The graph buttons are not displayed by default.
      * Subclasses needs to overwrite it to change that behaviour.
+     *
      * @return whether or not the graph buttons are displayed
      */
     public boolean showGraphButtons() {
         return false;
     }
 
-
-
-    ///////////////////////
-    // Abstract methods
-    ///////////////////////
-
     /**
-     * Instructs the bean to create an HTML content for the object that it wraps.
+     * Performance the initialisation of HighlightMap
      */
-    public abstract void getHTML( Writer writer );
-
     public abstract void initHighlightMap();
 
     /**

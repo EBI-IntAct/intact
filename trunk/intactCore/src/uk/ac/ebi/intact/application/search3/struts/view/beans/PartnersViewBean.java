@@ -7,7 +7,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.application.search3.util.ProteinUtils;
+import uk.ac.ebi.intact.application.search3.struts.util.ProteinUtils;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
 

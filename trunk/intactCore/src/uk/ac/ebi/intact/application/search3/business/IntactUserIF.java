@@ -6,6 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.business;
 
+import uk.ac.ebi.intact.business.IntactHelper;
+
 /**
  * This interface represents an Intact user.
  *
@@ -33,5 +35,15 @@ public interface IntactUserIF
 
     public String getBinaryValue();
 
+    public IntactHelper getIntactHelper();
+
     public void setBinaryValue(String binaryValue);
+
+    public String getView();
+
+    public void setView(String viewValue);
+
+    public String getFilter();
+
+    public void setFilter(String filterValue);
 }
