@@ -76,7 +76,7 @@
                 type="uk.ac.ebi.intact.application.cvedit.struts.security.LoginAction"
                 name="loginForm"
                 scope="request"
-                input="/loginError.jsp">
+                input="/login.jsp">
             <forward name="failure" path="/loginError.jsp"/>
             <forward name="success" path="/search.jsp"/>
         </action>
