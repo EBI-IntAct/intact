@@ -8,12 +8,9 @@ package uk.ac.ebi.intact.application.hierarchView.business.tulip.webService;
 // JDK
 import org.apache.axis.MessageContext;
 import org.apache.axis.session.Session;
-import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.*;
-
-import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 
 /**
  * Purpose : <br>

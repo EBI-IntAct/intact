@@ -5,6 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.view.utils;
 
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
@@ -12,8 +13,6 @@ import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
-
-import org.apache.log4j.Logger;
 
 
 /**

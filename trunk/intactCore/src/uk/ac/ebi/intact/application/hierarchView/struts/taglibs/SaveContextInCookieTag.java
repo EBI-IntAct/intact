@@ -5,45 +5,44 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
+import org.apache.log4j.Logger;
+import uk.ac.ebi.intact.application.commons.search.CriteriaBean;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-
-import java.util.ArrayList;
-import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 /**
+ * <p>
  * That tag allows to save in a cookie (stored in the client side)
  * all needed data to restore later the user context.
  * It stores the selected protein, the method and the current depth
  * of the graph.
- *
+ * </p>
+ * <p>
  * Be aware that the cookie specification allows to store a maximum of 20 cookies per session,
  * the length of a cookie including name and content shouldn't exceed 4Kbytes.
  * cf. http://wp.netscape.com/newsref/std/cookie_spec.html
+ * </p>
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-
 public class SaveContextInCookieTag extends TagSupport {
 
     static Logger logger = Logger.getLogger (Constants.LOGGER_NAME);
 
     private final static int KEEP_UNTIL_BROWSER_IS_CLOSED = -1;
-//    private final static int KILL_NOW = 0;
-
 
     /**
      * Create/update a persistent cookie
@@ -59,7 +58,6 @@ public class SaveContextInCookieTag extends TagSupport {
 
         logger.info (name + " saved in the cookie ("+ applicationPath +") with value: " + value);
     }
-
 
     /**
      * For Debugging Purpose.
@@ -79,7 +77,6 @@ public class SaveContextInCookieTag extends TagSupport {
             logger.info ( aCookie.getName() + " = " + aCookie.getValue() );
         }
     }
-
 
     /**
      * Skip the body content.
@@ -111,9 +108,9 @@ public class SaveContextInCookieTag extends TagSupport {
         // save our context
         ArrayList criterias = network.getCriteria();
         int max = criterias.size();
-        StringBuffer sb = new StringBuffer (128);
+        StringBuffer sb = new StringBuffer( 128 );
         for (int i = 0; i < max; i++) {
-            sb.append ( ( (String[]) criterias.get(i) )[0] ).append(',');
+            sb.append ( ( (CriteriaBean) criterias.get(i) ).getQuery() ).append(',');
         }
 
         // save queries without the last comma
@@ -128,8 +125,6 @@ public class SaveContextInCookieTag extends TagSupport {
         saveCookie (applicationPath, "QUERY", queryString);
         saveCookie (applicationPath, "DEPTH",       ""+user.getCurrentDepth());
         saveCookie (applicationPath, "METHOD",      user.getMethodLabel());
-
-        // saveCookie (applicationPath, "QUERY_COUNT", ""+max);
 
         return EVAL_PAGE;
     }
