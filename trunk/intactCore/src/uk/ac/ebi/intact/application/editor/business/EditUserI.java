@@ -13,10 +13,12 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.util.NewtServerProxy;
 
 import java.util.Collection;
 import java.util.Date;
 import java.io.Serializable;
+import java.net.URL;
 
 import org.apache.commons.beanutils.DynaBean;
 
@@ -252,6 +254,13 @@ public interface EditUserI extends Serializable {
      * @param dynaForm the form to populate.
      */
     public void fillSearchResult(DynaBean dynaForm);
+
+    /**
+     * Returns the Newt server proxy assigned for the current session.
+     * @return an instance of Newt server. A new instance is created if no server
+     * is created for the current session.
+     */
+    public NewtServerProxy getNewtProxy(URL url);
 
     // Session methods
 
