@@ -316,49 +316,36 @@ public class UpdateProteins extends UpdateProteinsI {
             throws SPTRException {
 
         String spAC[] = sptrEntry.getAccessionNumbers();
-        Collection proteins = new ArrayList();
-        boolean errorOccured = false;
+        Collection proteins = new HashSet();
         int i = 0;
         try {
             Collection tmp = null;
-            for (i = 0; i < spAC.length; i++) {
+            for( i = 0; i < spAC.length; i++ ) {
                 String ac = spAC[ i ];
                 tmp = helper.getObjectsByXref( Protein.class, ac );
 
-                if ( proteins.isEmpty() ) {
-                    for (Iterator iterator = tmp.iterator(); iterator.hasNext();) {
-                        Protein p = (Protein) iterator.next();
-                        // keep the protein only if the taxid is the same OR if no taxid is specified
-                        if (taxid == null || p.getBioSource().getTaxId().equals( taxid )) {
-                            if ( ! isSpliceVariant( p ) ) // insert only non splice variant
-                                proteins.add( p );
-                        }
-                    }
-                } else {
                     if( tmp != null ) {
                         for (Iterator iterator = tmp.iterator(); iterator.hasNext();) {
                             Protein p = (Protein) iterator.next();
                             // keep the protein only if the taxid is the same OR if no taxid is specified
                             if (taxid == null || p.getBioSource().getTaxId().equals( taxid )) {
-                                if (false == proteins.contains( p )) {
-                                    if ( ! isSpliceVariant( p ) ) // insert only non splice variant
-                                        proteins.add( p );
+                                if ( ! isSpliceVariant( p ) ) {
+                                    // insert only non splice variant
+                                    proteins.add( p );
                                 }
                             }
                         }
                     }
-                }
             }
         } catch (IntactException e) {
             // multiple object found for that criteria
             logger.error ("error when retreiving Proteins from AC: " + spAC[ i ], e);
-            errorOccured = true;
+            return null;
         }
-
-        if (errorOccured == true) return null;
 
         return proteins;
     }
+
 
     /**
      * Get existing splice variant generated from that SPTREntry.
@@ -370,8 +357,9 @@ public class UpdateProteins extends UpdateProteinsI {
      *      2 from those ACs, get master proteins (called PROTEINS).
      *          2.1 for each Protein p in PROTEINS
      *              2.1.1 get it's IntAct AC
-     *              2.1.2 search for all Protein which have a Xref isoform-parent with that AC as a primary key.
-     *              2.1.3 store the match in a collection spliceVariants
+     *              2.1.2 search for all Xrefs which have are qualified by isoform-parent with that AC as a primary key.
+     *              2.1.3 Get the Proteins (should be one since Xref are not shared) who own that particular Xref.
+     * </pre>
      *
      * @param sptrEntry The entry from which we will try to create the Proteins and splice variants
      * @param masters   The master protein of the splice variant
@@ -392,43 +380,33 @@ public class UpdateProteins extends UpdateProteinsI {
 
         Collection spliceVariants = new HashSet(); // we want a distinct set of Protein
 
-        boolean errorOccured = false;
+        // need that reference to ac out of the loop in order to have it available if an exception is raised.
         String ac = null;
         try {
             for ( Iterator iterator = masters.iterator (); iterator.hasNext (); ) {
                 Protein protein = (Protein) iterator.next ();
                 ac = protein.getAc();
 
-                Collection relatedSpliceVariants = helper.getObjectsByXref( Protein.class, ac );
+                // All splice proteins have 'this' protein as the primary id.
+                Collection proteins = helper.search( Xref.class.getName(), "primaryId", ac );
 
-                // check if the CvXrefQualifier
-                for ( Iterator iterator2 = relatedSpliceVariants.iterator (); iterator2.hasNext (); ) {
-                    Protein p = (Protein) iterator2.next ();
-                    Collection xrefs = p.getXrefs();
-                    for ( Iterator iterator3 = xrefs.iterator (); iterator3.hasNext (); ) {
-                        Xref xref = (Xref) iterator3.next ();
-                        if ( xref.getCvXrefQualifier().equals( isoFormParentXrefQualifier )
-                                &&
-                                xref.getPrimaryId().equals( ac )) {
-                            /*
-                            * You may find that test redondant, but this is in case the AC might have
-                            * been stored as primaryId for an other purpose.
-                            */
-                            spliceVariants.add( p );
-                        }
+                // Loop through proteins collection; only add the splice proteins.
+                for (Iterator iterator2 = proteins.iterator(); iterator2.hasNext();) {
+                    Xref xref = (Xref) iterator2.next();
+                    if (xref.getCvXrefQualifier().equals( isoFormParentXrefQualifier )) {
+                        spliceVariants.addAll( helper.search( Protein.class.getName(), "ac", xref.getParentAc() ) );
                     }
                 }
             }
         } catch (IntactException e) {
             // multiple object found for that criteria
             logger.error ("error when retreiving splice variants (Protein) from AC: " + ac, e);
-            errorOccured = true;
+            return null;
         }
-
-        if (errorOccured == true) return null;
 
         return spliceVariants;
     }
+
 
     /**
      * From a SPTREntry, that method will look for the correxponding proteins
@@ -454,6 +432,16 @@ public class UpdateProteins extends UpdateProteinsI {
                 writeEntry2file ();
                 return ;
             }
+            else
+            {
+                if ( logger.isInfoEnabled() ) {
+                    logger.info( "proteins found for that entry  ("+ proteins.size() +"):" );
+                    for ( Iterator iteratorX = proteins.iterator (); iteratorX.hasNext (); ) {
+                        Protein p = (Protein) iteratorX.next ();
+                        logger.info( p.getAc() + " " + p.getShortLabel() + " " + p.getBioSource().getShortLabel() );
+                    }
+                }
+            }
 
             // according to the SPTR entry, get the corresponding splice variant in IntAct
             Collection spliceVariants = getSpliceVariantFromSPTrAC (sptrEntry, proteins, taxid, helper);
@@ -461,6 +449,16 @@ public class UpdateProteins extends UpdateProteinsI {
                 logger.error  ("An error occured when trying to get IntAct splice variants, exit update");
                 writeEntry2file ();
                 return ;
+            }
+            else
+            {
+                if ( logger.isInfoEnabled() ) {
+                    logger.info( "Splice variant found for that entry  ("+ spliceVariants.size() +"):" );
+                    for ( Iterator iteratorX = spliceVariants.iterator (); iteratorX.hasNext (); ) {
+                        Protein p = (Protein) iteratorX.next ();
+                        logger.info( p.getAc() + " " + p.getShortLabel() + " " + p.getBioSource().getShortLabel() );
+                    }
+                }
             }
 
             /**
@@ -522,13 +520,14 @@ public class UpdateProteins extends UpdateProteinsI {
                     if (bs != null && bs.getTaxId().equals( sptrTaxid )) {
                         // found ... remove it from the collection
                         protein = tmp;
+                        // the fact to call .remove( o )
                         proteins.remove( tmp );
                     }
                 } // for, protein selection according to bioSource
 
 
                 if (protein == null) {
-                    // doesn't found so create a new one
+                    // didn't found an existing one so create a new one
                     logger.info ("No existing protein for that taxid, create a new one");
 
                     if ( localTransactionControl ){
@@ -599,13 +598,30 @@ public class UpdateProteins extends UpdateProteinsI {
                         String[] ids = isoForm.getIDs();
                         for( int k = 0; k < ids.length; k++ ) {
                             String id = ids[ k ];
+
                             logger.info( "Splice variant ID: " + id );
 
                             // Search for an existing splice variant in the IntAct database
                             Protein spliceVariant = null;
                             for ( Iterator iterator = spliceVariants.iterator (); iterator.hasNext (); ) {
                                 Protein sv = (Protein) iterator.next ();
-                                if ( sv.getShortLabel().equals( id ) && sv.getBioSource().equals( bioSource ) ) {
+
+                                /* How to spot and select the right splice variant ?
+                                 * -----------------------------------------------
+                                 * Here we have to take into account that the label could be a lowercase
+                                 * version of the isoForm id found in the Entry.
+                                 * - OR -
+                                 * that same id to which we have concatenated the biosource name.
+                                 *
+                                 * We do it by checking if the splice variant's shortlabel startwith
+                                 * the isoform id (both lowercase) and if the biosource is the right one.
+                                 * eg. shortlabel: p21181-1_human
+                                 *     isoform id: P21181-1
+                                 */
+
+                                if ( sv.getShortLabel().toLowerCase().startsWith( id.toLowerCase() )
+                                        &&
+                                        sv.getBioSource().equals( bioSource ) ) {
                                     // this isoform is already there for that bioSource... so update it.
                                     spliceVariant = sv;
                                     break; // exit the loop, we found it
@@ -632,10 +648,10 @@ public class UpdateProteins extends UpdateProteinsI {
                                         logger.debug ( "No master protein exists for that splice variant: " + id );
                                     }
 
-                                    /*
-                                    * We are doing the update of the existing protein only if the
-                                    * user request it we only update its content if needed
-                                    */
+                                    /**
+                                     * We are doing the update of the existing protein only if the
+                                     * user request it we only update its content if needed
+                                     */
                                     logger.info ("A splice variant exists for that taxid, try to update");
 
                                     if (localTransactionControl){
@@ -678,13 +694,14 @@ public class UpdateProteins extends UpdateProteinsI {
                                     }
                                 }
                                 if ( master == null ){
+                                    // Shouldn't happen, we have found the splice variant from the masters.
                                     System.out.println ( "Didn't found a master protein for " + id );
                                 }
 
-                                /*
-                                * We didn't find a Protein related to that isoform ... create it.
-                                * doesn't found so create a new one
-                                */
+                                /**
+                                 * We didn't find a Protein related to that isoform ... create it.
+                                 * doesn't found so create a new one
+                                 */
                                 logger.info ("No existing protein for that taxid, create a new one");
 
                                 if (localTransactionControl){
@@ -1109,7 +1126,11 @@ public class UpdateProteins extends UpdateProteinsI {
         if (needUpdate == true) {
             // update databse
             try {
-                helper.update (protein);
+                /**
+                 * If the object is proxied, the update will throw an Exception: ClassNotPersistenceCapableException
+                 * So we use the IntactHelper to get the realObject.
+                 */
+                helper.update ( IntactHelper.getRealIntactObject( protein ) );
 
                 if (debugOnScreen) System.out.print (" pU");
                 proteinUpdated++;
@@ -1417,7 +1438,11 @@ public class UpdateProteins extends UpdateProteinsI {
         if (needUpdate == true) {
             // update databse
             try {
-                helper.update( spliceVariant );
+                /**
+                 * If the object is proxied, the update will throw an Exception: ClassNotPersistenceCapableException
+                 * So we use the IntactHelper to get the realObject.
+                 */
+                helper.update ( IntactHelper.getRealIntactObject( spliceVariant ) );
 
                 if (debugOnScreen) System.out.print (" svU");
                 spliceVariantUpdated++;
