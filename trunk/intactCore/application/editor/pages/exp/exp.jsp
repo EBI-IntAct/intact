@@ -35,9 +35,9 @@
     <jsp:include page="intsHold.jsp" />
     <jsp:include page="intSearch.jsp" />
     <p></p>
-    <jsp:include page="annots.jsp" />
+    <jsp:include page="../annots.jsp" />
     <jsp:include page="../addAnnots.jsp" />
-    <jsp:include page="xrefs.jsp" />
+    <jsp:include page="../xrefs.jsp" />
     <jsp:include page="../addXrefs.jsp" />
 
     <p></p>
