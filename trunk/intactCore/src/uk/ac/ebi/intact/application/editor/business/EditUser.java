@@ -346,6 +346,15 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
+    public Protein getProteinByXref(String pid) throws SearchException {
+        try {
+            return (Protein) myHelper.getObjectByXref(Protein.class, pid);
+        }
+        catch (IntactException e) {
+            throw new SearchException(e.getMessage());
+        }
+    }
+
     public Collection search(String objectType, String searchParam,
                              String searchValue) throws SearchException {
         // Retrieve an object...

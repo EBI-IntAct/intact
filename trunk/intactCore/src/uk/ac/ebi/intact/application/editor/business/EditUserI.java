@@ -8,9 +8,9 @@ package uk.ac.ebi.intact.application.editor.business;
 
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractROViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 
@@ -134,6 +134,15 @@ public interface EditUserI extends Serializable {
      */
     public Object getObjectByLabel(Class clazz, String label)
             throws SearchException;
+
+    /**
+     * Gets a Protein by xref.
+     * @param pid the primary id to search for.
+     * @return <code>Protein</code> instance for <code>pid</code>.
+     * @throws SearchException thrown for a search failure or the search
+     * returned more than one Protein.
+     */
+    public Protein getProteinByXref(String pid) throws SearchException;
 
     /**
      * This method provides a means of searching intact objects, within the constraints
