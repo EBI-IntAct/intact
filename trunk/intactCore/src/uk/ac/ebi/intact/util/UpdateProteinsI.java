@@ -286,13 +286,14 @@ public abstract class UpdateProteinsI {
     }
 
     /**
-     * Closes the internal IntactHelper this object is created with. This is mainly
-     * for Editor which creates a special helper for update proteins. The editor
-     * uses an ODMG specific helper as opposed to JDBC version useb by Update proteins. 
-     * @throws IntactException
+     * Sets the internal helper. This method is used by the editor to set the
+     * helper, call necessary methods and close the helper again (the objective
+     * is to keep the scope of the Intact helper to minimum).
+     * @param helper the Intact helper to set.
      */
-    public void closeStore() throws IntactException {
-        this.helper.closeStore();
+    public void setIntactHelper(IntactHelper helper) {
+        this.helper = helper;
+        this.bioSourceFactory.setIntactHelper(helper);
     }
 
     /**
