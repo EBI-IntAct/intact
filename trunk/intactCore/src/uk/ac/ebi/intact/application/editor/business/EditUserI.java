@@ -136,12 +136,18 @@ public interface EditUserI extends Serializable {
                              String searchValue) throws SearchException;
 
     /**
-     * Sets the status of last search.
-     * @param size the size to determine the last search. If size is 1 then
-     * the last search is a single entry search. For any other value, the
-     * last search produces multiple entries.
+     * Utility method to handle the logic for lookup, ie trying AC, label etc.
+     *
+     * @param className the intact type to search on
+     * @param value the user-specified value.
+     * @param cache cache the search result if <code>true</code>; generally,
+     * this flag is set to true from a Search action.
+     * @return Collection the results of the search - an empty Collection if no
+     *  results found
+     * @exception SearchException thrown if there were any search problems
      */
-    public void setSearchResultStatus(int size);
+    public Collection lookup(String className, String value, boolean cache)
+            throws SearchException;
 
     /**
      * Returns true if the last search produced a single entry.
@@ -156,23 +162,10 @@ public interface EditUserI extends Serializable {
     public String getLastSearchQuery();
 
     /**
-     * Sets the last search query.
-     * @param searchParam the search parameter; ex., ac, shortLabel
-     * @param searchValue the search query.
-     */
-    public void setLastSearchQuery(String searchParam, String searchValue);
-
-    /**
      * Returns the class name of the last search.
      * @return the class name of the last search as a <code>String</code>.
      */
     public String getLastSearchClass();
-
-    /**
-     * Sets the class name of the last search.
-     * @param classname class name of the last search as a <code>String</code>.
-     */
-    public void setLastSearchClass(String classname);
 
     /**
      * Caches the last search result. Each object of <code>results</code> is

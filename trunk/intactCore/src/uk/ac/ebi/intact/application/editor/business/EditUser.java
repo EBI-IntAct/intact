@@ -315,24 +315,12 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
     }
 
-    public void setSearchResultStatus(int size) {
-        mySearchResultStatus = (size == 1) ? theirSingleEntry : theirMultipleEntries;
-    }
-
     public boolean hasSingleSearchResult() {
         return mySearchResultStatus == theirSingleEntry;
     }
 
     public String getLastSearchQuery() {
         return myLastQuery;
-    }
-
-    public void setLastSearchQuery(String searchParam, String searchValue) {
-        myLastQuery = searchParam + "=" + searchValue;
-    }
-
-    public void setLastSearchClass(String classname) {
-        myLastQueryClass = classname;
     }
 
     public String getLastSearchClass() {
@@ -371,6 +359,54 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void removeFromSearchCache() {
         String ac = myEditView.getAc();
         CollectionUtils.filter(mySearchCache, ResultBean.getPredicate(ac));
+    }
+
+    public Collection lookup(String className, String value, boolean cache)
+            throws SearchException {
+        // The result to return.
+        Collection results = new ArrayList();
+        // The search parameter.
+        String searchParam = "ac";
+
+        //try search on AC first...
+        results = search(className, searchParam, value);
+        if (results.isEmpty()) {
+            // No matches found - try a search by label now...
+//            super.log("now searching for class " + className + " with label " + value);
+            searchParam = "shortLabel";
+            results = search(className, searchParam, value);
+            if (results.isEmpty()) {
+                //no match on label - try by xref....
+                //super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
+                searchParam = "primaryId";
+                Collection xrefs = search(Xref.class.getName(), searchParam, value);
+
+                //could get more than one xref, eg if the primary id is a wildcard search value -
+                //then need to go through each xref found and accumulate the results...
+                Iterator it = xrefs.iterator();
+                Collection partialResults = new ArrayList();
+                searchParam = "ac";
+                while (it.hasNext()) {
+                    partialResults = search(className, searchParam,
+                            ((Xref) it.next()).getParentAc());
+                    results.addAll(partialResults);
+                }
+                if (results.isEmpty()) {
+                    //no match by xref - try finally by name....
+//                    super.log("trying fullname...last resort");
+                    searchParam = "fullName";
+                    results = search(className, searchParam, value);
+                }
+            }
+        }
+        if (cache) {
+            // Cache the search result statuses.
+            myLastQueryClass = className;
+            myLastQuery = searchParam + "=" + value;
+            mySearchResultStatus = (results.size() == 1)
+                    ? theirSingleEntry : theirMultipleEntries;
+        }
+        return results;
     }
 
     public String getUniqueShortLabel(String shortlabel) throws SearchException {
