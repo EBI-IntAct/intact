@@ -323,17 +323,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public Institution getInstitution() {
-        if (myInstitution == null) {
-            try {
-                Collection result = myHelper.search(
-                        "uk.ac.ebi.intact.model.Institution", "ac", "*");
-                // Only one institute per site. Cache it.
-                myInstitution = (Institution) result.iterator().next();
-            }
-            catch (IntactException ie) {
-                Logger.getLogger(EditorConstants.LOGGER).info(ie);
-            }
-        }
         return myInstitution;
     }
 
@@ -716,8 +705,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Construct the the helper.
         myHelper = new IntactHelper(myDAOSource);
 
-        // A dummy read to ensure that a connection is made as a valid user.
-        myHelper.search("uk.ac.ebi.intact.model.Institution", "ac", "*");
+        // Initialize the institution; this ensures that a connection is made
+        // as a valid user.
+        myInstitution = myHelper.getInstitution();
 
         // Initialize the Protein factory.
         try {
