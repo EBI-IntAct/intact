@@ -759,7 +759,8 @@ public class DRLineExport {
      *
      * @param protein The protein to be checked for eligibility to export in Swiss-Prot.
      * @param master  if protein is a splice variant, master is its master protein.
-     * @return the ID to be exported to Swiss-Prot.
+     *
+     * @return the ID to be exported to Swiss-Prot or null if it has not to be exported.
      */
     public final String getProteinExportStatus( Protein protein, Protein master ) {
 
@@ -798,11 +799,18 @@ public class DRLineExport {
 
             // if that interaction is flagged as negative, we don't take it into account
             if( isNegative( interaction ) ) {
-
                 log( "\t\t Interaction is flagged as negative, we don't take it into account." );
                 continue; // loop to the next interaction
             } else {
                 log( "\t\t Interaction is NOT flagged as negative." );
+            }
+
+            // if that interaction has not exactly 2 interactors, it is not taken into account
+            if( interaction.getComponents().size() != 2 ) {
+                log( "\t\t Interaction has not exactly 2 interactors, we don't take it into account." );
+                continue; // loop to the next interaction
+            } else {
+                log( "\t\t Interaction has exactly 2 interactors." );
             }
 
             Collection experiments = interaction.getExperiments();
@@ -1011,7 +1019,7 @@ public class DRLineExport {
         // fetch necessary vocabulary
         init( helper );
 
-        Set proteinEligible = new HashSet( 1024 );
+        Set proteinEligible = new HashSet( 4096 );
         Chrono globalChrono = new Chrono();
         globalChrono.start();
         Collection proteins = null;
@@ -1073,9 +1081,9 @@ public class DRLineExport {
                 int count = proteinEligible.size();
                 float percentage = ( (float) count / (float) proteinCount ) * 100;
                 log ( count + " protein" + ( count > 1 ? "s" : "" ) +
-		      " eligible for export out of " + proteinCount +
-		      " processed (" + percentage + "%)." );
-		System.out.print('.');
+                      " eligible for export out of " + proteinCount +
+                      " processed (" + percentage + "%)." );
+                System.out.print('.');
             }
         } // all proteins
 
