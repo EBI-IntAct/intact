@@ -291,6 +291,8 @@
                 <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
                 <include name="proxy.properties"/>
+                <include name="smtp.properties"/>
+                <include name="sanityCheck.properties"/>
                 <include name="Institution.properties"/>
             </fileset>
         </copy>
