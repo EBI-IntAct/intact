@@ -127,8 +127,7 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
         Map map = (Map) getApplicationObject(EditorConstants.ANCHOR_MAP);
 
         // Any anchors to set?
-        String anchor = EditorService.getInstance().getAnchor(map, request,
-                form.getDispatch());
+        String anchor = getService().getAnchor(map, request, form.getDispatch());
         // Set the anchor only if it is set.
         if (anchor != null) {
             form.setAnchor(anchor);
