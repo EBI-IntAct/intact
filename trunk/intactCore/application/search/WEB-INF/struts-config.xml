@@ -21,10 +21,6 @@
     <!-- ========== Form Bean Definitions =================================== -->
     <form-beans>
 
-        <!-- logon form bean -->
-        <form-bean name="welcomeForm"
-                   type="org.apache.struts.action.DynaActionForm"/>
-
         <!-- The sidebar form -->
         <form-bean name="sidebarForm"
                    type="org.apache.struts.action.DynaActionForm">
@@ -51,9 +47,15 @@
         <!-- Process when user clicks on the logo to enter the application. -->
         <action path="/welcome"
                 type="uk.ac.ebi.intact.application.search.struts.controller.WelcomeAction"
-                name="welcomeForm"
                 scope="request">
             <forward name="success" path="search.layout"/>
+        </action>
+
+        <!-- Process when user clicks on the logo to enter the application. -->
+        <action path="/hvWelcome"
+                type="uk.ac.ebi.intact.application.search.struts.controller.WelcomeAction"
+                scope="request">
+            <forward name="success" path="/do/search"/>
         </action>
 
         <!-- Process a user searches for a CV Object. -->
