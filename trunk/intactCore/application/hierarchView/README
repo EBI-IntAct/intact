@@ -84,21 +84,29 @@ PART 2 : INSTALL THE WEB APPLICATION
     - you can customize :
         * 'search.url' with the hostname of the server which hosts the search application.
 
-(4) Build the application war file
+(4) Configure how to access the graph2mif application
+    -------------------------------------------------
+
+    - edit the 'WEB-INF/config/graph2mif.properties' file.
+    - you can customize :
+        * 'graph2mif.url' with the full URL of the servlet which allow to interact with the service.
+          eg. http://www.ebi.ac.uk/intact/graph2mif/getXML
+
+(5) Build the application war file
     ------------------------------
     run 'ant undeploy war deploy', will clean Tomcat build the application war file and install
     the web application in the local machine assuming you have $CATALINA_HOME correctly set as
     an environment variable.
 
-(5) Start Tomcat
+(6) Start Tomcat
     ------------
     run 'ant start-tomcat' (once)- if this fails, simply go to your tomcat bin directory and start it manually from there.
 
-(6) Test the web service (OPTIONAL)
+(7) Test the web service (OPTIONAL)
     -------------------------------
     By running 'ant test-ws', you send a dummy TLP file to the web service and get back a
     list of protein's coordinates. Those coordinates are computed by Tulip.
 
-(7) Try the web application
+(8) Try the web application
     -----------------------
     let's open a browser and go to http://[TOMCAT_HOSTNAME]/intact/hierarchView
