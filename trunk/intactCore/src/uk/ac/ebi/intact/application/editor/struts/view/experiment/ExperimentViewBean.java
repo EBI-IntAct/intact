@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.ValidationException;
-import uk.ac.ebi.intact.application.editor.exception.ExperimentValidationException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
+import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentException;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
@@ -99,11 +99,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
                     CvIdentification.class, myIdentification);
             // We should have these proper objects.
             if ((biosource == null) || (interaction == null) || (ident == null)) {
-                throw new ExperimentValidationException();
+                throw new ExperimentException();
             }
         }
         catch (SearchException ie) {
-            throw new ExperimentValidationException();
+            throw new ExperimentException();
         }
     }
 
