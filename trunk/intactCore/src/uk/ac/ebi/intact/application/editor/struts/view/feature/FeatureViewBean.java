@@ -334,6 +334,14 @@ public class FeatureViewBean extends AbstractEditViewBean {
         return myNewFeature;
     }
 
+    /**
+     * Sets the default short label
+     * @param shortLabel the default short label.
+     */
+    public final void setDefaultShortLabel(String shortLabel) {
+        setShortLabel(shortLabel.toLowerCase() + "-");
+    }
+    
     // Override the super method to initialize this class specific resetting.
     protected void reset(Class clazz) {
         super.reset(clazz);
