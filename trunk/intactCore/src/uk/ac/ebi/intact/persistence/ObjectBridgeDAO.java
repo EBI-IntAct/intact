@@ -14,6 +14,7 @@ import org.apache.ojb.broker.metadata.*;
 import org.apache.ojb.broker.metadata.fieldaccess.PersistentField;
 import org.apache.ojb.broker.query.*;
 import org.apache.ojb.broker.util.ObjectModificationDefaultImpl;
+import org.apache.ojb.broker.util.BrokerHelper;
 import org.apache.ojb.odmg.OJB;
 import org.apache.ojb.odmg.TransactionImpl;
 import org.odmg.Database;
@@ -525,6 +526,24 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
     public void removeFromCache(Object obj) {
         broker.removeFromCache(obj);
+    }
+
+    public void removeFromCache(Class realClass, Class topClass, String ac) {
+        removeFromCache(new Identity(realClass, topClass, new Object[] {ac}));
+    }
+
+    public boolean isInCache(Class realClass, Class topClass, String ac) {
+        Identity id = new Identity(realClass, topClass, new Object[] {ac});
+//
+//        System.out.println("Top class: " + broker.getTopLevelClass(obj.getClass()));
+//        System.out.println("Real class: " + obj.getClass());
+//        BrokerHelper helper = broker.serviceBrokerHelper();
+//        ClassDescriptor cld = broker.getClassDescriptor(obj.getClass());
+//        Object[] objs = helper.extractValueArray( helper.getKeyValues(cld, obj, false) );
+//        for (int i = 0; i < objs.length; i++) {
+//            System.out.println("objs: " + i + objs[i].getClass() + " - " + objs[i]);
+//        }
+        return broker.serviceObjectCache().lookup(id) != null;
     }
 
     public void forceUpdate(Object obj) throws UpdateException {
