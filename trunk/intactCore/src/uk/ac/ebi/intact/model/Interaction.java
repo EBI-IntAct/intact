@@ -25,7 +25,7 @@ public class Interaction extends Interactor {
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
-    private String cvInteractionTypeAc;
+    protected String cvInteractionTypeAc;
 
     /**
      * Represents ...

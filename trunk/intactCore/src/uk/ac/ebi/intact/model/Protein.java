@@ -94,6 +94,9 @@ public class Protein extends Interactor {
     public void setCvProteinForm(CvProteinForm cvProteinForm) {
         this.cvProteinForm = cvProteinForm;
     }
+    public void setFeature(Collection someFeature) {
+        this.feature = someFeature;
+    }
     public Collection getFeature() {
         return feature;
     }
@@ -106,6 +109,9 @@ public class Protein extends Interactor {
     public void removeFeature(Feature feature) {
         boolean removed = this.feature.remove(feature);
         if (removed) feature.setProtein(null);
+    }
+    public void setModification(Collection someModification) {
+        this.modification = someModification;
     }
     public Collection getModification() {
         return modification;
@@ -124,6 +130,12 @@ public class Protein extends Interactor {
     }
     public void setCvProteinFormAc(String cvProteinFormAc) {
         this.cvProteinFormAc = cvProteinFormAc;
+    }
+    public String getFormOfAc() {
+        return this.formOfAc;
+    }
+    public void setFormOfAc(String ac) {
+        this.formOfAc = ac;
     }
 
 } // end Protein
