@@ -139,8 +139,6 @@ public class Prediction {
                 System.out.println("Performing Pay-As-You-Go Strategy for Taxonomic ID: " + species);
                 pred.doPayAsYouGo(species);         //Perform Pay-As-You-Go algorithm on the interaction network for each species
             }
-            // Drop temp tables.
-            pred.dropTables();
         }
         catch (SQLException sqle) {
             while (sqle != null) {
@@ -189,11 +187,11 @@ public class Prediction {
                 if (RS.next()) {
                     if (RS.getInt(1) == 0) {
                         S.executeUpdate("insert into ia_payg values(\'" + nid
-                                + "\',0,0,0,0,0.0,0,0,FALSE,\'" + species + "\');");
+                                + "\',0,0,0,0,0.0,0,0,'N',\'" + species + "\');");
                     }
                     else {
                         S.executeUpdate("insert into ia_payg values(\'" + nid
-                                + "\',0,0,0,0,0.0,0,0,TRUE,\'" + species + "\');");
+                                + "\',0,0,0,0,0.0,0,0,'Y',\'" + species + "\');");
                     }
                 }
                 RS.close();
@@ -210,24 +208,6 @@ public class Prediction {
             }
         }
     }// end Prepare Tables
-
-    private void dropTables() throws IntactException, SQLException {
-        Statement S = null;
-        try {
-            S = getConnection().createStatement();
-            S.executeUpdate("drop table current_edge;");
-            S.executeUpdate("drop table temp_node;");
-        }
-        finally {
-            if (S != null) {
-                try {
-                    S.close();
-                }
-                catch (SQLException e) {
-                }
-            }
-        }
-    }
 
     private void fillCurrentEdgesTable() throws IntactException, SQLException {
 
