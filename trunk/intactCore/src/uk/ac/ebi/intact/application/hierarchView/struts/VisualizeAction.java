@@ -48,14 +48,16 @@ public final class VisualizeAction extends Action {
      * @exception ServletException if a servlet exception occurs
      */
     public ActionForward perform (ActionMapping mapping,
-				  ActionForm form,
-				  HttpServletRequest request,
-				  HttpServletResponse response)
+				                  ActionForm form,
+				                  HttpServletRequest request,
+				                  HttpServletResponse response)
 	throws IOException, ServletException {
 
 	// Extract attributes we will need
 	Locale locale = getLocale(request);
-	MessageResources messages = getResources();
+    // TODO : replace that for Struts 1.1
+    //MessageResources messages = getResources (request);
+    MessageResources messages = getResources ();
 
 	// Validate the request parameters specified by the user
 	ActionErrors errors = new ActionErrors();

@@ -42,15 +42,17 @@ public final class SourceAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
-				 ActionForm form,
-				 HttpServletRequest request,
-				 HttpServletResponse response)
+    public ActionForward perform (ActionMapping mapping,
+				                  ActionForm form,
+				                  HttpServletRequest request,
+				                  HttpServletResponse response)
 	throws IOException, ServletException {
 
 	// Extract attributes we will need
 	Locale locale = getLocale(request);
-	MessageResources messages = getResources();
+    // TODO : replace that for Struts 1.1
+    //MessageResources messages = getResources (request);
+    MessageResources messages = getResources ();
 
 	// read form values from the bean
 	ActionErrors errors = new ActionErrors();
