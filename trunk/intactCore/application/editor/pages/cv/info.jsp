@@ -16,6 +16,10 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
+<style type="text/css">
+    <%@ include file="/layouts/styles/editor.css" %>
+</style>
+
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
         <th class="tableCellHeader">AC</th>
@@ -32,7 +36,8 @@
             <bean:write property="ac" name="cvForm"/>
         </td>
         <td class="tableCell">
-            <html:text property="shortLabel" size="20" maxlength="25" name="cvForm"/>
+            <html:text property="shortLabel" size="20" maxlength="25" name="cvForm"
+                styleClass="inputRequired"/>
         </td>
 
         <td class="tableCell">

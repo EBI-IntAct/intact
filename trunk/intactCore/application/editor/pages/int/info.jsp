@@ -18,6 +18,10 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
+<style type="text/css">
+    <%@ include file="/layouts/styles/editor.css" %>
+</style>
+
 <%-- The current view --%>
 <c:set var="view" value="${user.view}"/>
 
@@ -52,7 +56,8 @@
             <bean:write property="ac" name="intForm"/>
         </td>
         <td class="tableCell">
-            <html:text property="shortLabel" size="20" maxlength="25" name="intForm"/>
+            <html:text property="shortLabel" size="20" maxlength="25"
+                name="intForm" styleClass="inputRequired"/>
         </td>
 
         <td class="tableCell">
@@ -85,14 +90,14 @@
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="interactionType" name="intForm">
+            <html:select property="interactionType" name="intForm" styleClass="inputRequired">
                 <html:options name="intertypemenu" />
             </html:select>
             <html:errors property="int.interaction"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="organism" name="intForm">
+            <html:select property="organism" name="intForm" styleClass="inputRequired">
                 <html:options name="organismmenu" />
             </html:select>
             <html:errors property="int.organism"/>
