@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.business;
 
 import java.util.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.servlet.http.HttpSessionBindingListener;
@@ -510,6 +509,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             myNewtServer = new NewtServerProxy(url);
         }
         return myNewtServer;
+    }
+
+    public String getHelpTag() {
+        return myEditView.getHelpTag();
     }
 
     // Helper methods.

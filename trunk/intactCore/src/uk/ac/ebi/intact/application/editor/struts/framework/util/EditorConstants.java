@@ -35,6 +35,11 @@ public interface EditorConstants {
     public static final String INTACT_USER = "user";
 
     /**
+     * The key to access the server path.
+     */
+    public static final String SERVER_PATH = "path";
+
+    /**
      * The key to success action.
      */
     public static final String FORWARD_SUCCESS = "success";
@@ -109,4 +114,9 @@ public interface EditorConstants {
      * The name of the protein form in an Interaction.
      */
     public static final String FORM_INTERACTION_PROT = "intProteinEditForm";
+
+    /**
+     * The default help link.
+     */
+    public static final String HELP_TITLE = "[?]";
 }

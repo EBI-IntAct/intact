@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -142,16 +143,21 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Update proteins.
         for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
             ProteinBean pb = (ProteinBean) iter.next();
-            Component comp = pb.getComponent(user);//getUpdatedComponent(user, (ProteinBean) iter.next());
+            Component comp = pb.getComponent(user);
             intact.addComponent(comp);
             user.update(comp);
         }
         super.persist(user);
     }
 
-    // Ovverride to provide Experiment layout.
+    // Override to provide Experiment layout.
     public void setLayout(ComponentContext context) {
         context.putAttribute("content", "edit.interaction.layout");
+    }
+
+    // Override to provide Interaction help tag.
+    public String getHelpTag() {
+        return "interaction";
     }
 
     // Null for any of these values will throw an exception.
@@ -381,15 +387,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @param protein the Protein to add.
      *
      * <pre>
-     * post: myProteinsToAdd = myProteinsToAdd@pre + 1
      * post: myProteins = myProteins@pre + 1
      * </pre>
      */
     public void addProtein(Protein protein) {
-//        ProteinBean pb = new ProteinBean(protein);
-        // Protein to add.
-//        myProteinsToAdd.add(pb);
-        // Add to the view as well.
+        // Add to the view.
         myProteins.add(new ProteinBean(protein));
     }
 
@@ -488,7 +490,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
         myExperimentsToHold.clear();
 
         // Clear Proteins
-//        myProteinsToAdd.clear();
         myProteinsToDel.clear();
         myProteinsToUpdate.clear();
     }
@@ -544,90 +545,4 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // All the experiments only found in experiments to delete collection.
         return CollectionUtils.subtract(myExperimentsToDel, common);
     }
-
-    /**
-     * Returns a collection of proteins to add.
-     * @return the collection of proteins to add to the current CV object.
-     * Empty if there are no proteins to add.
-     *
-     * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(ProteinBean)
-     * </pre>
-     */
-//    private Collection getProteinsToAdd() {
-//        // Proteins common to both add and delete.
-//        Collection common = CollectionUtils.intersection(
-//                myProteinsToAdd, myProteinsToDel);
-//        // All the proteins only found in proteins to add collection.
-//        return CollectionUtils.subtract(myProteinsToAdd, common);
-//    }
-
-    /**
-     * Returns a collection of proteins to remove.
-     * @return the collection of proteins to remove from the current CV object.
-     * Could be empty if there are no proteins to delete.
-     *
-     * <pre>
-     * post: return->forall(obj: Object | obj.oclIsTypeOf(ProteinBean)
-     * </pre>
-     */
-//    private Collection getProteinsToDel() {
-//        // Proteins common to both add and delete.
-//        Collection common = CollectionUtils.intersection(
-//                myProteinsToAdd, myProteinsToDel);
-//        // All the proteins only found in proteins to delete collection.
-//        return CollectionUtils.subtract(myProteinsToDel, common);
-//    }
-
-//    public Component getUpdatedComponent(EditUserI user, ProteinBean pb)
-//            throws SearchException {
-//        Component comp = pb.getComponent();
-//        String newrole = pb.getRole();
-//        if (newrole != null) {
-//            CvComponentRole role = (CvComponentRole) user.getObjectByLabel(
-//                    CvComponentRole.class, newrole);
-//            comp.setCvComponentRole(role);
-//        }
-//        comp.setStoichiometry(pb.getStoichiometry());
-//        String neworg = pb.getOrganism();
-//        if (neworg != null) {
-//            BioSource biosrc = (BioSource) user.getObjectByLabel(
-//                    BioSource.class, neworg);
-//            comp.getInteractor().setBioSource(biosrc);
-//        }
-//        return comp;
-//    }
-
-//    public Component getNewComponent(EditUserI user, ProteinBean pb)
-//            throws SearchException {
-//        Component comp = new Component();
-//        String newrole = pb.getRole();
-//        if (newrole != null) {
-//            CvComponentRole role = (CvComponentRole) user.getObjectByLabel(
-//                    CvComponentRole.class, newrole);
-//            comp.setCvComponentRole(role);
-//        }
-//        comp.setStoichiometry(pb.getStoichiometry());
-//        String neworg = pb.getOrganism();
-//        if (neworg != null) {
-//            BioSource biosrc = (BioSource) user.getObjectByLabel(
-//                    BioSource.class, neworg);
-//            comp.getInteractor().setBioSource(biosrc);
-//        }
-//        System.out.println("New component is (in InteractionView bean)");
-//        if (comp.getInteraction() != null) {
-//            System.out.println("Interaction(updated): " + comp.getInteraction().getShortLabel());
-//        }
-//        else {
-//            System.out.println("Interaction is null");
-//        }
-//        if (comp.getInteractor() != null) {
-//            System.out.println("Interactor(updated): " + comp.getInteractor().getShortLabel());
-//        }
-//        else {
-//            System.out.println("Interactor is null");
-//        }
-//        System.out.println("Role(updated): " + comp.getCvComponentRole().getShortLabel());
-//        return comp;
-//    }
 }

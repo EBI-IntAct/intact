@@ -90,6 +90,10 @@ public class LoginAction extends AbstractEditorAction {
         LOGGER.info("Created a new session");
         // Need to access the user later.
         session.setAttribute(EditorConstants.INTACT_USER, user);
+
+        // Store the server path.
+        ctx.setAttribute(EditorConstants.SERVER_PATH, request.getContextPath());
+
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
     }
 }

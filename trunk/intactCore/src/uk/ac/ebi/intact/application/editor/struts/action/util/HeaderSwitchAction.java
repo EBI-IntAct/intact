@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 
@@ -59,11 +60,27 @@ public class HeaderSwitchAction extends TilesAction {
         }
         EditUserI user = (EditUserI)
                 session.getAttribute(EditorConstants.INTACT_USER);
+
         // Only change the header if we are editing; need to check for null
-        // here because 'user' is null when the logout action was selected.
+        // here because 'user' is null when the logout action is selected.
         if ((user != null) && user.isEditing()) {
-            // Append the topic to the existing title.
+            // Service to get the help tags.
+            EditorService service = (EditorService)
+                    super.servlet.getServletContext().getAttribute(
+                            EditorConstants.EDITOR_SERVICE);
+
+            // The new title without the help tag.
             String newtitle = oldtitle + " - " + user.getSelectedTopic();
+
+            String tag = user.getHelpTag();
+            // Only process if we have tag.
+            if (tag != null) {
+                // The link title (superscript and reduced font).
+                String title = "<sup><font size=\"-1\">"
+                        + EditorConstants.HELP_TITLE + "</font></sup>";
+                newtitle += service.getHelpLinkAsHTML(
+                        request.getContextPath(), tag, title);
+            }
             context.putAttribute("header.title", newtitle);
         }
         return null;
