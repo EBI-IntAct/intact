@@ -33,6 +33,7 @@
 
     //build the URL for hierarchView from the absolute path and the relative beans..
     String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = relativePath.concat("mine/display.jsp");
 %>
 
 <script language="JavaScript" type="text/javascript">
@@ -131,7 +132,12 @@
 
 <h1>Search Results for
     <%=session.getAttribute(SearchConstants.SEARCH_CRITERIA) %></h1>
-    <h4>(short labels of search criteria matches highlighted in <b><i>bold italic</i></b>)</h4>
+
+    <br>
+<span class="smalltext">(short labels of search criteria matches are
+    <span style="color: rgb(255, 0, 0);">highlighted</span>
+</span><span class="smalltext">)<br></span></p>
+
 <!-- a line to separate the header -->
 <hr size=2>
 

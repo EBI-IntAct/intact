@@ -37,6 +37,7 @@
 
     //build the URL for hierarchView from the absolute path and the relative beans..
     String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
+    String minePath = relativePath.concat("mine/display.jsp");
 
     //The List of view beans used to provide the data for this JSP. Each
     //bean in the List should be an instance of SummaryViewBean, and corresponds to
@@ -133,7 +134,7 @@
                 <td class="objectClass" style="background-color: rgb(255, 255, 255);">
                     <code><a href="<%= bean.getSimpleSearchURL()%>">
                         <% if(highlightList.contains(bean.getIntactName())) { %>
-                            <span style="color: rgb(255, 0, 0);"><%= bean.getIntactName()%></span>
+                            <b><span style="color: rgb(255, 0, 0);"><%= bean.getIntactName()%></span></b>
                         <%
                             }
                             else {
