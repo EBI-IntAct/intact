@@ -39,35 +39,20 @@
     </tag>
 
     <tag>
-        <name>listIntactTypes</name>
-        <tagclass>uk.ac.ebi.intact.application.cvedit.struts.taglibs.IntactTypesListerTag</tagclass>
+        <name>createIntactTypeListTag</name>
+        <tagclass>
+            uk.ac.ebi.intact.application.cvedit.struts.taglibs.CreateIntactTypeListTag
+        </tagclass>
         <bodycontent>JSP</bodycontent>
         <info>
-            Compiles the Control Vocabulary list and display it as a list.
+            Creates a Control Vocabulary type list and store it in a request
+            object.
         </info>
         <attribute>
             <name>resource</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
-    </tag>
-
-    <tag>
-        <name>resetTransaction</name>
-        <tagclass>uk.ac.ebi.intact.application.cvedit.struts.taglibs.ResetTransactionTag</tagclass>
-        <bodycontent>JSP</bodycontent>
-        <info>
-            Resets a transaction if it has already been started.
-        </info>
-    </tag>
-
-    <tag>
-        <name>beginTransaction</name>
-        <tagclass>uk.ac.ebi.intact.application.cvedit.struts.taglibs.BeginTransactionTag</tagclass>
-        <bodycontent>JSP</bodycontent>
-        <info>
-            Begins a new transaction.
-        </info>
     </tag>
 
     <tag>
