@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.util.Utilities;
+
 import java.util.*;
 
 /**
@@ -125,6 +127,46 @@ public class Component extends BasicObject {
     public void setCvComponentRole(CvComponentRole cvComponentRole) {
         this.cvComponentRole = cvComponentRole;
     }
+
+    // instance methods
+
+    /** Returns true if the "important" attributes are equal.
+     * Criteria are:
+     * - identity of the interactor and interaction
+     * - the role
+     *
+     * More than one component may link the same (interactor, interaction)
+     * pair, but they must have different roles.
+     *
+     */
+    public boolean equals(Object obj){
+       /* TODO: Take features into account when they are implemented. */
+        return (super.equals(obj) &&
+                // Compare if the component links the same objects.
+                // This comparision can be based on reference equality,
+                // so "==" can be used instaed of "equals".
+                (this.interactor == ((Component) obj).interactor) &&
+                (this.interaction == ((Component) obj).interaction) &&
+                (this.cvComponentRole == ((Component) obj).cvComponentRole)
+                );
+    }
+
+    /** This class overwrites equals. To ensure proper functioning of HashTable,
+     * hashCode must be overwritten, too.
+     * @return  hash code of the object.
+     */
+    public int hashCode(){
+        /* TODO: Take features into account when they are implemented. */
+
+        int code = super.hashCode();
+
+        if (null != interactor) code += interactor.hashCode();
+        if (null != interaction) code += interaction.hashCode();
+        if (null != cvComponentRole) code += cvComponentRole.hashCode();
+
+        return code;
+    }
+
 
     //attributes used for mapping BasicObjects - project synchron
     public String getInteractorAc(){
