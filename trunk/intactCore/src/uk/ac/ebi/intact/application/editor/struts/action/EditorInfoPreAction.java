@@ -7,9 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
-import org.apache.struts.config.ModuleConfig;
-import org.apache.struts.config.FormBeanConfig;
-import org.apache.struts.Globals;
 import org.apache.commons.beanutils.DynaBean;
 
 import javax.servlet.http.*;
@@ -91,12 +88,13 @@ public class EditorInfoPreAction extends AbstractEditorAction {
         // Fill the form to edit short label and full name.
         DynaBean dynaForm = (DynaBean) session.getAttribute(formName);
         if (dynaForm == null) {
-            ModuleConfig appConfig =
-                    (ModuleConfig) request.getAttribute(Globals.MODULE_KEY);
-            FormBeanConfig config = appConfig.findFormBeanConfig(formName);
-            DynaActionFormClass dynaClass =
-                    DynaActionFormClass.createDynaActionFormClass(config);
-            dynaForm = dynaClass.newInstance();
+            dynaForm = getDynaBean(request, formName);
+//            ModuleConfig appConfig =
+//                    (ModuleConfig) request.getAttribute(Globals.MODULE_KEY);
+//            FormBeanConfig config = appConfig.findFormBeanConfig(formName);
+//            DynaActionFormClass dynaClass =
+//                    DynaActionFormClass.createDynaActionFormClass(config);
+//            dynaForm = dynaClass.newInstance();
             session.setAttribute(formName, dynaForm);
             super.log("Created " + formName + " instance ");
         }

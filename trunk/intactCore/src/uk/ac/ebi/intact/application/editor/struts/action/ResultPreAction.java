@@ -48,15 +48,17 @@ public class ResultPreAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // Handler to the Intact User.
-        EditUserI user = super.getIntactUser(request);
+//        EditUserI user = super.getIntactUser(request);
 
-        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(Globals.MODULE_KEY);
-        FormBeanConfig config = appConfig.findFormBeanConfig("resultForm");
-        DynaActionFormClass dynaClass =
-                DynaActionFormClass.createDynaActionFormClass(config);
-
-        DynaBean dynaForm = dynaClass.newInstance();
-        dynaForm.set("items", user.getSearchCache());
+//        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(Globals.MODULE_KEY);
+//        FormBeanConfig config = appConfig.findFormBeanConfig("resultForm");
+//        DynaActionFormClass dynaClass =
+//                DynaActionFormClass.createDynaActionFormClass(config);
+//
+//        DynaBean dynaForm = dynaClass.newInstance();
+        // Fill the form with data.
+        DynaBean dynaForm = getDynaBean(request, "resultForm");
+        dynaForm.set("items", getIntactUser(request).getSearchCache());
         request.setAttribute("resultForm", dynaForm);
         // Move to the results page.
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);

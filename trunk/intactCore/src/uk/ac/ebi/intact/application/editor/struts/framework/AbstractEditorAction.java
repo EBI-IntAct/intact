@@ -7,6 +7,10 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.struts.action.*;
+import org.apache.struts.config.ModuleConfig;
+import org.apache.struts.config.FormBeanConfig;
+import org.apache.struts.Globals;
+import org.apache.commons.beanutils.DynaBean;
 
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
@@ -166,6 +170,25 @@ public abstract class AbstractEditorAction extends Action {
     protected String getForwardAction(HttpServletRequest request)
             throws SessionExpiredException {
         return this.getForwardAction(this.getIntactUser(request));
+    }
+
+    /**
+     * Returns a new DynaBean instance for given form name.
+     * @param formName the name of the form configured in the struts
+     * configuration file.
+     * @param request the HTTP request to get the application configuration.
+     * @return a <code>DynaBean</code> instance.
+     * @throws InstantiationException errors in creating the bean
+     * @throws IllegalAccessException errors in creating the bean
+     */
+    protected DynaBean getDynaBean(HttpServletRequest request, String formName)
+            throws InstantiationException, IllegalAccessException {
+        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(
+                Globals.MODULE_KEY);
+        FormBeanConfig config = appConfig.findFormBeanConfig(formName);
+        DynaActionFormClass dynaClass =
+                DynaActionFormClass.createDynaActionFormClass(config);
+        return dynaClass.newInstance();
     }
 
     // Helper Methods
