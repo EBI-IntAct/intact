@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinBean;
@@ -76,8 +77,8 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         int idx = ((Integer) dynaform.get("idx")).intValue();
 
         // The current view of the edit session.
-        InteractionViewBean viewbean =
-                (InteractionViewBean) getIntactUser(request).getView();
+//        InteractionViewBean viewbean =
+//                (InteractionViewBean) getIntactUser(request).getView();
 
         // The protein we are editing at the moment.
         ProteinBean pb = ((ProteinBean[]) dynaform.get("proteins"))[idx];
@@ -113,6 +114,17 @@ public class ProteinDispatchAction extends AbstractEditorAction {
         // We must have the protein bean.
         assert pb != null;
 
+        // Must define a role for the Protein.
+        if (EditorMenuFactory.SELECT_LIST_ITEM.equals(pb.getRole())) {
+            ActionErrors errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.int.protein.edit.role"));
+            saveErrors(request, errors);
+            pb.setEditState(ProteinBean.ERROR);
+            return mapping.findForward(FORWARD_FAILURE);
+        }
+
+        // Any duplicate Proteins (same role)?
         if (viewbean.hasDuplicates(pb)) {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
