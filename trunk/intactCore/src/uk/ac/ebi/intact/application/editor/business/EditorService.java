@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
+import uk.ac.ebi.intact.util.NewtServerProxy;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -27,44 +28,9 @@ public class EditorService {
     private ResourceBundle myTopicProps;
 
     /**
-     * Reference to Newt server instance.
+     * Reference to Newt proxy server instance.
      */
-    private NewtServer myNewtServer;
-
-    // ------------------------------------------------------------------------
-    // Inner class to store Newt Server properties
-
-    private static class NewtServer {
-
-        /**
-         * Newt server URL
-         */
-        private URL myNewtURL;
-
-        /**
-         * Newt server query parameters.
-         */
-        private String myNewtQueryParas;
-
-        private NewtServer(String name)
-                throws MissingResourceException, MalformedURLException {
-            ResourceBundle rb = ResourceBundle.getBundle(name);
-            myNewtURL = new URL(rb.getString("newt.server.url"));
-            myNewtQueryParas = rb.getString("newt.server.request.params");
-        }
-
-        // Getter methods.
-        private URL getURL() {
-            return myNewtURL;
-        }
-
-        private String getQueryParameters() {
-            return myNewtQueryParas;
-        }
-
-    }
-    // End of Inner class
-    // ------------------------------------------------------------------------
+    private NewtServerProxy myNewtServer;
 
     /**
      * Loads editor topic properties from a resources file.
@@ -85,14 +51,17 @@ public class EditorService {
     }
 
     /**
-     * Loads Newt properties from a resources file.
+     * Initialize the Newt server using properties from a resources file.
      * @param name the name of the Newt resource file.
      * @exception MissingResourceException thrown when the resource file is
      * not found.
+     * @exception MalformedURLException thrown for incorrect URL property.
      */
-    public void loadNewtProperties(String name)
+    public void initNewtServer(String name)
             throws MissingResourceException, MalformedURLException {
-        myNewtServer = new NewtServer(name);
+        ResourceBundle rb = ResourceBundle.getBundle(name);
+        URL url = new URL(rb.getString("newt.server.url"));
+        myNewtServer = new NewtServerProxy(url);
     }
 
     /**
@@ -118,18 +87,9 @@ public class EditorService {
     }
 
     /**
-     * Returns the URL of the Newt server.
-     * @return the URL of the Newt server as a <code>String</code>.
+     * Returns reference to the Newt server proxy.
      */
-    public URL getNewtURL() {
-        return myNewtServer.getURL();
-    }
-
-    /**
-     * Returns the Newt server query parameters
-     * @return the Newt server query parameters as a <code>String</code>.
-     */
-    public String getNewtQueryParameters() {
-        return myNewtServer.getQueryParameters();
+    public NewtServerProxy getNewtServer() {
+        return myNewtServer;
     }
 }
