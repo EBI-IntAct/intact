@@ -30,7 +30,7 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
      * indicates saving a new item. This state is only used by proteins.jsp
      * to save new componets as as result of a search.
      */
-    private static final String SAVE_NEW = "saveNew";
+    static final String SAVE_NEW = "saveNew";
 
     /**
      * Identifier for an error bean.
@@ -105,8 +105,8 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
 
     public Component getComponent(EditUserI user) throws SearchException {
         CvComponentRole newrole = getRole(user);
-        // We must have a non null role for a valid component.
-        if (newrole == null) {
+        // Must have a non null role and interaction for a valid component
+        if ((newrole == null) || (myInteraction == null)) {
             return null;
         }
         // Component is null if this bean constructed from a Protein.
