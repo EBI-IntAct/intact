@@ -1,6 +1,6 @@
 -- insert nodes into database for testing synchron package
 
-insert into institution(shortlabel, fullname, postaladdress, url, ac) values ('EBI',
+insert into ia_institution(shortlabel, fullname, postaladdress, url, ac) values ('EBI',
     'European Bioinformatics Institute',
     'European Bioinformatics Institute
     Wellcome Trust Genome Campus Hinxton, Cambridge
@@ -8,6 +8,6 @@ insert into institution(shortlabel, fullname, postaladdress, url, ac) values ('E
     'http://www.ebi.ac.uk',
     'EBI-11');
 
-insert into intactnode(ac, ftpaddress, ftplogin, ftppassword, ftpdirectory, ownerprefix,owner_ac)
+insert into ia_intactnode(ac, ftpaddress, ftplogin, ftppassword, ftpdirectory, ownerprefix,owner_ac)
     values ('EBI-11', 'brandt.ebi.ac.uk', 'amueller', 'iZ111sU+A', '/scratch/PseudoFtpServer/EBI', 'EBI','EBI-10');
 
