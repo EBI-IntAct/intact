@@ -11,7 +11,6 @@ import gnu.regexp.REMatch;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 
