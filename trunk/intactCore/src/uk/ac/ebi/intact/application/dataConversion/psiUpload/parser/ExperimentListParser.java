@@ -48,27 +48,31 @@ public final class ExperimentListParser {
      * @param element
      */
     public void process( final Element element ) {
-
-        if( false == "entry".equals( element.getNodeName() )
+        final String name = element.getNodeName();
+        if( false == "entry".equals( name )
             &&
-            false == "interaction".equals( element.getNodeName() ) ) {
+            false == "interaction".equals( name ) ) {
             MessageHolder.getInstance().addParserMessage( new Message( element, "ERROR - We should be in either " +
                                                                                 "entry or interaction tag." ) );
+            // TODO should we carry on here ? If the tag is not right ... the parsing can only fail !
         }
 
         final Element experimentList = DOMUtil.getFirstElement( element, "experimentList" );
-        final NodeList someExperiments = experimentList.getElementsByTagName( "experimentDescription" );
-        final int count = someExperiments.getLength();
 
-        for ( int i = 0; i < count; i++ ) {
-            final Node experimentNode = someExperiments.item( i );
+        if( experimentList != null ) {
+            final NodeList someExperiments = experimentList.getElementsByTagName( "experimentDescription" );
+            final int count = someExperiments.getLength();
 
-            final ExperimentDescriptionParser expDesc = new ExperimentDescriptionParser( this, (Element) experimentNode );
-            final LabelValueBean lvb = expDesc.process();
+            for ( int i = 0; i < count; i++ ) {
+                final Node experimentNode = someExperiments.item( i );
 
-            if( lvb != null ) {
-                experiments.put( lvb.getLabel(), lvb.getValue() );
-            }
-        } // experiments
+                final ExperimentDescriptionParser expDesc = new ExperimentDescriptionParser( this, (Element) experimentNode );
+                final LabelValueBean lvb = expDesc.process();
+
+                if( lvb != null ) {
+                    experiments.put( lvb.getLabel(), lvb.getValue() );
+                }
+            } // experiments
+        }
     }
 }
