@@ -424,6 +424,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         boolean localTx = false;
         Object dummy = null;
 
+        logger.debug("doing update - searching for old data...");
+        // Removed the object from cache for a database load to get the
+        // true old data.
+        broker.removeFromCache(obj);
          try {
 
              //NB To do a proper (intelligent) update:
@@ -432,7 +436,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
              //3) copy the new data into it (harder than it sounds!!)
              //4) commit
              //
-             logger.debug("doing update - searching for old data...");
              dummy = broker.getObjectByIdentity(new Identity(obj));
              if(dummy == null) {
                  logger.debug("unable to update " + obj.getClass().getName() + " : no object exists in store; creating it...");
