@@ -116,7 +116,7 @@
                         <bean:write name="xrefs" property="databaseLink" filter="false"/>
                     </td>
                     <td class="tableCell">
-                        <bean:write name="xrefs" property="primaryId"/>
+                        <bean:write name="xrefs" property="primaryId" filter="false"/>
                     </td>
                     <td class="tableCell">
                         <bean:write name="xrefs" property="secondaryId"/>
