@@ -140,7 +140,8 @@ public final class DisplayAction extends IntactBaseAction {
 
             // Creation of the graph and the image
             try {
-                produceInteractionNetworkImage (user);
+                updateInteractionNetwork (user, StrutsConstants.CREATE_INTERACTION_NETWORK);
+                produceImage (user);
             } catch (MultipleResultException e) {
                 return (mapping.findForward("displayWithSearch"));
             }

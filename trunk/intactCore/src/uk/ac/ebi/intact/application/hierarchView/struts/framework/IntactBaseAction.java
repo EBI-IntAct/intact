@@ -13,9 +13,11 @@ import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundException;
 import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
+import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.business.IntactException;
+
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
@@ -201,55 +203,17 @@ public abstract class IntactBaseAction extends Action {
     }
 
     /**
-     * Produces and updates the user session with :
-     * <blockquote>
-     *      the InteractionNetwork corresponding to the given AC and depth. <br>
-     *      the image data corresponding to the produced InteractionNetwork
-     * </blockquote>
+     * Produces image accordingly to the interaction network stored in the user :
      * Any errors are stored in the <i>ActionErrors</i> object. A test need to be done
-     * afterward to check if any errors have occured.
+     * afterward to check if any errors have occured.<br>
+     * nothing is done if there is no existing interaction network.
      *
      * @param user where are saved produced data
      */
-    protected void produceInteractionNetworkImage (IntactUserI user)
-              throws MultipleResultException {
+    protected void produceImage (IntactUserI user) {
 
-        InteractionNetwork in = null;
-        String queryString = user.getQueryString();
-        int depth = user.getCurrentDepth();
-
-        try {
-            GraphHelper gh = new GraphHelper(user);
-            Chrono chrono = new Chrono ();
-            chrono.start();
-
-            in = gh.getInteractionNetwork(queryString, depth);
-
-            chrono.stop();
-            String msg = "Time for retreiving the interaction network ( " +
-                    in.sizeNodes() + " proteins, " + in.sizeEdges() + " edges) :" +
-                    chrono;
-            logger.info(msg);
-
-        } catch (ProteinNotFoundException e) {
-            addError ("error.protein.notFound", queryString);
-            return;
-
-        } catch (SearchException e) {
-            addError ("error.search.process", e.getMessage());
-            return;
-
-        } catch (IntactException e) {
-            addError ("error.interactionNetwork.notCreated", e.getMessage());
-            return;
-        } catch (MultipleResultException mre) {
-             throw mre;
-        }
-
-        if (0 == in.sizeNodes()) {
-            addError ("error.interactionNetwork.noProteinFound");
-            return;
-        }
+        InteractionNetwork in = user.getInteractionNetwork();
+        if (in == null) return;
 
         // TODO : If depth desacrease we don't have to access IntAct, we have to reduce the current graph.
 
@@ -274,9 +238,10 @@ public abstract class IntactBaseAction extends Action {
 
         Chrono chrono = new Chrono ();
         chrono.start();
+
         DrawGraph te = new DrawGraph (in);
-//        GraphToSVG te = new GraphToSVG (in);
         te.draw ();
+
         chrono.stop();
         String msg = "Time for rendering the interaction network " + chrono;
         logger.info(msg);
@@ -290,6 +255,84 @@ public abstract class IntactBaseAction extends Action {
 
         // store the image data and the graph
         user.setImageBean (ib);
+    }
+
+
+    /**
+     * Update the interaction network according to the specified action type:
+     * <blockquote>
+     *      <li> <code>StrutsConstants.CREATE_INTERACTION_NETWORK</code> : create a new interaction network </li>
+     *      <li> <code>StrutsConstants.ADD_INTERACTION_NETWORK</code> : add a new interaction network to the existing's one</li>
+     *      <li> <code>StrutsConstants.UPDATE_INTERACTION_NETWORK</code> : rebuild the current interaction network by taking into account any depth change </li>
+     * </blockquote>
+     * Any errors are stored in the <i>ActionErrors</i> object. A test need to be done
+     * afterward to check if any errors have occured.
+     *
+     * @param user where are saved produced data
+     * @param action to perform
+     * @see StrutsConstants
+     *
+     * @throws MultipleResultException in case your query gives multiple results
+     */
+    public void updateInteractionNetwork (IntactUserI user, int action)
+              throws MultipleResultException {
+
+        InteractionNetwork in = null;
+        String queryString = user.getQueryString();
+        int depth = user.getCurrentDepth();
+
+        try {
+            GraphHelper gh = new GraphHelper(user);
+            Chrono chrono = new Chrono ();
+            chrono.start();
+
+            switch (action) {
+                case StrutsConstants.CREATE_INTERACTION_NETWORK:
+                    in = gh.createInteractionNetwork (queryString, depth);
+                    break;
+
+                case StrutsConstants.ADD_INTERACTION_NETWORK:
+                    in = user.getInteractionNetwork();
+                    in = gh.addInteractionNetwork (in, queryString, depth);
+                    break;
+
+                case StrutsConstants.UPDATE_INTERACTION_NETWORK:
+                    in = user.getInteractionNetwork();
+                    in = gh.updateInteractionNetwork (in, depth);
+                    break;
+
+                default:
+                    return;
+            }
+
+            chrono.stop();
+            String msg = "Time for retreiving the interaction network ( " +
+                         in.sizeNodes() + " proteins, " + in.sizeEdges() + " edges) :" +
+                         chrono;
+            logger.info(msg);
+
+        } catch (ProteinNotFoundException e) {
+            addError ("error.protein.notFound", queryString);
+            return;
+
+        } catch (SearchException e) {
+            addError ("error.search.process", e.getMessage());
+            return;
+
+        } catch (IntactException e) {
+            addError ("error.interactionNetwork.notCreated", e.getMessage());
+            return;
+
+        } catch (MultipleResultException mre) {
+             throw mre;
+        }
+
+        if (0 == in.sizeNodes()) {
+            addError ("error.interactionNetwork.noProteinFound");
+            return;
+        }
+
         user.setInteractionNetwork (in);
-    } // produceInteractionNetworkImage
+    }
+
 }
