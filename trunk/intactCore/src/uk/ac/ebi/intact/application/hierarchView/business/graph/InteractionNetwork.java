@@ -66,7 +66,6 @@ public class InteractionNetwork extends Graph {
      */
     private Interactor centralProtein;
     private String centralProteinAC; // avoid numerous call to interactor.getAc()
-//    private Node centralProteinNode;
 
     /**
      * Stores a set of central nodes and interactor. There is one by fusioned interaction network
@@ -88,12 +87,14 @@ public class InteractionNetwork extends Graph {
      * Constructor
      */
     public InteractionNetwork (Interactor aCentralProtein) {
+        Collection xrefs = aCentralProtein.getXref();
+        logger.info("Create an Interaction Network with centralProtein:" + aCentralProtein.getAc() + " #xref=" + (xrefs==null?0:xrefs.size()));
         centralProtein     = aCentralProtein;
         centralProteinAC   = aCentralProtein.getAc();
         criteriaList       = new ArrayList();
         centralNodes       = new ArrayList();
         centralInteractors = new ArrayList();
-        centralInteractors.add (aCentralProtein); // can be a interaction, a Protein
+        centralInteractors.add (aCentralProtein); // can be an Interaction or a Protein
 
         // wait the user to add some node to reference the central one
         dimension        = new ImageDimension();
@@ -111,16 +112,22 @@ public class InteractionNetwork extends Graph {
     }
 
 
-
     public void addCentralProtein (Node node) {
         if (node == null) logger.info ("!!!!!!!!!!!!!!!!!!!!!!! Node == NULL");
         if ((! centralNodes.contains(node)) && (node != null))
             centralNodes.add (node);
+        else {
+            logger.info("Node not inserted in the central nodes");
+            logger.info("centralNodes.contains(node) == " + centralNodes.contains(node));
+            logger.info("(node == null) == " + (node == null));
+        }
     }
+
 
     public ArrayList getCentralProteins () {
         return centralNodes;
     }
+
 
     public ArrayList getCentralInteractors () {
         return centralInteractors;
@@ -130,6 +137,7 @@ public class InteractionNetwork extends Graph {
     public ArrayList getCriteria() {
         return criteriaList;
     }
+
 
     /**
      * Add a new criteria to the interaction network<br>
@@ -142,12 +150,14 @@ public class InteractionNetwork extends Graph {
         criteriaList.add (aCriteria);
     }
 
+
     /**
      * remove all existing criteria from the interaction network
      */
     public void resetCriteria () {
         criteriaList.clear();
     }
+
 
     /**
      * Initialization of the interaction network
@@ -173,11 +183,14 @@ public class InteractionNetwork extends Graph {
 
         // initialization of the node
         if (null != aNode) {
+           logger.info("Comparing interactors: ("+ anInteractor.getAc() +") and ("+ centralProtein.getAc() +")");
             if (anInteractor.equals(centralProtein)) {
+                logger.info("They are equals");
                 addCentralProtein(aNode);
                 // TODO: could add the interactor in a Collection ... would solve the problem of an interaction
 
-            }
+            } else logger.info("They are different");
+
             aNode.put (Constants.ATTRIBUTE_LABEL, anInteractor.getAc ());
 
             initNodeDisplay (aNode);
@@ -223,7 +236,6 @@ public class InteractionNetwork extends Graph {
     public void initNodeDisplay (NodeI aNode) {
 
         // read the Graph.proterties file
-//        Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
         Properties properties = IntactUserI.GRAPH_PROPERTIES;
 
         String stringColorNode  = null;
@@ -251,7 +263,7 @@ public class InteractionNetwork extends Graph {
 
         ((Node) aNode).put (Constants.ATTRIBUTE_COLOR_LABEL, colorLabel);
         ((Node) aNode).put (Constants.ATTRIBUTE_VISIBLE, new Boolean (true));
-    } // initNode
+    }
 
 
     /**
@@ -330,7 +342,6 @@ public class InteractionNetwork extends Graph {
     } // exportTlp
 
 
-
     /**
      * Create a String giving informations for the bioLayout EMBL software
      * the informations are just pairwise of protein label.
@@ -359,7 +370,6 @@ public class InteractionNetwork extends Graph {
 
         return out.toString();
     } // exportBioLayout
-
 
 
     /**
@@ -416,6 +426,7 @@ public class InteractionNetwork extends Graph {
 
         return null;
     } //importDataToImage
+
 
     /**
      * Fusion a interaction network to the current one.<br>
@@ -506,7 +517,7 @@ public class InteractionNetwork extends Graph {
         logger.info ("END fusion");
     }
 
-}
+} // InteractionNetwork
 
 
 
