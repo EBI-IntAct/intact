@@ -116,14 +116,16 @@ public class InteractionViewBean extends AbstractEditViewBean {
         makeProteinBeans(intact.getComponents());
     }
 
-    // Override the super method to this bean's info.
-    public void persist(EditUserI user) throws IntactException, SearchException {
+    // Override the super method to update the current Interaction.
+    public void update(EditUserI user) throws IntactException, SearchException {
+        super.update(user);
         // Get the objects using their short label.
         BioSource biosource = (BioSource) user.getObjectByLabel(
                 BioSource.class, myOrganism);
         CvInteractionType type = (CvInteractionType) user.getObjectByLabel(
                 CvInteractionType.class, myInteractionType);
 
+        // The current Interaction object we want to update
         Interaction intact = (Interaction) getAnnotatedObject();
         intact.setBioSource(biosource);
         intact.setCvInteractionType(type);
@@ -139,7 +141,64 @@ public class InteractionViewBean extends AbstractEditViewBean {
             Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
             intact.removeExperiment(exp);
         }
-        super.persist(user);
+    }
+
+    // Override the super method to this bean's info.
+//    public void persist(EditUserI user) throws IntactException, SearchException {
+//        // Get the objects using their short label.
+//        BioSource biosource = (BioSource) user.getObjectByLabel(
+//                BioSource.class, myOrganism);
+//        CvInteractionType type = (CvInteractionType) user.getObjectByLabel(
+//                CvInteractionType.class, myInteractionType);
+//
+//        Interaction intact = (Interaction) getAnnotatedObject();
+//        intact.setBioSource(biosource);
+//        intact.setCvInteractionType(type);
+//        intact.setKD(myKD);
+//
+//        // Create experiments and add them to CV object.
+//        for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
+//            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+//            intact.addExperiment(exp);
+//        }
+//        // Delete experiments and remove them from CV object.
+//        for (Iterator iter = getExperimentsToDel().iterator(); iter.hasNext();) {
+//            Experiment exp = ((ExperimentBean) iter.next()).getExperiment();
+//            intact.removeExperiment(exp);
+//        }
+//        super.persist(user);
+//    }
+
+    // Override the super to persist others.
+    public void persistOthers(EditUserI user) throws IntactException,
+            SearchException {
+        try {
+            // Begin the transaction.
+            user.begin();
+
+            // persist the view.
+            persistCurrentView(user);
+
+            // Commit the transaction.
+            user.commit();
+        }
+        catch (IntactException ie1) {
+            try {
+                user.rollback();
+            }
+            catch (IntactException ie2) {
+                // Oops! Problems with rollback; ignore this as this
+                // error is reported via the main exception (ie1).
+            }
+            // Rethrow the exception to be logged.
+            throw ie1;
+        }
+    }
+
+    // Override the super method as the current interaction is added to the
+    // recent interaction list.
+    public void addToRecentList(EditUserI user) {
+        user.addToCurrentInteraction((Interaction) getAnnotatedObject());
     }
 
     /**
@@ -149,35 +208,35 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @throws SearchException for errors in searching for objects in the
      * persistent system.
      */
-    public void persistProteins(EditUserI user) throws IntactException, SearchException {
-        Interaction intact = (Interaction) getAnnotatedObject();
-        // Delete proteins and remove it from the interaction.
-        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
-            Component comp = ((ProteinBean) iter.next()).getComponent(user);
-            // No need to delete from persistent storage if the link to this
-            // Protein is not persisted.
-            if ((comp == null) || (comp.getAc() == null)) {
-                continue;
-            }
-            user.delete(comp);
-            intact.removeComponent(comp);
-        }
-        // Update proteins.
-        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
-            ProteinBean pb = (ProteinBean) iter.next();
-            Component comp = pb.getComponent(user);
-            intact.addComponent(comp);
-            if (user.isPersistent(comp)) {
-                user.update(comp);
-            }
-            else {
-                user.create(comp);
-            }
-        }
-        // No need to test whether this 'intact' persistent or not because we
-        // know it has been already persisted by persist() call.
-        user.update(intact);
-    }
+//    public void persistProteins(EditUserI user) throws IntactException, SearchException {
+//        Interaction intact = (Interaction) getAnnotatedObject();
+//        // Delete proteins and remove it from the interaction.
+//        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
+//            Component comp = ((ProteinBean) iter.next()).getComponent(user);
+//            // No need to delete from persistent storage if the link to this
+//            // Protein is not persisted.
+//            if ((comp == null) || (comp.getAc() == null)) {
+//                continue;
+//            }
+//            user.delete(comp);
+//            intact.removeComponent(comp);
+//        }
+//        // Update proteins.
+//        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
+//            ProteinBean pb = (ProteinBean) iter.next();
+//            Component comp = pb.getComponent(user);
+//            intact.addComponent(comp);
+//            if (user.isPersistent(comp)) {
+//                user.update(comp);
+//            }
+//            else {
+//                user.create(comp);
+//            }
+//        }
+//        // No need to test whether this 'intact' persistent or not because we
+//        // know it has been already persisted by persist() call.
+//        user.update(intact);
+//    }
 
     // Override super method to clear experiments and componets.
     public void clear() {
@@ -602,5 +661,38 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 myExperimentsToAdd, myExperimentsToDel);
         // All the experiments only found in experiments to delete collection.
         return CollectionUtils.subtract(myExperimentsToDel, common);
+    }
+
+    private void persistCurrentView(EditUserI user) throws IntactException,
+            SearchException {
+        // The current Interaction.
+        Interaction intact = (Interaction) getAnnotatedObject();
+
+        // Delete proteins and remove it from the interaction.
+        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
+            Component comp = ((ProteinBean) iter.next()).getComponent(user);
+            // No need to delete from persistent storage if the link to this
+            // Protein is not persisted.
+            if ((comp == null) || (comp.getAc() == null)) {
+                continue;
+            }
+            user.delete(comp);
+            intact.removeComponent(comp);
+        }
+        // Update proteins.
+        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
+            ProteinBean pb = (ProteinBean) iter.next();
+            Component comp = pb.getComponent(user);
+            intact.addComponent(comp);
+            if (user.isPersistent(comp)) {
+                user.update(comp);
+            }
+            else {
+                user.create(comp);
+            }
+        }
+        // No need to test whether this 'intact' persistent or not because we
+        // know it has been already persisted by persist() call.
+        user.update(intact);
     }
 }

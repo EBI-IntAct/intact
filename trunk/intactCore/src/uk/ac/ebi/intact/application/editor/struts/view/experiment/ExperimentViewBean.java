@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
+import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentException;
@@ -101,10 +102,10 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         makeInteractionBeans(exp.getInteractions());
     }
 
-    // Override the super method to this bean's info.
-    public void persist(EditUserI user) throws IntactException, SearchException {
-        // The order is important! update super last as it does
-        // the update of the object.
+    // Override the super method to update the current Experiment.
+    public void update(EditUserI user) throws IntactException, SearchException {
+        super.update(user);
+        // The current Experiment object we want to update
         Experiment exp = (Experiment) getAnnotatedObject();
 
         // Get the objects using their short label.
@@ -119,11 +120,59 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         exp.setBioSource(biosource);
         exp.setCvInteraction(interaction);
         exp.setCvIdentification(ident);
-        super.persist(user);
 
-        // The experiment is sucessfully persisted; add this to the
-        // current edit/add experiment list.
-        user.addToCurrentExperiment(exp);
+        // Add interaction to the experiment.
+        for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
+            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
+            intact.addExperiment(exp);
+        }
+        // Delete interactions from the experiment.
+        for (Iterator iter = getInteractionsToDel().iterator(); iter.hasNext();) {
+            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
+            intact.removeExperiment(exp);
+        }
+    }
+
+    // Override the super method to this bean's info.
+//    public void persist(EditUserI user) throws IntactException, SearchException {
+//        // The order is important! update super last as it does
+//        // the update of the object.
+//        Experiment exp = (Experiment) getAnnotatedObject();
+//
+//        // Get the objects using their short label.
+//        BioSource biosource = (BioSource) user.getObjectByLabel(
+//                BioSource.class, myOrganism);
+//        CvInteraction interaction = (CvInteraction) user.getObjectByLabel(
+//                CvInteraction.class, myInter);
+//        CvIdentification ident = (CvIdentification) user.getObjectByLabel(
+//                CvIdentification.class, myIdent);
+//
+//        // Update the experiment object.
+//        exp.setBioSource(biosource);
+//        exp.setCvInteraction(interaction);
+//        exp.setCvIdentification(ident);
+//
+//        // Add interaction to the experiment.
+//        for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
+//            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
+//            intact.addExperiment(exp);
+//        }
+//        // Delete interactions from the experiment.
+//        for (Iterator iter = getInteractionsToDel().iterator(); iter.hasNext();) {
+//            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
+//            intact.removeExperiment(exp);
+//        }
+//        super.persist(user);
+//
+//        // The experiment is sucessfully persisted; add this to the
+//        // current edit/add experiment list.
+//        user.addToCurrentExperiment(exp);
+//    }
+
+    // Override the super method as the current experiment is added to the
+    // recent experiment list.
+    public void addToRecentList(EditUserI user) {
+        user.addToCurrentExperiment((Experiment) getAnnotatedObject());
     }
 
     // Ovverride to provide Experiment layout.
@@ -373,5 +422,39 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             Interaction interaction  = (Interaction) iter.next();
             myInteractions.add(new InteractionBean(interaction));
         }
+    }
+
+    /**
+     * Returns a collection of interactions to add.
+     * @return the collection of interactions to add to the current Experiment.
+     * Empty if there are no interactions to add.
+     *
+     * <pre>
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(InteractionBean)
+     * </pre>
+     */
+    private Collection getInteractionsToAdd() {
+        // Interaction common to both add and delete.
+        Collection common = CollectionUtils.intersection(
+                myInteractionsToAdd, myInteractionsToDel);
+        // All the interactions only found in interaction to add collection.
+        return CollectionUtils.subtract(myInteractionsToAdd, common);
+    }
+
+    /**
+     * Returns a collection of interactions to remove.
+     * @return the collection of interactions to remove from the current Experiment.
+     * Could be empty if there are no interactions to delete.
+     *
+     * <pre>
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(InteractionBean)
+     * </pre>
+     */
+    private Collection getInteractionsToDel() {
+        // Interactions common to both add and delete.
+        Collection common = CollectionUtils.intersection(
+                myInteractionsToAdd, myInteractionsToDel);
+        // All the interactions only found in interaction to delete collection.
+        return CollectionUtils.subtract(myInteractionsToDel, common);
     }
 }

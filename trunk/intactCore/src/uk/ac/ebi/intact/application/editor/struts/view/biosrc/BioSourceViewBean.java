@@ -32,13 +32,19 @@ public class BioSourceViewBean extends AbstractEditViewBean {
         setTaxId(biosrc.getTaxId());
     }
 
-    // Override the super method to persist tax id.
-    public void persist(EditUserI user) throws IntactException, SearchException {
-        // The order is important! update super last as it does
-        // the update of the object.
+    // Override the super method to update the current Biosource.
+    public void update(EditUserI user) throws IntactException, SearchException {
+        super.update(user);
         ((BioSource) getAnnotatedObject()).setTaxId(getTaxId());
-        super.persist(user);
     }
+
+    // Override the super method to persist tax id.
+//    public void persist(EditUserI user) throws IntactException, SearchException {
+//        // The order is important! update super last as it does
+//        // the update of the object.
+//        ((BioSource) getAnnotatedObject()).setTaxId(getTaxId());
+//        super.persist(user);
+//    }
 
     // Override to provide BioSource layout.
     public void setLayout(ComponentContext context) {
