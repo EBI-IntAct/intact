@@ -45,7 +45,7 @@ public class ProteinSearchDynaForm extends DynaValidatorForm {
         // Error if all three fields are empty.
         if ((acLen == 0) && (spAcLen == 0) && (shortLabelLen == 0)) {
             ActionErrors errors = new ActionErrors();
-            errors.add("int.protein.search",
+            errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.protein.search.input"));
             return errors;
         }
