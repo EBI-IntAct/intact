@@ -3,7 +3,7 @@
 
  <%--
     Forwards the request to the login page.
-    @author ${User} (shuet@ebi.ac.uk)
+    @author Sophie Huet (shuet@ebi.ac.uk), Samuel Kerrien (skerrien@ebi.ac.uk)
     Version: $Id$
 --%>
 

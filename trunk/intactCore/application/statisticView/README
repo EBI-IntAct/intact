@@ -14,12 +14,7 @@ dist/           : Where the WAR file is created.
 
 
 INSTALLATION
-    edit repository.xml and OJB.properties in the intact root directory
-    (intactCore/config) to suit your requirements (oracle vs postgres etc).
-    Instead of editing these files manually, you may just run ant set-target-env
-    from intactCore directory. The target environment is specified in the
-    build.properties file (intactCore directory). CvEdit has been tested
-    under Oracle 8.1.6 and PostGres 7.2 (local and remote).
+	Read the README file in the intact home directory to know how to configure the database access.
 
 BUILD
     ant war

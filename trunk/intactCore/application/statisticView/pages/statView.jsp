@@ -13,10 +13,16 @@
 <%@ page import="java.util.Vector,
                  java.util.Iterator,
                  java.util.Collection,
-                 uk.ac.ebi.intact.application.statisticView.business.data.DataManagement,
                  java.util.ArrayList,
                  uk.ac.ebi.intact.business.IntactException,
-                 uk.ac.ebi.intact.application.statisticView.business.servlet.StatBean"%>
+                 uk.ac.ebi.intact.util.IntactStatistics,
+                 java.io.PrintWriter,
+                 uk.ac.ebi.intact.application.statisticView.business.graphic.ChartBuilder,
+                 uk.ac.ebi.intact.application.statisticView.business.data.NoDataException,
+                 uk.ac.ebi.intact.application.statisticView.business.data.StatisticsBean,
+                 uk.ac.ebi.intact.application.statisticView.business.data.DisplayStatisticsBean,
+                 uk.ac.ebi.intact.util.StatisticsDataSet,
+                 uk.ac.ebi.intact.application.statisticView.business.Constants"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/display.tld"     prefix="display" %>
@@ -25,14 +31,19 @@
 
 
 <%
-    String applicationPath = request.getContextPath();
-    DataManagement dat = new DataManagement();
+    StatisticsBean bean = null;
+    try {
+        bean = StatisticsDataSet.getInstance( Constants.LOGGER_NAME ).getStatisticBean();
+    } catch (NoDataException nde) {
+        // forward to an error page.
+    }
     boolean noData = false;
     String lastDate = "";
 
     try {
-        lastDate = dat.getLastTimestamp();
+        lastDate = bean.getMoreRecentStatisticsDate();
     } catch (IntactException ie) {
+        ie.printStackTrace();
         noData = true;
     }
 %>
@@ -43,16 +54,19 @@
         <tr>
             <td valign="top" height="*">
             <br>
-           <%
-            if (noData) {
-               out.println("Sorry, right now there is no statistics available in your IntAct node.");
-               out.println("</td></tr></table>");
-               return; // terminate right here the execution of the JSP.
-            }
-           %>
+            Database: <b><%= bean.getDatabaseName() %></b>.
+            <br>
+
+            <%
+                if (noData) {
+                   out.println("Sorry, right now there is no statistics available in your IntAct node.");
+                   out.println("</td></tr></table>");
+                   return; // terminate right here the execution of the JSP.
+                }
+            %>
 
             <bean:message key="stat.present.content.string"/>
-            <%= lastDate %>
+            <b><%= lastDate %></b>
 
             <br>
             </td>
@@ -62,44 +76,40 @@
             <td valign="top" height="*">
 
 <%
-
-
-    ArrayList rows = new ArrayList();
+    ArrayList rows = new ArrayList( 6 );
     try {
-        Collection listDataTable = dat.getLastStatistics();
-        Iterator iterator = listDataTable.iterator();
+        IntactStatistics latest = bean.getLastRow();
 
-        rows.add (new StatBean ("Proteins",
-                                ((Integer) iterator.next()).intValue(),
+        rows.add (new DisplayStatisticsBean ("Proteins",
+                                latest.getNumberOfProteins(),
                                 "Number of proteins in the database."));
 
-        rows.add (new StatBean ("Interactions",
-                                ((Integer) iterator.next()).intValue(),
+        rows.add (new DisplayStatisticsBean ("Interactions",
+                                latest.getNumberOfInteractions(),
                                 "Number of distinct interactions"));
 
-        rows.add (new StatBean ("thereof with 2 interactors",
-                                ((Integer) iterator.next()).intValue(),
+        rows.add (new DisplayStatisticsBean ("thereof with 2 interactors",
+                                latest.getNumberOfBinaryInteractions(),
                                 "Binary interactions"));
 
-        rows.add (new StatBean ("thereof with more than 2 interactors",
-                                ((Integer) iterator.next()).intValue(),
+        rows.add (new DisplayStatisticsBean ("thereof with more than 2 interactors",
+                                latest.getNumberOfComplexInteractions(),
                                 "Interactions with more than two interactors (complexes)."));
 
-        rows.add (new StatBean ("Experiments",
-                                ((Integer) iterator.next()).intValue(),
+        rows.add (new DisplayStatisticsBean ("Experiments",
+                                latest.getNumberOfExperiments(),
                                 "Distincts experiments."));
 
-        rows.add (new StatBean ("Terms",
-                                ((Integer) iterator.next()).intValue(),
+        rows.add (new DisplayStatisticsBean ("Terms",
+                                latest.getNumberOfGoTerms(),
                                 "Controlled vocabulary terms define possible choices for text attributes."));
 
         session.setAttribute("statistics", rows);
-        dat.closeDataStore();
 %>
 
        <!-- Displays the available highlightment source -->
        <display:table
-            name="statistics" width="70%">
+            name="statistics" width="90%">
                <display:column property="object" title="Object" width="22% "/>
                <display:column property="count"                 width="8%" />
                <display:column property="description"           width="70%" />
@@ -107,12 +117,6 @@
                <display:setProperty name="basic.msg.empty_list"
                                     value="No statistics available..." />
        </display:table>
-
-
-      <%
-        // will be added to each servlet URL to avoid browser caching
-        long time = System.currentTimeMillis();
-      %>
 
             </td>
         </tr>
@@ -132,20 +136,74 @@
                         <tr>
                             <td valign="top" height="*">
 
-                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Protein&time=<%= time %>">
+
+                            <%
+
+
+
+                                String filename = ChartBuilder.generateXYChart( bean,
+                                                                                ChartBuilder.COMPLEX_DATA,
+                                                                                "IntAct complexes","","",
+                                                                                session,
+                                                                                new PrintWriter( out ));
+                                String graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
+
+                            %>
+
+                            <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
+
 
                             </td>
                             <td valign="top" height="*">
-                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Interaction&time=<%= time %>">
+
+                            <%
+
+                                filename = ChartBuilder.generateXYChart( bean,
+                                                                         ChartBuilder.EXPERIMENT_DATA,
+                                                                         "IntAct experiments","","",
+                                                                         session,
+                                                                         new PrintWriter( out ));
+                                graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
+
+                            %>
+
+                            <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
+
                             </td>
                         </tr>
 
                         <tr>
                             <td valign="top" height="*">
-                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Experiment&time=<%= time %>">
+
+                            <%
+
+                                filename = ChartBuilder.generateXYChart( bean,
+                                                                         ChartBuilder.PROTEIN_DATA,
+                                                                         "IntAct proteins","","",
+                                                                         session,
+                                                                         new PrintWriter( out ));
+                                graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
+
+                            %>
+
+                            <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
+
                             </td>
                             <td valign="top" height="*">
-                                <img src="<%= applicationPath %>/statisticGraphic?TYPE=Term&time=<%= time %>">
+
+                            <%
+
+                                filename = ChartBuilder.generateXYChart( bean,
+                                                                         ChartBuilder.TERM_DATA,
+                                                                         "IntAct GO terms","","",
+                                                                         session,
+                                                                         new PrintWriter( out ));
+                                graphURL = request.getContextPath() + "/servlet/DisplayChart?filename=" + filename;
+
+                            %>
+
+                            <img src="<%= graphURL %>" width=500 height=300 border=0 usemap="#<%= filename %>">
+
                             </td>
                         </tr>
                     </tbody>

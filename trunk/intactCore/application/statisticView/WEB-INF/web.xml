@@ -7,25 +7,25 @@
 
     <description>
         StatisticView is a Web application made to display:
-            * a table with the main statistics stored in the local IntAct Database:
-                - number of proteins
-                - number of interactions
-                - number of interactions with 2 interactors
-                - number of interactions with more than 2 interactors
-                - number of experiments
-                - number of terms provided by the controlled vocabulary
-            * 4 graphics to show the evolution of these amount of data in the database
+        * a table with the main statistics stored in the local IntAct Database:
+        - number of proteins
+        - number of interactions
+        - number of interactions with 2 interactors
+        - number of interactions with more than 2 interactors
+        - number of experiments
+        - number of terms provided by the controlled vocabulary
+        * 4 graphics to show the evolution of these amount of data in the database
     </description>
 
 
     <!--  NB XML config files for the DB MUST be referred to here relative
-        to the WEB-INF/classes directory as that is where the class loader
-        will start to look. The leading "/" MUST be present if the config
-        files are in a sub-directory of WEB-INF/classes, otherwise
-        the class loader will only check in the package in which the servlet
-        instance resides (which may not be the same as the config file
-        location....). The exception to this rule seems to be the struts-config.xml
-        file....
+    to the WEB-INF/classes directory as that is where the class loader
+    will start to look. The leading "/" MUST be present if the config
+    files are in a sub-directory of WEB-INF/classes, otherwise
+    the class loader will only check in the package in which the servlet
+    instance resides (which may not be the same as the config file
+    location....). The exception to this rule seems to be the struts-config.xml
+    file....
     -->
 
     <context-param>
@@ -55,84 +55,92 @@
 
     <!-- Init servlet for the logging facilities -->
     <servlet>
-      <servlet-name>logging-init</servlet-name>
-      <servlet-class>uk.ac.ebi.intact.application.commons.util.LoggingInitServlet</servlet-class>
+        <servlet-name>logging-init</servlet-name>
+        <servlet-class>uk.ac.ebi.intact.application.commons.util.LoggingInitServlet</servlet-class>
 
-      <init-param>
-        <param-name>log4j-init-file</param-name>
-        <param-value>/WEB-INF/classes/config/log4j.properties</param-value>
-      </init-param>
+        <init-param>
+            <param-name>log4j-init-file</param-name>
+            <param-value>/WEB-INF/classes/config/log4j.properties</param-value>
+        </init-param>
 
-      <load-on-startup>1</load-on-startup>
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
-
-                 <!-- =================================================================== -->
     <!-- =============================== Action Servlet Configuration ==================================== -->
 
+    <servlet>
 
-        <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <!-- The name of the Struts property file, '.properties' is automatically added -->
+            <param-name>application</param-name>
+            <param-value>/config/Struts</param-value>
+        </init-param>
 
-            <servlet-name>action</servlet-name>
-            <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
-            <init-param>
-                <!-- The name of the Struts property file, '.properties' is automatically added -->
-                <param-name>application</param-name>
-                <param-value>/config/Struts</param-value>
-            </init-param>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
 
-            <init-param>
-                <param-name>config</param-name>
-                <param-value>/WEB-INF/struts-config.xml</param-value>
-            </init-param>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>2</param-value>
+        </init-param>
 
-            <init-param>
-                <param-name>debug</param-name>
-                <param-value>2</param-value>
-            </init-param>
+        <init-param>
+            <param-name>detail</param-name>
+            <param-value>2</param-value>
+        </init-param>
 
-            <init-param>
-                <param-name>detail</param-name>
-                <param-value>2</param-value>
-            </init-param>
+        <init-param>
+            <param-name>validate</param-name>
+            <param-value>true</param-value>
+        </init-param>
 
-            <init-param>
-                <param-name>validate</param-name>
-                <param-value>true</param-value>
-            </init-param>
+        <load-on-startup>1</load-on-startup>
 
-            <load-on-startup>1</load-on-startup>
-
-        </servlet>
+    </servlet>
 
     <!-- =================================================================== -->
 
-        <!-- Declaration of the Statistics Graphic generator servlet -->
-        <servlet>
-            <servlet-name>statisticGraphic</servlet-name>
-            <servlet-class>uk.ac.ebi.intact.application.statisticView.business.servlet.StatisticGraphicServlet</servlet-class>
-        </servlet>
+    <!-- Declaration of the Statistics Graphic generator servlet -->
+    <servlet>
+        <servlet-name>statisticGraphic</servlet-name>
+        <servlet-class>uk.ac.ebi.intact.application.statisticView.business.servlet.StatisticGraphicServlet</servlet-class>
+    </servlet>
 
-        <servlet-mapping>
-            <servlet-name>statisticGraphic</servlet-name>
-            <url-pattern>/statisticGraphic</url-pattern>
-        </servlet-mapping>
-
-
-        <!-- =================================================================== -->
+      <servlet>
+    <servlet-name>DisplayChart</servlet-name>
+    <servlet-class>org.jfree.chart.servlet.DisplayChart</servlet-class>
+  </servlet>
 
 
-        <!-- Action Servlet Mapping with servlets adding by Sophie on 03/02 and one welcome file "index.jsp"-->
-        <servlet-mapping>
-            <servlet-name>action</servlet-name>
-            <url-pattern>/do/*</url-pattern>
-        </servlet-mapping>
+   <!--  Servlet mapping  -->
 
-        <!-- =================================================================== -->
+   <servlet-mapping>
+        <servlet-name>DisplayChart</servlet-name>
+        <url-pattern>/servlet/DisplayChart</url-pattern>
+    </servlet-mapping>
 
-        <!-- The Welcome File List --><!-- it's the first page where an user is sent when he uses the URL !-->
-        <welcome-file-list>
-            <welcome-file>init.jsp</welcome-file>
-        </welcome-file-list>
+    <servlet-mapping>
+        <servlet-name>statisticGraphic</servlet-name>
+        <url-pattern>/statisticGraphic</url-pattern>
+    </servlet-mapping>
+
+    <!-- =================================================================== -->
+
+    <!-- Action Servlet Mapping with servlets adding by Sophie on 03/02 and one welcome file "index.jsp"-->
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>/do/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- =================================================================== -->
+
+    <!-- The Welcome File List --><!-- it's the first page where an user is sent when he uses the URL !-->
+    <welcome-file-list>
+        <welcome-file>init.jsp</welcome-file>
+    </welcome-file-list>
 
 </web-app>
