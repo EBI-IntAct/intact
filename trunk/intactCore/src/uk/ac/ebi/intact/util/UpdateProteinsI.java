@@ -30,7 +30,7 @@ public abstract class UpdateProteinsI {
 
     protected final static org.apache.log4j.Logger logger = Logger.getLogger("updateProtein");
 
-    protected class UpdateException extends Exception {
+    public class UpdateException extends Exception {
         public UpdateException (String message) {
             super(message);
         }
@@ -152,7 +152,7 @@ public abstract class UpdateProteinsI {
     /**
      * From a given sptr AC, returns a full URL from where a flatfile format SPTR entry
      * will be fetched. Note, the SRS has several format of data output, the URLs which
-     * outputs html format SPTR entry CANNOT be used, since YASP does't have html parsing 
+     * outputs html format SPTR entry CANNOT be used, since YASP does't have html parsing
      * function.
      *
      * @param sptrAC a SPTR AC
@@ -161,15 +161,15 @@ public abstract class UpdateProteinsI {
     public abstract String getUrl (String sptrAC) ;
 
     /**
-     * From a given URL, returns a string of a SPTR entry. 
-     * 
+     * From a given URL, returns a string of a SPTR entry.
+     *
      * @param url a URL which outputs flatfile of
      * @return a full URL.
      */
     public abstract String getAnEntry (String url) ;
 
     /**
-     * from a given string and a given pattern(string), to find all matches. The matched are  
+     * from a given string and a given pattern(string), to find all matches. The matched are
      * retured as a list. This method uses gnu.regexp.* package, not the org.apache.regexp.*
      * @param textin A string from which some pattern will be matched.
      * @param pattern A string as a pattern.
