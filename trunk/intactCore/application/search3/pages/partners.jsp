@@ -42,7 +42,8 @@
     //The List of view beans used to provide the data for this JSP. Each
     //bean in the List should be an instance of SummaryViewBean, and corresponds to
     //a single search result.
-    List viewBeans = (List)session.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    //List viewBeans = (List)session.getAttribute(SearchConstants.VIEW_BEAN_LIST);
+    List viewBeans = (List)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
 
     //the list of shortlabels for the search matches - need to be highlighted
     //NB the SearchAction ensures this will never be null
@@ -63,30 +64,45 @@
 <!-- the main form for the page -->
 <form name="viewForm">
 
-
-<!-- we need the buttons at the top as well as the bottom now -->
-<%@ include file="buttonBar.html" %>
-
-
-<!-- line seperator -->
-    <hr size="2">
-
-
     <!-- NB the display is basically one table definition, repeated for each Protein
     search match ..... -->
 
     <!-- interate through the viewbean List and display each one in a new table... -->
 
     <%
+        boolean hasPartners = true;  //decide whether or not to display button bar
         for(Iterator it = viewBeans.iterator(); it.hasNext();) {
 
             Object item = it.next();
             if(item instanceof PartnersViewBean) {
                 //OK to carry one - otherwise skip the bean
                 PartnersViewBean bean = (PartnersViewBean)item;
+
+                //first check for 'orphan' Proteins and display an appropriate message...
+                //(NB multiple Protein matches are handled by the 'main' view, but a single
+                //match will come through to here so we need the check)
+                if(bean.getInteractionPartners().isEmpty()) {
+                    hasPartners = false;
     %>
+    <br>
+     <h4>The Protein with Intact name
+        <b><span style="color: rgb(255, 0, 0);"><%= bean.getIntactName() %></span></b>
+        and AC <%= bean.getAc()%> has no Interaction partners </h4>
+     <br>
+    <%
+                }
+                else {
+                    //process as normal...
+    %>
+
+    <!-- we need the buttons at the top as well as the bottom now -->
+    <%@ include file="buttonBar.html" %>
+
+    <!-- line seperator -->
+    <hr size="2">
+
     <!-- the main data table -->
-    <table style="width: 100%; background-color: rgb(51, 102, 102);">
+    <table style="width: 100%; background-color: rgb(51, 102, 102);" cellpadding="5">
         <tbody>
 
             <!-- header row -->
@@ -95,35 +111,23 @@
                 <td class="headermid"><br>
                 </td>
 
-                <td class="headerlight"
-                    rowspan="1" colspan="1">
-                    <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>" target="new"
-                   class="tdlink">IntAct name<br>
-                </a>
+                <td nowrap="nowrap" class="headerlight" rowspan="1" colspan="1">
+                    <a href="<%= bean.getHelpLink() + "AnnotatedObject.shortLabel"%>"
+                    target="new" class="tdlink">IntAct name<br></a>
                 </td>
 
-                <td class="headerlight"
-                    colspan="1"><a href="<%= bean.getHelpLink() + "BasicObject.ac"%>" target="new"
-                   class="tdlink">IntAct Ac<br>
-                </a>
+                <td nowrap="nowrap" class="headerlight" colspan="1">
+                    <a href="<%= bean.getHelpLink() + "BasicObject.ac"%>" target="new"
+                        class="tdlink">IntAct Ac<br></a>
                 </td>
 
-                <td class="headerlight"
-                    colspan="1"><span style="color: rgb(0, 0, 0);">Number of</span>
-                    interactions<br>
-                </td>
+                <td class="headerlight" colspan="1">Number of interactions<br></td>
 
-                <td class="headerlight"
-                    colspan="1">UniProt Ac<br>
-                </td>
+                <td nowrap="nowrap" class="headerlight" colspan="1">UniProt Ac<br></td>
 
-                <td class="headerlight"
-                    colspan="1">Gene name<br>
-                </td>
+                <td nowrap="nowrap" class="headerlight"colspan="1">Gene name<br></td>
 
-                <td class="headerlight">
-                Description<br>
-                </td>
+                <td class="headerlight">Description<br></td>
             </tr>
 
 
@@ -136,7 +140,7 @@
                 </td>
 
                 <!-- shortlabel with link: seems to be back to this page (!!)... -->
-                <td class="objectClass" style="background-color: rgb(255, 255, 255);">
+                <td nowrap="nowrap" class="objectClass" style="background-color: rgb(255, 255, 255);">
                     <code><a href="<%= bean.getSimpleSearchURL()%>">
                         <% if(highlightList.contains(bean.getIntactName())) { %>
                             <b><span style="color: rgb(255, 0, 0);"><%= bean.getIntactName()%></span></b>
@@ -153,7 +157,7 @@
                 </td>
 
                 <!-- AC, with link to single Protein details page -->
-                <td style="background-color: rgb(255, 255, 255);">
+                <td nowrap="nowrap" style="background-color: rgb(255, 255, 255);">
                     <a href="<%= bean.getProteinSearchURL()%>"><%= bean.getAc()%></a><br>
                 </td>
 
@@ -171,18 +175,18 @@
                 </td>
 
                 <!-- Uniprot AC, not linked -->
-                <td rowspan="1" style="background-color: rgb(255, 255, 255);">
+                <td class="data" rowspan="1" style="background-color: rgb(255, 255, 255);">
                     <%= bean.getUniprotAc()%><br>
                 </td>
 
                 <!-- gene name, not linked -->
-                <td style="vertical-align: top; background-color: rgb(255, 255, 255);"
+                <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);"
                     rowspan="1" colspan="1">
                     <%= bean.getGeneNames()%><br>
                 </td>
 
                 <!-- description, not linked -->
-                <td style="vertical-align: top; background-color: rgb(255, 255, 255);">
+                <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <%= bean.getDescription()%><br>
                 </td>
 
@@ -197,7 +201,7 @@
                 </td>
 
                 <!-- heading, spans the table width (6 columns) -->
-                <td rowspan="1" colspan="6" style="background-color: rgb(255, 255, 255);">
+                <td class="data" rowspan="1" colspan="6" style="background-color: rgb(255, 255, 255);">
                     interacts with<br>
                 </td>
 
@@ -222,12 +226,12 @@
                 </td>
 
                 <!-- shortlabel, linked back to this view for the partner instead -->
-                <td style="vertical-align: top; background-color: rgb(255, 255, 255);">
+                <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <code><a href="<%= partner.getProteinPartnerURL()%>"><nobr><%= partner.getIntactName() %></nobr></a></code>
                 </td>
 
                 <!-- AC, linked to single Protein details page -->
-                <td style="vertical-align: top; background-color: rgb(255, 255, 255);">
+                <td nowrap="nowrap" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <a href="<%= partner.getProteinSearchURL()%>"><%= partner.getAc()%></a><br>
                 </td>
 
@@ -241,17 +245,17 @@
                     whilst the others are not. Is this correct? If so then how is
                     the order of partners determined?
                     -->
-                <td style="vertical-align: top; background-color: rgb(255, 255, 255);">
+                <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <a href="<%= partner.getUniprotURL()%>"><%= partner.getUniprotAc() %></a>
                 </td>
 
                 <!-- gene name, not linked -->
-                <td style="vertical-align: top; background-color: rgb(255, 255, 255);"
+                <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);"
                     rowspan="1" colspan="1"><%= partner.getGeneNames() %>
                 </td>
 
                 <!-- description, not linked -->
-                <td style="vertical-align: top; background-color: rgb(255, 255, 255);">
+                <td class="data" style="vertical-align: top; background-color: rgb(255, 255, 255);">
                     <%= partner.getDescription() %>
                 </td>
 
@@ -264,24 +268,26 @@
     </table>
 
     <%
+                }   //done 'orphan' check
             } //done one result
     %>
 
              <!-- line break before next table match...... -->
     <br>
     <%
+            //need button bar underneath too IF this is the last one to be processed...
+            if((!it.hasNext()) & hasPartners) {
+    %>
+        <!-- line break before the bottom button bar -->
+        <br>
+        <!-- same buttons as at the top of the page -->
+        <%@ include file="buttonBar.html" %>
+    <%
+            } //ends button bar check
         }   //ends the loop
     %>
 
-
-    <!-- line break before the button bar -->
-    <br>
-
     <!-- line seperator -->
     <hr size="2">
-
-    <!-- same buttons as at the top of the page -->
-<%@ include file="buttonBar.html" %>
-
 
 </form>
