@@ -16,12 +16,27 @@
 <html:html>
 
 <head>
-     <html:base target="_top"/>
+     <base target="_top"/>
 </head>
 
 <body bgcolor="white">
 
-    <jsp:forward page="/init.do"/>
+    <html:form action="/init" >
+          <html:hidden property="host" />
+          <html:hidden property="protocol" />
+    </html:form>
+
+    <script language="JavaScript" type="text/javascript">
+        <!--
+            // gives the current host and protocol from the browser URL.
+            document.forms[0].host.value     = window.location.host;
+            document.forms[0].protocol.value = window.location.protocol;
+
+            // submit the form automatically toward the entry page
+            document.forms[0].submit();
+        //-->
+    </script>
+
 
 </body>
 
