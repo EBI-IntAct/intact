@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.commons.struts.taglibs.DocumentationTag;
 
 /**
  * This action class is responsible for appending the class type to the header.
@@ -76,10 +77,10 @@ public class HeaderSwitchAction extends TilesAction {
             // Only process if we have tag.
             if (tag != null) {
                 // The link title (superscript and reduced font).
-                String title = "<sup><font size=\"-1\">"
+                String title = "<sup><font color=\"red\" size=\"-1\">"
                         + EditorConstants.HELP_TITLE + "</font></sup>";
-                newtitle += service.getHelpLinkAsHTML(
-                        service.getHelpLink(request), tag, title);
+                newtitle += DocumentationTag.getHtmlVersion(
+                        service.getHelpURL(request), tag, title);
             }
             context.putAttribute("header.title", newtitle);
         }
