@@ -51,13 +51,28 @@ public final class EntryChecker {
         Monitor monitor = null;
         if( guiEnabled ) {
             monitor = new Monitor( keys.size(), "Protein update" );
+            monitor.setStatus( "Waiting for the checker to start..." );
             monitor.show();
         }
         int current = 0;
         for ( Iterator iterator = keys.iterator(); iterator.hasNext(); ) {
             final String key = (String) iterator.next();
             final ProteinInteractorTag proteinInteractor = (ProteinInteractorTag) proteinInteractors.get( key );
+            if( guiEnabled ) {
+                String uniprotID = null;
+                String taxid = null;
+
+                if( proteinInteractor != null && proteinInteractor.getUniprotXref() != null ) {
+                    uniprotID = proteinInteractor.getUniprotXref().getId();
+                }
+                if( proteinInteractor != null && proteinInteractor.getOrganism() != null ) {
+                    taxid = proteinInteractor.getOrganism().getTaxId();
+                }
+                monitor.setStatus( "Checking " + uniprotID + " (" + taxid + ")" );
+            }
+
             ProteinInteractorChecker.check( proteinInteractor, helper, proteinFactory, bioSourceFactory );
+
             if( guiEnabled ) {
                 monitor.updateProteinProcessedCound( ++current );
             }
