@@ -1054,7 +1054,7 @@
                         <center>
                             <table border="0">
                                 <tr>
-                                    <td> <a href="./images/hierarchView/PPIN.png" target="_blank"><img src="./images/hierarchView/PPIN-small.png" border="0" width="300" height="198"></img></a> </td>
+                                    <td> <a href="./images/hierarchView/PPIN.png" target="_blank"><img src="./images/hierarchView/PPIN-small.png" border="0" width="300" height="197"></img></a> </td>
                                 </tr>
                                 <tr>
                                     <td> click the image to enlarge </td>
@@ -1198,7 +1198,7 @@
                             <center>
                                 <table border="0">
                                     <tr>
-                                        <td><a href="./images/hierarchView/highlight.png" target="_blank"><img src="./images/hierarchView/highlight-small.png" border="0" width="299" height="195"></img></a> </td>
+                                        <td><a href="./images/hierarchView/highlight.png" target="_blank"><img src="./images/hierarchView/highlight-small.png" border="0" width="299" height="197"></img></a> </td>
                                     </tr>
                                     <tr>
                                         <td> click the image to enlarge </td>
@@ -1209,9 +1209,28 @@
 
                     </section> <!-- Highlight the interaction network -->
 
+
+                    <section title="Retreive the interaction network in PSI MI XML format" name="hierarchView.PPIN.download">
+                        <blockquote>
+                            After loading an interaction network, you can request to download its representation in
+                            PSI MI XML format. To do so, you have to click on the <i>Download</i> button of the
+                            <i>PSI-XML</i> section and a new window will appear in which the XML content will be
+                            displayed. After the data are fully loaded you can save that content on you hard disk.
+                            <br/>
+                            <br/>
+                            You can then, for instance, load the downloaded data in an external tool for further analysis.
+                            <br/>
+                            You can find a list of the tools supporting the PSI MI XML format
+                            <a href="http://psidev.sourceforge.net/mi/xml/doc/user" target="_blank">here</a>
+                            in the <i>Tools</i> section.
+                        </blockquote>
+
+                    </section> <!-- interaction network download -->
+
                 </section> <!-- How to interact -->
 
             </section> <!-- hierarchView -->
+
 
             <section name="graph2mif" title="Graph2MIF -  Export IntAct to PSI-MIF-Format">
                 <section name="graph2mif.overview" title="Overview">
