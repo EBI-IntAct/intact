@@ -128,7 +128,7 @@ public class DbSequenceManager implements SequenceManager {
         _stmt = broker
                 .getStatementManager()
                 .getPreparedStatement(_cld,
-                        "SELECT intact_ac.nextval FROM DUAL",
+                        "SELECT intact.intact_ac.nextval FROM DUAL",
                         Query.NOT_SCROLLABLE);
 
     }
