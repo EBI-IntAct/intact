@@ -22,7 +22,7 @@ import java.util.Iterator;
 public class LockManager {
 
     // The lock object.
-    private class LockObject {
+    public class LockObject {
 
         /**
          * The id.
@@ -49,8 +49,15 @@ public class LockManager {
             return myId;
         }
 
-        private String getOwner() {
+        // These two methods are public as they are accessed from out side of
+        // this class.
+
+        public String getOwner() {
             return myOwner;
+        }
+
+        public Date getLockDate() {
+            return myLockDate;
         }
 
         // Override Objects's equal method.
@@ -120,14 +127,33 @@ public class LockManager {
         return false;
     }
 
-    public synchronized String getOwner(String id) {
+    /**
+     * Returns the lock object for given id if it exists.
+     * @param id the of the lock.
+     * @return the lock object for <code>id</code> if a lock exists for it. Null
+     * is returned if there is no lock object.
+     */
+    public synchronized LockObject getLock(String id) {
         for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
             LockObject lo = (LockObject) iter.next();
             if (lo.getId().equals(id)) {
-                return lo.getOwner();
+                return lo;
             }
         }
-        return "---";
+        return null;
+    }
+    /**
+     * Returns the owner for given id if it exists.
+     * @param id the of the lock.
+     * @return the owner of <code>id</code> if there is an owner or an empty
+     * street is returned.
+     */
+    public synchronized String getOwner(String id) {
+        LockObject lock = getLock(id);
+        if (lock != null) {
+            return lock.getOwner();
+        }
+        return "";
     }
 
     /**

@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 
 /**
  * This class contains information for a single search result.
@@ -19,6 +20,12 @@ import java.io.Serializable;
  */
 
 public class ResultBean implements Serializable {
+
+    /**
+     * The formatter for the date.
+     */
+    private static SimpleDateFormat ourDateFormatter =
+            new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     /**
      * Reference to CV object.
@@ -100,7 +107,16 @@ public class ResultBean implements Serializable {
      * bean is not locked.
      */
     public String getLockOwner() {
-        return myLmr.getOwner(getAc());
+        LockManager.LockObject lock = myLmr.getLock(getAc());
+        if (lock == null) {
+            // No owner; no need for the title
+            return "<input type=\"text\" size=\"7\" value=\"  ---  \" readonly>";
+        }
+        // Get the owner and the time stamp.
+        String owner = lock.getOwner();
+        String title = ourDateFormatter.format(lock.getLockDate());
+        return "<input type=\"text\" size=\"7\" value=\"" + owner + "\" title=\""
+                + title + "\" readonly>";
     }
 
     /**
