@@ -1,39 +1,38 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Editable;
+
 import java.io.*;
 import java.util.Properties;
+import java.lang.reflect.Modifier;
 
 /**
  * This utility class generates EditorTopics.properties file using the
- * classes in uk.ac.ebi.intact.model package. The algorithm as follows.
- * First, the program searches for all the classes in the
- * uk.ac.ebi.intact.model package.
- * If a class has CvObject as its parent class then it is saved to a properties
- * file under an abbreviated class name. For example,
+ * classes in the AnnotatedObject package. An editiable class must follow
+ * the following conditions<ul>:
+ * <li>It must implement the Editable interface.</li>
+ * <li>It must have AnnotatedObject has it super class in the class hierarchy</li>
+ * <li>It must not be an abstract class or an interface.</li>
+ * </ul>
+ * The property key is the abbreviated class name and full class name is the
+ * value. For example,
  * uk.ac.ebi.intact.model.CvTopic saved under CvTopic.
- * All decendents of CvObject apart from CvObject itself are stored. In addition
- * to CvObject subclasses, Experiment and BioSource are also added as topics.
  *
- * <b>Note</b> This program assumes that all the decendents of CvObject
- * are in the package uk.ac.ebi.intact.model and starts with 'Cv'. It also
- * assumes that classes already exists in this location (ie., compile sources
- * before running this tool).
+ * <b>Note</b> This program assumes that all the editable objects
+ * are in the package of AnnotatedObject and classes already exist in this
+ * location (ie., compile sources before running this tool).
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
 public class EditorTopicsGenerator {
-
-    /**
-     * The package name to search for topics.
-     */
-    private static String TOPICS_PACKAGE = "uk.ac.ebi.intact.model";
 
     /**
      * The root of the classpath. The package uk.ac.ebi.intact.model
@@ -47,12 +46,13 @@ public class EditorTopicsGenerator {
     private String myResourceName;
 
     /**
-     * Constructor that accepts jar filename.
+     * Constructor that accepts root to the class directory to search for
+     * AnnotatedObject and the destination to write the properties.
      *
-     * @param root the root of the classpath to access uk.ac.ebi.intact.model.
-     * @param dest the name of the resource file to write Intact types. The
-     * postfix '.properties' is appended to the name if it is not present. This
-     * shouldn't be null.
+     * @param root the root of the classpath to access AnnotatedObject.
+     * @param dest the name of the resource file to write Intact editor types.
+     * The postfix '.properties' is appended to the name if it is not present.
+     * This shouldn't be null.
      */
     public EditorTopicsGenerator(String root, String dest) {
         myRoot = root;
@@ -61,34 +61,35 @@ public class EditorTopicsGenerator {
                 dest + ".properties";
     }
 
+    // Instance Methods
 
     /**
      * This method does the actual writing of the resource file.
+     * @throws ClassNotFoundException unable to find a class.
+     * @throws IOException for errors in writing to the properties file.
      */
-    public void doIt() {
-        // The name of the superclass of CV objects.
-        final String superCN = "CvObject";
+    public void doIt() throws ClassNotFoundException, IOException {
+        // The super class for all the editable objects.
+        Class superClazz = AnnotatedObject.class;
 
-        // The relative path to package containing CvObject.
-        String path = myRoot + packageToFile(TOPICS_PACKAGE);
+        // The name of the super's package.
+        String packname = superClazz.getPackage().getName();
 
-        // Filter to filter out what we want; an annoymous inner class.
+        // The path to the super class from the root.
+        String path = myRoot + packageToFile(packname);
+
+        // Filter to include only the classes.
         FilenameFilter filter = new FilenameFilter() {
-            // The name of the super class.
-            private String mySuperName = superCN + ".class";
-
             // Implements FilenameFiler interface.
             public boolean accept(File dir, String name) {
-                // Only the name beginning with Cv and classes are accepted;
-                // don't inlcude CvObject as it is the super class.
-                if (name.startsWith("Cv") && name.endsWith(".class") &&
-                        !name.equals(mySuperName)) {
+                // Only accept the classes.
+                if (name.endsWith(".class")) {
                     return true;
                 }
                 return false;
             }
         };
-        // List of files that match the filter.
+        // List of files in the package matching the filter.
         String[] files = (new File(path)).list(filter);
 
         // The proprties to hold CV class names; the key is the CV class name
@@ -96,18 +97,85 @@ public class EditorTopicsGenerator {
         Properties props = new Properties();
 
         for (int i = 0; i < files.length; i++) {
-            // The class name without the file extension.
-            addTopic(props, stripExtension(files[i]), superCN);
+            String classname = stripExtension(files[i]);
+            String fullname = packname + "." + classname;
+            Class clazz = Class.forName(fullname);
+
+            if (!implementsEditable(clazz)) {
+                // Does not implement the ditable interface.
+                continue;
+            }
+            if (!hasAnnotatedObjetAsSuper(clazz)) {
+                // Has no AnnotatedObject as super.
+                continue;
+            }
+            if (isAbstractOrInterface(clazz)) {
+                // An abstract or an interface.
+                continue;
+            }
+            props.put(classname, fullname);
         }
-        // Add other two additional classes.
-        addTopic(props, "Experiment", "AnnotatedObject");
-        addTopic(props, "BioSource", "AnnotatedObject");
-        try {
-            writeToProperties(props);
+        writeToProperties(props);
+    }
+
+    // Helper Methods
+
+    /**
+     * True if the given class implements the Editable interface.
+     * @param clazz the class object to check.
+     * @return <code>triue</code> if <code>clazz</code> implements
+     * {@link uk.ac.ebi.intact.model.Editable} interface.
+     */
+    private boolean implementsEditable(Class clazz) {
+        Class editClass = Editable.class;
+        Class[] intfs = clazz.getInterfaces();
+        for (int i = 0; i < intfs.length; i++) {
+            if (intfs[i].equals(editClass)) {
+                return true;
+            }
         }
-        catch (IOException ex) {
-            assert false;
+        return false;
+    }
+
+    /**
+     * @param clazz the class object to check.
+     * @return true if <code>clazz</code>is derived from
+     * AnnotatedObject (super class); false is for otherwise.
+     */
+    private boolean hasAnnotatedObjetAsSuper(Class clazz) {
+        Class superclass = clazz.getSuperclass();
+
+        // Assume we hvaen't found the super class.
+        boolean superFound = false;
+        // Loop till Object is reached or found AnnotatedObject in the
+        // class hierarchy.
+        while (!superclass.equals(Object.class)) {
+            if (superclass.equals(AnnotatedObject.class)) {
+                // Found the annotated object as the super class.
+                superFound = true;
+                break;
+            }
+            superclass = superclass.getSuperclass();
         }
+        // Found a type but not inhertited from AnnotatedObject.
+        if (!superFound) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param clazz the class object to check.
+     * @return true if <code>clazz</code> is an abstract or an interface.
+     */
+    private boolean isAbstractOrInterface(Class clazz) {
+        // AnnotatedObject is the super class. Check for abstract classes.
+        int modifiers = clazz.getModifiers();
+        // Must be a non abstract and non interface.
+        if (Modifier.isAbstract(modifiers) || Modifier.isInterface(modifiers)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -115,7 +183,7 @@ public class EditorTopicsGenerator {
      * @param packName the name of the package.
      * @return the patform dependent file path.
      */
-    private static String packageToFile(String packName) {
+    private String packageToFile(String packName) {
         // The platform dependent file separator.
         char sep = System.getProperty("file.separator").charAt(0);
 
@@ -129,7 +197,7 @@ public class EditorTopicsGenerator {
      * @return the filename after removing the extension; if there is no
      * extension then this equals to <tt>filename</tt>.
      */
-    private static String stripExtension(String filename) {
+    private String stripExtension(String filename) {
         // The index position to chop off the .class extension.
         int pos = filename.indexOf('.');
 
@@ -138,37 +206,6 @@ public class EditorTopicsGenerator {
             return filename.substring(0, pos);
         }
         return filename;
-    }
-
-    /**
-     * Adds a topic to given <code>props</code> container only if
-     * <code>className</code> exists and it is a super class of
-     * <code>superName</code>
-     * @param props the properties to add the editor topic.
-     * @param className the name of the class to add (name only).
-     * @param superName the name of the supper class of <code>className</code>
-     * (name only).
-     */
-    private void addTopic(Properties props, String className, String superName) {
-        // The class name with the package.
-        String fullPath = TOPICS_PACKAGE + "." + className;
-
-        // The class for the name.
-        Class clazz = null;
-        try {
-            clazz = Class.forName(fullPath);
-        }
-        catch (ClassNotFoundException cnfe) {
-            // This shouldn't happen as the class is already there.
-            assert false;
-        }
-        // Get the super class.
-        Class superclass = clazz.getSuperclass();
-
-        if (superclass.getName().equals(TOPICS_PACKAGE + "." + superName)) {
-            // Only consider CvObject as the super class.
-            props.put(className, fullPath);
-        }
     }
 
     /**
@@ -192,6 +229,24 @@ public class EditorTopicsGenerator {
                 catch (IOException ioe) {
                 }
             }
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    public static void main(String[] args) {
+        if (args.length != 2) {
+            System.err.println(
+                    "usage: EditorTopicsGenerator {class root} {property file to write}");
+            return;
+        }
+        EditorTopicsGenerator topicsGen = new EditorTopicsGenerator(args[0], args[1]);
+        try {
+            topicsGen.doIt();
+            System.out.println("Wrote to " + args[1]);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
