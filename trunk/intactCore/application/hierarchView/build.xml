@@ -29,13 +29,15 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <property name="intact.app.dir" value=".."/>
 
     <!-- The build properties. -->
-    <property file="${intact.root}/build.properties"/>
+    <property file="${intact.root}/config/build.properties"/>
 
     <!-- Web service related properties. -->
     <property name="ws.dir" value="ws"/>
     <property name="ws.wsdd.dir" value="ws/wsdd"/>
     <property name="ws.wsdl.dir" value="ws/wsdl"/>
     <property name="ws.tulip.wsdl" value="${ws.wsdl.dir}/tulip.wsdl"/>
+    <property name="webService.archive.filename" value="tulipWebService.tar.gz"/>
+    <property name="webService.archive.path" value="${dist.dir}/${webService.archive.filename}"/>
 
     <!-- Properties related to Tulip server -->
     <property name="ws.tulip.server.pkg"
@@ -64,9 +66,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <property name="webService.properties.filename"   value="${config.dir}/WebService.properties"/>
     <property name="highlighting.properties.filename" value="${config.dir}/Highlighting.properties"/>
 
-    <!-- Properties files on which some tests will be performed
-         Give the full path from root
-      -->
+    <!-- Properties files on which some tests will be performed -->
     <property file="${webService.properties.filename}"/>
     <property file="${highlighting.properties.filename}"/>
 
@@ -176,22 +176,21 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
     <!-- =================================================================== -->
 
-    <!-- Remove 'dest' and 'jdoc' directories for clean build. -->
+    <!-- Remove some directories/files for clean build. -->
     <target name="clean"
         description="Prepare for clean build; removes api docs and classes dirs">
         <delete dir="${dest.dir}"/>
         <delete dir="${jdoc.dir}"/>
-        <delete dir="${ws.dir}"/>
         <delete dir="${dist.dir}"/>
+
+        <!-- Clean up the web service directory -->
+        <delete file="${ws.dir}/${ws.tulip.jar.name}"/>
+        <delete dir="${ws.wsdd.dir}"/>
+        <delete dir="${ws.wsdl.dir}"/>
 
         <!-- Struts imported tlds-->
         <delete>
             <fileset dir="${tld.dir}" includes="struts*.tld"/>
-        </delete>
-
-        <!-- Web service deployment file -->
-        <delete>
-            <fileset dir="${config.dir}" includes="*.wsdd"/>
         </delete>
     </target>
 
@@ -236,7 +235,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <mkdir dir="${dest.dir}" />
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            includes="**/application/hierarchView/**, **/application/commons/**"
+            includes="**/application/hierarchView/**"
             debug="on">
             <classpath refid="project.class.path"/>
         </javac>
@@ -264,10 +263,8 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
     <!-- =================================================================== -->
 
     <!-- Compile the web service source tree. -->
-    <target name="deploy-ws" description="Create and deploy the web service"
-        depends="run-once, compile" if="axis.present">
-        <!-- Create ws specific directories. -->
-        <mkdir dir="${ws.dir}"/>
+    <target name="make-ws" description="Create the web service" depends="compile">
+
         <mkdir dir="${ws.wsdd.dir}"/>
         <mkdir dir="${ws.wsdl.dir}"/>
 
@@ -275,11 +272,12 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         any clashes with linkage problem with Document class. Also, -o
         option is passed via arg line instead of value to avoid creating
         a wsdl with a space in the name!
+        The variable ${webService.adress} come from WebService.properties file.
         -->
         <echo message="Generating WSDL file..."/>
         <java classname="org.apache.axis.wsdl.Java2WSDL" fork="yes">
             <arg line="-o ${ws.tulip.wsdl}"/>
-            <arg value="-lhttp://localhost:8080/axis/services/tulip"/>
+            <arg value="-l${webService.adress}"/>
             <arg line="-n urn:tulip"/>
             <arg value="-p ${ws.tulip.server.pkg}"/>
             <arg value="urn:${ws.tulip.server.pkg}"/>
@@ -299,7 +297,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         </java>
 
         <!-- Extract the wsdd files. -->
-        <echo message="Extracting deploy/undeploy wsdd files"/>
+        <echo message="Extracting deploy/undeploy WSDD files"/>
         <copy todir="${ws.wsdd.dir}">
             <fileset dir="${ws.tulip.server.dir}/generated">
                 <include name="*.wsdd"/>
@@ -354,28 +352,33 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <echo message="Deleting the configuration file"/>
         <delete file="${root.dest.dir}/${ws.props.file}"/>
 
-        <!-- Copy the service to Axis installed on Tomcat. -->
-        <echo message="Copy the service to Axis (installed on Tomcat)"/>
-        <copy file="${ws.tulip.jar}" todir="${tomcat.home}/webapps/axis/WEB-INF/lib"
-            overwrite="true"/>
-
         <echo message="Modify the deployment file"/>
         <antcall target="mod-deployfile" />
 
         <echo message="Delete generated files"/>
         <delete dir="uk"/>
-    </target>
 
-    <!-- =================================================================== -->
+        <!-- Create an TAR archive which includes everythings needed to install
+             and deploy the web service.
+          -->
+        <mkdir dir="${dist.dir}"/>
+        <delete file="${webService.archive.path}" quiet="true"/>
+        <echo message="Create the web service archive"/>
+        <tar destfile="${webService.archive.path}" compression="gzip">
+            <tarfileset dir="${ws.dir}/.." mode="766">
+                <include name="${ws.dir}/**"/>
+            </tarfileset>
+        </tar>
 
-    <!-- Compile the web service source tree. -->
-    <target name="undeploy-ws" description="Undeploys the web service"
-        depends="run-once" if="axis.present">
+        <echo>
+               The web service archive has been built under ${webService.archive.path}
+               Now, you have to :
+                 (1) copy that archive to your server
+                 (2) decompress it (tar zxvf ${webService.archive.filename})
+                 (3) enter the ${ws.dir} directory and read the README file to
+                     know how to install and manage the web service.
+        </echo>
 
-        <antcall target="stop-ws"/>
-
-        <echo message="Remove the service from Axis (installed on Tomcat)"/>
-        <delete file="${tomcat.home}/webapps/axis/WEB-INF/lib/${ws.tulip.jar.name}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -391,38 +394,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <echo message="Replace the SoapBinding name by the implementation one" />
         <replace file="${ws.deploy.file}" token="TulipSoapBindingImpl"
             value="TulipAccessImpl" />
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Start the web service by using the modified deployment file.
-    TODO : check if the deployment file is in the right place.
-      -->
-    <target name="start-ws"
-        description="Start the web service by using the deployment file">
-
-       <echo message="DEPRECATED; That task is now automatically managed"/>
-
-        <echo message="Starting the web service" />
-        <java classname="org.apache.axis.client.AdminClient" fork="yes">
-            <arg line="${ws.deploy.file}"/>
-            <classpath refid="project.class.path"/>
-        </java>
-    </target>
-
-    <!-- =================================================================== -->
-
-    <!-- Stop the web service by using the undeployment file -->
-    <target name="stop-ws"
-        description="Stop the web service by using the undeployment file">
-
-        <echo message="DEPRECATED; That task is now automatically managed"/>
-
-        <echo message="Stopping the web service" />
-        <java classname="org.apache.axis.client.AdminClient" fork="yes">
-            <arg line="${ws.undeploy.file}"/>
-            <classpath refid="project.class.path"/>
-        </java>
     </target>
 
     <!-- =================================================================== -->
@@ -448,7 +419,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
-    <target name="build-war" depends="compile, make-jar, deploy-ws">
+    <target name="build-war" depends="compile, make-jar">
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
@@ -464,14 +435,8 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
             </fileset>
         </copy>
 
-        <!-- Copy web service deployments files -->
+        <!-- Copy log4j properties file -->
         <copy todir="${dest.dir}/config">
-            <fileset dir="${ws.wsdd.dir}">
-                <include name="deploy.wsdd"/>
-                <include name="undeploy.wsdd"/>
-            </fileset>
-
-            <!-- Copy log4j properties file -->
             <fileset dir="${root.config.dir}">
                 <include name="log4j.properties"/>
             </fileset>
