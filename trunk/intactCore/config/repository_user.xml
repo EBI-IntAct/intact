@@ -1519,7 +1519,6 @@ to AnnotatedObject and Experiment
     <collection-descriptor
             proxy="true"
             name="bindingDomains"
-            auto-delete="true"
             element-class-ref="uk.ac.ebi.intact.model.Feature"
             >
             <inverse-foreignkey field-ref="componentAc"/>
