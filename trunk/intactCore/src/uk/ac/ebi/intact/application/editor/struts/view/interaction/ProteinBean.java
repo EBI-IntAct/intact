@@ -87,9 +87,9 @@ public class ProteinBean extends EditBean implements Serializable {
     private String myOrganism;
 
     /**
-     * Holds error arguments.
+     * A flag to indicate that this instance is marked for deletion.
      */
-//    private Object[] myErrorArgs;
+    private boolean myDeleteFlag;
 
     /**
      * Instantiate an object of this class from a Protein instance.
@@ -188,24 +188,6 @@ public class ProteinBean extends EditBean implements Serializable {
         myOrganism = organism;
     }
 
-//    public void setError(String label, String role) {
-//        if (myErrorArgs == null) {
-//            myErrorArgs = new Object[]{label, role};
-//        }
-//        else {
-//            myErrorArgs[0] = label;
-//            myErrorArgs[1] = role;
-//        }
-//    }
-
-    /**
-     * The formatted error message
-     * @return the error message after applying the formatter.
-     */
-//    public String getError() {
-//        return FORMATTER.format(myErrorArgs);
-//    }
-
     // Override Objects's equal method.
 
     /**
@@ -226,6 +208,21 @@ public class ProteinBean extends EditBean implements Serializable {
                     && this.myRole.equals(other.myRole);
         }
         return false;
+    }
+
+    /**
+     * Marks this bean as it is ready for deletion from the view.
+     */
+    public void markForDelete() {
+        myDeleteFlag = true;
+    }
+
+    /**
+     * True if this bean is marked for delete.
+     * @return true if this bean is marked for delete.
+     */
+    public boolean isMarkedForDelete() {
+        return myDeleteFlag;
     }
 
     // Helper methods
