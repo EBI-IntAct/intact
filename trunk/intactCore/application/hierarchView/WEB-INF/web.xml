@@ -44,7 +44,7 @@
     <!-- Init servlet for the logging facilities -->
     <servlet>
       <servlet-name>logging-init</servlet-name>
-      <servlet-class>uk.ac.ebi.intact.util.logging.LoggingInitServlet</servlet-class>
+      <servlet-class>uk.ac.ebi.intact.application.commons.util.LoggingInitServlet</servlet-class>
 
       <init-param>
         <param-name>log4j-init-file</param-name>
