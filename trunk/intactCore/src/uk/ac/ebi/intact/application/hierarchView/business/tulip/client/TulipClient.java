@@ -126,13 +126,13 @@ public class TulipClient {
      */
     public String[] getErrorMessages (boolean hasToBeCleaned) {
         try {
+            logger.error ("Try to retreive from tulip web service error messages");
             return tulip.getErrorMessages (hasToBeCleaned);
         } catch (RemoteException re) {
             // create an error message to display
             String[] errors = new String[1];
             errors[0] = "\n\nError while checking errors.";
 
-            // log exception
             logger.error ("Unable to get error messages", re);
             return errors;
         }
@@ -169,6 +169,14 @@ public class TulipClient {
 
         if (null == proteins) {
             System.out.println ("Error during retreiving of proteins coordinates (null).");
+
+            System.out.print ("Try to get service messages ... ");
+            String[] msg = client.getErrorMessages (true);
+            for (int i = 0; i < msg.length; i++) {
+                // display coordinates
+                System.out.println ("message "+ i + ") " + msg[i]);
+            } // for
+
             System.exit (1);
         }
 
