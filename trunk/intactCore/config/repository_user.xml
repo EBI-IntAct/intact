@@ -3,11 +3,17 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 -->
 
 <class-descriptor
+    class="uk.ac.ebi.intact.model.IntactObject"
+    >
+    <extent-class class-ref="uk.ac.ebi.intact.model.BasicObject"/>
+    <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/>
+</class-descriptor>
+
+<class-descriptor
     class="uk.ac.ebi.intact.model.BasicObject"
     >
     <extent-class class-ref="uk.ac.ebi.intact.model.Annotation"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.IntactNode"/>
-    <!-- <extent-class class-ref="uk.ac.ebi.intact.model.Institution"/> -->
     <extent-class class-ref="uk.ac.ebi.intact.model.Component"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Xref"/>
     <extent-class class-ref="uk.ac.ebi.intact.model.Alias"/>
@@ -151,7 +157,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
     <!-- fields from AnnotatedObject (intactCore only) -->
     <collection-descriptor
-        name="xref"
+        name="xrefs"
         proxy="true"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
@@ -173,7 +179,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <!-- Interactors and Annotations are linked via a (non-qualified) indirection
     table INT2ANNOT..... -->
     <collection-descriptor
-        name="annotation"
+        name="annotations"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         proxy="true"
         auto-delete="true"
@@ -185,7 +191,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     </collection-descriptor>
 
     <collection-descriptor
-        name="activeInstance"
+        name="activeInstances"
         element-class-ref="uk.ac.ebi.intact.model.Component"
         proxy="true"
         >
@@ -309,7 +315,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <!-- Collections... -->
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
@@ -332,7 +338,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     table INT2ANNOT..... -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_INT2ANNOT"
@@ -345,7 +351,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     table Int2Exp..... -->
     <collection-descriptor
         proxy="true"
-        name="experiment"
+        name="experiments"
         element-class-ref="uk.ac.ebi.intact.model.Experiment"
         indirection-table="ia_INT2EXP"
         >
@@ -358,7 +364,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
       -->
     <collection-descriptor
         proxy="true"
-        name="activeInstance"
+        name="activeInstances"
         element-class-ref="uk.ac.ebi.intact.model.Component"
         >
         <inverse-foreignkey field-id-ref="6"/>
@@ -367,7 +373,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
     <collection-descriptor
         proxy="true"
-        name="component"
+        name="components"
         element-class-ref="uk.ac.ebi.intact.model.Component"
         >
         <inverse-foreignkey field-id-ref="7"/>
@@ -489,7 +495,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     <!-- ******************* fields inherited from AnnotatedObject ************** -->
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
@@ -512,7 +518,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     table EXP2ANNOT..... -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_EXP2ANNOT"
@@ -526,7 +532,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     table Int2Exp..... -->
     <collection-descriptor
         proxy="true"
-        name="interaction"
+        name="interactions"
         element-class-ref="uk.ac.ebi.intact.model.Interaction"
         indirection-table="ia_INT2EXP"
         >
@@ -598,7 +604,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
@@ -617,7 +623,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
 
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_BIOSOURCE2ANNOT"
@@ -1195,7 +1201,7 @@ to AnnotatedObject and Experiment
 
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
@@ -1218,7 +1224,7 @@ to AnnotatedObject and Experiment
     table CVOBJECT2ANNOT -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
@@ -1299,7 +1305,7 @@ to AnnotatedObject and Experiment
 
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
@@ -1322,7 +1328,7 @@ to AnnotatedObject and Experiment
     table CVOBJECT2ANNOT -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
@@ -1403,7 +1409,7 @@ to AnnotatedObject and Experiment
 
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
@@ -1426,7 +1432,7 @@ to AnnotatedObject and Experiment
     table CVOBJECT2ANNOT -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
@@ -1508,7 +1514,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
@@ -1531,7 +1537,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     table CVOBJECT2ANNOT -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
@@ -1607,7 +1613,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     This is the parent reference. -->
     <collection-descriptor
         proxy="true"
-        name="parent"
+        name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvInteraction"
         indirection-table="ia_Cv2Cv"
         >
@@ -1619,7 +1625,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     This is the child reference. -->
     <collection-descriptor
         proxy="true"
-        name="child"
+        name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvInteraction"
         indirection-table="ia_Cv2Cv"
         >
@@ -1631,7 +1637,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
@@ -1654,7 +1660,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     table CVOBJECT2ANNOT -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
@@ -1730,7 +1736,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     This is the parent reference. -->
     <collection-descriptor
         proxy="true"
-        name="parent"
+        name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvInteractionType"
         indirection-table="ia_Cv2Cv"
         >
@@ -1742,7 +1748,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     This is the child reference. -->
     <collection-descriptor
         proxy="true"
-        name="child"
+        name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvInteractionType"
         indirection-table="ia_Cv2Cv"
         >
@@ -1754,7 +1760,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
@@ -1777,7 +1783,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     table CVOBJECT2ANNOT -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
@@ -1853,7 +1859,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     This is the parent reference. -->
     <collection-descriptor
         proxy="true"
-        name="parent"
+        name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvIdentification"
         indirection-table="ia_Cv2Cv"
         >
@@ -1865,7 +1871,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     This is the child reference. -->
     <collection-descriptor
         proxy="true"
-        name="child"
+        name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvIdentification"
         indirection-table="ia_Cv2Cv"
         >
@@ -1877,7 +1883,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
@@ -1900,7 +1906,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     table CVOBJECT2ANNOT -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
@@ -1975,7 +1981,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
 
@@ -1999,7 +2005,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     table CVOBJECT2ANNOT -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         auto-delete="true"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
@@ -2172,7 +2178,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     This is the parent reference. -->
     <collection-descriptor
         proxy="true"
-        name="parent"
+        name="parents"
         element-class-ref="uk.ac.ebi.intact.model.CvGoNode"
         indirection-table="ia_Cv2Cv"
         >
@@ -2184,7 +2190,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     This is the child reference. -->
     <collection-descriptor
         proxy="false"
-        name="child"
+        name="children"
         element-class-ref="uk.ac.ebi.intact.model.CvGoNode"
         indirection-table="ia_Cv2Cv"
         >
@@ -2196,7 +2202,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
 
     <collection-descriptor
         proxy="true"
-        name="xref"
+        name="xrefs"
         element-class-ref="uk.ac.ebi.intact.model.Xref"
         >
         <inverse-foreignkey field-id-ref="10"/>
@@ -2218,7 +2224,7 @@ this is because the CvTopic linked to an Annotation is a better home for it...
     table CVOBJECT2ANNOT -->
     <collection-descriptor
         proxy="true"
-        name="annotation"
+        name="annotations"
         element-class-ref="uk.ac.ebi.intact.model.Annotation"
         indirection-table="ia_CVOBJECT2ANNOT"
         >
