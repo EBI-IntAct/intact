@@ -16,8 +16,13 @@
 
   <!-- Save needed request parameter -->
   <%
-      pageContext.setAttribute("AC",    request.getParameter("AC"),    PageContext.PAGE_SCOPE);
-      pageContext.setAttribute("depth", request.getParameter("depth"), PageContext.PAGE_SCOPE);
+      String AC    = request.getParameter("AC");
+      String depth = request.getParameter("depth");
+      if (null != AC)
+          pageContext.setAttribute("AC", AC, PageContext.PAGE_SCOPE);
+
+      if (null != depth)
+          pageContext.setAttribute("depth", depth, PageContext.PAGE_SCOPE);
   %>
 
  <!-- Create frames and forward any query to the left frame (in one is passed) -->
