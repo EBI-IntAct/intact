@@ -21,12 +21,8 @@ public class QueryTutorial {
 
         // the non-argument Intact-Helper
         IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-        } catch (IntactException ie) {
+        helper = new IntactHelper();
 
-
-        }
 //        // the advanced Intact-Helper
 //        IntactHelper helper = null;
 //        try{
@@ -65,15 +61,15 @@ public class QueryTutorial {
         // search experiments interacions and print out the experiments shortlabels
         for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
             Experiment exp = (Experiment) iterator.next();
-            System.out.println("\n EXPERIMENT: " + exp.getShortLabel());
             Collection interactions = exp.getInteractions();
+            System.out.println("\n EXPERIMENT: " + exp.getShortLabel() + " has " + interactions.size() + " interaction(s)");
 
             // search interactions interactors and print out the interactions shortlabel
             for (Iterator iterator1 = interactions.iterator(); iterator1.hasNext();) {
                 Interaction interaction = (Interaction) iterator1.next();
                 Collection components = interaction.getComponents();
                 System.out.println("\t INTERACTION: " + interaction.getShortLabel() + " has " + components.size()
-                                    + "participants");
+                                    + " participants");
 
                 for (Iterator iterator2 = components.iterator(); iterator2.hasNext();) {
                     Component component = (Component) iterator2.next();
