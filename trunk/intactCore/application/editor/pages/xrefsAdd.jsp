@@ -19,48 +19,53 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-<c:set var="dblist" value="${user.databaseList}"/>
-<c:set var="qlist" value="${user.qualifierList}"/>
+<c:set var="menus" value="${user.view.addXrefMenus}"/>
+
+<%-- Individual menu lists --%>
+<c:set var="dblist" value="${menus['DatabaseNames']}"/>
+<c:set var="qlist" value="${menus['QualifierNames']}"/>
 
 <%-- Adds a new xreferece. This will invoke addXref action. --%>
 <html:form action="/xref/add">
     <table class="table" width="80%" border="0">
-    <tr class="tableRowHeader">
-        <th class="tableCellHeader" colspan="2">Action</th>
-        <th class="tableCellHeader">Database</th>
-        <th class="tableCellHeader">Primary ID</th>
-        <th class="tableCellHeader">Secondary ID</th>
-        <th class="tableCellHeader">Release Number</th>
-        <th class="tableCellHeader">Reference Qualifier</th>
-    </tr>
-    <tr class="tableRowOdd">
-        <td class="tableCell" align="right" valign="top">
-            <html:submit titleKey="xrefs.button.add.titleKey">
-                <bean:message key="button.add"/>
-            </html:submit>
-        </td>
-        <td class="tableCell" align="right" valign="top">
-            <html:reset/>
-        </td>
-        <td class="tableCell" align="left" valign="top">
-            <html:select property="database">
-                <html:options name="dblist" />
-            </html:select>
-        </td>
-        <td class="tableCell" align="left" valign="top">
-            <html:text property="primaryId" size="15" value=""/>
-        </td>
-        <td class="tableCell" align="left" valign="top">
-            <html:text property="secondaryId" size="15" value=""/>
-        </td>
-        <td class="tableCell" align="left" valign="top">
-            <html:text property="releaseNumber" size="15" value=""/>
-        </td>
-        <td class="tableCell" align="left" valign="top">
-            <html:select property="qualifier">
-                <html:options name="qlist" />
-            </html:select>
-        </td>
-    </tr>
+        <tr class="tableRowHeader">
+            <th class="tableCellHeader" colspan="2">Action</th>
+            <th class="tableCellHeader">Database</th>
+            <th class="tableCellHeader">Primary ID</th>
+            <th class="tableCellHeader">Secondary ID</th>
+            <th class="tableCellHeader">Release Number</th>
+            <th class="tableCellHeader">Reference Qualifier</th>
+        </tr>
+        <tr class="tableRowOdd">
+            <td class="tableCell" align="right" valign="top">
+                <html:submit titleKey="xrefs.button.add.titleKey">
+                    <bean:message key="button.add"/>
+                </html:submit>
+            </td>
+            <td class="tableCell" align="right" valign="top">
+                <html:reset/>
+            </td>
+            <td class="tableCell" align="left" valign="top">
+                <html:select property="database">
+                    <html:options name="dblist" />
+                </html:select>
+                <html:errors property="xref.database"/>
+            </td>
+            <td class="tableCell" align="left" valign="top">
+                <html:text property="primaryId" size="15" value=""/>
+            </td>
+            <td class="tableCell" align="left" valign="top">
+                <html:text property="secondaryId" size="15" value=""/>
+            </td>
+            <td class="tableCell" align="left" valign="top">
+                <html:text property="releaseNumber" size="15" value=""/>
+            </td>
+            <td class="tableCell" align="left" valign="top">
+                <html:select property="qualifier">
+                    <html:options name="qlist" />
+                </html:select>
+                <html:errors property="xref.qualifier"/>
+            </td>
+        </tr>
     </table>
 </html:form>

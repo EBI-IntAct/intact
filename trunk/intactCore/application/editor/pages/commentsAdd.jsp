@@ -18,34 +18,35 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-<!-- Set the drop down lists -->
-<c:set var="topiclist" value="${user.topicList}"/>
+<%-- The list of topics --%>
+<c:set var="topiclist" value="${user.view.addAnnotationMenus}"/>
 
 <!-- Adds a new comment. This will invoke addComment action. -->
 <html:form action="/comment/add">
     <table class="table" width="80%" border="0" cellspacing="1" cellpadding="2">
-    <tr class="tableRowHeader">
-        <th class="tableCellHeader" colspan="2">Action</th>
-        <th class="tableCellHeader">Topic</th>
-        <th class="tableCellHeader">Description</th>
-    </tr>
-    <tr class="tableRowOdd">
-        <td class="tableCell" align="left" valign="bottom">
-            <html:submit titleKey="annotations.button.add.titleKey">
-                <bean:message key="button.add"/>
-            </html:submit>
-        </td>
-        <td class="tableCell" align="left" valign="bottom">
-            <html:reset/>
-        </td>
-        <td class="tableCell" align="left" valign="top">
-            <html:select property="topic">
-                <html:options name="topiclist" />
-            </html:select>
-        </td>
-        <td class="tableCell" align="left" valign="top">
-            <html:textarea property="description" rows="3" cols="70" value=""/>
-        </td>
-    </tr>
+        <tr class="tableRowHeader">
+            <th class="tableCellHeader" colspan="2">Action</th>
+            <th class="tableCellHeader">Topic</th>
+            <th class="tableCellHeader">Description</th>
+        </tr>
+        <tr class="tableRowOdd">
+            <td class="tableCell" align="left" valign="bottom">
+                <html:submit titleKey="annotations.button.add.titleKey">
+                    <bean:message key="button.add"/>
+                </html:submit>
+            </td>
+            <td class="tableCell" align="left" valign="bottom">
+                <html:reset/>
+            </td>
+            <td class="tableCell" align="left" valign="top">
+                <html:select property="topic">
+                    <html:options name="topiclist" />
+                </html:select>
+                <html:errors property="comment.topic"/>
+            </td>
+            <td class="tableCell" align="left" valign="top">
+                <html:textarea property="description" rows="3" cols="70"/>
+            </td>
+        </tr>
     </table>
 </html:form>
