@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Generic form to edit a collection (annotation or xref).
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
- * @version $id$
+ * @version $Id$
  */
 public class EditForm extends ActionForm {
 
