@@ -158,11 +158,6 @@ public abstract class IntactBaseAction extends Action {
         return viewbean;
     }
 
-    protected ActionErrors getErrors() {
-        return myErrors;
-    }
-
-
     /**
      * Clear error container.
      */
@@ -201,6 +196,13 @@ public abstract class IntactBaseAction extends Action {
      */
     protected void saveErrors(HttpServletRequest request) {
         super.saveErrors(request, myErrors);
+    }
+
+    /**
+     * True if there are errors.
+     */
+    protected boolean hasErrors() {
+        return !myErrors.empty();
     }
 
     /**
