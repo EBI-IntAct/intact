@@ -17,8 +17,20 @@
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
-<%-- Only display the table if the interactions are within the allowed limit --%>
-<c:if test="${user.view.numberOfInteractions le service.interactionLimit}">
+<%-- Need this to access the interaction limit. --%>
+<jsp:useBean id="service" scope="application"
+    class="uk.ac.ebi.intact.application.editor.business.EditorService"/>
+
+<%-- A message to indicate that current interactions equal to max allowed --%>
+<c:if test="${user.view.numberOfInteractions eq service.interactionLimit}">
+    <div class="warning">
+        <bean:message key="message.ints.limit.search"
+            arg0='<%=service.getResource("exp.interaction.limit")%>'/>
+    </div>
+</c:if>
+
+<%-- Only display the table if the interactions are less (<) than the allowed limit --%>
+<c:if test="${user.view.numberOfInteractions lt service.interactionLimit}">
     <table width="50%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="10%" colspan="2">
