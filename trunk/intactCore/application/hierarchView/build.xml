@@ -12,6 +12,7 @@
     <property name="root.dist.dir" value="${intact.root}/dist"/>
     <property name="root.src.dir" value="${intact.root}/src"/>
     <property name="root.dest.dir" value="${intact.root}/classes"/>
+    <property name="root.config.dir" value="${intact.root}/config"/>
 
     <property name="lib.dir" value="WEB-INF/lib"/>
     <property name="dest.dir" value="WEB-INF/classes"/>
@@ -19,6 +20,12 @@
     <property name="jdoc.dir" value="doc/api"/>
     <property name="dist.dir" value="dist"/>
     <property name="war.file" value="hierarchView.war"/>
+
+    <!-- Intact application location. -->
+    <property name="intact.app.dir" value=".."/>
+
+    <!-- The build properties. -->
+    <property file="${intact.root}/build.properties"/>
 
     <!-- Web service related properties. -->
     <property name="ws.dir" value="ws"/>
@@ -58,6 +65,7 @@
         <pathelement path="${dest.dir}"/>
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
         <pathelement path="${root.lib.dir}/struts.jar"/>
+        <pathelement path="${intact.app.dir}/lib/commons-logging.jar"/>
     </path>
 
     <!-- =================================================================== -->
@@ -96,6 +104,30 @@
 
     <!-- =================================================================== -->
 
+    <!-- Copy configuration files. -->
+    <target name="cpConfigFiles">
+        <!-- Copy repository files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${root.config.dir}">
+                <include name="repository*.xml"/>
+                <include name="repository.dtd"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy property files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="WEB-INF/config">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+
+        <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
+        <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
+        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
     <target name="compile">
         <mkdir dir="${dest.dir}" />
@@ -110,6 +142,9 @@
                 <include name="*.properties"/>
             </fileset>
         </copy>
+
+        <!-- Copy configuration files -->
+        <antcall target="cpConfigFiles"/>
     </target>
 
     <!-- =================================================================== -->
@@ -240,7 +275,6 @@
             <arg line="${ws.deploy.file}"/>
             <classpath refid="project.class.path"/>
        </java>
-
     </target>
 
     <!-- =================================================================== -->
@@ -253,14 +287,20 @@
             <arg line="${ws.undeploy.file}"/>
             <classpath refid="project.class.path"/>
        </java>
-
     </target>
 
     <!-- =================================================================== -->
 
-    <!-- Builds a war file. -->
+    <!-- Builds a war file using the current database setup. -->
 
-    <target name="war" depends="compile" description="Builds a war file">
+    <target name="war" description="Builds a war file"
+        depends="set-db-type, war-pg, war-oracle"/>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file. The database to include is specified as a parameter. -->
+
+    <target name="build-war" depends="compile">
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
@@ -278,16 +318,66 @@
 			<!-- Include jar files for hv. -->
 			<lib dir="${lib.dir}"/>
 
+            <!-- Inlcude the intact core -->
+            <lib dir="${root.dist.dir}"/>
+
+            <!-- Include common jar files for struts (except for the
+                 latest struts). -->
+            <lib dir="${intact.app.dir}/lib">
+                <exclude name="struts.jar"/>
+            </lib>
+
 			<!-- Include common jar files from intact core. -->
 			<lib dir="${root.lib.dir}">
 				<include name="jakarta-ojb-0.9.7.jar"/>
-				<include name="struts.jar"/>
 				<include name="log4j-1.2.5.jar"/>
-                <include name="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
-				<include name="commons-logging.jar"/>
+                <include name="${db}"/>
+                <include name="struts.jar"/>
+                <include name="commons-lang-1.0.jar"/>
 			</lib>
+
+            <!-- Hierarchy View classes and config files. -->
   			<classes dir="${dest.dir}"/>
 		</war>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the database type using the values given in build.properties. -->
+
+    <target name="set-db-type">
+        <condition property="postgres">
+            <contains string="${target.env}" substring="-pg-"/>
+        </condition>
+        <condition property="oracle">
+            <contains string="${target.env}" substring="-oracle-"/>
+        </condition>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file with postgres; should be called only after calling
+        set-db-type. -->
+
+    <target name="war-pg" description="Builds a war file" if="postgres">
+        <echo message="Building a war for postgres"/>
+        <antcall target="build-war">
+            <param name="db" value="postgresql.jar"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file with oracle; should be called only after calling
+        set-db-type. -->
+
+    <target name="war-oracle" description="Builds a war file" if="oracle">
+        <echo message="Building a war for oracle"/>
+        <antcall target="build-war">
+            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+        </antcall>
     </target>
 
     <!-- =================================================================== -->
