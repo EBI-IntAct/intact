@@ -42,10 +42,6 @@ public class DefinedFeatureBean {
         rb.setFromRange("?");
         rb.setToRange("?");
 
-        // Sets the fuzzy type as undetermined types.
-        rb.setFromFuzzyTypeAsUndetermined();
-        rb.setToFuzzyTypeAsUndetermined();
-
         myFeatureBean.addRange(rb);
         myFeatureBean.setShortLabel("undetermined");
         myFeatureBean.setFullName("Undetermined feature position");

@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
-import uk.ac.ebi.intact.model.Range;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,23 +50,8 @@ public class FeatureNewRangeAction extends AbstractEditorAction {
             // Incorrect values for ranges. Display the error in the input page.
             return mapping.getInputForward();
         }
-        // From and To ranges as strings
-        String fromRange = rbnew.getFromRange();
-        String toRange = rbnew.getToRange();
-
-        // Create a new range.
-        int[] ranges = RangeBean.parseRange(fromRange, toRange);
-
-        // The new range created from the new range bean.
-        Range range = new Range(user.getInstitution(), ranges[0],
-                ranges[1], ranges[2], ranges[3], null);
-
-        // Sets the fuzzy types.
-        range.setFromCvFuzzyType(RangeBean.parseFuzzyType(fromRange, user));
-        range.setToCvFuzzyType(RangeBean.parseFuzzyType(toRange, user));
-
         // Add a copy of the new range
-        view.addRange(new RangeBean(range));
+        view.addRange(new RangeBean(user, rbnew.getFromRange(), rbnew.getToRange()));
 
         // Back to the input form.
         return mapping.getInputForward();

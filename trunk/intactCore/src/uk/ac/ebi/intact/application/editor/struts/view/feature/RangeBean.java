@@ -14,13 +14,25 @@ import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.model.CvFuzzyType;
 import uk.ac.ebi.intact.model.Range;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Bean to store a range for a feature.
- * 
+ *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
 public class RangeBean extends AbstractEditKeyBean {
+
+    // Class Data
+
+    /**
+     * optional ?, <, >, c, n, -, followed by an optional number, optional ..
+     * , optional -
+     */
+    private static final Pattern ourRangePattern =
+            Pattern.compile("^(\\?|<|>|c|n|\\-)?+(\\d+)*?(\\.\\.)?+(\\-)?+(\\d+)?+$");
 
     // Instance Data
 
@@ -28,16 +40,6 @@ public class RangeBean extends AbstractEditKeyBean {
      * Reference to the range this instance is created with.
      */
     private Range myRange;
-
-    /**
-     * The from fuzzy type. Default is none.
-     */
-    private String myFromFuzzyType = "";
-
-    /**
-     * The to fuzzy type. Default is none.
-     */
-    private String myToFuzzyType = "";
 
     /**
      * The from range as a string.
@@ -59,51 +61,20 @@ public class RangeBean extends AbstractEditKeyBean {
      */
     private boolean myUndetermined;
 
+    /**
+     * Handler to the fuzzy type converter.
+     */
+    private FuzzyTypeConverter myFTConverter = FuzzyTypeConverter.getInstance();
+
     // Class Methods
 
     /**
-     * Parses given ranges and return the parsed values via an int array.
-     * @param fromRange the from range
-     * @param toRange the to range
-     * @return an array of four ints. The items in the array are in the following
-     * order: position 0: start for from range, pos 1: end for from range,
-     * pos 2: start for to range and pos 3: end for to range.
-     * @throws NumberFormatException any errors in parsing the range string.
+     * For test purposes only
+     *
+     * @return return the pattern to parse a range.
      */
-    public static int[] parseRange(String fromRange, String toRange) {
-        // The array to return.
-        int[] ranges = new int[4];
-
-        // The array to hold the result.
-        int[] results;
-
-        // Copy the from range values.
-        results = RangeBean.parseRange(fromRange);
-        ranges[0] = results[0];
-        ranges[1] = results[1];
-
-        // Copy the to range values.
-        results = RangeBean.parseRange(toRange);
-        ranges[2] = results[0];
-        ranges[3] = results[1];
-
-        return ranges;
-    }
-
-    /**
-     * Returns the fuzzy type for given range.
-     * @param range the range as a string.
-     * @param user the user search for the fuzzy type
-     * @return the fuzzy type for given range. <code>null</code> is returned
-     * if there is no fuzzy type associated with <code>range</code>.
-     * @throws SearchException for errors in searching the persisten system
-     * for the fuzzy type.
-     */
-    public static CvFuzzyType parseFuzzyType(String range, EditUserI user)
-            throws SearchException {
-        // The from fuzzy type as a string.
-        String fromType = denormalizeFuzzyType(range);
-        return getFuzzyType(fromType, user);
+    public static Pattern testGetRangePattern() {
+        return ourRangePattern;
     }
 
     /**
@@ -115,7 +86,7 @@ public class RangeBean extends AbstractEditKeyBean {
     /**
      * Instantiate an object of this class from a Range instance. The key is set
      * to a default value (unique).
-     * 
+     *
      * @param range the <code>Range</code> object.
      */
     public RangeBean(Range range) {
@@ -124,7 +95,7 @@ public class RangeBean extends AbstractEditKeyBean {
 
     /**
      * Instantiate an object of this class from a Range instance and a key.
-     * 
+     *
      * @param range the <code>Range</code> object.
      * @param key the key to assigned to this bean.
      */
@@ -134,24 +105,46 @@ public class RangeBean extends AbstractEditKeyBean {
     }
 
     /**
-     * Sets the From fuzzy type as undertermined.
+     * Instantiate an object of this class using ranges.
+     *
+     * @param user the user to get the CvFuzzyTypes.
+     * @param fromRange the from range as a string
+     * @param toRange the to range as a string
+     * @throws SearchException for errors in retrieving CvFuzzyTypes
      */
-    public void setFromFuzzyTypeAsUndetermined() {
-        myFromFuzzyType = CvFuzzyType.UNDETERMINED;
-    }
+    public RangeBean(EditUserI user, String fromRange, String toRange)
+            throws SearchException {
+        // The match result for from range
+        Matcher fromMatcher = ourRangePattern.matcher(fromRange);
+        if (!fromMatcher.matches()) {
+            throw new IllegalArgumentException("Unable to parse the from range");
+        }
+        String fromFuzzyType = myFTConverter.getFuzzyShortLabel(fromMatcher);
+        int[] fromRanges = getRangeValues(fromFuzzyType, fromMatcher);
 
-    /**
-     * Sets the To fuzzy type as undertermined.
-     */
-    public void setToFuzzyTypeAsUndetermined() {
-        myToFuzzyType = CvFuzzyType.UNDETERMINED;
+        // The match result for to range.
+        Matcher toMatcher = ourRangePattern.matcher(toRange);
+        if (!toMatcher.matches()) {
+            throw new IllegalArgumentException("Unable to parse the to range");
+        }
+        String toFuzzyType = myFTConverter.getFuzzyShortLabel(toMatcher);
+        int[] toRanges = getRangeValues(toFuzzyType, toMatcher);
+
+        // Construct a range and set fuzzy types.
+        Range range = new Range(user.getInstitution(), fromRanges[0], fromRanges[1],
+                toRanges[0], toRanges[1], null);
+
+        // Set the from and to fuzzy types.
+        range.setFromCvFuzzyType(getFuzzyType(user, fromFuzzyType));
+        range.setToCvFuzzyType(getFuzzyType(user, toFuzzyType));
+        initialize(range);
     }
 
     // Read/Write only properties.
 
     /**
      * Returns the from range.
-     * 
+     *
      * @return the from range as a string for display purposes.
      */
     public String getFromRange() {
@@ -164,7 +157,7 @@ public class RangeBean extends AbstractEditKeyBean {
 
     /**
      * Returns the to range.
-     * 
+     *
      * @return the to range as a string for display purposes.
      */
     public String getToRange() {
@@ -177,7 +170,7 @@ public class RangeBean extends AbstractEditKeyBean {
 
     /**
      * Returns the link as a string.
-     * 
+     *
      * @return the link as a string (true or false).
      */
     public String getLink() {
@@ -186,7 +179,7 @@ public class RangeBean extends AbstractEditKeyBean {
 
     /**
      * Sets the link.
-     * 
+     *
      * @param link the link to set as a string object.
      */
     public void setLink(String link) {
@@ -195,7 +188,7 @@ public class RangeBean extends AbstractEditKeyBean {
 
     /**
      * Returns the undetermined as a string.
-     * 
+     *
      * @return the undetermined as a string (true or false).
      */
     public String getUndetermined() {
@@ -204,7 +197,7 @@ public class RangeBean extends AbstractEditKeyBean {
 
     /**
      * Sets the undetermined.
-     * 
+     *
      * @param undetermined the undetermined to set as a string object.
      */
     public void setUndetermined(String undetermined) {
@@ -219,10 +212,11 @@ public class RangeBean extends AbstractEditKeyBean {
 
     /**
      * Returns true if given bean is equivalent to the current bean.
+     *
      * @param rb the bean to compare.
      * @return true if ranges, link and undetermined are equivalent
-     * to corresponding value in <code>rb</code>; false is returned for all
-     * other instances.
+     *         to corresponding value in <code>rb</code>; false is returned for all
+     *         other instances.
      */
     public boolean isEquivalent(RangeBean rb) {
         // Check ranges.
@@ -256,7 +250,7 @@ public class RangeBean extends AbstractEditKeyBean {
 
         try {
             // Parse ranges.
-            ranges = parseRange(myFromRange);
+            ranges = getFromRangeValues();
 
             // Split ranges to start and end.
             fromStart = ranges[0];
@@ -265,14 +259,12 @@ public class RangeBean extends AbstractEditKeyBean {
             // Check the validity of ranges.
             if (fromStart > fromEnd) {
                 errors = new ActionErrors();
-                errors.add(prefix + ".fromRange", new ActionError(
-                        "error.feature.range.interval.invalid"));
+                errors.add(prefix + ".fromRange", new ActionError("error.feature.range.interval.invalid"));
             }
         }
-        catch (NumberFormatException nfe) {
+        catch (IllegalArgumentException iae) {
             errors = new ActionErrors();
-            errors.add(prefix + ".fromRange", new ActionError(
-                    "error.feature.range.invalid"));
+            errors.add(prefix + ".fromRange", new ActionError("error.feature.range.invalid"));
         }
         // Don't check any further if we have errors.
         if (errors != null) {
@@ -285,7 +277,7 @@ public class RangeBean extends AbstractEditKeyBean {
 
         try {
             // Parse ranges.
-            ranges = parseRange(myToRange);
+            ranges = getToRangeValues();
 
             // Split ranges to start and end.
             toStart = ranges[0];
@@ -294,14 +286,12 @@ public class RangeBean extends AbstractEditKeyBean {
             // Check the validity of ranges.
             if (toStart > toEnd) {
                 errors = new ActionErrors();
-                errors.add(prefix + ".toRange", new ActionError(
-                        "error.feature.range.interval.invalid"));
+                errors.add(prefix + ".toRange", new ActionError("error.feature.range.interval.invalid"));
             }
         }
-        catch (NumberFormatException nfe) {
+        catch (IllegalArgumentException iae) {
             errors = new ActionErrors();
-            errors.add(prefix + ".toRange", new ActionError(
-                    "error.feature.range.invalid"));
+            errors.add(prefix + ".toRange", new ActionError("error.feature.range.invalid"));
         }
         // Don't check any further if we have errors.
         if (errors != null) {
@@ -311,38 +301,34 @@ public class RangeBean extends AbstractEditKeyBean {
         // copied from Range constructor.
         if (fromEnd < fromStart) {
             errors = new ActionErrors();
-            errors.add(prefix + ".range", new ActionError(
-                    "error.feature.range.fromEnd.less.fromStart"));
+            errors.add(prefix + ".range", new ActionError("error.feature.range.fromEnd.less.fromStart"));
         }
         else if (toEnd < toStart) {
             errors = new ActionErrors();
-            errors.add(prefix + ".range", new ActionError(
-                    "error.feature.range.toEnd.less.toStart"));
+            errors.add(prefix + ".range", new ActionError("error.feature.range.toEnd.less.toStart"));
         }
         else if (fromEnd > toStart) {
             errors = new ActionErrors();
-            errors.add(prefix + ".range", new ActionError(
-                    "error.feature.range.fromEnd.more.toStart"));
+            errors.add(prefix + ".range", new ActionError("error.feature.range.fromEnd.more.toStart"));
         }
         else if (fromStart > toEnd) {
             errors = new ActionErrors();
-            errors.add(prefix + ".range", new ActionError(
-                    "error.feature.range.fromStart.more.toEnd"));
+            errors.add(prefix + ".range", new ActionError("error.feature.range.fromStart.more.toEnd"));
         }
         else if (fromStart > toStart) {
             errors = new ActionErrors();
-            errors.add(prefix + ".range", new ActionError(
-                    "error.feature.range.fromStart.more.toStart"));
+            errors.add(prefix + ".range", new ActionError("error.feature.range.fromStart.more.toStart"));
         }
         return errors;
     }
 
     /**
      * Allows access to the range object this bean is created with.
+     *
      * @return the Range instance this bean is wrapped.
-     * <p>
-     * <b>Notde:</b> The range is not updated. This method is used to
-     * delete existing ranges.
+     *         <p/>
+     *         <b>Notde:</b> The range is not updated. This method is used to
+     *         delete existing ranges.
      */
     public Range getRange() {
         return myRange;
@@ -352,15 +338,14 @@ public class RangeBean extends AbstractEditKeyBean {
      * Construts a new Range or updates the existing range using the current
      * values in the bean. <b>Must </b> call {@link #validate(String)} method
      * prior to calling this method.
-     * 
+     *
      * @param user the user object to access <code>CvFuzzyType</code>s.
-     * 
      * @return a new Range using values from the bean if this is a new range or
-     * else the existing range is updated.
-     * @exception SearchException unable to find code>CvFuzzyType</code>s.
-     * @exception IllegalArgumentException for errors in constructing a Range
+     *         else the existing range is updated.
+     * @throws SearchException unable to find code>CvFuzzyType</code>s.
+     * @throws IllegalArgumentException for errors in constructing a Range
      * object (ie., thrown from the constructor of the Range class).
-     * 
+     * <p/>
      * <pre>
      *  pre: validate(String)
      * </pre>
@@ -368,7 +353,7 @@ public class RangeBean extends AbstractEditKeyBean {
     public Range getRange(EditUserI user) throws SearchException,
             IllegalArgumentException {
         // The range as an int array.
-        int[] ranges = RangeBean.parseRange(myFromRange, myToRange);
+        int[] ranges = getRangeValues();
 
         // Split the ranges to parts.
         int fromStart = ranges[0];
@@ -376,41 +361,38 @@ public class RangeBean extends AbstractEditKeyBean {
         int toStart = ranges[2];
         int toEnd = ranges[3];
 
-        // The from/to fuzzy types.
-        CvFuzzyType fromFuzzyType = parseFuzzyType(myFromRange, user);
-        CvFuzzyType toFuzzyType = parseFuzzyType(myToRange, user);
-
         // Need to validate the from and start ranges. These validations are
         // copied from Range constructor. Alternative is to create a dummy
         // range object to validate inputs.
         if (fromEnd < fromStart) {
-            throw new IllegalArgumentException(
-                    "End of 'from' interval must be bigger than the start!");
+            throw new IllegalArgumentException("End of 'from' interval must be bigger than the start!");
         }
         if (toEnd < toStart) {
-            throw new IllegalArgumentException(
-                    "End of 'to' interval must be bigger than the start!");
+            throw new IllegalArgumentException("End of 'to' interval must be bigger than the start!");
         }
         if (fromEnd > toStart) {
-            throw new IllegalArgumentException(
-                    "The 'from' and 'to' intervals cannot overlap!");
+            throw new IllegalArgumentException("The 'from' and 'to' intervals cannot overlap!");
         }
         if (fromStart > toEnd) {
-            throw new IllegalArgumentException(
-                    "The 'from' interval starts beyond the 'to' interval!");
+            throw new IllegalArgumentException("The 'from' interval starts beyond the 'to' interval!");
         }
         if (fromStart > toStart) {
-            throw new IllegalArgumentException(
-                    "The 'from' interval cannot begin during the 'to' interval!");
+            throw new IllegalArgumentException("The 'from' interval cannot begin during the 'to' interval!");
         }
         // Update the ranges.
         myRange.setFromIntervalStart(fromStart);
         myRange.setFromIntervalEnd(fromEnd);
         myRange.setToIntervalStart(toStart);
         myRange.setToIntervalEnd(toEnd);
-        // Set the fuzzy types.
-        myRange.setFromCvFuzzyType(fromFuzzyType);
-        myRange.setToCvFuzzyType(toFuzzyType);
+
+        // The from/to fuzzy types.
+        Matcher matcher = ourRangePattern.matcher(myFromRange);
+        String type = myFTConverter.getFuzzyShortLabel(matcher);
+        myRange.setFromCvFuzzyType(getFuzzyType(user, type));
+
+        matcher = ourRangePattern.matcher(myToRange);
+        type = myFTConverter.getFuzzyShortLabel(matcher);
+        myRange.setToCvFuzzyType(getFuzzyType(user, type));
 
         myRange.setLink(myLink);
         myRange.setUndetermined(myUndetermined);
@@ -422,185 +404,181 @@ public class RangeBean extends AbstractEditKeyBean {
 
     /**
      * Intialize the member variables using the given Range object.
-     * 
+     *
      * @param range <code>Range</code> object to populate this bean.
      */
     private void initialize(Range range) {
         myRange = range;
 
-        // Set the fuzzy type first as they are used in set range methods.
-        setFromFuzzyType(range);
-        setToFuzzyType(range);
+        // Saves the from type as a short label
+        String fromType = "";
 
-        // Set the from/to ranges.
-        setFromRange(range);
-        setToRange(range);
+        // Set the fuzzy type first as they are used in set range methods.
+        if (range.getFromCvFuzzyType() != null) {
+            fromType = range.getFromCvFuzzyType().getShortLabel();
+        }
+        setFromRange(fromType, range);
+
+        // Saves the to type as a short label
+        String toType = "";
+
+        if (range.getToCvFuzzyType() != null) {
+            toType = range.getToCvFuzzyType().getShortLabel();
+        }
+        setToRange(toType, range);
 
         myLink = range.isLinked();
         myUndetermined = range.isUndertermined();
     }
 
-    private void setFromFuzzyType(Range range) {
-        if (range.getFromCvFuzzyType() != null) {
-            myFromFuzzyType = normalizeFuzzyType(range.getFromCvFuzzyType()
-                    .getShortLabel());
-        }
-    }
+    /**
+     * Sets the bean's from range
+     *
+     * @param range the Range to get the from range.
+     */
+    private void setFromRange(String type, Range range) {
+        // The value for display (fuzzy).
+        String dispLabel = myFTConverter.getDisplayValue(type);
 
-    private static CvFuzzyType getFuzzyType(String fuzzyType, EditUserI user)
-            throws SearchException {
-        // The fuzzy type to return.
-        CvFuzzyType type = null;
-
-        if (fuzzyType.equals(CvFuzzyType.LESS_THAN)) {
-            // Return the less than fuzzy type.
-            type = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
-                    CvFuzzyType.LESS_THAN);
-        }
-        else if (fuzzyType.equals(CvFuzzyType.GREATER_THAN)) {
-            // Return the greater than fuzzy type.
-            type = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
-                    CvFuzzyType.GREATER_THAN);
-        }
-        else if (fuzzyType.equals(CvFuzzyType.FUZZY)) {
-            // Return the fuzzy type.
-            type = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
-                    CvFuzzyType.FUZZY);
-        }
-        else if (fuzzyType.equals(CvFuzzyType.UNDETERMINED)) {
-            // Return the undetermined type.
-            type = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class,
-                    CvFuzzyType.UNDETERMINED);
-        }
-        return type;
-    }
-
-    private void setToFuzzyType(Range range) {
-        if (range.getToCvFuzzyType() != null) {
-            myToFuzzyType = normalizeFuzzyType(range.getToCvFuzzyType()
-                    .getShortLabel());
-        }
-    }
-
-    private String normalizeFuzzyType(String label) {
-        String result;
-        if (label.equals(CvFuzzyType.LESS_THAN)) {
-            result = "<";
-        }
-        else if (label.equals(CvFuzzyType.GREATER_THAN)) {
-            result = ">";
-        }
-        else if (label.equals(CvFuzzyType.UNDETERMINED)) {
-            result = "?";
-        }
-        else {
-            result = label;
-        }
-        return result;
-    }
-
-    private static String denormalizeFuzzyType(String input) {
-        String result = "";
-        if (input.startsWith("<")) {
-            result = CvFuzzyType.LESS_THAN;
-        }
-        else if (input.startsWith(">")) {
-            result = CvFuzzyType.GREATER_THAN;
-        }
-        else if (input.startsWith("?")) {
-            result = CvFuzzyType.UNDETERMINED;
-        }
-        else if (input.indexOf("..") != -1) {
-            result = CvFuzzyType.FUZZY;
-        }
-        return result;
-    }
-
-    private void setFromRange(Range range) {
         // Undetermined?
-        if (myFromFuzzyType.equals("?")) {
-            myFromRange = "?";
+        if (type.equals(CvFuzzyType.UNDETERMINED)) {
+            myFromRange = dispLabel;
         }
-        // Fuzzy type?
-        else if (myFromFuzzyType.equals(CvFuzzyType.FUZZY)) {
-            myFromRange = range.getFromIntervalStart() + ".."
+        // Range type?
+        else if (type.equals(CvFuzzyType.RANGE)) {
+            myFromRange = range.getFromIntervalStart() + dispLabel
                     + range.getFromIntervalEnd();
         }
         // No fuzzy type?
-        else if (myFromFuzzyType.length() == 0) {
-            myFromRange = "" + range.getFromIntervalStart();
+        else if (type.length() == 0) {
+            myFromRange = dispLabel + range.getFromIntervalStart();
         }
         else {
-            // > or <
-            myFromRange = myFromFuzzyType + range.getFromIntervalStart();
-        }
-    }
-
-    private static String getRange(String fuzzyType, String input) {
-        String range;
-        if (fuzzyType.equals(CvFuzzyType.UNDETERMINED)) {
-            // Undetermined fuzzy.
-            range = "0";
-        }
-        else if (fuzzyType.equals(CvFuzzyType.FUZZY)
-                || (fuzzyType.length() == 0)) {
-            // 1..3 situation or no fuzzy specified. Return the whole range
-            range = input;
-        }
-        else {
-            // < or > situation; skip the leading char.
-            range = input.substring(1);
-        }
-        return range;
-    }
-
-    private void setToRange(Range range) {
-        // Undetermined?
-        if (myToFuzzyType.equals("?")) {
-            myToRange = "?";
-        }
-        // Fuzzy type?
-        else if (myToFuzzyType.equals(CvFuzzyType.FUZZY)) {
-            myToRange = range.getToIntervalStart() + ".."
-                    + range.getToIntervalEnd();
-        }
-        // No fuzzy type?
-        else if (myToFuzzyType.length() == 0) {
-            myToRange = "" + range.getToIntervalStart();
-        }
-        else {
-            // > or <
-            myToRange = myToFuzzyType + range.getToIntervalEnd();
+            // >, <, c or n
+            myFromRange = dispLabel + range.getFromIntervalStart();
         }
     }
 
     /**
-     * Parses the given range.
-     * @param rangeStr the range string to parse.
-     * @return an array of two ints with the first element contains
-     * the start and the second element contains the end value.
+     * Returns an array of ints.
+     *
+     * @return an array of ints. int[0] = fromStart, int[1] = fromEnd, int[2] =
+     *         toStart and int[3] toEnd.
      */
-    private static int[] parseRange(String rangeStr) {
-        // To hold from start and end values.
-        int[] result = new int[2];
-        // The fuzzy type as a string.
-        String type = denormalizeFuzzyType(rangeStr);
-        // Range as a string after taking into the type.
-        String range = getRange(type, rangeStr);
+    private int[] getRangeValues() {
+        // The array to return.
+        int[] ranges = new int[4];
 
-        // Need special parsing for fuzzy types.
-        if (type.equals(CvFuzzyType.FUZZY)) {
-            int pos = range.indexOf('.');
-            result[0] = Integer.parseInt(range.substring(0, pos));
-            // Skip two positions to be on the first character of the end level.
-            pos += 2;
-            result[1] = Integer.parseInt(range.substring(pos));
+        // The array to hold the result.
+        int[] results;
+        results = getFromRangeValues();
+
+        // Copy the from range values.
+        ranges[0] = results[0];
+        ranges[1] = results[1];
+
+        // The match result for to range.
+        results = getToRangeValues();
+
+        // Copy the to range values.
+        ranges[2] = results[0];
+        ranges[3] = results[1];
+        return ranges;
+    }
+
+    /**
+     * A convenient method to get from range values in an int array.
+     *
+     * @return an arry of ints. int[0] = fromStart and int[1] = fromEnd
+     */
+    private int[] getFromRangeValues() {
+        Matcher matcher = ourRangePattern.matcher(myFromRange);
+        String fuzzyType = myFTConverter.getFuzzyShortLabel(matcher);
+        return getRangeValues(fuzzyType, matcher);
+    }
+
+    /**
+     * A convenient method to get to range values in an int array.
+     *
+     * @return an arry of ints. int[0] = toStart and int[1] = toEnd
+     */
+    private int[] getToRangeValues() {
+        Matcher matcher = ourRangePattern.matcher(myToRange);
+        String fuzzyType = myFTConverter.getFuzzyShortLabel(matcher);
+        return getRangeValues(fuzzyType, matcher);
+    }
+
+    /**
+     * Returns an array of ints.
+     *
+     * @param fuzzyType the fuzzy type as a string
+     * @param matcher the matcher object to extract int values to return.
+     * @return an array of ints. int[0] = fromStart, int[1] = fromEnd, int[2] =
+     *         toStart and int[3] toEnd.
+     */
+    private int[] getRangeValues(String fuzzyType, Matcher matcher) {
+        int[] ranges = new int[2];
+        if (!fuzzyType.equals(CvFuzzyType.UNDETERMINED)) {
+            if (fuzzyType.equals(CvFuzzyType.RANGE)) {
+                // Range, 1..2 type
+                // From value.
+                ranges[0] = Integer.parseInt(matcher.group(2));
+                // Check for negative values.
+                if (matcher.group(1) != null && matcher.group(1).equals("-")) {
+                    ranges[0] *= -1;
+                }
+                // End value
+                ranges[1] = Integer.parseInt(matcher.group(5));
+                // Check for negative values.
+                if (matcher.group(4) != null && matcher.group(4).equals("-")) {
+                    ranges[1] *= -1;
+                }
+            }
+            else {
+                // Other type, <2 or >2, c2 etc.
+                ranges[0] = Integer.parseInt(matcher.group(5));
+                if (matcher.group(1) != null && matcher.group(1).equals("-")) {
+                    ranges[0] *= -1;
+                }
+                ranges[1] = ranges[0];
+            }
+        }
+        return ranges;
+    }
+
+    /**
+     * Sets the bean's to range
+     *
+     * @param range the Range to get the to range.
+     */
+    private void setToRange(String type, Range range) {
+        // The value for display (fuzzy).
+        String dispLabel = myFTConverter.getDisplayValue(type);
+
+        // Undetermined?
+        if (type.equals(CvFuzzyType.UNDETERMINED)) {
+            myToRange = dispLabel;
+        }
+        // Range type?
+        else if (type.equals(CvFuzzyType.RANGE)) {
+            myToRange = range.getToIntervalStart() + dispLabel + range.getToIntervalEnd();
+        }
+        // No fuzzy type?
+        else if (type.length() == 0) {
+            myToRange = dispLabel + range.getToIntervalStart();
         }
         else {
-            // Non fuzzy types.
-            result[0] = Integer.parseInt(range);
-            result[1] = result[0];
+            // >, <, c or n
+            myToRange = dispLabel + range.getToIntervalEnd();
         }
-        return result;
+    }
+
+    private CvFuzzyType getFuzzyType(EditUserI user, String type) throws SearchException {
+        // Set the from and to fuzzy types.
+        CvFuzzyType fuzzyType = null;
+        if (type.length() != 0) {
+            fuzzyType = (CvFuzzyType) user.getObjectByLabel(CvFuzzyType.class, type);
+        }
+        return fuzzyType;
     }
 }
