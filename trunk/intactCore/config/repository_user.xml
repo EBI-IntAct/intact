@@ -385,7 +385,6 @@
          column="shortLabel"
          jdbc-type="VARCHAR"
          indexed="true"
-
       />
       <field-descriptor id="6"
          name="fullName"
@@ -488,10 +487,6 @@
    </class-descriptor>
 
 
-
-
-
-
    <!-- Definitions for Biosource -->
   <class-descriptor
 	  class="uk.ac.ebi.intact.model.BioSource"
@@ -511,17 +506,17 @@
          jdbc-type="VARCHAR"
       />
 
-     <field-descriptor id="3"
-         name="created"
-         column="created"
-         jdbc-type="TIMESTAMP"
-         nullable="false"
-      />
+      <field-descriptor id="3"
+          name="shortLabel"
+          column="shortLabel"
+          jdbc-type="VARCHAR"
+          indexed="true"
+
+       />
       <field-descriptor id="4"
-         name="updated"
-         column="updated"
-         jdbc-type="TIMESTAMP"
-         nullable="false"
+         name="fullName"
+         column="fullName"
+         jdbc-type="VARCHAR"
       />
 
       <field-descriptor id="5"
@@ -536,6 +531,19 @@
          column="taxId"
          jdbc-type="VARCHAR"
       />
+
+      <field-descriptor id="7"
+          name="created"
+          column="created"
+          jdbc-type="TIMESTAMP"
+          nullable="false"
+       />
+       <field-descriptor id="8"
+          name="updated"
+          column="updated"
+          jdbc-type="TIMESTAMP"
+          nullable="false"
+       />
 
       <!-- used for class identification - OJB uses it directly -->
       <reference-descriptor
@@ -565,10 +573,6 @@
       </collection-descriptor>
 
    </class-descriptor>
-
-
-
-
 
 
  <!-- Definitions for Annotation....
