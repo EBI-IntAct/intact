@@ -8,12 +8,10 @@ package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.model.*;
 
 
-import java.net.URL;
 import java.io.*;
 import java.util.*;
 
@@ -277,7 +275,7 @@ public class GoTools {
             throws Exception {
 
         // initialisation
-        Vector goRecord;
+//        Vector goRecord;
         BufferedReader in = new BufferedReader(new FileReader(sourceFile));
 
         System.err.println("Reading GO DAG lines: ");
