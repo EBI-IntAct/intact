@@ -7,7 +7,7 @@
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.graph.*" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.Constants" %>
 
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.OptionGenerator" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.view.OptionGenerator" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader" %>
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean" %>
 <%@ page import="java.util.ArrayList" %>
