@@ -1,12 +1,17 @@
 package uk.ac.ebi.intact.application.hierarchView.business.graph;
- 
+
+/**
+ * Give a specific behaviour to the generic graph definition
+ *
+ * @author Samuel Kerrien
+ */
+
 // intact
 import uk.ac.ebi.intact.simpleGraph.*;
 import uk.ac.ebi.intact.model.*;
 
 // hierarchView
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
-
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.*;
@@ -14,9 +19,6 @@ import uk.ac.ebi.intact.application.hierarchView.business.image.*;
 
 // JDK
 import java.util.*;
-import java.io.BufferedWriter;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.awt.Color;
  
 public class InteractionNetwork extends Graph {
