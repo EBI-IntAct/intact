@@ -73,10 +73,12 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
     <property name="webService.properties.filename"   value="${config.dir}/WebService.properties"/>
     <property name="highlighting.properties.filename" value="${config.dir}/Highlighting.properties"/>
+    <property name="search.properties.filename"       value="${config.dir}/Search.properties"/>
 
     <!-- Properties files on which some tests will be performed -->
     <property file="${webService.properties.filename}"/>
     <property file="${highlighting.properties.filename}"/>
+    <property file="${search.properties.filename}"/>
 
     <!-- Build working classpath -->
     <path id="project.class.path">
@@ -105,6 +107,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <antcall target="console-location-result"/>
         <antcall target="console-location-available-result"/>
         <antcall target="interpro-hostname-result"/>
+        <antcall target="search-hostname-result"/>
     </target>
 
 
@@ -129,25 +132,40 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
             <contains string="${highlightment.source.GO.hostname}" substring="[HOSTNAME]"/>
         </condition>
         <echo message="    highlightment.source.GO.hostname = ${highlightment.source.GO.hostname}"/>
+
+       <echo message="${search.properties.filename} :"/>
+
+       <condition property="search.hostname.notCustomized">
+            <contains string="${search.url}" substring="[SEARCH_HOSTNAME]"/>
+        </condition>
+        <echo message="    search.url = ${search.url}"/>
     </target>
 
 
     <target name="console-location-result" if="webService.console.location.notCustomized">
-        <fail>
-            ERROR :
+        <echo>
+            WARNING :
+            If you plan to run the web service on an other computer, don't take
+            the following message in to account.
+            -----------------------------------------------------------------------
             You have to edit the following file : ${webService.properties.filename}
             and customized the webService.console.location property.
-        </fail>
+            -----------------------------------------------------------------------
+        </echo>
     </target>
 
 
     <target name="console-location-available-result" unless="webService.console.isAvailable">
-        <fail>
-            ERROR :
+        <echo>
+            WARNING :
+            If you plan to run the web service on an other computer, don't take
+            the following message in to account.
+            -----------------------------------------------------------------------
             You have to edit the following file : ${webService.properties.filename}
             and customized the webService.console.location with the right path.
             Currently the file ${webService.console.location} is not found.
-        </fail>
+            -----------------------------------------------------------------------
+        </echo>
     </target>
 
 
@@ -165,6 +183,15 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
             ERROR :
             You have to edit the following file : ${highlighting.properties.filename}
             and customized the highlightment.source.GO.hostname property.
+        </fail>
+    </target>
+
+
+    <target name="search-hostname-result" if="search.hostname.notCustomized">
+        <fail>
+            ERROR :
+            You have to edit the following file : ${search.properties.filename}
+            and customized the search.url property.
         </fail>
     </target>
 
@@ -201,6 +228,7 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
             <fileset dir="${tld.dir}">
                 <exclude name="hierarchView.tld"/>
                 <exclude name="display.tld"/>
+                <exclude name="redirect.tld"/>
             </fileset>
 
         </delete>
@@ -226,6 +254,8 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
                  <!-- Do not remove hv specific files -->
                  <exclude name="index.jsp"/>
                  <exclude name="blank.jsp"/>
+                 <exclude name="forwardToSearch.jsp"/>
+                 <exclude name="restoreContext.jsp"/>
                  <exclude name="sidebarSearch.jsp"/>
                  <exclude name="sidebarGraph.jsp"/>
                  <exclude name="graphTitle.jsp"/>
@@ -279,7 +309,8 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             includes="**/application/hierarchView/**,
-                      **/application/commons/**"
+                      **/application/commons/**,
+                      **/html/**"
             debug="on">
             <classpath refid="project.class.path"/>
         </javac>
