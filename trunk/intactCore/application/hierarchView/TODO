@@ -6,62 +6,65 @@ T O   D O
 	+ currently under progress
 
 
+- Is there a way to get log4j to automatically reload a configuration file if it changes?
+  Yes. Both the DOMConfigurator and the PropertyConfigurator support automatic reloading
+  through the configureAndWatch APIs. See the API documentation for more details.
 
+- InGO integration
+  - InGO modifications :
+    - Url creation :
+       - david has modified inGO in that way :
+         http://localhost/ingo/ego/DisplayGoTerm?selected=GO:0005635,GO:0005637&intact=true&format=contentonly
+         the intact parameter allows to use a dedicated JSP page which remove all internal link !
+       - we still have to integrate two parameters in order to target back properly to hierarchView :
+         - application URL (on which inGO concatenate a list of GO terms)
+         - frame name
 
+  - I have to do :
+    - IDEA : could be possible to display in one time all go terms of the selected protein
+      example : http://web7-node1.ebi.ac.uk:8100/ingo/ego/DisplayGoTerm?id=GO:0005840&selected=GO:0003735,GO:0005622,GO:0019843,GO:0006412,GO:0005840&viz=graph
+      here the selected one is GO:0005840 and others are : GO:0003735,GO:0005622,GO:0019843,GO:0006412,GO:0005840
 
-- Add licence in files it's missing.
-
-- Find a way to check if a web service is currently running (in the runtime)
-  test could be done when a new user is lauching the first page !
-
-+ Check if the current use of Struts couldn't be improved
-  + refactoring the package architecture
-  - Storing the ActionBean instead of each data separetly
-  - take advantage of Struts 1.1 to remove all Form and let Struts generate ans manage them.
-
-+ Contact David Binns to go on colaboration
-  + mail sent on 29.1.2003 to ask for a talk
-  - See the current state of Interpro and how it's possible to integrate our features
++ Look for solving Oracle driver problem
+  + contact dbinns (no idea)
+  - forwarded to dba ... waiting from 10.02.2003
 
 + See with Florian Iragne (forian.iragne@labri.fr, Bordeaux)
-   + Test the Turender web service
+   + Test the Turender web service : not that reliable ... often unavailable.
    + Definition of the future web service interface
    + implementation of a basic web service to begin test
 
-+ SVG integration 
++ SVG integration
   + SVG producing (batik)
   + SVG displaying (batik, CSIRO applet)
   - SVG handling (real zoom, panning, text searching, centering via URL ...)
 
 + Work on the SVG applet
-   - create or reuse an existing one (CSIRO, Batik) 
+   - create or reuse an existing one (CSIRO, Batik)
    - features
    - size
 
-	Q: My applets are big and it takes much time to download (on 
+	Q: My applets are big and it takes much time to download (on
 	browser) when a network is slow.
 	Is there any way to decrease the start up time?
 
 	Answer: The good solution is to make a small core .jar file that
-	contains part applet that is necessary to start it up (initial 
+	contains part applet that is necessary to start it up (initial
 	GUI elements) and rest of classes can be loaded later when applet
-	is already running. Nobody use 100 % of functionality directly 
-	and will give an impression that everything is ready... :-) 
+	is already running. Nobody use 100 % of functionality directly
+	and will give an impression that everything is ready... :-)
 	This solution is good due to another reason also. If browser lost
-	connection during loading of one big .jar file you need to start 
-	everything from scratch. If it happens with our solution browser 
+	connection during loading of one big .jar file you need to start
+	everything from scratch. If it happens with our solution browser
 	will cash part of classes and it will save time for reloading!
 
-	Usually you don?t need all the functionality of the applet at 
-	once, so the applet can operate before all of its possible 
+	Usually you don?t need all the functionality of the applet at
+	once, so the applet can operate before all of its possible
 	functionality is downloaded. And .jar and .class files does get
-	cached by most browsers. 
+	cached by most browsers.
 
 - solve browser behaviour problem
 	o Netscape, remove frames
-
-- checkbox with struts.
-  Maybe to store the bean in the session ?!
 
 - If an error occurs during the highlightment process,
   the error is not caught currently and so, not reported in the Struts Level.
@@ -85,10 +88,135 @@ WAIT FOR INTEGRATION IN BORDEAUX ...
 
 
 
+
+
+
+
 ====================================
               D O N E
 ====================================
 
+(28.02.2003)
++ in order to support the host name in the logging file path, write our own log4j appender
+  which support the $hostname option the the FileAppender.File property.
+
+(26.02.2003)
++ put frames name as constants
+
+(26.02.2003)
++ checkbox with struts.
+  Maybe to store the bean in the session ?!
+  -> modifying the scope of the visualize option to session.
+
+(25.02.2003)
++ preparing logging strategy for Intact web application
+  + shared log4j.properties file (1 log file by application)
+  + new scripts which allows to set every system variables (JAVA_OPTS needed)
+  + creating a powerpoint to explain during the IntAct meeting
+
+(25.02.2003)
++ InGO integration
+  + InGO use : (corrected by david)
+    + No image produced (EBI-195 -> GO:0005758):
+        http://web7-node1.ebi.ac.uk:9280/ingo/ego/DisplayGoTerm?id=GO:0005758&format=contentonly
+    + no active MAP ... currently 2 MAP are produced : one called graphzone (which contained data)
+      and an other (without data). And the hierarchy image is using the empty one.
+      May be an option exists to activate the MAP ?
+  + InGO modification (by david)
+      + Customize JSP (finally did by David)
+      + if tag to display intact part
+      + add needed parameters to <i:gohierarchy ...> tag : URL, targetFrameName
+
+(25.02.2003)
++ Check if the current use of Struts couldn't be improved
+  + refactoring the package architecture
+  + Storing the ActionBean instead of each data separetly
+    -> finally storing every user data in the IntactUser (+ getters and setters)
+
+(24.02.2003)
++ BUG : when a database connection timeout occured, no way to use hierarchView, even if
+        the intactHelper has been close (.closeStore()). When a new intactHelper is created,
+        the database is still unavailable.
+  + MUST find a way to check if the connection is still open (not needed anymore).
+  + How to very close data access (helper.closeStore seems to do the job now)
+
+(14.02.2003)
++ Find out how many Go term could be involved in an interaction network
+        proteinAC     depth      #proteins       #GO terms
+        EBI-19551       1              20            28
+                        2              190          253
+                        3              519          497
+                        4              1049         776
+        EBI-17599       1              185          201
+                        2              913          716
+                        3              1206         843
+                        4              1417         874
+        EBI-17593       1              100          115
+                        2              576          557
+                        3              1089         753
+                        4              1481         920
+        EBI-3545        1              3             17
+                        2              44            95
+                        3              239          299
+                        4              833          704
+        EBI-40427       1              25            61
+                        2              532          480
+                        3              1318         841
+                        4              1372         902
+
+(12.02.2003)
++ do an entry point to the application for external use.
+  + give AC and depth to the index page ... and forward it to the left frame.
++ Contact David Binns to go on colaboration
+  + mail sent on 29.1.2003 to ask for a talk
+  + See the current state of Interpro and how it's possible to integrate our features
+  + have a meeting on 2003.02.12
+    + David Binns will send a war file to work with the application (modifications should be integrated later)
+      + I have to customize JSP to fit the link back to hierarchView and the frame targeting
+    + David is looking for the XSL file written last year in order to remove all internal links
+    + About the highlightment with all children of the selected GO term
+      + could pass all GO terms in the URL
+        PB: could get numerous GO term and not fit a URL in term of length,
+      + idea: could query the Ancestor table.
+
+(11.02.2003)
++ Find a way to check if a web service is currently running (in the runtime)
+  test could be done when a new user is lauching the first page !
+  + Add that method to WebServiceManager (boolean returned), it will
+    be used in the InitTag to check in case the manager is in the session is
+    the web service is running.
+    Write a dummy method (isRunning) in the web service (which return a Bolean) and try
+    to catch an exception
+    -> is something is throws ... try to start the WS again !
+  + It possible to know if it's properly working by catching the java.rmi.RemoteException !
+
+(11.02.2003)
++ BUG : try to create a network which contains EBI-25829 or EBI-14988 (on intacttest)...
+        crash with arrayIndexOutOfBoundException
+  + Henning warned and trying to fix it
+    Solution : there was a database inconsistency ... some test will be added in
+               the database filling process.
+
+(11.02.2003)
++ Move intactHelper search call inside the IntactUser and user the user to perform a search inside
+  our business logic.
+
+(10.02.2003)
++ Try to manage the session timeout
+  + add a new Exception : SessionExpiredException
+  + configure struts-config.xml to let Struts manage it
+  + Make interrested class thrown that Exception in case (*Action, IntactBaseAction)
+  + Display nicely the error
+
+(08.02.2003)
++ Move back to Log4J and find a way to split logs in several files to have a proper
+  hierarchView log file.
+
+(08.02.2003)
++ Clean the intactCore/jsp directory (delete hierarchView dir)
+
+(07.02.2003)
++ Add licence in files it's missing.
 
 (07.02.2003)
 + in the startup create a logger object and put it in the context to allow better tracing.
@@ -167,41 +295,41 @@ WAIT FOR INTEGRATION IN BORDEAUX ...
 
 + no depth limit (see hhe)
 
-- implement the option of GoHighlightmentSource to use the list of GO terms (children)
++ implement the option of GoHighlightmentSource to use the list of GO terms (children)
 
-- Document the way to launch the Tomcat server by taking care to run properly a new X server in the same window
++ Document the way to launch the Tomcat server by taking care to run properly a new X server in the same window
   Xvfb :2.0 &
   setenv DISPLAY :2.0
   (run Tomcat)
 
-- Allows the web service to send error message
++ Allows the web service to send error message
 
-- update jsp/hierarchView/tulip/scripts/startService.sh with right messages
++ update jsp/hierarchView/tulip/scripts/startService.sh with right messages
   don't speak anymore about 'Serveur' unless Bordeaux solve that problem !
 
-- add some comments in properties files with #
++ add some comments in properties files with #
 
-- update INTACTCORE/build.xml with the description flag to make some target visible from
++ update INTACTCORE/build.xml with the description flag to make some target visible from
   ant -projecthelp
 
-- write a proper test directory for the web service
++ write a proper test directory for the web service
   jsp/hierarchView/tulip/script.test
 
-- cleaning the web.xml to avoid Tomcat exception in its startup
++ cleaning the web.xml to avoid Tomcat exception in its startup
 
-- Correcting the displaying if the interaction network :
++ Correcting the displaying if the interaction network :
 	o label out of the image range
 
-- give a meaning for each displayed GO term in the right frame.
++ give a meaning for each displayed GO term in the right frame.
 
-- get a list of GO term from AC in the IntAct database
++ get a list of GO term from AC in the IntAct database
 
-- put under CVS source code of cli, Serveur and console.
++ put under CVS source code of cli, Serveur and console.
 
-- Allow to read dinamically (in runtime) the URL of the Web Service, instead to have this hardcoded in the 
++ Allow to read dinamically (in runtime) the URL of the Web Service, instead to have this hardcoded in the
   following class :
   uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator.java
   Maybe by reading a property file and editing the generated code !
 
-- option of the highlightment source
++ option of the highlightment source
 
