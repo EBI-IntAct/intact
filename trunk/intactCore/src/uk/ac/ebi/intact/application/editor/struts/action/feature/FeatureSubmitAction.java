@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -82,27 +83,27 @@ public class FeatureSubmitAction extends CommonDispatchAction {
     }
 
     // Override to implement Feature Save & Continue
-    public ActionForward save(ActionMapping mapping, ActionForm form,
-                              HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        ActionForward forward = super.save(mapping, form, request, response);
-
-        // Return the forward for any non success.
-        if (!forward.getPath().equals(mapping.findForward(SUCCESS).getPath())) {
-            return forward;
-        }
-        // The current view.
-        FeatureViewBean view = ((FeatureViewBean) getIntactUser(request).getView());
-
-        // The feature we just submitted.
-        Feature feature = (Feature) view.getAnnotatedObject();
-
-        // Access the parent view and update the current feature.
-        view.getParentView().saveFeature(feature);
-
-        // Update the existing defined feature.
-//        view.refreshDefinedFeature();
-
-        return forward;
-    }
+//    public ActionForward save(ActionMapping mapping, ActionForm form,
+//                              HttpServletRequest request, HttpServletResponse response)
+//            throws Exception {
+//        ActionForward forward = super.save(mapping, form, request, response);
+//
+//        // Return the forward for any non success.
+//        if (!forward.getPath().equals(mapping.findForward(SUCCESS).getPath())) {
+//            return forward;
+//        }
+//        // The current view.
+//        FeatureViewBean view = ((FeatureViewBean) getIntactUser(request).getView());
+//
+//        // The feature we just submitted.
+//        Feature feature = (Feature) view.getAnnotatedObject();
+//
+//        // Access the parent view and update the current feature.
+//        view.getParentView().saveFeature(feature);
+//
+//        // Update the existing defined feature.
+////        view.refreshDefinedFeature();
+//
+//        return forward;
+//    }
 }
