@@ -49,7 +49,7 @@ public class InteractionDetailsViewBean extends DetailsViewBean {
                 // If the experiment is not yet processed, add a copy to the current set
                 Experiment shallowCopy = (Experiment) experiments.get(experiment.getAc());
                 if (null == shallowCopy){
-                    shallowCopy = createShallowExperiment( experiment );
+                    shallowCopy = Experiment.getShallowCopy( experiment );
                     experiments.put(experiment.getAc(), shallowCopy);
                 }
 

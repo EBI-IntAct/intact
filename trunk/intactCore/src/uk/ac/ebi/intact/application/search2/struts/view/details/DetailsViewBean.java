@@ -83,25 +83,25 @@ public class DetailsViewBean extends AbstractViewBean
      * Build a copy the Experiment object - don't copy the interactions.
      * @param experiment the Experiment to copy
      */
-    protected static Experiment createShallowExperiment ( Experiment experiment) {
-
-
-
-        Experiment ex = new Experiment ( experiment.getOwner(),
-                                         experiment.getShortLabel(),
-                                         experiment.getBioSource() );
-        ex.setAc(experiment.getAc());
-        ex.setAnnotation( experiment.getAnnotations() );
-        ex.setCurator( experiment.getCurator() );
-        ex.setCvInteraction( experiment.getCvInteraction() );
-        ex.setCvIdentification( experiment.getCvIdentification() );
-        ex.setEvidences( experiment.getEvidences() );
-        ex.setFullName( experiment.getFullName() );
-        ex.setReferences( experiment.getReferences() );
-        ex.setRelatedExperiment( experiment.getRelatedExperiment() );
-        ex.setXrefs( experiment.getXrefs() );
-        return ex;
-    }
+//    protected static Experiment createShallowExperiment ( Experiment experiment) {
+//
+//
+//
+//        Experiment ex = new Experiment ( experiment.getOwner(),
+//                                         experiment.getShortLabel(),
+//                                         experiment.getBioSource() );
+//        ex.setAc(experiment.getAc());
+//        ex.setAnnotation( experiment.getAnnotations() );
+//        ex.setCurator( experiment.getCurator() );
+//        ex.setCvInteraction( experiment.getCvInteraction() );
+//        ex.setCvIdentification( experiment.getCvIdentification() );
+//        ex.setEvidences( experiment.getEvidences() );
+//        ex.setFullName( experiment.getFullName() );
+//        ex.setReferences( experiment.getReferences() );
+//        ex.setRelatedExperiment( experiment.getRelatedExperiment() );
+//        ex.setXrefs( experiment.getXrefs() );
+//        return ex;
+//    }
 
     public void getHTML( Writer writer ) {
 
