@@ -356,6 +356,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         // Must be a feature.
         Feature feature = (Feature) annobj;
 
+        // Reset the view with the given feature.
         setComponent(feature.getComponent());
 
         // CVFeatureType is compulsory.

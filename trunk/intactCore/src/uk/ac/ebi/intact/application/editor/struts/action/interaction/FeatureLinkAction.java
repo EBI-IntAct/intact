@@ -55,7 +55,10 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
 
         // Delete the features.
         for (Iterator iter = beans.iterator(); iter.hasNext();) {
-            view.delFeature((FeatureBean) iter.next());
+            FeatureBean fb = (FeatureBean) iter.next();
+            view.delFeature(fb);
+            // No longer checked.
+            fb.setChecked(false);
         }
         return updateForm(mapping, form, request);
     }
@@ -75,9 +78,20 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
         // The two Features to link.
         FeatureBean[] fbs = view.getFeaturesForLink();
 
+        // Set the checked boxes off.
+        fbs[0].setChecked(false);
+        fbs[1].setChecked(false);
+
+        // Check for any error Features.
+        if (fbs[0].isError() || fbs[1].isError()) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("feature.link", new ActionError("error.int.feature"));
+            saveErrors(request, errors);
+            return updateForm(mapping, form, request);
+        }
+
         // Check if they already have bound domains.
-        if ((fbs[0].getBoundDomain().length() != 0)
-                || (fbs[1].getBoundDomain().length() != 0)) {
+        if (fbs[0].hasBoundDomain() || fbs[1].hasBoundDomain()) {
             ActionErrors errors = new ActionErrors();
             errors.add("feature.link",
                     new ActionError("error.int.feature.link.error"));
@@ -105,8 +119,19 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
         // The Feature to unlink.
         FeatureBean fb = view.getFeatureForUnlink();
 
+        // Set the checked box off.
+        fb.setChecked(false);
+
+        // Check for any error Features.
+        if (fb.isError()) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("feature.link", new ActionError("error.int.feature"));
+            saveErrors(request, errors);
+            return updateForm(mapping, form, request);
+        }
+
         // Check if they already have bound domains.
-        if (fb.getBoundDomain().length() == 0) {
+        if (!fb.hasBoundDomain()) {
             ActionErrors errors = new ActionErrors();
             errors.add("feature.link",
                     new ActionError("error.int.feature.unlink.error"));

@@ -8,12 +8,12 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
+import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.model.CvFeatureIdentification;
 import uk.ac.ebi.intact.model.CvFeatureType;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class FeatureBean implements Serializable, Cloneable {
+public class FeatureBean extends AbstractEditKeyBean {
 
     // Instance Data
 
@@ -84,21 +84,33 @@ public class FeatureBean implements Serializable, Cloneable {
      * @param feature the <code>Feature</code> object.
      */
     public FeatureBean(Feature feature) {
-        myFeature = feature;
-        myShortLabel = feature.getShortLabel();
-        myFullName = feature.getFullName();
-        myType = feature.getCvFeatureType().getShortLabel();
-        myDetection = feature.getCvFeatureIdentification() == null ? ""
-                : feature.getCvFeatureIdentification().getShortLabel();
+        initialize(feature);
+//        myFeature = feature;
+//        myShortLabel = feature.getShortLabel();
+//        myFullName = feature.getFullName();
+//        myType = feature.getCvFeatureType().getShortLabel();
+//        myDetection = feature.getCvFeatureIdentification() == null ? ""
+//                : feature.getCvFeatureIdentification().getShortLabel();
+//
+//        // Loop through the ranges.
+//        for (Iterator iter = feature.getRanges().iterator(); iter.hasNext();) {
+//            Range range = (Range) iter.next();
+//            myRanges.add(new RangeBean(range));
+//        }
+//
+//        myBoundDomain = feature.getBoundDomain() == null ? ""
+//                : feature.getBoundDomain().getShortLabel();
+    }
 
-        // Loop through the ranges.
-        for (Iterator iter = feature.getRanges().iterator(); iter.hasNext();) {
-            Range range = (Range) iter.next();
-            myRanges.add(new RangeBean(range));
-        }
-
-        myBoundDomain = feature.getBoundDomain() == null ? ""
-                : feature.getBoundDomain().getShortLabel();
+    /**
+     * Instantiate an object of this class from a Feature instance
+     * and a key
+     * @param feature the <code>Feature</code> object.
+     * @param key the key to assigned to this bean.
+     */
+    public FeatureBean(Feature feature, long key) {
+        super(key);
+        initialize(feature);
     }
 
     // Read only properties.
@@ -144,8 +156,16 @@ public class FeatureBean implements Serializable, Cloneable {
     public String getComponentAc() {
         return myFeature.getComponent().getAc();
     }
-    
+
+    public boolean hasBoundDomain() {
+        return myBoundDomain.length() != 0;
+    }
+
     // Read/Write methods for JSPs
+
+    public void setShortLabel(String label) {
+        myShortLabel = label;
+    }
 
     public String getBoundDomain() {
         return myBoundDomain;
@@ -214,7 +234,7 @@ public class FeatureBean implements Serializable, Cloneable {
             myFeature.addRange(rangeBean.getRange(user));
         }
         // Set the bound domain if it isn't empty.
-        if (getBoundDomain().length() != 0) {
+        if (hasBoundDomain()) {
             Feature boumdDomain = (Feature) user.getObjectByLabel(
                     Feature.class, getBoundDomain());
             myFeature.setBoundDomain(boumdDomain);
@@ -222,57 +242,70 @@ public class FeatureBean implements Serializable, Cloneable {
         return myFeature;
     }
 
+    // For debugging.
+
+    public String toString() {
+        return "AC: " + getAc() + " Short Label: " + getShortLabel()
+                + " Range: " + getRanges();
+    }
+
     // Override Objects's hashCode and equals method.
 
-    /**
-     * Overrides the hashcode method.
-     * @return the hascode of the AC is returned.
-     */
-    public int hashCode() {
-        return myFeature.getAc().hashCode();
-    }
+//    /**
+//     * Overrides the hashcode method.
+//     * @return the hascode of the AC is returned.
+//     */
+//    public int hashCode() {
+//        return myFeature.getAc() != null ? myFeature.getAc().hashCode()
+//                : myFeature.hashCode();
+//    }
 
-    /**
-     * Compares <code>obj</code> with this object according to
-     * Java's equals() contract. Only returns <tt>true</tt> if the ac
-     * for both objects match.
-     * @param obj the object to compare.
-     */
-    public boolean equals(Object obj) {
-        // Identical to this?
-        if (obj == this) {
-            return true;
-        }
-        if ((obj != null) && (getClass() == obj.getClass())) {
-            // Can safely cast it.
-            FeatureBean other = (FeatureBean) obj;
-            return myFeature.getAc().equals(other.myFeature.getAc());
-        }
-        return false;
-    }
+//    /**
+//     * Compares <code>obj</code> with this object according to
+//     * Java's equals() contract. Only returns <tt>true</tt> if the ac
+//     * for both objects match.
+//     * @param obj the object to compare.
+//     */
+//    public boolean equals(Object obj) {
+//        // Identical to this?
+//        if (obj == this) {
+//            return true;
+//        }
+//        if ((obj != null) && (getClass() == obj.getClass())) {
+//            // Can safely cast it.
+//            FeatureBean other = (FeatureBean) obj;
+//            if (myFeature.getAc() != null) {
+//                // Check for AC if the Feature has an AC
+//               return myFeature.getAc().equals(other.myFeature.getAc());
+//            }
+//            // No AC, compare Feature directly.
+//            return myFeature.equals(other.myFeature);
+//        }
+//        return false;
+//    }
 
-    /**
-     * Makes a clone of this object apart for the Feature instance this object
-     * is wrapped around.
-     *
-     * @return a cloned version of the current instance. A null
-     */
-    public Object clone() throws CloneNotSupportedException {
-        FeatureBean copy = (FeatureBean) super.clone();
-
-        // Clone range beans.
-        copy.myRanges = new ArrayList(myRanges.size());
-        for (Iterator iter = myRanges.iterator(); iter.hasNext();) {
-            copy.myRanges.add(((RangeBean) iter.next()).clone());
-        }
-        return copy;
-    }
+//    /**
+//     * Makes a clone of this object apart for the Feature instance this object
+//     * is wrapped around.
+//     *
+//     * @return a cloned version of the current instance. A null
+//     */
+//    public Object clone() throws CloneNotSupportedException {
+//        FeatureBean copy = (FeatureBean) super.clone();
+//
+//        // Clone range beans.
+//        copy.myRanges = new ArrayList(myRanges.size());
+//        for (Iterator iter = myRanges.iterator(); iter.hasNext();) {
+//            copy.myRanges.add(((RangeBean) iter.next()).clone());
+//        }
+//        return copy;
+//    }
 
     // Write methods. Only visible within this package.
 
-    void setShortLabel(String label) {
-        myShortLabel = label;
-    }
+//    void setShortLabel(String label) {
+//        myShortLabel = label;
+//    }
 
     void setFullName(String fullname) {
         myFullName = fullname;
@@ -284,5 +317,23 @@ public class FeatureBean implements Serializable, Cloneable {
 
     Iterator getRangeList() {
         return myRanges.iterator();
+    }
+
+    private void initialize(Feature feature) {
+        myFeature = feature;
+        myShortLabel = feature.getShortLabel();
+        myFullName = feature.getFullName();
+        myType = feature.getCvFeatureType().getShortLabel();
+        myDetection = feature.getCvFeatureIdentification() == null ? ""
+                : feature.getCvFeatureIdentification().getShortLabel();
+
+        // Loop through the ranges.
+        for (Iterator iter = feature.getRanges().iterator(); iter.hasNext();) {
+            Range range = (Range) iter.next();
+            myRanges.add(new RangeBean(range));
+        }
+
+        myBoundDomain = feature.getBoundDomain() == null ? ""
+                : feature.getBoundDomain().getShortLabel();
     }
 }

@@ -37,6 +37,11 @@ public interface ForwardConstants {
     public static final String RESULT = "result";
 
     /**
+     * Forward to the reload action.
+     */
+    public static final String RELOAD = "reload";
+    
+    /**
      * Used as a key to identify a page to display when matches are found
      * from a search.
      */

@@ -149,7 +149,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         user.setClonedView(copy);
 
         // Redisplay the cloned object.
-        return mapping.getInputForward();
+        return mapping.findForward(RELOAD);
     }
 
     /**

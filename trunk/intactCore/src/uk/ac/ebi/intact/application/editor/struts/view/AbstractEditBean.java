@@ -58,6 +58,14 @@ public abstract class AbstractEditBean implements Serializable {
     }
 
     /**
+     * Returns true if this bean is in error state.
+     * @return true if this bean's state equals {@link #ERROR}.
+     */
+    public boolean isError() {
+        return myEditState.equals(ERROR);
+    }
+
+    /**
      * Returns a link to display a read only window.
      * @param topic the first parameter to the show command.
      * @param label the second parameter to the show command; this should
