@@ -18,6 +18,8 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
+<jsp:include page="misc/user_js.jsp" />
+
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
