@@ -70,7 +70,7 @@ public abstract class HighlightmentSource {
    * @param aProteinAC : a protein identifier (AC)
    * @return a set of keys (this keys are a String)
    */
-  abstract public Collection getKeysFromIntAct (String aProteinAC) throws Exception;
+  abstract public Collection getKeysFromIntAct (String aProteinAC);
 
 
   /**
@@ -81,7 +81,7 @@ public abstract class HighlightmentSource {
    * @param aGraph the graph we want to highlight
    * @return a set of nodes to highlight
    */
-  abstract public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) throws Exception;
+  abstract public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph);
 
 
   /**
@@ -135,7 +135,7 @@ public abstract class HighlightmentSource {
    * @param aProteinAC : a protein identifier (AC)
    * @return a set of URL pointing on the highlightment source
    */
-  abstract public Collection getUrl (String aProteinAC) throws Exception;
+  abstract public Collection getUrl (String aProteinAC);
 
   /**
    * Generate a key string for a particular selectable item of the highlightment source.
