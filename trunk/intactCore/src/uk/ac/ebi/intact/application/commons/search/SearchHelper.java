@@ -25,8 +25,15 @@ import java.util.*;
  */
 public class SearchHelper implements SearchHelperI {
 
+    /**
+     * The Logger
+     */
     private transient Logger logger;
-    public final static String SEARCH_TABLE = "ia_search";
+
+    /**
+     * The table for the initial search request in the searchFast method
+     */
+    private final static String SEARCH_TABLE = "ia_search";
 
     /**
      * Collection of CriteriaBean
@@ -345,25 +352,28 @@ public class SearchHelper implements SearchHelperI {
 
 
     /**
-     * This method is only used in the initial request from the Search3 Form It uses a view created
-     * in the database, which work like a hashtable.
+     * This method is only used in the initial request from the Search Application. You enter with a
+     * query, It uses the ia_search table for retrieving the results, if the resultset is too large,
+     * the ResultWrapper contains no data. 
      *
-     * @param query      is a string with the search value
-     * @return A ResultWrapper with the result in it
+     * @param query is a string with holds the search value
+     * @return ResultWrapper ResultWrapper with the result in it. if the resultset is too large,
+     * the ResultWrapper contains no data.
      * @throws IntactException
      */
     public ResultWrapper searchFast(String query) throws IntactException {
+
         // replace  the "*" with "%"
         String sqlValue = query.replaceAll("\\*", "%");
-        // no case sensitive search
         sqlValue.toLowerCase();
 
         // split the query
         Collection someSearchValues = this.splitQuery(sqlValue);
-        // add the values
+
+        // create the tail of the sql query
         StringBuffer sb = new StringBuffer();
         String value = null;
-        // create the tail of the sql query
+
         for (Iterator iterator = someSearchValues.iterator(); iterator.hasNext();) {
             value = (String) iterator.next();
             sb.append("value LIKE '");
@@ -376,9 +386,10 @@ public class SearchHelper implements SearchHelperI {
                 sb.append(" OR ");
             }  // end if
         } // end for
+
         IntactHelper helper = new IntactHelper();
-        // create the beginning of the query and add the tail
-        String sqlCount = "SELECT COUNT(distinct(ac)), objclass from " + SEARCH_TABLE + " where " + sb.toString() +
+        String sqlCount = "SELECT COUNT(distinct(ac)), objclass from " + SEARCH_TABLE + " where " +
+                sb.toString() +
                 " GROUP BY objclass";
 
         Connection conn = null;
@@ -386,8 +397,9 @@ public class SearchHelper implements SearchHelperI {
         PreparedStatement labelStmt = null;
         ResultSet rs = null;
 
+        // Access the Connection via the helper.
         try {
-            // Access the Connection via the helper.
+
             conn = helper.getJDBCConnection();
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sqlCount);
@@ -403,25 +415,25 @@ public class SearchHelper implements SearchHelperI {
                 count += classCount;
             }
 
-            // check the result size
-            if (count >SearchConstants.MAXIMUM_RESULT_SIZE) {
+            // check the result size if the result is too large return an empty ResultWrapper
+            if (count > SearchConstants.MAXIMUM_RESULT_SIZE) {
                 return new ResultWrapper(count, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
             }
 
-            // Fine we got results, and in it's in the limit
-            // let's get them
-            String sql = "SELECT distinct(ac), objclass from "+ SEARCH_TABLE + " where " + sb.toString();
+            // we got an result, and it's in the limit, so now we need the ac's
+            String sql = "SELECT distinct(ac), objclass from " + SEARCH_TABLE + " where " +
+                    sb.toString();
+
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
+
+            // get the result from the resultset and query via the intacthelper the objects and
+            // put the data in a ResultWrapper
 
             String ac = null;
             className = null;
             Class clazz = null;
             ArrayList searchResult = new ArrayList();
-
-            // get ac, classname from the resultset and create a class and get the Object with
-            // the SearchHelper
-            // use a map here to make shure we don't have results twice
 
             while (rs.next()) {
                 ac = rs.getString(1);
@@ -429,22 +441,25 @@ public class SearchHelper implements SearchHelperI {
                 clazz = Class.forName(className);
                 searchResult.add(helper.getObjectByAc(clazz, ac));
             }
-            // get the results
-            return new ResultWrapper(searchResult, SearchConstants.MAXIMUM_RESULT_SIZE,resultInfo);
+
+            return new ResultWrapper(searchResult, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
+
         } catch (SQLException se) {
             while ((se.getNextException()) != null) {
                 logger.info(se.getSQLState());
                 logger.info("SQL: Error Code: " + se.getErrorCode());
             }
             throw new IntactException("SQL errors, see the log out for more info");
+
         } catch (ClassNotFoundException e) {
-             throw new IntactException("SQL errors, see the log out for more info");
-        }
-          catch(NullPointerException e) {
-             throw new IntactException("SQL errors, see the log out for more info");
-        }
-                // finally close all database connections
-        finally {
+            throw new IntactException(
+                    "Recieved an intact typ which is not valid, see the log out for more info");
+
+        } catch (NullPointerException e) {
+            throw new IntactException("Problems with the resultset, see the log out for more info");
+
+        } finally {
+            //  close all database connections
             helper.closeStore();
             try {
                 rs.close();
@@ -458,12 +473,11 @@ public class SearchHelper implements SearchHelperI {
                     conn.close();
                 }
             } catch (SQLException se) {
-                throw new IntactException("SQL errors, see the log out for more info");
-            }
-               catch(NullPointerException e) {
-             throw new IntactException("SQL errors, see the log out for more info");
+                throw new IntactException("Problems with closing the IntactHelper");
+            } catch (NullPointerException e) {
+                throw new IntactException("Problems with closing the IntactHelper");
             }
         }
-      //  return new ResultWrapper(SearchConstants.MAXIMUM_RESULT_SIZE);
-    }
+    }   // end searchFast
 }
+ 
