@@ -44,7 +44,7 @@
     for (Iterator it = idToView.entrySet().iterator(); it.hasNext(); ) {
         Map.Entry entry = (Map.Entry) it.next();
         IntactViewBean bean = (IntactViewBean) entry.getValue();
-        int id = ((Integer) entry.getKey()).intValue();
+        String id = (String) entry.getKey();
         bean.transform(factory, id, result);
     }
 %>

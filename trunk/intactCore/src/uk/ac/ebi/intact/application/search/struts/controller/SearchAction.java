@@ -198,7 +198,7 @@ public class SearchAction extends IntactBaseAction {
                 //set up a viewbean to hold the results for display
                 IntactViewBean bean = new IntactViewBean(obj);
                 bean.setStylesheet(xslfile);
-                idToView.put(new Integer(0), bean);
+                idToView.put("0", bean);
                 marshall(bean, xmlMapping, db);
                 bean.addStatusNodes();
             }
@@ -216,7 +216,7 @@ public class SearchAction extends IntactBaseAction {
                     IntactViewBean bean = new IntactViewBean(iter.next());
                     bean.setStylesheet(xslfile);
                     // Collect the results together...
-                    idToView.put(new Integer(counter), bean);
+                    idToView.put(Integer.toString(counter), bean);
                     marshall(bean, xmlMapping, db);
                     bean.addStatusNodes();
                     super.log("object marshalled - now building view bean...");

@@ -61,14 +61,14 @@ public class ViewAction extends IntactBaseAction {
             Map.Entry entry = (Map.Entry) iter.next();
             String key = (String) entry.getKey();
 
-            // Ignore the submit button.
-            if (key.equals("submit")) {
+            // Ignore the non tbl parameters.
+            if (!key.startsWith("tbl_")) {
                 continue;
             }
             // Extract the bean id and the AC.
             StringTokenizer stk = new StringTokenizer(key, "_");
             String ignore = stk.nextToken();
-            Integer beanId = new Integer(stk.nextToken());
+            String beanId = stk.nextToken();
             String ac = stk.nextToken();
 
             // The view bean associated with the id.
