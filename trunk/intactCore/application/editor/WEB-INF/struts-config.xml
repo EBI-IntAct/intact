@@ -685,6 +685,19 @@
             <forward name="delete" path="/do/feature/delete"/>
         </action>
 
+        <!--
+             This is only called from feature/cancel action path for cancelling
+             a new Feature.
+        -->
+        <action path="/feature/delete"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.DeleteFeatureAction"
+            name="featureForm"
+            validate="false"
+            scope="session">
+            <!-- Back to the interaction editor -->
+            <forward name="success" path="/do/int/fill/form"/>
+        </action>
+
         <!-- Action to handle when a button (edit/save/delete) related to xref
              is activated
         -->

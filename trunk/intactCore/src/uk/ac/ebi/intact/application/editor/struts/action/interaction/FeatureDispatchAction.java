@@ -85,6 +85,9 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Set the parent for the feature view.
         featureView.setParentView(intView);
 
+        // Set the interaction ac to come back.
+//        featureView.setSourceInteractionAc(intView.getAc());
+
         return forward;
     }
 //
@@ -145,6 +148,9 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
         // Set the parent for the feature view.
         featureView.setParentView(intView);
+
+        // Set the interaction ac to come back.
+//        featureView.setSourceInteractionAc(intView.getAc());
 
         // The form.
         InteractionActionForm intform = (InteractionActionForm) form;

@@ -278,16 +278,18 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         // Handler to the edit user.
         EditUserI user = getIntactUser(request);
 
-        // The current view.
-        FeatureViewBean view = (FeatureViewBean) user.getView();
+        // The AC of the interaction to go back to.
+        String ac = ((FeatureViewBean) user.getView()).getParentView().getAc();//.getSourceInteractionAc();
+
+        // The interaction we have been editing.
+        Interaction interaction = (Interaction) user.getObjectByAc(
+                Interaction.class, ac);
 
         // Set the topic.
         user.setSelectedTopic(getService().getTopic(Interaction.class));
 
-        // The interaction we going back to. It is important that we don't
-        // reset the view with the interaction because we want to  go back
-        //  to the last interaction stage.
-        user.setView(view.getParentView());
+        // The interaction we going back to.
+        user.setView(interaction);
     }
 
     /**

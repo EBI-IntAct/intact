@@ -35,8 +35,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
     private static final List ourBoolenMenus = Arrays.asList(
             new String[]{Boolean.TRUE.toString(), Boolean.FALSE.toString()});
 
-
-    private Interaction myParent;
     /**
      * The parent of this view bean (Feature is part of an Interaction)
      */
@@ -142,14 +140,6 @@ public class FeatureViewBean extends AbstractEditViewBean {
      */
     public void setParentView(InteractionViewBean parent) {
         myParentViewBean = parent;
-    }
-
-    public Interaction getParent() {
-        return myParent;
-    }
-
-    public void setParent(Interaction interaction) {
-        myParent = interaction;
     }
 
     /**
@@ -276,32 +266,13 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Replaces an existing range bean with a new bean. This method takes
-     * care of refreshing relevant lists. For example, if the existing bean is in
-     * the new collection, it will be removed from the new collection before the
-     * new bean is added.
-     * @param rb the new bean to replace existing bean. The existing bean has
-     * the same key as the new bean.
+     * Replaces an existing range bean with a new bean.
+     * @param rb the new bean to replace existing bean.
      */
     public void saveRange(RangeBean rb) {
-//        // Remove the existing bean which has the same key as the new bean.
-//        myRanges.remove(rb);
-//        // This will add the new bean.
-//        myRanges.add(rb);
-
-        // Do the same check for beans to add collection as well.
+        // The updated bean can only exists in one collection.
         if (!myRangesToAdd.contains(rb)) {
              myRangesToUpdate.add(rb);
-//            // Remove the existing bean with the same key.
-//            myRangesToAdd.remove(rb);
-//            // Add the new bean.
-//            myRangesToAdd.add(rb);
-//        }
-//        else {
-//            // Remove the old bean from the 'update' list.
-//            myRangesToUpdate.remove(rb);
-//            // Add the new bean to the update list.
-//            myRangesToUpdate.add(rb);
         }
     }
 
