@@ -226,24 +226,6 @@ public class CvViewBean {
     }
 
     /**
-     * Finds the bean for a given key.
-     * @param key the key to search for the bean.
-     * @return the <code>CommentBean</code> object whose key matches with given
-     * <code>key</code>. <code>null</code> is returned if no matching bean
-     * is found.
-     */
-    public CommentBean findAnnotationCB(long key) {
-        for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
-            CommentBean bean = (CommentBean) iter.next();
-            if (bean.getKey() == key) {
-                return bean;
-            }
-        }
-        // Not found the bean.
-        return null;
-    }
-
-    /**
      * Returns a collection of annotations to add.
      * @return the collection of annotations to add to the current CV object.
      * Could be empty if there are no annotations to add.
@@ -376,24 +358,6 @@ public class CvViewBean {
     }
 
     /**
-     * Finds the bean for a given key.
-     * @param key the key to search for the bean.
-     * @return the <code>XreferenceBean</code> object whose key matches with given
-     * <code>key</code>. <code>null</code> is returned if no matching bean
-     * is found.
-     */
-    public XreferenceBean findXref(long key) {
-        for (Iterator iter = myXrefs.iterator(); iter.hasNext();) {
-            XreferenceBean bean = (XreferenceBean) iter.next();
-            if (bean.getKey() == key) {
-                return bean;
-            }
-        }
-        // Not found the bean.
-        return null;
-    }
-
-    /**
      * Returns a collection of xrefs to add.
      * @return the collection of xrefs to add to the current CV object.
      * Could be empty if there are no xrefs to add.
@@ -499,23 +463,4 @@ public class CvViewBean {
             myXrefs.add(new XreferenceBean(xref));
         }
     }
-
-    /**
-     * Finds the bean for a given accession number.
-     * @param ac the accession number to search for the bean.
-     * @return the <code>CommentBean</code> object whose AC of the
-     * <code>Annotation</code> object matches with given
-     * <code>ac</code>; <code>null</code> is returned if no matching bean
-     * is found.
-     */
-//    private CommentBean findAnnotationCB(String ac) {
-//        for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
-//            CommentBean bean = (CommentBean) iter.next();
-//            if (bean.getAnnotation().getAc().equals(ac)) {
-//                return bean;
-//            }
-//        }
-//        // Not found the bean.
-//        return null;
-//    }
 }
