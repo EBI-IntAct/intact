@@ -202,6 +202,18 @@ public class IntactHelper implements SearchI, Serializable {
     }
 
     /**
+     * @return boolean true if a client-initiated transaction is in progress, false if not
+     * or if there is no valid connection to the datastore.
+     */
+    public boolean isInTransaction() {
+
+        if(dao != null) {
+            return dao.isActive();
+        }
+        return false;
+    }
+
+    /**
      * starts a business level transaction. This allows finer grained
      * transaction management of business operations (eg for performing
      * a number of creates/deletes within one unit of work).
