@@ -34,20 +34,18 @@ public class Graph extends BasicGraph implements GraphI {
 
     ///////////////////////////////////////
     // access methods for attributes
-    public void addNode(NodeI aNode) {
+    public void addNode(BasicGraphI aNode) {
         nodes.put(aNode.getAc(), aNode);
     }
 
-    public Node addNode(Interactor anInteractor){
-        Node node = (Node) nodes.get(anInteractor.getAc());
+    public BasicGraphI addNode(Interactor anInteractor){
+        BasicGraphI node = (BasicGraphI) nodes.get(anInteractor.getAc());
         if (null == node) {
             node = new Node (anInteractor);
-            node.setLabel (anInteractor.getShortLabel());
             this.addNode (node);
         }
         return node;
     }
-
 
     public void addEdge(EdgeI anEdge) {
         if ( ! edges.contains( anEdge ) )

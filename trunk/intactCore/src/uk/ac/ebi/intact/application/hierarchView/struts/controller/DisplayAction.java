@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.image.DrawGraph;
 import uk.ac.ebi.intact.application.hierarchView.exception.MultipleResultException;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
@@ -149,17 +150,20 @@ public final class DisplayAction extends IntactBaseAction {
             // to put it into the request failed because the request got lost
             // and at the result page no information could be found about these
             // parameters
-            
-            // if the parameter 'network' is given its stored in the session 
+
+            // Save user's data
+            user.setQueryString( AC );
+            // if the parameter 'network' is given its stored in the session
             if ( network != null && !"null".equals( network ) ) {
                 session.setAttribute( "network", network );
+                // the minepath is stored in the user to enable the highlighting
+                // of the path
+                user.setMinePath( AC );
             }
             //if the parameter 'singletons' is given its stored in the session
             if ( singletons != null && !"null".equals( singletons ) ) {
                 session.setAttribute( "singletons", singletons );
             }
-            // Save user's data
-            user.setQueryString( AC );
             try {
                 int d = Integer.parseInt( depth );
                 user.setCurrentDepth( d );

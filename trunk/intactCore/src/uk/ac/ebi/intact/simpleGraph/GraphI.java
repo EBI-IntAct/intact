@@ -5,21 +5,20 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.simpleGraph;
 
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.BasicObject;
-
 import java.util.Collection;
 import java.util.HashMap;
+
+import uk.ac.ebi.intact.model.BasicObject;
+import uk.ac.ebi.intact.model.Interactor;
 
 /**
  * A simple graph class for temporary processing, for example to prepare output for graph analysis packages.
  */
 public interface GraphI extends BasicGraphI {
 
-    public void addNode(NodeI aNode);
+    public void addNode(BasicGraphI aNode);
 
-    public Node addNode(Interactor anInteractor);
+    public BasicGraphI addNode(Interactor anInteractor);
 
     public void addEdge(EdgeI anEdge);
 

@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.model.Interactor;
  */
 public class Node extends BasicGraph implements NodeI {
 
-    public Interactor interactor;
+    private Interactor interactor;
 
     public Node (Interactor interactor) {
         this.interactor = interactor;
@@ -26,6 +26,10 @@ public class Node extends BasicGraph implements NodeI {
 
     public String getAc() {
         return interactor.getAc();
+    }
+    
+    public String getLabel() {
+        return interactor.getShortLabel();
     }
 
     public boolean equals(Object o) {
