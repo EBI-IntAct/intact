@@ -820,7 +820,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         DAOSource dao = DAOFactory.getDAOSource(myDSClass);
 
         // Construct the the helper.
-        myHelper = new IntactHelper(dao, myUserName, myPassword, IntactHelper.ODMG);
+        myHelper = new IntactHelper(dao, myUserName, myPassword);
 
         try {
             myDatabaseName = myHelper.getDbName();
@@ -838,7 +838,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Initialize the Protein factory.
         try {
-            myProteinFactory = new UpdateProteins(new IntactHelper(dao, myUserName, myPassword));
+            myProteinFactory = new UpdateProteins(myHelper);
         }
         catch (UpdateProteinsI.UpdateException e) {
             throw new IntactException("Unable to create the Protein factory");
@@ -874,11 +874,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     private void logoff(LockManager lm) throws IntactException {
         mySessionEndTime = Calendar.getInstance().getTime();
+        // Not an error, just a logging statemet to see values are unbound or not
+        getLogger().error("User: " + getUserName() + " at: " + mySessionEndTime);
         getLogger().info("User is logging off at: " + mySessionEndTime);
         // Release all the locks held by this user.
         lm.releaseAllLocks(getUserName());
         myHelper.closeStore();
-        myProteinFactory.closeStore();
+//        myProteinFactory.closeStore();
     }
 
     /**
