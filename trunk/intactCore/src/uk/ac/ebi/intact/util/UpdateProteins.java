@@ -1048,12 +1048,13 @@ public class UpdateProteins extends UpdateProteinsI {
         // check on aliases
         needUpdate = needUpdate || updateAliases( sptrEntry, protein );
 
+        // keep that protein
+        proteins.add(protein);
+
         if (needUpdate == true) {
             // update databse
             try {
                 helper.update (protein);
-                // keep that protein
-                proteins.add(protein);
 
                 if (debugOnScreen) System.out.print (" pU");
                 proteinUpdated++;
@@ -1337,12 +1338,13 @@ public class UpdateProteins extends UpdateProteinsI {
             }
         }
 
+        // keep that spliceVariant
+        proteins.add( spliceVariant );
+
         if (needUpdate == true) {
             // update databse
             try {
                 helper.update( spliceVariant );
-                // keep that spliceVariant
-                proteins.add( spliceVariant );
 
                 if (debugOnScreen) System.out.print (" svU");
                 spliceVariantUpdated++;
