@@ -7,4 +7,4 @@
     Version: $Id$
 --%>
 
-<logic:redirect forward="start"/>
+<logic:redirect forward="statistics"/>
