@@ -141,21 +141,6 @@ then
     exit 1
 fi
 
-echo ""
-echo "Insert CvInteraction"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteraction psi-mi data/controlledVocab/CvInteraction.def data/controlledVocab/CvInteraction.dag
-if [ $? != 0 ]
-then
-    exit 1
-fi
-
-echo ""
-echo "Insert CvInteractionType"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteractionType psi-mi data/controlledVocab/CvInteractionType.def data/controlledVocab/CvInteractionType.dag
-if [ $? != 0 ]
-then
-    exit 1
-fi
 
 echo ""
 echo "Insert CvFeatureType"
