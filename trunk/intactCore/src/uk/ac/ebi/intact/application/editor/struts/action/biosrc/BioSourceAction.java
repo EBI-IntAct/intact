@@ -18,7 +18,6 @@ import uk.ac.ebi.intact.util.NewtServerProxy;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -91,21 +90,9 @@ public class BioSourceAction extends SubmitFormAction {
         // already created the correct editor view bean.
         BioSourceViewBean bioview = (BioSourceViewBean) user.getView();
 
-        // The URL to access the Newt proxy.
-        URL url = getService().getNewtServerUrl();
-        // URL is null for an incorrect URL set for NewtProxy.
-        if (url == null) {
-            // Error in communcating with the server.
-            errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.newt.url"));
-            saveErrors(request, errors);
-            return mapping.findForward(FORWARD_FAILURE);
-        }
-
         // The response from the Newt server.
         NewtServerProxy.NewtResponse newtResponse =
-                getNewtResponse(user, url, taxid, request);
+                getNewtResponse(user, taxid, request);
 
         // Any errors?
         if (hasErrors(request)) {
@@ -195,14 +182,13 @@ public class BioSourceAction extends SubmitFormAction {
     }
 
     private NewtServerProxy.NewtResponse getNewtResponse(EditUserI user,
-                                                         URL url,
                                                          String taxid,
                                                          HttpServletRequest request) {
         // To report errors.
         ActionErrors errors;
 
         // Handler to the Newt server.
-        NewtServerProxy newtServer = user.getNewtProxy(url);
+        NewtServerProxy newtServer = user.getNewtProxy();
 
         // Query the server.
         NewtServerProxy.NewtResponse newtResponse = null;

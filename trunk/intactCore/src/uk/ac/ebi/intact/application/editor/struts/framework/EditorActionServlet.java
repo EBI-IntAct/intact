@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import java.net.MalformedURLException;
 import java.util.MissingResourceException;
 
 /**
@@ -49,10 +48,10 @@ public class EditorActionServlet extends ActionServlet {
             log(ExceptionUtils.getStackTrace(mite));
             throw new ServletException();
         }
-        catch (MalformedURLException murle) {
-            log(ExceptionUtils.getStackTrace(murle));
-            // Carry on as only the biosource editor is not available.
-        }
+//        catch (MalformedURLException murle) {
+//            log(ExceptionUtils.getStackTrace(murle));
+//            // Carry on as only the biosource editor is not available.
+//        }
         // Make them accessible for any servlets within the server.
         ctx.setAttribute(EditorConstants.EDITOR_SERVICE, service);
         ctx.setAttribute(EditorConstants.EDITOR_TOPICS, service.getIntactTypes());
