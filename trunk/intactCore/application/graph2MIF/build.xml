@@ -31,6 +31,9 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
+     <!-- The jdbc properties. -->
+    <property file="${intact.root}/config/jdbc.properties"/>
+
     <!-- The logging configuration -->
     <property file="${intact.root}/config/log4j.properties"/>
 
@@ -339,7 +342,7 @@
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
         <antcall target="build-war">
-            <param name="db" value="postgresql.jar"/>
+            <param name="db" value="${postgresql.jar}"/>
             <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
@@ -359,7 +362,7 @@
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
         <antcall target="build-war">
-            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+            <param name="db" value=" ${oracle.jar}"/>
             <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>

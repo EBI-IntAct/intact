@@ -2,7 +2,7 @@
 <!--
      ANT build configuration file for goDensity module.
      Author: Markus Brosch, markus@brosch.cc
-     Version: $Id: build.xml
+    Version: $Id$
 -->
 
 <project name="goDensity" basedir="." default="compile">
@@ -32,6 +32,9 @@
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
+
+     <!-- The jdbc properties. -->
+    <property file="${intact.root}/config/jdbc.properties"/>
 
     <property name="dist.dir" value="dist"/>
     <property name="war.file" value="goDensity.war"/>
@@ -266,7 +269,7 @@
     <target name="war-pg" if="postgres">
         <echo message="Building a war for postgres"/>
         <antcall target="build-war">
-            <param name="db" value="postgresql.jar"/>
+            <param name="db" value="${postgresql.jar}"/>
         </antcall>
     </target>
 
@@ -279,7 +282,7 @@
     <target name="war-oracle" if="oracle">
         <echo message="Building a war for oracle"/>
         <antcall target="build-war">
-            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+            <param name="db" value=" ${oracle.jar}"/>
         </antcall>
     </target>
 

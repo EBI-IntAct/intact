@@ -25,6 +25,9 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
+     <!-- The jdbc properties. -->
+    <property file="${intact.root}/config/jdbc.properties"/>
+
     <property name="dist.dir" value="dist"/>
 
     <!-- This project specific paths. -->
@@ -267,7 +270,7 @@
     <target name="cp-postgres" if="postgres">
         <!-- Load postgres properties. -->
         <antcall target="copy-lib">
-            <param name="db" value="postgresql.jar"/>
+            <param name="db" value="${postgresql.jar}"/>
         </antcall>
     </target>
 
@@ -281,7 +284,7 @@
     <target name="cp-oracle" description="copies driver for oracle" if="oracle">
         <!-- Load oracle properties. -->
         <antcall target="copy-lib">
-            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+            <param name="db" value=" ${oracle.jar}"/>
         </antcall>
     </target>
 

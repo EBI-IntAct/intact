@@ -20,6 +20,9 @@
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
+    
+     <!-- The jdbc properties. -->
+    <property file="${intact.root}/config/jdbc.properties"/>
 
     <!-- Intact application location. -->
     <property name="intact.app.dir" value=".."/>
