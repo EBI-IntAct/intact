@@ -7,15 +7,46 @@
 
 <project name="intact" basedir="." default="war">
 
-    <property name="project.title" value="intact"/>
+    <property name="project.title"   value="intact"/>
     <property name="project.version" value="1.0"/>
 
+    <property name="intact.root"  value="../.."/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+
     <property name="dist.dir" value="dist"/>
+    <property name="dest.dir" value="dest"/>
     <property name="war.file" value="intact.war"/>
 
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
     <property name="webapps.dir" value="${tomcat.home}/webapps"/>
+
+
+    <!-- Documentation related -->
+    <property name="xml.dir"    value="doc/xml"/>
+    <property name="xsl.dir"    value="doc/xsl"/>
+    <property name="css.dir"    value="doc/css"/>
+    <property name="html.dir"   value="doc/html"/>
+    <property name="images.dir" value="doc/images"/>
+    <property name="lib.dir"    value="doc/lib"/>
+
+    <property name="xml.documentation"   value="${xml.dir}/intact.xml"/>
+    <property name="xsl.tableOfContent"  value="${xsl.dir}/contents.xsl"/>
+    <property name="xsl.content"         value="${xsl.dir}/contentonly.xsl"/>
+    <property name="html.tableOfContent" value="${html.dir}/tableOfContent.html"/>
+    <property name="html.content"        value="${html.dir}/documentation.html"/>
+
+
+
+
+    <!-- Build working classpath -->
+    <path id="project.class.path">
+        <pathelement path="${root.lib.dir}/servlet.jar"/>
+
+        <!-- XSLT processor for the documentation -->
+        <pathelement path="${lib.dir}/xalan-2.5.D1.jar"/>
+    </path>
 
     <!-- =================================================================== -->
 
@@ -24,13 +55,30 @@
     <target name="clean" description="Prepare for clean build">
         <!-- Delete directories first -->
         <delete dir="${dist.dir}"/>
+        <delete dir="${html.dir}"/>
+        <delete dir="${dest.dir}"/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile" description="Compile the source tree and copy the configuration files">
+
+        <mkdir dir="${dest.dir}" />
+
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            includes="**/intact/util/DocumentationIntegrityChecker*"
+            debug="on">
+        </javac>
+
     </target>
 
     <!-- =================================================================== -->
 
     <!-- Builds a war file. -->
 
-    <target name="war" description="Builds a war file">
+    <target name="war" description="Builds a war file" depends="build-doc">
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}"/>
@@ -38,17 +86,81 @@
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
 
+        <!-- html.dir is created in the build-doc target -->
+        <copy file="${css.dir}/stylesheet.css" todir="${html.dir}" />
+
+        <copy todir="${html.dir}/images">
+            <fileset dir="${images.dir}"/>
+        </copy>
+
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${basedir}">
-                <include name="*.jsp"/>
                 <include name="*.jpg"/>
                 <include name="*.css"/>
                 <include name="*.xsl"/>
                 <include name="*.html"/>
-            </fileset>
 
+                <!-- doc related -->
+                <include name="*.jsp"/>
+                <include name="doc/html/**"/>
+            </fileset>
         </war>
+
     </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Check documentation integrity by verifying if a section name is used only once. -->
+
+    <target name="check-doc" depends="compile"
+            description="Check documentation integrity (section's name uniqueness)">
+
+        <echo message="Checking documentation integrity ..."/>
+
+        <java classname="uk.ac.ebi.intact.util.DocumentationIntegrityChecker"
+              fork="yes"
+              failonerror="true">
+            <arg line="${xml.documentation}"/>
+            <classpath>
+              <pathelement path="${dest.dir}"/>
+            </classpath>
+        </java>
+
+        <echo message="Documentation integrity check successfully done."/>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Build static pages for IntAct documentation. -->
+
+    <target name="build-doc" depends="check-doc"
+            description="Build static pages for IntAct documentation">
+
+        <mkdir dir="${html.dir}"/>
+
+        <echo message="Build the IntAct documentation static pages ... "/>
+
+        <echo message="Build table of content"/>
+        <java classname="org.apache.xalan.xslt.Process" fork="yes" failonerror="true">
+            <arg line="-IN  ${xml.documentation}"/>
+            <arg line="-XSL ${xsl.tableOfContent}"/>
+            <arg line="-OUT ${html.tableOfContent}"/>
+            <classpath refid="project.class.path"/>
+        </java>
+
+        <echo message="Build content"/>
+        <java classname="org.apache.xalan.xslt.Process" fork="yes" failonerror="true">
+            <arg line="-IN  ${xml.documentation}"/>
+            <arg line="-XSL ${xsl.content}"/>
+            <arg line="-OUT ${html.content}"/>
+            <classpath refid="project.class.path"/>
+        </java>
+
+        <echo message="Generation process finished"/>
+    </target>
+
+
 
     <!-- =================================================================== -->
 
