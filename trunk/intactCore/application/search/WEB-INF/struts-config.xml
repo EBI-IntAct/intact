@@ -25,6 +25,7 @@
         <form-bean name="sidebarForm"
                    type="org.apache.struts.action.DynaActionForm">
             <form-property name="searchString" initial="*" type="java.lang.String"/>
+            <form-property name="searchClass" type="java.lang.String"/>
         </form-bean>
 
         <!-- Search form bean -->
