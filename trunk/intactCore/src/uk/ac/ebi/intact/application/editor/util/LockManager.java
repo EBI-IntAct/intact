@@ -164,9 +164,21 @@ public class LockManager {
      * all other instances.
      */
     public synchronized boolean acquire(String id, String owner) {
-        if (hasLock(id)) {
-            return false;
+        // Get any existing lock.
+        LockObject lo = getLock(id);
+
+        // Have we already got the lock?
+        if (lo != null) {
+            if (lo.getOwner().equals(owner)) {
+                // The same user is trying the same lock; allow it.
+                return true;
+            }
+            else {
+                // Different user; don't allow it.
+                return false;
+            }
         }
+        // There is no lock associated with the id; create a new lock.
         myLocks.add(new LockObject(id, owner));
         return true;
     }
