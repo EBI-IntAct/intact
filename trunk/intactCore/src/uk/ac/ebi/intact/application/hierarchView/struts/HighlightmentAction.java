@@ -70,7 +70,7 @@ public final class HighlightmentAction extends Action {
 	  // get the class method name to create an instance
 	  String source = (String) session.getAttribute (Constants.ATTRIBUTE_METHOD_CLASS);
 
-	  // update the option (given in thise request) of the source in the session
+	  // update the option (given in this request) of the source in the session
 	  HighlightmentSource highlightmentSource = HighlightmentSource.getHighlightmentSource(source);
 	  if (null != highlightmentSource) {
 	    highlightmentSource.parseRequest (request, session);
