@@ -6,10 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
-import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.BioSourceViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.CvObjectViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.ProteinViewBean;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Protein;
