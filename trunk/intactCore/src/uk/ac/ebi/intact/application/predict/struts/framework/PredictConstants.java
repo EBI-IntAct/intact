@@ -25,4 +25,9 @@ public interface PredictConstants {
      * The key for the prediction results.
      */
     public static final String PREDICTION = "prediction";
+
+    /**
+     * The key to access the service handler.
+     */
+    public static final String SERVICE = "service";
 }
