@@ -14,6 +14,9 @@
     <property name="config.dir" value="config"/>
     <property name="template.dir" value="template"/>
 
+    <!-- Application directory -->
+    <property name="app.dir" value="application"/>
+
     <!-- Repository/OJB file properties -->
     <property name="rep.template.file" value="${template.dir}/repository.template"/>
     <property name="rep.dest.file" value="${config.dir}/repository.xml"/>
@@ -22,10 +25,11 @@
     <property name="ora.props.file" value="${config.dir}/oracle.properties"/>
 
     <!-- The non core files. -->
-    <property name="non.core.files" value="**/intact/application/**"/>
+    <property name="non.core.files" value="**/intact/${app.dir}/**"/>
 
     <!-- Where the distribution files are going to be (jar) -->
     <property name="dist.dir" value="dist"/>
+    <property name="intact.core.jar" value="intact-core.jar"/>
 
     <!-- To access the environment properties. -->
     <property environment="env"/>
@@ -46,25 +50,25 @@
         <path refid="project.class.path"/>
 
         <!-- Common jar files for applications -->
-        <fileset dir="application/lib">
+        <fileset dir="${app.dir}/lib">
             <include name="*.jar"/>
         </fileset>
 
         <!-- cvedit specific jar files. -->
-        <pathelement location="application/cvedit/WEB-INF/classes"/>
-        <fileset dir="application/cvedit/WEB-INF/lib">
+        <pathelement location="${app.dir}/cvedit/WEB-INF/classes"/>
+        <fileset dir="${app.dir}/cvedit/WEB-INF/lib">
             <include name="*.jar"/>
         </fileset>
 
         <!-- search specific jar files. -->
-        <pathelement location="application/search/WEB-INF/classes"/>
-        <fileset dir="application/search/WEB-INF/lib">
+        <pathelement location="${app.dir}/search/WEB-INF/classes"/>
+        <fileset dir="${app.dir}/search/WEB-INF/lib">
             <include name="*.jar"/>
         </fileset>
 
         <!-- hv specific jar files. -->
-        <pathelement location="application/hierarchView/WEB-INF/classes"/>
-        <fileset dir="application/hierarchView/WEB-INF/lib">
+        <pathelement location="${app.dir}/hierarchView/WEB-INF/classes"/>
+        <fileset dir="${app.dir}/hierarchView/WEB-INF/lib">
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -86,8 +90,39 @@
     <!-- Remove 'dest' and 'jdoc' directories for clean build. -->
     <target name="clean"
         description="Prepare for clean build; removes api docs and classes dirs">
+
+        <echo message="DEPRECATED; PLEASE USE clean-all or clean-core INSTEAD"/>
+
+        <!-- Delete the existing jar file. -->
+        <delete file="${dist.dir}/${intact.core.jar}" quiet="true"/>
+
         <delete dir="${dest.dir}"/>
         <delete dir="${jdoc.dir}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and 'jdoc' directories for clean build. -->
+    <target name="clean-core"
+        description="Removes api docs and classes dirs for core">
+        <!-- Delete the existing jar file. -->
+        <delete file="${dist.dir}/${intact.core.jar}" quiet="true"/>
+
+        <delete dir="${dest.dir}"/>
+        <delete dir="${jdoc.dir}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and 'jdoc' directories for clean build. -->
+    <target name="clean-all"
+        description="Removes api docs and classes dirs for core and applications">
+        <!-- Delete the existing jar file. -->
+        <delete file="${dist.dir}/${intact.core.jar}" quiet="true"/>
+
+        <antcall target="clean-cvedit"/>
+        <antcall target="clean-search"/>
+        <antcall target="clean-hv"/>
     </target>
 
     <!-- =================================================================== -->
@@ -95,7 +130,15 @@
     <!-- Remove 'dest' and docs directories of cvedit module for clean build -->
     <target name="clean-cvedit"
         description="Prepare cvedit module for a clean build">
-        <ant dir="application/cvedit" inheritAll="false" target="clean"/>
+        <ant dir="${app.dir}/cvedit" inheritAll="false" target="clean" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories of search module for clean build -->
+    <target name="clean-search"
+        description="Prepare search module for a clean build">
+        <ant dir="${app.dir}/search" inheritAll="false" target="clean" />
     </target>
 
     <!-- =================================================================== -->
@@ -105,7 +148,7 @@
     -->
     <target name="clean-hv"
         description="Prepare hierarchView module for a clean build">
-        <ant dir="application/hierarchView" inheritAll="false" target="clean"/>
+        <ant dir="${app.dir}/hierarchView" inheritAll="false" target="clean" />
     </target>
 
     <!-- =================================================================== -->
@@ -114,7 +157,7 @@
     <target name="copySynchronMappings">
         <echo message="This target to be moved to synchron package - avoid using it"/>
 
-        <copy todir="${dest.dir}/uk/ac/ebi/intact/application/synchron" >
+        <copy todir="${dest.dir}/uk/ac/ebi/intact/${app.dir}/synchron" >
             <fileset dir="${config.dir}" >
                 <include name="**/*.xml"/>
             </fileset>
@@ -244,9 +287,9 @@
         <mkdir dir="${dist.dir}" />
 
         <!-- Delete the existing jar file. -->
-        <delete file="${dist.dir}/intact-core.jar" quiet="true"/>
+        <delete file="${dist.dir}/${intact.core.jar}" quiet="true"/>
 
-        <jar destfile="${dist.dir}/intact-core.jar" basedir="${basedir}/${dest.dir}" />
+        <jar destfile="${dist.dir}/${intact.core.jar}" basedir="${basedir}/${dest.dir}" />
     </target>
 
     <!-- =================================================================== -->
@@ -288,7 +331,7 @@
     <!-- Compiles the hierarchView module. -->
     <target name="compile-hv"  depends="compile-core"
         description="Compiles the hierarchView module">
-        <ant dir="application/hierarchView" inheritAll="false" target="compile"/>
+        <ant dir="${app.dir}/hierarchView" inheritAll="false" target="compile"/>
     </target>
 
     <!-- =================================================================== -->
@@ -297,7 +340,7 @@
     <target name="compile-cvedit" depends="compile-core"
         description="Compiles the cvedit module">
 
-        <ant dir="application/cvedit" inheritAll="false" target="compile"/>
+        <ant dir="${app.dir}/cvedit" inheritAll="false" target="compile"/>
     </target>
 
     <!-- =================================================================== -->
@@ -305,7 +348,7 @@
     <target name="compile-synchron" depends="compile-core"
         description="Compiles the synchron module">
 
-        <ant dir="application/synchron" inheritAll="false" target="compile"/>
+        <ant dir="${app.dir}/synchron" inheritAll="false" target="compile"/>
     </target>
 
     <!-- =================================================================== -->
@@ -314,7 +357,7 @@
     <target name="compile-search" depends="compile-core"
         description="Compiles the search module">
 
-        <ant dir="application/search" inheritAll="false" target="compile"/>
+        <ant dir="${app.dir}/search" inheritAll="false" target="compile"/>
     </target>
 
     <!-- =================================================================== -->
