@@ -247,7 +247,16 @@ public class HtmlBuilder {
 
         // Annotation description
         write("<td colspan=3>");
-        write(anAnnotation.getAnnotationText());
+
+        if(label.equals("negative")) {
+            //negative info needs highlighting...
+            write("<font color=red>");
+            write(anAnnotation.getAnnotationText());
+            write("</font>");
+        }
+        else {
+            write(anAnnotation.getAnnotationText());
+        }
         write("</td>");
 
         write("</tr>\n");
