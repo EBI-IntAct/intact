@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.BusinessConstants;
@@ -497,14 +496,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Wrap as ResultsBeans for tag library to display.
         for (Iterator iter = results.iterator(); iter.hasNext();) {
-            mySearchCache.add(new ResultBean((AnnotatedObject) iter.next()));
+            mySearchCache.add(iter.next());
         }
     }
 
-    public void updateSearchCache(ResultBean rb) {
+    public void updateSearchCache(AnnotatedObject annotobj) {
         // Clear previous results.
         mySearchCache.clear();
-        mySearchCache.add(rb);
+        mySearchCache.add(annotobj);
     }
 
     public Collection lookup(String className, String value) throws SearchException {

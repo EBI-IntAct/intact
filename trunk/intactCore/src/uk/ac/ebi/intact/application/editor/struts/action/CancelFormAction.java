@@ -11,7 +11,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -72,7 +71,7 @@ public class CancelFormAction extends AbstractEditorAction {
         // Update the search cache to display the current object.
         AnnotatedObject annobj = user.getView().getAnnotatedObject();
         if (annobj != null) {
-            user.updateSearchCache(new ResultBean(annobj));
+            user.updateSearchCache(annobj);
         }
         return forward;
     }

@@ -20,7 +20,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 
@@ -267,8 +266,7 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         // Update the search cache with the experiment, so the Cancel from the
         // experiment will correctly return to the result page with single
         // experiment (or else it will display the last edited Interaction).
-        ResultBean rb = new ResultBean(annobj);
-        user.updateSearchCache(rb);
+        user.updateSearchCache(annobj);
     }
 
     // Helper Methods

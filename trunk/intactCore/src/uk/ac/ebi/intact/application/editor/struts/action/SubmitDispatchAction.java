@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
@@ -265,8 +264,7 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         }
         if (submit) {
             // Update the search cache.
-            ResultBean rb = new ResultBean(view.getAnnotatedObject());
-            user.updateSearchCache(rb);
+            user.updateSearchCache(view.getAnnotatedObject());
 
             // Add the current edited object to the recent list.
             view.addToRecentList(user);
