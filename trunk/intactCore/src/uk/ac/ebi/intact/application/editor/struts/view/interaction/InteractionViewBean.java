@@ -152,8 +152,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 exps.add(((ExperimentBean) iter.next()).getExperiment());
             }
             // Not persisted. Create a new Interaction.
-            intact = new Interaction(exps, new ArrayList(),
-                    type, getShortLabel(), user.getInstitution());
+            intact = new InteractionImpl(exps, new ArrayList(),
+                                         type, getShortLabel(), user.getInstitution());
             // Set this interaction as the annotated object.
             setAnnotatedObject(intact);
         }
