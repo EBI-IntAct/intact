@@ -79,7 +79,7 @@ public class GoHighlightmentSource
    * @param aProteinAC : a protein identifier (AC)
    * @return a set of keys (this keys are a String)
    */
-  public Collection getKeysFromIntAct (String aProteinAC) throws Exception {
+  public Collection getKeysFromIntAct (String aProteinAC) {
 
     Collection result;
     Iterator iterator;
@@ -87,37 +87,43 @@ public class GoHighlightmentSource
     Collection listGOTerm = new ArrayList();
     String goTerm;
     
-    dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
-
-    // set the config details, ie repository file for OJB in this case
-    Map config = new HashMap();
-    /*
-     *  TO BE STORED LATER IN A PROPERTY FILE !!!!!
-     */
-    config.put("mappingfile", "config/repository.xml");
-    dataSource.setConfig(config);
-    
-    IntactHelper ih = new IntactHelper(dataSource);
-    result = ih.search ("uk.ac.ebi.intact.model.Protein","ac", aProteinAC);
-    
-    // recup object
-    if (result.isEmpty()) return null;
-  
-    iterator = result.iterator();
-    uk.ac.ebi.intact.model.Interactor interactor = (uk.ac.ebi.intact.model.Interactor) iterator.next();
-    
-    // get Xref collection
-    Collection xRef = interactor.getXref();
-    Iterator xRefIterator = xRef.iterator() ;
-    int cptXRef = 0;
-    
-    while (xRefIterator.hasNext() ) {
-      Xref xref = (Xref) xRefIterator.next();
+    try {
+      dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
       
-      if (((String) xref.getCvDatabase().getShortLabel()).equals("GO"))
-	listGOTerm.add((String) xref.getPrimaryId());            
+      // set the config details, ie repository file for OJB in this case
+      Map config = new HashMap();
+      /*
+       *  TO BE STORED LATER IN A PROPERTY FILE !!!!!
+       */
+      config.put("mappingfile", "config/repository.xml");
+      dataSource.setConfig(config);
+      
+      IntactHelper ih = new IntactHelper(dataSource);
+      result = ih.search ("uk.ac.ebi.intact.model.Protein","ac", aProteinAC);
+      
+      // recup object
+      if (result.isEmpty()) return null;
+      
+      iterator = result.iterator();
+      uk.ac.ebi.intact.model.Interactor interactor = (uk.ac.ebi.intact.model.Interactor) iterator.next();
+    
+      // get Xref collection
+      Collection xRef = interactor.getXref();
+      Iterator xRefIterator = xRef.iterator() ;
+      int cptXRef = 0;
+      
+      while (xRefIterator.hasNext() ) {
+	Xref xref = (Xref) xRefIterator.next();
+	
+	if (((String) xref.getCvDatabase().getShortLabel()).equals("GO"))
+	  listGOTerm.add((String) xref.getPrimaryId());            
+      }
     }
-
+    catch (Exception e) {
+    return null;}
+     
+    
+    
     return listGOTerm;	
     
   } // getKeysFromIntAct
@@ -133,7 +139,7 @@ public class GoHighlightmentSource
    * @param aGraph the graph we want to highlight
    * @return a set of node to highlight
    */
-  public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) throws Exception{
+  public Collection proteinToHightlight (HttpSession aSession, InteractionNetwork aGraph) {
     Collection nodeList = new Vector ();
     String keys         = (String)  aSession.getAttribute (Constants.ATTRIBUTE_KEYS);
 
@@ -203,7 +209,7 @@ public class GoHighlightmentSource
    * @param aProteinAC : a protein identifier (AC)
    * @return a set of URL pointing on the highlightment source
    */
-  public Collection getUrl (String aProteinAC) throws Exception{
+  public Collection getUrl (String aProteinAC) {
     Collection urls = new Vector();
     
     // Search in Intact data Base all Go term for the AC accession number 
@@ -213,7 +219,7 @@ public class GoHighlightmentSource
     
     Collection listGOTerm = this.getKeysFromIntAct(aProteinAC);
     
-    if (listGOTerm !=null && !listGOTerm.isEmpty())
+    if (listGOTerm != null && !listGOTerm.isEmpty())
       {
 	Iterator list = listGOTerm.iterator();
 	while (list.hasNext())
