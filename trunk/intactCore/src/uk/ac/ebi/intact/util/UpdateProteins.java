@@ -600,11 +600,15 @@ public class UpdateProteins extends UpdateProteinsI {
                         // doesn't found so create a new one
                         logger.info ("No existing protein for that taxid, create a new one");
 
-                        helper.startTransaction( BusinessConstants.OBJECT_TX );
+                        if (localTransactionControl){
+                            helper.startTransaction( BusinessConstants.OBJECT_TX );
+                        }
                         if (createNewProtein (sptrEntry, bioSource)) {
                             logger.info ("creation sucessfully done");
                         }
-                        helper.finishTransaction();
+                        if (localTransactionControl){
+                                helper.finishTransaction();
+                        }
                         logger.info ("Transaction conplete");
                     } else {
                         if (update) {
@@ -614,12 +618,16 @@ public class UpdateProteins extends UpdateProteinsI {
                              */
                             logger.info ("A protein exists for that taxid, try to update");
 
-                            helper.startTransaction( BusinessConstants.OBJECT_TX );
+                           if (localTransactionControl){
+                              helper.startTransaction( BusinessConstants.OBJECT_TX );
+                            }
                             if (updateExistingProtein (protein, sptrEntry, bioSource)) {
                                 logger.info ("update sucessfully done");
                             }
-                            helper.finishTransaction();
-                            logger.info ("Transaction conplete");
+                            if (localTransactionControl) {
+                                helper.finishTransaction();
+                                logger.info ("Transaction conplete");
+                            }
                         }
                     }
 
@@ -966,6 +974,10 @@ public class UpdateProteins extends UpdateProteinsI {
         // Search for the protein or create it
         Collection newProteins = helper.getObjectsByXref(Protein.class, anAc);
 
+        if (localTransactionControl){
+            helper.startTransaction(BusinessConstants.OBJECT_TX);
+        }
+
         // Get or create valid biosource from taxid
         BioSource validBioSource = getValidBioSource(aTaxId);
 
@@ -1007,6 +1019,10 @@ public class UpdateProteins extends UpdateProteinsI {
                 targetProtein.addXref(newXref);
                 helper.create(newXref);
             }
+        }
+
+        if (localTransactionControl){
+            helper.finishTransaction();
         }
 
         return targetProtein;
@@ -1313,6 +1329,30 @@ public class UpdateProteins extends UpdateProteinsI {
         return newBioSource;
     }
 
+    /**
+     * If true, each protein is updated in a distinct transaction.
+     * If localTransactionControl is false, no local transactions are initiated,
+     * control is left with the calling class.
+     * This can be used e.g. to have transctions span the insertion of all
+     * proteins of an entire complex.
+     * @return current value of localTransactionControl
+     */
+    public boolean isLocalTransactionControl() {
+        return localTransactionControl;
+    }
+
+    /**
+     * If true, each protein is updated in a distinct transaction.
+     * If localTransactionControl is false, no local transactions are initiated,
+     * control is left with the calling class.
+     * This can be used e.g. to have transctions span the insertion of all
+     * proteins of an entire complex.
+     * @param aLocalTransactionControl New value for localTransactionControl
+     */
+    public void setLocalTransactionControl(boolean aLocalTransactionControl) {
+        localTransactionControl = aLocalTransactionControl;
+    }
+
 
     /**
      *  D E M O
@@ -1369,4 +1409,5 @@ public class UpdateProteins extends UpdateProteinsI {
             if (helper != null) helper.closeStore();
         }
     }
+
 }

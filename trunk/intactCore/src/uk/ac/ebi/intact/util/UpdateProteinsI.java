@@ -72,6 +72,16 @@ public abstract class UpdateProteinsI {
     protected IntactHelper helper = null;
 
     /**
+     * If true, each protein is updated in a distinct transaction.
+     * If localTransactionControl is false, no local transactions are initiated,
+     * control is left with the calling class.
+     * This can be used e.g. to have transctions span the insertion of all
+     * proteins of an entire complex.
+     * Default is true.
+     */
+    protected static boolean localTransactionControl = true;
+
+    /**
      *
      * @param helper IntactHelper object to access (read/write) the database.
      * @param cacheSize the number of valid biosource to cache during the update process.
@@ -309,5 +319,25 @@ public abstract class UpdateProteinsI {
      * @return a valid, persistent BioSource
      */
     public abstract BioSource getValidBioSource (String aTaxId) throws IntactException;
+
+    /**
+     * If true, each protein is updated in a distinct transaction.
+     * If localTransactionControl is false, no local transactions are initiated,
+     * control is left with the calling class.
+     * This can be used e.g. to have transctions span the insertion of all
+     * proteins of an entire complex.
+     * @return current value of localTransactionControl
+     */
+    public abstract boolean isLocalTransactionControl();
+
+    /**
+     * If true, each protein is updated in a distinct transaction.
+     * If localTransactionControl is false, no local transactions are initiated,
+     * control is left with the calling class.
+     * This can be used e.g. to have transctions span the insertion of all
+     * proteins of an entire complex.
+     * @param localTransactionControl New value for localTransactionControl
+     */
+    public abstract void setLocalTransactionControl(boolean localTransactionControl);
 
 }
