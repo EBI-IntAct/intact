@@ -29,12 +29,17 @@ In the following part, I will consider that :
 
 
 
-(1) Compile the intactCore
-    ----------------------
-    go in the intactCore directory (root of the project) and run 'ant compile-all'.
+PART 0 : PREPARE THE INTACTCORE
+-------------------------------
+
+cf. README file in the intactCore root directory.
 
 
-(2) Install the tulip console
+
+PART 1 : INSTALL THE TULIP WEB SERVICE
+---------------------------------------
+
+(1) Install the tulip console (software allowing to interact with the Tulip library)
     -------------------------
     - in the 'tulip' directory, you will find the 'tulipRemote-scr.tar.gz' archive.
     - Uncompress it.
@@ -44,59 +49,59 @@ In the following part, I will consider that :
     - run it (./configure) to create the 'Makefile'.
     - run it (make)
     - You obtain 'console' binary file you have now to copy in a location of your
-      choice. That file will be used by the web service to accessed the Tulip
-      library.
+      choice (on the machine which will run the web service).
+
+(2) Configure the Tulip web service
+    -------------------------------
+    - edit the 'WEB-INF/config/WebService.properties' file.
+    - customize :
+        * webService.adress             : with the url of your tulip web service
+        * webService.console.location   : with the absolute path to the console you have compiled in step 1.
+        * webService.tlpRepository.path : with the path of a writable directory (default /tmp).
+
+(3) Build the web service archive
+    -----------------------------
+    type 'ant make-ws'
+    it creates an archive called tulipWebService.tar.gz in the 'dist' directory.
+
+(4) Install the web service
+    ------------------------
+    - copy that archive to your server
+    - decompress it (tar zxvf tulipWebService.tar.gz)
+    - enter the freshly created directory 'ws' and read the README file to know how
+      to install and manage the web service.
 
 
-(3) Configure and deploy the Tulip web service
+
+PART 2 : INSTALL THE WEB APPLICATION
+------------------------------------
+
+(1) Configure how to access the web service
     ------------------------------------------
     - edit the 'WEB-INF/config/WebService.properties' file.
     - customize :
-        * 'webService.adress' with the url of your Axis installation.
-        * 'webService.console.location' with the absolute path to the console you
-          have compiled.
+        * webService.adress : with the url of your tulip web service
 
-
-(4) set your Linux X11 system
-    -------------------------
-    Before to start tomcat, you have to start a new X server to allow
-    hierarchView to access the display layer of the current system.
-    In the terminal you want to start Tomcat, you have to do the following tasks :
-
-	    Xvfb :2.0 &        (or an other port if it's already in use)
-	    setenv DIPLAY :2.0 (to point on the new X server)
-	    echo $DISPLAY      (just to check)
-
-
-(5) Configure the Highlighting
+(2) Configure the Highlighting
     --------------------------
-
     - edit the 'WEB-INF/config/Highlighting.properties' file.
     - customize :
         * 'highlightment.source.GO.hostname' with the hostname of the interpro web server.
 
-
-(6) Build the application war file
+(3) Build the application war file
     ------------------------------
     run 'ant undeploy war deploy', will clean Tomcat and install the web application.
 
-
-(7) Start Tomcat
+(4) Start Tomcat
     ------------
     run 'ant start-tomcat'
 
-
-(8) Test the web service (OPTIONAL)
+(5) Test the web service (OPTIONAL)
     -------------------------------
-    run 'ant start-ws', to start the tulip web service.
-    You don't need to do that step to use hierarchView.
-    By running 'ant test-ws', you should get the sended TLP
-    content and the returned list of protein's coordinates.
+    By running 'ant test-ws', you send a dummy TLP file to the web service and get back a
+    list of protein's coordinates. Those coordinates are computed by Tulip.
 
-
-(9) Try the web application
+(6) Try the web application
     -----------------------
     let's open a browser and go to http://[TOMCAT_HOSTNAME]/hierarchView
-
-
 
