@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 
 import org.apache.struts.action.*;
 
@@ -51,8 +50,8 @@ public class ProteinEditAction extends AbstractEditorAction {
         EditForm theForm = (EditForm) form;
 
         // The current view of the edit session.
-        EditUserI user = super.getIntactUser(request);
-        InteractionViewBean viewbean = (InteractionViewBean) user.getView();
+        InteractionViewBean viewbean =
+                (InteractionViewBean) getIntactUser(request).getView();
 
         // The bean associated with the current action.
         int index = theForm.getIndex();
@@ -66,14 +65,19 @@ public class ProteinEditAction extends AbstractEditorAction {
             pb.setEditState(EditBean.SAVE);
         }
         else if (theForm.savePressed()) {
-            // The protein to update.
-            viewbean.addProteinToUpdate(pb);
-            // Back to the view mode.
-            pb.setEditState(EditBean.VIEW);
+            if (viewbean.hasDuplicates(pb)) {
+                pb.setEditState(ProteinBean.ERROR);
+            }
+            else {
+                // The protein to update.
+                viewbean.addProteinToUpdate(pb);
+                // Back to the view mode.
+                pb.setEditState(EditBean.VIEW);
+            }
         }
         else if (theForm.deletePressed()) {
             // Delete is pressed.
-            viewbean.delProtein(pb);
+            viewbean.delProtein(pb, index);
         }
         else {
             // Unknown operation; should never get here.

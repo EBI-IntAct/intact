@@ -22,42 +22,52 @@ public class ExperimentBean extends EditBean implements Serializable {
     // Instance Data
 
     /**
+     * Reference to the object this instance is created with.
+     */
+    private Experiment myExperiment;
+
+    /**
      * The AC.
      */
-    private String myAc;
+//    private String myAc;
 
     /**
      * The short label.
      */
-    private String myShortLabel;
+//    private String myShortLabel;
 
     /**
      * The full name of the Protein.
      */
-    private String myFullName;
+//    private String myFullName;
 
     /**
      * Instantiate an object of this class from a Experiment instance.
      * @param experiment the <code>Experiment</code> object.
      */
     public ExperimentBean(Experiment experiment) {
-        myAc = experiment.getAc();
-        myShortLabel = experiment.getShortLabel();
-        myFullName = experiment.getFullName();
+        myExperiment = experiment;
+//        myAc = experiment.getAc();
+//        myShortLabel = experiment.getShortLabel();
+//        myFullName = experiment.getFullName();
     }
 
     // Read only properties.
 
+    public Experiment getExperiment() {
+        return myExperiment;
+    }
+
     public String getAc() {
-        return myAc;
+        return myExperiment.getAc();//myAc;
     }
 
     public String getShortLabel() {
-        return myShortLabel;
+        return myExperiment.getShortLabel();//myShortLabel;
     }
 
     public String getFullName() {
-        return myFullName;
+        return myExperiment.getFullName();//myFullName;
     }
 
     /**
@@ -65,7 +75,7 @@ public class ExperimentBean extends EditBean implements Serializable {
      * @return the topic as a browsable link.
      */
     public String getShortLabelLink() {
-        return getLink("Experiment", myShortLabel);
+        return getLink("Experiment", myExperiment.getShortLabel());
     }
 
     // Override Objects's equal method.
@@ -83,7 +93,9 @@ public class ExperimentBean extends EditBean implements Serializable {
         }
         if ((obj != null) && (getClass() == obj.getClass())) {
             // Can safely cast it.
-            return myShortLabel == ((ExperimentBean) obj).myShortLabel;
+            ExperimentBean other = (ExperimentBean) obj;
+            return myExperiment.getShortLabel().equals(
+                    other.myExperiment.getShortLabel());
         }
         return false;
     }

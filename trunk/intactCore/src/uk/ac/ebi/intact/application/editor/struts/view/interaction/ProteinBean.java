@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SearchException;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -29,7 +31,17 @@ public class ProteinBean extends EditBean implements Serializable {
      */
     public static final String SAVE_NEW = "saveNew";
 
+    /**
+     * Identifier for an error bean.
+     */
+    public static final String ERROR = "error";
+
     // Instance Data
+
+    /**
+     * The object this instance is created with.
+     */
+    private Component myComponent;
 
     /**
      * The AC.
@@ -59,7 +71,7 @@ public class ProteinBean extends EditBean implements Serializable {
     /**
      * The stoichiometry.
      */
-    private float myStoichiometry;
+    private float myStoichiometry = 1.0f;
 
     /**
      * The organism. Empty if there is no biosource. This is necessary to
@@ -72,6 +84,9 @@ public class ProteinBean extends EditBean implements Serializable {
      * @param protein the <code>Protein</code> object.
      */
     public ProteinBean(Protein protein) {
+        myComponent = new Component();
+        myComponent.setOwner(protein.getOwner());
+        myComponent.setInteractor(protein);
         myAc = protein.getAc();
         myShortLabel = protein.getShortLabel();
         mySPAc = getSPAc(protein);
@@ -85,6 +100,7 @@ public class ProteinBean extends EditBean implements Serializable {
      * @param component the <code>Component</code> object.
      */
     public ProteinBean(Component component) {
+        myComponent = component;
         Interactor interact = component.getInteractor();
         myAc = interact.getAc();
         myShortLabel = interact.getShortLabel();
@@ -97,12 +113,33 @@ public class ProteinBean extends EditBean implements Serializable {
 
     // Read only properties.
 
+    public Component getComponent() {
+        return myComponent;
+    }
+
+    public Component getComponent(EditUserI user) throws SearchException {
+        CvComponentRole newrole = getRole(user);
+        if (newrole != null) {
+            myComponent.setCvComponentRole(newrole);
+        }
+        myComponent.setStoichiometry(getStoichiometry());
+        BioSource neworg = getOrganism(user);
+        if (neworg != null) {
+            myComponent.getInteractor().setBioSource(neworg);
+        }
+        return myComponent;
+    }
+
     public String getAc() {
         return myAc;
     }
 
     public String getShortLabel() {
         return myShortLabel;
+    }
+
+    public String getShortLabelLink() {
+        return getLink("Protein", myShortLabel);
     }
 
     public String getSpAc() {
@@ -139,6 +176,28 @@ public class ProteinBean extends EditBean implements Serializable {
         myOrganism = organism;
     }
 
+    // Override Objects's equal method.
+
+    /**
+     * Compares <code>obj</code> with this object according to
+     * Java's equals() contract. Only returns <tt>true</tt> if the short labels
+     * for both objects match.
+     * @param obj the object to compare.
+     */
+    public boolean equals(Object obj) {
+        // Identical to this?
+        if (obj == this) {
+            return true;
+        }
+        if ((obj != null) && (getClass() == obj.getClass())) {
+            // Can safely cast it.
+            ProteinBean other = (ProteinBean) obj;
+            return this.myShortLabel.equals(other.myShortLabel)
+                    && this.myRole.equals(other.myRole);
+        }
+        return false;
+    }
+
     // Helper methods
 
     private void setOrganism(Interactor interact) {
@@ -157,5 +216,20 @@ public class ProteinBean extends EditBean implements Serializable {
             }
         }
         return "";
+    }
+
+    private CvComponentRole getRole(EditUserI user) throws SearchException  {
+        if (myRole != null) {
+            return (CvComponentRole) user.getObjectByLabel(
+                    CvComponentRole.class, myRole);
+        }
+        return null;
+    }
+
+    private BioSource getOrganism(EditUserI user) throws SearchException  {
+        if (myOrganism != null) {
+            return (BioSource) user.getObjectByLabel(BioSource.class, myOrganism);
+        }
+        return null;
     }
 }
