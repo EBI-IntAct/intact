@@ -14,7 +14,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.ImageDimension;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.simpleGraph.EdgeI;
 

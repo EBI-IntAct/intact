@@ -15,6 +15,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.graph;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.image.Utilities;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ImageDimension;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
 import uk.ac.ebi.intact.model.Interactor;
