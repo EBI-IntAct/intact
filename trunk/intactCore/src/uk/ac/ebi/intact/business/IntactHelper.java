@@ -1474,8 +1474,11 @@ public class IntactHelper implements SearchI, Serializable {
 
         System.out.println("subGraph called: " + startNode.getAc() + " Depth: " + graphDepth);
 
-        graph = subGraphPartial(startNode, graphDepth, experiments, complexExpansion, graph);
-
+       if (startNode instanceof Interaction) {
+            graph = subGraphPartial((Interaction) startNode, graphDepth, experiments, complexExpansion, graph);
+        } else if (startNode instanceof Interactor) {
+            graph = subGraphPartial(startNode, graphDepth, experiments, complexExpansion, graph);
+        }
         return graph;
 
     };
