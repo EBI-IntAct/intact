@@ -19,9 +19,8 @@ import java.util.Iterator;
  */
 
 /**
- * This class provides JSP view information for a particular AnnotatedObject. Its main purpose is to
- * provide very simple beans for display in an initial search result page. Currenty the types that
- * may be displayed with this bean are
+ * This class provides JSP view information for a particular Xref. It is used in the CvObject View and
+ * in the BioSource View.
  */
 public class XrefViewBean {
 
@@ -29,11 +28,7 @@ public class XrefViewBean {
     private String helpLink;
     private String searchURL;
 
-    /**
-     * @param obj
-     * @param link
-     * @param searchURL
-     */
+
     public XrefViewBean(final Xref obj, final String link, final String searchURL) {
 
 
@@ -68,9 +63,9 @@ public class XrefViewBean {
 
 
     /**
-     * Provides direct access to the wrapped AnnotatedObject itself.
+     * Provides direct access to the wrapped Xref itself.
      *
-     * @return AnnotatedObject The reference to the wrapped object.
+     * @return Xref The reference to the wrapped object.
      */
     public Xref getObject() {
         return this.obj;
@@ -78,7 +73,7 @@ public class XrefViewBean {
 
 
     /**
-     * @return the SearchUrl to the given AnnotatadObject
+     * @return the SearchUrl to the given Xref Object
      */
     public String getSearchUrl() {
         String searchUrl = null;
@@ -103,43 +98,20 @@ public class XrefViewBean {
         return "-";
     }
 
-    /**
-     * @return
-     */
+
     public String getName() {
         return this.obj.getCvDatabase().getShortLabel();
     }
 
-    /**
-     * @return
-     */
+
     public String getXrefQualifierName() {
         if (null != this.obj.getCvXrefQualifier()) {
             return this.obj.getCvXrefQualifier().getShortLabel();
         } else
             return "-";
     }
+  
 
-    /**
-     * @return
-     */
-    public String getXrefQualifierURL() {
-
-        return null;
-
-    }
-
-    /**
-     * @return
-     */
-    public XrefViewBean getcvrefType() {
-        return null;
-
-    }
-
-    /**
-     * @return
-     */
     public String getPrimaryId() {
 
         if (null != this.obj.getPrimaryId()) {
@@ -151,9 +123,6 @@ public class XrefViewBean {
 
     }
 
-    /**
-     * @return
-     */
     public String getPrimaryIdSearchUrl() {
 
         if (null != this.obj.getPrimaryId()) {
@@ -166,9 +135,6 @@ public class XrefViewBean {
 
     }
 
-    /**
-     * @return
-     */
     public String getSecondaryId() {
 
         if (null != this.obj.getSecondaryId()) {
@@ -180,13 +146,9 @@ public class XrefViewBean {
 
     }
 
-    /**
-     * @return
-     */
     public String getSecondaryIdSearchUrl() {
 
         if (null != this.obj.getSecondaryId()) {
-
             //TODO
             return null;
 
@@ -196,20 +158,12 @@ public class XrefViewBean {
 
     }
 
-    /**
-     * @return
-     */
     public String getType() {
-
         return "Type:";
 
     }
 
-    /**
-     * @return
-     */
     public String getTypeUrl() {
-
         return this.helpLink + "Xref.cvrefType";
 
     }
