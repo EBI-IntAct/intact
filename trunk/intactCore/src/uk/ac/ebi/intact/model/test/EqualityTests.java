@@ -114,13 +114,13 @@ public class EqualityTests extends TestCase {
         exps.add(exp1); //Interaction needs at least one Experiment
         int1 = new Interaction(exps, comps,
                 new CvInteractionType(inst1, "interaction type"),
-                "interaction1", bio1, inst1);
+                "interaction1", inst1);
         int2 = new Interaction(exps, comps,
                 new CvInteractionType(inst1, "interaction type"),
-                "interaction1", bio1, inst1);
+                "interaction1", inst1);
         int3 = new Interaction(exps, comps,
                 new CvInteractionType(inst1, "interaction type"),
-                "interaction1", bio1, inst1);
+                "interaction1", inst1);
 
         Component comp1 = new Component(inst1, int1, prot1,
                 new CvComponentRole(inst1, "bait"));   //Components should not exist without an Interaction
