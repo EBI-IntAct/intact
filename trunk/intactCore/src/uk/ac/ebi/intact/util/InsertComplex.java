@@ -512,7 +512,7 @@ public class InsertComplex {
      * proteins.
      * @throws Exception for any errors.
      */
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
         /* Usage: InsertComplex -file <filename>
          *                      -taxid <biosource.taxid>
@@ -584,6 +584,9 @@ public class InsertComplex {
             displayUsage(options);
 
             System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
+            System.exit( 1 );
+        } catch (Exception e) {
+            e.printStackTrace();
             System.exit( 1 );
         }
     }

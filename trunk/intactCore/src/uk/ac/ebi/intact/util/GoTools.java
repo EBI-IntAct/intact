@@ -458,14 +458,16 @@ public class GoTools {
         try {
             // Check parameters
             if ((args.length < 3) || (args.length > 4)) {
-                throw new IntactException("Invalid number of arguments.\n" + usage);
+                System.out.println ( "Invalid number of arguments.\n" + usage );
+                System.exit( 1 );
             }
 
             try {
                 targetClass = Class.forName(args[1]);
             }
             catch (ClassNotFoundException e) {
-                throw new IntactException("Class " + args[1] + " not found.\n" + usage);
+                System.out.println ( "Class " + args[1] + " not found.\n" + usage );
+                System.exit( 1 );
             }
 
 
@@ -481,7 +483,6 @@ public class GoTools {
                 if (args.length == 4) {
                     insertGoDag(targetClass, helper, args[3]);
                 }
-                ;
 
             }
             else if (args[0].equals("download")) {
@@ -498,9 +499,10 @@ public class GoTools {
                 }
 
             }
-            else
-                throw new IntactException("Invalid argument " + args[0] + "\n" + usage);
-
+            else {
+                System.out.println ( "Invalid argument " + args[0] + "\n" + usage );
+                System.exit( 1 );
+            }
         }
         catch (IntactException e) {
             System.err.println(e.getMessage());
