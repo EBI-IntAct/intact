@@ -38,6 +38,10 @@ public class ProteinEditForm extends EditForm {
                                  HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
 
+        // No need for validation if delete button is pressed.
+        if (deletePressed()) {
+            return errors;
+        }
         // The bean associated with the current action.
         int index = getIndex();
         ProteinBean pb = (ProteinBean) getItems()[index];
