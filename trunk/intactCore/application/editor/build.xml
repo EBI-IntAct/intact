@@ -295,6 +295,7 @@
                 <include name="images/*"/>
                 <include name="pages/**"/>
                 <include name="layouts/**"/>
+                <include name="editor.html"/>
             </fileset>
 
             <webinf dir="${temp.web}/WEB-INF"/>
