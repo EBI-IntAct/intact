@@ -11,9 +11,10 @@ import java.util.Map;
 import java.util.HashMap;
 
 import uk.ac.ebi.intact.application.search.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.application.search.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search.business.IntactUserImpl;
+import uk.ac.ebi.intact.application.search.business.IntactServiceIF;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.business.*;
@@ -49,7 +50,7 @@ public class WelcomeAction extends IntactBaseAction {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
@@ -61,7 +62,7 @@ public class WelcomeAction extends IntactBaseAction {
 
         // Name of the mapping file and data source.
         String repfile = ctx.getInitParameter(Constants.MAPPING_FILE_KEY);
-        String ds = ctx.getInitParameter(WebIntactConstants.DATA_SOURCE);
+        String ds = ctx.getInitParameter(SearchConstants.DATA_SOURCE);
 
         // Create an instance of IntactService.
         IntactUserIF user = null;
@@ -75,7 +76,7 @@ public class WelcomeAction extends IntactBaseAction {
             ActionErrors errors = new ActionErrors();
             errors.add(super.INTACT_ERROR, new ActionError("error.invalid.user"));
             super.saveErrors(request, errors);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
         }
         catch (IntactException se) {
             // Unable to construct lists such as topics, db names etc.
@@ -84,17 +85,17 @@ public class WelcomeAction extends IntactBaseAction {
             ActionErrors errors = new ActionErrors();
             errors.add(super.INTACT_ERROR, new ActionError("error.search"));
             super.saveErrors(request, errors);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            return mapping.findForward(SearchConstants.FORWARD_FAILURE);
         }
 
         // Save the user. For the moment, create a new session.
-        HttpSession session = request.getSession(false);
-        session.setAttribute(WebIntactConstants.INTACT_USER, user);
+        HttpSession session = request.getSession();
+        session.setAttribute(SearchConstants.INTACT_USER, user);
 
-        // The map to hold intact view beans.
+        // The map to hold intact view beans; this will be filled later on.
         Map idToView = new HashMap();
-        session.setAttribute(WebIntactConstants.FORWARD_MATCHES, idToView);
+        session.setAttribute(SearchConstants.FORWARD_MATCHES, idToView);
 
-        return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
+        return mapping.findForward(SearchConstants.FORWARD_SUCCESS);
     }
 }
