@@ -210,8 +210,6 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
             user.create(cvobj);
             // Commit all the changes.
             user.commit();
-            // Set the new object as the current edit object.
-            user.updateView(cvobj);
             // Added a new CV object; update the drop down list.
             user.refreshList();
         }
@@ -242,9 +240,10 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
             super.saveErrors(request, errors);
             return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
+        // Set the new object as the current edit object.
+        user.updateView(cvobj);
         // Add to the view page.
         user.addToSearchCache(cvobj);
-        // To the edit patge.
         return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
     }
 
@@ -292,36 +291,45 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
      */
     private Collection doLookup(String className, String value, IntactUserIF user)
         throws SearchException {
-
+        // The result to return.
         Collection results = new ArrayList();
+        // The search parameter.
+        String searchParam = "ac";
 
         //try search on AC first...
-        results = user.search(className, "ac", value);
+        results = user.search(className, searchParam, value);
         if (results.isEmpty()) {
             // No matches found - try a search by label now...
             super.log("now searching for class " + className + " with label " + value);
-            results = user.search(className, "shortLabel", value);
+            searchParam = "shortLabel";
+            results = user.search(className, searchParam, value);
             if (results.isEmpty()) {
                 //no match on label - try by xref....
-                super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
-                Collection xrefs = user.search(Xref.class.getName(), "primaryId", value);
+                //super.log("no match on label - looking for: " + className + " with primary xref ID " + value);
+                searchParam = "primaryId";
+                Collection xrefs = user.search(Xref.class.getName(), searchParam, value);
 
                 //could get more than one xref, eg if the primary id is a wildcard search value -
                 //then need to go through each xref found and accumulate the results...
                 Iterator it = xrefs.iterator();
                 Collection partialResults = new ArrayList();
+                searchParam = "ac";
                 while (it.hasNext()) {
-                    partialResults = user.search(className, "ac", ((Xref) it.next()).getParentAc());
+                    partialResults = user.search(className, searchParam,
+                            ((Xref) it.next()).getParentAc());
                     results.addAll(partialResults);
                 }
-
                 if (results.isEmpty()) {
                     //no match by xref - try finally by name....
-                    super.log("no matches found using ac, shortlabel or xref - trying fullname...");
-                    results = user.search(className, "fullName", value);
+                    super.log("trying fullname...last resort");
+                    searchParam = "fullName";
+                    results = user.search(className, searchParam, value);
                 }
             }
         }
+        // Cache this info as we need to display them on the JSP.
+        user.setLastSearchClass(className);
+        user.setLastSearchQuery(searchParam, value);
         return results;
     }
 }
