@@ -22,11 +22,6 @@ import org.apache.struts.tiles.ComponentContext;
 public class BioSourceViewBean extends AbstractEditViewBean {
 
     /**
-     * The name of the BioSource form.
-     */
-//    public static final String BIOSOURCE_FORM = "bioSourceForm";
-
-    /**
      * The tax id.
      */
     private String myTaxId;
