@@ -4,31 +4,24 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
-<!--
+<%--
     This layout displays the search box to search the CV database.
     Author: Sugath Mudali (smudali@ebi.ac.uk)
     Version: $Id$
--->
+--%>
 
-<%--<script language="JavaScript" type="text/javascript">--%>
-<%----%>
-<%--    function set(target) {--%>
-<%--        document.forms[0].dispatch.value=target;--%>
-<%--        if (target == "create") {--%>
-<%--            return validate();--%>
-<%--        }--%>
-<%--    }--%>
-<%----%>
-<%--    // Validate the short label.--%>
-<%--    function validate() {--%>
-<%--        var re = /\W+/;--%>
-<%--        if (re.test(document.forms[0].shortLabel.value)) {--%>
-<%--            window.alert("Only word characters are allowed for a short label");--%>
-<%--            return false;--%>
-<%--        }--%>
-<%--    }--%>
-<%----%>
-<%--</script>--%>
+<script language="JavaScript" type="text/javascript">
+
+    // Validate the short label.
+    function validate() {
+        var re = /\W+/;
+        if (re.test(document.forms[0].shortLabel.value)) {
+            window.alert("Only letters and/or numbers are allowed for a new short label.");
+            return false;
+        }
+    }
+
+</script>
 
 <html:form action="/cv/sidebar" focus="AC">
     <table>
@@ -54,8 +47,7 @@
                     <tr>
                         <td><html:text property="shortLabel" size="15"/></td>
                         <td>
-<%--                            <html:submit onclick="return set('create')">--%>
-                            <html:submit property="dispatch">
+                            <html:submit property="dispatch" onclick="return validate()">
                                 <bean:message key="button.create"/>
                             </html:submit>
                         </td>
