@@ -74,11 +74,8 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 
         // Update the experiment object.
         exp.setBioSource(biosource);
-//        exp.setBioSourceAc(biosource.getAc());
         exp.setCvInteraction(interaction);
-//        exp.setCvInteractionAc(interaction.getAc());
         exp.setCvIdentification(ident);
-//        exp.setCvIdentificationAc(ident.getAc());
         super.persist(user);
     }
 
@@ -91,16 +88,14 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     public void validate(EditUserI user) throws ValidationException,
             SearchException {
         super.validate(user);
-        // Get the objects using their short label.
-        BioSource biosource = (BioSource) user.getObjectByLabel(
-                BioSource.class, myOrganism);
-        CvInteraction interaction = (CvInteraction) user.getObjectByLabel(
-                CvInteraction.class, myInteraction);
-        CvIdentification ident = (CvIdentification) user.getObjectByLabel(
-                CvIdentification.class, myIdentification);
-        // We should have these proper objects.
-        if ((biosource == null) || (interaction == null) || (ident == null)) {
-            throw new ExperimentException();
+        if (myOrganism == null) {
+            throw new ExperimentException("error.exp.bio.validation");
+        }
+        else if (myInteraction == null) {
+            throw new ExperimentException("error.exp.cvint.validation");
+        }
+        else if (myIdentification == null) {
+            throw new ExperimentException("error.exp.ident.validation");
         }
     }
 
