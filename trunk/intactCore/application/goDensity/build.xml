@@ -59,12 +59,13 @@
 
         <!-- Common jar files. -->
         <pathelement path="${root.lib.dir}/junit.jar"/>
-        <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
+        <pathelement path="${root.lib.dir}/db-ojb-1.0.rc6.jar"/>
+        <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
-        <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
-        <pathelement path="${intact.app.dir}/lib/commons-lang.jar"/>
-        <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
+        <pathelement path="${root.lib.dir}/commons-collections-2.0.jar"/>
+        <pathelement path="${root.lib.dir}/commons-lang-2.0.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
     </path>
 
     <!-- =================================================================== -->
@@ -231,10 +232,11 @@
 
             <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">
-                <include name="jakarta-ojb-0.9.7.jar"/>
-                <include name="log4j-1.2.5.jar"/>
+                <include name="db-ojb-1.0.rc6.jar"/>
+                <include name="commons-dbcp-1.1.jar"/>
+                <include name="log4j-1.2.8.jar"/>
                 <include name="${db}"/>
-                <include name="commons-pool.jar"/>
+                <include name="commons-pool-1.1.jar"/>
             </lib>
 
             <!-- goDensity specific classes -->
