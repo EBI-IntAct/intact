@@ -213,6 +213,7 @@ public class ViewAction extends IntactBaseAction {
                             //an AC/Interaction match...
                             Document doc2 = bean.getAsXmlDoc();
                             Node root = doc2.getDocumentElement();
+                            //NB NodeIterator is not Serializable - need to fix this at some point...
                             NodeIterator nodeIter = ((DocumentTraversal)doc2).createNodeIterator(root, NodeFilter.SHOW_ALL,null,true);
                             Node n = null;
                             System.out.println("Checking for an Interaction...");
@@ -422,7 +423,7 @@ public class ViewAction extends IntactBaseAction {
 
         //find all the ACs for this tag type in the bean, then expand them first of all
         List acList = new ArrayList(); //make sure we have a non-empty one
-        acList = this.getAcs(bean, tagName);
+        acList = bean.getAcs(tagName);
         bean.modifyXml(XmlBuilder.EXPAND_NODES, acList);
 
         //update the state, just to be sure
@@ -434,8 +435,8 @@ public class ViewAction extends IntactBaseAction {
             return;
         }
         if(tagName.equals("Interaction")) {
-            //do the Components, then recurse
-            this.doComponents(bean.getAsXmlDoc(), bean, XmlBuilder.EXPAND_NODES);
+
+            this.expandTree(bean, "Component", id, modes);
             this.expandTree(bean, "Protein", id, modes);
         }
         if(tagName.equals("Experiment")) {
@@ -444,30 +445,4 @@ public class ViewAction extends IntactBaseAction {
 
     }
 
-    /**
-     * Gets all of the ACs for a given tag name in an XML document
-     * @param bean The bean to examine
-     * @tag The element type we want the ACs for
-     *
-     * @return List the list of ACs for that tag type (empty if none found)
-     * @exception ParserConfigurationException if there was a problem getting the XML from the bean
-     */
-    private List getAcs(IntactViewBean bean, String tag) throws ParserConfigurationException {
-
-        List result = new ArrayList();
-        //set up a NodeIterator for the bean
-        Document doc = bean.getAsXmlDoc();
-        Node root = doc.getDocumentElement();
-        NodeIterator nodeIter = ((DocumentTraversal)doc).createNodeIterator(root, NodeFilter.SHOW_ALL,null,true);
-        Node n = null;
-        System.out.println("collecting " + tag + " ACs in bean...");
-        while((n = nodeIter.nextNode()) != null) {
-            Element e = (Element)n;
-            if((e.getTagName().equals(tag))) {
-                System.out.println(tag + " AC found:" + e.getAttribute("ac"));
-                result.add(e.getAttribute("ac"));
-            }
-        }
-        return result;
-    }
 }
