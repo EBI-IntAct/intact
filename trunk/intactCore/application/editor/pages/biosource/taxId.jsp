@@ -21,9 +21,9 @@
     <%
         // Fill with form data for this page to display.
         String formName = EditorConstants.FORM_BIOSOURCE;
-        DynaBean form = user.createForm(formName, request);
-        user.getView().populateEditorSpecificInfo(form);
-        pageContext.setAttribute(formName, form);
+        DynaBean dynaBean = (DynaBean) session.getAttribute(formName);
+        user.getView().populateEditorSpecificInfo(dynaBean);
+        pageContext.setAttribute(formName, dynaBean);
     %>
 
 <html:form action="/biosource/taxid">

@@ -29,9 +29,10 @@
 
     <%
         // Fill with form data for this page to display.
-        EditForm form = new EditForm();
+        String formName = EditorConstants.FORM_XREF_EDIT;
+        EditForm form = (EditForm) session.getAttribute(formName);
         user.getView().populateXrefs(form);
-        pageContext.setAttribute(EditorConstants.FORM_XREF_EDIT, form);
+        pageContext.setAttribute(formName, form);
     %>
 
 <h3>Crossreferences</h3>

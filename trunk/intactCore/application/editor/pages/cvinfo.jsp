@@ -24,7 +24,7 @@
     <%
         // Fill with form data for this page to display.
         String formName = EditorConstants.FORM_INFO;
-        DynaBean dynaBean = user.createForm(formName, request);
+        DynaBean dynaBean = (DynaBean) session.getAttribute(formName);
         user.getView().populate(dynaBean);
         pageContext.setAttribute(formName, dynaBean);
     %>

@@ -1,5 +1,6 @@
 <%@ page import="org.apache.commons.beanutils.DynaBean,
-                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%><!--
+                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%>
+<!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -23,7 +24,7 @@
     <%
         // Fill with form data for this page to display.
         String formName = EditorConstants.FORM_RESULTS;
-        DynaBean dynaBean = user.createForm(formName, request);
+        DynaBean dynaBean = (DynaBean) session.getAttribute(formName);
         user.populateSearchResult(dynaBean);
         pageContext.setAttribute(formName, dynaBean);
     %>
