@@ -20,7 +20,7 @@ Verison: $Id$
 
     <!-- context path for hierarchView store in the application level -->
     <property name="intact.context.dir" value="${intact.app.dir}/context"/>
-    <property name="hv-context-file"    value="hierarchView-context.xml"/>
+    <property name="hierarchView.context.file"    value="hierarchView-context.xml"/>
 
     <property name="commons.pages.dir"   value="${intact.app.dir}/pages"/>
     <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
@@ -599,8 +599,6 @@ Verison: $Id$
 
             <!-- Include common jar files -->
             <lib dir="${intact.app.dir}/lib"/>
-<!--               <exclude name="standard.jar"/>-->
-<!--            </lib>-->
 
             <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">
@@ -614,6 +612,9 @@ Verison: $Id$
             <!-- HierarchView classes and config files. -->
             <classes dir="${dest.dir}"/>
         </war>
+
+        <antcall target="gen-context-file" />
+
     </target>
 
     <!-- =================================================================== -->
@@ -671,7 +672,8 @@ Verison: $Id$
     <target name="war-ora-iweb" description="Builds a war file for oracle"
         if="ora-iweb">
         <echo message="Building a war for oracle iweb database"/>
-        <property name="war.name" value="${ant.project.name}-iweb-${TODAY}.war"/>        <antcall target="build-war">
+        <property name="war.name" value="${ant.project.name}-iweb-${TODAY}.war"/>
+        <antcall target="build-war">
             <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
             <param name="war.file" value="${war.name}"/>
         </antcall>
@@ -686,7 +688,7 @@ Verison: $Id$
         </ant>
 
         <!-- Copy context files in the Tomcat's webapps directory -->
-        <copy file="${intact.context.dir}/${hv-context-file}"
+        <copy file="${dist.dir}/${hierarchView.context.file}"
               todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
@@ -700,7 +702,7 @@ Verison: $Id$
         </ant>
 
         <!-- Delete context files from the Tomcat's webapps directory -->
-        <delete file="${webapps.dir}/${hv-context-file}" quiet="true"/>
+        <delete file="${webapps.dir}/${hierarchView.context.file}" quiet="true"/>
     </target>
 
     <!-- =================================================================== -->
@@ -728,5 +730,24 @@ Verison: $Id$
             <property name="file" value="hierarchView/${last.modified.file}"/>
         </ant>
     </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Create the context file. -->
+
+    <target name="gen-context-file">
+        <echo message="Creating the context file..."/>
+
+        <!-- Copy the template file. -->
+        <copy todir="${dist.dir}"
+              file="${intact.context.dir}/${hierarchView.context.file}"
+              overwrite="true" />
+
+        <!-- Customize the context file. -->
+        <replace file="${dist.dir}/${hierarchView.context.file}"
+                 token="[WAR.FILE.NAME]"
+                 value="${war.file}" />
+    </target>
+
 
 </project>
