@@ -94,18 +94,4 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener,
      * @return the intact helper
      */
     public IntactHelper getIntactHelper();
-
-    /**
-     * Sets the collection of the search ac numbers
-     * 
-     * @param search the ac to search for
-     */
-    public void setSearch(Collection search);
-
-    /**
-     * Returns the collection of the search ac numbers.
-     * 
-     * @return the search ac numbers
-     */
-    public Collection getSearch();
 }

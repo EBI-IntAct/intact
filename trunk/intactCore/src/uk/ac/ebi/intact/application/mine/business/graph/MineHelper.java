@@ -89,8 +89,8 @@ public class MineHelper {
      * @param searchAc the search accession numbers
      * @return @throws MineException
      */
-    public Map getNetworkMap() throws MineException {
-        Map map = new Hashtable();
+    public Map getNetworkMap(Collection searchFor) throws MineException {
+        Map networks = new Hashtable();
         try {
             // statement to select the biosource and graphid for a specific
             // interactor
@@ -102,38 +102,38 @@ public class MineHelper {
             String ac, bioSource;
             NetworkKey key;
             ResultSet set;
-            Collection col;
-
+            Collection search;
             // for every search ac number the biosource and graphid is fetched
             // and stored in a map where the keys the wrapper class of the two
             // strings are and the value a collection of the ac nr.
-            for (Iterator iter = intactUser.getSearch().iterator(); iter
-                    .hasNext();) {
+            for (Iterator iter = searchFor.iterator(); iter.hasNext();) {
                 ac = iter.next().toString();
                 pstm.setString(1, ac);
                 pstm.setString(2, ac);
                 set = pstm.executeQuery();
                 // the ac is not part in an interaction
                 // to detect that the biosource is set to an empty value
+                int graphid = 0;
                 if (!set.next()) {
                     bioSource = "";
-                    int graphid = 0;
-                    key = new NetworkKey(bioSource, graphid);
                 }
                 else {
                     bioSource = set.getString(1);
-                    int graphid = set.getInt(2);
-                    key = new NetworkKey(bioSource, graphid);
+                    graphid = set.getInt(2);
                 }
-                // if the key is already in the map the ac is added to the
-                // existing collection
-                if (map.containsKey(key)) {
-                    ((Collection) map.get(key)).add(ac);
+                // create a new wrapper class to store taxid and graphid
+                key = new NetworkKey(bioSource, graphid);
+
+                // if the network map contains the current key the search ac is
+                // added to the collection of the current key, otherwise a new
+                // collection is added to the map.
+                if (networks.containsKey(key)) {
+                    ((Collection) networks.get(key)).add(ac);
                 }
                 else {
-                    col = new HashSet();
-                    col.add(ac);
-                    map.put(key, col);
+                    search = new HashSet();
+                    search.add(ac);
+                    networks.put(key, search);
                 }
                 set.close();
             }
@@ -142,7 +142,7 @@ public class MineHelper {
         catch (Exception e) {
             throw new MineException(e);
         }
-        return map;
+        return networks;
     }
 
     /**
@@ -250,7 +250,7 @@ public class MineHelper {
         IncidenceListGraph graph = null;
         Vertex v1, v2;
         String acc1, acc2, interAcc;
-        Hashtable bioMap = new Hashtable();
+        Map bioMap = new Hashtable();
 
         String query = "SELECT * FROM ia_interactions WHERE bac='"
                 + key.getBioSource() + "' AND graphID=" + key.getGraphID();

@@ -27,4 +27,5 @@ public class Constants {
 	public static final int MAX_INTERACTION_SIZE = 5;
 	public static final int MAX_SEARCH_NUMBER = 7;
 	public static final String HELP_LINK = "/displayDoc.jsp?section=";
+	public static final String SEARCH = "search";
 }

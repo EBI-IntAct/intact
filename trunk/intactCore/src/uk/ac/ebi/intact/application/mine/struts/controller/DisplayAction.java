@@ -57,44 +57,46 @@ public class DisplayAction extends Action {
         IntactUserI user = (IntactUserI) session.getAttribute(Constants.USER);
 
         try {
+            Collection searchFor = (Collection) request
+                    .getAttribute(Constants.SEARCH);
+
             // if no user is in the current session an excepion is thrown
             // because up to now a user should have been created and e.g.
             // the search ac nr. should have been set.
-            if (user == null) {
+            if (user == null || searchFor == null) {
                 throw new NullPointerException("No user could be found in the "
                         + "current session");
             }
             // if less than two search Ac are given
-            else if (user.getSearch().size() < 2) {
+            else if (searchFor.size() < 2) {
                 request.setAttribute(Constants.ERROR, new ErrorForm(
                         "At least two interactors have to be given !"
                                 + " No network can be displayed !"));
                 return mapping.findForward(Constants.ERROR);
             }
 
-            Constants.LOGGER.warn("start minehelper");
+            Constants.LOGGER.info("start minehelper");
 
             MineHelper helper = new MineHelper(user);
             // the network map maps the wrapper class containing
             // the biosource taxid and the graphid to a collection
             // of search acnr.
-            Map networkMap = helper.getNetworkMap();
+            Map networks = helper.getNetworkMap(searchFor);
 
             NetworkKey key;
             MineData md;
             Collection search = null;
-            for (Iterator iter = networkMap.keySet().iterator(); iter.hasNext();) {
+            for (Iterator iter = networks.keySet().iterator(); iter.hasNext();) {
                 // the key stores the taxid and graphid for the current search
                 key = (NetworkKey) iter.next();
-                // the search ac nrs for the current search
-                search = (Collection) networkMap.get(key);
-               
+                search = (Collection) networks.get(key);
+
                 // if the current search ac are in a graph in the database
                 if (key.getGraphID() != 0) {
                     // the wrapper class which stores the graph and the
                     // searchac->vertex map is fetched from the user
                     md = user.getMineData(key);
-                    // if there is no data the graph is build and add to the
+                    // if there is no data, the graph is build and add to the
                     // user
                     if (md == null) {
                         md = helper.buildGraph(key);
