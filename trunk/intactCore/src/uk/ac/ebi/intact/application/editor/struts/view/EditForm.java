@@ -64,9 +64,18 @@ public class EditForm extends ActionForm {
      * Returns the selected bean.
      * @return the selected bean. This can result in a null pointer exception
      * if the form is not in a session scope. So, only use this method for a form
-     * stored in a session.
+     * stored in a session. A null object is returned if this method is called
+     * when the form has no items.
+     *
+     * <pre>
+     * post: return != Null iff items.size() > 0
+     * post: return == Null iff items-size() == 0
+     * </pre>
      */
     public Object getSelectedBean() {
+        if (myItems.isEmpty()) {
+            return null;
+        }
         return myItems.get(myIndex);
     }
 
@@ -85,7 +94,7 @@ public class EditForm extends ActionForm {
     /**
      * True if Edit button was pressed.
      * @return true if Edit button was pressed; for all other instances false
-     * is returned.
+     * is returned as long as some command is selected (ie., not null).
      */
     public boolean editPressed() {
         return myCommand.equals("Edit");
@@ -94,7 +103,7 @@ public class EditForm extends ActionForm {
     /**
      * True if Delete button was pressed.
      * @return true if Delete button was pressed; for all other instances false
-     * is returned.
+     * is returned as long as some command is selected (ie., not null).
      */
     public boolean deletePressed() {
         return myCommand.equals("Delete");
@@ -103,7 +112,7 @@ public class EditForm extends ActionForm {
     /**
      * True if Save button was pressed.
      * @return true if Save button was pressed; for all other instances false
-     * is returned.
+     * is returned as long as some command is selected (ie., not null).
      */
     public boolean savePressed() {
         return myCommand.equals("Save");
