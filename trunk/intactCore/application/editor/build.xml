@@ -80,12 +80,21 @@
     </path>
 
     <path id="project.test.class.path">
-        <!-- The project class path. -->
-        <path refid="project.class.path"/>
+        <!-- Where the classes are compiled to. -->
+        <pathelement path="${dest.dir}"/>
+
+        <!-- Where the jar files are. -->
+        <fileset dir="${temp.web}/${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- Inlcude the intact core -->
+        <pathelement path="${root.jar.file}"/>
 
         <!-- Runtime jar files. -->
         <fileset dir="${root.lib.dir}">
             <include name="junit.jar"/>
+            <include name="servlet.jar"/>
         </fileset>
     </path>
 
@@ -460,7 +469,7 @@
     <!-- =================================================================== -->
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
-    <target name="junit-test-stdout" depends="compile-all"
+    <target name="junit-test-stdout" depends="compile-all, war"
         description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value=
@@ -499,7 +508,7 @@
 
     <!-- Create the context file. -->
 
-    <target name="gen-context-file">
+    <target name="gen-context-file" unless="dev.mode">
         <echo message="Creating the context file..."/>
 
         <!-- Copy the template file -->
