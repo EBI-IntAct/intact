@@ -85,6 +85,9 @@ public class SearchAction extends Action {
             for (Iterator iter = parameters.keySet().iterator(); iter.hasNext();) {
                 key = (String) iter.next();
                 values = (String[]) parameters.get( key );
+                if(key.equals("action")) {
+                    continue;
+                }
                 // if a checkbox with a protein was ticked the protein ac
                 // number is the key and stored in the list
                 if ( PROTEIN_PARAMETER.equals( values[0] ) ) {
