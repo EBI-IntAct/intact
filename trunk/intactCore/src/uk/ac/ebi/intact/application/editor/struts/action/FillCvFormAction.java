@@ -7,13 +7,10 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.commons.beanutils.DynaBean;
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionFormClass;
-import org.apache.struts.config.FormBeanConfig;
-import org.apache.struts.config.ModuleConfig;
+import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 
@@ -35,28 +32,15 @@ public class FillCvFormAction  extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // The dyna form.
-        DynaBean dynaform;
-        if (form == null) {
-//            System.out.println("Creating a new CV form");
-            dynaform = createForm("cvInfoForm", request);
-            if ("request".equals(mapping.getScope())) {
-                request.setAttribute(mapping.getName(), dynaform);
-            }
-            else {
-                getSession(request).setAttribute(mapping.getName(), dynaform);
-            }
-        }
-        else {
-            dynaform = (DynaBean) form;
-//            System.out.println("Using an existing CVForm");
-        }
+        DynaActionForm dynaform = (DynaActionForm) form;
+
         // The view of the current object we are editing at the moment.
         AbstractEditViewBean view = getIntactUser(request).getView();
         dynaform.set("ac", view.getAc());
         dynaform.set("shortLabel", view.getShortLabel());
         dynaform.set("fullName", view.getFullName());
 
-        // Strainght to the editor.
+        // Straight to the editor.
         return mapping.findForward("success");
     }
 
@@ -69,14 +53,14 @@ public class FillCvFormAction  extends AbstractEditorAction {
      * @throws InstantiationException errors in creating the bean
      * @throws IllegalAccessException errors in creating the bean
      */
-    private DynaBean createForm(String formName, HttpServletRequest request)
-            throws InstantiationException, IllegalAccessException {
-        // Fill the form to edit short label and full name.
-        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(
-            Globals.MODULE_KEY);
-        FormBeanConfig config = appConfig.findFormBeanConfig(formName);
-        DynaActionFormClass dynaClass =
-                DynaActionFormClass.createDynaActionFormClass(config);
-        return dynaClass.newInstance();
-    }
+//    private DynaBean createForm(String formName, HttpServletRequest request)
+//            throws InstantiationException, IllegalAccessException {
+//        // Fill the form to edit short label and full name.
+//        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(
+//            Globals.MODULE_KEY);
+//        FormBeanConfig config = appConfig.findFormBeanConfig(formName);
+//        DynaActionFormClass dynaClass =
+//                DynaActionFormClass.createDynaActionFormClass(config);
+//        return dynaClass.newInstance();
+//    }
 }
