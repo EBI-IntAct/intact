@@ -6,12 +6,10 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
+import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +63,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         EditUserI user = super.getIntactUser(request);
 
         // Remove any locks held by the user.
-        user.releaseLock();
+//        user.releaseLock();
 
         // The form to access input data.
         DynaActionForm theForm = (DynaActionForm) form;
@@ -87,6 +85,23 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         if (results.size() == 1) {
             // The object to edit.
             AnnotatedObject annobj = (AnnotatedObject) results.iterator().next();
+
+            // The ac of the object about to edit.
+            String ac = annobj.getAc();
+
+            // Check the lock.
+            LockManager lmr = LockManager.getInstance();
+
+            // Try to acuire the lock.
+            if (!lmr.acquire(ac, user.getUserName())) {
+                ActionErrors errors = new ActionErrors();
+                // The owner of the lock (not the current user).
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                        new ActionError("error.lock", ac, lmr.getOwner(ac)));
+                saveErrors(request, errors);
+                return mapping.findForward(FAILURE);
+            }
+            // Set the view to this annotated object.
             user.setView(annobj);
 
             // Single item found
@@ -124,7 +139,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         EditUserI user = getIntactUser(request);
 
         // Remove any locks held by the user.
-        user.releaseLock();
+//        user.releaseLock();
 
         DynaActionForm theForm = (DynaActionForm) form;
         String topic = (String) theForm.get("topic");
