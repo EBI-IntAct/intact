@@ -54,6 +54,8 @@
     <!-- We need this flag because deploy targets need to know where to deploy. -->
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="axis.home" value="${env.AXIS_HOME}"/>
+
 
     <!-- Build working classpath -->
     <path id="project.class.path">
@@ -129,11 +131,11 @@
     <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
-    <target name="compile">
+    <target name="compile" depends="prepare">
         <mkdir dir="${dest.dir}" />
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-			includes="**/application/hierarchView/**" debug="on">
+	       includes="**/application/hierarchView/**" debug="on">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -149,8 +151,19 @@
 
     <!-- =================================================================== -->
 
+    <!-- Ensures that tomcat.present property is called only once to avoid
+         error from Ant.
+    -->
+
+    <target name="run-once"  unless="tomcat.present">
+        <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
+        <available file="${tomcat.home}/webapps/axis/WEB-INF/web.xml" property="axis.present"/>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Compile the web service source tree. -->
-    <target name="deploy-ws" depends="compile" if="axis.present">
+    <target name="deploy-ws" depends="run-once, compile" if="axis.present">
         <!-- Create ws specific directories. -->
         <mkdir dir="${ws.dir}"/>
         <mkdir dir="${ws.wsdd.dir}"/>
@@ -184,7 +197,7 @@
         </java>
 
         <!-- Extract the wsdd files. -->
-        <echo message="Extracting deploy/undeply wsdd files"/>
+        <echo message="Extracting deploy/undeploy wsdd files"/>
         <copy todir="${ws.wsdd.dir}">
             <fileset dir="${ws.tulip.server.dir}/generated">
                 <include name="*.wsdd"/>
@@ -195,58 +208,61 @@
         <echo message="Removing generated server files..."/>
         <delete dir="${ws.tulip.server.dir}"/>
 
-        <!-- Generate server side files. -->
+        <!-- Generate client side files. -->
         <echo message="Generating Client side files..."/>
         <java classname="org.apache.axis.wsdl.WSDL2Java" fork="yes">
             <arg line="-o ."/>
             <arg line="-d ${ws.session.type}"/>
-            <arg value="-s"/>
             <arg line="-p ${ws.tulip.client.pkg}.generated"/>
             <arg value="${ws.tulip.wsdl}"/>
             <classpath refid="project.class.path"/>
         </java>
 
         <!-- Copy generated client files. -->
-        <echo message="Copying generated client files..."/>
+        <echo message="Copying generated client files in the source tree..."/>
         <copy todir="${root.src.dir}/${ws.tulip.client.dir}">
             <fileset dir="${ws.tulip.client.dir}">
-                <include name="*.java"/>
+                <include name="**/*.java"/>
             </fileset>
         </copy>
 
         <!-- Compile the client generated files -->
         <echo message="Compiling client generated files"/>
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-			includes="${ws.tulip.client.dir}/generated/**" debug="on">
+	       includes="${ws.tulip.client.dir}/generated/**" debug="on">
             <classpath refid="project.class.path"/>
         </javac>
 
         <!-- Copy the configuration file to the current directory. -->
         <echo message="Copying configuration file to the ${root.dest.dir} dir"/>
         <copy file="${config.dir}/${ws.props.file}" todir="${root.dest.dir}"
-            overwrite="true"/>
+              overwrite="true"/>
 
-        <!-- Create the jar file. -->
+        <!-- Create the web service jar file (which will be deployed later on Axis). -->
         <!-- First delete the jar file if it exists. -->
         <delete file="${ws.tulip.jar}" quiet="true"/>
         <echo message="Create the service jar file"/>
-        <jar destfile="${ws.tulip.jar}" basedir="${root.dest.dir}"
-             includes="${ws.tulip.server.dir}/**, ${ws.props.file}"/>
+
+        <jar destfile="${ws.tulip.jar}">
+		<fileset dir="${root.dest.dir}" includes="${ws.props.file}"/>
+		<fileset dir="${dest.dir}" includes="${ws.tulip.server.dir}/**"/>
+	</jar>
 
         <!-- Delete the webservice properties file. -->
         <echo message="Deleting the configuration file"/>
         <delete file="${root.dest.dir}/${ws.props.file}"/>
 
-        <!-- Copy the service to Tomcat. -->
-        <echo message="Copy the service to Tomcat"/>
-        <copy file="${ws.tulip.jar}" todir="${tomcat.home}/webapps/axis/WEB-INF/lib}"
-            overwrite="true"/>
+        <!-- Copy the service to Axis installed on Tomcat. -->
+        <echo message="Copy the service to Axis installed on Tomcat"/>
+        <copy file="${ws.tulip.jar}" todir="${tomcat.home}/webapps/axis/WEB-INF/lib"
+              overwrite="true"/>
 
         <echo message="Modify the deployment file"/>
         <antcall target="mod-deployfile" />
 
         <echo message="Delete generated files"/>
         <delete dir="uk"/>
+
 
     </target>
 
@@ -291,54 +307,66 @@
 
     <!-- =================================================================== -->
 
+    <!-- Tests the web service  -->
+    <target name="test-ws">
+
+       <echo message="Testing the web service" />
+       <java classname="uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient" fork="yes">
+            <classpath refid="project.class.path"/>
+       </java>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-        depends="set-db-type, war-pg, war-oracle"/>
+            depends="set-db-type, war-pg, war-oracle"/>
 
     <!-- =================================================================== -->
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
-    <target name="build-war" depends="compile">
+    <target name="build-war" depends="compile, make-jar">
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
 
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
-		<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
-		   <fileset dir="${basedir}">
-				<include name="*.jsp"/>
-	        	<include name="*.css"/>
-	  			<include name="WEB-INF/config/struts-config.xml"/>
-	  			<include name="WEB-INF/tld/**"/>
-	   		</fileset>
+	<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+	   <fileset dir="${basedir}">
+		<include name="*.jsp"/>
+	   	<include name="*.css"/>
+	  	<include name="WEB-INF/config/struts-config.xml"/>
+	  	<include name="WEB-INF/tld/**"/>
+	   </fileset>
 
-			<!-- Include jar files for hv. -->
-			<lib dir="${lib.dir}"/>
+	   <!-- Include jar files for hv. -->
+	   <lib dir="${lib.dir}"/>
 
-            <!-- Inlcude the intact core -->
-            <lib dir="${root.dist.dir}"/>
+           <!-- Include the intact core  -->
+           <lib dir="${root.dist.dir}">
+		<include name="intact-core.jar"/>
+	   </lib>
 
-            <!-- Include common jar files for struts (except for the
-                 latest struts). -->
-            <lib dir="${intact.app.dir}/lib">
-                <exclude name="struts.jar"/>
-            </lib>
+           <!-- Include common jar files for struts (except for the latest struts). 
+                from the application level. -->
+           <lib dir="${intact.app.dir}/lib"/>
 
-			<!-- Include common jar files from intact core. -->
-			<lib dir="${root.lib.dir}">
-				<include name="jakarta-ojb-0.9.7.jar"/>
-				<include name="log4j-1.2.5.jar"/>
-                <include name="${db}"/>
-                <include name="struts.jar"/>
+	   <!-- Include common jar files from intact core. -->
+	   <lib dir="${root.lib.dir}">
+		<include name="jakarta-ojb-0.9.7.jar"/>
+		<include name="log4j-1.2.5.jar"/>
+                <include name="${db}"/>                
                 <include name="commons-lang-1.0.jar"/>
-			</lib>
 
-            <!-- Hierarchy View classes and config files. -->
-  			<classes dir="${dest.dir}"/>
-		</war>
+		<exclude name="struts.jar"/>
+	   </lib>
+
+           <!-- HierarchView classes and config files. -->
+  	   <classes dir="${dest.dir}"/>
+	</war>
     </target>
 
     <!-- =================================================================== -->
