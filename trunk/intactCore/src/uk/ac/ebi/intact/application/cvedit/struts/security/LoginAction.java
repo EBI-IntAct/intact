@@ -55,9 +55,18 @@ public class LoginAction extends IntactBaseAction {
 
         // Get the user's login name and password. They should have already
         // validated by the ActionForm.
-        LoginForm theForm = (LoginForm) form;
-        String username = theForm.getUsername();
-        String password = theForm.getPassword();
+        DynaActionForm theForm = (DynaActionForm) form;
+        String username = (String) theForm.get("username");
+        String password = (String) theForm.get("password");
+
+        // Validate the form parameters as we are using dynamic form.
+        if (username == null || username.length() < 1) {
+            ActionErrors errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                new ActionError("global.required", "username"));
+            super.saveErrors(request, errors);
+            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+        }
 
         // Save the context to avoid repeat calls.
         ServletContext ctx = super.getServlet().getServletContext();
@@ -69,19 +78,18 @@ public class LoginAction extends IntactBaseAction {
         // Create an instance of IntactService.
         IntactUserIF user = null;
 
-        // Create a new session if it hasn't created before.
+        // Invalidate any previous sessions.
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
         // Create a new session.
         session = request.getSession(true);
-        super.log("Creating a new user");
+        super.log("Created a new session");
         try {
             user = new IntactUserImpl(repfile, ds, username, password);
         }
         catch (DataSourceException de) {
-            System.out.println("Rep: " + repfile + " DS: " + ds);
             // Unable to get a data source...can't proceed
             super.log(ExceptionUtils.getStackTrace(de));
             // The errors to report back.
@@ -106,17 +114,12 @@ public class LoginAction extends IntactBaseAction {
             super.saveErrors(request);
             return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
         }
-        // Save the info in the user session object for us to retrieve later.
-        super.log("user selected " + theForm.getTopic());
-
 //        super.log("Existing session timeout is: " + session.getMaxInactiveInterval());
 //        session.setMaxInactiveInterval(90);
 //        super.log("New session timeout is: " + session.getMaxInactiveInterval());
 
         // Need to access the user later.
         session.setAttribute(WebIntactConstants.INTACT_USER, user);
-        // Have a valid user. set the topic selected.
-        user.setSelectedTopic(theForm.getTopic());
 
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }
