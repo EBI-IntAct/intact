@@ -83,6 +83,17 @@ public class NewtServerProxyTest extends TestCase {
             fail();
         }
 
+        // Test: has full name but no short label.
+        try {
+            response = server.query(41057);
+            // short label has to be replaced by the taxid
+            assertEquals(response.getShortLabel(), "41057");
+            assertEquals(response.getFullName(), "Aspergillus unilateralis");
+        }
+        catch (NewtServerProxy.TaxIdNotFoundException ex) {
+            fail();
+        }
+
         // Test: no matches.
         try {
             response = server.query(8);
