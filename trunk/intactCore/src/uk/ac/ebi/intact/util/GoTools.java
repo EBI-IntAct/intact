@@ -106,11 +106,11 @@ public class GoTools {
         // Get or create CvObject
         CvObject current;
 
-        // If the intact ac is defined, use it, otherwise use the GO id to try to retrieve the
+        // If the intact shortlabel is defined, use it, otherwise use the GO id to try to retrieve the
         // corresponding IntAct object.
-        if (((Vector)definition.get("intact_ac")) != null){
-            String intactAc = ((Vector)definition.get("intact_ac")).elementAt(0).toString();
-            current = (CvObject) helper.getObjectByAc(targetClass, intactAc);
+        if (((Vector)definition.get("shortlabel")) != null){
+            String shortLabel = ((Vector)definition.get("shortlabel")).elementAt(0).toString();
+            current = (CvObject) helper.getObjectByLabel(targetClass, shortLabel);
         } else {
             current = (CvObject)helper.getObjectByXref(targetClass,
                                        ((Vector)definition.get("goid")).elementAt(0).toString());
@@ -199,16 +199,13 @@ public class GoTools {
      */
     public static void insertGoDefinitions (Class aTargetClass,
                                             IntactHelper helper,
-                                            String aSourceUrl)
+                                            String sourceFile)
                                              throws Exception {
 
         Hashtable goRecord;
 
             // Parse input line by line
-            URL goServer = new URL(aSourceUrl);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            goServer.openStream()));
+            BufferedReader in = new BufferedReader(new FileReader(sourceFile));
 
             int count = 0;
 
@@ -241,13 +238,12 @@ public class GoTools {
      */
     public static void insertGoDag(Class aTargetClass,
                                    IntactHelper helper,
-                                   String aSourceUrl)
+                                   String sourceFile)
             throws Exception {
 
         // initialisation
         Vector goRecord;
-        URL goServer = new URL(aSourceUrl);
-        BufferedReader in = new BufferedReader(new InputStreamReader(goServer.openStream()));
+        BufferedReader in = new BufferedReader(new FileReader(sourceFile));
 
         System.err.println("Reading GO DAG lines: ");
         DagNode.addNodes(in, null, aTargetClass, helper, 0);
@@ -401,8 +397,8 @@ public class GoTools {
 
     /** Load or unload Controlled Vocabularies in GO format.
      *  Usage:
-     *  GoTools upload IntAct_classname Go_DefinitionFile_Url Go_DagFile_Url |
-     *  GoTools download IntAct_classname
+     *  GoTools upload   IntAct_classname Go_DefinitionFile [Go_DagFile] |
+     *  GoTools download IntAct_classname Go_DefinitionFile [Go_DagFile]
      *
      * @param args
      * @throws Exception
@@ -410,8 +406,8 @@ public class GoTools {
     public static void main(String[] args) throws Exception {
 
         final String usage = "Usage:\n" +
-                             "GoTools upload IntAct_classname Go_DefinitionFile_Url [Go_DagFile_Url]    OR\n" +
-                             "GoTools download IntAct_classname Go_DefinitionsFile [Go_DagFile]";
+                             "GoTools upload   IntAct_classname Go_DefinitionFile [Go_DagFile]    OR\n" +
+                             "GoTools download IntAct_classname Go_DefinitionFile [Go_DagFile]";
         Class targetClass;
 
         try {
