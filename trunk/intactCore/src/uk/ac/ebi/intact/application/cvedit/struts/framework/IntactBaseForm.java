@@ -28,21 +28,6 @@ public class IntactBaseForm extends ActionForm {
     private String myAction;
 
     /**
-     * Returns the list for given list name. Just a wrapper
-     * to <code>getList(String)</code> method of <code>IntactService</code>.
-     *
-     * @see uk.ac.ebi.intact.application.cvedit.business.IntactService#getListName(String)
-     */
-//    public Collection getList(String name) {
-//        if (myUser == null) {
-//            ServletContext ctx = super.getServlet().getServletContext();
-//            myUser = (IntactUser) ctx.getAttribute(
-//                WebIntactConstants.SERVICE_INTERFACE);
-//        }
-//        return myService.getList(name);
-//    }
-
-    /**
      * Sets the action taken by the user.
      *
      * @param action the user action.
