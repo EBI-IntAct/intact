@@ -17,12 +17,8 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditViewBeanFactory;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorFormFactory;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.*;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.util.GoTools;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.beanutils.DynaBean;
@@ -147,6 +143,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient EditorMenuFactory myMenuFactory;
 
     /**
+     * The institution; transient as it is already persistent on the database.
+     */
+    private transient Institution myInstitution;
+
+    /**
      * Stores the last query result.
      */
     private String myLastQuery;
@@ -195,6 +196,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // Initialize the helper.
         myHelper = new IntactHelper(ds, user, password);
+
+        // A dummy read to ensure that a connection is made with a valid user.
+        myHelper.search("uk.ac.ebi.intact.model.Institution", "ac", "*");
+
         // Record the time started.
         mySessionStartTime = Calendar.getInstance().getTime();
     }
@@ -244,7 +249,17 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public Institution getInstitution() throws DuplicateLabelException {
-        return (Institution) getObjectByLabel(Institution.class, "EBI");
+        if (myInstitution == null) {
+            try {
+                Collection result = myHelper.search("uk.ac.ebi.intact.model.Institution", "ac", "*");
+                // Only one institute per site. Cache it.
+                myInstitution = (Institution) result.iterator().next();
+            }
+            catch (IntactException ie) {
+                EditorLogger.log(ie);
+            }
+        }
+        return myInstitution;
     }
 
     public boolean isEditing() {
