@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
+Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 
 import java.util.MissingResourceException;
-import java.net.MalformedURLException;
 
 /**
  * This is Intact editor specific action servlet class. This class is
@@ -36,27 +35,20 @@ public class EditorActionServlet extends ActionServlet {
         ServletContext ctx = super.getServletContext();
 
         // Create an instance of EditorService.
-        EditorService service = new EditorService();
+        EditorService service = null;
         try {
             // Load resources.
-            service.loadTopicProperties(ctx.getInitParameter("topics"));
-            service.initNewtServer(ctx.getInitParameter("newt"));
+            service = new EditorService(ctx.getInitParameter("resources"));
         }
         catch (MissingResourceException mre) {
             // Unable to find the resource file.
-            super.log(ExceptionUtils.getStackTrace(mre));
+            log(ExceptionUtils.getStackTrace(mre));
             throw new ServletException();
         }
         catch (EmptyTopicsException mite) {
             // An empty topic resource file.
-            super.log(ExceptionUtils.getStackTrace(mite));
+            log(ExceptionUtils.getStackTrace(mite));
             throw new ServletException();
-        }
-        catch (MalformedURLException murle) {
-            // Incorrect URL for the Newt server.
-            super.log(ExceptionUtils.getStackTrace(murle));
-            // Log the error and carry on - we should able to use the rest of
-            // editor functionalities.
         }
         // Make them accessible for any servlets within the server.
         ctx.setAttribute(EditorConstants.EDITOR_SERVICE, service);
