@@ -53,7 +53,7 @@
 
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
-        <forward name="logoff"   path="/logoff.do"/>
+        <forward name="logout"   path="/logout.do"/>
         <forward name="login"    path="/login.jsp"/>
         <forward name="success"  path="/edit.jsp"/>
         <forward name="failure"  path="/error.jsp"/>
@@ -62,10 +62,10 @@
     <!-- ========== Action Mapping Definitions ============================== -->
     <action-mappings>
 
-        <!-- Process a user logoff -->
-        <action path="/logoff"
-                type="uk.ac.ebi.intact.application.cvedit.struts.LogoffAction">
-            <forward name="success" path="/index.jsp"/>
+        <!-- Process a user logout -->
+        <action path="/logout"
+                type="uk.ac.ebi.intact.application.cvedit.struts.security.LogoutAction">
+            <forward name="success" path="/login.jsp"/>
         </action>
 
         <!-- Process a user logon. error.jsp is set to input as basic error checking
