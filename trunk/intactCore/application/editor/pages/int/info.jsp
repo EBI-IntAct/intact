@@ -53,7 +53,7 @@
     </tr>
     <tr class="tableRowEven">
         <td class="tableCell">
-            <bean:write property="ac" name="intForm"/>
+            <bean:write property="ac" name="intForm" filter="false"/>
         </td>
         <td class="tableCell">
             <html:text property="shortLabel" size="20" maxlength="25"
