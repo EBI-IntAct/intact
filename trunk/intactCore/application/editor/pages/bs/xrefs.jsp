@@ -19,7 +19,7 @@
 <c:set var="view" value="${user.view}"/>
 <c:set var="dblist" value="${view.editDatabaseMenu}"/>
 <c:set var="menus" value="${view.editXrefMenus}"/>
-<c:set var="qlist" value="${menus['QualifierNames']}"/>
+<c:set var="qlist" value="${menus['Qualifier']}"/>
 
 <h3>Crossreferences</h3>
 
