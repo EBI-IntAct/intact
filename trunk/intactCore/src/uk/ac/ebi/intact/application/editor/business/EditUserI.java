@@ -14,10 +14,10 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -320,7 +320,14 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @return an instance of Newt server. A new instance is created if no server
      * is created for the current session.
      */
-    public NewtServerProxy getNewtProxy(URL url);
+    public NewtServerProxy getNewtProxy();
+
+    /**
+     * Returns the Go server proxy assigned for the current session.
+     * @return an instance of Go server. A new instance is created if no server
+     * is created for the current session.
+     */
+    public GoServerProxy getGoProxy();
 
     /**
      * Returns the help tag for the current view bean.
