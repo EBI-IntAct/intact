@@ -119,8 +119,6 @@ public class UpdateProteins extends UpdateProteinsI {
          super (helper);
     }
 
-
-
     public int getCreatedCount () {
         return proteinCreated;
     }
@@ -296,7 +294,6 @@ public class UpdateProteins extends UpdateProteinsI {
         return proteins;
     }
 
-
     /**
      * From a SPTREntry, that method will look for the correxponding proteins
      * in IntAct in order to update its data or create brand new if it doesn't exists.<br>
@@ -341,7 +338,6 @@ public class UpdateProteins extends UpdateProteinsI {
                     else logger.info ("SKIP: sptrTaxid=" + entryTaxid);
                 }
             }
-
 
             /**
              * Process all collected BioSource
@@ -447,14 +443,13 @@ public class UpdateProteins extends UpdateProteinsI {
 
     } // createProteinFromSPTrEntry
 
-
-    public void addNewXref (AnnotatedObject current, Xref xref)  {
+    public void addNewXref (AnnotatedObject current, final Xref xref)  {
         // Make sure the xref does not yet exist in the object
         Collection xrefs = current.getXref();
         for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
             Xref anXref = (Xref) iterator.next();
             if (anXref.equals(xref)) {
-                return;
+                return; // already in, exit
             }
         }
 
@@ -472,6 +467,32 @@ public class UpdateProteins extends UpdateProteinsI {
         }
     }
 
+    public void addNewAlias (AnnotatedObject current, final Alias alias)  {
+        // Make sure the alias does not yet exist in the object
+        Collection aliases = current.getAliases();
+        for (Iterator iterator = aliases.iterator(); iterator.hasNext();) {
+            Alias anAlias = (Alias) iterator.next();
+            if (anAlias.equals(alias)) {
+                return; // already in, exit
+            }
+        }
+
+        // add the alias to the AnnotatedObject
+        current.addAlias (alias);
+
+        // That test is done to avoid to record in the database an Xref
+        // which is already linked to that AnnotatedObject.
+        if (alias.getParentAc() == current.getAc()) {
+            try {
+                helper.create( alias );
+                logger.info ("ADD new Alias[name: " + alias.getName() +
+                                          " type: " + alias.getCvAliasType().getShortLabel() + "]" +
+                                         ", to: " + current.getShortLabel() );
+            } catch ( Exception e_alias ) {
+                logger.error ("Error when creating an Alias for protein " + current, e_alias);
+            }
+        }
+    }
 
     /**
      * update all Xref specific to a database.
@@ -509,7 +530,7 @@ public class UpdateProteins extends UpdateProteinsI {
                 // link the Xref to the protein and record it in the database
                 addNewXref (protein, xref);
                 logger.info ("CREATE "+ database +" Xref[AC: " + ac + ", Id: " + id + "]");
-                needUpdate = needUpdate || true;
+                needUpdate = true;
             } else {
                 logger.info ("SKIP: "+ database +" Xref[AC: " + ac + ", Id: " + id + "] already exists");
             }
@@ -517,6 +538,81 @@ public class UpdateProteins extends UpdateProteinsI {
 
         return needUpdate;
     }
+
+    private boolean isAliasAlreadyExisting( Collection aliases, String name, CvAliasType aliasType) {
+
+        for ( Iterator iterator = aliases.iterator(); iterator.hasNext(); ) {
+            Alias alias = (Alias) iterator.next ();
+            if ( alias.getName().equals( name ) && alias.getCvAliasType().equals( aliasType ) )
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * update all Xref specific to a database.
+     * That procedure is used when creating and updating a Protein Xref.
+     *
+     * @param protein    The protein to update
+     * @return true if the protein has been updated, else false.
+     * @throws SPTRException
+     */
+    private boolean updateAliases ( final SPTREntry sptrEntry,
+                                    Protein protein ) throws SPTRException{
+
+        boolean needUpdate = false;
+        Collection aliases = protein.getAliases();
+        // gene[i][0]: gene name
+        // gene[i][1 ...]: synomyms of the gene's name
+        String[][] genes = sptrEntry.getGenes();
+
+        Alias alias = null;
+
+        for (int i=0; i<genes.length; i++) {
+
+            if ( ! isAliasAlreadyExisting( aliases, genes[i][0], geneNameAliasType ) ) {
+                alias = new Alias( myInstitution,
+                                   protein,
+                                   geneNameAliasType, // gene-name
+                                   genes[i][0] );
+
+                // link the Xref to the protein and record it in the database
+                addNewAlias ( protein, alias );
+                logger.info ("ADD new Alias[name: " + alias.getName() +
+                             " type: " + geneNameAliasType.getShortLabel() + "]" +
+                             ", to: " + protein.getShortLabel() );
+                needUpdate = true;
+            } else {
+                logger.info ("SKIP Alias[name: " + genes[i][0] +
+                             " type: " + geneNameAliasType.getShortLabel() + "]" +
+                             ", for: " + protein.getShortLabel() );
+            }
+
+            for (int ii=1; ii<genes[i].length; ii++) {
+
+                if ( ! isAliasAlreadyExisting( aliases, genes[i][ii], geneNameSynonymAliasType ) ) {
+
+                    alias = new Alias( myInstitution,
+                                       protein,
+                                       geneNameSynonymAliasType, // gene-name-synonym
+                                       genes[i][ii] );
+
+                    // link the Xref to the protein and record it in the database
+                    addNewAlias ( protein, alias );
+                    logger.info ("ADD new Alias[name: " + alias.getName() +
+                            " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
+                                 ", to: " + protein.getShortLabel() );
+                    needUpdate = true;
+                } else {
+                    logger.info ("SKIP Alias[name: " + genes[i][ii] +
+                                 " type: " + geneNameSynonymAliasType.getShortLabel() + "]" +
+                                 ", for: " + protein.getShortLabel() );
+                }
+            }
+        }
+
+        return needUpdate;
+    } // updateAliases
 
     /**
      * Update an existing protein with data from a SPTR Entry.
@@ -619,6 +715,9 @@ public class UpdateProteins extends UpdateProteinsI {
             }
         }
 
+        // check on aliases
+        needUpdate = needUpdate || updateAliases( sptrEntry, protein );
+
         if (needUpdate == true) {
             // update databse
             try {
@@ -699,8 +798,6 @@ public class UpdateProteins extends UpdateProteinsI {
             logger.info ("CREATE SPTR Xref[spAC: " + ac + ", spId: " + shortLabel + "]");
         }
 
-
-
         // create a SPTR Xref
         Xref sptrXref = new Xref ( myInstitution,
                                    sptrDatabase,
@@ -709,6 +806,27 @@ public class UpdateProteins extends UpdateProteinsI {
 
         addNewXref (protein, sptrXref);
         logger.info ("created SPTR Xref[spAC: " + proteinAC[0] + ", spId: " + shortLabel + "]");
+
+        // create Aliases
+        String[][] genes = sptrEntry.getGenes();
+        Alias alias = null;
+        // TODO: create proper vocabularies for the alias type !!
+        for (int i=0; i<genes.length; i++) {
+
+            alias = new Alias( myInstitution,
+                               protein,
+                               geneNameAliasType,  // gene-name
+                               genes[i][0] );
+            addNewAlias( protein, alias );
+
+            for (int ii=1; ii<genes[i].length; ii++) {
+                alias = new Alias( myInstitution,
+                                   protein,
+                                   geneNameSynonymAliasType, // gene-name-synonym
+                                   genes[i][ii] );
+                addNewAlias( protein, alias );
+            }
+        }
 
         // update database
         try {
@@ -1085,7 +1203,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
             try {
                 helper = new IntactHelper();
-                System.out.println("Helper created (User: "+helper.getDbUserName()+"" +
+                System.out.println("Helper created (User: "+helper.getDbUserName()+ " " +
                                    "Database: "+helper.getDbName()+")");
 
             } catch (IntactException e) {
