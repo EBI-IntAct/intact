@@ -62,9 +62,6 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // Handler to the Intact User.
         EditUserI user = super.getIntactUser(request);
 
-        // Remove any locks held by the user.
-//        user.releaseLock();
-
         // The form to access input data.
         DynaActionForm theForm = (DynaActionForm) form;
 
@@ -72,10 +69,11 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         String topic = (String) theForm.get("topic");
         String searchString = (String) theForm.get("searchString");
 
-        // The current topic.
+        // The current topic, so the sidebar displays this as the currently
+        // selected type.
         user.setSelectedTopic(topic);
 
-        LOGGER.info("search action: topic is " + topic);
+        LOGGER.info("The current topic is " + topic);
 
         // Try searching as it is.
         Collection results = user.lookup(topic, searchString);
@@ -84,7 +82,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             LOGGER.info("No matches were found for the specified search criteria");
             return mapping.findForward(NO_MATCH);
         }
-        // If we retrieved one object then we can go strainght to edit page.
+        // If we retrieved one object then we can go straight to edit page.
         if (results.size() == 1) {
             // The object to edit.
             AnnotatedObject annobj = (AnnotatedObject) results.iterator().next();

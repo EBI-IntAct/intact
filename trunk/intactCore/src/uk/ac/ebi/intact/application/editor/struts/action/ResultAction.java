@@ -8,9 +8,12 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.IntactObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,15 +34,14 @@ public class ResultAction extends AbstractEditorAction {
      * control should be forwarded, or null if the response has
      * already been completed.
      *
-     * @param mapping - The <code>ActionMapping</code> used to select this instance
-     * @param form - The optional <code>ActionForm</code> bean for this request (if any)
-     * @param request - The HTTP request we are processing
+     * @param mapping  - The <code>ActionMapping</code> used to select this instance
+     * @param form     - The optional <code>ActionForm</code> bean for this request (if any)
+     * @param request  - The HTTP request we are processing
      * @param response - The HTTP response we are creating
-     *
      * @return - represents a destination to which the action servlet,
-     * <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
-     * or HttpServletResponse.sendRedirect() to, as a result of processing
-     * activities of an <code>Action</code> class
+     *         <code>ActionServlet</code>, might be directed to perform a RequestDispatcher.forward()
+     *         or HttpServletResponse.sendRedirect() to, as a result of processing
+     *         activities of an <code>Action</code> class
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
@@ -56,10 +58,23 @@ public class ResultAction extends AbstractEditorAction {
         }
         // The ac to search
         String ac = request.getParameter("ac");
-        // The class name to search.
-        String className = request.getParameter("searchClass");
+        // The type to edit.
+        String type = request.getParameter("type");
 
-        LOGGER.info("AC: " + ac + " class: " + className);
+        // At this point we should have valid ac and type. Validate them. It is
+        // possible for these parameters to contain invalid characters (as a result
+        // of allowing to access pages directly).
+        if ((ac == null) || (type == null) || !getService().isValidTopic(type)) {
+            LOGGER.error("Invalid values submitted for ac=" + ac + " and type=" + type);
+            ActionErrors errors = new ActionErrors();
+            // The owner of the lock (not the current user).
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.invalid.edit.inputs"));
+            saveErrors(request, errors);
+            return mapping.findForward(FAILURE);
+        }
+
+        LOGGER.info("AC: " + ac + " class: " + type);
 
         // Check the lock.
         LockManager lmr = LockManager.getInstance();
@@ -78,13 +93,21 @@ public class ResultAction extends AbstractEditorAction {
         }
         // The selected Annotated object.
         AnnotatedObject annobj = (AnnotatedObject) user.getObjectByAc(
-                        Class.forName("uk.ac.ebi.intact.model." + className), ac);
-        // The object we are editing presently.
+                getModelClass(type), ac);
+
+        // Set the object and the type we are about to edit.
+        user.setSelectedTopic(type);
         user.setView(annobj);
 
-        LOGGER.info("Numner of annotations: " + annobj.getAnnotations().size());
+        LOGGER.info("Number of annotations: " + annobj.getAnnotations().size());
         LOGGER.info("Number of xrefs: " + annobj.getXrefs().size());
 
         return mapping.findForward(SUCCESS);
+    }
+
+    private Class getModelClass(String type) throws ClassNotFoundException {
+        // The intact model package name.
+        String packageName = IntactObject.class.getPackage().getName();
+        return Class.forName(packageName + "." + type);
     }
 }

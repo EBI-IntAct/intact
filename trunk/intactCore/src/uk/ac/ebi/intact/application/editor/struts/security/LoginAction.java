@@ -54,7 +54,6 @@ public class LoginAction extends AbstractEditorAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-
         // Get the user's login name and password. They should have already
         // validated by the ActionForm.
         DynaActionForm theForm = (DynaActionForm) form;
@@ -77,13 +76,26 @@ public class LoginAction extends AbstractEditorAction {
         }
         // Create a new session.
         session = request.getSession(true);
+
         LOGGER.info("Created a new session");
+
+        // Set the status for the filter to let logged in users to get through.
+        session.setAttribute(EditorConstants.LOGGED_IN, Boolean.TRUE);
+
         // Need to access the user later.
         session.setAttribute(EditorConstants.INTACT_USER, user);
 
         // Store the server path.
         ctx.setAttribute(EditorConstants.SERVER_PATH, request.getContextPath());
 
+        String ac = (String) theForm.get("ac");
+        String type = (String) theForm.get("type");
+
+        // Accessing an editor page directly?
+        if ((ac.length() != 0) && (type.length() != 0)) {
+            // Set the topic for editor to load the correct page.
+            return mapping.findForward("redirect");
+        }
         return mapping.findForward(SUCCESS);
     }
 }

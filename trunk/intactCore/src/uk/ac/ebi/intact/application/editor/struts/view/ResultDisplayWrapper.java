@@ -108,7 +108,7 @@ public class ResultDisplayWrapper extends TableDecorator {
      */
     private String getEditorLink(AnnotatedObject annotobj) {
         String topic = IntactHelper.getDisplayableClassName(annotobj);
-        return "<a href=result?ac=" + annotobj.getAc() + "&searchClass="
+        return "<a href=secure/edit?ac=" + annotobj.getAc() + "&type="
                 + topic + ">" + annotobj.getShortLabel() + "</a>";
     }
 }
