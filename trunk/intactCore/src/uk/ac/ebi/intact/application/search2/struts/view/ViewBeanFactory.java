@@ -75,15 +75,20 @@ public class ViewBeanFactory {
         ourBeanToDetailsView.put ( Experiment.class, DetailsViewBean.class );
 //        ourBeanToDetailsView.put ( Interaction.class, InteractionDetailsViewBean.class );
 //        ourBeanToDetailsView.put ( Protein.class, ProteinDetailsViewBean.class );
-        ourBeanToDetailsView.put ( InteractionProxy.class, InteractionDetailsViewBean.class );
-        ourBeanToDetailsView.put ( ProteinProxy.class, ProteinDetailsViewBean.class );
+//        ourBeanToDetailsView.put ( InteractionProxy.class, InteractionDetailsViewBean.class );
+//        ourBeanToDetailsView.put ( ProteinProxy.class, ProteinDetailsViewBean.class );
+        ourBeanToDetailsView.put ( InteractionImpl.class, InteractionDetailsViewBean.class );
+        ourBeanToDetailsView.put ( ProteinImpl.class, ProteinDetailsViewBean.class );
 
         // Single view bean.
         ourBeanToSingleItemView.put ( Experiment.class, ExperimentSingleViewBean.class );
 //        ourBeanToSingleItemView.put ( Interaction.class, InteractionSingleViewBean.class );
 //        ourBeanToSingleItemView.put ( Protein.class, ProteinSingleViewBean.class );
-        ourBeanToSingleItemView.put ( InteractionProxy.class, InteractionSingleViewBean.class );
-        ourBeanToSingleItemView.put ( ProteinProxy.class, ProteinSingleViewBean.class );
+//        ourBeanToSingleItemView.put ( InteractionProxy.class, InteractionSingleViewBean.class );
+//        ourBeanToSingleItemView.put ( ProteinProxy.class, ProteinSingleViewBean.class );
+        ourBeanToSingleItemView.put ( InteractionImpl.class, InteractionSingleViewBean.class );
+        ourBeanToSingleItemView.put ( ProteinImpl.class, ProteinSingleViewBean.class );
+
         ourBeanToSingleItemView.put ( CvDatabase.class, SingleViewBean.class );
         ourBeanToSingleItemView.put ( CvXrefQualifier.class, SingleViewBean.class );
         ourBeanToSingleItemView.put ( CvTopic.class, SingleViewBean.class );
@@ -95,7 +100,8 @@ public class ViewBeanFactory {
 
         // Binary views.
 //        ourBeanToBinaryView.put ( Protein.class, BinaryDetailsViewBean.class );
-        ourBeanToBinaryView.put ( ProteinProxy.class, BinaryDetailsViewBean.class );
+//        ourBeanToBinaryView.put ( ProteinProxy.class, BinaryDetailsViewBean.class );
+        ourBeanToBinaryView.put ( ProteinImpl.class, BinaryDetailsViewBean.class );
 
         // chunked view
         ourBeanToChunkedView.put( Experiment.class, ExperimentChunkedSingleViewBean.class );
