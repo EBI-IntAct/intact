@@ -148,11 +148,14 @@ public class Xref extends BasicObject {
 
     /** Returns true if the "important" attributes are equal.
      */
-    public boolean equals(Object obj){
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (!(o instanceof Xref)) return false;
 
-        return (super.equals(obj) &&
-                Utilities.equals(this.cvDatabase, ((Xref)obj).getCvDatabase()) &&
-                Utilities.equals(this.primaryId, ((Xref)obj).getPrimaryId()));
+        final Xref xref = (Xref) o;
+
+        return (Utilities.equals(this.cvDatabase, xref.getCvDatabase()) &&
+                Utilities.equals(this.primaryId, xref.getPrimaryId()));
     }
 
     /** This class overwrites equals. To ensure proper functioning of HashTable,
@@ -160,11 +163,10 @@ public class Xref extends BasicObject {
      * @return  hash code of the object.
      */
     public int hashCode(){
-
         int code = super.hashCode();
 
-        if (null != cvDatabase) code += cvDatabase.hashCode();
-        if (null != primaryId) code += primaryId.hashCode();
+        if (null != cvDatabase) code = 29 * code + cvDatabase.hashCode();
+        if (null != primaryId)  code = 29 * code + primaryId.hashCode();
 
         return code;
     }
@@ -173,8 +175,7 @@ public class Xref extends BasicObject {
         return " Xref: " + this.getAc()
                 + "; Owner: " + this.getOwner().getShortLabel()
                 + "; DB: " + getCvDatabase().getShortLabel()
-                + "; PrimaryId: "+ this.primaryId
-                + "\n";
+                + "; PrimaryId: "+ this.primaryId;
     }
 } // end Xref
 

@@ -170,11 +170,15 @@ public class Institution implements Serializable {
 
     /** Returns true if the "important" attributes are equal.
      */
-    public boolean equals(Object obj){
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (!(o instanceof Institution)) return false;
+        if (!super.equals(o)) return false;
 
-        return (super.equals(obj) &&
-                Utilities.equals(this.shortLabel, ((Institution)obj).getShortLabel()) &&
-                Utilities.equals(this.fullName, ((Institution)obj).getFullName()));
+        final Institution institution = (Institution) o;
+
+        return (Utilities.equals(this.shortLabel, institution.getShortLabel()) &&
+                Utilities.equals(this.fullName,   institution.getFullName()));
     }
 
     /** This class overwrites equals. To ensure proper functioning of HashTable,
@@ -182,11 +186,10 @@ public class Institution implements Serializable {
      * @return  hash code of the object.
      */
     public int hashCode(){
-
         int code = super.hashCode();
 
-        if (null != shortLabel) code += shortLabel.hashCode();
-        if (null != fullName) code += fullName.hashCode();
+        if (null != shortLabel) code = 29 * code + shortLabel.hashCode();
+        if (null != fullName)   code = 29 * code + fullName.hashCode();
 
         return code;
     }

@@ -69,11 +69,15 @@ public class Annotation extends BasicObject {
 
     /** Returns true if the "important" attributes are equal.
      */
-    public boolean equals(Object obj){
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (!(o instanceof Annotation)) return false;
+        if (!super.equals(o)) return false;
 
-        return (super.equals(obj) &&
-                Utilities.equals(this.cvTopic, ((Annotation)obj).getCvTopic()) &&
-                Utilities.equals(this.annotationText, ((Annotation)obj).getAnnotationText()));
+        final Annotation annotation = (Annotation) o;
+
+        return (Utilities.equals(this.cvTopic, annotation.getCvTopic()) &&
+                Utilities.equals(this.annotationText, annotation.getAnnotationText()));
     }
 
     /** This class overwrites equals. To ensure proper functioning of HashTable,
@@ -84,8 +88,8 @@ public class Annotation extends BasicObject {
 
         int code = super.hashCode();
 
-        if (null != cvTopic) code += cvTopic.hashCode();
-        if (null != annotationText) code += annotationText.hashCode();
+        if (null != cvTopic)        code = 29 * code + cvTopic.hashCode();
+        if (null != annotationText) code = 29 * code + annotationText.hashCode();
 
         return code;
     }
