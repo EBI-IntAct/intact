@@ -91,7 +91,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
     private String mySourceExperimentAc;
 
     // Override the super method to initialize this class specific resetting.
-    public void reset(Class clazz) {
+    protected void reset(Class clazz) {
         super.reset(clazz);
         // Set fields to null.
         setKD(Float.valueOf("1.0"));
@@ -107,7 +107,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         makeProteinBeans(Collections.EMPTY_LIST);
     }
 
-    public void reset(AnnotatedObject annobj) {
+    protected void reset(AnnotatedObject annobj) {
         super.reset(annobj);
 
         // Must be an Interaction; can cast it safely.
