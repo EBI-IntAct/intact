@@ -6,18 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
-import org.apache.struts.tiles.ComponentContext;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.*;
 
@@ -587,7 +585,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         
         // Add new ranges.
         for (Iterator iter = getRangesToAdd().iterator(); iter.hasNext();) {
-            Range range = ((RangeBean) iter.next()).getRange(feature, user);
+            Range range = ((RangeBean) iter.next()).getRange(user);
             // Avoid creating duplicate Ranges.
             if (feature.getRanges().contains(range)) {
                 continue;
@@ -605,7 +603,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
         // Update existing ranges.
         for (Iterator iter = myRangesToUpdate.iterator(); iter.hasNext();) {
-            Range range = ((RangeBean) iter.next()).getRange(feature, user);
+            Range range = ((RangeBean) iter.next()).getRange(user);
             user.update(range);
         }
         // No need to test whether this 'feature' persistent or not because we
