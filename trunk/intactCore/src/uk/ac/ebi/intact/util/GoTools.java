@@ -165,7 +165,7 @@ public class GoTools {
         // add GO xref
         if ((Vector) definition.get("goid") != null){
             current.addXref(new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                                  (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "GO"),
+                                  (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go"),
                                   ((Vector) definition.get("goid")).elementAt(0).toString(),
                                   null, null, null));
         }
@@ -178,12 +178,12 @@ public class GoTools {
                 if (pubmedRefPat.match(s)){
                     // add Pubmed xref
                     current.addXref(new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                                              (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "PubMed"),
+                                              (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "pubmed"),
                                               pubmedRefPat.getParen(1),
                                               null,
                                               null,
                                               (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class,
-                                                      "GO-definition-ref")));
+                                                      "go-definition-ref")));
                 }
             }
         }
@@ -227,7 +227,7 @@ public class GoTools {
                 }
             }
 
-        System.err.println();
+        System.err.println(count + " ");
 
         return;
     }
@@ -408,7 +408,8 @@ public class GoTools {
         final String usage = "Usage:\n" +
                              "GoTools upload   IntAct_classname Go_DefinitionFile [Go_DagFile]    OR\n" +
                              "GoTools download IntAct_classname Go_DefinitionFile [Go_DagFile]";
-        Class targetClass;
+
+        Class targetClass = null;
 
         try {
             // Check parameters
