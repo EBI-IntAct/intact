@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 
 import java.io.Serializable;
 
+import uk.ac.ebi.intact.util.Utilities;
 
 /**
 
@@ -153,35 +154,20 @@ public abstract class BasicObject implements Serializable {
         return this.ac + "; owner=" + this.ownerAc + "\n";
     }
 
-    /** Returns true if the two object have equivalent content.
-     *  The definition depends on the object.
-     *  For BasicObject this method always returns true, as BasicObject
+    /** Returns true if two objects have the same content.
+     *
+     * For BasicObject this method always returns true, as BasicObject
      *  contains no content attributes.
      *
      */
-    public boolean isSameObject(Object comparator){
+    public boolean equals(Object anObject){
 
         return true;
     }
 
-    /** Returns true if an object is in a collection.
-     *  The predicate used is isSameObject, which returns true for
-     * two objects which have equivalent content.
-     *
-     */
-    public boolean isInCollection (Collection coll){
-        if (null == coll){
-                return false;
-        }
-        Iterator i = coll.iterator();
-        while(i.hasNext()){
-            Object element = i.next();
-            if (this.isSameObject((BasicObject) element)){
-                return true;
-            }
-        }
-        // The element has not been found in the collection.
-        return false;
+    public int hashCode(){
+
+        return 0;
     }
 
 } // end BasicObject

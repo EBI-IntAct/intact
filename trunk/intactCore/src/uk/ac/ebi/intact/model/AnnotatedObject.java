@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.model;
 
 import java.util.*;
 
+import uk.ac.ebi.intact.util.Utilities;
+
 /**
  * Represents an object with biological annotation.
  *
@@ -47,10 +49,7 @@ public abstract class AnnotatedObject extends BasicObject {
      *
      */
     public Collection xref = new Vector();
-    /**
-     *
-     */
-    public Collection referenceQualifier = new Vector();
+
     /**
      *
      */
@@ -105,7 +104,7 @@ public abstract class AnnotatedObject extends BasicObject {
      * if an equivalent xref is not yet part of the object.
      */
     public void addXref(Xref aXref) {
-        if (! aXref.isInCollection(this.xref)) {
+        if (! this.xref.contains(aXref)) {
             this.xref.add(aXref);
             aXref.parentAc = this.getAc();
         }
@@ -113,19 +112,7 @@ public abstract class AnnotatedObject extends BasicObject {
     public void removeXref(Xref xref) {
         this.xref.remove(xref);
     }
-    public void setReferenceQualifier(Collection someReferenceQualifier) {
-        this.referenceQualifier = someReferenceQualifier;
-    }
-    public Collection getReferenceQualifier() {
-        return referenceQualifier;
-    }
-    public void addReferenceQualifier(ReferenceQualifier referenceQualifier) {
-        if (! this.referenceQualifier.contains(referenceQualifier)) this.referenceQualifier.add(referenceQualifier);
-    }
-    public void removeReferenceQualifier(ReferenceQualifier referenceQualifier) {
-        this.referenceQualifier.remove(referenceQualifier);
-    }
-    public void setReference(Collection someReference) {
+     public void setReference(Collection someReference) {
         this.reference = someReference;
     }
     public Collection getReference() {
@@ -153,6 +140,29 @@ public abstract class AnnotatedObject extends BasicObject {
 
     ///////////////////////////////////////
     // instance methods
+
+    /** Returns true if the "important" attributes are equal.
+     */
+    public boolean equals(Object obj){
+
+        return (super.equals(obj) &&
+                Utilities.equals(this.shortLabel, ((AnnotatedObject)obj).getShortLabel()) &&
+                Utilities.equals(this.fullName, ((AnnotatedObject)obj).getFullName()));
+    }
+
+    /** This class overwrites equals. To ensure proper functioning of HashTable,
+     * hashCode must be overwritten, too.
+     * @return  hash code of the object.
+     */
+    public int hashCode(){
+
+        int code = super.hashCode();
+
+        if (null != shortLabel) code += shortLabel.hashCode();
+        if (null != fullName) code += fullName.hashCode();
+
+        return code;
+    }
 
     public String toString() {
         return this.getAc() + "; owner=" + this.ownerAc

@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.util.Utilities;
+
 import java.util.*;
 
 /**
@@ -57,8 +59,6 @@ public class Annotation extends BasicObject {
         this.cvTopic = cvTopic;
     }
 
-
-
     //attributes used for mapping BasicObjects - project synchron
     public String getCvTopicAc() {
         return this.cvTopicAc;
@@ -66,6 +66,30 @@ public class Annotation extends BasicObject {
     public void setCvTopicAc(String ac){
         this.cvTopicAc = ac;
     }
+
+    /** Returns true if the "important" attributes are equal.
+     */
+    public boolean equals(Object obj){
+
+        return (super.equals(obj) &&
+                Utilities.equals(this.cvTopic, ((Annotation)obj).getCvTopic()) &&
+                Utilities.equals(this.annotationText, ((Annotation)obj).getAnnotationText()));
+    }
+
+    /** This class overwrites equals. To ensure proper functioning of HashTable,
+     * hashCode must be overwritten, too.
+     * @return  hash code of the object.
+     */
+    public int hashCode(){
+
+        int code = super.hashCode();
+
+        if (null != cvTopic) code += cvTopic.hashCode();
+        if (null != annotationText) code += annotationText.hashCode();
+
+        return code;
+    }
+
 } // end Annotation
 
 
