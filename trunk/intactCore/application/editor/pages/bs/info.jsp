@@ -50,7 +50,6 @@
         <td class="tableCell">
             <html:text property="shortLabel" size="20" maxlength="20"
                 name="bsForm" styleClass="inputRequired"/>
-            <br/><html:errors property="shortLabel"/>
         </td>
 
         <td class="tableCell">
@@ -107,3 +106,8 @@
     </tr>
 </table>
 <html:errors property="bs.taxid"/>
+<html:messages id="message" message="true">
+	<span class="warning">
+		<bean:write name="message" filter="false"/>
+	</span>	
+</html:messages>        
