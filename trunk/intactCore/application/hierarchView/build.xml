@@ -629,9 +629,9 @@ Verison: $Id$
             </lib>
 
             <!-- Inlcude application common jar files exclude test files. -->
-            <fileset dir="${intact.app.dir}/lib">
+            <lib dir="${intact.app.dir}/lib">
                 <exclude name="test/**"/>
-            </fileset>
+            </lib>
 
             <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">
