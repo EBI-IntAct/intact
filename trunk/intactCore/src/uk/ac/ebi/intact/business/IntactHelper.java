@@ -30,12 +30,17 @@ import uk.ac.ebi.intact.simpleGraph.*;
  * @author Chris Lewington
  */
 
-public class IntactHelper implements SearchI {
+public class IntactHelper implements SearchI, Serializable {
 
     //initialise variables used for persistence
     DAO dao = null;
     DAOSource dataSource = null;
     Map classInfo = null;
+
+    /**
+     * used internally to manage transaction creation
+     */
+    private boolean isInTransaction;
 
     /** cache to be used for caching by shortLabel.
      *  shortLabel is not a primary key, therefore the caching
@@ -94,6 +99,17 @@ public class IntactHelper implements SearchI {
         //NB this needs to be a generic logger, from ObjectBridge?...
         pr = dataSource.getLogger();
 
+        //get a DAO so some work can be done!!
+        try {
+
+            dao = dataSource.getDAO();
+        }
+        catch (DataSourceException de) {
+
+            String msg = "intact helper: There was a problem accessing a data store";
+            throw new IntactException(msg, de);
+
+        }
     }
 
     /**
@@ -137,6 +153,106 @@ public class IntactHelper implements SearchI {
         notRequired.add("name");
         notRequired.add("class");
 
+        //get a DAO so some work can be done!!
+        try {
+
+            dao = dataSource.getDAO();
+        }
+        catch (DataSourceException de) {
+
+            String msg = "intact helper: There was a problem accessing a data store";
+            throw new IntactException(msg, de);
+
+        }
+    }
+
+    /**
+     * validates a user's credentials against the data store.
+     *
+     * @param user the username
+     * @param passowrd the user password (may be null)
+     *
+     * @return boolean true if valid details, false if not (including a null username).
+     */
+    public boolean isUserVerified(String user, String password) {
+
+        return dao.isUserValid(user, password);
+    }
+
+    /**
+     * close the data source. NOTE: performing this operation will
+     * invalidate any outstanding transactions, and a call to open()
+     * must be made before further store access can be made. Do not use this method
+     * if you wish to continue data store operations in the same connection!
+     * Note that any previous data may be lost, and a subsequent call to open()
+     * will result in a new connection being established to the persitent store.
+     *
+     * @exception thrown if the store was unable to be closed.
+     */
+    public void closeStore() throws IntactException {
+
+        try {
+
+            dao.close();
+        }
+        catch(DataSourceException de) {
+
+            throw new IntactException("failed to close data source!", de);
+        }
+    }
+
+    /**
+     * starts a business level transaction. This allows finer grained
+     * transaction management of business operations (eg for performing
+     * a number of creates/deletes within one unit of work).
+     *
+     * @exception IntactException thrown usually if a transaction is already running
+     */
+    public void startTransaction() throws IntactException {
+
+        try {
+            dao.begin();
+        }
+        catch(Exception e) {
+
+            throw new IntactException("unable to start an intact transaction!", e);
+        }
+    }
+
+    /**
+     * ends a busines transaction. This method should be used if it is required
+     * to manage business transactionas across multiple operations (eg for
+     * performing a number of creates/deletes in one unit of work).
+     *
+     * @exception IntactException thrown usually if there is no transaction in progress
+     */
+    public void finishTransaction() throws IntactException {
+
+        try {
+            dao.commit();
+        }
+        catch(Exception e) {
+
+            throw new IntactException("unable to complete an intact transaction!", e);
+        }
+    }
+
+    /**
+     * unwraps a transaction. This method is of use when a "business unit of work"
+     * fails for some reason and the operations within it should not affect the
+     * persistent store.
+     *
+     * @exception IntactException thrown usually if a transaction is not in progress
+     */
+    public void undoTransaction() throws IntactException {
+
+        try {
+            dao.rollback();
+        }
+        catch(Exception e) {
+
+            throw new IntactException("unable to undo an intact transaction!", e);
+        }
     }
 
     /**
@@ -151,7 +267,7 @@ public class IntactHelper implements SearchI {
 
         try {
 
-            dao = dataSource.getDAO();
+            if(dao == null) dao = dataSource.getDAO();
 
             //just to be safe, restrict write access..
             synchronized (this) {
@@ -203,7 +319,7 @@ public class IntactHelper implements SearchI {
 
            try {
 
-               dao = dataSource.getDAO();
+               if(dao == null) dao = dataSource.getDAO();
 
                //just to be safe, restrict write access..
                synchronized(this) {
@@ -235,7 +351,7 @@ public class IntactHelper implements SearchI {
 
            try {
 
-               dao = dataSource.getDAO();
+               if(dao == null) dao = dataSource.getDAO();
 
                //just to be safe, restrict write access..
                synchronized(this) {
@@ -388,19 +504,8 @@ public class IntactHelper implements SearchI {
             String msg = "intact helper: unable to perform search operation.. \n";
             throw new IntactException(msg, se);
 
-        } catch (DataSourceException de) {
-
-            String msg = "intact helper: problem with underlying persistence engine during search";
-            throw new IntactException(msg, de);
-
-        } catch (TransactionException te) {
-
-            String msg1 = "intact helper: transaction problem during search - \n";
-            String msg2 = "possible cause: transaction not started or not terminated";
-            String msg = msg1 + msg2;
-            throw new IntactException(msg, te);
-
-        } finally {
+        }
+        finally {
 
             //done with the connection, so close it
             try {
@@ -488,19 +593,8 @@ public class IntactHelper implements SearchI {
             String msg = "intact helper: unable to perform search operation.. \n";
             throw new IntactException(msg, se);
 
-        } catch (DataSourceException de) {
-
-            String msg = "intact helper: problem with underlying persistence engine during search";
-            throw new IntactException(msg, de);
-
-        } catch (TransactionException te) {
-
-            String msg1 = "intact helper: transaction problem during search - \n";
-            String msg2 = "possible cause: transaction not started or not terminated";
-            String msg = msg1 + msg2;
-            throw new IntactException(msg, te);
-
-        } finally {
+        }
+        finally {
 
             //done with the connection, so close it
             try {
