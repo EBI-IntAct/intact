@@ -11,6 +11,7 @@ import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.business.IntactServiceIF;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -46,11 +47,20 @@ public abstract class IntactBaseAction extends Action {
      * @param request the Http request to access the Intact user object.
      * @return an instance of <code>IntactUserImpl</code> stored in a session.
      * No new session is created.
+     * @exception SessionExpiredException for an expired session.
+     *
+     * <pre>
+     * post: return <> Undefined
+     * </pre>
      */
-    protected IntactUserIF getIntactUser(HttpServletRequest request) {
-        IntactUserIF service = (IntactUserIF)
+    protected IntactUserIF getIntactUser(HttpServletRequest request)
+            throws SessionExpiredException {
+        IntactUserIF user = (IntactUserIF)
             getSessionObject(request,WebIntactConstants.INTACT_USER);
-        return service;
+        if (user == null) {
+            throw new SessionExpiredException();
+        }
+        return user;
     }
 
     /**
@@ -59,20 +69,20 @@ public abstract class IntactBaseAction extends Action {
      * @param session the session to access the Intact user object.
      * @return an instance of <code>IntactUserImpl</code> stored in
      * <code>session</code>
+     * @exception SessionExpiredException for an expired session.
+     *
+     * <pre>
+     * post: return <> Undefined
+     * </pre>
      */
-    protected IntactUserIF getIntactUser(HttpSession session) {
-        IntactUserIF service = (IntactUserIF)
+    protected IntactUserIF getIntactUser(HttpSession session)
+            throws SessionExpiredException {
+        IntactUserIF user = (IntactUserIF)
             session.getAttribute(WebIntactConstants.INTACT_USER);
-        return service;
-    }
-
-    /**
-     * A convenient method to retrieve an application object from a session.
-     * @param attrName the attribute name.
-     * @return an application object stored in a session under <tt>attrName</tt>.
-     */
-    protected Object getApplicationObject(String attrName) {
-        return super.servlet.getServletContext().getAttribute(attrName);
+        if (user == null) {
+            throw new SessionExpiredException();
+        }
+        return user;
     }
 
     /**
@@ -87,27 +97,21 @@ public abstract class IntactBaseAction extends Action {
     /**
      * Returns the session from given request. No new session is created.
      * @param request the request to get the session from.
-     * @return session associated with given request. Null is returned if there
-     * is no session associated with <code>request</code>.
-     */
-    protected HttpSession getSession(HttpServletRequest request) {
-        // Don't create a new session.
-        return request.getSession(false);
-    }
-
-    /**
-     * Retrieve a session object based on the request and attribute name.
+     * @return session associated with given request.
+     * @exception SessionExpiredException for an expired session.
      *
-     * @param request the HTTP request to retrieve a session object stored
-     * under <tt>attrName</tt>.
-     * @param attrName the name of the attribute.
-     * @return the session object stored in <tt>request</tt> under
-     * <tt>attrName</tt>. Could be <tt>null</tt> if there is no session
-     * object stored under <tt>attrName</tt> in <tt>request</tt>.
+     * <pre>
+     * post: return <> Undefined
+     * </pre>
      */
-    protected Object getSessionObject(HttpServletRequest request,
-                                      String attrName) {
-        return getSession(request).getAttribute(attrName);
+    protected HttpSession getSession(HttpServletRequest request)
+            throws SessionExpiredException {
+        // Don't create a new session.
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            throw new SessionExpiredException();
+        }
+        return session;
     }
 
     /**
@@ -182,13 +186,16 @@ public abstract class IntactBaseAction extends Action {
      *
      * @param request the HTTP request to access the
      * <code>WebIntactConstants.SINGLE_MATCH</code>.
+     * @exception SessionExpiredException for an expired session.
      *
      * <pre>
      * post: return = WebIntactConstants.SINGLE_MATCH or
      *                WebIntactConstants.FORWARD_RESULTS
+     * post: return <> Undefined
      * </pre>
      */
-    protected String fwdResultsOrSearch(HttpServletRequest request) {
+    protected String fwdResultsOrSearch(HttpServletRequest request)
+            throws SessionExpiredException {
         // The default is to search again.
         String retval = WebIntactConstants.FORWARD_SEARCH;
 
@@ -203,5 +210,35 @@ public abstract class IntactBaseAction extends Action {
             retval = WebIntactConstants.FORWARD_RESULTS;
         }
         return retval;
+    }
+
+    // Helper Methods
+
+    /**
+     * A convenient method to retrieve an application object from a session.
+     * @param attrName the attribute name.
+     * @return an application object stored in a session under <tt>attrName</tt>.
+     */
+    private Object getApplicationObject(String attrName) {
+        return super.servlet.getServletContext().getAttribute(attrName);
+    }
+
+    /**
+     * Retrieve a session object based on the request and attribute name.
+     *
+     * @param request the HTTP request to retrieve a session object stored
+     * under <tt>attrName</tt>.
+     * @param attrName the name of the attribute.
+     * @return the session object stored in <tt>request</tt> under
+     * <tt>attrName</tt>.
+     * @exception SessionExpiredException for an expired session.
+     *
+     * <pre>
+     * post: return <> Undefined
+     * </pre>
+     */
+    private Object getSessionObject(HttpServletRequest request,
+            String attrName) throws SessionExpiredException {
+        return getSession(request).getAttribute(attrName);
     }
 }
