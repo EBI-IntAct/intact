@@ -76,7 +76,7 @@ public class CommentBean implements Serializable {
     /**
      * Returns the annotated text.
      */
-    public String getText() {
+    public String getDescription() {
         return myAnnotatedText;
     }
 
@@ -85,7 +85,7 @@ public class CommentBean implements Serializable {
      *
      * @param text the annotated text.
      */
-    public void setText(String text) {
+    public void setDescription(String text) {
         myAnnotatedText = text;
     }
 
@@ -94,7 +94,7 @@ public class CommentBean implements Serializable {
      *
      * @param text the annotated text to add.
      */
-    public void addText(String text) {
+    public void addDescription(String text) {
         myAnnotatedText = myAnnotatedText + " " + text;
     }
 
