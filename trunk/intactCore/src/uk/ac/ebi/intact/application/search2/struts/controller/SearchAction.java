@@ -176,12 +176,42 @@ public class SearchAction extends IntactBaseAction {
 
     /**
      * utility method to handle the logic for lookup, ie trying AC, label etc.
+     * <p>
      * Isolating it here allows us to change initial strategy if we want to.
      * NB this will probably be refactored out into the IntactHelper class later on.
+     * </p>
+     *
+     * <p>
+     * Strategy:
+     *
+     * If no <code>searchClass</code> is specified, we are using as <code>searchClass</code>
+     * the class of the first item found by one of the subqueries.
+     *
+     * <pre>
+     * eg: value="ho-412 , ho , q124020 , ga-123"
+     * respectivly Interaction, Experiment, Protein and Interaction.
+     *
+     * We'll iterate through all subqueries in the readin order.
+     * 'ho-412':
+     *      look for Protein      ---> nothing found.
+     *      look for Interaction  ---> <b>1 object found</b>.
+     *
+     * 'ho' :
+     *      look for Interaction  ---> nothing found.
+     *
+     * 'q124020'
+     *      look for Interaction  ---> nothing found.
+     *
+     * 'ga-123'
+     *      look for Interaction  ---> <b>1 object found</b>.
+     *
+     * We have found <b>2</b> Interactions.
+     * </pre>
+     * </p>
      *
      * @param searchClass The class to search on (only comes from a link clink) - useful for optimizing
      * search
-     * @param value the user-specified value
+     * @param value the user-specified value (can be a comma-separated list of query)
      * @param user The object holding the IntactHelper for a given user/session
      * (passed as a parameter to avoid using an instance variable, which may
      *  cause thread problems).
@@ -190,8 +220,7 @@ public class SearchAction extends IntactBaseAction {
      *
      * @exception IntactException thrown if there were any search problems
      */
-    private Collection doLookup(String searchClass, String value, IntactUserIF user)
-            throws IntactException {
+    private Collection doLookup( String searchClass, String value, IntactUserIF user ) throws IntactException {
         Collection queries = splitQuery( value );
 
         // avoid to have duplicate intact object in the dataset.
@@ -199,22 +228,35 @@ public class SearchAction extends IntactBaseAction {
         String packageName = AnnotatedObject.class.getPackage().getName() + ".";
         if(searchClass.length() == 0) {
 
-            //have to go through the possible classes in order...
-            for (int i = 0; i < SEARCH_ORDER.length; i++) {
-                // The class name associated with the search request.
-                String className = packageName + SEARCH_ORDER[i];
-                //try search on AC first...
-                for ( Iterator iterator = queries.iterator (); iterator.hasNext (); ) {
-                    String subQuery = (String) iterator.next ();
-                    System.out.println ( "Search for subquery: " +subQuery );
-                    results.addAll( doSearch(className, subQuery, user) );
-                    System.out.println ( "Item count: " + results.size());
-                }
-                if (!results.isEmpty()) {
-                    super.log("found search match - class: " + className +", value: " + value);
-                    break;
-                }
-            }
+            String className = null;
+            boolean itemFound = false;
+            int x = 0;
+            for ( Iterator iterator = queries.iterator (); iterator.hasNext (); ) {
+                String subQuery = (String) iterator.next ();
+                super.log( "Search for subquery: " + subQuery );
+
+                for (int i = 0; i < SEARCH_ORDER.length; i++) {
+                    if (false == itemFound) {
+                        className = packageName + SEARCH_ORDER[i];
+                    } else {
+                        // if there is an item found (i.e. only one class to look for)
+                        // we need only one iteration.
+                        if ( i > 0) break;
+                    }
+
+                    Collection subResult = doSearch( className, subQuery, user );
+                    super.log( "sub result count: " + subResult.size() );
+
+                    if (subResult.size() > 0) {
+                        results.addAll( subResult );
+                        className = subResult.iterator().next().getClass().getName();
+                        super.log("found search match - class: " + className +", value: " + subQuery);
+                        itemFound = true;
+                        break; // exit the inner for
+                    }
+                } // inner for
+                super.log( "total result count: " + results.size() );
+            } // main for
         }
         else {
             super.log("className supplied in request - going straight to search...");
@@ -223,14 +265,16 @@ public class SearchAction extends IntactBaseAction {
             for ( Iterator iterator = queries.iterator (); iterator.hasNext (); ) {
                 String subQuery = (String) iterator.next ();
                 System.out.println ( "Search for subquery: " +subQuery );
-                results.addAll( doSearch(className, subQuery, user) );
+                Collection subResult = doSearch(className, subQuery, user);
+
+                if ( subResult.isEmpty() ) {
+                    super.log("no search results found for class: " + className +", value: " + value);
+                } else {
+                    super.log("found search match - class: " + className +", value: " + value);
+                }
+
+                results.addAll( subResult );
                 System.out.println ( "Item count: " + results.size());
-            }
-            if(results.isEmpty()) {
-                super.log("no search results found for class: " + className +", value: " + value);
-            }
-            else {
-                super.log("found search match - class: " + className +", value: " + value);
             }
         }
         return results;
@@ -246,7 +290,7 @@ public class SearchAction extends IntactBaseAction {
      * @return one to many subquery of the comma separated list.
      */
     private Collection splitQuery( String query ) {
-        Collection queries = new HashSet();
+        Collection queries = new LinkedList();
 
         StringTokenizer st = new StringTokenizer( query, "," );
         while (st.hasMoreTokens()) {
