@@ -1,13 +1,14 @@
 <%@ page language="java" %>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
 
 <html:html locale="true">
 <head>
 <title><bean:message key="hierarchView.index.title"/></title>
 <html:base/>
 
-  <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
   <META HTTP-EQUIV="Expires" CONTENT="-1">
 
 
@@ -18,15 +19,19 @@
   </frameset>
 
   <noframes>
-    <p>This frameset document contains:      
+    <p>This frameset document contains:
     <ul>
       <li><a href="view.jsp"> Visualization page </a>
       <li><a href="hierarchy.jsp"> Hierarchy page </a>
     </ul>
   </noframes>
 
+ <!-- Initialize User's session with data access layer -->
+ <hierarchView:init/>
+
 </head>
 <body bgcolor="white">
- 
+
+
 </body>
 </html:html>
