@@ -184,19 +184,32 @@ public class EditorActionServlet extends ActionServlet {
 
         // Protein search in the Interaction editor.
         map.put("error.int.protein.edit.role", "int.protein.search");
+        // Anchor for pressing the protein search button.
         map.put(rb.getString("int.proteins.button.search"), "int.protein.search");
+        // Unsaved proteins
         map.put("error.int.sanity.unsaved.prot", "int.protein.search");
+        // No search parameter
         map.put("error.int.protein.search.input", "int.protein.search");
+        // Invalid format for AC
         map.put("error.int.protein.search.ac", "int.protein.search");
+        // Invalid format for SP AC
         map.put("error.int.protein.search.sp", "int.protein.search");
-        map.put("error.int.protein.search.empty", "int.protein.search");
+        // Too many proteins returned.
         map.put("error.int.protein.search.many", "int.protein.search");
+        // No proteins found
+        map.put("error.int.protein.search.empty", "int.protein.search");
+        // Error with yasp
+        map.put("error.int.protein.search.empty.parse", "int.protein.search");
+
         // Experiment search in the Interaction editor.
         map.put("error.int.sanity.exp", "int.exp.search");
+        // No criteria specified.
         map.put("error.int.exp.search.input", "int.exp.search");
+        // No experiments found for citeria
         map.put("error.int.exp.search.empty", "int.exp.search");
+        // Too many experiments
         map.put("error.int.exp.search.many", "int.exp.search");
-        // General Interaction page anchors.
+        // General Interaction page anchors (not sure these were used or not)
         map.put("int.interaction", "info");
         map.put("int.organism", "info");
 
