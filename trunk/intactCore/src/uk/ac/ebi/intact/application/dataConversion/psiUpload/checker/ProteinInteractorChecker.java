@@ -55,7 +55,12 @@ public final class ProteinInteractorChecker {
      */
     public static ProteinHolder getProtein( String id, BioSource bioSource ) {
 
-        return (ProteinHolder) cache.get( buildID( id, bioSource.getTaxId() ) );
+        String taxid = null;
+        if( null != bioSource ) {
+            taxid = bioSource.getTaxId();
+        }
+
+        return (ProteinHolder) cache.get( buildID( id, taxid ) );
     }
 
     /**
