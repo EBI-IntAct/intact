@@ -87,7 +87,7 @@
 
     <!-- Creates the 'docs' directory. -->
     <target name="mk-docs">
-        <mkdir dir="${docs.dir}" />
+        <mkdir dir="${docs.dir}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -139,7 +139,7 @@
         description="Compiles non test source files">
 
         <!-- Create the dest dir if it doesn't exist. -->
-        <mkdir dir="${dest.dir}" />
+        <mkdir dir="${dest.dir}"/>
 
         <!-- Only compile editor sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
@@ -161,7 +161,7 @@
         description="Compiles all the source files">
 
         <!-- Create the dest dir if it doesn't exist. -->
-        <mkdir dir="${dest.dir}" />
+        <mkdir dir="${dest.dir}"/>
 
         <!-- Only compile editor sources only. -->
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
@@ -180,7 +180,7 @@
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-            depends="set-db-type, war-pg, war-oracle"/>
+        depends="set-db-type, war-pg, war-oracle"/>
 
     <!-- =================================================================== -->
 
@@ -189,7 +189,7 @@
     <target name="build-war" depends="compile">
 
         <!-- Create the distribution dir if it doesn't exist. -->
-        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${dist.dir}"/>
 
         <!-- Create local directories to copy common files. -->
         <mkdir dir="${basedir}/layouts/styles"/>
@@ -199,9 +199,11 @@
         <!-- Common layouts -->
         <copy todir="${basedir}/layouts">
             <fileset dir="${intact.app.dir}/layouts">
-            <!-- Don't need any frame lauyouts for this application -->
-            <exclude name="*Frame.jsp"/>
-        </fileset>
+                <!-- Don't need any frame lauyouts for this application -->
+                <exclude name="*Frame.jsp"/>
+                <!--  No EBI header for this application (yet) -->
+                <exclude name="ebiHeaderLayout.jsp"/>
+            </fileset>
         </copy>
         <!-- Common images -->
         <copy todir="${basedir}/images">
@@ -228,7 +230,7 @@
         </copy>
 
         <!-- Generate editor topics -->
-        <antcall target="gen-editor-topics"/>
+        <!--        <antcall target="gen-editor-topics"/>-->
 
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
             <fileset dir="${basedir}">
@@ -243,28 +245,28 @@
                 <include name="layouts/**"/>
             </fileset>
 
-			<!-- Include editor specific jar files. -->
+            <!-- Include editor specific jar files. -->
             <lib dir="${lib.dir}">
                 <!-- Avoid NFS temp files (occationally) -->
                 <include name="*.jar"/>
             </lib>
 
             <!-- Inlcude the intact core -->
-            <lib dir="${root.dist.dir}" />
+            <lib dir="${root.dist.dir}"/>
 
             <!-- Include common jar files for struts. -->
-            <lib dir="${intact.app.dir}/lib" />
+            <lib dir="${intact.app.dir}/lib"/>
 
-			<!-- Include common jar files from intact core. -->
-			<lib dir="${root.lib.dir}">
-				<include name="jakarta-ojb-0.9.7.jar"/>
-				<include name="log4j-1.2.5.jar"/>
+            <!-- Include common jar files from intact core. -->
+            <lib dir="${root.lib.dir}">
+                <include name="jakarta-ojb-0.9.7.jar"/>
+                <include name="log4j-1.2.5.jar"/>
                 <include name="${db}"/>
-			</lib>
+            </lib>
 
             <!-- editor specific classes -->
-  			<classes dir="${dest.dir}"/>
-		</war>
+            <classes dir="${dest.dir}"/>
+        </war>
     </target>
 
     <!-- =================================================================== -->
@@ -329,7 +331,7 @@
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
     <target name="gen-editor-topics" depends="compile"
-            description="Generates the Editor topic properties">
+        description="Generates the Editor topic properties">
 
         <!-- Root dest must have compiled prior to calling this. -->
         <java classname="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorTopicsGenerator"
@@ -357,7 +359,7 @@
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
     <target name="junit-test-stdout" depends="compile-all"
-            description="Runs JUnit directly with output directed to stdout">
+        description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value=
                 "uk.ac.ebi.intact.application.editor.struts.framework.util.test.AllJUnitTests"/>
