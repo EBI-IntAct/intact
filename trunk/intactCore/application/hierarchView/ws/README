@@ -23,6 +23,9 @@ environment (or, for the DBs, at least have access to them over the network):
       see http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.1.18/bin/
 	- Apache Axis web application (1.0) for web services (for use with the HierarchView application)
 	  see http://ws.apache.org/axis/
+	  We advice to use Axis 1.0 Beta 3 which has been tested thoroughly
+	      you can get it from: http://archive.apache.org/dist/ws/axis/beta3/
+	  It is planned to update to a more recent version of Axis.
 
     [ Layout library: GVF(provided) or Tulip ]
 
