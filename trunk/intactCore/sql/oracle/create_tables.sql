@@ -187,14 +187,8 @@ CREATE TABLE IA_Interactor
         , fullName              VARCHAR2(250)
         /* Colums belonging to BasicObject */
         , owner_ac              VARCHAR2(30)    CONSTRAINT fk_Interactor$owner REFERENCES IA_Institution(ac)
-        , polymerSeq            CLOB
 )
 TABLESPACE &&intactMainTablespace
-lob (polymerSeq) 
-   STORE AS SEGNAME (TABLESPACE &&intactLobTablespace
-                     PCTVERSION 0
-                     CACHE READS
-                    )
 ;
 
 CREATE index i_Interactor$crc64 on IA_Interactor(crc64) TABLESPACE &&intactIndexTablespace;
@@ -234,9 +228,53 @@ set term off
     'Date of the last update of the column.';
     COMMENT ON COLUMN IA_Interactor.userstamp IS
     'Database user who has performed the last update of the column.';
-    COMMENT ON COLUMN IA_Interactor.polymerSeq IS
-    'The polymer sequence, usually DNA or amino acid.';
 set term on
+
+
+
+/* This is a table where we store chunks of sequence so there is no reason for a CLOB; the CLOB usage is limited in OJB.
+   Index organization gives fast access to table data for queries involving exact match and/or range search on a primary key 
+   and in this case we always access the table by interactor_ac.
+ */
+
+PROMPT Creating table "IA_Sequence_Chunk"
+CREATE TABLE IA_Sequence_Chunk
+(         interactor_ac         VARCHAR2(30)    NOT NULL CONSTRAINT fk_sequence$interactor REFERENCES IA_Interactor(ac)
+        , order_in_sequence     number(3)       NOT NULL
+        , sequence_chunk        VARCHAR2(1000)  NOT NULL
+        , created               DATE            DEFAULT  SYSDATE NOT NULL
+        , updated               DATE            DEFAULT  SYSDATE NOT NULL
+        , timestamp             DATE            DEFAULT  SYSDATE NOT NULL
+        , userstamp             VARCHAR2(30)    DEFAULT  USER    NOT NULL
+        ,CONSTRAINT             pk_IA_Sequence_Chunk
+                                PRIMARY KEY (interactor_ac,order_in_sequence)
+)
+ORGANIZATION INDEX
+TABLESPACE &&intactMainTablespace
+;
+
+set term off
+    COMMENT ON TABLE IA_Sequence_Chunk IS
+    'Sequence chunks; to avoid CLOB columns the sequences are split into chunks of 1000 characters'
+    COMMENT ON COLUMN IA_Sequence_Chunk.interactor_ac IS
+    'Refers to the Interactor to which this bit of sequence belongs.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.order_in_sequence IS
+    'Order of the chunk within the sequence of the Interactor';
+    COMMENT ON COLUMN IA_Sequence_Chunk.sequence_chunk IS
+    '1000 charcacters max size Sequence chunk';
+    'Unique, auto-generated accession number.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.timestamp IS
+    'Date of the last update of the column.';
+    COMMENT ON COLUMN IA_Sequence_Chunk.userstamp IS
+    'Database user who has performed the last update of the column.';
+set term on
+
+
+
 
 
 PROMPT Creating table "IA_Component"
