@@ -45,7 +45,7 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
         map.put("button.submit", "submit");
-        map.put("button.save", "save");
+        map.put("button.save.continue", "save");
         map.put("annotations.button.add", "addAnnot");
         map.put("xrefs.button.add", "addXref");
         return map;
