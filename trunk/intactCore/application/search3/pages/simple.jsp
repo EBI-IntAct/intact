@@ -91,6 +91,7 @@ because if not then we should NOT display the message below..
     //is valid for display, by checking the types against corresponding max values....
 
     boolean areValidItems = false;  //used to flag if we have something to display
+    Collection notDisplayed = new ArrayList();  //used to hold the lists that are too big for display
     for(Iterator it = partitionList.iterator(); it.hasNext();) {
 
         List listToCheck = (List)it.next();
@@ -107,9 +108,8 @@ because if not then we should NOT display the message below..
         int maxSizeForType = Integer.parseInt(mapValue);
         if(listToCheck.size() > maxSizeForType) {
 
-            //need to display a suitable error message and remove the subList from the
-            //display partitions..** DEBUG THIS ** - doesn't seem to like it done this way...
-            //partitionList.remove(listToCheck);
+            //cache it ready for removal from the display list
+            notDisplayed.add(listToCheck);
 %>
 
         <%-- this gets displayed INSTEAD if the result set was 'too big' --%>
@@ -124,6 +124,9 @@ because if not then we should NOT display the message below..
 
 
     } //ends List loop
+
+    //now need to remove the sublists that are too large from the list of displayable items..
+    partitionList.removeAll(notDisplayed);
 %>
 
 <%
