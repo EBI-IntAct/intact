@@ -21,19 +21,18 @@ public interface SearchHelperI {
 
     /**
      * Peforms a simple search in the IntAct data for given search class and
-     * value. This search is limited to AC and short label fields.
+     * value. This search is limited to AC and short label fields ONLY.
      *
      * @param searchClass the search class to perform the search on
      * (e.g., Experiment)
      * @param query the search query; doesn't support mupltiple comma
      * separated values.
-     * @param user the user to invoke search on.
-     * @return a collection of Intact objects of same class as
-     *         <code>searchClass</code> or an empty collection if none found.
+     * @param max the maximum number of entries to retrieve
+     * @return the result wrapper which contains the result of the search
      * @throws IntactException for any errors in searching the persistent system.
      */
-    public Collection doLookupSimple(String searchClass, String query,
-                                     IntactUserI user) throws IntactException;
+    public ResultWrapper doLookupSimple(Class searchClass, String query, int max)
+            throws IntactException;
 
     /**
      * Search in the IntAct data for a colleciton of object (type=searchClass).
@@ -69,6 +68,7 @@ public interface SearchHelperI {
 
     /**
      * Returns a result wrapper which contains the result for given search type.
+     * The search uses the JDBC.
      *
      * @param searchClass the class to search for. Eg., Experiment. It has to be a
      * <b>concrete</b> class not an interface.
@@ -80,5 +80,21 @@ public interface SearchHelperI {
      * is not thrown if the search produces no output.
      */
     public ResultWrapper search(Class searchClass, String searchParam, String searchValue,
+                                int max) throws IntactException;
+
+    /**
+     * Returns a result wrapper which contains the result for given search type.
+     * The search uses the OQL.
+     *
+     * @param searchClass the class to search for. Eg., Experiment. It has to be a
+     * <b>concrete</b> class not an interface.
+     * @param searchParam the search criteria to search. Eg., ac, shortLabel
+     * @param searchValue the search value. Eg., ga-*
+     * @param max the maximum number of entries to retrieve
+     * @return the result wrapper which contains the result of the search
+     * @throws IntactException for errors in searching for persistent system. This
+     * is not thrown if the search produces no output.
+     */
+    public ResultWrapper searchByQuery(Class searchClass, String searchParam, String searchValue,
                                 int max) throws IntactException;
 }

@@ -6,6 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.commons.search;
 
 import org.apache.log4j.Logger;
+import org.apache.ojb.broker.query.Query;
 import uk.ac.ebi.intact.application.commons.business.IntactUserI;
 import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
@@ -13,6 +14,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
 
 import java.sql.*;
 import java.util.*;
@@ -53,25 +55,10 @@ public class SearchHelper implements SearchHelperI {
         return searchCriteria;
     }
 
-    public Collection doLookupSimple(String searchClass, String query,
-                                     IntactUserI user) throws IntactException {
+    public ResultWrapper doLookupSimple(Class clazz, String query, int max)
+            throws IntactException {
         searchCriteria.clear();
-        String packageName = AnnotatedObject.class.getPackage().getName() + ".";
-
-        logger.info("className supplied in request - going straight to search...");
-        String className = packageName + searchClass;
-        logger.info("attempting search for " + className + " with query " + query);
-
-        Collection results = doSearchSimple(className, query, user);
-
-        if (results.isEmpty()) {
-            logger.info("no search results found for class: " + className + ", query: " + query);
-        } else {
-            logger.info("found search match - class: " + className + ", value: " + query);
-        }
-        logger.info("Item count: " + results.size());
-
-        return results;
+        return doSearchSimple(clazz, query, max);
     }
 
     public Collection doLookup(String searchClass, String values, IntactUserI user)
@@ -94,7 +81,8 @@ public class SearchHelper implements SearchHelperI {
 
             if (subResult.isEmpty()) {
                 logger.info("no search results found for class: " + className + ", value: " + values);
-            } else {
+            }
+            else {
                 logger.info("found search match - class: " + className + ", value: " + values);
             }
 
@@ -125,7 +113,8 @@ public class SearchHelper implements SearchHelperI {
             for (int i = 0; i < size; i++) {
                 if (false == itemFound) {
                     className = packageName + searchClasses.get(i);
-                } else {
+                }
+                else {
                     // if there is an item found (i.e. only one class to look for)
                     // we need only one iteration.
                     if (i > 0) break;
@@ -192,16 +181,19 @@ public class SearchHelper implements SearchHelperI {
             Collection searchResults = helper.search(clazz, searchParam, searchValue);
             if (searchResults.isEmpty()) {
                 return new ResultWrapper(0, max);
-            } else {
+            }
+            else {
                 return new ResultWrapper(searchResults, max);
             }
-        } catch (SQLException se) {
+        }
+        catch (SQLException se) {
             while ((se.getNextException()) != null) {
                 logger.info(se.getSQLState());
                 logger.info("SQL: Error Code: " + se.getErrorCode());
             }
             throw new IntactException("SQL errors, see the log out for more info");
-        } finally {
+        }
+        finally {
             helper.closeStore();
             try {
                 rs.close();
@@ -214,8 +206,43 @@ public class SearchHelper implements SearchHelperI {
                 if (conn != null) {
                     conn.close();
                 }
-            } catch (SQLException se) {
+            }
+            catch (SQLException se) {
                 throw new IntactException("SQL errors, see the log out for more info");
+            }
+        }
+    }
+
+    public ResultWrapper searchByQuery(Class clazz, String searchParam,
+                                   String searchValue, int max) throws IntactException {
+        // The helper to run the query against.
+        IntactHelper helper = null;
+
+        // The query factory to get a query.
+        ObjectBridgeQueryFactory qf = ObjectBridgeQueryFactory.getInstance();
+
+        // The query to search for AC or shortlabel.
+        Query query = qf.getLikeQuery(clazz, searchParam, searchValue);
+        try {
+            helper = new IntactHelper();
+            int count = helper.getCountByQuery(query);
+            if (count > max) {
+                // Exceeds the maximum size.
+                logger.info("return empty resultwrapper");
+                return new ResultWrapper(count, max);
+            }
+            // We have a result which is within limits. Do the search.
+            Collection searchResults = helper.getCollectionByQuery(query);
+            if (searchResults.isEmpty()) {
+                return new ResultWrapper(0, max);
+            }
+            else {
+                return new ResultWrapper(searchResults, max);
+            }
+        }
+        finally {
+            if (helper != null) {
+                helper.closeStore();
             }
         }
     }
@@ -244,14 +271,13 @@ public class SearchHelper implements SearchHelperI {
      * into the IntactHelper class later on.
      *
      * @param className The class to search on (only comes from a link clink) - useful for
-     *                  optimizing search
-     * @param value     the user-specified value
-     * @param user      object holding the IntactHelper for a given user/session (passed as a
-     *                  parameter to avoid using an instance variable, which may cause thread
-     *                  problems).
+     * optimizing search
+     * @param value the user-specified value
+     * @param user object holding the IntactHelper for a given user/session (passed as a
+     * parameter to avoid using an instance variable, which may cause thread
+     * problems).
      * @return Collection the results of the search - an empty Collection if no results found
-     * @throws uk.ac.ebi.intact.business.IntactException
-     *          thrown if there were any search problems
+     * @throws uk.ac.ebi.intact.business.IntactException thrown if there were any search problems
      */
     private Collection doSearch(String className, String value, IntactUserI user)
             throws IntactException {
@@ -319,33 +345,28 @@ public class SearchHelper implements SearchHelperI {
     /**
      * utility method to handle the logic for a simple lookup, ie trying AC and label only.
      *
-     * @param className The class to search on.
-     * @param value     the user-specified value
-     * @param user      The object holding the IntactHelper for a given user/session (passed as a
-     *                  parameter to avoid using an instance variable, which may cause thread
-     *                  problems).
-     * @return Collection the results of the search - an empty Collection if no results found
-     * @throws uk.ac.ebi.intact.business.IntactException
-     *          thrown if there were any search problems
+     * @param clazz The class to search on.
+     * @param value the user-specified value
+     * @return the result wrapper which contains the result of the search
+     * @throws uk.ac.ebi.intact.business.IntactException thrown if there were any search problems
      */
-    private Collection doSearchSimple(String className, String value,
-                                      IntactUserI user) throws IntactException {
+    private ResultWrapper doSearchSimple(Class clazz, String value, int max)
+            throws IntactException {
         //try search on AC first...
-        Collection results = user.search(className, "ac", value);
+        ResultWrapper rw = searchByQuery(clazz, "ac", value, max);
         String currentCriteria = "ac";
 
-        if (results.isEmpty()) {
+        if (rw.isEmpty()) {
             // No matches found - try a search by label now...
-            logger.info("no match found for " + className + " with ac= " + value);
-            logger.info("now searching for class " + className + " with label " + value);
-            results = user.search(className, "shortLabel", value);
+            logger.info("no match found for " + clazz + " with ac= " + value);
+            logger.info("now searching for class " + clazz + " with label " + value);
+            rw = searchByQuery(clazz, "shortLabel", value, max);
             currentCriteria = "shortLabel";
         }
         CriteriaBean cb = new CriteriaBean(value, currentCriteria);
         searchCriteria.add(cb);
-        return results;
+        return rw;
     }
-
 
     /**
      * This method is only used in the initial request from the Search Application. You enter with a
@@ -440,7 +461,8 @@ public class SearchHelper implements SearchHelperI {
 
             return new ResultWrapper(searchResult, SearchConstants.MAXIMUM_RESULT_SIZE, resultInfo);
 
-        } catch (SQLException se) {
+        }
+        catch (SQLException se) {
             while ((se.getNextException()) != null) {
                 logger.info(se.getSQLState());
                 logger.info("SQL: Error Code: " + se.getErrorCode());
@@ -570,11 +592,12 @@ public class SearchHelper implements SearchHelperI {
 
         } catch (ClassNotFoundException e) {
             throw new IntactException("Recieved an intact typ which is not valid, see the log out for more info");
-
-        } catch (NullPointerException e) {
+        }
+        catch (NullPointerException e) {
             throw new IntactException("Problems with the resultset, see the log out for more info");
 
-        } finally {
+        }
+        finally {
             //  close all database connections
             helper.closeStore();
             try {
@@ -588,9 +611,11 @@ public class SearchHelper implements SearchHelperI {
                 if (conn != null) {
                     conn.close();
                 }
-            } catch (SQLException se) {
+            }
+            catch (SQLException se) {
                 throw new IntactException("Problems with closing the IntactHelper");
-            } catch (NullPointerException e) {
+            }
+            catch (NullPointerException e) {
                 throw new IntactException("Problems with closing the IntactHelper");
             }
         }
