@@ -7,8 +7,7 @@ import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 import org.apache.xerces.dom.DOMImplementationImpl;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
+import org.w3c.dom.*;
 
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.dom.DOMSource;
@@ -16,6 +15,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
 import java.io.File;
 
@@ -96,10 +98,19 @@ public class PsiDataBuilder implements DataBuilder {
     /**
      * @see uk.ac.ebi.intact.application.dataConversion.DataBuilder
      */
-    public void writeData(String fileName) throws DataConversionException {
+    public void writeData(String fileName, Document docToWrite) throws DataConversionException {
 
         try {
             File f = new File(fileName);
+            DOMSource source = null;
+
+            //decide what is to be written
+            if(docToWrite == null) {
+                source = new DOMSource(doc);
+            }
+            else {
+                source = new DOMSource(docToWrite);
+            }
 
             // Use a Transformer for output
             TransformerFactory tFactory =
@@ -107,7 +118,7 @@ public class PsiDataBuilder implements DataBuilder {
             Transformer transformer = tFactory.newTransformer();
             transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
 
-            DOMSource source = new DOMSource(doc);
+
             StreamResult result = new StreamResult(f);
             transformer.transform(source, result);
 
@@ -120,6 +131,8 @@ public class PsiDataBuilder implements DataBuilder {
         }
 
     }
+
+
 
     //--------------- private methods originally copied from graph2MIF: may not need all, --------------------------
     //--------------- and need refactoring anyway. Some will already be modified...   -----------------------------------------
@@ -196,7 +209,7 @@ public class PsiDataBuilder implements DataBuilder {
 
         for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
 
-            Object obj = (Object) iterator.next();
+            Object obj = iterator.next();
 
             Experiment exp = null;
             try {
@@ -223,6 +236,126 @@ public class PsiDataBuilder implements DataBuilder {
     }
 
     /**
+     * Used to obtain a PSI Document object that is initialised and ready
+     * for use when for example later appending lists. Mainly used for processing
+     * large experiment sets where the interactions need to be generated in speerate
+     * files - this method allows for the generation of the 'root' PSI file.
+     * @return The current Document held by the builder. If called first this will
+     * provide an initialised Document; if called after generations have been made then
+     * it will return the current state of the Document.
+     * @throws ElementNotParseableException thron if somethingis wrong with the entry format
+     */
+    public Document getCurrentDocument() throws ElementNotParseableException {
+
+        if(!psiEntrySet.hasChildNodes()) {
+            //first call - just initialise with a root entry and return
+            Element psiEntry = null;
+            psiEntry = psiEntry("IntAct", "IntAct download");
+            // Append the entry to the root node
+            psiEntrySet.appendChild(psiEntry);
+
+        }
+         return doc;
+    }
+
+    /**
+     * Provides access in Document format to the current Interactor List.
+     * @return A Document containing the current InteractorList, or null if not yet built.
+     * @throws DataConversionException  if there was a problem building a Document
+     */
+    public Document getInteractorList() throws DataConversionException {
+
+        Document result = null;
+        Element root = null;
+        try {
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            result = db.newDocument();
+            root = result.createElement("interactor-root");    //sets up a place-holder for the list
+            //now just import the list we want into the new document and return
+            Node newChild = result.importNode(globalInteractorList, true); //built in a different Document!!
+            root.appendChild(newChild);
+        }
+        catch(ParserConfigurationException pe) {
+            throw new DataConversionException("Unable to build a Document!", pe);
+        }
+
+        if((root != null) & (root.hasChildNodes())) result.appendChild(root);
+        return result;
+    }
+
+    /**
+     * Provides access in Document format to the current Experiment List.
+     * @return A Document containing the current ExperimentList, or null if not yet built.
+     * @throws DataConversionException  if there was a problem building a Document
+     */
+    public Document getExperimentList() throws DataConversionException {
+
+        Document result = null;
+        Element root = null;
+        try {
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            result = db.newDocument();
+            root = result.createElement("experiment-root");    //sets up a place-holder for the list
+            //now just import the list we want into the new document and return
+            Node newChild = result.importNode(globalExperimentList, true); //built in a different Document!!
+            root.appendChild(newChild);
+        }
+        catch(ParserConfigurationException pe) {
+            throw new DataConversionException("Unable to build a Document!", pe);
+        }
+
+        if((root != null) & (root.hasChildNodes())) result.appendChild(root);
+        return result;
+    }
+
+    /**
+     * Produces an XML Document which contains only an interactionList. This
+     * is most likely to be of use for experiments which have very large numbers
+     * of Interactions (eg over 1000), and allows the caller to obtain XML in manageable
+     * 'chunks' for further processing. It is up to the caller to provide a reasonably
+     * well sized Collection - more than 1000 will be rejected.
+     * @param interactions A Collections of Interactions to be proceesed
+     * @return  Document an XML DOM containing the relevant elements for the Interactions
+     * @throws ElementNotParseableException thrown if the Document could not be created.
+     * @throws DataConversionException thrown if the parameter size is tooo big to be processed in one chunk.
+     */
+    public Document buildInteractionsOnly(Collection interactions) throws
+                                                DataConversionException, ElementNotParseableException {
+
+        if(interactions.size() > 1000)
+            throw new DataConversionException("Too many interactions to process!");
+        //NB the globalExperimentList etc will not have been set here, but are used
+        //further donw in the processing!!
+        Element dummy = psiEntry("junk1", "junk2"); //dummy to get things initialised!!
+        Document result = null;
+        Element list = null;
+        try {
+            //First set up a DOM tree to build the data in
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            result = db.newDocument();
+            list = result.createElement("interactionList");    //sets up a place-holder for the list
+            Element interactionElem = null;
+            //create elements for each Interaction in turn and add them to the list..
+            for (Iterator it = interactions.iterator(); it.hasNext();) {
+                interactionElem = doInteraction((Interaction) it.next());
+                Node newChild = result.importNode(interactionElem, true); //built in a different Document!!
+                list.appendChild(newChild);
+            }
+        }
+        catch (ElementNotParseableException e) {
+            //just log it
+            logger.info("InteractionList could not be built:" + e.getMessage());
+        }
+        catch(ParserConfigurationException pe) {
+            throw new DataConversionException("Unable to build a Document!", pe);
+        }
+
+        //put the list into the document and return..
+        result.appendChild(list);
+        return result;
+    }
+
+    /**
      * process list of interactions for an Experiment
      * @param exp to convert to PSI-Format
      * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if PSIrequired Elements are missing within graph
@@ -232,8 +365,18 @@ public class PsiDataBuilder implements DataBuilder {
 
         //get the Interactions from the Experiment....
         Collection interactions = exp.getInteractions();
+        //OPTIMIZATION POINT??
+                //Here for giot all the 20000 Interactions get loaded,
+                //when the call is made to iterator...
+                //A Possibility:
+                //If we know it is a big Exp, maybe we can process the Collection
+                //in 'chunks', by maybe adopting the same solution as for
+                //the search app when retrieving giot? Thus use the proxy solution
+        //for Interactions so we only pick out the Interactions one at a time
+        //from the Collection via their individual proxies...
         for (Iterator it = interactions.iterator(); it.hasNext();) {
             try {
+
                 Element psiInteraction = doInteraction((Interaction) it.next());
                 globalInteractionList.appendChild(psiInteraction);
             } catch (ElementNotParseableException e) {
@@ -1623,5 +1766,27 @@ public class PsiDataBuilder implements DataBuilder {
         }
         return (cal.get(Calendar.YEAR) + "-" + monthString + "-" + dayString);
 
+    }
+
+    /**
+     * Generates a new DOM Document with the PSI stuff filled in for the root.
+     * Mainly used so we can generate bits of the full XML (eg InteractionLists)
+     * and dump them to seperate files.
+     * @return Document a new PSI-initialised document.
+     */
+    private Document getNewDocRoot() {
+
+        Document newDoc = new DOMImplementationImpl().createDocument("net:sf:psidev:mi", "entrySet", null);
+        //The root-element is just a place-holder - we may not even need it,
+        //but to be safe we just generate a valid XML document to hold part of
+        //the InteractionList
+        Element root = newDoc.getDocumentElement();
+        root.setAttribute("xmlns", "net:sf:psidev:mi");
+        root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        root.setAttribute("xsi:schemaLocation", "net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd");
+        root.setAttribute("level", "1");
+        root.setAttribute("version", "1");
+
+        return newDoc;
     }
 }
