@@ -9,14 +9,13 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.log4j.Logger;
 import org.apache.ojb.broker.query.Query;
 import org.apache.struts.action.*;
-import uk.ac.ebi.intact.application.commons.search.ResultIterator;
+import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelper;
 import uk.ac.ebi.intact.application.commons.search.SearchHelperI;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
-import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -102,49 +101,39 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // The array to store queries.
         Query[] queries = getSearchQueries(searchClass, searchString);
 
-        // The results to display.
-        List results = new ArrayList();
-
         // The search helper to do the searching.
         SearchHelperI searchHelper = new SearchHelper(Logger.getLogger(
                 EditorConstants.LOGGER));
 
-        // Helper to pass onto the search helper.
-        IntactHelper helper = new IntactHelper();
-
-        // The result iterator returned from the search.
-        ResultIterator resultIter;
-        try {
-            resultIter = searchHelper.searchByQuery(helper, queries, max);
-            if (resultIter.isNonEmptyAndWithinBounds()) {
-                // Fill the results set.
-                for (Iterator iter = resultIter.getIterator(); iter.hasNext();) {
-                    results.add(new ResultRowData((Object[])iter.next(), searchClass));
-                }
-            }
-        }
-        finally {
-            helper.closeStore();
-        }
+        // The result wrapper returned from the search.
+        ResultWrapper rw = searchHelper.searchByQuery(queries, max);
 
         // Too large result set?
-        if (resultIter.isTooLarge()) {
+        if (rw.isTooLarge()) {
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.search.large",
-                            Integer.toString(resultIter.getPossibleResultSize())));
+                            Integer.toString(rw.getPossibleResultSize())));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
 
         // Nothing found?
-        if (resultIter.isEmpty()) {
+        if (rw.isEmpty()) {
             // No matches found - forward to a suitable page
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.search.nomatch", searchString, topic));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
+        }
+
+        // The results to display.
+        List results = new ArrayList();
+
+        // Convert to result row data.
+        for (Iterator iter = rw.getResult().iterator(); iter.hasNext();) {
+            results.add(new ResultRowData((Object[]) iter.next(), searchClass));
         }
 
         // Only one instance found?
