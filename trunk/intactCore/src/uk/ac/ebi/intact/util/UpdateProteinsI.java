@@ -56,6 +56,8 @@ public abstract class UpdateProteinsI {
     protected static CvXrefQualifier identityXrefQualifier;
     protected static CvXrefQualifier secondaryXrefQualifier;
 
+    protected static CvAliasType geneNameAliasType;
+    protected static CvAliasType geneNameSynonymAliasType;
 
     protected IntactHelper helper = null;
 
@@ -140,6 +142,18 @@ public abstract class UpdateProteinsI {
                 throw new UpdateException ("Unable to find the identity CvXrefQualifier in your IntAct node");
             }
 
+            geneNameAliasType = (CvAliasType) helper.getObjectByLabel(CvAliasType.class, "gene-name");
+            if (geneNameAliasType == null) {
+                logger.error ("Unable to find the gene-name CvAliasType in your IntAct node");
+                throw new UpdateException ("Unable to find the gene-name CvAliasType in your IntAct node");
+            }
+
+            geneNameSynonymAliasType = (CvAliasType) helper.getObjectByLabel(CvAliasType.class, "gene-name-synonym");
+            if (geneNameSynonymAliasType == null) {
+                logger.error ("Unable to find the gene-name-synonym CvAliasType in your IntAct node");
+                throw new UpdateException ("Unable to find the gene-name-synonym CvAliasType in your IntAct node");
+            }
+
         } catch (IntactException e) {
             logger.error (e);
             throw new UpdateException ("Couldn't find needed object in IntAct, cause: " + e.getMessage());
@@ -220,11 +234,17 @@ public abstract class UpdateProteinsI {
 
     /**
      * add (not update) a new Xref to the given Annotated object and write it in the database.
-     * @param current
-     * @param xref
+     * @param current the object to which we add a new Xref
+     * @param xref the Xref to add to the AnnotatedObject
      */
-    public abstract void addNewXref (AnnotatedObject current,
-                                     Xref xref) ;
+    public abstract void addNewXref (AnnotatedObject current, final Xref xref );
+
+    /**
+     * add (not update) a new Xref to the given Annotated object and write it in the database.
+     * @param current the object to which we add a new Xref
+     * @param alias the Alias to add to the AnnotatedObject
+     */
+    public abstract void addNewAlias (AnnotatedObject current, final Alias alias);
 
     /**
      * add (not update) a new BioSource to the db and send it back.
