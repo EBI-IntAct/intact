@@ -173,6 +173,7 @@
         </copy>
 
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
+        <copy todir="${dest.dir}" file="${root.config.dir}/Institution.properties"/>
         <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
         <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
     </target>
@@ -211,7 +212,7 @@
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.4"
             includes="**/application/graph2MIF/**">
-            <classpath refid="project.test.class.path"/>
+            <classpath refid="project.class.path"/>
         </javac>
 
         <!-- Copy configuration files -->
