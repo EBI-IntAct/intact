@@ -37,11 +37,9 @@
 								<td><span class="header">
 						<bean:message key="main.heading"/>
 						</span><br>
-                        <html:link page="/login.jsp"><bean:message key="home.link"/></html:link>
-                        <span class="menupipe"> | </span>
                         <html:link page="/search.jsp"><bean:message key="search.link"/></html:link>
                         <span class="menupipe"> | </span>
-                        <html:link page="/index.jsp"><bean:message key="logout.label"/></html:link>
+                        <html:link page="/logout.do"><bean:message key="logout.label"/></html:link>
                    </font></td>
 							</tr>
 						</table>
