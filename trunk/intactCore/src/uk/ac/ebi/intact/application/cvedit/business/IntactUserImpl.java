@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.cvedit.exception.InvalidLoginException;
+import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -91,7 +92,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     /**
      * The selected topic.
      */
-    private String mySelectedTopic;
+//    private String mySelectedTopic;
 
     /**
      * Maps list name -> list of items. Made it transient
@@ -102,6 +103,11 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      * The current Cv object we are editing.
      */
     private CvObject myEditCvObject;
+
+    /**
+     * The current view of the user. Not saving the state of the view yet.
+     */
+    private transient CvViewBean myView;
 
     // Static initializer.
 
@@ -173,6 +179,8 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      * Not doing anything.
      */
     public void valueBound(HttpSessionBindingEvent event) {
+        // Create my initial view.
+        myView = new CvViewBean();
     }
 
     /**
@@ -185,21 +193,26 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     // Implementation of IntactUserIF interface.
 
+    public CvViewBean getView() {
+        return myView;
+    }
+
     public String getUser() {
         return myUser;
     }
 
     public void setSelectedTopic(String topic) {
-        mySelectedTopic = topic;
+        myView.setTopic(topic);
+//        mySelectedTopic = topic;
     }
 
     public String getSelectedTopic() {
-        return mySelectedTopic;
+        return myView.getTopic();
+//        return mySelectedTopic;
     }
 
     public Institution getInstitution() throws SearchException {
-        return (Institution) getObjectByLabel(
-            Institution.class, "EBI");
+        return (Institution) getObjectByLabel(Institution.class, "EBI");
     }
 
     public Collection getList(String name) {
@@ -231,25 +244,15 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     }
 
     public void begin() throws IntactException {
-        // Only begin a transaction if it hasn't been started before.
-        if (!isActive()) {
-            myHelper.startTransaction();
-        }
+        myHelper.startTransaction();
     }
 
     public void commit() throws IntactException {
         myHelper.finishTransaction();
     }
 
-    public boolean isActive() {
-        return myHelper.isInTransaction();
-    }
-
     public void rollback() throws IntactException {
-        // Only rollback if there is an active transaction.
-        if (isActive()) {
-            myHelper.undoTransaction();
-        }
+        myHelper.undoTransaction();
     }
 
     public void create(Object object) throws IntactException {
@@ -266,6 +269,9 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     public void setCurrentEditObject(CvObject cvobj) {
         myEditCvObject = cvobj;
+
+        // Update the view to using the new CV edit object.
+        myView.initialise(cvobj);
     }
 
     public CvObject getCurrentEditObject() {
