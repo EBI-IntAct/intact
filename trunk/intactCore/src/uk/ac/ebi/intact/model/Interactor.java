@@ -120,7 +120,7 @@ public abstract class Interactor extends AnnotatedObject {
 
         final Interactor interactor = (Interactor) o;
 
-        if (!activeInstance.equals(interactor.activeInstance)) return false;
+        // if (!activeInstance.equals(interactor.activeInstance)) return false;
         if (bioSource != null ? !bioSource.equals(interactor.bioSource) : interactor.bioSource != null) return false;
         if (bioSourceAc != null ? !bioSourceAc.equals(interactor.bioSourceAc) : interactor.bioSourceAc != null) return false;
         if (!product.equals(interactor.product)) return false;
@@ -132,7 +132,14 @@ public abstract class Interactor extends AnnotatedObject {
         int result = super.hashCode();
         result = 29 * result + (bioSourceAc != null ? bioSourceAc.hashCode() : 0);
         result = 29 * result + (bioSource != null ? bioSource.hashCode() : 0);
-        result = 29 * result + activeInstance.hashCode();
+
+	/*
+         * Can't take into account activeInstance since it happens that an object
+         * references himself into that collection ... it would never ends.
+         */
+        // result = 29 * result + activeInstance.hashCode();
+
+
         result = 29 * result + product.hashCode();
         return result;
     }
