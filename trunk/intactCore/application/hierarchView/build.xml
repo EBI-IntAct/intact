@@ -317,6 +317,15 @@
        <echo message="Testing the web service" />
        <java classname="uk.ac.ebi.intact.application.hierarchView.business.tulip.client.TulipClient" fork="yes">
             <classpath refid="project.class.path"/>
+
+            <!-- Add the Axis library -->
+            <classpath>
+                <pathelement location="${lib.dir}/axis.jar"/>
+                <pathelement location="${lib.dir}/jaxrpc.jar"/>
+                <pathelement location="${lib.dir}/tt-bytecode.jar"/>
+                <pathelement location="${lib.dir}/wsdl4j.jar"/>
+                <pathelement location="${lib.dir}/xml-apis.jar"/>
+            </classpath>
        </java>
     </target>
 
