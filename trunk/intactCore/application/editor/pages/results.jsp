@@ -1,4 +1,5 @@
-<!--
+<%@ page import="org.apache.commons.beanutils.DynaBean,
+                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%><!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -18,6 +19,14 @@
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+
+    <%
+        // Fill with form data for this page to display.
+        String formName = EditorConstants.FORM_RESULTS;
+        DynaBean dynaBean = user.createForm(formName, request);
+        user.populateSearchResult(dynaBean);
+        pageContext.setAttribute(formName, dynaBean);
+    %>
 
 Search class: <c:out value="${user.lastSearchClass}"/>
 &nbsp;Query: <c:out value="${user.lastSearchQuery}"/>
