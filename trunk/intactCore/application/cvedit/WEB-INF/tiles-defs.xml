@@ -67,7 +67,7 @@
 
     <!-- The edit CV page layout. -->
     <definition name="edit.content.layout" path="/layouts/editCVLayout.jsp">
-        <put name="header" value="/pages/cvinfo.jsp"/>
+        <put name="info" value="/pages/cvinfo.jsp"/>
         <put name="comments" value="edit.comment.layout"/>
         <put name="xrefs" value="edit.xref.layout"/>
         <put name="action" value="/pages/editAction.jsp"/>
@@ -76,12 +76,12 @@
     <!-- =============== Definitions related to pages ================= -->
 
     <!-- Login page description  -->
-    <definition name="login.layout" path="/layouts/defaultLayout.jsp">
+    <definition name="login.layout" path="/layouts/intactLayout.jsp">
         <put name="title"  value="IntAct - Control Vocabulary Editor"/>
 <!--        <put name="stylesheet" value="layouts/styles/cvedit.css"/>-->
         <put name="sidebar" value="login.sidebar.layout"/>
-        <put name="header" value="/pages/common/header.jsp"/>
-        <put name="footer" value="/pages/common/footer.jsp"/>
+        <put name="header" value="header.layout"/>
+        <put name="footer" value="/pages/footer.jsp"/>
     </definition>
 
     <!-- Login failure page description  -->
@@ -89,12 +89,15 @@
         <put name="content" value="/pages/error.jsp"/>
     </definition>
 
+    <!-- The header layout. -->
+    <definition name="header.layout" path="/layouts/headerLayout.jsp">
+        <put name="header.title" value="IntAct - Control Vocabulary Editor"/>
+    </definition>
+
     <!-- Search page description  -->
     <definition name="search.layout" extends="login.layout">
 <!--        <put name="stylesheet" value="styles/cvedit.css"/>-->
         <put name="sidebar" value="search.sidebar.layout"/>
-        <put name="header" value="/pages/common/header.jsp"/>
-        <put name="footer" value="/pages/common/footer.jsp"/>
     </definition>
 
     <!-- Match page description. -->
@@ -109,13 +112,13 @@
     </definition>
 
     <!-- Edit page description. -->
-    <definition name="edit.layout" extends="match.layout">
+    <definition name="edit.layout" extends="login.layout">
         <put name="sidebar" value="edit.sidebar.layout"/>
         <put name="content" value="edit.content.layout"/>
     </definition>
 
     <!-- General error layout -->
-    <definition name="error.layout" extends="match.layout">
+    <definition name="error.layout" extends="login.layout">
         <put name="content" value="/pages/error.jsp"/>
         <put name="sidebar" value="search.sidebar.layout"/>
     </definition>
