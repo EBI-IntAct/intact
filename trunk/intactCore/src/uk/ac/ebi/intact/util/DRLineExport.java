@@ -24,6 +24,15 @@ import java.util.*;
  */
 public class DRLineExport {
 
+    public static String TIME;
+
+    static {
+        SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd@HH.mm" );
+        TIME = formatter.format( new Date() );
+        formatter = null;
+    }
+
+
     //////////////////////////
     // Constants
 
@@ -33,7 +42,14 @@ public class DRLineExport {
     public static final String UNIPROT = "uniprot";
     public static final String IDENTITY = "identity";
 
+    public static final String METHOD_EXPORT_KEYWORK_EXPORT = "yes";
+    public static final String METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT = "no";
+
+    public static final String EXPERIMENT_EXPORT_KEYWORK_EXPORT = "yes";
+    public static final String EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT = "no";
+
     private static final String NEW_LINE = System.getProperty( "line.separator" );
+
 
     ////////////////////////////
     // Inner Class
@@ -195,6 +211,84 @@ public class DRLineExport {
     }
 
 
+    /**
+     * Service termination hook (gets called when the JVM terminates from a signal).
+     * eg.
+     * <pre>
+     * IntactHelper helper = new IntactHelper();
+     * DatabaseConnexionShutdownHook dcsh = new DatabaseConnexionShutdownHook( helper );
+     * Runtime.getRuntime().addShutdownHook( sh );
+     * </pre>
+     */
+    private static class DatabaseConnexionShutdownHook extends Thread {
+
+        private IntactHelper helper;
+
+        public DatabaseConnexionShutdownHook( IntactHelper helper ) {
+            super();
+            this.helper = helper;
+            System.out.println( "Database Connexion Shutdown Hook installed." );
+        }
+
+        public void run() {
+            System.out.println( "JDBCShutdownHook thread started" );
+            if( helper != null ) {
+                try {
+                    helper.closeStore();
+                    System.out.println( "Connexion to the database closed." );
+                } catch ( IntactException e ) {
+                    System.err.println( "Could not close the connexion to the database." );
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Service termination hook (gets called when the JVM terminates from a signal).
+     * eg.
+     * <pre>
+     * IntactHelper helper = new IntactHelper();
+     * DatabaseConnexionShutdownHook dcsh = new DatabaseConnexionShutdownHook( helper );
+     * Runtime.getRuntime().addShutdownHook( sh );
+     * </pre>
+     */
+    private static class CloseFileOnShutdownHook extends Thread {
+
+        private BufferedWriter outputBufferedWriter;
+        private FileWriter outputFileWriter;
+
+        public CloseFileOnShutdownHook( BufferedWriter outputBufferedWriter, FileWriter outputFileWriter ) {
+            super();
+            this.outputBufferedWriter = outputBufferedWriter;
+            this.outputFileWriter = outputFileWriter;
+
+            System.out.println( "Output File close on Shutdown Hook installed." );
+        }
+
+        public void run() {
+            if( outputFileWriter != null ) {
+                try {
+                    outputFileWriter.close();
+                } catch ( IOException e ) {
+                    System.out.println( "An error occured when trying to close the output file" );
+                    return;
+                }
+            }
+
+            if( outputFileWriter != null ) {
+                try {
+                    outputFileWriter.close();
+                } catch ( IOException e ) {
+                    System.out.println( "An error occured when trying to close the output file" );
+                    return;
+                }
+            }
+            System.out.println( "Output file is now closed." );
+        }
+    }
+
     //////////////////////////////
     // Attributes
 
@@ -219,6 +313,10 @@ public class DRLineExport {
 
     protected boolean debugEnabled = false; // protected to allow the testcase to modify it.
 
+    private boolean debugFileEnabled = false;
+
+    private BufferedWriter outputBufferedWriter;
+    private FileWriter outputFileWriter;
 
     /////////////////////////////
     // Methods
@@ -262,6 +360,29 @@ public class DRLineExport {
 
     public void setDebugEnabled( boolean flag ) {
         debugEnabled = flag;
+    }
+
+    public void setDebugFileEnabled( boolean enabled ) {
+        debugFileEnabled = enabled;
+
+        if( enabled ) {
+            // create the output file if the user requested it.
+            String filename = "export2uniprot_verboseOutput_" + TIME + ".txt";
+            File file = new File( filename );
+            System.out.println( "Save verbose output to: " + file.getAbsolutePath() );
+            outputBufferedWriter = null;
+            outputFileWriter = null;
+            try {
+                outputFileWriter = new FileWriter( file );
+                outputBufferedWriter = new BufferedWriter( outputFileWriter );
+
+                Runtime.getRuntime().addShutdownHook( new DRLineExport.CloseFileOnShutdownHook( outputBufferedWriter, outputFileWriter ) );
+
+            } catch ( IOException e ) {
+                e.printStackTrace();
+                debugFileEnabled = false;
+            }
+        }
     }
 
 
@@ -311,6 +432,28 @@ public class DRLineExport {
 
 
     /**
+     * Log the message in STDOUT [AND/OR] a file.
+     *
+     * @param message
+     */
+    private final void log( String message ) {
+
+        if( debugEnabled ) {
+            System.out.println( message );
+        }
+
+        if( debugFileEnabled ) {
+            try {
+                outputBufferedWriter.write( message );
+                outputBufferedWriter.write( NEW_LINE );
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
      * Answers the question: does that technology is to be exported to SwissProt ?
      * <br>
      * Do give that answer, we check that the CvInteration has an annotation having
@@ -342,9 +485,8 @@ public class DRLineExport {
 
             CvInteractionStatus cache = (CvInteractionStatus) cvInteractionExportStatusCache.get( cvInteraction.getAc() );
             if( null != cache ) {
-                if( debugEnabled ) {
-                    System.out.println( "\t\t\t\t CvInteraction: Status already processed, retreived from cache." );
-                }
+
+//                log( "\t\t\t\t CvInteraction: Status already processed, retreived from cache." );
                 status = cache;
 
             } else {
@@ -354,17 +496,14 @@ public class DRLineExport {
                 Collection annotations = null;
 
                 annotations = cvInteraction.getAnnotations();
-                if( debugEnabled ) {
-                    System.out.println( "\t\t\t\t\t " + annotations.size() + " annotations found." );
-                }
+
+                log( "\t\t\t\t\t " + annotations.size() + " annotations found." );
                 Annotation annotation = null;
                 for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && !multipleAnnotationFound; ) {
                     Annotation _annotation = (Annotation) iterator.next();
                     if( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
 
-                        if( debugEnabled ) {
-                            System.out.println( "\t\t\t\t\t Found uniprot-dr-export annotation: " + _annotation );
-                        }
+                        log( "\t\t\t\t\t Found uniprot-dr-export annotation: " + _annotation );
 
                         if( true == found ) {
                             multipleAnnotationFound = true;
@@ -382,9 +521,7 @@ public class DRLineExport {
                 if( multipleAnnotationFound ) {
 
                     status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
-                    if( debugEnabled ) {
-                        System.out.println( "\t\t\t multiple annotation found: do not export " );
-                    }
+                    log( "\t\t\t multiple annotation found: do not export " );
 
                 } else {
 
@@ -395,25 +532,19 @@ public class DRLineExport {
                             text = text.toLowerCase().trim();
                         }
 
-                        if( "yes".equals( annotation.getAnnotationText() ) ) {
+                        if( METHOD_EXPORT_KEYWORK_EXPORT.equals( annotation.getAnnotationText() ) ) {
 
                             status = new CvInteractionStatus( CvInteractionStatus.EXPORT );
-                            if( debugEnabled ) {
-                                System.out.println( "\t\t\t YES found: export " );
-                            }
+                            log( "\t\t\t " + METHOD_EXPORT_KEYWORK_EXPORT + " found: export " );
 
-                        } else if( "no".equals( annotation.getAnnotationText() ) ) {
+                        } else if( METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( annotation.getAnnotationText() ) ) {
 
                             status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
-                            if( debugEnabled ) {
-                                System.out.println( "\t\t\t NO found: do not export " );
-                            }
+                            log( "\t\t\t " + METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT + " found: do not export " );
 
                         } else {
 
-                            if( debugEnabled ) {
-                                System.out.println( "\t\t\t neither YES or NO found: should be an integer value... " );
-                            }
+                            log( "\t\t\t neither YES or NO found: should be an integer value... " );
 
                             // it must be an integer value, let's check it.
                             try {
@@ -424,23 +555,17 @@ public class DRLineExport {
 
                                     // value is >= 2
                                     status = new CvInteractionStatus( CvInteractionStatus.CONDITIONAL_EXPORT, i );
-                                    if( debugEnabled ) {
-                                        System.out.println( "\t\t\t " + i + " found: conditional export " );
-                                    }
+                                    log( "\t\t\t " + i + " found: conditional export " );
 
                                 } else if( i == 1 ) {
 
                                     String err = cvInteraction.getShortLabel() + " having annotation (" + UNIPROT_DR_EXPORT +
                                                  ") has an annotationText like <integer value>. Value was: " + i +
                                                  ", We consider it as to be exported.";
-                                    if( debugEnabled ) {
-                                        System.out.println( err );
-                                    }
+                                    log( err );
 
                                     status = new CvInteractionStatus( CvInteractionStatus.EXPORT );
-                                    if( debugEnabled ) {
-                                        System.out.println( "\t\t\t integer == " + i + " found: export " );
-                                    }
+                                    log( "\t\t\t integer == " + i + " found: export " );
 
                                 } else {
                                     // i < 1
@@ -451,9 +576,7 @@ public class DRLineExport {
                                     System.err.println( err );
 
                                     status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
-                                    if( debugEnabled ) {
-                                        System.out.println( "\t\t\t integer < 1 (" + i + ") found: do not export " );
-                                    }
+                                    log( "\t\t\t integer < 1 (" + i + ") found: do not export " );
                                 }
 
                             } catch ( NumberFormatException e ) {
@@ -461,9 +584,7 @@ public class DRLineExport {
                                 System.err.println( cvInteraction.getShortLabel() + " having annotation (" + UNIPROT_DR_EXPORT +
                                                     ") has an annotationText different from yes/no/<integer value> !!!" +
                                                     " value was: '" + text + "'." );
-                                if( debugEnabled ) {
-                                    System.out.println( "\t\t\t not an integer:(" + text + ") found: do not export " );
-                                }
+                                log( "\t\t\t not an integer:(" + text + ") found: do not export " );
 
                                 status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
                             }
@@ -472,9 +593,7 @@ public class DRLineExport {
                         // no annotation implies NO EXPORT !
                         System.err.println( cvInteraction.getShortLabel() +
                                             " doesn't have an annotation: " + UNIPROT_DR_EXPORT );
-                        if( debugEnabled ) {
-                            System.out.println( "\t\t\t not annotation found: do not export " );
-                        }
+                        log( "\t\t\t not annotation found: do not export " );
 
                         status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
                     }
@@ -485,9 +604,7 @@ public class DRLineExport {
             }
         }
 
-        if( debugEnabled ) {
-            System.out.println( "\t\t CvInteractionExport status: " + status );
-        }
+        log( "\t\t CvInteractionExport status: " + status );
 
         return status;
     }
@@ -522,9 +639,8 @@ public class DRLineExport {
         // cache the cvInteraction
         ExperimentStatus cache = (ExperimentStatus) experimentExportStatusCache.get( experiment.getAc() );
         if( null != cache ) {
-            if( debugEnabled ) {
-                System.out.println( "\t\t\t\t Experiment: Status already processed, retreived from cache." );
-            }
+
+//            log( "\t\t\t\t Experiment: Status already processed, retreived from cache." );
             status = cache;
 
         } else {
@@ -537,44 +653,35 @@ public class DRLineExport {
             Collection keywords = null;
 
             Collection annotations = experiment.getAnnotations();
-            if( debugEnabled ) {
-                System.out.println( "\t\t\t\t " + annotations.size() + " annotation(s) found" );
-            }
+            log( "\t\t\t\t " + annotations.size() + " annotation(s) found" );
 
             for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
                 Annotation _annotation = (Annotation) iterator.next();
                 if( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
 
-                    if( debugEnabled ) {
-                        System.out.println( "\t\t\t\t " + _annotation );
-                    }
+                    log( "\t\t\t\t " + _annotation );
 
                     String text = _annotation.getAnnotationText();
                     if( text != null ) {
                         text = text.trim().toLowerCase();
                     }
 
-                    if( "yes".equals( text ) ) {
+                    if( EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals( text ) ) {
                         yesFound = true;
-                        if( debugEnabled ) {
-                            System.out.println( "\t\t\t\t 'yes' found" );
-                        }
+                        log( "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found" );
 
                     } else {
-                        if( "no".equals( text ) ) {
+                        if( EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( text ) ) {
                             noFound = true;
-                            if( debugEnabled ) {
-                                System.out.println( "\t\t\t\t 'no' found" );
-                            }
+                            log( "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found" );
 
                         } else {
                             if( keywords == null ) {
                                 keywords = new ArrayList( 2 );
                             }
                             keywordFound = true;
-                            if( debugEnabled ) {
-                                System.out.println( "\t\t\t\t '" + text + "' keyword found" );
-                            }
+
+                            log( "\t\t\t\t '" + text + "' keyword found" );
                             keywords.add( text );
                         }
                     }
@@ -597,9 +704,7 @@ public class DRLineExport {
             experimentExportStatusCache.put( experiment.getAc(), status );
         }
 
-        if( debugEnabled ) {
-            System.out.println( "\t\t\t\t Experiment status: " + status );
-        }
+        log( "\t\t\t\t Experiment status: " + status );
         return status;
     }
 
@@ -636,9 +741,7 @@ public class DRLineExport {
             Protein protein = (Protein) iterator.next();
             String uniprotID = getUniprotID( protein );
 
-            if( debugEnabled ) {
-                System.out.println( "\n\n" + uniprotID + " Shortlabel:" + protein.getShortLabel() + "  AC: " + protein.getAc() );
-            }
+            log( "\n\n" + uniprotID + " Shortlabel:" + protein.getShortLabel() + "  AC: " + protein.getAc() );
 
             /**
              * In order to export a protein, it has to:
@@ -649,9 +752,8 @@ public class DRLineExport {
              *          - if yes, the protein become eligible to export.
              */
             Collection interactions = getInteractions( protein );
-            if( debugEnabled ) {
-                System.out.println( "\t related to " + interactions.size() + " interactions." );
-            }
+            log( "\t related to " + interactions.size() + " interactions." );
+
             boolean export = false;
             boolean stop = false;
             conditionalMethods.clear();
@@ -659,58 +761,46 @@ public class DRLineExport {
             for ( Iterator iterator1 = interactions.iterator(); iterator1.hasNext() && !stop; ) {
                 Interaction interaction = (Interaction) iterator1.next();
 
-                if( debugEnabled ) {
-                    System.out.println( "\t Interaction: Shortlabel:" + interaction.getShortLabel() +
-                                        "  AC: " + interaction.getAc() );
-                }
+                log( "\t Interaction: Shortlabel:" + interaction.getShortLabel() +
+                     "  AC: " + interaction.getAc() );
 
                 // if that interaction is flagged as negative, we don't take it into account
                 if( isNegative( interaction ) ) {
-                    if( debugEnabled ) {
-                        System.out.println( "\t\t Interaction is flagged as negative, we don't take it into account." );
-                    }
 
+                    log( "\t\t Interaction is flagged as negative, we don't take it into account." );
                     continue; // loop to the next interaction
                 } else {
-                    if( debugEnabled ) {
-                        System.out.println( "\t\t Interaction is NOT flagged as negative." );
-                    }
+                    log( "\t\t Interaction is NOT flagged as negative." );
                 }
 
                 Collection experiments = interaction.getExperiments();
-                if( debugEnabled ) {
-                    int count = experiments.size();
-                    System.out.println( "\t\t interaction related to " + count + " experiment" + ( count > 1 ? "s" : "" ) + "." );
-                }
+
+                int count = experiments.size();
+                log( "\t\t interaction related to " + count + " experiment" + ( count > 1 ? "s" : "" ) + "." );
 
                 for ( Iterator iterator2 = experiments.iterator(); iterator2.hasNext() && !stop; ) {
                     Experiment experiment = (Experiment) iterator2.next();
 
-                    if( debugEnabled ) {
-                        System.out.println( "\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() +
-                                            "  AC: " + experiment.getAc() );
-                    }
+
+                    log( "\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() +
+                         "  AC: " + experiment.getAc() );
 
                     // if that experiment is flagged as negative, we don't take it into account
                     if( isNegative( experiment ) ) {
-                        if( debugEnabled ) {
-                            System.out.println( "\t\t\t\t Experiment is flagged as negative, we don't take it into account." );
-                        }
 
+                        log( "\t\t\t\t Experiment is flagged as negative, we don't take it into account." );
                         continue; // loop to the next experiment
                     } else {
-                        if( debugEnabled ) {
-                            System.out.println( "\t\t\t\t Experiment is NOT flagged as negative." );
-                        }
+
+                        log( "\t\t\t\t Experiment is NOT flagged as negative." );
                     }
 
                     ExperimentStatus experimentStatus = getExperimentExportStatus( experiment );
                     if( experimentStatus.doNotExport() ) {
 
                         // forbid export for all interaction of that experiment (and their proteins).
-                        if( debugEnabled ) {
-                            System.out.println( "\t\t\t\t No interaction of that experiment will be exported." );
-                        }
+
+                        log( "\t\t\t\t No interaction of that experiment will be exported." );
                         export = false;
                         stop = true;
 
@@ -720,9 +810,8 @@ public class DRLineExport {
 
                         // Authorise export for all interactions of that experiment (and their proteins),
                         // This overwrite the setting of the CvInteraction concerning the export.
-                        if( debugEnabled ) {
-                            System.out.println( "\t\t\t\t All interaction of that experiment will be exported." );
-                        }
+
+                        log( "\t\t\t\t All interaction of that experiment will be exported." );
                         export = true;
                         stop = true;
 
@@ -742,9 +831,9 @@ public class DRLineExport {
                             if( authorConfidenceTopic.equals( annotation.getCvTopic() ) ) {
                                 String text = annotation.getAnnotationText();
 
-                                if( debugEnabled ) {
-                                    System.out.println( "\t\t\t\t Interaction has uniprot-dr-export: '" + text + "'" );
-                                }
+
+                                log( "\t\t\t\t Interaction has " + authorConfidenceTopic.getShortLabel() +
+                                     ": '" + text + "'" );
 
                                 if( text != null ) {
                                     text = text.trim();
@@ -754,15 +843,11 @@ public class DRLineExport {
                                     String kw = (String) iterator4.next();
                                     // NOT case sensitive
 
-                                    if( debugEnabled ) {
-                                        System.out.println( "\t\t\t\t\t Compare it with '" + kw + "'" );
-                                    }
+                                    log( "\t\t\t\t\t Compare it with '" + kw + "'" );
 
                                     if( kw.equalsIgnoreCase( text ) ) {
                                         found = true;
-                                        if( debugEnabled ) {
-                                            System.out.println( "\t\t\t\t\t Equals !" );
-                                        }
+                                        log( "\t\t\t\t\t Equals !" );
                                     }
                                 }
                             }
@@ -771,29 +856,24 @@ public class DRLineExport {
                         if( found ) {
 
                             /*
-                             * We don't need to check an eventual threshold on the method level because
-                             * in the current state, the annotation is on the experiment level that is
-                             * lower and hence is dominant on the method's one.
-                             */
+                            * We don't need to check an eventual threshold on the method level because
+                            * in the current state, the annotation is on the experiment level that is
+                            * lower and hence is dominant on the method's one.
+                            */
 
                             export = true;
                             stop = true;
 
-                            if( debugEnabled ) {
-                                System.out.println( "\t\t\t that interaction is eligible for export in the context of a large scale experiment" );
-                            }
+                            log( "\t\t\t that interaction is eligible for export in the context of a large scale experiment" );
 
                         } else {
-                            if( debugEnabled ) {
-                                System.out.println( "\t\t\t interaction not eligible" );
-                            }
+
+                            log( "\t\t\t interaction not eligible" );
                         }
 
                     } else if( experimentStatus.isNotSpecified() ) {
 
-                        if( debugEnabled ) {
-                            System.out.println( "\t\t\t No experiment status, check the experimental method." );
-                        }
+                        log( "\t\t\t No experiment status, check the experimental method." );
 
                         // Then check the experimental method (CvInteraction)
                         // Nothing specified at the experiment level, check for the method (CvInteraction)
@@ -823,9 +903,7 @@ public class DRLineExport {
 
                         } else if( methodStatus.isConditionalExport() ) {
 
-                            if( debugEnabled ) {
-                                System.out.println( "\t\t\t As conditional export, check the count of distinct experiment for that method." );
-                            }
+                            log( "\t\t\t As conditional export, check the count of distinct experiment for that method." );
 
                             // non redundant set of experiment AC.
                             HashSet experimentAcs = (HashSet) conditionalMethods.get( cvInteraction );
@@ -837,9 +915,7 @@ public class DRLineExport {
 
                                 // stores it back in the collection ... needs to be done only once ! We are using reference ;o)
                                 conditionalMethods.put( cvInteraction, experimentAcs );
-                                if( debugEnabled ) {
-                                    System.out.println( "\t\t\t Created a container for experiment ID for that method" );
-                                }
+                                log( "\t\t\t Created a container for experiment ID for that method" );
                             }
 
                             // add the experiment ID
@@ -847,18 +923,14 @@ public class DRLineExport {
 
                             if( experimentAcs.size() == threshold ) {
                                 // We reached the threshold, export allowed !
-                                if( debugEnabled ) {
-                                    System.out.println( "\t\t\t Count of distinct experiment reached for that method" );
-                                }
+                                log( "\t\t\t Count of distinct experiment reached for that method" );
                                 export = true;
                                 stop = true;
                             }
 
-                            if( debugEnabled ) {
-                                System.out.println( "\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
-                                                    threshold + " #experiment: " +
-                                                    ( experimentAcs == null ? "none" : "" + experimentAcs.size() ) );
-                            }
+                            log( "\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
+                                 threshold + " #experiment: " +
+                                 ( experimentAcs == null ? "none" : "" + experimentAcs.size() ) );
                         }
                     } // experiment status not specified
                 } // experiments
@@ -867,14 +939,11 @@ public class DRLineExport {
             if( export ) {
                 // That protein is eligible for export.
                 // The ID will be still unique even if it already exists.
-                if( debugEnabled ) {
-                    System.out.println( "Protein exported to Swiss-Prot" );
-                }
+                log( "Protein exported to Swiss-Prot" );
                 selectedUniprotID.add( uniprotID );
             } else {
-                if( debugEnabled ) {
-                    System.out.println( "Protein NOT exported to Swiss-Prot" );
-                }
+
+                log( "Protein NOT exported to Swiss-Prot" );
             }
         } // proteins
 
@@ -937,7 +1006,7 @@ public class DRLineExport {
     private static void displayUsage( Options options ) {
         // automatically generate the help statement
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "DRLineExport [-debug]", options );
+        formatter.printHelp( "DRLineExport [-debug] [-debugFile]", options );
     }
 
 
@@ -947,13 +1016,17 @@ public class DRLineExport {
         // create Option objects
         Option helpOpt = new Option( "help", "print this message" );
 
-        Option debugOpt = OptionBuilder.withDescription( "Shows debugging messages." ).create( "debug" );
+        Option debugOpt = OptionBuilder.withDescription( "Shows verbose output." ).create( "debug" );
         debugOpt.setRequired( false );
+
+        Option debugFileOpt = OptionBuilder.withDescription( "Store verbose output in the specified file." ).create( "debugFile" );
+        debugFileOpt.setRequired( false );
 
         Options options = new Options();
 
         options.addOption( helpOpt );
         options.addOption( debugOpt );
+        options.addOption( debugFileOpt );
 
         // create the parser
         CommandLineParser parser = new BasicParser();
@@ -978,12 +1051,16 @@ public class DRLineExport {
         DRLineExport exporter = new DRLineExport();
 
         boolean debugEnabled = line.hasOption( "debug" );
+        boolean debugFileEnabled = line.hasOption( "debugFile" );
         exporter.setDebugEnabled( debugEnabled );
+        exporter.setDebugFileEnabled( debugFileEnabled );
 
 
         IntactHelper helper = new IntactHelper();
         System.out.println( "Database instance: " + helper.getDbName() );
         System.out.println( "User: " + helper.getDbUserName() );
+
+        Runtime.getRuntime().addShutdownHook( new DRLineExport.DatabaseConnexionShutdownHook( helper ) );
 
         exporter.init( helper );
 
@@ -1014,11 +1091,17 @@ public class DRLineExport {
         Collection proteins = null;
         int proteinCount = 0;
 
-        for ( char i = 'A'; i <= 'Z'; i++ ) {  // O, P, Q
-            for ( char j = '0'; j <= '0'; j++ ) {  // 0,1,2,3,4,5,6,7,8,9
+        // after one run we have over 60.000 proteins process.
+        // TODO: before to process a protein for eligibility, we should check if it's uniprot ID hasn't been processed already !
+        // TODO: The exporter should keep a count of the distinct protein processed. 2 HashSet: Eligible, notEligible
+
+        for ( char i = 'A'; i <= 'Z'; i++ ) {  // A .. Z
+            for ( char j = '0'; j <= '9'; j++ ) {  // 0,1,2,3,4,5,6,7,8,9
                 for ( char k = '0'; k <= '9'; k++ ) {  // 0,1,2,3,4,5,6,7,8,9
 
-                    String searchString = i + "" + j + "*" + k;
+                    // Note1: empty String between 'i' and 'j' avoid java to sum 'i' and 'j' as integer.
+                    // Note2: the last * allow to include also all splice variant
+                    String searchString = i + "" + j + "*" + k + "*";
 
                     System.out.println( "\nexport protein matching: " + searchString );
 
@@ -1027,10 +1110,9 @@ public class DRLineExport {
                     proteins = helper.getObjectsByXref( Protein.class, uniprot, searchString );
                     int count = proteins.size();
 
-
                     System.out.println( count + " protein" + ( count > 1 ? "s" : "" ) + " selected." );
                     if( count > 0 ) {
-                        proteinCount += count;
+                        proteinCount += count; // TODO don't !!! you should only add those that haven't been processed !
                         Chrono chrono = new Chrono();
                         chrono.start();
 
@@ -1058,11 +1140,7 @@ public class DRLineExport {
         helper.closeStore();
 
         // save it file.
-        SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd@HH.mm" );
-        String time = formatter.format( new Date() );
-        formatter = null;
-
-        String filename = "export2uniprot_" + time + ".txt";
+        String filename = "export2uniprot_" + TIME + ".txt";
         File file = new File( filename );
         System.out.println( "Try to save to: " + file.getAbsolutePath() );
         BufferedWriter out = null;
