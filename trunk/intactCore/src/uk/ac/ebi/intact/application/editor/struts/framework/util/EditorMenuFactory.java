@@ -26,7 +26,7 @@ public class EditorMenuFactory {
     /**
      * An empty list only contains this item.
      */
-    public static final String EMPTY_LIST_ITEM = "---";
+//    public static final String EMPTY_LIST_ITEM = "---";
 
     /**
      * The list item to indicate a selection is required. This item is always
@@ -84,6 +84,8 @@ public class EditorMenuFactory {
      */
     private static final Map theirNameToType = new HashMap();
 
+    // Instance Data
+
     /**
      * Reference to the Intact Helper to build menus.
      */
@@ -98,6 +100,12 @@ public class EditorMenuFactory {
      * Maps: Menu name -> add menu list.
      */
     private Map myNameToAddItems = new HashMap();
+
+    /**
+     * Maps: Menu name -> normalized (stripped of leading dots) dag menu
+     * list items.
+     */
+    private Map myNameToDagItems = new HashMap();
 
     // Static initializer.
 
@@ -171,9 +179,12 @@ public class EditorMenuFactory {
     public Map getExperimentMenus(int mode) throws SearchException {
         // The map to put menus.
         Map map = new HashMap();
-        storeMenu(map, ORGANISMS, mode);
-        storeMenu(map, INTERACTIONS, mode);
-        storeMenu(map, IDENTIFICATIONS, mode);
+        map.put(ORGANISMS, getMenu(ORGANISMS, mode));
+//        storeMenu(map, ORGANISMS, mode);
+        map.put(INTERACTIONS, getMenu(INTERACTIONS, mode));
+//        storeMenu(map, INTERACTIONS, mode);
+        map.put(IDENTIFICATIONS, getMenu(IDENTIFICATIONS, mode));
+//        storeMenu(map, IDENTIFICATIONS, mode);
         return map;
     }
 
@@ -188,9 +199,12 @@ public class EditorMenuFactory {
     public Map getInteractionMenus(int mode) throws SearchException {
         // The map to put menus.
         Map map = new HashMap();
-        storeMenu(map, ORGANISMS, mode);
-        storeMenu(map, INTERACTION_TYPES, mode);
-        storeMenu(map, EXPERIMENTS, mode);
+        map.put(ORGANISMS, getMenu(ORGANISMS, mode));
+        map.put(INTERACTION_TYPES, getMenu(INTERACTION_TYPES, mode));
+        map.put(EXPERIMENTS, getMenu(EXPERIMENTS, mode));
+//        storeMenu(map, ORGANISMS, mode);
+//        storeMenu(map, INTERACTION_TYPES, mode);
+//        storeMenu(map, EXPERIMENTS, mode);
         return map;
     }
 
@@ -243,7 +257,13 @@ public class EditorMenuFactory {
         Vector v = null;
         Class clazz = (Class) theirNameToType.get(key);
         try {
-            v = AnnotatedObject.getMenuList(clazz, myHelper, true);
+            // Use a different construction for a CvDagObject.
+            if (clazz.getSuperclass().equals(CvDagObject.class)) {
+                v = CvDagObject.getMenuList(clazz, myHelper, true);
+            }
+            else {
+                v = AnnotatedObject.getMenuList(clazz, myHelper, true);
+            }
         }
         catch (IntactException ie) {
             throw new SearchException("Failed to get menu list for "
@@ -252,7 +272,7 @@ public class EditorMenuFactory {
         // Guard against the null pointer.
         if ((v == null) || v.isEmpty()) {
             // Special list when we don't have any names.
-            list.add(EMPTY_LIST_ITEM);
+            list.add(SELECT_LIST_ITEM);
             return list;
         }
         // -- select list -- for add menus.
@@ -272,8 +292,8 @@ public class EditorMenuFactory {
      * @param mode 0 for an edit menu; 1 for an add menu.
      * @throws SearchException for errors in constructing the menu.
      */
-    private void storeMenu(Map map, String name, int mode)
-            throws SearchException {
-        map.put(name, getMenu(name, mode));
-    }
+//    private void storeMenu(Map map, String name, int mode)
+//            throws SearchException {
+//        map.put(name, getMenu(name, mode));
+//    }
 }
