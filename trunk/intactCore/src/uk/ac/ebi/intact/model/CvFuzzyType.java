@@ -23,15 +23,25 @@ public class CvFuzzyType extends CvObject implements Editable {
     public static final String GREATER_THAN = "greater-than";
 
     /**
-     * The constant for fuzzy.
+     * The constant for range.
      */
-    public static final String FUZZY = "fuzzy";
+    public static final String RANGE = "range";
 
     /**
      * The constant for undetermined.
      */
     public static final String UNDETERMINED = "undetermined";
-    
+
+    /**
+     * The constant for c-terminal.
+     */
+    public static final String C_TERMINAL = "c-terminal";
+
+    /**
+     * The constant for n-terminal.
+     */
+    public static final String N_TERMINAL = "n-terminal";
+
     /**
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
