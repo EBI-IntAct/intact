@@ -141,7 +141,7 @@ public interface DAO {
      *
      * @return boolean - true if closed, false otherwise
      */
-    public boolean isClosed();
+//    public boolean isClosed();
 
     /**
      * checks to determine if a given object is persistent or not.
