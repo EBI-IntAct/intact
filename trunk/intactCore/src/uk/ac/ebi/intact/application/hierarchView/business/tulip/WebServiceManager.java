@@ -20,7 +20,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 /**
- * Allows to deploy and undeploy the web service
+ * Allows to deploy and undeploy the web service.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
@@ -53,7 +53,7 @@ public class WebServiceManager implements ServletContextListener {
 
 
     /**
-     * Tells is the Manager is properly initialized
+     * Tells is the Manager is properly initialized.
      * @return true is the manager is initialized, false in the other way round.
      */
     public boolean isInitialized () {
@@ -104,7 +104,7 @@ public class WebServiceManager implements ServletContextListener {
 
     /**
      * Undeploy the web service according to collected data
-     * (i.e. undeployment file name)
+     * (ie undeployment file name).
      */
     public void undeploy () throws Exception {
 
@@ -121,7 +121,7 @@ public class WebServiceManager implements ServletContextListener {
 
     /**
      * deploy the web service according to collected data
-     * (i.e. deployment file name)
+     * (ie deployment file name).
      */
     public void deploy () throws Exception {
 
@@ -137,7 +137,7 @@ public class WebServiceManager implements ServletContextListener {
 
 
     /**
-     * process the WSDD file given in parameter
+     * process the WSDD file given in parameter.
      *
      * @param wsddFile can be a deployment or undeployment file
      * @throws Exception
