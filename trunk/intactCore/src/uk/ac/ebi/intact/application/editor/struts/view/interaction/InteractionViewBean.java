@@ -110,6 +110,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
         setOrganism(null);
         setInteractionType(null);
         setSourceExperimentAc(null);
+
+        // Reset components and experiments
+        myExperiments.clear();
+        myComponents.clear();
     }
 
     protected void reset(AnnotatedObject annobj) {
@@ -134,6 +138,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         Interaction interaction = (Interaction) copy;
 
+        // Clear existing exps and comps.
+        myExperiments.clear();
+        myComponents.clear();
+        
         // Reset the interaction view.
         resetInteraction(interaction);
 
