@@ -1312,7 +1312,13 @@
                 </section>
             </section>   <!-- end graph2MIF -->
 
-
+           <section name="proviz" title="ProViz - Standalone Interaction Visualization System">
+              <blockquote>
+                  ProViz is a high-performance, standalone visualization system for molecular interactions. For a detailed description,
+                  please see the <a href="proviz/proviz.html">ProViz user manual</a>.
+              </blockquote>
+           </section>   <!-- end ProViz -->
+ 
         </section> <!-- applications -->
 
     </division>
