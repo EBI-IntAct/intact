@@ -389,7 +389,7 @@
         *************************************************************************-->
     <xsl:template match="CvAliasType | CvCellCycle | CvCellType | CvCompartment |
     CvComponentRole | CvDagObject | CvDatabase | CvDevelopmentalStage | CvEvidenceType |
-CvFeatureIdentification | CvFeatureType | CvIndentification | CvInteractionType |
+CvFeatureIdentification | CvFeatureType | CvIdentification | CvInteractionType |
 CvJournal | CvModificationType | CvProductRole | CvProteinForm | CvReferenceQualifier |
 CvTissue | CvTopic | CvXrefQualifier">
 
