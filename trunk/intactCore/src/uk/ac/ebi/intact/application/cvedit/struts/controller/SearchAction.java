@@ -19,7 +19,6 @@ import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.application.cvedit.struts.view.*;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.util.Assert;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.SearchException;
 
@@ -109,7 +108,7 @@ public class SearchAction extends IntactBaseAction {
         }
         else {
             // Unknown action.
-            Assert.fail("Uknown choice selected from search page");
+            assert false;
         }
 
         //super.log("search action: action value is " + action);

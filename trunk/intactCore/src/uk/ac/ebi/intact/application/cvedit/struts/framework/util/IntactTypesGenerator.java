@@ -6,8 +6,6 @@ package uk.ac.ebi.intact.application.cvedit.struts.framework.util;
 import java.io.*;
 import java.util.Properties;
 
-import uk.ac.ebi.intact.util.Assert;
-
 /**
  * This utility class generates IntactTypes.properties file using the
  * classes in uk.ac.ebi.intact.model package. The algorithm as follows.
@@ -111,7 +109,7 @@ public class IntactTypesGenerator {
             }
             catch (ClassNotFoundException cnfe) {
                 // This shouldn't happen as the class is already there.
-                Assert.fail(cnfe);
+                assert false;
             }
 
             // Get the super class.
@@ -126,7 +124,7 @@ public class IntactTypesGenerator {
             writeToProperties(props);
         }
         catch (IOException ex) {
-            Assert.fail(ex);
+            assert false;
         }
     }
 
