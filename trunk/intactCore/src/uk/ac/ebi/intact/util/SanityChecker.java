@@ -24,8 +24,7 @@ public class SanityChecker {
      * TODO additional checks
      * 	    a) an annotation should only have 1 annotation concerning uniprot-dr-export
      *      b) an experiment could have 1..n annotation concerning uniprot-dr-export
-     *      c) look for biosource with a taxid NULL
-     *      d) is there annotations with same text and topic ? Could cause bug with OJB data loading.
+     *      c) is there annotations with same text and topic ? Could cause bug with OJB data loading.
      */
 
 
@@ -413,7 +412,7 @@ public class SanityChecker {
                     expCheckNoPubmedCount++;
                 }
 
-                if( pubmedPrimaryCount != 1 ) {
+                if( pubmedPrimaryCount < 1 ) {
                     //record it.....
                     getUserInfo( expCheckNoPubmedWithPrimaryReference, exp );
                     expCheckNoPubmedWithPrimaryReferenceCount++;
