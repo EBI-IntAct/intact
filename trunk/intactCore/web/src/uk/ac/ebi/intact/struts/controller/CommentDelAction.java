@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -9,9 +9,12 @@ package uk.ac.ebi.intact.struts.controller;
 import uk.ac.ebi.intact.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.struts.view.CommentBean;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
+import uk.ac.ebi.intact.struts.service.IntactService;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.util.Assert;
+import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * The class is called when the user deletes a comment.
+ * The class is called by struts framework when the user deletes a comment.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -50,6 +53,39 @@ public class CommentDelAction extends IntactBaseAction {
         // The ac passed via the request.
         String ac = (String) request.getParameter("ac");
 
+        // Handler to the IntactService.
+        IntactService service = super.getIntactService();
+
+        try {
+            // The Intact Helper to search the database.
+            IntactHelper helper = service.getIntactHelper();
+
+            // Find the annotation object to delete.
+            Collection results = (Collection) helper.search(
+                Annotation.class.getName(), "ac", ac);
+
+            // We should at least have one annotation.
+            Assert.assert(!results.isEmpty(),
+                "Unable to find the annotation for " + ac);
+
+            // The annotation to delete.
+            Iterator iter = results.iterator();
+            Annotation annot = (Annotation) iter.next();
+
+            // We should only have one annotation.
+            Assert.assert(!iter.hasNext(),
+                "Expected one annotation but received multiple annotations!");
+
+            // Delete the annotation.
+            helper.delete(annot);
+        }
+        catch (IntactException ie) {
+            // Can't create a helper class.
+            ActionErrors errors = new ActionErrors();
+            errors.add(super.INTACT_ERROR, new ActionError("error.datasource"));
+            super.saveErrors(request, errors);
+            return (mapping.findForward(WebIntactConstants.FORWARD_FAILURE));
+        }
         // The annotation collection.
         Collection collection = (Collection) super.getSessionObject(request,
             WebIntactConstants.ANNOTATIONS);
@@ -57,15 +93,12 @@ public class CommentDelAction extends IntactBaseAction {
         // The bean for 'ac'.
         CommentBean bean = findByAc(ac, collection);
 
-        // null if the bean wasn't found.
-        if (bean == null) {
-            super.log("Unable to find the bean for accession number " + ac);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-        }
-        else {
-            // Remove it from the collection.
-            collection.remove(bean);
-        }
+        // We must have the bean.
+        Assert.assert(bean != null,
+            "Unable to find the bean for accession number " + ac);
+
+        // Remove it from the collection.
+        collection.remove(bean);
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }
 
