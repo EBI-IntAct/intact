@@ -45,17 +45,6 @@
 
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0">
 
-<%--<%--%>
-<%--    // in case some arrors are discovered, let's save them in the session for later--%>
-<%--    // displaying. The page in charge of the displaying will have to check it any--%>
-<%--    // errors are stored and need to be displayed--%>
-<%--    ActionErrors errors = (ActionErrors) pageContext.findAttribute(Globals.ERROR_KEY);--%>
-<%----%>
-<%--    if ( null != errors ) {--%>
-<%--        session.setAttribute("MY_ERRORS", errors);--%>
-<%--    }--%>
-<%--%>--%>
-
 <intact:saveErrors/>
 
 </body>
