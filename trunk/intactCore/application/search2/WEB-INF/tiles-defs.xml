@@ -35,12 +35,12 @@
 
     <!-- The header layout. -->
     <definition name="header.layout" path="/layouts/headerLayout.jsp">
-        <put name="header.title" value="IntAct - Database Search"/>
+        <put name="header.title" value="Database Search"/>
     </definition>
 
     <!-- Search page description  -->
     <definition name="search.layout" path="/layouts/intactLayout.jsp">
-        <put name="title"  value="IntAct - Database Search"/>
+        <put name="title"  value="Database Search"/>
         <put name="sidebar" value="search.sidebar.layout"/>
         <put name="header" value="header.layout"/>
         <put name="footer" value="/pages/footer.jsp"/>
