@@ -153,7 +153,7 @@ public class BioSourceAction extends SubmitFormAction {
                                   HttpServletRequest request)
             throws SearchException {
         // Holds the results from the search.
-        Collection results = user.search(BioSource.class.getName(), "taxId", taxid);
+        Collection results = user.search1(BioSource.class.getName(), "taxId", taxid);
         if (results.isEmpty()) {
             // Don't have this tax id on the database.
             return true;

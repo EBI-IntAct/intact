@@ -174,6 +174,9 @@ public interface EditUserI extends IntactUserI, Serializable {
     /**
      * This method provides a means of searching intact objects, within the constraints
      * provided by the parameters to the method.
+     * <p>
+     * This method is named as search1 to avoid conflict with the similar named
+     * method (with diffrent exception) of the super interface.
      *
      * @param objectType the object type to be searched
      * @param searchParam the parameter to search on (eg field)
@@ -182,7 +185,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @exception SearchException thrown if problems are encountered during the
      * search process.
      */
-    public Collection search(String objectType, String searchParam,
+    public Collection search1(String objectType, String searchParam,
                              String searchValue) throws SearchException;
 
     /**

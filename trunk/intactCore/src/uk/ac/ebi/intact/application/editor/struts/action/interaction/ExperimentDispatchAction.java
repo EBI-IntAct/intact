@@ -108,7 +108,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         searchParam = searchParam.endsWith("AC") ? "ac" : "shortLabel";
 
         // The collection to hold experiments.
-        Collection experiments = user.search(Experiment.class.getName(), searchParam,
+        Collection experiments = user.search1(Experiment.class.getName(), searchParam,
                 searchValue);
         // Search found any results?
         if (experiments.isEmpty()) {
