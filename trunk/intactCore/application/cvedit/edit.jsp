@@ -105,13 +105,10 @@
 
 <h2><html:errors/></h2>
 
-<h3><c:out value="${viewbean.topic}"/></h3>
+Topic: <b><c:out value="${viewbean.topic}"/></b>
 
-<hr size=2>
-
-Accession Number: <b><c:out value="${viewbean.ac}"/></b>
-&nbsp;&nbsp;Short Label:
-<html:text property="shortLabel" value="<%=viewbean.getShortLabel()%>" size="16" readonly="true"/>
+&nbsp;&nbsp;AC: <b><c:out value="${viewbean.ac}"/></b>
+&nbsp;&nbsp;Short Label: <b><c:out value="${viewbean.shortLabel}"/></b>
 
 <!-- a line to separate the header -->
 <hr size=2>
@@ -143,23 +140,23 @@ Accession Number: <b><c:out value="${viewbean.ac}"/></b>
         <td class="tableCell" align="left" valign="top">
             <html:textarea property="text" rows="3" cols="80"/>
         </td>
-    </tr>
-    <tr class="tableRowEven">
-        <td class="tableCell" align="right" valign="top" colspan="2">
+        <td class="tableCell" align="right" valign="top">
             <html:submit property="action" value="Add" />
+        </td>
+        <td class="tableCell" align="right" valign="top">
             <html:reset/>
         </td>
     </tr>
     </table>
 </html:form>
 
-<hr size=2>
+<hr></hr>
 
 <h3>Xreferences</h3>
 
 <display:table width="100%" name="<%=xrefs%>" pagesize="<%=rowspps%>"
     decorator="uk.ac.ebi.intact.application.cvedit.struts.view.XreferenceBeanWrapper">
-    <display:column property="database" title="Database" width="10%"/>
+    <display:column property="database" title="Database" width="11%"/>
     <display:column property="primaryId" title="Primary ID" width="20%"/>
     <display:column property="secondaryId" title="Secondary ID" width="20%"/>
     <display:column property="releaseNumber" title="Release Number" width="20%"/>
@@ -171,10 +168,10 @@ Accession Number: <b><c:out value="${viewbean.ac}"/></b>
 
 <!-- Adds a new xreferece. This will invoke addXref action. -->
 <html:form action="/addXref">
-    <table class="table" width="90%" border="0" cellspacing="1" cellpadding="2">
+    <table class="table" width="100%" border="0">
     <tr class="tableRowHeader">
-        <th width="10%" class="tableCellHeader">Database</th>
-        <th width="20%" class="tableCellHeader">Primary ID</th>
+        <th width="11%" class="tableCellHeader">Database</th>
+        <th width="19%" class="tableCellHeader">Primary ID</th>
         <th width="20%" class="tableCellHeader">Secondary ID</th>
         <th width="20%" class="tableCellHeader">Release Number</th>
         <th width="20%" class="tableCellHeader">Reference Qualifier</th>
@@ -186,24 +183,23 @@ Accession Number: <b><c:out value="${viewbean.ac}"/></b>
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="primaryId" size="20"/>
+            <html:text property="primaryId" size="21"/>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="secondaryId" size="19"/>
+            <html:text property="secondaryId" size="21"/>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:text property="releaseNumber" size="20"/>
+            <html:text property="releaseNumber" size="21"/>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:select property="qualifer">
                 <html:options name="qlist" />
             </html:select>
         </td>
-    </tr>
-    <tr class="tableRowEven">
-        <td></td>
-        <td class="tableCell" align="right" valign="top" colspan="4">
+        <td class="tableCell" align="right" valign="top">
             <html:submit property="action" value="Add" />
+        </td>
+        <td class="tableCell" align="right" valign="top">
             <html:reset/>
         </td>
     </tr>
