@@ -204,6 +204,7 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
             super.saveErrors(request, errors);
             return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
+        // Remove it from cache result.
         user.removeFromSearchCache(cvobj.getAc());
         // Deleted successfully; either search or results.
         return mapping.findForward(super.getForwardAction(user));
