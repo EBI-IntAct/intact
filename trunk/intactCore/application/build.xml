@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT master build configuration file for applications
+     Authors: Sugath Mudali (smudali@ebi.ac.uk), Samuel Kerrien
+-->
+
+<project name="application" basedir="." default="compile">
+
+    <property name="project.title" value="application"/>
+
+    <property name="script" value="tomcat.sh"/>
+    <property name="script.dir" value="../scripts"/>
+
+    <property environment="env"/>
+    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="axis.home" value="${env.AXIS_HOME}"/>
+
+    <!-- =================================================================== -->
+
+    <!-- Ensures that tomcat.present property is called only once to avoid
+         error from Ant.
+    -->
+
+    <target name="run-once"  unless="tomcat.present">
+        <available file="${tomcat.home}/conf/server.xml" property="tomcat.present"/>
+        <available file="${tomcat.home}/webapps/axis/WEB-INF/web.xml" property="axis.present"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <target name="detect-services">
+        <condition property="tomcat">
+            <contains string="${tomcat.home}" substring="jakarta-tomcat"/>
+        </condition>
+
+        <condition property="axis">
+            <contains string="${axis.home}" substring="webapps/axis"/>
+        </condition>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays a message to indicate that tomcat is not available. -->
+
+    <target name="check-tomcat" depends="detect-services" unless="tomcat">
+        <echo message=
+            "Tomcat is not available on your system or CATALINA_HOME is not set"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays a message to indicate that axis is not available. -->
+
+    <target name="check-axis" depends="detect-services" unless="axis">
+        <echo message=
+            "Axis is not available on your system or AXIS_HOME is not set"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tomcat" depends="check-tomcat" if="tomcat"
+        description="Starts Tomcat server">
+        <antcall target="admin-tomcat">
+            <param name="command" value="start"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tomcat" depends="check-tomcat" if="tomcat"
+        description="Stops Tomcat server">
+        <antcall target="admin-tomcat">
+            <param name="command" value="stop"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Restarts the Tomcat server. -->
+
+    <target name="restart-tomcat" depends="check-tomcat" if="tomcat"
+        description="Restarts Tomcat server">
+        <antcall target="admin-tomcat">
+            <param name="command" value="restart"/>
+        </antcall>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays the status of Tomcat server. -->
+
+    <target name="status-tomcat" depends="check-tomcat" if="tomcat"
+        description="Displays the status of the Tomcat server">
+        <antcall target="admin-tomcat">
+            <param name="command" value="status"/>
+        </antcall>
+
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server. -->
+    <target name="deploy" depends="check-tomcat" if="tomcat"
+        description="Deploys the WAR file on the Tomcat server">
+        <!-- Copy the file across to the deploy dir. -->
+        <copy file="${war}" todir="${tomcat.home}/webapps" overwrite="yes"/>
+
+        <echo message="Please restart Tomcat to take effect (ant restart-tomcat)"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file from the Tomcat server. -->
+    <target name="undeploy" depends="check-tomcat" if="tomcat"
+        description="Removes the WAR file and the directory from the Tomcat server">
+
+        <!-- Stop the tomcat completely. -->
+        <antcall target="stop-tomcat"/>
+
+        <!-- Remove the war file. -->
+        <delete file="${tomcat.home}/webapps/${war}.war" quiet="true"/>
+        <!-- Delete the dircectory. -->
+        <delete dir="${tomcat.home}/webapps/${war}" quiet="true"/>
+
+        <echo message="Please start Tomcat (ant start-tomcat)"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- This script calls the external tomcat shell script. -->
+
+    <target name="admin-tomcat" >
+        <exec executable="${script}" dir="${script.dir}" vmlauncher="false" os="Linux">
+            <arg line="${command}"/>
+        </exec>
+    </target>
+
+</project>
