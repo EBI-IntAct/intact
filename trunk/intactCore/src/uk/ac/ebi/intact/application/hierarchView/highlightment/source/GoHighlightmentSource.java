@@ -2,7 +2,7 @@ package uk.ac.ebi.intact.application.hierarchView.highlightment.source;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
-import uk.ac.ebi.intact.application.hierarchView.business.util.SearchReplace;
+import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceBean;
@@ -251,7 +251,9 @@ public class GoHighlightmentSource extends HighlightmentSource {
         }
 
         // filter to keep only GO terms
+        logger.info(xRefs.size() + " Xref before filtering");
         Collection listGOTerm = filterXref (xRefs);
+        logger.info(listGOTerm.size() + " GO term after filtering");
 
         // create url collection with exact size
         List urls = new ArrayList (listGOTerm.size());
@@ -297,8 +299,6 @@ public class GoHighlightmentSource extends HighlightmentSource {
                                            selected) );
             }
         }
-
-        logger.info("");
 
         return urls;
     } // getSourceUrls
