@@ -191,8 +191,16 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 else {
                     //need plurals - appending 's' works in most cases..
             %>
-            <td><%= firstItem.getIntactType() + "s" %>
+            <td class="headerdark">
+
+              <nobr>  <span class="whiteheadertext"><%= firstItem.getIntactType() + "s" %></span>
+
+                <a href="<%=  firstItem.getHelpLink() + "AnnotatedObject.shortLabel"%>" target="new"
+                   class="whitelink"><sup>?</sup> </nobr>
+                </a>
+
             </td>
+        
             <%
                 }
             %>
@@ -255,9 +263,10 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
         <!-- data row: -->
         <tr>
 
-            <!-- checkbox - presumably checked by default? NOT NEEDED for CvObjects.. -->
+            <!-- checkbox - presumably checked by default? NOT NEEDED for CvObjects and Experiments -->
             <%
-                if(CvObject.class.isAssignableFrom(firstItem.getObject().getClass())) {
+                if(CvObject.class.isAssignableFrom(firstItem.getObject().getClass()) ||
+                        Experiment.class.isAssignableFrom(firstItem.getObject().getClass()) ) {
             %>
             <!-- Single cell padding -->
             <td rowspan ="1"></td>
