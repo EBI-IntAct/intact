@@ -79,8 +79,11 @@
         <put name="content" value="/pages/error.jsp"/>
     </definition>
 
-    <!-- The header layout. -->
-    <definition name="header.layout" path="/layouts/headerLayout.jsp">
+    <!-- The header layout. The controller may change the header when editing
+         the CV object.
+    -->
+    <definition name="header.layout" path="/layouts/headerLayout.jsp"
+        controllerUrl="/do/cv/tiles/header">
         <put name="header.title" value="IntAct - Control Vocabulary Editor"/>
     </definition>
 
