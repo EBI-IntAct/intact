@@ -58,4 +58,28 @@ public final class Constants {
    */
   public static final String ATTRIBUTE_VISIBLE = "visible";
 
+
+  /**
+   * Key name of the user in the session
+   */
+  public static final String USER_KEY = "user";
+
+  /**
+    * Used as a key to identify a mapping filename (for Castor).
+    * the value is defined in the web.xml file
+    */
+   public static final String MAPPING_FILE = "mappingfile";
+
+   /**
+    * Used as a key to identify a datasource class - its value
+    * is deifned in the web.xml file as a servlet context parameter
+    */
+   public static final String DATA_SOURCE = "datasource";
+
+   /**
+    * The name of the file containing the java to XML mapping
+    */
+   public static final String XML_MAPPING_FILE = "xmlMappingFile";
+
+
 } // Constants

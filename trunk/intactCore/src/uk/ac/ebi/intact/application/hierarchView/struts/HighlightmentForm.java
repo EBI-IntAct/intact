@@ -1,12 +1,12 @@
 package uk.ac.ebi.intact.application.hierarchView.struts;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -37,7 +37,7 @@ public final class HighlightmentForm extends ActionForm {
      * Return the behaviour value.
      */
     public String getBehaviour() {
-	return (this.behaviour);
+        return (this.behaviour);
     }
 
 
@@ -65,9 +65,9 @@ public final class HighlightmentForm extends ActionForm {
 
         this.behaviour = null;
 
-	// clean the session	
-	HttpSession session = request.getSession();
-	session.removeAttribute(Constants.ATTRIBUTE_BEHAVIOUR);
+        // clean the session
+        HttpSession session = request.getSession();
+        session.removeAttribute(Constants.ATTRIBUTE_BEHAVIOUR);
 
     } // reset
 
@@ -90,22 +90,22 @@ public final class HighlightmentForm extends ActionForm {
         if ((behaviour == null) || (behaviour.length() < 1))
             errors.add("behaviour", new ActionError("error.behaviour.required"));
 
-	try {
+        try {
 
-	  // try to load the specified behaviour
-	  Class cls = Class.forName (behaviour);
+            // try to load the specified behaviour
+            Class cls = Class.forName (behaviour);
 
-	} catch (ClassNotFoundException e) {
-	  errors.add("behaviour", new ActionError("error.behaviour.unknown", behaviour));
-	}
-	catch (Exception e) {
-	  errors.add("behaviour", new ActionError("error.behaviour.unexpected", e.getMessage() ) ) ;
-	}
+        } catch (ClassNotFoundException e) {
+            errors.add("behaviour", new ActionError("error.behaviour.unknown", behaviour));
+        }
+        catch (Exception e) {
+            errors.add("behaviour", new ActionError("error.behaviour.unexpected", e.getMessage() ) ) ;
+        }
 
-	if (false == errors.empty()) {
-	  // delete properties of the bean, so can't be saved int the session.
-	  reset(mapping, request);
-	}
+        if (false == errors.empty()) {
+            // delete properties of the bean, so can't be saved int the session.
+            reset(mapping, request);
+        }
 
         return errors;
 

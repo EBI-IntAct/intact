@@ -1,16 +1,12 @@
 package uk.ac.ebi.intact.application.hierarchView.business.graph;
 
 // hierarchView
-import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.simpleGraph.Graph;
 
-// intact
-import uk.ac.ebi.intact.simpleGraph.*;
-import uk.ac.ebi.intact.business.*;
-import uk.ac.ebi.intact.persistence.*;
-import uk.ac.ebi.intact.model.*;
-
-// JDK
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 
@@ -24,28 +20,12 @@ import java.util.*;
 public class GraphHelper  {
 
   private IntactHelper helper;
-  private DAOSource dataSource;
 
   /**
    * basic constructor - sets up (hard-coded) data source and an intact helper.
    */
-  public GraphHelper()  throws Exception {
-    
-    dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
-    
-    //set the config details, ie repository file for OJB in this case
-    Map config = new HashMap();
-    config.put("mappingfile", "config/repository.xml");
-    dataSource.setConfig(config);
-    
-    try {
-      helper = new IntactHelper(dataSource);
-    } catch (IntactException ie) {
-      //something failed with type map or datasource...
-      String msg = "unable to create intact helper class - no datasource";
-      System.out.println(msg);
-      ie.printStackTrace();
-    }
+  public GraphHelper (IntactHelper intactHelper)  throws Exception {
+      helper = intactHelper;
   } // GraphHelper
   
 
@@ -87,7 +67,7 @@ public class GraphHelper  {
     if (iter1.hasNext()) {
       System.out.println ("Starting graph generation ... ");
       Interactor interactor = (Interactor) iter1.next();
-      Graph graph = (Graph) in;
+      Graph graph = in;
       graph = this.helper.subGraph (interactor, 
 				    depth, 
 				    null, 

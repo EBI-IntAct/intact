@@ -1,26 +1,20 @@
 package uk.ac.ebi.intact.application.hierarchView.struts;
 
+import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.business.graph.*;
-import uk.ac.ebi.intact.application.hierarchView.business.image.*;
-import uk.ac.ebi.intact.application.hierarchView.business.*;
-
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Properties;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
+import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Implementation of <strong>Action</strong> that validates a visualize submisson.
@@ -48,149 +42,152 @@ public final class VisualizeAction extends Action {
      * @exception ServletException if a servlet exception occurs
      */
     public ActionForward perform (ActionMapping mapping,
-				                  ActionForm form,
-				                  HttpServletRequest request,
-				                  HttpServletResponse response)
-	throws IOException, ServletException {
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response)
+            throws IOException, ServletException {
 
-	// Extract attributes we will need
-	Locale locale = getLocale(request);
-    // TODO : replace that for Struts 1.1
-    //MessageResources messages = getResources (request);
-    MessageResources messages = getResources ();
+        // Validate the request parameters specified by the user
+        ActionErrors errors = new ActionErrors();
 
-	// Validate the request parameters specified by the user
-	ActionErrors errors = new ActionErrors();
+        // get the current session
+        HttpSession session = request.getSession();
 
-	// get the current session
-	HttpSession session = request.getSession();
+        String AC    = null;
+        String depth = null;
+        boolean hasNoDepthLimit = false; // the default value.
+        String methodLabel = null;
+        String methodClass = null;
+        String behaviourDefault = null;
 
-	String AC    = null;
-	String depth = null;
-	boolean hasNoDepthLimit = false; // the default value.
-	String methodLabel = null;
-	String methodClass = null;
-	String behaviourDefault = null;
+        if (null != form) {
+            // read form values from the bean
+            AC            = ((VisualizeForm) form).getAC ();
+            depth         = ((VisualizeForm) form).getDepth ();
+            hasNoDepthLimit = ((VisualizeForm) form).getHasNoDepthLimit ();
+            methodLabel   = ((VisualizeForm) form).getMethod ();
 
-	if (null != form) {
-	  // read form values from the bean
-	  AC            = ((VisualizeForm) form).getAC ();
-	  depth         = ((VisualizeForm) form).getDepth ();
-	  hasNoDepthLimit = ((VisualizeForm) form).getHasNoDepthLimit ();
-	  methodLabel   = ((VisualizeForm) form).getMethod ();
+            // read the ApplicationResource.proterties file
+            Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE_HIGHLIGHTING);
 
-	  // read the ApplicationResource.proterties file 
-	  Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE_HIGHLIGHTING);
-  
-	  if (null != properties) {
-	    methodClass = properties.getProperty ("highlightment.source." + methodLabel + ".class");
-	    behaviourDefault = properties.getProperty ("highlighting.behaviour.default.class");
-	  }
-	} 
+            if (null != properties) {
+                methodClass = properties.getProperty ("highlightment.source." + methodLabel + ".class");
+                behaviourDefault = properties.getProperty ("highlighting.behaviour.default.class");
+            }
+        }
 
-	// creating the bean to allow a good init of the form (checkbox)
-	form = new VisualizeForm();
-	VisualizeForm visualizeForm = (VisualizeForm) form;
-	
-	// populate the form
-	boolean value = (new Boolean(hasNoDepthLimit)).booleanValue();
-	visualizeForm.setHasNoDepthLimit (value);
+        // creating the bean to allow a good init of the form (checkbox)
+        form = new VisualizeForm();
+        VisualizeForm visualizeForm = (VisualizeForm) form;
 
-	// store the bean (by taking care of the scope)
-	if ("request".equals(mapping.getScope()))
-	  request.setAttribute(mapping.getAttribute(), form);
-	else
-	  session.setAttribute(mapping.getAttribute(), form);
-	
-	if (!errors.empty()) {
-	  // Report any errors we have discovered back to the original form
-	  saveErrors(request, errors);
-	  return (mapping.findForward("error"));
-	} else {
+        // populate the form
+        boolean value = (new Boolean(hasNoDepthLimit)).booleanValue();
+        visualizeForm.setHasNoDepthLimit (value);
 
-	  if (hasNoDepthLimit == true) {
-	    Properties properties2 = PropertyLoader.load (Constants.PROPERTY_FILE);
-	    if (null != properties2) {
-	      depth = properties2.getProperty ("hierarchView.view.form.default.value.nodepthlimit");
-	    }
-	  }
+        // store the bean (by taking care of the scope)
+        if ("request".equals(mapping.getScope()))
+            request.setAttribute(mapping.getAttribute(), form);
+        else
+            session.setAttribute(mapping.getAttribute(), form);
 
-	  // Save our data in the session
-	  session.setAttribute(Constants.ATTRIBUTE_AC, AC);
-	  session.setAttribute(Constants.ATTRIBUTE_DEPTH, depth);
-	  session.setAttribute(Constants.ATTRIBUTE_NO_DEPTH_LIMIT, new Boolean (hasNoDepthLimit));
-	  session.setAttribute(Constants.ATTRIBUTE_METHOD_LABEL, methodLabel);
-	  session.setAttribute(Constants.ATTRIBUTE_METHOD_CLASS, methodClass);
-	  session.setAttribute(Constants.ATTRIBUTE_BEHAVIOUR, behaviourDefault);
+        if (!errors.empty()) {
+            // Report any errors we have discovered back to the original form
+            saveErrors(request, errors);
+            return (mapping.findForward("error"));
+        } else {
+
+            if (hasNoDepthLimit == true) {
+                Properties properties2 = PropertyLoader.load (Constants.PROPERTY_FILE);
+                if (null != properties2) {
+                    depth = properties2.getProperty ("hierarchView.view.form.default.value.nodepthlimit");
+                }
+            }
+
+            // Save our data in the session
+            session.setAttribute(Constants.ATTRIBUTE_AC, AC);
+            session.setAttribute(Constants.ATTRIBUTE_DEPTH, depth);
+            session.setAttribute(Constants.ATTRIBUTE_NO_DEPTH_LIMIT, new Boolean (hasNoDepthLimit));
+            session.setAttribute(Constants.ATTRIBUTE_METHOD_LABEL, methodLabel);
+            session.setAttribute(Constants.ATTRIBUTE_METHOD_CLASS, methodClass);
+            session.setAttribute(Constants.ATTRIBUTE_BEHAVIOUR, behaviourDefault);
 
 
-	  // Creation of the graph and the image
-	  int depthInt = 0;
-	  InteractionNetwork in = null;
+            // Creation of the graph and the image
+            int depthInt = 0;
+            InteractionNetwork in = null;
 
-	  try {
-	    GraphHelper gh = new GraphHelper ();
-	    depthInt = Integer.parseInt(depth);
-	    in = (InteractionNetwork) gh.getInteractionNetwork (AC, depthInt);
-	  } catch (Exception e) {
-	    errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.notCreated"));
-	    saveErrors(request, errors);
-	    return (mapping.findForward("error"));
-	  }
+            // retreive datasource fron the session
+            IntactUser user = (IntactUser) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.business.Constants.USER_KEY);
+            if (null == user) {
+                errors.add ("Datasource", new ActionError("error.datasource.notCreated"));
+                saveErrors(request, errors);
+                return (mapping.findForward("error"));
+            }
+            IntactHelper intactHelper = user.getIntactHelper ();
 
-	  if (null == in) {
-	    // warn the user that an error occur
-	    errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.notCreated"));
-	  } else {
-	    if (0 == in.sizeNodes()) {
-	      errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.noProteinFound"));
-	    }
-	  }
+            try {
+                GraphHelper gh = new GraphHelper ( intactHelper );
+                depthInt = Integer.parseInt(depth);
+                in = gh.getInteractionNetwork (AC, depthInt);
+            } catch (Exception e) {
+                errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.notCreated"));
+                saveErrors(request, errors);
+                return (mapping.findForward("error"));
+            }
 
-	  if (!errors.empty()) {
-	    // Report any errors we have discovered back to the original form
-	    saveErrors(request, errors);
-	    return (mapping.findForward("error"));
-	  }
+            if (null == in) {
+                // warn the user that an error occur
+                errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.notCreated"));
+            } else {
+                if (0 == in.sizeNodes()) {
+                    errors.add ("InteractionNetwork", new ActionError("error.interactionNetwork.noProteinFound"));
+                }
+            }
 
-	  // If depth desacrease we don't have to access IntAct, we have to reduce the current graph.
+            if (!errors.empty()) {
+                // Report any errors we have discovered back to the original form
+                saveErrors(request, errors);
+                return (mapping.findForward("error"));
+            }
 
-	  String dataTlp  = in.exportTlp(); 
-	  System.out.println ("\n\n\n\n\n\n toto \n" + dataTlp + "\n\n\n\n\n\n");
-	  in.importDataToImage (dataTlp);
-	  
-	  // GraphToImage te = new GraphToImage (in);
-	  GraphToSVG te = new GraphToSVG (in);
+            // If depth desacrease we don't have to access IntAct, we have to reduce the current graph.
 
-	  te.draw ();
-	  ImageBean ib    = te.getImageBean ();
-	  
-	  if (null == ib) {
-	    errors.add("ImageBean", new ActionError("error.ImageBean.build"));
-	    saveErrors(request, errors);
-	    return (mapping.findForward("error"));
-	  }
-	  
-	  // store the bean 
-	  session.setAttribute (Constants.ATTRIBUTE_IMAGE_BEAN, ib);	  
-	  // store the graph
-	  session.setAttribute (Constants.ATTRIBUTE_GRAPH, in);
-	}
+            String dataTlp  = in.exportTlp();
+            System.out.println ("\n" + dataTlp + "\n\n");
+            in.importDataToImage (dataTlp);
+
+            // GraphToImage te = new GraphToImage (in);
+            GraphToSVG te = new GraphToSVG (in);
+
+            te.draw ();
+            ImageBean ib = te.getImageBean ();
+
+            if (null == ib) {
+                errors.add("ImageBean", new ActionError("error.ImageBean.build"));
+                saveErrors(request, errors);
+                return (mapping.findForward("error"));
+            }
+
+            // store the bean
+            session.setAttribute (Constants.ATTRIBUTE_IMAGE_BEAN, ib);
+            // store the graph
+            session.setAttribute (Constants.ATTRIBUTE_GRAPH, in);
+        }
 
         if (servlet.getDebug() >= 1)
             servlet.log(" Populating form from " + visualizeForm);
 
-	// Print debug in the log file
-	if (servlet.getDebug() >= 1)
-	    servlet.log("VisualizeAction: AC=" + AC + 
-			" depth=" + depth +
-			" noDepthLimit=" + hasNoDepthLimit +
-			" methodLabel=" + methodLabel +
-			" methodClass=" + methodClass +
-	                "\nlogged on in session " + session.getId());
+        // Print debug in the log file
+        if (servlet.getDebug() >= 1)
+            servlet.log("VisualizeAction: AC=" + AC +
+                    " depth=" + depth +
+                    " noDepthLimit=" + hasNoDepthLimit +
+                    " methodLabel=" + methodLabel +
+                    " methodClass=" + methodClass +
+                    "\nlogged on in session " + session.getId());
 
-   	// Forward control to the specified success URI
-	return (mapping.findForward("success"));
+        // Forward control to the specified success URI
+        return (mapping.findForward("success"));
 
     } // perform
 
