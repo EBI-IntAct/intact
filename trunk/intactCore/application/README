@@ -1,0 +1,21 @@
+$Id$
+**********************************************************************
+README for application (intactCore/application)
+**********************************************************************
+
+DIRECTORIES:
+    cvedit/         : CvEdit application
+    search/         : Search application
+    hierarchView/   : Hierarchy view application
+    lib/            : Common struts libraries
+    tld/            : Common tld files
+    build.xml       : super build for sub applications.
+
+NOTES
+    NO installations are performed from this location. Instead, they should be
+    be performed from their respective locations. For example, the installation
+    procedure for CvEdit should run from the cvedit directory. The build.xml
+    performs common tasks for applications.
+
+COMMENTS
+    Send any comments/feedback to smudali@ebi.ac.uk
