@@ -540,6 +540,8 @@ public class GoUtils {
                 CvDatabase.class, ourPubMedDB);
         CvDatabase residDB = (CvDatabase) myHelper.getObjectByLabel(
                 CvDatabase.class, ourResIdDB);
+        CvXrefQualifier identity = (CvXrefQualifier) myHelper.getObjectByLabel(
+                CvXrefQualifier.class, "identity");
         CvXrefQualifier goDefRef = (CvXrefQualifier) myHelper.getObjectByLabel(
                 CvXrefQualifier.class, "go-definition-ref");
 
@@ -615,7 +617,7 @@ public class GoUtils {
 
         // add xref to goidDatabase if it does not yet exist.
         if (goRec.hasGoId() && goidDB != null) {
-            Xref xref = new Xref(inst, goidDB, goRec.getGoId(), null, null, null);
+            Xref xref = new Xref(inst, goidDB, goRec.getGoId(), null, null, identity);
             if (!current.getXrefs().contains(xref)) {
                 current.addXref(xref);
                 myHelper.create(xref);
