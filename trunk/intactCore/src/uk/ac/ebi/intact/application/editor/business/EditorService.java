@@ -142,6 +142,15 @@ public class EditorService {
     }
 
     /**
+     * Retrieves the resource for given key from the editor resource file.
+     * @param key the key to search for the resource.
+     * @return the resource for <code>key</code> if it is found.
+     */
+    public String getResource(String key) {
+        return myResources.getString(key);
+    }
+
+    /**
      * Moves the given item to the front of the topics list.
      * @param item the item to move; this is only moved if it exists.
      */
