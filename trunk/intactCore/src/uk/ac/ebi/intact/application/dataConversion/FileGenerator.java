@@ -137,8 +137,12 @@ public class FileGenerator {
             }
             //strip off trailing comma - can't do this in advance as we don't
             //know how big the buffers can be now!
-            pattern.deleteCharAt(pattern.length()-1);
-            if(negPattern.length() != 0) negPattern.deleteCharAt(negPattern.length()-1);
+	    if (pattern.length() > 0) {
+		pattern.deleteCharAt(pattern.length()-1);
+	    }
+            if(negPattern.length() > 0) {
+		negPattern.deleteCharAt(negPattern.length()-1);
+	    }
 
             //classification for this BioSource is output as:
             //'<filename> <comma-seperated shortLabel list>'
