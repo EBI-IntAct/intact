@@ -22,7 +22,7 @@
     <property name="intact.app.dir" value=".."/>
 
     <!-- The build properties. -->
-    <property file="${intact.root}/build.properties"/>
+    <property file="${intact.root}/config/build.properties"/>
 
     <property name="dist.dir" value="dist"/>
     <property name="war.file" value="search.war"/>
