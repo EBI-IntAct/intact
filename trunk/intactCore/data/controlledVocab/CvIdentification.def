@@ -1,12 +1,3 @@
-shortlabel: predetermined
-term: predetermined
-goid: MI:0221
-definition_reference: PMID:7940758
-
-shortlabel: radio-labelled prote
-term: radio-labelled protein
-goid: MI:0222
-
 shortlabel: participant detectio
 term: participant detection
 goid: MI:0002
@@ -83,4 +74,13 @@ shortlabel: western blot
 term: western blot
 goid: MI:0113
 definition: Western blot is a procedure to identify and quantify proteins. A mixture of protein is first submitted to an electrophoresis in denaturant condition and then electro-transferred from the gel to a membrane. The membrane is then incubated with a primary antibody specific for a given protein or a specific residue modification in the sample under analysis. A secondary antibody, radiolabelled or fused to a chromogenic enzyme, targets the first antibody and allows the visualisation of the protein band on the membrane. 
+
+shortlabel: predetermined
+term: predetermined
+goid: MI:0221
+definition_reference: PMID:7940758
+
+shortlabel: radio-labelled prote
+term: radio-labelled protein
+goid: MI:0222
 
