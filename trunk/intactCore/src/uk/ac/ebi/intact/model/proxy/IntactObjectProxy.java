@@ -86,4 +86,12 @@ public class IntactObjectProxy  extends VirtualProxy implements IntactObject {
     public void setUpdated ( Date updated ) {
         realSubject().setUpdated( updated );
     }
+
+    public boolean equals ( Object o ) {
+        return realSubject().equals( o );
+    }
+
+    public int hashCode () {
+        return realSubject().hashCode();
+    }
 }

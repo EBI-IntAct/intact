@@ -85,4 +85,12 @@ public class BasicObjectProxy  extends IntactObjectProxy implements BasicObject 
     public void setOwnerAc ( String ac ) {
         realSubject().setOwnerAc( ac );
     }
+
+    public boolean equals ( Object o ) {
+        return realSubject().equals( o );
+    }
+
+    public int hashCode () {
+        return realSubject().hashCode();
+    }
 }

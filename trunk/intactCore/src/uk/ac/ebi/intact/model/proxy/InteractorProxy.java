@@ -105,4 +105,12 @@ public class InteractorProxy  extends AnnotatedObjectProxy implements Interactor
     public void setBioSourceAc ( String bioSourceAc ) {
         realSubject().setBioSourceAc( bioSourceAc );
     }
+
+    public boolean equals ( Object o ) {
+        return realSubject().equals( o );
+    }
+
+    public int hashCode () {
+        return realSubject().hashCode();
+    }
 }
