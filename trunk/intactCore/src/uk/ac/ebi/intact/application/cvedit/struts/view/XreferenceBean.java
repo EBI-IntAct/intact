@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class XreferenceBean implements Serializable {
+public class XreferenceBean extends EditBean implements Serializable {
 
     /**
      * The unique identifier for this bean.
@@ -114,10 +114,26 @@ public class XreferenceBean implements Serializable {
     }
 
     /**
+     * Sets the primary id.
+     * @param primaryId the primary id as a <code>String</code>.
+     */
+    public void setPrimaryId(String primaryId) {
+        myPrimaryId = primaryId;
+    }
+
+    /**
      * Return the secondary id.
      */
     public String getSecondaryId() {
         return mySecondaryId;
+    }
+
+    /**
+     * Sets the secondary id.
+     * @param secondaryId the primary id as a <code>String</code>.
+     */
+    public void setSecondaryId(String secondaryId) {
+        mySecondaryId = secondaryId;
     }
 
     /**
@@ -128,10 +144,26 @@ public class XreferenceBean implements Serializable {
     }
 
     /**
+     * Sets the release number.
+     * @param releaseNumber the release number as a <code>String</code>.
+     */
+    public void setReleaseNumber(String releaseNumber) {
+       myReleaseNumber = releaseNumber;
+    }
+
+    /**
      * Return the reference qualifier.
      */
     public String getQualifier() {
         return myReferenceQualifer;
+    }
+
+    /**
+     * Sets the reference qualifier.
+     * @param refQualifier the reference qaulifier as a <code>String</code>.
+     */
+    public void setQualifier(String refQualifier) {
+        myReferenceQualifer = refQualifier;
     }
 
     // Override Objects's equal method.
