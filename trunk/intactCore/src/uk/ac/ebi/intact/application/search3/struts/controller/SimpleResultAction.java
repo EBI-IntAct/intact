@@ -69,8 +69,6 @@ public class SimpleResultAction extends IntactBaseAction {
 
         logger.info("SimpleAction: Collection contains " + results.size() + " items.");
 
-        //List beanList = new ArrayList();           //used to hold the view beans
-
         String contextPath = request.getContextPath();
         //build the URL for searches and pass to the view beans
         //NB probably better to put this in the User object at some point instead...
@@ -97,8 +95,12 @@ public class SimpleResultAction extends IntactBaseAction {
             if(Interaction.class.isAssignableFrom(obj.getClass()))
                 interactionList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
 
-            if(Protein.class.isAssignableFrom(obj.getClass()))
+            if(Protein.class.isAssignableFrom(obj.getClass())) {
+
+                //have to check for and IGNORE 'orphan' Proteins...
+                if(((Protein)obj).getActiveInstances().isEmpty()) continue;
                 proteinList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
+            }
 
             if(CvObject.class.isAssignableFrom(obj.getClass()))
                 cvObjectList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
@@ -113,17 +115,8 @@ public class SimpleResultAction extends IntactBaseAction {
         //get the maximum size beans from the context for later use
         Map sizeMap = (Map)session.getServletContext().getAttribute(SearchConstants.MAX_ITEMS_MAP);
 
-        //now just build a Simple view bean for each itme in the result list and then
-        //forward to the simple JSP...
-        //for(Iterator it = results.iterator(); it.hasNext();) {
-            //beanList.add(new SimpleViewBean((AnnotatedObject)it.next(),
-                    //user.getHelpLink(), searchURL, contextPath));
-        //}
-
-        //session.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
-
-        //now pass on the list of partitioned viewbeans to the view..
-        session.setAttribute(SearchConstants.VIEW_BEAN_LIST, partitionList);
+        //put the viewbeans in the request and send on to the view...
+        request.setAttribute(SearchConstants.VIEW_BEAN_LIST, partitionList);
         return mapping.findForward("simpleResults");
 
     }

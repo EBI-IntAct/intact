@@ -64,7 +64,8 @@ public class BinaryResultAction extends AbstractResultAction {
             logger.info("BinaryAction: Collection of " + beanList.iterator().next().getClass() + " created");
 
             //save in the session (****REQUEST**** would be better!) and return..
-            session.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
+            //session.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
+            request.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
             //send to the protein partners view JSP
             return "partners";
 

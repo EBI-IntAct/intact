@@ -100,7 +100,7 @@ public class SingleResultAction extends AbstractResultAction {
 
     /**
      * Used to process a 'single item' view. In general this will handle all such views,
-     * but for now thsi just deals with single Protein views.
+     * but for now this just deals with single Protein views.
      * @param request The request object containing the data we want
      * @param helpLink The help link to use
      * @return String the return code for forwarding use by the execute method
@@ -121,12 +121,13 @@ public class SingleResultAction extends AbstractResultAction {
             String appPath = getServlet().getServletContext().getInitParameter("searchLink");
             String searchURL = request.getContextPath().concat(appPath);
             ProteinViewBean bean = new ProteinViewBean((Protein) firstItem, helpLink, searchURL, request.getContextPath());
-            request.getSession().setAttribute(SearchConstants.VIEW_BEAN, bean);
+            //request.getSession().setAttribute(SearchConstants.VIEW_BEAN, bean);
+            request.setAttribute(SearchConstants.VIEW_BEAN, bean);
 
             return "singleProtein";
         }
 
-        //TODO: need code here to handle non-Protein single views (not urgent)
+        //TODO: need code here to handle non-Protein single views (needs specification first)...
         //something wrong here - wrong result type for this Action...
         return SearchConstants.FORWARD_FAILURE;
 

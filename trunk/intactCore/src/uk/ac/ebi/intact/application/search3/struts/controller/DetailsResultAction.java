@@ -89,9 +89,19 @@ public class DetailsResultAction extends AbstractResultAction {
         //NB either have a single Experiment to display, OR if we have an Interaction
         //then we need to build an Experiment view bean for each Experiment that the
         //Interaction is linked to.....
+        //TODO: November 2004 - NEW REQUIREMENT: For Interaction search results, the Experiment
+        //TODO: context should display ONLY the Interaction and its Experiment details, and
+        //TODO: NOT the whole Experiment.
         Collection experiments = null;
+        Interaction interactionResult = null;    //used to tell the viewbean what needs displaying
         if ((Interaction.class.isAssignableFrom(resultType))) {
-            experiments = ((Interaction) results.iterator().next()).getExperiments();
+
+            //NOTE: by the time we get to this Action we should only ever have ONE
+            //Interaction to deal with (multiple search results go to the main 'simple' view
+            //first
+            interactionResult = (Interaction) results.iterator().next();
+            experiments = interactionResult.getExperiments();
+
         } else if (Experiment.class.isAssignableFrom(resultType)) {
             experiments = results;  //got Experiments in the first place
         }
@@ -100,12 +110,15 @@ public class DetailsResultAction extends AbstractResultAction {
         if (experiments != null) {
             beanList = new ArrayList();
             for (Iterator it = experiments.iterator(); it.hasNext();) {
-                beanList.add(new MainDetailViewBean((Experiment) it.next(), helpLink, searchURL, request.getContextPath()));
+                MainDetailViewBean bean = new MainDetailViewBean((Experiment) it.next(), helpLink, searchURL, request.getContextPath());
+                if(interactionResult != null) bean.setWrappedInteraction(interactionResult);   //tell bean display info
+                beanList.add(bean);
             }
             logger.info("DetailAction: Collection of " + beanList.iterator().next().getClass() + " created");
 
             //save in the session (****REQUEST**** would be better!) and return..
-            session.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
+            //session.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
+            request.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
             //send to the detail view JSP
             logger.info("detailsAction: forwarding to 'details' JSP..");
             return "detailPage";
