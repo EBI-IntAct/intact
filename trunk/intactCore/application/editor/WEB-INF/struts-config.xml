@@ -117,8 +117,8 @@
         <!-- Form to search for an Experiment in an Interaction  -->
         <form-bean name="intExpSearchForm"
             type="org.apache.struts.action.DynaActionForm">
+            <form-property name="action" type="java.lang.String"/>
             <form-property name="shortLabel" type="java.lang.String"/>
-            <form-property name="spAc" type="java.lang.String"/>
             <form-property name="ac" type="java.lang.String"/>
         </form-bean>
 
