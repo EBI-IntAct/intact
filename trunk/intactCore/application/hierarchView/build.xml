@@ -251,6 +251,7 @@ Verison: $Id$
                  <exclude name="graphFrame.jsp"/>
                  <exclude name="sourceListFrame.jsp"/>
                  <exclude name="selectedSourceFrame.jsp"/>
+                 <exclude name="hvHeaderLayout.jsp"/>
             </fileset>
         </delete>
 
@@ -329,7 +330,7 @@ Verison: $Id$
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             includes="**/application/hierarchView/**,
                       **/application/commons/**,
-                      **/html/**"
+                      **/util/PropertyLoader*"
             debug="on">
             <classpath refid="project.class.path"/>
         </javac>
@@ -524,7 +525,9 @@ Verison: $Id$
 
         <!-- Common layouts -->
         <copy todir="${layouts.dir}">
-            <fileset dir="${commons.layouts.dir}"/>
+            <fileset dir="${commons.layouts.dir}">
+                <exclude name="headerLayout.jsp"/> <!-- has been replaced by hvHeaderLayout.jsp -->
+            </fileset>
         </copy>
 
         <!-- Common images -->
