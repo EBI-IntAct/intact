@@ -4,10 +4,7 @@ ANT build configuration file for hierarchView module.
 Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 Verison: $Id$
 -->
-<project name="hv" basedir="." default="compile">
-
-    <property name="project.title" value="hierarchView"/>
-
+<project name="hierarchView" basedir="." default="compile">
     <property name="intact.root"     value="../.."/>
     <property name="root.lib.dir"    value="${intact.root}/lib"/>
     <property name="root.dist.dir"   value="${intact.root}/dist"/>
@@ -39,7 +36,7 @@ Verison: $Id$
     <property name="config.dir"         value="WEB-INF/config"/>
     <property name="jdoc.dir"           value="doc/api"/>
     <property name="dist.dir"           value="dist"/>
-    <property name="war.file"           value="hierarchView.war"/>
+    <property name="pg.war.file"        value="${ant.project.name}.war"/>
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
@@ -218,6 +215,15 @@ Verison: $Id$
         <!-- These targets are called to display messages if tomcat or axis are not present. -->
         <ant dir=".." inheritAll="false" target="check-tomcat"/>
         <ant dir=".." inheritAll="false" target="check-axis"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp. -->
+    <target name="set-tstamp">
+        <tstamp>
+            <format property="TODAY" pattern="yyyy-MM-dd" locale="en"/>
+        </tstamp>
     </target>
 
     <!-- =================================================================== -->
@@ -515,13 +521,15 @@ Verison: $Id$
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-        depends="all-config-test, set-db-type, war-postgres, war-oracle"/>
+        depends="all-config-test, set-tstamp, set-db-type, war-postgres,
+            war-ora-d002, war-ora-iweb"/>
 
     <!-- =================================================================== -->
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
     <target name="build-war" depends="compile, gen-last-modified-file, make-jar">
+        <echo message="Generating ${war.file} file"/>
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
@@ -612,8 +620,11 @@ Verison: $Id$
         <condition property="postgres">
             <contains string="${target.env}" substring="-postgres-"/>
         </condition>
-        <condition property="oracle">
-            <contains string="${target.env}" substring="-oracle-"/>
+        <condition property="ora-d002">
+            <contains string="${target.env}" substring="-ora-d002-"/>
+        </condition>
+        <condition property="ora-iweb">
+            <contains string="${target.env}" substring="-ora-iweb-"/>
         </condition>
     </target>
 
@@ -627,20 +638,38 @@ Verison: $Id$
         <echo message="Building a war for postgres"/>
         <antcall target="build-war">
             <param name="db" value="postgresql.jar"/>
+            <param name="war.file" value="${pg.war.file}"/>
         </antcall>
     </target>
 
     <!-- =================================================================== -->
 
     <!--
-    Builds a war file with oracle; should be called only after calling
-    set-db-type. -->
+        Builds a war file for d002 oracle database; should be called only after
+        calling set-db-type. -->
 
-    <target name="war-oracle" if="oracle">
-        <echo message="Building a war for oracle"/>
+    <target name="war-ora-d002" description="Builds a war file for oracle"
+        if="ora-d002">
+        <echo message="Building a war for oracle d002 database"/>
+        <property name="war.name" value="${ant.project.name}-d002-${TODAY}.war"/>
         <antcall target="build-war">
             <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
-            <!--param name="db" value="jdbc-9.2.0.1.0-jdk1.2.x.jar"/-->
+            <param name="war.file" value="${war.name}"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!--
+        Builds a war file for oracle iweb database; should be called only after
+        calling set-db-type. -->
+
+    <target name="war-ora-iweb" description="Builds a war file for oracle"
+        if="ora-iweb">
+        <echo message="Building a war for oracle iweb database"/>
+        <property name="war.name" value="${ant.project.name}-iweb-${TODAY}.war"/>        <antcall target="build-war">
+            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+            <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
 
@@ -649,7 +678,7 @@ Verison: $Id$
     <!-- Deploys the war file on the Tomcat server. -->
     <target name="deploy" description="Deploys the WAR file on the Tomcat server">
         <ant dir=".." inheritAll="false" target="deploy">
-            <property name="war" value="hierarchView/${dist.dir}/${war.file}"/>
+            <property name="war" value="hierarchView/${dist.dir}/${pg.war.file}"/>
         </ant>
 
         <!-- Copy context files in the Tomcat's webapps directory -->
