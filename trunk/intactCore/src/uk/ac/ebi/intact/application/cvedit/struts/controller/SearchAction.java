@@ -139,15 +139,15 @@ public class SearchAction extends IntactBaseAction {
             return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
         }
         // Save the search parameters for results page to display.
-        session.setAttribute(WebIntactConstants.SEARCH_CRITERIA,
-            searchParam + "=" + searchValue);
+        user.setSearchQuery(searchParam + "=" + searchValue);
+//        session.setAttribute(WebIntactConstants.SEARCH_CRITERIA,
+//            searchParam + "=" + searchValue);
+
+        // Sets the result status type.
+        user.setSearchResultStatus(results.size());
 
         // If we retrieved one object then we can go strainght to edit page.
         if (results.size() == 1) {
-            // Found a single match only; save it to determine which page to
-            // return from edit page; for example, results or search page.
-            session.setAttribute(WebIntactConstants.SINGLE_MATCH, Boolean.TRUE);
-
             // The object to edit.
             CvObject cvobj = (CvObject) results.iterator().next();
             user.setCurrentEditObject(cvobj);
@@ -155,16 +155,8 @@ public class SearchAction extends IntactBaseAction {
             // Straight to the edit jsp.
             return mapping.findForward(WebIntactConstants.FORWARD_EDIT);
         }
-        // Found multiple results.
-        session.setAttribute(WebIntactConstants.SINGLE_MATCH, Boolean.FALSE);
-
-        // The collection to hold our List objects for display tag API.
-        Collection container = new ArrayList();
-        for (Iterator iter = results.iterator(); iter.hasNext();) {
-            container.add(new ListObject((CvObject) iter.next()));
-        }
-        // Save it in a session for a JSP to display.
-        session.setAttribute(WebIntactConstants.FORWARD_MATCHES, container);
+        // Cache the search results.
+        user.cacheSearchResult(results);
 
         // Move to the results page.
         return mapping.findForward(WebIntactConstants.FORWARD_RESULTS);
