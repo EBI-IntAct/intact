@@ -803,22 +803,34 @@ public class UpdateProteins extends UpdateProteinsI {
         needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
         needUpdate = needUpdate || updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
 
-        // update SPTR Xref
-        Xref sptrXref = new Xref ( myInstitution,
-                                   sptrDatabase,
-                                   proteinAC[0],
-                                   shortLabel, null, null) ;
+        // update SPTR Xrefs
 
-        // check Xrefs
-        Collection xrefs = protein.getXref();
-        if (! xrefs.contains(sptrXref)) {
-            // link the Xref to the protein and record it in the database
-            addNewXref (protein, sptrXref);
-            needUpdate = true;
+        for ( int i = 0; i < proteinAC.length; i++ ) {
+            String ac = proteinAC[ i ];
 
-            logger.info ("CREATE SPTR Xref[spAC: " + proteinAC[0] + ", spId: " + shortLabel + "]");
-        } else {
-            logger.info ("SKIP: SPTR Xref[spAC: " + proteinAC[0] + ", spId: " + shortLabel + "] already exists");
+            // The first AC is primary, all others are secondaty
+            CvXrefQualifier xrefQualifier;
+            if ( i == 0 ) xrefQualifier = identityXrefQualifier;
+            else xrefQualifier = secondaryXrefQualifier;
+
+            Xref sptrXref = new Xref ( myInstitution,
+                                       sptrDatabase,
+                                       ac,
+                                       shortLabel, null, null) ;
+
+            sptrXref.setCvXrefQualifier( xrefQualifier );
+
+            // check Xrefs
+            Collection xrefs = protein.getXref();
+            if (! xrefs.contains(sptrXref)) {
+                // link the Xref to the protein and record it in the database
+                addNewXref (protein, sptrXref);
+                needUpdate = true;
+
+                logger.info ("CREATE SPTR Xref[spAC: " + ac + ", spId: " + shortLabel + "]");
+            } else {
+                logger.info ("SKIP: SPTR Xref[spAC: " + ac + ", spId: " + shortLabel + "] already exists");
+            }
         }
 
         if (needUpdate == true) {
@@ -881,6 +893,27 @@ public class UpdateProteins extends UpdateProteinsI {
 
         updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
         updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
+
+        for ( int i = 0; i < proteinAC.length; i++ ) {
+            String ac = proteinAC[ i ];
+
+            // The first AC is primary, all others are secondaty
+            CvXrefQualifier xrefQualifier;
+            if ( i == 0 ) xrefQualifier = identityXrefQualifier;
+            else xrefQualifier = secondaryXrefQualifier;
+
+            Xref sptrXref = new Xref ( myInstitution,
+                                       sptrDatabase,
+                                       ac,
+                                       shortLabel, null, null) ;
+
+            sptrXref.setCvXrefQualifier( xrefQualifier );
+
+            addNewXref (protein, sptrXref);
+            logger.info ("CREATE SPTR Xref[spAC: " + ac + ", spId: " + shortLabel + "]");
+        }
+
+
 
         // create a SPTR Xref
         Xref sptrXref = new Xref ( myInstitution,

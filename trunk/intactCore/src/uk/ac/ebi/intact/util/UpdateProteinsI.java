@@ -41,10 +41,26 @@ public abstract class UpdateProteinsI {
 
 
     // cache useful object to avoid redoing queries
+
+    /**
+     * The owner of the created object
+     */
+    protected static Institution myInstitution;
+
+    /**
+     * Xref databases
+     */
     protected static CvDatabase sptrDatabase;
     protected static CvDatabase sgdDatabase;
     protected static CvDatabase goDatabase;
-    protected static Institution myInstitution;
+
+    /**
+     * Describe wether an Xref is related the primary SPTR AC (identityCrefQualifier)
+     * or not (secondaryXrefQualifier)
+     */
+    protected static CvXrefQualifier identityXrefQualifier;
+    protected static CvXrefQualifier secondaryXrefQualifier;
+
 
     /**
      * Cache valid BioSource objects for taxIds.
@@ -88,6 +104,19 @@ public abstract class UpdateProteinsI {
                 logger.error ("Unable to find the GO database in your IntAct node");
                 throw new UpdateException ("Unable to find the GO database in your IntAct node");
             }
+
+            identityXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class, "identity");
+            if (identityXrefQualifier == null) {
+                logger.error ("Unable to find the identity CvXrefQualifier in your IntAct node");
+                throw new UpdateException ("Unable to find the identity CvXrefQualifier in your IntAct node");
+            }
+
+            secondaryXrefQualifier = (CvXrefQualifier) helper.getObjectByLabel(CvXrefQualifier.class, "secondary-ac");
+            if (secondaryXrefQualifier == null) {
+                logger.error ("Unable to find the identity CvXrefQualifier in your IntAct node");
+                throw new UpdateException ("Unable to find the identity CvXrefQualifier in your IntAct node");
+            }
+
         } catch (IntactException e) {
             logger.error (e);
             throw new UpdateException ("Couldn't find needed object in IntAct, cause: " + e.getMessage());
