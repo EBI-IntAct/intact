@@ -125,16 +125,20 @@ public class FeatureActionForm extends DispatchActionForm implements EditorFormI
     }
 
     public void setAnnotations(List annotations) {
+        // No annotations for Feature
     }
 
     public List getAnnotations() {
+        // No annotations for Feature
         return null;
     }
 
     public void setAnnotCmd(int index, String value) {
+        // No annotations for Feature
     }
 
     public CommentBean getSelectedAnnotation() {
+        // No annotations for Feature
         return null;
     }
 
@@ -204,6 +208,10 @@ public class FeatureActionForm extends DispatchActionForm implements EditorFormI
         return myFeatureType;
     }
 
+    /**
+     * @struts.validator type="mask" msgkey="error.feature.cvtype"
+     * @struts.validator-var name="mask" value="${menu-pat}"
+     */
     public void setFeatureType(String type) {
         myFeatureType = type;
     }
