@@ -11,10 +11,10 @@ import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.AbstractViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.ViewBeanFactory;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.ProteinViewBean;
+import uk.ac.ebi.intact.application.search3.struts.view.beans.BioSourceViewBean;
+import uk.ac.ebi.intact.application.search3.struts.view.beans.CvObjectViewBean;
 import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -31,6 +31,8 @@ public class SingleResultAction extends AbstractResultAction {
     // Abstract methods implementation
     ///////////////////////////////////
 
+
+
     /**
      * @see AbstractResultAction#getAbstractViewBean
      * @param result
@@ -45,6 +47,7 @@ public class SingleResultAction extends AbstractResultAction {
         if(!AnnotatedObject.class.isAssignableFrom(result.getClass())) {
             //We have an incorrect parameter type - return null for now, but
             //this could perhaps be handled better later on...
+             logger.info( "object not assignale from annotatedobject" );
             return null;
         }
 
@@ -84,18 +87,45 @@ public class SingleResultAction extends AbstractResultAction {
 
         //checking the new stuff....
         if(Protein.class.isAssignableFrom(result.getClass())) {
-            //single Protein view - try out our new bean instead....
-
-            //build the URL for searches and pass to the view bean
-            //NB probably better to put this in the User object at some point instead
+            // it's a single Protein
+            logger.info( "Creating single Protein view" );
             String appPath = getServlet().getServletContext().getInitParameter("searchLink");
             String searchURL = contextPath.concat(appPath);
             return new ProteinViewBean((Protein)result, user.getHelpLink(), searchURL, contextPath);
         }
 
+        //we know the result isn't an Experiment or Protein - it must be a CvObject or a BioSource Object
+        // Let's see
+
+         if(CvObject.class.isAssignableFrom(result.getClass())) {
+             // it's a single CvObject
+            logger.info( "Creating CvObject view" );
+            logger.info( result.toString());
+            String appPath = getServlet().getServletContext().getInitParameter("searchLink");
+            String searchURL = contextPath.concat(appPath);
+            return new CvObjectViewBean((CvObject)result, user.getHelpLink(), searchURL, contextPath);
+        }
+
+         if(BioSource.class.isAssignableFrom(result.getClass())) {
+             // it's a BioSource Object
+            logger.info( "Creating BioSource view" );
+            String appPath = getServlet().getServletContext().getInitParameter("searchLink");
+            String searchURL = contextPath.concat(appPath);
+            return new BioSourceViewBean((BioSource)result, user.getHelpLink(), searchURL, contextPath);
+        }
+
+
         //we know the result isn't an Experiment or Protein - handle it as a general
         //AnnotatedObject...
-        return ViewBeanFactory.getInstance().getSingleViewBean ((AnnotatedObject)result, user.getHelpLink(), contextPath );
+          /**
+          logger.info( "Creating standard Annotated Object view  " );
+          String appPath = getServlet().getServletContext().getInitParameter("searchLink");
+          String searchURL = contextPath.concat(appPath);
+          return new BioSourceViewBean((BioSource)result, user.getHelpLink(), searchURL, contextPath);
+          **/
+        // something was getting wrong
+        // we need here a exception
+         throw new RuntimeException("search result not inspectable"); 
     }
 
     /**
