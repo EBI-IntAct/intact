@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.util;
 
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.model.*;
 
@@ -220,7 +221,9 @@ public class GoTools {
 
                 // Insert the definition
                 try {
+                    // helper.startTransaction(BusinessConstants.JDBC_TX);
                     insertDefinition(goRecord, helper, aTargetClass, false);
+                    // helper.finishTransaction();
                 }
                 catch (IntactException e){
                     System.err.println("Error storing GO record " + (count - 1) + "\n" + e);
