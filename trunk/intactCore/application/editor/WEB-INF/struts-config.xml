@@ -87,6 +87,10 @@
             <form-property name="inter" type="java.lang.String"/>
             <form-property name="ident" type="java.lang.String"/>
 
+            <!-- Search parameters for an experiment -->
+            <form-property name="intSearchLabel" type="java.lang.String"/>
+            <form-property name="intSearchAC" type="java.lang.String"/>
+
             <!-- For annotations -->
             <form-property name="annotations"
                 type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean[]"/>
@@ -454,6 +458,7 @@
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/expAnnotSubmit"/>
             <forward name="xref" path="/do/expXrefSubmit"/>
+            <forward name="intSearch" path="/do/intSearch"/>
         </action>
 
         <!-- Action to handle when the Submit/Cancel/Delete button is pressed.
@@ -496,6 +501,19 @@
             input="/do/fillExpForm"
             validate="false"
             scope="session" />
+
+        <!-- Action to handle when an interaction is added to the experiment or
+             hidden from the current view.
+        -->
+        <action path="/intSearch"
+            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionDispatchAction"
+            name="expForm"
+            input="/do/fillExpForm"
+            validate="false"
+            scope="session"
+            parameter="dispatch">
+            <forward name="success" path="/do/fillExpForm"/>
+        </action>
 
         <!-- ============= Actions related to BioSource editor ============ -->
 

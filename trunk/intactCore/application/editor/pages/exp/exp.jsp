@@ -41,8 +41,8 @@
 <%--    </logic:messagesPresent>--%>
 
     <jsp:include page="info.jsp" />
-<%--    <p></p>--%>
-<%--    <jsp:include page="expinfo.jsp" />--%>
+    <p></p>
+    <jsp:include page="intSearch.jsp" />
     <p></p>
     <jsp:include page="annots.jsp" />
     <jsp:include page="../addAnnots.jsp" />
