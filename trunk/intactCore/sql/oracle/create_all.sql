@@ -1,10 +1,12 @@
+    
 
 
-DEFINE intactMainTablespace         = USERS
-DEFINE intactIndexTablespace        = USERS
-DEFINE intactLobTablespace          = USERS
-DEFINE intactAuditTablespace        = USERS
-DEFINE intactIndexAuditTablespace   = USERS
+  
+DEFINE intactMainTablespace         = INTACT_TAB
+DEFINE intactIndexTablespace        = INTACT_IDX
+DEFINE intactLobTablespace          = INTACT_TAB
+DEFINE intactAuditTablespace        = INTACT_TAB
+DEFINE intactIndexAuditTablespace   = INTACT_IDX
 DEFINE spoolFile                    = ddl.sql
 
 
