@@ -109,7 +109,7 @@ public class InsertComplex {
                        new Xref ((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
                                 (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR"),
                                 spAc,
-                                null, null));
+                                null, null, null));
         }
 	log.info((System.currentTimeMillis() - startTime) + " ZZ  set interactor");
         comp.setInteractor(protein);
