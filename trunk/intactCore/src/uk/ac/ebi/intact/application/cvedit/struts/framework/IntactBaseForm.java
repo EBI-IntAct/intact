@@ -23,11 +23,6 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConsta
 public class IntactBaseForm extends ActionForm {
 
     /**
-     * Reference to the Intact User object.
-     */
-//    private IntactUserIF myUser;
-
-    /**
      * The user choice.
      */
     private String myAction;
