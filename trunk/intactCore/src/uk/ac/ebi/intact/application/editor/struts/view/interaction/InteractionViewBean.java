@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.ArrayList;
@@ -119,10 +118,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
     // Override the super method to this bean's info.
     public void persist(EditUserI user) throws IntactException, SearchException {
-        // Persists the annotations and xrefs; this will create the
-        // Interaction if it is a new one.
-        super.persist(user);
-
         // Get the objects using their short label.
         BioSource biosource = (BioSource) user.getObjectByLabel(
                 BioSource.class, myOrganism);
@@ -169,6 +164,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 user.create(comp);
             }
         }
+
+        //
+        super.persist(user);
     }
 
     // Override super method to clear experiments and componets.
