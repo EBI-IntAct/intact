@@ -10,25 +10,16 @@ import java.sql.Timestamp;
 /**
  * This class represents the Statistics table in the database.
  *
- *  * ----------------------- FIRST NEEDS --------------------------------
- * The Scripts
- *                  create_table_statistics.sql
- *            and   insert_count_statistics.sql
- * should be run before the run of this class.
- *
- * Then check the repository_user.xml : mapping of the IA_Statistics table
- *
- *------------------------------------------------------------------------
+ * The Script sql/[oracle|postgres]/insert_count_statistics.sql
+ * should be run before to use of this class.
  *
  * The corresponding mapping between the both JAVA object and the SQL table
  * is described in the repository_user.xml
  *
- *
- *
- * @author shuet (shuet@ebi.ac.uk)
+ * @author shuet (shuet@ebi.ac.uk), Samuel Kerrien (skerrien:ebi.ac.uk)
  * @version : $Id$
  */
-public class IntactStatistics {
+public class IntactStatistics implements Comparable {
 
     ///////////////////////////////////////
     //attributes:
@@ -38,7 +29,6 @@ public class IntactStatistics {
     /**
      * Specify the ac of the field retrieved.
      * Need to be declared there because it is a field in the repository_user.xml file
-     *
      */
     protected int ac;
 
@@ -66,35 +56,21 @@ public class IntactStatistics {
         this.timestamp = new java.sql.Timestamp(System.currentTimeMillis());
     }
 
-    /*public IntactStatistics (int proteins,
-                             int interactions,
-                             int binaryInteractions,
-                             int complexInteractions,
-                             int experiments,
-                             int terms) {
-        this.proteinNumber = proteins;
-        this.interactionNumber = interactions;
-        this.binaryInteractions = binaryInteractions;
-        this.complexInteractions = complexInteractions;
-        this.experimentNumber = experiments;
-        this.termNumber = terms;
-    } */
-
 
     ///////////////////////////////////////
     //access methods for attributes
-    // = properties to get and set attributes
+    ///////////////////////////////////////
 
     /**
      * returns the timestamp
      * @return Timestamp
      *
      */
-    public int getAc() {
+    public final int getAc() {
         return (this.ac);
     }
 
-    public void setAc(int ac) {
+    public final void setAc(final int ac) {
         this.ac = ac;
     }
 
@@ -103,11 +79,11 @@ public class IntactStatistics {
      * @return Timestamp
      *
      */
-    public Timestamp getTimestamp() {
+    public final Timestamp getTimestamp() {
         return (this.timestamp);
     }
 
-    public void setTimestamp(Timestamp timeStamp) {
+    public final void setTimestamp(final Timestamp timeStamp) {
         this.timestamp = timeStamp;
     }
 
@@ -116,11 +92,11 @@ public class IntactStatistics {
      * @return int
      *
      */
-    public int getNumberOfProteins() {
+    public final int getNumberOfProteins() {
         return (this.proteinNumber);
     }
 
-    public void setNumberOfProteins(int proteinNumb) {
+    public final void setNumberOfProteins(final int proteinNumb) {
         this.proteinNumber = proteinNumb;
     }
 
@@ -129,25 +105,24 @@ public class IntactStatistics {
      * @return int
      *
      */
-    public int getNumberOfInteractions() {
+    public final int getNumberOfInteractions() {
         return (this.interactionNumber);
     }
 
-    public void setNumberOfInteractions(int interactionNumb) {
+    public final void setNumberOfInteractions(final int interactionNumb) {
         this.interactionNumber = interactionNumb;
     }
-
 
     /**
      * returns the number of interactions with two interactors, now available in the IntAct Database
      * @return int
      *
      */
-    public int getNumberOfBinaryInteractions() {
+    public final int getNumberOfBinaryInteractions() {
         return (this.binaryInteractions);
     }
 
-    public void setNumberOfBinaryInteractions(int binaryInteraction) {
+    public final void setNumberOfBinaryInteractions(final int binaryInteraction) {
         this.binaryInteractions = binaryInteraction;
     }
 
@@ -156,11 +131,11 @@ public class IntactStatistics {
      * @return int
      *
      */
-    public int getNumberOfComplexInteractions() {
+    public final int getNumberOfComplexInteractions() {
         return (this.complexInteractions);
     }
 
-    public void setNumberOfComplexInteractions(int complexInteraction) {
+    public final void setNumberOfComplexInteractions(final int complexInteraction) {
         this.complexInteractions = complexInteraction;
     }
 
@@ -169,31 +144,28 @@ public class IntactStatistics {
      * @return int
      *
      */
-    public int getNumberOfExperiments() {
+    public final int getNumberOfExperiments() {
         return (this.experimentNumber);
     }
 
-    public void setNumberOfExperiments(int experimentNumb) {
+    public final void setNumberOfExperiments(final int experimentNumb) {
         this.experimentNumber = experimentNumb;
     }
-
 
     /**
      * returns the number of terms in the Controlled Vocabulary table now available in the IntAct Database
      * @return int
      *
      */
-    public int getNumberOfGoTerms() {
+    public final int getNumberOfGoTerms() {
         return (this.termNumber);
     }
 
-    public void setNumberOfGoTerms(int termNumb) {
+    public final void setNumberOfGoTerms(final int termNumb) {
         this.termNumber = termNumb;
     }
 
-
-
-    public String toString(){
+    public final String toString(){
         return " Timestamp: " + this.getTimestamp()
                 + "; Number of proteins: " + this.getNumberOfProteins()
                 + "; Number of interactions: " + this.getNumberOfInteractions()
@@ -203,4 +175,27 @@ public class IntactStatistics {
                 + "; Number of terms in Go: " + this.getNumberOfProteins()
                 + "\n";
     }
-}// end IntactStatistics
+
+
+    ////////////////////////////////////////////////
+    // Implementation of the Comparable interface
+    ////////////////////////////////////////////////
+
+    /**
+     * Compares this object with the specified object for order.  Returns a
+     * negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified object.<p>
+     *
+     * @param   o the Object to be compared.
+     * @return  a negative integer, zero, or a positive integer as this object
+     *		    is less than, equal to, or greater than the specified object.
+     *
+     * @throws ClassCastException if the specified object's type prevents it
+     *         from being compared to this Object.
+     */
+    public final int compareTo( final Object o ) {
+        final Timestamp t = ( (IntactStatistics) o ).getTimestamp();
+
+        return (int) ( t.getTime() - this.timestamp.getTime() );
+    }
+}
