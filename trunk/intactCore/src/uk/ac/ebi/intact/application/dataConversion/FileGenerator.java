@@ -176,8 +176,8 @@ public class FileGenerator {
                 System.out.println("number of Interactions for " + exp.getShortLabel()
                 + " = " + size);
                 // Avoid outOfMemory from huge datasets (Giot)
-                //NB changed to a small size for testing!!...
-                if (size>1){
+                //NB use a a small size here for testing!!...
+                if (size>1000){
                     //add to the large experiments list for different processing
                     System.out.println("adding a large experiment to list...");
                     largeExperimentList.add(exp);
