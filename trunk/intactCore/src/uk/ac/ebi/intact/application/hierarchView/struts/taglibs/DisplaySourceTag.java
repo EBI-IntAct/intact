@@ -3,24 +3,21 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 // intact
+import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
-import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.util.Properties;
 import java.util.Collection;
 import java.util.Iterator;
-import java.io.IOException;
+import java.util.Properties;
 
 
 
@@ -90,14 +87,14 @@ public class DisplaySourceTag extends TagSupport {
 
                         /* redirection to this URL */
                         String msg = "<script language=\"JavaScript\">\n" +
-                                     "<!--\n" +
-                                     "     forward ( '" + absoluteUrl + "' );\n" +
-                                     "//-->\n" +
-                                     "</script>\n";
+                                "<!--\n" +
+                                "     forward ( '" + absoluteUrl + "' );\n" +
+                                "//-->\n" +
+                                "</script>\n";
 
                         pageContext.getOut().write (msg);
 
-                     } else {
+                    } else {
                         // more than 1 source available : display a list of link
                         pageContext.getOut().write ("Select an element in the list : <br>");
 
@@ -111,15 +108,15 @@ public class DisplaySourceTag extends TagSupport {
                                 pageContext.getOut().write ("<a href=" + adress +" target=\"frameHierarchy\">" + label + "</a> <br>");
                             else
                                 pageContext.getOut().write("<a href=" + adress +" target=\"frameHierarchy\">" + label + "</a> " + description + "<br>");
-                         } // while
-                     } // else
-                 } // else
-         } // if
+                        } // while
+                    } // else
+                } // else
+            } // if
 
-    } catch (Exception ioe) {
-        throw new JspException ("Fatal error: init tag could not initialize user's HTTPSession.");
-    }
-    return EVAL_PAGE;
-} // doEndTag
+        } catch (Exception ioe) {
+            throw new JspException ("Fatal error: init tag could not initialize user's HTTPSession.");
+        }
+        return EVAL_PAGE;
+    } // doEndTag
 
 } // DisplaySourceTag

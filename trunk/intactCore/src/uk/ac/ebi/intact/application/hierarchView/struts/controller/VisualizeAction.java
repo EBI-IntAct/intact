@@ -1,16 +1,22 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 
-import org.apache.struts.action.*;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-
-import uk.ac.ebi.intact.application.hierarchView.struts.view.VisualizeForm;
 import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.hierarchView.struts.view.VisualizeForm;
 import uk.ac.ebi.intact.business.IntactHelper;
 
 import javax.servlet.ServletException;
@@ -182,11 +188,11 @@ public final class VisualizeAction extends IntactBaseAction {
 
         // Print debug in the log file
         super.log("VisualizeAction: AC=" + AC +
-                  " depth=" + depth +
-                  " noDepthLimit=" + hasNoDepthLimit +
-                  " methodLabel=" + methodLabel +
-                  " methodClass=" + methodClass +
-                  "\nlogged on in session " + session.getId());
+                " depth=" + depth +
+                " noDepthLimit=" + hasNoDepthLimit +
+                " methodLabel=" + methodLabel +
+                " methodClass=" + methodClass +
+                "\nlogged on in session " + session.getId());
 
         // Forward control to the specified success URI
         return (mapping.findForward("success"));

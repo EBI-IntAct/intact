@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.application.hierarchView.business.tulip.client;
 
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
@@ -10,6 +15,7 @@ import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 
 /**
@@ -22,6 +28,9 @@ import java.util.Properties;
 
 
 public class TulipClient {
+
+    // LOGGER
+    static Logger logger = Logger.getLogger("TulipClient");
 
     /* --------------------------------------------------- Instance variable
 
@@ -57,7 +66,7 @@ public class TulipClient {
             String tulipAdress = null;
             if (null != properties) {
                 tulipAdress = properties.getProperty ("webService.adress");
-                System.out.println (" adress=" + tulipAdress);
+                logger.info (" adress=" + tulipAdress);
             } else {
                 tulip = null;
                 return;
@@ -110,7 +119,8 @@ public class TulipClient {
             try {
                 pc = tulip.getComputedTlpContent (tlpContent, mask);
             } catch (java.rmi.RemoteException se) {
-                System.out.println ("Exception during retreiving proteins' coordinate");
+                logger.severe ("Exception during retreiving proteins' coordinate");
+                logger.severe (se.toString());
                 se.printStackTrace ();
             }
         }
@@ -145,12 +155,6 @@ public class TulipClient {
      */
     public String getLineSeparator () {
         String result = null;
-
-        //    if (null != tulip) {
-//       try {
-// 	result = tulip.getLineSeparator();
-//       } catch (java.rmi.RemoteException se) {}
-//     }
 
         return result;
     } // getLineSeparator

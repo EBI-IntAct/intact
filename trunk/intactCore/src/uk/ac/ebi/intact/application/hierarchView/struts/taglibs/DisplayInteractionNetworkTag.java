@@ -3,13 +3,12 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 // intact
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
+import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
@@ -67,12 +66,12 @@ public class DisplayInteractionNetworkTag extends TagSupport {
                 }
 
                 String msg = "<p align=\"left\">\n"
-                           + "  <center>"
-                           + "     <img src=\"/hierarchView/GenerateImage?format=" + format + "\" "
-                           + "      USEMAP=\"#" + mapName +"\" border =\"0\">"
-                           + "     <br>"
-                           + "  </center>"
-                           + "</p>";
+                        + "  <center>"
+                        + "     <img src=\"/hierarchView/GenerateImage?format=" + format + "\" "
+                        + "      USEMAP=\"#" + mapName +"\" border =\"0\">"
+                        + "     <br>"
+                        + "  </center>"
+                        + "</p>";
 
                 pageContext.getOut().write (msg);
             }

@@ -5,16 +5,16 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.WebServiceManager;
 
-import javax.servlet.jsp.tagext.TagSupport;
-import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.http.HttpSession;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspTagException;
+import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -26,6 +26,7 @@ import java.util.logging.Logger;
  */
 public class CheckInitTag  extends TagSupport {
 
+    // LOGGER
     private static Logger logger = Logger.getLogger("CheckInitTag");
 
     private String forwardOnError;
@@ -81,7 +82,7 @@ public class CheckInitTag  extends TagSupport {
             try {
                 // FORWARD
                 super.pageContext.forward (this.forwardOnError);
-                 return SKIP_PAGE;
+                return SKIP_PAGE;
             } catch (ServletException e) {
                 logger.warning (e.toString());
                 e.printStackTrace();

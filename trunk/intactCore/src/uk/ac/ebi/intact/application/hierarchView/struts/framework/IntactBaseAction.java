@@ -3,15 +3,13 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-
 package uk.ac.ebi.intact.application.hierarchView.struts.framework;
 
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionError;
-
-import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
+import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -37,8 +35,7 @@ public abstract class IntactBaseAction extends Action {
      * <code>session</code>
      */
     protected IntactUser getIntactUser(HttpSession session) {
-        IntactUser service = (IntactUser)
-            session.getAttribute(Constants.USER_KEY);
+        IntactUser service = (IntactUser) session.getAttribute(Constants.USER_KEY);
         return service;
     }
 
@@ -47,8 +44,8 @@ public abstract class IntactBaseAction extends Action {
      * @param message string that describes the error or exception
      */
     protected void log(String message) {
-       if (super.servlet.getDebug() >= 1)
-           super.servlet.log(message);
+        if (super.servlet.getDebug() >= 1)
+            super.servlet.log(message);
     }
 
     /**
@@ -108,7 +105,7 @@ public abstract class IntactBaseAction extends Action {
      * @return boolean false is there are any error registered, else true
      */
     protected boolean isErrorsEmpty () {
-         return myErrors.empty();
+        return myErrors.empty();
     }
 
     // Helper methods.

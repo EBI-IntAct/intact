@@ -4,11 +4,10 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 
 
 /**
@@ -21,7 +20,6 @@ import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
  */
 
 public final class HighlightmentForm extends ActionForm {
-
 
     // --------------------------------------------------- Instance Variables
 
@@ -93,9 +91,8 @@ public final class HighlightmentForm extends ActionForm {
             errors.add("behaviour", new ActionError("error.behaviour.required"));
 
         try {
-
             // try to load the specified behaviour
-            Class cls = Class.forName (behaviour);
+            Class.forName (behaviour);
 
         } catch (ClassNotFoundException e) {
             errors.add("behaviour", new ActionError("error.behaviour.unknown", behaviour));
@@ -104,7 +101,7 @@ public final class HighlightmentForm extends ActionForm {
             errors.add("behaviour", new ActionError("error.behaviour.unexpected", e.getMessage() ) ) ;
         }
 
-        if (false == errors.empty()) {
+        if (false == errors.isEmpty()) {
             // delete properties of the bean, so can't be saved int the session.
             reset(mapping, request);
         }

@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
 package uk.ac.ebi.intact.application.hierarchView.business.graph;
 
 /**
@@ -20,116 +25,112 @@ import uk.ac.ebi.intact.simpleGraph.NodeI;
 
 import java.awt.*;
 import java.util.*;
- 
+
 public class InteractionNetwork extends Graph {
 
 
-  /*********************************************************************** Constants */
-  private static int DEFAULT_COLOR_NODE_RED   = 0;
-  private static int DEFAULT_COLOR_NODE_GREEN = 0;
-  private static int DEFAULT_COLOR_NODE_BLUE  = 255;
-  private static String DEFAULT_COLOR_NODE = DEFAULT_COLOR_NODE_RED + "," +
-                                             DEFAULT_COLOR_NODE_GREEN + "," + 
-                                             DEFAULT_COLOR_NODE_BLUE;
+    /*********************************************************************** Constants */
+    private static int DEFAULT_COLOR_NODE_RED   = 0;
+    private static int DEFAULT_COLOR_NODE_GREEN = 0;
+    private static int DEFAULT_COLOR_NODE_BLUE  = 255;
+    private static String DEFAULT_COLOR_NODE = DEFAULT_COLOR_NODE_RED + "," +
+                                               DEFAULT_COLOR_NODE_GREEN + "," +
+                                               DEFAULT_COLOR_NODE_BLUE;
 
-  private static int DEFAULT_COLOR_LABEL_RED   = 255;
-  private static int DEFAULT_COLOR_LABEL_GREEN = 255;
-  private static int DEFAULT_COLOR_LABEL_BLUE  = 255;
-  private static String DEFAULT_COLOR_LABEL = DEFAULT_COLOR_LABEL_RED + "," +
-                                              DEFAULT_COLOR_LABEL_GREEN + "," + 
-                                              DEFAULT_COLOR_LABEL_BLUE;
-
-  private static String DEFAULT_SIZE_LENGTH = "40";
-  private static String DEFAULT_SIZE_HEIGHT = "40";
+    private static int DEFAULT_COLOR_LABEL_RED   = 255;
+    private static int DEFAULT_COLOR_LABEL_GREEN = 255;
+    private static int DEFAULT_COLOR_LABEL_BLUE  = 255;
+    private static String DEFAULT_COLOR_LABEL = DEFAULT_COLOR_LABEL_RED + "," +
+                                                DEFAULT_COLOR_LABEL_GREEN + "," +
+                                                DEFAULT_COLOR_LABEL_BLUE;
 
 
+    /*********************************************************************** Instance variables */
 
-  /*********************************************************************** Instance variables */
+    /**
+     * Allow to record nodes and keep their order
+     */
+    private ArrayList nodeList;
+    private boolean   isInitialized;
 
-  /**
-   * Allow to record nodes and keep their order
-   */
-  private ArrayList nodeList;
-  private boolean   isInitialized;
-
-  /**
-   * Properties of the final image (size ...)
-   */
-  private ImageDimension dimension;
+    /**
+     * Properties of the final image (size ...)
+     */
+    private ImageDimension dimension;
 
 
 
 
-  /*********************************************************************** Methods */
-  /**
-   * Constructor
-   */
-  public InteractionNetwork()
-  {
-    this.dimension     = new ImageDimension();
-    this.isInitialized = false;
-  }
-  
-
-  /**
-   * Initialization of the interaction network
-   * Record the nodes in a list which allows to keep an order ...
-   */
-  public void init () {
-    HashMap myNodes = super.getNodes();
-
-    // create a new collection (ordered) to allow a indexed access to the node list
-    this.nodeList = new ArrayList (myNodes.values());
-    this.isInitialized = true;
-  }
-
-
-  /**
-   * add the initialization part to the super class method
-   *
-   * @param anInteractor the interactor to add in the graph
-   * @return the created Node
-   */
-  public Node addNode(Interactor anInteractor){
-    Node aNode = super.addNode (anInteractor);
-
-    // initialization of the node
-    if (null != aNode) {
-      // String label = anInteractor.getShortLabel();
-      String label = anInteractor.getAc ();
-      aNode.put (Constants.ATTRIBUTE_LABEL,label);
-
-      this.initNodeDisplay (aNode);
+    /*********************************************************************** Methods */
+    /**
+     * Constructor
+     */
+    public InteractionNetwork()
+    {
+        this.dimension     = new ImageDimension();
+        this.isInitialized = false;
     }
 
-    return aNode;
-  } // addNode
-  
 
-  /**
-   * return a list of nodes ordered 
-   */
-  public ArrayList getOrderedNodes () {
-    return this.nodeList;
-  }
+    /**
+     * Initialization of the interaction network
+     * Record the nodes in a list which allows to keep an order ...
+     */
+    public void init () {
+        HashMap myNodes = super.getNodes();
 
-
-  /**
-   * Allow to put the default color and default visibility for each 
-   * protein of the interaction network
-   */
-  public void initNodes()
-  {
-    Node aNode;
-
-    HashMap  someNodes = super.getNodes();
-    Set keys = someNodes.keySet();
-    Iterator iterator = keys.iterator();
-
-    while (iterator.hasNext ()) {
-      aNode = (Node) someNodes.get(iterator.next());
-      this.initNodeDisplay (aNode);
+        // create a new collection (ordered) to allow a indexed access to the node list
+        this.nodeList = new ArrayList (myNodes.values());
+        this.isInitialized = true;
     }
+
+
+    /**
+     * add the initialization part to the super class method
+     *
+     * @param anInteractor the interactor to add in the graph
+     * @return the created Node
+     */
+    public Node addNode(Interactor anInteractor){
+        Node aNode = super.addNode (anInteractor);
+
+        // initialization of the node
+        if (null != aNode) {
+            // String label = anInteractor.getShortLabel();
+            String label = anInteractor.getAc ();
+            aNode.put (Constants.ATTRIBUTE_LABEL,label);
+
+            this.initNodeDisplay (aNode);
+        }
+
+        return aNode;
+    } // addNode
+
+
+    /**
+     * return a list of nodes ordered
+     */
+    public ArrayList getOrderedNodes () {
+        return this.nodeList;
+    }
+
+
+    /**
+     * Allow to put the default color and default visibility for each
+     * protein of the interaction network
+     */
+    public void initNodes()
+    {
+        Node aNode;
+
+        HashMap  someNodes = super.getNodes();
+        Set keys = someNodes.keySet();
+        Iterator iterator = keys.iterator();
+
+        while (iterator.hasNext ()) {
+            aNode = (Node) someNodes.get(iterator.next());
+            this.initNodeDisplay (aNode);
+        }
 
 //     Iterator iterator = someNodes.values().iterator ();
 
@@ -138,195 +139,195 @@ public class InteractionNetwork extends Graph {
 //       this.initNodeDisplay (aNode);
 //     }
 
-  } // initNodes
+    } // initNodes
 
 
-  /**
-   * initialisation of one Node about its color, its visible attribute
-   *
-   * @param aNode the node to update
-   */
-  public void initNodeDisplay (NodeI aNode) {
+    /**
+     * initialisation of one Node about its color, its visible attribute
+     *
+     * @param aNode the node to update
+     */
+    public void initNodeDisplay (NodeI aNode) {
 
-    // read the ApplicationResource.proterties file 
-    Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
-    
-    String stringColorNode  = null;
-    String stringColorLabel = null; 
-    
-    if (null != properties) {
-      stringColorNode  = properties.getProperty ("hierarchView.image.color.default.node");
-      stringColorLabel = properties.getProperty ("hierarchView.image.color.default.label");
-    }
-    
-    if (null == stringColorNode)  stringColorNode  = DEFAULT_COLOR_NODE;
-    if (null == stringColorLabel) stringColorLabel = DEFAULT_COLOR_LABEL;
-    
-    Color colorNode = Utilities.parseColor(stringColorNode, 
-					   DEFAULT_COLOR_NODE_RED, 
-					   DEFAULT_COLOR_NODE_GREEN,
-					   DEFAULT_COLOR_NODE_BLUE);
-    
-    ((Node) aNode).put (Constants.ATTRIBUTE_COLOR_NODE, colorNode);
+        // read the ApplicationResource.proterties file
+        Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
 
-    Color colorLabel = Utilities.parseColor(stringColorLabel, 
-					    DEFAULT_COLOR_LABEL_RED, 
-					    DEFAULT_COLOR_LABEL_GREEN,
-					    DEFAULT_COLOR_LABEL_BLUE);
-    
-    ((Node) aNode).put (Constants.ATTRIBUTE_COLOR_LABEL, colorLabel);    
-    ((Node) aNode).put (Constants.ATTRIBUTE_VISIBLE,new Boolean (true));
+        String stringColorNode  = null;
+        String stringColorLabel = null;
 
-  } // initNode
+        if (null != properties) {
+            stringColorNode  = properties.getProperty ("hierarchView.image.color.default.node");
+            stringColorLabel = properties.getProperty ("hierarchView.image.color.default.label");
+        }
 
+        if (null == stringColorNode)  stringColorNode  = DEFAULT_COLOR_NODE;
+        if (null == stringColorLabel) stringColorLabel = DEFAULT_COLOR_LABEL;
 
-  /**
-   * Return the number of node
-   *
-   * @return the number of nodes
-   */
-  public int sizeNodes () {
-    return super.getNodes().size();
-  }
+        Color colorNode = Utilities.parseColor(stringColorNode,
+                                               DEFAULT_COLOR_NODE_RED,
+                                               DEFAULT_COLOR_NODE_GREEN,
+                                               DEFAULT_COLOR_NODE_BLUE);
 
-  
-  /**
-   * Return the number of edge 
-   *
-   * @return the number of edge
-   */
-  public int sizeEdges () {
-    return super.getEdges().size();
-  }
+        ((Node) aNode).put (Constants.ATTRIBUTE_COLOR_NODE, colorNode);
+
+        Color colorLabel = Utilities.parseColor(stringColorLabel,
+                                                DEFAULT_COLOR_LABEL_RED,
+                                                DEFAULT_COLOR_LABEL_GREEN,
+                                                DEFAULT_COLOR_LABEL_BLUE);
+
+        ((Node) aNode).put (Constants.ATTRIBUTE_COLOR_LABEL, colorLabel);
+        ((Node) aNode).put (Constants.ATTRIBUTE_VISIBLE,new Boolean (true));
+
+    } // initNode
 
 
-  /**
-   * Return the object ImageDimension which correspond to the graph
-   *
-   * @return an object ImageDimension
-   */
-  public ImageDimension getImageDimension () {
-    return this.dimension;
-  }
-
-
-  /**
-   * Create a String giving informations for the Tulip treatment
-   * the informations are :
-   *       - the number of nodes,
-   *       - the whole of the edges and nodes associeted for each edge,
-   *       - the label of each node.
-   *
-   * @return an object String
-   */
-  public String exportTlp () {
-
-    EdgeI edge;
-    StringBuffer out        = new StringBuffer();
-    String separator = System.getProperty ("line.separator");
-    int i;
-
-    if (false == this.isInitialized)
-      this.init();
-
-    out.append("(nodes ");
-    
-    for (i = 1; i <= this.nodeList.size(); i++)
-      out.append(i + " ");
-    
-    out.append(")" + separator);
-    
-
-    Vector  myEdges = (Vector)  super.getEdges();
-
-    for (i = 1; i <= sizeEdges(); i++) {
-
-      edge = (EdgeI) myEdges.get (i - 1);
-      out.append("(edge "+ i + " "  + 
-		 (this.nodeList.indexOf (edge.getNode1 ()) + 1) + " " +
-		 (this.nodeList.indexOf (edge.getNode2 ()) + 1) + ")" + 
-		 separator);
+    /**
+     * Return the number of node
+     *
+     * @return the number of nodes
+     */
+    public int sizeNodes () {
+        return super.getNodes().size();
     }
 
-    return out.toString();
-  } // exportTlp
 
-
-
-  /**
-   * Create a String giving informations for the bioLayout EMBL software
-   * the informations are just pairwise of protein label.
-   *
-   * @return an object String
-   */
-  public String exportBioLayout () {
-
-    EdgeI edge;
-    StringBuffer out        = new StringBuffer();
-    String separator = System.getProperty ("line.separator");
-    int i;
-
-    if (false == this.isInitialized)
-      this.init();
-
-    Vector  myEdges = (Vector)  super.getEdges();
-
-    for (i = 1; i <= sizeEdges(); i++) {
-
-      edge = (EdgeI) myEdges.get (i - 1);
-      String label1 = ((Node) edge.getNode1 ()).getLabel () ;
-      String label2 = ((Node) edge.getNode2 ()).getLabel () ;
-
-      out.append(label1 + "\t" + label2 + separator);
+    /**
+     * Return the number of edge
+     *
+     * @return the number of edge
+     */
+    public int sizeEdges () {
+        return super.getEdges().size();
     }
 
-    return out.toString();
-  } // exportBioLayout
+
+    /**
+     * Return the object ImageDimension which correspond to the graph
+     *
+     * @return an object ImageDimension
+     */
+    public ImageDimension getImageDimension () {
+        return this.dimension;
+    }
+
+
+    /**
+     * Create a String giving informations for the Tulip treatment
+     * the informations are :
+     *       - the number of nodes,
+     *       - the whole of the edges and nodes associeted for each edge,
+     *       - the label of each node.
+     *
+     * @return an object String
+     */
+    public String exportTlp () {
+
+        EdgeI edge;
+        StringBuffer out        = new StringBuffer();
+        String separator = System.getProperty ("line.separator");
+        int i;
+
+        if (false == this.isInitialized)
+            this.init();
+
+        out.append("(nodes ");
+
+        for (i = 1; i <= this.nodeList.size(); i++)
+            out.append(i + " ");
+
+        out.append(")" + separator);
+
+
+        Vector  myEdges = (Vector)  super.getEdges();
+
+        for (i = 1; i <= sizeEdges(); i++) {
+
+            edge = (EdgeI) myEdges.get (i - 1);
+            out.append("(edge "+ i + " "  +
+                    (this.nodeList.indexOf (edge.getNode1 ()) + 1) + " " +
+                    (this.nodeList.indexOf (edge.getNode2 ()) + 1) + ")" +
+                    separator);
+        }
+
+        return out.toString();
+    } // exportTlp
 
 
 
-  /**
-   * Send a String to Tulip to calculate coordinates
-   * Enter the obtained coordinates in the graph.
-   * 
-   * @param dataTlp The obtained String by the exportTlp() method 
-   * @return an array of error message or <b>null</b> if no error occurs.
-   */
-  public String[] importDataToImage (String dataTlp) {
+    /**
+     * Create a String giving informations for the bioLayout EMBL software
+     * the informations are just pairwise of protein label.
+     *
+     * @return an object String
+     */
+    public String exportBioLayout () {
 
-    ProteinCoordinate[] result;
-    TulipClient client  = new TulipClient();
-    
-    // Call Tulip Web Service
-    // if (!client.isReady()) throw new IOException ("Unable to create Tulip Web service"); 
-    
-    // get coordinates
-    result = client.getComputedTlpContent(dataTlp);
+        EdgeI edge;
+        StringBuffer out        = new StringBuffer();
+        String separator = System.getProperty ("line.separator");
+        int i;
 
-    if (null == result) {
-      // throw new IOException ("Tulip send back no data.");
-      String[] errors = client.getErrorMessages (true);
-      return errors;
-    } else {
-      // update protein coordinates
-      for (int i = 0; i < result.length; i++) {
-	ProteinCoordinate p = result[i];
-	
-	Float x  = new Float (p.getX());
-	Float y  = new Float (p.getY());
-	
-	// nodes are labelled from 1 to n int the tlp file and from 0 to n-1 int the collection.
-	Node protein = (Node) this.nodeList.get (p.getId() - 1);
-	
-	// Store coordinates in the protein
-	protein.put (Constants.ATTRIBUTE_COORDINATE_X, x);
-	protein.put (Constants.ATTRIBUTE_COORDINATE_Y, y);
-      } // for
-    } // else
+        if (false == this.isInitialized)
+            this.init();
 
-    return null;
-    
-  } //importDataToImage
+        Vector  myEdges = (Vector)  super.getEdges();
+
+        for (i = 1; i <= sizeEdges(); i++) {
+
+            edge = (EdgeI) myEdges.get (i - 1);
+            String label1 = ((Node) edge.getNode1 ()).getLabel () ;
+            String label2 = ((Node) edge.getNode2 ()).getLabel () ;
+
+            out.append(label1 + "\t" + label2 + separator);
+        }
+
+        return out.toString();
+    } // exportBioLayout
+
+
+
+    /**
+     * Send a String to Tulip to calculate coordinates
+     * Enter the obtained coordinates in the graph.
+     *
+     * @param dataTlp The obtained String by the exportTlp() method
+     * @return an array of error message or <b>null</b> if no error occurs.
+     */
+    public String[] importDataToImage (String dataTlp) {
+
+        ProteinCoordinate[] result;
+        TulipClient client  = new TulipClient();
+
+        // Call Tulip Web Service
+        // if (!client.isReady()) throw new IOException ("Unable to create Tulip Web service");
+
+        // get coordinates
+        result = client.getComputedTlpContent(dataTlp);
+
+        if (null == result) {
+            // throw new IOException ("Tulip send back no data.");
+            String[] errors = client.getErrorMessages (true);
+            return errors;
+        } else {
+            // update protein coordinates
+            for (int i = 0; i < result.length; i++) {
+                ProteinCoordinate p = result[i];
+
+                Float x  = new Float (p.getX());
+                Float y  = new Float (p.getY());
+
+                // nodes are labelled from 1 to n int the tlp file and from 0 to n-1 int the collection.
+                Node protein = (Node) this.nodeList.get (p.getId() - 1);
+
+                // Store coordinates in the protein
+                protein.put (Constants.ATTRIBUTE_COORDINATE_X, x);
+                protein.put (Constants.ATTRIBUTE_COORDINATE_Y, y);
+            } // for
+        } // else
+
+        return null;
+
+    } //importDataToImage
 
 } // InteractionNetwork
 
