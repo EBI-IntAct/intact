@@ -42,7 +42,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     /**
      * The search criteria.
      */
-    private String searchCriteria;
+//    private String searchCriteria;
 
     private String myHelpLink;
 
@@ -127,14 +127,15 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         return null;
     }
 
-    public String getSearchCritera() {
-        return this.searchCriteria;
-    }
+//    public String getSearchCritera() {
+//        return this.searchCriteria;
+//    }
 
     public Collection search(String objectType, String searchParam,
                               String searchValue) throws IntactException {
         // Set the search criteria.
-        this.searchCriteria = searchParam;
+        // TODO remove it if not needed
+//        this.searchCriteria = searchParam;
 
         //now retrieve an object...
         return helper.search(objectType, searchParam, searchValue);
