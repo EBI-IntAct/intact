@@ -87,6 +87,7 @@ public class IntactUser implements HttpSessionBindingListener {
         }
         catch(IntactException ie) {
             //failed to close the store - not sure what to do here yet....
+            // TODO : log that error when closing store
         }
     }
 
