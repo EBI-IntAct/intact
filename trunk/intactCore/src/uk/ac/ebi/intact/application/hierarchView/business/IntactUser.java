@@ -426,8 +426,8 @@ public class IntactUser implements IntactUserI {
         if (null != properties) {
             String url = properties.getProperty ("search.url");
             String queryParameter = properties.getProperty ("search.parameter.query.name");
-            if ( addFullContext ) {
-                StringBuffer buffer = new StringBuffer(64);
+            if ( addFullContext && (interactionNetwork != null) ) {
+                StringBuffer buffer = new StringBuffer( 64 );
                 Collection interactors = interactionNetwork.getCentralInteractors();
                 for ( Iterator iterator = interactors.iterator (); iterator.hasNext (); ) {
                     Interactor interactor = (Interactor) iterator.next ();
