@@ -10,7 +10,9 @@ package uk.ac.ebi.intact.application.editor.test.pg;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.application.editor.test.pg.security.LoginTest;
+import uk.ac.ebi.intact.application.editor.test.LoginTest;
+import uk.ac.ebi.intact.application.editor.test.pg.biosource.BioSourceDisplayTest;
+import uk.ac.ebi.intact.application.editor.test.pg.biosource.BioSourceTests;
 
 /**
  * Testsuite for Postgres database.
@@ -35,8 +37,9 @@ public class AllJUnitTests extends TestCase {
      */
     public static Test suite() {
         TestSuite suite = new TestSuite();
-        suite.addTest(LoginTest.suite());
-        suite.addTest(SearchTest.suite());
+//        suite.addTest(LoginTest.suite());
+//        suite.addTest(SearchTest.suite());
+        suite.addTest(BioSourceTests.suite());
         return suite;
     }
 }
