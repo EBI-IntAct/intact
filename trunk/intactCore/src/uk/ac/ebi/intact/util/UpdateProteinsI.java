@@ -61,19 +61,19 @@ public abstract class UpdateProteinsI {
                 throw new UpdateException ("Unable to find the Institution");
             }
 
-            sgdDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SGD");
+            sgdDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sgd");
             if (sgdDatabase == null) {
                 logger.error ("Unable to find the SGD database in your IntAct node");
                 throw new UpdateException ("Unable to find the SGD database in your IntAct node");
             }
 
-            sptrDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "SPTR");
+            sptrDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sptr");
             if (sptrDatabase == null) {
                 logger.error ("Unable to find the SPTR database in your IntAct node");
                 throw new UpdateException ("Unable to find the SPTR database in your IntAct node");
             }
 
-            goDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "GO");
+            goDatabase = (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go");
             if (goDatabase == null) {
                 logger.error ("Unable to find the GO database in your IntAct node");
                 throw new UpdateException ("Unable to find the GO database in your IntAct node");
