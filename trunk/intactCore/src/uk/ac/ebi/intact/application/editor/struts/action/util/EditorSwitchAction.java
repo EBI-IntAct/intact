@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
@@ -35,10 +36,10 @@ public class EditorSwitchAction extends TilesAction {
      * with provision for handling exceptions thrown by the business logic.
      * Override this method to provide functionality
      *
-     * @param context the current Tile context, containing Tile attributes.
-     * @param mapping the ActionMapping used to select this instance.
-     * @param form the optional ActionForm bean for this request (if any).
-     * @param request the HTTP request.
+     * @param context  the current Tile context, containing Tile attributes.
+     * @param mapping  the ActionMapping used to select this instance.
+     * @param form     the optional ActionForm bean for this request (if any).
+     * @param request  the HTTP request.
      * @param response the HTTP response.
      * @return null because there is no forward associated with this action.
      * @throws java.lang.Exception if the application business logic throws an exception.
@@ -54,9 +55,15 @@ public class EditorSwitchAction extends TilesAction {
         if (session == null) {
             throw new SessionExpiredException();
         }
-        EditUserI user = (EditUserI) session.getAttribute(
-                EditorConstants.INTACT_USER);
+        EditUserI user = (EditUserI) session.getAttribute(EditorConstants.INTACT_USER);
         user.getView().setLayout(context);
+
+        // Warnings for a large experiment.
+        if (user.getView().getReadOnly().equals(Boolean.TRUE)) {
+            MessageResources resources = getResources(request);
+            request.setAttribute(EditorConstants.SEVERE_WARN,
+                    resources.getMessage("message.exp.read.only"));
+        }
         return null;
     }
 }

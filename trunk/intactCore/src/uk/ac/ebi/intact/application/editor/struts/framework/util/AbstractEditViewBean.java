@@ -674,6 +674,16 @@ public abstract class AbstractEditViewBean implements Serializable {
             SearchException {
     }
 
+    /**
+     * False as this object is editable. Sublcasses such as ExperimentViewBean
+     * must override this method if it has a large number of interactions.
+     * This method is used by actions.jsp to disable saving a large Intact object.
+     * @return false as all the edit beans are editable by default.
+     */
+    public Boolean getReadOnly() {
+        return Boolean.FALSE;
+    }
+
     // Protected Methods
 
     /**

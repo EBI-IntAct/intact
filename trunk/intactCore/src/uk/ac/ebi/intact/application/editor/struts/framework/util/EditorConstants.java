@@ -49,4 +49,9 @@ public interface EditorConstants {
      * The lock manager.
      */
     public static final String LOCK_MGR = "lmr";
+
+    /**
+     * The key for the severe warning messages.
+     */
+    public static final String SEVERE_WARN = "severe-warning";
 }

@@ -14,6 +14,7 @@
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 
 <script language="JavaScript" type="text/javascript">
 
@@ -23,17 +24,26 @@
 
 </script>
 
+<jsp:useBean id="user" scope="session"
+    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+
+<bean:define id="view" name="user" property="view"
+    type="uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean"/>
+
+<%-- Read only if the view says so --%>
+<bean:define id="disable" name="view" property="readOnly" type="java.lang.Boolean"/>
+
 <table class="table" width="100%" cellspacing="1" cellpadding="2">
     <tr class="tableRowOdd">
         <td align="center" bgcolor="green">
-            <html:submit property="dispatch">
+            <html:submit property="dispatch" disabled="<%=disable.equals(Boolean.TRUE)%>">
                 <bean:message key="button.submit"/>
             </html:submit>
             <br/>Submits the form and exits
         </td>
 
         <td align="center" bgcolor="palegreen">
-            <html:submit property="dispatch">
+            <html:submit property="dispatch" disabled="<%=disable.equals(Boolean.TRUE)%>">
                 <bean:message key="button.save.continue"/>
             </html:submit>
             <br/>Saves the changes to the database
@@ -47,7 +57,8 @@
         </td>
 
         <td align="center" bgcolor="red">
-            <html:submit property="dispatch" onclick="return confirmDelete()">
+            <html:submit property="dispatch" onclick="return confirmDelete()"
+                disabled="<%=disable.equals(Boolean.TRUE)%>">
                 <bean:message key="button.delete"/>
             </html:submit>
             <br/>Deletes the current object from the database
