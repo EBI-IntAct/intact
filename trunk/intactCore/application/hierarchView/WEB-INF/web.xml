@@ -129,4 +129,12 @@
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- =================================================================== -->
+
+    <!-- JSTL Tag Library Descriptor  -->
+    <taglib>
+        <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
+        <taglib-location>/WEB-INF/tld/c.tld</taglib-location>
+    </taglib>
+
 </web-app>
