@@ -24,7 +24,7 @@
     <definition name="search.menu.links" path="/layouts/menu.jsp">
         <put name="title" value="Links"/>
         <putList name="items">
-            <item value="New Search"  link="/search/do/welcome"/>
+            <item value="New Search" link="/search/do/welcome"/>
             <item value="Intact Home" link="http://www.ebi.ac.uk/intact"/>
         </putList>
     </definition>
@@ -34,8 +34,8 @@
     <!-- Sidebar for the search page -->
     <definition name="search.sidebar.layout" path="/layouts/sidebarLayout.jsp">
         <put name="input-dialog" value="/pages/sidebarInput.jsp"/>
-        <put name="menu"         value="search.menu.links"/>
-        <put name="footer"       value="/pages/sidebarFooter.jsp"/>
+        <put name="menu" value="search.menu.links"/>
+        <put name="footer" value="/pages/sidebarFooter.jsp"/>
     </definition>
 
     <!-- =============== Definitions related to pages ================= -->
@@ -47,10 +47,10 @@
 
     <!-- Search page description  -->
     <definition name="search.layout" path="/layouts/intactLayout.jsp">
-        <put name="title"   value="Database Search"/>
+        <put name="title" value="Database Search"/>
         <put name="sidebar" value="search.sidebar.layout"/>
-        <put name="header"  value="header.layout"/>
-        <put name="footer"  value="/pages/footer.jsp"/>
+        <put name="header" value="header.layout"/>
+        <put name="footer" value="/pages/footer.jsp"/>
     </definition>
 
     <!-- Match page description. -->
@@ -58,24 +58,24 @@
         <put name="content" value="/pages/results.jsp"/>
     </definition>
 
-    <!-- ***** tiles defs for new search interface pages: June 2004 ***** -->
-
     <!-- single Protein view description. -->
     <definition name="singleProtein.layout" extends="search.layout">
         <put name="content" value="/pages/singleProtein.jsp"/>
     </definition>
 
     <!-- single AnnotatedObject view description. Used for eg CvObjects, BioSource-->
+    <!--
     <definition name="single.layout" extends="search.layout">
         <put name="content" value="/pages/single.jsp"/>
     </definition>
-
-     <!-- single  BioSource view -->
+    -->
+    
+    <!-- single  BioSource view -->
     <definition name="cvObject.layout" extends="search.layout">
         <put name="content" value="/pages/cvObject.jsp"/>
     </definition>
 
-      <!-- single  CvObject view -->
+    <!-- single  CvObject view -->
     <definition name="bioSource.layout" extends="search.layout">
         <put name="content" value="/pages/bioSource.jsp"/>
     </definition>
@@ -95,7 +95,7 @@
         <put name="content" value="/pages/simple.jsp"/>
     </definition>
 
-    <!-- *** usual stuff continues here .... *** -->
+    <!-- =============== Errorpages ====================================== -->
 
     <!-- Match failed page description. -->
     <definition name="no.match.layout" extends="search.layout">
@@ -114,17 +114,30 @@
         <put name="sidebar" value="search.sidebar.layout"/>
     </definition>
 
-      <!-- General too large layout -->
+    <!-- General too large layout -->
     <definition name="too.large.layout" extends="search.layout">
         <put name="content" value="/pages/tooLarge.jsp"/>
         <put name="sidebar" value="search.sidebar.layout"/>
     </definition>
 
-      <!-- Binary Layout for testing  -->
-    <!-- not needed any more --> 
-    <definition name="binaryProtein.layout" extends="search.layout">
-        <put name="content" value="/pages/binaryProtein.jsp"/>
-        <put name="sidebar" value="search.sidebar.layout"/>
+    <!-- No DataResource available -->
+    <definition name="no.resource.layout" extends="search.layout">
+        <put name="content" value="/pages/noResource.jsp"/>
+    </definition>
+
+    <!-- No Interactions available -->
+    <definition name="no.interactions.layout" extends="search.layout">
+        <put name="content" value="/pages/noInteraction.jsp"/>
+    </definition>
+
+    <!-- No Protein available -->
+    <definition name="no.protein.layout" extends="search.layout">
+        <put name="content" value="/pages/noProtein.jsp"/>
+    </definition>
+
+    <!-- No Protein available -->
+    <definition name="too.many.proteins.layout" extends="search.layout">
+        <put name="content" value="/pages/tooManyProteins.jsp"/>
     </definition>
 
 </tiles-definitions>
