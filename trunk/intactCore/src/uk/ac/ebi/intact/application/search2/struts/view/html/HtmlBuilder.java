@@ -7,13 +7,11 @@ package uk.ac.ebi.intact.application.search2.struts.view.html;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class generates an HTML view of search results.
@@ -339,6 +337,106 @@ public class HtmlBuilder {
         endTable(anAnnotatedObject);
     }
 
+
+    private void processLine (Interactor query,
+                              Collection interactions,
+                              String prefix,
+                              String postfix)
+            throws IOException {
+
+        // build the column 'view # interactions'
+        StringBuffer buf = new StringBuffer(128);
+        int interactionCount;
+        buf.append( "<a href=\">" );
+
+        if ( interactions != null ) { // we are processing a partner
+            interactionCount = interactions.size();
+            for ( Iterator iterator = interactions.iterator (); iterator.hasNext (); ) {
+                Interaction interaction = (Interaction) iterator.next ();
+                buf.append( interaction.getAc() );
+                buf.append( ',' );
+            }
+            buf.deleteCharAt( buf.length() - 1 );
+        } else { // we are processing the query
+
+            Collection components = query.getActiveInstance();
+            interactionCount = 0;
+            for ( Iterator iterator = components.iterator (); iterator.hasNext (); ) {
+                Component component = (Component) iterator.next ();
+                Interaction interaction = component.getInteraction();
+                if (interaction != null) {
+                    interactionCount++;
+                    buf.append( interaction.getAc() );
+                    buf.append( ',' );
+                }
+            }
+
+            int lastChar = buf.length() - 1;
+            if ( buf.charAt(lastChar) == ',' )
+                buf.deleteCharAt( lastChar );
+        }
+
+        buf.append( "\">" );
+        buf.append( prefix );
+        buf.append( "View " + interactionCount +
+                " Interaction" + (interactionCount > 1 ? "s" : "") );
+        buf.append( postfix );
+
+
+        // write the line
+        rs.write("<tr bgcolor=\"" + tableCellColor + "\">" );
+        rs.write( "<td>" );
+        htmlCheckBox( query );
+        rs.write( "</td><td>" );
+        rs.write( prefix );
+        rs.write( query.getShortLabel() );
+        rs.write( postfix );
+
+        rs.write( "</td><td>" );
+        rs.write( prefix );
+        rs.write( query.getFullName() );
+        rs.write( postfix );
+
+        rs.write( "</td><td>" );
+        rs.write( buf.toString() ); // interaction link
+        rs.write( "</td><td>" );
+        rs.write( prefix );
+
+        rs.write( "Query with " + query.getShortLabel() );
+        rs.write( postfix );
+        rs.write( "</td></tr>" );
+        rs.write( "\n" );
+    }
+
+    public void htmlView( BinaryDetailsViewBean.BinaryData binaryData ) throws IOException {
+
+        HashMap results = binaryData.getData();
+
+        rs.write("<table width=100% bgcolor=\""
+                    + tableBackgroundColor
+                    + "\">");
+
+        Iterator i = results.keySet().iterator();
+        while (i.hasNext()){
+            Interactor query = (Interactor) i.next();
+
+            processLine( query, null,"<b>", "</b>" );
+
+            HashMap currentResults = (HashMap) results.get(query);
+
+            Iterator j = currentResults.keySet().iterator();
+            while(j.hasNext()){
+                Interactor partner = (Interactor) j.next();
+
+                processLine( partner,
+                        (Collection) currentResults.get(partner),
+                        "", // no bold font
+                        "" );
+            }
+        }
+
+        rs.write("</table>");
+    }
 
     /**
      * HTML view of a CvObject. This is the view showing only the CvObject
@@ -735,6 +833,16 @@ public class HtmlBuilder {
     }
 
     /**
+     * TODO as to be refined
+     * @param cvIdentification
+     * @throws IOException
+     */
+    public void htmlView (CvIdentification cvIdentification) throws IOException {
+
+        htmlView ( (AnnotatedObject) cvIdentification );
+    }
+
+    /**
      * HTML view of an Interaction object.
      *
      * @param act
@@ -790,9 +898,19 @@ public class HtmlBuilder {
 
         Iterator i = ex.getInteraction().iterator();
 
+        int count = 0;
         while (i.hasNext()) {
             Interaction act = (Interaction) i.next();
             htmlView(act);
+            if ( ++count == 10 ) {
+                endTable( ex );
+
+                rs.flush();
+                System.out.println ( "FLUSH IT !" );
+
+                beginTable( ex );
+                count = 0;
+            }
         }
 
         // End table

@@ -52,6 +52,11 @@ public interface SearchConstants {
     public static final String FORWARD_FREE_TEXT_SEARCH_ACTION = "freeTextSearchAction";
 
     /**
+     * Forward to the Action responsible for setting up a view when using the search box
+     */
+    public static final String FORWARD_PROTEIN_BINARY_ACTION = "proteinBinaryAction";
+
+    /**
      * Forward to the Action responsible for setting up a view when clicking on a link
      */
     public static final String FORWARD_LINK_SEARCH_ACTION = "linkSearchAction";

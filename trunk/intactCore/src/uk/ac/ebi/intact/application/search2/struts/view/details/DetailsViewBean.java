@@ -9,8 +9,11 @@ package uk.ac.ebi.intact.application.search2.struts.view.details;
 import uk.ac.ebi.intact.application.search2.struts.view.AbstractViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.html.HtmlBuilderManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Experiment;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,9 +26,8 @@ import java.util.Set;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public class DetailsViewBean
-        extends AbstractViewBean
-        implements Serializable {
+public class DetailsViewBean extends AbstractViewBean
+                             implements Serializable {
 
     //---- Attributes needed by all subclasses -----
 
@@ -77,23 +79,56 @@ public class DetailsViewBean
         setHighlightMap(set);
     }
 
-    public String getHTML() {
-        String result = null;
+    /**
+     * Build a copy the Experiment object - don't copy the interactions.
+     * @param experiment the Experiment to copy
+     */
+    protected static Experiment createShallowExperiment ( Experiment experiment) {
+
+
+
+        Experiment ex = new Experiment ( experiment.getOwner(),
+                                         experiment.getShortLabel(),
+                                         experiment.getBioSource() );
+        ex.setAc(experiment.getAc());
+        ex.setAnnotation( experiment.getAnnotation() );
+        ex.setCurator( experiment.getCurator() );
+        ex.setCvIdentification( experiment.getCvIdentification() );
+        ex.setEvidence( experiment.getEvidence() );
+        ex.setFullName( experiment.getFullName() );
+        ex.setReference( experiment.getReference() );
+        ex.setRelatedExperiment( experiment.getRelatedExperiment() );
+        ex.setXref( experiment.getXref() );
+        return ex;
+    }
+
+    public void getHTML( Writer writer ) {
 
         try {
-            result = HtmlBuilderManager.getInstance().getHtml(getWrappedObjects(),
+            HtmlBuilderManager.getInstance().getHtml(writer, getWrappedObjects(),
                     getHighlightMap(), getHelpLink());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
-            result = "Could not produce a view for a Protein";
+            try {
+                writer.write( "Could not produce a view for a Protein" );
+            } catch ( IOException e1 ) {
+                e1.printStackTrace ();
+            }
         } catch (InvocationTargetException e) {
             e.printStackTrace();
-            result = "Could not produce a view for a Protein";
+            try {
+                writer.write( "Could not produce a view for a Protein" );
+            } catch ( IOException e1 ) {
+                e1.printStackTrace ();
+            }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-            result = "Could not produce a view for a Protein";
+            try {
+                writer.write( "Could not produce a view for a Protein" );
+            } catch ( IOException e1 ) {
+                e1.printStackTrace ();
+            }
         }
-        return result;
     }
 
     /**

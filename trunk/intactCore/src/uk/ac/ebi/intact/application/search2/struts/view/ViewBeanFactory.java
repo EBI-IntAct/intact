@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 /**
@@ -19,6 +19,7 @@ package uk.ac.ebi.intact.application.search2.struts.view;
 import uk.ac.ebi.intact.application.search2.struts.view.details.DetailsViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.details.InteractionDetailsViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.details.ProteinDetailsViewBean;
+import uk.ac.ebi.intact.application.search2.struts.view.details.BinaryDetailsViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.ExperimentSingleViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.InteractionSingleViewBean;
 import uk.ac.ebi.intact.application.search2.struts.view.single.ProteinSingleViewBean;
@@ -43,33 +44,40 @@ public class ViewBeanFactory {
     /**
      * Mapping related to the detailed view
      */
-    private static Map ourBeanToDetailsView = new HashMap();
-
-    // Stores the beans to create in a map.
-    static {
-        ourBeanToDetailsView.put( Experiment.class,  DetailsViewBean.class );
-        ourBeanToDetailsView.put( Interaction.class, InteractionDetailsViewBean.class );
-        ourBeanToDetailsView.put( Protein.class,     ProteinDetailsViewBean.class );
-    }
+    private static Map ourBeanToDetailsView = new HashMap ();
 
     /**
      * Mapping related to the single object view
      */
-    private static Map ourBeanToSingleItemView = new HashMap();
+    private static Map ourBeanToSingleItemView = new HashMap ();
+
+    /**
+     * Maps: Model class -> binary view bean
+     */
+    private static Map ourBeanToBinaryView = new HashMap();
 
     // Stores the beans to create in a map.
     static {
-        ourBeanToSingleItemView.put( Experiment.class,      ExperimentSingleViewBean.class );
-        ourBeanToSingleItemView.put( Interaction.class,     InteractionSingleViewBean.class );
-        ourBeanToSingleItemView.put( Protein.class,         ProteinSingleViewBean.class );
-        ourBeanToSingleItemView.put( CvDatabase.class,      SingleViewBean.class );
-        ourBeanToSingleItemView.put( CvXrefQualifier.class, SingleViewBean.class );
-        ourBeanToSingleItemView.put( CvTopic.class,         SingleViewBean.class );
-        ourBeanToSingleItemView.put( CvInteraction.class,   SingleViewBean.class );
-        ourBeanToSingleItemView.put( CvComponentRole.class, SingleViewBean.class );
-        ourBeanToSingleItemView.put( BioSource.class,       SingleViewBean.class );
-    }
+        // Details view beans.
+        ourBeanToDetailsView.put ( Experiment.class, DetailsViewBean.class );
+        ourBeanToDetailsView.put ( Interaction.class, InteractionDetailsViewBean.class );
+        ourBeanToDetailsView.put ( Protein.class, ProteinDetailsViewBean.class );
 
+        // Single view bean.
+        ourBeanToSingleItemView.put ( Experiment.class, ExperimentSingleViewBean.class );
+        ourBeanToSingleItemView.put ( Interaction.class, InteractionSingleViewBean.class );
+        ourBeanToSingleItemView.put ( Protein.class, ProteinSingleViewBean.class );
+        ourBeanToSingleItemView.put ( CvDatabase.class, SingleViewBean.class );
+        ourBeanToSingleItemView.put ( CvXrefQualifier.class, SingleViewBean.class );
+        ourBeanToSingleItemView.put ( CvTopic.class, SingleViewBean.class );
+        ourBeanToSingleItemView.put ( CvInteraction.class, SingleViewBean.class );
+        ourBeanToSingleItemView.put ( CvComponentRole.class, SingleViewBean.class );
+        ourBeanToSingleItemView.put ( CvIdentification.class, SingleViewBean.class );
+        ourBeanToSingleItemView.put ( BioSource.class, SingleViewBean.class );
+
+        // Binary views.
+        ourBeanToBinaryView.put ( Protein.class, BinaryDetailsViewBean.class);
+    }
 
 
     ///////////////////////////
@@ -77,22 +85,19 @@ public class ViewBeanFactory {
     ///////////////////////////
 
     // Made it private to stop from instantiating this class.
-    private ViewBeanFactory() {
+    private ViewBeanFactory () {
     }
 
     /**
      * Returns the only instance of this class.
      * @return the only instance of this class; always non null value is returned.
      */
-    public synchronized static ViewBeanFactory getInstance() {
-        if (ourInstance == null) {
-            ourInstance = new ViewBeanFactory();
+    public synchronized static ViewBeanFactory getInstance () {
+        if ( ourInstance == null ) {
+            ourInstance = new ViewBeanFactory ();
         }
         return ourInstance;
     }
-
-
-
 
 
     /**
@@ -105,29 +110,33 @@ public class ViewBeanFactory {
      */
     public AbstractViewBean getViewBean ( Collection objects, String link ) {
 
-        if ( objects != null && !objects.isEmpty() ) {
+        Object object = objects.iterator ().next ();
 
-            // TODO: check for heterogen collection ? Should not be necessary since we search for one type at a time.
+        Class objsClass = object.getClass ();
+        System.out.println ( objsClass );
+        Class clazz = null;
 
-            Object object = objects.iterator().next();
+//        if (objsClass.isAssignableFrom(Protein.class)) {
+//           clazz = (Class) ourBeanToBinaryView.get( objsClass );
+//        }
+//        else {
+            clazz = (Class) ourBeanToDetailsView.get ( objsClass );
+//        }
 
-            System.out.println( object.getClass() );
-            Class clazz = (Class) ourBeanToDetailsView.get( object.getClass() );
-            if ( clazz != null ) {
-                try {
-                    Constructor constructor = clazz.getConstructor(
-                            new Class[]{ Collection.class, String.class } );
-                    return (AbstractViewBean) constructor.newInstance(
-                            new Object[]{ objects, link } );
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+        if ( clazz != null ) {
+            try {
+                Constructor constructor = clazz.getConstructor (
+                        new Class[]{Collection.class, String.class} );
+                return (AbstractViewBean) constructor.newInstance (
+                        new Object[]{objects, link} );
+            } catch ( InstantiationException e ) {
+                e.printStackTrace ();
+            } catch ( IllegalAccessException e ) {
+                e.printStackTrace ();
+            } catch ( NoSuchMethodException e ) {
+                e.printStackTrace ();
+            } catch ( InvocationTargetException e ) {
+                e.printStackTrace ();
             }
         }
         return null;
@@ -147,22 +156,22 @@ public class ViewBeanFactory {
 
         if ( object != null ) {
 
-            System.out.println( object.getClass() );
-            Class clazz = (Class) ourBeanToSingleItemView.get( object.getClass() );
+            System.out.println ( object.getClass () );
+            Class clazz = (Class) ourBeanToSingleItemView.get ( object.getClass () );
             if ( clazz != null ) {
                 try {
-                    Constructor constructor = clazz.getConstructor(
-                            new Class[]{ AnnotatedObject.class, String.class } );
-                    return (AbstractViewBean) constructor.newInstance(
-                            new Object[]{ object, link } );
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    Constructor constructor = clazz.getConstructor (
+                            new Class[]{AnnotatedObject.class, String.class} );
+                    return (AbstractViewBean) constructor.newInstance (
+                            new Object[]{object, link} );
+                } catch ( InstantiationException e ) {
+                    e.printStackTrace ();
+                } catch ( IllegalAccessException e ) {
+                    e.printStackTrace ();
+                } catch ( NoSuchMethodException e ) {
+                    e.printStackTrace ();
+                } catch ( InvocationTargetException e ) {
+                    e.printStackTrace ();
                 }
             }
         }

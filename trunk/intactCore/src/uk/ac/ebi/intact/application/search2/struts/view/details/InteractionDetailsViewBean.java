@@ -9,6 +9,7 @@ import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 
+import java.io.Writer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,7 +34,7 @@ public class InteractionDetailsViewBean extends DetailsViewBean {
     }
 
 
-    public String getHTML() {
+    public void getHTML( Writer writer ) {
 
         Set experiments = new HashSet();
 
@@ -44,7 +45,7 @@ public class InteractionDetailsViewBean extends DetailsViewBean {
             for (Iterator iterator2 = localExperiments.iterator(); iterator2.hasNext();) {
                 Experiment experiment = (Experiment) iterator2.next();
                 // add a copy of the experiment
-                experiments.add( new Experiment( experiment ) );
+                experiments.add( createShallowExperiment( experiment ) );
             }
         }
 
@@ -62,7 +63,7 @@ public class InteractionDetailsViewBean extends DetailsViewBean {
         initHighlightMap();
         setWrappedObjects( experiments );
 
-        // sends bach the HTML content
-        return super.getHTML();
+        // write the HTML content
+        super.getHTML( writer );
     }
 }
