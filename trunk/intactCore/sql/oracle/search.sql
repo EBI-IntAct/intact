@@ -1,3 +1,22 @@
+/*
+  Copyright (c) 2002 The European Bioinformatics Institute, and others.
+  All rights reserved. Please see the file LICENSE
+  in the root directory of this distribution.
+*/
+/*************************************************************
+
+  Package:    IntAct reports
+
+  Purpose:    materialized view for search3 for the initial request
+
+  Usage:      psql -f progname.sql
+
+  $Date$
+  $Author$
+  $Locker$
+
+  *************************************************************/
+
 CREATE OR REPLACE MATERIALIZED VIEW IA_SEARCH (
     SELECT ac,
            shortlabel as value,
