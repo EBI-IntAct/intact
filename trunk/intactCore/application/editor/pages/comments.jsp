@@ -33,7 +33,6 @@
         String formName = EditorConstants.FORM_COMMENT_EDIT;
         EditForm form = (EditForm) session.getAttribute(formName);
         user.getView().populateAnnotations(form);
-        pageContext.setAttribute(formName, form);
     %>
 
 <h3>Annotations</h3>
@@ -50,7 +49,7 @@
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
             <nested:iterate name="<%=EditorConstants.FORM_COMMENT_EDIT%>"
-                property="items">
+                property="items" scope="session">
                 <!-- Different styles for even or odd rows -->
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
@@ -66,8 +65,7 @@
                          Delete is visible regardless of the state.
                      --%>
                     <td class="tableCell">
-                        <nested:equal name="<%=EditorConstants.FORM_COMMENT_EDIT%>"
-                            property="editState" value="<%=EditBean.VIEW%>">
+                        <nested:equal property="editState" value="<%=EditBean.VIEW%>">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="annotations.button.edit.titleKey">
                                 <bean:message key="button.edit"/>
@@ -89,8 +87,7 @@
                         </html:submit>
                     </td>
 
-                    <nested:equal name="<%=EditorConstants.FORM_COMMENT_EDIT%>"
-                        property="editState" value="<%=EditBean.VIEW%>">
+                    <nested:equal property="editState" value="<%=EditBean.VIEW%>">
                         <td class="tableCell">
                             <nested:write property="topic"/>
                         </td>
