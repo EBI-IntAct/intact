@@ -57,6 +57,40 @@ public class DocumentationTag extends TagSupport {
      */
     private String title = DEFAULT_TITLE;
 
+    // Static methods
+
+    /**
+     * Returns HTML code snippet for use in non JSP pages.
+     * @param docURL the URL path to the URL
+     * @param section the section to go to; could be null if there is no
+     * section associated with it.
+     * @param title the title to display as the link. For e.g., [?]
+     * @return the HTML constructed from parameters; this value could be
+     * displayed in a HTML page directly.
+     */
+    public static String getHtmlVersion(String docURL, String section, String title) {
+        // The buffer to construct the string to return.
+        StringBuffer sb = new StringBuffer ();
+
+        sb.append (URL_BEGIN);
+        sb.append(docURL);
+        sb.append ("?section=");
+        if (section != null) {
+            sb.append (section);
+        }
+        sb.append (URL_END);
+        sb.append(title);
+        return sb.toString();
+    }
+
+    /**
+     * The path to the JSP documentation page.
+     * @return the relative path (from root of the server) of the JSP documentation page.
+     */
+    public static String getJspPath() {
+        return PAGE;
+    }
+
     public String getSection() {
         return section;
     }
