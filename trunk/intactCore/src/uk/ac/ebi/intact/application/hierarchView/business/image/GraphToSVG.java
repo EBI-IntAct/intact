@@ -279,7 +279,7 @@ public class GraphToSVG
 	float proteinX = ((Float) protein.get(Constants.ATTRIBUTE_COORDINATE_X)).floatValue();
 	float proteinY = ((Float) protein.get(Constants.ATTRIBUTE_COORDINATE_Y)).floatValue();
 
-	// update the image dimansion
+	// update the image dimension
 	dimension.adjust (proteinX, proteinY);
       }
     } // for
