@@ -4,42 +4,41 @@
  */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.IntactException;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.ArrayList;
+//import java.util.HashSet;
+import java.util.Iterator;
+//import java.util.Set;
 
 /**
- * <p>
  * Controlled vocabulary class for CVs which are organised in a Directed
  * Acyclic Graph (DAG). Each node many have multiple parents and multiple
  * children.
- * </p>
  *
+ * @author hhe
+ * @version $Id$
  */
 public abstract class CvDagObject extends CvObject {
 
     /**
-     * Cache a Vector of all shortLabels of the class, e.g. for menus.
-     *
+     * Cache a Set of all shortLabels of the class, e.g. for menus.
      */
-    protected static Vector menuList = null;
+//    private static Set menuList = null;
 
-   ///////////////////////////////////////
-   // associations
+    ///////////////////////////////////////
+    // associations
 
-/**
- * <p>
- *
- * </p>
- */
-    public Collection child = new Vector(); // of type CvDagObject
-/**
- * <p>
- *
- * </p>
- */
-    public Collection parent = new Vector(); // of type CvDagObject
+    /**
+     * TODO comments
+     * Children are unique
+     */
+    private Collection children = new ArrayList(); // of type CvDagObject
+
+    /**
+     * TODO comments
+     * Parents are unique
+     */
+    private Collection parents = new ArrayList(); // of type CvDagObject
 
     /**
      * no-arg constructor which will hopefully be removed later...
@@ -56,133 +55,152 @@ public abstract class CvDagObject extends CvObject {
      * @param owner The Institution which owns this CvDagObject
      * @exception NullPointerException thrown if either parameters are not specified
      */
-    public CvDagObject(String shortLabel, Institution owner) {
+    public CvDagObject(Institution owner, String shortLabel) {
 
         //super call sets up a valid CvObject
-        super(shortLabel, owner);
+        super(owner, shortLabel);
     }
 
 
-   ///////////////////////////////////////
-   // access methods for associations
-
-    public Collection getChilds() {
-        return child;
+    ///////////////////////////////////////
+    // access methods for associations
+    public Collection getChildren() {
+        return children;
     }
+
+    // TODO are they unique ?
     public void addChild(CvDagObject cvDagObject) {
-        if (! this.child.contains(cvDagObject)) {
-            this.child.add(cvDagObject);
+
+        if (! children.contains(cvDagObject)) {
+            children.add(cvDagObject);
             cvDagObject.addParent(this);
         }
     }
     public void removeChild(CvDagObject cvDagObject) {
-        boolean removed = this.child.remove(cvDagObject);
+        boolean removed = children.remove(cvDagObject);
         if (removed) cvDagObject.removeParent(this);
     }
     public Collection getParents() {
-        return parent;
+        return parents;
     }
     public void addParent(CvDagObject cvDagObject) {
-        if (! this.parent.contains(cvDagObject)) {
-            this.parent.add(cvDagObject);
+
+        if (! parents.contains(cvDagObject)) {
+            parents.add(cvDagObject);
             cvDagObject.addChild(this);
         }
     }
     public void removeParent(CvDagObject cvDagObject) {
-        boolean removed = this.parent.remove(cvDagObject);
+        boolean removed = parents.remove(cvDagObject);
         if (removed) cvDagObject.removeChild(this);
     }
 
+
+    //////////////////////////////
     // * Specific DAG methods
 
-    /** Add the ancestors of the current node to the set of currentAncestors.
+    /**
+     * Add the ancestors of the current node to the set of currentAncestors.
+     * This assumes that you gives a non null Set.
      *
      * @param currentAncestors Ancestors collected so far.
      * @return currentAncestors, with all the ancestors of the current node added.
      */
-    private Set ancestors(Set currentAncestors){
-       for (Iterator i = this.getParents().iterator(); i.hasNext();) {
-           CvDagObject current = (CvDagObject) i.next();
-           currentAncestors = current.ancestors(currentAncestors);
-       }
+    private Collection ancestors(Collection currentAncestors) {
+        for (Iterator i = getParents().iterator(); i.hasNext();) {
+            CvDagObject current = (CvDagObject) i.next();
+            currentAncestors = current.ancestors(currentAncestors); // recursive call
+        }
         currentAncestors.add(this);
         return currentAncestors;
     }
 
     /**
+     * TODO comments
+     *
      * @return All ancestors of the current object. Each node is listed only once.
      */
-    public Set ancestors(){
-        return this.ancestors(new HashSet());
+    public Collection ancestors(){
+        return this.ancestors(new ArrayList());
     }
 
     /**
-     * Produce a vector of shortLabels which can be used to create a selection list, eg for menus.
-     * The structure of the tree will be represented by indentation, a shortLabel of level two in the hierarchy
-     * will have two leading blanks.
+     * <p>
+     * Produce a List of shortLabels which can be used to create a selection list,
+     * eg for menus.
+     * </p>
+     * The structure of the tree will be represented by indentation, a shortLabel of
+     * level two in the hierarchy will have two leading blanks.
      *
      * @param currentDepth the current indentation level.
      * @param menuList The list of labels collected so far.
      * @param current The start node. Labels for the node and its descendents will be added to the menuList.
-     * @return A vector of shortlabels.
+     * @return A List of shortlabels.
      */
-    private static Vector getMenuList(int currentDepth, Vector menuList, CvDagObject current){
+//    private static Set getMenuList(int currentDepth, Set menuList, CvDagObject current){
+//
+//        StringBuffer currentTerm = new StringBuffer();
+//        for (int i = 0; i<currentDepth; i++) {
+//            currentTerm.append('.');
+//        }
+//        currentTerm.append(current.getShortLabel());
+//        menuList.add(currentTerm.toString());
+//        for (Iterator iterator = current.children.iterator(); iterator.hasNext();) {
+//            menuList = getMenuList(currentDepth+1, menuList, (CvDagObject) iterator.next());
+//        }
+//
+//        return menuList;
+//    }
 
-        StringBuffer currentTerm = new StringBuffer();
-        for (int i = 0; i<currentDepth; i++) {
-            currentTerm.append('.');
-        }
-        currentTerm.append(current.getShortLabel());
-        menuList.add(currentTerm.toString());
-        for (Iterator iterator = current.child.iterator(); iterator.hasNext();) {
-            menuList = getMenuList(currentDepth+1, menuList, (CvDagObject) iterator.next());
-        }
-
-        return menuList;
-    }
 
     /**
-     * Produce a vector of shortLabels which can be used to create a selection list, eg for menus.
+     * Produce a List of shortLabels which can be used to create a selection list, eg for menus.
      * The structure of the tree will be represented by indentation, a shortLabel of level two in the hierarchy
      * will have two leading blanks.
      *
-     * @param targetClass The class for which to return the menu list.
+     * @param targetClass The class for which to return the menu list. It has to be a CvObject
      * @param helper Database access object
      * @param forceUpdate If true, an update of the list is forced.
+     * @exception IllegalArgumentException if something different than a CvObject is given.
      *
-     * @return Vector of Strings. Each string one shortlabel.
+     * @return List of Strings. Each string one shortlabel.
      */
-    public static Vector getMenuList(Class targetClass, IntactHelper helper, boolean forceUpdate)
-            throws IntactException {
-        if ((menuList == null) || forceUpdate){
-            menuList = new Vector();
-            // get an arbitrary element of the target class
-            Collection allElements = helper.search(targetClass.getName(),"ac","*");
-            Iterator i = allElements.iterator();
-
-            // Check for no items.
-            if (!i.hasNext()) {
-                return menuList;
-            }
-            CvDagObject current = (CvDagObject) i.next();
-
-            // get the root element
-            current = current.getRoot();
-
-            // update the list
-            menuList = getMenuList(0, menuList, current);
-        }
-
-        return menuList;
-    }
+//    public static Set getMenuList(Class targetClass, IntactHelper helper, boolean forceUpdate)
+//            throws IntactException {
+//        if (! CvObject.class.isAssignableFrom(targetClass)) {
+//            throw new IllegalArgumentException ("The target class should be a CvObject!");
+//        }
+//
+//        if ((menuList == null) || forceUpdate){
+//            menuList = new HashSet();
+//            // get an arbitrary element of the target class
+//            Collection allElements = helper.search(targetClass.getName(),"ac","*");
+//            Iterator i = allElements.iterator();
+//
+//            // Check for no items.
+//            if (!i.hasNext()) {
+//                return menuList;
+//            }
+//            CvDagObject current = (CvDagObject) i.next();
+//
+//            // get the root element
+//            current = current.getRoot();
+//
+//            // update the list
+//            menuList = getMenuList(0, menuList, current);
+//        }
+//
+//        return menuList;
+//    }
 
     /**
+     * TODO coments
      *
      * @return the root node of the current term
      */
     public CvDagObject getRoot(){
-        if (parent.size()>0){
-            Iterator i = parent.iterator();
+        if (parents.size()>0){
+            Iterator i = parents.iterator();
             return ((CvDagObject) i.next()).getRoot();
         } else {
             return this;
@@ -190,9 +208,10 @@ public abstract class CvDagObject extends CvObject {
     }
 
     /**
+     * TODO comments
      *
      * @param currentDepth The current depth in the DAG. Translated into leading blanks.
-     * @param aParent The current parent. All parents exept aParent are listed in the DAG line as additional parents.
+     * @param aParent The current parents. All parents exept aParent are listed in the DAG line as additional parents.
      * @return a single string containing the GO DAG flatfile representation of the current object and all its decendents.
      */
     public String toGoDag(int currentDepth, CvDagObject aParent){
@@ -215,8 +234,8 @@ public abstract class CvDagObject extends CvObject {
         currentTree.append(term2DagLine());
 
         // additional parents
-        for (Iterator parents = parent.iterator(); parents.hasNext();) {
-            CvDagObject parent = (CvDagObject) parents.next();
+        for (Iterator iParents = parents.iterator(); iParents.hasNext();) {
+            CvDagObject parent = (CvDagObject) iParents.next();
             if (aParent != parent) {
                 currentTree.append(" % ");
                 currentTree.append(parent.term2DagLine());
@@ -227,13 +246,15 @@ public abstract class CvDagObject extends CvObject {
         currentTree.append("\n");
 
         // Iterate over children to add subtrees.
-        for (Iterator iterator = child.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = children.iterator(); iterator.hasNext();) {
             currentTree.append(((CvDagObject) iterator.next()).toGoDag(currentDepth+1, this));
         }
         return currentTree.toString();
     }
 
     /**
+     * TODO comments
+     *
      * @return  a single GOid - GOterm pair in appropriate formatting for the GO DAG
      */
     private String term2DagLine() {
@@ -244,7 +265,7 @@ public abstract class CvDagObject extends CvObject {
         termLine.append(getFullName());
 
         // the GO id
-        for (Iterator iterator = xref.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = getXrefs().iterator(); iterator.hasNext();) {
             Xref xref = (Xref) iterator.next();
             if (xref.getCvDatabase().getShortLabel().equals("go")){
                 termLine.append(" ; " + xref.getPrimaryId());
@@ -258,7 +279,8 @@ public abstract class CvDagObject extends CvObject {
         return termLine.toString();
     }
 
-    /** Create the GO flat file representation of the current object and all its descendants.
+    /**
+     * Create the GO flat file representation of the current object and all its descendants.
      *
      * @return a single string containing the GO DAG flatfile representation
      * of the current object and all its descendants.

@@ -41,7 +41,12 @@ public class Alias extends BasicObject {
      */
     private String parentAc;
 
-    // MUST be declared to allow OJB to create instances of the object
+    /**
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
+     */
     public Alias() {
         super();
     }
@@ -49,9 +54,10 @@ public class Alias extends BasicObject {
     /**
      * Create a new Alias for the given Annotated object
      *
+     * @param anOwner The institution owning this Alias
      * @param annotatedObject the object to which we'll add a new Alias
-     * @param cvAliasType the CvAliasType
-     * @param name the name of the alias
+     * @param cvAliasType the CvAliasType (may be null)
+     * @param name the name of the alias (namy be null)
      *
      * @see uk.ac.ebi.intact.model.CvAliasType
      * @see uk.ac.ebi.intact.model.AnnotatedObject
@@ -98,23 +104,43 @@ public class Alias extends BasicObject {
         this.cvAliasType = cvAliasType;
     }
 
+    /**
+     * Equality for Aliases is currently based on equality for
+     * <code>CvAliasTypes</code> and names.
+     * @see uk.ac.ebi.intact.model.CvAliasType
+     * @param o The object to check
+     * @return true if the parameter equals this object, false otherwise
+     */
     public boolean equals ( Object o ) {
         if ( this == o ) return true;
         if ( !(o instanceof Alias) ) return false;
-        if ( !super.equals ( o ) ) return false;
+
+        //NO! BasicObject's equals is the Java Object one!!
+        //if ( !super.equals ( o ) ) return false;
 
         final Alias alias = (Alias) o;
 
-        if ( !cvAliasType.equals ( alias.cvAliasType ) ) return false;
-        if ( !name.equals ( alias.name ) ) return false;
+        //NB according to the constructor, cvAliasType and name may be null,
+        //so need to handle this here....
+        if(cvAliasType != null) {
+            if (!cvAliasType.equals(alias.cvAliasType)) return false;
+        }
+        else {
+           if (alias.cvAliasType != null) return false;
+        }
+
+        if(name != null) {
+            if (!name.equals(alias.name)) return false;
+        }
+        else return alias.name == null;
 
         return true;
     }
 
     public int hashCode () {
-        int result = super.hashCode ();
-        result = 29 * result + name.hashCode ();
-        result = 29 * result + cvAliasType.hashCode ();
+        int result = 29;
+        if(name != null) result = 29 * result + name.hashCode ();
+        if (cvAliasType != null) result = 29 * result + cvAliasType.hashCode ();
         return result;
     }
 

@@ -5,10 +5,14 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
-
+ * TODO COMMENTS
+ *
+ * @author hhe
+ * @version $Id$
  */
 public class Reference extends BasicObject {
 
@@ -16,36 +20,59 @@ public class Reference extends BasicObject {
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     protected String submissionRefAc;
     protected String xrefAc;
 
 
     /**
-     * Represents ...
+     * TODO COMMENTS
      */
-    protected String title;
+    private String title;
 
     /**
-     * Represents ...
+     * TODO COMMENTS
      */
-    protected String authors;
+    private String authors;
 
     ///////////////////////////////////////
     // associations
 
     /**
-     *
+     * TODO COMMENTS
      */
-    public Collection annotatedObject = new Vector();
-    /**
-     *
-     */
-    public SubmissionRef submissionRef;
-    /**
-     *
-     */
-    public Xref xref;
+    private Collection annotatedObjects = new ArrayList();
 
+    /**
+     * TODO COMMENTS
+     */
+    private SubmissionRef submissionRef;
+
+    /**
+     * TODO COMMENTS
+     * TODO is it used ?
+     */
+    private Xref xref;
+
+    /**
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
+     */
+    public Reference() {
+        super();
+    }
+
+
+    public Reference(Institution owner, String title, String authors) {
+        super(owner);
+        if(title == null) throw new NullPointerException("valid Reference must have a non-null title!");
+        if(authors == null) throw new NullPointerException("valid Reference must have a non-null authors!");
+
+        this.title = title;
+        this.authors = authors;
+    }
 
     ///////////////////////////////////////
     //access methods for attributes
@@ -66,17 +93,17 @@ public class Reference extends BasicObject {
     ///////////////////////////////////////
     // access methods for associations
 
-    public Collection getAnnotatedObject() {
-        return annotatedObject;
+    public Collection getAnnotatedObjects() {
+        return annotatedObjects;
     }
     public void addAnnotatedObject(AnnotatedObject annotatedObject) {
-        if (! this.annotatedObject.contains(annotatedObject)) {
-            this.annotatedObject.add(annotatedObject);
+        if (! this.annotatedObjects.contains(annotatedObject)) {
+            this.annotatedObjects.add(annotatedObject);
             annotatedObject.addReference(this);
         }
     }
     public void removeAnnotatedObject(AnnotatedObject annotatedObject) {
-        boolean removed = this.annotatedObject.remove(annotatedObject);
+        boolean removed = this.annotatedObjects.remove(annotatedObject);
         if (removed) annotatedObject.removeReference(this);
     }
     public SubmissionRef getSubmissionRef() {
@@ -90,7 +117,42 @@ public class Reference extends BasicObject {
         }
     }
 
+    /**
+     * Equality for References is currently based on equality for
+     * author, title and <code>Xrefs</code>.
+     * @see uk.ac.ebi.intact.model.Xref
+     * @param o The object to check
+     * @return true if the parameter equals this object, false otherwise
+     */
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Reference)) return false;
+
+        final Reference reference = (Reference) o;
+         //TODO Auto-generated - needs to be readable when we use the class...
+        // Bear in mind that if you test SubmissionRef you could get a cycle ...
+
+        if (authors != null ? !authors.equals(reference.authors) : reference.authors != null) return false;
+        if (title != null ? !title.equals(reference.title) : reference.title != null) return false;
+        if (xref != null ? !xref.equals(reference.xref) : reference.xref != null) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+
+        //TODO Auto-generated - needs to be readable when we use the class...
+        result = (title != null ? title.hashCode() : 0);
+        result = 29 * result + (authors != null ? authors.hashCode() : 0);
+        result = 29 * result + (submissionRef != null ? submissionRef.hashCode() : 0);
+        result = 29 * result + (xref != null ? xref.hashCode() : 0);
+        return result;
+    }
+
+
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String getSubmissionRefAc() {
         return this.submissionRefAc;
     }

@@ -5,12 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
 
 /**
- * Represents ...
+ * TODO Represents ...
  *
  * @author Henning Hermjakob
+ * @version $Id$
  */
 public class JournalRef extends Reference {
 
@@ -18,27 +18,43 @@ public class JournalRef extends Reference {
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
-    public String cvJournalAc;
+    // TODO: should be move out of the model.
+    private String cvJournalAc;
 
     /**
-     * Represents ...
+     * TODO Represents ...
      */
-    protected Integer pubmidId;
+    private Integer pubmidId;
 
     /**
-     * Represents ...
+     * TODO Represents ...
      */
-    protected String firstpage;
+    private String firstpage;
 
     ///////////////////////////////////////
     // associations
 
     /**
-     *
+     * TODO comments
      */
-    public CvJournal cvJournal;
+    private CvJournal cvJournal;
 
+    /**
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
+     */
+    public JournalRef() {
+        super();
+    }
 
+    public JournalRef(Institution owner, String title, String authors, Integer pubmidId, String firstpage, CvJournal cvJournal) {
+        super(owner, title, authors);
+        this.pubmidId = pubmidId;
+        this.firstpage = firstpage;
+        this.cvJournal = cvJournal;
+    }
     ///////////////////////////////////////
     //access methods for attributes
 
@@ -67,6 +83,7 @@ public class JournalRef extends Reference {
     }
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public void setCvJournalAc(String ac) {
         this.cvJournalAc = ac;
     }

@@ -5,7 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Represents one experiment. Describes the conditions in which
@@ -16,6 +18,7 @@ import java.util.*;
  * it refers to the original publication for this purpose.
  *
  * @author hhe
+ * @version $Id$
  */
 public class Experiment extends AnnotatedObject implements Editable {
 
@@ -23,6 +26,7 @@ public class Experiment extends AnnotatedObject implements Editable {
     // associations
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     private String detectionMethodAc;
     private String identMethodAc;
     private String relatedExperimentAc;
@@ -31,9 +35,10 @@ public class Experiment extends AnnotatedObject implements Editable {
     private String bioSourceAc;
 
     /**
-     *
+     * TODO comments
+     * TODO would be easier/meaningful to have plural
      */
-    public Collection interaction = new ArrayList();
+    private Collection interactions = new ArrayList();
     /**
      * One experiment should group all interactions from a publication
      * which have been performed under the same conditions.
@@ -44,24 +49,29 @@ public class Experiment extends AnnotatedObject implements Editable {
      * This might be extended into an association class
      * which could state the type of relationship.
      */
-    public Experiment relatedExperiment;
-    /**
-     *
-     */
-    public CvIdentification cvIdentification;
-    /**
-     *
-     */
-    public CvInteraction cvInteraction;
-    /**
-     *
-     */
-    public BioSource bioSource;
+    // TODO not clear, why only one Experiment ?
+    private Experiment relatedExperiment;
 
     /**
-     * no-arg constructor. Hope to replace with a private one as it should
-     * not be used by applications because it will result in objects with invalid
-     * states.
+     * TODO comments
+     */
+    private CvIdentification cvIdentification;
+
+    /**
+     * TODO comments
+     */
+    private CvInteraction cvInteraction;
+
+    /**
+     * TODO comments
+     */
+    private BioSource bioSource;
+
+    /**
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public Experiment() {
         //super call sets creation time data
@@ -75,42 +85,40 @@ public class Experiment extends AnnotatedObject implements Editable {
      * set the <code>created</code> and <code>updated</code> fields of the instance
      * to the current time.
      * @param owner The <code>Institution</code> which owns this Experiment (non-null)
-     * @param shortLabel A String which can be used to refer to the Expperiment (non-null)
+     * @param shortLabel A String which can be used to refer to the Experiment (non-null)
      * @param source The biological source of the experimental data (non-null)
      * @exception NullPointerException thrown if any of the parameters are not set
      */
     public Experiment(Institution owner, String shortLabel, BioSource source) {
 
-        //Q: does it make sense to create an Experiment without interactions? If not
-        //then all the Cv stuff (eg ident method etc) needs to be set also...
+        //TODO Q: does it make sense to create an Experiment without interactions? If not then all the Cv stuff (eg ident method etc) needs to be set also...
         super(shortLabel, owner);
         if(source == null) throw new NullPointerException("valid Experiment must have a BioSource!");
-        this.owner = owner;
-        this.shortLabel = shortLabel;
         this.bioSource = source;
-
     }
-
-
 
 
     ///////////////////////////////////////
     // access methods for associations
 
-    public void setInteraction(Collection someInteraction) {
-        this.interaction = someInteraction;
+    // TODO could wipe all existing interaction ... maybe dangerous.
+    // TODO shold also allow to have no interaction if the collection is null or empty.
+    public void setInteractions(Collection someInteraction) {
+        this.interactions = someInteraction;
     }
-    public Collection getInteraction() {
-        return interaction;
+    public Collection getInteractions() {
+        return interactions;
     }
+
+    // TODO comments
     public void addInteraction(Interaction interaction) {
-        if (! this.interaction.contains(interaction)) {
-            this.interaction.add(interaction);
+        if (! this.interactions.contains(interaction)) {
+            this.interactions.add(interaction);
             interaction.addExperiment(this);
         }
     }
     public void removeInteraction(Interaction interaction) {
-        boolean removed = this.interaction.remove(interaction);
+        boolean removed = this.interactions.remove(interaction);
         if (removed) interaction.removeExperiment(this);
     }
     public Experiment getRelatedExperiment() {
@@ -138,11 +146,14 @@ public class Experiment extends AnnotatedObject implements Editable {
         return bioSource;
     }
 
+    // TODO Q: does it make sense now to change the BioSource which is already set
+    // in the cosntructor.
     public void setBioSource(BioSource bioSource) {
         this.bioSource = bioSource;
     }
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String getRelatedExperimentAc(){
         return this.relatedExperimentAc;
     }
@@ -169,12 +180,58 @@ public class Experiment extends AnnotatedObject implements Editable {
     }
 
 
+    /**
+     * Equality for Experiments is currently based on equality for
+     * <code>AnnotatedObjects</code> and BioSources only.
+     * @see uk.ac.ebi.intact.model.AnnotatedObject
+     * @param o The object to check
+     * @return true if the parameter equals this object, false otherwise
+     */
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Experiment)) return false;
+        if (!super.equals(o)) return false;
+
+        final Experiment experiment = (Experiment) o;
+
+        //need check because we still have no-arg constructor...
+        if(bioSource != null) {
+            return (bioSource.equals(experiment.bioSource));
+        }
+        return experiment.bioSource == null;
+
+        // TODO Q: do we compare all interaction ?
+        /* YES
+         * Only if the shortlabel are the same (happen hardly) compare collection
+         * Maybe later......
+         */
+    }
+
+    public int hashCode() {
+        int result = super.hashCode();
+
+        //need check as we still have no-arg constructor...
+        if(bioSource != null) result = 29 * result + bioSource.hashCode();
+        return result;
+    }
+
+
     ///////////////////////////////////////
     // instance methods
 
     public String toString(){
+        String result;
+        Iterator i;
 
-       return "Experiment: " + this.getAc() + " " + this.shortLabel + "\n";
+        result = "Experiment: " + this.getAc() + " " + getShortLabel() + " [ " + NEW_LINE;
+        if (null != getInteractions()){
+            i = getInteractions().iterator();
+            while(i.hasNext()){
+                result = result + i.next();
+            }
+        }
+
+        return result + "] Experiment";
     }
 
 } // end Experiment

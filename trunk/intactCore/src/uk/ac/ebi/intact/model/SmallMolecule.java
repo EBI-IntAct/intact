@@ -6,7 +6,11 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 /**
-
+ * TODO comments
+ * TODO is this going to have anything in it ?
+ *
+ * @author hhe
+ * @version $Id$
  */
 public class SmallMolecule extends Interactor {
 } // end SmallMolecule

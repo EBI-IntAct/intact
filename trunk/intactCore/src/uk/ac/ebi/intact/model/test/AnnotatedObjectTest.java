@@ -7,16 +7,15 @@
  */
 package uk.ac.ebi.intact.model.test;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.test.FirstTest;
-import uk.ac.ebi.intact.util.TestCaseHelper;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.util.TestCaseHelper;
 
 public class AnnotatedObjectTest extends TestCase {
 
@@ -70,25 +69,25 @@ public class AnnotatedObjectTest extends TestCase {
         x2.setPrimaryId("xx1");
 
         // get the initial state
-        int xrefCount = p1.getXref().size();
+        int xrefCount = p1.getXrefs().size();
 
         // check addition of xref
         p1.addXref(x1);
-        super.assertEquals(xrefCount + 1, p1.getXref().size());
+        super.assertEquals(xrefCount + 1, p1.getXrefs().size());
 
         // x2 should not be added, it has the same content as x1
         p1.addXref(x2);
-        super.assertEquals(xrefCount + 1, p1.getXref().size());
+        super.assertEquals(xrefCount + 1, p1.getXrefs().size());
 
         // change x2, now it should be added
         x2.setPrimaryId("xx2");
         p1.addXref(x2);
-        super.assertEquals(xrefCount + 2, p1.getXref().size());
+        super.assertEquals(xrefCount + 2, p1.getXrefs().size());
 
         // Test removal
         p1.removeXref(x2);
         p1.removeXref(x1);
-        super.assertEquals(xrefCount, p1.getXref().size());
+        super.assertEquals(xrefCount, p1.getXrefs().size());
     }
 
     /**

@@ -5,9 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.util.Utilities;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * The specific instance of an interactor which
@@ -19,58 +18,67 @@ import java.util.*;
  * the relativeQuantity attribute.
  *
  * @author hhe
+ * @version $Id$
  */
 public class Component extends BasicObject {
 
-  ///////////////////////////////////////
-  //attributes
+    ///////////////////////////////////////
+    //attributes
 
+    // Synchron
+    // TODO: should be move out of the model.
     private String interactorAc;
     private String interactionAc;
     private String cvComponentRoleAc;
     private String expressedInAc;
-/**
- * Represents the relative quantitity of the interactor
- * participating in the interaction. Default is one.
- * To describe for example a homodimer, an interaction might have
- * only one substrate, but the relative quantity would be 2.
- */
-    protected float stoichiometry = 1;
 
-/**
- * Represents ...
- */
-    protected BioSource expressedIn;
-
-   ///////////////////////////////////////
-   // associations
-
-/**
- *
- */
-    public Interactor interactor;
-/**
- *
- */
-    public Interaction interaction;
-/**
- * The domain a Substrate binds by.
- */
-    public Collection bindingDomain = new Vector();
-/**
- *
- */
-    public CvComponentRole cvComponentRole;
 
     /**
-     * no-arg constructor. Hope to replace with a private one as it should
-     * not be used by applications because it will result in objects with invalid
-     * states.
+     * Represents the relative quantitity of the interactor
+     * participating in the interaction. Default is one.
+     * To describe for example a homodimer, an interaction might have
+     * only one substrate, but the relative quantity would be 2.
+     */
+    private float stoichiometry = 1;
+
+    /**
+     * TODO Represents ...
+     */
+    private BioSource expressedIn;
+
+    ///////////////////////////////////////
+    // associations
+
+    /**
+     * TODO comments
+     */
+    private Interactor interactor;
+
+    /**
+     * TODO comments
+     */
+    private Interaction interaction;
+
+    /**
+     * The domain a Substrate binds by.
+     */
+    private Collection bindingDomains = new ArrayList();
+
+    /**
+     * TODO comments
+     */
+    private CvComponentRole cvComponentRole;
+
+    /**
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public Component() {
         //super call sets creation time data
         super();
-    };
+    }
 
     /**
      * Creates a valid Component instance. To be valid, a Component must have at least:
@@ -87,7 +95,6 @@ public class Component extends BasicObject {
      * set the <code>created</code> and <code>updated</code> fields of the instance
      * to the current time.
      * @param owner The Institution owner of this Component (non-null)
-     * @param source The biological organism the Component was expressed in (non-null)
      * @param interaction The Interaction this Component is a part of (non-null)
      * @param interactor The 'wrapped active entity' (eg a Protein) that this Component represents
      * in the Interaction (non-null)
@@ -95,27 +102,23 @@ public class Component extends BasicObject {
      * experiment (eg bait/prey). This is a controlled vocabulary term (non-null)
      * @exception NullPointerException thrown if any of the parameters are not specified.
      */
-    public Component(Institution owner, BioSource source, Interaction interaction,
+    public Component(Institution owner, Interaction interaction,
                      Interactor interactor, CvComponentRole role) {
 
         //super call sets creation time data
-        super();
-        if(owner == null) throw new NullPointerException("valid Component must have an owner (Institution)!");
-        if(source == null) throw new NullPointerException("valid Component must have a non-null BioSource!");
+        super (owner);
         if(interaction == null) throw new NullPointerException("valid Component must have an Interaction set!");
         if(interactor == null) throw new NullPointerException("valid Component must have an Interactor (eg Protein) set!");
         if(role == null) throw new NullPointerException("valid Component must have a role set (ie a CvComponentRole)!");
-        this.owner = owner;
-        this.expressedIn = source;
+
         this.interaction = interaction;
         this.interactor = interactor;
         this.cvComponentRole = role;
-
     }
 
 
-  ///////////////////////////////////////
-  //access methods for attributes
+    ///////////////////////////////////////
+    //access methods for attributes
 
     public float getStoichiometry() {
         return stoichiometry;
@@ -130,12 +133,17 @@ public class Component extends BasicObject {
         this.expressedIn = expressedIn;
     }
 
-   ///////////////////////////////////////
-   // access methods for associations
+    ///////////////////////////////////////
+    // access methods for associations
 
     public Interactor getInteractor() {
         return interactor;
     }
+
+    /**
+     * TODO document that non obvious method
+     * @param interactor
+     */
     public void setInteractor(Interactor interactor) {
         if (this.interactor != interactor) {
             if (this.interactor != null) this.interactor.removeActiveInstance(this);
@@ -147,6 +155,8 @@ public class Component extends BasicObject {
     public Interaction getInteraction() {
         return interaction;
     }
+
+    // TODO document that non obvious method
     public void setInteraction(Interaction interaction) {
         if (this.interaction != interaction) {
             if (this.interaction != null) this.interaction.removeComponent(this);
@@ -155,20 +165,20 @@ public class Component extends BasicObject {
         }
     }
 
-    public void setBindingDomain(Collection someBindingDomain) {
-        this.bindingDomain = someBindingDomain;
+    public void setBindingDomains(Collection someBindingDomain) {
+        this.bindingDomains = someBindingDomain;
     }
-    public Collection getBindingDomain() {
-        return bindingDomain;
+    public Collection getBindingDomains() {
+        return bindingDomains;
     }
     public void addBindingDomain(Feature feature) {
-        if (! this.bindingDomain.contains(feature)) {
-            this.bindingDomain.add(feature);
+        if (! this.bindingDomains.contains(feature)) {
+            this.bindingDomains.add(feature);
             feature.setComponent(this);
         }
     }
     public void removeBindingDomain(Feature feature) {
-        boolean removed = this.bindingDomain.remove(feature);
+        boolean removed = this.bindingDomains.remove(feature);
         if (removed) feature.setComponent(null);
     }
 
@@ -181,25 +191,27 @@ public class Component extends BasicObject {
 
     // instance methods
 
-    /** Returns true if the "important" attributes are equal.
-     * Criteria are:
-     * - identity of the interactor and interaction
-     * - the role
-     *
-     * More than one component may link the same (interactor, interaction)
-     * pair, but they must have different roles.
-     *
+    /**
+     * Equality for Components is currently based on <b>object identity</b>
+     * (i.e. the references point to the same objects) for
+     * Interactors, Interactions and CvComponentRoles.
+     * @param o The object to check
+     * @return true if the parameter equals this object, false otherwise
      */
-    public boolean equals(Object obj){
-       /* TODO: Take features into account when they are implemented. */
-        return (super.equals(obj) &&
-                // Compare if the component links the same objects.
-                // This comparision can be based on reference equality,
-                // so "==" can be used instaed of "equals".
-                (this.interactor == ((Component) obj).interactor) &&
-                (this.interaction == ((Component) obj).interaction) &&
-                (this.cvComponentRole == ((Component) obj).cvComponentRole)
-                );
+    public boolean equals(Object o){
+        /* TODO: Take features into account when they are implemented. */
+        if (this == o) return true;
+        if (!(o instanceof Component)) return false;
+        // don't call super because that's a BasicObject !
+
+        final Component component = (Component) o;
+
+        // Compare if the component links the same objects.
+        // This comparision can be based on reference equality,
+        // so "==" can be used instead of "equals".
+        return this.interactor == component.interactor &&
+               this.interaction == component.interaction &&
+               this.cvComponentRole == component.cvComponentRole;
     }
 
     /** This class overwrites equals. To ensure proper functioning of HashTable,
@@ -208,18 +220,20 @@ public class Component extends BasicObject {
      */
     public int hashCode(){
         /* TODO: Take features into account when they are implemented. */
+        int code = 29;
 
-        int code = super.hashCode();
-
-        if (null != interactor) code += interactor.hashCode();
-        if (null != interaction) code += interaction.hashCode();
-        if (null != cvComponentRole) code += cvComponentRole.hashCode();
+        //need these checks because we still have a no-arg
+        //constructor at the moment.....
+        if(interactor != null) code = code * 29 + interactor.hashCode();
+        if(interaction != null) code = code * 29 +  interaction.hashCode();
+        if(cvComponentRole != null) code = code * 29 +  cvComponentRole.hashCode();
 
         return code;
     }
 
 
     //attributes used for mapping BasicObjects - project synchron
+    // TODO: should be move out of the model.
     public String getInteractorAc(){
         return this.interactorAc;
     }

@@ -5,37 +5,67 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.Date;
 import java.sql.Timestamp;
 
+
+/**
+ * TODO comments
+ *
+ * @author hhe
+ * @version $Id$
+ */
 public class IntactNode extends BasicObject {
-
-
 
     /**
      * ftp attributes: the address,directory, login and password
      * to access to the directory where xml dump files are available.
      * Format: One string
      */
-    protected String ftpAddress;
 
-    protected String ftpDirectory;
+    /**
+     * TODO comments
+     */
+    private String ftpAddress;
 
-    protected String ftpLogin;
+    /**
+     * TODO comments
+     */
+    private String ftpDirectory;
 
-    protected String ftpPassword;
+    /**
+     * TODO comments
+     */
+    private String ftpLogin;
 
+    /**
+     * TODO comments
+     */
+    private String ftpPassword;
 
-    protected int lastCheckId;
+    /**
+     * TODO comments
+     */
+    private int lastCheckId;
 
-    protected int lastProvidedId;
+    /**
+     * TODO comments
+     */
+    private int lastProvidedId;
 
+    /**
+     * TODO comments
+     */
+    private Timestamp lastProvidedDate=new Timestamp(0);
 
-    protected Timestamp lastProvidedDate=new Timestamp(0);
+    /**
+     * TODO comments
+     */
+    private int rejected = 0;
 
-    protected int rejected = 0;
-
-    protected String ownerPrefix;
+    /**
+     * TODO comments
+     */
+    private String ownerPrefix;
 
   ///////////////////////////////////////
   //access methods for attributes

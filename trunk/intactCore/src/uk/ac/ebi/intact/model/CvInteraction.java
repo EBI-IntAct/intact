@@ -4,22 +4,14 @@
  */
 package uk.ac.ebi.intact.model;
 
-import java.util.*;
+
 
 /**
- * <p>
- * The method by which the Interaction has been determined.
- * </p>
- * <p>
- * 
- * </p>
- * <p>
- * 
- * @example co-immunoprecipitation
- * </p>
+ * he method by which the Interaction has been determined.
+ * example co-immunoprecipitation
+ *
  * @author hhe
- * </p>
- * </p>
+ * @version $Id$
  */
 public class CvInteraction extends CvDagObject {
 
@@ -28,10 +20,14 @@ public class CvInteraction extends CvDagObject {
      * This should not be here as it has no model functionality but is
      * related to eg user interfaces.
      */
-    protected static Vector menuList = null;
+    // TODO should be moved away
+//    protected static Vector menuList = null;
 
     /**
-     * no-arg constructor which will hopefully be removed later...
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     * @deprecated Use the full constructor instead
      */
     public CvInteraction() {
         //super call sets creation time data
@@ -45,12 +41,11 @@ public class CvInteraction extends CvDagObject {
      * @param owner The Institution which owns this CvInteraction
      * @exception NullPointerException thrown if either parameters are not specified
      */
-    public CvInteraction(String shortLabel, Institution owner) {
+    public CvInteraction(Institution owner, String shortLabel) {
 
         //super call sets up a valid CvObject
-        super(shortLabel, owner);
+        super(owner, shortLabel);
     }
-
 
 } // end CvInteraction
 

@@ -5,42 +5,40 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.util.Utilities;
-
-import java.util.*;
-
 /**
  * Represents a crossreference to another database.
  *
  * @author hhe
+ * @version $Id$
  */
 public class SequenceChunk {
 
     ///////////////////////////////////////
     //attributes
+
+    /**
+     * Sequence chunk accession number
+     */
     private String ac;
 
-    //private String qualifierAc;
-    //protected String databaseAc;
-    protected String parentAc;
-
+    /**
+     * To who belongs that chunk.
+     */
+    private String parentAc;
 
     /**
-     * Primary identifier of the database referred to.
+     * The content of the sequence chunk.
      */
-    protected String sequenceChunk;
+    private String sequenceChunk;
 
     /**
-     * Secondary identifier of the database. This will usually be
-     * a meaningful name, for example a domain name.
+     * Chunk order.
      */
-    protected int sequenceIndex;
+    private int sequenceIndex;
 
     ///////////////////////////////////////
     // constructors
     public SequenceChunk() {
-        super();
     }
 
     public SequenceChunk(int aSequenceIndex, String aSequenceChunk) {
