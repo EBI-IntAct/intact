@@ -20,9 +20,9 @@ public interface WebIntactConstants {
     public static final String INTACT_SERVICE = "IntactService";
 
     /**
-     * The key to access a user session object.
+     * The key to access an Intact user.
      */
-    public static final String INTACT_USER = "IntactUser";
+    public static final String INTACT_USER = "intactuser";
 
     /**
      * The key to success action.
