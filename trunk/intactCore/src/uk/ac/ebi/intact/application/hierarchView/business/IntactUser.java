@@ -182,7 +182,7 @@ public class IntactUser implements IntactUserIF {
                                         int complexExpansion) throws IntactException {
 
         logger.info("Starting graph generation (" + startNode.getAc() + ", depth=" + graphDepth);
-        InteractionNetwork in = new InteractionNetwork ();
+        InteractionNetwork in = new InteractionNetwork (startNode.getAc());
         Graph graph = in;
 
         graph = intactHelper.subGraph (startNode,

@@ -63,18 +63,26 @@ public class InteractionNetwork extends Graph {
      */
     private ImageDimension dimension;
 
-
+    /**
+     * Protein from which has been created the interaction network.
+     */
+    private String centralProteinAC;
 
 
     /*********************************************************************** Methods */
     /**
      * Constructor
      */
-    public InteractionNetwork() {
-        this.dimension     = new ImageDimension();
-        this.isInitialized = false;
+    public InteractionNetwork (String aCentralProteinAC) {
+        this.centralProteinAC = aCentralProteinAC;
+        this.dimension        = new ImageDimension();
+        this.isInitialized    = false;
     }
 
+
+    public String getCentralProteinAC() {
+        return centralProteinAC;
+    }
 
     /**
      * Initialization of the interaction network
@@ -144,7 +152,7 @@ public class InteractionNetwork extends Graph {
      */
     public void initNodeDisplay (NodeI aNode) {
 
-        // read the ApplicationResource.proterties file
+        // read the Graph.proterties file
         Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
 
         String stringColorNode  = null;
@@ -165,14 +173,13 @@ public class InteractionNetwork extends Graph {
 
         ((Node) aNode).put (Constants.ATTRIBUTE_COLOR_NODE, colorNode);
 
-        Color colorLabel = Utilities.parseColor(stringColorLabel,
-                                                DEFAULT_COLOR_LABEL_RED,
-                                                DEFAULT_COLOR_LABEL_GREEN,
-                                                DEFAULT_COLOR_LABEL_BLUE);
+        Color colorLabel = Utilities.parseColor (stringColorLabel,
+                                                 DEFAULT_COLOR_LABEL_RED,
+                                                 DEFAULT_COLOR_LABEL_GREEN,
+                                                 DEFAULT_COLOR_LABEL_BLUE);
 
         ((Node) aNode).put (Constants.ATTRIBUTE_COLOR_LABEL, colorLabel);
-        ((Node) aNode).put (Constants.ATTRIBUTE_VISIBLE,new Boolean (true));
-
+        ((Node) aNode).put (Constants.ATTRIBUTE_VISIBLE, new Boolean (true));
     } // initNode
 
 
