@@ -213,8 +213,15 @@ public class FeatureActionForm extends EditorActionForm {
         // Trap errors for Saving/Submitting the feature.
         else if (dispatch.equals(msgres.getMessage("button.submit"))
                 || dispatch.equals(msgres.getMessage("button.save.continue"))) {
-            // Check for unsaved ranges.
-            errors = checkUnsavedRanges();
+            // Must have ranges.
+            if (myRanges.isEmpty()) {
+                errors = new ActionErrors();
+                errors.add("feature.range.empty", new ActionError("error.feature.range.empty"));
+            }
+            else {
+                // Check for unsaved ranges.
+                errors = checkUnsavedRanges();
+            }
         }
         return errors;
     }
