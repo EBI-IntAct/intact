@@ -128,7 +128,7 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
             return mapping.findForward(CvEditConstants.FORWARD_EDIT);
         }
         // Cache the search results.
-        user.cacheSearchResult(results);
+        user.addToSearchCache(results);
 
         // Move to the results page.
         return mapping.findForward(CvEditConstants.FORWARD_RESULTS);
@@ -230,6 +230,7 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
             errors.add(CvAbstractAction.INTACT_ERROR,
                     new ActionError("error.create", ie1.getMessage()));
             super.saveErrors(request, errors);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         catch (SearchException se) {
             // Log the stack trace.
@@ -239,7 +240,10 @@ public class SidebarDispatchAction extends CvAbstractDispatchAction {
             errors.add(CvAbstractAction.INTACT_ERROR,
                     new ActionError("error.search.list", se.getMessage()));
             super.saveErrors(request, errors);
+            return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
+        // Add to the view page.
+        user.addToSearchCache(cvobj);
         // To the edit patge.
         return mapping.findForward(CvEditConstants.FORWARD_SUCCESS);
     }
