@@ -84,7 +84,8 @@
         </td>
 
         <td class="tableCell">
-            <html:text property="taxId" name="bsForm" size="10" maxlength="16"/>
+            <html:text property="taxId" name="bsForm" size="10" maxlength="16"
+                styleClass="inputRequired"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
