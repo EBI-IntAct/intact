@@ -20,13 +20,14 @@
 
 <%-- The id must match with the name this bean is stored in the application ctx --%>
 <jsp:useBean id="listener" scope="application"
-    class="uk.ac.ebi.intact.application.editor.event.EventListener"/>
+    beanName="uk.ac.ebi.intact.application.editor.event.EventListener"
+    type="uk.ac.ebi.intact.application.editor.event.EventListener"/>
 
 <%-- Store in the page scope for the display library to access it --%>
 <bean:define id="locks" name="listener" property="authenticationEvents"
     type="java.util.Set"/>
 
-<jsp:useBean id="now" class="java.util.Date" />
+<jsp:useBean id="now" beanName="java.util.Date" type="java.util.Date"/>
 Last Refresh: <i><fmt:formatDate value="${now}" pattern="EE, dd MMM yyyy HH:mm:ss Z"/></i>
 
 <display:table width="100%" name="locks"

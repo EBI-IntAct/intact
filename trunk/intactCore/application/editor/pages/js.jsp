@@ -15,7 +15,8 @@
 <%@ page language="java"%>
 
 <jsp:useBean id="service" scope="application"
-    class="uk.ac.ebi.intact.application.editor.business.EditorService"/>
+    beanName="uk.ac.ebi.intact.application.editor.business.EditorService"
+    type="uk.ac.ebi.intact.application.editor.business.EditorService"/>
 
 <script language="JavaScript" type="text/javascript">
     // This is a global variable to setup a window.

@@ -18,7 +18,8 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
 
 <jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+    beanName="uk.ac.ebi.intact.application.editor.business.EditUser"
+    type="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <%-- Only display the table if the interactions less (<) the allowed limit --%>
 <c:if test="${user.view.numberOfInteractions lt service.interactionLimit}">

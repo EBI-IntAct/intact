@@ -18,10 +18,12 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
 
 <jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+    beanName="uk.ac.ebi.intact.application.editor.business.EditUser"
+    type="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <jsp:useBean id="service" scope="application"
-    class="uk.ac.ebi.intact.application.editor.business.EditorService"/>
+    beanName="uk.ac.ebi.intact.application.editor.business.EditorService"
+    type="uk.ac.ebi.intact.application.editor.business.EditorService"/>
 
 <%-- The current view --%>
 <bean:define id="view" name="user" property="view"

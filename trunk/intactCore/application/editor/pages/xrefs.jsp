@@ -16,8 +16,10 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
+<!-- User stored in a session -->
 <jsp:useBean id="user" scope="session"
-    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+    beanName="uk.ac.ebi.intact.application.editor.business.EditUser"
+    type="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <c:set var="view" value="${user.view}"/>
 <c:set var="dblist" value="${view.editDatabaseMenu}"/>

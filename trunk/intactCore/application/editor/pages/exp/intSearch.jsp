@@ -19,7 +19,8 @@
 
 <%-- Need this to access the interaction limit. --%>
 <jsp:useBean id="service" scope="application"
-    class="uk.ac.ebi.intact.application.editor.business.EditorService"/>
+    beanName="uk.ac.ebi.intact.application.editor.business.EditorService"
+    type="uk.ac.ebi.intact.application.editor.business.EditorService"/>
 
 <%-- A message to indicate that current interactions equal to max allowed --%>
 <c:if test="${user.view.numberOfInteractions eq service.interactionLimit}">
