@@ -81,6 +81,7 @@
                           </tbody>
                         </table>
                         </div>
+
                         <span class="pbold"><a name="document"></a>Documentation:</span>
                         <ul>
                           <li class="greenboldsmalllist"><span class="text"> <a href="doc/html/documentation.html">User manual</a></span></li>
@@ -99,6 +100,87 @@
                           </tbody>
                         </table>
                         </div>
+
+                        <span class="pbold"><a name="external.linking"></a>External Linking to IntAct:</span>
+                        <ul>
+
+                          <li class="greenboldsmalllist"><b>general search</b>
+                          <span class="text">
+                          <br>
+                          <p>
+                          http://www.ebi.ac.uk/intact/search/do/search?searchString=<b><font color="blue">&lt;query.string&gt;</font></b>[&searchClass=<b><font color="red">&lt;object.name&gt;</font></b>]
+                          </p>
+                            <b><font color="blue">&lt;query.string&gt;</font></b> is the user query that the searched object should match.
+                            <br/>
+                            it can be either:
+                            <ul>
+                               <li> AC </li>
+                               <li> shortlabel </li>
+                               <li> fullname </li>
+                               <li> Xref (UniProt, GO, FlyBase, SGD, Interpro...) </li>
+                               <li> Alias (gene name, locus, orf ...) </li>
+                            </ul>
+
+                            <br>
+                            <b><font color="red">&lt;object.name&gt;</font></b> is an <u>optional</u> parameter, it describes
+                            the type of the object you are looking for.
+                            <br/>
+                            it can take values in:
+                            <ul>
+                               <li> Protein </li>
+                               <li> Interaction </li>
+                               <li> Experiment </li>
+                               <li> CvObject, or one of its sub-types: CvDatabase, CvInteractionType...</li>
+                            </ul>
+                            <br>
+                            </span>
+                          </li>
+
+                          <li class="greenboldsmalllist"><b>Binary search</b>
+                              <span class="text">
+                              <br>
+                              <p>
+                              http://www.ebi.ac.uk/intact/search/do/search?searchString=<b><font color="blue">&lt;protein&gt;</font></b>
+                              </p>
+                              <b><font color="blue">&lt;protein&gt;</font></b> being either the AC, shortlabel, alias
+                              or Xref (eg. UniProt ID) of a Protein.
+                              <br>
+                              Wildcards are supported.
+                              <br>
+                              <br>
+                              </span>
+                          </li>
+
+                          <li class="greenboldsmalllist"><b>Interaction(s) involved given a set of proteins</b>
+                              <span class="text">
+                              <br>
+                              <p>
+                              http://www.ebi.ac.uk/intact/search/do/search?binary=<b><font color="red">&lt;protein1&gt;</font></b>,<b><font color="blue">&lt;protein2&gt;</font></b>
+                              </p>
+                              Giving two proteins will display all interactions in which those two proteins are involved in.
+                              <br>
+                              <b><font color="red">&lt;protein1&gt;</font></b> and
+                              <b><font color="blue">&lt;protein2&gt;</font></b> being either the AC, shortlabel, alias or
+                              Xref (eg. UniProt ID) of a Protein.
+                              <br>
+                              Wildcards are supported.
+                              </span>
+                          </li>
+
+
+
+                        </ul>
+                        <div align="right"><a href="#a0"><img src="http://www.ebi.ac.uk/Information/images/arrow_up2.gif" border="0" height="21" width="19"></a>
+                        <br>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                          <tbody>
+                            <tr>
+                              <td background="http://www.ebi.ac.uk/services/images/hor.gif" height="3"><img src="http://www.ebi.ac.uk/services/images/trans.gif" height="3" width="25"></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        </div>
+
                         <span class="pbold"><a name="soft"></a>Software:</span>
                         <br>
                         <ul>

@@ -14,10 +14,9 @@
         <section title="Introduction" name="intro">
 
             <blockquote>
-                IntAct is a protein interaction database and analysis system. It
-                provides a query interface and modules to analyse interaction
-                data. This manual describes the IntAct data structure and the
-                components of the IntAct system.
+                IntAct is a protein interaction database and analysis system. It provides a query interface and modules
+                to analyse interaction data. This manual describes the IntAct data structure and the components of the
+                IntAct system.
             </blockquote>
 
         </section>
@@ -25,14 +24,41 @@
         <section title="Recent changes" name="new">
 
             <blockquote>
-                    Changes up to February 01, 2004:
+                <u>Changes up to January 01, 2005</u>:
+                <ul>
+                    <li>New
+                        <a href="http://www.ebi.ac.uk/intact/search">Search</a> user interface available.
+                    </li>
+                    <li>New IntAct
+                        <a href="./tutorial/index.html">API tutorial.</a>
+                    </li>
+                    <li>Integration of data including features (eg.
+                        <a href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=EBI-474155&amp;searchClass=Experiment&amp;source=simple">Goehler et al.</a>).
+                    </li>
+                    <li>Integration of IntAct data into
+                        <a href="http://www.ebi.uniprot.org/">UniProt</a>
+                    </li>
+                    <li>IntAct takes part in the IMEx (link) consortium</li>
+                    <li>New application (
+                        <a href="http://www.ebi.ac.uk/intact/mine">MiNe</a>) allowing to find the
+                        minimal connecting network given a set of proteins.
+                    </li>
+                    <li>New application (
+                        <a href="http://www.ebi.ac.uk/intact/targets">Targets</a>) to predict targets
+                        for pull-down experiments.
+                    </li>
+                </ul>
+
+            </blockquote>
+            <blockquote>
+                <u>Changes up to February 01, 2004</u>:
                 <ul>
                     <li>IntAct release 1: IntAct data is now available in
                         <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>, see the
                         <a href="#download">download</a> section. Controlled vocabularies are available in GO DAG format.
                     </li>
-                    <li>20672 interactions have been imported from Giot et al, 2003.
-The dataset contains extensive crosslinking to UniProt, GO, InterPro, and FlyBase.
+                    <li>20672 interactions have been imported from Giot et al, 2003. The dataset contains extensive
+                        crosslinking to UniProt, GO, InterPro, and FlyBase.
                     </li>
                 </ul>
 
@@ -41,24 +67,135 @@ The dataset contains extensive crosslinking to UniProt, GO, InterPro, and FlyBas
 
 
         <section name="data" title="Data">
+
             <section name="download" title="Download">
                 <blockquote> IntAct data is available in
-                    <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI MI XML format</a>. Each IntAct release is split into multiple XML files according to the pattern Species_name-[small | exeriment-name].xml. For example, s-cerevisiae_small.xml contains data on all small-scale experiments in S.cerevisiae stored in IntAct, s-cerevisiae_ho-2002.xml contains the data from the Ho et al, 2002 experiment. The current release is available at
+                    <a href="http://psidev.sf.net/mi/xml/doc/user/"> PSI MI XML format</a>.
+                    Each IntAct release is split into multiple XML files according to the pattern Species_name-[small |
+                    exeriment-name].xml. For example, s-cerevisiae_small.xml contains data on all small-scale experiments
+                    in S.cerevisiae stored in IntAct, s-cerevisiae_ho-2002.xml contains the data from the Ho et al,
+                    2002 experiment. The current release is available at
                     <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/">ftp://ftp.ebi.ac.uk/pub/databases/intact/current/xml/</a>.
                 </blockquote>
             </section>   <!-- end download -->
+
             <section name="CVS" title="Controlled Vocabularies">
-                <blockquote>To ensure data consistency, IntAct makes intensive use of controlled vocabularies. All controlled vocabularies are available in Gene Ontology DAG-Edit format and HTML format. Some IntAct annotation of controlled vocabulary terms does not fit the GO DAG-Edit format, but as we want to export all available information, some comments might have to be filtered out from the *.def files before editing them in GO DAG-Edit. For an overview and download of IntAct controlled vocabularies, see
+                <blockquote>
+                    To ensure data consistency, IntAct makes intensive use of controlled vocabularies.
+                    All controlled vocabularies are available in Gene Ontology DAG-Edit format and HTML format.
+                    Some IntAct annotation of controlled vocabulary terms does not fit the GO DAG-Edit format, but
+                    as we want to export all available information, some comments might have to be filtered out from
+                    the *.def files before editing them in GO DAG-Edit. For an overview and download of IntAct
+                    controlled vocabularies, see
                     <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/">ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/</a>.
                 </blockquote>
             </section>   <!-- end CVS -->
+
             <section name="statistics" title="Statistics">
-Please see separate
+                Please see separate
                 <a href="statistics/index.html">statistics section</a>.
             </section>   <!-- end statistics -->
+
         </section>   <!-- end data -->
 
         <section title="IntAct data representation" name="core">
+
+            <section title="Common elements" name="CommonElements">
+
+                <blockquote>
+                    All main IntAct objects have the following attributes:
+                </blockquote>
+
+                <section title="ac" name="BasicObject.ac">
+
+                    <blockquote>
+                        The accession number. This is a unique, stable identifier for an object.
+                        The same accession number will always be associated with the same object.
+                        To reference IntAct objects from outside, accession numbers should be used.
+                        The format of the accession number is one or more uppercase letters, followed by a dash,
+                        followed by a number.
+                        <br/> In regular expression syntax:	[A-Z]\-[0-9]+.
+                        <br/> Example: EBI-15
+                    </blockquote>
+
+                </section>
+
+                <section title="name" name="AnnotatedObject.shortLabel">
+
+                    <blockquote>
+                        The name is a short, concise name to identify an object.
+                        Names for proteins are usually UniProt IDs,
+                        names for experiments are usually the names of the first author of the publication,
+                        names for interactions are usually the name of gene1 'hyphen' name of gene2.
+                        <br/>
+                        Names will normally be stable, but they may change, e.g. when the gene name of a protein is changed
+                        by the relevant nomenclature body, e.g. HUGO. Names are not guaranteed to be unique,
+                        e.g. if two proteins have the same primary gene name. They are guaranteed to be unique for
+                        controlled vocabulary terms within each controlled vocabulary. All names are in lowercase.
+                        <br/> Example for a protein: got2_yeast.
+                    </blockquote>
+
+                </section>
+
+                <section title="fullName" name="AnnotatedObject.fullName">
+
+                    <blockquote>
+                        The full name of the object.
+                        <br/> Example: Aspartate aminotransferase.
+                    </blockquote>
+
+                </section>
+
+                <section title="Xref" name="AnnotatedObject.Xref">
+
+                    <blockquote>
+                        Crossreferences to other databases. A crossreference has the following attributes:
+                        <ul>
+                            <li>
+                                <b>Name</b>:The name of the external database.
+                            </li>
+                            <li>
+                                <b>Primary id</b>: The primary id or accession number of the object in the external database.
+                            </li>
+                            <li>
+                                <b>Secondary id</b>: The secondary id of the object in the external database.
+                            </li>
+                            <li>
+                                <a name="Xref.cvXrefType"></a>
+                                <b>Crossreference type</b>: The type of crossreference.
+                            </li>
+                        </ul>
+                    </blockquote>
+
+                </section>
+
+                <section title="Annotation" name="AnnotatedObject.Annotation">
+
+                    <blockquote>
+                        Each object may have one or more annotations associated with it. Each annotation has a topic,
+                        which broadly classifies the annotation, and the annotation text.
+                    </blockquote>
+
+                </section>
+
+                <section title="created" name="BasicObject.created">
+
+                    <blockquote>
+                        The date the object has been created.
+                    </blockquote>
+
+                </section>
+
+                <section title="updated" name="BasicObject.updated">
+
+                    <blockquote>
+                        The date the object has been updated last.
+                    </blockquote>
+
+                </section>
+
+            </section> <!-- Common elements -->
+
 
             <section title="Main objects" name="mainObject">
 
@@ -80,10 +217,9 @@ Please see separate
 
                     <a name="mainObjectsExample"></a>
                     Example (simplified): Representation of the Interleukin 2 receptor binding:
-                    One interaction object represents the complex of the alpha, beta, and gamma
-                    chains which form the receptor. This interaction object is then used in the
-                    second interaction object, in which the binding of Interleukin 2 to the
-                    receptor is represented. Both Interaction objects are linked to an experiment,
+                    One interaction object represents the complex of the alpha, beta, and gamma chains which form the
+                    receptor. This interaction object is then used in the second interaction object, in which the binding
+                    of Interleukin 2 to the receptor is represented. Both Interaction objects are linked to an experiment,
                     in which the Interaction has been determined.
                     <img align="left" src="./images/core/intactMainObjects2.jpg" height="108" width="214"/>
                     <img align="right" src="./images/core/intactMainObjects.jpg" height="160" width="344"/>
@@ -94,12 +230,10 @@ Please see separate
                 <section title="Experiment" name="Experiment">
 
                     <blockquote>
-                        An Experiment object describes an experiment which has been performed
-                        to generate one or more interactions. It indicates the conditions
-                        in which the experiment has been performed. The description
-                        broadly classifies the experiment, it does not aim at
-                        providing all the necessary data to repeat the experiment. The
-                        attributes of the Experiment are the
+                        An Experiment object describes an experiment which has been performed to generate one or more
+                        interactions. It indicates the conditions in which the experiment has been performed.
+                        The description broadly classifies the experiment, it does not aim at providing all the
+                        necessary data to repeat the experiment. The attributes of the Experiment are the
                         <dl>
                             <dt>
                                 <a href="#BioSource">BioSource</a>
@@ -109,8 +243,8 @@ Please see separate
                             <dt>
                                 <a name="Experiment.cvIdentification"></a>identificationMethod
                             </dt>
-                            <dd>The experimental method by which the molecules participating in the
-                                interaction have been detected.
+                            <dd>The experimental method by which the molecules participating in the interaction have
+                                been detected.
                                 <br/>Example: Mass spectrometry.
                             </dd>
 
@@ -135,11 +269,10 @@ Please see separate
 
                     <blockquote>
                         The Interaction object describes the interaction of two or more
-                        <a href="#Interactor">Interactors</a> (proteins). As the number of Interactors in an
-                        Interaction is not limited, an Interaction can describe both binary interactions,
-                        which are the result of for example yeast two hybrid experiments, and interactions
-                        with more than two Interactors, for example determined by "TAP" experiments.
-                        The attributes of an Interaction are
+                        <a href="#Interactor">Interactors</a> (proteins). As the number of Interactors in an Interaction
+                        is not limited, an Interaction can describe both binary interactions, which are the result of
+                        for example yeast two hybrid experiments, and interactions with more than two Interactors, for
+                        example determined by "TAP" experiments. The attributes of an Interaction are
                         <dl>
                             <dt>CvInteractionType</dt>
                             <dd>A description of the type of interaction.
@@ -163,9 +296,8 @@ Please see separate
                             <dt>
                                 <a href="#BioSource">BioSource</a>
                             </dt>
-                            <dd>The biological system in which the interactor normally is
-                                found. For a human protein, the BioSource would be "Human",
-                                even if it has been expressed in E.coli in a particular
+                            <dd>The biological system in which the interactor normally is found. For a human protein,
+                                the BioSource would be "Human", even if it has been expressed in E.coli in a particular
                                 experiment.
                             </dd>
                         </dl>
@@ -174,23 +306,18 @@ Please see separate
                             <dt>sequence</dt>
                             <dd>The amino acid sequence of the protein.</dd>
                             <dt>crc64</dt>
-                            <dd>The CRC64 checksum for the amino acid sequence. This
-                                checksum is used to quickly detect if the amino acid sequence
-                                has changed, for example during an update process. It is also
-                                used to check if the amino acid sequence has potentially been
-                                corrupted.
+                            <dd>The CRC64 checksum for the amino acid sequence. This checksum is used to quickly detect
+                                if the amino acid sequence has changed, for example during an update process. It is also
+                                used to check if the amino acid sequence has potentially been corrupted.
                                 <br/>
-                                The
-                                algorithm to compute the CRC64 is described in the ISO 3309
-                                standard. The generator polynomial is x64 + x4 + x3 + x + 1.
+                                The algorithm to compute the CRC64 is described in the ISO 3309 standard.
+                                The generator polynomial is x64 + x4 + x3 + x + 1.
                                 <br/>
-                                Reference: Press W.H., Flannery B.P., Teukolsky S.A. and Vetterling
-                                W.T. "Numerical recipes in C", 2nd ed., pp896-902, Cambridge
-                                University Press (1993). (See
+                                Reference: Press W.H., Flannery B.P., Teukolsky S.A. and Vetterling W.T. "Numerical
+                                recipes in C", 2nd ed., pp896-902, Cambridge University Press (1993). (See
                                 http://www.ulib.org/webRoot/Books/Numerical_Recipes/bookcpdf/c20-3.pdf)
-                                It should be noted that while, in theory, two different
-                                sequences could have the same CRC64 value, the likelihood that
-                                this would happen is extremely low.
+                                It should be noted that while, in theory, two different sequences could have the
+                                same CRC64 value, the likelihood that this would happen is extremely low.
                             </dd>
                         </dl>
                         An Interactor describes an "abstract" form of e.g. a protein,
@@ -200,35 +327,28 @@ Please see separate
                         Interaction, the following additional attributes are used:
                         <dl>
                             <dt>stoichiometry</dt>
-                            <dd>The number of units of this interactor which participate in
-                                the interaction. The default is one.
+                            <dd>The number of units of this interactor which participate in the interaction. The default is one.
                             </dd>
                             <dt>expressedIn</dt>
                             <dd>A
-                                <a href="#BioSource">BioSource </a> object which describes
-                                the biological system in which the protein has been
-                                expressed.
+                                <a href="#BioSource">BioSource </a> object which describes the biological system in
+                                which the protein has been expressed.
                                 <br/>
-                                Example: If a human protein has been expresed in E.coli,
-                                expressedIn would refer to E.coli.
+                                Example: If a human protein has been expresed in E.coli, expressedIn would refer to E.coli.
                             </dd>
                             <dt>Role</dt>
-                            <dd>The role of the Interactor in the Interaction. In a yeast
-                                two hybrid experiment, each Interaction would usually have an
-                                Interactor which has the role "bait" and another one which has
-                                the role "prey".
+                            <dd>The role of the Interactor in the Interaction. In a yeast two hybrid experiment,
+                                each Interaction would usually have an Interactor which has the role "bait" and another
+                                one which has the role "prey".
                             </dd>
                         </dl>
 
-                        An Interactor is normally a protein. However, to model
-                        hierarchical assemblies of complexes from subcomplexes, an
-                        Interactor can also be an Interaction.
+                        An Interactor is normally a protein. However, to model hierarchical assemblies of complexes
+                        from subcomplexes, an Interactor can also be an Interaction.
                         <br/>
-                        Example: To model a receptor-ligand interaction, the receptor
-                        could be modeled by an interaction which describes the composition
-                        of the receptor from its component proteins. Then, in another
-                        Interaction, the association of receptor and ligand would be
-                        described. See the
+                        Example: To model a receptor-ligand interaction, the receptor could be modeled by an interaction
+                        which describes the composition of the receptor from its component proteins. Then, in another
+                        Interaction, the association of receptor and ligand would be described. See the
                         <a href="#mainObjectsExample">IL-2 example</a>.
                         <br/>
                     </blockquote>
@@ -253,17 +373,31 @@ Please see separate
                             <dt>taxId</dt>
                             <dd>The NCBI tax id, see the
                                 <a href="http://www.ncbi.nlm.nih.gov/Taxonomy/">NCBI taxonomy server</a> or the
-                                <a href="http://www.ebi.ac.uk/newt/index.html">NEWT taxonomy server</a>.
+                                <a href="http://www.ebi.ac.uk/newt">NEWT taxonomy server</a>.
+                                <br/>
+                                <u>Technical note</u>: We are using a programatical access to the Newt server to create on-the-fly
+                                new BioSources in IntAct.
                             </dd>
                             <dt>shortLabel</dt>
                             <dd>The shortLabel is the UniProt OS code, where available.</dd>
                             <dt>fullName</dt>
                             <dd>The full name is the scientific name of the species.</dd>
+                            <dt>tissue
+                                <font color="gray">(optional)</font>
+                            </dt>
+                            <dd>The tissue is the tissue type used in the experiment.</dd>
+                            <dt>compartment
+                                <font color="gray">(optional)</font>
+                            </dt>
+                            <dd>The compartment is the cellular compartment in which the interaction has been shown to occur.</dd>
+                            <dt>cell type
+                                <font color="gray">(optional)</font>
+                            </dt>
+                            <dd>The cell type is the cell line in which the interaction is shown to occur.</dd>
                         </dl>
                     </blockquote>
 
                 </section> <!-- BioSource -->
-
 
                 <section title="CvObject" name="CvObject">
 
@@ -282,116 +416,15 @@ Please see separate
 
             </section> <!-- Auxiliary objects -->
 
-
-            <section title="Common elements" name="CommonElements">
-
-                <blockquote>
-                    All main IntAct objects have
-                </blockquote>
-
-                <section title="ac" name="BasicObject.ac">
-
-                    <blockquote>
-                        The accession number. This is a unique, stable identifier
-                        for an object. The same accession number will always be
-                        assiciated with the same object. To reference IntAct objects
-                        from outside, accession numbers should be used. The format of
-                        the accession number is one or more uppercase letters, followed by a
-                        dash, followed by a number.
-                        <br/>
-                        In regular expression syntax:	[A-Z]\-[0-9]+.
-                        <br/>
-                        Example: EBI-15
-                    </blockquote>
-
-                </section>
-
-                <section title="name" name="AnnotatedObject.shortLabel">
-
-                    <blockquote>
-                        The name is a short, concise name to identify an
-                        object. Names for proteins are
-                        usually UniProt IDs, names for experiments are usually
-                        the names of the first author of the publication. Names
-                        will normally be stable, but they may change, e.g. when the
-                        gene name of a protein is changed by the relevant nomenclature
-                        body, e.g. HUGO. Names are not guaranteed to be unique,
-                        e.g. if two proteins have the same primary gene name. They are
-                        guaranteed to be unique for controlled vocabulary terms within each controlled vocabulary. All names are in lowercase.
-                        <br/>
-                        Example: got2_yeast.
-                    </blockquote>
-
-                </section>
-
-                <section title="fullName" name="AnnotatedObject.fullName">
-
-                    <blockquote>
-                        The full name of the object.
-                        <br/>
-                        Example: Aspartate aminotransferase.
-                    </blockquote>
-
-                </section>
-
-                <section title="Xref" name="AnnotatedObject.Xref">
-
-                    <blockquote>
-                        Crossreferences to other databases. A crossreference has the following attributes:
-                        <dl>
-                            <dt/>Name
-                            <dd/>The name of the external database.
-                            <dt/>Primary id
-                            <dd/>The primary id or accession number of the object in the external database.
-                            <dt/>Secondary id
-                            <dd/>The secondary id of the object in the external database.
-                            <dt/>
-                            <a name="Xref.cvXrefType"></a>
-                                 Crossreference type
-                            <dd/>The type of crossreference.
-                        </dl>
-                    </blockquote>
-
-                </section>
-
-                <section title="Annotation" name="AnnotatedObject.Annotation">
-
-                    <blockquote>
-                        Each object may have one or more annotations associated with
-                        it. Each annotation has a topic, which broadly classifies the
-                        annotation, and the annotation text.
-                    </blockquote>
-
-                </section>
-
-                <section title="created" name="BasicObject.created">
-
-                    <blockquote>
-                        The date the object has been created.
-                    </blockquote>
-
-                </section>
-
-                <section title="updated" name="BasicObject.updated">
-
-                    <blockquote>
-                        The date the object has been updated last.
-                    </blockquote>
-
-                </section>
-
-            </section> <!-- Common elements -->
-
         </section>  <!-- IntAct data representation -->
 
 
         <section title="IntAct applications" name="IntAct-applications">
 
-            IntAct provides a number of applications. Depending on the installation you are using, some modules described here may not be available, or additional modules not described in this manual might be available.
-
+            IntAct provides a number of applications. Depending on the installation you are using, some modules
+            described here may not be available, or additional modules not described in this manual might be available.
 
             <section title="Search" name="search">
-
 
                 <section title="Availability" name="search.availability">
 
@@ -406,14 +439,13 @@ Please see separate
                     <blockquote>
                         The search application currently allows a text-based search by entering
                         a text string into the search text box. It is possible to obtain information
-                        on experiments, protein interactions and the proteins themselves, with
-                        various views used to display the data. Intact uses the concept of
-                        <a href="#AnnotatedObject.shortLabel"> short
-                            label </a> which is intended to provide a way of 'more memorable identification'
-                        compared to an
-                        <a href="#AnnotatedObject.ac"> accession number (ac) </a> , although searches by ac are
+                        on experiments, protein interactions, the proteins themselves and the controlled vocabulary
+                        , with various views used to display the data. Intact uses the concept of
+                        <a href="#AnnotatedObject.shortLabel"> shortlabel </a> which is intended to provide a way
+                        of 'more memorable identification' compared to an
+                        <a href="#BasicObject.ac">accession number (ac)</a> , although searches by ac are
                         obviously allowed. For example a particular Experiment may have an ac of
-                        EBI-14, but its name is 'gavin' indicating a more meaningful reference
+                        EBI-12, but its name is 'gavin-2002' indicating a more meaningful reference
                         to the physical experiment which the entry represents. Basic points on
                         usage:
 
@@ -421,24 +453,46 @@ Please see separate
                             <ul>
                                 <li>
                                     Wildcard searching is supported - for example matches will be retrieved
-                                    for strings such as EBI*, *BI-14, E*4, etc etc.</li>
+                                    for strings such as EBI*, *BI-14, E*4, etc etc. Though if too many result
+                                    match your expression, you will be given some statistics about how many
+                                    objects have matched your query and you will be asked to refine your query.
+                                    cf.
+                                    <a href="#too.many.results">screenshot</a>.
+                                </li>
 
                                 <li>
-                                    upper or lower case strings are acceptable (but not mixed case) and will be matched if they
-                                    exist. The exception to this is a search by alias (ie gene name, as defined in
-                                    UniProt) - currently these
-                                    are stored as lower case and are searched for as such. This will become more sophisticated
-                                    as the project matures.</li>
+                                    upper or lower case strings are acceptable (but not mixed case) and will be matched
+                                    if they exist. The exception to this is a search by alias (ie gene name, as defined
+                                    in UniProt) - currently these are stored as lower case and are searched for as such.
+                                    This will become more sophisticated as the project matures.
+                                </li>
 
                                 <li>
-                                    currently searches progress in a certain order: proteins, then interactions,
-                                    then experiments. At a lower level, specific attributes are searched by
-                                    AC, short label, alias (gene name), Xref primary ID and finally full name. </li>
+                                    currently searches are looking for four main types of objects: experiment, interaction,
+                                    protein, and controlled vocabulary term (that has many sub types).
+                                    <br/>
+                                    A search doesn't progress in a certain order as it used to be, we perform a global
+                                    search on all mentionned types and if several of them match your query, a summary
+                                    page will be displayd to give you an overview. That way, you can select the object
+                                    you want to see amongst many types. cf
+                                    <a href="#multi.types.result">screenshot</a>.
+                                </li>
 
                                 <li>
-                                    Note that whilst CvObject details can be displayed via the click of a link,
-                                    currently it is not possible to search for CvObjects via the text box search
-                                    entry point.</li>
+                                    At a lower level, specific attributes are searched by
+                                    <a href="#BasicObject.ac">AC</a>,
+                                    <a href="#AnnotatedObject.shortLabel">shortlabel</a>,
+                                    <a href="#AnnotatedObject.fullname">fullname</a>
+                                    <a href="#AnnotatedObject.Xref">Xref</a> (Uniprot AC, GO, SGD, FlyBase, Interpro...),
+                                    and finally
+                                    <a href="#AnnotatedObject.Annotation">alias</a> (gene, locus and orf name).
+                                </li>
+
+                                <li>
+                                    Note that whilst controlled vocabulary term (also called CvObject) details can be
+                                    displayed via the click of a link, currently it is not possible to search for
+                                    CvObjects via the text box search entry point.
+                                </li>
                             </ul>
                         </ul>
                     </blockquote>
@@ -452,101 +506,205 @@ Please see separate
 
                         <br/>
 
-
                         <p>
                             <a NAME="experiment.single.view"></a>An example result screen when searching for an Experiment
                             is shown below:
                         </p>
                         <p>
-                            <img SRC="./images/search/exp.png" height="768" width="1024"/>
+                            <img SRC="./images/search/exp.png" border="0"/>
                         </p>
 
                         <p>
-                            <a NAME="experiment.single.chunked"></a>An other example result screen when searching for an Experiment,
-                            this time there are too many interactions to display it in one go. So, the Experiment is splited in several pages
-                            that you can reach using the index above the Experiment.
-                            <br/>
-                            This is shown below:
+                            <a NAME="experiment.single.chunked"></a>An other example result screen when searching for
+                            an Experiment, this time there are too many interactions to display it in one go.
+                            So, the Experiment is splited in several pages that you can reach using the index above
+                            the Experiment.
+                            <br/> This is shown below:
                         </p>
                         <p>
                             <img SRC="./images/search/exp-chunked.png" border="0"/>
                         </p>
 
                         <p>
-                            <a NAME="interaction.single.view"></a>An example result screen when searching for an Interaction is shown below:
+                            <a NAME="interaction.single.view"></a>
+                            An example result screen when searching for an Interaction is shown below, as you can see
+                            the interaction is shown in the context of its experiment:
                         </p>
                         <p>
-                            <img SRC="./images/search/int_single.png" height="768" width="1024"/>
+                            <img SRC="./images/search/int_single.png" border="0"/>
                         </p>
 
                         <p>
-                            <a NAME="binary.view"></a>Protein views can be of various types. Searching for a protein will result in a so-called
-                            'binary view'. This view shows the list of proteins which are in a pairwise interaction with the searched-for protein.
+                            <a NAME="too.many.results"></a>
+                            An example result screen when submiting a query that matches too many results, we show some
+                            basic statistics:
+                        </p>
+                        <p>
+                            <img SRC="./images/search/too_many_results.png" border="0"/>
+                        </p>
+
+                        <p>
+                            <a NAME="multi.types.result"></a>
+                            An example result screen when submiting a query that matches different types of objects,
+                            if there are not too many of them, we show simpler version of them to allow the user to choose:
+                        </p>
+                        <p>
+                            <img SRC="./images/search/query_multi_obj.png" border="0"/>
+                        </p>
+
+                        <p>
+                            <a NAME="binary.view"></a>
+                            Protein views can be of various types. Searching for a protein will result in a so-called
+                            'binary view'. This view shows the list of proteins which are in a pairwise interaction
+                            with the searched-for protein.
+                            <a NAME="number.interactions"></a>
+                            <p>
+                                The column "number of interactions" indicates:
+                                <br/>
+                                a) for the query protein (first row), in how many distinct interactions it has been observed.
+                                <br/>
+                                b) for all interactors of the query protein (subsequent rows), in how many interactions the
+                                current protein (current row) and the query protein (first row) interact.
+                            </p>
+
                             An example result screen for this view is shown below:
                         </p>
                         <p>
-                            <img SRC="./images/search/binary.png" height="768" width="1024"/>
+                            <img SRC="./images/search/binary.png" border="0"/>
                         </p>
                         <p>
-                            <a NAME="interaction.details.view"></a>Viewing the interactions for a particular protein can also be done from the binary view - an
-                            example screen displayed by clicking on the 'view 1 interaction' link is shown below:
-                        </p>
-                        <p>
-                            <img SRC="./images/search/interaction_details.png" height="768" width="1024"/>
+                            <a NAME="interaction.details.view"></a>
+                            Viewing the interactions involved for a particular (couple of) protein can also be done
+                            from the binary view by clicking on the interaction count.
                         </p>
                         <p>
                             <a NAME="protein.single.view"></a>The details for an individual protein are displayed as below:
                         </p>
                         <p>
-                            <img SRC="./images/search/protein_single.png" height="768" width="1024"/>
+                            <img SRC="./images/search/protein_single.png" border="0"/>
                         </p>
                         <br/>
 
                         <p>
-                            <a NAME="single.view"></a>If for example in the above screen you click
-                            on 'SPTR', this will display the controlled vocabulary information for
-                            the database identified with a name of 'SPTR'. The screen looks
+                            <a NAME="single.view"></a>
+                            If for example in the above screen you click on 'UniProt', this will display the controlled
+                            vocabulary information for the database identified with a name of 'UniProt'. The screen looks
                             like this:
                         </p>
                         <p>
-                            <img SRC="./images/search/sptr.png" height="768" width="1024"/>
+                            <img SRC="./images/search/uniprot.png" border="0"/>
+                        </p>
+                        <p>
+                            <u>Note</u>: You can see on that view that the CvDatabase called UniProt has been annotated
+                            using Xref, some of them have a special role in the IntAct framework:
+                            <ul>
+                                <li>
+                                    <b>search-url</b>: is used to forward to the original source of the object.
+                                    In the case of 'UniProt', if a protein has such a Uniprot Xref attached, the search
+                                    application would automatically generate a link to allow you to view that same
+                                    protein on the UniProt web site.
+                                    <br/>
+                                    <u>eg</u>. Let
+                                    <b>search-url</b> of the CvDatabase 'UniProt' be
+                                    <b>http://www.ebi.uniprot.org/entry/${ac}</b>
+                                    <br/>
+                                    Let the primaryId of that Xref be
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b>, the search
+                                    interface would replace ${ac} by
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b> and the URL
+                                    in the search application would show up as:
+                                    http://www.ebi.uniprot.org/entry/
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b>
+                                    <br/>
+                                </li>
+
+                                <li>
+                                    <b>search-url-ascii</b>: is used for programatical access to that database.
+                                    In the case of UniProt, if a protein has such a Uniprot Xref attached, we can then get
+                                    the UniProt FlatFile content correcponding to that protein.
+                                    <br/>
+                                    <u>eg</u>. Let
+                                    <b>search-url-ascii</b> of the CvDatabase 'UniProt' be
+                                    <b>http://www.ebi.uniprot.org/entry/${ac}?format=text&amp;ascii</b>
+                                    <br/>
+                                    Let the primaryId of that Xref be
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b>, the search
+                                    interface would replace ${ac} by
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b> and the URL
+                                    in the search application would show up as: http://www.ebi.uniprot.org/entry/
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b>?format=text&amp;ascii
+                                </li>
+                            </ul>
                         </p>
                         <br/>
                         <p>
-                            <a NAME="ShortLabelHelp"></a>Protein names are links you can
-                            click to get a view of the protein details. Also each protein name
-                            has a term in superscript which denotes the role that the protein
-                            plays in the interaction. These terms have tooltips associated with them
-                            to display the role name, and also the term is a clickable link from which
-                            you can view the full details of the controlled vocabulary term which presents
-                            the controlled vocabulary information for that term (eg the details held
-                            to define the meaning of the term 'bait').
+                            <a name="ShortLabelHelp"></a>
+                            Protein names are links you can click to get a view of the protein details. Also each
+                            protein name has a term in superscript which denotes the role that the protein plays in the
+                            interaction. These terms have tooltips associated with them to display the role name, and
+                            also the term is a clickable link from which you can view the full details of the controlled
+                            vocabulary term which presents the controlled vocabulary information for that term (eg the
+                            details held to define the meaning of the term 'bait').
                         </p>
-                        <p>Since the items displayed for a search result include many items not
-                            actually queried for, the items that matched the original search string
-                            are highlighted in
-                            <b>
-                                <i>bold italic</i>
-                            </b>. Specifically
-                            the *names* of the matching items are highlighted, since these are
-                            always displayed in every view.
-                        </p>
-                        <p>Where a protein (for example) might actually occur more than once in
-                            an experiment, the display is rationalised to avoid multiple presentations
-                            of the same experiment - therefore all occurrences within an experiment
-                            are gathered together into one experiment view.</p>
                         <p>
-                            <a NAME="ButtonDefinition"></a>At the bottom of the page are a number
-                            of buttons:
+                            Since the items displayed for a search result include many items not actually queried for,
+                            the items that matched the original search string are
+                            <b>
+                                <font color="red">highlighted in
+                            red</font>
+                            </b>. Specifically the *names* of the matching items are
+                            highlighted, since these are always displayed in every view.
+                        </p>
+                        <p>
+                            Where a protein (for example) might actually occur more than once in an experiment, the
+                            display is rationalised to avoid multiple presentations of the same experiment - therefore
+                            all occurrences within an experiment are gathered together into one experiment view.</p>
+                        <p>
+                            <a NAME="ButtonDefinition"></a>
+                            At the bottom of the page are a number of buttons:
                         </p>
                         <ul>
                             <ul>
 
-                                <li>a reset button to uncheck any textboxes;</li>
+                                <li>a
+                                    <b>Select all</b> button to check all tickboxes.
+                                </li>
+
+                                <li>a
+                                    <b>Clear all</b> button to uncheck all tickboxes.
+                                </li>
+
+                                <li>a
+                                    <b>Reset</b> button to undo any modification applied to the textboxes.
+                                </li>
 
                                 <li>
-                                    a graph button to display a graph of any selected proteins or interactions, which can be
-                                    chosen by clicking the appropriate checkboxes.</li>
+                                    a
+                                    <b>Graph</b> button to display a graph of any selected proteins or interactions,
+                                    which can be chosen by clicking the appropriate checkboxes.
+                                </li>
+
+                                <li>
+                                    a
+                                    <b>Path</b> button to compute the minimal connecting network (using
+                                    <a href="#mine">MiNe</a>) of the set of protein you have selected using the tickboxes.
+                                    It then displays a graph (using
+                                    <a href="#hierarchView">hierarchView</a>) showing
+                                    the computed path. The computed path is highlighted by coloring the interaction in
+                                    red along the path.
+                                </li>
                             </ul>
                         </ul>
 
@@ -554,15 +712,6 @@ Please see separate
 
                 </section> <!-- Basic Overview -->
 
-                <section title="Number of Interaction" name="number.interactions">
-                    <blockquote>
-                        <p>
-                    The column "number of interactions" indicates:
-                    a) for the query protein (first row), in how many distinct interactions it has been observed.
-                    b) for all interactors of the query protein (subsequent rows), in how many interactions the current protein (current row) and the query protein (first row) interact.
-                        </p>
-                    </blockquote>
-                </section>
             </section> <!-- Search -->
 
 
@@ -582,7 +731,8 @@ Please see separate
 
                     <blockquote>
                         The application to edit IntAct database is only available for
-                        users with <b>write</b> access to it.
+                        users with
+                        <b>write</b> access to it.
                     </blockquote>
 
                 </section>
@@ -661,8 +811,11 @@ Please see separate
                         The input field next to the Search button accepts the search criteria.
                         <br/>
                         The search is performed in the following order:
-                        <ol><li>accession number (ac)</li>
-                        <li>short label</li><li>primary id</li><li>full name</li>
+                        <ol>
+                            <li>accession number (ac)</li>
+                            <li>short label</li>
+                            <li>primary id</li>
+                            <li>full name</li>
                         </ol>
                         <img src="./images/editor/idea.gif" title=""
                             alt="" width="40" height="40" align="left"/>
@@ -670,7 +823,8 @@ Please see separate
                         <br/>
                         <br/>
                         You can accept the default search value (*) by simply clicking on the
-                        search button. This pratice is discouraged <b>strongly</b> as it may retrieve a large number
+                        search button. This pratice is discouraged
+                        <b>strongly</b> as it may retrieve a large number
                         of records from the database for some types (i.e., Interaction). Instead, you should
                         use more restrictive filtering such as EBI-3* to retrieve a subset of
                         records.
@@ -685,6 +839,7 @@ Please see separate
                         An example for a successful search:
                         <br/>
                         <img src="./images/editor/results.png" title="" alt="Results page"/>
+                        <br/>
                         The 'AC link' (see above) links the editor with the search application. The following
                         figure shows the result of clicking on EBI-39 link.
                         <br/>
@@ -739,8 +894,8 @@ Please see separate
                             a button (i.e., Add Annotation, Save etc) on the page.
                             <br/>
                             All shortlabels should be one to
-                            twenty characters from the character set blank, 0..9, a-z, : (colon) and
-                            -(dash). A dialog box similar to the following will appear for a
+                            twenty characters from the character set blank, 0..9, a-z, : ',' (colon), '_' (underscore) and
+                            '-' (hyphen). A dialog box similar to the following will appear for a
                             failure to adhere to this syntax. Short labels are unique for all the editors apart for
                             the Feature editor. The editor by default computes a unique shortlabel from a given
                             value. For example, if 'abc' arleay exists on the database, giving 'abc' as
@@ -749,7 +904,7 @@ Please see separate
                             <br/>
                             <br/>
                             <img src="./images/editor/shortlabel-client-error.png" title=""
-                                 alt="Incorrect shortlabel"/>
+                                alt="Incorrect shortlabel"/>
                             <br/>
                             <br/>
                             Submitting the form without entering a syntactically valid name
@@ -777,7 +932,8 @@ Please see separate
                                 alt="" width="40" height="40" align="left"/>
                             However, some editor components such as Experiment and
                             Interaction editors rely on Javascript and they wouldn't work correctly
-                            if Javascript is disabled.
+                            if Javascript is disabled. You will have then to enable Javascript in order to get
+                            the Editor to work correctly.
                             <br/>
                             <br/>
                         </blockquote>
@@ -1026,7 +1182,7 @@ Please see separate
                                 <img src="./images/editor/warning.gif" title=""
                                     alt="" width="40" height="40" align="left"/>
                                 You can switch back to the Normal Feature editor at anytime (or vice versa) but you
-                                will lose data enetered in the form.
+                                will lose data entered in the form.
                                 <br/>
                                 <br/>
                                 <br/>
@@ -1036,7 +1192,7 @@ Please see separate
                                 <img src="./images/editor/hotspot-editor.png" title="" alt="Hotspot Editor"/>
                                 <br/>
                                 <br/>
-                                See the curartion manual for the format for hotspots. Any errors in adding hotspot entries
+                                See the curation manual for the format of hotspots. Any errors in adding hotspot entries
                                 are shown in red with an error message.
                                 <br/>
                                 <br/>
@@ -1109,8 +1265,7 @@ Please see separate
                         <br/>
                         <br/>
 
-                        <b>Can I connect to my last session when
-                            my session expires?</b>
+                        <b>Can I connect to my last session when my session expires?</b>
                         <br/>
                         No. Once your session expires you need to login again and this in turn
                         will start a new session.
@@ -1118,8 +1273,7 @@ Please see separate
                         <br/>
 
 
-                        <b>Sometimes I get an error when Enter
-                            key is pressed for a search string in the sidebar.
+                        <b>Sometimes I get an error when Enter key is pressed for a search string in the sidebar.
                             <br/>
                         </b>This behaviour was observed with Explorer and Konqueror but not
                         with Mozilla. The simple solution is to click on Search button instead.
@@ -1129,14 +1283,16 @@ Please see separate
                         <b>It hangs for a tax id in BioSource editor.</b>
                         <br/>
                         Either Newt server is not accessible or down. There is no way to get
-                        around this problem; you need to access the Newt server to do the
-                        auto-completion.
+                        around this problem; you need to access the Newt server to do the auto-completion.
+                        <br/> Currenlty, you
+                        <u>have to</u> go through Newt to get your taxid validated as well as the
+                        shortlabel and the fullname set to the BioSource.
+
                         <br/>
                         <br/>
 
-                        <b>The parameter to search for Proteins
-                            given as name is ignored when a value is provided for IntactAc in
-                            the Interaction editor.</b>
+                        <b>The parameter to search for Proteins given as name is ignored when a value is provided for
+                           Intact Ac in the Interaction editor.</b>
                         <br/>
                         By default, IntAct AC is the most specific and it is followed by SP AC
                         and finally the shortlabel. Given two values for  name and
@@ -1144,14 +1300,13 @@ Please see separate
                         <br/>
                         <br/>
 
-                        <b>Is there a way to save or delete all
-                            Proteins in one single click?</b>
+                        <b>In the interaction form, is there a way to save or delete all Proteins in one single click?</b>
                         <br/>
                         Not at the moment. We may add this behaviour later.
                         <br/>
                         <br/>
 
-                        <b>The focus seems to be lost (can't enter or select an iterm in the editor).</b>
+                        <b>The focus seems to be lost (can't enter or select an item in the editor).</b>
                         <br/>
                         This is most likely due to the search popup having the focus. Close the search
                         popup window to regain the focus.
@@ -1165,14 +1320,16 @@ Please see separate
             <section title="hierarchView" name="hierarchView">
 
                 <blockquote>
-                    HierarchView is a web based application which visualises interaction networks contained in IntAct.
+                    HierarchView is a web based application which allow to visualise interaction networks contained in IntAct.
                     <br/>
                     <br/>
                     This includes :
                     <ul>
                         <li> Query interface: to select the set of Interactors from which the interaction network is built, </li>
                         <li> Visualising an interaction network as a two dimensional graph, </li>
-                        <li> Visualisation of a protein's context (using Search application), </li>
+                        <li> Visualisation of a protein's context (using the
+                            <a href="#search">Search application</a>),
+                        </li>
                         <li> Performing action by clicking on a protein of the displayed network, to</li>
                         <ul>
                             <li> Center the view, </li>
@@ -1417,6 +1574,10 @@ Please see separate
                             <i>PSI-XML</i> section and a new window will appear in which the XML content will be
                             displayed. After the data are fully loaded you can save that content on your hard disk.
                             <br/>
+                            <u>Note to Netscape's users</u>: You may have to right-click and select
+                            <b>view source</b>
+                            in order to display the XML code.
+                            <br/>
                             <br/>
                             You can then, for instance, load the downloaded data in an external tool for further analysis.
                             <br/>
@@ -1431,6 +1592,7 @@ Please see separate
                 </section> <!-- How to interact -->
 
             </section> <!-- hierarchView -->
+
 
             <section name="mine" title="MiNe - Minimal connecting network">
                 <blockquote>
@@ -1496,8 +1658,8 @@ Please see separate
 
                 <section name="mine.ambiguous.additional" title="What are additional search phrases ?">
                     <blockquote>
-						In this textbox you can enter search phrases in addition to or instead of the
-						selected proteins shown on the page.
+						In this textbox you can enter an additional search query that will be used to complement the set
+						of proteins currently shown on the page.
                         <br/>
 						If you want to add search phrases to your selection type a protein or an accession 
 						number or a comma seperated list into this field
@@ -1524,10 +1686,10 @@ Please see separate
                 <section name="graph2mif.access" title="Access">
                     <blockquote>
                         The URL to access the web service is the following:
-                        <pre>http://server.domain:port/intact/graph2mif</pre>
+                        <pre>http://server.domain[:port]/intact/graph2mif</pre>
                         <br/>
                         You can replace
-                        <code>server.domain:port</code> by
+                        <code>server.domain[:port]</code> by
                         <code>www.ebi.ac.uk</code>
                         <br/>
                         <br/>
@@ -1558,13 +1720,13 @@ Please see separate
                         Depending on the way you would like to access the data you call the soap-method
                         <pre>getMIF()</pre> or directly the URL like mentioned above.
                         Both of them have three Arguments
-                        <pre>ac, depth, strictmif</pre>.
+                        <pre>ac, depth, strictmif</pre>
                         A graph will be retrieved (representing a protein protein interaction network)
                         starting with an interactor of
                         <pre>ac</pre> and expanded to depth of
-                        <pre>depth</pre>.
+                        <pre>depth</pre>
                         <pre>striftmif</pre> is a Boolean. When set to true, a graph in PSI MI XML format will only be generated if the data allows to provide all required PSI MI attributes. Otherwise a exception is thrown.
-When set to false, the generated graph will still be in PSI MI format, but might lack some mandatory elements.
+                        When set to false, the generated graph will still be in PSI MI format, but might lack some mandatory elements.
                         <br/>
                         The resulting graph will be returned in PSI MI XML as a formated XML-String.
                         <br/>
