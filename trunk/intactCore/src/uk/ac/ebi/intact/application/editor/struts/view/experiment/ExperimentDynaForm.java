@@ -33,9 +33,9 @@ public class ExperimentDynaForm extends DynaValidatorForm {
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
-        String organism = ((String) get("organism")).trim();
-        String interaction = ((String) get("interaction")).trim();
-        String identification = ((String) get("identification")).trim();
+        String organism = removeDots((String) get("organism"));
+        String interaction = removeDots((String) get("interaction"));
+        String identification = removeDots((String) get("identification"));
 
         // Must select from the drop down list.
         if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
@@ -67,5 +67,30 @@ public class ExperimentDynaForm extends DynaValidatorForm {
         set("organism", EditorMenuFactory.SELECT_LIST_ITEM);
         set("interaction", EditorMenuFactory.SELECT_LIST_ITEM);
         set("identification", EditorMenuFactory.SELECT_LIST_ITEM);
+    }
+
+    /**
+     * Removes leading '.' characters from given string.
+     * @param s the string to remove leading '.' characters.
+     * @return a string without leading '.' characters. This my equivalent to
+     * the given string if it has no leading '.' characters.
+     */
+    private String removeDots(String s) {
+        if (s.charAt(0) != '.') {
+            return s;
+        }
+        // At least the first psotion contains '.'
+
+        // Holds the first non dot position.
+        int pos = 0;
+        int size = s.length();
+        // Search for non dot position, if found exit the loop.
+        for (int i = 1; i < size; i++) {
+            if (s.charAt(i) != '.') {
+                pos = i;
+                break;
+            }
+        }
+        return s.substring(pos);
     }
 }
