@@ -183,9 +183,7 @@
         <!-- Copy repository files -->
         <copy todir="${dest.dir}/config">
             <fileset dir="${root.config.dir}">
-                <include name="repository.xml"/>
-                <include name="repository_internal.xml"/>
-                <include name="repository_user.xml"/>
+                <include name="repository*.xml"/>
                 <include name="repository.dtd"/>
                 <include name="Institution.properties"/>
             </fileset>
