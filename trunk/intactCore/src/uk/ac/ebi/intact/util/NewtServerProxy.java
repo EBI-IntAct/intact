@@ -53,8 +53,14 @@ public class NewtServerProxy {
             return myTaxId;
         }
 
+        /**
+         * @return return the shortLabel or the taxId if the short label is not found.
+         */
         public String getShortLabel() {
-            return myShortLabel;
+            if (myShortLabel != null)
+                return myShortLabel;
+            else
+                return (myTaxId + "");
         }
 
         public String getFullName() {
