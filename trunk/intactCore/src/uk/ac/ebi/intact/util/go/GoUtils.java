@@ -393,7 +393,7 @@ public class GoUtils {
             out = new PrintWriter(new BufferedWriter(new FileWriter(targetFile)));
 
             // Get all members of the class
-            Collection result = myHelper.search(myTargetClass.getName(), "ac", "*");
+            Collection result = myHelper.search(myTargetClass, "ac", "*");
 
             for (Iterator iterator = result.iterator(); iterator.hasNext();) {
                 printGoDef((CvObject) iterator.next(), out, v14);
@@ -422,7 +422,7 @@ public class GoUtils {
             out = new PrintWriter(new BufferedWriter(new FileWriter(targetFile)));
 
             // Get a random members of the class
-            Collection result = myHelper.search(myTargetClass.getName(), "ac", "*");
+            Collection result = myHelper.search(myTargetClass, "ac", "*");
 
             if (result.size() > 0) {
                 Iterator iterator = result.iterator();
