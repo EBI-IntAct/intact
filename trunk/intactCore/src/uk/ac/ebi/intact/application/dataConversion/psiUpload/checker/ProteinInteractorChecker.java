@@ -61,7 +61,7 @@ public final class ProteinInteractorChecker {
     /**
      * Build an identifier for the cache
      *
-     * @param id uniprot id
+     * @param id    uniprot id
      * @param taxid taxid of the biosource (can be null)
      * @return a unique identifier for the given protein and taxid.
      */
@@ -69,7 +69,7 @@ public final class ProteinInteractorChecker {
                                    final String taxid ) {
         String cacheId = null;
 
-        if(null == taxid){
+        if( null == taxid ) {
             cacheId = id;
         } else {
             cacheId = id + '#' + taxid;
@@ -95,14 +95,14 @@ public final class ProteinInteractorChecker {
      * Remove from a collection of Protein all those that are not related to the given taxid.
      *
      * @param proteins the collection of protein to filter out.
-     * @param taxid the taxid that the returned protein must have (can be null - in which case there is no filtering).
+     * @param taxid    the taxid that the returned protein must have (can be null - in which case there is no filtering).
      * @return a new collection of proteins.
      */
     private static Collection filterByTaxid( final Collection proteins,
                                              final String taxid ) {
 
         if( taxid == null ) {
-            if(DEBUG) {
+            if( DEBUG ) {
                 System.out.println( "No taxid specified, returns identical collection" );
             }
 
@@ -131,7 +131,6 @@ public final class ProteinInteractorChecker {
      * @param id     the id of the object we are looking for (must not be null)
      * @param taxid  the taxid filter (can be null)
      * @param helper the access to the Intact database.
-     *
      * @return the objects that holds either [protein, -] or [protein, spliceVariant] or null if not found.
      */
     private static ProteinHolder getIntactProtein( final String id,
@@ -186,10 +185,10 @@ public final class ProteinInteractorChecker {
                     }
 
                     Collection filteredProteins = filterByTaxid( proteins, taxid );
-
-                    if( filteredProteins.size() == 1 ) {
+                    int count = filteredProteins.size();
+                    if( count == 1 ) {
                         protein = (Protein) filteredProteins.iterator().next();
-                    } else {
+                    } else if( count > 1 ) {
                         StringBuffer sb = new StringBuffer( 64 );
                         sb.append( "Search By Xref(" + proteinId + ") returned " + proteins.size() + " elements" );
                         sb.append( "After filtering on taxid(" + taxid + "): " + filteredProteins.size() +
@@ -204,7 +203,7 @@ public final class ProteinInteractorChecker {
 
             if( protein == null ) {
                 if( DEBUG ) {
-                    System.out.println( "Could not found the master protein ("+ proteinId +")" );
+                    System.out.println( "Could not found the master protein (" + proteinId + ")" );
                 }
                 return null;
             }
@@ -298,15 +297,15 @@ public final class ProteinInteractorChecker {
                 }
 
                 Collection filteredProteins = filterByTaxid( proteins, taxid );
-
-                if( filteredProteins.size() == 1 ) {
+                int count = filteredProteins.size();
+                if( count == 1 ) {
                     protein = (Protein) filteredProteins.iterator().next();
                     if( DEBUG ) {
                         System.out.println( "Found: " + protein );
                     }
-                } else {
+                } else if( count > 1 ) {
                     StringBuffer sb = new StringBuffer( 64 );
-                    sb.append( "Search By Xref(" + id + ") returned " + proteins.size() + " elements" );
+                    sb.append( "Search By Xref(" + id + ") returned " + proteins.size() + " elements. " );
                     sb.append( "After filtering on taxid(" + taxid + "): " + filteredProteins.size() +
                                " proteins remaining" );
                     throw new AmbiguousBioSourceException( sb.toString() );
@@ -340,12 +339,12 @@ public final class ProteinInteractorChecker {
      * @return true if more than one distinct biosource found, else false.
      */
     private static boolean hasMultipleBioSource( final Collection proteins ) {
-         Set biosources = new HashSet();
+        Set biosources = new HashSet();
 
         for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
             Protein protein = (Protein) iterator.next();
             BioSource bioSource = protein.getBioSource();
-            if( null != bioSource ){
+            if( null != bioSource ) {
                 biosources.add( bioSource );
             }
         }
