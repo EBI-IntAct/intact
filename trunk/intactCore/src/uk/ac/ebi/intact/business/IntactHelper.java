@@ -1346,35 +1346,43 @@ public class IntactHelper implements SearchI, Serializable {
      *
      * @return BioSource the result of the search, or null if not found
      *
-     * @exception IntactException thrown if a search problem occurs
+     * @exception IntactException thrown if a search problem occurs, or more than
+     * one BioSource found
      *
      * NB Not tested yet - requires BioSource data in DB
      *
      */
     public BioSource getBioSourceByName(String name) throws IntactException {
 
-        BioSource result = null;
-
         Collection resultList = null;
-
         resultList = this.search("uk.ac.ebi.intact.model.BioSource", "scientificName", name);
 
-        if (resultList.isEmpty()) {
-            result = null;
-        } else {
-            Iterator i = resultList.iterator();
-            result = (BioSource) i.next();
-            if (i.hasNext()) {
-                IntactException ie = new IntactException("More than one object returned by search by scientific name.");
-                throw(ie);
-            }
-        }
-
-        //this gets the BioSource instance - now need to use its taxId to get the object....
-        //Not sure how this should work!!
-
-        return result;
+        if (resultList.isEmpty()) return null;
+        if(resultList.size() > 1) throw new IntactException("More than one BioSource returned by name search");
+        return (BioSource)resultList.iterator().next();
     }
+
+    /**
+     *  Searches for a BioSource given a tax ID. The taxt ID must be
+     * unique and therefore if a match is found only a single BioSource should
+     * be returned.
+     * @param taxId The tax ID to search on - should be unique
+     * @return BioSource The matching BioSource object, or null if none found
+     * @exception IntactException thronw if there was a search problem, or if more
+     * than one BioSource was found
+     *
+     */
+     public BioSource getBioSourceByTaxId(String taxId) throws IntactException {
+
+        Collection resultList = null;
+        resultList = this.search("uk.ac.ebi.intact.model.BioSource", "taxId", taxId);
+
+        if (resultList.isEmpty()) return null;
+        if(resultList.size() > 1) throw new IntactException("More than one BioSource returned by taxtID search");
+        return (BioSource)resultList.iterator().next();
+
+    }
+
 
     /**
      *  This method is used for obtaining an interactor given a specific BioSource and
@@ -1704,7 +1712,7 @@ public class IntactHelper implements SearchI, Serializable {
             return partialGraph;
         }
 
-        Iterator i = startNode.getActiveInstance().iterator();
+        Iterator i = startNode.getActiveInstances().iterator();
 
         Component current = null;
         while (i.hasNext()) {
@@ -1755,10 +1763,10 @@ public class IntactHelper implements SearchI, Serializable {
         switch (complexExpansion) {
             case Constants.EXPANSION_ALL:
                 {
-                    baits = new ArrayList (current.getComponent().size());
+                    baits = new ArrayList (current.getComponents().size());
 
                     /* all components are considered as baits */
-                    Iterator i = current.getComponent().iterator();
+                    Iterator i = current.getComponents().iterator();
                     while (i.hasNext()) {
                         baits.add(i.next());
                     }
@@ -1771,8 +1779,8 @@ public class IntactHelper implements SearchI, Serializable {
                      */
                     Component bait = current.getBait();
                     if (null == bait) {
-                        baits = new ArrayList (current.getComponent().size());
-                        Iterator i = current.getComponent().iterator();
+                        baits = new ArrayList (current.getComponents().size());
+                        Iterator i = current.getComponents().iterator();
                         if (i.hasNext()) {
                             baits.add(i.next());
                         }
@@ -1784,8 +1792,8 @@ public class IntactHelper implements SearchI, Serializable {
         }
 
         /* Create list of preys */
-        ArrayList preys = new ArrayList(current.getComponent().size());
-        Iterator i = current.getComponent().iterator();
+        ArrayList preys = new ArrayList(current.getComponents().size());
+        Iterator i = current.getComponents().iterator();
         while (i.hasNext()) {
             preys.add(i.next());
         }
@@ -1817,7 +1825,7 @@ public class IntactHelper implements SearchI, Serializable {
         }
 
         /* recursively explore all Interactors linked to current Interaction */
-        for (Iterator iterator = current.getComponent().iterator(); iterator.hasNext();) {
+        for (Iterator iterator = current.getComponents().iterator(); iterator.hasNext();) {
             Component component = (Component) iterator.next();
             partialGraph = subGraphPartial (component.getInteractor(),
                                             graphDepth - 1,
@@ -1845,12 +1853,12 @@ public class IntactHelper implements SearchI, Serializable {
         if(item instanceof Protein) {
             //collect all the related experiments (interactions can be displayed from them)
             Protein protein = (Protein)item;
-            Collection components = protein.getActiveInstance();
+            Collection components = protein.getActiveInstances();
             Iterator iter1 = components.iterator();
             while(iter1.hasNext()) {
                 Component component = (Component)iter1.next();
                 Interaction interaction = component.getInteraction();
-                Collection experiments = interaction.getExperiment();
+                Collection experiments = interaction.getExperiments();
                 Iterator iter2 = experiments.iterator();
                 while(iter2.hasNext()) {
                     results.add(iter2.next());
@@ -1860,7 +1868,7 @@ public class IntactHelper implements SearchI, Serializable {
 
         if(item instanceof Interaction) {
             //collect all experiments....
-            Collection experiments = ((Interaction)item).getExperiment();
+            Collection experiments = ((Interaction)item).getExperiments();
             Iterator iter3 = experiments.iterator();
                 while(iter3.hasNext()) {
                     results.add(iter3.next());
