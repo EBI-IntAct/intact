@@ -118,14 +118,23 @@ public class InteractionNetwork extends Graph {
    */
   public void initNodes()
   {
-    NodeI aNode;
+    Node aNode;
+
     HashMap  someNodes = super.getNodes();
-    Iterator iterator = someNodes.values().iterator ();
+    Set keys = someNodes.keySet();
+    Iterator iterator = keys.iterator();
 
     while (iterator.hasNext ()) {
-      aNode = (NodeI) ((Entry) iterator.next ()).getValue();
-      initNodeDisplay (aNode);
+      aNode = (Node) someNodes.get(iterator.next());
+      this.initNodeDisplay (aNode);
     }
+
+//     Iterator iterator = someNodes.values().iterator ();
+
+//     while (iterator.hasNext ()) {
+//       aNode = (Node) ((Entry) iterator.next()).getValue();
+//       this.initNodeDisplay (aNode);
+//     }
 
   } // initNodes
 
