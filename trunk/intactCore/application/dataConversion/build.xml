@@ -231,6 +231,7 @@
                 <include name="yasp.jar"/>
                 <include name="aristotle.jar"/>
                 <include name="flatfilewriter.jar"/>
+                <include name="antlr.jar"/>
                 <include name="sptr-interfaces.jar"/>
                 <include name="log4j-1.2.5.jar"/>
                 <include name="${db}"/>
@@ -302,7 +303,7 @@
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
 
     <target name="junit-test-stdout" depends="clean, compile-test"
-            description="Runs JUnit directly with output directed to stdout">
+        description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value="uk.ac.ebi.intact.application.psiUpload.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
