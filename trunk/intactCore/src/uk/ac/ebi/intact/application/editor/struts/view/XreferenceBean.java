@@ -90,6 +90,18 @@ public class XreferenceBean extends AbstractEditKeyBean {
     }
 
     /**
+     * Override to make a clone of this object.
+     *
+     * @return a cloned version of the current instance.
+     * @throws CloneNotSupportedException for errors in cloning.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        XreferenceBean copy = (XreferenceBean) super.clone();
+        copy.myXref = null;
+        return copy;
+    }
+
+    /**
      * Updates the internal xref with the new values from the form.
      * @param helper the IntactHelper to search the database
      * @throws IntactException for errors in searching the database.
@@ -100,12 +112,19 @@ public class XreferenceBean extends AbstractEditKeyBean {
                 CvDatabase.class, myDatabaseName);
         CvXrefQualifier xqual = (CvXrefQualifier) helper.getObjectByLabel(
                 CvXrefQualifier.class, myReferenceQualifer);
-        // Update the existing xref with new values.
-        myXref.setCvDatabase(db);
-        myXref.setPrimaryId(myPrimaryId);
-        myXref.setSecondaryId(mySecondaryId);
-        myXref.setDbRelease(myReleaseNumber);
-        myXref.setCvXrefQualifier(xqual);
+        // Create a new xref (true if this object was cloned).
+        if (myXref == null) {
+            myXref = new Xref(getService().getOwner(), db, myPrimaryId,
+                    mySecondaryId, myReleaseNumber, xqual);
+        }
+        else {
+            // Update the existing xref with new values.
+            myXref.setCvDatabase(db);
+            myXref.setPrimaryId(myPrimaryId);
+            myXref.setSecondaryId(mySecondaryId);
+            myXref.setDbRelease(myReleaseNumber);
+            myXref.setCvXrefQualifier(xqual);
+        }
         return myXref;
     }
 
