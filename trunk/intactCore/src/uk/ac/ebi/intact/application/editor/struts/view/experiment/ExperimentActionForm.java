@@ -34,7 +34,7 @@ public class ExperimentActionForm extends EditorActionForm {
     }
 
     /**
-     * @struts.validator type="mask" msgkey="error.exp.biosrc"
+     * @struts.validator type="mask" msgkey="error.biosrc"
      * @struts.validator-var name="mask" value="${menu-pat}"
      */
     public void setOrganism(String organism) {
