@@ -55,7 +55,7 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
 
         // Delete the features.
         for (Iterator iter = beans.iterator(); iter.hasNext();) {
-            view.deleteFeature((FeatureBean) iter.next());
+            view.delFeature((FeatureBean) iter.next());
         }
         return updateForm(mapping, form, request);
     }
