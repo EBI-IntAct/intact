@@ -95,6 +95,20 @@ public class ResultBean implements Serializable {
         return myAnnotObject.getFullName();
     }
 
+    /**
+     * True if the given object and this object's annotated object are of safe type.
+     * @param obj the object to compare for type.
+     * @return true if <code>obj.getClass()</code> equals the class of the annotated
+     * object.
+     */
+    public boolean isSameType(Object obj) {
+        // Same instance?
+        if (obj == this) {
+            return true;
+        }
+        return getClass() == obj.getClass();
+    }
+
     // Override Objects's equal method.
 
     /**
