@@ -6,24 +6,25 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.cvedit.struts.taglibs;
 
-import uk.ac.ebi.intact.application.cvedit.business.IntactServiceIF;
-
 import java.util.*;
-import java.io.IOException;
 
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.*;
 
 /**
  * This tage class compiles a list of CV topics for a user to edit. The list of CV
- * topics are read from CVTopicResources.properties file. This file must be at
- * the top level of classes directory (Tomcat adds to this location to the class
- * path).
+ * topics are read from given resource file (must be at the top level of classes
+ * directory) and saves it in a HTTP request object.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
 public class CreateIntactTypeListTag extends TagSupport {
+
+    /**
+     * The key to access the list from a request object.
+     */
+    private String myKey;
 
     /**
      * The name of the resource bundle.
@@ -35,6 +36,14 @@ public class CreateIntactTypeListTag extends TagSupport {
      */
     public int doStartTag() throws JspTagException {
         return EVAL_BODY_INCLUDE;
+    }
+
+    /**
+     * Sets the key to access the resources.
+     * @param key the key to access the resources.
+     */
+    public void setKey(String key) {
+        myKey = key;
     }
 
     /**
@@ -61,8 +70,7 @@ public class CreateIntactTypeListTag extends TagSupport {
             types.add(keys.nextElement());
         }
         // Save the list in a request.
-        super.pageContext.getRequest().setAttribute(
-            IntactServiceIF.INTACT_TYPES, types);
-       return EVAL_PAGE;
+        super.pageContext.getRequest().setAttribute(myKey, types);
+        return EVAL_PAGE;
     }
 }
