@@ -9,26 +9,24 @@
 
   Purpose:    Overview of pairwise interactions
 
-  Usage:      sqlplus username/password @progname.sql
+  Usage:      psql -f progname.sql
 
   $Date$
   $Author$
   $Locker$
 
-  Note: not yet modified
-	
   *************************************************************/
 
---- Setup layout
 
 --- Main query
 SELECT e.shortlabel, i.shortLabel, 
        m.shortLabel, r.shortLabel
-  FROM interactor i, interactor m, component c, ControlledVocab r, 
-       experiment e, int2exp i2e 
+  FROM ia_interactor i, ia_interactor m, ia_component c, ia_ControlledVocab r, 
+       ia_experiment e, ia_int2exp i2e 
  WHERE i.ac=c.interaction_ac 
    AND m.ac=interactor_ac 
    AND c.role=r.ac 
    AND e.ac=i2e.experiment_ac 
    AND i.ac=i2e.interaction_ac;
 
+--- End
