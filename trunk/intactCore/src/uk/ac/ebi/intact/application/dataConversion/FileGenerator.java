@@ -5,6 +5,8 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 
 import java.util.*;
@@ -62,7 +64,13 @@ public class FileGenerator {
                     "shortLabel", patterns.nextToken()));
         }
         System.err.println("....Done. ");
-        System.err.println("Found " + searchResults.size() + " Experiments.");
+        int resultSize = searchResults.size();
+        if((resultSize > 1) || (resultSize == 0)) {
+        System.err.println("Found " + resultSize + " Experiments.");
+        }
+        else {
+           System.err.println("Found 1 Experiment.");
+        }
 
         return searchResults;
     }
@@ -249,12 +257,17 @@ public class FileGenerator {
             int chunkCount = 1; //used to distinguish files
             String mainFileName = null;
             List itemsToProcess = null;
-            Document interactionList = null;
+
+            //set up the basic PSI stuff..
+            //Document singleFileDoc = builder.getCurrentDocument();
+            Document singleFileDoc = builder.newPsiDoc(true);
+            Node root = singleFileDoc.getDocumentElement();
+
             for (Iterator it = FileGenerator.largeExperimentList.iterator(); it.hasNext();) {
                 Experiment exp = (Experiment)it.next();
                 //first need to build a file with just the initial PSI info..
-                String rootPsiDoc = exp.getShortLabel() + "_psi_entry.xml";
-                builder.writeData(rootPsiDoc, builder.getCurrentDocument());
+                //String rootPsiDoc = exp.getShortLabel() + "_psi_entry.xml";
+                //builder.writeData(rootPsiDoc, builder.getCurrentDocument());
 
                 //build the interactionList files..
                 System.out.println("generating Interaction files for experiment "
@@ -262,7 +275,7 @@ public class FileGenerator {
                 mainFileName = exp.getShortLabel() + "_interactions_";  //chunk number added later
                 Collection interactions = exp.getInteractions();
                 //System.out.println("Number of interactions found: " + interactions.size());
-
+                //System.out.println("Type of interaction Collection: " + interactions.getClass().getName());
                 //Lists are easier to work with...
                 if (List.class.isAssignableFrom(interactions.getClass())) {
                     while(startIndex < interactions.size()) {
@@ -271,10 +284,45 @@ public class FileGenerator {
                         //System.out.println("number of interactions per chunk: " + itemsToProcess.size());
                         //now build the XML and generate a file for it...
                         if(!itemsToProcess.isEmpty()) {
-                            interactionList = builder.buildInteractionsOnly(itemsToProcess);
+
+                            //build a Document containing the PSI info, the Experiment
+                            //info, the interactionList and the interactorList for
+                            //each chunk of interactions, then dump to a file
+                            System.out.println("Generating InteractionList for chunk "
+                                    + chunkCount + "...");
+                            System.out.println();
+                            Node interactionRoot = singleFileDoc.importNode(builder.buildInteractionsOnly(itemsToProcess), true);
+
+                            //now the interactionList has been built we can get at the other info...
+                            //NB need to rearrange the order of child appending, but AFTER
+                            //generation of interactions...
+                            System.out.println("Generating ExperimentList for chunk "
+                                    + chunkCount + "...");
+                            System.out.println();
+                            Node expRoot = singleFileDoc.importNode(builder.getExperimentList(), true);
+
+                            System.out.println("Generating InteractorList for chunk "
+                                    + chunkCount + "...");
+                            System.out.println();
+                            Node interactorRoot = singleFileDoc.importNode(builder.getInteractorList(), true);
+
+                            //Now add the new elements into the root to be dumped...
+                            root.appendChild(expRoot);
+                            root.appendChild(interactionRoot);
+                            root.appendChild(interactorRoot);
+
+                            //interactionList = builder.buildInteractionsOnly(itemsToProcess);
                             String fileName = mainFileName + chunkCount + ".xml";
-                            builder.writeData(fileName, interactionList);
-                            System.out.println(chunkCount);
+                            //builder.writeData(fileName, interactionList);
+                            System.out.println("Dumping chunk data...");
+                            builder.writeData(fileName, singleFileDoc);
+                            System.out.println("chunk " + chunkCount + " complete.");
+                            System.out.println();
+
+                            //now need to reset the singleFileDoc for the next chunk..
+                            singleFileDoc = builder.newPsiDoc(true);
+                            root = singleFileDoc.getDocumentElement();
+
                             chunkCount++;
                             startIndex = endIndex;
                             endIndex = endIndex + 1000;
@@ -285,19 +333,19 @@ public class FileGenerator {
                         //dump the interactorList for this chunk - NB
                         //this is not the best as it SHOULD have them all at th end but
                         //currently it does not. Don't have time to debug this right now!!
-                        System.out.println("Dumping interactorList XML...");
-                        String protListFile = exp.getShortLabel() + "_interactorList"
-                                + chunkCount + ".xml";
-                        builder.writeData(protListFile, builder.getInteractorList());
+                        //System.out.println("Dumping interactorList XML...");
+                        //String protListFile = exp.getShortLabel() + "_interactorList"
+                       //         + chunkCount + ".xml";
+                        //builder.writeData(protListFile, builder.getInteractorList());
                     }
                 }
                 //This will only NOT be a List if someone changes the model
                 //data types!!
 
                 //now dump the ExperimentList
-                System.out.println(("Dumping ExperimentList XML.."));
-                String expListFile = exp.getShortLabel() + "_experimentList.xml";
-                builder.writeData(expListFile, builder.getExperimentList());
+                //System.out.println(("Dumping ExperimentList XML.."));
+                //String expListFile = exp.getShortLabel() + "_experimentList.xml";
+                //builder.writeData(expListFile, builder.getExperimentList());
 
                 //dump the interactorList - NB can only do this at the end
                 //System.out.println("Dumping interactorList XML...");
