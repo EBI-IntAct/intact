@@ -312,7 +312,7 @@ public class Component extends BasicObjectImpl {
     }
 
     /**
-     * This is a package visible method specifically for the clone method
+     * This method is specifically for the clone method
      * of InteractionImpl class. The present setInteraction method changes
      * the argument passed, thus causing changes to the source of the
      * clone.
@@ -320,10 +320,15 @@ public class Component extends BasicObjectImpl {
      * @param interaction the interaction to set. This simply replaces
      * the existing interaction.
      */
-    void setInteractionForClone(Interaction interaction) {
+    protected void setInteractionForClone(Interaction interaction) {
         this.interaction = interaction;
     }
-    void setInteractorForClone(Interactor interactor) {
+
+    /**
+     * See the comments for {@link #setInteractionForClone(Interaction)} method.
+     * @param interactor
+     */
+    protected void setInteractorForClone(Interactor interactor) {
         this.interactor = interactor;
     }
 } // end Component
