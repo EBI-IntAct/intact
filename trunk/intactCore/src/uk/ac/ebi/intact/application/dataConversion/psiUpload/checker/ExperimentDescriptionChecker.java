@@ -62,7 +62,7 @@ public final class ExperimentDescriptionChecker {
         // We still check the rest of the ExperimentTag object.
 
         final HostOrganismTag hostOrganism = experimentDescription.getHostOrganism();
-        HostOrganismChecker.check( hostOrganism, bioSourceFactory );
+        HostOrganismChecker.check( hostOrganism, helper, bioSourceFactory );
 
         final InteractionDetectionTag interactionDetection = experimentDescription.getInteractionDetection();
         InteractionDetectionChecker.check( interactionDetection, helper );
