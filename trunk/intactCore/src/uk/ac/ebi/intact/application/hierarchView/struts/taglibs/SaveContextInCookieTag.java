@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUserI;
+import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
 
 /**
  * That tag allows to save in a cookie (stored in the client side)
@@ -90,17 +93,26 @@ public class SaveContextInCookieTag extends TagSupport {
         IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
         if (user == null) return EVAL_PAGE;
 
+        InteractionNetwork network = user.getInteractionNetwork();
+        if (network == null) return EVAL_PAGE;
+
         displayCookieContent ();
 
         // get the application path
         HttpServletRequest request = ((HttpServletRequest) pageContext.getRequest());
         String applicationPath = request.getContextPath();
 
-
         // save our context
-        saveCookie (applicationPath, "AC",     user.getInteractionNetwork().getCentralProteinAC());
-        saveCookie (applicationPath, "depth",  ""+user.getCurrentDepth());
-        saveCookie (applicationPath, "method", user.getMethodLabel());
+        ArrayList criterias = network.getCriteria();
+        int max = criterias.size();
+        for (int i = 0; i < max; i++) {
+            String query = ( (String[]) criterias.get(i) )[0];
+            saveCookie (applicationPath, "Q"+i, query);
+        }
+
+        saveCookie (applicationPath, "QUERY_COUNT", ""+max);
+        saveCookie (applicationPath, "DEPTH",       ""+user.getCurrentDepth());
+        saveCookie (applicationPath, "METHOD",      user.getMethodLabel());
 
         return EVAL_PAGE;
     }

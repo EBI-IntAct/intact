@@ -15,11 +15,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * That tag allows to restore the eventual user context of the user
@@ -64,20 +64,31 @@ public class RestoreContextFromCookieTag extends TagSupport {
         Cookie cookies[] = ((HttpServletRequest) pageContext.getRequest()).getCookies();
         if (cookies == null) return EVAL_PAGE;
 
-        String cookieName  = null;
-        String queryString = null;
+
         String method      = null;
         String depth       = null;
-        for (int i = 0; i < cookies.length; i++) {
-            cookieName = cookies[i].getName();
-            logger.info("In the cookie : " + cookieName + " = " + cookies[i].getValue());
-            if ("AC".equals(cookieName))
-                queryString = cookies[i].getValue();
-            else if ("depth".equals(cookieName))
-                 depth = cookies[i].getValue();
-            else if ("method".equals(cookieName))
-                 method = cookies[i].getValue();
+        String maxStr      = null;
+
+        // firstly cache the cookie content
+        HashMap cookieCache = new HashMap (cookies.length);
+        int i;
+        for (i = 0; i < cookies.length; i++) {
+            cookieCache.put (cookies[i].getName(), cookies[i].getValue());
         }
+
+        depth  = (String) cookieCache.get ("DEPTH");
+        method = (String) cookieCache.get ("METHOD");
+        maxStr = (String) cookieCache.get ("QUERY_COUNT");
+
+        int max = Integer.parseInt(maxStr);
+
+        // our entry points are store under Q0 .. Q8 (if QUERY_COUNT == 9)
+        String queryString = "";
+        for (i = 0; i < max; i++) {
+            queryString += (String) cookieCache.get ("Q"+i) + ",";
+        }
+        // remove the last comma
+        queryString = queryString.substring (0, queryString.length()-1);
 
         String url = null;
         if (queryString != null && method != null && depth != null) {
