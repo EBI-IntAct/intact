@@ -32,15 +32,8 @@ public class SingleResultAction extends AbstractResultAction {
     ///////////////////////////////////
 
 
-   
-     /**
-     * @see AbstractResultAction#getAbstractViewBean
-     * @param result
-     * @param user
-     * @param contextPath
-     * @return
-     */
     protected AbstractViewBean getAbstractViewBean ( Object result, IntactUserIF user, String contextPath ) {
+        
 
         logger.info( "single action: building view beans..." );
         //AnnotatedObject firstItem = (AnnotatedObject) results.iterator().next();
