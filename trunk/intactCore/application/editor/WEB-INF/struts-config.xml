@@ -87,15 +87,8 @@
             <form-property name="inter" type="java.lang.String"/>
             <form-property name="ident" type="java.lang.String"/>
 
-            <!-- Interactions for this experiment -->
-            <form-property name="ints"
-                type="uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean[]"/>
-            <form-property name="intCmd" type="java.lang.String[]"/>
-
-            <!-- Interactions for this experiment -->
-            <form-property name="intshold"
-                type="uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean[]"/>
-            <form-property name="intsholdCmd" type="java.lang.String[]"/>
+            <!-- Property for any button action related to an Interaction -->
+            <form-property name="intCmd" type="java.lang.String"/>
 
             <!-- Search parameters for an experiment -->
             <form-property name="intSearchLabel" type="java.lang.String"/>
