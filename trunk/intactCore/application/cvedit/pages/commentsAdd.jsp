@@ -30,7 +30,7 @@
             </html:select>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:textarea property="description" rows="3" cols="70"/>
+            <html:textarea property="description" rows="3" cols="70" value=""/>
         </td>
         <td class="tableCell" align="left" valign="bottom">
             <html:submit>
