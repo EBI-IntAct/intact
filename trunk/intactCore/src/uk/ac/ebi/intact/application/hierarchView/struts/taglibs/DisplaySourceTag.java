@@ -98,6 +98,7 @@ public class DisplaySourceTag extends TagSupport {
 
                 if (null == source) {
                     pageContext.getOut().write ("An error occured when trying to retreive source.<br>");
+                    logger.error("Error when trying to load the source class: " + method_class);
                 } else {
                     logger.info ("Display highlight source items for query = " + queryString +
                                  " SourceClass = " + method_class);
