@@ -1,0 +1,23 @@
+
+
+Notes for the PSI Generator
+------------------------------------------
+
+To Build it
+---------------
+Assuming you have already run ant compile-core to build the core files, cd to application/dataConversion. Then just type
+
+	ant compile
+
+to generate the classes directory. This will also copy the jar files from the lib directory of IntactCore, depending upon which 
+DB you have set to access (either postgres or oracle).
+
+
+To Run it
+-------------
+Assuming you have the usual things set up for Intact, simply type
+
+	scripts/psiRun.sh FileGenerator <filename>
+
+from the top level directory (ie from IntactCore). The <filename> parameter is simply the name of the XML file that you wish to use for 
+the results.
