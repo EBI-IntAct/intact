@@ -19,6 +19,7 @@ import javax.xml.transform.dom.DOMSource;
 
 import uk.ac.ebi.intact.util.*;
 import uk.ac.ebi.intact.business.*;
+import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
 
 /**
  * Bean to display an Intact object. This bean is used by results.jsp to display
@@ -63,6 +64,11 @@ public class IntactViewBean implements Serializable {
      */
     private int currentMode;
 
+    /**
+     * The search link; need this to pass to the style sheet. This defaults to local
+     * host search link.
+     */
+    private String searchLink = "http://localhost:8080/search/do/search?searchString=";
 
     /**
      * Construct an instance of this class for given object. A default XML builder is also created,
@@ -74,11 +80,11 @@ public class IntactViewBean implements Serializable {
      * @param xslt the name of the stylesheet to use for transformation.
      * @exception TransformerException for errors in creating a new transformer.
      */
-    public IntactViewBean(Object object, String xslt) throws IntactException, TransformerException {
-
-        //default builder - NB uses a default repository so may not be what is required!!
-        this(object, xslt, new XmlBuilder());
-    }
+//    public IntactViewBean(Object object, String xslt) throws IntactException, TransformerException {
+//
+//        //default builder - NB uses a default repository so may not be what is required!!
+//        this(object, xslt, new XmlBuilder());
+//    }
 
     /**
      * Construct an instance of this class for given object. If no XML builder is passed,
@@ -89,15 +95,34 @@ public class IntactViewBean implements Serializable {
      * @param builder The XML builder to be used
      * @exception TransformerException for errors in creating a new transformer.
      */
-    public IntactViewBean(Object object, String xslt, XmlBuilder builder) throws IntactException, TransformerException {
+//    public IntactViewBean(Object object, String xslt, XmlBuilder builder) throws IntactException, TransformerException {
+//        this(object, xslt, builder, null);
+//    }
+
+    /**
+     * Construct an instance of this class for given object. If no XML builder is passed,
+     * one will be created. However this means that the bean will maintain its own instance
+     * rather than being able to reuse an existing one. Same comments apply as for the other constructor.
+     * @param object the object to contruct the view.
+     * @param xslt the name of the stylesheet to use for transformation.
+     * @param builder The XML builder to be used
+     * @param link the HTML search link used by the stylesheet; null will default to local
+     * host search link.
+     * @exception TransformerException for errors in creating a new transformer.
+     */
+    public IntactViewBean(Object object, String xslt, XmlBuilder builder, String link)
+            throws IntactException, TransformerException {
         this.wrappedObject = object;
         this.stylesheet = xslt;
 
-        if(builder != null) {
+        if (builder != null) {
             this.builder = builder;
         }
         else {
             this.builder = new XmlBuilder();
+        }
+        if (link != null ){
+            searchLink = link;
         }
     }
 
@@ -119,11 +144,52 @@ public class IntactViewBean implements Serializable {
      * the view state of the object will be set to 'compact'
      */
     public void setViewMode(int mode) {
-        if((mode == XmlBuilder.CONTRACT_NODES) || (mode == XmlBuilder.EXPAND_NODES)) {
+        if ((mode == XmlBuilder.CONTRACT_NODES) || (mode == XmlBuilder.EXPAND_NODES)) {
             currentMode = mode;
         }
         else {
             currentMode = XmlBuilder.CONTRACT_NODES;
+        }
+    }
+
+    /**
+     * Sets the status attribute to <code>mode</code> for all the elements
+     * identified in <code>acsToSet</code> list. The status is unchanged
+     * if an AC is not found in the tree or <code>mode</code> is unknown.
+     * @param acsToSet contains list of ACs to set the status for; should contain
+     * strings.
+     * @param mode the mode to set; possible values are:
+     * {@link uk.ac.ebi.intact.util.XmlBuilder#CONTRACT_NODES} or
+     * {@link uk.ac.ebi.intact.util.XmlBuilder#EXPAND_NODES}.
+     * @exception IllegalArgumentException thrown if <code>acsToSet</code> list
+     * is null.
+     *
+     * <pre>
+     * pre: acsToSet != null
+     * pre: return->forall(obj: Object | obj.oclIsTypeOf(String))
+     * </pre>
+     */
+    public void resetStatus(Collection acsToSet, int mode) {
+
+        if(acsToSet == null) throw new IllegalArgumentException("List parameter must be non-null");
+        boolean modeOK = (mode == XmlBuilder.CONTRACT_NODES ||
+                (mode == XmlBuilder.EXPAND_NODES));
+        if (!modeOK) {
+            // Encountered an unknown mode.
+            return;
+        }
+        // The status to set.
+        String newStatus = (mode == XmlBuilder.CONTRACT_NODES) ? "compact" : "expand";
+        // The iterator to traverse the XML tree.
+        NodeIterator nodeIter = ((DocumentTraversal) rootNode).createNodeIterator(rootNode.getDocumentElement(),
+                NodeFilter.SHOW_ALL, null, true);
+        Node n = null;
+        while ((n = nodeIter.nextNode()) != null) {
+            Element elem = (Element) n;
+            String ac = elem.getAttribute("ac");
+            if (acsToSet.contains(ac)) {
+                elem.setAttribute("status", newStatus);
+            }
         }
     }
 
@@ -147,7 +213,7 @@ public class IntactViewBean implements Serializable {
      */
     public Element getXml() throws ParserConfigurationException {
 
-        if(this.elem == null) {
+        if (this.elem == null) {
 
             this.createXml();
         }
@@ -162,7 +228,7 @@ public class IntactViewBean implements Serializable {
      */
     public Document getAsXmlDoc() throws ParserConfigurationException {
 
-        if(this.rootNode == null) {
+        if (this.rootNode == null) {
 
             this.createXml();
         }
@@ -183,8 +249,9 @@ public class IntactViewBean implements Serializable {
                 factory.newTransformer(new StreamSource(this.stylesheet));
         // Set the global parameters.
         transformer.setParameter("tableName", "tbl_" + id);
-        if(currentMode == XmlBuilder.EXPAND_NODES) transformer.setParameter("viewMode", "expand");
-        if(currentMode == XmlBuilder.CONTRACT_NODES) transformer.setParameter("viewMode", "compact");
+        transformer.setParameter("searchLink", searchLink);
+        if (currentMode == XmlBuilder.EXPAND_NODES) transformer.setParameter("viewMode", "expand");
+        if (currentMode == XmlBuilder.CONTRACT_NODES) transformer.setParameter("viewMode", "compact");
 
         // Perform the transform.
         transformer.transform(new DOMSource(this.rootNode), out);
@@ -208,7 +275,7 @@ public class IntactViewBean implements Serializable {
 //            return;
 //        }
         try {
-            if((action != XmlBuilder.EXPAND_NODES) & (action != XmlBuilder.CONTRACT_NODES)) {
+            if ((action != XmlBuilder.EXPAND_NODES) & (action != XmlBuilder.CONTRACT_NODES)) {
 
                 System.out.println("unknown mode - default to compact..");
                 //default to compact as the requested mode is unknown
@@ -222,7 +289,7 @@ public class IntactViewBean implements Serializable {
                 //currentMode = action;
             }
         }
-        catch(ParserConfigurationException pe) {
+        catch (ParserConfigurationException pe) {
             throw new IntactException(pe.getMessage(), pe);
         }
     }
@@ -236,19 +303,19 @@ public class IntactViewBean implements Serializable {
      */
     public Element getElement(String ac) {
 
-        NodeIterator nodeIter = ((DocumentTraversal)this.rootNode).createNodeIterator(this.rootNode.getDocumentElement(),
-                                                NodeFilter.SHOW_ALL, null, true);
+        NodeIterator nodeIter = ((DocumentTraversal) this.rootNode).createNodeIterator(this.rootNode.getDocumentElement(),
+                NodeFilter.SHOW_ALL, null, true);
         Node n = null;
-        while((n = nodeIter.nextNode()) != null) {
-            Element elem = (Element)n;
-            if(elem.getAttribute("ac").equals(ac)) return elem;
+        while ((n = nodeIter.nextNode()) != null) {
+            Element elem = (Element) n;
+            if (elem.getAttribute("ac").equals(ac)) return elem;
         }
         return null;
     }
 
     /**
      * Gets all of the ACs for a given tag name in an XML document
-     * @tag The element type we want the ACs for
+     * @param tag The element type we want the ACs for
      *
      * @return List the list of ACs for that tag type (empty if none found)
      * @exception ParserConfigurationException if there was a problem getting the XML from the bean
@@ -258,12 +325,12 @@ public class IntactViewBean implements Serializable {
         List result = new ArrayList();
         //set up a NodeIterator for the bean
         Node root = this.rootNode.getDocumentElement();
-        NodeIterator nodeIter = ((DocumentTraversal)this.rootNode).createNodeIterator(root, NodeFilter.SHOW_ALL,null,true);
+        NodeIterator nodeIter = ((DocumentTraversal) this.rootNode).createNodeIterator(root, NodeFilter.SHOW_ALL, null, true);
         Node n = null;
         System.out.println("collecting " + tag + " ACs in bean...");
-        while((n = nodeIter.nextNode()) != null) {
-            Element e = (Element)n;
-            if((e.getTagName().equals(tag))) {
+        while ((n = nodeIter.nextNode()) != null) {
+            Element e = (Element) n;
+            if ((e.getTagName().equals(tag))) {
                 System.out.println(tag + " AC found:" + e.getAttribute("ac"));
                 result.add(e.getAttribute("ac"));
             }
@@ -281,20 +348,20 @@ public class IntactViewBean implements Serializable {
      */
     public void removeElements(List acList) {
 
-        if(acList == null) return;
+        if (acList == null) return;
         Iterator it = acList.iterator();
         String acToCheck = null;
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             Object obj = it.next();
-            if(!(obj instanceof String)) break;  //incorrect List element type
-            acToCheck = (String)obj;
+            if (!(obj instanceof String)) break;  //incorrect List element type
+            acToCheck = (String) obj;
 
-            NodeIterator nodeIter = ((DocumentTraversal)this.rootNode).createNodeIterator(this.rootNode.getDocumentElement(),
-                                                    NodeFilter.SHOW_ALL, null, true);
+            NodeIterator nodeIter = ((DocumentTraversal) this.rootNode).createNodeIterator(this.rootNode.getDocumentElement(),
+                    NodeFilter.SHOW_ALL, null, true);
             Node n = null;
-            while((n = nodeIter.nextNode()) != null) {
-                Element elem = (Element)n;
-                if(elem.getAttribute("ac").equals(acToCheck)) {
+            while ((n = nodeIter.nextNode()) != null) {
+                Element elem = (Element) n;
+                if (elem.getAttribute("ac").equals(acToCheck)) {
                     //remove it from the tree
                     Node parent = elem.getParentNode();
                     parent.removeChild(elem);
@@ -305,4 +372,4 @@ public class IntactViewBean implements Serializable {
 
     }
 
- }
+}

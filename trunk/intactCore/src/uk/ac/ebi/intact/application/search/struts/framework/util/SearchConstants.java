@@ -124,4 +124,9 @@ public interface SearchConstants {
      * To access intact types
      */
     public static final String INTACT_TYPES = "intacttypes";
+
+    /**
+     * The Protein View state.
+     */
+    public static final String PROTEIN_VIEW_BUTTON = "proteinView";
 }

@@ -10,8 +10,6 @@ import java.util.*;
 import java.io.IOException;
 
 import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
-import uk.ac.ebi.intact.application.search.exception.MissingIntactTypesException;
-import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Implments the IntactService interface.
@@ -20,11 +18,6 @@ import org.apache.commons.collections.CollectionUtils;
  * @version $Id$
  */
 public class IntactServiceImpl implements IntactServiceIF {
-
-    /**
-     * Holds Intact Types.
-     */
-    private ResourceBundle myIntactTypeProps;
 
     /**
      * Holds HierarchView properties.
@@ -37,36 +30,15 @@ public class IntactServiceImpl implements IntactServiceIF {
      * @param configdir the configuartion directory.
      * @exception IOException if the method fails to load the properties file.
      * @exception MissingResourceException unable to load a resource file.
-     * @exception MissingIntactTypesException no keys found in the Intact Type
-     * resource file.
      */
     public IntactServiceImpl(String configdir) throws IOException,
-            MissingResourceException, MissingIntactTypesException {
-        myIntactTypeProps = ResourceBundle.getBundle(
-                configdir + SearchConstants.INTACT_TYPE_PROPS);
-        // We must have Intact Types to search for; in other words, resource
-        // bundle can't be empty.
-        if (!myIntactTypeProps.getKeys().hasMoreElements()) {
-            throw new MissingIntactTypesException(
-                    "IntactTypes resource file cannot be empty");
-        }
+            MissingResourceException {
         myHvProps = ResourceBundle.getBundle(configdir + SearchConstants.HV_PROPS);
     }
 
     // Implements business methods
 
-    public String getClassName(String topic) {
-        return myIntactTypeProps.getString(topic);
-    }
-
     public String getHierarchViewProp(String key) {
         return myHvProps.getString(key);
-    }
-
-    public Collection getIntactTypes() {
-        // The collection to return.
-        Collection types = new ArrayList();
-        CollectionUtils.addAll(types, myIntactTypeProps.getKeys());
-        return types;
     }
 }
