@@ -34,9 +34,12 @@
     <property name="dist.dir" value="dist"/>
 	<property name="docs.dir" value="doc/api"/>
     <property name="war.file" value="graph2mif.war"/>
-	<property name="test-ac" value="EBI-818"/>
-	<property name="test-depth" value="1"/>
-	<property name="test-strictmif" value="false"/>
+
+    <!-- The console properties -->
+    <property file="client.properties"/>
+
+    <!-- The web service properties -->
+    <property file="graph2MIF.properties"/>
 
     <!-- This project specific paths. -->
 	<property name="src.dir" value="src"/> 
@@ -361,10 +364,20 @@
     </target>
     <!-- =================================================================== -->
 
+    <!-- Display the parameters of the client. -->
+    <target name="displayClientParameter"
+	        description="Display the parameters of the client">
+         <echo message="Interactor AC         : ${client.AC}" />
+         <echo message="Graph depth           : ${client.depth}" />
+         <echo message="Strict MIF compliance : ${client.strictMIF}" />
+	</target>
+
+    <!-- =================================================================== -->
+
     <!-- Compile example webservice client application. -->
     <target name="wsclient"
 	    description="Builds the example webservice client for Graph2MIF">
-		<javac srcdir="${root.src.dir}" destdir="${root.dest.dir}" deprecation="on"
+        <javac srcdir="${root.src.dir}" destdir="${root.dest.dir}" deprecation="on"
 		  debug="on" source="1.4"
 		  includes=" **/graph2MIF/client/Graph2MIFWSClient.java">
 		  <classpath refid="project.class.path"/>
@@ -376,10 +389,14 @@
     <target name="run-wsclient" depends="wsclient"
         description="Copies properties and runs the webservice client for testing.">
         <copy todir="${root.dest.dir}" file="graph2MIF.properties"/>
+
+        <echo message="Web service URL: ${webservice.location}" />
+        <ant target="displayClientParameter" />
+
 		<java classname="uk.ac.ebi.intact.application.graph2MIF.client.Graph2MIFWSClient" fork="yes">
-		      <arg line="-ac ${test-ac}"/>
-			  <arg line="-depth ${test-depth}"/>
-			  <arg line="-strict ${test-strictmif}"/>
+		      <arg line="-ac ${client.AC}"/>
+			  <arg line="-depth ${client.depth}"/>
+			  <arg line="-strict ${client.strictMIF}"/>
 			  <classpath refid="intact.class.path"/>
 			  <classpath refid="project.class.path"/>
 		</java>
@@ -389,6 +406,7 @@
     <!-- Compile example console application. -->
     <target name="console"
 	    description="Builds the example console for Graph2MIF">
+        <ant target="displayClientParameter" />
 		<javac srcdir="${root.src.dir}" destdir="${root.dest.dir}" deprecation="on"
 		  debug="on" source="1.4"
 		  includes=" **/graph2MIF/client/Graph2MIFConsole.java">
@@ -401,9 +419,9 @@
     <target name="run-console" depends="console"
         description="Runs the console for testing.">
 		<java classname="uk.ac.ebi.intact.application.graph2MIF.client.Graph2MIFConsole" fork="yes">
-		      <arg line="-ac ${test-ac}"/>
-			  <arg line="-depth ${test-depth}"/>
-			  <arg line="-strict ${test-strictmif}"/>
+		      <arg line="-ac ${client.AC}"/>
+			  <arg line="-depth ${client.depth}"/>
+			  <arg line="-strict ${client.strictMIF}"/>
 			  <classpath refid="intact.class.path"/>
 			  <classpath refid="project.class.path"/>
 		</java>
