@@ -49,7 +49,8 @@ public final class EntryChecker {
         keys = proteinInteractors.keySet();
         boolean guiEnabled = CommandLineOptions.getInstance().isGuiEnabled();
         Monitor monitor = null;
-        if( guiEnabled ) {
+        boolean displayProgressBar = guiEnabled && keys.size() > 0;
+        if( displayProgressBar ) {
             monitor = new Monitor( keys.size(), "Protein update" );
             monitor.setStatus( "Waiting for the checker to start..." );
             monitor.show();
@@ -77,14 +78,29 @@ public final class EntryChecker {
                 monitor.updateProteinProcessedCound( ++current );
             }
         }
-        if( guiEnabled ) {
+        if( displayProgressBar ) {
             monitor.hide();
         }
 
 
+        displayProgressBar = guiEnabled && interactions.size() > 0;
+        if( displayProgressBar ) {
+            monitor = new Monitor( interactions.size(), "Interaction checking" );
+            monitor.setStatus( "Waiting for the checker to start..." );
+            monitor.show();
+        }
+        current = 0;
         for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
             final InteractionTag interaction = (InteractionTag) iterator.next();
-            InteractionChecker.check( interaction, helper, proteinFactory, bioSourceFactory );
+            if( guiEnabled ) {
+                String name = interaction.getShortlabel();
+                if( name == null ) {
+                    name = "no shortlabel specified";
+                }
+                monitor.setStatus( "Checking " + name );
+                monitor.updateProteinProcessedCound( ++current );
+            }
+            InteractionChecker.check( interaction, helper, proteinFactory, bioSourceFactory, monitor );
         }
     }
 }
