@@ -127,7 +127,7 @@
 
         <!-- Form for a BioSource -->
         <form-bean name="bsForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.cv.CvDynaForm">
+            type="uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceDynaForm">
             <form-property name="ac" type="java.lang.String"/>
             <form-property name="shortLabel" type="java.lang.String"/>
             <form-property name="fullName" type="java.lang.String"/>
@@ -408,7 +408,6 @@
             scope="session">
 
             <forward name="submit" path="/do/cvSubmit"/>
-<!--            <forward name="save" path="/do/cvSubmit"/>-->
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/cvAnnotSubmit"/>
@@ -425,11 +424,6 @@
             parameter="dispatch">
             <forward name="success" path="/do/fillCvForm"/>
 
-            <!-- Uses the input for validation exceptions -->
-<!--            <exception-->
-<!--                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"-->
-<!--                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"-->
-<!--                key="dummy.key"/>-->
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the search page  (global) -->
         </action>
@@ -490,11 +484,6 @@
             parameter="dispatch">
             <forward name="success" path="/do/fillExpForm"/>
 
-            <!-- Uses the input for validation exceptions -->
-<!--            <exception-->
-<!--                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"-->
-<!--                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"-->
-<!--                key="dummy.key"/>-->
             <!-- Back to the results page as we got here from a search result (global) -->
         </action>
 
@@ -579,7 +568,6 @@
             scope="session">
 
             <forward name="submit" path="/do/bsSubmit"/>
-<!--            <forward name="save" path="/do/bsSubmit"/>-->
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/bsAnnotSubmit"/>
@@ -596,12 +584,6 @@
             scope="session"
             parameter="dispatch">
             <forward name="success" path="/do/fillBsForm"/>
-
-            <!-- Uses the input for validation exceptions -->
-<!--            <exception-->
-<!--                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"-->
-<!--                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"-->
-<!--                key="dummy.key"/>-->
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the search page  (global) -->
         </action>
@@ -626,7 +608,9 @@
             validate="false"
             scope="session" />
 
-        <!-- Action to handle when a tax id is entered.
+        <!-- Action to handle when a tax id is entered. validate is set to false
+             to stop validating short label as well (short label is set via
+             newt server).
         -->
         <action path="/taxid"
             type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceAction"
@@ -635,7 +619,6 @@
             validate="false"
             scope="session">
             <forward name="success" path="/do/fillBsForm"/>
-            <forward name="failure" path="/do/fillBsForm"/>
         </action>
 
         <!-- ============= Actions related to Interaction editor ============ -->
