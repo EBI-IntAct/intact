@@ -202,4 +202,25 @@ public class LockManager {
             System.out.println("Release locked: " + lock.getId() + " by owner: " + lock.getOwner());
         }
     }
+
+    /**
+     * Release all the locks held by given owner.
+     * @param owner the owner to release the locks for.
+     */
+    public synchronized void releaseAllLocks(String owner) {
+        // Holds locks to release; to avoid concurrent modification ex.
+        List locks = new ArrayList();
+
+        for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
+            LockObject lock = (LockObject) iter.next();
+            if (lock.getOwner().equals(owner)) {
+                System.out.println("Added lock " + lock.getId() + " to release");
+                locks.add(lock);
+            }
+        }
+        // Iterate through the temp locks and remove one by one from the cache.
+        for (Iterator iter = locks.iterator(); iter.hasNext();) {
+            myLocks.remove(iter.next());
+        }
+    }
 }
