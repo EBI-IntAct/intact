@@ -44,35 +44,40 @@
 
     <!-- =============== Editor Layouts =================================== -->
 
-    <!-- The edit CV page layout. -->
+    <!-- The CV page layout. -->
     <definition name="edit.cv.layout" path="/layouts/cvLayout.jsp">
         <put name="error" value="/pages/editorErrors.jsp"/>
         <put name="cv" value="/pages/cv/cv.jsp"/>
     </definition>
 
-    <!-- The edit Biosource page layout. -->
+    <!-- The Biosource page layout. -->
     <definition name="edit.biosrc.layout" extends="edit.cv.layout">
         <put name="cv" value="/pages/bs/bs.jsp"/>
     </definition>
 
-    <!-- The edit Experiment page layout. -->
+    <!-- The Experiment page layout. -->
     <definition name="edit.exp.layout" extends="edit.cv.layout">
         <put name="cv" value="/pages/exp/exp.jsp"/>
     </definition>
 
-    <!-- The edit Interaction page layout. -->
+    <!-- The Interaction page layout. -->
     <definition name="edit.int.layout" extends="edit.cv.layout">
         <put name="cv" value="/pages/int/int.jsp"/>
     </definition>
 
-    <!-- The edit Feature page layout. -->
+    <!-- The Feature page layout. -->
     <definition name="edit.feature.layout" extends="edit.cv.layout">
         <put name="cv" value="/pages/feature/feature.jsp"/>
     </definition>
 
-    <!-- The edit Mutation Feature page layout. -->
+    <!-- The Mutation Feature page layout. -->
     <definition name="edit.feature.mutation.layout" extends="edit.cv.layout">
         <put name="cv" value="/pages/feature/feature_mutation.jsp"/>
+    </definition>
+
+    <!-- The Sequence page layout. -->
+    <definition name="edit.sequence.layout" extends="edit.cv.layout">
+        <put name="cv" value="/pages/sequence/seq.jsp"/>
     </definition>
 
     <!-- =============== Definitions related to pages ================= -->
