@@ -150,6 +150,9 @@ public class FeatureSubmitAction extends CommonDispatchAction {
         // The mutation Feture to create.
         Feature feature;
 
+        // The sequence to set in Ranges.
+        String sequence = ((Protein) view.getComponent().getInteractor()).getSequence();
+
         // The range separator.
         String sep = getService().getResource("mutation.range.sep");
         do {
@@ -179,7 +182,7 @@ public class FeatureSubmitAction extends CommonDispatchAction {
                     // Only a single range specified.
                     int rangeValue = extractRange(token);
                     if (rangeValue != -1) {
-                        Range range = new Range(owner, rangeValue, rangeValue, null);
+                        Range range = new Range(owner, rangeValue, rangeValue, sequence);
                         user.create(range);
                         feature.addRange(range);
                     }
@@ -189,7 +192,7 @@ public class FeatureSubmitAction extends CommonDispatchAction {
                 do {
                     // Extract the range value to construct a range object.
                     int rangeValue = extractRange(stk2.nextToken());
-                    Range range = new Range(owner, rangeValue, rangeValue, null);
+                    Range range = new Range(owner, rangeValue, rangeValue, sequence);
                     user.create(range);
                     feature.addRange(range);
                 }
