@@ -15,10 +15,14 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
-<style type="text/css">
-    <%@ include file="/layouts/styles/editor.css" %>
-</style>
+<%-- The current view --%>
+<c:set var="view" value="${user.view}"/>
+
+<%-- Individual menu lists --%>
+<c:set var="tissuemenu" value="${view.tissueMenu}"/>
+<c:set var="cellmenu" value="${view.cellTypeMenu}"/>
 
 <table width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
@@ -60,6 +64,12 @@
         <th class="tableCellHeader">
             <bean:message key="biosource.label.tax"/>
         </th>
+        <th class="tableCellHeader">
+            <bean:message key="biosource.label.tissue"/>
+        </th>
+        <th class="tableCellHeader">
+            <bean:message key="biosource.label.cell"/>
+        </th>
     </tr>
     <tr class="tableRowEven">
         <td class="tableCell">
@@ -67,8 +77,21 @@
                 <bean:message key="biosource.button.taxid"/>
             </html:submit>
         </td>
+
         <td class="tableCell">
             <html:text property="taxId" name="bsForm" size="10" maxlength="16"/>
+        </td>
+
+        <td class="tableCell" align="left" valign="top">
+            <html:select property="tissue" name="bsForm">
+                <html:options name="tissuemenu"/>
+            </html:select>
+        </td>
+
+        <td class="tableCell" align="left" valign="top">
+            <html:select property="cellType" name="bsForm">
+                <html:options name="cellmenu"/>
+            </html:select>
         </td>
     </tr>
 </table>
