@@ -37,6 +37,13 @@
         </td>
 	</tr>
 
+    <%-- Click behaviour menu --%>
+    <tr>
+		<td>
+            <tiles:insert attribute="click" ignore="true"/>
+        </td>
+	</tr>
+
     <%-- Sidebar menu links --%>
     <tr>
 		<td>
