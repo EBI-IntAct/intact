@@ -15,7 +15,11 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
 
-import java.sql.*;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 /**
@@ -57,12 +61,6 @@ public class SearchHelper implements SearchHelperI {
 
     public Collection getSearchCritera() {
         return searchCriteria;
-    }
-
-    public ResultWrapper doLookupSimple(Class clazz, String query, int max)
-            throws IntactException {
-        searchCriteria.clear();
-        return doSearchSimple(clazz, query, max);
     }
 
     public Collection doLookup(String searchClass, String values, IntactUserI user)
@@ -175,6 +173,36 @@ public class SearchHelper implements SearchHelperI {
         }
     }
 
+    public ResultIterator searchByQuery(IntactHelper helper, Query[] queries, int max)
+            throws IntactException {
+        // The count returned by the query.
+        Object rowCount;
+
+        // The actual search count.
+        int count = 0;
+
+        Iterator iter0 = helper.getIteratorByReportQuery(queries[0]);
+        rowCount = ((Object[]) iter0.next())[0];
+
+        // Check for oracle
+        if (rowCount.getClass().isAssignableFrom(BigDecimal.class)) {
+            count =  ((BigDecimal) rowCount).intValue();
+        }
+        else {
+            // postgres driver returns Long. Could be a problem for another DB
+            // This may throw a classcast exception.
+            count =  ((Long) rowCount).intValue();
+        }
+        if ((count > 0) || (count <= max)) {
+            // Not empty and within the max limits. Do the search
+            return new ResultIterator(
+                    helper.getIteratorByReportQuery(queries[1]), max, count);
+        }
+        // Either too large or none found (empty search).
+        return new ResultIterator(count, max);
+    }
+
+
     /**
      * Split the query string. It generated one sub query by comma separated parameter. e.g.
      * {a,b,c,d} will gives {{a}, {b}, {c}, {d}}
@@ -280,23 +308,23 @@ public class SearchHelper implements SearchHelperI {
      * @throws uk.ac.ebi.intact.business.IntactException
      *          thrown if there were any search problems
      */
-    private ResultWrapper doSearchSimple(Class clazz, String value, int max)
-            throws IntactException {
-        //try search on AC first...
-        ResultWrapper rw = searchByQuery(clazz, "ac", value, max);
-        String currentCriteria = "ac";
-
-        if (rw.isEmpty()) {
-            // No matches found - try a search by label now...
-            logger.info("no match found for " + clazz + " with ac= " + value);
-            logger.info("now searching for class " + clazz + " with label " + value);
-            rw = searchByQuery(clazz, "shortLabel", value, max);
-            currentCriteria = "shortLabel";
-        }
-        CriteriaBean cb = new CriteriaBean(value, currentCriteria);
-        searchCriteria.add(cb);
-        return rw;
-    }
+//    private ResultWrapper doSearchSimple(Class clazz, String value, int max)
+//            throws IntactException {
+//        //try search on AC first...
+//        ResultWrapper rw = searchByQuery(clazz, "ac", value, max);
+//        String currentCriteria = "ac";
+//
+//        if (rw.isEmpty()) {
+//            // No matches found - try a search by label now...
+//            logger.info("no match found for " + clazz + " with ac= " + value);
+//            logger.info("now searching for class " + clazz + " with label " + value);
+//            rw = searchByQuery(clazz, "shortLabel", value, max);
+//            currentCriteria = "shortLabel";
+//        }
+//        CriteriaBean cb = new CriteriaBean(value, currentCriteria);
+//        searchCriteria.add(cb);
+//        return rw;
+//    }
 
     /**
      * Returns true  if a simple count on the ia_search table works, if not false
@@ -307,7 +335,7 @@ public class SearchHelper implements SearchHelperI {
         logger.info("check if is connected");
         //set up with first call
         if (connected == null) {
-            final String testQuery = "SELECT COUNT(*) FROM " + this.SEARCH_TABLE;
+            final String testQuery = "SELECT COUNT(*) FROM " + SEARCH_TABLE;
             IntactHelper helper = null;
             ResultSet rs = null;
             Statement stmt = null;
