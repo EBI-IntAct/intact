@@ -1,4 +1,3 @@
-<%@ page import="org.apache.commons.beanutils.DynaBean"%>
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -17,14 +16,21 @@
 
 <table width="70%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
-        <th class="tableCellHeader" width="10%">Action</th>
-        <th class="tableCellHeader" width="15%">Short Label</th>
+        <th class="tableCellHeader" width="10%">
+            <bean:message key="label.action"/>
+        </th>
+        <th class="tableCellHeader" width="15%">
+            <bean:message key="label.shortlabel"/>
+        </th>
         <th class="tableCellHeader" width="15%">SP AC</th>
-        <th class="tableCellHeader" width="15%">IntAct AC</th>
+        <th class="tableCellHeader" width="15%">
+            <bean:message key="label.ac"/>
+        </th>
         <th class="tableCellHeader" width="2%">
             <intact:documentation section="editor.int.proteins"/>
         </th>
     </tr>
+
     <tr class="tableRowEven">
         <td class="tableCell">
             <html:submit titleKey="int.proteins.button.search.titleKey"
