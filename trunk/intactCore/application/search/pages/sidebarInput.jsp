@@ -13,14 +13,6 @@
 <html:form action="/search" focus="AC">
     <table>
         <tr>
-            <td align="left">
-                <html:select property="searchClass">
-                    <html:options name="<%=SearchConstants.INTACT_TYPES%>"/>
-                </html:select>
-            </td>
-        </tr>
-
-        <tr>
             <td><html:text property="searchString" size="16"/></td>
         </tr>
         <tr>

@@ -37,8 +37,14 @@
         <put name="header.title" value="IntAct - Database Search"/>
     </definition>
 
+    <!-- Institution header -->
+    <definition name="ebi.header.layout" path="/layouts/ebiHeaderLayout.jsp">
+        <put name="title"  value="IntAct - Control Vocabulary Editor"/>
+    </definition>
+
     <!-- Search page description  -->
     <definition name="search.layout" path="/layouts/intactLayout.jsp">
+<!--        <put name="institution.header" value="ebi.header.layout"/>-->
         <put name="title"  value="IntAct - Database Search"/>
         <put name="sidebar" value="search.sidebar.layout"/>
         <put name="header" value="header.layout"/>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!DOCTYPE struts-config PUBLIC
-          "-//Apache Software Foundation//DTD Struts Configuration 1.0//EN"
-          "http://jakarta.apache.org/struts/dtds/struts-config_1_0.dtd">
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
 
 <!--
      This is the Struts configuration file for the example application,
@@ -24,7 +24,6 @@
         <!-- The sidebar form -->
         <form-bean name="sidebarForm"
                    type="org.apache.struts.action.DynaActionForm">
-            <form-property name="searchClass" type="java.lang.String"/>
             <form-property name="searchString" initial="*" type="java.lang.String"/>
         </form-bean>
 
@@ -58,11 +57,13 @@
             <forward name="success" path="/do/search"/>
         </action>
 
-        <!-- Process a user searches for a CV Object. -->
+        <!-- Process a user searches for a CV Object. The form is in a session because
+             we reuse search details from view action.
+             -->
         <action path="/search"
                 name="sidebarForm"
                 type="uk.ac.ebi.intact.application.search.struts.controller.SearchAction"
-                scope="request">
+                scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="results" path="match.layout"/>
         </action>
@@ -73,6 +74,7 @@
                 name="viewForm"
                 scope="request">
             <forward name="results" path="match.layout"/>
+            <forward name="proteinView" path="/do/search"/>
         </action>
 
     </action-mappings>
