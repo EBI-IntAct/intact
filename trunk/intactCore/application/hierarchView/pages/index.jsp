@@ -16,7 +16,6 @@
 <html:html>
 
 <head>
-   <html:base target="_top"/>
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
@@ -24,7 +23,7 @@
 
 <body bgcolor="white">
 
-    <jsp:forward page="/init.do"/>
+    <jsp:forward page="/index.jsp"/>
 
 </body>
 

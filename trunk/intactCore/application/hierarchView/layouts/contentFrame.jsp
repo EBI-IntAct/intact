@@ -15,20 +15,21 @@
 <html:html>
 
 <head>
-    <html:base target="_top"/>
+    <base target="_top">
+
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
-    <link rel="stylesheet" type="text/css" href="styles/intact.css"/>
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/layouts/styles/intact.css"/>
 </head>
 
 <frameset cols="63%,*" border=0>
 
-   <frame src="graphFrame.jsp" name="FOO">
+   <frame src="<%=request.getContextPath()%>/layouts/graphFrame.jsp" name="FOO">
 
    <frameset ROWS="31%,*">
-      <frame src="sourceListFrame.jsp"     name="sourceListFrame">
-      <frame src="selectedSourceFrame.jsp" name="selectedSourcetFrame">
+      <frame src="<%=request.getContextPath()%>/layouts/sourceListFrame.jsp"     name="sourceListFrame">
+      <frame src="<%=request.getContextPath()%>/layouts/selectedSourceFrame.jsp" name="selectedSourcetFrame">
    </frameset>
 
    <noframes>
