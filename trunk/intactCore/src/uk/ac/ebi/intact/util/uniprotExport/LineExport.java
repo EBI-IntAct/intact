@@ -1,0 +1,834 @@
+/*
+ * Copyright (c) 2002 The European Bioinformatics Institute, and others.
+ * All rights reserved. Please see the file LICENSE
+ * in the root directory of this distribution.
+ */
+package uk.ac.ebi.intact.util.uniprotExport;
+
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.*;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+/**
+ * That class .
+ *
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ */
+public class LineExport {
+
+    protected static String TIME;
+
+    static {
+        SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd@HH.mm" );
+        TIME = formatter.format( new Date() );
+        formatter = null;
+    }
+
+
+    //////////////////////////
+    // Constants
+
+    protected static final String UNIPROT_DR_EXPORT = "uniprot-dr-export";
+    protected static final String AUTHOR_CONFIDENCE = "author-confidence";
+    protected static final String GENE_NAME = "gene-name";
+    protected static final String NEGATIVE = "negative";
+    protected static final String CC_NOTE = "uniprot-cc-note";
+    protected static final String UNIPROT = "uniprot";
+    protected static final String INTACT = "intact";
+    protected static final String IDENTITY = "identity";
+    protected static final String ISOFORM_PARENT = "isoform-parent";
+
+    protected static final String METHOD_EXPORT_KEYWORK_EXPORT = "yes";
+    protected static final String METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT = "no";
+
+    protected static final String EXPERIMENT_EXPORT_KEYWORK_EXPORT = "yes";
+    protected static final String EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT = "no";
+
+    protected static final String NEW_LINE = System.getProperty( "line.separator" );
+
+
+    ////////////////////////////
+    // Inner Class
+
+    public class ExperimentStatus {
+
+        // Experiment status
+        public static final int EXPORT = 0;
+        public static final int DO_NOT_EXPORT = 1;
+        public static final int NOT_SPECIFIED = 2;
+        public static final int LARGE_SCALE = 3;
+
+        private int status;
+        private Collection keywords;
+
+        public ExperimentStatus( int status ) {
+            this.status = status;
+        }
+
+        public void setStatus( int status ) {
+            this.status = status;
+        }
+
+        public Collection getKeywords() {
+            return keywords;
+        }
+
+        public boolean doExport() {
+            return status == EXPORT;
+        }
+
+        public boolean doNotExport() {
+            return status == DO_NOT_EXPORT;
+        }
+
+        public boolean isNotSpecified() {
+            return status == NOT_SPECIFIED;
+        }
+
+        public boolean isLargeScale() {
+            return status == LARGE_SCALE;
+        }
+
+        public void addKeywords( Collection keywords ) {
+            if( keywords == null ) {
+                throw new IllegalArgumentException( "Keywords must not be null" );
+            }
+            this.keywords = keywords;
+        }
+
+        public String toString() {
+
+            StringBuffer sb = new StringBuffer( 128 );
+
+            sb.append( "ExperimentStatus{ keywords= " );
+            if( keywords != null ) {
+                for ( Iterator iterator = keywords.iterator(); iterator.hasNext(); ) {
+                    String kw = (String) iterator.next();
+                    sb.append( kw ).append( ' ' );
+                }
+            }
+
+            sb.append( " status=" );
+            switch ( status ) {
+                case EXPORT:
+                    sb.append( "EXPORT" );
+                    break;
+                case DO_NOT_EXPORT:
+                    sb.append( "DO_NOT_EXPORT" );
+                    break;
+                case NOT_SPECIFIED:
+                    sb.append( "NOT_SPECIFIED" );
+                    break;
+                case LARGE_SCALE:
+                    sb.append( "LARGE_SCALE" );
+                    break;
+                default:
+                    sb.append( "UNKNOWN VALUE !!!!!!!!!!!!!!!!!" );
+            }
+            sb.append( " }" );
+
+            return sb.toString();
+        }
+    }
+
+
+    public class CvInteractionStatus {
+
+        // Method status
+        public static final int EXPORT = 0;
+        public static final int DO_NOT_EXPORT = 1;
+        public static final int NOT_SPECIFIED = 2;
+        public static final int CONDITIONAL_EXPORT = 3;
+
+        private int status;
+        private int minimumOccurence = 1;
+
+        public CvInteractionStatus( int status ) {
+            this.status = status;
+        }
+
+        public CvInteractionStatus( int status, int minimumOccurence ) {
+            this.minimumOccurence = minimumOccurence;
+            this.status = status;
+        }
+
+        public int getMinimumOccurence() {
+            return minimumOccurence;
+        }
+
+        public boolean doExport() {
+            return status == EXPORT;
+        }
+
+        public boolean doNotExport() {
+            return status == DO_NOT_EXPORT;
+        }
+
+        public boolean isNotSpecified() {
+            return status == NOT_SPECIFIED;
+        }
+
+        public boolean isConditionalExport() {
+            return status == CONDITIONAL_EXPORT;
+        }
+
+        public String toString() {
+
+            StringBuffer sb = new StringBuffer( 128 );
+
+            sb.append( "CvInteractionStatus{ minimumOccurence=" ).append( minimumOccurence );
+
+            sb.append( " status=" );
+            switch ( status ) {
+                case EXPORT:
+                    sb.append( "EXPORT" );
+                    break;
+                case DO_NOT_EXPORT:
+                    sb.append( "DO_NOT_EXPORT" );
+                    break;
+                case NOT_SPECIFIED:
+                    sb.append( "NOT_SPECIFIED" );
+                    break;
+                case CONDITIONAL_EXPORT:
+                    sb.append( "CONDITIONAL_EXPORT" );
+                    break;
+                default:
+                    sb.append( "UNKNOWN VALUE !!!!!!!!!!!!!!!!!" );
+            }
+            sb.append( " }" );
+
+            return sb.toString();
+        }
+    }
+
+
+    protected class DatabaseContentException extends Exception {
+
+        public DatabaseContentException( String message ) {
+            super( message );
+        }
+    }
+
+
+    /**
+     * Service termination hook (gets called when the JVM terminates from a signal).
+     * eg.
+     * <pre>
+     * IntactHelper helper = new IntactHelper();
+     * DatabaseConnexionShutdownHook dcsh = new DatabaseConnexionShutdownHook( helper );
+     * Runtime.getRuntime().addShutdownHook( sh );
+     * </pre>
+     */
+    protected static class DatabaseConnexionShutdownHook extends Thread {
+
+        private IntactHelper helper;
+
+        public DatabaseConnexionShutdownHook( IntactHelper helper ) {
+            super();
+            this.helper = helper;
+            System.out.println( "Database Connexion Shutdown Hook installed." );
+        }
+
+        public void run() {
+            System.out.println( "JDBCShutdownHook thread started" );
+            if( helper != null ) {
+                try {
+                    helper.closeStore();
+                    System.out.println( "Connexion to the database closed." );
+                } catch ( IntactException e ) {
+                    System.err.println( "Could not close the connexion to the database." );
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Service termination hook (gets called when the JVM terminates from a signal).
+     * eg.
+     * <pre>
+     * IntactHelper helper = new IntactHelper();
+     * DatabaseConnexionShutdownHook dcsh = new DatabaseConnexionShutdownHook( helper );
+     * Runtime.getRuntime().addShutdownHook( sh );
+     * </pre>
+     */
+    protected static class CloseFileOnShutdownHook extends Thread {
+
+        private BufferedWriter outputBufferedWriter;
+        private FileWriter outputFileWriter;
+
+        public CloseFileOnShutdownHook( BufferedWriter outputBufferedWriter, FileWriter outputFileWriter ) {
+            super();
+            this.outputBufferedWriter = outputBufferedWriter;
+            this.outputFileWriter = outputFileWriter;
+
+            System.out.println( "Output File close on Shutdown Hook installed." );
+        }
+
+        public void run() {
+            if( outputFileWriter != null ) {
+                try {
+                    outputFileWriter.close();
+                } catch ( IOException e ) {
+                    System.out.println( "An error occured when trying to close the output file" );
+                    return;
+                }
+            }
+
+            if( outputFileWriter != null ) {
+                try {
+                    outputFileWriter.close();
+                } catch ( IOException e ) {
+                    System.out.println( "An error occured when trying to close the output file" );
+                    return;
+                }
+            }
+            System.out.println( "Output file is now closed." );
+        }
+    }
+
+    //////////////////////////////
+    // Attributes
+
+    // Vocabulary that we need for processing
+    protected CvXrefQualifier identityXrefQualifier = null;
+    protected CvXrefQualifier isoformParentQualifier = null;
+
+    protected CvDatabase uniprotDatabase = null;
+    protected CvDatabase intactDatabase = null;
+
+    protected CvTopic uniprotDR_Export = null;
+    protected CvTopic authorConfidenceTopic = null;
+    protected CvTopic negativeTopic = null;
+    protected CvTopic ccNoteTopic = null;
+
+    protected CvAliasType geneNameAliasType;
+
+    /**
+     * Cache the CvInteraction property for the export.
+     * CvInteraction.ac -> Boolean.TRUE or Boolean.FALSE
+     */
+    protected HashMap cvInteractionExportStatusCache = new HashMap();
+
+    /**
+     * Cache the Experiment property for the export.
+     * Experiment.ac -> Integer (EXPORT, DO_NOT_EXPORT, NOT_SPECIFIED)
+     */
+    protected HashMap experimentExportStatusCache = new HashMap();
+
+    protected boolean debugEnabled = false; // protected to allow the testcase to modify it.
+
+    protected boolean debugFileEnabled = false;
+
+    protected BufferedWriter outputBufferedWriter;
+    protected FileWriter outputFileWriter;
+
+    /////////////////////////////
+    // Methods
+
+    /**
+     * Load the minimal Controlled vocabulary needed during the processing.
+     * It at least one term is missing, an Exception is thrown.
+     *
+     * @param helper data access
+     * @throws uk.ac.ebi.intact.business.IntactException
+     *          search error
+     * @throws uk.ac.ebi.intact.util.uniprotExport.CCLineExport.DatabaseContentException
+     *          if at least one term is missing
+     */
+    public void init( IntactHelper helper ) throws IntactException, DatabaseContentException {
+
+        uniprotDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, UNIPROT );
+        intactDatabase = (CvDatabase) getCvObject( helper, CvDatabase.class, INTACT );
+
+        identityXrefQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, IDENTITY );
+        isoformParentQualifier = (CvXrefQualifier) getCvObject( helper, CvXrefQualifier.class, ISOFORM_PARENT );
+
+        uniprotDR_Export = (CvTopic) getCvObject( helper, CvTopic.class, UNIPROT_DR_EXPORT );
+        authorConfidenceTopic = (CvTopic) getCvObject( helper, CvTopic.class, AUTHOR_CONFIDENCE );
+        negativeTopic = (CvTopic) getCvObject( helper, CvTopic.class, NEGATIVE );
+        ccNoteTopic = (CvTopic) getCvObject( helper, CvTopic.class, CC_NOTE );
+
+        geneNameAliasType = (CvAliasType) getCvObject( helper, CvAliasType.class, GENE_NAME );
+    }
+
+    /**
+     * Get a CvObject based on its class name and its shortlabel.
+     *
+     * @param clazz      the Class we are looking for
+     * @param shortlabel the shortlabel of the object we are looking for
+     * @return the CvObject of type <code>clazz</code> and having the shortlabel <code>shorltabel<code>.
+     * @throws IntactException          if the search failed
+     * @throws DatabaseContentException if the object is not found.
+     */
+    private CvObject getCvObject( IntactHelper helper, Class clazz, String shortlabel )
+            throws IntactException,
+                   DatabaseContentException {
+
+        CvObject cv = (CvObject) helper.getObjectByLabel( clazz, shortlabel );
+        if( cv == null ) {
+            StringBuffer sb = new StringBuffer( 128 );
+            sb.append( shortlabel );
+            sb.append( ' ' );
+            sb.append( clazz.getName() );
+            sb.append( " in your IntAct node" );
+
+            throw new DatabaseContentException( sb.toString() );
+        }
+
+        return cv;
+    }
+
+    /**
+     * @param flag
+     */
+    protected void setDebugEnabled( boolean flag ) {
+        debugEnabled = flag;
+    }
+
+    /**
+     * @param enabled
+     */
+    protected void setDebugFileEnabled( boolean enabled ) {
+        debugFileEnabled = enabled;
+
+        if( enabled ) {
+            // create the output file if the user requested it.
+            String filename = "export2uniprot_verboseOutput_" + TIME + ".txt";
+            File file = new File( filename );
+            System.out.println( "Save verbose output to: " + file.getAbsolutePath() );
+            outputBufferedWriter = null;
+            outputFileWriter = null;
+            try {
+                outputFileWriter = new FileWriter( file );
+                outputBufferedWriter = new BufferedWriter( outputFileWriter );
+
+                Runtime.getRuntime().addShutdownHook( new CloseFileOnShutdownHook( outputBufferedWriter, outputFileWriter ) );
+
+            } catch ( IOException e ) {
+                e.printStackTrace();
+                debugFileEnabled = false;
+            }
+        }
+    }
+
+    /**
+     * Get the uniprot primary ID from Protein and Splice variant.
+     *
+     * @param protein the Protein for which we want the uniprot ID.
+     * @return the uniprot ID as a String or null if none is found (should not occur)
+     */
+    public final String getUniprotID( final Protein protein ) {
+
+        String uniprot = null;
+
+        Collection xrefs = protein.getXrefs();
+        boolean found = false;
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
+            Xref xref = (Xref) iterator.next();
+
+            if( uniprotDatabase.equals( xref.getCvDatabase() ) &&
+                identityXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
+                uniprot = xref.getPrimaryId();
+                found = true;
+            }
+        }
+
+        return uniprot;
+    }
+
+    /**
+     * Get the intact master AC from the given Splice variant.
+     *
+     * @param protein the splice variant (Protein) for which we its intact master AC.
+     * @return the intact AC
+     */
+    public final String getMasterAc( final Protein protein ) {
+
+        String ac = null;
+
+        Collection xrefs = protein.getXrefs();
+        boolean found = false;
+        for ( Iterator iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
+            Xref xref = (Xref) iterator.next();
+
+            if( intactDatabase.equals( xref.getCvDatabase() ) &&
+                isoformParentQualifier.equals( xref.getCvXrefQualifier() ) ) {
+                ac = xref.getPrimaryId();
+                found = true;
+            }
+        }
+
+        return ac;
+    }
+
+    /**
+     * Get all interaction related to the given Protein.
+     *
+     * @param protein the protein of which we want the interactions.
+     * @return a Collection if Interaction.
+     */
+    protected final Collection getInteractions( final Protein protein ) {
+        Collection components = protein.getActiveInstances();
+        Collection interactions = new ArrayList( components.size() );
+
+        for ( Iterator iterator = components.iterator(); iterator.hasNext(); ) {
+            Component component = (Component) iterator.next();
+            interactions.add( component.getInteraction() );
+        }
+
+        return interactions;
+    }
+
+    /**
+     * Log the message in STDOUT [AND/OR] a file.
+     *
+     * @param message
+     */
+    protected final void log( String message ) {
+
+        if( debugEnabled ) {
+            System.out.println( message );
+        }
+
+        if( debugFileEnabled ) {
+            try {
+                outputBufferedWriter.write( message );
+                outputBufferedWriter.write( NEW_LINE );
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Answers the question: does that technology is to be exported to SwissProt ?
+     * <br>
+     * Do give that answer, we check that the CvInteration has an annotation having
+     * <br>
+     * <b>CvTopic</b>: uniprot-dr-export
+     * <br>
+     * <b>text</b>: yes [OR] no [OR] &lt;integer value&gt;
+     * <p/>
+     * if <b>yes</b>: the method is meant to be exported
+     * <br>
+     * if <b>no</b>: the method is NOT meant to be exported
+     * <br>
+     * if <b>&lt;integer value&gt;</b>: the protein linked to that method are ment to be exported only if they are seen
+     * in a minimum number interactions belonging to distinct experiment.
+     * eg. let's set that value to 2 for Y2H. To be eligible for export a protein must
+     * have been seen in at least 2 Y2H distinct experiment.
+     * </p>
+     *
+     * @param cvInteraction the method to check
+     * @param logPrefix     indentatin of the log
+     * @return the status of that method (EXPORT, DO_NOT_EXPORT, NOT_SPECIFIED, CONDITIONAL_EXPORT)
+     *         with an optional count.
+     */
+    public final CvInteractionStatus getMethodExportStatus( final CvInteraction cvInteraction, String logPrefix ) {
+
+        CvInteractionStatus status = null;
+
+        // cache the CvInteraction status
+        if( null != cvInteraction ) {
+
+            CvInteractionStatus cache = (CvInteractionStatus) cvInteractionExportStatusCache.get( cvInteraction.getAc() );
+            if( null != cache ) {
+
+//                log( logPrefix + "\t\t\t\t CvInteraction: Status already processed, retreived from cache." );
+                status = cache;
+
+            } else {
+
+                boolean found = false;
+                boolean multipleAnnotationFound = false;
+                Collection annotations = null;
+
+                annotations = cvInteraction.getAnnotations();
+
+                log( logPrefix + "\t\t\t " + annotations.size() + " annotations found." );
+                Annotation annotation = null;
+                for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && !multipleAnnotationFound; ) {
+                    Annotation _annotation = (Annotation) iterator.next();
+                    if( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
+
+                        log( logPrefix + "\t\t\t\t Found uniprot-dr-export annotation: " + _annotation );
+
+                        if( true == found ) {
+                            multipleAnnotationFound = true;
+                            System.err.println( "There are multiple annotation having Topic:" + UNIPROT_DR_EXPORT +
+                                                " in CvInteraction: " + cvInteraction.getShortLabel() +
+                                                ". \nWe do not export." );
+                        } else {
+                            found = true;
+                            annotation = _annotation;
+                        }
+                    }
+                }
+
+
+                if( multipleAnnotationFound ) {
+
+                    status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
+                    log( logPrefix + "\t\t\t multiple annotation found: do not export " );
+
+                } else {
+
+                    if( true == found ) {
+
+                        String text = annotation.getAnnotationText();
+                        if( null != text ) {
+                            text = text.toLowerCase().trim();
+                        }
+
+                        if( METHOD_EXPORT_KEYWORK_EXPORT.equals( annotation.getAnnotationText() ) ) {
+
+                            status = new CvInteractionStatus( CvInteractionStatus.EXPORT );
+                            log( logPrefix + "\t\t\t " + METHOD_EXPORT_KEYWORK_EXPORT + " found: export " );
+
+                        } else if( METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( annotation.getAnnotationText() ) ) {
+
+                            status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
+                            log( logPrefix + "\t\t\t " + METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT + " found: do not export " );
+
+                        } else {
+
+                            log( logPrefix + "\t\t\t neither YES or NO found: should be an integer value... " );
+
+                            // it must be an integer value, let's check it.
+                            try {
+                                Integer value = new Integer( text );
+                                int i = value.intValue();
+
+                                if( i >= 2 ) {
+
+                                    // value is >= 2
+                                    status = new CvInteractionStatus( CvInteractionStatus.CONDITIONAL_EXPORT, i );
+                                    log( logPrefix + "\t\t\t " + i + " found: conditional export " );
+
+                                } else if( i == 1 ) {
+
+                                    String err = cvInteraction.getShortLabel() + " having annotation (" + UNIPROT_DR_EXPORT +
+                                                 ") has an annotationText like <integer value>. Value was: " + i +
+                                                 ", We consider it as to be exported.";
+                                    log( err );
+
+                                    status = new CvInteractionStatus( CvInteractionStatus.EXPORT );
+                                    log( logPrefix + "\t\t\t integer == " + i + " found: export " );
+
+                                } else {
+                                    // i < 1
+
+                                    String err = cvInteraction.getShortLabel() + " having annotation (" + UNIPROT_DR_EXPORT +
+                                                 ") has an annotationText like <integer value>. Value was: " + i +
+                                                 " However, having a value < 1 is not valid, We consider it as to be NOT exported.";
+                                    System.err.println( err );
+
+                                    status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
+                                    log( logPrefix + "\t\t\t integer < 1 (" + i + ") found: do not export " );
+                                }
+
+                            } catch ( NumberFormatException e ) {
+                                // not an integer !
+                                System.err.println( cvInteraction.getShortLabel() + " having annotation (" + UNIPROT_DR_EXPORT +
+                                                    ") has an annotationText different from yes/no/<integer value> !!!" +
+                                                    " value was: '" + text + "'." );
+                                log( logPrefix + "\t\t\t not an integer:(" + text + ") found: do not export " );
+
+                                status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
+                            }
+                        }
+                    } else {
+                        // no annotation implies NO EXPORT !
+                        System.err.println( cvInteraction.getShortLabel() +
+                                            " doesn't have an annotation: " + UNIPROT_DR_EXPORT );
+                        log( logPrefix + "\t\t\t not annotation found: do not export " );
+
+                        status = new CvInteractionStatus( CvInteractionStatus.DO_NOT_EXPORT );
+                    }
+                }
+
+                // cache it !
+                cvInteractionExportStatusCache.put( cvInteraction.getAc(), status );
+            }
+        }
+
+        log( "\t\t CvInteractionExport status: " + status );
+
+        return status;
+    }
+
+    /**
+     * Answers the question: does that experiment is to be exported to SwissProt ?
+     * <br>
+     * Do give that answer, we check that the Experiment has an annotation having
+     * <br>
+     * <b>CvTopic</b>: uniprot-dr-export
+     * <br>
+     * <b>text</b>: yes [OR] no [OR] &lt;keyword list&gt;
+     * <p/>
+     * if <b>yes</b>: the experiment is meant to be exported
+     * <br>
+     * if <b>no</b>: the experiment is NOT meant to be exported
+     * <br>
+     * if <b>&lt;keyword list&gt;</b>: the experiment is meant to be exported but only interactions that have
+     * an annotation with, as text, one of the keyword specified in the list.
+     * This is considered as a Large Scale experiment.
+     * </p>
+     *
+     * @param experiment the experiment for which we check if we have to export it.
+     * @return an Integer that has 4 possible value based on constant value: EXPORT, DO_NOT_EXPORT, NOT_SPECIFIED,
+     *         LARGE_SCALE. and a list of keywords that is set in case of large scale experiment.
+     */
+    public final ExperimentStatus getExperimentExportStatus( final Experiment experiment, String logPrefix ) {
+
+        ExperimentStatus status = null;
+
+        // cache the cvInteraction
+        ExperimentStatus cache = (ExperimentStatus) experimentExportStatusCache.get( experiment.getAc() );
+        if( null != cache ) {
+
+//            log( "\t\t\t\t Experiment: Status already processed, retreived from cache." );
+            status = cache;
+
+        } else {
+
+            boolean yesFound = false;
+            boolean noFound = false;
+            boolean keywordFound = false;
+
+            // most experiment won't need that, so we jsut allocate the collection when needed
+            Collection keywords = null;
+
+            Collection annotations = experiment.getAnnotations();
+            log( logPrefix + "\t\t\t\t " + annotations.size() + " annotation(s) found" );
+
+            for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
+                Annotation _annotation = (Annotation) iterator.next();
+                if( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
+
+                    log( logPrefix + "\t\t\t\t " + _annotation );
+
+                    String text = _annotation.getAnnotationText();
+                    if( text != null ) {
+                        text = text.trim().toLowerCase();
+                    }
+
+                    if( EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals( text ) ) {
+                        yesFound = true;
+                        log( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found" );
+
+                    } else {
+                        if( EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals( text ) ) {
+                            noFound = true;
+                            log( logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found" );
+
+                        } else {
+                            if( keywords == null ) {
+                                keywords = new ArrayList( 2 );
+                            }
+                            keywordFound = true;
+
+                            log( logPrefix + "\t\t\t\t '" + text + "' keyword found" );
+                            keywords.add( text );
+                        }
+                    }
+                }
+            }
+
+
+            if( yesFound && !keywordFound ) { // if at least one keyword found, set to large scale experiment.
+                status = new ExperimentStatus( ExperimentStatus.EXPORT );
+            } else if( noFound ) {
+                status = new ExperimentStatus( ExperimentStatus.DO_NOT_EXPORT );
+            } else if( keywordFound ) {
+                status = new ExperimentStatus( ExperimentStatus.LARGE_SCALE );
+                status.addKeywords( keywords );
+            } else {
+                status = new ExperimentStatus( ExperimentStatus.NOT_SPECIFIED );
+            }
+
+            // cache it.
+            experimentExportStatusCache.put( experiment.getAc(), status );
+        }
+
+        log( logPrefix + "\t\t\t\t Experiment status: " + status );
+        return status;
+    }
+
+    /**
+     * Answers the question: is that AnnotatedObject (Interaction, Experiment) annotated as negative ?
+     *
+     * @param annotatedObject the object we want to introspect
+     * @return true if the object is annotated with the 'negative' CvTopic, otherwise false.
+     */
+    public boolean isNegative( AnnotatedObject annotatedObject ) {
+
+        boolean isNegative = false;
+
+        Collection annotations = annotatedObject.getAnnotations();
+        for ( Iterator iterator = annotations.iterator(); iterator.hasNext() && false == isNegative; ) {
+            Annotation annotation = (Annotation) iterator.next();
+
+            if( negativeTopic.equals( annotation.getCvTopic() ) ) {
+                isNegative = true;
+            }
+        }
+
+        return isNegative;
+    }
+
+    /**
+     * @param interaction
+     * @return
+     */
+    protected Collection getCCnote( Interaction interaction ) {
+        Collection notes = null;
+
+        for ( Iterator iterator = interaction.getAnnotations().iterator(); iterator.hasNext(); ) {
+            Annotation annotation = (Annotation) iterator.next();
+
+            if( ccNoteTopic.equals( annotation.getCvTopic() ) ) {
+                if( notes == null ) {
+                    notes = new ArrayList( 2 ); // should rarely have more than 2
+                }
+
+                notes.add( annotation.getAnnotationText() );
+            }
+        }
+
+        return notes;
+    }
+
+    /**
+     * @param protein
+     * @return
+     */
+    protected String getGeneName( Protein protein ) {
+
+        String geneName = null;
+
+        for ( Iterator iterator = protein.getAliases().iterator(); iterator.hasNext() && null == geneName; ) {
+            Alias alias = (Alias) iterator.next();
+
+            if( geneNameAliasType.equals( alias.getCvAliasType() ) ) {
+                geneName = alias.getName();
+            }
+        }
+
+        if( geneName == null ) {
+            System.err.println( "Could not find a geneName for Protein: " + protein );
+        }
+
+        return geneName;
+    }
+}
