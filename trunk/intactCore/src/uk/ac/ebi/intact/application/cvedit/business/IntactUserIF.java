@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
+import uk.ac.ebi.intact.application.cvedit.struts.view.ResultBean;
 
 import java.util.Collection;
 import java.util.Date;
@@ -226,21 +227,32 @@ public interface IntactUserIF extends Serializable {
     public String getLastSearchClass();
 
     /**
-     * Caches the last search result. Each object of <code>results</code> is
-     * wrapped as a <code>ResultBean</code>.
-     * @param results holds the results from the search.
+     * Returns the cached search result.
+     * @return the cached search result as an array of <code>ResultBean</code>
+     * objects.
      *
      * <pre>
      * post: return->forall(obj: Object | obj.oclIsTypeOf(ResultBean))
      * </pre>
      */
-    public void cacheSearchResult(Collection results);
+    public ResultBean[] getSearchCache();
 
     /**
-     * Returns the cached search result.
-     * @return the cached search result as an <code>ArrayList</code>.
+     * Caches the last search result. Each object of <code>results</code> is
+     * wrapped as a <code>ResultBean</code>.
+     * @param results a collection of result beans from the search.
+     *
+     * <pre>
+     * pre: results->forall(obj: Object | obj.oclIsTypeOf(ResultBean))
+     * </pre>
      */
-    public ArrayList getCacheSearchResult();
+    public void addToSearchCache(Collection results);
+
+    /**
+     * Adds a new result item to the cache.
+     * @param cvobj the CV object to add to the cache.
+     */
+    public void addToSearchCache(CvObject cvobj);
 
     /**
      * Removes the object with matching AC from search cache.
