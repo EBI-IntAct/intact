@@ -9,8 +9,8 @@ package uk.ac.ebi.intact.application.cvedit.struts.controller;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvAddForm;
-import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
+import uk.ac.ebi.intact.application.cvedit.exception.SessionExpiredException;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.persistence.SearchException;
@@ -53,82 +53,117 @@ public class CvAddAction extends IntactBaseAction {
         // Need the form to get data entered by the user.
         CvAddForm theForm = (CvAddForm) form;
 
-        // Clear any previous errors.
-        super.clearErrors();
-
-        // Session to access various session objects.
-        HttpSession session = super.getSession(request);
-
         if (theForm.isSubmitted()) {
-            super.log("Form is submitted");
-            // Check for the short label; it must be unique.
-            String label = theForm.getShortLabel();
+            // The form is submitted.
+            formSubmitted(request, theForm.getShortLabel());
 
-            // Handler to the Intact User.
-            IntactUserIF user = super.getIntactUser(session);
-
-            // The topic selected by the user.
-            String topic = user.getSelectedTopic();
-
-            // The class name associated with the topic.
-            String classname = super.getIntactService().getClassName(topic);
-
-            // The owner of the object we are editing.
-            Institution owner = null;
-
-            // Holds the result from the search.
-            Collection result = null;
-
-            try {
-                owner = user.getInstitution();
-
-                result = user.search(classname,
-                    WebIntactConstants.SEARCH_BY_LABEL, label);
-            }
-            catch (SearchException se) {
-                // Can't query the database.
-                super.log(ExceptionUtils.getStackTrace(se));
-                super.addError("error.search", se.getMessage());
-                super.saveErrors(request);
+            // Any errors in creating a new CV object?
+            if (super.hasErrors()) {
                 return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
             }
-            // result is not empty if we have this label on the database.
-            if (!result.isEmpty()) {
-                super.addError("error.create",
-                    label + " you entered is not unique! Label must be unique.");
-                super.saveErrors(request);
-                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-            }
-            // Found a unique short label and topic combination; create a new CV.
-            CvObject cvobj = createNew(classname);
-            cvobj.setShortLabel(label);
-            cvobj.setOwner(owner);
-
-            try {
-                user.create(cvobj);
-            }
-            catch (IntactException ce) {
-                super.log(ExceptionUtils.getStackTrace(ce));
-                super.addError("error.create", ce.getMessage());
-                super.saveErrors(request);
-                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-            }
-            // Set the new object as the current edit object.
-            user.setCurrentEditObject(cvobj);
-
-            // Need to set the new CV object in a view bean to display on the
-            // screen for it to display.
-//            CvViewBean viewbean = super.getViewBean(session);
-//            viewbean.initialise(cvobj);
-//            viewbean.setTopic(topic);
-//            session.setAttribute(WebIntactConstants.VIEW_BEAN, viewbean);
-            // Straight to the edit jsp.
+            // Set it single match; once the editing is over, it will return
+            // back to the search page.
+            IntactUserIF user = super.getIntactUser(request);
+            user.setSearchResultStatus(1);
             return mapping.findForward(WebIntactConstants.FORWARD_EDIT);
         }
         // Cancel assumed.
         super.log("Form is cancelled");
         // Back to the search page.
         return mapping.findForward(WebIntactConstants.FORWARD_SEARCH);
+    }
+
+    /**
+     * This method is responsible for handling the sequence of events when the
+     * user presses Submit button to create a new CV object. Errors are added
+     * to super classes's error container as they occur.
+     *
+     * @param request the request to access various objects saved under a
+     * session.
+     * @param label the short label to create new CV object.
+     * @exception SessionExpiredException for an expired session.
+     */
+    private void formSubmitted(HttpServletRequest request, String label)
+            throws SessionExpiredException {
+        super.log("Form is submitted");
+
+        // Clear any previous errors.
+        super.clearErrors();
+
+        // Handler to the Intact User.
+        IntactUserIF user = super.getIntactUser(request);
+
+        // The topic selected by the user.
+        String topic = user.getSelectedTopic();
+
+        // The class name associated with the topic.
+        String classname = super.getIntactService().getClassName(topic);
+
+        // The owner of the object we are editing.
+        Institution owner = null;
+
+        // Holds the result from the search.
+        Collection result = null;
+
+        try {
+            owner = user.getInstitution();
+            result = user.search(classname,
+                WebIntactConstants.SEARCH_BY_LABEL, label);
+        }
+        catch (SearchException se) {
+            // Can't query the database.
+            super.log(ExceptionUtils.getStackTrace(se));
+            super.addError("error.search", se.getMessage());
+            super.saveErrors(request);
+        }
+        // result is not empty if we have this label on the database.
+        if (!result.isEmpty()) {
+            super.addError("error.create",
+                label + " you entered is not unique! Label must be unique.");
+            super.saveErrors(request);
+        }
+        // Quit if errors ocurred.
+        if (super.hasErrors()) {
+            return;
+        }
+        // Found a unique short label and topic combination; create a new CV.
+        CvObject cvobj = createNew(classname);
+        cvobj.setShortLabel(label);
+        cvobj.setOwner(owner);
+
+        try {
+            // Begin the transaction.
+            user.begin();
+            // Create the new object on the persistence system.
+            user.create(cvobj);
+            // Commit all the changes.
+            user.commit();
+            // Set the new object as the current edit object.
+            user.setCurrentEditObject(cvobj);
+            // Added a new CV object; update the drop down list.
+            user.refreshList();
+        }
+        catch (IntactException ie1) {
+            try {
+                user.rollback();
+            }
+            catch (IntactException ie2) {
+                // Oops! Problems with rollback; ignore this as this
+                // error is reported via the main exception (ie1).
+            }
+            // Log the stack trace.
+            super.log(ExceptionUtils.getStackTrace(ie1));
+            // Error with creating the new CV object changes.
+            super.addError("error.create", ie1.getMessage());
+            super.saveErrors(request);
+        }
+        catch (SearchException se) {
+            // Log the stack trace.
+            super.log(ExceptionUtils.getStackTrace(se));
+            // Error with updating the drop down lists.
+            super.addError("error.search.list", se.getMessage());
+            super.saveErrors(request);
+        }
     }
 
     /**
