@@ -80,11 +80,11 @@ public class DisplayAction extends Action {
             Constants.LOGGER.info( "start minehelper" );
 
             MineHelper helper = new MineHelper( user );
+
             // the network map maps the unique graphid to the accession numbers
             // which are in the graph represented by the graphid
             // Integer -> Collection (related protein ac)
             Map networks = helper.getNetworkMap( searchFor );
-            Constants.LOGGER.info( "found the different graphs to search in" );
 
             Integer graphid;
             GraphHelper graphHelper;
@@ -94,10 +94,11 @@ public class DisplayAction extends Action {
                 graphid = (Integer) iter.next();
                 search = (Collection) networks.get( graphid );
 
-                Constants.LOGGER.warn( "start with " + graphid );
+                Constants.LOGGER.info( "start with graph nr " + graphid );
 
                 // if the current search ac are in a graph in the database
-                if ( graphid != Constants.SINGLETON_GRAPHID ) {
+                if ( graphid != Constants.SINGLETON_GRAPHID
+                        && search.size() > 1 ) {
                     // the shortest path is computed
                     Constants.LOGGER.info( "searching for MiNe with " + search );
                     // the graphHelper is fetched from the application scope
@@ -117,6 +118,8 @@ public class DisplayAction extends Action {
                     helper.computeMiNe( gd, search );
                 }
                 else {
+                    Constants.LOGGER.info( search
+                            + " is added to the singletons" );
                     // the search accession numbers are not in a graph
                     // therefore they are added to the singletons
                     user.addToSingletons( helper.getShortLabels( search ) );
