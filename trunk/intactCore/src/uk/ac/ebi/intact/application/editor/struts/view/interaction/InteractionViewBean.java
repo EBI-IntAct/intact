@@ -160,10 +160,10 @@ public class InteractionViewBean extends AbstractEditViewBean {
         super.validate(user);
 
         if (myInteractionType == null) {
-            throw new InteractionException();
+            throw new InteractionException("error.int.validation.type");
         }
         if (myOrganism == null) {
-            throw new InteractionException();
+            throw new InteractionException("error.int.validation.biosrc");
         }
         // Look for any unsaved or error proteins.
         for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
