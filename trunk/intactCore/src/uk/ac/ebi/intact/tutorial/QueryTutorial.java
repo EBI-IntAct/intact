@@ -7,8 +7,10 @@ import org.apache.ojb.broker.accesslayer.LookupException;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 import java.sql.SQLException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 
 /**
@@ -47,46 +49,70 @@ public class QueryTutorial {
 
         //get only one spezific experiment
         Object experiment = helper.getObjectByLabel(Experiment.class, "ho");
-        if(experiment != null){
+        if (experiment != null) {
             String ex = experiment.toString();
             System.out.println("EXPERIMENT: " + ex);
-        }else{
+        } else {
             System.out.println("Sorry, experiment not found!");
         }
 
-        // get a collection of experiments
-        Collection experiments = helper.search(Experiment.class.getName(), "shortlabel", null);
-        System.out.println("We have " + experiments.size() + " experiment(s) found.");
+        // ask for a specific experiment
+        String str = "";
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("Please specify the name of the experiment (or press Enter to get all experiments): ");
+            str = in.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String expStr = "*" + str + "*";
+        // get a collection of experiments with the specified name
+        Collection experiments = helper.search(Experiment.class.getName(), "shortlabel", expStr);
 
-        // search experiments interacions and print out the experiments shortlabels
-        for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
-            Experiment exp = (Experiment) iterator.next();
-            Collection interactions = exp.getInteractions();
-            System.out.println("\n EXPERIMENT: " + exp.getShortLabel() + " has " + interactions.size() + " interaction(s)");
+        // check if there is an experiment with that name
+        // if not the list of available experiment are given
+        if (experiments.size() == 0) {
+            System.out.println("You have entered the experiment:  " + str);
+            System.out.println("Unfortunately it is not in your database!");
+            System.out.println("The following experiments are in your database: ");
+            Collection allExperiments = helper.search(Experiment.class.getName(), "shortlabel", null);
+            for (Iterator iterator = allExperiments.iterator(); iterator.hasNext();) {
+                Experiment exp = (Experiment) iterator.next();
+                System.out.println("\t" + exp.getShortLabel());
+            }
+        } else {
+            System.out.println("We have " + experiments.size() + " experiment(s) found.");
 
-            // search interactions interactors and print out the interactions shortlabel
-            for (Iterator iterator1 = interactions.iterator(); iterator1.hasNext();) {
-                Interaction interaction = (Interaction) iterator1.next();
-                Collection components = interaction.getComponents();
-                System.out.println("\t INTERACTION: " + interaction.getShortLabel() + " has " + components.size()
-                                    + " participants");
+            // search experiments interacions and print out the experiments shortlabels
+            for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
+                Experiment exp = (Experiment) iterator.next();
+                Collection interactions = exp.getInteractions();
+                System.out.println("\n EXPERIMENT: " + exp.getShortLabel() + " has " + interactions.size() + " interaction(s)");
 
-                for (Iterator iterator2 = components.iterator(); iterator2.hasNext();) {
-                    Component component = (Component) iterator2.next();
-                    Interactor interactor = component.getInteractor();
+                // search interactions interactors and print out the interactions shortlabel
+                for (Iterator iterator1 = interactions.iterator(); iterator1.hasNext();) {
+                    Interaction interaction = (Interaction) iterator1.next();
+                    Collection components = interaction.getComponents();
+                    System.out.println("\t INTERACTION: " + interaction.getShortLabel() + " has " + components.size()
+                            + " participants");
 
-                    String type = null;
-                    if (interactor instanceof Protein) {
-                        type = "PROTEIN";
-                    } else if (interactor instanceof Interaction) {
-                        type = "INTERACTION";
-                    } else {
-                        type = interactor.getClass().getName();
+                    for (Iterator iterator2 = components.iterator(); iterator2.hasNext();) {
+                        Component component = (Component) iterator2.next();
+                        Interactor interactor = component.getInteractor();
+
+                        String type = null;
+                        if (interactor instanceof Protein) {
+                            type = "PROTEIN";
+                        } else if (interactor instanceof Interaction) {
+                            type = "INTERACTION";
+                        } else {
+                            type = interactor.getClass().getName();
+                        }
+                        System.out.println("\t\t " + type + "\t" +
+                                interactor.getShortLabel() +
+                                "\t Role:" +
+                                component.getCvComponentRole().getShortLabel());
                     }
-                    System.out.println("\t\t " + type + "\t" +
-                            interactor.getShortLabel() +
-                            "\t Role:" +
-                            component.getCvComponentRole().getShortLabel());
                 }
             }
         }
