@@ -183,44 +183,11 @@ public class GraphToImage
 
     ImageDimension dimension = in.getImageDimension();
 
-//     // Initialization of dimensionRate, imageSizex and imagesizey
-//     if (dimension.length() / imageLength < dimension.height() / imageHeight){
-//       this.dimensionRate     = dimension.length() / imageLength;
-//       this.imageSizex        = imageLength + borderSize * 2;
-//       this.imageSizey        = dimension.height() / dimensionRate + borderSize * 2;
-//     } else {
-//       this.dimensionRate     = dimension.height() / imageHeight;
-//       this.imageSizex        = dimension.length() / dimensionRate  + borderSize * 2;
-//       this.imageSizey        = imageHeight + borderSize * 2;
-//     }
-
-
-    // Initialization of dimensionRate, imageSizex and imagesizey
-    if (dimension.length() / imageLength < dimension.height() / imageHeight){
-      this.dimensionRateX  = dimension.length() / imageLength;
-      this.dimensionRateY  = dimension.height() / imageHeight;
-      this.imageSizex      = imageLength + borderSize * 2;
-      this.imageSizey      = dimension.height() / dimensionRateY + borderSize * 2;
-    } else {
-      this.dimensionRateX  = dimension.length() / imageLength;
-      this.dimensionRateY  = dimension.height() / imageHeight;
-      this.imageSizex      = dimension.length() / dimensionRateX  + borderSize * 2;
-      this.imageSizey      = imageHeight + borderSize * 2;
-    }
-
-
-
-//     System.out.println ("numberOfProtein = " + numberOfProtein);
-//     System.out.println ("this.dimensionRateX = " + this.dimensionRateX);
-//     System.out.println ("this.dimensionRateY = " + this.dimensionRateY);
-//     System.out.println ("dimension.length() = " + dimension.length() );
-//     System.out.println ("dimension.height() = " + dimension.height());
-//     System.out.println ("borderSize = " + borderSize);
-//     System.out.println ("imageLength = " + imageLength);
-//     System.out.println ("imageHeight = " + imageHeight);
-//     System.out.println ("imageSizex = "+imageSizex);
-//     System.out.println ("imageSizey = "+imageSizey);
-
+    
+    this.dimensionRateX  = dimension.length() / imageLength;
+    this.dimensionRateY  = dimension.height() / imageHeight;
+    this.imageSizex      = imageLength + borderSize * 2;
+    this.imageSizey      = imageHeight + borderSize * 2;   
 
   } // GraphToImage
   
@@ -269,7 +236,7 @@ public class GraphToImage
     } // for
 
 
-    // update the image dimension according to the proteins coordinates and their size's shape
+    // update the image dimension according to the proteins coordinates and their size's label
     for (j = 0; j < numberOfProtein; j++) {
       protein = (Node) listOfProtein.get(j);
 
@@ -289,12 +256,17 @@ public class GraphToImage
                        this.internalLeftMargin + 
                        this.internalRightMargin;
 
+	// The dimension rate depends of the size of the picture.
+	// so, we have to calculate at each iteration to keep a right value.
+	this.dimensionRateX  = dimension.length() / imageLength;
+	this.dimensionRateY  = dimension.height() / imageHeight;
+
 	// update data in the protein
 	protein.put (Constants.ATTRIBUTE_LENGTH, new Float (length));
 	protein.put (Constants.ATTRIBUTE_HEIGHT, new Float (height));
 
-	// update the image dimension according to the proteine shape size
-	dimension.adjustCadre (length, height, proteinX, proteinY);
+	// update the image dimension according to the protein label size
+	dimension.adjustCadre (length * dimensionRateX , height * dimensionRateY, proteinX, proteinY);
       }
     } //  for
 
@@ -310,7 +282,7 @@ public class GraphToImage
    */
   private void readPropertyFile () {
 
-    this.properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+    this.properties = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
 
     // read the background and border color in the property file
     String stringBgColor     = null;
@@ -539,34 +511,38 @@ public class GraphToImage
   }
 
   /**
-   * Modify the coordinate for an edge. This modification allows to create a boder in the image
-   *
-   * @param x The old coordinate
-   * @param length The length
+   * Modify the coordinate for an edge. 
+   * i.e. Convert the Tulip coordinate to the image coordinate (the one we will draw).  
+   * The coordinate we want to use is in the middle of the node.
+   * This modification allows to create a border in the image by applying a shift to the coordinate.
+   * @param old The tulip coordinate
+   * @param min The coordinate minimal in the graph
    * @param rate The rate
    *
    * @return float
    */
-  private float newCoordinateEdge(float x, float length, float rate){
-    return x + length / (2 * rate); //for the border
+  private float newCoordinateEdge(float old, float min, float rate){
+    return (old - min) / rate + borderSize;
   }
   
 
   
   /**
-   * Modify the coordinate for a node. This modification allow to create a boder in the image
-   * a shift is applied to coordinates x and y
+   * Modify the coordinate for a node. 
+   * i.e. Convert the Tulip coordinate to the image coordinate (the one we will draw).  
+   * The coordinate we want to use is the upper left corner of the node.
+   * This modification allows to create a border in the image by applying a shift to the coordinate.
    *
-   * @param old The old coordinate
-   * @param xmin The coordinate x minimal in the graph
+   * @param old The tulip coordinate
+   * @param min The coordinate minimal in the graph
    * @param length The length
    * @param rate The rate
    *
    * @return the new coordinate
    */
-  private float newCoordinateNode (float old, float xmin, float length, float rate)
+  private float newCoordinateNode (float old, float min, float length, float rate)
   {
-    return (old - xmin - length/2) / rate + borderSize;
+    return (old - min) / rate - length/2 + borderSize;
   } 
   
   
@@ -579,8 +555,7 @@ public class GraphToImage
   private void drawNode(Node protein, Graphics2D g) {
 
     String proteinLabel  = protein.getLabel();
-
-    System.out.println("proteinLabel = " + proteinLabel);
+    
     float proteinLength  = ((Float) protein.get(Constants.ATTRIBUTE_LENGTH)).floatValue();
     float proteinHeight  = ((Float) protein.get(Constants.ATTRIBUTE_HEIGHT)).floatValue();
     float proteinX       = ((Float) protein.get(Constants.ATTRIBUTE_COORDINATE_X)).floatValue();
@@ -592,14 +567,10 @@ public class GraphToImage
 					     dimension.xmin(), 
 					     proteinLength ,
 					     getDimensionRateX());
-
-    float y1            = newCoordinateNode (- proteinY, 
-					     - (dimension.height() + dimension.ymin()), 
+    float y1            = newCoordinateNode (proteinY, 
+					     dimension.ymin(), 
 					     proteinHeight, 
 					     getDimensionRateY());
-
-    x1 -= proteinLength / 4;
-    y1 -= proteinHeight / 4;
 
     int x2 = (int) x1 + ((int) proteinLength); 
     int y2 = (int) y1 + ((int) proteinHeight);
@@ -625,8 +596,7 @@ public class GraphToImage
       g.setColor(bg);
     }
 
-
-    g.fillOval ((int) x1,
+   g.fillOval ((int) x1,
 		(int) y1, 
 		(int) proteinLength, 
 		(int) proteinHeight); 
@@ -668,12 +638,8 @@ public class GraphToImage
     float xline1, xline2, yline1, yline2;
 
     float proteinRx, proteinRy, 
-          proteinRlength, proteinRheight, 
-          proteinLx, proteinLy, 
-          proteinLlength, proteinLheight; 
+          proteinLx, proteinLy; 
     Color proteinRcolorNode, proteinLcolorNode;
-    int proteinRred, proteinRgreen, proteinRblue, proteinRalpha, 
-        proteinLred, proteinLgreen, proteinLblue, proteinLalpha;
 
     ImageDimension dimension = graph.getImageDimension();
     
@@ -681,52 +647,30 @@ public class GraphToImage
     proteinR           = (Node) interaction.getNode1();
     proteinRx          = ((Float) proteinR.get(Constants.ATTRIBUTE_COORDINATE_X)).floatValue();
     proteinRy          = ((Float) proteinR.get(Constants.ATTRIBUTE_COORDINATE_Y)).floatValue();
-    proteinRlength     = ((Float) proteinR.get(Constants.ATTRIBUTE_LENGTH)).floatValue();
-    proteinRheight     = ((Float) proteinR.get(Constants.ATTRIBUTE_HEIGHT)).floatValue();
     proteinRcolorNode  = (Color) proteinR.get(Constants.ATTRIBUTE_COLOR_NODE);
 
     // proteinLeft
     proteinL           = (Node) interaction.getNode2();
     proteinLx          = ((Float) proteinL.get(Constants.ATTRIBUTE_COORDINATE_X)).floatValue();
     proteinLy          = ((Float) proteinL.get(Constants.ATTRIBUTE_COORDINATE_Y)).floatValue();
-    proteinLlength     = ((Float) proteinL.get(Constants.ATTRIBUTE_LENGTH)).floatValue();
-    proteinLheight     = ((Float) proteinL.get(Constants.ATTRIBUTE_HEIGHT)).floatValue();
     proteinLcolorNode  = (Color) proteinL.get(Constants.ATTRIBUTE_COLOR_NODE);
 
-
     // calcul
-    xline1 = newCoordinateEdge(
-			       newCoordinateNode(proteinRx,
-						 dimension.xmin(), 
-						 proteinRlength,
-						 getDimensionRateX()),
-			       proteinRlength,
+    xline1 = newCoordinateEdge(proteinRx,
+			       dimension.xmin(),
 			       getDimensionRateX());
     
-    xline2 = newCoordinateEdge(
-			       newCoordinateNode(proteinLx,
-						 dimension.xmin(), 
-						 proteinLlength,
-						 getDimensionRateX()), 
-			       proteinLlength, 
+    xline2 = newCoordinateEdge(proteinLx,
+			       dimension.xmin(),
 			       getDimensionRateX());
-
-    yline1 = newCoordinateEdge(
-			       newCoordinateNode(- proteinRy, 
-						 -(dimension.height() + dimension.ymin()),
-						 proteinRheight, 
-						 getDimensionRateY()) , 
-			       proteinRheight, 
+			       
+    yline1 = newCoordinateEdge(proteinRy,
+			       dimension.ymin(), 
 			       getDimensionRateY());
 
-    yline2 = newCoordinateEdge(
-			       newCoordinateNode(- proteinLy, 
-						 -(dimension.height() + dimension.ymin()),
-						 proteinLheight, 
-						 getDimensionRateY()), 
-			       proteinLheight, 
+    yline2 = newCoordinateEdge(proteinLy,
+			       dimension.ymin(), 
 			       getDimensionRateY());
-
 
     if (this.edgeAntialiased.equalsIgnoreCase ("enable")) {
       // Enable antialiasing for shape
