@@ -4,13 +4,16 @@
         Authors: Henning Hermjakob (hhe@ebi.ac.uk), Sugath Mudali (smudali@ebi.ac.uk).
     -->
 
-    <project name="struts-intact" basedir="." default="project">
+    <project name="intact-core" basedir="." default="project">
     <property name="project.title" value="Intact Core"/>
     <property name="project.version" value="0.1.0"/>
 
     <property name="src.dir" value="src"/>
     <property name="dest.dir" value="classes"/>
     <property name="jdoc.dir" value="doc/api"/>
+
+    <!-- The non core files. -->
+    <property name="non.core.files" value="**/intact/application/**, **/intact/synchron/**"/>
 
     <!-- Where the distribution files are going to be (jar) -->
     <property name="dist.dir" value="dist"/>
@@ -32,15 +35,37 @@
 
     <!-- ************ End of Project level data *************** -->
 
-    <!-- Remove 'dest' and 'jdoc' directories for clean build -->
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and 'jdoc' directories for clean build. -->
     <target name="clean"
         description="Prepare for clean build; removes api docs and classes dirs">
         <delete dir="${dest.dir}"/>
         <delete dir="${jdoc.dir}"/>
     </target>
 
-    <!-- copy mapping files for castor and ojb in synchron class directory -->
-    <target name="copyMappings">
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories of cvedit module for clean build -->
+    <target name="clean-cvedit"
+        description="Prepare cvedit module for a clean build">
+        <ant dir="application/cvedit" inheritAll="false" target="clean"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories of hierarchView module for clean
+         build
+    -->
+    <target name="clean-hv"
+        description="Prepare hierarchView module for a clean build">
+        <ant dir="application/hierarchView" inheritAll="false" target="clean"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copy mapping files for castor and ojb in synchron class directory. -->
+    <target name="copySynchronMappings">
         <copy todir="${dest.dir}/uk/ac/ebi/intact/application/synchron" >
             <fileset dir="config" >
                 <include name="**/*.xml"/>
@@ -48,31 +73,10 @@
         </copy>
     </target>
 
-      <!-- Builds a jar file for intact core excluding test packages and only
-           including classes belonging to ebi.
-      -->
-    <target name="jar" depends="compile"
-        description="Creates the Intact core jar file in the distribution directory">
-        <mkdir dir="${dist.dir}" />
-        <jar destfile="${dist.dir}/intact-core.jar"
-           basedir="${basedir}/${dest.dir}"
-           includes="**/uk/**"
-           excludes="**/test/**"
-        />
-        <!-- Copy the file to web/WEB-INF/lib directory. -->
-        <copy file="${dist.dir}/intact-core.jar" todir="web/WEB-INF/lib"/>
-    </target>
+    <!-- =================================================================== -->
 
-    <!-- Compiles th source tree; creates the dest dir if it doesn't exist. -->
-    <target name="compile" description="Compiles the source tree"
-        depends="copyMappings">
-        <mkdir dir="${dest.dir}" />
-
-        <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on">
-            <classpath refid="project.class.path"/>
-        </javac>
-
-        <!-- Copy any configuration files -->
+    <!-- Copy configuration files. -->
+    <target name="copyConfigFiles">
         <copy todir="${dest.dir}/config" filtering="on">
             <fileset dir="config">
                 <include name="*.properties"/>
@@ -84,8 +88,94 @@
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="config/OJB.properties"/>
         <copy todir="${dest.dir}" file="config/log4j.properties"/>
-
     </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a jar file for intact core including only the core packages.
+         Test packages, property and repository files required for persistence
+         are not included.
+    -->
+    <target name="jar-core" depends="compile-core"
+        description="Creates the Intact core jar file in the distribution directory">
+        <mkdir dir="${dist.dir}" />
+
+        <!-- Delete the existing jar file. -->
+        <delete file="${dist.dir}/intact-core.jar" quiet="true"/>
+        <jar destfile="${dist.dir}/intact-core.jar"
+           basedir="${basedir}/${dest.dir}"
+           excludes="**/test/**, config/**, OJB.properties, log4j.properties,
+                    ${non.core.files}"
+        />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compiles the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile" description="Compiles the entire Intact source tree"
+        depends="copySynchronMappings">
+
+        <echo message=
+            "DEPRECATED; PLEASE USE compile-all or compile-core INSTEAD"/>
+        <mkdir dir="${dest.dir}" />
+
+        <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
+            excludes="${non.core.files}">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy any configuration files -->
+        <antcall target="copyConfigFiles"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compiles only the Intact core files. -->
+    <target name="compile-core" description="Compiles the Intact core source files">
+        <mkdir dir="${dest.dir}" />
+
+        <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
+            excludes="${non.core.files}">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy any configuration files -->
+        <antcall target="copyConfigFiles"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compiles the hierarchView module. -->
+    <target name="compile-hv"  depends="compile-core"
+        description="Compiles the hierarchView module">
+        <ant dir="application/hierarchView" inheritAll="false" target="compile"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compiles the cvedit module. -->
+    <target name="compile-cvedit" depends="compile-core"
+        description="Compiles the cvedit module">
+
+        <ant dir="application/cvedit" inheritAll="false" target="compile"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compiles all the sources. -->
+    <target name="compile-all" description="Compiles all the sources for Intact">
+
+        <!-- Make sure core jar is up to date first (this will compile core
+             as well).
+        -->
+        <antcall target="jar-core"/>
+
+        <!-- Call other modules as they rely on intact core. -->
+        <antcall target="compile-hv"/>
+        <antcall target="compile-cvedit"/>
+    </target>
+
+    <!-- =================================================================== -->
 
     <!-- Build javadocs -->
     <target name="javadoc" depends="compile"
@@ -120,131 +210,4 @@
 
     <!-- Build entire project -->
     <target name="project" depends="javadoc,demo"/>
-
-    <!-- BEGIN : hierarchView -->
-
-    <target name="init-hierarchView">
-
-        <property name="hierarchView.version" value="0.0.1"/>
-
-        <!-- Properties to locate the hierarchView ressources -->
-        <property name="hierarchView.webapp.jsp.dir"     value="jsp/hierarchView"/>
-        <property name="hierarchView.webapp.classes.dir" value="classes"/>
-
-        <!-- Properties for the building process -->
-        <property name="hierarchView.build.dir"   value="target/hierarchView"/>
-        <property name="hierarchView.build.web-inf.dir" value="${hierarchView.build.dir}/WEB-INF"/>
-        <property name="hierarchView.build.config.dir"  value="${hierarchView.build.web-inf.dir}/config"/>
-        <property name="hierarchView.build.lib.dir"     value="${hierarchView.build.web-inf.dir}/lib"/>
-        <property name="hierarchView.build.classes.dir" value="${hierarchView.build.web-inf.dir}/classes"/>
-
-        <property name="verbose" value="false"/>
-
-    </target>
-
-
-    <!-- Target for the hierarchView application module
-         Allows to build the web application (war file) -->
-    <target name="hv" 
-	    description="Build the hierarchView web application"
-            depends="init-hierarchView, compile">
-
-        <delete dir="${hierarchView.build.dir}"/>
-        <mkdir  dir="${hierarchView.build.dir}"/>
-	<mkdir  dir="${hierarchView.build.web-inf.dir}"/>
-	<mkdir  dir="${hierarchView.build.config.dir}"/>
-	<mkdir  dir="${hierarchView.build.lib.dir}"/>
-	<mkdir  dir="${hierarchView.build.classes.dir}"/>
-
-        <!-- Copy any jsp files -->
-        <copy todir="${hierarchView.build.dir}" filtering="on" verbose="${verbose}">
-	   <fileset dir="${hierarchView.webapp.jsp.dir}">
-		<include name="*.jsp"/>
-	        <include name="*.css"/>
-	   </fileset>
-        </copy>
-
-	<!-- Copy class files -->
-	<copy todir="${hierarchView.build.classes.dir}" verbose="${verbose}" >
-	   <fileset dir="${hierarchView.webapp.classes.dir}"/>
-	</copy>
-
-	<!-- Copy WEB-INF content -->
-	<copy todir="${hierarchView.build.web-inf.dir}" overwrite="true" verbose="${verbose}">
-	   <fileset dir="${hierarchView.webapp.jsp.dir}/WEB-INF">
-		<include name="**/*"/>
-	   </fileset>
-	</copy>
-
-	<!-- Copy lib files -->
-	<copy todir="${hierarchView.build.lib.dir}" verbose="${verbose}">
-          <fileset dir="lib">
-	     <include name="struts.jar"/>
-
-	     <!-- Misc. JAR files -->
-	     <include name="jdbc-se2.0.jar"/>
-	     <include name="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
-	     <include name="jta1.0.1.jar"/>
-	     <include name="jakarta-ojb-0.9.2.jar"/>
-	     <include name="log4j-1.2.5.jar"/>
-	     <include name="commons-collections-2.0.jar"/>
-	     <include name="commons-lang-0.1-dev.jar"/>
-	     <include name="jdori.jar"/>
-	     <include name="jmxri.jar"/>
-	     <include name="jta-spec1_0_1.jar"/>
-	     <include name="optional.jar"/>
-	     <include name="p6spy.jar"/>
-
-	     <include name="PngEncoder.jar"/>
-
-	     <!-- Include for Axis & Web Service -->
-	     <include name="axis.jar"/>
-	     <include name="commons-logging.jar"/>
-	     <include name="tt-bytecode.jar"/>
-	     <include name="wsdl4j.jar"/>
-	     <include name="jaxrpc.jar"/>
-	     <include name="xercesImpl.jar"/>
-
-	     <!-- Include JAR for Batik Framework -->
-	     <include name="batik-awt-util.jar"/>
-	     <include name="batik-bridge.jar"/>
-	     <include name="batik-css.jar"/>
-	     <include name="batik-dom.jar"/>
-	     <include name="batik-ext.jar"/>
-	     <include name="batik-extension.jar"/>
-	     <include name="batik-gui-util.jar"/>
-	     <include name="batik-gvt.jar"/>
-	     <include name="batik-parser.jar"/>
-	     <include name="batik-script.jar"/>
-	     <include name="batik-svg-dom.jar"/>
-	     <include name="batik-svggen.jar"/>
-	     <include name="batik-swing.jar"/>
-	     <include name="batik-transcoder.jar"/>
-	     <include name="batik-util.jar"/>
-	     <include name="batik-xml.jar"/>
-	     <include name="crimson-parser.jar"/>
-	     <include name="js.jar"/>
-
-          </fileset>
-	</copy>
-
-	<echo message="done !"/>
-
-    </target>
-
-
-    <!-- Build the hierarchView webapp file -->
-    <target name="hv-war" 
-            description="Build the hierarchView Web Application Archive"
-            depends="hv">
-
-       <jar basedir="${hierarchView.build.dir}"
-            jarfile="hierarchView.war"
-       />
-
-    </target>
-
-    <!-- END : hierarchView -->
-
-
 </project>
