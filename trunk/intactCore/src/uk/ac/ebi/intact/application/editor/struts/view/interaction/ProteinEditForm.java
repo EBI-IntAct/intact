@@ -41,8 +41,7 @@ public class ProteinEditForm extends EditForm {
             return null;
         }
         // The bean associated with the current action.
-        int index = getIndex();
-        ProteinBean pb = (ProteinBean) getItems()[index];
+        ProteinBean pb = (ProteinBean) getSelectedBean();
 
         // Must select from the drop down list.
         if (pb.getRole().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
