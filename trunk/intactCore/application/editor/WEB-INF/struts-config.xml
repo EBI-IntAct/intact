@@ -190,7 +190,7 @@
     >
     </action>
     <action
-      path="/exp/dispatch"
+      path="/expDispatch"
       type="uk.ac.ebi.intact.application.editor.struts.action.experiment.ExperimentSubmitAction"
       name="expForm"
       scope="session"
@@ -239,7 +239,7 @@
       />
     </action>
     <action
-      path="/feature/dispatch"
+      path="/featureDispatch"
       type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureSubmitAction"
       name="featureForm"
       scope="session"
@@ -305,7 +305,7 @@
     >
     </action>
     <action
-      path="/int/dispatch"
+      path="/intDispatch"
       type="uk.ac.ebi.intact.application.editor.struts.action.interaction.InteractionSubmitAction"
       name="intForm"
       scope="session"
@@ -445,7 +445,7 @@
       />
     </action>
     <action
-      path="/seq/dispatch"
+      path="/seqDispatch"
       type="uk.ac.ebi.intact.application.editor.struts.action.sequence.SequenceSubmitAction"
       name="seqForm"
       scope="session"
@@ -557,7 +557,7 @@
     >
     </action>
     <action
-      path="/bs/dispatch"
+      path="/bsDispatch"
       type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceSubmitAction"
       name="bsForm"
       scope="session"
@@ -1002,7 +1002,7 @@
       />
     </action>
     <action
-      path="/cv/dispatch"
+      path="/cvDispatch"
       type="uk.ac.ebi.intact.application.editor.struts.action.cv.CvSubmitAction"
       name="cvForm"
       scope="session"
