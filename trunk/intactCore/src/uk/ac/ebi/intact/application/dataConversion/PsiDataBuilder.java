@@ -24,7 +24,10 @@ import java.io.File;
 /**
  * PSI-specific implementation of DataBuilder interface. This class will
  * generate a PSI-format file from the data it is supplied with. The implementation
- * is based on the <code>Graph2MIF</code> application written by Henning Mersch.
+ * is based on the <code>Graph2MIF</code> application written by Henning Mersch - currently
+ * much of this code remains 'from the original', and needs to be refactored/fixed when
+ * time allows.
+ * Many methods have not yet been exercised but will be fixed on demand.
  *
  * @author Chris Lewington
  * @version $Id$
@@ -1255,31 +1258,59 @@ public class PsiDataBuilder implements DataBuilder {
      * @see uk.ac.ebi.intact.model.Xref
      */
     private Element doXrefCollection(Collection xrefs, String primaryRefLabel) throws ElementNotParseableException {
+
+        //CL:General idea - go through the xrefs and find the primary
+        //one, then consider all the others as secondary. Create the PSI elements
+        //as appropriate and return.
+        //NB we should avoid removing the primary ref from the collection once we
+        //have it (this would make the job simpler), in case other code needs to
+        //access the Experiment's xrefs - we could end up with unwanted side effects.
+        //Making a local copy is inefficient.
+
         // keep track of the existence of a primary Xref
         Xref primaryXref = null;
 
         //generate DOM-Element
         Element psiXref = doc.createElement("xref");
 
+        //the first SPTR Intact Xref will become primary & secondary ref in PSI
+        //(CL: WHAT???)
 
-            //the first SPTR Intact Xref will become primary & secondary ref in PSI
+        //CL: A primary ref must exist, but there may also be any number of
+        //secondary refs - these must be captured also..
+        try {
             for (Iterator it = xrefs.iterator(); it.hasNext();) {
                 Xref xref = (Xref) it.next();
                 //check for parent being an interaction
                 // - they should be handled differently...
                 String dbShortLabel = xref.getCvDatabase().getShortLabel();
-                try {
-                    if ((dbShortLabel.equalsIgnoreCase(primaryRefLabel) && xref.getPrimaryId() != null) //SPTR found
-                            || !it.hasNext()) { //if no SPTR found, take any (here we take last)
-                        Element psiPrimaryRef = doPrimaryRef(xref);
-                        psiXref.appendChild(psiPrimaryRef);
-                        primaryXref = xref;
-                        break;
-                    }
-                } catch (ElementNotParseableException e) { //dont worry - try next one
-                    logger.warn("Xref without primary db or id found ! Ignoring !");
+                if ((dbShortLabel.equalsIgnoreCase(primaryRefLabel) && xref.getPrimaryId() != null) //SPTR found
+                    || !it.hasNext()) { //if no SPTR found, take any (here we take last)
+                    //Element psiPrimaryRef = doPrimaryRef(xref);
+                    //psiXref.appendChild(psiPrimaryRef);
+                    primaryXref = xref;
+                    break;  //done - we only want to grab the primary one
                 }
             }
+
+            //now do the PSI stuff - what is left in our List must all be
+            //secondary Xrefs..
+            Element psiPrimaryRef = doPrimaryRef(primaryXref);
+            psiXref.appendChild(psiPrimaryRef);
+            //need this as XML API won't let you append 'anonymous' children..
+            Element secondaryPsiRef = null;
+            Xref ref = null;
+            for(Iterator it = xrefs.iterator(); it.hasNext();) {
+                ref = (Xref)it.next();
+                //ignore the primary one - let's hope equals works on Xrefs....
+                if(ref.equals(primaryXref)) continue;
+                secondaryPsiRef = procSecondaryRef(ref);
+                psiXref.appendChild(secondaryPsiRef);
+            }
+        }
+        catch (ElementNotParseableException e) { //dont worry - try next one
+            logger.warn("Xref without primary db or id found ! Ignoring !");
+        }
 
         /* secondary xrefs are optional, don't do them
 
