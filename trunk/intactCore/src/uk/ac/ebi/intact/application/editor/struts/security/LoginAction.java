@@ -10,7 +10,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
-import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUser;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
@@ -23,8 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Implements the logic to authenticate a user for the editor application.
