@@ -74,6 +74,11 @@ public interface EditorConstants {
     public static final String FORWARD_NO_MATCHES = "noMatch";
 
     /**
+     * Forwards to the editor.
+     */
+    public static final String FORWARD_EDITOR = "editor";
+
+    /**
      * The name of the CV info form.
      */
     public static final String FORM_CVINFO = "cvInfoForm";
