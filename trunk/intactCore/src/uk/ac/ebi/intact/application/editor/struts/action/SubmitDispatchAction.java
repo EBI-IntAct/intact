@@ -232,11 +232,9 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         // Validate the data.
         view.validate(user);
 
-        // Update the annotated object with current values.
-        view.update(user);
-
         try {
-            // Persist my current state
+            // Persist my current state (this takes care of updating the wrapped
+            // object with values from the form).
             view.persist(user);
 
             // Any other objects to persist in their own transaction.
