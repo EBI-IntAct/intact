@@ -17,16 +17,24 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
     <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
 
-    <property name="lib.dir"    value="WEB-INF/lib"/>
-    <property name="tld.dir"    value="WEB-INF/tld"/>
-    <property name="dest.dir"   value="WEB-INF/classes"/>
-    <property name="config.dir" value="WEB-INF/config"/>
-    <property name="jdoc.dir"   value="doc/api"/>
-    <property name="dist.dir"   value="dist"/>
-    <property name="war.file"   value="hierarchView.war"/>
-
     <!-- Intact application location. -->
     <property name="intact.app.dir" value=".."/>
+
+    <property name="commons.pages.dir"   value="${intact.app.dir}/pages"/>
+    <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
+    <property name="commons.images.dir"  value="${intact.app.dir}/images"/>
+
+    <property name="pages.dir"          value="pages"/>
+    <property name="images.dir"         value="images"/>
+    <property name="layouts.dir"        value="layouts"/>
+    <property name="layouts.styles.dir" value="${layouts.dir}/styles"/>
+    <property name="lib.dir"            value="WEB-INF/lib"/>
+    <property name="tld.dir"            value="WEB-INF/tld"/>
+    <property name="dest.dir"           value="WEB-INF/classes"/>
+    <property name="config.dir"         value="WEB-INF/config"/>
+    <property name="jdoc.dir"           value="doc/api"/>
+    <property name="dist.dir"           value="dist"/>
+    <property name="war.file"           value="hierarchView.war"/>
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
@@ -190,7 +198,35 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
 
         <!-- Struts imported tlds-->
         <delete>
-            <fileset dir="${tld.dir}" includes="struts*.tld"/>
+            <fileset dir="${tld.dir}">
+                <include name="struts*.tld"/>
+                <include name="taglib3.tld"/>
+            </fileset>
+
+        </delete>
+
+        <!-- Tiles commons files -->
+        <delete dir="${images.dir}"/>
+        <delete>
+             <fileset dir="${layouts.dir}">
+                 <!-- Do not remove hv specific files -->
+                 <exclude name="sidebar.jsp"/>
+                 <exclude name="content.jsp"/>
+            </fileset>
+        </delete>
+
+        <delete dir="${layouts.styles.dir}"/>
+
+        <delete>
+             <fileset dir="${pages.dir}">
+                 <!-- Do not remove hv specific files -->
+                 <exclude name="graphTitle.jsp"/>
+                 <exclude name="highlightTitle.jsp"/>
+                 <exclude name="graph.jsp"/>
+                 <exclude name="highlight.jsp"/>
+                 <exclude name="sidebarSearch.jsp"/>
+                 <exclude name="sidebarGraph.jsp"/>
+            </fileset>
         </delete>
     </target>
 
@@ -424,14 +460,32 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
 
+        <!-- Create local directories to copy common files. -->
+        <mkdir dir="${layouts.styles.dir}"/>
+        <mkdir dir="${images.dir}"/>
+
+        <!-- Common layouts -->
+        <copy todir="${layouts.dir}">
+            <fileset dir="${commons.layouts.dir}"/>
+        </copy>
+
+        <!-- Common images -->
+        <copy todir="${images.dir}">
+            <fileset dir="${commons.images.dir}"/>
+        </copy>
+
+        <!-- Common jsp files -->
+        <copy todir="${pages.dir}">
+            <fileset dir="${commons.pages.dir}"/>
+        </copy>
+
         <!-- Delete the war file or else it will keep the old one -->
         <delete file="${dist.dir}/${war.file}" quiet="true"/>
 
         <!-- Copy struts standard tld files -->
         <copy todir="${tld.dir}">
             <fileset dir="${intact.app.dir}/tld">
-                <include name="struts-bean.tld"/>
-                <include name="struts-html.tld"/>
+                <include name="*.tld"/>
             </fileset>
         </copy>
 
@@ -446,8 +500,12 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
             <fileset dir="${basedir}">
                 <include name="*.jsp"/>
                 <include name="*.css"/>
-                <include name="WEB-INF/config/struts-config.xml"/>
-                <include name="WEB-INF/tld/*.tld"/>
+                <include name="WEB-INF/struts-config.xml"/>
+                <include name="WEB-INF/tiles-defs.xml"/>
+                <include name="${tld.dir}/**"/>
+                <include name="${images.dir}/*"/>
+                <include name="${pages.dir}/**"/>
+                <include name="${layouts.dir}/**"/>
             </fileset>
 
             <!-- Include jar files for hv. -->

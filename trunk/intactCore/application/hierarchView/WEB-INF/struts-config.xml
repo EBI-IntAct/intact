@@ -21,80 +21,107 @@ need only the "form-bean" element itself, with the corresponding
     <!-- ========== Form Bean Definitions =================================== -->
     <form-beans>
 
-        <!-- visualization form bean -->
-        <form-bean name="visualizeForm"
-                   type="uk.ac.ebi.intact.application.hierarchView.struts.view.VisualizeForm"/>
-
         <!-- highlightment form bean -->
         <form-bean name="highlightmentForm"
                    type="uk.ac.ebi.intact.application.hierarchView.struts.view.HighlightmentForm"/>
+
+        <!-- The searchbar form -->
+        <form-bean name="searchForm"
+                   type="uk.ac.ebi.intact.application.hierarchView.struts.view.SearchForm"/>
+
+        <!-- form container for the graph management -->
+        <form-bean name="InteractionNetworkForm"
+                   type="uk.ac.ebi.intact.application.hierarchView.struts.view.InteractionNetworkForm"/>
 
     </form-beans>
 
     <!-- ========== Global Exceptions ======================================= -->
     <global-exceptions>
+
         <exception
             key="error.session.expired"
-            path="error.jsp"
+            path="hierarchView.error.layout"
             scope="request"
             type="uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException"
         />
+
     </global-exceptions>
 
     <!-- ========== Global Forward Definitions ============================== -->
     <global-forwards>
-        <forward name="quit" path="/exit.jsp"/>
+
+        <forward  name="success"  path="hierarchView.result.layout"/>
+        <forward  name="error"    path="hierarchView.error.layout"/>
+
     </global-forwards>
 
     <!-- ========== Action Mapping Definitions ============================== -->
     <action-mappings>
 
         <!-- Action mapping for the hierarchView application -->
+        <!-- Entrance of the application -->
+        <action
+            path="/init"
+            type="uk.ac.ebi.intact.application.hierarchView.struts.controller.InitAction">
 
-        <!-- Processes the main form which allow to define the interaction network you want to visualize -->
-        <action path="/visualize"
-                type="uk.ac.ebi.intact.application.hierarchView.struts.controller.VisualizeAction"
-                name="visualizeForm"
-                scope="session"
-                input="/view.jsp">
-
-            <forward  name="success"  path="/view.jsp"/>
-            <forward  name="error"    path="/view.jsp"/>
-
+            <forward name="success" path="hierarchView.blank.layout"/>
         </action>
 
-        <!-- Processes the highlightment form -->
+        <!-- Processes the user search -->
+        <action path="/search"
+                type="uk.ac.ebi.intact.application.hierarchView.struts.controller.SearchAction"
+                name="searchForm"
+                validate="true"
+                scope="request"
+                input="hierarchView.error.layout"/>
+
+        <!-- Processes the user search -->
+        <action path="/display"
+                type="uk.ac.ebi.intact.application.hierarchView.struts.controller.DisplayAction"
+                scope="request"
+                input="hierarchView.error.layout"/>
+
+        <!-- Processes the highlightment form
+             allowing to change the current behaviour, options
+          -->
         <action path="/highlightment"
                 type="uk.ac.ebi.intact.application.hierarchView.struts.controller.HighlightmentAction"
                 name="highlightmentForm"
-                scope="request"
-                input="/view.jsp">
-
-            <forward  name="success"  path="/view.jsp"/>
-
-        </action>
+                scope="request"/>
 
         <!-- Processes the user's action allowing to select an object in an external application -->
         <action path="/source"
                 type="uk.ac.ebi.intact.application.hierarchView.struts.controller.SourceAction"
                 scope="request"
-                input="/hierarchy.jsp">
-
-            <forward  name="success"  path="/view.jsp"/>
-
-        </action>
+                input="hierarchView.result.layout"/>
 
         <!-- Processes the centered view action -->
         <action path="/centered"
                 type="uk.ac.ebi.intact.application.hierarchView.struts.controller.CenteredAction"
                 scope="request"
-                input="/view.jsp">
+                input="hierarchView.result.layout"/>
 
-            <forward  name="success"  path="/view.jsp"/>
-            <forward  name="error"    path="/view.jsp"/>
+        <!-- Processes the Contraction/Expansion of the interaction network -->
+        <action path="/interactionNetwork"
+                type="uk.ac.ebi.intact.application.hierarchView.struts.controller.InteractionNetworkAction"
+                name="InteractionNetworkForm"
+                scope="request"/>
 
-        </action>
+        <!-- Processes the request to display the content of a highlight source-->
+        <action path="/displaySourceContent"
+                type="uk.ac.ebi.intact.application.hierarchView.struts.controller.DisplaySourceAction"
+                scope="request"/>
 
     </action-mappings>
+
+    <!-- ============ Plug Ins Configuration ================================== -->
+
+    <!-- Declaration of the use of Tiles (where to find its configuration file) -->
+    <plug-in className="org.apache.struts.tiles.TilesPlugin" >
+
+        <set-property  property="definitions-config"  value="/WEB-INF/tiles-defs.xml"/>
+        <set-property  property="moduleAware"         value="true" />
+
+    </plug-in>
 
 </struts-config>

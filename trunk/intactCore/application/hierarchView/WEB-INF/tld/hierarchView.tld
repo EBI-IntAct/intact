@@ -15,50 +15,22 @@
 
 
     <tag>
-        <name>init</name>
-        <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.InitTag</tagclass>
-        <bodycontent>empty</bodycontent>
-        <info>
-            Initializes some components :
-              - data access and by storing it in the session,
-              - web service by deploying it and storing a flag in the ServletContext.
-        </info>
-    </tag>
-
-
-    <tag>
-        <name>createFrames</name>
-        <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.CreateFramesTag</tagclass>
-        <bodycontent>JSP</bodycontent>
-        <info>
-            Create application frames, and in case the index page receive a query,
-            it's forwarded to the left frame.
-        </info>
-    </tag>
-
-
-    <tag>
-        <name>checkInit</name>
-        <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.CheckInitTag</tagclass>
-        <bodycontent>empty</bodycontent>
-        <info>
-            Check if data access and the web service have been properly inittialized.
-        </info>
-        <attribute>
-            <name>forwardOnError</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
-
-
-    <tag>
         <name>displayInteractionNetwork</name>
         <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayInteractionNetworkTag</tagclass>
         <bodycontent>JSP</bodycontent>
         <info>
             Displays the interaction network if the picture has been generated
             and stored in the session.
+        </info>
+    </tag>
+
+
+    <tag>
+        <name>displayHighlightOptions</name>
+        <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayHighlightOptions</tagclass>
+        <bodycontent>JSP</bodycontent>
+        <info>
+            Include HTML code to Displays current highlight source options.
         </info>
     </tag>
 
@@ -72,6 +44,15 @@
         </info>
     </tag>
 
+
+    <tag>
+        <name>displayHttpContent</name>
+        <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayHttpContentTag</tagclass>
+        <bodycontent>JSP</bodycontent>
+        <info>
+            Displays the content of the URL stored in the session.
+        </info>
+    </tag>
 </taglib>
 
 
