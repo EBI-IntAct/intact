@@ -6,21 +6,21 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.struts.action.ActionServlet;
-import org.apache.struts.util.MessageResources;
+
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import java.util.MissingResourceException;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ResourceBundle;
 
 /**
  * This is Intact editor specific action servlet class. This class is
@@ -164,6 +164,8 @@ public class EditorActionServlet extends ActionServlet {
 
         // Biosource anchors
         map.put("error.taxid.mask", "info");
+		map.put("error.bs.sanity.taxid", "info");
+		map.put("error.bs.sanity.taxid.dup", "info");
         return map;
     }
 }

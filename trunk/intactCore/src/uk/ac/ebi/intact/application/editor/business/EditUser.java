@@ -692,7 +692,16 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             LockManager.getInstance().release(myEditView.getAc());
         }
     }
-
+    
+	public BioSource getBioSourceByTaxId(String taxId) throws SearchException {
+		try {
+			return myHelper.getBioSourceByTaxId(taxId);
+		}
+		catch (IntactException ie) {
+			throw new SearchException("Failed to get a BioSource for " + taxId);
+		}
+	}
+	
     // Helper methods.
 
     /**

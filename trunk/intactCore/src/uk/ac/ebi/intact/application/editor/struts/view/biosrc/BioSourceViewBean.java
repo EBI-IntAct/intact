@@ -120,9 +120,15 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     // Override to provide biosource specific sanity checking.
     public void sanityCheck(EditUserI user) throws ValidationException,
             SearchException {
-        // Tax id can't be null.
-        if (myTaxId == null) {
-            throw new BioSourceException("sanity.bs.taxid");
+        // There should be one unique bisosurce.
+        BioSource bs = user.getBioSourceByTaxId(myTaxId);
+        if (bs !=null) {
+        	// A BioSource found.
+        	if (!bs.getAc().equals(getAc())) {
+        		// Different biosources.
+				throw new BioSourceException("bs.sanity.taxid.dup",
+					 "error.bs.sanity.taxid.dup");
+			}
         }
     }
 

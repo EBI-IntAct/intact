@@ -110,4 +110,7 @@
 	<span class="warning">
 		<bean:write name="message" filter="false"/>
 	</span>	
-</html:messages>        
+</html:messages>
+
+<html:errors property="bs.sanity.taxid.dup"/>
+        
