@@ -106,7 +106,7 @@ public class ResultBean implements Serializable {
         if (obj == this) {
             return true;
         }
-        return getClass() == obj.getClass();
+        return myAnnotObject.getClass() == obj.getClass();
     }
 
     // Override Objects's equal method.
