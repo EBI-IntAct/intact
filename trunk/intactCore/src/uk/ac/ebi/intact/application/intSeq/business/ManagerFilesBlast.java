@@ -71,6 +71,43 @@ public class ManagerFilesBlast extends ManagerFiles {
      * This method parses a wu-blast output file, to retrieve the accession number of each result,
      * the percentage identity with the query, start and end of the both aligned fragments.
      *
+     *  --------------- WU-BLAST OUTPUT FILE SAMPLE --------------------------------
+     *          >SWALL:O88613 (3873) MUSCARINIC ACETYLCHOLINE RECEPTOR M1 (FRAGMENT)
+                        Length = 200
+
+                Score = 61 (26.5 bits), Expect = 4.4, Sum P(2) = 0.99
+                Identities = 26/78 (33%), Positives = 36/78 (46%)
+
+                Query:   317 TEKQARELSVPQG---PGAGAESTGEIINNTVPLENSI---PGNCCSALFKNLLLK---- 366
+                            TE +AREL+  QG   PG G  S+     +    E S    PG CC       LL+
+                Sbjct:    58 TENRARELAALQGSETPGKGGGSSSSSERSQPGAEGSPESPPGRCCRCCRTPRLLQAYSW 117
+
+                Query:   367 KIKRCERKGT-ESVTEEK 383
+                            K +  E +G+ ES+T  +
+                Sbjct:   118 KEEEEEDEGSMESLTSSE 135
+
+                Score = 37 (18.1 bits), Expect = 4.4, Sum P(2) = 0.99
+                Identities = 7/14 (50%), Positives = 8/14 (57%)
+
+                Query:   655 PLPTPELQMPTMVP 668
+                            P+  PE Q PT  P
+                Sbjct:   148 PMVDPEAQAPTKQP 161
+
+                >SWALL:O55068 (3829) ALPHA1B-ADRENERGIC RECEPTOR (FRAGMENT)
+                       Length = 85
+
+                Score = 51 (23.0 bits), Expect = 5.6, P = 0.996
+                Identities = 13/33 (39%), Positives = 19/33 (57%)
+
+                Query:   164 SLIETPANGTGPSEALAMLLQETTGELEAAKAL 196
+                            +L T A G  P  ++A+ L + + E EAAK L
+                Sbjct:    47 TLSSTKAKGHNPRSSIAVKLFKFSREKEAAKTL 79
+
+     *
+     * What is retrieved from this file by the regular expression is described
+     * in the file where the regular expression is defined (the SeqIdConstant class temporarily
+     * -- later in a configuration file of the application)
+     *
      * @param patterns contains the Regular Expression list, one for each item to retrieve.
      * @param jWhichGroup defines the group requiered in the regular expression:
      *          jWhichGroup must be different from "0" otherwise, the whole line is retrieved.
