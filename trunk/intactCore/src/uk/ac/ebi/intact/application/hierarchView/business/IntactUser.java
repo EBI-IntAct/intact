@@ -21,12 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
 
-
 import org.apache.log4j.Logger;
 
 /**
- * This class stores information about an Intact Web user session. Instead of
- * binding multiple objects, only an object of this class is bound to a session,
+ * This class stores information about an Intact Web user session. <br>
+ * Instead of binding multiple objects, only an object of this class is bound to a session,
  * thus serving a single access point for multiple information.
  * <p>
  * This class implements the <tt>HttpSessionBindingListener</tt> interface for it
@@ -170,15 +169,15 @@ public class IntactUser implements IntactUserI {
 
         init ();
 
-        DAOSource ds = DAOFactory.getDAOSource (datasourceClass);
+        DAOSource dataSource = DAOFactory.getDAOSource (datasourceClass);
 
         // Pass config details to data source - don't need fast keys as only accessed once
         Map fileMap = new HashMap();
         fileMap.put (Constants.MAPPING_FILE_KEY, repositoryfile);
-        ds.setConfig (fileMap);
+        dataSource.setConfig (fileMap);
 
         // build a helper for use throughout a session
-        this.intactHelper = new IntactHelper (ds);
+        this.intactHelper = new IntactHelper (dataSource);
         logger.info ("IntactHelper created.");
     }
 
