@@ -13,7 +13,6 @@ import org.w3c.dom.Document;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
-import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ConvertSVG;
 
 /**
