@@ -23,6 +23,13 @@
             type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="username" type="java.lang.String"/>
             <form-property name="password" type="java.lang.String"/>
+
+            <!-- These two fields are only set when accessing an editor page
+                 directly. It is important to keep property names as they appear
+                 in ResultAction & LoginAction classes, loginInput.jsp.
+            -->
+            <form-property name="ac" type="java.lang.String"/>
+            <form-property name="type" type="java.lang.String"/>
         </form-bean>
 
         <!-- The sidebar form -->
@@ -89,6 +96,16 @@
     <!-- ========== Action Mapping Definitions ============================== -->
     <action-mappings>
 
+        <!-- This action is responsible for which editor to choose. -->
+        <action path="/choose"
+            type="uk.ac.ebi.intact.application.editor.struts.action.EditorChoiceAction"
+            scope="request">
+            <forward name="cv" path="/do/cv/fill/form"/>
+            <forward name="exp" path="/do/exp/fill/form"/>
+            <forward name="biosrc" path="/do/bs/fill/form"/>
+            <forward name="int" path="/do/int/fill/form"/>
+        </action>
+
         <!-- The starting point for the application; display the login layout. -->
         <action path="/welcome"
             type="org.apache.struts.actions.ForwardAction"
@@ -121,6 +138,11 @@
                 path="login.error.layout"/>
             <!-- Successful login; present the search page. -->
             <forward name="success" path="search.layout"/>
+
+            <!-- Redirect to processing the query (already selected what to edit)
+                 This will only happen when accessing an editor page directly.
+            -->
+            <forward name="redirect" path="/do/secure/edit"/>
         </action>
 
         <!-- This action is called by tiles when displaying the header. The
@@ -157,7 +179,7 @@
         </action>
 
         <!-- Process when a user selects an Editor object from a search result. -->
-        <action path="/result"
+        <action path="/secure/edit"
             type="uk.ac.ebi.intact.application.editor.struts.action.ResultAction"
             name="dummyForm"
             scope="request">

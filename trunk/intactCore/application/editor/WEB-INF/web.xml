@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!DOCTYPE web-app
-  PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
-  "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+  PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+  "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
 
@@ -31,6 +31,18 @@
         <param-name>datasource</param-name>
         <param-value>uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource</param-value>
     </context-param>
+
+    <!-- This filter is to stop users accessing edit pages without login first -->
+   <filter>
+      <filter-name>Security Filter</filter-name>
+      <filter-class>uk.ac.ebi.intact.application.editor.security.LoginCheckFilter</filter-class>
+   </filter>
+
+   <!-- map all requests to the SecurityFilter, control what it does with configuration settings -->
+   <filter-mapping>
+      <filter-name>Security Filter</filter-name>
+      <url-pattern>/*</url-pattern>
+   </filter-mapping>
 
     <!-- Action Servlet Configuration -->
     <servlet>
@@ -75,6 +87,8 @@
 
         <load-on-startup>1</load-on-startup>
     </servlet>
+
+    <!-- =================================================================== -->
 
     <!-- Action Servlet Mapping -->
     <servlet-mapping>

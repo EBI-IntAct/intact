@@ -51,7 +51,7 @@
 <%-- The uri when clicking on tab links --%>
 <bean:define id="uri" value="<%=request.getContextPath() + "/do/showResults"%>"/>
 
-<html:form action="/result">
+<html:form action="/secure/edit">
     <display:table width="100%" name="results" pagesize="50" requestURI="<%=uri%>"
         decorator="uk.ac.ebi.intact.application.editor.struts.view.ResultDisplayWrapper">
         <display:column property="ac" title="AC"/>

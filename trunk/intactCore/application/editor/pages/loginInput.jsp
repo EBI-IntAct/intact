@@ -1,5 +1,6 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <%--
     Defines the login input dialog window.
@@ -8,6 +9,13 @@
 --%>
 
 <html:form action="/login" focus="username" onsubmit="return validateLoginForm(this)">
+
+    <%-- Append ac and search class parameters if they are present --%>
+    <c:if test="${not empty param.ac and not empty param.type}">
+        <html:hidden property="ac" value="<%=request.getParameter(\"ac\")%>"/>
+        <html:hidden property="type" value="<%=request.getParameter(\"type\")%>"/>
+    </c:if>
+
     <table border="0" width="100%">
 
         <tr>
