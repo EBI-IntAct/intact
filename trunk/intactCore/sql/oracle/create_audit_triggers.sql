@@ -4,6 +4,9 @@ set term off
 set doc off
 
 begin
+
+   dbms_output.enable(1000000000000);
+
    for r_tab in (select lower(table_name) table_name 
                  from   user_tables 
                  where  table_name not like '%AUDIT'
@@ -13,10 +16,19 @@ begin
                          ,'IA_GODENS_GODAGDENORM'
                          ,'IA_GODENS_GOPROT'
                          ,'IA_GODENS_DENSITY'
+
                          ,'IA_PAYG'
                          ,'IA_PAYG_CURRENT_EDGE'
                          ,'IA_PAYG_TEMP_NODE'
-                        )   
+
+                         ,'IA_INTERACTIONS'
+
+                         ,'IA_STATISTICS'
+                         ,'IA_EXPSTATISTICS'
+                         ,'IA_BIOSOURCESTATISTICS'
+
+                         ,'IA_SEARCH'
+                        )
    ) loop
       dbms_output.put_line ('PROMPT Creating audit trigger for '||r_tab.table_name);
       dbms_output.put_line ('create or replace trigger '|| substr ('trgAud_'||r_tab.table_name,1,30)  );
