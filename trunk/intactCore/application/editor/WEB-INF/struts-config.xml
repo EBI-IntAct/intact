@@ -83,6 +83,12 @@
             handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
             type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
             key="dummy.key"/>
+
+        <!-- Any other exception -->
+        <exception
+            key="dummy.key"
+            path="login.error.layout"
+            type="java.lang.Exception"/>
     </global-exceptions>
 
     <!-- ========== Global Forward Definitions ============================== -->
@@ -644,7 +650,7 @@
             <forward name="cancel" path="/do/feature/cancel"/>
 
             <!-- Cloning a undetermined feature -->
-            <forward name="feature.clone" path="/do/feature/clone"/>
+            <forward name="feature.undetermined.clone" path="/do/feature/undetermined/clone"/>
 
             <!-- Changing an existing range (edit/save/delete) -->
             <forward name="feature.range" path="/do/feature/range"/>
@@ -709,15 +715,15 @@
             scope="session" />
 
         <!-- Action to handle when cloning a feature for given AC -->
-        <action path="/feature/clone"
-            type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureCloneAction"
+        <action path="/feature/undetermined/clone"
+            type="uk.ac.ebi.intact.application.editor.struts.action.feature.UndeterminedCloneAction"
             name="featureForm"
             validate="false"
             scope="session">
             <forward name="success" path="edit.layout"/>
         </action>
 
-        <!-- Action to handle for adding a new  range -->
+        <!-- Action to handle for adding a new range -->
         <action path="/feature/range/new"
             type="uk.ac.ebi.intact.application.editor.struts.action.feature.FeatureNewRangeAction"
             name="featureForm"
