@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -12,7 +12,8 @@ import uk.ac.ebi.intact.model.*;
 import java.util.*;
 
 /**
- * Bean to display an Intact object.
+ * Bean to display an Intact object. This bean is used by edit.jsp to display
+ * and capture the data.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -26,9 +27,10 @@ public class CvViewBean {
     private static Collection theirEmptyCollection = new ArrayList();
 
     /**
-     * Reference to the Intact Helper instance to access the business layer.
+     * Reference to the CvObject as we need to this access annotations
+     * and xrefs.
      */
-    //private IntactHelper myIntactHelper;
+    private CvObject myCvObject;
 
     /**
      * Selected topic.
@@ -56,22 +58,13 @@ public class CvViewBean {
     private Collection myXrefs;
 
     /**
-     * Constructs an instance of this class with Intact Service object.
-     *
-     * @param service the Intact Service to accss business model.
-     * @exception IntactException for error in accessing IntactHelp object.
-     */
-//    public CvViewBean(IntactService service) throws IntactException {
-//        myIntactHelper = service.getIntactHelper();
-//    }
-
-    /**
      * Set attributes using values from CvObject. A coarse-grained method to
      * avoid multiple method calls.
      *
      * @param cvobj the <code>CvObject</code> to set attributes of this class.
      */
     public void initialise(CvObject cvobj) {
+        myCvObject = cvobj;
         setAc(cvobj.getAc());
         setShortLabel(cvobj.getShortLabel());
 
@@ -80,6 +73,13 @@ public class CvViewBean {
         // or getXrefs() methods.
         myAnnotations = makeCommentBeans(cvobj.getAnnotation());
         myXrefs = makeXrefBeans(cvobj.getXref());
+    }
+
+    /**
+     * Returns the reference to the Cv Object.
+     */
+    public CvObject getCvObject() {
+        return myCvObject;
     }
 
     /**
@@ -219,52 +219,4 @@ public class CvViewBean {
 //            Xref.class.getName(), "database_ac", myAc);
 //    }
 
-    // Testing method which fills up dummy values for annotations.
-
-/*
-    private Collection dummyComments(int number) {
-        // The collection to return.
-        Collection comments = new ArrayList();
-
-        Annotation annot;
-        CvTopic topic;
-
-        for (int i = 0; i < number; i++) {
-            annot = new Annotation();
-            annot.setAc("EBI-" + (i + 100));
-            annot.setAnnotationText("Dummy annotations for topic " + i);
-            topic = new CvTopic();
-            topic.setAc("EBI-" + (i + 150));
-            topic.setShortLabel("Topic" + i);
-            annot.setCvTopic(topic);
-            comments.add(annot);
-        }
-        return comments;
-    }
-
-    // Testing method which fills up dummy values for annotations.
-
-    private Collection dummyXrefs(int number) {
-        // The collection to return.
-        Collection xrefs = new ArrayList();
-
-        Xref xref;
-        CvDatabase cvdb = new CvDatabase();
-        cvdb.setShortLabel("InterPro");
-        CvXrefQualifier cvx = new CvXrefQualifier();
-        cvx.setShortLabel("Identity");
-
-        for (int i = 0; i < number; i++) {
-            xref = new Xref();
-            xref.setAc("EBI-" + (i + 200));
-            xref.setCvDatabase(cvdb);
-            xref.setPrimaryId("PrimaryId" + i);
-            xref.setSecondaryId("SecondaryId" + i);
-            xref.setDbRelease("Release");
-            xref.setCvXrefQualifier(cvx);
-            xrefs.add(xref);
-        }
-        return xrefs;
-    }
-*/
 }
