@@ -74,7 +74,6 @@ public class SearchForm extends ActionForm {
      * 'AC' then the search is by AC otherwise the search is by label.
      */
     public void setAction(String action) {
-        //myAction = action;
         if (action.indexOf("AC") != -1) {
             myAction = WebIntactConstants.SEARCH_BY_AC;
         }
