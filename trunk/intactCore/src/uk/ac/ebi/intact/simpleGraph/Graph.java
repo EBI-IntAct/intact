@@ -67,7 +67,6 @@ public class Graph extends BasicGraph implements GraphI {
      */
     public void addVisited(BasicObject anElement){
         visited.add(anElement.getAc());
-        System.out.println("Marking: " + anElement.getAc());
     }
 
     /** return true if a Component has been visited during graph exploration.
@@ -77,23 +76,24 @@ public class Graph extends BasicGraph implements GraphI {
         return visited.contains(anElement.getAc());
     }
 
-    public String toString(){
+    public String toString() {
         StringBuffer s = new StringBuffer( 256 );
 
-        for (int i = 0; i < edges.size(); i++) {
-            EdgeI e = (EdgeI) edges.get(i);
-            s.append(e.getNode1().getAc());
-            s.append("(");
-            s.append(e.getComponent1().getCvComponentRole().getShortLabel());
-            s.append(")");
-            s.append("-> ");
-            s.append(e.getNode2().getAc());
-            s.append("(");
-            s.append(e.getComponent2().getCvComponentRole().getShortLabel());
-            s.append(")");
-            s.append(NEW_LINE);
+        final int count = edges.size();
+        for ( int i = 0; i < count; i++ ) {
+            EdgeI e = (EdgeI) edges.get( i );
+            s.append( e.getNode1().getAc() );
+            s.append( '(' );
+            s.append( e.getComponent1().getCvComponentRole().getShortLabel() );
+            s.append( ')' );
+            s.append( "-> " );
+            s.append( e.getNode2().getAc() );
+            s.append( '(' );
+            s.append( e.getComponent2().getCvComponentRole().getShortLabel() );
+            s.append( ')' );
+            s.append( NEW_LINE );
         }
-        s.append(NEW_LINE);
+        s.append( NEW_LINE );
         return s.toString();
     }
 }
