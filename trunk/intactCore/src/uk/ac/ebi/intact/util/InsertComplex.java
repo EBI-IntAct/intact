@@ -14,6 +14,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
 
+import org.apache.commons.cli.*;
+
 /**
  * Insert complex data for Ho and Gavin publications.
  * Data is read from an input text file.
@@ -28,12 +30,14 @@ import java.util.*;
  */
 public class InsertComplex {
 
-    IntactHelper helper;
-    UpdateProteins proteinFactory;
+    public static final String NEW_LINE = System.getProperty("line.separator");
+
+    private IntactHelper helper;
+    private UpdateProteins proteinFactory;
 
     /** All proteins which have been created for the current complex.
      */
-    HashMap createdProteins = null;
+    private HashMap createdProteins = null;
 
     /**
      * basic constructor - sets up intact helper and protein factory
@@ -46,40 +50,34 @@ public class InsertComplex {
 
             //something failed with type map or datasource...
             String msg = "unable to create intact helper class";
-            System.out.println(msg);
+            System.err.println(msg);
             ie.printStackTrace();
         }
         try {
-            proteinFactory = new UpdateProteins(helper);
+            proteinFactory = new UpdateProteins( helper );
 
             // Transactions are controlled by this class, not by UpdateProteins.
             // Set local transaction control to false.
-            proteinFactory.setLocalTransactionControl(false);
+            proteinFactory.setLocalTransactionControl( false );
         }
         catch (UpdateProteinsI.UpdateException e) {
             //something failed with type map or datasource...
             String msg = "unable to create protein factory";
-            System.out.println(msg);
+            System.err.println( msg );
             e.printStackTrace();
         }
     }
 
-    /** Add a new xref to an annotatedObject.
-     *
+    /**
+     * Close the database connexion if it has been opened.
      */
-//    public void addNewXref(AnnotatedObject current,
-//                           Xref xref) throws Exception {
-//
-//        current.addXref(xref);
-//
-//        /* The temporary xref will only be added to the object
-//           if it does not yet exist in it.
-//           Only if it is added it will be made persistent.
-//        */
-//        if (xref.getParentAc() == current.getAc()) {
-//            helper.create(xref);
-//        }
-//    }
+    public void closeHelper() {
+        try {
+            if (helper != null) helper.closeStore();
+        } catch ( IntactException e ) {
+            e.printStackTrace ();
+        }
+    }
 
     /**
      * Insert a Component object linking an Interactor to an Interaction.
@@ -118,9 +116,10 @@ public class InsertComplex {
 
                 // if it looks like an sgd protein, create it with an xref to sgd
                 if ((0 == proteins.size()) && (spAc.substring(0, 1).equals("S"))) {
-                    proteins.add(proteinFactory.insertSimpleProtein(spAc,
-                            (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sgd"),
-                            taxId));
+                    proteins.add(
+                            proteinFactory.insertSimpleProtein(spAc,
+                                    (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sgd"),
+                                    taxId));
                 }
             }
             else {
@@ -135,7 +134,7 @@ public class InsertComplex {
         // Filter for the correct protein
         for (Iterator i = proteins.iterator(); i.hasNext();) {
             Protein tmp = (Protein) i.next();
-            if (tmp.getBioSource().getTaxId().equals(taxId)) {
+            if (tmp.getBioSource().getTaxId().equals( taxId )) {
                 if (null == targetProtein) {
                     targetProtein = tmp;
                 }
@@ -155,6 +154,18 @@ public class InsertComplex {
         helper.create(comp);
     }
 
+    private Experiment getExperiment( String experimentLabel ) throws IntactException {
+
+        // Get experiment from the local node
+        Experiment ex = (Experiment) helper.getObjectByLabel(Experiment.class, experimentLabel);
+        if (null == ex) {
+            // create it
+            ex = new Experiment();
+            ex.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
+            helper.create(ex);
+        }
+        return ex;
+    }
 
     /**
      * Inserts a complex into the database
@@ -172,14 +183,10 @@ public class InsertComplex {
                               String bait,
                               Vector preys,
                               String taxId,
-                              String experimentLabel) throws Exception {
-        // Get experiment
-        Experiment ex = (Experiment) helper.getObjectByLabel(Experiment.class, experimentLabel);
-        if (null == ex) {
-            ex = new Experiment();
-            ex.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
-            helper.create(ex);
-        }
+                              String experimentLabel,
+                              String interactionTypeLabel) throws Exception {
+
+        Experiment ex = getExperiment( experimentLabel );
 
         // Get Interaction
         // The label is the first two letters of the experiment label plus the interaction number
@@ -187,9 +194,27 @@ public class InsertComplex {
         Interaction act = (Interaction) helper.getObjectByLabel(Interaction.class, actLabel);
         if (null == act) {
             act = new Interaction();
+            // TODO: should rely on the helper to get the default Institution
             act.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
+
+            // if requested, try to set the CvInteractionType.
+            if ( interactionTypeLabel != null ) {
+                try {
+                    CvInteractionType cvInteractionType = (CvInteractionType) helper.getObjectByLabel(
+                            CvInteractionType.class, interactionTypeLabel);
+                    if ( cvInteractionType == null ) {
+                        // TODO: what is the CvInteractionType is not existing.
+                        System.out.println ( interactionTypeLabel + " is not known as a CvInteractionType shortLabel." );
+                    } else {
+                        act.setCvInteractionType( cvInteractionType );
+                    }
+                } catch ( IntactException ie ) {
+                    // this is not mandatory, skip it.
+                }
+            }
+
             act.setShortLabel(actLabel);
-            helper.create(act);
+            helper.create( act );
 
             // Initialise list of proteins created
             createdProteins = new HashMap();
@@ -202,12 +227,12 @@ public class InsertComplex {
                     CvComponentRole.class, "prey");
             // add preys
             for (int i = 0; i < preys.size(); i++) {
-                String prey = (String) preys.elementAt(i);
-                insertComponent(act, prey, taxId, role);
+                String prey = (String) preys.elementAt( i );
+                insertComponent( act, prey, taxId, role );
             }
 
             // link interaction to experiment
-            ex.addInteraction(act);
+            ex.addInteraction( act );
 
             // No need to do an update here because we have created a new Interaction.
             // In fact, it is an error to do so because you can only update objects that
@@ -229,31 +254,28 @@ public class InsertComplex {
 //        }
     }
 
-    /** Read complex data from flat file and insert it into the database.
+
+    /**
      *
-     * @param args the command line arguments. The first argument is the
-     * InputFileName and the second argument is the the tax id of the target
-     * proteins.
-     * @throws Exception for any errors.
+     * @param filename the filename to parse
+     * @param taxId the taxId
+     * @param interactionType the CvInteractionType shortlabel which will
+     *                        allow to retreive the right object from the
+     *                        database and then to link it to the created
+     *                        interactions.
+     * @throws Exception
      */
-    public static void main(String[] args) throws Exception {
-
-        if (args.length != 2) {
-            System.err.println("Usage: InsertComplex complexFileName targetTaxId");
-            return;
-        }
-
-        InsertComplex app = new InsertComplex();
+    public void insert( String filename, String taxId, String interactionType ) throws Exception {
 
         // Parse input file line by line
 
-        BufferedReader file = new BufferedReader(new FileReader(args[0]));
+        BufferedReader file = new BufferedReader( new FileReader( filename ) );
         String line;
         int lineCount = 0;
 
         System.out.print("Lines processed: ");
 
-        while (null != (line = file.readLine())) {
+        while ( null != (line = file.readLine()) ) {
 
             // Tokenize lines
             StringTokenizer st = new StringTokenizer(line);
@@ -261,19 +283,19 @@ public class InsertComplex {
             String bait = st.nextToken();
             Vector preys = new Vector();
 
-            while (st.hasMoreTokens()) {
+            while ( st.hasMoreTokens() ) {
                 preys.add(st.nextToken());
             }
 
             // remove last element from preys vector, it is the experiment identifier.
             String experimentLabel = (String) preys.lastElement();
-            preys.removeElement(preys.lastElement());
+            preys.removeElement( preys.lastElement() );
 
             // Insert results into database
             try {
-                app.helper.startTransaction(BusinessConstants.OBJECT_TX);
-                app.insertComplex(interactionNumber, bait, preys, args[1], experimentLabel);
-                app.helper.finishTransaction();
+                helper.startTransaction(BusinessConstants.OBJECT_TX);
+                insertComplex( interactionNumber, bait, preys, taxId, experimentLabel, interactionType );
+                helper.finishTransaction();
             }
             catch (Exception ie) {
                 ie.printStackTrace();
@@ -291,6 +313,109 @@ public class InsertComplex {
                 System.out.println(".");
             }
         }
-        System.out.println("\n");
+        System.out.println( NEW_LINE );
+    }
+
+    private static void displayUsage( Options options ) {
+        // automatically generate the help statement
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp( "InsertComplex -file <filename> " +
+                             "-taxId <biosource.taxId> " +
+                             "[-interactionType <CvInteractionType.shortLabel>]",
+                             options );
+    }
+
+    private static void displayLegend( ){
+        System.out.println( "Legend:" );
+        System.out.println( "C: new Complex created." );
+        System.out.println( "c: Complex already existing." );
+        System.out.println( "P: new Protein created." );
+        System.out.println( "p: Protein already existing." );
+    }
+
+
+
+    /**
+     * Read complex data from flat file and insert it into the database.
+     *
+     * @param args the command line arguments. The first argument is the
+     * InputFileName and the second argument is the the tax id of the target
+     * proteins.
+     * @throws Exception for any errors.
+     */
+    public static void main(String[] args) throws Exception{
+
+        /* Usage: InsertComplex -file <filename>
+         *                      -taxid <biosource.taxid>
+         *                      [-interactionType <CvInteractionType.shortLabel>]
+         */
+
+        // create Option objects
+        Option helpOpt = new Option( "help", "print this message" );
+
+        Option filenameOpt = OptionBuilder.withArgName( "filename" )
+                                          .hasArg()
+                                          .withDescription( "use given buildfile" )
+                                          .create( "file" );
+        filenameOpt.setRequired( true );
+
+        Option taxidOpt = OptionBuilder.withArgName( "biosource.taxid" )
+                                       .hasArg()
+                                       .withDescription( "taxId of the BioSource to link to that Complex" )
+                                       .create( "taxId" );
+        taxidOpt.setRequired( true );
+
+        Option interactionTypeOpt = OptionBuilder.withArgName( "CvInteractionType.shortLabel" )
+                                                 .hasArg()
+                                                 .withDescription ( "Shortlabel of the existing " +
+                                                                    "CvInteractionType to link to that Complex" )
+                                                 .create( "interactionType" );
+        // Not mandatory.
+        // interactionTypeOpt.setRequired( true );
+
+        Options options = new Options();
+
+        options.addOption( helpOpt );
+        options.addOption( filenameOpt );
+        options.addOption( taxidOpt );
+        options.addOption( interactionTypeOpt );
+
+        // create the parser
+        CommandLineParser parser = new BasicParser();
+        try {
+            // parse the command line arguments
+            CommandLine line = parser.parse( options, args, true );
+
+            if( line.hasOption( "help" ) ) {
+                displayUsage( options );
+                System.exit( 0 );
+            }
+
+            // These argument are mandatory.
+            String filename        = line.getOptionValue( "file" );
+            String taxid           = line.getOptionValue( "taxId" );
+            String interactionType = line.getOptionValue( "interactionType" );
+
+            try {
+                HttpProxyManager.setup();
+            } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
+                proxyConfigurationNotFound.printStackTrace ();
+            }
+
+            displayLegend( );
+
+            InsertComplex tool = new InsertComplex();
+            tool.insert( filename, taxid, interactionType );
+            tool.closeHelper();
+            System.exit( 0 );
+        }
+        catch( ParseException exp ) {
+            // Oops, something went wrong
+
+            displayUsage(options);
+
+            System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
+            System.exit( 1 );
+        }
     }
 }

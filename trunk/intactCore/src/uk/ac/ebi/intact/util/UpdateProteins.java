@@ -1183,6 +1183,7 @@ public class UpdateProteins extends UpdateProteinsI {
      * Could be use for loading from a .txl file
      * ./scripts/javaRun.sh UpdateProteins file:///homes/user/mySPTRfile.txl
      *
+     * TODO: check if -Xmm128m -Xmx512m could fix the OutOfMemoryException problem.
      */
     public static void main(String[] args) throws Exception {
 
