@@ -156,8 +156,15 @@ public class Annotation extends BasicObjectImpl {
     public int hashCode(){
 
         int code = 29;
-        if(cvTopic != null) code = 29*code + cvTopic.hashCode();
-        if (null != annotationText) code = 29 * code + annotationText.hashCode();
+        if( ac != null ) {
+            code = 29 * code + ac.hashCode();
+        }
+        if( cvTopic != null ) {
+            code = 29 * code + cvTopic.hashCode();
+        }
+        if( null != annotationText ) {
+            code = 29 * code + annotationText.hashCode();
+        }
 
         return code;
     }
