@@ -19,11 +19,15 @@
     String formName = "bioSourceForm";
 %>
 
-<html:form action="/biosource/info" onsubmit="return validateBioSourceForm(this)">
+<html:form action="/biosource/info">
     <table width="50%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
-            <th class="tableCellHeader" width="30%">Action</th>
-            <th class="tableCellHeader">NCBI Tax Id</th>
+            <th class="tableCellHeader" width="30%">
+                <bean:message key="label.action"/>
+            </th>
+            <th class="tableCellHeader">
+                <bean:message key="biosrc.label.tax"/>
+            </th>
         </tr>
         <tr class="tableRowEven">
             <td class="tableCell">
@@ -38,4 +42,3 @@
         </tr>
     </table>
 </html:form>
-<html:javascript formName="bioSourceForm"/>
