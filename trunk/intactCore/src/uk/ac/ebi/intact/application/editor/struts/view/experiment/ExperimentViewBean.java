@@ -10,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -40,6 +41,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * The experiment identification.
      */
     private String myIdent;
+
+    /**
+     * True if the maximum interactions allowed for the experiment has exceeded.
+     */
+    private boolean myHasLargeInts;
 
     /**
      * The collection of Interactions. Transient as it is only valid for the
@@ -100,8 +106,17 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // Clear any left overs from previous transaction.
         clearTransactions();
 
-        // Prepare for Interactions for display.
-        makeInteractionBeans(exp.getInteractions());
+        // Check the limit for interactions.
+        int maxLimit = EditorService.getInstance().getInteractionLimit();
+        if (exp.getInteractions().size() > maxLimit) {
+            // Reached the maximum limit.
+            myHasLargeInts = true;
+        }
+        else {
+            // Prepare for Interactions for display.
+            makeInteractionBeans(exp.getInteractions());
+            myHasLargeInts = false;
+        }
     }
 
     // Implements abstract methods
@@ -145,10 +160,10 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         // --------------------------------------------------------------------
 
         // Add interaction to the experiment.
-        for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
-            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
-            exp.addInteraction(intact);
-        }
+//        for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
+//            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
+//            exp.addInteraction(intact);
+//        }
         // Delete interactions from the experiment.
         for (Iterator iter = getInteractionsToDel().iterator(); iter.hasNext();) {
             Interaction intact = ((InteractionBean) iter.next()).getInteraction();
@@ -436,11 +451,24 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     /**
-     * Returns the number of
-     * @return
+     * Returns the number of interactions for this experiment.
+     * @return the number of interactions for this experiment if it hasn't
+     * already reached the max limit. When the maximum limit is reached,
+     * maximum value + 1 is returned to indicate.
      */
     public int getNumberOfInteractions() {
-        return myInteractions.size();
+        int maxLimit = EditorService.getInstance().getInteractionLimit();
+        if (myHasLargeInts) {
+            return maxLimit + 1;
+        }
+        // Save the current interactions.
+        int currentInts = myInteractions.size();
+
+        // Has it reached the limit?
+        if (currentInts > maxLimit) {
+            return maxLimit + 1;
+        }
+        return currentInts;
     }
 
     // Helper methods
@@ -462,13 +490,13 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(InteractionBean)
      * </pre>
      */
-    private Collection getInteractionsToAdd() {
-        // Interaction common to both add and delete.
-        Collection common = CollectionUtils.intersection(
-                myInteractionsToAdd, myInteractionsToDel);
-        // All the interactions only found in interaction to add collection.
-        return CollectionUtils.subtract(myInteractionsToAdd, common);
-    }
+//    private Collection getInteractionsToAdd() {
+//        // Interaction common to both add and delete.
+//        Collection common = CollectionUtils.intersection(
+//                myInteractionsToAdd, myInteractionsToDel);
+//        // All the interactions only found in interaction to add collection.
+//        return CollectionUtils.subtract(myInteractionsToAdd, common);
+//    }
 
     /**
      * Returns a collection of interactions to remove.
