@@ -25,7 +25,7 @@
     <!-- Menu for the results page -->
     <definition name="result.menu.links" extends="search.menu.links">
         <putList name="items">
-            <item value="New Search"  link="/pages/search.jsp"/>
+            <item value="New Search"  link="/do/cv/search/new"/>
             <item value="Logout" link="/do/cv/logout"/>
         </putList>
     </definition>
@@ -58,7 +58,7 @@
     <!-- Login page description  -->
     <definition name="login.layout" path="/layouts/defaultLayout.jsp">
         <put name="title"  value="IntAct - Control Vocabulary Editor"/>
-        <put name="stylesheet" value="layouts/styles/cvedit.css"/>
+<!--        <put name="stylesheet" value="layouts/styles/cvedit.css"/>-->
         <put name="sidebar" value="login.sidebar.layout"/>
         <put name="header" value="/pages/common/header.jsp"/>
         <put name="footer" value="/pages/common/footer.jsp"/>
@@ -71,7 +71,7 @@
 
     <!-- Search page description  -->
     <definition name="search.layout" extends="login.layout">
-        <put name="stylesheet" value="styles/cvedit.css"/>
+<!--        <put name="stylesheet" value="styles/cvedit.css"/>-->
         <put name="sidebar" value="search.sidebar.layout"/>
         <put name="header" value="/pages/common/header.jsp"/>
         <put name="footer" value="/pages/common/footer.jsp"/>
