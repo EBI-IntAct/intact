@@ -115,17 +115,16 @@ public class ProteinSearchAction extends AbstractEditorAction {
 
         if (param.equals("spAc")) {
             proteins = user.getSPTRProteins(value);
-//            proteins = user.getSpliceProteinsByXref(value);
-//            // Try importing Proteins via SRS
-//            if (proteins.isEmpty()) {
-//                proteins = user.getSPTRProteins(value);
-//            }
         }
         else {
             proteins = user.search1(Protein.class.getName(), param, value);
         }
         // Search found any results?
         if (proteins.isEmpty()) {
+            // Log the error.
+            LOGGER.info(user.getProteinParseException());
+
+            // The error to display on the web page.
             ActionErrors errors = new ActionErrors();
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.protein.search.empty", param));
