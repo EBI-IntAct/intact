@@ -13,6 +13,9 @@
   --%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-tiles.tld" prefix="tiles"%>
+<%-- The error page at the top --%>
+<tiles:insert attribute="error"/>
+
 <%-- The common information for all the CV objects. --%>
 <tiles:insert attribute="cv-info"/>
 

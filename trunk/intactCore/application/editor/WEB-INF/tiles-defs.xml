@@ -55,6 +55,7 @@
 
     <!-- The edit CV page layout. -->
     <definition name="edit.cv.layout" path="/layouts/cvLayout.jsp">
+        <put name="error" value="/pages/editorErrors.jsp"/>
         <put name="cv-info" value="/pages/cvInfo.jsp"/>
         <put name="comments" value="/pages/comments.jsp"/>
         <put name="add-comments" value="/pages/commentsAdd.jsp"/>
