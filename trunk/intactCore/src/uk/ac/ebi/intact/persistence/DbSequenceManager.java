@@ -64,7 +64,6 @@ import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.util.logging.*;
 import org.apache.ojb.broker.util.sequence.SequenceManager;
-import org.apache.ojb.broker.util.sequence.SequenceConfiguration;
 import org.apache.ojb.broker.util.configuration.impl.OjbConfiguration;
 import org.apache.ojb.broker.util.configuration.ConfigurationException;
 
