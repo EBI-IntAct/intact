@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The action class to handle events related to add/edit and delete of a
+ * The action class to handle events related to add/edit a
  * Feature from an Interaction editor.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
@@ -35,7 +35,6 @@ public class FeatureDispatchAction extends CommonDispatchAction {
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
         map.put("int.proteins.button.feature.edit", "edit");
-        map.put("int.proteins.button.feature.delete", "delete");
         map.put("int.proteins.button.feature.add", "add");
         return map;
     }
