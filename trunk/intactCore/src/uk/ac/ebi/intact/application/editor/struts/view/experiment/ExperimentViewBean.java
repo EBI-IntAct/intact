@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ExperimentExcept
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvIdentification;
@@ -91,6 +92,10 @@ public class ExperimentViewBean extends AbstractEditViewBean {
         exp.setCvInteraction(interaction);
         exp.setCvIdentification(ident);
         super.persist(user);
+
+        // The experiment is sucessfully persisted; add this to the
+        // current edit/add experiment list.
+        user.addToCurrentExperiment(exp);
     }
 
     // Ovverride to provide Experiment layout.
