@@ -420,6 +420,7 @@
             validate="true"
             scope="session"
             parameter="dispatch">
+            <forward name="success" path="/do/fillCvForm"/>
 
             <!-- Uses the input for validation exceptions -->
             <exception
@@ -468,7 +469,7 @@
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/expAnnotSubmit"/>
             <forward name="xref" path="/do/expXrefSubmit"/>
-            <forward name="intDel" path="/do/intDel"/>
+            <forward name="interaction" path="/do/interaction"/>
             <forward name="intHold" path="/do/intHold"/>
             <forward name="intSearch" path="/do/intSearch"/>
         </action>
@@ -484,6 +485,7 @@
             validate="true"
             scope="session"
             parameter="dispatch">
+            <forward name="success" path="/do/fillExpForm"/>
 
             <!-- Uses the input for validation exceptions -->
             <exception
@@ -514,14 +516,31 @@
             validate="false"
             scope="session" />
 
-        <!-- Action to handle when an interaction is deleted from the Experiment.
+        <!-- Action to handle when an interaction is deleted/edited from the Experiment.
         -->
-        <action path="/intDel"
+        <action path="/interaction"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionAction"
             name="expForm"
             validate="false"
             scope="session" >
             <forward name="success" path="/do/fillExpForm"/>
+            <forward name="intEdit" path="/do/intEditSave"/>
+        </action>
+
+        <action path="/intEditSave"
+            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
+            name="expForm"
+            input="/do/fillExpForm"
+            validate="true"
+            scope="session"
+            parameter="dispatch">
+            <forward name="success" path="/do/fillIntForm"/>
+
+            <!-- Uses the input for validation exceptions -->
+            <exception
+                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
+                key="dummy.key"/>
         </action>
 
         <!-- Action to handle when an experiment is added to an Interaction
@@ -578,6 +597,7 @@
             validate="true"
             scope="session"
             parameter="dispatch">
+            <forward name="success" path="/do/fillBsForm"/>
 
             <!-- Uses the input for validation exceptions -->
             <exception
@@ -653,6 +673,7 @@
             validate="true"
             scope="session"
             parameter="dispatch">
+            <forward name="success" path="/do/fillIntForm"/>
 
             <!-- Uses the input for validation exceptions -->
             <exception
@@ -750,6 +771,8 @@
             scope="session">
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the search page  (global) -->
+            <!-- Back to the experiment editor (where we came from) -->
+            <forward name="experiment" path="/do/fillExpForm"/>
         </action>
 
         <!-- Action to handle when the current edit record is deleted. -->
