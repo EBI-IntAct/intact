@@ -37,12 +37,21 @@ public class SetUpEditorAction  extends AbstractEditorAction {
         AbstractEditViewBean view = getIntactUser(request).getView();
 
         // The annotation form; populate with annotations.
-        getEditForm(request,
-                EditorConstants.FORM_COMMENT_EDIT).setItems(view.getAnnotations());
+//        request.setAttribute("items", view.getAnnotations());
+//        createActionForm(request, mapping, "commentEditForm");
+        EditForm editform;
+//
+//        editform = (EditForm) createActionForm(request, mapping, "commentEditForm");
+//        editform.setItems(view.getAnnotations());
+//
+        editform = (EditForm) createActionForm(request, mapping, "xrefEditForm");
+        editform.setItems(view.getXrefs());
+//        getEditForm(request,
+//                EditorConstants.FORM_COMMENT_EDIT).setItems(view.getAnnotations());
 
         // The xref form; populate it with xrefs.
-        getEditForm(request,
-                EditorConstants.FORM_XREF_EDIT).setItems(view.getXrefs());
+//        getEditForm(request,
+//                EditorConstants.FORM_XREF_EDIT).setItems(view.getXrefs());
 
         // The topic to choose where to go.
         String topic = getIntactUser(request).getSelectedTopic();
