@@ -51,16 +51,16 @@ public final class CenteredAction extends IntactBaseAction {
             throws IOException, ServletException, SessionExpiredException {
 
         // Clear any previous errors.
-        super.clearErrors();
+        clearErrors();
 
         // get the current session
-        HttpSession session = super.getSession(request);
+        HttpSession session = getSession(request);
 
         // retreive user fron the session
-        IntactUserI user = super.getIntactUser(session);
+        IntactUserI user = getIntactUser(session);
         if (null == user) {
-            super.addError ("error.datasource.notCreated");
-            super.saveErrors(request);
+            addError ("error.datasource.notCreated");
+            saveErrors(request);
             return (mapping.findForward("error"));
         }
 
@@ -71,7 +71,7 @@ public final class CenteredAction extends IntactBaseAction {
 
         if ((null == AC) || (AC.length() < 1)) {
             addError("error.centeredAC.required");
-            super.saveErrors(request);
+            saveErrors(request);
             return (new ActionForward(mapping.getInput()));
         }
 
@@ -86,11 +86,11 @@ public final class CenteredAction extends IntactBaseAction {
             String depth = user.getDepth();
 
             // Creation of the graph and the image
-            super.produceInteractionNetworkImage (AC, depth, user);
+            produceInteractionNetworkImage (AC, depth, user);
 
-            if (false == super.isErrorsEmpty()) {
+            if (false == isErrorsEmpty()) {
                 // Report any errors we have discovered back to the original form
-                super.saveErrors(request);
+                saveErrors(request);
                 return (mapping.findForward("error"));
             }
 

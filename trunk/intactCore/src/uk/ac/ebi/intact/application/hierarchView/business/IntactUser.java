@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
-import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.simpleGraph.Graph;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
@@ -39,51 +38,125 @@ public class IntactUser implements IntactUserI {
 
     static Logger logger = Logger.getLogger(uk.ac.ebi.intact.application.hierarchView.business.Constants.LOGGER_NAME);
 
+    /**
+     * datasource entry point
+     */
     private IntactHelper intactHelper;
 
-    // User's properties (forms data)
+    /**
+     * The current network with which the user is working
+     */
+    private InteractionNetwork interactionNetwork;
+
+    /**
+     * Set of highlight options (key/value) given by the user via the web interface
+     */
+    private Map highlightOptions;
+
+    /**
+     * data relatives to the image producing (Image byte code, SVG DOM, HTML MAP)
+     */
+    private ImageBean imageBean;
+
+    /**
+     * Collection of keys received from the current source.
+     * The highlightment of the current interaction network is done according to these keys.
+     */
+    private Collection keys;
+
+    // User's form fields
     private String AC;
     private String depth;
     private boolean hasNoDepthLimit;
     private String methodLabel;
     private String methodClass;
     private String behaviour;
-    private InteractionNetwork interactionNetwork;
-    private ImageBean imageBean;
-    private Collection keys;
-    private Map highlightOptions;
 
-    public String getAC()               { return (this.AC); }
-    public String getDepth()            { return (this.depth); }
-    public boolean getHasNoDepthLimit() { return (this.hasNoDepthLimit); }
-    public String getMethodLabel()      { return (this.methodLabel); }
-    public String getMethodClass()      { return (this.methodClass); }
-    public String getBehaviour()        { return behaviour; }
+
+    public String getAC() {
+        return (this.AC);
+    }
+
+    public String getDepth() {
+        return (this.depth);
+    }
+
+    public boolean getHasNoDepthLimit() {
+        return (this.hasNoDepthLimit);
+    }
+
+    public String getMethodLabel() {
+        return (this.methodLabel);
+    }
+
+    public String getMethodClass() {
+        return (this.methodClass);
+    }
+
+    public String getBehaviour() {
+        return behaviour;
+    }
+
     public InteractionNetwork getInteractionNetwork() {
         return interactionNetwork;
     }
-    public ImageBean getImageBean() { return imageBean; }
-    public Collection getKeys()     { return keys; }
+    public ImageBean getImageBean() {
+        return imageBean;
+    }
 
-    public void setAC(String AC)                    { this.AC = AC; }
-    public void setDepth (String depth)             { this.depth = depth; }
-    public void setHasNoDepthLimit (boolean flag)   { this.hasNoDepthLimit = flag; }
-    public void setMethodLabel (String methodLabel) { this.methodLabel = methodLabel; }
-    public void setMethodClass (String methodClass) { this.methodClass = methodClass; }
-    public void setBehaviour(String behaviour)      { this.behaviour = behaviour; }
+    public Collection getKeys() {
+        return keys;
+    }
+
+    public IntactHelper getHelper () {
+        return intactHelper;
+    }
+
+
+
+    public void setAC(String AC) {
+        this.AC = AC;
+    }
+
+    public void setDepth (String depth) {
+        this.depth = depth;
+    }
+
+    public void setHasNoDepthLimit (boolean flag) {
+        this.hasNoDepthLimit = flag;
+    }
+
+    public void setMethodLabel (String methodLabel) {
+        this.methodLabel = methodLabel;
+    }
+
+    public void setMethodClass (String methodClass) {
+        this.methodClass = methodClass;
+    }
+
+    public void setBehaviour(String behaviour) {
+        this.behaviour = behaviour;
+    }
+
     public void setInteractionNetwork(InteractionNetwork in) {
         this.interactionNetwork = in;
     }
-    public void setImageBean(ImageBean imageBean) { this.imageBean = imageBean; }
-    public void setKeys(Collection keys)          { this.keys = keys; }
+
+    public void setImageBean(ImageBean imageBean) {
+        this.imageBean = imageBean;
+    }
+
+    public void setKeys(Collection keys) {
+        this.keys = keys;
+    }
 
 
     /**
      * Constructs an instance of this class with given mapping file and
      * the name of the data source class.
      *
-     * @param mapping the name of the mapping file.
-     * @param dsClass the class name of the Data Source.
+     * @param repositoryfile the name of the mapping file.
+     * @param datasourceClass the class name of the Data Source.
      *
      * @exception DataSourceException for error in getting the data source; this
      *  could be due to the errors in repository files or the underlying
@@ -92,19 +165,16 @@ public class IntactUser implements IntactUserI {
      * @exception IntactException thrown for any error in creating lists such
      *  as topics, database names etc.
      */
-    public IntactUser (String mapping, String dsClass) throws DataSourceException, IntactException {
+    public IntactUser (String repositoryfile, String datasourceClass)
+            throws DataSourceException, IntactException {
 
-        initUserData();
+        init ();
 
-        // create storage for highlight options
-        highlightOptions = new HashMap();
+        DAOSource ds = DAOFactory.getDAOSource (datasourceClass);
 
-        DAOSource ds = DAOFactory.getDAOSource(dsClass);
-
-        // Pass config details to data source - don't need fast keys as only
-        // accessed once
+        // Pass config details to data source - don't need fast keys as only accessed once
         Map fileMap = new HashMap();
-        fileMap.put (Constants.MAPPING_FILE_KEY, mapping);
+        fileMap.put (Constants.MAPPING_FILE_KEY, repositoryfile);
         ds.setConfig (fileMap);
 
         // build a helper for use throughout a session
@@ -115,7 +185,7 @@ public class IntactUser implements IntactUserI {
     /**
      * Set the default value of user's data
      */
-    public void initUserData () {
+    public void init () {
 
         this.AC = null;
         this.depth = null;
@@ -123,33 +193,12 @@ public class IntactUser implements IntactUserI {
         this.methodLabel = null;
         methodClass = null;
         behaviour = null;
+
         interactionNetwork = null;
         imageBean = null;
         keys = null;
+        highlightOptions = new HashMap();
     }
-
-    /**
-     * Allows the user to retreive a collection of matching IntAct object
-     * according to a criteria given in parameter.
-     *
-     * @param objectType  object type you want to retreive
-     * @param searchParam the field you want to query on
-     * @param searchValue the value you are looking for
-     * @return a collection of <i>objectType</i> object
-     * @throws SearchException in case the search fail
-     */
-    public Collection search (String objectType,
-                              String searchParam,
-                              String searchValue) throws SearchException {
-
-        //now retrieve an object collection
-        try {
-            return intactHelper.search(objectType, searchParam, searchValue);
-        }
-        catch (IntactException ie) {
-            throw new SearchException("Search Failed: " + ie.getNestedMessage());
-        }
-    } // search
 
 
     /**

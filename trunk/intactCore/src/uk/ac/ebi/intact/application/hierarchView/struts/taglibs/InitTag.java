@@ -72,7 +72,7 @@ public class InitTag extends TagSupport {
             // user already exists
             logger.info ("User already exists ... don't create a new one !");
             // set user's data field (AC, depth ...) to default value
-            user.initUserData();
+            user.init();
             return ;
         }
 
@@ -81,14 +81,14 @@ public class InitTag extends TagSupport {
             // Save the context to avoid repeat calls.
             ServletContext servletContext = pageContext.getServletContext();
 
-            // Name of the mapping file and data source.
-            String repfile = servletContext.getInitParameter (Constants.MAPPING_FILE);
-            String ds      = servletContext.getInitParameter (Constants.DATA_SOURCE);
+            // Name of the mapping file and data source class.
+            String repositoryfile  = servletContext.getInitParameter (Constants.MAPPING_FILE);
+            String datasourceClass = servletContext.getInitParameter (Constants.DATA_SOURCE);
 
             // Create an instance of IntactUser which we'll store in the Session
             user = null;
             try {
-                user = new IntactUser (repfile, ds);
+                user = new IntactUser (repositoryfile, datasourceClass);
                 session.setAttribute (Constants.USER_KEY, user);
             }
             catch (DataSourceException de) {
