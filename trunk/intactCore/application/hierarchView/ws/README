@@ -1,0 +1,60 @@
+README for tulip web service
+**********************************************************************
+
+ARCHIVE CONTENT
+----------------
+wsdd/            : deployment and undeployment files.
+wsdl/            : description of the web service.
+build.xml        : Ant build file which contains target to install and manage the web service.
+ws.properties    : contains properties needed to install the web service.
+tulipService.jar : the web service library (need to be install under Axis).
+
+
+PREREQUISITES
+--------------
+To install and run the intact software you must have the following installed in your
+environment (or, for the DBs, at least have access to them over the network):
+
+	- java JDK 1.4
+	  see http://java.sun.com/j2se/downloads.html
+	- ant 1.5 or above (all the intact build process relies on ant)
+	  see http://ant.apache.org/bindownload.cgi
+	- Tomcat Light Edition, for JDK 1.4 (preferably 4.1.1.8 LE)
+      see http://jakarta.apache.org/builds/jakarta-tomcat-4.0/release/v4.1.18/bin/
+	- Apache Axis web application (1.0) for web services (for use with the HierarchView application)
+	  see http://ws.apache.org/axis/
+	- Tulip (available from Bordeaux), which is needed by HierarchView
+	  see http://www.tulip-software.org/
+      Note that Tulip needs the following environment variables to be set :
+         TLPDIR=<location of the main tulip directory>
+         LD_LIBRARY_PATH=$LD_LIBRARY_PATH:TLPDIR/lib
+         QTDIR=<location of the QT directory>
+         LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$QTDIR/lib
+	- The console binary file has to be put in the location described in the
+	  application/hierarchView/WEB-INF/config/WebService.properties
+
+
+INSTALLATION NOTES
+-------------------
+By following the steps below, we will install the tulip web service on that machine.
+
+(1) Customize the properties file (ws.properties)
+     - webService.port : the port number of the Tomcat server which host your web service
+     - axis.dir        : the path of your Axis installation
+                         usually, <TOMCAT_PATH>/webapps/axis
+
+(2) Intall the web service
+    type 'ant install', it copy needed files on Axis.
+
+(3) Restart Tomcat
+    The web service is now ready to be started.
+
+
+WEB SERVICE MANAGEMENT
+-----------------------
+* Start the web service
+  type 'ant start'
+  Now the web service is ready to receive client request.
+
+* Stop the web service
+  type 'ant stop'
