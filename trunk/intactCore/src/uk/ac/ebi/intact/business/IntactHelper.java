@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.business;
@@ -78,6 +78,10 @@ public class IntactHelper implements SearchI, Serializable {
 
     Logger pr = null;
 
+    public Logger getLogger(){
+            return pr;
+    }
+
     /**
      *  Constructor - requires a datasource to be provided.
      *
@@ -115,6 +119,36 @@ public class IntactHelper implements SearchI, Serializable {
 
         }
     }
+
+    /**
+     *  Shortcut constructor
+     *
+     * @exception IntactException - thrown if either the type map or source are invalid
+     *
+     */
+    public IntactHelper() throws IntactException {
+
+        try {
+            DAOSource dataSource = DAOFactory.getDAOSource("uk.ac.ebi.intact.persistence.ObjectBridgeDAOSource");
+
+            //set the config details, ie repository file for OJB in this case
+            Map config = new HashMap();
+            config.put("mappingfile", "config/repository.xml");
+            dataSource.setConfig(config);
+
+            //set up a logger
+            pr = dataSource.getLogger();
+
+            //get a DAO so some work can be done!!
+            dao = dataSource.getDAO();
+        } catch (DataSourceException de) {
+
+            String msg = "intact helper: There was a problem accessing a data store";
+            throw new IntactException(msg, de);
+
+        }
+    }
+
 
     /**
      * Constructor allowing a helper instance to be created with a given
@@ -891,48 +925,47 @@ public class IntactHelper implements SearchI, Serializable {
         return relatedObjects;
     }
 
-    /** Return an Object by classname and Xref.
+    /** Searches for objects by classname and Xref.
+     *  Currently this searches only by primaryId.
+     *  Should search by database and primaryId.
+     */
+    public Collection getObjectsByXref(Class clazz,
+                                      String aPrimaryId) throws IntactException {
+
+        // get the Xref from the database
+        Collection xrefs = this.search(Xref.class.getName(), "primaryId", aPrimaryId);
+        Collection results = new Vector();
+
+        // add all referenced objects of the searched class
+        for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
+            Xref xref = (Xref) iterator.next();
+            results.addAll(this.search(clazz.getName(), "ac", xref.getParentAc()));
+        }
+        return results;
+    }
+
+
+    /** Searches for a unique Object by classname and Xref.
      *  Currently this searches only by primaryId.
      *  Should search by database and primaryId.
      */
     public Object getObjectByXref(Class clazz,
                                   String aPrimaryId) throws IntactException {
-        Collection resultList = null;
 
-        // get the Xref from the database
-        resultList = this.search(Xref.class.getName(), "primaryId", aPrimaryId);
-        if (resultList.isEmpty()) {
-            return null;
+        Collection results = getObjectsByXref(clazz, aPrimaryId);
+
+        //should be unique...
+        if (results.size() > 1) {
+            throw new IntactException("protein search error - more than one result returned with query by"
+                    + aPrimaryId);
         } else {
-            Iterator i = resultList.iterator();
-            Object result = i.next();
-            if (i.hasNext()) {
-                IntactException ie = new IntactException("More than one object returned by search by primary id:\n"
-                        + result + i.next());
-                throw(ie);
+            if (results.isEmpty()) {
+                return null;
             }
-            // now get the object which belongs to the xref
-            resultList = this.search(clazz.getName(), "ac", ((Xref) result).getParentAc());
-            if (resultList.isEmpty()) {
-                IntactException ie = new IntactException("Xref " + ((Xref) result).getAc() + " has invalid reference.");
-                throw(ie);
-            } else {
-                Iterator j = resultList.iterator();
-                Object parent = j.next();
-                if (j.hasNext()) {
-                    IntactException ie = new IntactException("More than one object of class "
-                            + clazz.getName()
-                            + (" and ac ")
-                            + ((Xref) result).getAc()
-                            + " found.");
-                    throw(ie);
-                } else {
-                    return parent;
-                }
-            }
+            Iterator it = results.iterator();
+            return it.next();
         }
     }
-
 
     /** Return an Object by classname and shortLabel.
      *  For efficiency, classes which are subclasses of CvObject are cached
@@ -972,7 +1005,7 @@ public class IntactHelper implements SearchI, Serializable {
             Iterator i = resultList.iterator();
             result = i.next();
             if (i.hasNext()) {
-                IntactException ie = new IntactException("More than one object returned by search by label.");
+                IntactException ie = new DuplicateLabelException();
                 throw(ie);
             }
         }
@@ -1299,10 +1332,10 @@ public class IntactHelper implements SearchI, Serializable {
      * The subgraph will contain all nodes which are up to graphDepth interactions away from startNode.
      * Only Interactions which belong to one of the Experiments in experiments will be taken into account.
      * If experiments is empty, all Interactions are taken into account.
-     * 
+     *
      * Graph depth:
      * This parameter limits the size of the returned interaction graph. All baits are shown with all
-     * the interacting preys, even if they would normally be on the "rim" of the graph. 
+     * the interacting preys, even if they would normally be on the "rim" of the graph.
      * Therefore the actual diameter of the graph may be 2*(graphDepth+1).
      *
      * Expansion:
