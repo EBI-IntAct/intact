@@ -25,14 +25,15 @@
 
       <tr>
              <td valign="top">
-                   <!-- Displays available highlightment source for the selected protein -->
+                   <!-- Prepare available highlightment source for the selected protein in the session -->
                    <hierarchView:displaySource/>
 
+                   <!-- Displays the available highlightment source -->
                    <display:table
                         name="sources" width="100%"
                         decorator="uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceDecorator">
-                           <display:column property="label" title="ID" />
-                           <display:column property="description" />
+                           <display:column property="label" title="ID" width="25%"/>
+                           <display:column property="description" width="75%" />
 
                            <display:setProperty name="basic.msg.empty_list" value="No source available for that protein" />
                    </display:table>
