@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.model.Constants;
+import uk.ac.ebi.intact.business.IntactException;
 
 import org.apache.struts.action.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -25,7 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 
 /**
- * Implements the logic to authenticate a user for the storefront application.
+ * Implements the logic to authenticate a user for the cvedit application.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -75,6 +76,15 @@ public class LoginAction extends IntactBaseAction {
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
             errors.add(super.INTACT_ERROR, new ActionError("error.invalid.user"));
+            super.saveErrors(request, errors);
+            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+        }
+        catch (IntactException ie) {
+            // Unable to access the intact helper.
+            super.log(ExceptionUtils.getStackTrace(ie));
+            // The errors to report back.
+            ActionErrors errors = new ActionErrors();
+            errors.add(super.INTACT_ERROR, new ActionError("error.helper"));
             super.saveErrors(request, errors);
             return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
         }
