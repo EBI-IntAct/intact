@@ -6,20 +6,16 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.util;
 
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.BusinessConstants;
-import uk.ac.ebi.intact.business.DuplicateLabelException;
-import uk.ac.ebi.intact.model.*;
-
-
-import java.net.URL;
-import java.io.*;
-import java.util.*;
-import java.lang.reflect.Constructor;
-
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import uk.ac.ebi.intact.business.DuplicateLabelException;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.*;
+
+import java.io.*;
+import java.lang.reflect.Constructor;
+import java.util.*;
 
 /**
  * Utilities to read and write files in GO format
@@ -315,45 +311,43 @@ public class GoTools {
 
     /**
      * Read a single GO term definition flat file record.
+     *
      * @param in
      * @return Hashtable containing the parsing results.
      */
-    private static Hashtable readRecord(BufferedReader in) throws IOException, RESyntaxException {
+    private static Hashtable readRecord( BufferedReader in ) throws IOException, RESyntaxException {
         Hashtable parsed = new Hashtable();
         String line;
-        RE emptyLinePat = new RE("^[:blank:]*$");
-        RE tagValuePat = new RE("(\\S*): (.*)");
 
-        while (null != (line = in.readLine())) {
+        while ( null != ( line = in.readLine() ) ) {
 
             // The empty line indicates the end of the record. Return parsed record.
-            if (emptyLinePat.match(line)) {
+            if( "".equals( line.trim() ) ) { // emptyLinePat.match( line ) )
                 break;
             }
-            ;
 
-            // Parse a tag-value line
-            if (tagValuePat.match(line)) {
-                String tag = tagValuePat.getParen(1);
-                String value = tagValuePat.getParen(2);
+            int index = line.indexOf( ':' );
+            if( index != -1 ) {
 
-                if (null == parsed.get(tag)) {
-                    parsed.put(tag, new Vector());
+                String tag = line.substring( 0, index);
+                String value = line.substring( index+1 ).trim();
+
+                if( null == parsed.get( tag ) ) {
+                    parsed.put( tag, new Vector() );
                 }
-                ;
-                ((Vector) parsed.get(tag)).add(value);
+
+                ( (Vector) parsed.get( tag ) ).add( value );
             }
 
             // Ignore all other lines by doing nothing.
         }
 
-        if (parsed.isEmpty()) {
+        if( parsed.isEmpty() ) {
             return null;
-        }
-        else {
+        } else {
             return parsed;
         }
-    };
+    }
 
     /**
      * Return a single CvObject as a GO flatfile formatted string
