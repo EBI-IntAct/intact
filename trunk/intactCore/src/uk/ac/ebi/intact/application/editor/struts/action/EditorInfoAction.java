@@ -50,25 +50,10 @@ public class EditorInfoAction extends AbstractEditorAction {
         // Handler to the current user.
         EditUserI user = super.getIntactUser(request);
 
-        // The name of the class associated with the current topic or class.
-        String topic = user.getSelectedTopic();
-        String className = super.getService().getClassName(topic);
-        Class clazz = null;
-
         // Holds the unique short label.
         String newlabel = null;
         try {
-            clazz = Class.forName(className);
             newlabel = user.getUniqueShortLabel(formlabel);
-        }
-        catch (ClassNotFoundException cnfe) {
-            super.log(ExceptionUtils.getStackTrace(cnfe));
-            // The errors to report back.
-            ActionErrors errors = new ActionErrors();
-            errors.add(AbstractEditorAction.EDITOR_ERROR,
-                    new ActionError("error.class", cnfe.getMessage()));
-            super.saveErrors(request, errors);
-            return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
         catch (SearchException se) {
             super.log(ExceptionUtils.getStackTrace(se));
@@ -83,12 +68,6 @@ public class EditorInfoAction extends AbstractEditorAction {
         viewbean.setShortLabel(newlabel);
         viewbean.setFullName((String) theForm.get("fullName"));
 
-        // We need to refresh the view with the unique label only if it is
-        // different to what is appearing on the screen.
-        if (!newlabel.equals(formlabel)) {
-            super.log("Refreshing the screen");
-            return mapping.findForward(EditorConstants.FORWARD_REFRESH);
-        }
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
     }
 }
