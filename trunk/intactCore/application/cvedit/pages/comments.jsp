@@ -71,7 +71,6 @@
                         </html:submit>
                     </td>
 
-                <%-- The following loop is under <tr> tag --%>
                     <nested:equal name="<%=CvEditConstants.COMMENT_EDIT_FORM%>"
                         property="editState" value="<%=EditBean.VIEW%>">
                         <td class="tableCell">
@@ -96,5 +95,4 @@
             </nested:iterate>
         </table>
     </html:form>
-
 </c:if>
