@@ -12,7 +12,7 @@
 <%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
                  uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
 
-<%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
+<%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 
 <%-- hierarchView seleted source page
 
@@ -22,21 +22,33 @@
      author : Samuel Kerrien (skerrien@ebi.ac.uk)
  --%>
 
-<%
-   /**
-    * Retreive user's data from the session
-    */
-   IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
-%>
+<html:html>
 
+<head>
+    <html:base target="_top"/>
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="-1">
 
-<!-- Displays Http content if URL updated in the session -->
-<%
-    if (user.hasSourceUrlToDisplay()) {
-        out.print("<!-- "+ user.getSourceURL() +" -->");
-        response.sendRedirect (user.getSourceURL());
-%>
-        <!--hierarchView:displayHttpContent/-->
-<%
-    }
-%>
+    <%
+       /**
+        * Retreive user's data from the session
+        */
+       IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
+
+       // Displays Http content if URL updated in the session
+       if (user.hasSourceUrlToDisplay()) {
+
+    %>
+            <script>
+               setTimeout("top.contentFrame.selectedSourcetFrame.location = '<%= user.getSourceURL() %>'", 1000);
+            </script>
+    <%
+       }
+    %>
+
+</head>
+
+<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0">
+</body>
+</html:html>
