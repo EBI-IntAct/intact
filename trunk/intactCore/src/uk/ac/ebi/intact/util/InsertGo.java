@@ -109,7 +109,7 @@ public class InsertGo {
         Protein protein = null;
         // TODO: why do we need that for ?
         Xref spXref = null;
-        spXref = new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
+        spXref = new Xref(helper.getInstitution(),
                           (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "uniprot"),
                           spAc,
                           null, null, null);
@@ -142,7 +142,7 @@ public class InsertGo {
         // Now we have a valid protein object, complete it.
 
         addNewXref(protein,
-                   new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
+                   new Xref(helper.getInstitution(),
                             (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "sgd"),
                             sgdAc,
                             null, null, null));
@@ -154,7 +154,7 @@ public class InsertGo {
 
 
         addNewXref(protein,
-                   new Xref((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
+                   new Xref(helper.getInstitution(),
                             (CvDatabase) helper.getObjectByLabel(CvDatabase.class, "go"),
                             goAc,
                             goTerm, null, null));

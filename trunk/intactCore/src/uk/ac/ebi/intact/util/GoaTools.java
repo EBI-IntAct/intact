@@ -340,7 +340,7 @@ public class GoaTools {
             throw new IntactException ( "Could not find the CvDatabase: go. Stop processing." );
         }
 
-        Institution institution = (Institution) helper.getObjectByLabel(Institution.class, "EBI");
+        Institution institution = helper.getInstitution();
 
         if ( institution == null ){
             throw new IntactException ( "Could not find the Institution: EBI. Stop processing." );
