@@ -25,7 +25,7 @@
      * Retreive user's data from the session
      */
     IntactUserI user = (IntactUserI) session.getAttribute (Constants.USER_KEY);
-    if (user == null) return ;
+    if (user.getSearchUrl() == null) return ;
 
     InteractionNetwork in = user.getInteractionNetwork();
     if (in == null) return ;
@@ -35,10 +35,12 @@
 
     ArrayList criterias = in.getCriteria();
     int max = criterias.size();
-    StringBuffer context = new StringBuffer();
+    StringBuffer context = new StringBuffer(512);
     for (int i=0; i < max; i++) {
         String[] aCriteria = (String[]) criterias.get(i);
-        context.append(prefix + aCriteria[1] + " : " + aCriteria[0] + suffix + ", ");
+        context.append (prefix + aCriteria[1] + ": ");
+        context.append ("<a href=\"" + user.getSearchUrl(aCriteria[0]) + "\" target=\"_blank\">" + aCriteria[0] + "</a>");
+        context.append (suffix + ", ");
     }
     // remove the last comma and white space
     String contextToDisplay = "";

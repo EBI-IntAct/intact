@@ -44,6 +44,7 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener {
     public IntactHelper getHelper ();
     public String getSourceURL ();
     public boolean hasSourceUrlToDisplay();
+    public String getSearchUrl (String query);
     public String getSearchUrl ();
 
     public void setQueryString (String aQueryString);

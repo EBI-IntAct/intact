@@ -413,7 +413,7 @@ public class IntactUser implements IntactUserI {
     }
 
 
-    public String getSearchUrl () {
+    public String getSearchUrl (String query) {
         String searchURL = null;
 
         // read the Search.properties file
@@ -425,11 +425,16 @@ public class IntactUser implements IntactUserI {
             String classParameter = properties.getProperty ("search.parameter.class.name");
             String classValue     = properties.getProperty ("search.parameter.class.value");
 
-            searchURL = url + "?" + queryParameter + "=" + queryString + "&" +
+            searchURL = url + "?" + queryParameter + "=" + query + "&" +
                         classParameter + "=" + classValue;
         }
 
         logger.info ("search URL = " + searchURL);
         return searchURL;
+    }
+
+
+    public String getSearchUrl () {
+        return getSearchUrl (queryString);
     }
 }
