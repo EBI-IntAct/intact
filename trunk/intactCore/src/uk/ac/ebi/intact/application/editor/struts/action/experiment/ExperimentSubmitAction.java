@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.PageValueBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,24 +43,15 @@ public class ExperimentSubmitAction extends SubmitFormAction {
         // The dyna form.
         DynaActionForm dynaform = (DynaActionForm) form;
 
-        // List of buttons to check which interaction was selected.
-        String[] intCmds = (String[]) dynaform.get("intCmd");
-        int intIdx = getCurrentSelection(intCmds);
-        if (intIdx != -1 ) {
-            // Selected an interaction to delete/edit; set the index.
-            dynaform.set("idx", new Integer(intIdx));
+        // PV bean to extract values from the cmd string.
+        PageValueBean pvb = new PageValueBean((String) dynaform.get("intCmd"));
+
+        // Is to do with Edit/Delete existing ints?
+        if (pvb.isMajor("interaction")) {
             return mapping.findForward("interaction");
         }
-
-        // List of buttons to check which interaction was added/hidden.
-        String[] intholdCmds = (String[]) dynaform.get("intsholdCmd");
-        int intholdIdx = getCurrentSelection(intholdCmds);
-        if (intholdIdx != -1 ) {
-            // Selected an interaction to add/hide.
-            dynaform.set("idx", new Integer(intholdIdx));
-            return mapping.findForward("intHold");
-        }
-        return mapping.findForward(FAILURE);
+        // Assume the request is with hold interactions.
+        return mapping.findForward("intHold");
     }
 
     // Handle events with dispatch parameter.

@@ -12,11 +12,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.struts.action.FillCvFormAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * Populates experiment form for display.
@@ -59,15 +57,9 @@ public class FillExperimentFormAction extends FillCvFormAction {
                 dynaform.set("ident", view.getIdent());
 //            }
         }
-        // Populate with the interaction for the experiment.
-        List ints = view.getInteractions();
-        dynaform.set("ints", ints.toArray(new InteractionBean[0]));
-        dynaform.set("intCmd", new String[ints.size()]);
+        // Reset the intCmd as it may contain the previous value.
+        dynaform.set("intCmd", null);
 
-        // Populate with interactions on hold.
-        List intshold = view.getHoldInteractions();
-        dynaform.set("intshold", intshold.toArray(new InteractionBean[0]));
-        dynaform.set("intsholdCmd", new String[intshold.size()]);
         return mapping.findForward(SUCCESS);
     }
 }
