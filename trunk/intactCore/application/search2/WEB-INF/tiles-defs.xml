@@ -28,8 +28,8 @@
     <!-- Sidebar for the search page -->
     <definition name="search.sidebar.layout" path="/layouts/sidebarLayout.jsp">
         <put name="input-dialog" value="/pages/sidebarInput.jsp"/>
-        <put name="menu" value="search.menu.links"/>
-        <put name="footer" value="/pages/sidebarFooter.jsp"/>
+        <put name="menu"         value="search.menu.links"/>
+        <put name="footer"       value="/pages/sidebarFooter.jsp"/>
     </definition>
 
     <!-- =============== Definitions related to pages ================= -->
@@ -41,10 +41,10 @@
 
     <!-- Search page description  -->
     <definition name="search.layout" path="/layouts/intactLayout.jsp">
-        <put name="title"  value="Database Search"/>
+        <put name="title"   value="Database Search"/>
         <put name="sidebar" value="search.sidebar.layout"/>
-        <put name="header" value="header.layout"/>
-        <put name="footer" value="/pages/footer.jsp"/>
+        <put name="header"  value="header.layout"/>
+        <put name="footer"  value="/pages/footer.jsp"/>
     </definition>
 
     <!-- Match page description. -->
@@ -55,6 +55,12 @@
     <!-- Match failed page description. -->
     <definition name="no.match.layout" extends="search.layout">
         <put name="content" value="/pages/noMatch.jsp"/>
+    </definition>
+
+    <!-- General warning layout -->
+    <definition name="warning.layout" extends="search.layout">
+        <put name="content" value="/pages/warning.jsp"/>
+        <put name="sidebar" value="search.sidebar.layout"/>
     </definition>
 
     <!-- General error layout -->
