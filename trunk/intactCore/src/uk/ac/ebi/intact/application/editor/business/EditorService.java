@@ -71,6 +71,11 @@ public class EditorService {
         // Cache the topics after sorting them.
         CollectionUtils.addAll(myTopicsCache, myTopics.getKeys());
         Collections.sort(myTopicsCache);
+        // Remove Experiment and Interaction and move them to the top of the list.
+        // Order is important: interaction first and then followed by Experiment as
+        // we want the Experiment to be at the top.
+        moveToFront("Interaction");
+        moveToFront("Experiment");
     }
 
     /**
@@ -128,5 +133,13 @@ public class EditorService {
             }
         }
         return myHelpUrl.toExternalForm();
+    }
+
+    private void moveToFront(String item) {
+        int pos = myTopicsCache.indexOf(item);
+        if (pos != -1) {
+            myTopicsCache.remove(pos);
+            myTopicsCache.add(0, item);
+        }
     }
 }
