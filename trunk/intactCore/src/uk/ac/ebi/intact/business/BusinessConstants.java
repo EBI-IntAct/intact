@@ -26,4 +26,15 @@ public class BusinessConstants {
      */
     public static final String MAPPING_FILE_KEY = "mappingfile";
 
+    /**
+     * used to identify a JDBC transaction type. Used by DAOs etc.
+     */
+        public static final int JDBC_TX = 0;
+
+    /**
+     * used to identify an object-level transaction. Used by DAOs etc.
+     */
+        public static final int OBJ_TX = 1;
+
+
 }
