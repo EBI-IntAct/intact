@@ -1,4 +1,4 @@
-<!--
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory"%><!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
@@ -15,22 +15,24 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
-<%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
+
+<script language="JavaScript" type="text/javascript">
+
+    function validateAnnotation() {
+    window.alert('I am here');
+    var v = document.forms[0].elements['dispatch'].value;
+    window.alert(v);
+        if (dispatch == "<%= EditorMenuFactory.SELECT_LIST_ITEM%>") {
+            alert("Please select an item from the list first!");
+            return;
+        }
+        return window.confirm("Do you want to delete this CV? Press OK to confirm");
+    }
+
+</script>
 
 <%-- The list of topics --%>
 <c:set var="topiclist" value="${user.view.addTopicMenu}"/>
-
-<%-- Errors are displayed in its own table if present --%>
-<%--<logic:messagesPresent name="annotation">--%>
-<%--    <table width="100%" border="0" cellspacing="1" cellpadding="2">--%>
-        <%-- Error messages --%>
-<%--        <html:messages id="annotation">--%>
-<%--            <tr class="tableRowEven">--%>
-<%--                <td class="tableErrorCell"><bean:write name="annotation" filter="false"/></td>--%>
-<%--            </tr>--%>
-<%--        </html:messages>--%>
-<%--    </table>--%>
-<%--</logic:messagesPresent>--%>
 
 <%-- The anchor name for this page --%>
 <a name="annotation"/>

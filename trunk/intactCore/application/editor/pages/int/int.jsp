@@ -18,6 +18,7 @@
 
 <html:form action="/intDispatch" focus="shortLabel" onsubmit="return validateIntForm(this)">
     <html:hidden property="anchor" />
+<%--    <html:hidden property="dispatch" />--%>
 
     <jsp:include page="info.jsp" />
     <p></p>
@@ -28,6 +29,7 @@
     <p></p>
     <jsp:include page="proteins.jsp" />
     <jsp:include page="proteinSearch.jsp" />
+    <jsp:include page="feature_link.jsp" />
     <p></p>
     <jsp:include page="annots.jsp" />
     <jsp:include page="../addAnnots.jsp" />

@@ -64,6 +64,11 @@
         <put name="cv" value="/pages/int/int.jsp"/>
     </definition>
 
+    <!-- The edit Feature page layout. -->
+    <definition name="edit.feature.layout" extends="edit.cv.layout">
+        <put name="cv" value="/pages/feature/feature.jsp"/>
+    </definition>
+
     <!-- =============== Definitions related to pages ================= -->
 
     <!-- The header layout. The controller may change the header when editing

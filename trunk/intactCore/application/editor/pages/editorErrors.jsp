@@ -24,11 +24,11 @@
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
 
         <%-- Error messages --%>
-        <html:messages id="error">
-            <tr class="tableRowEven">
-                <td class="tableErrorCell"><bean:write name="error" filter="false"/></td>
-            </tr>
-        </html:messages>
+<%--        <html:messages id="error">--%>
+<%--            <tr class="tableRowEven">--%>
+<%--                <td class="tableErrorCell"><bean:write name="error" filter="false"/></td>--%>
+<%--            </tr>--%>
+<%--        </html:messages>--%>
 
         <%-- Warning messages --%>
         <html:messages id="message" message="true">
