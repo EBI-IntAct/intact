@@ -140,6 +140,16 @@ public class EditorMenuFactory {
     }
 
     /**
+     * A utility method to normalizes a menu item
+     * @param item the item to normalize.
+     * @return if give <code>item</code> equals to {@link #SELECT_LIST_ITEM} null
+     * is returned. For all other times, given <code>item</code> is returned.
+     */
+    public static String normalizeMenuItem(String item) {
+        return SELECT_LIST_ITEM.equals(item) ? null : item;
+    }
+
+    /**
      * Construst with an Intact helper.
      * @param helper the Intact Helper to build menus.
      */
