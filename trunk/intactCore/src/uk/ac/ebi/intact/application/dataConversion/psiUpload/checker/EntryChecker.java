@@ -102,5 +102,9 @@ public final class EntryChecker {
             }
             InteractionChecker.check( interaction, helper, proteinFactory, bioSourceFactory, monitor );
         }
+        if( displayProgressBar ) {
+            monitor.setStatus( "finished..." );
+            monitor.hide();
+        }
     }
 }
