@@ -10,44 +10,48 @@ body, input, td, th, p {
     font-size: 12px;
 }
 
-h1 {
-    color: #000000;
-    background-color: transparent;
-    font-size: 18px;
-    font-family: Arial, verdana, sans-serif;
+.header {
+    background-color: #336666;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18pt;
     font-weight: bold;
-    text-decoration: none;
-    margin-bottom: 15pt;
+
 }
 
-h2 {
-    color: #000000;
+h1 {
+    color: #336666;
     background-color: transparent;
     font-size: 16px;
     font-family: Arial, verdana, sans-serif;
     font-weight: bold;
     text-decoration: none;
-    margin-bottom: 12px;
 }
 
-h3 {
-    color: #000000;
+h2 {
+    color: #336666;
     background-color: transparent;
     font-size: 14px;
     font-family: Arial, verdana, sans-serif;
     font-weight: bold;
     text-decoration: none;
-    margin-bottom: 10px;
 }
 
-.header {
-    color: #000000;
+h3 {
+    color: #336666;
     background-color: transparent;
-    font-size: 24pt;
+    font-size: 12px;
     font-family: Arial, verdana, sans-serif;
     font-weight: bold;
     text-decoration: none;
-    margin-bottom: 10px;
+}
+
+h4 {
+    color: #336666;
+    background-color: transparent;
+    font-size: 10px;
+    font-family: Arial, verdana, sans-serif;
+    text-decoration: none;
 }
 
 .footer {
@@ -65,8 +69,12 @@ tr.tableRowHeader {
     background-color: #ffcc00;
 }
 
+.objectClass {
+    background-color: #336666;
+    color: white;
+}
+
 th.tableCellHeader {
-    font-size: 9pt;
     font-family: Arial, verdana, sans-serif;
     text-decoration: none;
     font-weight: bold;
