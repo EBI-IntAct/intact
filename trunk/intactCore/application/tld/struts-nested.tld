@@ -10,7 +10,7 @@
 <tlibversion>1.0</tlibversion>
 <jspversion>1.1</jspversion>
 <shortname>nested</shortname>
-<uri>http://jakarta.apache.org/struts/tags-nested-1.0</uri>
+<uri>http://jakarta.apache.org/struts/tags-nested</uri>
 <tag>
 <name>nest</name>
 <tagclass>org.apache.struts.taglib.nested.NestedPropertyTag</tagclass>
