@@ -19,9 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
 import java.util.Properties;
+import java.sql.SQLException;
 
 
 import org.apache.log4j.Logger;
+import org.apache.ojb.broker.accesslayer.LookupException;
 
 /**
  * This class stores information about an Intact Web user session. <br>
@@ -468,5 +470,29 @@ public class IntactUser implements IntactUserI {
             //failed to close the store - not sure what to do here yet....
             logger.error ("error when closing the IntactHelper store", ie);
         }
+    }
+
+    // Implementation of IntactUserI interface.
+
+    public String getUserName() {
+        if (this.intactHelper != null) {
+            try {
+                return this.intactHelper.getDbUserName();
+            }
+            catch (LookupException e) {}
+            catch (SQLException e) {}
+        }
+        return null;
+    }
+
+    public String getDatabaseName() {
+        if (this.intactHelper != null) {
+            try {
+                return this.intactHelper.getDbName();
+            }
+            catch (LookupException e) {}
+            catch (SQLException e) {}
+        }
+        return null;
     }
 }
