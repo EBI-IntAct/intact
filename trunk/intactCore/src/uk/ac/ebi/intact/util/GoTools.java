@@ -41,14 +41,14 @@ public class GoTools {
      * Label as a label of "current" is considered unique.
      * @param helper
      * @param targetClass
-     * @param current may be null
+     * @param ac the ac of the current object.
      * @param label
      * @param externalAc
      * @return a label unique in targetClass
      */
     public static String getUniqueShortLabel(IntactHelper helper,
                                              Class targetClass,
-                                             AnnotatedObject current,
+                                             String ac,
                                              String label,
                                              String externalAc)
             throws IntactException, DuplicateLabelException {
@@ -65,8 +65,8 @@ public class GoTools {
              searchResult = (AnnotatedObject)helper.getObjectByLabel(targetClass, label.replaceAll("\\\\","\\\\\\\\"));
              if (null == searchResult)
                  return label;
-             if (current.getAc() != null) {
-                 if (current.getAc().equals(searchResult.getAc())) {
+             if (ac != null) {
+                 if (ac.equals(searchResult.getAc())) {
                      // No object has label, or only the current object.
                      // Therefore, if label is assigned to current, it will still be unique.
                      return label;
@@ -85,8 +85,8 @@ public class GoTools {
          searchResult = (AnnotatedObject)helper.getObjectByLabel(targetClass, label.replaceAll("\\\\","\\\\\\\\"));
          if (null == searchResult)
              return label;
-         if (current.getAc() != null) {
-             if (current.getAc().equals(searchResult.getAc())) {
+         if (ac != null) {
+             if (ac.equals(searchResult.getAc())) {
                  // No object has label, or only the current object.
                  // Therefore, if label is assigned to current, it will still be unique.
                  return label;
@@ -156,7 +156,7 @@ public class GoTools {
         }
         else {
             label = goTerm.substring(0, Math.min(goTerm.length(), MAX_LABEL_LEN));
-            label = getUniqueShortLabel(helper, targetClass, current, label,
+            label = getUniqueShortLabel(helper, targetClass, current.getAc(), label,
                     ((Vector) definition.get("goid")).elementAt(0).toString());
         }
 
