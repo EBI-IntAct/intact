@@ -62,10 +62,12 @@ public class CommentAddAction extends AbstractEditorAction {
         // Handler to the Intact User.
         EditUserI user = super.getIntactUser(request);
 
+        // The topic selected by the user.
+        String topic = (String) theForm.get("topic");
+
         try {
             // Get the topic object for the new annotation.
-            cvtopic = (CvTopic) user.getObjectByLabel(
-                    CvTopic.class, ((String) theForm.get("topic")).trim());
+            cvtopic = (CvTopic) user.getObjectByLabel(CvTopic.class, topic);
 
             // The owner of the object we are editing.
             owner = user.getInstitution();
@@ -90,7 +92,7 @@ public class CommentAddAction extends AbstractEditorAction {
         AbstractEditViewBean viewbean = user.getView();
         viewbean.addAnnotation(annot);
 
-        // Clear previous entries.
+        // Clear previous entries and reset to the default values.
         theForm.reset(mapping, request);
 
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);

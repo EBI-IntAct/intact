@@ -55,21 +55,21 @@ public class XrefAddAction extends AbstractEditorAction {
         // The new xref to add to the current cv object.
         Xref xref = null;
 
+        // The drop down list items.
+        String database = (String) theForm.get("database");
+        String qualifier = (String) theForm.get("qualifier");
+
         try {
             // The owner of the object we are editing.
             Institution owner = user.getInstitution();
 
             // The database the new xref belong to.
             CvDatabase db = (CvDatabase) user.getObjectByLabel(
-                    CvDatabase.class, ((String) theForm.get("database")).trim());
+                    CvDatabase.class, database);
 
-            // The CV xref qualifier; create it only if have an item in the form.
-            CvXrefQualifier xqual = null;
-            if (!user.isQualifierListEmpty()) {
-                xqual = (CvXrefQualifier) user.getObjectByLabel(
-                        CvXrefQualifier.class,
-                        ((String) theForm.get("qualifier")).trim());
-            }
+            // The CV xref qualifier.
+            CvXrefQualifier xqual = (CvXrefQualifier) user.getObjectByLabel(
+                        CvXrefQualifier.class, qualifier);
             xref = new Xref(owner, db, (String) theForm.get("primaryId"),
                     (String) theForm.get("secondaryId"),
                     (String) theForm.get("releaseNumber"), xqual);
@@ -86,7 +86,7 @@ public class XrefAddAction extends AbstractEditorAction {
         AbstractEditViewBean viewbean = user.getView();
         viewbean.addXref(xref);
 
-        // Clear previous entries.
+        // Clear previous entries and reset to the default values.
         theForm.reset(mapping, request);
 
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
