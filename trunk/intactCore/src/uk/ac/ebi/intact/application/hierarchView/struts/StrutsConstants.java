@@ -23,6 +23,8 @@ public final class StrutsConstants {
 
     public static final String SEARCH_PROPERTY_FILE = "/config/Search.properties";
 
+    public static final String GRAPH2MIF_PROPERTY_FILE = "/config/graph2mif.properties";
+
     // ********************************************************* session keys
 
     public static final String HOST     = "intact.hierarchView.host";

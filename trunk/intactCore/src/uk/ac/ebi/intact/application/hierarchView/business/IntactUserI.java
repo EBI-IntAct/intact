@@ -37,6 +37,7 @@ public interface IntactUserI extends Serializable, HttpSessionBindingListener,
     public static final Properties SEARCH_PROPERTIES       = PropertyLoader.load (StrutsConstants.SEARCH_PROPERTY_FILE);
     public static final Properties WEB_SERVICE_PROPERTIES  = PropertyLoader.load (StrutsConstants.WEB_SERVICE_PROPERTY_FILE);
     public static final Properties HIGHLIGHTING_PROPERTIES = PropertyLoader.load (StrutsConstants.HIGHLIGHTING_PROPERTY_FILE);
+    public static final Properties GRAPH2MIF_PROPERTIES    = PropertyLoader.load (StrutsConstants.GRAPH2MIF_PROPERTY_FILE);
 
 
     public String  getQueryString();
