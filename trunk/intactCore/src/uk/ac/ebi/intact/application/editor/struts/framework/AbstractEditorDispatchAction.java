@@ -7,6 +7,10 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.struts.actions.LookupDispatchAction;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.Globals;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpSession;
@@ -100,6 +104,32 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction 
     protected String getForwardAction(EditUserI user) {
         return user.hasSingleSearchResult() ? EditorConstants.FORWARD_SEARCH :
                 EditorConstants.FORWARD_RESULTS;
+    }
+
+    /**
+     * Returns the forward for input.
+     * @param mapping the mapping to get forward action.
+     * @return forward action stored in <code>mapping</code> under "input".
+     */
+    protected ActionForward inputForward(ActionMapping mapping) {
+        return mapping.findForward("input");
+    }
+
+    /**
+     * Returns true if errors in stored in the request
+     * @param request Http request to search errors for.
+     * @return true if strut's error is found in <code>request</code> and
+     * it is not null. For all instances, false is returned.
+     */
+    protected boolean hasErrors(HttpServletRequest request) {
+        ActionErrors errors =
+                (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
+        if (errors != null) {
+            // Empty menas no errors.
+            return !errors.isEmpty();
+        }
+        // No errors stored in the request.
+        return false;
     }
 
     // Helper Methods
