@@ -72,7 +72,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         Set recentExps = user.getCurrentExperiments();
         if (recentExps.isEmpty()) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("int.exp.search",
                     new ActionError("error.int.exp.search.recent.empty"));
             saveErrors(request, errors);
             return mapping.getInputForward();
