@@ -319,7 +319,7 @@
         <!-- Just compile without copying config files to the class dir; exclude tests. -->
         <mkdir dir="${dest.dir}" />
         <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
-            excludes="${non.core.files}, **/test/**">
+            source="1.4" excludes="${non.core.files}, **/test/**">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -348,7 +348,7 @@
         <mkdir dir="${dest.dir}" />
 
         <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
-            excludes="${non.core.files}">
+            source="1.4" excludes="${non.core.files}">
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -363,7 +363,7 @@
         <mkdir dir="${dest.dir}" />
 
         <javac srcdir="${src.dir}" destdir="${dest.dir}" debug="on" deprecation="on"
-            excludes="${non.core.files}">
+            source="1.4" excludes="${non.core.files}">
             <classpath refid="project.class.path"/>
         </javac>
 
