@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.search2.struts.view.details;
@@ -65,9 +65,5 @@ public class InteractionDetailsViewBean extends DetailsViewBean {
 
         // write the HTML content
         super.getHTML( writer );
-    }
-
-    public String getHelpSection() {
-        return "interaction.details.view";
     }
 }
