@@ -1,0 +1,116 @@
+body {
+    margin-top: 0pt;
+    margin-left: 0pt;
+    margin-right: 0pt;
+    margin-bottom: 0pt;
+}
+
+body, input, td, th, p {
+    font-family: Arial, verdana, sans-serif;
+    font-size: 12px;
+}
+
+h1 {
+    color: #000000;
+    background-color: transparent;
+    font-size: 18px;
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 15pt;
+}
+
+h2 {
+    color: #000000;
+    background-color: transparent;
+    font-size: 16px;
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 12px;
+}
+
+h3 {
+    color: #000000;
+    background-color: transparent;
+    font-size: 14px;
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.header {
+    color: #000000;
+    background-color: transparent;
+    font-size: 24pt;
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.footer {
+    color: #000000;
+    font-size: 11pt;
+    background-color: transparent;
+    font-family: Arial, verdana, sans-serif;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+tr.tableRowHeader {
+    font-family: Arial, verdana, sans-serif;
+    color: inherit;
+    background-color: #ffcc00;
+}
+
+th.tableCellHeader {
+    font-size: 9pt;
+    font-family: Arial, verdana, sans-serif;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a.tableCellHeader {
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    background-color: transparent;
+}
+
+a.tableCellHeader:hover {
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: underline;
+    color: black;
+    background-color: transparent;
+}
+
+tr.tableRowOdd {
+    font-family: Arial, verdana, sans-serif;
+    color: inherit;
+    background-color: #ffffff
+}
+
+tr.tableRowEven {
+    font-family: Arial, verdana, sans-serif;
+    color: inherit;
+    background-color: #ffeeaa
+}
+
+td.tableCell {
+    font-size: 9pt;
+    font-family: Arial, verdana, sans-serif;
+    text-align: left;
+    vertical-align: top;
+}
+
+td.tableErrorCell {
+    font-family: Arial, verdana, sans-serif;
+    text-align: left;
+    vertical-align: top;
+    color: red;
+    background-color: transparent;
+}
