@@ -130,6 +130,7 @@
         <antcall target="clean-search"/>
         <antcall target="clean-hv"/>
         <antcall target="clean-intact"/>
+        <antcall target="clean-dataConversion"/>
     </target>
 
     <!-- =================================================================== -->
@@ -146,6 +147,14 @@
     <target name="clean-search"
         description="Prepare search module for a clean build">
         <ant dir="${app.dir}/search2" inheritAll="false" target="clean" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories of search module for clean build -->
+    <target name="clean-dataConversion"
+        description="Prepare dataConversion module for a clean build">
+        <ant dir="${app.dir}/dataConversion" inheritAll="false" target="clean" />
     </target>
 
     <!-- =================================================================== -->
@@ -379,9 +388,18 @@
 
     <!-- =================================================================== -->
 
+	<!-- Compiles the search module. -->
+    <target name="compile-dataConversion" depends="compile-core"
+        description="Compiles the data conversion module">
+
+        <ant dir="${app.dir}/dataConversion" inheritAll="false" target="compile"/>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Compiles all the sources. -->
     <target name="compile-all" description="Compiles all the sources for Intact"
-        depends="compile-core, compile-hv, compile-editor, compile-search, compile-synchron">
+        depends="compile-core, compile-hv, compile-editor, compile-search, compile-synchron, compile-dataConversion">
     </target>
 
     <!-- =================================================================== -->

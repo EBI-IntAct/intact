@@ -1,8 +1,10 @@
 package uk.ac.ebi.intact.application.dataConversion;
 
 import uk.ac.ebi.intact.model.*;
-
 import uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException;
+
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
 import org.apache.xerces.dom.DOMImplementationImpl;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
@@ -36,31 +38,39 @@ public class PsiDataBuilder implements DataBuilder {
     //----------- copied from Graph2MIF ---------------------
 
     /**
-         * Keep the global experiemnt definition.
-         */
-        private Element globalExperimentList;
+     * Keep the global experiemnt definition.
+     */
+    private Element globalExperimentList;
 
-        /**
-         * Distinct set of experiment AC
-         */
-        private HashSet globalExperiments;
+    /**
+     * Distinct set of experiment AC
+     */
+    private HashSet globalExperiments;
 
-        /**
-         * Keep the global interactor definition.
-         */
-        private Element globalInteractorList;
+    /**
+     * Keep the global interactor definition.
+     */
+    private Element globalInteractorList;
 
-        /**
-         * Distinct set of Interactor AC
-         */
-        private HashSet globalInteractors;
+    /**
+     * The Element holding all interactions in the current entry
+     */
+    private Element globalInteractionList;
+
+    /**
+     * Distinct set of Interactor AC
+     */
+    private HashSet globalInteractors;
 
     private Element psiEntrySet;
-  //--------------------------------------------------
+    //--------------------------------------------------
     /**
      * Holds the DOm representation of the data
      */
     private Document doc;
+
+    private RE RE  = null;
+
 
     public PsiDataBuilder() {
 
@@ -75,20 +85,12 @@ public class PsiDataBuilder implements DataBuilder {
         psiEntrySet.setAttribute("level", "1");
         psiEntrySet.setAttribute("version", "1");
 
-    }
-
-    /**
-     * @see uk.ac.ebi.intact.application.dataConversion.DataBuilder
-     */
-    public void createData(IntactObject obj) {
-
+        // Initialise regular expression
         try {
-            Element psiEntry = processObject(obj);
-            psiEntrySet.appendChild(psiEntry);
-        } catch (ElementNotParseableException e) {
-            logger.warn("failed to build XML data - reason: " + e.getMessage());
+            RE = new RE("^\\d+");
+        } catch (RESyntaxException e) {
+            e.printStackTrace();
         }
-
     }
 
     /**
@@ -109,12 +111,10 @@ public class PsiDataBuilder implements DataBuilder {
             StreamResult result = new StreamResult(f);
             transformer.transform(source, result);
 
-        }
-        catch(TransformerConfigurationException tce) {
+        } catch (TransformerConfigurationException tce) {
             throw new DataConversionException("Could not generate file - Transformer config error", tce);
 
-        }
-        catch(TransformerException te) {
+        } catch (TransformerException te) {
             throw new DataConversionException("Could not generate file - Transformer error", te);
 
         }
@@ -125,96 +125,121 @@ public class PsiDataBuilder implements DataBuilder {
     //--------------- and need refactoring anyway. Some will already be modified...   -----------------------------------------
 
     /**
-     * Start of processing the Intact Object (usually an Experiment).
-     * @param obj to convert to PSI-Format
+     * Generate a valid XML id from an IntAct shortlabel.
+     * Normally using shortlabels is fine but in a few cases they may start with
+     * a digit, which is not valid as an XML id, so prefix it with a random string.
+     */
+    private String getValidId(String id) {
+        if (RE.match(id)){
+            return ("ID-" + id);
+        } else {
+            return id;
+        }
+    }
+
+    /**
+     * Create a new entry element
+     * @param sourceShortLabel
+     * @param sourceFullName
      * @return DOM-Object, representing an <entry>
      * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException
      * if PSIrequired Elements are missing within the object graph
      *
      */
-    private Element processObject(IntactObject obj) throws ElementNotParseableException {
+    private Element psiEntry(String sourceShortLabel, String sourceFullName) throws ElementNotParseableException {
 
+        //generate DOM-Element
         Element psiEntry = null;
-        Element psiSource = null;
+        psiEntry = doc.createElement("entry");
+
+        // The source element
         try {
-            //generate DOM-Element
-            psiEntry = doc.createElement("entry");
-            //local elements processing...
+            Element psiSource = null;
             //getId/Label are names
             psiSource = doc.createElement("source");
             psiEntry.appendChild(psiSource);
-            Element psiNames = null;
-            if(obj instanceof AnnotatedObject) {
-                psiNames = getPsiNamesOfAnnotatedObject((AnnotatedObject)obj);
-            }
-            else {
-                //Not sure what to do with those (eg Institution)...
-                logger.debug("don't know (yet) what to do with non-AnnotatedObjects");
-            }
+            Element psiNames = getNames(sourceShortLabel, sourceFullName);
             psiSource.appendChild(psiNames);
             psiSource.setAttribute("releaseDate", getReleaseDate());
 
-            //set up the lists to hold the Experiments and Interactors....
-            globalExperimentList = doc.createElement("experimentList");
-            globalInteractorList = doc.createElement("interactorList");
-            psiEntry.appendChild(globalExperimentList);
-            psiEntry.appendChild(globalInteractorList);
-
-            //Q: Why are these initialised here?
-            globalExperiments = new HashSet();
-            globalInteractors = new HashSet();
-
-        }
-        catch (ElementNotParseableException e) {
+        } catch (ElementNotParseableException e) {
             logger.info("source/names failed (not required):" + e.getMessage());
         } //not required here - so dont worry
 
-        Experiment exp = null;
-        try {
-            //just checking for now - know we have an Experiment....
-            exp = (Experiment)obj;
-            Element psiInteractionList = doInteractionList(exp);
-            psiEntry.appendChild(psiInteractionList);
-        } catch (ElementNotParseableException e) {
-            if(exp != null)
-            logger.warn("failed to process InteractionList for Experiment "
-                    + exp.getShortLabel() + ":" + e.getMessage());
-        }
-        //returning result DOMObject
-        if (!psiEntry.hasChildNodes()) {
-            logger.warn("graph failed, no child elements.");
-            throw new ElementNotParseableException("graph has no Child Elements");
-        }
+        //set up the global lists to hold the Experiments and Interactors....
+        globalExperimentList = doc.createElement("experimentList");
+        psiEntry.appendChild(globalExperimentList);
+        globalExperiments = new HashSet();
+
+        globalInteractorList = doc.createElement("interactorList");
+        psiEntry.appendChild(globalInteractorList);
+        globalInteractors = new HashSet();
+
+        globalInteractionList = doc.createElement("interactionList");
+        psiEntry.appendChild(globalInteractionList);
+
         return psiEntry;
     }
 
 
     /**
+     * Generate the PSI xml for a list of experiments
+     * @param experiments to convert to PSI-Format
+     * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException
+     * if PSIrequired Elements are missing within the object graph
+     *
+     */
+    public void processExperiments(Collection experiments) throws ElementNotParseableException {
+
+        Element psiEntry = null;
+        psiEntry = psiEntry("IntAct", "IntAct download");
+
+        for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
+
+            Object obj = (Object) iterator.next();
+
+            Experiment exp = null;
+            try {
+                //just checking for now - know we have an Experiment....
+                exp = (Experiment) obj;
+                doInteractionList(exp);
+            } catch (ElementNotParseableException e) {
+                if (exp != null)
+                    logger.warn("failed to process InteractionList for Experiment "
+                            + exp.getShortLabel() + ":" + e.getMessage());
+            }
+            System.err.println(exp.getShortLabel());
+        }
+        System.err.println("");
+
+        //returning result DOMObject
+        if (!psiEntry.hasChildNodes()) {
+            logger.warn("graph failed, no child elements.");
+            throw new ElementNotParseableException("graph has no Child Elements");
+        }
+
+        // Append the entry to the root node
+        psiEntrySet.appendChild(psiEntry);
+    }
+
+    /**
      * process list of interactions for an Experiment
      * @param exp to convert to PSI-Format
-     * @return DOM-Object, representing an <interactionList>
      * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if PSIrequired Elements are missing within graph
      * @see uk.ac.ebi.intact.simpleGraph.Edge
      */
-    private Element doInteractionList(Experiment exp) throws ElementNotParseableException {
-        //generate DOM-Element
-        Element psiInteractionList = doc.createElement("interactionList");
+    private void doInteractionList(Experiment exp) throws ElementNotParseableException {
+
         //get the Interactions from the Experiment....
         Collection interactions = exp.getInteractions();
-        for(Iterator it = interactions.iterator(); it.hasNext();) {
+        for (Iterator it = interactions.iterator(); it.hasNext();) {
             try {
-                Element psiInteraction = doInteraction((Interaction)it.next());
-                psiInteractionList.appendChild(psiInteraction);
+                Element psiInteraction = doInteraction((Interaction) it.next());
+                globalInteractionList.appendChild(psiInteraction);
             } catch (ElementNotParseableException e) {
                 logger.info("InteractionList could not be built:" + e.getMessage());
             } // not required here - so dont worry
         }
-        //returning result DOMObject
-        if (!psiInteractionList.hasChildNodes()) {
-            logger.warn("edges failed, no child elements.");
-            throw new ElementNotParseableException("InteractionList has no Child Elements");
-        }
-        return psiInteractionList;
     }
 
 
@@ -226,6 +251,8 @@ public class PsiDataBuilder implements DataBuilder {
      * @see uk.ac.ebi.intact.simpleGraph.Edge
      */
     private Element doInteraction(Interaction interaction) throws ElementNotParseableException {
+	System.err.print(".");
+
         //generate DOM-Element
         Element psiInteraction = doc.createElement("interaction");
         //local elements processing...
@@ -245,31 +272,41 @@ public class PsiDataBuilder implements DataBuilder {
         } catch (ElementNotParseableException e) {
             logger.warn("experiments failed (required):" + e.getMessage());
         }
-        //Now do the Interaction's Components......
-        Element psiParticipantList = doc.createElement("participantList");
-        psiInteraction.appendChild(psiParticipantList);
-        try {
-            Collection components = interaction.getComponents();
-            Collection elements = new ArrayList();
-            Element elem = null;
-            for(Iterator it = components.iterator(); it.hasNext();) {
-                elem = doComponent((Component)it.next());
-                elements.add(elem);
-            }
-            //add them to the Document tree...
-            for(Iterator it = elements.iterator(); it.hasNext();) {
-              psiParticipantList.appendChild((Element)it.next());
-            }
 
-        } catch (ElementNotParseableException e) {
-            logger.warn("component failed (required):" + e.getMessage());
+        //Now do the Interaction's Components......
+        Collection components = interaction.getComponents();
+        /* IntAct has interactions with one component (and stoichiometry 2).
+           these are not acceptable in PSI format for now.
+           Don't generate the interaction at all.
+           */
+        if (components.size() < 2) {
+            throw new ElementNotParseableException();
+        } else {
+            Element psiParticipantList = doc.createElement("participantList");
+            psiInteraction.appendChild(psiParticipantList);
+            try {
+                components = interaction.getComponents();
+                Collection elements = new ArrayList();
+                Element elem = null;
+                for (Iterator it = components.iterator(); it.hasNext();) {
+                    elem = doComponent((Component) it.next());
+                    elements.add(elem);
+                }
+                //add them to the Document tree...
+                for (Iterator it = elements.iterator(); it.hasNext();) {
+                    psiParticipantList.appendChild((Element) it.next());
+                }
+
+            } catch (ElementNotParseableException e) {
+                logger.warn("component failed (required):" + e.getMessage());
+            }
         }
 
         // TODO: shouldn't it be in the experiment scope ?
         //Now do the CvInteractions for each Experiment (for some reason!)...
         Collection interactionTypes = getRelInteractionTypes(experiments);
-        for(Iterator it = interactionTypes.iterator(); it.hasNext();) {
-            CvInteraction cvInteraction = (CvInteraction)it.next();
+        for (Iterator it = interactionTypes.iterator(); it.hasNext();) {
+            CvInteraction cvInteraction = (CvInteraction) it.next();
             Element psiInteractionType = null;
             try {
                 psiInteractionType = doCvInteraction(cvInteraction);
@@ -281,11 +318,23 @@ public class PsiDataBuilder implements DataBuilder {
         //Now do the Interaction's Xrefs...
         try {
             Collection xrefs = interaction.getXrefs();
-            Element psiXref = doXrefCollection(xrefs);
+            Element psiXref = doXrefCollection(xrefs, "intact");
             psiInteraction.appendChild(psiXref);
         } catch (ElementNotParseableException e) {
             logger.info("xref failed (not required):" + e.getMessage());
         }
+
+        //Now do the Interaction's Annotation...
+        if (null != interaction.getAnnotations()) {
+            try {
+                Collection annotations = interaction.getAnnotations();
+                Element psiAttributeList = doAnnotations(annotations);
+                psiInteraction.appendChild(psiAttributeList);
+            } catch (ElementNotParseableException e) {
+                logger.info("no annotations (not required):" + e.getMessage());
+            }
+        }
+
         //returning result DOMObject
         if (!psiInteraction.hasChildNodes()) {
             logger.warn("edge failed, no child elements.");
@@ -293,7 +342,6 @@ public class PsiDataBuilder implements DataBuilder {
         }
         return psiInteraction;
     }
-
 
 
     /**
@@ -314,13 +362,13 @@ public class PsiDataBuilder implements DataBuilder {
         while (experimentList.hasNext()) {
             Experiment experiment = (Experiment) experimentList.next();
             try {
-                if ( ! globalExperiments.contains( experiment.getAc() )) {
+                if (!globalExperiments.contains(experiment.getAc())) {
                     Element psiExperimentDescription = doExperiment(experiment);
                     globalExperimentList.appendChild(psiExperimentDescription);
-                    globalExperiments.add( experiment.getAc() );
+                    globalExperiments.add(experiment.getAc());
                 }
                 Element psiExperimentRef = doExperimentRef(experiment);
-                psiExperimentList.appendChild( psiExperimentRef );
+                psiExperimentList.appendChild(psiExperimentRef);
             } catch (ElementNotParseableException e) {
                 logger.info("experiment failed (not required):" + e.getMessage());
             } //not required - so dont worry
@@ -366,7 +414,7 @@ public class PsiDataBuilder implements DataBuilder {
         } //not required here - so dont worry
         // getXref
         try {
-            Element psiXrefPubMed = doXrefCollectionSelectingPubMed(experiment.getXrefs());
+            Element psiXrefPubMed = doXrefCollection(experiment.getXrefs(), "pubmed");
             Element psiBibref = doc.createElement("bibref");
             psiBibref.appendChild(psiXrefPubMed);
             psiExperimentDescription.appendChild(psiBibref);
@@ -379,6 +427,7 @@ public class PsiDataBuilder implements DataBuilder {
         } catch (ElementNotParseableException e) {
             logger.info("xref(not pubmed) failed (not required):" + e.getMessage());
         } //not required here - so dont worry
+
         // getBioSource()
         try {
             Element psiHostOrganism = doBioSourceAsHost(experiment.getBioSource());
@@ -426,6 +475,18 @@ public class PsiDataBuilder implements DataBuilder {
         // getOwner @todo
         // getOwnerAc @todo
         // getUpdated  @todo
+
+        //Now do the Experiment's Annotation...
+        if (null != experiment.getAnnotations()) {
+            try {
+                Collection annotations = experiment.getAnnotations();
+                Element psiAttributeList = doAnnotations(annotations);
+                psiExperimentDescription.appendChild(psiAttributeList);
+            } catch (ElementNotParseableException e) {
+                logger.info("no annotations (not required):" + e.getMessage());
+            }
+        }
+
         //returning result DOMObject
         if (!psiExperimentDescription.hasChildNodes()) {
             logger.warn("Experiment failed, no child elements.");
@@ -448,7 +509,7 @@ public class PsiDataBuilder implements DataBuilder {
         Element psiInteractionDetection = doc.createElement("interactionDetection");
 
         //CvInteraction is not compulsory for an Experiment (at present)...
-        if(cvInteractionDetection != null) {
+        if (cvInteractionDetection != null) {
             //local elements processing...
             try {
                 Element psiNames = getPsiNamesOfAnnotatedObject(cvInteractionDetection);
@@ -457,7 +518,7 @@ public class PsiDataBuilder implements DataBuilder {
                 logger.warn("names failed (required):" + e.getMessage());
             }
             try {
-                Element psiXref = doXrefCollection(cvInteractionDetection.getXrefs());
+                Element psiXref = doXrefCollection(cvInteractionDetection.getXrefs(), "psi-mi");
                 psiInteractionDetection.appendChild(psiXref);
             } catch (ElementNotParseableException e) {
                 logger.warn("xref failed (required):" + e.getMessage());
@@ -479,13 +540,13 @@ public class PsiDataBuilder implements DataBuilder {
      * @see uk.ac.ebi.intact.model.CvInteraction
      */
     private Element doCvInteraction(CvInteraction cvInteractionType) throws ElementNotParseableException {
-       /* TODO: could be factorized with the doCvInteractionDetection if
-          TODO: the name of the node is given in parameter.
-        */
+        /* TODO: could be factorized with the doCvInteractionDetection if
+           TODO: the name of the node is given in parameter.
+         */
         //generate DOM-Element
         Element psiInteractionDetection = doc.createElement("interactionType");
         //possible CvInteraction is not defined......
-        if(cvInteractionType != null) {
+        if (cvInteractionType != null) {
             try {
                 Element psiNames = getPsiNamesOfAnnotatedObject(cvInteractionType);
                 psiInteractionDetection.appendChild(psiNames);
@@ -493,7 +554,7 @@ public class PsiDataBuilder implements DataBuilder {
                 logger.warn("names failed (required):" + e.getMessage());
             }
             try {
-                Element psiXref = doXrefCollection(cvInteractionType.getXrefs());
+                Element psiXref = doXrefCollection(cvInteractionType.getXrefs(), "psi-mi");
                 psiInteractionDetection.appendChild(psiXref);
             } catch (ElementNotParseableException e) {
                 logger.warn("xref failed (required):" + e.getMessage());
@@ -518,7 +579,7 @@ public class PsiDataBuilder implements DataBuilder {
         //generate DOM-Element
         Element psiParticipantDetection = doc.createElement("participantDetection");
         //CvIdentification is not mandatory for an Experiment (at present)...
-        if(cvIdentification != null) {
+        if (cvIdentification != null) {
             try {
                 Element psiNames = getPsiNamesOfAnnotatedObject(cvIdentification);
                 psiParticipantDetection.appendChild(psiNames);
@@ -526,7 +587,7 @@ public class PsiDataBuilder implements DataBuilder {
                 logger.warn("names failed (required):" + e.getMessage());
             }
             try {
-                Element psiXref = doXrefCollection(cvIdentification.getXrefs());
+                Element psiXref = doXrefCollection(cvIdentification.getXrefs(), "psi-mi");
                 psiParticipantDetection.appendChild(psiXref);
             } catch (ElementNotParseableException e) {
                 logger.warn("xref failed (required):" + e.getMessage());
@@ -553,17 +614,17 @@ public class PsiDataBuilder implements DataBuilder {
         //local elements processing...
         //getInteractor()
         //possible the component is not specified....
-        if(component != null) {
+        if (component != null) {
             try {
                 Interactor interactor = component.getInteractor();
-                if ( ! globalInteractors.contains( interactor.getAc() ) ) {
+                if (!globalInteractors.contains(interactor.getAc())) {
                     Element psiProteinInteractor = doInteractor(interactor);
-                    globalInteractorList.appendChild( psiProteinInteractor );
-                    globalInteractors.add( interactor.getAc() );
+                    globalInteractorList.appendChild(psiProteinInteractor);
+                    globalInteractors.add(interactor.getAc());
                 }
 
-                Element psiProteinInteractorRef = doInteractorRef( interactor );
-                psiProteinParticipant.appendChild( psiProteinInteractorRef );
+                Element psiProteinInteractorRef = doInteractorRef(interactor);
+                psiProteinParticipant.appendChild(psiProteinInteractorRef);
             } catch (ElementNotParseableException e) {
                 logger.warn("interactor failed (required):" + e.getMessage());
             }
@@ -609,8 +670,26 @@ public class PsiDataBuilder implements DataBuilder {
         //generate DOM-Element
         Element psiRole = doc.createElement("role");
         //should be there, but you never know...
-        if(cvComponentRole != null) {
-            psiRole.appendChild(doc.createTextNode(cvComponentRole.getShortLabel()));
+        if (cvComponentRole != null) {
+            String role = cvComponentRole.getShortLabel();
+
+            /* The IntAct CvComponentRole has more terms than the current PSI role attribute.
+            Therefore some remapping needs to be done.
+            */
+            if (role.equals("agent")) {
+                role = "bait";
+            }
+            if (role.equals("complex")) {
+                role = "unspecified";
+            }
+            if (role.equals("self")) {
+                role = "neutral";
+            }
+            if (role.equals("target")) {
+                role = "prey";
+            }
+
+            psiRole.appendChild(doc.createTextNode(role));
             //returning result DOMObject
             if (!psiRole.hasChildNodes()) {
                 logger.warn("cvComponentRole failed, no child elements.");
@@ -735,7 +814,7 @@ public class PsiDataBuilder implements DataBuilder {
         //generate DOM-Element
         Element psiFeatureDescription = doc.createElement("featureDescription");
         //CvFeatureType may not be present...
-        if(cvFeatureType != null) {
+        if (cvFeatureType != null) {
             try {
                 Element psiNames = getPsiNamesOfAnnotatedObject(cvFeatureType);
                 psiFeatureDescription.appendChild(psiNames);
@@ -743,7 +822,7 @@ public class PsiDataBuilder implements DataBuilder {
                 logger.warn("names failed (required):" + e.getMessage());
             }
             try {
-                Element psiXref = doXrefCollection(cvFeatureType.getXrefs());
+                Element psiXref = doXrefCollection(cvFeatureType.getXrefs(), "psi-mi");
                 psiFeatureDescription.appendChild(psiXref);
             } catch (ElementNotParseableException e) {
                 logger.warn("xref failed (required):" + e.getMessage());
@@ -768,7 +847,7 @@ public class PsiDataBuilder implements DataBuilder {
         //generate DOM-Element
         Element psiFeatureDetection = doc.createElement("featureDetection");
         //parameter may not be defined...
-        if(cvFeatureIdentification != null) {
+        if (cvFeatureIdentification != null) {
             try {
                 Element psiNames = getPsiNamesOfAnnotatedObject(cvFeatureIdentification);
                 psiFeatureDetection.appendChild(psiNames);
@@ -776,7 +855,7 @@ public class PsiDataBuilder implements DataBuilder {
                 logger.warn("cvFeatureIdentification failed (required):" + e.getMessage());
             }
             try {
-                Element psiXref = doXrefCollection(cvFeatureIdentification.getXrefs());
+                Element psiXref = doXrefCollection(cvFeatureIdentification.getXrefs(), "psi-mi");
                 psiFeatureDetection.appendChild(psiXref);
             } catch (ElementNotParseableException e) {
                 logger.warn("xref failed (required):" + e.getMessage());
@@ -801,7 +880,8 @@ public class PsiDataBuilder implements DataBuilder {
         //generate DOM-Element
         Element psiProteinInteractorRef = doc.createElement("proteinInteractorRef");
         //param may not be defined....
-        if(interactor != null)  psiProteinInteractorRef.setAttribute("ref", interactor.getAc());
+        if (interactor != null)
+            psiProteinInteractorRef.setAttribute("ref", getValidId(interactor.getShortLabel()));
 
         //returning result DOMObject
         return psiProteinInteractorRef;
@@ -825,7 +905,7 @@ public class PsiDataBuilder implements DataBuilder {
         //getCuratorAc @todo
         //getShortLabel, getFullName -> names
         //param may not be defined...
-        if(interactor != null) {
+        if (interactor != null) {
             try {
                 Element psiNames = getPsiNamesOfAnnotatedObject(interactor);
                 psiProteinInteractor.appendChild(psiNames);
@@ -836,13 +916,13 @@ public class PsiDataBuilder implements DataBuilder {
             //getReference @todo
             //getXref
             try {
-                Element psiXref = doXrefCollection(interactor.getXrefs());
+                Element psiXref = doXrefCollection(interactor.getXrefs(), "sptr");
                 psiProteinInteractor.appendChild(psiXref);
             } catch (ElementNotParseableException e) {
                 logger.info("xref failed (not required):" + e.getMessage());
             }  //not required here - so dont worry
             //getAc @todo
-            psiProteinInteractor.setAttribute("id", interactor.getAc());
+            psiProteinInteractor.setAttribute("id", getValidId(interactor.getShortLabel()));
 
             //getCreated @todo
             //getEvidence @todo
@@ -855,13 +935,16 @@ public class PsiDataBuilder implements DataBuilder {
             } catch (ElementNotParseableException e) {
                 logger.info("BioSource failed (not required):" + e.getMessage());
             } // not required here - so dont worry
-            //sequence is not directly accessible ...
-            try {
+
+            //sequence is optional, don't generate it for now
+            /*try {
                 Element psiSequence = doSequence((Protein) interactor);
                 psiProteinInteractor.appendChild(psiSequence);
             } catch (ElementNotParseableException e) {
                 logger.info("sequence failed (not required):" + e.getMessage());
             } //not required here - so dont worry
+            */
+
             //returning result DOMObject
             if (!psiProteinInteractor.hasChildNodes()) {
                 logger.warn("Interactor failed, no child elements.");
@@ -882,17 +965,16 @@ public class PsiDataBuilder implements DataBuilder {
         //generate DOM-Element
         Element psiSequence = doc.createElement("sequence");
         //param may not be there...
-        if(protein != null) {
+        if (protein != null) {
 
-            if(protein.getSequence() != null) {
+            if (protein.getSequence() != null) {
                 psiSequence.appendChild(doc.createTextNode(protein.getSequence()));
                 //returning result DOMObject
                 if (!psiSequence.hasChildNodes()) {
                     logger.warn("protein failed, no child elements.");
                     throw new ElementNotParseableException("Sequence has no Child Elements");
                 }
-            }
-            else {
+            } else {
                 System.out.println("Protein " + protein.getShortLabel() + " has no sequence..");
             }
         }
@@ -917,7 +999,7 @@ public class PsiDataBuilder implements DataBuilder {
      * @exception  uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if it is not defined
      * @see uk.ac.ebi.intact.model.Xref
      */
-    private Element doXrefCollection(Collection xrefs) throws ElementNotParseableException {
+    private Element doXrefCollection(Collection xrefs, String primaryRefLabel) throws ElementNotParseableException {
         // keep track of the existence of a primary Xref
         Xref primaryXref = null;
 
@@ -925,11 +1007,11 @@ public class PsiDataBuilder implements DataBuilder {
         Element psiXref = doc.createElement("xref");
 
         //the first SPTR Intact Xref will become primary & secondary ref in PSI
-        for(Iterator it = xrefs.iterator(); it.hasNext();) {
-            Xref xref = (Xref)it.next();
+        for (Iterator it = xrefs.iterator(); it.hasNext();) {
+            Xref xref = (Xref) it.next();
             String dbShortLabel = xref.getCvDatabase().getShortLabel();
             try {
-                if ((dbShortLabel.equalsIgnoreCase("SPTR") && xref.getPrimaryId() != null) //SPTR found
+                if ((dbShortLabel.equalsIgnoreCase(primaryRefLabel) && xref.getPrimaryId() != null) //SPTR found
                         || !it.hasNext()) { //if no SPTR found, take any (here we take last)
                     Element psiPrimaryRef = doPrimaryRef(xref);
                     psiXref.appendChild(psiPrimaryRef);
@@ -941,29 +1023,96 @@ public class PsiDataBuilder implements DataBuilder {
             }
         }
 
+        /* secondary xrefs are optional, don't do them
+
         //the rest becomes secondary Refs
         Iterator iteratorSnd = xrefs.iterator();
         while (iteratorSnd.hasNext()) {
             Xref xref = (Xref) iteratorSnd.next();
             try {
                 Element psiRef = null;
-                if ( primaryXref == null )
-                    psiRef = doPrimaryRef( xref );
+                if (primaryXref == null)
+                    psiRef = doPrimaryRef(xref);
                 else {
                     if (primaryXref == xref) break; // don't put the primary as secondary !
-                    psiRef = procSecondaryRef( xref );
+                    psiRef = procSecondaryRef(xref);
                 }
                 psiXref.appendChild(psiRef);
             } catch (ElementNotParseableException e) {
                 logger.warn("Xref without primary db or id found ! Ignoring !"); // not required here - so dont worry
             }
         }
+        */
+
         //returning result DOMObject
         if (!psiXref.hasChildNodes()) {
             logger.warn("xrefcollection failed, no child elements.");
             throw new ElementNotParseableException("Xref has no Child Elements");
         }
         return psiXref;
+    }
+
+
+    /**
+     * processing protein
+     * @param annotation to convert to PSI-Format
+     * @return DOM-Object, representing a psi <attribute>
+     * @exception  uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if it is not defined
+     * @see uk.ac.ebi.intact.model.Protein
+     */
+    private Element doAnnotation(Annotation annotation) throws ElementNotParseableException {
+
+        if (null == annotation){
+            throw new ElementNotParseableException("Annotation is null");
+        }
+        if (annotation.getCvTopic().getShortLabel().equals("remark")){
+            throw new ElementNotParseableException("Annotation with topic remark not exported.");
+        }
+        //generate DOM-Element
+        Element psiAttribute = doc.createElement("attribute");
+        psiAttribute.setAttribute("name", annotation.getCvTopic().getShortLabel());
+        if (null != annotation.getAnnotationText()) {
+            psiAttribute.appendChild(doc.createTextNode(annotation.getAnnotationText()));
+        } else {
+            psiAttribute.appendChild(doc.createTextNode(""));
+        }
+
+        return psiAttribute;
+    }
+
+    /**
+     * This method gets an Collection of annotations and returns it as an attributeList.
+     * @param annotations to convert to a PSI attributelist.
+     * @return DOM-Object, representing an <attributeList>
+     * @exception  uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if it is not defined
+     * @see uk.ac.ebi.intact.model.Annotation
+     */
+    private Element doAnnotations(Collection annotations)
+            throws ElementNotParseableException {
+
+        if (null == annotations) {
+            throw new ElementNotParseableException("no annotation");
+        }
+
+        //generate DOM-Element
+        Element psiAttributeList = doc.createElement("attributeList");
+
+        for (Iterator it = annotations.iterator(); it.hasNext();) {
+            Annotation annotation = (Annotation) it.next();
+            try {
+                Element psiAttribute = doAnnotation(annotation);
+                psiAttributeList.appendChild(psiAttribute);
+            } catch (ElementNotParseableException e) {
+                // Do nothing, just ignore this annotation
+            }
+        }
+
+        //returning result DOMObject
+        if (!psiAttributeList.hasChildNodes()) {
+            logger.info("no annotation");
+            throw new ElementNotParseableException("No annotation.");
+        }
+        return psiAttributeList;
     }
 
     /**
@@ -986,61 +1135,6 @@ public class PsiDataBuilder implements DataBuilder {
         //returning result DOMObject
         if (!psiXref.hasChildNodes()) {
             logger.warn("xref failed, no child elements.");
-            throw new ElementNotParseableException("Xref has no Child Elements");
-        }
-        return psiXref;
-    }
-
-    /**
-     * This method gets a collection of Xfres and, beacause PSI often does not allow a list of xrefs,
-     * takes the 1st primary ref as psiPrimaryRef,  and all others as secondary Refs.
-     * But only from PubMed-DB will be processed.
-     * @param xrefs - Object  to convert to PSI-Format
-     * @return DOM-Object, representing a <xref>
-     * @exception  uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if it is not defined
-     * @see uk.ac.ebi.intact.model.Xref
-     */
-    private Element doXrefCollectionSelectingPubMed(Collection xrefs) throws ElementNotParseableException {
-        //generate DOM-Element
-        Element psiXref = doc.createElement("xref");
-        //local elements processing...
-        Iterator iteratorPrim = xrefs.iterator();
-        while (iteratorPrim.hasNext()) {
-            Xref xref = (Xref) iteratorPrim.next();
-            try {
-                if ((xref.getCvDatabase().getShortLabel().equalsIgnoreCase("PubMed") && xref.getPrimaryId() != null)) { //PubMed found
-                    Element psiPrimaryRef = doPrimaryRef(xref);
-                    psiXref.appendChild(psiPrimaryRef);
-                    xrefs.remove(xref); //this was already processed
-                    break;
-                }
-            } catch (ElementNotParseableException e) { //dont worry - try next one
-                logger.warn("Xref without primary db or id found ! Ignoring !");
-            }
-
-        }
-        //if we could not create a primaryID - throw exception
-        if (!psiXref.hasChildNodes()) {
-            logger.warn("xrefcollection failed, no child elements.");
-            throw new ElementNotParseableException("couldn't generate primaryID - Xref not parseabel");
-        }
-        //the rest becomes secondary Refs
-        Iterator iteratorSnd = xrefs.iterator();
-        while (iteratorSnd.hasNext()) {
-            Xref xref = (Xref) iteratorSnd.next();
-            try {
-                if ((xref.getCvDatabase().getShortLabel().equalsIgnoreCase("PubMed") && xref.getPrimaryId() != null)) { //PubMed found
-                    Element psiSecondaryRef = procSecondaryRef(xref);
-                    psiXref.appendChild(psiSecondaryRef);
-                }
-            } catch (ElementNotParseableException e) {
-                logger.warn("Xref without primary db or id found ! Ignoring !"); // not required here - so dont worry
-            }
-
-        }
-        //returning result DOMObject
-        if (!psiXref.hasChildNodes()) {
-            logger.warn("xrefcol failed, no child elements.");
             throw new ElementNotParseableException("Xref has no Child Elements");
         }
         return psiXref;
@@ -1187,33 +1281,44 @@ public class PsiDataBuilder implements DataBuilder {
         //       getCvCellCycle()   @todo
         //       getCvCellCycleAc() @todo
         //       getCvCellType()
-        try {
-            Element psiCellType = doCvCelltype(bioSource.getCvCellType());
-            psiOrganism.appendChild(psiCellType);
-        } catch (ElementNotParseableException e) {
-            logger.info("cvCellType failed (not required):" + e.getMessage());
-        } //not required here - so dont worry
-        //       getCvCellTypeAc()  @todo
-        //       getCvCompartment()
-        try {
-            Element psiCompartment = doCvCompartment(bioSource.getCvCompartment());
-            psiOrganism.appendChild(psiCompartment);
-        } catch (ElementNotParseableException e) {
-            logger.info("cvCompartment failed (not required):" + e.getMessage());
-        }  //not required here - so dont worry
+        if (null != bioSource.getCvCellType()) {
+            try {
+                Element psiCellType = doCvCelltype(bioSource.getCvCellType());
+                psiOrganism.appendChild(psiCellType);
+            } catch (ElementNotParseableException e) {
+                logger.info("cvCellType failed (not required):" + e.getMessage());
+            } //not required here - so dont worry
+
+            //       getCvCellTypeAc()  @todo
+            //       getCvCompartment()
+        }
+        if (null != bioSource.getCvCompartment()) {
+            try {
+                Element psiCompartment = doCvCompartment(bioSource.getCvCompartment());
+                psiOrganism.appendChild(psiCompartment);
+            } catch (ElementNotParseableException e) {
+                logger.info("cvCompartment failed (not required):" + e.getMessage());
+            }  //not required here - so dont worry
+        }
         //       getCvCompartmentAc() @todo
         //       getCvDevelopmentalStage() @todo
         //       getCvDevelopmentalStageAc()    @todo
         //       getCvTissue()
-        try {
-            Element psiTissue = doCvTissue(bioSource.getCvTissue());
-            psiOrganism.appendChild(psiTissue);
-        } catch (ElementNotParseableException e) {
-            logger.info("cvTissue failed (not required):" + e.getMessage());
-        } //not required here - so dont worry
+        if (null != bioSource.getCvTissue()) {
+            try {
+                Element psiTissue = doCvTissue(bioSource.getCvTissue());
+                psiOrganism.appendChild(psiTissue);
+            } catch (ElementNotParseableException e) {
+                logger.info("cvTissue failed (not required):" + e.getMessage());
+            } //not required here - so dont worry
+        }
         //       getCvTissueAc() @todo
         //       getTaxId()
-        psiOrganism.setAttribute("ncbiTaxId", bioSource.getTaxId());
+        String taxId = bioSource.getTaxId();
+        if ((null == taxId) || ("" == taxId)){
+            taxId = "-1";
+        }
+        psiOrganism.setAttribute("ncbiTaxId", taxId);
         //       getAnnotation @todo
         //       getCurator @todo
         //       getCuratorAc @todo
@@ -1256,42 +1361,49 @@ public class PsiDataBuilder implements DataBuilder {
         //       getCvCellCycle()   @todo
         //       getCvCellCycleAc() @todo
         //       getCvCellType()
-        try {
-            Element psiCellType = doCvCelltype(bioSource.getCvCellType());
-            psiOrganism.appendChild(psiCellType);
-        } catch (ElementNotParseableException e) {
-            logger.info("cvCelltype failed (not required):" + e.getMessage());
-        } //not required here - so dont worry
-        catch (NullPointerException e) {
-            logger.info("cvCelltype failed (not required):" + e.getMessage());
-        }//not required here - so dont worry
+        if (null != bioSource.getCvCellType()) {
+            try {
+                Element psiCellType = doCvCelltype(bioSource.getCvCellType());
+                psiOrganism.appendChild(psiCellType);
+            } catch (ElementNotParseableException e) {
+                logger.info("cvCelltype failed (not required):" + e.getMessage());
+            } //not required here - so dont worry
+            catch (NullPointerException e) {
+                logger.info("cvCelltype failed (not required):" + e.getMessage());
+            }//not required here - so dont worry
+        }
         //       getCvCellTypeAc()  @todo
         //       getCvCompartment()
-        try {
-            Element psiCompartment = doCvCompartment(bioSource.getCvCompartment());
-            psiOrganism.appendChild(psiCompartment);
-        } catch (ElementNotParseableException e) {
-            logger.info("cvCompartment failed (not required):" + e.getMessage());
-        }//not required here - so dont worry
+        if (null != bioSource.getCvCompartment()) {
+            try {
+                Element psiCompartment = doCvCompartment(bioSource.getCvCompartment());
+                psiOrganism.appendChild(psiCompartment);
+            } catch (ElementNotParseableException e) {
+                logger.info("cvCompartment failed (not required):" + e.getMessage());
+            }//not required here - so dont worry
+        }
         //       getCvDevelopmentalStage() @todo
         //       getCvDevelopmentalStageAc()    @todo
         //       getCvTissue()
-        try {
-            Element psiTissue = doCvTissue(bioSource.getCvTissue());
-            psiOrganism.appendChild(psiTissue);
-        } catch (ElementNotParseableException e) {
-            logger.info("cvTissue failed (not required):" + e.getMessage());
-        } //not required here - so dont worry
-        catch (NullPointerException e) {
-            logger.info("cvTissue failed (not required):" + e.getMessage());
-        }//not required here - so dont worry
+        if (null != bioSource.getCvTissue()) {
+
+            try {
+                Element psiTissue = doCvTissue(bioSource.getCvTissue());
+                psiOrganism.appendChild(psiTissue);
+            } catch (ElementNotParseableException e) {
+                logger.info("cvTissue failed (not required):" + e.getMessage());
+            } //not required here - so dont worry
+            catch (NullPointerException e) {
+                logger.info("cvTissue failed (not required):" + e.getMessage());
+            }//not required here - so dont worry
+        }
         //       getCvTissueAc() @todo
         //       getTaxId()
-        try {
-            psiOrganism.setAttribute("ncbiTaxId", bioSource.getTaxId());
-        } catch (NullPointerException e) {
-            logger.warn("ncbiTaxID failed (required):" + e.getMessage());
+        String taxId = bioSource.getTaxId();
+        if ((null == taxId) || ("" == taxId)){
+            taxId = "-1";
         }
+        psiOrganism.setAttribute("ncbiTaxId", taxId);
         //       getAnnotation @todo
         //       getCurator @todo
         //       getCuratorAc @todo
@@ -1320,10 +1432,12 @@ public class PsiDataBuilder implements DataBuilder {
      * @see uk.ac.ebi.intact.model.CvCellType
      */
     private Element doCvCelltype(CvCellType cvCellType) throws ElementNotParseableException {
-        //generate DOM-Element
-        Element psiCellType = doc.createElement("cellType");
         //param may be undefined...
-        if(cvCellType != null) {
+        if (cvCellType != null) {
+            //generate DOM-Element
+            Element psiCellType = null;
+            doc.createElement("cellType");
+
             try {
                 psiCellType.appendChild(doc.createTextNode(cvCellType.getShortLabel()));
             } catch (NullPointerException e) {
@@ -1334,8 +1448,10 @@ public class PsiDataBuilder implements DataBuilder {
                 logger.warn("cvCellType failed, no child elements.");
                 throw new ElementNotParseableException("CellType has no Child Elements");
             }
+            return psiCellType;
+        } else {
+            return null;
         }
-        return psiCellType;
     }
 
     /**
@@ -1346,11 +1462,12 @@ public class PsiDataBuilder implements DataBuilder {
      * @see uk.ac.ebi.intact.model.CvCompartment
      */
     private Element doCvCompartment(CvCompartment cvCompartment) throws ElementNotParseableException {
-        //generate DOM-Element
-        Element psiCompartment = doc.createElement("compartment");
         //local elements processing...
-        if(cvCompartment != null) {
+        if (cvCompartment != null) {
+            //generate DOM-Element
+            Element psiCompartment = doc.createElement("compartment");
             try {
+
                 psiCompartment.appendChild(doc.createTextNode(cvCompartment.getShortLabel()));
             } catch (NullPointerException e) {
                 logger.warn("cvCompartment failed (required):" + e.getMessage());
@@ -1360,8 +1477,10 @@ public class PsiDataBuilder implements DataBuilder {
                 logger.warn("cvCompartment failed, no child elements.");
                 throw new ElementNotParseableException("Compartment has no Child Elements");
             }
+            return psiCompartment;
+        } else {
+            return null;
         }
-        return psiCompartment;
     }
 
     /**
@@ -1372,10 +1491,11 @@ public class PsiDataBuilder implements DataBuilder {
      * @see uk.ac.ebi.intact.model.CvTissue
      */
     private Element doCvTissue(CvTissue cvTissue) throws ElementNotParseableException {
-        //generate DOM-Element
-        Element psiTissue = doc.createElement("tissue");
         //local elements processing...
-        if(cvTissue != null) {
+        if (cvTissue != null) {
+            //generate DOM-Element
+            Element psiTissue = doc.createElement("tissue");
+
             try {
                 psiTissue.appendChild(doc.createTextNode(cvTissue.getShortLabel()));
             } catch (NullPointerException e) {
@@ -1386,8 +1506,10 @@ public class PsiDataBuilder implements DataBuilder {
                 logger.warn("cvTissue failed, no child elements.");
                 throw new ElementNotParseableException("Tissue has no Child Elements");
             }
+            return psiTissue;
+        } else {
+            return null;
         }
-        return psiTissue;
     }
 
 
@@ -1398,47 +1520,56 @@ public class PsiDataBuilder implements DataBuilder {
 
 
     /**
-     * This method gets an AnnotatedObject and will return a Element names,
-     * while getting shortLabel as getShortLabel() and fullName as getFullName()
-     * @param annotatedObject - Object  to convert to PSI-Format
-     * @return DOM-Object, representing a <names>
-     * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if it is not defined
-     * @see uk.ac.ebi.intact.model.AnnotatedObject
+     * Create a names element from an IntAct AnnotatedObject
+     * @param anAnnotatedObject
+     * @return DOM-Object, representing a names element
+     * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException
      */
-    private Element getPsiNamesOfAnnotatedObject(AnnotatedObject annotatedObject) throws ElementNotParseableException {
+    private Element getPsiNamesOfAnnotatedObject(AnnotatedObject anAnnotatedObject)
+            throws ElementNotParseableException {
+
+        return getNames(anAnnotatedObject.getShortLabel(), anAnnotatedObject.getFullName());
+    }
+
+    /**
+     * Create a names element from shortLabel and fullName strings.
+     * @param shortLabel
+     * @param fullName
+     * @return DOM-Object, representing a <names>
+     * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException
+     */
+    private Element getNames(String shortLabel, String fullName) throws ElementNotParseableException {
         //generate DOM-Element
         Element psiNames = doc.createElement("names");
         //local elements processing...
-        if(annotatedObject != null) {
-            try {
-                //getshortLabel
-                if (annotatedObject.getShortLabel() != null) {
-                    Element psiShortLabel = doc.createElement("shortLabel");
-                    psiShortLabel.appendChild(doc.createTextNode(annotatedObject.getShortLabel()));
-                    psiNames.appendChild(psiShortLabel);
-                    //getFullName is names/fullName
-                } else {
-                    logger.warn("names failed (required): no shortLabel");
-
-                }
-            } catch (NullPointerException e) {
+        try {
+            //getshortLabel
+            if (shortLabel != null) {
+                Element psiShortLabel = doc.createElement("shortLabel");
+                psiShortLabel.appendChild(doc.createTextNode(shortLabel));
+                psiNames.appendChild(psiShortLabel);
+                //getFullName is names/fullName
+            } else {
                 logger.warn("names failed (required): no shortLabel");
 
             }
-            try {
-                if (annotatedObject.getFullName() != null) {
-                    Element psiFullName = doc.createElement("fullName");
-                    psiFullName.appendChild(doc.createTextNode(annotatedObject.getFullName()));
-                    psiNames.appendChild(psiFullName);
-                }   //else: dont need a FullName
-            } catch (NullPointerException e) {
-            } // donty worry - dont need a FullName
+        } catch (NullPointerException e) {
+            logger.warn("names failed (required): no shortLabel");
 
-            //returning result DOMObject
-            if (!psiNames.hasChildNodes()) {
-                logger.warn("names failed, no child elements.");
-                throw new ElementNotParseableException("Names has no Child Elements");
-            }
+        }
+        try {
+            if (fullName != null) {
+                Element psiFullName = doc.createElement("fullName");
+                psiFullName.appendChild(doc.createTextNode(fullName));
+                psiNames.appendChild(psiFullName);
+            }   //else: dont need a FullName
+        } catch (NullPointerException e) {
+        } // donty worry - dont need a FullName
+
+        //returning result DOMObject
+        if (!psiNames.hasChildNodes()) {
+            logger.warn("names failed, no child elements.");
+            throw new ElementNotParseableException("Names has no Child Elements");
         }
 
         return psiNames;
@@ -1455,7 +1586,7 @@ public class PsiDataBuilder implements DataBuilder {
 
     private Collection getRelInteractionTypes(Collection relExperiments) {
         // TODO: an HashSet would me more appropriate ? this is a distinct set of CvInteraction !
-        Collection relInteractionTypes = new ArrayList( relExperiments.size() );
+        Collection relInteractionTypes = new ArrayList(relExperiments.size());
         Iterator relExperimentsIterator = relExperiments.iterator();
         while (relExperimentsIterator.hasNext()) {
             Experiment experiment = (Experiment) relExperimentsIterator.next();
@@ -1478,15 +1609,15 @@ public class PsiDataBuilder implements DataBuilder {
 
         cal = Calendar.getInstance();
         //appending "0" for 1-9th day of a month
-        if( cal.get(Calendar.DAY_OF_MONTH) <= 9 ) {
-            dayString = "0"+Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
+        if (cal.get(Calendar.DAY_OF_MONTH) <= 9) {
+            dayString = "0" + Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
         } else {
             dayString = Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
         }
         //appending "0" for 1-9th month of a year
-        month = cal.get(Calendar.MONTH)+1;
-        if( month <= 9 ) {
-            monthString = "0"+month;
+        month = cal.get(Calendar.MONTH) + 1;
+        if (month <= 9) {
+            monthString = "0" + month;
         } else {
             monthString = Integer.toString(month);
         }
