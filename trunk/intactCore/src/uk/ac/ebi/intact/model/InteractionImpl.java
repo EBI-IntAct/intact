@@ -9,6 +9,8 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.util.*;
 
+import uk.ac.ebi.intact.business.IntactHelper;
+
 /**
  * Represents an interaction.
  *
@@ -303,7 +305,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         InteractionImpl copy =  (InteractionImpl) super.clone();
 
         // Not copying any experiments.
-        copy.experiments = Collections.EMPTY_LIST;
+        copy.experiments = new ArrayList();
 
         // New components, will contain same number of componets. Can't use
         // clone here as components are OJB list proxies if an interation
@@ -317,6 +319,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
             Component copyComp = (Component) comp.clone();
             // Set the interactor as the current cloned interactions.
             copyComp.setInteractionForClone(copy);
+            copyComp.setInteractorForClone(
+                    (Interactor) IntactHelper.getRealIntactObject(comp.getInteractor()));
             copy.components.add(copyComp);
         }
         return copy;
