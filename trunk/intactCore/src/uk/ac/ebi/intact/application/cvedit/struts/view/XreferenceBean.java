@@ -103,7 +103,7 @@ public class XreferenceBean extends EditBean implements Serializable {
      * @param dbname the name of the database.
      */
     public void setDatabase(String dbname) {
-        myDatabaseName = dbname;
+        myDatabaseName = dbname.trim();
     }
 
     /**
@@ -163,7 +163,7 @@ public class XreferenceBean extends EditBean implements Serializable {
      * @param refQualifier the reference qaulifier as a <code>String</code>.
      */
     public void setQualifier(String refQualifier) {
-        myReferenceQualifer = refQualifier;
+        myReferenceQualifer = refQualifier.trim();
     }
 
     // Override Objects's equal method.
