@@ -181,6 +181,16 @@
 
     <!-- =================================================================== -->
 
+	<!-- Compiles the search module. -->
+    <target name="compile-search" depends="compile-core"
+        description="Compiles the search module">
+
+        <ant dir="application/search" inheritAll="false" target="compile"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+
     <!-- Compiles all the sources. -->
     <target name="compile-all" description="Compiles all the sources for Intact">
 
