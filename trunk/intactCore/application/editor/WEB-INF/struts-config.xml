@@ -219,7 +219,7 @@
              submit buttons (submit, cancel, delete, add annotation/xref) on the
              CV editor.
         -->
-        <action path="/cv/dispatch"
+        <action path="/cvDispatch"
             type="uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction"
             name="cvForm"
             validate="false"
