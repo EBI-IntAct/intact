@@ -34,7 +34,7 @@ public class QueryTutorial {
 //            helper = new IntactHelper(dataSource);
 //
 //        }catch(DataSourceException de){
-//            System.out.println("DataSourceException: " + de);
+//            de.printStackTrace();
 //        }
 
         // get user name and db name
@@ -43,9 +43,9 @@ public class QueryTutorial {
             String dbName = helper.getDbName();
             System.out.println("User '" + user + "' is connected to database: " + dbName + ".");
         } catch (LookupException lupe) {
-            System.out.println("LookupException: " + lupe);
+            lupe.printStackTrace();
         } catch (SQLException sqle) {
-            System.out.println("SQLException: " + sqle);
+            sqle.printStackTrace();
         }
 
 
@@ -59,7 +59,7 @@ public class QueryTutorial {
         }
 
         // get a collection of experiments
-        Collection experiments = helper.search(Experiment.class.getName(), "shortlabel", "ho");
+        Collection experiments = helper.search(Experiment.class.getName(), "shortlabel", null);
         System.out.println("We have " + experiments.size() + " experiment(s) found.");
 
         // search experiments interacions and print out the experiments shortlabels
@@ -86,10 +86,6 @@ public class QueryTutorial {
                         type = "INTERACTION";
                     } else {
                         type = interactor.getClass().getName();
-                        StringTokenizer st = new StringTokenizer(type, ".");
-                        while (st.hasMoreTokens()) {
-                            type = st.nextToken();
-                        }
                     }
                     System.out.println("\t\t " + type + "\t" +
                             interactor.getShortLabel() +
