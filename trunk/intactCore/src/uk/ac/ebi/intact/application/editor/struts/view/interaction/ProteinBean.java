@@ -234,7 +234,7 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
     }
 
     private String getSPAc(Interactor interact) {
-        for (Iterator iter = interact.getXref().iterator(); iter.hasNext();) {
+        for (Iterator iter = interact.getXrefs().iterator(); iter.hasNext();) {
             Xref xref = (Xref) iter.next();
             // Only consider SwissProt database entries.
             if (xref.getCvDatabase().getShortLabel().equals("sptr")) {

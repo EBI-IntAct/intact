@@ -112,8 +112,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
         clearTransactions();
 
         // Prepare for Proteins and Experiments for display.
-        makeExperimentBeans(intact.getExperiment());
-        makeProteinBeans(intact.getComponent());
+        makeExperimentBeans(intact.getExperiments());
+        makeProteinBeans(intact.getComponents());
     }
 
     // Override the super method to this bean's info.
@@ -213,9 +213,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         Interaction intact = (Interaction) getAnnotatedObject();
         // Experiments involved in this interaction.
-        intact.getExperiment().clear();
+        intact.getExperiments().clear();
         // Components.
-        intact.getComponent().clear();
+        intact.getComponents().clear();
     }
 
     // Override to provide Experiment layout.
