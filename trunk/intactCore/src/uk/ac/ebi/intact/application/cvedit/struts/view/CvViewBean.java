@@ -45,12 +45,12 @@ public class CvViewBean {
     /**
      * The annotations to display.
      */
-    private Collection myAnnotations = new ArrayList();
+    private ArrayList myAnnotations = new ArrayList();
 
     /**
      * The Xreferences to display.
      */
-    private Collection myXrefs = new ArrayList();
+    private ArrayList myXrefs = new ArrayList();
 
     /**
      * Holds annotations to add. This collection is cleared once the user
@@ -65,6 +65,12 @@ public class CvViewBean {
     private transient Collection myAnnotsToDel = new ArrayList();
 
     /**
+     * Holds annotations to update. This collection is cleared once the user
+     * commits the transaction.
+     */
+    private transient Collection myAnnotsToUpdate = new ArrayList();
+
+    /**
      * Holds xrefs to add. This collection is cleared once the user commits
      * the transaction.
      */
@@ -75,6 +81,12 @@ public class CvViewBean {
      * the transaction.
      */
     private transient Collection myXrefsToDel = new ArrayList();
+
+    /**
+     * Holds xrefs to update. This collection is cleared once the user
+     * commits the transaction.
+     */
+    private transient Collection myXrefsToUpdate = new ArrayList();
 
     /**
      * Set attributes using values from CvObject. A coarse-grained method to
@@ -148,8 +160,23 @@ public class CvViewBean {
      * post: return->forall(obj : Object | obj.oclIsTypeOf(CommentBean))
      * </pre>
      */
-    public Collection getAnnotations() {
+    public ArrayList getAnnotations() {
         return myAnnotations;
+    }
+
+    /**
+     * Returns a <code>CommentBean</code> at given location.
+     * @param index the position to return <code>CommentBean</code>.
+     * @return <code>CommentBean</code> at <code>index</code>.
+     *
+     * <pre>
+     * pre: index >=0 and index < myAnnotations->size
+     * post: return != null
+     * post: return = myAnnotations->at(index)
+     * </pre>
+     */
+    public CommentBean getAnnotation(int index) {
+        return (CommentBean) myAnnotations.get(index);
     }
 
     /**
@@ -183,6 +210,19 @@ public class CvViewBean {
         myAnnotsToDel.add(cb);
         // Remove from the view as well.
         myAnnotations.remove(cb);
+    }
+
+    /**
+     * Adds an annotation to update.
+     * @param annotation an <code>Annotation</code> object to update.
+     *
+     * <pre>
+     * post: myAnnotsToUpdate = myAnnotsToUpdate@pre + 1
+     * post: myAnnotations = myAnnotations@pre
+     * </pre>
+     */
+    public void addAnnotationToUpdate(Annotation annotation) {
+        myAnnotsToUpdate.add(annotation);
     }
 
     /**
@@ -236,16 +276,31 @@ public class CvViewBean {
     }
 
     /**
+     * Returns a collection of annotations to update.
+     * @return the collection of annotations to update from the current CV object.
+     * Could be empty if there are no annotations to update.
+     *
+     * <pre>
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(CommentBean)
+     * </pre>
+     */
+    public Collection getAnnotationsToUpdate() {
+        return myAnnotsToUpdate;
+    }
+
+    /**
      * Clears annotations stored transaction containers.
      *
      * <pre>
      * post: myAnnotsToAdd.isEmpty()
      * post: myAnnotsToDel.isEmpty()
+     * post: myAnnotsToUpdate.isEmpty()
      * </pre>
      */
     public void clearTransAnnotations() {
         myAnnotsToAdd.clear();
         myAnnotsToDel.clear();
+        myAnnotsToUpdate.clear();
     }
 
     /**
@@ -255,8 +310,23 @@ public class CvViewBean {
      * post: return->forall(obj: Object | obj.oclIsTypeOf(Xref))
      * </pre>
      */
-    public Collection getXrefs() {
+    public ArrayList getXrefs() {
         return myXrefs;
+    }
+
+    /**
+     * Returns a <code>XreferenceBean</code> at given location.
+     * @param index the position to return <code>XreferenceBean</code>.
+     * @return <code>XreferenceBean</code> at <code>index</code>.
+     *
+     * <pre>
+     * pre: index >=0 and index < myXrefs->size
+     * post: return != null
+     * post: return = myXrefs->at(index)
+     * </pre>
+     */
+    public XreferenceBean getXref(int index) {
+        return (XreferenceBean) myXrefs.get(index);
     }
 
     /**
@@ -290,6 +360,19 @@ public class CvViewBean {
         myXrefsToDel.add(xb);
         // Remove from the view as well.
         myXrefs.remove(xb);
+    }
+
+    /**
+     * Adds a xref to update.
+     * @param xref an <code>Xref</code> object to update.
+     *
+     * <pre>
+     * post: myXrefsToUpdate = myXrefsToUpdate@pre + 1
+     * post: myXrefs = myXrefs@pre
+     * </pre>
+     */
+    public void addXrefToUpdate(Xref xref) {
+        myXrefsToUpdate.add(xref);
     }
 
     /**
@@ -343,6 +426,19 @@ public class CvViewBean {
     }
 
     /**
+     * Returns a collection of xrefs to update.
+     * @return the collection of xrefs to update from the current CV object.
+     * Could be empty if there are no xrefs to update.
+     *
+     * <pre>
+     * post: return->forall(obj: Object | obj.oclIsTypeOf(XreferenceBean)
+     * </pre>
+     */
+    public Collection getXrefsToUpdate() {
+        return myXrefsToUpdate;
+    }
+
+    /**
      * Clears xrefs stored in transaction containers.
      *
      * <pre>
@@ -353,6 +449,7 @@ public class CvViewBean {
     public void clearTransXrefs() {
         myXrefsToAdd.clear();
         myXrefsToDel.clear();
+        myXrefsToUpdate.clear();
     }
 
     /**
@@ -401,5 +498,24 @@ public class CvViewBean {
             Xref xref = (Xref) iter.next();
             myXrefs.add(new XreferenceBean(xref));
         }
+    }
+
+    /**
+     * Finds the bean for a given accession number.
+     * @param ac the accession number to search for the bean.
+     * @return the <code>CommentBean</code> object whose AC of the
+     * <code>Annotation</code> object matches with given
+     * <code>ac</code>; <code>null</code> is returned if no matching bean
+     * is found.
+     */
+    private CommentBean findAnnotationCB(String ac) {
+        for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
+            CommentBean bean = (CommentBean) iter.next();
+            if (bean.getAnnotation().getAc().equals(ac)) {
+                return bean;
+            }
+        }
+        // Not found the bean.
+        return null;
     }
 }
