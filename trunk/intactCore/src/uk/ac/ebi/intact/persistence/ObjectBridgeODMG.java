@@ -12,6 +12,10 @@ import org.apache.ojb.odmg.OJB;
 import org.apache.ojb.odmg.TransactionImpl;
 import org.odmg.*;
 
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -138,7 +142,7 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
                 begin(1);
             }
             catch (TransactionException e) {
-                throw new CreateException("Unable to start a local transaction");
+                throw new CreateException("Unable to start a local transaction", e);
             }
         }
         //create called as part of another TX, so lock it
@@ -155,37 +159,37 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
                 commit();
             }
             catch (TransactionException e) {
-                throw new CreateException("Unable to commit the local transaction");
+                try {
+                    rollback();
+                }
+                catch (TransactionException e1) {
+                    // Swallow it
+                }
+                throw new CreateException("Unable to commit the local transaction", e);
             }
         }
     }
 
     public void forceUpdate(Object obj) throws UpdateException {
-        throw new UpdateException("Not implemented, not required");
+//        throw new UpdateException("Not implemented, not required");
+        update(obj, true);
     }
 
-    /**
-     * @see DAO#update(Object)
-     */
     public void update(Object obj) throws UpdateException {
         update(obj, false);
     }
 
     /**
-     * Does the update here.
-     *
-     * @param obj the object to update.
-     * @param force true if update is to be forced.
-     * @throws UpdateException
+     * @see DAO#update(Object)
      */
-    private void update(Object obj, boolean force) throws UpdateException {
+    public void update(Object obj, boolean flag) throws UpdateException {
         if (!isPersistent(obj)) {
             throw new UpdateException();
         }
         // Assume transaction has started already.
         boolean localTransaction = false;
 
-        //do this with ODMG....
+        // Start a local transaction if there is no transaction
         if (!isActive()) {
             localTransaction = true;
             try {
@@ -195,16 +199,120 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
                 throw new UpdateException("Unable to start a local transaction");
             }
         }
-        ((TransactionImpl) odmg.currentTransaction()).markDirty(obj);
+        try {
+            doUpdate(obj, flag);
+        }
+        catch (SecurityException se) {
+            try {
+                rollback();
+            }
+            catch (TransactionException e1) {
+                // Swallow it
+            }
+            ourLogger.error("failure during update - field access denied!!", se);
+            throw new UpdateException("Field access denied", se);
+        }
+        catch (IllegalAccessException iae) {
+            try {
+                rollback();
+            }
+            catch (TransactionException e1) {
+                // Swallow it
+            }
+            throw new UpdateException("Unable to access fields", iae);
+        }
 
-        // Comit only for a local transaction.
+        // No need to anything here for a transaction started externally.
         if (localTransaction) {
             try {
                 commit();
             }
             catch (TransactionException e) {
-                throw new UpdateException("Unable to commit the local transaction");
+                try {
+                    rollback();
+                }
+                catch (TransactionException e1) {
+                    // Swallow it
+                }
+                throw new UpdateException("Unable to commit the local transaction", e);
             }
+        }
+    }
+
+    /**
+     * Does the update here.
+     *
+     * @param obj the object to update.
+     * @param force true if update is to be forced.
+     * @throws IllegalAccessException result of using reflection to access fields.
+     */
+    private void doUpdate(Object obj, boolean force) throws IllegalAccessException {
+        // Removed the object from cache for a database load to get the
+        // true old data.
+        removeFromCache(obj);
+
+        //NB To do a proper (intelligent) update:
+        //1) get the "old" obj data from the DB. 2) lock it for write in an ODMG transaction
+        //3) copy the new data into it (harder than it sounds!!). 4) commit
+        Object dummy = getIdentity(obj);
+
+        ourLogger.debug("doing update - searching for old data...");
+
+        // Lock the dummy and then do the changes to the dummy.
+        lock(dummy);
+
+        //do some reflection/security stuff so we can set the fields to new values..
+        //first though, need to get all the superclasses as we don't get them
+        // directly from a Class object...
+
+        Collection superClasses = new ArrayList();
+        Class tester = dummy.getClass();
+        ourLogger.debug("getting classes - first class is " + tester.getName());
+
+        while (tester != Object.class) {
+            ourLogger.debug("superclass added to collection: " + tester.getName());
+            superClasses.add(tester);
+            //now get the next parent up
+            tester = tester.getSuperclass();
+        }
+
+        ourLogger.debug("parent classes obtained - getting all fields in hierarchy...");
+        Collection fieldList = new ArrayList();
+        for (Iterator it = superClasses.iterator(); it.hasNext(); ) {
+            Field[] superclassFields = ((Class) it.next()).getDeclaredFields();
+            for (int i = 0; i < superclassFields.length; i++) {
+                ourLogger.debug("field name: " + superclassFields[i].getName());
+                fieldList.add(superclassFields[i]);
+            }
+        }
+
+        //convert list of fields to an array, as AccessibleObject needs
+        //an array of AccessibleObjects as a param
+        ourLogger.debug("converting field list to array for security processing...");
+        Field[] fields = (Field[]) fieldList.toArray(new Field[0]);
+
+        //set the permissions on the fields - if this ever fails (eg if a
+        //SecurityManager is set), need to go via the AccessController...
+        ourLogger.debug("setting fields to be accessible for write...");
+        AccessibleObject.setAccessible(fields, true);
+
+        //now update them..
+        for (int i = 0; i < fields.length; i++) {
+            Object value = fields[i].get(obj);
+
+            // skip final field
+            if (Modifier.isFinal(fields[i].getModifiers())) {
+                continue;
+            }
+            ourLogger.debug("field: " + fields[i].getName());
+            ourLogger.debug("old value: " + fields[i].get(dummy));
+            ourLogger.debug("new value: " + value);
+            fields[i].set(dummy, value);
+        }
+        // Force the update if the flag is true. This is because OJB doesn't
+        // mark the object as dirty if a collection's size is unchanged.
+        if (force) {
+            ((TransactionImpl) odmg.currentTransaction()).markDirty(dummy);
         }
     }
 
@@ -253,7 +361,13 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
 
         // Comit only for a local transaction.
         if (localTransaction) {
-            commit();
+            try {
+                commit();
+            }
+            catch (TransactionException e) {
+                rollback();
+                throw e;
+            }
         }
     }
 
@@ -295,7 +409,13 @@ public class ObjectBridgeODMG extends AbstractObjectBridgeDAO {
         }
         // Commit only for a local transaction.
         if (localTransaction) {
-            commit();
+            try {
+                commit();
+            }
+            catch (TransactionException e) {
+                rollback();
+                throw e;
+            }
         }
     }
 }
