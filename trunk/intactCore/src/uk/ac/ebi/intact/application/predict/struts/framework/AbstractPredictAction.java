@@ -39,8 +39,8 @@ public class AbstractPredictAction extends Action {
      * Returns the Intact User instance saved in a session for given
      * Http request.
      *
-     * @param request the Http request to access the Intact user object.
-     * @return an instance of <code>EditUser</code> stored in a session.
+     * @param request the Http request to access the Predict user object.
+     * @return an instance of <code>PredictUser</code> stored in a session.
      * No new session is created.
      * @exception SessionExpiredException for an expired session.
      *
