@@ -129,4 +129,20 @@ public interface SearchConstants {
      * The Protein View state.
      */
     public static final String PROTEIN_VIEW_BUTTON = "proteinView";
+
+    /**
+     * The view bean for a single CvObject.
+     */
+    public static final String CV_VIEW_BEAN = "cvViewBean";
+
+    /**
+     * The most recent user-defined search (ie not from a CvObject link).
+     */
+    public static final String LAST_VALID_SEARCH = "lastValidSearch";
+
+    /**
+     * The label used to identify the search form in a session (specified in struts-config.xml)
+     */
+    public static final String SEARCH_FORM = "sidebarForm";
+
 }

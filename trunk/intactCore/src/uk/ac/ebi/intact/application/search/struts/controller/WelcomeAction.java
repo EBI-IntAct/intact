@@ -59,6 +59,7 @@ public class WelcomeAction extends IntactBaseAction {
 
         // Save the context to avoid repeat calls.
         ServletContext ctx = super.getServlet().getServletContext();
+        super.log("IN WELCOME ACTION");
 
         // Name of the mapping file and data source.
         String repfile = ctx.getInitParameter(Constants.MAPPING_FILE_KEY);
@@ -68,6 +69,7 @@ public class WelcomeAction extends IntactBaseAction {
         IntactUserIF user = null;
         try {
             user = new IntactUserImpl(repfile, ds);
+            super.log("new user created..");
         }
         catch (DataSourceException de) {
             // Unable to get a data source...can't proceed
@@ -86,6 +88,10 @@ public class WelcomeAction extends IntactBaseAction {
             errors.add(super.INTACT_ERROR, new ActionError("error.search"));
             super.saveErrors(request, errors);
             return mapping.findForward(SearchConstants.FORWARD_FAILURE);
+        }
+        catch(Exception e) {
+            super.log("failed to create user - unexpected error!!");
+            super.log(ExceptionUtils.getStackTrace(e));
         }
 
         // Save the user. For the moment, create a new session.
