@@ -530,8 +530,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Deletes all the links to sub objects of the current edit object.
      */
     public void clear() {
-        // Need to rebuild the menu again. Remove it from cache.
-        removeMenu();
         // Clear Transaction containers.
         clearTransactions();
     }
@@ -588,15 +586,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     public Map getEditorMenus() throws SearchException {
         return null;
-    }
-
-    /**
-     * Removes the current object from the menu list. This will only succeed
-     * if the current edit object is of menu type. For example, this method will
-     * succeed for CvTopic as it is considered as a menu type.
-     */
-    public void removeMenu() {
-        myMenuFactory.removeMenu(getEditClass());
     }
 
     /**
