@@ -151,6 +151,10 @@
             </fileset>
         </copy>
 
+        <!-- Copy proxy properties file. -->
+        <copy todir="${dest.dir}/config"
+            file="${root.config.dir}/proxy.properties"/>
+
         <!-- Copy editor property files to the editor pkg root -->
         <copy todir="${dest.dir}/${editor.pkg.root}">
             <fileset dir="WEB-INF/config">
