@@ -53,23 +53,13 @@
         <put name="menu" value="result.menu.links"/>
     </definition>
 
-    <!-- The comment edit/view section. -->
-    <definition name="edit.comment.layout" path="/layouts/editItemLayout.jsp">
-        <put name="item" value="/pages/comments.jsp"/>
-        <put name="itemToAdd" value="/pages/commentsAdd.jsp"/>
-    </definition>
-
-    <!-- The xref edit/view section. -->
-    <definition name="edit.xref.layout" path="/layouts/editItemLayout.jsp">
-        <put name="item" value="/pages/xrefs.jsp"/>
-        <put name="itemToAdd" value="/pages/xrefsAdd.jsp"/>
-    </definition>
-
     <!-- The edit CV page layout. -->
     <definition name="edit.content.layout" path="/layouts/editCVLayout.jsp">
         <put name="info" value="/pages/cvinfo.jsp"/>
-        <put name="comments" value="edit.comment.layout"/>
-        <put name="xrefs" value="edit.xref.layout"/>
+        <put name="comments" value="/pages/comments.jsp"/>
+        <put name="add-comments" value="/pages/commentsAdd.jsp"/>
+        <put name="xrefs" value="/pages/xrefs.jsp"/>
+        <put name="add-xrefs" value="/pages/xrefsAdd.jsp"/>
         <put name="action" value="/pages/editAction.jsp"/>
     </definition>
 
