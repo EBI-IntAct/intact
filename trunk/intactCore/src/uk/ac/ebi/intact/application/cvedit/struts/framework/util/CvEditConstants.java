@@ -99,4 +99,14 @@ public interface CvEditConstants {
      * The bean to display short labels when the user is adding a new CV obj.
      */
     public static final String SHORT_LABEL_BEAN = "labelBean";
+
+    /**
+     * The name of the Xref edit form.
+     */
+    public static final String XREF_EDIT_FORM = "xrefEditForm";
+
+    /**
+     * The name of the Comment (annotation) edit form.
+     */
+    public static final String COMMENT_EDIT_FORM = "commentEditForm";
 }
