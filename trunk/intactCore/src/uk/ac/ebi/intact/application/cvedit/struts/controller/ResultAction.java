@@ -85,7 +85,7 @@ public class ResultAction extends CvAbstractAction {
             return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         // The object we are editing presently.
-        user.setCurrentEditObject(cvobj);
+        user.updateView(cvobj);
 
         super.log("Numner of annotations: " + cvobj.getAnnotation().size());
         super.log("Number of xrefs: " + cvobj.getXref().size());
