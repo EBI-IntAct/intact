@@ -399,6 +399,9 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         AnnotatedObject annobj = myEditView.getAnnotatedObject();
         if (isPersistent(annobj)) {
             myHelper.delete(annobj);
+
+            // Clear annotation and xref collections
+            myHelper.deleteAllElements(annobj.getAnnotations());
             annobj.getAnnotations().clear();
             // Don't want xrefs; tied to an annotated object. Delete them explicitly
             myHelper.deleteAllElements(annobj.getXrefs());
