@@ -19,7 +19,7 @@
 <%-- Include javascript for show user functionality --%>
 <jsp:include page="../misc/user_js.jsp"/>
 
-<html:form action="/seq/dispatch" onsubmit="return validateSeqForm(this)">
+<html:form action="/seqDispatch" onsubmit="return validateSeqForm(this)">
     <html:hidden property="anchor" />
 
     <jsp:include page="info.jsp" />
