@@ -19,10 +19,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Experiment edit view bean.
@@ -70,41 +67,39 @@ public class ExperimentViewBean extends AbstractEditViewBean {
      */
     private transient List myInteractionsToHold = new ArrayList();
 
-    /**
-     * Constructs with the Intact helper.
-     * @param helper the Intact helper.
-     */
-//    public ExperimentViewBean(IntactHelper helper) {
-//        super(helper);
-//    }
+    // Override the super method to initialize this class specific resetting.
+    public void setAnnotatedClass(Class clazz) {
+        super.setAnnotatedClass(clazz);
+        // Set fields to null.
+        setOrganism(null);
+        setInter(null);
+        setIdent(null);
+
+        // Clear any left overs from previous transaction.
+        clearTransactions();
+
+        // Clear Interaction beans.
+        makeInteractionBeans(Collections.EMPTY_LIST);
+    }
 
     // Reset the fields to null if we don't have values to set. Failure
     // to do so will display the previous edit object's values as current.
     public void setAnnotatedObject(AnnotatedObject annobj) {
         super.setAnnotatedObject(annobj);
+
+        // Must be an experiment.
         Experiment exp = (Experiment) annobj;
+
         // Only set the short labels if the experiment has the objects.
         BioSource biosrc = exp.getBioSource();
-        if (biosrc != null) {
-            myOrganism = biosrc.getShortLabel();
-        }
-        else {
-            myOrganism = null;
-        }
+        setOrganism(biosrc != null ? biosrc.getShortLabel(): null);
+
         CvInteraction inter = exp.getCvInteraction();
-        if (inter != null) {
-            myInter = inter.getShortLabel();
-        }
-        else {
-            myInter = null;
-        }
+        setInter(inter != null ? inter.getShortLabel() : null);
+
         CvIdentification ident = exp.getCvIdentification();
-        if (ident != null) {
-            myIdent = ident.getShortLabel();
-        }
-        else {
-            myIdent = null;
-        }
+        setIdent(ident != null ? ident.getShortLabel() : null);
+
         // Clear any left overs from previous transaction.
         clearTransactions();
 
@@ -156,73 +151,6 @@ public class ExperimentViewBean extends AbstractEditViewBean {
             intact.removeExperiment(exp);
         }
     }
-
-    // Override the super method to update the current Experiment.
-//    public void updateXXX(EditUserI user) throws SearchException {
-//        super.updateXXX(user);
-//        // The current Experiment object we want to update
-//        Experiment exp = (Experiment) getAnnotatedObject();
-//
-//        // Get the objects using their short label.
-//        BioSource biosource = (BioSource) user.getObjectByLabel(
-//                BioSource.class, myOrganism);
-//        CvInteraction interaction = (CvInteraction) user.getObjectByLabel(
-//                CvInteraction.class, myInter);
-//        CvIdentification ident = (CvIdentification) user.getObjectByLabel(
-//                CvIdentification.class, myIdent);
-//
-//        // Update the experiment object.
-//        exp.setBioSource(biosource);
-//        exp.setCvInteraction(interaction);
-//        exp.setCvIdentification(ident);
-//
-//        // Add interaction to the experiment.
-//        for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
-//            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
-//            intact.addExperiment(exp);
-//        }
-//        // Delete interactions from the experiment.
-//        for (Iterator iter = getInteractionsToDel().iterator(); iter.hasNext();) {
-//            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
-//            intact.removeExperiment(exp);
-//        }
-//    }
-
-    // Override the super method to this bean's info.
-//    public void persist(EditUserI user) throws IntactException, SearchException {
-//        // The order is important! update super last as it does
-//        // the update of the object.
-//        Experiment exp = (Experiment) getAnnotatedObject();
-//
-//        // Get the objects using their short label.
-//        BioSource biosource = (BioSource) user.getObjectByLabel(
-//                BioSource.class, myOrganism);
-//        CvInteraction interaction = (CvInteraction) user.getObjectByLabel(
-//                CvInteraction.class, myInter);
-//        CvIdentification ident = (CvIdentification) user.getObjectByLabel(
-//                CvIdentification.class, myIdent);
-//
-//        // Update the experiment object.
-//        exp.setBioSource(biosource);
-//        exp.setCvInteraction(interaction);
-//        exp.setCvIdentification(ident);
-//
-//        // Add interaction to the experiment.
-//        for (Iterator iter = getInteractionsToAdd().iterator(); iter.hasNext();) {
-//            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
-//            intact.addExperiment(exp);
-//        }
-//        // Delete interactions from the experiment.
-//        for (Iterator iter = getInteractionsToDel().iterator(); iter.hasNext();) {
-//            Interaction intact = ((InteractionBean) iter.next()).getInteraction();
-//            intact.removeExperiment(exp);
-//        }
-//        super.persist(user);
-//
-//        // The experiment is sucessfully persisted; add this to the
-//        // current edit/add experiment list.
-//        user.addToCurrentExperiment(exp);
-//    }
 
     // Override the super method as the current experiment is added to the
     // recent experiment list.
@@ -468,10 +396,11 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     public void clearTransactions() {
         super.clearTransactions();
 
-        // Clear experiments.
-//        myInteractionsToAdd.clear();
-//        myInteractionsToDel.clear();
+        // Clear interactions.
+        myInteractionsToAdd.clear();
+        myInteractionsToDel.clear();
         myInteractionsToHold.clear();
+        clearInteractionToHold();
     }
 
     // Helper methods

@@ -28,17 +28,18 @@ public class BioSourceViewBean extends AbstractEditViewBean {
      */
     private String myTaxId;
 
+    // Override the super method to initialize this class specific resetting.
+    public void setAnnotatedClass(Class clazz) {
+        super.setAnnotatedClass(clazz);
+        // Set fields to null.
+        setTaxId(null);
+    }
+
     // Override the super method to set the tax id.
     public void setAnnotatedObject(BioSource biosrc) {
         super.setAnnotatedObject(biosrc);
         setTaxId(biosrc.getTaxId());
     }
-
-    // Override the super method to update the current Biosource.
-//    public void updateXXX(EditUserI user) throws SearchException {
-//        super.updateXXX(user);
-//        ((BioSource) getAnnotatedObject()).setTaxId(getTaxId());
-//    }
 
     // Implements abstract methods
 
@@ -62,14 +63,6 @@ public class BioSourceViewBean extends AbstractEditViewBean {
             setAnnotatedObject(bs);
         }
     }
-
-    // Override the super method to persist tax id.
-//    public void persist(EditUserI user) throws IntactException, SearchException {
-//        // The order is important! update super last as it does
-//        // the update of the object.
-//        ((BioSource) getAnnotatedObject()).setTaxId(getTaxId());
-//        super.persist(user);
-//    }
 
     // Override to provide BioSource layout.
     public void setLayout(ComponentContext context) {

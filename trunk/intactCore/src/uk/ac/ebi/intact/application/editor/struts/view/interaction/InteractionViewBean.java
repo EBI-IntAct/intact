@@ -90,32 +90,44 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     private String mySourceExperimentAc;
 
+    // Override the super method to initialize this class specific resetting.
+    public void setAnnotatedClass(Class clazz) {
+        super.setAnnotatedClass(clazz);
+        // Set fields to null.
+        setKD(Float.valueOf("1.0"));
+        setOrganism(null);
+        setInteractionType(null);
+        setSourceExperimentAc(null);
+
+        // Clear any left overs from previous transaction.
+        clearTransactions();
+
+        // Clear experiments and proteins.
+        makeExperimentBeans(Collections.EMPTY_LIST);
+        makeProteinBeans(Collections.EMPTY_LIST);
+    }
+
     public void setAnnotatedObject(AnnotatedObject annobj) {
         super.setAnnotatedObject(annobj);
+
+        // Must be an Interaction; can cast it safely.
         Interaction intact = (Interaction) annobj;
-        myKD = intact.getKD();
+        setKD(intact.getKD());
 
         // Only set the short labels if the interaction has non null values.
         BioSource biosrc = intact.getBioSource();
-        if (biosrc != null) {
-            myOrganism = biosrc.getShortLabel();
-        }
-        else {
-            myOrganism = null;
-        }
+        setOrganism(biosrc != null ? biosrc.getShortLabel() : null);
+
         CvInteractionType inter = intact.getCvInteractionType();
-        if (inter != null) {
-            myInteractionType = intact.getCvInteractionType().getShortLabel();
-        }
-        else {
-            myInteractionType = null;
-        }
+        setInteractionType(inter != null
+                ? intact.getCvInteractionType().getShortLabel() : null);
+
         // Clear any left overs from previous transaction.
         clearTransactions();
 
         // Set the source experiment to null to indicate that this bean
         // is not constructed from within an experiment.
-        mySourceExperimentAc = null;
+        setSourceExperimentAc(null);
 
         // Prepare for Proteins and Experiments for display.
         makeExperimentBeans(intact.getExperiments());
@@ -674,11 +686,13 @@ public class InteractionViewBean extends AbstractEditViewBean {
         super.clearTransactions();
 
         // Clear experiments.
+        myExperiments.clear();
         myExperimentsToAdd.clear();
         myExperimentsToDel.clear();
         myExperimentsToHold.clear();
 
         // Clear proteins.
+        myProteins.clear();
         myProteinsToDel.clear();
         myProteinsToUpdate.clear();
     }
