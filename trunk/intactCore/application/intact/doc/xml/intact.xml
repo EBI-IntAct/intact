@@ -1297,7 +1297,7 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
 				<section name="mine.search" title="How to search for a minimal connecting network ?">
 					<blockquote>
 						Type in the <i>Interactor</i> form either a protein name or accession number and
-						click the <i>Find network</i> button to the related minimal connecting network.
+						click the <i>Find network</i> button to get the related minimal connecting network.
 						You are free to type a comma separated list of proteins in order to display all of them in one go.
 						<br/>
 						<br/>
