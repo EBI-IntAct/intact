@@ -26,20 +26,71 @@ sqlplus $1@$2 @create_dummy.sql
 sqlplus $1@$2 @create_privs.sql
 cd ../../
 
-echo "Inserting controlled vocabularies"
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvTopic data/controlledVocab/CvTopic.def
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvXrefQualifier data/controlledVocab/CvXrefQualifier.def
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase data/controlledVocab/CvDatabase.def
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvComponentRole data/controlledVocab/CvComponentRole.def
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvIdentification data/controlledVocab/CvIdentification.def data/controlledVocab/CvIdentification.dag
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteraction data/controlledVocab/CvInteraction.def data/controlledVocab/CvInteraction.dag
-scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteractionType data/controlledVocab/CvInteractionType.def data/controlledVocab/CvInteractionType.dag
 
+echo ""
+echo ""
+echo "Inserting controlled vocabularies"
+ 
+echo ""
+echo "Insert CvTopic"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvTopic data/controlledVocab/CvTopic.def
+ 
+echo ""
+echo "Insert CvXrefQualifier"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvXrefQualifier data/controlledVocab/CvXrefQualifier.def
+ 
+echo ""
+echo "Insert CvAliasType"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvAliasType data/controlledVocab/CvAliasType.def
+ 
+echo ""
+echo "Insert CvDatabase"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase data/controlledVocab/CvDatabase.def
+ 
+echo ""
+echo "Insert CvComponentRole"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvComponentRole data/controlledVocab/CvComponentRole.def
+ 
+echo ""
+echo "Insert CvIdentification"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvIdentification data/controlledVocab/CvIdentification.def data/controlledVocab/CvIdentification.dag
+ 
+echo ""
+echo "Insert CvInteraction"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteraction data/controlledVocab/CvInteraction.def data/controlledVocab/CvInteraction.dag
+ 
+echo ""
+echo "Insert CvInteractionType"
+scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteractionType data/controlledVocab/CvInteractionType.def data/controlledVocab/CvInteractionType.dag
+ 
+echo ""
 echo "Inserting Proteins ..."
 scripts/javaRun.sh UpdateProteins file:data/yeast_test.sp
-
+ 
+echo ""
 echo "Inserting Complexes ..."
 scripts/javaRun.sh InsertComplex data/ho_gavin_${DATASET}.dat 4932
+ 
+#end
+
+
+
+
+
+#echo "Inserting controlled vocabularies"
+#scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvTopic data/controlledVocab/CvTopic.def
+#scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvXrefQualifier data/controlledVocab/CvXrefQualifier.def
+#scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvDatabase data/controlledVocab/CvDatabase.def
+#scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvComponentRole data/controlledVocab/CvComponentRole.def
+#scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvIdentification data/controlledVocab/CvIdentification.def data/controlledVocab/CvIdentification.dag
+#scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteraction data/controlledVocab/CvInteraction.def data/controlledVocab/CvInteraction.dag
+#scripts/javaRun.sh GoTools upload uk.ac.ebi.intact.model.CvInteractionType data/controlledVocab/CvInteractionType.def data/controlledVocab/CvInteractionType.dag
+
+#echo "Inserting Proteins ..."
+#scripts/javaRun.sh UpdateProteins file:data/yeast_test.sp
+
+#echo "Inserting Complexes ..."
+#scripts/javaRun.sh InsertComplex data/ho_gavin_${DATASET}.dat 4932
 
 #end
 
