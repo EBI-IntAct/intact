@@ -6,13 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.commons.exception;
 
-import uk.ac.ebi.intact.application.editor.exception.BaseException;
-
 /**
  * Throws when a session is expired.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class SessionExpiredException extends BaseException {
+public class SessionExpiredException extends Exception {
 }
