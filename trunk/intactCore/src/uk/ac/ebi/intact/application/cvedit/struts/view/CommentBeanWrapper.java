@@ -29,8 +29,8 @@ public class CommentBeanWrapper extends TableDecorator {
      * Returns the HTML snippet for read only description contents.
      */
     public String getDescription() {
-        String text = ((CommentBean) super.getObject()).getText();
-        return "<textarea name=\"text\" rows=\"3\" cols=\"85\" readonly=\"yes\">"
+        String text = ((CommentBean) super.getObject()).getDescription();
+        return "<textarea name=\"description\" rows=\"3\" cols=\"85\" readonly=\"yes\">"
             + text + "</textarea>";
     }
 
@@ -39,6 +39,6 @@ public class CommentBeanWrapper extends TableDecorator {
      */
     public String getDeleteLink() {
         long key = ((CommentBean) super.getObject()).getKey();
-        return "<a href=\"delComment.do?key=" + key + "\">Delete</a>";
+        return "<a href=\"../do/cv/comment/del?key=" + key + "\">Delete</a>";
     }
 }
