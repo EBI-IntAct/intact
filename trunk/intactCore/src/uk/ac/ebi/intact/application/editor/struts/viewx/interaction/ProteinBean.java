@@ -6,20 +6,28 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.viewx.interaction;
 
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 /**
- * Bean to store data for an Interactor.
+ * Bean to store data for an Interactor (Protein).
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
 public class ProteinBean extends EditBean implements Serializable {
+
+    // Class Data
+
+    /**
+     * The saving new state; this is different to saving state as this state
+     * indicates saving a new item. This state is only used by proteins.jsp
+     * to save new componets as as result of a search.
+     */
+    public static final String SAVE_NEW = "saveNew";
 
     // Instance Data
 
@@ -54,9 +62,22 @@ public class ProteinBean extends EditBean implements Serializable {
     private float myStoichiometry;
 
     /**
-     * The organism.
+     * The organism. Empty if there is no biosource. This is necessary to
+     * prevent Null pointer exception in validate method of ProteinEditForm.
      */
-    private String myOrganism;
+    private String myOrganism = "";
+
+    /**
+     * Instantiate an object of this class from a Protein instance.
+     * @param protein the <code>Protein</code> object.
+     */
+    public ProteinBean(Protein protein) {
+        myAc = protein.getAc();
+        myShortLabel = protein.getShortLabel();
+        mySPAc = getSPAc(protein);
+        myFullName = protein.getFullName();
+        setEditState(SAVE_NEW);
+    }
 
     /**
      * Instantiate an object of this class from a Component instance.
@@ -66,7 +87,7 @@ public class ProteinBean extends EditBean implements Serializable {
         Interactor interact = component.getInteractor();
         myAc = interact.getAc();
         myShortLabel = interact.getShortLabel();
-        mySPAc = ""; // need to clarify this.
+        mySPAc = getSPAc(interact);
         myFullName = interact.getFullName();
         myRole = component.getCvComponentRole().getShortLabel();
         myStoichiometry = component.getStoichiometry();
@@ -75,6 +96,8 @@ public class ProteinBean extends EditBean implements Serializable {
             myOrganism = biosource.getShortLabel();
         }
     }
+
+    // Read only properties.
 
     public String getAc() {
         return myAc;
@@ -91,6 +114,8 @@ public class ProteinBean extends EditBean implements Serializable {
     public String getFullName() {
         return myFullName;
     }
+
+    // Read/Write properties.
 
     public String getRole() {
         return myRole;
@@ -114,6 +139,16 @@ public class ProteinBean extends EditBean implements Serializable {
 
     public void setOrganism(String organism) {
         myOrganism = organism;
+    }
+
+    private String getSPAc(Interactor interact) {
+        for (Iterator iter = interact.getXref().iterator(); iter.hasNext();) {
+            Xref xref = (Xref) iter.next();
+            if (xref.getCvDatabase().getShortLabel().equals("SPTR")) {
+                return xref.getAc();
+            }
+        }
+        return "";
     }
 
     // Override Objects's equal method.
