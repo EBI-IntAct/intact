@@ -23,7 +23,8 @@
 <c:set var="menus" value="${user.view.addXrefMenus}"/>
 
 <%-- Individual menu lists --%>
-<c:set var="dblist" value="${menus['DatabaseNames']}"/>
+<c:set var="view" value="${user.view}"/>
+<c:set var="dblist" value="${view.addDatabaseMenu}"/>
 <c:set var="qlist" value="${menus['QualifierNames']}"/>
 
 <%-- Adds a new xreferece. This will invoke addXref action. --%>
@@ -53,7 +54,6 @@
                 <html:select property="database">
                     <html:options name="dblist" />
                 </html:select>
-                <html:errors property="xref.database"/>
             </td>
             <td class="tableCell" align="left" valign="top">
                 <html:text property="primaryId" size="15"/>
@@ -68,8 +68,8 @@
                 <html:select property="qualifier">
                     <html:options name="qlist" />
                 </html:select>
-                <html:errors property="xref.qualifier"/>
             </td>
         </tr>
     </table>
 </html:form>
+<%--<html:javascript formName="xrefAddForm"/>--%>
