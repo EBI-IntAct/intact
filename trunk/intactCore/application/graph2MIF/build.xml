@@ -42,7 +42,7 @@
     <property file="graph2MIF.properties"/>
 
     <!-- This project specific paths. -->
-	<property name="src.dir" value="src"/> 
+	<property name="src.dir" value="src"/>
     <property name="lib.dir" value="WEB-INF/lib"/>
     <property name="wsdd.file" value="Graph2MIFWS.wsdd"/>
 
@@ -76,7 +76,7 @@
         <!-- Intact core at root. -->
         <pathelement path="${root.jar.file}"/>
 
-        <!-- Common jar files. --> <!-- ??? -->  
+        <!-- Common jar files. --> <!-- ??? -->
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
@@ -96,6 +96,16 @@
         <tstamp/>
         <mkdir dir="${basedir}/${lib.dir}"/>
         <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+
+        <echo>
+            BEWARE that if the logging feature isn't set to ERROR,
+            it will desacrease considerably the response time of the application.
+            Up to now, even the WARN level is generating a huge load of log.
+            cf. the file $INTACT_CORE/config/log4j.properties (section graph2mif).
+        </echo>
+
+        <input message="Press the ENTER key to continue..."/>
+
     </target>
 
     <!-- =================================================================== -->
@@ -108,7 +118,7 @@
     </target>
 
     <!-- =================================================================== -->
-    <!-- Creates the java 'docs' . --> 
+    <!-- Creates the java 'docs' . -->
     <target name="doc">
         <mkdir dir="${docs.dir}"/>
 		<javadoc packagenames="uk.ac.ebi.intact.application.graph2MIF, uk.ac.ebi.intact.application.graph2MIF.client"
@@ -229,6 +239,13 @@
             </fileset>
         </copy>
 
+        <!-- Copy JSPs files -->
+        <copy todir="${temp.web}">
+            <fileset dir=".">
+                <include name="*.jsp"/>
+            </fileset>
+        </copy>
+
         <!-- Copy jar files -->
         <copy todir="${temp.web}/WEB-INF/lib">
             <!--  Graph2MIF specific jar files. -->
@@ -264,8 +281,11 @@
 
         <!-- Generate Graph2MIF topics -->
         <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
-            <webinf dir="${temp.web}/WEB-INF"/>
+            <fileset dir="${temp.web}">
+                <include name="**"/>
+            </fileset>
         </war>
+
     </target>
 
     <!-- =================================================================== -->

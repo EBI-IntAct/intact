@@ -20,6 +20,12 @@ INSTALLATION
     build.properties file (intactCore directory). CvEdit has been tested
     under Oracle 8.1.6 and PostGres 7.2 (local and remote).
 
+NOTE
+    BEWARE that if the logging feature isn't set to ERROR,
+    it will desacrease considerably the response time of the application.
+    Up to now, even the WARN level is generating a huge load of log.
+    cf. the file $INTACT_CORE/config/log4j.properties (section graph2mif).    
+
 BUILD
     ant war
         prepares a WAR file to be deployed in a WEB container. The WAR file is
@@ -82,4 +88,4 @@ NOTES
         WEB-INF/classes - Graph2MIF class files.
 
 COMMENTS
-    Send any comments/feedback to hmersch@ebi.ac.uk
+    Send any comments/feedback to skerrien@ebi.ac.uk, hmersch@ebi.ac.uk
