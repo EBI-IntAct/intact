@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.intSeq.business;
 
+import uk.ac.ebi.intact.business.IntactException;
+
 import java.util.ArrayList;
 
 /**
@@ -34,6 +36,6 @@ public interface RunSimilaritySearchIF {
      *
      * @return the results in a list of list.
      */
-    public ArrayList RetrieveParseResult ();
+    public ArrayList RetrieveParseResult () throws IntactException ;
 
 }

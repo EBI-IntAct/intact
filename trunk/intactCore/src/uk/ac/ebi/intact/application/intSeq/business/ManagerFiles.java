@@ -7,11 +7,14 @@ package uk.ac.ebi.intact.application.intSeq.business;
 
 
 
+import uk.ac.ebi.intact.business.IntactException;
+
 import java.io.*;
-import java.util.Random;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
+import org.apache.log4j.Logger;
 
 
 
@@ -27,7 +30,9 @@ import java.util.regex.Matcher;
 
 public class ManagerFiles {
 
-          /**
+    static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
+
+    /**
      * Inner class to generate unique ids to use primary keys for CommentBean
      * class.
      */
@@ -48,18 +53,18 @@ public class ManagerFiles {
     }
 
 
-        //---------- INSTANCE VARIABLES -------------//
+    //---------- INSTANCE VARIABLES -------------//
 
     /**
-      * the whole path file with the file name
-      */
+     * the whole path file with the file name
+     */
     File inputFile = null;
     FileWriter fileWriter = null;
 
 
     /**
-      * absolute path file
-      */
+     * absolute path file
+     */
     protected String absolutePath = "";
     protected String fileName = "";
 
@@ -68,12 +73,12 @@ public class ManagerFiles {
 
 
 
-        //---------- CONSTRUCTORS -------------------//
+    //---------- CONSTRUCTORS -------------------//
 
 
     /**
-      * constructor by default
-      */
+     * constructor by default
+     */
     public ManagerFiles () {
     }
 
@@ -104,7 +109,7 @@ public class ManagerFiles {
         this.absolutePath = inputFile.getAbsolutePath();
     }
 
-        //--------- PROPERTIES ---------------------//
+    //--------- PROPERTIES ---------------------//
 
 
     /**
@@ -113,11 +118,11 @@ public class ManagerFiles {
      * @return string.
      */
     public String GetPathFile () {
-           return (this.absolutePath);
+        return (this.absolutePath);
     }
 
     public void SetPathFile (String path) {
-           this.absolutePath = path;
+        this.absolutePath = path;
     }
 
     /**
@@ -126,15 +131,15 @@ public class ManagerFiles {
      * @return string.
      */
     public String GetFileName () {
-            return (this.fileName);
+        return (this.fileName);
     }
 
     public void SetFileName (String name) {
-           this.fileName = name;
+        this.fileName = name;
     }
 
 
-        //---------- PUBLIC METHODS -----------------//
+    //---------- PUBLIC METHODS -----------------//
 
     /**
      * Generate a file name randomly, with a long added at the end of the name.
@@ -145,42 +150,45 @@ public class ManagerFiles {
      */
     public String GetRandFileName (Object extensionFile) {
 
-            long rand = UniqueID.get();
-                //to concat the value with the file pathname string,
-                // cast the random long into a string.
-            String s = String.valueOf(rand);
-            fileName = "file".concat(s).concat((String)extensionFile);
+        long rand = UniqueID.get();
+        //to concat the value with the file pathname string,
+        // cast the random long into a string.
+        String s = String.valueOf(rand);
+        fileName = "file".concat(s).concat((String)extensionFile);
 
-            return fileName;
+        return fileName;
     }
 
 
-     /**
-      * Create a file, checking some important points before:
-      * if it already exists, and if it is readable.
-      *
-      * @return boolean which answers if the file has been well created.
-      */
-     public boolean CreateFile () {
+    /**
+     * Create a file, checking some important points before:
+     * if it already exists, and if it is readable.
+     *
+     * @return boolean which answers if the file has been well created.
+     */
+    public boolean CreateFile () {
 
-         boolean create = false;
+        boolean create = false;
 
-         try {
-             inputFile.createNewFile();
-             if (inputFile.exists() == true && inputFile.canRead() == true) {
-                 create = true;
-                 return create;
-             } else if (inputFile.isDirectory() == true) {
-                 return create;
-             } else {
-                 return create;
-             }
-         }
-         catch (IOException io) {
-             System.out.println (io);
-             return create;
-         }
-     }
+        try {
+//            inputFile.
+            inputFile.createNewFile();
+            if (inputFile.exists() == true && inputFile.canRead() == true) {
+                create = true;
+                return create;
+            } else if (inputFile.isDirectory() == true) {
+                logger.error ("The given path is a directory, can't create a file");
+                return create;
+            } else {
+                logger.error ("Could not create a file:" + inputFile.getName());
+                return create;
+            }
+        }
+        catch (IOException ioe) {
+            logger.error ("Could not create a file, cause: " + ioe.getMessage(), ioe);
+            return create;
+        }
+    }
 
 
     /**
@@ -193,16 +201,16 @@ public class ManagerFiles {
      *      in a file.
      *
      */
-    public void PutInFile (String sequence) {
+    public void PutInFile (String sequence) throws IntactException {
         try {
-                //retrieve the input file name where the user query will be recorded.
+            //retrieve the input file name where the user query will be recorded.
             if (inputFile.canWrite() == true && inputFile.length() == 0) {
 
                 this.CreateWriter();
                 fileWriter.write(sequence);
-                    //to make sure that all the buffer is write in the file.
+                //to make sure that all the buffer is write in the file.
                 fileWriter.flush();
-                    //protects the file in reading.
+                //protects the file in reading.
                 inputFile.setReadOnly();
             }
             else {
@@ -210,34 +218,37 @@ public class ManagerFiles {
             }
         }
         catch (FileNotFoundException e){
-            System.out.print(e);
+            logger.error ("Error while trying to look up for a file: ", e);
+            throw new IntactException ("Error while trying to look up for a file: ", e);
         }
         catch (IOException io) {
-            System.out.print(io);
+            logger.error ("Error while creating a file: " + inputFile, io);
+            throw new IntactException ("Error while creating a file: " + inputFile, io);
         }
     }
 
     /**
-      * if the PutInFile method needs to be managed in a loop,
-      * the FileWriter has to be created only once. Create a File
-      * Writer separately.
-      *
-      */
-    public void CreateWriter () {
-            try {
-                    fileWriter = new FileWriter(inputFile);
-            }
-            catch (IOException io) {
-                    System.err.println (io);
-            }
+     * if the PutInFile method needs to be managed in a loop,
+     * the FileWriter has to be created only once. Create a File
+     * Writer separately.
+     *
+     */
+    public void CreateWriter () throws IntactException {
+        try {
+            fileWriter = new FileWriter(inputFile);
+        }
+        catch (IOException io) {
+            logger.error ("Error while creating a file ("+ inputFile +"), cause: " + io.getCause(), io);
+            throw new IntactException ("Error while creating a file: " + inputFile, io);
+        }
     }
 
     /**
-      * This method allows to recover the file content in a String.
-      *
-      * @return string which is in the file.
-      */
-    public String ReadingFile () {
+     * This method allows to recover the file content in a String.
+     *
+     * @return string which is in the file.
+     */
+    public String ReadingFile () throws IntactException {
         try {
             this.PrepareBufferedReader();
 
@@ -260,27 +271,27 @@ public class ManagerFiles {
                 return null;
         }
         catch (IOException io) {
-            System.err.println (io);
-            return null;
+            logger.error ("Error while reading file, cause: " + io.getCause(), io);
+            throw new IntactException ("Error while reading file", io);
         }
     }
 
 
 
     /**
-      * Delete a file which isn't used anymore.
-      *
-      */
+     * Delete a file which isn't used anymore.
+     *
+     */
     public void DeleteFile () {
-            //if (inputFile.createNewFile() == false) { //the file name already exists...
-                    //String name = inputFile.getName();
-       if (inputFile.isFile() == true) {
+        //if (inputFile.createNewFile() == false) { //the file name already exists...
+        //String name = inputFile.getName();
+        if (inputFile.isFile() == true) {
             inputFile.delete();
-       }
+        }
     }
 
 
-     /**
+    /**
      * This method parses a file with only one item requiered and returns the list of this
      * item possibly retrieved in several lines.
      *
@@ -291,42 +302,41 @@ public class ManagerFiles {
      * @return list made of another list with the results from one line of the file.
      *
      */
-    public ArrayList ResultParsing (ArrayList patternList, int jWhichGroup) {
+    public ArrayList ResultParsing (ArrayList patternList, int jWhichGroup) throws IntactException {
         try {
             this.PrepareBufferedReader();
             if (bufReader.ready()) {
 
-                    String currentLine = null;
-                    String oneLine = GetLineSeparator();
+                String currentLine = null;
+                String oneLine = GetLineSeparator();
+                StringBuffer stringBuf = new StringBuffer ();
+                ArrayList result = new ArrayList();
 
-                    StringBuffer stringBuf = new StringBuffer ();
+                while ((currentLine = bufReader.readLine()) != null) {
+                    int i = 0;
+                    while (i < patternList.size()) {
+                        String theDataRetrieved = "";
+                        theDataRetrieved = ParseWithReOneGroup(currentLine, (String)patternList.get(i), jWhichGroup);
 
-                    ArrayList result = new ArrayList();
-
-                    while ((currentLine = bufReader.readLine()) != null) {
-                        int i = 0;
-                        while (i < patternList.size()) {
-                            String theDataRetrieved = "";
-                            theDataRetrieved = ParseWithReOneGroup(currentLine, (String)patternList.get(i), jWhichGroup);
-
-                            result.add(theDataRetrieved);
-                            stringBuf.append(currentLine + oneLine);
-                            i++;
-                        }
+                        result.add(theDataRetrieved);
+                        stringBuf.append(currentLine + oneLine);
+                        i++;
                     }
-
-                    bufReader.close();
-                    fr.close();
-
-                    return result;
                 }
-                else {
-                    return null;
-                }
+
+                bufReader.close();
+                fr.close();
+
+                return result;
+            }
+            else {
+                logger.error ("Buffer is not ready, something goes wrong when preparing it.");
+                return null;
+            }
         }
         catch (IOException io) {
-             System.err.println (io);
-             return null;
+            logger.error ("Error while parsing a file, cause: " + io.getCause(), io);
+            throw new IntactException ("Error while parsing a file: ", io);
         }
 
     }
@@ -342,10 +352,12 @@ public class ManagerFiles {
      * @return list made of another list with the results from one line of the file.
      *
      */
-    public ArrayList ResultParsingTableFile (String pattern) {
+    public ArrayList ResultParsingTableFile (String pattern) throws IntactException {
 
         try {
             this.PrepareBufferedReader();
+
+            // TODO: has to be tested to avoid NullPointerException !!!
 
             if (bufReader.ready()) {
 
@@ -356,8 +368,10 @@ public class ManagerFiles {
 
                 while ((currentLine = bufReader.readLine()) != null) {
 
-                        // avoid retrieving two identical lines which follow themselves.
+                    // avoid retrieving two identical lines which follow themselves.
                     if (currentLine.equals(oldLine) == false) {
+
+                        logger.info("Line to parse: " + currentLine);
 
                         ArrayList result = ParseWithReAllFollow (currentLine, pattern);
 
@@ -377,21 +391,17 @@ public class ManagerFiles {
                 return items;
             }
             else {
-                System.out.println("problem");
+                logger.error ("Buffer is not ready, something goes wrong when preparing it.");
                 return null;
             }
         }
-        catch (FileNotFoundException fn) {
-            System.out.println (fn);
-            return null;
-        }
         catch (IOException io) {
-            System.out.println (io);
-            return null;
+            logger.error ("Error while processing a file, cause: " + io.getCause(), io);
+            throw new IntactException ("Error while processing a file: ", io);
         }
     }
 
-        //---------- PROTECTED METHODS -----------------//
+    //---------- PROTECTED METHODS -----------------//
 
 
     /**
@@ -401,17 +411,19 @@ public class ManagerFiles {
      * it must be created only once.
      *
      */
-    protected void PrepareBufferedReader () {
+    protected void PrepareBufferedReader () throws IntactException {
 
-           if (CreateFile() == true) {
-                try {
-                       fr = new FileReader(inputFile);
-                       bufReader = new BufferedReader(fr);
-                }
-                catch (FileNotFoundException fnfe) {
-                       System.out.println (fnfe);
-                }
-           }
+        if (CreateFile() == true) {
+            try {
+                fr = new FileReader(inputFile);
+                bufReader = new BufferedReader(fr);
+            } catch (FileNotFoundException fnfe) {
+                logger.error ("");
+                throw new IntactException ("Unable to create the buffer reader, file not found");
+            }
+        } else {
+            throw new IntactException ("Could not create a new file");
+        }
     }
 
 
@@ -431,58 +443,58 @@ public class ManagerFiles {
      */
     protected String ParseWithReOneGroup (String inputStr, String patternStr, int iWhichGroup) {
 
-            Pattern pattern = Pattern.compile(patternStr);
-            Matcher matcher = pattern.matcher(inputStr);
-            boolean matchFound = matcher.find();
+        Pattern pattern = Pattern.compile(patternStr);
+        Matcher matcher = pattern.matcher(inputStr);
+        boolean matchFound = matcher.find();
 
-            String groupStr = "";
-            if (matchFound == true) {
-                groupStr = matcher.group(iWhichGroup);
-            }
+        String groupStr = "";
+        if (matchFound == true) {
+            groupStr = matcher.group(iWhichGroup);
+        }
 
-            return groupStr;
+        return groupStr;
     }
 
-     /**
-      * This method allows to parse one line with one Regular Expression in JAVA and to
-      * retrieve all items described in this RE, except the whole line.
-      * The String <code>groupStr</code> retrieves items requiered by the regular expression.
-      * So, each group is added in the <code>result</code> ArrayList, like a String.
-      *
-      * @param inputStr the current line reading in the file.
-      * @param patternStr the Regular Expression which describes the file line to retrieve.
-      *
-      * @return ArrayList which contains the items list retrieved in the line.
-      */
-     protected ArrayList ParseWithReAllFollow (String inputStr, String patternStr) {
+    /**
+     * This method allows to parse one line with one Regular Expression in JAVA and to
+     * retrieve all items described in this RE, except the whole line.
+     * The String <code>groupStr</code> retrieves items requiered by the regular expression.
+     * So, each group is added in the <code>result</code> ArrayList, like a String.
+     *
+     * @param inputStr the current line reading in the file.
+     * @param patternStr the Regular Expression which describes the file line to retrieve.
+     *
+     * @return ArrayList which contains the items list retrieved in the line.
+     */
+    protected ArrayList ParseWithReAllFollow (String inputStr, String patternStr) {
 
-             Pattern pattern = Pattern.compile(patternStr);
-             Matcher matcher = pattern.matcher(inputStr);
-             boolean matchFound = matcher.find();
+        Pattern pattern = Pattern.compile(patternStr);
+        Matcher matcher = pattern.matcher(inputStr);
+        boolean matchFound = matcher.find();
 
-             ArrayList result = new ArrayList();
+        ArrayList result = new ArrayList();
 
-             if (matchFound == true) {
-                    // the "0" one is the whole line
-                    //begins with 1 because we don't want to retrieve the whole line
-                 for (int i = 1; i <= matcher.groupCount(); i++) {
+        if (matchFound == true) {
+            // the "0" one is the whole line
+            //begins with 1 because we don't want to retrieve the whole line
+            for (int i = 1; i <= matcher.groupCount(); i++) {
 
-                     String groupStr = "";
-                     groupStr = matcher.group(i);
+                String groupStr = "";
+                groupStr = matcher.group(i);
 
-                     result.add(groupStr);
-                 }
-             }
-             return result;
-     }
+                result.add(groupStr);
+            }
+        }
+        return result;
+    }
 
     /**
-      * get the line separator string.
-      * It allows to use the same separator int the service and int the client
-      * to keep the multiplateform aspect.
-      *
-      * @return the line separator
-      */
+     * get the line separator string.
+     * It allows to use the same separator int the service and int the client
+     * to keep the multiplateform aspect.
+     *
+     * @return the line separator
+     */
     protected String GetLineSeparator () {
         return System.getProperty ("line.separator");
     } // getLineSeparator

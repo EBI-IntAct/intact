@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.application.intSeq.business;
 import java.util.*;
 import java.io.*;
 
-import uk.ac.ebi.intact.application.intSeq.struts.framework.SeqIdConstants;
 import uk.ac.ebi.intact.application.intSeq.business.ManagerFiles;
+import uk.ac.ebi.intact.business.IntactException;
 
 
 /**
@@ -45,7 +45,7 @@ public class ManagerFilesBlast extends ManagerFiles {
      *
      */
     public ManagerFilesBlast (String pathFile, Object extension) {
-        this.fileName = GetRandFileName((String)extension);
+        this.fileName = GetRandFileName(extension);
         this.inputFile = new File (pathFile.concat(fileName));
         this.absolutePath = inputFile.getAbsolutePath();
     }
@@ -115,11 +115,8 @@ public class ManagerFilesBlast extends ManagerFiles {
      * @return The result is a list (all lines retrieved) of lists (all items retrieved in one line).
      *
      */
-    public ArrayList ResultParsing (ArrayList patterns, int jWhichGroup) {
+    public ArrayList ResultParsing (ArrayList patterns, int jWhichGroup) throws IntactException {
         try {
-
-
-
             this.PrepareBufferedReader();
 
             if (bufReader.ready()) {

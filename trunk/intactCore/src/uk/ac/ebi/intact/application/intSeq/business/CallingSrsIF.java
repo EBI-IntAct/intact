@@ -6,6 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.intSeq.business;
 
 
+import uk.ac.ebi.intact.business.IntactException;
+
 import java.util.ArrayList;
 
 
@@ -22,18 +24,18 @@ public interface CallingSrsIF {
      * check if the protein topic still corresponds to an Intact entry.
      * @return the boolean answer.
      */
-    public boolean GetBooleanIntactId ();
+    public boolean GetBooleanIntactId () throws IntactException ;
 
     /**
      * request result: return a list of accession numbers and its own description.
      * @return arraylist of arraylist (size 2).
      */
-    public ArrayList RetrieveAccDes ();
+    public ArrayList RetrieveAccDes () throws IntactException ;
 
     /**
      * return the sequence, which allows to run a multi-alignment algorithm (like Fasta or Blast).
      * @return string sequence in the Fasta format.
      */
-    public String GetSequenceFasta();
+    public String GetSequenceFasta() throws IntactException ;
 }
 

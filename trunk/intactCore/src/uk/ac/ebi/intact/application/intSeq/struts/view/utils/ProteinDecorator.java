@@ -54,7 +54,7 @@ public class ProteinDecorator extends Decorator {
 
         String acc = sr.getAcc();
 
-        return "<a href=\"/intSeq/do/accession?acc="  + acc + "\"> "+ acc +" </a>";
+        return "<a href=\""+ sr.getUrl() +"/do/accession?acc="  + acc + "\"> "+ acc +" </a>";
     }
 
     /**

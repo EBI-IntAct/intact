@@ -20,6 +20,8 @@ import uk.ac.ebi.intact.application.intSeq.struts.framework.SeqIdConstants;
 import uk.ac.ebi.intact.application.search.business.IntactUserIF;
 import uk.ac.ebi.intact.application.intSeq.business.ManagerFilesSrs;
 import uk.ac.ebi.intact.application.intSeq.business.CallingSrsIF;
+import uk.ac.ebi.intact.business.IntactException;
+import org.apache.log4j.Logger;
 
 /**
  * This class allows to retrieve AC and Description fields from the SRS engine, with the SPTr database.
@@ -32,25 +34,28 @@ import uk.ac.ebi.intact.application.intSeq.business.CallingSrsIF;
  */
 public class CallingSrs implements CallingSrsIF{
 
+    static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
+
+
+    /**
+     * Inner class to generate unique ids to use primary keys for CommentBean
+     * class.
+     */
+    private static class UniqueID {
+
         /**
-         * Inner class to generate unique ids to use primary keys for CommentBean
-         * class.
+         * The initial value. All the unique ids are based on this value for any
+         * (all) user(s).
          */
-        private static class UniqueID {
+        private static long theirCurrentTime = System.currentTimeMillis();
 
-            /**
-             * The initial value. All the unique ids are based on this value for any
-             * (all) user(s).
-             */
-            private static long theirCurrentTime = System.currentTimeMillis();
-
-            /**
-             * Returns a unique id using the initial seed value.
-             */
-            private static synchronized long get() {
-                return theirCurrentTime++;
-            }
+        /**
+         * Returns a unique id using the initial seed value.
+         */
+        private static synchronized long get() {
+            return theirCurrentTime++;
         }
+    }
 
 
     // --------- INSTANCE VARIABLES --------------//
@@ -58,20 +63,20 @@ public class CallingSrs implements CallingSrsIF{
     protected IntactUserIF theUser = null;
 
     /**
-      * protein feature which has been captured by the user
-      */
+     * protein feature which has been captured by the user
+     */
     protected String proteinTopic = "";
 
     protected String srsCommand = "";
 
     /**
-      * the first idea is that there will be none error during the SRS running
-      */
+     * the first idea is that there will be none error during the SRS running
+     */
     protected boolean srsError = false;
 
     protected ManagerFilesSrs resultWgetzQuery = null;
 
-        //protected IntactHelper myHelper;
+    //protected IntactHelper myHelper;
     protected boolean matchWithIntactId = false;
 
 
@@ -84,7 +89,7 @@ public class CallingSrs implements CallingSrsIF{
 
     }
 
-     /**
+    /**
      * constructor which allows to check if the protein topic exists in IntAct. (later)
      *
      * @param id String which represents a protein feature (protein reference or simply a word)
@@ -114,67 +119,33 @@ public class CallingSrs implements CallingSrsIF{
         return UniqueID.get();
     }
 
-     /**
-      * later, a method will allow to look for an IntAct entry from a protein topic
-      * (no SRS process in this case)
-      */
+    /**
+     * later, a method will allow to look for an IntAct entry from a protein topic
+     * (no SRS process in this case)
+     */
     public boolean GetBooleanIntactId () {
         return (this.matchWithIntactId);
     }
 
-    //------------- PUBLIC METHOD ----------------//
-
-    /*  ALREADY DONE BY SUGATH ???
-        // return the first intact id retrieved (could returned an array afterwards...)
-    public String ReturnIntactId () {
-
-        try {
-                // retrieve a collection of Intact identifier
-            Collection parentACxRef = theUser.search("Xref", "parentAc", "primaryId");
-            //Collection parentACxRef = myHelper.search("Xref", "parentAc", "primaryId");
-            Iterator coll = parentACxRef.iterator();
-            Object objectRetrieved = null;
-            String originClass = "";
-            for (int i = 0; i < parentACxRef.size(); i++) {
-
-                objectRetrieved = coll.next();
-                originClass = objectRetrieved.getClass().getName();
-                    // objectRetrieved is an AnnotatedObject... we want to see which kind of instance it is
-
-                    //this "if" will break the loop when the first protein result is encontered
-                if ((originClass.startsWith("uk.ac.ebi.intact.model.Protein")) == true ||
-                                (originClass.startsWith("uk.ac.ebi.intact.model.Interactor")) == true) {
-                    matchWithIntactId = true;
-                    return originClass;
-                }
-            }
-            return null;
-        }
-        catch (IntactException ie) {
-            System.out.println (ie);
-            return null;
-        }
-    }
-    */
 
     /**
      * Wgetz execution + parsing of the WGETZ output file
      *
      * @return a list of Accession Number and Description got from the SRS request
      */
-    public ArrayList RetrieveAccDes () {
+    public ArrayList RetrieveAccDes () throws IntactException {
 
-            this.ExecFinalCommand(true);
+        this.ExecFinalCommand(true);
 
-            if (srsError == false) {
-                        // parsing
-                ArrayList acDes = resultWgetzQuery.ResultParsingTableFile (SeqIdConstants.PARSING_TABLE_WGETZ_AC);
-                resultWgetzQuery.DeleteFile();
+//        if (srsError == false) {
+//             parsing
+            ArrayList acDes = resultWgetzQuery.ResultParsingTableFile (SeqIdConstants.PARSING_TABLE_WGETZ_AC);
+            resultWgetzQuery.DeleteFile();
 
-                return acDes;
-            }
-            else
-                return null;
+            return acDes;
+//        }
+//        else
+//            return null;
     }
 
 
@@ -185,29 +156,29 @@ public class CallingSrs implements CallingSrsIF{
      *
      * @return a list of Accession Number and Description got from the SRS request
      */
-    public String GetSequenceFasta () {
+    public String GetSequenceFasta () throws IntactException {
 
-            this.ExecFinalCommand(false);
+        this.ExecFinalCommand (false);
 
-            if (srsError == false) {
-                String sequence = resultWgetzQuery.ReadingFile();
-                resultWgetzQuery.DeleteFile();
+        if (srsError == false) {
+            String sequence = resultWgetzQuery.ReadingFile();
+            resultWgetzQuery.DeleteFile();
 
-                if ( (sequence.startsWith(">") == true) )
-                    return sequence;
-                        /*  the +-vn+4 wgetz command shouldn't be used...
-                        // to put the srs format sequence into a fasta format.
-                        else if ( (sequence.startsWith("<PRE>") == true) ) {   // && (sequence.endsWith("<\\PRE>")) ) {
-                        int len = sequence.length();
-                        String fastaSequence = sequence.substring(5, len-7);
-                        return fastaSequence;
-                        }
-                        */
-                else
-                    return null;
+            if ( (sequence.startsWith(">") == true) )
+                return sequence;
+            /*  the +-vn+4 wgetz command shouldn't be used...
+            // to put the srs format sequence into a fasta format.
+            else if ( (sequence.startsWith("<PRE>") == true) ) {   // && (sequence.endsWith("<\\PRE>")) ) {
+            int len = sequence.length();
+            String fastaSequence = sequence.substring(5, len-7);
+            return fastaSequence;
             }
+            */
             else
                 return null;
+        }
+        else
+            return null;
 
     }
 
@@ -215,7 +186,7 @@ public class CallingSrs implements CallingSrsIF{
     //------------ PROTECTED METHOD ----------------//
 
 
-     /**
+    /**
      * This method decides which command will be executed (Wgetz or Getz)
      * and put the file in the provided directory: to organize the
      * numerous generated files into two separate directories.
@@ -224,22 +195,24 @@ public class CallingSrs implements CallingSrsIF{
      *        true means that it is the AC-Description result file
      *
      */
-    protected void ExecFinalCommand (boolean acOrSeqRequest) {
-
+    protected void ExecFinalCommand (boolean acOrSeqRequest) throws IntactException {
 
         if (srsCommand.startsWith("http") == true) {
-
 
             if (acOrSeqRequest == true)
                 this.WebSrs (SeqIdConstants.DIR_OUTPUT_WGETZ);
             else
                 this.WebSrs (SeqIdConstants.DIR_OUTPUT_WGETZ_SEQ);
+
+        } else {
+            logger.error ("Invalid SRS URL: " + srsCommand);
+            throw new IntactException ("Invalid SRS URL: " + srsCommand);
         }
 
         /*
         else {
-                //  for the moment, the only command is Wgetz.
-            this.GetzSrs();
+        //  for the moment, the only command is Wgetz.
+        this.GetzSrs();
         }
         */
     }
@@ -253,98 +226,103 @@ public class CallingSrs implements CallingSrsIF{
      *
      *
      */
-    protected void WebSrs (String path) {
+    protected void WebSrs (String path) throws IntactException {
 
-            try {
-                URL wgetzUrl = new URL (srsCommand);
-                URLConnection srsConnection = wgetzUrl.openConnection();
+        try {
+            URL wgetzUrl = new URL (srsCommand);
+            URLConnection srsConnection = wgetzUrl.openConnection();
 
-                BufferedReader in = new BufferedReader
-                                        (new InputStreamReader (srsConnection.getInputStream()));
-                String inputLine = "";
-                resultWgetzQuery = new ManagerFilesSrs (path, (Object)".srs");
+            BufferedReader in = new BufferedReader
+                    (new InputStreamReader (srsConnection.getInputStream()));
+            String inputLine = "";
+            resultWgetzQuery = new ManagerFilesSrs (path, (Object)".srs");
 
-                if (resultWgetzQuery.CreateFile() == true) {
-                        // reading this web page content
-                    resultWgetzQuery.CreateWriter();
+            if (resultWgetzQuery.CreateFile() == true) {
+                // reading this web page content
+                resultWgetzQuery.CreateWriter();
 
-                        // allows to put the web page content in a file
-                    while ((inputLine = in.readLine()) != null) {
-                        if ( inputLine.matches("<title>SRS\\serror</title>") == true ) {
-                            srsError = true;
-                        }
-                        resultWgetzQuery.PutInFile(inputLine);
+                // allows to put the web page content in a file
+                while ((inputLine = in.readLine()) != null) {
+                    if ( inputLine.matches("<TITLE>SRS\\serror</TITLE>") == true ) {
+                        srsError = true;
                     }
-                    in.close();
-                        // to protect this file in writing
-                    resultWgetzQuery.inputFile.setReadOnly();
+                    resultWgetzQuery.PutInFile(inputLine);
                 }
+                in.close();
+                // to protect this file in writing
+                resultWgetzQuery.inputFile.setReadOnly();
+            } else {
+                logger.error ("Unable to create the output file to store the SRS query result");
+                throw new IntactException ("Unable to create the output file to store the SRS query result");
             }
-            catch (MalformedURLException mue) {
-                System.out.println (mue);
-                resultWgetzQuery.DeleteFile();
-                srsError = true;
-            }
-            catch (IOException io) {
-                System.out.println (io);
-                resultWgetzQuery.DeleteFile();
-                srsError = true;
-            }
+        }
+        catch (MalformedURLException mue) {
+            logger.error ("SRS URL is malformed: " + srsCommand, mue);
+            resultWgetzQuery.DeleteFile();
+            srsError = true;
+            throw new IntactException ("SRS URL is malformed: " + srsCommand, mue);
+        }
+        catch (IOException ioe) {
+            logger.error ("Error when retreiving SRS response: " + ioe.getMessage(), ioe);
+            resultWgetzQuery.DeleteFile();
+            srsError = true;
+            throw new IntactException ("Error when retreiving SRS response: " + ioe.getMessage(), ioe);
+        }
     }
 
-  /*
-        // when SRS is called  by the getz command
+    /*
+    // when SRS is called  by the getz command
 
-        // il faut faire pointer cette classe sur RunSimilaritySearch !!!
+    // il faut faire pointer cette classe sur RunSimilaritySearch !!!
     protected boolean GetzSrs () {
-            // result : getz '[{sptrembl}-alltext:userId]' -f "id acc des seq"
-            // if we want to capture the result into an output file
-            //srsCommande with proteinTopic in parameter
-            //biojava class to execute an Unix commande line...
+    // result : getz '[{sptrembl}-alltext:userId]' -f "id acc des seq"
+    // if we want to capture the result into an output file
+    //srsCommande with proteinTopic in parameter
+    //biojava class to execute an Unix commande line...
 
-                // make the output file
-            outputGetzFile = new ManagerFilesSrs (SeqIdConstants.DIR_OUTPUT_GETZ);
-            String getzCommand = srsCommand.concat(outputGetzFile.GetPathFile());
+    // make the output file
+    outputGetzFile = new ManagerFilesSrs (SeqIdConstants.DIR_OUTPUT_GETZ);
+    String getzCommand = srsCommand.concat(outputGetzFile.GetPathFile());
 
-            Runtime rt = Runtime.getRuntime();
+    Runtime rt = Runtime.getRuntime();
 
-        try{
-            Process child = rt.exec(getzCommand);
+    try{
+    Process child = rt.exec(getzCommand);
 
-                // wait for the end of the blast process, can be long if the database is big.
-            child.waitFor();
+    // wait for the end of the blast process, can be long if the database is big.
+    child.waitFor();
 
-                // any program needs this file anymore
-            //resultQueryFile.DeleteFile();
+    // any program needs this file anymore
+    //resultQueryFile.DeleteFile();
 
-                //test if the process has been finished in a right way
-            if (child.exitValue() == 0) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        catch (InterruptedException ie) {
-            System.err.println (ie);
-            return false;
-        }
-        catch (NullPointerException npe) {  // if command is null
-            System.err.println (npe);
-            return false;
-        }
-        catch (SecurityException se) {
-            System.err.print(se);
-            return false;
-        }
-        catch (RuntimeException re) {
-            System.err.print(re);
-            return false;
-        }
-        catch (IOException io) {
-            System.err.println(io);
-            return false;
-        }
+    //test if the process has been finished in a right way
+    if (child.exitValue() == 0) {
+    return true;
+    }
+    else {
+    return false;
+    }
+    }
+    catch (InterruptedException ie) {
+    System.err.println (ie);
+    return false;
+    }
+    catch (NullPointerException npe) {  // if command is null
+    System.err.println (npe);
+    return false;
+    }
+    catch (SecurityException se) {
+    System.err.print(se);
+    return false;
+    }
+    catch (RuntimeException re) {
+    System.err.print(re);
+    return false;
+    }
+    catch (IOException io) {
+    System.err.println(io);
+    return false;
+    }
     }
 
     */
