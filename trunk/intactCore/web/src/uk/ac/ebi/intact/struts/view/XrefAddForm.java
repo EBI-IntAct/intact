@@ -8,6 +8,12 @@ package uk.ac.ebi.intact.struts.view;
 
 import org.apache.struts.action.ActionForm;
 
+import javax.servlet.ServletContext;
+import java.util.Collection;
+
+import uk.ac.ebi.intact.struts.service.IntactService;
+import uk.ac.ebi.intact.struts.framework.util.WebIntactConstants;
+
 /**
  * The form to fill when adding a cross reference.
  *
@@ -57,6 +63,20 @@ public class XrefAddForm extends ActionForm {
         myDatabase = db;
     }
 
+    /**
+     * Return a collection of database names.
+     *
+     * <pre>
+     * post: return != null
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(String))
+     * </pre>
+     */
+    public Collection getDbNames() {
+        ServletContext ctx = super.getServlet().getServletContext();
+        IntactService service = (IntactService) ctx.getAttribute(
+            WebIntactConstants.SERVICE_INTERFACE);
+        return service.getDatabaseNames();
+    }
     /**
      * Return the primary id.
      */
