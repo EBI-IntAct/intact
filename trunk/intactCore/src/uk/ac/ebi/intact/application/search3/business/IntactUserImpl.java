@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.search3.business;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.persistence.DAOFactory;
 import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
@@ -18,16 +17,14 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * This class stores information about an Intact Web user session. Instead of
- * binding multiple objects, only an object of this class is bound to a session,
- * thus serving a single access point for multiple information.
- * <p>
- * This class implements the <tt>ttpSessionBindingListener</tt> interface for it
- * can be notified of session time outs.
+ * This class stores information about an Intact Web user session. Instead of binding multiple
+ * objects, only an object of this class is bound to a session, thus serving a single access point
+ * for multiple information.
+ * <p/>
+ * This class implements the <tt>ttpSessionBindingListener</tt> interface for it can be notified of
+ * session time outs.
  *
  * @author Chris Lewington, Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -45,31 +42,30 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
     private String searchClass;
 
+    private String binaryValue;
+
     /**
      * Managment of the object chunk - Chunk to display
      */
     private int selectedChunk;
 
 
-
     /**
-     * Constructs an instance of this class with given mapping file and
-     * the name of the data source class. Side-effects of this constructor
-     * are that the User instance also has an <code>IntactHelper</code> and
-     * an <code>XmlBuilder</code> created for use during a user session.
+     * Constructs an instance of this class with given mapping file and the name of the data source
+     * class. Side-effects of this constructor are that the User instance also has an
+     * <code>IntactHelper</code> and an <code>XmlBuilder</code> created for use during a user
+     * session.
      *
      * @param mapping the name of the mapping file.
      * @param dsClass the class name of the Data Source.
-     *
-     * @exception DataSourceException for error in getting the data source; this
-     *  could be due to the errors in repository files or the underlying
-     *  persistent mechanism rejected <code>user</code> and
-     *  <code>password</code> combination.
-     * @exception IntactException thrown for any error in creating an IntactHelper,
-     * XmlBuilder etc
+     * @throws DataSourceException for error in getting the data source; this could be due to the
+     *                             errors in repository files or the underlying persistent mechanism
+     *                             rejected <code>user</code> and <code>password</code>
+     *                             combination.
+     * @throws IntactException     thrown for any error in creating an IntactHelper, XmlBuilder etc
      */
     public IntactUserImpl(String mapping, String dsClass)
-        throws DataSourceException, IntactException {
+            throws DataSourceException, IntactException {
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
         // Pass config beans to data source - don't need fast keys as only
@@ -82,19 +78,18 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         this.helper = new IntactHelper(ds);
     }
 
-    public int getSelectedChunk () {
+    public int getSelectedChunk() {
         return selectedChunk;
     }
 
-    public void setSelectedChunk ( int selectedChunk ) {
+    public void setSelectedChunk(int selectedChunk) {
         this.selectedChunk = selectedChunk;
     }
 
     // Implements HttpSessionBindingListener
 
     /**
-     * Will call this method when an object is bound to a session.
-     * Not doing anything.
+     * Will call this method when an object is bound to a session. Not doing anything.
      */
     public void valueBound(HttpSessionBindingEvent event) {
     }
@@ -106,8 +101,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
         try {
             this.helper.closeStore();
-        }
-        catch(IntactException ie) {
+        } catch (IntactException ie) {
             //failed to close the store - not sure what to do here yet....
         }
     }
@@ -118,9 +112,9 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         if (this.helper != null) {
             try {
                 return this.helper.getDbUserName();
+            } catch (LookupException e) {
+            } catch (SQLException e) {
             }
-            catch (LookupException e) {}
-            catch (SQLException e) {}
         }
         return null;
     }
@@ -129,9 +123,9 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         if (this.helper != null) {
             try {
                 return this.helper.getDbName();
+            } catch (LookupException e) {
+            } catch (SQLException e) {
             }
-            catch (LookupException e) {}
-            catch (SQLException e) {}
         }
         return null;
     }
@@ -141,7 +135,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 //    }
 
     public Collection search(String objectType, String searchParam,
-                              String searchValue) throws IntactException {
+                             String searchValue) throws IntactException {
         // Set the search criteria.
         // TODO remove it if not needed
 //        this.searchCriteria = searchParam;
@@ -150,19 +144,27 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         return helper.search(objectType, searchParam, searchValue);
     }
 
-    public String getSearchClass () {
+    public String getSearchClass() {
         return searchClass;
     }
 
-    public void setSearchClass ( String searchClass ) {
+    public void setSearchClass(String searchClass) {
         this.searchClass = searchClass;
     }
 
-    public String getSearchValue () {
+    public String getBinaryValue() {
+        return this.binaryValue;
+    }
+
+    public void setBinaryValue(String binaryValue) {
+        this.binaryValue = binaryValue;
+    }
+
+    public String getSearchValue() {
         return searchValue;
     }
 
-    public void setSearchValue ( String searchValue ) {
+    public void setSearchValue(String searchValue) {
         this.searchValue = searchValue;
     }
 
