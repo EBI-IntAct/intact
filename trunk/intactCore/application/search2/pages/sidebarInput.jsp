@@ -1,4 +1,7 @@
-<%@ page language="java" %>
+<%@ page language="java"  %>
+<%@ page buffer="none"    %>
+<%@ page autoFlush="true" %>
+
 <%@ page import="uk.ac.ebi.intact.application.search2.struts.framework.util.SearchConstants"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
