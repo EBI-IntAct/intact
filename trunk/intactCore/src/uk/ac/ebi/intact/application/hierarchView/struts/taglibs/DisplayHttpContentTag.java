@@ -65,6 +65,7 @@ public class DisplayHttpContentTag extends TagSupport {
 
             // Retrieve the content of the URL
             StringBuffer httpContent = new StringBuffer();
+            httpContent.append ("<!-- URL : " + urlStr + "-->");
             String tmpLine;
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));

@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
