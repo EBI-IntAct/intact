@@ -140,6 +140,44 @@ public class InteractionViewBean extends AbstractEditViewBean {
             intact.removeExperiment(exp);
         }
 
+//        // Delete proteins and remove it from the interaction.
+//        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
+//            Component comp = ((ProteinBean) iter.next()).getComponent();
+//            // No need to delete from persistent storage if the link to this
+//            // Protein is not persisted.
+//            if (comp.getAc() == null) {
+//                continue;
+//            }
+//            user.delete(comp);
+//            intact.removeComponent(comp);
+//        }
+//        // Update proteins.
+//        for (Iterator iter = getProteinsToUpdateIter(); iter.hasNext();) {
+//            ProteinBean pb = (ProteinBean) iter.next();
+//            pb.update(user);
+//            Component comp = pb.getComponent(user);
+//            intact.addComponent(comp);
+//            if (user.isPersistent(comp)) {
+//                user.update(comp);
+//            }
+//            else {
+//                user.create(comp);
+//            }
+//        }
+
+        //
+        super.persist(user);
+    }
+
+    /**
+     * Persists proteins.
+     * @param user handler to the user to persist proteins.
+     * @throws IntactException for errors in persisting.
+     * @throws SearchException for errors in searching for objects in the
+     * persistent system.
+     */
+    public void persistProteins(EditUserI user) throws IntactException, SearchException {
+        Interaction intact = (Interaction) getAnnotatedObject();
         // Delete proteins and remove it from the interaction.
         for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
             Component comp = ((ProteinBean) iter.next()).getComponent();
@@ -164,9 +202,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 user.create(comp);
             }
         }
-
-        //
-        super.persist(user);
+        // No need to test whether this 'intact' persistent or not because we
+        // know it has been already persisted by persist() call.
+        user.update(intact);
     }
 
     // Override super method to clear experiments and componets.
@@ -197,14 +235,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         String inttype = (String) dynaform.get("interactionType");
         if (!EditorMenuFactory.SELECT_LIST_ITEM.equals(inttype)) {
-            try {
-                inttype = getNormalizedInterationType(inttype);
-            }
-            catch (SearchException e) {
-                // Should log this exception; the validate method will fail if
-                // this exception is thrown.
-                e.printStackTrace();
-            }
             setInteractionType(inttype);
         }
         String organism = (String) dynaform.get("organism");
@@ -256,43 +286,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public List getInteractionTypeMenu() throws SearchException {
         int mode = (myInteractionType == null) ? 1 : 0;
-//        List l = getMenuFactory().getMenu(EditorMenuFactory.INTERACTION_TYPES, mode);
-//        for (int i = 0; i < l.size(); i++) {
-//            System.out.println("Item: " + l.get(i));
-//        }
-        return getMenuFactory().getMenu(EditorMenuFactory.INTERACTION_TYPES, mode);
-    }
-
-    /**
-     * Returns the selected interaction type. It is necessary to match the
-     * current interaction to what is given in the drop down list. For example,
-     * the match for current interaction type 'xyz' could be '...xyz'. If we don't
-     * peform this mapping, the hightlighted menu always defaults to the first
-     * item in the list.
-     * @return the mapped menu item as it appears in the drop down list. If there
-     * is no Interaction Type for this experiment (i.e, null) or the current interaction
-     * is not found (highly unlikely), the selected menu defaults to the first
-     * item in the list (doesn't mean that the first item is the selected one).
-     * @throws SearchException for errors in constructing the menu.
-     */
-    public String getSelectedInterationType() throws SearchException {
-        return getSelectedMenuItem(myInteractionType,
-                EditorMenuFactory.INTERACTION_TYPES);
-    }
-
-    /**
-     * Returns the normalized interaction. This is the opposite of
-     * {@link #getSelectedInterationType()} method. Given an item from the drop
-     * sown list, this method returns the normalized version of it. For example,
-     * the match for current interaction '..xyz' this method returns 'xyz'.
-     * @param item the menu item to normalize.
-     * @return the normalized menu item as without menu level indicator
-     * characters.
-     * @throws SearchException for errors in constructing the menu.
-     */
-    private String getNormalizedInterationType(String item) throws SearchException {
-        return getNormalizedMenuItem(item,
-                EditorMenuFactory.INTERACTION_TYPES);
+        return getMenuFactory().getDagMenu(EditorMenuFactory.INTERACTION_TYPES, mode);
     }
 
     /**
@@ -579,7 +573,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         myExperimentsToDel.clear();
         myExperimentsToHold.clear();
 
-        // Clear Proteins
+        // Clear proteins.
         myProteinsToDel.clear();
         myProteinsToUpdate.clear();
     }
@@ -652,11 +646,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
         // Remove any proteins marked for deletions.
         for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
             ProteinBean pb = (ProteinBean) iter.next();
-//            System.out.println("Going though with " + pb.getShortLabel());
             if (pb.isMarkedForDelete()) {
                 continue;
             }
-//            System.out.println("Adding to the list to update: " + pb.getShortLabel());
             result.add(pb);
         }
         return result.iterator();
