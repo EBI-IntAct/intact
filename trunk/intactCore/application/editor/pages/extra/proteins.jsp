@@ -14,7 +14,8 @@
 <%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
                  uk.ac.ebi.intact.application.editor.struts.view.EditBean,
                  uk.ac.ebi.intact.application.editor.struts.view.EditForm,
-                 uk.ac.ebi.intact.application.editor.struts.viewx.interaction.InteractionViewBean"%>
+                 uk.ac.ebi.intact.application.editor.struts.viewx.interaction.InteractionViewBean,
+                 uk.ac.ebi.intact.application.editor.struts.viewx.interaction.ProteinBean"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -25,16 +26,23 @@
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <c:set var="viewbean" value="${user.view}"/>
-<%-- The menus needed for Proteins --%>
-<c:set var="menus" value="${viewbean.proteinMenus}"/>
+
+<%-- The menus needed to edit Proteins --%>
+<c:set var="menus" value="${viewbean.editProteinMenus}"/>
 <c:set var="rolelist" value="${menus['Roles']}"/>
 <c:set var="organismlist" value="${menus['Organisms']}"/>
+
+<%-- The menus needed to add Proteins --%>
+<c:set var="menus" value="${viewbean.addProteinMenus}"/>
+<c:set var="rolelist_" value="${menus['Roles']}"/>
+<c:set var="organismlist_" value="${menus['Organisms']}"/>
 
 <%-- Class wide declarations. --%>
 <%!
     String formName = "proteinEditForm";
     String viewState = EditBean.VIEW;
     String saveState = EditBean.SAVE;
+    String saveNewState = ProteinBean.SAVE_NEW;
 %>
 
 <%
@@ -54,7 +62,7 @@
                 <th class="tableCellHeader" width="10%">Short Label</th>
                 <th class="tableCellHeader" width="10%">SP AC</th>
                 <th class="tableCellHeader" width="20%">IntAct AC</th>
-                <th class="tableCellHeader" width="50%" rowspan="2">Fullname</th>
+                <th class="tableCellHeader" width="50%" rowspan="2">Full Name</th>
             </tr>
             <tr class="tableRowHeader">
                 <th class="tableCellHeader">Role*</th>
@@ -64,7 +72,7 @@
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
             <nested:iterate name="<%=formName%>" property="items">
-                <!-- Different styles for even or odd rows -->
+                <%-- Different styles for even or odd rows --%>
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
                         <tr class="tableRowEven">
@@ -73,7 +81,6 @@
                         <tr class="tableRowOdd">
                     </c:otherwise>
                 </c:choose>
-                <c:set var="row" value="${row + 1}"/>
 
                     <td class="tableCell">
                         <html:submit indexed="true" property="cmd"
@@ -98,8 +105,19 @@
                     <%-- Buttons; Edit or Save depending on the bean state;
                          Delete is visible regardless of the state.
                      --%>
-                    <tr class="tableRowEven">
-                        <td class="tableCell">
+                <%-- Start of the second row --%>
+                <c:choose>
+                    <c:when test="${row % 2 == 0}">
+                        <tr class="tableRowEven">
+                    </c:when>
+                    <c:otherwise>
+                        <tr class="tableRowOdd">
+                    </c:otherwise>
+                </c:choose>
+                <c:set var="row" value="${row + 1}"/>
+
+                    <%-- Buttons --%>
+                    <td class="tableCell">
                         <nested:equal property="editState" value="<%=viewState%>">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="annotations.button.edit.titleKey">
@@ -113,8 +131,16 @@
                                 <bean:message key="button.save"/>
                             </html:submit>
                         </nested:equal>
+
+                        <nested:equal property="editState" value="<%=saveNewState%>">
+                            <html:submit indexed="true" property="cmd"
+                                titleKey="annotations.button.save.titleKey">
+                                <bean:message key="button.save"/>
+                            </html:submit>
+                        </nested:equal>
                     </td>
 
+                    <%-- Data --%>
                     <nested:equal property="editState" value="<%=viewState%>">
                         <td class="tableCell">
                             <nested:write property="role"/>
@@ -142,6 +168,25 @@
                             </nested:select>
                         </td>
                     </nested:equal>
+
+                    <nested:equal property="editState" value="<%=saveNewState%>">
+                        <td class="tableCell">
+                            <nested:select property="role">
+                                <nested:options name="rolelist_" />
+                            </nested:select>
+                            <html:errors property="protein.role"/>
+                        </td>
+                        <td class="tableCell">
+                            <nested:text size="5" property="stoichiometry"/>
+                        </td>
+                        <td class="tableCell">
+                            <nested:select property="organism">
+                                <nested:options name="organismlist_" />
+                            </nested:select>
+                            <html:errors property="protein.organism"/>
+                        </td>
+                    </nested:equal>
+
                 </tr>
             </nested:iterate>
         </table>
