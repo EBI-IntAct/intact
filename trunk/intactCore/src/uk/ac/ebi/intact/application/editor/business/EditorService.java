@@ -91,4 +91,12 @@ public class EditorService {
     public URL getNewtServerUrl() {
         return myNewtServerUrl;
     }
+
+    /**
+     * Returns the link to the search application.
+     * @return the link to the search application as a String object.
+     */
+    public String getSerachLink() {
+        return myResources.getString("search.url");
+    }
 }
