@@ -235,8 +235,13 @@ public class Feature extends AnnotatedObjectImpl {
     public Object clone() throws CloneNotSupportedException {
         Feature copy = (Feature) super.clone();
 
-        // Unset the existing component.
+        // Unset the existing component and bind feature.
         copy.component = null;
+        copy.componentAc = null;
+        copy.bindsAc = null;
+        copy.binds = null;
+        
+        // binds is still pointing to the original feature.
 
         copy.ranges = new ArrayList(ranges.size());
         // Make deep copies of range.

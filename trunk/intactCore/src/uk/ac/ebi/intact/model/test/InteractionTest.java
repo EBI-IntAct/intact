@@ -298,7 +298,8 @@ public class InteractionTest extends TestCase {
         Feature copyFeature1 = findFeature(copy.getComponents(), "feature1-x");
         assertNotNull("Feature 1 missing", copyFeature1);
         assertEquals(copyFeature1.getShortLabel(),"feature1-x");
-        assertEquals(copyFeature1.getBoundDomain().getShortLabel(), "feature2-x");
+        // Bound domains are not copied.
+        assertNull(copyFeature1.getBoundDomain());
 
         // Components are set.
         assertNotNull(origFeature1.getComponent());
