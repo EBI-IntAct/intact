@@ -171,7 +171,9 @@ public class UpdateProteins extends UpdateProteinsI {
     }
 
     public final String getUrl(String sptrAC) {
-        String url = "http://www3.ebi.ac.uk/srs7bin/cgi-bin/wgetz?-e+[SWALL-acc:"
+
+        // example: http://srs.ebi.ac.uk/srs7bin/cgi-bin/wgetz?-e+[SWALL-acc:P12345]+-vn+2+-ascii
+        String url = "http://srs.ebi.ac.uk/srs7bin/cgi-bin/wgetz?-e+[SWALL-acc:"
                 + sptrAC + "]+-vn+2+-ascii" ;
 
         return url ;
@@ -181,6 +183,11 @@ public class UpdateProteins extends UpdateProteinsI {
         BufferedReader br = null ;
         StringBuffer sb = null;
         URL u = null;
+
+        final String isProxySet = System.getProperty( "proxySet" );
+        final String proxyHost  = System.getProperty( "proxyHost" );
+        final String proxyPort  = System.getProperty( "proxyPort" );
+        logger.debug ( "Uses: proxySet="+ isProxySet +", proxyHost="+ proxyHost +", proxyPort="+ proxyPort );
 
         try {
             u = new URL (anUrl) ;

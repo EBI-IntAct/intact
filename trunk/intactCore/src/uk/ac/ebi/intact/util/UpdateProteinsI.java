@@ -17,9 +17,9 @@ import uk.ac.ebi.intact.model.*;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.collections.LRUMap;
 
 
 
@@ -29,6 +29,9 @@ import org.apache.log4j.Logger;
 public abstract class UpdateProteinsI {
 
     protected final static org.apache.log4j.Logger logger = Logger.getLogger("updateProtein");
+
+    private final static int DEFAULT_CACHE_SIZE = 200;
+
 
     public class UpdateException extends Exception {
         public UpdateException (String message) {
@@ -46,7 +49,7 @@ public abstract class UpdateProteinsI {
     /**
      * Cache valid BioSource objects for taxIds.
      */
-    protected static HashMap bioSourceCache = null;
+    protected static LRUMap bioSourceCache = null;
 
     protected NewtServerProxy newtProxy;
 
@@ -55,9 +58,10 @@ public abstract class UpdateProteinsI {
     /**
      *
      * @param helper IntactHelper object to access (read/write) the database.
+     * @param cacheSize the number of valid biosource to cache during the update process.
      * @throws UpdateException
      */
-    public UpdateProteinsI (IntactHelper helper) throws UpdateException {
+    public UpdateProteinsI (IntactHelper helper, int cacheSize) throws UpdateException {
          this.helper = helper;
 
         try {
@@ -101,11 +105,23 @@ public abstract class UpdateProteinsI {
         }
 
         newtProxy = new NewtServerProxy(url);
-        newtProxy.enableCaching();
+        newtProxy.disableCaching();
 
-        bioSourceCache = new HashMap();
-
+        bioSourceCache = new LRUMap( cacheSize );
     }
+
+
+    /**
+     * Default constructor which initialize the bioSource cache to default.
+     *
+     * @param helper IntactHelper object to access (read/write) the database.
+     * @throws UpdateException
+     */
+    public UpdateProteinsI (IntactHelper helper) throws UpdateException {
+
+        this (helper, DEFAULT_CACHE_SIZE);
+    }
+
 
 
     /**
