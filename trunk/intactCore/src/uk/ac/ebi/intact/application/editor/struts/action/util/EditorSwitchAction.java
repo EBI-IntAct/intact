@@ -58,12 +58,6 @@ public class EditorSwitchAction extends TilesAction {
         EditUserI user = (EditUserI) session.getAttribute(
                 EditorConstants.INTACT_USER);
         user.getView().setLayout(context);
-//        // The topic user has selected.
-//        String topic = user.getSelectedTopic();
-//        if (topic.equals("BioSource")) {
-//            // Switch over to biosource layout.
-//            context.putAttribute("content", "edit.biosrc.layout");
-//        }
         return null;
     }
 }
