@@ -39,7 +39,7 @@
 
     <!-- Sidebar for the search page -->
     <definition name="search.sidebar.layout" path="/layouts/sidebar.jsp">
-        <put name="input-dialog" value="/pages/sidebarInput.jsp"/>
+        <put name="input-dialog" value="/pages/sidebar.jsp"/>
         <put name="menu" value="search.menu.links"/>
     </definition>
 
@@ -65,12 +65,12 @@
 
     <!-- The edit Biosource page layout. -->
     <definition name="edit.biosrc.layout" extends="edit.cv.layout">
-        <put name="editor-info" value="/pages/extra/biosource.jsp"/>
+        <put name="editor-info" value="/pages/others/biosource.jsp"/>
     </definition>
 
     <!-- The edit Experiment page layout. -->
     <definition name="edit.exp.layout" extends="edit.cv.layout">
-        <put name="editor-info" value="/pages/extra/experiment.jsp"/>
+        <put name="editor-info" value="/pages/others/experiment.jsp"/>
     </definition>
 
     <!-- The edit Interaction page layout. -->
