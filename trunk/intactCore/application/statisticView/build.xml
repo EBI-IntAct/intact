@@ -9,50 +9,53 @@
     <property name="project.title" value="statisticView"/>
 
     <!-- Intact core locations -->
-    <property name="intact.root"     value="../.."/>
-    <property name="root.lib.dir"    value="${intact.root}/lib"/>
-    <property name="root.src.dir"    value="${intact.root}/src"/>
-    <property name="root.dest.dir"   value="${intact.root}/classes"/>
+    <property name="intact.root" value="../.."/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.dest.dir" value="${intact.root}/classes"/>
     <property name="root.config.dir" value="${intact.root}/config"/>
-    <property name="root.dist.dir"   value="${intact.root}/dist"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
 
-    <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
     <!--<property name="root.util.dir" value="${root.src.dir}/uk/ac/ebi/intact/util"/>-->
 
     <!-- Intact application location for the shared common pages -->
     <property name="intact.app.dir" value=".."/>
 
-    <property name="commons.pages.dir"   value="${intact.app.dir}/pages"/>
+    <property name="commons.pages.dir" value="${intact.app.dir}/pages"/>
     <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
-    <property name="commons.images.dir"  value="${intact.app.dir}/images"/>
+    <property name="commons.images.dir" value="${intact.app.dir}/images"/>
 
     <property name="layouts.styles.dir" value="${commons.layouts.dir}/styles"/>
-    <property name="pages.dir"          value="pages"/>
-    <property name="images.dir"         value="images"/>
-    <property name="layouts.dir"        value="layouts"/>
-    <property name="styles.dir"         value="${layouts.dir}/styles"/>
+    <property name="pages.dir" value="pages"/>
+    <property name="images.dir" value="images"/>
+    <property name="layouts.dir" value="layouts"/>
+    <property name="styles.dir" value="${layouts.dir}/styles"/>
 
 
     <!-- context path for statisticsView store in the application level -->
-    <property name="config.dir"         value="WEB-INF/config" />
-    <property name="lib.dir"            value="WEB-INF/lib"/>
-    <property name="tld.dir"            value="WEB-INF/tld"/>
-    <property name="dest.dir"           value="WEB-INF/classes"/>
-    <property name="jdoc.dir"           value="doc/api"/>
-    <property name="dist.dir"           value="dist"/>
+    <property name="config.dir" value="WEB-INF/config"/>
+    <property name="lib.dir" value="WEB-INF/lib"/>
+    <property name="tld.dir" value="WEB-INF/tld"/>
+    <property name="dest.dir" value="WEB-INF/classes"/>
+    <property name="jdoc.dir" value="doc/api"/>
+    <property name="dist.dir" value="dist"/>
 
-    <property name="war.dir"           value="statisticView"/>
-    <property name="war.file"           value="${war.dir}.war"/>
+    <property name="war.dir" value="statisticView"/>
+    <property name="war.file" value="${war.dir}.war"/>
+
 
     <!-- context path for statisticView store in the application level -->
-    <property name="intact.context.dir"          value="${intact.app.dir}/context"/>
-    <property name="statisticView-context-file"  value="statisticView-context.xml"/>
+    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
+    <property name="statisticView-context-file" value="statisticView-context.xml"/>
 
     <!-- The name of the last modified file -->
     <property name="last.modified.file" value="last-modified.txt"/>
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
+
+    <!-- The JDBC properties. -->
+    <property file="${intact.root}/config/jdbc.properties"/>
 
 
     <!-- This project specific paths. -->
@@ -66,8 +69,10 @@
     <path id="project.class.path">
 
         <!-- JFreeChart -->
-        <pathelement path="${lib.dir}/jcommon-0.8.8.jar"/>
-        <pathelement path="${lib.dir}/jfreechart-0.9.13.jar"/>
+        <pathelement path="${lib.dir}/jcommon-0.9.6.jar"/>
+        <pathelement path="${lib.dir}/jfreechart-0.9.21.jar"/>
+        <pathelement path="${lib.dir}/PngEncoder.jar"/>
+
 
         <!-- Intact core at root. -->
         <pathelement path="${root.dest.dir}"/>
@@ -123,38 +128,38 @@
 
         <!-- Delete the Struts imported tlds-->
         <delete>
-             <fileset dir="${tld.dir}">
-                  <exclude name="display.tld"/>
-             </fileset>
+            <fileset dir="${tld.dir}">
+                <exclude name="display.tld"/>
+            </fileset>
         </delete>
 
         <!-- Tiles commons files -->
         <delete>
-             <fileset dir="${layouts.dir}">
-                 <!-- Do not remove our specific files -->
-                 <exclude name="sidebar.jsp"/>
-             </fileset>
+            <fileset dir="${layouts.dir}">
+                <!-- Do not remove our specific files -->
+                <exclude name="sidebar.jsp"/>
+            </fileset>
         </delete>
 
         <delete dir="${styles.dir}"/>
 
         <delete>
-             <fileset dir="${pages.dir}">
-                 <!-- Do not remove our specific files -->
-                 <exclude name="statView.jsp"/>
-                 <exclude name="sidebarFilter.jsp"/>
+            <fileset dir="${pages.dir}">
+                <!-- Do not remove our specific files -->
+                <exclude name="statView.jsp"/>
+                <exclude name="sidebarFilter.jsp"/>
             </fileset>
         </delete>
 
         <delete>
-             <fileset dir="${images.dir}">
-                 <!-- Do not remove our specific files -->
-                 <exclude name="public_error_500x300.png"/>
-                 <exclude name="public_nodata_500x300.png"/>
+            <fileset dir="${images.dir}">
+                <!-- Do not remove our specific files -->
+                <exclude name="public_error_500x300.png"/>
+                <exclude name="public_nodata_500x300.png"/>
             </fileset>
         </delete>
 
-	<delete file="last-modified.txt" />
+        <delete file="last-modified.txt"/>
 
     </target>
 
@@ -180,7 +185,7 @@
 
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
-<!--        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>-->
+        <!--        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>-->
     </target>
 
     <!-- =================================================================== -->
@@ -191,7 +196,7 @@
         depends="prepare">
 
         <!-- Create the dest dir if it doesn't exist. -->
-        <mkdir dir="${dest.dir}" />
+        <mkdir dir="${dest.dir}"/>
 
         <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
             debug="on" source="1.4"
@@ -213,7 +218,8 @@
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-            depends="set-db-type, set-tstamp, war-postgres, war-oracle"/>
+        depends="set-db-type, set-tstamp, war-postgres, war-oracle"/>
+
 
     <!-- =================================================================== -->
 
@@ -226,9 +232,9 @@
         <delete dir="${dist.dir}" quiet="true"/>
 
         <!-- Create the distribution dir if it doesn't exist. -->
-        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${dist.dir}"/>
         <!-- Create the tld dir if it doesn't exist. -->
-        <mkdir dir="${tld.dir}" />
+        <mkdir dir="${tld.dir}"/>
 
         <!-- Copy struts standard tld files -->
         <copy todir="${tld.dir}">
@@ -251,7 +257,7 @@
         <!-- Common layouts -->
         <copy todir="${layouts.dir}">
             <fileset dir="${commons.layouts.dir}">
-                <exclude name="*Frame.jsp" />
+                <exclude name="*Frame.jsp"/>
             </fileset>
         </copy>
 
@@ -262,7 +268,7 @@
 
         <!-- Common jsp files -->
         <copy todir="${pages.dir}">
-            <fileset dir="${commons.pages.dir}" />
+            <fileset dir="${commons.pages.dir}"/>
         </copy>
 
         <!-- Copy log4j properties file -->
@@ -278,7 +284,7 @@
                 <include name="${layouts.dir}/**"/>
                 <include name="${pages.dir}/*.jsp"/>
                 <include name="${images.dir}/*"/>
-<!--                <include name="${styles.dir}/*.css"/>-->
+                <!--                <include name="${styles.dir}/*.css"/>-->
                 <include name="WEB-INF/struts-config.xml"/>
                 <include name="WEB-INF/tiles-defs.xml"/>
                 <include name="${tld.dir}/**"/>
@@ -291,26 +297,27 @@
             </lib>
 
             <!-- Include Struts' jars. -->
-            <lib dir="${intact.app.dir}/lib" />
+            <lib dir="${intact.app.dir}/lib"/>
 
             <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">
-                 <include name="db-ojb-1.0.rc6.jar"/>
-                 <include name="commons-dbcp-1.1.jar"/>
-                 <include name="log4j-1.2.8.jar"/>
-                 <include name="commons-pool-1.1.jar"/>
-                 <include name="commons-lang-2.0.jar"/>
-                 <include name="${db}"/>
+                <include name="db-ojb-1.0.rc6.jar"/>
+                <include name="commons-dbcp-1.1.jar"/>
+                <include name="log4j-1.2.8.jar"/>
+                <include name="commons-pool-1.1.jar"/>
+                <include name="commons-lang-2.0.jar"/>
+                <include name="${db}"/>
             </lib>
 
+
             <!-- Include StatisticView jars. -->
-            <lib dir="${lib.dir}" />
+            <lib dir="${lib.dir}"/>
 
             <!-- StatisticView classes and config files. -->
             <classes dir="${dest.dir}"/>
         </war>
 
-        <antcall target="gen-context-file" />
+        <antcall target="gen-context-file"/>
     </target>
 
     <!-- =================================================================== -->
@@ -335,13 +342,13 @@
 
     <target name="war-postgres" if="postgres">
         <!-- Load postgres properties. -->
-        <property file="${intact.root}/config/postgres.properties" />
+        <property file="${intact.root}/config/postgres.properties"/>
 
         <echo message="Building a war for postgres ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
         <antcall target="build-war">
-            <param name="db" value="postgresql.jar"/>
+            <param name="db" value="${postgresql.jar}"/>
             <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
@@ -355,13 +362,13 @@
 
     <target name="war-oracle" description="Builds a war file for oracle" if="oracle">
         <!-- Load oracle properties. -->
-        <property file="${intact.root}/config/oracle.properties" />
+        <property file="${intact.root}/config/oracle.properties"/>
 
         <echo message="Building a war for oracle ${dbalias} database"/>
         <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
 
         <antcall target="build-war">
-            <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+            <param name="db" value="${oracle.jar}"/>
             <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
@@ -375,13 +382,18 @@
 
         <echo message="Now you have to restart Tomcat ... "/>
 
+        <!-- problem -->
+
         <ant dir=".." inheritAll="false" target="deploy">
             <property name="war" value="statisticView/${dist.dir}/${war.name}"/>
         </ant>
 
+
+
+
         <!-- Copy context files in the Tomcat's webapps directory -->
         <copy file="${dist.dir}/${statisticView-context-file}"
-              todir="${webapps.dir}" overwrite="yes"/>
+            todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -433,16 +445,16 @@
 
         <!-- Copy the template file -->
         <copy todir="${dist.dir}"
-              file="${intact.context.dir}/${statisticView-context-file}"
-              overwrite="true" />
+            file="${intact.context.dir}/${statisticView-context-file}"
+            overwrite="true"/>
 
         <!-- Customize the context file -->
         <replace file="${dist.dir}/${statisticView-context-file}"
-                 token="[WAR.FILE.NAME]"
-                 value="${war.name}" />
+            token="[WAR.FILE.NAME]"
+            value="${war.name}"/>
         <replace file="${dist.dir}/${statisticView-context-file}"
-                 token="[server.name]"
-                 value="${server.name}" />
+            token="[server.name]"
+            value="${server.name}"/>
     </target>
 
 </project>
