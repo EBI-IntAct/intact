@@ -16,6 +16,9 @@ import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundException;
+import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -98,26 +101,26 @@ public final class CenteredAction extends IntactBaseAction {
 
             try {
                 GraphHelper gh = new GraphHelper ( user );
-                depthInt = Integer.parseInt (depth);
+                depthInt = Integer.parseInt(depth);
                 in = gh.getInteractionNetwork (AC, depthInt);
-            } catch (Exception e) {
-                logger.error ("when trying to get an interaction network", e);
-                addError ("error.interactionNetwork.notCreated");
+            } catch (ProteinNotFoundException e) {
+                super.addError ("error.protein.notFound", AC);
+                super.saveErrors(request);
+                return (mapping.findForward("error"));
+
+            } catch (SearchException e) {
+                super.addError ("error.search.process", e.getMessage());
+                super.saveErrors(request);
+                return (mapping.findForward("error"));
+
+            } catch (IntactException e) {
+                super.addError ("error.interactionNetwork.notCreated", e.getMessage());
                 super.saveErrors(request);
                 return (mapping.findForward("error"));
             }
 
-            if (null == in) {
-                // warn the user that an error occur
-                addError ("error.interactionNetwork.notCreated");
-            } else {
-                if (0 == in.sizeNodes()) {
-                    addError ("error.interactionNetwork.noProteinFound");
-                }
-            }
-
-            if (false == super.isErrorsEmpty()) {
-                // Report any errors we have discovered back to the original form
+            if (0 == in.sizeNodes()) {
+                super.addError ("error.interactionNetwork.noProteinFound");
                 super.saveErrors(request);
                 return (mapping.findForward("error"));
             }
@@ -130,7 +133,7 @@ public final class CenteredAction extends IntactBaseAction {
 
                 if ((null != errorMessages) && (errorMessages.length > 0)) {
                     for (int i = 0; i<errorMessages.length; i++) {
-                         addError("error.webService", errorMessages[i]);
+                        addError("error.webService", errorMessages[i]);
                         logger.error (errorMessages[i]);
                     }
                     super.saveErrors(request);
@@ -138,7 +141,7 @@ public final class CenteredAction extends IntactBaseAction {
                 }
             } catch (Exception e) {
                 addError ("error.webService", e.getMessage());
-                logger.error (e);
+                logger.error (e.getMessage(), e);
                 super.saveErrors(request);
                 return (mapping.findForward("error"));
             }

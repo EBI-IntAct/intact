@@ -6,7 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.hierarchView.struts.taglibs;
 
 // intact
-import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.highlightment.source.HighlightmentSource;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean;
@@ -17,7 +17,8 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Properties;
+
+import org.apache.log4j.Logger;
 
 
 
@@ -28,6 +29,8 @@ import java.util.Properties;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
 public class DisplaySourceTag extends TagSupport {
+
+    private static Logger logger = Logger.getLogger(Constants.LOGGER_NAME);
 
     /**
      * Evaluate the tag's body content.
@@ -46,31 +49,20 @@ public class DisplaySourceTag extends TagSupport {
         HttpSession session = pageContext.getSession();
 
         try {
-
             String AC = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_AC);
             String method_class = (String) session.getAttribute (StrutsConstants.ATTRIBUTE_METHOD_CLASS);
 
-            Properties properties = PropertyLoader.load (StrutsConstants.PROPERTY_FILE);
-            String debug = null;
-            if (null != properties) {
-                debug = properties.getProperty ("application.debug");
-            } else {
-                debug = "disable";
-            }
-
-            if (debug.equalsIgnoreCase ("enable")) {
-                pageContext.getOut().write ("AC : " + AC + "<br>");
-                pageContext.getOut().write ("method : " + method_class + " <br>");
-            }
+            logger.info ("Display highlight source items for AC = " + AC +
+                         "  SourceClass = " + method_class);
 
             if (null != AC) {
-                HighlightmentSource source = HighlightmentSource.getHighlightmentSource(method_class);
+                // get the implementation class of the selected source
+                HighlightmentSource source = HighlightmentSource.getHighlightmentSource (method_class);
 
                 if (null == source) {
                     pageContext.getOut().write ("An error occured when trying to retreive source.<br>");
                 } else {
                     Collection urls = source.getUrl(AC, session);
-
                     Iterator iterator = urls.iterator();
                     int size = urls.size();
 
@@ -85,16 +77,17 @@ public class DisplaySourceTag extends TagSupport {
 
                         /* redirection to this URL */
                         String msg = "<script language=\"JavaScript\">\n" +
-                                "<!--\n" +
-                                "     forward ( '" + absoluteUrl + "' );\n" +
-                                "//-->\n" +
-                                "</script>\n";
+                                     "<!--\n" +
+                                     "     forward ( '" + absoluteUrl + "' );\n" +
+                                     "//-->\n" +
+                                     "</script>\n";
 
                         pageContext.getOut().write (msg);
 
                     } else {
                         // more than 1 source available : display a list of link
-                        pageContext.getOut().write ("Select an element in the list : <br>");
+                        StringBuffer sb = new StringBuffer();
+                        sb.append ("Select an element in the list : <br>");
 
                         while (iterator.hasNext()) {
                             LabelValueBean url = (LabelValueBean) iterator.next();
@@ -102,11 +95,14 @@ public class DisplaySourceTag extends TagSupport {
                             String label = url.getLabel();
                             String description = url.getDescription();
 
-                            if (null == description)
-                                pageContext.getOut().write ("<a href=" + adress +" target=\"frameHierarchy\">" + label + "</a> <br>");
-                            else
-                                pageContext.getOut().write("<a href=" + adress +" target=\"frameHierarchy\">" + label + "</a> " + description + "<br>");
+                            sb.append ("<a href=" + adress +" target=\"frameHierarchy\">" + label + "</a>");
+                            if (null != description)
+                                sb.append (" : " + description);
+
+                            sb.append("<br>");
                         } // while
+
+                        pageContext.getOut().write (sb.toString());
                     } // else
                 } // else
             } // if

@@ -5,8 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.highlightment;
 
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.application.hierarchView.business.image.GraphToSVG;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
@@ -19,26 +17,23 @@ import java.io.IOException;
 import java.util.Collection;
 
 
-public class HighlightProteins{
-
+public class HighlightProteins {
 
     /** Constructor
      * Allow to modify the current graph to highlight a part of this.
      *
      * @param source The highlighting source
-     * @param behaviour The highlighting behaviour
+     * @param behaviourClass The highlighting behaviour class name
      * @param session The current session
      * @param in The interaction network
      */
-    public HighlightProteins(String source,
-                             String behaviour,
-                             HttpSession session,
-                             InteractionNetwork in)throws IOException{
-
-        // Validate the request parameters specified by the user
-        ActionErrors errors = new ActionErrors();
-
-        // Put the default color and default visibility in the interaction network before to highlight this one
+    public HighlightProteins (String source,
+                              String behaviourClass,
+                              HttpSession session,
+                              InteractionNetwork in)
+            throws IOException {
+        // Put the default color and default visibility in the
+        // interaction network before to highlight this one
         in.initNodes();
 
         // Search the list of protein to highlight
@@ -48,28 +43,22 @@ public class HighlightProteins{
         Collection proteinsToHighlight = highlightmentSource.proteinToHightlight (session, in);
 
         // Interaction network 's modification
-        HighlightmentBehaviour highlightmentBehaviour = HighlightmentBehaviour.getHighlightmentBehaviour(behaviour);
-        highlightmentBehaviour.apply(proteinsToHighlight,in);
+        HighlightmentBehaviour highlightmentBehaviour;
+        highlightmentBehaviour = HighlightmentBehaviour.getHighlightmentBehaviour (behaviourClass);
 
-        GraphToSVG te = new GraphToSVG(in);
+        highlightmentBehaviour.apply (proteinsToHighlight, in);
 
-        te.draw();
-        if (null == te) throw new IOException ("Unable to create the image data");
-        ImageBean ib = te.getImageBean();
+        // Rebuild the image SVG data
+        GraphToSVG svgProducer = new GraphToSVG (in);
+        if (null == svgProducer) throw new IOException ("Unable to create the image data");
+        svgProducer.draw();
 
-        if (null == ib)
-            errors.add("ImageBean", new ActionError("error.ImageBean.build"));
+        ImageBean ib = svgProducer.getImageBean();
 
-        // store the bean
+        // store data in the session
         session.setAttribute (StrutsConstants.ATTRIBUTE_IMAGE_BEAN, ib);
-
-        // store the graph
         session.setAttribute (StrutsConstants.ATTRIBUTE_GRAPH, in);
 
-
     } // highlightProteins
-
-
-
 
 } // HighlightProteins

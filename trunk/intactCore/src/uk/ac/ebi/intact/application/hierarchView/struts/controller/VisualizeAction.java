@@ -5,9 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.hierarchView.struts.controller;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.SearchException;
+
 import uk.ac.ebi.intact.application.hierarchView.business.IntactUser;
 import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.graph.GraphHelper;
@@ -18,6 +18,11 @@ import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 import uk.ac.ebi.intact.application.hierarchView.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.hierarchView.struts.view.VisualizeForm;
 import uk.ac.ebi.intact.application.hierarchView.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.hierarchView.exception.ProteinNotFoundException;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -138,23 +143,24 @@ public final class VisualizeAction extends IntactBaseAction {
                 GraphHelper gh = new GraphHelper ( user );
                 depthInt = Integer.parseInt(depth);
                 in = gh.getInteractionNetwork (AC, depthInt);
-            } catch (Exception e) {
-                super.addError ("error.interactionNetwork.notCreated");
+            } catch (ProteinNotFoundException e) {
+                super.addError ("error.protein.notFound", AC);
+                super.saveErrors(request);
+                return (mapping.findForward("error"));
+
+            } catch (SearchException e) {
+                super.addError ("error.search.process", e.getMessage());
+                super.saveErrors(request);
+                return (mapping.findForward("error"));
+
+            } catch (IntactException e) {
+                super.addError ("error.interactionNetwork.notCreated", e.getMessage());
                 super.saveErrors(request);
                 return (mapping.findForward("error"));
             }
 
-            if (null == in) {
-                // warn the user that an error occur
-                super.addError ("error.interactionNetwork.notCreated");
-            } else {
-                if (0 == in.sizeNodes()) {
-                    super.addError ("error.interactionNetwork.noProteinFound");
-                }
-            }
-
-            if (false == super.isErrorsEmpty()) {
-                // Report any errors we have discovered back to the original form
+            if (0 == in.sizeNodes()) {
+                super.addError ("error.interactionNetwork.noProteinFound");
                 super.saveErrors(request);
                 return (mapping.findForward("error"));
             }
@@ -184,7 +190,6 @@ public final class VisualizeAction extends IntactBaseAction {
 
             // GraphToImage te = new GraphToImage (in);
             GraphToSVG te = new GraphToSVG (in);
-
             te.draw ();
             ImageBean ib = te.getImageBean ();
 

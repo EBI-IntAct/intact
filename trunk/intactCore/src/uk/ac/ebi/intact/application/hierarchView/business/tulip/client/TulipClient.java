@@ -13,12 +13,12 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
+import java.rmi.RemoteException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 
 /**
@@ -63,11 +63,18 @@ public class TulipClient {
             String tulipAdress = null;
             if (null != properties) {
                 tulipAdress = properties.getProperty ("webService.adress");
-                logger.debug ("Tulip web service URL: " + tulipAdress);
             } else {
+                logger.error ("Unable to get WebService properties ... so can't use the web service.");
                 tulip = null;
                 return;
             }
+
+            if (null == tulipAdress) {
+                logger.error ("Unable to find the 'webService.adress' property in " +
+                              StrutsConstants.WEB_SERVICE_PROPERTY_FILE);
+                tulip = null;
+                return;
+            } else logger.debug ("Tulip web service URL: " + tulipAdress);
 
             URL tulipUrl = new URL (tulipAdress);
 
@@ -82,22 +89,7 @@ public class TulipClient {
             logger.error("Unable to create the Tulip web service", se);
             tulip = null;
         }
-
     } // constructor
-
-
-    /**
-     * allows to know if the service is ready or not.
-     * BUG : that method isn't reliable !
-     *
-     * @return is the webService is rubbubg
-     */
-    public boolean isReady () {
-        if (null == tulip) {
-            return false;
-        }
-        return true;
-    } // isReady
 
 
     /**
@@ -107,19 +99,19 @@ public class TulipClient {
      * @return the collection of protein coordinates
      */
     public ProteinCoordinate[] getComputedTlpContent (String tlpContent)
-           throws Exception {
+           throws RemoteException {
 
         ProteinCoordinate[] pc = null;
         String mask = "0";
 
-        logger.info (tlpContent);
+        logger.info ("TLP content: \n" + tlpContent);
 
         if (null != tulip) {
             try {
                 pc = tulip.getComputedTlpContent (tlpContent, mask);
-            } catch (java.rmi.RemoteException se) {
-                logger.error ("Unable to retreive proteins' coordinates", se);
-                throw new Exception (se.getMessage());
+            } catch (RemoteException re) {
+                logger.error ("Unable to retreive proteins' coordinates", re);
+                throw re;
             }
         }
 
@@ -135,28 +127,16 @@ public class TulipClient {
     public String[] getErrorMessages (boolean hasToBeCleaned) {
         try {
             return tulip.getErrorMessages (hasToBeCleaned);
-        } catch (java.rmi.RemoteException se) {
+        } catch (RemoteException re) {
             // create an error message to display
             String[] errors = new String[1];
             errors[0] = "\n\nError while checking errors.";
 
             // log exception
-            se.printStackTrace ();
+            logger.error ("Unable to get error messages", re);
             return errors;
         }
     } // getErrorMessages
-
-
-    /**
-     * get the line separator string
-     *
-     */
-    public String getLineSeparator () {
-        String result = null;
-
-        return result;
-    } // getLineSeparator
-
 
 
 
@@ -181,8 +161,9 @@ public class TulipClient {
         ProteinCoordinate[] proteins = null;
 
         try {
+            System.out.print ("Check if the web service is running ... ");
             proteins = client.getComputedTlpContent (content);
-        } catch (Exception e) {
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
 
