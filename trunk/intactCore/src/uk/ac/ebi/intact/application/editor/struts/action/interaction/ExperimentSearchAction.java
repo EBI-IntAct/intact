@@ -6,14 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.model.Experiment;
-
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.model.Experiment;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,37 +54,24 @@ public class ExperimentSearchAction extends AbstractEditorAction {
         String searchValue = (String) theForm.get(searchParam);
         if (searchValue.length() == 0) {
             ActionErrors errors = new ActionErrors();
-            errors.add("int.exp.search",
+            errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.exp.search.input"));
             saveErrors(request, errors);
             return mapping.getInputForward();
-//            return mapping.findForward(EditorConstants.FORWARD_INPUT);
         }
         // Handler to the current user.
-        EditUserI user = super.getIntactUser(request);
+        EditUserI user = getIntactUser(request);
 
         // The collection to hold experiments.
-        Collection experiments;
-        try {
-            experiments = user.search(Experiment.class.getName(), searchParam,
-                    searchValue);
-        }
-        catch (SearchException se) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("int.exp.search",
-                    new ActionError("error.search", se.getMessage()));
-            saveErrors(request, errors);
-            return mapping.getInputForward();
-//            return mapping.findForward(EditorConstants.FORWARD_INPUT);
-        }
+        Collection experiments = user.search(Experiment.class.getName(), searchParam,
+                searchValue);
         // Search found any results?
         if (experiments.isEmpty()) {
             ActionErrors errors = new ActionErrors();
-            errors.add("int.exp.search",
+            errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.exp.search.empty", searchParam));
             saveErrors(request, errors);
             return mapping.getInputForward();
-//            return mapping.findForward(EditorConstants.FORWARD_INPUT);
         }
         // The number of Experiments retrieved from the search.
         int size = experiments.size();
@@ -95,12 +79,11 @@ public class ExperimentSearchAction extends AbstractEditorAction {
         // Just an arbitrary number for the moment.
         if (size > 10) {
             ActionErrors errors = new ActionErrors();
-            errors.add("int.exp.search",
+            errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.int.exp.search.many",
                             Integer.toString(size), searchParam, "10"));
             saveErrors(request, errors);
             return mapping.getInputForward();
-//            return mapping.findForward(EditorConstants.FORWARD_INPUT);
         }
         // Can safely cast it as we have the correct editor view bean.
         InteractionViewBean view = (InteractionViewBean) user.getView();
@@ -108,7 +91,7 @@ public class ExperimentSearchAction extends AbstractEditorAction {
         // Add the search result to the holder.
         view.addExperimentToHold(experiments);
 
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 
     /**
@@ -119,12 +102,18 @@ public class ExperimentSearchAction extends AbstractEditorAction {
      * over any other value.
      */
     private String getSearchParam(DynaActionForm form) {
-        if (((String) form.get("ac")).length() != 0) {
+        if (!isPropertyEmpty(form, "ac")) {
             return "ac";
         }
-        if (((String) form.get("spAc")).length() != 0) {
+        if (!isPropertyEmpty(form, "spAc")) {
             return "spAc";
         }
+//        if (((String) form.get("ac")).length() != 0) {
+//            return "ac";
+//        }
+//        if (((String) form.get("spAc")).length() != 0) {
+//            return "spAc";
+//        }
         return "shortLabel";
     }
 }
