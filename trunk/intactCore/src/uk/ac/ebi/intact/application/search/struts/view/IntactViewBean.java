@@ -119,7 +119,7 @@ public class IntactViewBean implements Serializable {
      * @exception TransformerConfigurationException thrown during the parse
      *  when it is constructing the Templates object and fails.
      */
-    public void transform(TransformerFactory factory, int id, Result out)
+    public void transform(TransformerFactory factory, String id, Result out)
             throws TransformerException {
         Transformer transformer =
                 factory.newTransformer(new StreamSource(this.stylesheet));
