@@ -63,7 +63,7 @@ public class RangeBeanTest extends TestCase {
         // anything).
         bean.setFromRange("");
         bean.setToRange("");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // Must be from range.
@@ -75,7 +75,7 @@ public class RangeBeanTest extends TestCase {
         bean.setFromRange("2");
         assertTrue(bean.getFromRange().length() != 0);
         assertTrue(bean.getToRange().length() == 0);
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // Not from 'from' range.
@@ -86,7 +86,7 @@ public class RangeBeanTest extends TestCase {
         // TEST: Non numeric values for both from and to ranges.
         bean.setFromRange("a");
         bean.setToRange("b");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // Must be from range.
@@ -97,7 +97,7 @@ public class RangeBeanTest extends TestCase {
         // TEST: Non numeric values for to range.
         bean.setFromRange("2");
         bean.setToRange("b");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // Not from 'from' range.
@@ -108,21 +108,21 @@ public class RangeBeanTest extends TestCase {
         // TEST: Numeric values for from and to ranges.
         bean.setFromRange("2");
         bean.setToRange("2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: from is >
         bean.setFromRange(">2");
         bean.setToRange("2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: from is > but to is non numeric.
         bean.setFromRange(">2");
         bean.setToRange("a");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // Not from 'from' range.
@@ -133,14 +133,14 @@ public class RangeBeanTest extends TestCase {
         // TEST: from is < (valid case)
         bean.setFromRange("<2");
         bean.setToRange("2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: from is < alone.
         bean.setFromRange("<");
         bean.setToRange("2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // Must be from range.
@@ -151,21 +151,21 @@ public class RangeBeanTest extends TestCase {
         // TEST: from is < and to range has a number alone.
         bean.setFromRange("<2");
         bean.setToRange("2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: to is >
         bean.setFromRange("2");
         bean.setToRange(">2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: to is > but from is non numeric.
         bean.setFromRange("a");
         bean.setToRange(">2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // From 'from' range.
@@ -176,14 +176,14 @@ public class RangeBeanTest extends TestCase {
         // TEST: from is < (valid case)
         bean.setFromRange("2");
         bean.setToRange("<2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: to is < alone.
         bean.setFromRange("2");
         bean.setToRange("<");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // Not from 'from' range.
@@ -194,14 +194,14 @@ public class RangeBeanTest extends TestCase {
         // TEST: to and from have < (valid case)
         bean.setFromRange("<2");
         bean.setToRange("<2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: to and from have > (valid case)
         bean.setFromRange(">2");
         bean.setToRange(">2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
@@ -212,7 +212,7 @@ public class RangeBeanTest extends TestCase {
         // TEST: from has fuzzy range, to has non numerics.
         bean.setFromRange("1..2");
         bean.setToRange("a");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // Not from 'from' range.
@@ -222,15 +222,15 @@ public class RangeBeanTest extends TestCase {
 
         // TEST: to and from have fuzzy ranges (valid case)
         bean.setFromRange("1..2");
-        bean.setToRange("1..2");
-        errors = bean.validate();
+        bean.setToRange("2..3");
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: test for incorrect 'dots' (one less).
         bean.setFromRange("1.2");
         bean.setToRange("1..2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // From 'from' range.
@@ -241,7 +241,7 @@ public class RangeBeanTest extends TestCase {
         // TEST: test for incorrect 'dots' (one extra).
         bean.setFromRange("1...2");
         bean.setToRange("1..2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Should have some errors.
         assertFalse(errors.isEmpty());
         // From 'from' range.
@@ -251,29 +251,29 @@ public class RangeBeanTest extends TestCase {
 
         // TEST: from fuzzy to is not fuzzy (valid case).
         bean.setFromRange("1..2");
-        bean.setToRange("1");
-        errors = bean.validate();
+        bean.setToRange("2");
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: from fuzzy to is not fuzzy (valid case).
         bean.setFromRange("1..2");
-        bean.setToRange(">1");
-        errors = bean.validate();
+        bean.setToRange(">2");
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: to is fuzzy from is not fuzzy (valid case).
         bean.setFromRange("1");
         bean.setToRange("1..2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // TEST: to is fuzzy from is not fuzzy (valid case).
         bean.setFromRange(">1");
         bean.setToRange("1..2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
@@ -284,28 +284,28 @@ public class RangeBeanTest extends TestCase {
         // Negative numbers.
         bean.setFromRange("-3");
         bean.setToRange("-2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // Negative numbers and fuzzy types.
         bean.setFromRange("-1");
         bean.setToRange("1..2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // Negative fuzzy values.
-        bean.setFromRange("-1..3");
+        bean.setFromRange("-4..-3");
         bean.setToRange("-2..2");
-        errors = bean.validate();
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
 
         // Negative fuzzy values.
         bean.setFromRange("-3..-1");
-        bean.setToRange("-2..-2");
-        errors = bean.validate();
+        bean.setToRange("1..2");
+        errors = bean.validate("new");
         // Shouldn't have errors.
         assertNull(errors);
     }
@@ -319,8 +319,15 @@ public class RangeBeanTest extends TestCase {
         bean.setToRange("5");
 
         // The copy.
-        RangeBean copy = (RangeBean) bean.clone();
-        
+        RangeBean copy = null;
+        try {
+            copy = (RangeBean) bean.clone();
+        }
+        catch (CloneNotSupportedException cnse) {
+            assertTrue(true);
+            return;
+        }
+
         assertEquals(copy.getFromRange(), bean.getFromRange());
         assertEquals(copy.getToRange(), bean.getToRange());
 

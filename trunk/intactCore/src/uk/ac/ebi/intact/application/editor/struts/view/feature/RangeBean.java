@@ -28,9 +28,6 @@ import org.apache.struts.action.ActionErrors;
  * @version $Id$
  */
 public class RangeBean extends AbstractEditKeyBean implements Cloneable {
-    // Class Data
-
-    private static final String ourUndeterminedFuzzyType = "undetermined";
 
     // Instance Data
 
@@ -97,27 +94,15 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
     }
 
     /**
-     * Sets the from fuzzy type as undertermined.
-     * 
-     * @param type the from fuzzy type. Must be of valid type. No exceptions or
-     * errors thrown for an invalid/unknown type.
+     * Sets the From fuzzy type as undertermined.
      */
-    //    public void setFromFuzzyType(String type) {
-    //        myFromFuzzyType = getFuzzyType(type);
-    //    }
     public void setFromFuzzyTypeAsUndetermined() {
         myFromFuzzyType = CvFuzzyType.UNDETERMINED;
     }
 
     /**
-     * Sets the to fuzzy type as undertermined.
-     * 
-     * @param type the from fuzzy type. Must be of valid type. No exceptions or
-     * errors thrown for an invalid/unknown type.
+     * Sets the To fuzzy type as undertermined.
      */
-    //    public void setToFuzzyType(String type) {
-    //        myToFuzzyType = getFuzzyType(type);
-    //    }
     public void setToFuzzyTypeAsUndetermined() {
         myToFuzzyType = CvFuzzyType.UNDETERMINED;
     }
@@ -205,11 +190,32 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
     }
 
     /**
+     * Returns true if given bean is equivalent to the current bean.
+     * @param rb the bean to compare.
+     * @return true if ranges, link and undetermined are equivalent
+     * to corresponding value in <code>rb</code>; false is returned for all
+     * other instances.
+     */
+    public boolean isEquivalent(RangeBean rb) {
+        // Check ranges.
+        if (!rb.getFromRange().equals(getFromRange())
+                || !rb.getToRange().equals(getToRange())) {
+            return false;
+        }
+
+        // Check link and undetermined types.
+        if ((myLink != rb.myLink) || (myUndetermined != rb.myUndetermined)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Validates the vlaues for from and to ranges.
-     * 
+     *
      * @return null if no errors found in validating from/to ranges.
      */
-    public ActionErrors validate() {
+    public ActionErrors validate(String prefix) {
         // The errors to return.
         ActionErrors errors = null;
 
@@ -222,13 +228,13 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
             // Parse the from range.
             if (!isRangeValid(fromType, fromRange)) {
                 errors = new ActionErrors();
-                errors.add("new.fromRange", new ActionError(
+                errors.add(prefix + ".fromRange", new ActionError(
                         "error.feature.range.interval.invalid"));
             }
         }
         catch (NumberFormatException nfe) {
             errors = new ActionErrors();
-            errors.add("new.fromRange", new ActionError(
+            errors.add(prefix + ".fromRange", new ActionError(
                     "error.feature.range.invalid"));
         }
         // Don't check any further if we have errors.
@@ -245,14 +251,77 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
             // Parse the to range.
             if (!isRangeValid(toType, toRange)) {
                 errors = new ActionErrors();
-                errors.add("new.toRange", new ActionError(
+                errors.add(prefix + ".toRange", new ActionError(
                         "error.feature.range.interval.invalid"));
             }
         }
         catch (NumberFormatException nfe) {
             errors = new ActionErrors();
-            errors.add("new.toRange", new ActionError(
+            errors.add(prefix + ".toRange", new ActionError(
                     "error.feature.range.invalid"));
+        }
+        // Don't check any further if we have errors.
+        if (errors != null) {
+            return errors;
+        }
+        // Do the parsing to get the values for 'from'.
+        int fromStart = 0;
+        int fromEnd = 0;
+        // Need special parsing for fuzzy types.
+        if (fromType.equals(CvFuzzyType.FUZZY)) {
+            int pos = fromRange.indexOf('.');
+            fromStart = Integer.parseInt(fromRange.substring(0, pos));
+            // Skip two positions to be on the first character of the end level.
+            pos += 2;
+            fromEnd = Integer.parseInt(fromRange.substring(pos));
+        }
+        else {
+            // Non fuzzy types.
+            fromStart = Integer.parseInt(fromRange);
+            fromEnd = fromStart;
+        }
+        // Do the parsing to get the values for 'to'.
+        int toStart = 0;
+        int toEnd = 0;
+        // Need special parsing for fuzzy types.
+        if (toType.equals(CvFuzzyType.FUZZY)) {
+            int pos = toRange.indexOf('.');
+            toStart = Integer.parseInt(toRange.substring(0, pos));
+            // Skip two positions to be on the first character of the end level.
+            pos += 2;
+            toEnd = Integer.parseInt(toRange.substring(pos));
+        }
+        else {
+            // Non fuzzy types.
+            toStart = Integer.parseInt(toRange);
+            toEnd = toStart;
+        }
+        // Need to validate the from and start ranges. These validations are
+        // copied from Range constructor.
+        if (fromEnd < fromStart) {
+            errors = new ActionErrors();
+            errors.add(prefix + ".range", new ActionError(
+                    "error.feature.range.fromEnd.less.fromStart"));
+        }
+        else if (toEnd < toStart) {
+            errors = new ActionErrors();
+            errors.add(prefix + ".range", new ActionError(
+                    "error.feature.range.toEnd.less.toStart"));
+        }
+        else if (fromEnd > toStart) {
+            errors = new ActionErrors();
+            errors.add(prefix + ".range", new ActionError(
+                    "error.feature.range.fromEnd.more.toStart"));
+        }
+        else if (fromStart > toEnd) {
+            errors = new ActionErrors();
+            errors.add(prefix + ".range", new ActionError(
+                    "error.feature.range.fromStart.more.toEnd"));
+        }
+        else if (fromStart > toStart) {
+            errors = new ActionErrors();
+            errors.add(prefix + ".range", new ActionError(
+                    "error.feature.range.fromStart.more.toStart"));
         }
         return errors;
     }
@@ -270,7 +339,7 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
 
     /**
      * Construts a new Range using the current values in the bean.
-     * <b>Must </b> call {@link #validate()}method prior to calling
+     * <b>Must </b> call {@link #validate(String)}method prior to calling
      * this method.
      * 
      * @param parent the parent of the range to return.
@@ -282,7 +351,7 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
      * object (ie., thrown from the constructor of the Range class).
      * 
      * <pre>
-     *  pre: validate()
+     *  pre: validate(String)
      * </pre>
      */
     public Range getRange(Feature parent, EditUserI user)
@@ -332,49 +401,34 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
         CvFuzzyType fromFuzzyType = getFuzzyType(fromType, user);
         CvFuzzyType toFuzzyType = getFuzzyType(toType, user);
 
-        // Construct a range object to return.
-//        Range range = new Range(user.getInstitution(), parent, fromStart,
-//                fromEnd, toStart, toEnd, null);
-
-        // myRange is null for a new range.
-//        if (myRange == null) {
-//            // Construct a range object to return.
-//            myRange = new Range(user.getInstitution(), parent, fromStart,
-//                    fromEnd, toStart, toEnd, null);
-//        }
-//        else {
-            // Need to validate the from and start ranges. These validations are
-            // copied from Range constructor. Alternative is to create a dummy
-            // range object to validate inputs.
-            if (fromEnd < fromStart) {
-                throw new IllegalArgumentException(
-                        "End of 'from' interval must be bigger than the start!");
-            }
-            if (toEnd < toStart) {
-                throw new IllegalArgumentException(
-                        "End of 'to' interval must be bigger than the start!");
-            }
-            if (fromEnd > toStart) {
-                throw new IllegalArgumentException(
-                        "The 'from' and 'to' intervals cannot overlap!");
-            }
-            if (fromStart > toEnd) {
-                throw new IllegalArgumentException(
-                        "The 'from' interval starts beyond the 'to' interval!");
-            }
-            if (fromStart > toStart) {
-                throw new IllegalArgumentException(
-                        "The 'from' interval cannot begin during the 'to' interval!");
-            }
-            // Update the ranges for the existing range.
-            myRange.setFromIntervalStart(fromStart);
-            myRange.setFromIntervalEnd(fromEnd);
-            myRange.setToIntervalStart(toStart);
-            myRange.setToIntervalEnd(toEnd);
-//        }
-        //
-        //        // Important: Set the owner (or persistent will fail)
-        //        range.setOwner(user.getInstitution());
+        // Need to validate the from and start ranges. These validations are
+        // copied from Range constructor. Alternative is to create a dummy
+        // range object to validate inputs.
+        if (fromEnd < fromStart) {
+            throw new IllegalArgumentException(
+                    "End of 'from' interval must be bigger than the start!");
+        }
+        if (toEnd < toStart) {
+            throw new IllegalArgumentException(
+                    "End of 'to' interval must be bigger than the start!");
+        }
+        if (fromEnd > toStart) {
+            throw new IllegalArgumentException(
+                    "The 'from' and 'to' intervals cannot overlap!");
+        }
+        if (fromStart > toEnd) {
+            throw new IllegalArgumentException(
+                    "The 'from' interval starts beyond the 'to' interval!");
+        }
+        if (fromStart > toStart) {
+            throw new IllegalArgumentException(
+                    "The 'from' interval cannot begin during the 'to' interval!");
+        }
+        // Update the ranges for the existing range.
+        myRange.setFromIntervalStart(fromStart);
+        myRange.setFromIntervalEnd(fromEnd);
+        myRange.setToIntervalStart(toStart);
+        myRange.setToIntervalEnd(toEnd);
 
         // Set the fuzzy types.
         myRange.setFromCvFuzzyType(fromFuzzyType);
@@ -386,6 +440,14 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
         return myRange;
     }
 
+    /**
+     * Makes a new Range instance.
+     * @param parent the parent for the new Range.
+     * @param user handler to access the persistent system.
+     * @return a new Range constructed using values in the bean.
+     * @throws SearchException for errors in searching the persistent system.
+     * @throws IllegalArgumentException for validation errors.
+     */ 
     public Range makeRange(Feature parent, EditUserI user)
             throws SearchException, IllegalArgumentException {
         // The from fuzzy type as a string.
@@ -449,45 +511,15 @@ public class RangeBean extends AbstractEditKeyBean implements Cloneable {
     /**
      * Makes a clone of this object.
      * 
-     * @return a cloned version of the current instance. A null
+     * @return a cloned version of the current instance.
+     * @throws CloneNotSupportedException for errors in cloning.
      */
-    public Object clone() {
-        try {
-            return super.clone();
-        }
-        catch (CloneNotSupportedException e) {
-            return null;
-        }
+    public Object clone() throws CloneNotSupportedException {
+        RangeBean copy = (RangeBean) super.clone();
+        // Reset to view mode.
+        copy.setEditState(AbstractEditBean.VIEW);
+        return copy;
     }
-
-    //    // Override Objects's equal method.
-    //
-    //    /**
-    //     * Compares <code>obj</code> with this object according to
-    //     * Java's equals() contract. Only returns <tt>true</tt> if ranges, link
-    // and
-    //     * undetermined al match.
-    //     * @param obj the object to compare.
-    //     */
-    //    public boolean equals(Object obj) {
-    //        // Identical to this?
-    //        if (obj == this) {
-    //            return true;
-    //        }
-    //        if ((obj != null) && (getClass() == obj.getClass())) {
-    //            // Can safely cast it.
-    //            RangeBean other = (RangeBean) obj;
-    //            // Match the from ranges.
-    //            if (getFromRange().equals(other.getFromRange())) {
-    //                // From ranges match. Match to the to range.
-    //                if (getToRange().equals(other.getToRange())) {
-    //                    // To ranges match; match boolean attributes.
-    //                    return myLink == other.myLink && myUndetermined == other.myUndetermined;
-    //                }
-    //            }
-    //        }
-    //        return false;
-    //    }
 
     // Helper methods
 

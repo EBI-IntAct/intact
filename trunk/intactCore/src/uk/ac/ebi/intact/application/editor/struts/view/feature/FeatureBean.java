@@ -8,21 +8,15 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
-import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.model.CvFeatureIdentification;
+import uk.ac.ebi.intact.model.CvFeatureType;
+import uk.ac.ebi.intact.model.Feature;
+import uk.ac.ebi.intact.model.Range;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
-
-import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Feature bean.
@@ -30,7 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class FeatureBean implements Serializable {
+public class FeatureBean implements Serializable, Cloneable {
 
     // Instance Data
 
@@ -73,11 +67,6 @@ public class FeatureBean implements Serializable {
      * True if this feature is linked. Default is not linked.
      */
     private boolean myLinked;
-
-    /**
-     * The call back class when a feature is selected.
-     */
-    private InteractionActionForm myCallBack;
 
     /**
      * True if this bein selected. Default is not selected.
@@ -152,9 +141,9 @@ public class FeatureBean implements Serializable {
         return myDetection;
     }
 
-//    public String getComponentAc() {
-//        return myFeature.getComponent().getAc();
-//    }
+    public String getComponentAc() {
+        return myFeature.getComponent().getAc();
+    }
     
     // Read/Write methods for JSPs
 
@@ -166,32 +155,17 @@ public class FeatureBean implements Serializable {
         myBoundDomain = label;
     }
 
-//    public String getLinked() {
-//        return myLinked;
-//    }
-//
-//    public void setLinked(String linked) {
-//        System.out.println("Linked: " + linked + " Feature AC: " + myAc);
-//        myLinked = linked;
-//    }
-
     public boolean isLinked() {
         return myLinked;
     }
 
     public void setLinked(boolean linked) {
-//        System.out.println("Linked 1: " + linked + " Feature AC: " + myAc);
         myLinked = linked;
     }
 
     public void setFeatureCmd(String value) {
         mySelected = true;
-//        myCallBack.setSelectedFeatureAc(myAc);
     }
-    
-//    public void setCallBack(InteractionActionForm callback) {
-//        myCallBack = callback;
-//    }
 
     // Other methods
 
@@ -255,7 +229,6 @@ public class FeatureBean implements Serializable {
      * @return the hascode of the AC is returned.
      */
     public int hashCode() {
-//        System.out.println("Called feature bean's hashcode");
         return myFeature.getAc().hashCode();
     }
 
@@ -278,6 +251,23 @@ public class FeatureBean implements Serializable {
         return false;
     }
 
+    /**
+     * Makes a clone of this object apart for the Feature instance this object
+     * is wrapped around.
+     *
+     * @return a cloned version of the current instance. A null
+     */
+    public Object clone() throws CloneNotSupportedException {
+        FeatureBean copy = (FeatureBean) super.clone();
+
+        // Clone range beans.
+        copy.myRanges = new ArrayList(myRanges.size());
+        for (Iterator iter = myRanges.iterator(); iter.hasNext();) {
+            copy.myRanges.add(((RangeBean) iter.next()).clone());
+        }
+        return copy;
+    }
+
     // Write methods.
 
     protected void setShortLabel(String label) {
@@ -290,5 +280,9 @@ public class FeatureBean implements Serializable {
 
     protected void addRange(RangeBean rb) {
         myRanges.add(rb);
+    }
+
+    protected void resetRanges() {
+        myRanges.clear();
     }
 }

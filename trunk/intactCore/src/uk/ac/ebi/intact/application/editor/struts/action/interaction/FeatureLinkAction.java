@@ -8,21 +8,13 @@ package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
 import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
+import uk.ac.ebi.intact.application.editor.struts.action.FillFormAction;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.model.Protein;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
-import java.util.Iterator;
 
 /**
  * The action class to handle events related to link/unlink of a feature from
@@ -31,7 +23,7 @@ import java.util.Iterator;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class FeatureLinkAction extends AbstractEditorAction {
+public class FeatureLinkAction extends FillFormAction {
 
     /**
      * This method handles events related to link/unlink of a feature.
@@ -70,6 +62,13 @@ public class FeatureLinkAction extends AbstractEditorAction {
             // default is unlink.
             unlink(intform, request, view);
         }
+        // Set Any anchors.
+        setAnchor(request, intform);
+
+        // Reset the dispatch action.
+        intform.resetDispatch();
+
+        // Back to the edit screen.
         return mapping.getInputForward();
     }
 
@@ -87,17 +86,13 @@ public class FeatureLinkAction extends AbstractEditorAction {
             errors.add("feature.link",
                     new ActionError("error.int.feature.link.error"));
             saveErrors(request, errors);
-//            return mapping.getInputForward();
+            return;
         }
-        else {
-            // The feature to link.
-            view.addFeatureLink(fbs[0], fbs[1]);
-        }
-
-//        return mapping.getInputForward();
+        // The feature to link.
+        view.addFeatureLink(fbs[0], fbs[1]);
     }
 
-    public void unlink(InteractionActionForm form,
+    private void unlink(InteractionActionForm form,
                        HttpServletRequest request,
                        InteractionViewBean view)
             throws Exception {
@@ -110,13 +105,9 @@ public class FeatureLinkAction extends AbstractEditorAction {
             errors.add("feature.link",
                     new ActionError("error.int.feature.unlink.error"));
             saveErrors(request, errors);
-//            return mapping.getInputForward();
+            return;
         }
-        else {
-            // This feature is linked.
-            view.addFeatureToUnlink(fb, getIntactUser(request));
-        }
-        // Back to the edit page.
-//        return mapping.getInputForward();
+        // This feature is linked.
+        view.addFeatureToUnlink(fb);
     }
 }

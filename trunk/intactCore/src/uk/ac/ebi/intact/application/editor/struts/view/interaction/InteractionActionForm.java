@@ -192,15 +192,6 @@ public class InteractionActionForm extends EditorActionForm {
                 return;
             }
         }
-        // Set the call back for features.
-        //        for (Iterator iterator1 = comps.iterator(); iterator1.hasNext();) {
-        //            ComponentBean cb = (ComponentBean) iterator1.next();
-        //            for (Iterator iterator2 = cb.getFeatures().iterator();
-        // iterator2.hasNext();) {
-        //                FeatureBean fb = (FeatureBean) iterator2.next();
-        //                fb.setCallBack(this);
-        //            }
-        //        }
         Logger.getLogger(EditorConstants.LOGGER)
                 .debug("Setting the components");
         // Clear previous components.
@@ -212,12 +203,6 @@ public class InteractionActionForm extends EditorActionForm {
 //            myComponents.
 //        }
         myComponents = new ArrayList(comps);
-//        for (Iterator iterator = myComponents.iterator(); iterator.hasNext();) {
-//            ComponentBean cb = (ComponentBean) iterator.next();
-//            for (Iterator iter1 = cb.getFeatures().iterator(); iter1.hasNext();) {
-//                System.out.println("Feature: " + ((FeatureBean) iter1.next()).getAc());
-//            }
-//        }
     }
 
     public List getComponents() {
@@ -269,6 +254,10 @@ public class InteractionActionForm extends EditorActionForm {
 
     public void setDispatchFeature(String dispatch) {
         myFeatureDispatch = dispatch;
+    }
+
+    public void resetDispatchFeature() {
+        myFeatureDispatch = "";
     }
 
 //    public void setSelectedFeatureAc(String ac) {

@@ -195,6 +195,17 @@ public class EditorActionServlet extends ActionServlet {
         map.put("error.taxid.mask", "info");
 		map.put("error.bs.sanity.taxid", "info");
 		map.put("error.bs.sanity.taxid.dup", "info");
+
+        // Linking Features - buttons
+        map.put(rb.getString("int.proteins.button.feature.link"), "feature.link");
+        map.put(rb.getString("int.proteins.button.feature.unlink"), "feature.link");
+        // Linking Features - errors
+        map.put("error.int.feature.link.error", "feature.link");
+        map.put("error.int.feature.unlink.error", "feature.link");
+
+        // Deleting a feature
+        map.put(rb.getString("int.proteins.button.feature.delete"), "int.protein.search");
+
         return map;
     }
 }
