@@ -25,12 +25,49 @@ import java.sql.ResultSet;
  */
 public class SanityChecker {
 
+    //Keep the helper at object level - may need it for other tests later
     private IntactHelper helper;
     private PrintWriter writer;
 
-    public SanityChecker(IntactHelper helper, PrintWriter writer) {
+    //Holds the statements for finding userstamps in various tables
+    private PreparedStatement expStmt;
+    private PreparedStatement intStmt;
+
+    //holds the accumulated results of the test executions
+    private StringBuffer expCheck;
+    private StringBuffer interactionCheck;
+    private StringBuffer singleProteinCheck;
+    private StringBuffer noProteinCheck;
+
+    //The Experiments and Interactions - may be used in more than one test
+    private Collection experiments;
+    private Collection interactions;
+
+    public SanityChecker(IntactHelper helper, PrintWriter writer) throws IntactException, SQLException {
         this.helper = helper;
         this.writer = writer;
+
+        //set up statements to get user info...
+        //NB remember the Connection belongs to the helper - don't close it anywhere but
+        //let the helper do it at the end!!
+        Connection conn = helper.getJDBCConnection();
+        intStmt = conn.prepareStatement("SELECT userstamp FROM ia_interactor WHERE ac=?");
+        expStmt = conn.prepareStatement("SELECT userstamp FROM ia_experiment WHERE ac=?");
+
+        //get the Experiment and Interaction info from the DB for later use..
+        experiments = helper.search(Experiment.class.getName(), "ac", "*");
+        interactions = helper.search(Interaction.class.getName(), "ac", "*");
+
+        //initialize buffers that will accumulate the test results..
+        expCheck = new StringBuffer("Experiments with no Interactions" +
+                "\n" + "-----------------------------------" + "\n");
+        interactionCheck = new StringBuffer("Interactions with no Experiment" +
+                "\n" + "-----------------------------------" + "\n");
+        singleProteinCheck = new StringBuffer("Interactions with only One Protein" +
+                "\n" + "-----------------------------------" + "\n");
+        noProteinCheck = new StringBuffer("Interactions with No Components" +
+                "\n" + "---------------------------------" + "\n");
+
 
     }
 
@@ -56,126 +93,159 @@ public class SanityChecker {
     */
 
     /**
-     * Performs Experiment checks.
-     * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
+     * Performs checks on Experiments.
+     * @throws IntactException Thrown if there was a Helper problem
+     * @throws SQLException Thrown if there was a DB access problem
      */
-    public void checkExpsAndInts() throws IntactException {
+    public void checkExperiments() throws IntactException, SQLException  {
 
-        System.out.print("checking Experiment data...");
-        String expSql = "SELECT userstamp FROM ia_experiment WHERE ac='";
-        String intSql = "SELECT userstamp FROM ia_interactor WHERE ac='";
-        PreparedStatement expStmt = null;
-        PreparedStatement intStmt = null;
-        Connection conn = null;
+        //check 8
+        for(Iterator it = experiments.iterator(); it.hasNext();) {
+            Experiment exp = (Experiment)it.next();
+            if(exp.getInteractions().size() < 1) {
+                    //record it.....
+                    getUserInfo(expCheck, exp);
+            }
+        }
+        writeResults(expCheck);
+        writer.println();
+
+    }
+
+    /**
+    * Performs Interaction checks.
+    * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
+    */
+    public void checkInteractions() throws IntactException, SQLException  {
+
+        //check 7
+        for (Iterator it = interactions.iterator(); it.hasNext();) {
+            Interaction interaction = (Interaction) it.next();
+
+            if (interaction.getExperiments().size() < 1) {
+                //record it.....
+                getUserInfo(interactionCheck, interaction);
+            }
+        }
+        //now dump the results...
+        writeResults(interactionCheck);
+        writer.println();
+
+    }
+
+    /**
+     * Performs checks against Proteins.
+     * @throws IntactException Thrown if there were Helper problems
+     * @throws SQLException thrown if there were DB access problems
+     */
+    public void checkProteins() throws IntactException, SQLException {
+
+        //checks 5 and 6 (easier if done together)
+        for (Iterator it = interactions.iterator(); it.hasNext();) {
+
+            Interaction interaction = (Interaction) it.next();
+            Collection components = interaction.getComponents();
+            int originalSize = components.size();
+            int matchCount = 0;
+            Protein proteinToCheck = null;
+            if (components.size() > 0) {
+                Component firstOne = (Component) components.iterator().next();
+
+                if (firstOne.getInteractor() instanceof Protein) {
+                    proteinToCheck = (Protein) firstOne.getInteractor();
+                    components.remove(firstOne); //don't check it twice!!
+                } else {
+                    //not interested (for now) in Interactions that have
+                    //interactors other than Proteins (for now)...
+                    return;
+                }
+
+                for (Iterator iter = components.iterator(); iter.hasNext();) {
+                    Component comp = (Component) iter.next();
+                    Interactor interactor = comp.getInteractor();
+                    if (interactor.equals(proteinToCheck)) {
+                        //check it against the first one..
+                        matchCount++;
+                    }
+                }
+                //now compare the count and the original - if they are the
+                //same then we have found one that needs to be flagged..
+                if (matchCount == originalSize) {
+                    getUserInfo(singleProteinCheck, interaction);
+                }
+
+            } else {
+                //Interaction has no Components!! This is in fact test 5...
+                getUserInfo(noProteinCheck, interaction);
+            }
+        }
+
+        writeResults(singleProteinCheck);
+        writer.println();
+        writeResults(noProteinCheck);
+        writer.println();
+
+    }
+
+    /**
+     * tidies up the DB statements.
+     */
+    public void cleanUp() {
 
         try {
-            conn = helper.getJDBCConnection();
-
-            //Doing 7 and 8 first as they are the easiest......
-            Collection experiments = helper.search(Experiment.class.getName(), "ac", "*");
-            Collection interactions = helper.search(Interaction.class.getName(), "ac", "*");
-            ResultSet results = null;
-            String user = null;
-
-            //check 8
-            writer.println("Experiments with no Interactions");
-            writer.println("--------------------------------");
-            for(Iterator it = experiments.iterator(); it.hasNext();) {
-                Experiment exp = (Experiment)it.next();
-                if(exp.getInteractions().size() < 1) {
-                    //record it in a file.....
-                    expStmt = conn.prepareStatement(expSql + exp.getAc() + "'");
-                    results = expStmt.executeQuery();
-                    if(results.next()) user = results.getString("userstamp");
-                    writer.println("AC: " + exp.getAc() + "\t"+ " User: " + user);
-                }
-            }
-
-            //check 7
-            writer.println();
-            writer.println("Interactions with no Experiment");
-            writer.println("--------------------------------");
-            for(Iterator it = interactions.iterator(); it.hasNext();) {
-                Interaction interaction = (Interaction)it.next();
-
-
-                if(interaction.getExperiments().size() < 1) {
-                    //record it in a file.....
-                    //and also get the userStamp info...
-                    intStmt = conn.prepareStatement(intSql + interaction.getAc() + "'");
-                    results = intStmt.executeQuery();
-                    if(results.next()) user = results.getString("userstamp");
-                    writer.println("AC: " + interaction.getAc() + "\t" + " User: " + user);
-                }
-            }
-
-            //check 6 (modified) - flag all interactions which have only
-            //one Protein....
-            writer.println();
-            writer.println("Interactions with only One Protein");
-            writer.println("--------------------------------");
-            for(Iterator it = interactions.iterator(); it.hasNext();) {
-
-                Interaction interaction = (Interaction)it.next();
-
-                Collection components = interaction.getComponents();
-                int originalSize = components.size();
-                int matchCount = 0;
-                Protein proteinToCheck = null;
-                if(components.size() > 0) {
-                    Component firstOne = (Component)components.iterator().next();
-
-                    if(firstOne.getInteractor() instanceof Protein) {
-                        proteinToCheck = (Protein)firstOne.getInteractor();
-                        components.remove(firstOne); //don't check it twice!!
-                    }
-                    else {
-                        //not interested (for now) in Interactions without
-                        //Proteins...
-                        return;
-                    }
-
-                    for(Iterator iter = components.iterator(); iter.hasNext();) {
-                        Component comp = (Component)iter.next();
-                        Interactor interactor = comp.getInteractor();
-                        if(interactor.equals(proteinToCheck)) {
-                            //check it against the first one..
-                            matchCount++;
-                        }
-                    }
-                    //now compare the count and the original - if they are the
-                    //same then we have found one that needs to be flagged..
-                    if(matchCount == originalSize) {
-                        intStmt = conn.prepareStatement(intSql + interaction.getAc() + "'");
-                        results = intStmt.executeQuery();
-                        if(results.next()) user = results.getString("userstamp");
-                        writer.println("AC: " + interaction.getAc() + "\t" + " User: " + user);
-                    }
-
-                }
-                else {
-                    //Interaction has no Components!! This is in fact test 5...
-                    writer.println("Unexpected error - Interaction " + interaction.getAc()
-                            + " has no Components!!");
-                }
-
-            }
-
-            System.out.println("....Done. ");
-            System.out.println();
+            if(expStmt != null) expStmt.close();
+            if(intStmt != null) intStmt.close();
         }
-        catch(SQLException sqe) {
-            sqe.printStackTrace();
+        catch(SQLException se) {
+            System.out.println("failed to close statement!!");
+            se.printStackTrace();
         }
-        finally {
-            try {
-                if(expStmt != null) expStmt.close();
-                if(intStmt != null) intStmt.close();
-            }
-            catch(SQLException se) {
-                System.out.println("failed to close statement!!");
-                se.printStackTrace();
-            }
+    }
+
+    //--------------------------- private methods ------------------------------------------
+
+    /**
+     * Helper method to obtain userstamp info from a given record, and
+     * then if it has any to append the details to a result buffer.
+     * @param buf The result buffer we want the info put into (may want more than one
+     * result displayed for a single Intact type)
+     * @param obj The Intact object that user info is required for.
+     * @throws SQLException thrown if there were DB problems
+     */
+    private void getUserInfo(StringBuffer buf, IntactObject obj) throws SQLException {
+
+        String user = null;
+        ResultSet results = null;
+
+        if(obj instanceof Experiment) {
+            expStmt.setString(1, obj.getAc());
+            results = expStmt.executeQuery();
+
+        }
+        if(obj instanceof Interaction) {
+            intStmt.setString(1, obj.getAc());
+            results = intStmt.executeQuery();
+
+        }
+        //Connection conn = null;
+        //stmt = conn.prepareStatement(sql);
+        if(results.next()) user = results.getString("userstamp");
+        buf.append("AC: " + obj.getAc() + "\t" + " User: " + user + "\n");
+
+    }
+
+    /**
+     * Handles dumping results to a file. If no results were found
+     * then an apporpiate message is printed instead.
+     * @param buf The data to be dumped to the file
+     */
+    private void writeResults(StringBuffer buf) {
+
+        writer.println(buf);
+        if (buf.indexOf("User") == -1) {
+            //none found - write useful message
+            writer.println("No matches for this test.");
+            writer.println();
         }
 
     }
@@ -184,6 +254,7 @@ public class SanityChecker {
 
         IntactHelper helper = null;
         PrintWriter out = null;
+        SanityChecker checker = null;
 
         try {
 
@@ -201,14 +272,19 @@ public class SanityChecker {
             out.println("Checks against Database " + helper.getDbName());
             out.println("----------------------------------");
             out.println();
-            SanityChecker checker = new SanityChecker(helper, out);
+            System.out.print("checking data integrity...");
+            checker = new SanityChecker(helper, out);
 
             long start = System.currentTimeMillis();
             //do checks here.....
-            checker.checkExpsAndInts();
+            checker.checkExperiments();
+            checker.checkInteractions();
+            checker.checkProteins();
 
             long end = System.currentTimeMillis();
             long total = end - start;
+            System.out.println("....Done. ");
+            System.out.println();
             System.out.println("Total time to perform checks: " + total / 1000 + "s");
 
         }
@@ -220,10 +296,15 @@ public class SanityChecker {
         catch(EOFException fe) {
             System.err.println("End of stream");
         }
+        catch(SQLException sqe) {
+            System.out.println("DB error!");
+            sqe.printStackTrace();
+        }
         catch (Exception e) {
             e.printStackTrace();
         }
         finally {
+            if(checker != null) checker.cleanUp();
             if (helper != null) helper.closeStore();
             if(out != null) out.close();
         }
