@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     ANT build configuration file for cvedit module.
+     Author: Sugath Mudali, smudali@ebi.ac.uk.
+     Version: $Id$
+-->
+
+<project name="cvedit" basedir="." default="compile">
+    <property name="project.title" value="cvedit"/>
+    <property name="project.version" value="1.0"/>
+
+    <!-- Intact core locations -->
+    <property name="intact.root" value="../.."/>
+    <property name="root.lib.dir" value="${intact.root}/lib"/>
+    <property name="root.src.dir" value="${intact.root}/src"/>
+    <property name="root.config.dir" value="${intact.root}/config"/>
+    <property name="root.dist.dir" value="${intact.root}/dist"/>
+    <property name="root.jar.file" value="${root.dist.dir}/intact-core.jar"/>
+
+
+    <property name="dist.dir" value="dist"/>
+    <property name="war.file" value="cvedit.war"/>
+
+    <!-- This project specific paths. -->
+    <property name="src.dir" value="src"/>
+    <property name="lib.dir" value="WEB-INF/lib"/>
+    <property name="dest.dir" value="WEB-INF/classes"/>
+    <property name="docs.dir" value="doc/api"/>
+
+    <!-- Build working classpath -->
+    <path id="project.class.path">
+
+        <!-- Project specific jar files. -->
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- Where the classes are compiled to. -->
+        <pathelement path="${dest.dir}"/>
+
+        <!-- Intact core at root. -->
+        <pathelement path="${root.jar.file}"/>
+
+        <!-- Common jar files. -->
+        <pathelement path="${root.lib.dir}/junit.jar"/>
+        <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.2.jar"/>
+        <pathelement path="${root.lib.dir}/struts.jar"/>
+        <pathelement path="${root.lib.dir}/servlet.jar"/>
+    </path>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp and various 'present' properties. -->
+    <target name="prepare">
+        <tstamp/>
+        <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+        <!-- Display a message if tomcat or axis is not present.
+        -->
+        <ant dir=".." inheritAll="false" target="check-tom"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Creates the 'docs' directory. -->
+    <target name="mk-docs">
+        <mkdir dir="${docs.dir}" />
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Remove 'dest' and docs directories for clean build -->
+    <target name="clean" description="Prepare for clean build">
+        <!-- Delete directories first -->
+        <delete dir="${dest.dir}"/>
+        <delete dir="${docs.dir}"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Calls the jar task from core build file if intact core jar file
+         is missing.
+    -->
+    <target name="make-jar" depends="prepare" unless="intact.jar.present">
+        <ant dir="${intact.root}" target="jar-core" inheritAll="false"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Copy configuration files. -->
+    <target name="cpConfigFiles">
+        <!-- Copy repository files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="${root.config.dir}">
+                <include name="repository*.xml"/>
+                <include name="repository.dtd"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy cvedit property files -->
+        <copy todir="${dest.dir}/config">
+            <fileset dir="WEB-INF/config">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+
+        <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
+        <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
+        <copy todir="${dest.dir}" file="${root.config.dir}/log4j.properties"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile" depends="make-jar">
+
+        <!-- Create the dest dir if it doesn't exist. -->
+        <mkdir dir="${dest.dir}" />
+
+        <!-- Only compile cvedit sources only. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            includes="**/application/cvedit/**" debug="on">
+            <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy configuration files -->
+        <antcall target="cpConfigFiles"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Builds a war file. -->
+
+    <target name="war" depends="compile" description="Builds a war file">
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}" />
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.file}" quiet="true"/>
+
+		<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+		   <fileset dir="${basedir}">
+				<include name="*.jsp"/>
+	        	<include name="*.css"/>
+	  			<include name="WEB-INF/struts-config.xml"/>
+	  			<include name="WEB-INF/tld/**"/>
+	   		</fileset>
+
+			<!-- Include cvedit specific jar files. -->
+			<lib dir="${lib.dir}">
+                <!-- Avoid NFS temp files (occationally) -->
+                <include name="*.jar"/>
+            </lib>
+
+            <!-- Inlcude the intact core -->
+            <lib dir="${root.dist.dir}"/>
+
+			<!-- Include common jar files from intact core. -->
+			<lib dir="${root.lib.dir}">
+				<include name="jakarta-ojb-0.9.2.jar"/>
+				<include name="struts.jar"/>
+				<include name="log4j-1.2.5.jar"/>
+				<include name="commons-beanutils.jar"/>
+				<include name="commons-collections-2.0.jar"/>
+				<include name="pgjdbc2.jar"/>
+			</lib>
+
+            <!-- cvedit specific classes -->
+  			<classes dir="${dest.dir}"/>
+		</war>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the war file on the Tomcat server. -->
+    <target name="deploy" description="Deploys the WAR file on the Tomcat server">
+        <ant dir=".." inheritAll="false" target="deploy">
+            <property name="war" value="cvedit/${dist.dir}/${war.file}"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the war file from the Tomcat server. -->
+    <target name="undeploy"
+        description="Undeploys the WAR file from the Tomcat server">
+        <ant dir=".." inheritAll="false" target="undeploy">
+            <property name="war" value="cvedit"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- These unit tests only run one tests in a single package; we need to add
+         a utility class which can run all the unit tests together.
+     -->
+    <!-- Runs tests using junit. -->
+    <target name="junit-test" depends="compile" description="Run JUnit tests">
+        <junit printsummary="withOutAndErr">
+            <test name="uk.ac.ebi.intact.struts.framework.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </junit>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+    <target name="junit-test-stdout" depends="compile"
+            description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner">
+            <arg value="uk.ac.ebi.intact.struts.framework.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Starts the Tomcat server. -->
+
+    <target name="start-tom">
+        <ant dir=".." inheritAll="false" target="start-tom"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Stops the Tomcat server. -->
+
+    <target name="stop-tom">
+        <ant dir=".." inheritAll="false" target="stop-tom"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Restarts the Tomcat server. -->
+
+    <target name="restart-tom">
+        <ant dir=".." inheritAll="false" target="restart-tom"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays the status of Tomcat server. -->
+
+    <target name="status-tom">
+        <ant dir=".." inheritAll="false" target="status-tom"/>
+    </target>
+
+</project>
