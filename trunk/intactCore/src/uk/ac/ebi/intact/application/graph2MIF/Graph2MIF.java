@@ -1,3 +1,9 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
+
 package uk.ac.ebi.intact.application.graph2MIF;
 
 import org.apache.xerces.dom.DOMImplementationImpl;
@@ -13,6 +19,7 @@ import uk.ac.ebi.intact.application.graph2MIF.GraphNotConvertableException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.Calendar;
 
 /**
  * This class gives IntAct the possibillity to give out a graph to MIF-PSI-Format in XML.
@@ -32,6 +39,7 @@ public class Graph2MIF {
      * The general DOM-Object accessible for all methods is required for creating Elements
      */
     private Document doc;
+
     /**
      * This Boolean indicates if an exception will be thrown if a required tag of MIF is missing
      * at the IntAct graph
@@ -80,14 +88,14 @@ public class Graph2MIF {
             Element psiEntry = procGraph(graph);
             psiEntrySet.appendChild(psiEntry);
         } catch (ElementNotParseableError e) {
-            logger.warn("could not proceed graph: "+e.getMessage());
-             if (STRICT_MIF) {
+            logger.warn("could not proceed graph: " + e.getMessage());
+            if (STRICT_MIF) {
                 throw new GraphNotConvertableException(e.getMessage());
             }
         }
         //returning finished Dom-Document
         if (!doc.hasChildNodes()) {
-         logger.warn("graph failed, no child elements.");
+            logger.warn("graph failed, no child elements.");
             throw new GraphNotConvertableException("doc has no Child Elements");
         }
         return doc;
@@ -113,28 +121,49 @@ public class Graph2MIF {
         Element psiEntry = doc.createElement("entry");
         //local elements processing...
         //getId/Label are names
+        Element psiSource = doc.createElement("source");
+        psiEntry.appendChild(psiSource);
         try {
             Element psiNames = getPsiNamesOfBasicGraph(graph);
-            Element psiSource = doc.createElement("source");
-            psiEntry.appendChild(psiSource);
             psiSource.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-            logger.info("source failed (not required):"+e.getMessage());
+            logger.info("source/names failed (not required):" + e.getMessage());
         } //not required here - so dont worry
+        //releaseDate will be current date
+        Calendar cal = Calendar.getInstance();
+        //appending "0" for 1-9th day of a month
+        String dayString;
+        if( cal.get(Calendar.DAY_OF_MONTH) <= 9 ) {
+          dayString = "0"+Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
+        } else {
+          dayString = Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
+        }
+        //appending "0" for 1-9th month of a year
+        String monthString;
+        int month = cal.get(Calendar.MONTH)+1;
+        if( month <= 9 ) {
+          monthString = "0"+month;
+        } else {
+          monthString = Integer.toString(month);
+        }
+        String date = cal.get(Calendar.YEAR) +
+                      "-" + monthString +
+                      "-" + dayString;
+        psiSource.setAttribute("releaseDate", date);
         //getNodes() @todo
         //getEdges()
         try {
             Element psiInteractionList = procEdges(graph.getEdges());
             psiEntry.appendChild(psiInteractionList);
         } catch (ElementNotParseableError e) {
-             logger.warn("edges failed (required):"+e.getMessage());
+            logger.warn("edges failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("Interaction without Interactions:" + e.getMessage());
             }
         }
         //returning result DOMObject
         if (!psiEntry.hasChildNodes()) {
-             logger.warn("graph failed, no child elements.");
+            logger.warn("graph failed, no child elements.");
             throw new ElementNotParseableError("graph has no Child Elements");
         }
         return psiEntry;
@@ -158,12 +187,12 @@ public class Graph2MIF {
                 Element psiInteraction = procEdge((Edge) iterator.next());
                 psiInteractionList.appendChild(psiInteraction);
             } catch (ElementNotParseableError e) {
-                 logger.info("edge failed (not required):"+e.getMessage());
+                logger.info("edge failed (not required):" + e.getMessage());
             } // not required here - so dont worry
         }
         //returning result DOMObject
         if (!psiInteractionList.hasChildNodes()) {
-             logger.warn("edges failed, no child elements.");
+            logger.warn("edges failed, no child elements.");
             throw new ElementNotParseableError("InteractionList has no Child Elements");
         }
         return psiInteractionList;
@@ -186,7 +215,7 @@ public class Graph2MIF {
             Element psiNames = getPsiNamesOfBasicGraph(edge);
             psiInteraction.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-             logger.info("names failed (not required):"+e.getMessage());
+            logger.info("names failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         //because we cannot directly get related Experiments, we access them from component1->interaction->experiments
         Collection relExperiments = edge.getComponent1().getInteraction().getExperiment();
@@ -195,7 +224,7 @@ public class Graph2MIF {
             psiExperimentList = procExperiments(relExperiments);
             psiInteraction.appendChild(psiExperimentList);
         } catch (ElementNotParseableError e) {
-             logger.warn("experiments failed (required):"+e.getMessage());
+            logger.warn("experiments failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("Interactor without experiment:" + e.getMessage());
             }
@@ -209,7 +238,7 @@ public class Graph2MIF {
             Element psiProteinParticipant2 = procComponent(edge.getComponent2());
             psiParticipantList.appendChild(psiProteinParticipant2);
         } catch (ElementNotParseableError e) {
-             logger.warn("compartment failed (required):"+e.getMessage());
+            logger.warn("compartment failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no 2 proteinParticipants in interaction:" + e.getMessage());
             }
@@ -224,7 +253,7 @@ public class Graph2MIF {
                 psiInteractionType = procInteractionType(interactionType);
                 psiInteraction.appendChild(psiInteractionType);
             } catch (ElementNotParseableError e) {
-                 logger.info("interactionType failed (not required):"+e.getMessage());
+                logger.info("interactionType failed (not required):" + e.getMessage());
             } // not one is required - so dont worry
         }
         //because we cannot directly get Xref , we get it this way
@@ -233,13 +262,13 @@ public class Graph2MIF {
             Element psiXref = procXrefCollection(xrefs);
             psiInteraction.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
-             logger.info("xref failed (not required):"+e.getMessage());
+            logger.info("xref failed (not required):" + e.getMessage());
         } catch (NullPointerException e) {
-             logger.info("xref failed (not required):"+e.getMessage());
+            logger.info("xref failed (not required):" + e.getMessage());
         } //dont worry - not required here
         //returning result DOMObject
         if (!psiInteraction.hasChildNodes()) {
-             logger.warn("edge failed, no child elements.");
+            logger.warn("edge failed, no child elements.");
             throw new ElementNotParseableError("Interaction has no Child Elements");
         }
         return psiInteraction;
@@ -260,7 +289,7 @@ public class Graph2MIF {
             Element psiNames = getPsiNamesOfAnnotatedObject(relInteractionType);
             psiInteractionType.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-             logger.warn("names failed (required):"+e.getMessage());
+            logger.warn("names failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvInteractionType ShortLabel");
             }
@@ -269,19 +298,19 @@ public class Graph2MIF {
             Element psiXref = procXrefCollection(relInteractionType.getXref());
             psiInteractionType.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
-             logger.warn("xref failed (required):"+e.getMessage());
+            logger.warn("xref failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvInteraction:" + e.getMessage());
             }
         } catch (NullPointerException e) {
-             logger.warn("xref failed (required):"+e.getMessage());
+            logger.warn("xref failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvInteraction-xref");
             }
         }
         //returning result DOMObject
         if (!psiInteractionType.hasChildNodes()) {
-             logger.warn("interactionType failed, no child elements.");
+            logger.warn("interactionType failed, no child elements.");
             throw new ElementNotParseableError("interactionType has no Child Elements");
         }
         return psiInteractionType;
@@ -300,7 +329,7 @@ public class Graph2MIF {
         //local elements processing...
         Iterator experimentList = experiments.iterator();
         if (!experimentList.hasNext()) {
-             logger.warn("experimentlist without one experiment -  failed (required):");
+            logger.warn("experimentlist without one experiment -  failed (required):");
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("not one experiment");
             }
@@ -311,12 +340,12 @@ public class Graph2MIF {
                 Element psiExperimentDescription = procExperiment(experiment);
                 psiExperimentList.appendChild(psiExperimentDescription);
             } catch (ElementNotParseableError e) {
-                 logger.info("experiment failed (not required):"+e.getMessage());
+                logger.info("experiment failed (not required):" + e.getMessage());
             } //not required - so dont worry
         }
         //returning result DOMObject
         if (!psiExperimentList.hasChildNodes()) {
-             logger.warn("experiments failed, no child elements.");
+            logger.warn("experiments failed, no child elements.");
             throw new ElementNotParseableError("ExperimentList has no Child Elements");
         }
         return psiExperimentList;
@@ -338,7 +367,7 @@ public class Graph2MIF {
             Element psiNames = getPsiNamesOfAnnotatedObject(experiment);
             psiExperimentDescription.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-             logger.info("names failed (not required):"+e.getMessage());
+            logger.info("names failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         // getXref
         try {
@@ -347,20 +376,20 @@ public class Graph2MIF {
             psiBibref.appendChild(psiXrefPubMed);
             psiExperimentDescription.appendChild(psiBibref);
         } catch (ElementNotParseableError e) {
-             logger.info("xref(pubmed) failed (not required):"+e.getMessage());
+            logger.info("xref(pubmed) failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         try {
             Element psiXrefNotPubMed = procXrefCollectionSelectingNotPubMed(experiment.getXref());
             psiExperimentDescription.appendChild(psiXrefNotPubMed);
         } catch (ElementNotParseableError e) {
-             logger.info("xref(not pubmed) failed (not required):"+e.getMessage());
+            logger.info("xref(not pubmed) failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         // getBioSource()
         try {
             Element psiHostOrganism = procBioSourceAsHost(experiment.getBioSource());
             psiExperimentDescription.appendChild(psiHostOrganism);
         } catch (ElementNotParseableError e) {
-             logger.info("biosource failed (not required):"+e.getMessage());
+            logger.info("biosource failed (not required):" + e.getMessage());
         } // not required here - so dont worry
         // getBioSourceAc() @todo
         // getCvIdentificationAc() @todo
@@ -369,7 +398,7 @@ public class Graph2MIF {
             Element psiInteractionDetection = procCvInteraction(experiment.getCvInteraction());
             psiExperimentDescription.appendChild(psiInteractionDetection);
         } catch (ElementNotParseableError e) {
-             logger.warn("cvInteraction failed (required):"+e.getMessage());
+            logger.warn("cvInteraction failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no interactionDetection created::" + e.getMessage());
             }
@@ -379,7 +408,7 @@ public class Graph2MIF {
             Element psiIdentification = procCvIdentification(experiment.getCvIdentification());
             psiExperimentDescription.appendChild(psiIdentification);
         } catch (ElementNotParseableError e) {
-             logger.info("cvIdentification failed (not required):"+e.getMessage());
+            logger.info("cvIdentification failed (not required):" + e.getMessage());
         } // not required here - so dont worry
         //
         // PSI - FeatureDetection is IntAct cvFeatureIdentification
@@ -398,7 +427,15 @@ public class Graph2MIF {
         // getCuratorAc @todo
         // getMenuList @todo
         // getReference @todo
-        // getAc @todo
+        // getAc
+        try {
+            psiExperimentDescription.setAttribute("id", experiment.getAc());
+        } catch (NullPointerException e) {
+            logger.warn("Ac of Experiment failed - required !");
+            if (STRICT_MIF) {
+                throw new ElementNotParseableError("Experiment without Ac:" + e.getMessage());
+            }
+        }
         // getCreated @todo
         // getEvidence - not defined
         // getOwner @todo
@@ -406,7 +443,7 @@ public class Graph2MIF {
         // getUpdated  @todo
         //returning result DOMObject
         if (!psiExperimentDescription.hasChildNodes()) {
-             logger.warn("Experiment failed, no child elements.");
+            logger.warn("Experiment failed, no child elements.");
             throw new ElementNotParseableError("ExperimentDescription has no Child Elements");
         }
         return psiExperimentDescription;
@@ -427,7 +464,7 @@ public class Graph2MIF {
             Element psiNames = getPsiNamesOfAnnotatedObject(cvInteraction);
             psiInteractionDetection.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-             logger.warn("names failed (required):"+e.getMessage());
+            logger.warn("names failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvInteraction ShortLabel");
             }
@@ -436,19 +473,19 @@ public class Graph2MIF {
             Element psiXref = procXrefCollection(cvInteraction.getXref());
             psiInteractionDetection.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
-             logger.warn("xref failed (required):"+e.getMessage());
+            logger.warn("xref failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvInteraction Xref");
             }
         } catch (NullPointerException e) {
             if (STRICT_MIF) {
-                 logger.warn("xref failed (required):"+e.getMessage());
+                logger.warn("xref failed (required):" + e.getMessage());
                 throw new ElementNotParseableError("no cvInteraction Xref");
             }
         }
         //returning result DOMObject
         if (!psiInteractionDetection.hasChildNodes()) {
-             logger.warn("cvInteraction failed, no child elements.");
+            logger.warn("cvInteraction failed, no child elements.");
             throw new ElementNotParseableError("interactionDetection has no Child Elements");
         }
         return psiInteractionDetection;
@@ -469,7 +506,7 @@ public class Graph2MIF {
             Element psiNames = getPsiNamesOfAnnotatedObject(cvIdentification);
             psiParticipantDetection.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-             logger.warn("names failed (required):"+e.getMessage());
+            logger.warn("names failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvInteraction ShortLabel");
             }
@@ -478,19 +515,19 @@ public class Graph2MIF {
             Element psiXref = procXrefCollection(cvIdentification.getXref());
             psiParticipantDetection.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
-             logger.warn("xref failed (required):"+e.getMessage());
+            logger.warn("xref failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvInteraction Xref");
             }
         } catch (NullPointerException e) {
-             logger.warn("xref failed (required):"+e.getMessage());
+            logger.warn("xref failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvInteraction Xref");
             }
         }
         //returning result DOMObject
         if (!psiParticipantDetection.hasChildNodes()) {
-             logger.warn("cvIdentification failed, no child elements.");
+            logger.warn("cvIdentification failed, no child elements.");
             throw new ElementNotParseableError("ParticipantDetection has no Child Elements");
         }
         return psiParticipantDetection;
@@ -512,7 +549,7 @@ public class Graph2MIF {
             Element psiProteinInteractor = procInteractor(component.getInteractor());
             psiProteinParticipant.appendChild(psiProteinInteractor);
         } catch (ElementNotParseableError e) {
-             logger.warn("interactor failed (required):"+e.getMessage());
+            logger.warn("interactor failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no interactor:" + e.getMessage());
             }
@@ -522,14 +559,14 @@ public class Graph2MIF {
             Element psiFeatureList = procFeatureList(component.getBindingDomain());
             psiProteinParticipant.appendChild(psiFeatureList);
         } catch (ElementNotParseableError e) {
-             logger.info("featureList failed (not required):"+e.getMessage());
+            logger.info("featureList failed (not required):" + e.getMessage());
         } //not required here - dont worry
         //getcvComponentRole
         try {
             Element psiRole = procRole(component.getCvComponentRole());
             psiProteinParticipant.appendChild(psiRole);
         } catch (NullPointerException e) {
-             logger.info("cvComponentRole failed (not required):"+e.getMessage());
+            logger.info("cvComponentRole failed (not required):" + e.getMessage());
         } //not required here - dont worry
         // getCvComponentRoleAc() @todo
         // getExpressedIn() @todo
@@ -545,7 +582,7 @@ public class Graph2MIF {
         // getUpdated @todo
         //returning result DOMObject
         if (!psiProteinParticipant.hasChildNodes()) {
-             logger.warn("component failed, no child elements.");
+            logger.warn("component failed, no child elements.");
             throw new ElementNotParseableError("proteinParticipant has no Child Elements");
         }
         return psiProteinParticipant;
@@ -565,14 +602,14 @@ public class Graph2MIF {
         try {
             psiRole.appendChild(doc.createTextNode(cvComponentRole.getShortLabel()));
         } catch (NullPointerException e) {
-            logger.warn("shortLabel failed (required):"+e.getMessage());
+            logger.warn("shortLabel failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("role without shortLabel");
             }
         }
         //returning result DOMObject
         if (!psiRole.hasChildNodes()) {
-             logger.warn("cvComponentRole failed, no child elements.");
+            logger.warn("cvComponentRole failed, no child elements.");
             throw new ElementNotParseableError("role has no Child Elements");
         }
         return psiRole;
@@ -591,7 +628,7 @@ public class Graph2MIF {
         //local elements processing...
         Iterator featureList = features.iterator();
         if (!featureList.hasNext()) {
-             logger.warn("empty FeatureList failed (required):");
+            logger.warn("empty FeatureList failed (required):");
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no features found");
             }
@@ -602,12 +639,12 @@ public class Graph2MIF {
                 Element psiFeature = procFeature(feature);
                 psiFeatureList.appendChild(psiFeature);
             } catch (ElementNotParseableError e) {
-                 logger.info("feature failed (not required):"+e.getMessage());
+                logger.info("feature failed (not required):" + e.getMessage());
             } // not required here - so dont worry
         }
         //returning result DOMObject
         if (!psiFeatureList.hasChildNodes()) {
-             logger.warn("featurelist failed, no child elements.");
+            logger.warn("featurelist failed, no child elements.");
             throw new ElementNotParseableError("FeatureList has no Child Elements");
         }
         return psiFeatureList;
@@ -636,30 +673,30 @@ public class Graph2MIF {
             Element psiXref = procXref(feature.getXref());
             psiFeature.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
-             logger.info("xref failed (not required):"+e.getMessage());
+            logger.info("xref failed (not required):" + e.getMessage());
         }  //not required here - so dont worry
         // getCvFeatureType()
         try {
             Element psiFeatureDescription = procCvFeatureType(feature.getCvFeatureType());
             psiFeature.appendChild(psiFeatureDescription);
         } catch (ElementNotParseableError e) {
-             logger.info("cvFeatureTyoe failed (not required):"+e.getMessage());
+            logger.info("cvFeatureTyoe failed (not required):" + e.getMessage());
         }  //not required here - so dont worry
         // getCvFeatureIdentification()
         try {
             Element psiFeatureDetection = procCvFeatureIdentification(feature.getCvFeatureIdentification());
             psiFeature.appendChild(psiFeatureDetection);
         } catch (ElementNotParseableError e) {
-             logger.info("cvFeatureIdentification failed (not required):"+e.getMessage());
+            logger.info("cvFeatureIdentification failed (not required):" + e.getMessage());
         }  //not required here - so dont worry
         // psi Location is not yet implemented - but required - so we have to throw an exception anyway
         try {
             Element psiLocation = procLocation();
             psiFeature.appendChild(psiLocation);
         } catch (ElementNotParseableError e) {
-             logger.warn("location failed (required):"+e.getMessage());
-            if(STRICT_MIF) {
-            throw new ElementNotParseableError("Feature-Location cant created:" + e.getMessage());
+            logger.warn("location failed (required):" + e.getMessage());
+            if (STRICT_MIF) {
+                throw new ElementNotParseableError("Feature-Location cant created:" + e.getMessage());
             }
         }
         // getRange()  @todo
@@ -672,7 +709,7 @@ public class Graph2MIF {
         //  getUpdated @todo
         //returning result DOMObject
         if (!psiFeature.hasChildNodes()) {
-             logger.warn("feature failed, no child elements.");
+            logger.warn("feature failed, no child elements.");
             throw new ElementNotParseableError("Feature has no Child Elements");
         }
         return psiFeature;
@@ -684,7 +721,7 @@ public class Graph2MIF {
      * @see uk.ac.ebi.intact.model.Feature (Binding Domain)
      */
     private Element procLocation() throws ElementNotParseableError {
-         logger.warn("location failed (required): NOT IMPLEMENTED");
+        logger.warn("location failed (required): NOT IMPLEMENTED");
         throw new ElementNotParseableError("not implemented in IntAct");
     }
 
@@ -703,7 +740,7 @@ public class Graph2MIF {
             Element psiNames = getPsiNamesOfAnnotatedObject(cvFeatureType);
             psiFeatureDescription.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-             logger.warn("names failed (required):"+e.getMessage());
+            logger.warn("names failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvFeatureType ShortLabel");
             }
@@ -712,19 +749,19 @@ public class Graph2MIF {
             Element psiXref = procXrefCollection(cvFeatureType.getXref());
             psiFeatureDescription.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
-             logger.warn("xref failed (required):"+e.getMessage());
+            logger.warn("xref failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvFeatureType Xref");
             }
         } catch (NullPointerException e) {
-             logger.warn("xref failed (required):"+e.getMessage());
+            logger.warn("xref failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvFeatureType Xref");
             }
         }
         //returning result DOMObject
         if (!psiFeatureDescription.hasChildNodes()) {
-             logger.warn("cvFeatureType failed, no child elements.");
+            logger.warn("cvFeatureType failed, no child elements.");
             throw new ElementNotParseableError("FeatureDescription has no Child Elements");
         }
         return psiFeatureDescription;
@@ -745,7 +782,7 @@ public class Graph2MIF {
             Element psiNames = getPsiNamesOfAnnotatedObject(cvFeatureIdentification);
             psiFeatureDetection.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-             logger.warn("cvFeatureIdentification failed (required):"+e.getMessage());
+            logger.warn("cvFeatureIdentification failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvFeatureIdentification ShortLabel");
             }
@@ -754,19 +791,19 @@ public class Graph2MIF {
             Element psiXref = procXrefCollection(cvFeatureIdentification.getXref());
             psiFeatureDetection.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
-             logger.warn("xref failed (required):"+e.getMessage());
+            logger.warn("xref failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvFeatureIdentification Xref");
             }
         } catch (NullPointerException e) {
-             logger.warn("xref failed (required):"+e.getMessage());
+            logger.warn("xref failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("no cvFeatureIdentification Xref");
             }
         }
         //returning result DOMObject
         if (!psiFeatureDetection.hasChildNodes()) {
-             logger.warn("cvFeatureIdentification failed, no child elements.");
+            logger.warn("cvFeatureIdentification failed, no child elements.");
             throw new ElementNotParseableError("FeatureDetection has no Child Elements");
         }
         return psiFeatureDetection;
@@ -794,7 +831,7 @@ public class Graph2MIF {
             Element psiNames = getPsiNamesOfAnnotatedObject(interactor);
             psiProteinInteractor.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-             logger.warn("names failed (required):"+e.getMessage());
+            logger.warn("names failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("Interactor without name" + e.getMessage());
             }
@@ -806,9 +843,17 @@ public class Graph2MIF {
             Element psiXref = procXrefCollection(interactor.getXref());
             psiProteinInteractor.appendChild(psiXref);
         } catch (ElementNotParseableError e) {
-             logger.info("xref failed (not required):"+e.getMessage());
+            logger.info("xref failed (not required):" + e.getMessage());
         }  //not required here - so dont worry
         //getAc @todo
+        try {
+            psiProteinInteractor.setAttribute("id", interactor.getAc());
+        } catch (NullPointerException e) {
+            logger.warn("Ac of interactor failed - required !");
+            if (STRICT_MIF) {
+                throw new ElementNotParseableError("Interactor without Ac:" + e.getMessage());
+            }
+        }
         //getCreated @todo
         //getEvidence @todo
         //getOwner @todo
@@ -818,18 +863,18 @@ public class Graph2MIF {
             Element psiOrganism = procBioSource(interactor.getBioSource());
             psiProteinInteractor.appendChild(psiOrganism);
         } catch (ElementNotParseableError e) {
-             logger.info("BioSource failed (not required):"+e.getMessage());
+            logger.info("BioSource failed (not required):" + e.getMessage());
         } // not required here - so dont worry
         //sequence is not directly accessible ...
         try {
             Element psiSequence = procSequence((Protein) interactor);
             psiProteinInteractor.appendChild(psiSequence);
         } catch (ElementNotParseableError e) {
-             logger.info("sequence failed (not required):"+e.getMessage());
+            logger.info("sequence failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         //returning result DOMObject
         if (!psiProteinInteractor.hasChildNodes()) {
-             logger.warn("Interactor failed, no child elements.");
+            logger.warn("Interactor failed, no child elements.");
             throw new ElementNotParseableError("ProteinInteractor has no Child Elements");
         }
         return psiProteinInteractor;
@@ -849,14 +894,15 @@ public class Graph2MIF {
         try {
             psiSequence.appendChild(doc.createTextNode(protein.getSequence()));
         } catch (NullPointerException e) {
-             logger.warn("sequence failed (required):"+e.getMessage());
-            if(STRICT_MIF) {
-            throw new ElementNotParseableError("no sequence in protein");
+            logger.warn("sequence failed (required):" + e.getMessage());
+            if (STRICT_MIF) {
+                throw new ElementNotParseableError("no sequence in protein");
             }
-        };
+        }
+        ;
         //returning result DOMObject
         if (!psiSequence.hasChildNodes()) {
-             logger.warn("protein failed, no child elements.");
+            logger.warn("protein failed, no child elements.");
             throw new ElementNotParseableError("Sequence has no Child Elements");
         }
         return psiSequence;
@@ -895,7 +941,7 @@ public class Graph2MIF {
         }
         //if we could not create a primaryID - throw exception
         if (!psiXref.hasChildNodes()) {
-             logger.warn("xrefCollection failed, no child element as primary.");
+            logger.warn("xrefCollection failed, no child element as primary.");
             throw new ElementNotParseableError("couldn't generate primaryID - Xref not parseabel");
         }
         //the rest becomes secondary Refs
@@ -913,7 +959,7 @@ public class Graph2MIF {
         }
         //returning result DOMObject
         if (!psiXref.hasChildNodes()) {
-             logger.warn("xrefcollection failed, no child elements.");
+            logger.warn("xrefcollection failed, no child elements.");
             throw new ElementNotParseableError("Xref has no Child Elements");
         }
         return psiXref;
@@ -941,7 +987,7 @@ public class Graph2MIF {
         }
         //returning result DOMObject
         if (!psiXref.hasChildNodes()) {
-             logger.warn("xref failed, no child elements.");
+            logger.warn("xref failed, no child elements.");
             throw new ElementNotParseableError("Xref has no Child Elements");
         }
         return psiXref;
@@ -979,7 +1025,7 @@ public class Graph2MIF {
         }
         //if we could not create a primaryID - throw exception
         if (!psiXref.hasChildNodes()) {
-             logger.warn("xrefcollection failed, no child elements.");
+            logger.warn("xrefcollection failed, no child elements.");
             throw new ElementNotParseableError("couldn't generate primaryID - Xref not parseabel");
         }
         //the rest becomes secondary Refs
@@ -1000,7 +1046,7 @@ public class Graph2MIF {
         }
         //returning result DOMObject
         if (!psiXref.hasChildNodes()) {
-             logger.warn("xrefcol failed, no child elements.");
+            logger.warn("xrefcol failed, no child elements.");
             throw new ElementNotParseableError("Xref has no Child Elements");
         }
         return psiXref;
@@ -1039,7 +1085,7 @@ public class Graph2MIF {
         }
         //if we could not create a primaryID - throw exception
         if (!psiXref.hasChildNodes()) {
-             logger.warn("xrefcol failed, no child elements.");
+            logger.warn("xrefcol failed, no child elements.");
             throw new ElementNotParseableError("couldn't generate primaryID - Xref not parseabel");
         }
         //the rest becomes secondary Refs
@@ -1060,7 +1106,7 @@ public class Graph2MIF {
         }
         //returning result DOMObject
         if (!psiXref.hasChildNodes()) {
-             logger.warn("xrefcol failed, no child elements.");
+            logger.warn("xrefcol failed, no child elements.");
             throw new ElementNotParseableError("Xref has no Child Elements");
         }
         return psiXref;
@@ -1086,7 +1132,12 @@ public class Graph2MIF {
         try {
             psiPrimaryRef.setAttribute("secondary", xref.getSecondaryId());
         } catch (NullPointerException e) {
-             logger.info("no secondaryRef");
+            logger.info("no secondaryRef");
+        } // not required here - so dont worry
+        try {
+            psiPrimaryRef.setAttribute("version", xref.getDbRelease());
+        } catch (NullPointerException e) {
+            logger.info("no dbRelease");
         } // not required here - so dont worry
 
         return psiPrimaryRef;
@@ -1114,6 +1165,11 @@ public class Graph2MIF {
         } catch (NullPointerException e) {
             logger.info("no secondaryId");
         } // not required here - so dont worry
+        try {
+            psiSecondaryRef.setAttribute("version", xref.getDbRelease());
+        } catch (NullPointerException e) {
+            logger.info("no dbRelease");
+        } // not required here - so dont worry
 
         return psiSecondaryRef;
     }
@@ -1136,7 +1192,7 @@ public class Graph2MIF {
             Element psiNames = getPsiNamesOfAnnotatedObject(bioSource);
             psiOrganism.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-             logger.info("names failed (not required):"+e.getMessage());
+            logger.info("names failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         //       getCvCellCycle()   @todo
         //       getCvCellCycleAc() @todo
@@ -1145,10 +1201,10 @@ public class Graph2MIF {
             Element psiCellType = procCvCelltype(bioSource.getCvCellType());
             psiOrganism.appendChild(psiCellType);
         } catch (ElementNotParseableError e) {
-             logger.info("cvCellType failed (not required):"+e.getMessage());
+            logger.info("cvCellType failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         catch (NullPointerException e) {
-             logger.info("cvCellType failed (not required):"+e.getMessage());
+            logger.info("cvCellType failed (not required):" + e.getMessage());
         }//not required here - so dont worry
         //       getCvCellTypeAc()  @todo
         //       getCvCompartment()
@@ -1156,10 +1212,10 @@ public class Graph2MIF {
             Element psiCompartment = procCvCompartment(bioSource.getCvCompartment());
             psiOrganism.appendChild(psiCompartment);
         } catch (ElementNotParseableError e) {
-             logger.info("cvCompartment failed (not required):"+e.getMessage());
+            logger.info("cvCompartment failed (not required):" + e.getMessage());
         }  //not required here - so dont worry
         catch (NullPointerException e) {
-             logger.info("cvCompartment failed (not required):"+e.getMessage());
+            logger.info("cvCompartment failed (not required):" + e.getMessage());
         }//not required here - so dont worry
         //       getCvCompartmentAc() @todo
         //       getCvDevelopmentalStage() @todo
@@ -1169,19 +1225,19 @@ public class Graph2MIF {
             Element psiTissue = procCvTissue(bioSource.getCvTissue());
             psiOrganism.appendChild(psiTissue);
         } catch (ElementNotParseableError e) {
-             logger.info("cvTissue failed (not required):"+e.getMessage());
+            logger.info("cvTissue failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         catch (NullPointerException e) {
-             logger.info(" failed (not required):"+e.getMessage());
+            logger.info(" failed (not required):" + e.getMessage());
         }//not required here - so dont worry
         //       getCvTissueAc() @todo
         //       getTaxId()
         try {
             psiOrganism.setAttribute("ncbiTaxId", bioSource.getTaxId());
         } catch (NullPointerException e) {
-             logger.warn("ncbiTaxID failed (required):"+e.getMessage());
+            logger.warn("ncbiTaxID failed (required):" + e.getMessage());
             if (STRICT_MIF) {
-              throw new ElementNotParseableError("organism without Taxid found");
+                throw new ElementNotParseableError("organism without Taxid found");
             }
         }
         //       getAnnotation @todo
@@ -1197,7 +1253,7 @@ public class Graph2MIF {
         //       getUpdated @todo
         //returning result DOMObject
         if (!psiOrganism.hasChildNodes()) {
-             logger.warn("bioSource failed, no child elements.");
+            logger.warn("bioSource failed, no child elements.");
             throw new ElementNotParseableError("Organism has no Child Elements");
         }
         return psiOrganism;
@@ -1221,7 +1277,7 @@ public class Graph2MIF {
             psiNames = getPsiNamesOfAnnotatedObject(bioSource);
             psiOrganism.appendChild(psiNames);
         } catch (ElementNotParseableError e) {
-             logger.info("names failed (not required):"+e.getMessage());
+            logger.info("names failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         //       getCvCellCycle()   @todo
         //       getCvCellCycleAc() @todo
@@ -1230,10 +1286,10 @@ public class Graph2MIF {
             Element psiCellType = procCvCelltype(bioSource.getCvCellType());
             psiOrganism.appendChild(psiCellType);
         } catch (ElementNotParseableError e) {
-             logger.info("cvCelltype failed (not required):"+e.getMessage());
+            logger.info("cvCelltype failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         catch (NullPointerException e) {
-            logger.info("cvCelltype failed (not required):"+e.getMessage());
+            logger.info("cvCelltype failed (not required):" + e.getMessage());
         }//not required here - so dont worry
         //       getCvCellTypeAc()  @todo
         //       getCvCompartment()
@@ -1241,10 +1297,10 @@ public class Graph2MIF {
             Element psiCompartment = procCvCompartment(bioSource.getCvCompartment());
             psiOrganism.appendChild(psiCompartment);
         } catch (ElementNotParseableError e) {
-         logger.info("cvCompartment failed (not required):"+e.getMessage());
+            logger.info("cvCompartment failed (not required):" + e.getMessage());
         }//not required here - so dont worry
         catch (NullPointerException e) {
-            logger.info("cvCompartment failed (not required):"+e.getMessage());
+            logger.info("cvCompartment failed (not required):" + e.getMessage());
         }//not required here - so dont worry
         //       getCvDevelopmentalStage() @todo
         //       getCvDevelopmentalStageAc()    @todo
@@ -1253,20 +1309,20 @@ public class Graph2MIF {
             Element psiTissue = procCvTissue(bioSource.getCvTissue());
             psiOrganism.appendChild(psiTissue);
         } catch (ElementNotParseableError e) {
-      logger.info("cvTissue failed (not required):"+e.getMessage());
+            logger.info("cvTissue failed (not required):" + e.getMessage());
         } //not required here - so dont worry
         catch (NullPointerException e) {
-            logger.info("cvTissue failed (not required):"+e.getMessage());
-              }//not required here - so dont worry
+            logger.info("cvTissue failed (not required):" + e.getMessage());
+        }//not required here - so dont worry
         //       getCvTissueAc() @todo
         //       getTaxId()
         try {
             psiOrganism.setAttribute("ncbiTaxId", bioSource.getTaxId());
         } catch (NullPointerException e) {
-            logger.warn("ncbiTaxID failed (required):"+e.getMessage());
-                 if (STRICT_MIF) {
-                   throw new ElementNotParseableError("organism without Taxid found");
-                 }
+            logger.warn("ncbiTaxID failed (required):" + e.getMessage());
+            if (STRICT_MIF) {
+                throw new ElementNotParseableError("organism without Taxid found");
+            }
         }
         //       getAnnotation @todo
         //       getCurator @todo
@@ -1281,7 +1337,7 @@ public class Graph2MIF {
         //       getUpdated @todo
         //returning result DOMObject
         if (!psiOrganism.hasChildNodes()) {
-       logger.warn("organism failed, no child elements.");
+            logger.warn("organism failed, no child elements.");
             throw new ElementNotParseableError("Organism has no Child Elements");
         }
         return psiOrganism;
@@ -1302,14 +1358,14 @@ public class Graph2MIF {
         try {
             psiCellType.appendChild(doc.createTextNode(cvCellType.getShortLabel()));
         } catch (NullPointerException e) {
-             logger.warn("cvCelltype failed (required):"+e.getMessage());
+            logger.warn("cvCelltype failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("cellType not defined");
             }
         }
         //returning result DOMObject
         if (!psiCellType.hasChildNodes()) {
-             logger.warn("cvCellType failed, no child elements.");
+            logger.warn("cvCellType failed, no child elements.");
             throw new ElementNotParseableError("CellType has no Child Elements");
         }
         return psiCellType;
@@ -1329,14 +1385,14 @@ public class Graph2MIF {
         try {
             psiCompartment.appendChild(doc.createTextNode(cvCompartment.getShortLabel()));
         } catch (NullPointerException e) {
-             logger.warn("cvCompartment failed (required):"+e.getMessage());
+            logger.warn("cvCompartment failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("Tissue not defined");
             }
         }
         //returning result DOMObject
         if (!psiCompartment.hasChildNodes()) {
-             logger.warn("cvCompartment failed, no child elements.");
+            logger.warn("cvCompartment failed, no child elements.");
             throw new ElementNotParseableError("Compartment has no Child Elements");
         }
         return psiCompartment;
@@ -1356,14 +1412,14 @@ public class Graph2MIF {
         try {
             psiTissue.appendChild(doc.createTextNode(cvTissue.getShortLabel()));
         } catch (NullPointerException e) {
-             logger.warn("cvTissue failed (required):"+e.getMessage());
+            logger.warn("cvTissue failed (required):" + e.getMessage());
             if (STRICT_MIF) {
                 throw new ElementNotParseableError("Tissue not defined");
             }
         }
         //returning result DOMObject
         if (!psiTissue.hasChildNodes()) {
-             logger.warn("cvTissue failed, no child elements.");
+            logger.warn("cvTissue failed, no child elements.");
             throw new ElementNotParseableError("Tissue has no Child Elements");
         }
         return psiTissue;
@@ -1395,20 +1451,20 @@ public class Graph2MIF {
                 psiNames.appendChild(psiShortLabel);
                 //names/fullName undef
             } else {
-                 logger.warn("names failed (required): no shortLabel");
+                logger.warn("names failed (required): no shortLabel");
                 if (STRICT_MIF) {
                     throw new ElementNotParseableError("No shortlabel for Name found");
                 }
             }
         } catch (NullPointerException e) {
             if (STRICT_MIF) {
-             logger.warn("names failed (required): no Shortlabel");
+                logger.warn("names failed (required): no Shortlabel");
                 throw new ElementNotParseableError("No shortlabel for Name found");
             }
         }
         //returning result DOMObject
         if (!psiNames.hasChildNodes()) {
-             logger.warn("names failed, no child elements.");
+            logger.warn("names failed, no child elements.");
             throw new ElementNotParseableError("Names has no Child Elements");
         }
         return psiNames;
@@ -1434,7 +1490,7 @@ public class Graph2MIF {
                 psiNames.appendChild(psiShortLabel);
                 //getFullName is names/fullName
             } else {
-                 logger.warn("names failed (required): no shortLabel");
+                logger.warn("names failed (required): no shortLabel");
                 if (STRICT_MIF) {
                     throw new ElementNotParseableError("No shortlabel for Name found");
                 }
@@ -1456,7 +1512,7 @@ public class Graph2MIF {
 
         //returning result DOMObject
         if (!psiNames.hasChildNodes()) {
-             logger.warn("names failed, no child elements.");
+            logger.warn("names failed, no child elements.");
             throw new ElementNotParseableError("Names has no Child Elements");
         }
 

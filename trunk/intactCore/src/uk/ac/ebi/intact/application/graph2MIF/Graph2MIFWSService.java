@@ -1,26 +1,26 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
+
 package uk.ac.ebi.intact.application.graph2MIF;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.persistence.DAOFactory;
-import uk.ac.ebi.intact.persistence.DAOSource;
-import uk.ac.ebi.intact.simpleGraph.Graph;
-import uk.ac.ebi.intact.application.graph2MIF.Graph2MIF;
-import uk.ac.ebi.intact.application.graph2MIF.GraphNotConvertableException;
-import uk.ac.ebi.intact.application.graph2MIF.NoGraphRetrievedException;
-import uk.ac.ebi.intact.application.graph2MIF.NoInteractorFoundException;
-import uk.ac.ebi.intact.application.graph2MIF.MIFSerializeException;
 import uk.ac.ebi.intact.persistence.DataSourceException;
+import uk.ac.ebi.intact.simpleGraph.Graph;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
 
 /**
  *  Graph2MIFWSService Implementation
@@ -29,15 +29,21 @@ import java.util.Map;
  *  Interface defined in Graph2MIFWS.java
  *
  *  @author Henning Mersch <hmersch@ebi.ac.uk>
+ *  @version $Id$
  */
 public class Graph2MIFWSService implements Graph2MIFWS {
 
     //The IntactHelper for retrieving information from IntAct Database.
 	private IntactHelper helper;
+       /**
+     *  logger for proper information
+     *  see config/log4j.properties for more informtation
+     */
+    static Logger logger = Logger.getLogger("graph2MIF");
 	//Contructor creates the IntactHelper
 	public Graph2MIFWSService()  throws DataSourceException, IntactException {
 	       helper = new IntactHelper();
-		   System.out.println("Helper created");
+		   logger.info("Helper created");
 	}
 
     /**
@@ -61,14 +67,14 @@ public class Graph2MIFWSService implements Graph2MIFWS {
 				 NoInteractorFoundException {
 	  // the serialised DOM-Object - so the returned string.
 	  String mif = "";
-	  System.out.println("here we go with AC:'"+ac+"', Depth:'"+depth+"'");
-	  System.out.println("generating strict MIF: "+strictmif.booleanValue());
+	  logger.info("here we go with AC:'"+ac+"', Depth:'"+depth+"'");
+	  logger.info("generating strict MIF: "+strictmif.booleanValue());
 	  Graph graph = new Graph();
 	  // retrieve Graph
 	  Graph2MIFWSService graph2mifwsservice = new Graph2MIFWSService(); //DataSourceException possible
 	  graph = graph2mifwsservice.getInteractionNetwork(ac, depth); //NoGraphRetrievedExceptioni, IntactException and NoInteractorFoundException possible
-	  System.out.println("got graph:");
-	  System.out.println(graph);
+	  logger.info("got graph:");
+	  logger.info(graph);
 	  //convert graph to DOM Object
 	  Graph2MIF convert = new Graph2MIF(strictmif);
       Document mifDOM = null;
@@ -80,7 +86,7 @@ public class Graph2MIFWSService implements Graph2MIFWS {
 	  try {
 		xmls.serialize(mifDOM);
 	  } catch (IOException e) {
-		System.out.println("msg:"+e.getMessage());
+		logger.warn("IOException while serialize"+e.getMessage());
         throw new MIFSerializeException();
 	  }
 	  mif = w.toString();
@@ -107,22 +113,23 @@ public class Graph2MIFWSService implements Graph2MIFWS {
 		throw new IntactException();
 	  }
 	  Interactor interactor = null;
-	  if (interactors.size() == 1 ) {
-	  interactor = (Interactor)interactors.toArray()[0]; // just take the 1st element - there should be no 2nd if searche for an ac !
-	  } else { //No Interactor found
-		System.out.println("msg: No Interactor found");
+      Iterator interactorIterator = interactors.iterator(); // just take the 1st element - there should be no 2nd if searche for an ac !
+	  if (interactorIterator.hasNext()) {
+          interactor = (Interactor)interactorIterator.next();
+      } else { //No Interactor found
+		logger.warn("No Interactor found for: "+ac);
 	    throw new NoInteractorFoundException();
 	  }
 	  // retrieve the graph with interactor as root element and given depth
 	  Graph graph = new Graph();
       if(graph == null) {
-          System.out.println("retrieved graph == null");
+          logger.warn("retrieved graph == null");
           throw new NoGraphRetrievedException();
       }
       try {
 		graph = helper.subGraph(interactor, depth.intValue(), null, Constants.EXPANSION_BAITPREY, graph);
 	  } catch (IntactException e) {
-		System.out.println("msg:"+e.getMessage());
+		logger.warn("IntActException while subgraph() call"+e.getMessage());
         throw new NoGraphRetrievedException();
 	  }
 	  //return this graph

@@ -1,3 +1,9 @@
+/*
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
+in the root directory of this distribution.
+*/
+
 package uk.ac.ebi.intact.application.graph2MIF;
 
 import uk.ac.ebi.intact.business.IntactException;
@@ -15,6 +21,7 @@ import uk.ac.ebi.intact.application.graph2MIF.MIFSerializeException;
  *  Implementation in Graph2MIFWSService.java
  *
  *  @author Henning Mersch <hmersch@ebi.ac.uk>
+ *  @version $Id$
  */
 public interface Graph2MIFWS {
 
