@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.application.cvedit.struts.controller;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
-import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.application.cvedit.struts.view.CommentBean;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,12 +49,12 @@ public class CommentDelAction extends IntactBaseAction {
         // Save the current view.
         CvViewBean viewbean = super.getIntactUser(request).getView();
 
-        // The annotation we want to delete.
-        Annotation delannot = viewbean.findAnnotation(key);
+        // The annotation bean we want to delete.
+        CommentBean cb = viewbean.findAnnotationCB(key);
 
-        // We must have the annotation.
-        assert delannot != null;
-        viewbean.delAnnotation(key, delannot);
+        // We must have the annotation bean.
+        assert cb != null;
+        viewbean.delAnnotation(cb);
 
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }
