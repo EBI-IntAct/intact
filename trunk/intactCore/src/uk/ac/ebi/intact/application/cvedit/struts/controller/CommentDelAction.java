@@ -10,7 +10,6 @@ import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
-import uk.ac.ebi.intact.business.IntactException;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,50 +45,44 @@ public class CommentDelAction extends IntactBaseAction {
     public ActionForward perform (ActionMapping mapping, ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response) {
-        // The annotation collection.
-        Collection collection = (Collection) super.getSessionObject(request,
-            WebIntactConstants.ANNOTATIONS);
+        // The annotation on display.
+        Collection viewbeans = (Collection) super.getSessionObject(request,
+            WebIntactConstants.ANNOTS_TO_VIEW);
 
-        // The bean for 'ac'.
-        CommentBean bean = findByAc(request.getParameter("ac"), collection);
+        // Find the bean for 'key'.
+        CommentBean bean = findByKey(request.getParameter("key"), viewbeans);
 
         // We must have the bean.
         assert bean != null;
 
         // Remove it from the collection.
-        collection.remove(bean);
+        viewbeans.remove(bean);
 
-        // There is no need to delete from the persistence system if this comment
-        // is in a transaction.
-//        if (bean.inTransaction()) {
-//            super.log("Deleting an uncommitted annotation");
-//            return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
-//        }
-        // Not in a transaction; we must delete it from the persistence storage.
+        // Collection of comments to delete.
+        Collection delcomments = (Collection) super.getSessionObject(request,
+            WebIntactConstants.ANNOTS_TO_DELETE);
 
-        // Handler to the Intact User.
-        IntactUserIF user = super.getIntactUser(request);
+        // Collections of comments to add.
+        Collection addcomments = (Collection) super.getSessionObject(request,
+            WebIntactConstants.ANNOTS_TO_ADD);
 
-        try {
-            super.log("Transaction before annt delete: " + user.isActive());
-            user.delete(bean.getAnnotation());
-            super.log("Transaction after annt delete: " + user.isActive());
+        // Are we trying to delete a bean that has been just added?
+        if (addcomments.contains(bean)) {
+            addcomments.remove(bean);
         }
-        catch (IntactException ie) {
-            // Clear any previous errors.
-            super.clearErrors();
-            super.addError("error.transaction", ie.getMessage());
-            super.saveErrors(request);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+        else {
+            // No; we should remove it when the transaction is committed.
+            delcomments.add(bean);
         }
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
     }
 
     // Returns a comment bean from a given collection for matching Ac.
-    private CommentBean findByAc(String ac, Collection collection) {
+    private CommentBean findByKey(String keystr, Collection collection) {
+        long key = Long.parseLong(keystr);
         for (Iterator iter = collection.iterator(); iter.hasNext();) {
             CommentBean bean = (CommentBean) iter.next();
-            if (bean.getAc().equals(ac)) {
+            if (bean.getKey() == key) {
                 return bean;
             }
         }
