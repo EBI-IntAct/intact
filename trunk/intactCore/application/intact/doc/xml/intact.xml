@@ -1270,6 +1270,78 @@ Please see separate <a href="statistics/index.html">statistics section</a>.
                 </section> <!-- How to interact -->
 
             </section> <!-- hierarchView -->
+			
+			<section name="mine" title="MiNe - Minimal connecting network">
+				<blockquote>
+                    MiNe is a web based application which computes the minimal connecting network for a given
+					set of proteins if possible. 
+                    <br/>
+					A minimal network is a sub network of an interaction network which has to fulfill the following
+					points:
+					<ul>
+						<li>it has to contain all wanted proteins</li>
+						<li>the sum of the weight of the edges has to be minimal.<br/>
+							The weight of the edges can be either different or identical (e.g. weight 1) -
+							then the minimal connecting network is actually the network with the minimal number of nodes
+						</li>
+					</ul>
+                    <br/>
+                    This includes :
+                    <ul>
+                        <li> Query interface: to select the set of <i>Interactors</i> from which the minimal network is computed, </li>
+                        <li> Computation of the minimal connecting network, </li>
+                        <li> Forwarding to HierarchView to visualise the network </li>
+                    </ul>
+                </blockquote>
+				
+				<section name="mine.search" title="How to search for a minimal connecting network ?">
+					<blockquote>
+						Type in the <i>Interactor</i> form either a protein name or accession number and
+						click the <i>Find network</i> button to the related minimal connecting network.
+						You are free to type a comma separated list of proteins in order to display all of them in one go.
+						<br/>
+						<br/>
+						As search phrases can be used:
+						<ol>	
+						   <li>IntAct Ac: EBI-44444</li>
+						   <li>ene names: lsm7</li>
+						   <li>SwissProt / Trembl Ac: Q08162</li>
+						   <li>SwissProt / Trembl Id: rr44_yeast</li>
+						   <li>InterPro Ac: IPR001900</li>
+						   <li>GO Id: GO:0000176</li>
+						</ol>
+					</blockquote>
+				</section>
+				
+				<section name="mine.ambiguous.result" title="What is an ambiguous result ?">
+					<blockquote>
+						If your search returns an ambiguous result all found proteins for every search phrase
+						are shown on this page.
+						<br/>
+						An ambiguous result occurs when you search for either an <i>Interaction</i> or an <i>Experiment</i> 
+						or at least one search phrase returns more than one protein.
+						<br/>
+						To proceed you have to select the proteins from which you want to compute the minimal connecting
+						network by activating the checkboxes related to the proteins.
+					</blockquote>	
+				</section>
+				
+				<section name="mine.ambiguous.additional" title="What are additional search phrases ?">
+					<blockquote>
+						In this textbox you can enter search phrases in addition to or instead of the
+						selected proteins shown on the page.
+						<br/>
+						If you want to add search phrases to your selection type a protein or an accession 
+						number or a comma seperated list into this field
+						<br/>
+						If you want to search for the phrases instead of the selection make sure to deselect
+						all proteins found by the previous search.
+						<br/>
+						<br/>
+						Please be aware of the search limit of seven proteins !
+					</blockquote>
+				</section>
+			</section>
 
 
             <section name="graph2mif" title="Graph2MIF -  Export IntAct to PSI Molecular Interaction Format">
