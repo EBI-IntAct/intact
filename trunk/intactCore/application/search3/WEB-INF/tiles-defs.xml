@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
  <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+         "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
        "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<!--
+  Copyright (c) 2002 The European Bioinformatics Institute, and others.
+  All rights reserved. Please see the file LICENSE
+  in the root directory of this distribution.
+-->
 
 <!--
     Tiles definitions for search.
@@ -62,6 +68,16 @@
     <!-- single AnnotatedObject view description. Used for eg CvObjects, BioSource-->
     <definition name="single.layout" extends="search.layout">
         <put name="content" value="/pages/single.jsp"/>
+    </definition>
+
+     <!-- single AnnotatedObject view description. Used for eg CvObjects, BioSource-->
+    <definition name="cvObject.layout" extends="search.layout">
+        <put name="content" value="/pages/cvObject.jsp"/>
+    </definition>
+
+     <!-- single AnnotatedObject view description. Used for eg CvObjects, BioSource-->
+    <definition name="bioSource.layout" extends="search.layout">
+        <put name="content" value="/pages/bioSource.jsp"/>
     </definition>
 
     <!-- detail view description. Used for Interaction and Experiment display -->
