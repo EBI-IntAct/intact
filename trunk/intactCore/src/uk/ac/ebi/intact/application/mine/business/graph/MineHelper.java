@@ -5,16 +5,6 @@
  */
 package uk.ac.ebi.intact.application.mine.business.graph;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-
 import jdsl.core.api.ObjectIterator;
 import jdsl.core.api.Sequence;
 import jdsl.graph.api.Edge;
@@ -28,6 +18,12 @@ import uk.ac.ebi.intact.application.mine.business.graph.model.EdgeObject;
 import uk.ac.ebi.intact.application.mine.business.graph.model.MineData;
 import uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey;
 import uk.ac.ebi.intact.application.mine.business.graph.model.SearchObject;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
 
 /**
  * The <tt>MineHelper</tt> provides all methods to coordinate between the web
@@ -43,7 +39,7 @@ public class MineHelper {
      * Creates a new MineHelper which organise the search for the minimal
      * connection network.
      * 
-     * @param helper the intacthelper
+     * @param user the intacthelper
      */
     public MineHelper(IntactUserI user) {
         this.intactUser = user;
@@ -87,8 +83,8 @@ public class MineHelper {
             // interactor
             PreparedStatement pstm = intactUser.getDBConnection()
                     .prepareStatement(
-                            "SELECT DISTINCT bac, graphid FROM ia_interactions "
-                                    + "WHERE p1ac=? or p2ac=?");
+                            "SELECT DISTINCT taxid, graphid FROM ia_interactions "
+                                    + "WHERE protein1_ac=? or protein2_ac=?");
 
             String ac;
             NetworkKey key;
@@ -215,7 +211,7 @@ public class MineHelper {
         String acc1, acc2, interAcc;
         Map bioMap = new Hashtable();
 
-        String query = "SELECT * FROM ia_interactions WHERE bac='"
+        String query = "SELECT * FROM ia_interactions WHERE taxid='"
                 + key.getBioSourceTaxID() + "' AND graphID=" + key.getGraphID();
         set = stm.executeQuery(query);
         graph = new IncidenceListGraph();

@@ -4,21 +4,11 @@
 
 package uk.ac.ebi.intact.util;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
-
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+
+import java.sql.*;
+import java.util.*;
 
 /**
  * The class <tt>MineDatabaseFill</tt> is a utility class to fill the database
@@ -151,7 +141,7 @@ public class MineDatabaseFill {
 		set = stm.executeQuery(query);
 
 		PreparedStatement deleteStm = con
-				.prepareStatement("DELETE FROM ia_interactions WHERE iac=?");
+				.prepareStatement("DELETE FROM ia_interactions WHERE interaction_ac=?");
 		j = 0;
 		while (set.next()) {
 			deleteStm.setString(1, set.getString(1));
@@ -204,8 +194,8 @@ public class MineDatabaseFill {
 			throws SQLException {
 		System.out.print(".");
 		// query fetches all entries where the graphid is not set yet
-		String query = "SELECT p1ac FROM ia_interactions WHERE graphid IS NULL "
-				+ "AND bac='" + bioAcc + "'";
+		String query = "SELECT protein1_ac FROM ia_interactions WHERE graphid IS NULL "
+				+ "AND taxid='" + bioAcc + "'";
 		Statement stm = con.createStatement();
 		ResultSet set = stm.executeQuery(query);
 		// if no result is available the biosource completed
@@ -217,16 +207,16 @@ public class MineDatabaseFill {
 		Stack stack = new Stack();
 		stack.push(ac);
 
-		PreparedStatement selectP1Ac = con.prepareStatement("SELECT "
-				+ "p1ac FROM ia_interactions WHERE p2ac=? " + "AND bac='"
+		PreparedStatement selectprotein1_ac = con.prepareStatement("SELECT "
+				+ "protein1_ac FROM ia_interactions WHERE protein2_ac=? " + "AND taxid='"
 				+ bioAcc + "' AND graphid IS NULL");
-		PreparedStatement selectP2Ac = con.prepareStatement("SELECT "
-				+ "p2ac FROM ia_interactions WHERE p1ac=? " + "AND bac='"
+		PreparedStatement selectprotein2_ac = con.prepareStatement("SELECT "
+				+ "protein2_ac FROM ia_interactions WHERE protein1_ac=? " + "AND taxid='"
 				+ bioAcc + "' AND graphid IS NULL");
 
 		PreparedStatement updatePST = con
 				.prepareStatement("UPDATE ia_interactions "
-						+ "SET graphID=? WHERE p1ac=? OR p2ac=? AND bac='"
+						+ "SET graphID=? WHERE protein1_ac=? OR protein2_ac=? AND taxid='"
 						+ bioAcc + "' AND graphid IS NULL");
 
 		// the stack stores each element which is
@@ -236,27 +226,27 @@ public class MineDatabaseFill {
 		while (!stack.isEmpty()) {
 			// get the current ac nr from the stack
 			ac = stack.pop().toString();
-			selectP1Ac.setString(1, ac);
-			selectP2Ac.setString(1, ac);
+			selectprotein1_ac.setString(1, ac);
+			selectprotein2_ac.setString(1, ac);
 
-			set = selectP1Ac.executeQuery();
+			set = selectprotein1_ac.executeQuery();
 			// select all acnr which have an interaction with
 			// the current ac nr and push them onto the stack
 			while (set.next()) {
-				String p1ac = set.getString(1);
-				if (!stack.contains(p1ac)) {
-					stack.push(p1ac);
+				String protein1_ac = set.getString(1);
+				if (!stack.contains(protein1_ac)) {
+					stack.push(protein1_ac);
 				}
 			}
 			set.close();
 
 			// select all acnr which have an interaction with
 			// the current ac nr and push them onto the stack
-			set = selectP2Ac.executeQuery();
+			set = selectprotein2_ac.executeQuery();
 			while (set.next()) {
-				String p2ac = set.getString(1);
-				if (!stack.contains(p2ac)) {
-					stack.push(p2ac);
+				String protein2_ac = set.getString(1);
+				if (!stack.contains(protein2_ac)) {
+					stack.push(protein2_ac);
 				}
 			}
 
@@ -265,8 +255,8 @@ public class MineDatabaseFill {
 			updatePST.setString(2, ac);
 			updatePST.setString(3, ac);
 		}
-		selectP1Ac.close();
-		selectP2Ac.close();
+		selectprotein1_ac.close();
+		selectprotein2_ac.close();
 		updatePST.close();
 		stm.close();
 		setGraphIDBio(con, bioAcc, graphID + 1);
