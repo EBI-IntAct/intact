@@ -1389,11 +1389,11 @@
            <section name="statistics" title="Statistics">
 <table border="1">
 <tr><td>Object type</td><td>Number</td><td>Remarks</td></tr>
-<tr><td>Experiment</td><td>5</td><td></td></tr>
-<tr><td>Interaction (binary or n-ary)</td><td>6</td><td></td></tr>
-<tr><td>Resulting binary interaction</td><td>7</td><td></td></tr>
-<tr><td>Controlled vocabulary term</td><td>8</td><td></td></tr>
-<tr><td>BioSource</td><td>9</td><td>Normally species, by may map to tissue, cell type etc.</td></tr>
+<tr><td>Experiment</td><td>316</td><td></td></tr>
+<tr><td>Interaction (binary or n-ary)</td><td>22725</td><td></td></tr>
+<tr><td>Resulting binary interaction</td><td>29759</td><td></td></tr>
+<tr><td>Controlled vocabulary term</td><td>181</td><td></td></tr>
+<tr><td>BioSource</td><td>56</td><td>Normally species, but may map to tissue, cell type etc.</td></tr>
 </table>
            </section>   <!-- end statistics -->
            <section name="download" title="Download">
