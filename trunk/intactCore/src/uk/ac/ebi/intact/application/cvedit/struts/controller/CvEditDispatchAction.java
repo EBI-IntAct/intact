@@ -70,11 +70,11 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(request);
 
-        // The object we are editing at the moment.
-        CvObject cvobj = user.getCurrentEditObject();
-
-        // Holds the annotations to add.
+        // The current view.
         CvViewBean viewbean = user.getView();
+
+        // The object we are editing at the moment.
+        CvObject cvobj = viewbean.getCvObject();
 
         // The annotations/xrefs to add and delete to/from persistent system.
         Collection addcomments = viewbean.getAnnotationsToAdd();
@@ -87,6 +87,10 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
         try {
             // Begin the transaction.
             user.begin();
+
+            // Update the cv info data.
+            cvobj.setShortLabel(viewbean.getShortLabel());
+            cvobj.setFullName(viewbean.getFullName());
 
             // Create annotations and add them to CV object.
             for (Iterator iter = addcomments.iterator(); iter.hasNext();) {
@@ -147,10 +151,11 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
             return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
         finally {
-            // Clear containers; regradless of the outcome.
-            viewbean.clearTransAnnotations();
-            viewbean.clearTransXrefs();
+            // Clear containers; regardless of the outcome.
+            viewbean.clearTransactions();
         }
+        // Update the search cache.
+        user.updateSearchCache(cvobj);
         // All changes are committed successfully; either search or results.
         return mapping.findForward(super.getForwardAction(user));
     }
@@ -177,7 +182,7 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
         IntactUserIF user = super.getIntactUser(request);
 
         // The object to delete.
-        CvObject cvobj = user.getCurrentEditObject();
+        CvObject cvobj = user.getView().getCvObject();
 
         try {
             // Begin the transaction.
@@ -204,6 +209,10 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
             super.saveErrors(request, errors);
             return mapping.findForward(CvEditConstants.FORWARD_FAILURE);
         }
+        finally {
+            // Clear containers; regardless of the outcome.
+            user.getView().clearTransactions();
+        }
         // Remove it from cache result.
         user.removeFromSearchCache(cvobj.getAc());
         // Deleted successfully; either search or results.
@@ -228,13 +237,11 @@ public class CvEditDispatchAction extends CvAbstractDispatchAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
-            // Handler to the Intact User.
+        // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser(request);
 
-        // Cancel any pending annotations/xrefs.
-        CvViewBean viewbean = user.getView();
-        viewbean.clearTransAnnotations();
-        viewbean.clearTransXrefs();
+        // Cancel the current edit session.
+        user.cancelEdit();
 
         // Either search or results.
         return mapping.findForward(super.getForwardAction(user));
