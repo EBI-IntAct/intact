@@ -6,8 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.cvedit.struts.view;
 
-import org.apache.taglibs.display.StringUtil;
-
 import java.io.Serializable;
 
 import uk.ac.ebi.intact.model.CvObject;
@@ -30,10 +28,7 @@ public class ListObject implements Serializable {
 
     /**
      * Constructs with a CvObject.
-     *
      * @param cvobj the CvObject to extract information.
-     *
-     * @pre cvobj != null
      */
     public ListObject(CvObject cvobj) {
         myCvObject = cvobj;
@@ -41,7 +36,6 @@ public class ListObject implements Serializable {
 
     /**
      * Returns the AC as a string.
-     *
      * @return accession number of the CvObject.
      */
     public String getAc() {
@@ -50,7 +44,6 @@ public class ListObject implements Serializable {
 
     /**
      * Returns the short label.
-     *
      * @return short label.
      */
     public String getShortLabel() {
