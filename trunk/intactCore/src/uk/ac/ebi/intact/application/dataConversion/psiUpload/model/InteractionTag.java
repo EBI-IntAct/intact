@@ -86,7 +86,7 @@ public final class InteractionTag {
      * @see uk.ac.ebi.intact.application.dataConversion.psiUpload.model.AnnotationTag
      */
     private final Collection annotations;
-    private ConfidenceTag confidence;
+    private final ConfidenceTag confidence;
 
 
     /////////////////////////////
