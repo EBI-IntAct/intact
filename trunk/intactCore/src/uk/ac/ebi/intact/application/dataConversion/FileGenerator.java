@@ -89,6 +89,7 @@ public class FileGenerator {
 
     /**
      * Output the experiment classification, suitable for scripting
+     * @param allExp HashMap of HashMap of ArrayLists of Experiments: {species}{scale}[n]
      */
     public static void writeExperimentsClassification(HashMap allExp) {
         for (Iterator iterator = allExp.keySet().iterator(); iterator.hasNext();) {
@@ -168,7 +169,7 @@ public class FileGenerator {
             } catch (Exception e) {
                 /* If anything goes wrong in determining the source,
                 experiments without interactions etc are the most likely cause.
-                Just ignore these it the classification and therefore in the output.
+                Just ignore these in the classification and therefore in the output.
                 */
                 continue;
             }
@@ -237,7 +238,7 @@ public class FileGenerator {
                 System.err.println("Usage: psiRun.sh FileGenerator <searchPattern> [<filename>] ");
                 System.err.println("<searchPattern> will be used to select experiment shortlabels. May be a comma-separated list");
                 System.err.println("If <filename> is given, all matches will be written into it.");
-                System.err.println("Otherwise a set of files according to species and experiment size will be created.");
+                System.err.println("Otherwise a list of suggested filenames and experiment shortLabels will be written to standard out.");
                 System.exit(1);
             }
 
