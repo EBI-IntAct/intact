@@ -10,7 +10,6 @@ package uk.ac.ebi.intact.util;
 
 import java.util.*;
 import java.lang.reflect.*;
-import java.security.*;
 
 //XML classes
 import org.w3c.dom.*;
@@ -22,7 +21,6 @@ import java.io.*;
 //DB accessor
 import uk.ac.ebi.intact.business.*;
 
-import uk.ac.ebi.intact.model.*;
 
 
 /**
@@ -153,7 +151,7 @@ public class XmlBuilder implements Serializable {
 
                 //to avoid using intact classes (keeps it a little more flexible)
                 //get the references and find the AC from that...
-                List referenceList = this.getReferences(item, new HashSet());
+                Collection referenceList = this.getReferences(item, new HashSet());
                 Iterator iter = referenceList.iterator();
                 while(iter.hasNext()) {
                     Field field = (Field)iter.next();
@@ -197,7 +195,7 @@ public class XmlBuilder implements Serializable {
      * AC will be amodified with the same specified mode.
      *
      * @param dc The Document to be expanded
-     * @param ids A list of the items (identified by AC) to be expanded
+     * @param ids A Collection of the items (identified by AC) to be expanded
      * @param mode The mode of operation to be carried out (eg expand, contract etc)
      *
      * @return Document the expanded XML Document or the original Document if no changes
@@ -206,7 +204,7 @@ public class XmlBuilder implements Serializable {
      * @exception ParserConfigurationException thrown if a document builder could not be created
      *
      */
-    public Document modifyDoc(Document dc, List ids, int mode) throws ParserConfigurationException {
+    public Document modifyDoc(Document dc, Collection ids, int mode) throws ParserConfigurationException {
 
         //basic idea:
         //1. Get all the objects from the DB using their AC (probably in the OJB
@@ -277,6 +275,7 @@ public class XmlBuilder implements Serializable {
                         compactCache.put(key, result);
                     }
                 }
+
                 //import the new Element into the current document so we can use it
                 Node newNode = dc.importNode(result, true);
 
@@ -296,30 +295,30 @@ public class XmlBuilder implements Serializable {
 
                         //found the node we want - replace it
                         oldNode = walker.getCurrentNode();
-                        System.out.println("Node to replace: AC =: " + ((Element)oldNode).getAttribute("ac"));
-                        System.out.println("Node to replace: Type =: " + ((Element)oldNode).getTagName());
+//                        System.out.println("Node to replace: AC =: " + ((Element)oldNode).getAttribute("ac"));
+//                        System.out.println("Node to replace: Type =: " + ((Element)oldNode).getTagName());
 
                         Node parent = oldNode.getParentNode();
-                        System.out.println("Parent: AC =: " + ((Element)parent).getAttribute("ac"));
-                        System.out.println("Parent: Type =: " + ((Element)parent).getTagName());
-                        System.out.println("New child: AC =: " + ((Element)newNode).getAttribute("ac"));
-                        System.out.println("New child: Type =: " + ((Element)newNode).getTagName());
+//                        System.out.println("Parent: AC =: " + ((Element)parent).getAttribute("ac"));
+//                        System.out.println("Parent: Type =: " + ((Element)parent).getTagName());
+//                        System.out.println("New child: AC =: " + ((Element)newNode).getAttribute("ac"));
+//                        System.out.println("New child: Type =: " + ((Element)newNode).getTagName());
 
                         //have to use a copy to avoid the walker building references to only
                         //one
                         if(hasMatchedBefore) {
                             Node copy = newNode.cloneNode(true);
                             parent.replaceChild(copy, oldNode);
-                            System.out.println("setting walker back to replaced node.....");
+                           // System.out.println("setting walker back to replaced node.....");
                             walker.setCurrentNode(copy);
                         }
                         else {
                             parent.replaceChild(newNode, oldNode);
-                            System.out.println("setting walker back to replaced node.....");
+                           // System.out.println("setting walker back to replaced node.....");
                             walker.setCurrentNode(newNode);
                         }
-                        System.out.println("Where I am in the tree - Tag:" + ((Element)walker.getCurrentNode()).getTagName());
-                        System.out.println("AC: " + ((Element)walker.getCurrentNode()).getAttribute("ac"));
+//                        System.out.println("Where I am in the tree - Tag:" + ((Element)walker.getCurrentNode()).getTagName());
+//                        System.out.println("AC: " + ((Element)walker.getCurrentNode()).getAttribute("ac"));
 
                         //flag that we already have a match
                         hasMatchedBefore = true;
@@ -366,8 +365,8 @@ public class XmlBuilder implements Serializable {
         Document doc = db.newDocument();
 
         //get the fields defined in this class, and put them
-        //in a list so we can add to them easily
-        List allFields = Arrays.asList(this.getAllFields(item));
+        //in a Collection so we can add to them easily
+        Collection allFields = Arrays.asList(this.getAllFields(item));
 
         //get the appropriate intact form of the class name
         //(needed to match the XSL templates correctly..)
@@ -448,8 +447,8 @@ public class XmlBuilder implements Serializable {
         ignored.add(Collection.class);
         ignored.add(java.sql.Timestamp.class);
 
-        List objRefs = this.getReferences(obj, ignored);
-        List collectionRefs = this.getCollections(obj);
+        Collection objRefs = this.getReferences(obj, ignored);
+        Collection collectionRefs = this.getCollections(obj);
 
         Element refElement = null;
         Iterator it = objRefs.iterator();
@@ -494,15 +493,17 @@ public class XmlBuilder implements Serializable {
                 //create a collector Node in the same Document as elem
                 Element collectionElem = doc.createElement(fieldName);
                 Collection items = (Collection)collectionField.get(obj);
-                Iterator iter = items.iterator();
-                while(iter.hasNext()) {
-                    Object item = iter.next();
+                if(items != null) {
+                    Iterator iter = items.iterator();
+                    while(iter.hasNext()) {
+                        Object item = iter.next();
 
-                    //reuse the refElement to access each item of the Collection,
-                    //NB cache each one? it exists as compact but no AC references it...
-                    refElement = this.buildCompactElem(item);
-                    Node newItemNode = doc.importNode(refElement, true); //build returns Element from a different doc
-                    collectionElem.appendChild(newItemNode);
+                        //reuse the refElement to access each item of the Collection,
+                        //NB cache each one? it exists as compact but no AC references it...
+                        refElement = this.buildCompactElem(item);
+                        Node newItemNode = doc.importNode(refElement, true); //build returns Element from a different doc
+                        collectionElem.appendChild(newItemNode);
+                    }
                 }
 
                 elem.appendChild(collectionElem);
@@ -518,7 +519,6 @@ public class XmlBuilder implements Serializable {
         return elem;
 
     }
-
 
     //------------------------ private helper methods ------------------------------------
 
@@ -539,12 +539,12 @@ public class XmlBuilder implements Serializable {
         try {
 
             //get the fields defined in this class, and put them
-            //in a list so we can add to them easily
+            //in a Collection so we can add to them easily
             Field[] fields = clazz.getDeclaredFields();
 
             //the Arrays.asList op gives you an AbstractList backed by the array, which means that
             //the add operation is not supported!! Hence the use of ArrayList...
-            List allFields = new ArrayList(Arrays.asList(fields));
+            Collection allFields = new ArrayList(Arrays.asList(fields));
 
             //also need to get the declared fields of the superclasses...
             Class parent = clazz.getSuperclass();
@@ -577,12 +577,12 @@ public class XmlBuilder implements Serializable {
      *
      * @param obj The object to reflect upon
      * @param onesToIgnore The set of Classes of fields to be left out (must be non-null, but may be empty)
-     * @return List a list of object references, or an empty list if
+     * @return Collection a Collection of object references, or an empty Collection if
      * the object contains only primitives, Collections or objects of type in the set to ignore.
      */
-    private List getReferences(Object obj, Set onesToIgnore) {
+    private Collection getReferences(Object obj, Set onesToIgnore) {
 
-        List result = new ArrayList();
+        Collection result = new ArrayList();
         Field[] fields = this.getAllFields(obj);
 
         for (int i=0; i < fields.length; i++) {
@@ -606,12 +606,12 @@ public class XmlBuilder implements Serializable {
      * obtain all the collection fields of an object.
      *
      * @param obj The object to reflect upon
-     * @return List a list of Collection fields, or an empty list if
+     * @return Collection a Collection of Collection fields, or an empty Collection if
      * the object contains no Collections
      */
-    private List getCollections(Object obj) {
+    private Collection getCollections(Object obj) {
 
-        List result = new ArrayList();
+        Collection result = new ArrayList();
 
         Field[] fields = this.getAllFields(obj);
 
