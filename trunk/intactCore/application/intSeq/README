@@ -13,12 +13,59 @@ WEB-INF/config  : Configuration/Property files for the application.
 dist/           : Where the WAR file is created.
 
 INSTALLATION
-    edit repository.xml and OJB.properties in the intact root directory
-    (intactCore/config) to suit your requirements (oracle vs postgres etc).
-    Instead of editing these files manually, you may just run ant set-target-env
-    from intactCore directory. The target environment is specified in the
-    build.properties file (intactCore directory). 'search' has been tested
-    under Oracle 8.1.6 and PostGres 7.2 (local and remote).
+    no need of a database installation
+
+    ------------------------- INTSEQ SPECIFIC COMMANDS AND ACTIONS --------------------------
+
+BIOLOGICAL PROGRAMS:
+
+       -The command line definition of the FASTA program
+       -The URL definition of the WGETZ program (to run SRS)
+
+    must be set up in a properties file of the application in a right way
+    (in the web.xml file for the moment, but it has to be modified later)
+
+FILES NEEDED
+
+    The proteinFastaDownload.fasta file needs to be created
+    This file stores all protein sequences of IntAct in a Fasta format
+    + formatdb is processed so the FASTA program can use it as an input.
+
+    -> the ProteinFastaDownload utility tool (util directory) has to be launched.
+        In this tool, you must specify:
+            - your path where the proteinFastaDownload.fasta file will be stored
+            - the formatdb command line available
+        in the two provided private attributes
+
+DIRECTORIES NEEDED BY BIOLOGICAL PROGRAMS
+
+        These program are expected to create output files. We need to create directories
+        to store them for a while.
+        For the moment, these files have to be defined in the SeqIdConstants class
+        in the Struts/framework directory (src...)
+
+        For the FASTA program:
+            - one directory to store the input files, which contain the query protein sequence.
+                    (for the moment: /ebi/sp/misc1/tmp/shuet/intactblast/fasta_files/)
+            - one directory to store the output files, which contain alignment results and
+              will be parsed afterwards.
+                    (for the moment: /ebi/sp/misc1/tmp/shuet/intactblast/blast_files/)
+            - one directory specified in the ProteinFastaDownload tool where the formatted
+              IntAct FASTA file is.
+
+       For the SRS process:
+            - one directory to store the SRS output files where AC and Description
+              to display it in the SRSSearchResults.jsp page
+                    (for the moment: /ebi/sp/misc1/tmp/shuet/intactsrs/wgetz_files/list_acc/)
+            - one directory to store the SRS output files where the protein sequence are stored
+              in a FASTA format (in order to launch the Similarity Search afterwards)
+                    (for the moment: /ebi/sp/misc1/tmp/shuet/intactsrs/wgetz_files/seq_fasta/)
+
+------------------------------------------------------------------------------------------------------
+
+
+    ------------------------- ANT COMMANDS --------------------------
+
 
 BUILD
     ant war
@@ -45,6 +92,9 @@ OTHER USEFUL COMMANDS
         runs all three targets in the specified order. Undeploys the last deployment,
         creates a new war file and deploy it again.
 
+------------------------------------------------------------------------------------------------------
+
+
 NOTES
     The WAR file is being built using jar and class file from various locations.
     Given below are locations where it looks for these files:
@@ -53,7 +103,7 @@ NOTES
         WEB-INF/lib     - all the jar files in this location.
         ../../dist/     - intact-core.jar file.
         ../../lib       - application common jar files (only a subset).
-        WEB-INF/classes - search class files.
+        WEB-INF/classes - intSeq class files.
 
 COMMENTS
-    Send any comments/feedback to clewing@ebi.ac.uk, shuet@ebi.ac.uk
+    Send any comments/feedback to shuet@ebi.ac.uk
