@@ -176,7 +176,7 @@ public class HtmlBuilder {
         rs.write("<a href=\"");
         rs.write(helpLink);
         rs.write(target);
-        rs.write("\" target=\"_blank\"/><sup><b><font color=red>?</font></b></sup></a>");
+        rs.write("\" target=\"new\"/><sup><b><font color=red>?</font></b></sup></a>");
     }
 
     /**
@@ -188,7 +188,7 @@ public class HtmlBuilder {
         rs.write("<a href=\"");
         rs.write(helpLink);
         rs.write(target);
-        rs.write("\" target=\"_blank\"/>");
+        rs.write("\" target=\"new\"/>");
         rs.write(displayString);
         rs.write("</a>");
     }
