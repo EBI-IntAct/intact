@@ -8,14 +8,12 @@ package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
-import uk.ac.ebi.intact.application.cvedit.struts.view.CommentBean;
-import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
+import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
+import uk.ac.ebi.intact.model.Annotation;
 import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * The class is called by struts framework when the user deletes a comment.
@@ -42,51 +40,22 @@ public class CommentDelAction extends IntactBaseAction {
      * or HttpServletResponse.sendRedirect() to, as a result of processing
      * activities of an <code>Action</code> class
      */
-    public ActionForward perform (ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response) {
-        // The annotation on display.
-        Collection viewbeans = (Collection) super.getSessionObject(request,
-            WebIntactConstants.ANNOTS_TO_VIEW);
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        // The key to search as a long.
+        long key = Long.parseLong(request.getParameter("key"));
 
-        // Find the bean for 'key'.
-        CommentBean bean = findByKey(request.getParameter("key"), viewbeans);
+        // Save the current view.
+        CvViewBean viewbean = super.getIntactUser(request).getView();
 
-        // We must have the bean.
-        assert bean != null;
+        // The annotation we want to delete.
+        Annotation delannot = viewbean.findAnnotation(key);
 
-        // Remove it from the collection.
-        viewbeans.remove(bean);
+        // We must have the annotation.
+        assert delannot != null;
+        viewbean.delAnnotation(key, delannot);
 
-        // Collection of comments to delete.
-        Collection delcomments = (Collection) super.getSessionObject(request,
-            WebIntactConstants.ANNOTS_TO_DELETE);
-
-        // Collections of comments to add.
-        Collection addcomments = (Collection) super.getSessionObject(request,
-            WebIntactConstants.ANNOTS_TO_ADD);
-
-        // Are we trying to delete a bean that has been just added?
-        if (addcomments.contains(bean)) {
-            addcomments.remove(bean);
-        }
-        else {
-            // No; we should remove it when the transaction is committed.
-            delcomments.add(bean);
-        }
         return mapping.findForward(WebIntactConstants.FORWARD_SUCCESS);
-    }
-
-    // Returns a comment bean from a given collection for matching Ac.
-    private CommentBean findByKey(String keystr, Collection collection) {
-        long key = Long.parseLong(keystr);
-        for (Iterator iter = collection.iterator(); iter.hasNext();) {
-            CommentBean bean = (CommentBean) iter.next();
-            if (bean.getKey() == key) {
-                return bean;
-            }
-        }
-        // Not found the bean; shouldn't happen.
-        return null;
     }
 }

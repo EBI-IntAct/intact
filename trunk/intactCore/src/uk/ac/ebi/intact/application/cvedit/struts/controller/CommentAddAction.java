@@ -8,18 +8,17 @@ package uk.ac.ebi.intact.application.cvedit.struts.controller;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
-import uk.ac.ebi.intact.application.cvedit.struts.view.*;
+import uk.ac.ebi.intact.application.cvedit.struts.view.CommentAddForm;
+import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.*;
-import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.SearchException;
 
 import org.apache.struts.action.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 
 /**
  * The action class is called when the user adds a new comment (annotation) to
@@ -47,9 +46,9 @@ public class CommentAddAction extends IntactBaseAction {
      * or HttpServletResponse.sendRedirect() to, as a result of processing
      * activities of an <code>Action</code> class
      */
-    public ActionForward perform (ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response ) {
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         // Need the form to get data entered by the user.
         CommentAddForm theForm = (CommentAddForm) form;
 
@@ -86,18 +85,9 @@ public class CommentAddAction extends IntactBaseAction {
         annot.setCvTopic(cvtopic);
         annot.setOwner(owner);
 
-        // Wrapper to add to collections.
-        CommentBean cb = new CommentBean(annot);
-
-        // The new annotations to add when submit is pressed.
-        Collection addbeans = (Collection) super.getSessionObject(request,
-            WebIntactConstants.ANNOTS_TO_ADD);
-        addbeans.add(cb);
-
-        // Need to show this new annotation on screen as well.
-        Collection viewbeans = (Collection) super.getSessionObject(request,
-            WebIntactConstants.ANNOTS_TO_VIEW);
-        viewbeans.add(cb);
+        // Add the annotation to the view.
+        CvViewBean viewbean = user.getView();
+        viewbean.addAnnotation(annot);
 
         theForm.reset();
 
