@@ -10,10 +10,7 @@ import java.io.EOFException;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 
 /**
  * Utility class to perform some sanity checks on the DB. Mainly for use by curators.
@@ -43,6 +40,8 @@ public class SanityChecker {
     private Collection experiments;
     private Collection interactions;
 
+    private final String NEW_LINE = System.getProperty("line.separator");
+
     public SanityChecker(IntactHelper helper, PrintWriter writer) throws IntactException, SQLException {
         this.helper = helper;
         this.writer = writer;
@@ -51,8 +50,8 @@ public class SanityChecker {
         //NB remember the Connection belongs to the helper - don't close it anywhere but
         //let the helper do it at the end!!
         Connection conn = helper.getJDBCConnection();
-        intStmt = conn.prepareStatement("SELECT userstamp FROM ia_interactor WHERE ac=?");
-        expStmt = conn.prepareStatement("SELECT userstamp FROM ia_experiment WHERE ac=?");
+        intStmt = conn.prepareStatement("SELECT userstamp, timestamp FROM ia_interactor WHERE ac=?");
+        expStmt = conn.prepareStatement("SELECT userstamp, timestamp FROM ia_experiment WHERE ac=?");
 
         //get the Experiment and Interaction info from the DB for later use..
         experiments = helper.search(Experiment.class.getName(), "ac", "*");
@@ -60,13 +59,13 @@ public class SanityChecker {
 
         //initialize buffers that will accumulate the test results..
         expCheck = new StringBuffer("Experiments with no Interactions" +
-                "\n" + "-----------------------------------" + "\n");
+                "\n" + "------------------------------------------------" + NEW_LINE);
         interactionCheck = new StringBuffer("Interactions with no Experiment" +
-                "\n" + "-----------------------------------" + "\n");
+                "\n" + "------------------------------------------------" + NEW_LINE);
         singleProteinCheck = new StringBuffer("Interactions with only One Protein" +
-                "\n" + "-----------------------------------" + "\n");
+                "\n" + "------------------------------------------------" + NEW_LINE);
         noProteinCheck = new StringBuffer("Interactions with No Components" +
-                "\n" + "---------------------------------" + "\n");
+                "\n" + "------------------------------------------------" + NEW_LINE);
 
 
     }
@@ -215,6 +214,7 @@ public class SanityChecker {
     private void getUserInfo(StringBuffer buf, IntactObject obj) throws SQLException {
 
         String user = null;
+        Timestamp date = null;
         ResultSet results = null;
 
         if(obj instanceof Experiment) {
@@ -229,8 +229,13 @@ public class SanityChecker {
         }
         //Connection conn = null;
         //stmt = conn.prepareStatement(sql);
-        if(results.next()) user = results.getString("userstamp");
-        buf.append("AC: " + obj.getAc() + "\t" + " User: " + user + "\n");
+        if(results.next()) {
+            user = results.getString("userstamp");
+            date = results.getTimestamp("timestamp");
+        }
+
+        buf.append("AC: " + obj.getAc() + "\t" + " User: " + user
+                + "\t" + "When: " + date + NEW_LINE);
 
     }
 
