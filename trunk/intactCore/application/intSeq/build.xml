@@ -21,6 +21,10 @@
     <!-- Intact application location. -->
     <property name="intact.app.dir" value=".."/>
 
+    <!-- context path for hierarchView store in the application level -->
+    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
+    <property name="intSeq-context-file"    value="intSeq-context.xml"/>
+
     <property name="commons.pages.dir"   value="${intact.app.dir}/pages"/>
     <property name="commons.layouts.dir" value="${intact.app.dir}/layouts"/>
     <property name="commons.images.dir"  value="${intact.app.dir}/images"/>
@@ -42,9 +46,13 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
+    <!-- This project specific paths.
+    <property name="src.dir" value="src"/>  -->
 
-    <!-- This project specific paths. -->
-    <property name="src.dir" value="src"/>
+    <!-- We need this flag because deploy targets need to know where to deploy. -->
+    <property environment="env"/>
+    <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+    <property name="webapps.dir" value="${tomcat.home}/webapps"/>
 
     <!-- intSeq package root. -->
     <property name="intSeq.pkg.root" value="uk/ac/ebi/intact/application/intSeq"/>
@@ -57,19 +65,17 @@
             <include name="**/*.jar"/>
         </fileset>
 
+        <!-- Intact core at root. -->
+        <pathelement path="${root.dest.dir}"/>
         <!-- Where the classes are compiled to. -->
         <pathelement path="${dest.dir}"/>
 
-        <!-- Intact core at root. -->
-        <pathelement path="${root.dest.dir}"/>
-
         <!-- Common jar files. -->
-        <pathelement path="${root.lib.dir}/junit.jar"/>
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
-        <pathelement path="${root.lib.dir}/struts.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
-        <pathelement path="${root.lib.dir}/biojava-1.22.jar"/>
         <pathelement path="${root.lib.dir}/jakarta-regexp-1.2.jar"/>
+        <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
+        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
     </path>
 
     <!-- =================================================================== -->
@@ -94,14 +100,22 @@
         <!-- Delete directories first -->
         <delete dir="${dest.dir}"/>
         <delete dir="${docs.dir}"/>
+        <delete dir="${dist.dir}"/>
+
+        <!-- Struts imported tlds-->
+        <delete>
+             <fileset dir="${tld.dir}">
+                  <exclude name="display.tld"/>
+                  <exclude name="taglib3.tld"/>
+             </fileset>
+        </delete>
 
         <!-- Tiles commons files -->
-        <delete dir="${images.dir}"/>
         <delete>
              <fileset dir="${layouts.dir}">
                  <!-- Do not remove our specific files -->
                  <exclude name="sidebar.jsp"/>
-            </fileset>
+             </fileset>
         </delete>
 
         <delete dir="${layouts.styles.dir}"/>
@@ -116,6 +130,7 @@
                  <exclude name="srsSearchResults.jsp"/>
             </fileset>
         </delete>
+        <delete dir="${images.dir}"/>
     </target>
 
     <!-- =================================================================== -->
@@ -141,19 +156,10 @@
 
         <!-- Copy intSeq property files to the intSeq pkg root ${intSeq.pkg.root}-->
         <copy todir="${dest.dir}/config">
-            <fileset dir="WEB-INF/config">
+            <fileset dir="${config.dir}">
                 <include name="*.properties"/>
             </fileset>
         </copy>
-
-        <!-- Copy
-        property files and XML mapping file-->
-<!--        <copy todir="${dest.dir}/config">-->
-<!--            <fileset dir="WEB-INF/config">-->
-<!--                <include name="*.properties"/>-->
-<!--                <include name="*.xml"/>-->
-<!--            </fileset>-->
-<!--        </copy>-->
 
         <!-- the OJB and log4J properties files should be at the top level in 'dest' -->
         <copy todir="${dest.dir}" file="${root.config.dir}/OJB.properties"/>
@@ -163,14 +169,16 @@
     <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
-    <target name="compile">
+    <target name="compile"
+        description="Compile the source tree and copy the configuration files"
+        depends="prepare">
 
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}" />
 
         <!-- Only compile intSeq sources only. -->
-        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
-            includes="**/application/intSeq/**" debug="on" source="1.4">
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on" debug="on" source="1.4"
+            includes="**/application/intSeq/**" >
             <classpath refid="project.class.path"/>
         </javac>
 
@@ -199,8 +207,10 @@
         <!-- Copy struts standard tld files -->
         <copy todir="${tld.dir}">
             <fileset dir="${intact.app.dir}/tld">
+<!--                <include name="intact.tld"/>-->
                 <include name="struts-bean.tld"/>
                 <include name="struts-html.tld"/>
+                <include name="struts-logic.tld"/>
                 <include name="struts-tiles.tld"/>
             </fileset>
         </copy>
@@ -228,6 +238,9 @@
 		   <fileset dir="${basedir}">
 				<include name="*.jsp"/>
                 <include name="${layouts.dir}/*.jsp"/>
+               <!-- Exclude un-usefull files -->
+                <exclude name="${layouts.dir}/*Frame.jsp"/>
+
                 <include name="${layouts.styles.dir}/*.css"/>
                 <include name="${images.dir}/*.gif"/>
                 <include name="${pages.dir}/*.jsp"/>
@@ -236,7 +249,7 @@
                 <include name="${tld.dir}/**"/>
 	   		</fileset>
 
-			<!-- Include cvedit specific jar files. -->
+			<!-- Include intSeq specific jar files. -->
 			<lib dir="${lib.dir}">
                 <!-- Avoid NFS temp files (occationally) -->
                 <include name="*.jar"/>
@@ -266,7 +279,7 @@
 
     <target name="set-db-type">
         <condition property="postgres">
-            <contains string="${target.env}" substring="-pg-"/>
+            <contains string="${target.env}" substring="-postgres-"/>
         </condition>
         <condition property="oracle">
             <contains string="${target.env}" substring="-oracle-"/>
@@ -306,6 +319,10 @@
         <ant dir=".." inheritAll="false" target="deploy">
             <property name="war" value="intSeq/${dist.dir}/${war.file}"/>
         </ant>
+
+        <!-- Copy context files in the Tomcat's webapps directory -->
+        <copy file="${intact.context.dir}/${intSeq-context-file}"
+              todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
     <!-- =================================================================== -->
@@ -316,6 +333,9 @@
         <ant dir=".." inheritAll="false" target="undeploy">
             <property name="war" value="intSeq"/>
         </ant>
+
+        <!-- Delete context files from the Tomcat's webapps directory -->
+        <delete file="${webapps.dir}/${intSeq-context-file}" quiet="true"/>
     </target>
 
     <!-- =================================================================== -->

@@ -129,7 +129,17 @@
                 http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[{sptrembl}-alltext:  (  other interesting field : acc   )
                 -->
 
-    <!--  Options with the previous SRS call : to retrieve the accession number and description fields  -->
+    <!--  Options with the previous SRS call : to retrieve the accession number and description fields
+
+                http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[swall-alltext:signal]+-vn+3+-ascii
+
+                gives
+
+                SWALL:108_LYCES	Q43495	Protein 108 precursor.	102
+                SWALL:10KD_VIGUN	P18646	10 kDa protein precursor (Clone PSAS10).	75
+                SWALL:11S3_HELAN	P19084	11S globulin seed storage protein G3 precursor (Helianthinin G3).	493
+                (...)
+ -->
     <context-param>
         <param-name>firstSrsOptionsIntact</param-name>
         <param-value>]+-vn+3+-lv+20+-ascii</param-value>
@@ -141,6 +151,10 @@
         <param-value>]+-f+seq+-ascii</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>URL</param-name>
+        <param-value>http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+[swall-acc:${SEARCH_STRING}]+-f+seq+-ascii</param-value>
+    </context-param>
 
     <!--    GETZ options:
                     -e      //gives the full entries
@@ -202,52 +216,5 @@
         <welcome-file-list>
             <welcome-file>init.jsp</welcome-file>
         </welcome-file-list>
-
-        <!-- Struts tag library descriptor -->
-        <taglib>
-            <taglib-uri>
-                /WEB-INF/tld/intact.tld
-            </taglib-uri>
-            <taglib-location>
-                /WEB-INF/tld/intact.tld
-            </taglib-location>
-        </taglib>
-
-        <taglib>
-            <taglib-uri>
-                /WEB-INF/tld/struts-bean.tld
-            </taglib-uri>
-            <taglib-location>
-                /WEB-INF/tld/struts-bean.tld
-            </taglib-location>
-        </taglib>
-
-        <taglib>
-            <taglib-uri>
-                /WEB-INF/tld/struts-logic.tld
-            </taglib-uri>
-            <taglib-location>
-                /WEB-INF/tld/struts-logic.tld
-            </taglib-location>
-        </taglib>
-
-        <taglib>
-            <taglib-uri>
-                /WEB-INF/tld/struts-html.tld
-            </taglib-uri>
-            <taglib-location>
-                /WEB-INF/tld/struts-html.tld
-            </taglib-location>
-        </taglib>
-
-        <taglib>
-            <taglib-uri>
-                /WEB-INF/tld/struts-tiles.tld
-            </taglib-uri>
-            <taglib-location>
-                /WEB-INF/tld/struts-tiles.tld
-            </taglib-location>
-        </taglib>
-
 
 </web-app>
