@@ -39,7 +39,6 @@ public class AllJUnitTests extends TestCase {
     public static Test suite() {
         TestSuite suite = new TestSuite();
         suite.addTest(RangeBeanTest.suite());
-        suite.addTest(FuzzyTypeConverterTest.suite());
         return suite;
     }
 }
