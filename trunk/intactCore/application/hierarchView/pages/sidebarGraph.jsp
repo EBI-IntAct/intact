@@ -49,8 +49,8 @@
           <th colspan="2">
              <div align="left">
                 <strong><bean:message key="sidebar.graph.section.title"/></strong>
+                <intact:documentation section="hierarchView.PPIN.expand" />
              </div>
-             <intact:documentation section="hierarchView.PPIN.expand" />
           </th>
         </tr>
 
