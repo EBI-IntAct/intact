@@ -964,7 +964,7 @@ public class PsiDataBuilder implements DataBuilder {
      * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if PSIrequired Elements are missing within graph
      * @see uk.ac.ebi.intact.model.Feature
      */
-    private Element doFeatureList(Collection features) throws ElementNotParseableException {
+    public Element doFeatureList(Collection features) throws ElementNotParseableException {
         //generate DOM-Element
         Element psiFeatureList = doc.createElement("featureList");
         //local elements processing...
@@ -972,11 +972,32 @@ public class PsiDataBuilder implements DataBuilder {
         if (!featureList.hasNext()) {
             logger.warn("empty FeatureList failed (required):");
         }
+
+        int clusterID = 1;
+
         while (featureList.hasNext()) {
             Feature feature = (Feature) featureList.next();
             try {
-                Element psiFeature = doFeature(feature);
-                psiFeatureList.appendChild(psiFeature);
+                Collection psiFeatures = null;
+
+                if( feature.getRanges().isEmpty() ) {
+
+                    psiFeatures = doFeature(feature, null);
+                    System.out.println( psiFeatures.size() + " elements built" );
+
+                } else {
+
+                    // PSI 1 doesn't have a way of representing feature having multiple ranges.
+                    // hence we will duplicate the feature object, and link the different ranges and add a cluster ID
+                    // that will allow to group those ranges later.
+                    psiFeatures = doFeature(feature, "_AUTO_ASSIGNED_CLUSTER_ID_" + clusterID );
+                }
+
+                for( Iterator iterator = psiFeatures.iterator(); iterator.hasNext(); ) {
+                    Element psiFeatureElement = (Element) iterator.next();
+                    psiFeatureList.appendChild( psiFeatureElement );
+                }
+
             } catch (ElementNotParseableException e) {
                 logger.info("feature failed (not required):" + e.getMessage());
             } // not required here - so dont worry
@@ -991,14 +1012,18 @@ public class PsiDataBuilder implements DataBuilder {
 
     /**
      * process Feature
+     *
      * @param feature to convert to PSI-Format
      * @return DOM-Object, representing a <featureList>
-     * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if PSIrequired Elements are missing within graph
+     * @throws uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException
+     *          if PSIrequired Elements are missing within graph
      * @see uk.ac.ebi.intact.model.Feature
      */
-    private Element doFeature(Feature feature) throws ElementNotParseableException {
+    private Collection doFeature( Feature feature, String clusterID ) throws ElementNotParseableException {
         //generate DOM-Element
-        Element psiFeature = doc.createElement("feature");
+        Collection features = null;
+
+        Element psiFeature = doc.createElement( "feature" );
         //local elements processing...
         // getBoundDomain() @todo
         // getBoundDomainAc() @todo
@@ -1009,32 +1034,134 @@ public class PsiDataBuilder implements DataBuilder {
         // getProteinAc() @todo
         // getXrefs()
         try {
-            Element psiXref = doXrefCollection(feature.getXrefs(), "psi-mi");
-            psiFeature.appendChild(psiXref);
-        } catch (ElementNotParseableException e) {
-            logger.info("xref failed (not required):" + e.getMessage());
+            Element psiXref = doXrefCollection( feature.getXrefs(), "psi-mi" );
+            psiFeature.appendChild( psiXref );
+
+            System.out.println( "ClusterID: " + clusterID );
+
+            // if a cluster ID is requested, add it here
+            if( clusterID != null ) {
+
+                if( psiXref == null ) {
+                    // create it
+                    doc.createElement( "xref" );
+                    psiFeature.appendChild( psiXref );
+                }
+
+                Element clusterElement = null;
+                if( psiXref.getChildNodes().getLength() == 0 ) {
+                    // create primaryRef
+                    clusterElement = doc.createElement( "primaryRef" );
+                } else {
+                    // create secondaryRef
+                    clusterElement = doc.createElement( "secondaryRef" );
+                }
+                clusterElement.setAttribute( "db", "location_clusterID" );
+                clusterElement.setAttribute( "id", clusterID );
+
+                // add that Xref to the parent (xref)
+                psiXref.appendChild( clusterElement );
+
+                Comment comment = doc.createComment( "The cluster ID is a work around to allow the representation of features having more than one Range. PSI version 1 doesn't support it." );
+                clusterElement.getParentNode().insertBefore(comment, clusterElement);
+            }
+
+        } catch ( ElementNotParseableException e ) {
+            logger.info( "xref failed (not required):" + e.getMessage() );
         }  //not required here - so dont worry
+
+
         // getCvFeatureType()
         try {
-            Element psiFeatureDescription = doCvFeatureType(feature.getCvFeatureType());
-            psiFeature.appendChild(psiFeatureDescription);
-        } catch (ElementNotParseableException e) {
-            logger.info("cvFeatureTyoe failed (not required):" + e.getMessage());
+            Element psiFeatureDescription = doCvFeatureType( feature.getCvFeatureType() );
+            psiFeature.appendChild( psiFeatureDescription );
+        } catch ( ElementNotParseableException e ) {
+            logger.info( "cvFeatureTyoe failed (not required):" + e.getMessage() );
         }  //not required here - so dont worry
+
+
+
         // getCvFeatureIdentification()
+        Element psiFeatureDetection = null;
         try {
-            Element psiFeatureDetection = doCvFeatureIdentification(feature.getCvFeatureIdentification());
-            psiFeature.appendChild(psiFeatureDetection);
-        } catch (ElementNotParseableException e) {
-            logger.info("cvFeatureIdentification failed (not required):" + e.getMessage());
+            if( feature.getCvFeatureIdentification() != null ) {
+                psiFeatureDetection = doCvFeatureIdentification( feature.getCvFeatureIdentification() );
+                psiFeature.appendChild( psiFeatureDetection );
+            }
+        } catch ( ElementNotParseableException e ) {
+            logger.info( "cvFeatureIdentification failed (not required):" + e.getMessage() );
         }  //not required here - so dont worry
+
+
         // psi Location is not yet implemented - but required - so we have to throw an exception anyway
-        try {
-            Element psiLocation = doLocation();
-            psiFeature.appendChild(psiLocation);
-        } catch (ElementNotParseableException e) {
-            logger.warn("location failed (required):" + e.getMessage());
-        }
+
+        Collection ranges = feature.getRanges();
+        switch( ranges.size() ) {
+
+            case 0:
+
+                Element location = createVoidLocation();
+
+                // if the featureDetection exists, insert the location before.
+                if( psiFeatureDetection != null ) {
+                    Element featureDetection = (Element) psiFeature.getElementsByTagName( "featureDetection" ).item( 0 );
+                    psiFeature.insertBefore( location, featureDetection );
+                } else {
+                    psiFeature.appendChild( location );
+                }
+
+                // add the new feature to the collection
+                if( features == null ) {
+                    features = new ArrayList( 1 ); // will be enough in most cases
+                }
+
+                features.add( psiFeature );
+
+                break;
+
+            default:
+
+                Element clonedPsiFeature = null;
+
+                // if 1..n ranges
+                for( Iterator iterator = ranges.iterator(); iterator.hasNext(); ) {
+                    Range range = (Range) iterator.next();
+
+                    if( iterator.hasNext() ) {
+                        // this is not the last range to process...
+                        // then clone the existing feature.
+                        clonedPsiFeature = (Element) psiFeature.cloneNode( true );
+                    } else {
+
+                        // use the original as this is the last range to be processed.
+                        clonedPsiFeature = psiFeature;
+                    }
+
+
+                    // generate the location from the range
+                    location = doLocation( range );
+
+                    // add the location before the FeatureDetection if any
+                    // Oxygen XML editor doesn't validate the XML file otherwise.
+                    if( psiFeatureDetection != null ) {
+                        Element featureDetection = (Element) clonedPsiFeature.getElementsByTagName( "featureDetection" ).item( 0 );
+                        clonedPsiFeature.insertBefore( location, featureDetection );
+                    } else {
+                        clonedPsiFeature.appendChild( location );
+                    }
+
+                    // add the new feature to the collection
+                    if( features == null ) {
+                        features = new ArrayList( 2 ); // will be enough in most cases
+                    }
+
+                    features.add( clonedPsiFeature );
+                } // for
+        } // switch
+
+
+        // TODO Testing !!!!!!
+
         // getRange()  @todo
         // getXrefAc() @todo
         // getAc @todo
@@ -1044,22 +1171,92 @@ public class PsiDataBuilder implements DataBuilder {
         // getOwnerAc @todo
         //  getUpdated @todo
         //returning result DOMObject
-        if (!psiFeature.hasChildNodes()) {
-            logger.warn("feature failed, no child elements.");
-            throw new ElementNotParseableException("Feature has no Child Elements");
+        if( !psiFeature.hasChildNodes() ) {
+            logger.warn( "feature failed, no child elements." );
+            throw new ElementNotParseableException( "Feature has no Child Elements" );
         }
-        return psiFeature;
+
+        if( features == null ) {
+            features = Collections.EMPTY_LIST;
+        }
+
+        return features;
     }
 
     /**
-     * process Location - which is not yet implemented in IntAct
-     * @exception uk.ac.ebi.intact.application.graph2MIF.exception.ElementNotParseableException if PSIrequired Elements are missing within graph
-     * @see uk.ac.ebi.intact.model.Feature (Binding Domain)
+     * That method is used to cope with the fact that IntAct Feature might not have a Range,
+     * though PSI 1 requires a location, hence we generate a dummy one + a comment as a work around.
+     *
+     * @param session
+     * @param parent
      */
-    private Element doLocation() throws ElementNotParseableException {
-        logger.warn("location failed (required): NOT IMPLEMENTED");
-        throw new ElementNotParseableException("not implemented in IntAct");
+    public static final String NO_RANGE = "-1";
+    private Element createVoidLocation() {
+
+        Element locationElement = doc.createElement( "location" );
+
+        // Processing begin
+        Element beginElement = doc.createElement( "begin" );
+        beginElement.setAttribute( "position", NO_RANGE );
+        locationElement.appendChild( beginElement );
+
+        // Processing end
+        Element endElement = doc.createElement( "end" );
+        endElement.setAttribute( "position", NO_RANGE );
+        locationElement.appendChild( endElement );
+
+        Comment comment = doc.createComment( "The location(-1, -1) is volontary wrong in order to reflect its abscence from the related IntAct Feature." );
+        beginElement.getParentNode().insertBefore(comment, beginElement);
+
+        return locationElement;
     }
+
+    private Element doLocation( Range range ) {
+
+        Element locationElement = doc.createElement( "location" );
+
+        // Processing begin
+        Element beginElement = null;
+
+        if( range.getFromIntervalStart() == range.getFromIntervalEnd() ) {
+
+            // build a begin tag
+            beginElement = doc.createElement( "begin" );
+            beginElement.setAttribute( "position", "" + range.getFromIntervalEnd() );
+
+        } else {
+
+            // build a beginInterval tag
+            beginElement = doc.createElement( "beginInterval" );
+            beginElement.setAttribute( "begin", "" + range.getFromIntervalStart() );
+            beginElement.setAttribute( "end", "" + range.getFromIntervalEnd() );
+        }
+
+        locationElement.appendChild( beginElement );
+
+
+        // Processing end
+        Element endElement = null;
+
+        if( range.getToIntervalStart() == range.getToIntervalEnd() ) {
+
+            // build a begin tag
+            endElement = doc.createElement( "end" );
+            endElement.setAttribute( "position", "" + range.getToIntervalEnd() );
+
+        } else {
+
+            // build a beginInterval tag
+            endElement = doc.createElement( "endInterval" );
+            endElement.setAttribute( "begin", "" + range.getToIntervalStart() );
+            endElement.setAttribute( "end", "" + range.getToIntervalEnd() );
+        }
+
+        locationElement.appendChild( endElement );
+
+        return locationElement;
+    }
+
 
     /**
      * process cvFeatureType
@@ -1356,12 +1553,17 @@ public class PsiDataBuilder implements DataBuilder {
         }
 
         //filter the object - NB if this grows any more, put into a filter method instead..
-        if (annotation.getCvTopic().getShortLabel().equals("remark")){
-            throw new ElementNotParseableException("Annotation with topic 'remark' not exported.");
+        String topic = annotation.getCvTopic().getShortLabel();
+        if (topic.equals("remark-internal")){
+            throw new ElementNotParseableException("Annotation with topic 'remark-internal' not exported.");
         }
 
-        if (annotation.getCvTopic().getShortLabel().equals("uniprot-dr-export")){
+        if (topic.equals("uniprot-dr-export")){
             throw new ElementNotParseableException("Annotation with topic 'uniprot-dr-export' not exported.");
+        }
+
+        if (topic.equals("uniprot-cc-note")){
+            throw new ElementNotParseableException("Annotation with topic 'uniprot-cc-note' not exported.");
         }
         //generate DOM-Element
         Element psiAttribute = doc.createElement("attribute");
