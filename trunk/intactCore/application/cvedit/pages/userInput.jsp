@@ -1,5 +1,5 @@
 <%@ page language="java" %>
-<%@ page import="uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants"%>
+<%@ page import="uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
@@ -36,7 +36,7 @@
         <tr>
             <td align="left">
                 <html:select property="topic">
-                    <html:options name="<%=WebIntactConstants.INTACT_TYPES%>"/>
+                    <html:options name="<%=CvEditConstants.INTACT_TYPES%>"/>
                 </html:select>
             </td>
         </tr>

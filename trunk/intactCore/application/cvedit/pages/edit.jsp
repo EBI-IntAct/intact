@@ -1,5 +1,5 @@
 <%@ page language="java" import="java.util.Collection,
-                                 uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants,
+                                 uk.ac.ebi.intact.application.cvedit.struts.framework.util.CvEditConstants,
                                  uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean"
 %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
