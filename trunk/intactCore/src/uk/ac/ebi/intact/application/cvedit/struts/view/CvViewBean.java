@@ -213,16 +213,16 @@ public class CvViewBean {
     }
 
     /**
-     * Adds an annotation to update.
-     * @param annotation an <code>Annotation</code> object to update.
+     * Adds a Comment bean to update.
+     * @param cb a <code>CommentBean</code> object to update.
      *
      * <pre>
      * post: myAnnotsToUpdate = myAnnotsToUpdate@pre + 1
      * post: myAnnotations = myAnnotations@pre
      * </pre>
      */
-    public void addAnnotationToUpdate(Annotation annotation) {
-        myAnnotsToUpdate.add(annotation);
+    public void addAnnotationToUpdate(CommentBean cb) {
+        myAnnotsToUpdate.add(cb);
     }
 
     /**
@@ -363,16 +363,16 @@ public class CvViewBean {
     }
 
     /**
-     * Adds a xref to update.
-     * @param xref an <code>Xref</code> object to update.
+     * Adds a xref bean to update.
+     * @param xb an <code>XreferenceBean</code> object to update.
      *
      * <pre>
      * post: myXrefsToUpdate = myXrefsToUpdate@pre + 1
      * post: myXrefs = myXrefs@pre
      * </pre>
      */
-    public void addXrefToUpdate(Xref xref) {
-        myXrefsToUpdate.add(xref);
+    public void addXrefToUpdate(XreferenceBean xb) {
+        myXrefsToUpdate.add(xb);
     }
 
     /**
@@ -508,14 +508,14 @@ public class CvViewBean {
      * <code>ac</code>; <code>null</code> is returned if no matching bean
      * is found.
      */
-    private CommentBean findAnnotationCB(String ac) {
-        for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
-            CommentBean bean = (CommentBean) iter.next();
-            if (bean.getAnnotation().getAc().equals(ac)) {
-                return bean;
-            }
-        }
-        // Not found the bean.
-        return null;
-    }
+//    private CommentBean findAnnotationCB(String ac) {
+//        for (Iterator iter = myAnnotations.iterator(); iter.hasNext();) {
+//            CommentBean bean = (CommentBean) iter.next();
+//            if (bean.getAnnotation().getAc().equals(ac)) {
+//                return bean;
+//            }
+//        }
+//        // Not found the bean.
+//        return null;
+//    }
 }
