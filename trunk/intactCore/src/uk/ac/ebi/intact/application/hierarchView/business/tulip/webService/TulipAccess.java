@@ -2,8 +2,7 @@ package uk.ac.ebi.intact.application.hierarchView.business.tulip.webService;
 
 /**
   * Purpose : <br>
-  * Allows the user to send a TLP file to Tulip and get back 
-  * the computed file.
+  * Allows the user to send a TLP file to Tulip and get back the coordinate of the nodes.
   *
   * @author Samuel KERRIEN (skerrien@ebi.ac.uk)
   */
@@ -11,15 +10,12 @@ package uk.ac.ebi.intact.application.hierarchView.business.tulip.webService;
 public interface TulipAccess {
 
   /**
-   * get the computed TLP content from tulip
-   *
-   */
-  public String getComputedTlpContent ( String tlpContent );
-
-  /**
-   * get the line separator string
-   *
-   */
-  public String getLineSeparator ();
+    * get the computed TLP content from tulip
+    *
+    * @param tlpContent tlp content to compute
+    * @param optionMask the option of the Tulip process
+    * @return the computed tlp file content or <b>null</b> if an error occurs.
+    */
+  public ProteinCoordinate[] getComputedTlpContent ( String tlpContent, String optionMask );
   
 } // TulipAccess

@@ -1,8 +1,10 @@
 package uk.ac.ebi.intact.application.hierarchView.business.tulip.webService;
 
+// Web Service
 import org.apache.axis.*;
 import org.apache.axis.session.*;
 
+// File & Input/Output managment
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -10,28 +12,29 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.File;
 
+// Process 
 import java.lang.Runtime;
 import java.lang.Process;
 import java.lang.InterruptedException;
 
-// import HttpServletRequest
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
   * Purpose : <br>
-  * Allows the user to send a TLP file to Tulip and get back 
-  * the computed file.
+  * Allows the user to send a TLP file to Tulip and get back the coordinate of the nodes.
   *
   * @author Samuel KERRIEN (skerrien@ebi.ac.uk)
   */
 
-public class TulipAccessImpl 
-  implements TulipAccess {
+public class TulipAccessImpl implements TulipAccess {
 
 
   /**************/
   /** Constants */
   /**************/
-
 
   /**
    * Had to be moved in a property file
@@ -99,13 +102,14 @@ public class TulipAccessImpl
   /****************************************/
   /** Public methods over the web service */
   /****************************************/
-
+  
   /**
-    * get the computed TLP content from tulip
-    * @param tlpContent tlp content to compute
-    * @return the computed tlp file content or <b>null</b> if an error occurs.
-    */
-  public String getComputedTlpContent ( String tlpContent ) {
+   * get the computed TLP content from tulip
+   * @param tlpContent tlp content to compute
+   * @param optionMask the option of the Tulip process
+   * @return the computed tlp file content or <b>null</b> if an error occurs.
+   */
+  public ProteinCoordinate[] getComputedTlpContent ( String tlpContent, String optionMask ) {
     // get a unique key
     String sessionKey = getUniqueIdentifier ();
 
@@ -115,18 +119,45 @@ public class TulipAccessImpl
     // Store the content in a file on hard disk
     if (!storeInputFile (inputFile, tlpContent)) return null;
 
-    // call the tulip client in a new process
-    if (!computeTlpFile (inputFile, outputFile, "0")) return null;
+    // test the validity of the mask
+    if ((null == optionMask) || (0 == optionMask.length())) {
+      // warning log : mask undefined
+      optionMask = DEFAULT_MASK;
+    } else {
+      int i = 0;
+      try {
+	i = Integer.parseInt (optionMask);
+      } catch (NumberFormatException nfe) {
+	// warning log : invalid mask format
+	optionMask = DEFAULT_MASK;
+      }
+      if ((i < 0) || (i > 65535)) {
+	// warning log : mask out of range
+	optionMask = DEFAULT_MASK;
+      }      
+    }
 
-    // Read the content of the generated file
-    String computedContent = readOutputFile (outputFile);
+    // call the tulip client in a new process
+    if (!computeTlpFile (inputFile, outputFile, optionMask)) return null;
+
+    // Read the content of the generated file and create a collection of proteinCoordinate
+    Collection coordinateSet = parseOutputFile (outputFile);
 
     // delete temporary files
     deleteFile (inputFile);
     deleteFile (outputFile);
 
+    // create the array
+    ProteinCoordinate[] pc = new ProteinCoordinate[coordinateSet.size()];
+    Iterator iterator = coordinateSet.iterator ();
+    int i = 0;
+    while (iterator.hasNext()) {
+      pc[i++] = (ProteinCoordinate) iterator.next();;
+    }
+
     // Send back the computed content
-    return computedContent;
+    return pc;
+
   } // computeTlpContent
 
 
@@ -137,7 +168,7 @@ public class TulipAccessImpl
    *
    * @return the line separator
    */
-  public String getLineSeparator () {
+  private String getLineSeparator () {
     return System.getProperty ("line.separator");
   } // getLineSeparator
 
@@ -254,6 +285,94 @@ public class TulipAccessImpl
     }
     return stringBuffer.toString();
   } // readOutputFile
+
+
+
+  /**
+   * Parse the Tulip conputed TLP file to grab coordinates of each protein
+   *
+   * Here is the format of the section to parse :
+   *
+   * (property  0 layout "viewLayout"
+   * (default "(105.000000,966.000000,359.000000)" "()" )
+   * (node 1 "(215.500000,7.000000,0.000000)")
+   * (node 2 "(57.500000,-288.000000,0.000000)")
+   * (node 3 "(40.500000,191.000000,0.000000)")
+   * (...)
+   * )
+   *
+   * @param anOutputFile the path of the file to read
+   * @return a collection of ProteinCoordinate
+   */
+  public static Collection parseOutputFile (String anOutputFile) {
+
+    ArrayList collection = new ArrayList ();
+
+    try {
+      FileReader fileReader = new FileReader(anOutputFile);
+      BufferedReader bufferedReader = new BufferedReader(fileReader);
+      String currentLine;
+
+      while (( currentLine = bufferedReader.readLine() ) != null ){	
+       if ( currentLine.equals ("") ) continue;
+       
+       // We look, now, word by word
+       StringTokenizer st = new StringTokenizer (currentLine);
+
+      if (st.nextToken().equals ("(property")) {
+	 st.nextToken();
+	 st.nextToken();
+	 currentLine = st.nextToken();
+	 // test null
+	 
+	 
+	 // viewLayout treatment : parse and store computed coordinates
+	 if (currentLine.equals ("\"viewLayout\"")) {
+  
+	   currentLine = bufferedReader.readLine(); // get pass the default line
+	   currentLine = bufferedReader.readLine();
+	   // test null
+	   
+	   while (! currentLine.equals (")") ) {
+	     int index;
+	     float x,y;
+	     StringBuffer buf;
+	     
+	     st = new StringTokenizer (currentLine);
+	     
+	     if (!st.nextToken().equals ("(node"))
+	       throw new IOException ("Imported data don't contain the good number of nodes"); 
+
+	     index   = (new Integer(st.nextToken())).intValue();
+	     buf     = new StringBuffer (st.nextToken()); /* = "(15.0000, 45.2540, 78.454)" */
+	     buf.delete (0,2);
+	     buf.delete (buf.length() - 3, buf.length());
+
+	     st = new StringTokenizer (buf.toString(), ",");
+	     x  = Float.parseFloat (st.nextToken());
+	     y  = Float.parseFloat (st.nextToken());
+	     
+	     // Store coordinates
+	     ProteinCoordinate pc = new ProteinCoordinate (index, x, y);
+	     collection.add (pc);
+
+	     currentLine = bufferedReader.readLine();
+	   } // while
+	 } // if "viewLayout"
+       } // if "property"
+      } // while
+
+      bufferedReader.close();
+      fileReader.close ();
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
+
+    return (Collection) collection;
+
+  } // parseOutputFile
+
 
 
   /** Purpose : <br>

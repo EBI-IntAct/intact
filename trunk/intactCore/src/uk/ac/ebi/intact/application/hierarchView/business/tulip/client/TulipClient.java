@@ -1,6 +1,12 @@
 package uk.ac.ebi.intact.application.hierarchView.business.tulip.client;
 
-import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.*;
+import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccess;
+import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessService;
+import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator;
+import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipSoapBindingStub;
+
+import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
+
 
 /**
  * 
@@ -9,6 +15,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated
  * 
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  */
+
 
 public class TulipClient {
 
@@ -60,16 +67,24 @@ public class TulipClient {
    * allows to compute a tlp content
    *
    * @param tlpContent the tlp content to compute
-   * @return the conputed tlp content
+   * @return the collection of protein coordinates
    */
-  public String getComputedTlpContent (String tlpContent) {
-    String result = null;
+  public ProteinCoordinate[] getComputedTlpContent (String tlpContent) {
+
+    ProteinCoordinate[] pc = null;
+    String mask = "0";
+
+    System.out.println (tlpContent);
+
     if (null != tulip) {
       try {
-	result = tulip.getComputedTlpContent (tlpContent);
+	pc = (ProteinCoordinate[]) tulip.getComputedTlpContent (tlpContent, mask);
       } catch (java.rmi.RemoteException se) {}
     }
-    return result;
+
+    System.out.println ("size = " + pc.length);
+
+    return pc;
   } // getComputedTlpContent
 
 
@@ -79,11 +94,13 @@ public class TulipClient {
    */
   public String getLineSeparator () {
     String result = null;
-    if (null != tulip) {
-      try {
-	result = tulip.getLineSeparator();
-      } catch (java.rmi.RemoteException se) {}
-    }
+
+ //    if (null != tulip) {
+//       try {
+// 	result = tulip.getLineSeparator();
+//       } catch (java.rmi.RemoteException se) {}
+//     }
+
     return result;
   } // getLineSeparator
 
