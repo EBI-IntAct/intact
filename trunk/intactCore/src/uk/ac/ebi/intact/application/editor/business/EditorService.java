@@ -133,6 +133,19 @@ public class EditorService {
     }
 
     /**
+     * A convenient method to return the interaction limit for JSPs. This method
+     * is equvalent to calling {@link #getResource(String)} with exp.interaction.limit
+     * as the key.
+     * @return the maximum number of interactions allowed to display in the experiment
+     * editor.
+     *
+     * @see #getResource(String)
+     */
+    public int getInteractionLimit() {
+        return Integer.parseInt(myResources.getString("exp.interaction.limit"));
+    }
+
+    /**
      * Moves the given item to the front of the topics list.
      * @param item the item to move; this is only moved if it exists.
      */
