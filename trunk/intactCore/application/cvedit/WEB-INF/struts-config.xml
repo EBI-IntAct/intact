@@ -130,7 +130,7 @@
 
         <!-- When the user selects  -->
         <action path="/cv/results/pre"
-                type="uk.ac.ebi.intact.application.cvedit.struts.controller.ResultsPreAction"
+                type="uk.ac.ebi.intact.application.cvedit.struts.controller.ResultPreAction"
                 scope="request">
             <forward name="success" path="match.layout"/>
         </action>
