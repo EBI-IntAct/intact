@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -64,7 +64,7 @@ public class LoginAction extends IntactBaseAction {
             super.log("invalid user " + username + " detected");
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
-            errors.add("invalid.user", new ActionError("error.invalid.user"));
+            errors.add(super.INTACT_ERROR, new ActionError("error.invalid.user"));
             super.saveErrors(request, errors);
             return (mapping.findForward(WebIntactConstants.FORWARD_FAILURE));
         }
