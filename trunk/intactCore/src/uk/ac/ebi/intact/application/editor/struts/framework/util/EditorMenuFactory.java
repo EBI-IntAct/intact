@@ -180,7 +180,7 @@ public class EditorMenuFactory {
      * @param mode 1 for add or 0 for edit; see the documentation for
      * {@link #getMenu(String, int)}
      * @return a map name -> menu; the valid names (keys) are: {@link #ORGANISMS},
-     * {@link #INTERACTIONS} and {@link #EXPERIMENTS}.
+     * {@link #INTERACTION_TYPES} and {@link #EXPERIMENTS}.
      * @throws SearchException for errors in constructing the menu.
      */
     public Map getInteractionMenus(int mode) throws SearchException {
