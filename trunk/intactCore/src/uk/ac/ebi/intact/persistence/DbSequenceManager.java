@@ -54,23 +54,20 @@ package uk.ac.ebi.intact.persistence;
  * <http://www.apache.org/>.
  */
 
-import org.apache.ojb.broker.PersistenceBrokerException;
-import org.apache.ojb.broker.PersistenceBrokerSQLException;
-import org.apache.ojb.broker.PersistenceBrokerFactory;
 import org.apache.ojb.broker.PersistenceBroker;
+import org.apache.ojb.broker.PersistenceBrokerException;
+import org.apache.ojb.broker.PersistenceBrokerFactory;
+import org.apache.ojb.broker.PersistenceBrokerSQLException;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
 import org.apache.ojb.broker.query.Query;
-
-import org.apache.ojb.broker.PersistenceBroker;
-import org.apache.ojb.broker.util.logging.*;
-import org.apache.ojb.broker.util.sequence.SequenceManager;
-import org.apache.ojb.broker.util.configuration.impl.OjbConfiguration;
 import org.apache.ojb.broker.util.configuration.ConfigurationException;
+import org.apache.ojb.broker.util.configuration.impl.OjbConfiguration;
+import org.apache.ojb.broker.util.logging.LoggerFactory;
+import org.apache.ojb.broker.util.sequence.SequenceManager;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
 
 /**
  * This sequence manager accesses a database sequence object to
@@ -90,12 +87,6 @@ public class DbSequenceManager implements SequenceManager {
     protected PersistenceBroker broker;
 
     /**
-     * singleton instance of the SequenceManager
-     */
-    private static DbSequenceManager _instance;
-
-
-    /**
      *   Prepared SQL statement to get a new id from a database sequence object.
      */
     private static PreparedStatement _stmt;
@@ -113,7 +104,6 @@ public class DbSequenceManager implements SequenceManager {
     public DbSequenceManager(PersistenceBroker broker)
             throws ConfigurationException {
         this.broker = broker;
-
         try {
 
             OjbConfiguration configuration =
@@ -152,14 +142,12 @@ public class DbSequenceManager implements SequenceManager {
         if (null == _stmt) {
             prepareSequenceStm(clazz);
         }
-
-        int result = 0;
         ResultSet rs = null;
         try {
 
             rs = _stmt.executeQuery();
             rs.next();
-            result = rs.getInt(1);
+            return rs.getInt(1);
         } catch (Throwable t) {
             LoggerFactory.getDefaultLogger().error(t);
             throw new PersistenceBrokerException(t);
@@ -171,7 +159,6 @@ public class DbSequenceManager implements SequenceManager {
                 LoggerFactory.getDefaultLogger().error(e);
                 throw new PersistenceBrokerSQLException(e);
             }
-            return result;
         }
     }
 
