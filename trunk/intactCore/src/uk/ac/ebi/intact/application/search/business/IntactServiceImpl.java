@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.application.search.exception.MissingIntactTypesException;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Implments the IntactService interface.
@@ -60,5 +61,12 @@ public class IntactServiceImpl implements IntactServiceIF {
 
     public String getHierarchViewProp(String key) {
         return myHvProps.getString(key);
+    }
+
+    public Collection getIntactTypes() {
+        // The collection to return.
+        Collection types = new ArrayList();
+        CollectionUtils.addAll(types, myIntactTypeProps.getKeys());
+        return types;
     }
 }
