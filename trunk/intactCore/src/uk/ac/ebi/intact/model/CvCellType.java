@@ -10,6 +10,27 @@ package uk.ac.ebi.intact.model;
  */
 public class CvCellType extends CvObject implements Editable {
 
+    /**
+     * no-arg constructor which will hopefully be removed later...
+     */
+    public CvCellType() {
+        //super call sets creation time data
+        super();
+    }
+
+    /**
+     * Creates a valid CvCellType instance. Requires at least a shortLabel and an
+     * owner to be specified.
+     * @param shortLabel The memorable label to identify this CvCellType
+     * @param owner The Institution which owns this CvCellType
+     * @exception NullPointerException thrown if either parameters are not specified
+     */
+    public CvCellType(String shortLabel, Institution owner) {
+
+        //super call sets up a valid CvObject
+        super(shortLabel, owner);
+    }
+
 
 } // end CvCellType
 

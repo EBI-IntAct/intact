@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
@@ -10,14 +10,14 @@ import uk.ac.ebi.intact.util.Utilities;
 import java.util.*;
 
 /**
- * The specific instance of an interactor which 
+ * The specific instance of an interactor which
  * participates in an interaction.
- * 
+ *
  * The same interactor may participate more than once,
- * for example to describe different roles of the Interactors. 
+ * for example to describe different roles of the Interactors.
  * However, simple multimers should be expressed by
  * the relativeQuantity attribute.
- * 
+ *
  * @author hhe
  */
 public class Component extends BasicObject {
@@ -31,7 +31,7 @@ public class Component extends BasicObject {
     private String expressedInAc;
 /**
  * Represents the relative quantitity of the interactor
- * participating in the interaction. Default is one. 
+ * participating in the interaction. Default is one.
  * To describe for example a homodimer, an interaction might have
  * only one substrate, but the relative quantity would be 2.
  */
@@ -46,11 +46,11 @@ public class Component extends BasicObject {
    // associations
 
 /**
- * 
+ *
  */
     public Interactor interactor;
 /**
- * 
+ *
  */
     public Interaction interaction;
 /**
@@ -58,9 +58,60 @@ public class Component extends BasicObject {
  */
     public Collection bindingDomain = new Vector();
 /**
- * 
+ *
  */
     public CvComponentRole cvComponentRole;
+
+    /**
+     * no-arg constructor. Hope to replace with a private one as it should
+     * not be used by applications because it will result in objects with invalid
+     * states.
+     */
+    public Component() {
+        //super call sets creation time data
+        super();
+    };
+
+    /**
+     * Creates a valid Component instance. To be valid, a Component must have at least:
+     * <ul>
+     * <li>An onwer (Institution)</li>
+     * <li>a biological source that the interaaction was expressed in</li>
+     * <li>an Interaction that this instance is a Component of</li>
+     * <li>an Interactor which defines the entity (eg Protein) which takes part in the
+     * Interaction and is therefore the 'core' of this Component</li>
+     * <li>the biological role that this Component plays in the Interaction (eg bait/prey etc)</li>
+     * </ul>
+     * <p>
+     * A side-effect of this constructor is to
+     * set the <code>created</code> and <code>updated</code> fields of the instance
+     * to the current time.
+     * @param owner The Institution owner of this Component (non-null)
+     * @param source The biological organism the Component was expressed in (non-null)
+     * @param interaction The Interaction this Component is a part of (non-null)
+     * @param interactor The 'wrapped active entity' (eg a Protein) that this Component represents
+     * in the Interaction (non-null)
+     * @param role The biological/experimental role played by this Component in the Interaction
+     * experiment (eg bait/prey). This is a controlled vocabulary term (non-null)
+     * @exception NullPointerException thrown if any of the parameters are not specified.
+     */
+    public Component(Institution owner, BioSource source, Interaction interaction,
+                     Interactor interactor, CvComponentRole role) {
+
+        //super call sets creation time data
+        super();
+        if(owner == null) throw new NullPointerException("valid Component must have an owner (Institution)!");
+        if(source == null) throw new NullPointerException("valid Component must have a non-null BioSource!");
+        if(interaction == null) throw new NullPointerException("valid Component must have an Interaction set!");
+        if(interactor == null) throw new NullPointerException("valid Component must have an Interactor (eg Protein) set!");
+        if(role == null) throw new NullPointerException("valid Component must have a role set (ie a CvComponentRole)!");
+        this.owner = owner;
+        this.expressedIn = source;
+        this.interaction = interaction;
+        this.interactor = interactor;
+        this.cvComponentRole = role;
+
+    }
 
 
   ///////////////////////////////////////
@@ -87,20 +138,20 @@ public class Component extends BasicObject {
     }
     public void setInteractor(Interactor interactor) {
         if (this.interactor != interactor) {
-            if (this.interactor != null) this.interactor.removeActiveInstance(this);     
+            if (this.interactor != null) this.interactor.removeActiveInstance(this);
             this.interactor = interactor;
-            if (interactor != null) interactor.addActiveInstance(this);  
+            if (interactor != null) interactor.addActiveInstance(this);
         }
-    } 
+    }
 
     public Interaction getInteraction() {
         return interaction;
     }
     public void setInteraction(Interaction interaction) {
         if (this.interaction != interaction) {
-            if (this.interaction != null) this.interaction.removeComponent(this);     
+            if (this.interaction != null) this.interaction.removeComponent(this);
             this.interaction = interaction;
-            if (interaction != null) interaction.addComponent(this);  
+            if (interaction != null) interaction.addComponent(this);
         }
     }
 
@@ -111,8 +162,8 @@ public class Component extends BasicObject {
         return bindingDomain;
     }
     public void addBindingDomain(Feature feature) {
-        if (! this.bindingDomain.contains(feature)) {     
-            this.bindingDomain.add(feature);  
+        if (! this.bindingDomain.contains(feature)) {
+            this.bindingDomain.add(feature);
             feature.setComponent(this);
         }
     }

@@ -39,6 +39,37 @@ public class Annotation extends BasicObject {
      */
     public CvTopic cvTopic;
 
+    /**
+     * no-arg constructor. Hope to replace with a private one as it should
+     * not be used by applications because it will result in objects with invalid
+     * states.
+     */
+    public Annotation() {
+        //super call sets creation time data
+        super();
+    };
+
+    /**
+     * Creates a valid Annotation instance. A valid instance must have at least
+     * a non-null Institution specified. A side-effect of this constructor is to
+     * set the <code>created</code> and <code>updated</code> fields of the instance
+     * to the current time.
+     * @param owner The <code>Institution</code> which 'owns' this BioSource
+     * @param topic Refers to the controlled vocabulary topic this Annotation relates
+     * to. This should be non-null.
+     * @exception NullPointerException thrown if no Institution specified.
+     */
+    public Annotation(Institution owner, CvTopic topic) {
+
+        //super call sets creation time data
+        super();
+        if(owner == null) throw new NullPointerException("valid Annotation must have an owner (Institution)!");
+        if(topic == null) throw new NullPointerException("valid Annotation must have an associated topic!");
+        this.owner = owner;
+        this.cvTopic = topic;
+
+    }
+
     ///////////////////////////////////////
     //access methods for attributes
 

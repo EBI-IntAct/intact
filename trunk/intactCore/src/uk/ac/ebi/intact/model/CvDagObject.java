@@ -41,6 +41,27 @@ public abstract class CvDagObject extends CvObject {
  */
     public Collection parent = new Vector(); // of type CvDagObject
 
+    /**
+     * no-arg constructor which will hopefully be removed later...
+     */
+    public CvDagObject() {
+        //super call sets creation time data
+        super();
+    }
+
+    /**
+     * Creates a valid CvDagObject instance. Requires at least a shortLabel and an
+     * owner to be specified.
+     * @param shortLabel The memorable label to identify this CvDagObject
+     * @param owner The Institution which owns this CvDagObject
+     * @exception NullPointerException thrown if either parameters are not specified
+     */
+    public CvDagObject(String shortLabel, Institution owner) {
+
+        //super call sets up a valid CvObject
+        super(shortLabel, owner);
+    }
+
 
    ///////////////////////////////////////
    // access methods for associations

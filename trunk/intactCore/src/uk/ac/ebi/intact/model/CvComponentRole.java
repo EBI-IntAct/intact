@@ -15,6 +15,27 @@ package uk.ac.ebi.intact.model;
  */
 public class CvComponentRole extends CvObject implements Editable {
 
+    /**
+     * no-arg constructor which will hopefully be removed later...
+     */
+    public CvComponentRole() {
+        //super call sets creation time data
+        super();
+    }
+
+    /**
+     * Creates a valid CvComponentRole instance. Requires at least a shortLabel and an
+     * owner to be specified.
+     * @param shortLabel The memorable label to identify this CvComponentRole
+     * @param owner The Institution which owns this CvComponentRole
+     * @exception NullPointerException thrown if either parameters are not specified
+     */
+    public CvComponentRole(String shortLabel, Institution owner) {
+
+        //super call sets up a valid CvObject
+        super(shortLabel, owner);
+    }
+
 
 } // end CvComponentRole
 

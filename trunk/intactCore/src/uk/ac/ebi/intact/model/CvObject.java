@@ -20,6 +20,29 @@ import java.util.*;
  */
 public abstract class CvObject extends AnnotatedObject {
 
+    /**
+     * no-arg constructor provided for compatibility with subclasses
+     * that have no-arg constructors.
+     */
+    protected CvObject() {
+        //super call sets creation time data
+        super();
+    }
+
+    /**
+     * Constructor for subclass use only. Ensures that CvObjects cannot be
+     * created without at least a shortLabel and an owner specified.
+     * @param shortLabel The memorable label to identify this CvObject
+     * @param owner The Institution which owns this CvObject
+     * @exception NullPointerException thrown if either parameters are not specified
+     */
+    protected CvObject(String shortLabel, Institution owner) {
+
+        //super call sets up a valid AnnotatedObject (and also CvObject, as there is
+        //nothing more to add)
+        super(shortLabel, owner);
+    }
+
 } // end CvObject
 
 

@@ -29,13 +29,35 @@ public abstract class Interactor extends AnnotatedObject {
     // associations
 
     /**
-     *
+     * What is this??
      */
     public Collection activeInstance = new Vector();
     /**
-     *
+     * What is this??
      */
     public Collection product = new Vector();
+
+    /**
+     * no-arg constructor provided for compatibility with subclasses
+     * that have no-arg constructors.
+     */
+    protected Interactor() {
+        //super call sets creation time data
+        super();
+    }
+
+    /**
+     * Constructor for subclass use only. Ensures that Interactors cannot be
+     * created without at least a shortLabel and an owner specified.
+     * @param shortLabel The memorable label to identify this Interactor
+     * @param owner The Institution which owns this Interactor
+     * @exception NullPointerException thrown if either parameters are not specified
+     */
+    protected Interactor(String shortLabel, Institution owner) {
+
+        //NB is more than this required to define a valid Interactor?
+        super(shortLabel, owner);
+    }
 
 
     ///////////////////////////////////////

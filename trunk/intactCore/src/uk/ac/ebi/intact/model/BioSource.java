@@ -53,6 +53,35 @@ public class BioSource extends AnnotatedObject implements Editable {
      */
     public CvCompartment cvCompartment;
 
+    /**
+     * no-arg constructor. Hope to replace with a private one as it should
+     * not be used by applications because it will result in objects with invalid
+     * states.
+     */
+    public BioSource() {
+        //super call sets creation time data
+        super();
+    }
+
+    /**
+     * Creates a valid BioSource (ie a source organism) instance. A valid instance must have at least
+     * a non-null shortLabel specified. A side-effect of this constructor is to
+     * set the <code>created</code> and <code>updated</code> fields of the instance
+     * to the current time.
+     * @param shortLabel The label used to identify this instance
+     * @param taxId the NCBI taxId, which must be unique if defined (may be null)
+     * @param owner The <code>Institution</code> which 'owns' this BioSource
+     * @exception NullPointerException thrown if either no shortLabel or Institution specified.
+     */
+    public BioSource(String shortLabel, String taxId, Institution owner) {
+
+        //super call sets up a valid AnnotatedObject
+        super(shortLabel, owner);
+        //Q: taxId must be unique (but apparently may be null)- how to validate this??
+        this.taxId = taxId;
+
+    }
+
 
     ///////////////////////////////////////
     //access methods for attributes
