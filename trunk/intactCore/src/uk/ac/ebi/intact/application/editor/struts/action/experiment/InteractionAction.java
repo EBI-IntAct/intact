@@ -35,11 +35,9 @@ public class InteractionAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // The dyna form.
-//        DynaActionForm dynaform = (DynaActionForm) form;
         ExperimentActionForm expform = (ExperimentActionForm) form;
 
         // Are we editing an Interaction?
-//        if (dynaform.get("dispatch").equals(
         if (expform.getDispatch().equals(
                 getResources(request).getMessage("exp.int.button.edit"))) {
             // Pass the control to another action to edit an interaction.
@@ -52,7 +50,7 @@ public class InteractionAction extends AbstractEditorAction {
 
         // The interaction to delete.
         Interaction inter = (Interaction) user.getObjectByAc(
-                Interaction.class, (String) expform.getIntac());//dynaform.get("intac"));
+                Interaction.class, (String) expform.getIntac());
 
         // We must have the interaction bean.
         assert inter != null;

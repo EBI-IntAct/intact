@@ -30,14 +30,10 @@ public class InteractionLinkAction extends SubmitDispatchAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // The dyna form.
-//        DynaActionForm dynaform = (DynaActionForm) form;
-
         // Save the experiment first.
         ActionForward forward = save(mapping, form, request, response);
 
         // Check for any errors and redirect to the error page.
-//        if (forward.getPath().equals(mapping.getInputForward().getPath())
         if (forward.equals(mapping.findForward(FAILURE))) {
             return forward;
         }

@@ -89,33 +89,6 @@ public class LoginAction extends AbstractEditorAction {
         // Store the server path.
         ctx.setAttribute(EditorConstants.SERVER_PATH, request.getContextPath());
 
-        // Sets the submit and anchor maps.
-        session.setAttribute("formSubmitMap", getSubmitMap(request));
-
         return mapping.findForward(SUCCESS);
-    }
-
-    private Map getSubmitMap(HttpServletRequest request) {
-        // The map to return.
-        Map map = new HashMap();
-
-        // The message resources to get keys.
-        MessageResources msgres = getResources(request);
-
-        map.put(msgres.getMessage("button.submit"), "submit");
-        map.put(msgres.getMessage("button.save.continue"), "submit");
-        map.put(msgres.getMessage("button.cancel"), "cancel");
-        map.put(msgres.getMessage("button.delete"), "delete");
-
-        map.put(msgres.getMessage("annotations.button.add"), "submit");
-        map.put(msgres.getMessage("annotations.button.edit"), "annotation");
-        map.put(msgres.getMessage("annotations.button.save"), "annotation");
-        map.put(msgres.getMessage("annotations.button.delete"), "annotation");
-
-        map.put(msgres.getMessage("xrefs.button.add"), "submit");
-        map.put(msgres.getMessage("xrefs.button.edit"), "xref");
-        map.put(msgres.getMessage("xrefs.button.save"), "xref");
-        map.put(msgres.getMessage("xrefs.button.delete"), "xref");
-        return map;
     }
 }

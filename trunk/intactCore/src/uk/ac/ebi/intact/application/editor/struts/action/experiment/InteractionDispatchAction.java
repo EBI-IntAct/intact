@@ -72,7 +72,7 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
         Set recentInts = user.getCurrentInteractions();
         if (recentInts.isEmpty()) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("exp.int.search",
                     new ActionError("error.exp.int.search.recent.empty"));
             saveErrors(request, errors);
             return mapping.getInputForward();
@@ -101,14 +101,10 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
             searchValue = expform.getIntSearchLabel();
             searchParam = "shortLabel";
         }
-        // The search parameter.
-//        String searchParam = getSearchParam(expform.getIntSearchAC());//dynaform);
-
         // The search value.
-//        String searchValue = expform.getI(String) dynaform.get(searchParam);
         if (searchValue.length() == 0) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("exp.int.search",
                     new ActionError("error.exp.int.search.input"));
             saveErrors(request, errors);
             return mapping.getInputForward();
@@ -116,16 +112,13 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // Normalize the search parameter.
-//        searchParam = searchParam.endsWith("AC") ? "ac" : "shortLabel";
-
         // The collection to hold interactions
         Collection ints = user.search1(Interaction.class.getName(), searchParam,
                 searchValue);
         // Search found any results?
         if (ints.isEmpty()) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("exp.int.search",
                     new ActionError("error.exp.int.search.empty", searchParam));
             saveErrors(request, errors);
             return mapping.getInputForward();
@@ -137,7 +130,7 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
         String intlimit = getService().getResource("int.search.limit");
         if (intsize > Integer.parseInt(intlimit)) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("exp.int.search",
                     new ActionError("error.exp.int.search.many",
                             Integer.toString(intsize), searchParam, intlimit));
             saveErrors(request, errors);
@@ -151,20 +144,4 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
 
         return mapping.findForward(SUCCESS);
     }
-
-    /**
-     * Returns the search parameter.
-     * @param form the form to get search parameter values.
-     * @return the search parameter; the most sepecific search
-     * is preferred over the least specific one. For example, 'ac' is preferred
-     * over any other value.
-     */
-//    private String getSearchParam(DynaActionForm form) {
-//    private String getSearchParam(String  ac) {
-////        String ac = (String) form.get("intSearchAC");
-//        if ((ac != null) && (ac.length() > 0)) {
-//            return "intSearchAC";
-//        }
-//        return "intSearchLabel";
-//    }
 }

@@ -104,7 +104,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
 
         if (searchValue.length() == 0) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("int.exp.search",
                     new ActionError("error.int.exp.search.input"));
             saveErrors(request, errors);
             return mapping.getInputForward();
@@ -118,7 +118,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         // Search found any results?
         if (experiments.isEmpty()) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("int.exp.search",
                     new ActionError("error.int.exp.search.empty", searchParam));
             saveErrors(request, errors);
             return mapping.getInputForward();
@@ -129,7 +129,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         // Just an arbitrary number for the moment.
         if (size > 10) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_ERROR,
+            errors.add("int.exp.search",
                     new ActionError("error.int.exp.search.many",
                             Integer.toString(size), searchParam, "10"));
             saveErrors(request, errors);
