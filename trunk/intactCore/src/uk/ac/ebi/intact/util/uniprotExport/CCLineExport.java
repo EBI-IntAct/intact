@@ -45,66 +45,7 @@ public class CCLineExport extends LineExport {
         }
     }
 
-    private class CcLine implements Comparable {
-
-        private final String ccLine;
-        private final String geneName;
-
-        public CcLine( String ccLine, String geneName ) {
-
-            if( geneName == null ) {
-
-            }
-
-            this.ccLine = ccLine;
-            this.geneName = geneName;
-        }
-
-        public String getCcLine() {
-            return ccLine;
-        }
-
-        public String getGeneName() {
-            return geneName;
-        }
-
-        public int compareTo( Object o ) {
-            CcLine cc2 = null;
-            cc2 = (CcLine) o;
-
-            final String gene1 = getGeneName();
-            final String gene2 = cc2.getGeneName();
-
-            // the current string comes first if it's before in the alphabetical order
-
-            if( gene1 == null ) {
-                System.out.println( this );
-            }
-
-            if( gene1.equals( "Self" ) ) {
-
-                return -1;
-
-            } else if( gene2.equals( "Self" ) ) {
-
-                return 1;
-
-            } else {
-
-                return gene1.compareTo( gene2 );
-            }
-        }
-
-
-        public String toString() {
-            return "CcLine{" +
-                   "ccLine='" + ccLine + "'" +
-                   ", geneName='" + geneName + "'" +
-                   "}";
-        }
-    }
-
-
+    
     ///////////////////////////////
     // Instance variables
 
