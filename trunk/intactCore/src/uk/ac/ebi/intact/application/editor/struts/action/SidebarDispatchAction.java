@@ -213,9 +213,6 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             user.create(annobj);
             // Commit all the changes.
             user.commit();
-            // Set the new object as the current edit object. This has to be
-            // done before refreshList (it relies on current cv object).
-            user.updateView(annobj);
         }
         catch (IntactException ie1) {
             try {
@@ -234,6 +231,11 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             super.saveErrors(request, errors);
             return mapping.findForward(EditorConstants.FORWARD_FAILURE);
         }
+        // Set the new object as the current edit object. This has to be
+        // done before removeMenu (it relies on current cv object).
+        user.updateView(annobj);
+        // Need to load the current menu from the database.
+        user.getView().removeMenu();
         // Add to the view page.
         user.addToSearchCache(annobj);
         return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
