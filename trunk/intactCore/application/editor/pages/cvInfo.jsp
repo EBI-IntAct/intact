@@ -1,4 +1,5 @@
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
+                 uk.ac.ebi.intact.application.editor.business.EditorService"
 %>
  <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
@@ -26,6 +27,12 @@
     String formName = EditorConstants.FORM_CVINFO;
 %>
 
+<%
+    // To Allow access to Editor Service.
+    EditorService service = (EditorService)
+            application.getAttribute(EditorConstants.EDITOR_SERVICE);
+%>
+
 <script language="JavaScript" type="text/javascript">
 
     // This is a global variable to setup a window.
@@ -42,13 +49,13 @@
             newWindow.focus();
             newWindow.location.href = link;
         }
-   }
+    }
 
     // Will be invoked when user selects graph button. An AC must be selected.
     // This in trun will create a new widow.
     function show(topic, label) {
-        var link = "http://localhost:8080/intact/search/do/hvWelcome?searchString="
-            + label + "&searchClass=" + topic;
+        var link = "<%=service.getSerachLink()%>"
+            + "?searchString=" + label + "&searchClass=" + topic;
         makeNewWindow(link);
     }
 </script>
