@@ -103,10 +103,10 @@ build everything in one go - 'ant compile-all' - if you so wish).
 d) the final step for the intact core setup is to load the database. There are sample data files in the data directory,
 and to populate your database with this data simply type
 
-	scripts/postgres/testfill.sh 'user/pwd' <dbname> small | large  (postgres - quotes can be omitted if no password)
+	scripts/postgres/testfill.sh 'user/pwd' <dbname> small | medium | large  (postgres - quotes can be omitted if no password)
 
 or
-	scripts/oracle/testfill.sh 'user/pwd' <dbname> small | large (oracle)
+	scripts/oracle/testfill.sh 'user/pwd' <dbname> small | medium | large (oracle)
 
 "small" is for minimal tests, will need < 5 minutes. "large" is full, real data from the Ho and Gavin experiments,
 will run > 1 hour.
