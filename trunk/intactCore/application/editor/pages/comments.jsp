@@ -23,8 +23,8 @@
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <%-- The list of topics --%>
-<c:set var="viewbean" value="${user.view}"/>
-<c:set var="topiclist" value="${viewbean.editTopicMenu}"/>
+<c:set var="view" value="${user.view}"/>
+<c:set var="topiclist" value="${view.editTopicMenu}"/>
 
 <%-- Class wide declarations. --%>
 <%!
@@ -35,7 +35,7 @@
 
 <h3>Annotations</h3>
 
-<c:if test="${not empty viewbean.annotations}">
+<c:if test="${not empty view.annotations}">
 
     <html:form action="/comment/edit">
         <table width="80%" border="0" cellspacing="1" cellpadding="2">
@@ -52,7 +52,9 @@
             </tr>
             <%-- To calculate row or even row --%>
             <c:set var="row"/>
-            <nested:iterate name="<%=formName%>" property="items">
+<%--            <logic:iterate id="annots" name="commentEditForm" property="items">--%>
+<%--                type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean">--%>
+            <c:forEach var="items" items="${commentEditForm.items}">
                 <!-- Different styles for even or odd rows -->
                 <c:choose>
                     <c:when test="${row % 2 == 0}">
@@ -68,19 +70,23 @@
                          Delete is visible regardless of the state.
                      --%>
                     <td class="tableCell">
-                        <nested:equal property="editState" value="<%=viewState%>">
+<%--                        <logic:equal property="editState" value="<%=viewState%>">--%>
+                        <c:if test="${items.editState == 'editing'}">
                             <html:submit indexed="true" property="cmd"
                                 titleKey="annotations.button.edit.titleKey">
                                 <bean:message key="button.edit"/>
                             </html:submit>
-                        </nested:equal>
+                        </c:if>
+<%--                        </logic:equal>--%>
 
-                        <nested:equal property="editState" value="<%=saveState%>">
+                        <c:if test="${items.editState == 'saving'}">
+<%--                        <logic:equal property="editState" value="<%=saveState%>">--%>
                             <html:submit indexed="true" property="cmd"
                                 titleKey="annotations.button.save.titleKey">
                                 <bean:message key="button.save"/>
                             </html:submit>
-                        </nested:equal>
+                        </c:if>
+<%--                        </logic:equal>--%>
                     </td>
 
                     <td class="tableCell">
@@ -90,27 +96,32 @@
                         </html:submit>
                     </td>
 
-                    <nested:equal property="editState" value="<%=viewState%>">
+<%--                    <logic:equal property="editState" value="<%=viewState%>">--%>
+                        <c:if test="${items.editState == 'editing'}">
                         <td class="tableCell">
-                            <nested:write property="topicLink" filter="false"/>
+                            <bean:write name="items" property="topicLink" filter="false"/>
                         </td>
                         <td class="tableCell">
-                            <nested:write property="description"/>
+                            <bean:write name="items" property="description"/>
                         </td>
-                    </nested:equal>
+                        </c:if>
+<%--                    </logic:equal>--%>
 
-                    <nested:equal property="editState" value="<%=saveState%>">
+                        <c:if test="${items.editState == 'saving'}">
+<%--                    <logic:equal property="editState" value="<%=saveState%>">--%>
                         <td class="tableCell">
-                            <nested:select property="topic">
-                                <nested:options name="topiclist" />
-                            </nested:select>
+                            <html:select name="items" property="topic" indexed="true">
+                                <html:options name="topiclist" />
+                            </html:select>
                         </td>
                         <td class="tableCell">
-                            <nested:textarea cols="70" rows="3" property="description"/>
+                            <html:textarea name="items" cols="70" rows="3" property="description" indexed="true"/>
                         </td>
-                    </nested:equal>
+                        </c:if>
+<%--                    </logic:equal>--%>
                 </tr>
-            </nested:iterate>
+                </c:forEach>
+<%--            </logic:iterate>--%>
         </table>
     </html:form>
 </c:if>
