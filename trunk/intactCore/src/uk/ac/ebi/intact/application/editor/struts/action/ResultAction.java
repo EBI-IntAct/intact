@@ -95,8 +95,7 @@ public class ResultAction extends AbstractEditorAction {
             // an experiment via the interaction editor. Those interactions that
             // have been added or removed this way will not be visible until it
             // is removed and reloaded again.
-            if ((clazz == Experiment.class) && helper.isInCache(clazz, ac)) {
-                System.out.println("In Cache now");
+            if (Experiment.class.isAssignableFrom(clazz) && helper.isInCache(clazz, ac)) {
                 helper.removeFromCache(clazz, ac);
             }
             annobj = (AnnotatedObject) helper.getObjectByAc(clazz, ac);
