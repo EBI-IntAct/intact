@@ -1336,6 +1336,13 @@ public class IntactHelper implements SearchI, Externalizable {
     }
 
     /**
+     * @see uk.ac.ebi.intact.persistence.DAO#getTableName(Class)
+     */
+    public String getTableName(Class clazz) {
+        return dao.getTableName(clazz);
+    }
+
+    /**
      * Delete all elements in a collection.
      */
     public void deleteAllElements(Collection aCollection) throws IntactException {

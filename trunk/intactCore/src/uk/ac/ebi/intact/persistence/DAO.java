@@ -350,4 +350,12 @@ public interface DAO {
      * @throws PersistenceBrokerException
      */
     public void clearCache() throws PersistenceBrokerException;
+
+    /**
+     * Returns the table name for given class.
+     * @param clazz the class to get the table name for.
+     * @return the table name for <code>clazz</code>. This could be null if
+     * <code>clazz</code> is not found in the repository.
+     */
+    public String getTableName(Class clazz);
 }

@@ -129,7 +129,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         this.broker = broker;
         metaData = MetadataManager.getInstance();
         defaultKey = metaData.getDefaultPBKey();
-        //repositoryFile = broker.getDescriptorRepository().getPBkey().getRepositoryFile();
         repositoryFile = broker.getPBKey().getAlias();  //alias instead of repositoryfile name
         //get user details and cache for later use
         user = broker.getPBKey().getUser();
@@ -235,9 +234,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             } catch (Exception e) {
                 logger.error("unable to reconnect to store after serialization", e);
             }
-            //return true;
         }
-        //return false;
     }
 
     /**
@@ -251,9 +248,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         //just validate against user details in OJB repository.xml..
         if (userName == null)
             return false;
-
-//        String knownUser = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection().getUserName();
-//        String knownPassword = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection().getPassWord();
 
         //NB not sure if using the default PBKey is correct - really should use
         //the jcdAlias but don't know how to get at it!
@@ -275,14 +269,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      */
     public String getDbName() {
         String dbName = "";
-//        JdbcConnectionDescriptor jDesc = DescriptorRepository.getDefaultInstance().getDefaultJdbcConnection();
         JdbcConnectionDescriptor jDesc = metaData.connectionRepository().getDescriptor(defaultKey);
 
         if (jDesc.getDbAlias() != null)
             dbName = jDesc.getDbAlias();
-//        Connection conn = broker.getConnectionManager().getConnection();
-//        DatabaseMetaData metaInfo = conn.getMetaData();
-//        dbName = metaInfo.getDatabaseProductName();
         return dbName;
     }
 
@@ -295,7 +285,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      */
     public String getDbUserName() throws LookupException, SQLException {
         String userName = "";
-//        Connection conn = broker.getConnectionManager().getConnection();
         Connection conn = broker.serviceConnectionManager().getConnection();
         DatabaseMetaData metaInfo = conn.getMetaData();
         userName = metaInfo.getUserName();
@@ -308,7 +297,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * @throws LookupException
      */
     public Connection getJDBCConnection() throws LookupException {
-//        return broker.getConnectionManager().getConnection();
         return broker.serviceConnectionManager().getConnection();
     }
 
@@ -428,7 +416,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             //ODMG transaction...
             if (isODMGTransaction()) {
-//            if (tx != null) {
                 try {
                     tx.commit();
                 } catch (Exception ex) {
@@ -447,7 +434,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 tx = null;
                 transactionType = NULL_TX_TYPE;
             } else if (isJDBCTransaction()) {
-//            else if (transactionType == BusinessConstants.JDBC_TX) {
                 //it's a PB transaction instead
                 broker.commitTransaction();
                 //reset the transaction type flag ready for next time
@@ -456,7 +442,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //error - trying to close a non-existent TX
                 throw new TransactionException("error during commit - no transaction exists!");
             }
-            //broker.commitTransaction();
         } catch (org.odmg.TransactionAbortedException tae) {
 
             logger.error(tae.getCause());
@@ -485,10 +470,8 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      *
      */
     public void create(Object obj) throws CreateException {
-
         //do this with ODMG....
         checkForOpenStore();
-        //Transaction tx1 = null;
         boolean localTx = false;
         try {
 
@@ -501,7 +484,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //should join the TX just in case the thread has changed since
                 //the client begin() was called...
                 if (isODMGTransaction()) {
-//                if (transactionType == BusinessConstants.OBJECT_TX) {
                     logger.debug("Doing a object transaction");
                     //do the ODMG thing - otherwsie don't do anything!
                     tx.join();
@@ -512,12 +494,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 }
             } else {
                 logger.debug("Starting Local Transaction - default to JDBC type");
-
-                //run a local transaction **** NB local TX is JDBC level *****
-//                localTx = true;
-//                    tx1 = odmg.newTransaction();
-//                    tx1.begin();
-//                    tx1.lock(obj, tx1.WRITE);
                 //default to JDBC
                 transactionType = BusinessConstants.JDBC_TX;
                 localTx = true;
@@ -527,10 +503,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
                 //local transaction, so commit here instead...
                 logger.debug("committing local TX");
-//                if(transactionType == BusinessConstants.OBJECT_TX) {
-//                    tx1.commit();
-//                }
-//                else
                 broker.store(obj);
                 broker.commitTransaction();
             }
@@ -599,12 +571,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             Identity ident = new Identity(obj, broker);
             dummy = broker.getObjectByIdentity(ident);
             // dummy should never be null at this point.
-//            if (dummy == null) {
-//                // Has a primary key but unknown to the DB.
-//                throw new UpdateException("Can't find an object with primary key "
-//                        + ident.getPrimaryKeyValues()[0]);
-//            }
-//            logger.debug("object retrieved : " + dummy.toString());
 
             //check TX details and lock object into appropriate TX
             if (isActive()) {
@@ -614,7 +580,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //the client begin() was called...
                 logger.debug("client transaction detected - locking retrieved object for write..");
                 if (isODMGTransaction()) {
-//                if (transactionType == BusinessConstants.OBJECT_TX) {
                     tx.join();
                     tx.lock(dummy, tx.WRITE);
                 }
@@ -703,7 +668,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 broker.store(obj, mod);
                 broker.commitTransaction();
             } else if (isJDBCTransaction()) {
-//            else if (transactionType == BusinessConstants.JDBC_TX) {
                 // Not a local transaction; JDBC transaction.
                 ObjectModificationDefaultImpl mod = new ObjectModificationDefaultImpl();
                 mod.setNeedsUpdate(true);
@@ -714,7 +678,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 //local transaction failed - should rollback here..
                 logger.error("aborting local TX");
                 logger.error(e);
-                //tx1.abort();
                 broker.abortTransaction();
             }
             //client should be responsible for aborting their own TX...
@@ -737,13 +700,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     public boolean isActive() {
         checkForOpenStore();
         if (isODMGTransaction()) {
-//        if (transactionType == BusinessConstants.OBJECT_TX) {
             if (tx != null) {
                 return tx.isOpen();
             }
         }
         if (isJDBCTransaction()) {
-//        if (transactionType == BusinessConstants.JDBC_TX) {
             return broker.isInTransaction();
         }
         return false;
@@ -755,11 +716,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
      * @return boolean - true if auto saving is on, false otherwise
      */
     public boolean isAutoSave() {
-
         checkForOpenStore();
-//        Configuration con = OjbConfigurator.getInstance().getConfigurationFor(null);
-//        OjbConfiguration ojbCon = (OjbConfiguration) con;
-//        if (ojbCon.useAutoCommit() == 1)
         JdbcConnectionDescriptor connDesc = metaData.connectionRepository().getDescriptor(defaultKey);
         if(connDesc.getUseAutoCommit() == 1)
             return true;
@@ -854,13 +811,10 @@ public class ObjectBridgeDAO implements DAO, Serializable {
 
             //broker.delete(obj);
             if (!isActive()) {
-
                 //start local transaction - don't need to lock for write as db.deletePersistent
                 //does that for us
                 //*** NB default to JDBC here ****
                 broker.beginTransaction();
-//                tx1 = odmg.newTransaction();
-//                tx1.begin();
                 logger.debug("local TX started to delete object " + obj.getClass().getName());
                 localTx = true;
             }
@@ -868,7 +822,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //NB if an Object TX, for multi-threaded calls, need to make sure that the current thread
             //is always connected to the client transaction as this is how ODMG works...
             if (isODMGTransaction()) {
-//            if ((!localTx) & (transactionType == BusinessConstants.OBJECT_TX)) {
                 tx.join();
                 db.deletePersistent(obj);
                 logger.debug("object " + obj.getClass().getName() + " successfully locked for delete...");
@@ -877,21 +830,17 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                 broker.delete(obj);
             }
             if (localTx) {
-
                 //commit the local transaction
                 logger.debug("commiting delete on local transaction for object " + obj.getClass().getName());
-                //tx1.commit();
                 broker.commitTransaction();
                 logger.debug("local TX committed successfully");
             }
         } catch (Exception pbe) {
 
             if (localTx) {
-
                 //should rollback the local TX
                 logger.debug("error - local TX aborting...");
                 logger.debug("failed due to " + pbe);
-                //tx1.abort();
                 broker.abortTransaction();
             }
 
@@ -909,14 +858,11 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     public void rollback() throws TransactionException {
         checkForOpenStore();
         try {
-            //broker.abortTransaction();
             if (isODMGTransaction()) {
-//            if ((transactionType == BusinessConstants.OBJECT_TX) & (tx != null)) {
                 //make sure the current thread is associated with the TX first, to be safe
                 tx.join();
                 tx.abort();
             } else if (isJDBCTransaction()) {
-//            else if (transactionType == BusinessConstants.JDBC_TX) {
                 broker.abortTransaction();
             } else {
                 //error - no TX exists...
@@ -1013,7 +959,6 @@ public class ObjectBridgeDAO implements DAO, Serializable {
     public Collection find(Class searchClass, String col, String val) throws SearchException {
 
         checkForOpenStore();
-//        Query query = null;
         Collection results = new ArrayList();
 
         //debug info..
@@ -1120,21 +1065,9 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             //System.gc();
             timer = System.currentTimeMillis();
 
-            //try using broker TXs so Connections are released when commit called -
-            //this is to avoid the oracle 'open cursors' problem. If connection
-            //pooling is used, commit should just release the connection's resources..
-//            boolean localTx = false;
-//            if (!isActive()) {
-//                localTx = true;
-//                broker.beginTransaction();
-//            }
-
             for (Iterator queryIt = queries.iterator(); queryIt.hasNext();) {
                 results.addAll(broker.getCollectionByQuery((Query) queryIt.next()));
             }
-//            if (localTx) {
-//                broker.commitTransaction();
-//            }
 
             tmp = System.currentTimeMillis();
             timer = tmp - timer;
@@ -1430,26 +1363,16 @@ public class ObjectBridgeDAO implements DAO, Serializable {
         return resultIterator;
     }
 
+    public String getTableName(Class clazz) {
+        ClassDescriptor cld = broker.getDescriptorRepository().getDescriptorFor(clazz);
+        if (cld == null) {
+            return null;
+        }
+        return cld.getFullTableName();
+    }
 
 
 //-------------------------- private helper methods ----------------------------------------
-
-    /**
-     *  This method builds a query string based on the table information
-     * provided. Currently only a simple SELECT...WHERE statement is built;
-     * if more complex ones are needed in future then this method is the place
-     * to modify the logic - note however that this is not a trivial exercise..
-     */
-//    private String buildQuery(String className, String col) {
-//
-//        StringBuffer buf = new StringBuffer("SELECT p FROM ");
-//        buf.append(className);
-//        buf.append(" p WHERE ");
-//        buf.append(col);
-//        buf.append("=$1");
-//
-//        return buf.toString();
-//    }
 
     /**
      * <p>
