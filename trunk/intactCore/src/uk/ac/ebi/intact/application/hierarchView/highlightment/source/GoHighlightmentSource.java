@@ -48,6 +48,10 @@ public class GoHighlightmentSource extends HighlightmentSource {
     private static final String KEY_SEPARATOR = ",";
     private static final String ATTRIBUTE_OPTION_CHILDREN = "CHILDREN";
     private static final String PROMPT_OPTION_CHILDREN = "With children of the selected GO term";
+    
+    /**
+     * The key for this source 'go'
+     */
     private static final String SOURCE_KEY = "go";
 
     /**
@@ -159,6 +163,10 @@ public class GoHighlightmentSource extends HighlightmentSource {
     /**
      * get a collection of the xrefs and filter to keep only GO terms.
      * 
+     * The collection has the acutally just one entry which is a map structure.
+     * This map maps a source (e.g. GO) to a collection of strings which stores
+     * the primary and the secondary IDs of the central proteins.
+     * 
      * Method is used when the graph was built with the mine database table
      * 
      * @param xRef all xrefs of the centralnodes
@@ -169,19 +177,22 @@ public class GoHighlightmentSource extends HighlightmentSource {
         String[] goterm;
         // set to keep track of the GO Terms which are added to avoid duplicate
         // entries. This is needed because we are adding String[] to the actual
-        // collection and the method contains false when testing if an array
-        // (with the same entries) is already in the collection (even it is in)
+        // collection and the method 'contains' fails when testing if an array
+        // (with the same entries) is already in the collection (even if it is
+        // in)
         Set doubleEntrieCheckSet = new HashSet( xRef.size() );
+
         Iterator xRefIterator = xRef.iterator();
         if ( xRefIterator.hasNext() ) {
             // the source map is fetched
             // Map<String, Collection<String> >
             Map sourceMap = (Map) xRefIterator.next();
+
             Collection goTerms = (Collection) sourceMap.get( SOURCE_KEY );
             // the collection stores the filterd xrefs - it has the size of the
-            // number of GO terms divided by 2 because in the collection one GO
-            // Term is using to indizes in the collection (even: primary ID,
-            // odd: secondary ID)
+            // number of GO terms divided by 2 because in the goTerms collection
+            // two following entries are represanting one GO Term (even: primary
+            // ID, odd: secondary ID)
             listGOTerm = new ArrayList( goTerms.size() / 2 );
 
             Iterator sourceIterator = goTerms.iterator();
@@ -277,9 +288,9 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
         Collection nodeList = new ArrayList( 20 ); // should be enough for 90%
         // cases
+
         // retrieve the set of proteins to highlight for the source key (e.g.
-        // GO)
-        // and the selected GO Term
+        // GO) and the selected GO Term
         Set proteinsToHighlight = aGraph.getProteinsForHighlight( SOURCE_KEY,
                 selectedGOTerm );
 
@@ -288,11 +299,8 @@ public class GoHighlightmentSource extends HighlightmentSource {
             nodeList.addAll( proteinsToHighlight );
         }
 
-        /*
-         * if there are children provided it means that we have also to search
-         * for them
-         * 
-         * so for every children all proteins related to the current GO Term are
+        /* 
+         * for every children all proteins related to the current GO Term are
          * fetched from the source highlighting map of the graph and added to
          * the collection
          */
