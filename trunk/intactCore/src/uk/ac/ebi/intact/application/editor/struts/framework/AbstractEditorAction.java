@@ -27,9 +27,6 @@ public abstract class AbstractEditorAction extends Action {
     /** The global Intact error key. */
     public static final String EDITOR_ERROR = "EditError";
 
-    /** Error container */
-    private ActionErrors myErrors = new ActionErrors();
-
     /**
      * Returns the only instance of Intact Service instance.
      * @return only instance of the <code>EditorService</code> class.
@@ -131,53 +128,6 @@ public abstract class AbstractEditorAction extends Action {
                 session.removeAttribute(mapping.getAttribute());
             }
         }
-    }
-
-    /**
-     * Clear error container.
-     */
-    protected void clearErrors() {
-        if (!myErrors.isEmpty()) {
-            myErrors.clear();
-        }
-    }
-
-    /**
-     * Adds an error with given key.
-     *
-     * @param key the error key. This value is looked up in the
-     * IntactResources.properties bundle.
-     */
-    protected void addError(String key) {
-        myErrors.add(EDITOR_ERROR, new ActionError(key));
-    }
-
-    /**
-     * Adds an error with given key and value.
-     *
-     * @param key the error key. This value is looked up in the
-     * IntactResources.properties bundle.
-     * @param value the value to substitute for the first place holder in the
-     * IntactResources.properties bundle.
-     */
-    protected void addError(String key, String value) {
-        myErrors.add(EDITOR_ERROR, new ActionError(key, value));
-    }
-
-    /**
-     * Saves the errors in given request for <struts:errors> tag.
-     *
-     * @param request the request to save errors.
-     */
-    protected void saveErrors(HttpServletRequest request) {
-        super.saveErrors(request, myErrors);
-    }
-
-    /**
-     * True if there are errors.
-     */
-    protected boolean hasErrors() {
-        return !myErrors.isEmpty();
     }
 
     /**
