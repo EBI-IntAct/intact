@@ -10,7 +10,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.CellTypeTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.HostOrganismTag;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.TissueTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.HostOrganismParser;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.test.mock.MockDocumentBuilder;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.test.mock.MockXmlContent;
@@ -41,22 +43,73 @@ public class HostOrganismParserTest extends TestCase {
         return new TestSuite( HostOrganismParserTest.class );
     }
 
-    public void testProcess() {
+    private HostOrganismTag parse( String xmlContent ) {
 
         final MockInputStream is = new MockInputStream();
-        is.setBuffer( MockXmlContent.HOST_ORGANISM_1 );
+        is.setBuffer( xmlContent );
         final Document document = MockDocumentBuilder.build( is );
         final Element element = document.getDocumentElement();
 
-        HostOrganismTag bioSource = null;
-        bioSource = HostOrganismParser.process( element );
+        return HostOrganismParser.process( element );
+    }
 
-        /**
-         * REMARK: we don't test here the data contained in the XML file, we have those from Newt.
-         * We can't really know what will be returned for the shortlabel and the fullName so we only
-         * check the taxId.
-         */
+    public void testProcessWithCellTypeAndTissue() {
+
+        HostOrganismTag bioSource = parse( MockXmlContent.HOST_ORGANISM_1 );
+
         assertNotNull( bioSource );
         assertEquals( "4932", bioSource.getTaxId() );
+
+        CellTypeTag cellType = bioSource.getCellType();
+        assertNotNull( cellType );
+        assertEquals( "MI:987", cellType.getPsiDefinition().getId() );
+
+        TissueTag tissue = bioSource.getTissue();
+        assertNotNull( tissue );
+        assertEquals( "MI:123", tissue.getPsiDefinition().getId() );
+    }
+
+    public void testProcessOnlyTaxId() {
+
+        HostOrganismTag bioSource = parse( MockXmlContent.HOST_ORGANISM_2 );
+
+        assertNotNull( bioSource );
+        assertEquals( "4932", bioSource.getTaxId() );
+
+        CellTypeTag cellType = bioSource.getCellType();
+        assertNull( cellType );
+
+        TissueTag tissue = bioSource.getTissue();
+        assertNull( tissue );
+    }
+
+    public void testProcessWithTissue() {
+
+        HostOrganismTag bioSource = parse( MockXmlContent.HOST_ORGANISM_3 );
+
+        assertNotNull( bioSource );
+        assertEquals( "4932", bioSource.getTaxId() );
+
+        CellTypeTag cellType = bioSource.getCellType();
+        assertNull( cellType );
+
+        TissueTag tissue = bioSource.getTissue();
+        assertNotNull( tissue );
+        assertEquals( "MI:123", tissue.getPsiDefinition().getId() );
+    }
+
+    public void testProcessWithCellType() {
+
+        HostOrganismTag bioSource = parse( MockXmlContent.HOST_ORGANISM_4 );
+
+        assertNotNull( bioSource );
+        assertEquals( "4932", bioSource.getTaxId() );
+
+        CellTypeTag cellType = bioSource.getCellType();
+        assertNotNull( cellType );
+        assertEquals( "MI:987", cellType.getPsiDefinition().getId() );
+
+        TissueTag tissue = bioSource.getTissue();
+        assertNull( tissue );
     }
 }
