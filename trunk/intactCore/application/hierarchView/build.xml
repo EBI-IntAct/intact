@@ -234,7 +234,6 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         </delete>
 
         <!-- Tiles commons files -->
-        <delete dir="${images.dir}"/>
         <delete>
              <fileset dir="${layouts.dir}">
                  <!-- Do not remove hv specific files -->
@@ -264,6 +263,13 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
                  <exclude name="graph.jsp"/>
                  <exclude name="highlight.jsp"/>
                  <exclude name="selectedSource.jsp"/>
+            </fileset>
+        </delete>
+
+         <delete>
+             <fileset dir="${images.dir}">
+                 <!-- Do not remove hv specific files -->
+                 <exclude name="clockT.gif"/>
             </fileset>
         </delete>
     </target>
