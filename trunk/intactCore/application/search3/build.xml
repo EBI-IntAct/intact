@@ -237,7 +237,7 @@
                 <!--  No EBI header for this application (yet) -->
                 <exclude name="ebiHeaderLayout.jsp"/>
 		<!-- Exclude common styles -->
-		<exclude name="styles"/>
+		<exclude name="styles/**"/>
             </fileset>
         </copy>
 
