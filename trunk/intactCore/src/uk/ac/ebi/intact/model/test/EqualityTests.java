@@ -221,6 +221,8 @@ public class EqualityTests extends TestCase {
         inst3.setFullName("Institution 1");
         checkEquivalence(inst3, inst2, inst1);
         checkHashCodes(inst1, inst2);
+        System.out.println("Finished Institution checks.");
+        System.out.println();
     }
 
     /**
@@ -250,6 +252,8 @@ public class EqualityTests extends TestCase {
             bio3.addXref(tmpXref);
             checkEquivalence(bio2, bio1, bio3);
             checkHashCodes(bio2, bio1);
+        System.out.println("Finished BioSource checks.");
+        System.out.println();
 
 
         }
@@ -280,6 +284,8 @@ public class EqualityTests extends TestCase {
         exp3.addAnnotation(annot);
         checkEquivalence(exp3, exp2, exp1);
         checkHashCodes(inst1, inst3);
+        System.out.println("Finished Experiment checks.");
+        System.out.println();
 
     }
 
@@ -313,6 +319,8 @@ public class EqualityTests extends TestCase {
         int3.setBioSource(bio2);
         checkEquivalence(int2, int1, int3);
         checkHashCodes(int2, int1);
+        System.out.println("Finished Interaction checks.");
+        System.out.println();
 
 
 
@@ -344,6 +352,8 @@ public class EqualityTests extends TestCase {
         prot3.addAnnotation(annot);
         checkEquivalence(prot2, prot1, prot3);
         checkHashCodes(prot2, prot1);
+        System.out.println("Finished Protein checks.");
+        System.out.println();
 
 
     }
@@ -373,6 +383,8 @@ public class EqualityTests extends TestCase {
         xref3.setDbRelease("9.99");
         checkEquivalence(xref2, xref1, xref3);
         checkHashCodes(xref2, xref1);
+        System.out.println("Finished Xref checks.");
+        System.out.println();
     }
 
     /**

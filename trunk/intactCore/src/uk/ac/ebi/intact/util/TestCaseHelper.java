@@ -165,34 +165,34 @@ public class TestCaseHelper {
             institution.setUrl("http://www.dummydomain.org");
 
             bio1 = new BioSource(institution, "bio1", "1");
-            bio1.setOwnerAc(institution.getAc());
             bio1.setFullName("test biosource 1");
 
             bio2 = new BioSource(institution, "bio2", "2");
-            bio2.setOwnerAc(institution.getAc());
             bio2.setFullName("test biosource 2");
 
             exp1 = new Experiment(institution, "exp1", bio1);
-            exp1.setOwnerAc(institution.getAc());
             exp1.setFullName("test experiment 1");
 
             exp2 = new Experiment(institution, "exp2", bio2);
-            exp2.setOwnerAc(institution.getAc());
             exp2.setFullName("test experiment 2");
 
             prot1 = new Protein(institution, bio1, "prot1");
             prot2 = new Protein(institution, bio1, "prot2");
             prot3 = new Protein(institution, bio1, "prot3");
 
-            prot1.setOwnerAc(institution.getAc());
             prot1.setFullName("test protein 1");
             prot1.setCrc64("dummy 1 crc64");
-            prot2.setOwnerAc(institution.getAc());
             prot2.setFullName("test protein 2");
             prot2.setCrc64("dummy 2 crc64");
-            prot3.setOwnerAc(institution.getAc());
             prot3.setFullName("test protein 3");
             prot3.setCrc64("dummy 3 crc64");
+
+            //create some xrefs
+            cvDb = new CvDatabase(institution, "testCvDb");
+            cvDb.setFullName("dummy test cvdatabase");
+            xref1 = new Xref(institution, cvDb, "G0000000", "GAAAAAAA", "1.0", null);
+
+            xref2 = new Xref(institution, cvDb, "GEEEEEEE", "GGGGGGGG", "1.0", null);
 
             //set up some collections to be added to later - needed for
             //some of the constructors..
@@ -206,49 +206,26 @@ public class TestCaseHelper {
             int2 = new Interaction(experiments, components, null, "int2", institution);
             int3 = new Interaction(experiments, components, null, "int3", institution);
 
-            int1.setOwnerAc(institution.getAc());
             int1.setFullName("test interaction 1");
             int1.setKD(new Float(1));
 
-            int2.setOwnerAc(institution.getAc());
             int2.setFullName("test interaction 2");
             int2.setKD(new Float(2));
 
-            int3.setOwnerAc(institution.getAc());
             int3.setFullName("test interaction 3");
             int3.setKD(new Float(3));
-
-
-            //create some xrefs and link to proteins/interactions
-            cvDb = new CvDatabase(institution, "testCvDb");
-            cvDb.setFullName("dummy test cvdatabase");
-            xref1 = new Xref(institution, cvDb, "G0000000", "GAAAAAAA", "1.0", null);
-            xref1.setOwnerAc(institution.getAc());
-            xref1.setParentAc(prot1.getAc());
-            cvDb.addXref(xref1);
-
-            xref2 = new Xref(institution, cvDb, "GEEEEEEE", "GGGGGGGG", "1.0", null);
-            xref2.setOwnerAc(institution.getAc());
-            xref2.setParentAc(int1.getAc());
-            cvDb.addXref(xref2);
-
-            prot1.addXref(xref1);
-            int1.addXref(xref2);
 
             //now link up interactions and proteins via some components..
             compRole = new CvComponentRole(institution, "role");
 
             comp1 = new Component(institution, int1, prot1, compRole);
-            comp1.setOwnerAc(institution.getAc());
             comp1.setStoichiometry(1);
 
             comp2 = new Component(institution, int2, prot2, compRole);
-            comp2.setOwnerAc(institution.getAc());
             comp2.setStoichiometry(2);
 
             //needs owner, interaction, interactor, role
             comp3 = new Component(institution, int2, prot3, compRole);
-            comp3.setOwnerAc(institution.getAc());
             comp3.setStoichiometry(3);
 
             comp4 = new Component(institution, int1, prot2, compRole);
@@ -259,6 +236,33 @@ public class TestCaseHelper {
             int3.addComponent(comp3);
             int2.addComponent(comp4);
             int3.addComponent(comp4);
+
+            //add the Xrefs in.....
+            prot1.addXref(xref1);
+            int1.addXref(xref2);
+
+            exp1.addXref(xref1);
+            exp1.addXref(xref2);
+            exp2.addXref(xref1);
+            exp2.addXref(xref2);
+
+            bio1.addXref(xref1);
+            bio1.addXref(xref2);
+            bio2.addXref(xref1);
+            bio2.addXref(xref2);
+
+            prot1.addXref(xref1);
+            prot1.addXref(xref2);
+            prot2.addXref(xref1);
+            prot2.addXref(xref2);
+
+            int1.addXref(xref1);
+            int1.addXref(xref2);
+            int2.addXref(xref1);
+            int2.addXref(xref2);
+            int3.addXref(xref1);
+            int3.addXref(xref2);
+
 
             //store everything...
             Collection persistList = new ArrayList();
@@ -286,10 +290,12 @@ public class TestCaseHelper {
             helper.create(persistList);
 
             //now add an experiment and do an update
+            System.out.println("examples persisted - adding Experiments...");
             int1.addExperiment(exp2);
             int2.addExperiment(exp1);
             int3.addExperiment(exp2);
 
+            System.out.println("updating Interactions...");
             helper.update(int1);
             helper.update(int2);
             helper.update(int3);

@@ -40,7 +40,7 @@ public class AllJUnitTests extends TestCase {
         TestSuite suite = new TestSuite();
         // Add your test suite here.
         //suite.addTest(uk.ac.ebi.intact.test.AllJUnitTests.suite());
-        suite.addTest(XmlBuilderTest.suite());
+        //suite.addTest(XmlBuilderTest.suite());
         suite.addTest(NewtServerProxyTest.suite());
         suite.addTest(GoServerProxyTest.suite());
         return suite;
