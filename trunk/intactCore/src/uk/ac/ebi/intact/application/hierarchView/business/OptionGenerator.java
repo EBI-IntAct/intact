@@ -26,7 +26,7 @@ public class OptionGenerator {
     ArrayList sources = new ArrayList ();
     
     // read the ApplicationResource.proterties file 
-    Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+    Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE_HIGHLIGHTING);
         
     if (null != properties) {
 
@@ -73,7 +73,7 @@ public class OptionGenerator {
     ArrayList behaviours = new ArrayList ();
 
     // read the ApplicationResource.proterties file 
-    Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+    Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE_HIGHLIGHTING);
         
     if (null != properties) {
 
