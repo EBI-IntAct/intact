@@ -24,7 +24,7 @@ import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.mine.business.Constants;
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
 import uk.ac.ebi.intact.application.mine.business.MineException;
-import uk.ac.ebi.intact.application.mine.business.graph.GraphHelper;
+import uk.ac.ebi.intact.application.mine.business.graph.GraphManager;
 import uk.ac.ebi.intact.application.mine.business.graph.MineHelper;
 import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
 import uk.ac.ebi.intact.application.mine.struts.view.ErrorBean;
@@ -89,7 +89,7 @@ public class DisplayAction extends Action {
             return mapping.findForward( Constants.ERROR );
         }
         Integer graphid;
-        GraphHelper graphHelper;
+
         Collection search = null;
         for (Iterator iter = networks.keySet().iterator(); iter.hasNext();) {
             // the key stores the taxid and graphid for the current search
@@ -101,33 +101,31 @@ public class DisplayAction extends Action {
             // if the current search ac are in a graph in the database
             if ( graphid != Constants.SINGLETON_GRAPHID && search.size() > 1 ) {
                 // the shortest path is computed
-                Constants.LOGGER.info( "searching for MiNe with " + search );
+                Constants.LOGGER.warn( "searching for MiNe with " + search );
+                GraphData graphData;
+                // the graphManager is responsible for building and storing the
+                // graphs it is implemented as a singleton so just one instance
+                // is allowed during runtime.
+                GraphManager graphManager = GraphManager.getInstance( user );
+                // the graph is fetched for the given graphid. As long as there
+                // is no graph given for the graphid the action waits 25ms and
+                // then tries again to retrieve the graph
+                while ( ( graphData = graphManager.getGraphData( graphid ) ) == null ) {
+                    try {
+                        Thread.sleep( 25 );
+                    }
+                    catch ( InterruptedException e ) {
+                        request.setAttribute( Constants.ERROR, new ErrorBean(
+                                mr.getMessage( "displayAction.noGraph", Integer
+                                        .toString( graphid.intValue() ) ) ) );
+                        return mapping.findForward( Constants.ERROR );
+                    }
+                }
 
-                // the graphHelper is fetched from the application scope
-                graphHelper = (GraphHelper) session.getServletContext()
-                        .getAttribute( Constants.GRAPH_HELPER );
-                // if the helper is not initialised yet it is
-                // initialised now and put in the application scope.
-                if ( null == graphHelper ) {
-                    graphHelper = new GraphHelper( user );
-                    session.getServletContext().setAttribute(
-                            Constants.GRAPH_HELPER, graphHelper );
-                }
-                // the graphdata is fetched for the specific graphid
-                GraphData gd;
-                try {
-                    gd = graphHelper.getGraph( graphid );
-                }
-                catch ( SQLException e ) {
-                    request.setAttribute( Constants.ERROR, new ErrorBean( mr
-                            .getMessage( "displayAction.noGraph", Integer
-                                    .toString( graphid.intValue() ) ) ) );
-                    return mapping.findForward( Constants.ERROR );
-                }
                 try {
                     // the minimal network is computed
                     // the found network is then updated in the MiNeHelper class
-                    helper.computeMiNe( gd, search );
+                    helper.computeMiNe( graphData, search );
                 }
                 catch ( MineException e2 ) {
                     String searchString = search.toString();
