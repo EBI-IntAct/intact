@@ -235,10 +235,10 @@ public class GoHighlightmentSource extends HighlightmentSource {
      * Here it produce a list of GO terms and format URLs according to the InGO specification.<br>
      *
      * @param xRef A collection of xRef
-     * @param serverPath the server path where our application is running
+     * @param applicationPath our application path
      * @return a set of URL pointing on the highlightment source
      */
-    public List getSourceUrls (Collection xRef, String serverPath)
+    public List getSourceUrls (Collection xRef, String applicationPath)
          throws IntactException {
         List urls = new ArrayList();
 
@@ -277,7 +277,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
                 String hierarchViewURL = null; // %24%7Bselected-children%7D%26clicked%3D%24%7Bid%7D
                 try {
-                    hierarchViewURL = URLEncoder.encode (serverPath + "/hierarchView/source.do?keys=${selected-children}&clicked=${id}", "UTF-8");
+                    hierarchViewURL = URLEncoder.encode (applicationPath + "/source.do?keys=${selected-children}&clicked=${id}", "UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

@@ -90,9 +90,11 @@ public class RestoreContextFromCookieTag extends TagSupport {
         // remove the last comma
         queryString = queryString.substring (0, queryString.length()-1);
 
+        String contextPath = ((HttpServletRequest) pageContext.getRequest()).getContextPath();
         String url = null;
         if (queryString != null && method != null && depth != null) {
-            url = "/hierarchView/display.do?AC="+ queryString +"&method="+ method +"&depth="+ depth;
+
+            url = contextPath + "/display.do?AC="+ queryString +"&method="+ method +"&depth="+ depth;
         } else {
             // simply display the current page
             return EVAL_PAGE;
@@ -104,8 +106,7 @@ public class RestoreContextFromCookieTag extends TagSupport {
             session.setAttribute ("restoreUrl", url);
 
             // redirect to the forward page (with waiting message)
-            HttpServletRequest request = ((HttpServletRequest) pageContext.getRequest());
-            String forwardUrl = request.getContextPath() + "/pages/restoreContext.jsp";
+            String forwardUrl = contextPath + "/pages/restoreContext.jsp";
 
             logger.info("forward to: " + forwardUrl);
 

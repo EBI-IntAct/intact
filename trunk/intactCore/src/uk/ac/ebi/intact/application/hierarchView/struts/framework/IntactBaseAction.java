@@ -279,15 +279,17 @@ public abstract class IntactBaseAction extends Action {
     public void updateInteractionNetwork (IntactUserI user, int action)
               throws MultipleResultException {
 
-        InteractionNetwork in = null,
-                           tmp = null;
+        InteractionNetwork in = null;
         String queryString = user.getQueryString();
         int depth = user.getCurrentDepth();
 
         StringTokenizer st = new StringTokenizer (queryString, ",");
         ArrayList queries = new ArrayList(10);
+        String aQuery;
         while (st.hasMoreElements()) {
-            queries.add (st.nextToken().trim()); // remove front and back blank space
+            aQuery = st.nextToken().trim();
+            if (aQuery.length() > 0)
+               queries.add (aQuery); // remove front and back blank space
         }
         int max = queries.size();
 
