@@ -22,7 +22,8 @@
     <property name="intact.app.dir" value=".."/>
 
     <property name="dist.dir" value="dist"/>
-    <property name="war.file" value="cvedit.war"/>
+    <property name="war.file" value="${ant.project.name}.war"/>
+    <property name="war.test.file" value="${ant.project.name}-test.war"/>
 
     <!-- This project specific paths. -->
     <property name="src.dir" value="src"/>
@@ -31,9 +32,13 @@
     <property name="dest.dir" value="WEB-INF/classes"/>
     <property name="docs.dir" value="doc/api"/>
 
+    <!-- Contains jar files required for testing. -->
+    <property name="test.lib.dir" value="test/lib"/>
+    <!-- Holds misc files required for testing. -->
+    <property name="test.etc.dir" value="test/etc"/>
+
     <!-- Build working classpath -->
     <path id="project.class.path">
-
         <!-- Project specific jar files. -->
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
@@ -52,6 +57,28 @@
         <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
         <pathelement path="${root.lib.dir}/commons-lang-1.0.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
+    </path>
+
+    <path id="project.test.class.path">
+        <!-- Current directory to access struts-config.xml -->
+        <pathelement path="."/>
+
+        <!-- Struts test jar files. -->
+        <fileset dir="${test.lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- The project class path. -->
+        <path refid="project.class.path"/>
+
+        <!-- Runtime jar files. -->
+        <fileset dir="${root.lib.dir}">
+            <include name="junit.jar"/>
+            <include name="jakarta-ojb-0.9.7.jar"/>
+            <include name="commons-lang-1.0.jar"/>
+            <include name="log4j-1.2.5.jar"/>
+            <include name="pgjdbc2.jar"/>
+        </fileset>
     </path>
 
     <!-- =================================================================== -->
@@ -114,7 +141,8 @@
     <!-- =================================================================== -->
 
     <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
-    <target name="compile" depends="make-jar">
+    <target name="compile" depends="make-jar"
+        description="Compiles non test source files">
 
         <!-- Create the dest dir if it doesn't exist. -->
         <mkdir dir="${dest.dir}" />
@@ -125,6 +153,26 @@
             includes="**/application/cvedit/**"
             excludes="**/test/**">
             <classpath refid="project.class.path"/>
+        </javac>
+
+        <!-- Copy configuration files -->
+        <antcall target="cpConfigFiles"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Compile the source tree; creates the dest dir if it doesn't exist. -->
+    <target name="compile-all" depends="make-jar"
+        description="Compiles all the source files">
+
+        <!-- Create the dest dir if it doesn't exist. -->
+        <mkdir dir="${dest.dir}" />
+
+        <!-- Only compile cvedit sources only. -->
+        <javac srcdir="${root.src.dir}" destdir="${dest.dir}" deprecation="on"
+            debug="on" source="1.4"
+            includes="**/application/cvedit/**">
+            <classpath refid="project.test.class.path"/>
         </javac>
 
         <!-- Copy configuration files -->
@@ -151,6 +199,8 @@
 
 		<war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
 		   <fileset dir="${basedir}">
+               <!-- Only need this for testing -->
+                <exclude name="jspRedirector.jsp"/>
 				<include name="*.jsp"/>
 	        	<include name="*.css"/>
 	  			<include name="WEB-INF/struts-config.xml"/>
@@ -184,10 +234,78 @@
 
     <!-- =================================================================== -->
 
+    <!-- Builds a war file. -->
+
+    <target name="war-test" depends="compile-all" description="Builds a test war file">
+        <!-- Create the distribution dir if it doesn't exist. -->
+        <mkdir dir="${dist.dir}" />
+
+        <!-- Delete the war file or else it will keep the old one -->
+        <delete file="${dist.dir}/${war.test.file}" quiet="true"/>
+
+        <!-- Copy the misc files for testing. -->
+        <copy file="${test.etc.dir}/jspRedirector.jsp" todir="${basedir}"/>
+
+        <!-- Copy struts standard tld files -->
+        <copy todir="${tld.dir}">
+            <fileset dir="${intact.app.dir}/tld">
+                <include name="*.tld"/>
+            </fileset>
+        </copy>
+
+		<war destfile="${dist.dir}/${war.test.file}" webxml="${test.etc.dir}/web.xml">
+		   <fileset dir="${basedir}">
+				<include name="*.jsp"/>
+	        	<include name="*.css"/>
+	  			<include name="WEB-INF/struts-config.xml"/>
+	  			<include name="${tld.dir}/**"/>
+	   		</fileset>
+
+			<!-- Include cvedit specific jar files. -->
+			<lib dir="${lib.dir}">
+                <!-- Avoid NFS temp files (occationally) -->
+                <include name="*.jar"/>
+            </lib>
+
+            <!-- The jar files for unit testing -->
+            <lib dir="${test.lib.dir}">
+                <include name="aspectjrt-1.0.5.jar"/>
+                <include name="cactus-1.4.1.jar"/>
+                <include name="httpunit-1.4.1.jar"/>
+                <include name="strutstest.jar"/>
+            </lib>
+
+            <!-- Inlcude the intact core -->
+            <lib dir="${root.dist.dir}" />
+
+            <!-- Include common jar files for struts. -->
+            <lib dir="${intact.app.dir}/lib" />
+
+			<!-- Include common jar files from intact core. -->
+			<lib dir="${root.lib.dir}">
+                <include name="junit.jar"/>
+				<include name="jakarta-ojb-0.9.7.jar"/>
+                <include name="commons-lang-1.0.jar"/>
+				<include name="log4j-1.2.5.jar"/>
+				<include name="pgjdbc2.jar"/>
+			</lib>
+
+            <!-- xerces needed for Catalina LE -->
+            <lib dir="../search/WEB-INF/lib">
+                <include name="xerces.jar"/>
+            </lib>
+
+            <!-- cvedit specific classes -->
+  			<classes dir="${dest.dir}"/>
+		</war>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Deploys the war file on the Tomcat server. -->
     <target name="deploy" description="Deploys the WAR file on the Tomcat server">
         <ant dir=".." inheritAll="false" target="deploy">
-            <property name="war" value="cvedit/${dist.dir}/${war.file}"/>
+            <property name="war" value="${ant.project.name}/${dist.dir}/${war.file}"/>
         </ant>
     </target>
 
@@ -197,7 +315,26 @@
     <target name="undeploy"
         description="Undeploys the WAR file from the Tomcat server">
         <ant dir=".." inheritAll="false" target="undeploy">
-            <property name="war" value="cvedit"/>
+            <property name="war" value="${ant.project.name}"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Deploys the test war file on the Tomcat server. -->
+    <target name="deploy-test" description="Deploys the test WAR file on the Tomcat server">
+        <ant dir=".." inheritAll="false" target="deploy">
+            <property name="war" value="${ant.project.name}/${dist.dir}/${war.test.file}"/>
+        </ant>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Undeploys the test war file from the Tomcat server. -->
+    <target name="undeploy-test"
+        description="Undeploys the test WAR file from the Tomcat server">
+        <ant dir=".." inheritAll="false" target="undeploy">
+            <property name="war" value="${ant.project.name}-test"/>
         </ant>
     </target>
 
@@ -218,12 +355,24 @@
     <!-- =================================================================== -->
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
-    <target name="junit-test-stdout" depends="compile"
+    <target name="junit-test-stdout" depends="compile-all"
             description="Runs JUnit directly with output directed to stdout">
+        <!-- Make sure that we have the cactus properties file in the current classpath -->
+        <copy file="${test.etc.dir}/cactus.properties" todir="${basedir}"/>
+
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value=
                 "uk.ac.ebi.intact.application.cvedit.struts.framework.util.test.AllJUnitTests"/>
-            <classpath refid="project.class.path"/>
+            <classpath refid="project.test.class.path"/>
+        </java>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+    <target name="test">
+        <java classname="uk.ac.ebi.intact.application.cvedit.struts.security.test.LoginActionTest" fork="true">
+            <classpath refid="project.test.class.path"/>
         </java>
     </target>
 
