@@ -3,16 +3,6 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/tld/hierarchView.tld" prefix="hierarchView" %>
 
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.highlightment.source.*,
-                 uk.ac.ebi.intact.application.hierarchView.struts.view.LabelValueBean" %>
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants" %>
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.*"%>
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader" %>
-
-<%@page import="java.util.Collection" %>
-<%@page import="java.util.Iterator" %>
-<%@page import="java.util.Properties"%>
-
 <html:html locale="true">
 <head>
 
@@ -27,7 +17,6 @@
 
    <html:base/>
 
-
    <script language="JavaScript">
     <!--
     /**
@@ -38,8 +27,6 @@
     }
     //-->
    </script>
-
-
 
 </head>
 
