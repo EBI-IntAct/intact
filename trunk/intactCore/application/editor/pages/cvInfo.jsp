@@ -16,6 +16,7 @@
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="/WEB-INF/tld/editor.tld" prefix="editor" %>
 
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
@@ -31,6 +32,36 @@
     user.getView().fillCvInfo(form);
     request.setAttribute(formName, form);
 %>
+
+<script language="JavaScript" type="text/javascript">
+    // Copy the suggested value.
+    function copy(value) {
+        cvInfoForm.shortLabel.value = value;
+    }
+
+    // This is a global variable to setup a window.
+    var newWindow;
+
+    // Create a new window if it hasnt' created before and bring it to the
+    // front if it is focusable.
+    function makeNewWindow(link) {
+        if (!newWindow || newWindow.closed) {
+            newWindow = window.open(link, "display");
+        }
+        else if (newWindow.focus) {
+            newWindow.location.href = link;
+            newWindow.focus();
+        }
+   }
+
+    // Will be invoked when user selects graph button. An AC must be selected.
+    // This in trun will create a new widow.
+    function show(label) {
+        var link = "http://localhost:8080:/intact/editor?shortLabel=" + label;
+        window.alert(link);
+        //makeNewWindow(link);
+    }
+</script>
 
 <html:form action="/cv/info">
     <table width="80%" border="0" cellspacing="1" cellpadding="2">
@@ -62,11 +93,26 @@
         </tr>
 
         <%-- Prints all the error messages relevant to this page only. --%>
-        <logic:messagesPresent>
+        <logic:messagesPresent property="cvinfo">
             <tr class="tableRowOdd">
                 <td class="tableErrorCell" colspan="4">
                     <%-- Filter out other error messages. --%>
-                    <html:errors property="cvinfo"/>
+                    <html:errors/>
+                </td>
+            </tr>
+        </logic:messagesPresent>
+
+        <%-- Prints verbose error messages relevant to label. --%>
+        <logic:messagesPresent property="cvinfo.label">
+            <tr class="tableRowOdd">
+                <td class="tableErrorCell" colspan="4">
+                    <%-- Filter out other error messages. --%>
+                    <html:errors/>
+                </td>
+            </tr>
+            <tr class="tableRowEven">
+                <td class="tableCell" colspan="4">
+                    <editor:displayShortLabels/>
                 </td>
             </tr>
         </logic:messagesPresent>
