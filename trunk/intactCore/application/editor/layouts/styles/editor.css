@@ -1,0 +1,20 @@
+td.proteinEditCell {
+    font-size: 8pt;
+    font-family: Arial, verdana, sans-serif;
+    text-align: left;
+    vertical-align: top;
+    background-color: #ff8c00
+}
+
+td.proteinErrorCell {
+    color: white;
+    background-color: red
+}
+
+td.experimentHoldCell {
+    font-size: 8pt;
+    font-family: Arial, verdana, sans-serif;
+    text-align: left;
+    vertical-align: top;
+    background-color: #ff8c00
+}
