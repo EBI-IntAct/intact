@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
 import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.exception.validation.InteractionException;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -86,8 +85,6 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     private transient Collection myProteinsToUpdate = new ArrayList();
 
-
-    // Override the super method to set the tax id.
     public void setAnnotatedObject(Interaction intact) {
         super.setAnnotatedObject(intact);
         myKD = intact.getKD();
