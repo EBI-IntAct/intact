@@ -17,7 +17,7 @@
     <tag>
         <name>displayInteractionNetwork</name>
         <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayInteractionNetworkTag</tagclass>
-        <bodycontent>JSP</bodycontent>
+        <bodycontent>empty</bodycontent>
         <info>
             Displays the interaction network if the picture has been generated
             and stored in the session.
@@ -28,7 +28,7 @@
     <tag>
         <name>displayHighlightOptions</name>
         <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayHighlightOptions</tagclass>
-        <bodycontent>JSP</bodycontent>
+        <bodycontent>empty</bodycontent>
         <info>
             Include HTML code to Displays current highlight source options.
         </info>
@@ -38,7 +38,7 @@
     <tag>
         <name>displaySource</name>
         <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplaySourceTag</tagclass>
-        <bodycontent>JSP</bodycontent>
+        <bodycontent>empty</bodycontent>
         <info>
             Displays available source for the selected protein.
         </info>
@@ -48,11 +48,34 @@
     <tag>
         <name>displayHttpContent</name>
         <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayHttpContentTag</tagclass>
-        <bodycontent>JSP</bodycontent>
+        <bodycontent>empty</bodycontent>
         <info>
             Displays the content of the URL stored in the session.
         </info>
     </tag>
+
+
+    <tag>
+        <name>saveContextInCookie</name>
+        <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.SaveContextInCookieTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>
+            Allows to save in a cookie (stored in the client side)
+            all needed data to restore later the user context.
+        </info>
+    </tag>
+
+
+    <tag>
+        <name>restoreContextFromCookie</name>
+        <tagclass>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.RestoreContextFromCookieTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>
+            allows to restore the eventual user context of the user from a cookie
+            which has been created and updated by SaveContextInCookieTag.
+        </info>
+    </tag>
+
 </taglib>
 
 
