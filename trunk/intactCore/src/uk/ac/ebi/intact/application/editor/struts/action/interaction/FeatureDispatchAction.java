@@ -125,9 +125,6 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // The component for the feature.
         featureView.setComponent(selectedComp.getComponent(user));
 
-        // Set the default short label to SP AC.
-        featureView.setDefaultShortLabel(selectedComp.getSpAc());
-
         return mapping.findForward(SUCCESS);
     }
 
