@@ -81,11 +81,6 @@ public abstract class PredictUser implements IntactUserI,
         // The data source for given ds class.
         DAOSource ds = DAOFactory.getDAOSource(dsClass);
 
-        // Pass config details to data source.
-        Map fileMap = new HashMap();
-        fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
-        ds.setConfig(fileMap);
-
         // Connection to get the JDBC url.
         Connection conn = null;
         try {
