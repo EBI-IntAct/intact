@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.*;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.util.GoTools;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.beanutils.DynaBean;
@@ -134,6 +135,12 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private transient EditViewBeanFactory myViewFactory;
 
     /**
+     * The factory to create read only views.  The factory lasts
+     * only for a session, hence it is transient.
+     */
+    private transient ROViewBeanFactory myNonEditViewFactory;
+
+    /**
      * The factory to create various form beans.
      */
     private transient EditorFormFactory myFormFactory;
@@ -198,7 +205,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Initialize the helper.
         myHelper = new IntactHelper(ds, user, password);
 
-        // A dummy read to ensure that a connection is made with a valid user.
+        // A dummy read to ensure that a connection is made as a valid user.
         myHelper.search("uk.ac.ebi.intact.model.Institution", "ac", "*");
 
         // Record the time started.
@@ -214,6 +221,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public void valueBound(HttpSessionBindingEvent event) {
         // Create the factories.
         myViewFactory = new EditViewBeanFactory();
+        myNonEditViewFactory = new ROViewBeanFactory();
         myFormFactory = new EditorFormFactory();
         myMenuFactory = new EditorMenuFactory(myHelper);
     }
@@ -308,6 +316,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public DynaBean getDynaBean(String formName, HttpServletRequest request) {
         return myFormFactory.getDynaBean(formName, request);
+    }
+
+    public EditForm getEditForm(String formName) {
+        return myFormFactory.getEditForm(formName);
     }
 
     public Object getObjectByLabel(Class clazz, String label)
@@ -457,6 +469,15 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public Date logoffTime() {
         return mySessionEndTime;
+    }
+
+    public AbstractROViewBean getReadOnlyView(Class clazz,
+                                                   String shortLabel)
+            throws DuplicateLabelException {
+        // Try searching as it is.
+        AnnotatedObject annonj = (AnnotatedObject) getObjectByLabel(clazz,
+                shortLabel);
+        return myNonEditViewFactory.factory(annonj);
     }
 
     // Helper methods.
