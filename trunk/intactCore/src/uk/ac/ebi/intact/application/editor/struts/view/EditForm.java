@@ -45,8 +45,9 @@ public class EditForm extends ActionForm {
      * Returns an array of items.
      * @return an array of <code>Object</code>s.
      */
-    public Object[] getItems() {
-        return myItems.toArray();
+    public List getItems() {
+//        System.out.println("IN getItems method of EditForm");
+        return myItems;
     }
 
     /**
@@ -60,11 +61,11 @@ public class EditForm extends ActionForm {
     }
 
     /**
-     * Returns the index position of the current annotation.
-     * @return the index position as an <code>int</code>.
+     * Returns the selected bean.
+     * @return the selected bean.
      */
-    public int getIndex() {
-        return myIndex;
+    public Object getSelectedBean() {
+        return myItems.get(myIndex);
     }
 
     /**
