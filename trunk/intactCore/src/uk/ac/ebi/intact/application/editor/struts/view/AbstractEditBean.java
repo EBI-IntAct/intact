@@ -64,4 +64,23 @@ public abstract class AbstractEditBean implements Serializable {
                 + "'" + label + "')\"" + ">" + label + "</a>";
         return link;
     }
+
+    // Helper method for subclasses.
+
+    /**
+     * True if both objects are null or object i is equal to object 2.
+     * @param obj1 the first object to compare.
+     * @param obj2 the second object to compare.
+     * @return true only if both objects are null or <code>obj1</code> equals
+     * <code>obj2</code>. False is returned for all other instances.
+     */
+    protected boolean equals(Object obj1, Object obj2) {
+        if (obj1 == null && obj2 == null) {
+            return true;
+        }
+        if (obj1 != null) {
+            return obj1.equals(obj2);
+        }
+        return false;
+    }
 }

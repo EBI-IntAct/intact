@@ -16,8 +16,6 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,15 +65,13 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         EditUserI user = super.getIntactUser(request);
 
         // Remove any locks held by the user.
-        user.releaseLock(getLockManager());
+        user.releaseLock();
 
         // The form to access input data.
         DynaActionForm theForm = (DynaActionForm) form;
 
-        // The topic selected by the user.
+        // The topic and the search para selected by the user.
         String topic = (String) theForm.get("topic");
-        user.setSelectedTopic(topic);
-
         String searchString = (String) theForm.get("searchString");
 
         LOGGER.info("search action: topic is " + topic);
@@ -91,13 +87,13 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         if (results.size() == 1) {
             // The object to edit.
             AnnotatedObject annobj = (AnnotatedObject) results.iterator().next();
-            user.updateView(annobj);
+            user.setView(annobj);
 
             // Single item found
             return mapping.findForward("single");
         }
         // Cache the search results.
-        user.addToSearchCache(results, getLockManager());
+        user.addToSearchCache(results);
 
         // Move to the results page.
         return mapping.findForward(RESULT);
@@ -123,68 +119,16 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         EditUserI user = getIntactUser(request);
 
         // Remove any locks held by the user.
-        user.releaseLock(getLockManager());
+        user.releaseLock();
 
         DynaActionForm theForm = (DynaActionForm) form;
         String topic = (String) theForm.get("topic");
 
         // The class name associated with the topic.
         String classname = getService().getClassName(topic);
-        // The current topic.
-        user.setSelectedTopic(topic);
 
-        // The object we are about to edit.
-        AnnotatedObject annobj = createNew(classname);
-        annobj.setOwner(user.getInstitution());
-
-        // Set the new object as the current edit object. This has to be
-        // done before removeMenu (it relies on current cv object).
-        user.updateView(annobj);
+        // Set the new object as the current edit object.
+        user.setView(Class.forName(classname));
         return mapping.findForward("create");
-    }
-
-    // Helper methods
-
-    /**
-     * Construct a new instance for given class name using Java reflection.
-     * @param classname the name of the class.
-     * @return <code>AnnotatedObject</code> constructed form
-     * <code>classname</code>.
-     */
-    private AnnotatedObject createNew(String classname) {
-        // Create an instance of given classname by useing reflection.
-        AnnotatedObject annobj = null;
-        try {
-            Class clazz = Class.forName(classname);
-            Constructor[] ctrs = clazz.getDeclaredConstructors();
-            Constructor noargctr = null;
-            for (int i = 0; i < ctrs.length; i++) {
-                if (ctrs[i].getParameterTypes().length == 0) {
-                    noargctr = ctrs[i];
-                    break;
-                }
-            }
-            if (noargctr != null) {
-                noargctr.setAccessible(true);
-                annobj = (AnnotatedObject) noargctr.newInstance(null);
-            }
-        }
-        catch (IllegalAccessException iae) {
-            // Shouldn't happen.
-            assert false;
-        }
-        catch (ClassNotFoundException cnfe) {
-            // Shouldn't happen.
-            assert false;
-        }
-        catch (InstantiationException ie) {
-            // Shouldn't happen.
-            assert false;
-        }
-        catch (InvocationTargetException e) {
-            // Thrown from the constructing the object.
-            assert false;
-        }
-        return annobj;
     }
 }

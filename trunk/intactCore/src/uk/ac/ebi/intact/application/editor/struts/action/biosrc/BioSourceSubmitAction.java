@@ -9,9 +9,11 @@ package uk.ac.ebi.intact.application.editor.struts.action.biosrc;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.struts.action.SubmitFormAction;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Handles when the user enters a value for tax id. The short label and the full
@@ -22,6 +24,16 @@ import javax.servlet.http.HttpServletRequest;
  * @version $Id$
  */
 public class BioSourceSubmitAction extends SubmitFormAction {
+
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+            throws Exception {
+        // Update the bean with form values.
+        getIntactUser(request).getView().updateFromForm((DynaActionForm) form);
+        return super.execute(mapping, form, request, response);
+    }
 
     // Override the super method to handle the event for pressing the tax id.
     protected ActionForward handleDispatch(ActionMapping mapping,

@@ -107,9 +107,9 @@ public class ProteinBean extends AbstractEditBean implements Serializable {
 
     // Read only properties.
 
-    public Component getComponent() {
-        return myComponent;
-    }
+//    public Component getComponent() {
+//        return myComponent;
+//    }
 
     public Component getComponent(EditUserI user) throws SearchException {
         CvComponentRole newrole = getRole(user);

@@ -11,7 +11,9 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 
 /**
  * BioSource edit view bean.
@@ -33,9 +35,32 @@ public class BioSourceViewBean extends AbstractEditViewBean {
     }
 
     // Override the super method to update the current Biosource.
-    public void update(EditUserI user) throws IntactException, SearchException {
-        super.update(user);
-        ((BioSource) getAnnotatedObject()).setTaxId(getTaxId());
+//    public void updateXXX(EditUserI user) throws SearchException {
+//        super.updateXXX(user);
+//        ((BioSource) getAnnotatedObject()).setTaxId(getTaxId());
+//    }
+
+    // Implements abstract methods
+
+    protected void updateAnnotatedObject(EditUserI user) throws SearchException {
+        // The current biosource.
+        BioSource bs = (BioSource) getAnnotatedObject();
+
+        // Have we set the annotated object for the view?
+        if (bs == null) {
+            if (getAc() == null) {
+                // Not persisted; create a new biosource object.
+                bs = new BioSource(user.getInstitution(), getShortLabel(), getTaxId());
+            }
+            else {
+                // Read it from the peristent system.
+                bs = (BioSource) user.getObjectByAc(getEditClass(), getAc());
+                bs.setShortLabel(getShortLabel());
+                bs.setTaxId(getTaxId());
+            }
+            // Set the current biosource as the annotated object.
+            setAnnotatedObject(bs);
+        }
     }
 
     // Override the super method to persist tax id.

@@ -187,10 +187,10 @@ public class XrefDispatchAction extends AbstractEditorAction {
         // Only add to the update list if this isn't a new xref.
         if (view.isNewXref(xb)) {
             // Remove the existing 'new' xref.
-            view.removeNewXref(xb);
-            // Add this 'updated' as a new xref.
-            Xref xref = user.getXref(xb);
-            view.addXref(new XreferenceBean(xref, xb.getKey()));
+//            view.removeNewXref(xb);
+//            // Add this 'updated' as a new xref.
+//            Xref xref = user.getXref(xb);
+//            view.addXref(new XreferenceBean(xref, xb.getKey()));
         }
         else {
             // Saving an existing annotation.

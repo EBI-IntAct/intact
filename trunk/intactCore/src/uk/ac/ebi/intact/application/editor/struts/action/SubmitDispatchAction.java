@@ -13,11 +13,10 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
+import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Xref;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,10 +120,10 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         CommentBean cb = (CommentBean) dynaform.get("annotation");
 
         // Bean is wrapped around this annotation.
-        Annotation annot = user.getAnnotation(cb);
+        Annotation annot = cb.getAnnotation(user);
 
-        // Add the bean to the view.
-        user.getView().addAnnotation(new CommentBean(annot, cb.getKey()));
+        // Add the bean to the view; need to create a new bean.
+        user.getView().addAnnotation(new CommentBean(annot));
 
         return mapping.getInputForward();
     }
@@ -166,11 +165,11 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
             // Display the errors in the input page.
             return mapping.getInputForward();
         }
-        // Bean is wrapped around this xref.
-        Xref xref = user.getXref(xb);
+        // Bean is wrapped around this xref
+        Xref xref = xb.getXref(user);
 
-        // Add the bean to the view.
-        user.getView().addXref(new XreferenceBean(xref, xb.getKey()));
+        // Add the bean to the view; need to create a new bean.
+        user.getView().addXref(new XreferenceBean(xref));
 
         return mapping.getInputForward();
     }
@@ -230,14 +229,8 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         view.update(user);
 
         try {
-//            // Begin the transaction.
-//            user.begin();
-
             // Persist my current state
             view.persist(user);
-//
-//            // Commit all the changes.
-//            user.commit();
 
             // Any other objects to persist in their own transaction.
             try {
@@ -251,23 +244,9 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
                 // log the exception.
                 throw ie;
             }
-            // New transaction for updating proteins - this fixes the problem
-            // with adding new proteins and annotations together.
-//            if (view.getAnnotatedObject() instanceof Interaction) {
-//                user.begin();
-//                ((InteractionViewBean) view).persistProteins(user);
-//                user.commit();
-//            }
         }
         catch (IntactException ie1) {
             // We may need to
-//            try {
-//                user.rollback();
-//            }
-//            catch (IntactException ie2) {
-//                // Oops! Problems with rollback; ignore this as this
-//                // error is reported via the main exception (ie1).
-//            }
             // Log the stack trace.
             LOGGER.info(ie1);
             // Error with updating.
@@ -281,17 +260,21 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
         finally {
             // Release the lock only for submit.
             if (submit) {
-                user.releaseLock(getLockManager());
+                user.releaseLock();
             }
         }
         if (submit) {
             // Need to rebuild the menu again as the short label may have been
             // changed. Remove it from cache.
             view.removeMenu();
+
             // Update the search cache.
-            user.updateSearchCache(getLockManager());
+            ResultBean rb = new ResultBean(view.getAnnotatedObject());
+            user.updateSearchCache(rb);
+
             // Add the current edited object to the recent list.
             view.addToRecentList(user);
+
             // Only show the submitted record.
             return mapping.findForward(RESULT);
         }
@@ -307,7 +290,7 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
      */
     private String getExistingLabels(EditUserI user) throws SearchException {
         // The current view topic.
-        String topic = user.getCurrentViewClass();
+        String topic = user.getSelectedTopic();
 
         // The buffer to construct existing labels.
         StringBuffer sb = new StringBuffer();

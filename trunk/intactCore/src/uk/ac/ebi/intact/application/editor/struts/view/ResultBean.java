@@ -28,23 +28,34 @@ public class ResultBean implements Serializable {
             new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
 
     /**
-     * Reference to CV object.
+     * The AC of the search result.
      */
-    private AnnotatedObject myAnnotObject;
+   private String myAc;
 
     /**
-     * Handler to the lock manager.
+     * The short label of the current edit object.
      */
-    private LockManager myLmr;
+    private String myShortLabel;
+
+    /**
+     * The full name of the current edit object.
+     */
+    private String myFullName;
+
+    /**
+     * The name of the search result class.
+     */
+    private String mySearchClass;
 
     /**
      * Constructs with an Annotated object and the lock manager for it.
-     * @param anobj the <code>AnnotatedObject</code> to extract information.
-     * @param lmr the lock manager for the bean.
+     * @param annobj the <code>AnnotatedObject</code> to extract information.
      */
-    public ResultBean(AnnotatedObject anobj, LockManager lmr) {
-        myAnnotObject = anobj;
-        myLmr = lmr;
+    public ResultBean(AnnotatedObject annobj) {
+        myAc = annobj.getAc();
+        myShortLabel = annobj.getShortLabel();
+        myFullName = annobj.getFullName();
+        mySearchClass = annobj.getClass().getName();
     }
 
     /**
@@ -52,7 +63,7 @@ public class ResultBean implements Serializable {
      * @return accession number of the CvObject.
      */
     public String getAc() {
-        return myAnnotObject.getAc();
+        return myAc;
     }
 
     /**
@@ -60,7 +71,7 @@ public class ResultBean implements Serializable {
      * @return short label.
      */
     public String getShortLabel() {
-        return myAnnotObject.getShortLabel();
+        return myShortLabel;
     }
 
     /**
@@ -68,7 +79,7 @@ public class ResultBean implements Serializable {
      * @return the full name as a <code>String</code> for the wrapped object.
      */
     public String getFullName() {
-        return myAnnotObject.getFullName();
+        return myFullName;
     }
 
     /**
@@ -76,7 +87,7 @@ public class ResultBean implements Serializable {
      * @return he class name of the wrapped object as a string object.
      */
     public String getClassName() {
-        return myAnnotObject.getClass().getName();
+        return mySearchClass;
     }
 
     /**
@@ -107,7 +118,7 @@ public class ResultBean implements Serializable {
      * bean is not locked.
      */
     public String getLockOwner() {
-        LockManager.LockObject lock = myLmr.getLock(getAc());
+        LockManager.LockObject lock = LockManager.getInstance().getLock(getAc());
         if (lock == null) {
             // No owner; no need for the title
             return "<input type=\"text\" size=\"7\" value=\"  ---  \" readonly>";
@@ -124,7 +135,7 @@ public class ResultBean implements Serializable {
      * @return true if this bean is locked or false is returned for otherwise.
      */
     public String getLocked() {
-        return myLmr.hasLock(getAc()) ? "true" : "false";
+        return LockManager.getInstance().hasLock(getAc()) ? "true" : "false";
     }
 
     // Override Objects's equal method.

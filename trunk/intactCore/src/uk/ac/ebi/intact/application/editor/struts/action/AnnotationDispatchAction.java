@@ -176,14 +176,14 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
         AbstractEditViewBean view = user.getView();
 
         // Only add to the update list if this isn't a new annotation.
-        if (view.isNewAnnotation(cb)) {
+//        if (view.isNewAnnotation(cb)) {
             // Remove the existing 'new' annotation.
-            view.removeNewAnnotation(cb);
-            // Add this 'updated' as a new annotation.
-            Annotation annot = user.getAnnotation(cb);
-            view.addAnnotation(new CommentBean(annot, cb.getKey()));
-        }
-        else {
+//            view.removeNewAnnotation(cb);
+//            // Add this 'updated' as a new annotation.
+//            Annotation annot = user.getAnnotation(cb);
+//            view.addAnnotation(new CommentBean(annot));//, cb.getKey()));
+//        }
+        if (!view.isNewAnnotation(cb)) {
             // Saving an existing annotation.
             view.addAnnotationToUpdate(cb);
         }

@@ -16,11 +16,13 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Xref;
 
 import java.util.*;
+import java.io.Serializable;
 
 /**
  * This super bean encapsulates behaviour for a common editing session. This
@@ -29,12 +31,24 @@ import java.util.*;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class AbstractEditViewBean {
+public abstract class AbstractEditViewBean implements Serializable {
 
     /**
-     * The Annotated object to wrap.
+     * The Annotated object to wrap. Transient as we can always retrieve it via
+     * the accession number.
      */
-    private AnnotatedObject myAnnotObject;
+    private transient AnnotatedObject myAnnotObject;
+
+    /**
+     * The AC of the current edit object. Could be null if it is not persisted
+     * yet (newly created object).
+     */
+    private String myAc;
+
+    /**
+     * The class we are editing.
+     */
+    private Class myEditClass;
 
     /**
      * The short label of the current edit object.
@@ -47,57 +61,131 @@ public abstract class AbstractEditViewBean {
     private String myFullName;
 
     /**
-     * The annotations to display. Transient as it is only valid for the
-     * current display.
+     * The annotations to display.
      */
-    private transient List myAnnotations = new ArrayList();
+    private List myAnnotations = new ArrayList();
 
     /**
-     * The Xreferences to display. Transient as it is only valid for the
-     * current display.
+     * The Xreferences to display.
      */
-    private transient List myXrefs = new ArrayList();
+    private List myXrefs = new ArrayList();
 
     /**
-     * Holds annotations to add. This collection is cleared once the user
+     * List of annotations to add. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient List myAnnotsToAdd = new ArrayList();
+    private List myAnnotsToAdd = new ArrayList();
 
     /**
-     * Holds annotations to del. This collection is cleared once the user
+     * List of annotations to del. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient List myAnnotsToDel = new ArrayList();
+    private List myAnnotsToDel = new ArrayList();
 
     /**
-     * Holds annotations to update. This collection is cleared once the user
+     * List of annotations to update. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient List myAnnotsToUpdate = new ArrayList();
+    private List myAnnotsToUpdate = new ArrayList();
 
     /**
-     * Holds xrefs to add. This collection is cleared once the user commits
+     * List of xrefs to add. This collection is cleared once the user commits
      * the transaction.
      */
-    private transient List myXrefsToAdd = new ArrayList();
+    private List myXrefsToAdd = new ArrayList();
 
     /**
-     * Holds xrefs to del. This collection is cleared once the user commits
+     * List of xrefs to del. This collection is cleared once the user commits
      * the transaction.
      */
-    private transient List myXrefsToDel = new ArrayList();
+    private List myXrefsToDel = new ArrayList();
 
     /**
-     * Holds xrefs to update. This collection is cleared once the user
+     * List of xrefs to update. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient List myXrefsToUpdate = new ArrayList();
+    private List myXrefsToUpdate = new ArrayList();
 
     /**
-     * The factory to create various menus.
+     * The factory to create various menus; this is transient as it is set from
+     * the view bean factory when it creates a new instance of a view bean.
      */
     private transient EditorMenuFactory myMenuFactory;
+
+    // Override Objects's equal method.
+
+    /**
+     * Compares <code>obj</code> with this object according to
+     * Java's equals() contract. Only used for testing a serialized
+     * objects.
+     * @param obj the object to compare.
+     * @return true only if <code>obj</code> is an instance of this class
+     * and all non transient fields are equal to given object's non tranient
+     * fields. For all other instances, false is returned.
+     */
+    public boolean equals(Object obj) {
+        // Identical to this?
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof AbstractEditViewBean)) {
+            return false;
+        }
+        // Can safely cast it.
+        AbstractEditViewBean other = (AbstractEditViewBean) obj;
+
+        // AC must match if it exists
+        if (!equals(myAc, other.myAc)) {
+            return false;
+        }
+        // Edit clas smust match; no need to check for null as edit class must
+        // exist at all times.
+        if (!myEditClass.equals(other.myEditClass)) {
+            return false;
+        }
+        // Short labels must match.
+        if (!equals(myShortLabel, other.myShortLabel)) {
+            return false;
+        }
+        // Fullname must match.
+        if (!equals(myFullName, other.myFullName)) {
+            return false;
+        }
+        // Annotations must equal.
+        if (!myAnnotations.containsAll(other.myAnnotations)) {
+            return false;
+        }
+        if (!myAnnotsToAdd.containsAll(other.myAnnotsToAdd)) {
+            return false;
+        }
+        if (!myAnnotsToDel.containsAll(other.myAnnotsToDel)) {
+            return false;
+        }
+        if (!myAnnotsToUpdate.containsAll(other.myAnnotsToUpdate)) {
+            return false;
+        }
+
+        // Xrefs must equal.
+        if (!myXrefs.containsAll(other.myXrefs)) {
+            return false;
+        }
+        if (!myXrefsToAdd.containsAll(other.myXrefsToAdd)) {
+            return false;
+        }
+        if (!myXrefsToDel.containsAll(other.myXrefsToDel)) {
+            return false;
+        }
+        if (!myXrefsToUpdate.containsAll(other.myXrefsToUpdate)) {
+            return false;
+        }
+        return true;
+    }
+
+    public void setAnnotatedClass(Class clazz) {
+        myEditClass = clazz;
+        // Clear any left overs from previous transaction.
+        clearTransactions();
+    }
 
     /**
      * Construts an instance using an Annotated object.
@@ -106,6 +194,8 @@ public abstract class AbstractEditViewBean {
      */
     public void setAnnotatedObject(AnnotatedObject annot) {
         myAnnotObject = annot;
+        myAc = annot.getAc();
+        myEditClass = annot.getClass();
         setShortLabel(annot.getShortLabel());
         setFullName(annot.getFullName());
 
@@ -128,19 +218,56 @@ public abstract class AbstractEditViewBean {
     }
 
     /**
-     * Returns the Annotated object.
+     * Returns the Annotated object. Must have set the AnnotatedObject by calling
+     * {@link #update(EditUserI)} prior to this method.
      * @return <code>AnnotatedObject</code> this instace is wrapped around.
+     *
+     * <pre>
+     * pre: update(user)
+     * </pre>
      */
     public AnnotatedObject getAnnotatedObject() {
+        if (myAnnotObject == null) {
+            throw new IllegalStateException("Annotated Object not set; must "
+                    + "call update(user) method prior to calling this method");
+        }
         return myAnnotObject;
+    }
+
+    public void update(EditUserI user) throws SearchException {
+        // First create/update the annotated object by the view.
+        updateAnnotatedObject(user);
+
+        // Update the short label as it is common to all.
+        myAnnotObject.setFullName(getFullName());
+
+        // Add annotations and xrefs as they are common to all annotated objs.
+        for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
+            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
+            myAnnotObject.addAnnotation(annot);
+        }
+        for (Iterator iter = getXrefsToAdd().iterator(); iter.hasNext();) {
+            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
+            myAnnotObject.addXref(xref);
+        }
+
+        // Delete annotations and xrefs as they are common to all annotated objs.
+        for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
+            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
+            myAnnotObject.removeAnnotation(annot);
+        }
+        for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
+            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
+            myAnnotObject.removeXref(xref);
+        }
     }
 
     /**
      * Returns accession number.
      * @return the accession number as a <code>String</code> instance.
      */
-    public String getAcNoLink() {
-        return myAnnotObject.getAc();
+    public String getAc() {
+        return myAc;
     }
 
     /**
@@ -148,15 +275,23 @@ public abstract class AbstractEditViewBean {
      * @return ac as a link to the seatch application or an empty string if this
      * object is not yet persisted (i.r., ac is not yet set).
      */
-    public String getAc() {
-        if (getAcNoLink() == null) {
+    public String getAcLink() {
+        if (getAc() == null) {
             return "";
         }
-        String className = myAnnotObject.getClass().getName();
+        String className = getEditClass().getName();
         int lastPos = className.lastIndexOf('.');
         String type = className.substring(lastPos + 1);
         return "<a href=\"" + "javascript:show('" + type + "', " + "'"
-                + getShortLabel() + "')\"" + ">" + getAcNoLink() + "</a>";
+                + getShortLabel() + "')\"" + ">" + getAc() + "</a>";
+    }
+
+    /**
+     * Returns the edit class.
+     * @return the class name of the current edit object.
+     */
+    public Class getEditClass() {
+        return myEditClass;
     }
 
     /**
@@ -372,19 +507,6 @@ public abstract class AbstractEditViewBean {
     }
 
     /**
-     * Updates the current edit object with the values from the form. This
-     * method is called prior to pesisting the current state.
-     * @param user handler to access the persistent method calls. Not used
-     * in here but a subclass could use the user object to query the
-     * persistent system.
-     */
-    public void update(EditUserI user) throws IntactException, SearchException {
-        // Update the cv info data.
-        myAnnotObject.setShortLabel(getShortLabel());
-        myAnnotObject.setFullName(getFullName());
-    }
-
-    /**
      * Persists the current state to the persistent system. After this
      * method is called the persistent view is as same as the current view.
      * @param user handler to access the persistent method calls.
@@ -419,8 +541,10 @@ public abstract class AbstractEditViewBean {
      */
     public void clear() {
         // Delete all the annotations and xrefs.
-        myAnnotObject.getAnnotations().clear();
-        myAnnotObject.getXrefs().clear();
+        if (getAnnotatedObject() != null) {
+            getAnnotatedObject().getAnnotations().clear();
+            getAnnotatedObject().getXrefs().clear();
+        }
         // Need to rebuild the menu again. Remove it from cache.
         removeMenu();
         // Clear Transaction containers.
@@ -487,7 +611,7 @@ public abstract class AbstractEditViewBean {
      * succeed for CvTopic as it is considered as a menu type.
      */
     public void removeMenu() {
-        myMenuFactory.removeMenu(myAnnotObject.getClass());
+        myMenuFactory.removeMenu(getEditClass());
     }
 
     /**
@@ -520,7 +644,7 @@ public abstract class AbstractEditViewBean {
      */
     public void validate(EditUserI user)
             throws SearchException, ValidationException {
-        if (myShortLabel == null) {
+        if (getShortLabel() == null) {
 //            if ((myShortLabel == null) || SL_RE.matcher(myShortLabel).find()) {
             throw new ShortLabelException();
         }
@@ -550,12 +674,33 @@ public abstract class AbstractEditViewBean {
     }
 
     /**
-     * Adds the current edit object to the recent edited item list. Only needed
-     * for Interactions or Experiments.
+     * Adds the current edit object to the recent edited item list.
+     * Interaction or Experiment beans must override this method.
      * @param user the user handle to add to the recent list.
      */
-    public void addToRecentList(EditUserI user) {
-    }
+    public void addToRecentList(EditUserI user) {}
+
+    /**
+     * Removes the current edit object from the recent edited item list.
+     * Interaction or Experiment beans must override this method.
+     * @param user the user handle to remove from the recent list.
+     */
+    public void removeFromRecentList(EditUserI user) {}
+
+    // Abstract method
+
+    /**
+     * Gathers values in the view bean and updates the existing AnnotatedObject
+     * or create a new annotated object for the view.
+     * @param user to access the persistent system.
+     * @throws SearchException for errors in searching the persistent system.
+     *
+     * <pre>
+     * post: getAnnotatedObject() != null
+     * </pre>
+     */
+    protected abstract void updateAnnotatedObject(EditUserI user)
+            throws SearchException;
 
     /**
      * Allows access to menu factory.
@@ -702,20 +847,18 @@ public abstract class AbstractEditViewBean {
     }
 
     private List getTopicMenu(int mode) throws SearchException {
-        return getMenu(EditorMenuFactory.TOPICS,
-                myAnnotObject.getShortLabel(), mode);
+        return getMenu(EditorMenuFactory.TOPICS, getShortLabel(), mode);
     }
 
     private List getDatabaseMenu(int mode) throws SearchException {
-        return getMenu(EditorMenuFactory.DATABASES,
-                myAnnotObject.getShortLabel(), mode);
+        return getMenu(EditorMenuFactory.DATABASES, getShortLabel(), mode);
     }
 
     private Map getXrefMenus(int mode) throws SearchException {
         Map map = new HashMap();
         String name;
         // The short label to remove from the list.
-        String label = myAnnotObject.getShortLabel();
+        String label = getShortLabel();
 
         // The database menu.
         name = EditorMenuFactory.DATABASES;
@@ -739,7 +882,7 @@ public abstract class AbstractEditViewBean {
      */
     private List getMenu(String name, String label, int mode) throws SearchException {
         // Remove the current label from menus (to stop recursive calls to db)!
-        if (myMenuFactory.isMenuType(myAnnotObject.getClass())) {
+        if (myMenuFactory.isMenuType(getEditClass())) {
             // Remove my short label to avoid circular reference. We create a
             // new list so the remove method wouldn't affect the original list.
             List list = new ArrayList(myMenuFactory.getMenu(name, mode));
@@ -758,23 +901,25 @@ public abstract class AbstractEditViewBean {
 
         // Create annotations and add them to CV object.
         for (Iterator iter = getAnnotationsToAdd().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation();
+            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
             // Need this to generate the PK for the indirection table.
             user.create(annot);
-            myAnnotObject.addAnnotation(annot);
+//            myAnnotObject.addAnnotation(annot);
         }
         // Delete annotations and remove them from CV object.
         for (Iterator iter = getAnnotationsToDel().iterator(); iter.hasNext();) {
-            Annotation annot = ((CommentBean) iter.next()).getAnnotation();
+            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
             user.delete(annot);
-            myAnnotObject.removeAnnotation(annot);
+//            myAnnotObject.removeAnnotation(annot);
         }
         // Update annotations; update the object with values from the bean.
         // The update of annotated object ensures the sub objects are updated as well.
         for (Iterator iter = getAnnotationsToUpdate().iterator(); iter.hasNext();) {
-            CommentBean cb = (CommentBean) iter.next();
-            cb.update(user);
-            user.update(cb.getAnnotation());
+            Annotation annot = ((CommentBean) iter.next()).getAnnotation(user);
+//            CommentBean cb = (CommentBean) iter.next();
+//            cb.update(user);
+//            user.update(cb.getAnnotation());
+            user.update(annot);
         }
         // Xref has a parent_ac column which is not a foreign key. So, the parent needs
         // to be persistent before we can create the Xrefs.
@@ -784,25 +929,39 @@ public abstract class AbstractEditViewBean {
 
         // Create xrefs and add them to CV object.
         for (Iterator iter = getXrefsToAdd().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref();
+            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
+//            Xref xref = ((XreferenceBean) iter.next()).getXref();
             user.create(xref);
-            myAnnotObject.addXref(xref);
+//            myAnnotObject.addXref(xref);
         }
         // Delete xrefs and remove them from CV object.
         for (Iterator iter = getXrefsToDel().iterator(); iter.hasNext();) {
-            Xref xref = ((XreferenceBean) iter.next()).getXref();
+            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
+//            Xref xref = ((XreferenceBean) iter.next()).getXref();
             user.delete(xref);
-            myAnnotObject.removeXref(xref);
+//            myAnnotObject.removeXref(xref);
         }
         // Update xrefs; see the comments for annotation update above.
         for (Iterator iter = getXrefsToUpdate().iterator(); iter.hasNext();) {
-            XreferenceBean xb = (XreferenceBean) iter.next();
-            xb.update(user);
-            user.update(xb.getXref());
+            Xref xref = ((XreferenceBean) iter.next()).getXref(user);
+//            XreferenceBean xb = (XreferenceBean) iter.next();
+//            xb.update(user);
+//            user.update(xb.getXref());
+            user.update(xref);
         }
         // Update the cv object only for an object already persisted.
         if (user.isPersistent(myAnnotObject)) {
             user.update(myAnnotObject);
         }
+    }
+
+    private boolean equals(Object obj1, Object obj2) {
+        if (obj1 == null && obj2 == null) {
+            return true;
+        }
+        if (obj1 != null) {
+            return obj1.equals(obj2);
+        }
+        return false;
     }
 }
