@@ -1,7 +1,6 @@
 <!--
-        Context configuration for intSeq
+        Template of the context configuration for intSeq
         version : $Id$
     -->
 
-<Context path="/intact/intSeq" docBase="app-dir/intSeq.war">
-</Context>
+<Context path="/intact/intSeq" docBase="app-dir/[WAR.FILE.NAME]" />

@@ -3,5 +3,4 @@
         version : $Id$
     -->
 
-<Context path="/intact/statisticView" docBase="app-dir/statisticView.war">
-</Context>
+<Context path="/intact/statisticView" docBase="app-dir/[WAR.FILE.NAME]" />
