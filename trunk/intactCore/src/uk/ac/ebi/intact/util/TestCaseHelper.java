@@ -23,6 +23,9 @@ import java.util.*;
  * 'get' methods to obtain a collection of various intact object types that have been
  * created, and then use any of them at random to perform tests.
  *
+ * NB This class needs careful revision to work with the new model and new
+ * constructors.
+ *
  * @author Chris Lewington
  *
  */
@@ -154,174 +157,108 @@ public class TestCaseHelper {
             *
             * two options: a) store and get back ACs, or b) set ACs artificially. Go for b) just now (if it works!)..
             */
-            institution = new Institution();
+            institution = new Institution("Boss");
 
-            //NB if Institution is not to extend BasicObject, its created/updated need setting also
-            institution.setAc("EBITEST-111111");
+                        //NB if Institution is not to extend BasicObject, its created/updated need setting also
             institution.setFullName("The Owner Of Everything");
             institution.setPostalAddress("1 AnySreet, AnyTown, AnyCountry");
-            institution.setShortLabel("Boss");
             institution.setUrl("http://www.dummydomain.org");
 
-            bio1 = new BioSource();
-            bio1.setAc("EBITEST-111112");
+            bio1 = new BioSource(institution, "bio1", "1");
             bio1.setOwnerAc(institution.getAc());
             bio1.setFullName("test biosource 1");
-            bio1.setOwner(institution);
-            bio1.setFullName("some kind of obscure Greek should go here");
-            bio1.setShortLabel("bio1");
-            bio1.setTaxId("1");
 
-            bio2 = new BioSource();
-            bio2.setAc("EBITEST-111113");
+            bio2 = new BioSource(institution, "bio2", "2");
             bio2.setOwnerAc(institution.getAc());
             bio2.setFullName("test biosource 2");
-            bio2.setOwner(institution);
-            bio2.setFullName("more obscure Greek should go here");
-            bio2.setShortLabel("bio2");
-            bio2.setTaxId("2");
 
-            exp1 = new Experiment();
-            exp1.setAc("EBITEST-111114");
+            exp1 = new Experiment(institution, "exp1", bio1);
             exp1.setOwnerAc(institution.getAc());
             exp1.setFullName("test experiment 1");
-            exp1.setShortLabel("exp1");
-            exp1.setOwner(institution);
-            exp1.setBioSource(bio1);
 
-            exp2 = new Experiment();
-            exp2.setAc("EBITEST-111115");
+            exp2 = new Experiment(institution, "exp2", bio2);
             exp2.setOwnerAc(institution.getAc());
             exp2.setFullName("test experiment 2");
-            exp2.setShortLabel("exp2");
-            exp2.setOwner(institution);
-            exp2.setBioSource(bio2);
 
-            prot1 = new Protein();
-            prot2 = new Protein();
-            prot3 = new Protein();
+            prot1 = new Protein(institution, bio1, "prot1");
+            prot2 = new Protein(institution, bio1, "prot2");
+            prot3 = new Protein(institution, bio1, "prot3");
 
-            prot1.setAc("EBITEST-111118");
             prot1.setOwnerAc(institution.getAc());
             prot1.setFullName("test protein 1");
-            prot1.setOwner(institution);
-            prot1.setShortLabel("prot1");
-            prot1.setBioSource(bio1);
             prot1.setCrc64("dummy 1 crc64");
-            prot2.setAc("EBITEST-111119");
             prot2.setOwnerAc(institution.getAc());
             prot2.setFullName("test protein 2");
-            prot2.setOwner(institution);
-            prot2.setShortLabel("prot2");
-            prot2.setBioSource(bio1);
             prot2.setCrc64("dummy 2 crc64");
-            prot3.setAc("EBITEST-111121");
             prot3.setOwnerAc(institution.getAc());
             prot3.setFullName("test protein 3");
-            prot3.setOwner(institution);
-            prot3.setShortLabel("prot3");
-            prot3.setBioSource(bio1);
             prot3.setCrc64("dummy 3 crc64");
 
-            int1 = new Interaction();
-            int2 = new Interaction();
-            int3 = new Interaction();
+            //set up some collections to be added to later - needed for
+            //some of the constructors..
+            Collection experiments = new ArrayList();
+            Collection components = new ArrayList();
 
-            int1.setAc("EBITEST-111122");
+            experiments.add(exp1);
+            //needs exps, components, type, shortlabel, owner...
+            //No need to set BioSource - taken from the Experiment...
+            int1 = new Interaction(experiments, components, null, "int1", institution);
+            int2 = new Interaction(experiments, components, null, "int2", institution);
+            int3 = new Interaction(experiments, components, null, "int3", institution);
+
             int1.setOwnerAc(institution.getAc());
-            int1.setBioSource(bio1);
             int1.setFullName("test interaction 1");
-            int1.setOwner(institution);
-            int1.setShortLabel("int1");
             int1.setKD(new Float(1));
 
-            int2.setAc("EBITEST-111123");
             int2.setOwnerAc(institution.getAc());
-            int2.setBioSource(bio1);
             int2.setFullName("test interaction 2");
-            int2.setOwner(institution);
-            int2.setShortLabel("int2");
             int2.setKD(new Float(2));
 
-            int3.setAc("EBITEST-111124");
             int3.setOwnerAc(institution.getAc());
-            int3.setBioSource(bio2);
             int3.setFullName("test interaction 3");
-            int3.setOwner(institution);
-            int3.setShortLabel("int3");
             int3.setKD(new Float(3));
 
 
             //create some xrefs and link to proteins/interactions
-            cvDb = new CvDatabase();
-            cvDb.setOwner(institution);
-            cvDb.setShortLabel("testCvDb");
+            cvDb = new CvDatabase(institution, "testCvDb");
             cvDb.setFullName("dummy test cvdatabase");
-            cvDb.setAc("EBITEST-999999");
-            xref1 = new Xref();
-            xref1.setAc("EBITEST-111116");
+            xref1 = new Xref(institution, cvDb, "G0000000", "GAAAAAAA", "1.0", null);
             xref1.setOwnerAc(institution.getAc());
-            xref1.setOwner(institution);
-            xref1.setPrimaryId("GOOOOOOO");
-            xref1.setSecondaryId("GAAAAAAA");
-            xref1.setDbRelease("1.0");
             xref1.setParentAc(prot1.getAc());
-            xref1.setCvDatabase(cvDb);
             cvDb.addXref(xref1);
 
-            xref2 = new Xref();
-            xref2.setAc("EBITEST-111117");
+            xref2 = new Xref(institution, cvDb, "GEEEEEEE", "GGGGGGGG", "1.0", null);
             xref2.setOwnerAc(institution.getAc());
-            xref2.setOwner(institution);
-            xref2.setPrimaryId("GEEEEEEEE");
-            xref2.setSecondaryId("GGGGGGGG");
-            xref2.setDbRelease("1.0");
             xref2.setParentAc(int1.getAc());
-            xref2.setCvDatabase(cvDb);
             cvDb.addXref(xref2);
 
             prot1.addXref(xref1);
             int1.addXref(xref2);
 
             //now link up interactions and proteins via some components..
-            compRole = new CvComponentRole();
-            compRole.setAc("EBITEST-999998");
-            compRole.setOwner(institution);
-            compRole.setShortLabel("role");
-            comp1 = new Component();
-            comp1.setAc("EBITEST-111125");
+            compRole = new CvComponentRole(institution, "role");
+
+            comp1 = new Component(institution, int1, prot1, compRole);
             comp1.setOwnerAc(institution.getAc());
-            comp1.setOwner(institution);
             comp1.setStoichiometry(1);
-            comp1.setInteraction(int1);
-            comp1.setInteractor(prot1);
-            comp1.setCvComponentRole(compRole);
 
-            comp2 = new Component();
-            comp2.setAc("EBITEST-111126");
+            comp2 = new Component(institution, int2, prot2, compRole);
             comp2.setOwnerAc(institution.getAc());
-            comp2.setOwner(institution);
             comp2.setStoichiometry(2);
-            comp2.setInteraction(int2);
-            comp2.setInteractor(prot2);
-            comp2.setCvComponentRole(compRole);
 
-            comp3 = new Component();
-            comp3.setAc("EBITEST-111127");
+            //needs owner, interaction, interactor, role
+            comp3 = new Component(institution, int2, prot3, compRole);
             comp3.setOwnerAc(institution.getAc());
-            comp3.setOwner(institution);
             comp3.setStoichiometry(3);
-            comp3.setInteraction(int2);
-            comp3.setInteractor(prot3);
-            comp3.setCvComponentRole(compRole);
 
-            comp4 = new Component();
-            comp4.setAc("EBITEST-111128");
-            comp4.setOwner(institution);
+            comp4 = new Component(institution, int1, prot2, compRole);
             comp4.setStoichiometry(4);
-            comp4.setInteraction(int1);
-            comp4.setInteractor(prot2);
-            comp4.setCvComponentRole(compRole);
+
+            int1.addComponent(comp1);
+            int2.addComponent(comp2);
+            int3.addComponent(comp3);
+            int2.addComponent(comp4);
+            int3.addComponent(comp4);
 
             //store everything...
             Collection persistList = new ArrayList();
@@ -348,8 +285,8 @@ public class TestCaseHelper {
             System.out.println("saving examples to store...");
             helper.create(persistList);
 
-            //now add the link between experiments and interactions and do an update
-            int1.addExperiment(exp1);
+            //now add an experiment and do an update
+            int1.addExperiment(exp2);
             int2.addExperiment(exp1);
             int3.addExperiment(exp2);
 
@@ -378,7 +315,6 @@ public class TestCaseHelper {
             components.add(comp2);
             components.add(comp3);
             components.add(comp4);
-
 
         }
         catch (Exception ie) {

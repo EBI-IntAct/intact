@@ -759,12 +759,13 @@ public class UpdateProteins extends UpdateProteinsI {
             throws SPTRException,
                    IntactException {
 
-        Protein protein = new Protein ();
+        String shortLabel  = sptrEntry.getID().toLowerCase();
+        Protein protein = new Protein (myInstitution, bioSource, shortLabel);
 
-        protein.setOwner (myInstitution);
+        //protein.setOwner (myInstitution);
 
         // get the protein info we need
-        String shortLabel  = sptrEntry.getID().toLowerCase();
+
 
         helper.create(protein);
 
@@ -774,10 +775,10 @@ public class UpdateProteins extends UpdateProteinsI {
         String crc64       = sptrEntry.getCRC64();
 
         protein.setFullName (fullName);
-        protein.setShortLabel (shortLabel);
+        //protein.setShortLabel (shortLabel);
         protein.setSequence (helper, sequence);
         protein.setCrc64 (crc64);
-        protein.setBioSource (bioSource);
+        //protein.setBioSource (bioSource);
 
         updateXref (sptrEntry, protein, Factory.XREF_SGD, sgdDatabase);
         updateXref (sptrEntry, protein, Factory.XREF_GO, goDatabase);
@@ -912,12 +913,12 @@ public class UpdateProteins extends UpdateProteinsI {
 
             // Create new Protein
             targetProtein = new Protein((Institution) helper.getObjectByLabel(Institution.class, "EBI"),
-                                             validBioSource, anAc);
+                    validBioSource, anAc);
             helper.create(targetProtein);
 
             // Create new Xref if a DB has been given
             if (null != aDatabase) {
-                Xref newXref = new Xref();
+                Xref newXref = new Xref(myInstitution, aDatabase, anAc, null, null, null);
                 newXref.setOwner(myInstitution);
                 newXref.setCvDatabase(aDatabase);
                 newXref.setPrimaryId(anAc);
@@ -1074,11 +1075,8 @@ public class UpdateProteins extends UpdateProteinsI {
     public BioSource addBioSource (Institution institution,
                                    String orgName,
                                    String taxId) {
-        BioSource bs = new BioSource() ;
+        BioSource bs = new BioSource(institution, orgName, taxId) ;
         try {
-            bs.setOwner(institution) ;
-            bs.setFullName(orgName) ;
-            bs.setTaxId(taxId) ;
             helper.create(bs) ;
         } catch (Exception e_bioSrc) {
             e_bioSrc.printStackTrace() ;

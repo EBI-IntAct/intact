@@ -126,11 +126,15 @@ public class InsertGo {
         }
 
         if (null == protein){
-            protein = new Protein();
-            protein.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
-            protein.setShortLabel(shortLabel);
-            dao.create(protein);
-            addNewXref(protein, spXref);
+
+            //IMPORTANT! This needs fixing for the new model, as to create
+            //a Protein we need a BioSource!! See InsertComplex for details on
+            //getting one from newt....
+//            protein = new Protein();
+//            protein.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
+//            protein.setShortLabel(shortLabel);
+//            dao.create(protein);
+//            addNewXref(protein, spXref);
         } else {
             // set the short label in any case
             protein.setShortLabel(shortLabel);

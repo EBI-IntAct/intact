@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.model.*;
 import java.net.URL;
 import java.io.*;
 import java.util.*;
+import java.lang.reflect.Constructor;
 
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
@@ -126,7 +127,12 @@ public class GoTools {
         }
 
         if (null == current) {
-            current = (CvObject) targetClass.newInstance();
+            //This would be better done using the (owner, shortLabel) constructor
+            //since - at least so far - all CvObject subclasses have the same form
+            //of constructor. Thus do it further down after getting a shortLabel...
+            current = getCvObject(targetClass);
+            if(current == null) throw new IntactException("failed to create new CvObject of type "
+             + targetClass.getName());
             current.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI"));
             helper.create(current);
         }
@@ -499,6 +505,35 @@ public class GoTools {
         catch (IntactException e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    /**
+     * Used to run a no-arg constructor as we don't know what
+     * type of CvObject we have. This is OK since we are only in this
+     * application when loading a DB and if the user does not have
+     * access rights to it then the load will fail anyway.
+     * @param clazz The class to create an instance of
+     * @return CvObject A concrete subclass of CvObject, or null
+     * if the creation failed.
+     * @throws Exception thrown if there was a reflection problem
+     */
+    private static CvObject getCvObject(Class clazz) throws Exception {
+
+        Constructor[] constructors = clazz.getDeclaredConstructors();
+        Constructor noArgs = null;
+        for(int i=0; i < constructors.length; i++) {
+            if(constructors[i].getParameterTypes().length == 0) {
+                //got the no-arg one - done
+                noArgs = constructors[i];
+                break;
+            }
+        }
+        if((noArgs != null) & CvObject.class.isAssignableFrom(clazz)) {
+            noArgs.setAccessible(true);
+            return (CvObject)noArgs.newInstance(null);
+        }
+        return null;
+
     }
 }
 
