@@ -36,6 +36,11 @@ public class FeatureViewBean extends AbstractEditViewBean {
             new String[]{Boolean.TRUE.toString(), Boolean.FALSE.toString()});
 
     /**
+     * The default laytout name.
+     */
+    private static final String ourDefaultLayoutName = "edit.feature.layout";
+
+    /**
      * The parent of this view bean (Feature is part of an Interaction)
      */
     private InteractionViewBean myParentViewBean;
@@ -86,9 +91,19 @@ public class FeatureViewBean extends AbstractEditViewBean {
      */
     private boolean myNewFeature;
 
+    /**
+     * The name of the layout. Set it to the default layout.
+     */
+    private String myCurrentLayoutName = ourDefaultLayoutName;
+
+    /**
+     * True if the mutation mode is requested.
+     */
+    private boolean myMutationMode;
+
     // Override to provide the Feature layout.
     public void setLayout(ComponentContext context) {
-        context.putAttribute("content", "edit.feature.layout");
+        context.putAttribute("content", myCurrentLayoutName);
     }
 
     // Override to provide Experiment help tag.
@@ -124,6 +139,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         featureForm.setAc(getAc());
         featureForm.setFeatureType(getCvFeatureType());
         featureForm.setFeatureIdent(getCvFeatureIdentification());
+        featureForm.setMutationState(myMutationMode);
 
         // Properties related to the ranges.
         featureForm.setRanges(myRanges);
@@ -132,6 +148,11 @@ public class FeatureViewBean extends AbstractEditViewBean {
     // Override to not to display the Delete button.
     public boolean getDeleteState() {
         return false;
+    }
+
+    // Override to not to display for a mutation entry.
+    public boolean getSaveState() {
+        return !myMutationMode;
     }
 
     /**
@@ -175,7 +196,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     public void setCvFeatureType(String featureType) {
-        myCvFeatureType = featureType;
+        myCvFeatureType = EditorMenuFactory.normalizeMenuItem(featureType);
     }
 
     public String getCvFeatureIdentification() {
@@ -184,6 +205,38 @@ public class FeatureViewBean extends AbstractEditViewBean {
 
     public void setCvFeatureIdentification(String featureIdent) {
         myCvFeatureIdent = EditorMenuFactory.normalizeMenuItem(featureIdent);
+    }
+
+    public boolean isInMutationMode() {
+        return myMutationMode;
+    }
+
+    public boolean isInNonMutationMode() {
+        return !myMutationMode;
+    }
+
+    // For JSPs
+    public boolean getInNonMutationMode() {
+        return isInNonMutationMode();
+    }
+
+    public void turnOffMutationMode() {
+        myMutationMode = false;
+        setDefaultLayout();
+    }
+
+    /**
+     * Toggles between normal/mutation mode.
+     */
+    public void toggleEditMode() {
+        if (isInMutationMode()) {
+            // Back to the normal feature editor.
+            turnOffMutationMode();
+        }
+        else {
+            // Switch back to the mutation feature editor.
+            turnOnMutationMode();
+        }
     }
 
     // Override super to add extra.
@@ -211,14 +264,13 @@ public class FeatureViewBean extends AbstractEditViewBean {
     /**
      * The CvFeatureIdentification menu list.
      * @return the CvFeatureIdentification menu consisting of
-     * CvFeatureIdentification short labels. The first item in the menu may
-     * contain '---Select---' if the current CvFeatureIdentification is
+     * CvFeatureIdentification short labels. The first item in the menu
+     * contains '---Select---' if the current CvFeatureIdentification is
      * not set (a Feature not yet persisted).
      * @throws SearchException for errors in generating menus.
      */
     public List getCvFeatureIdentificationMenu() throws SearchException {
-        int mode = (getCvFeatureIdentification() == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.FEATURE_IDENTIFICATION, mode);
+        return getMenuFactory().getMenu(EditorMenuFactory.FEATURE_IDENTIFICATION, 1);
     }
 
     /**
@@ -334,14 +386,11 @@ public class FeatureViewBean extends AbstractEditViewBean {
         return myNewFeature;
     }
 
-    /**
-     * Sets the default short label
-     * @param shortLabel the default short label.
-     */
-    public final void setDefaultShortLabel(String shortLabel) {
-        setShortLabel(shortLabel.toLowerCase() + "-");
+    // FOR JSPs
+    public boolean getNewFeature() {
+        return isNewFeature();
     }
-    
+
     // Override the super method to initialize this class specific resetting.
     protected void reset(Class clazz) {
         super.reset(clazz);
@@ -501,5 +550,18 @@ public class FeatureViewBean extends AbstractEditViewBean {
         // No need to test whether this 'feature' persistent or not because we
         // know it has been already persisted by persist() call.
         user.update(feature);
+    }
+
+    private void turnOnMutationMode() {
+        myMutationMode = true;
+        setMutationLayout();
+    }
+
+    private void setDefaultLayout() {
+        myCurrentLayoutName = ourDefaultLayoutName;
+    }
+
+    private void setMutationLayout() {
+        myCurrentLayoutName = "edit.feature.mutation.layout";
     }
 }
