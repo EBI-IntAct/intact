@@ -81,20 +81,25 @@ public class GraphHelper  {
 
             case 1 :
                 Interactor interactor = (Interactor) results.iterator().next();
+
                 InteractionNetwork tmp = null;
                 if (in != null) {
                     // in the case that interactor is already registered as central in
                     // the current network, no need to retrieve the network, just send
                     // back the current one.
-                    String ac = interactor.getAc();
-                    ArrayList centrals = in.getCentralProteins();
-                    int max = centrals.size();
-                    for (int i=0; i<max; i++) {
-                        Node node = (Node) centrals.get(i);
-                        if (ac.equals(node.getAc())) {
-                           return in;
-                        }
-                    }
+                    ArrayList interactors = in.getCentralInteractors();
+                    if ( interactors.contains (interactor) )
+                       return in;
+
+//                    String ac = interactor.getAc();
+//                    ArrayList centrals = in.getCentralProteins();
+//                    int max = centrals.size();
+//                    for (int i=0; i<max; i++) {
+//                        Node node = (Node) centrals.get(i);
+//                        if (ac.equals(node.getAc())) {
+//                           return in;
+//                        }
+//                    }
 
                     // this is not the case, so retreive that network and fusion them.
                     tmp = in;
@@ -235,11 +240,14 @@ public class GraphHelper  {
 
         InteractionNetwork newNetwork = null;
 
-        ArrayList centrals = network.getCentralProteins();
+//        ArrayList centrals = network.getCentralProteins();
+        ArrayList centrals = network.getCentralInteractors();
+        logger.info ("#Central protein in the network: " + centrals.size());
+
         String ac;
         int max = centrals.size();
         for (int i=0; i<max; i++) {
-            Node node = (Node) centrals.get(i);
+            Interactor node = (Interactor) centrals.get(i);
             ac = node.getAc();
 
             logger.info ("Retrieving Interactor "+ ac +" ...");
@@ -278,6 +286,24 @@ public class GraphHelper  {
                     throw new MultipleResultException();
             } // switch
         } // for each central proteins
+
+        if (newNetwork == null) {
+            logger.info ("newNetwork == null");
+        } else {
+            if (newNetwork.getCriteria() == null) {
+                logger.info ("newNetwork.getCriteria() == null");
+            }
+        }
+
+
+        if (network == null) {
+            logger.info ("network == null");
+        } else {
+            if (network.getCriteria() == null) {
+                logger.info ("network.getCriteria() == null");
+            }
+        }
+
 
         // to finish, copy criterias
         newNetwork.getCriteria().addAll (network.getCriteria());

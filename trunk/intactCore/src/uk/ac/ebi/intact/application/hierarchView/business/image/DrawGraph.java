@@ -637,10 +637,6 @@ public class DrawGraph {
                 RenderingHints.VALUE_ANTIALIAS_OFF);
 
         // Write the map
-        // TODO : get the contextPath in the runtime
-//        mapCode.append("<AREA SHAPE=\"RECT\" HREF=\"/intact/hierarchView/click.do?AC=" + protein.getAc() +
-//                " \" COORDS=" + (int)x1 + "," + (int)y1 + "," + x2 + "," + y2 + ">");
-
         mapCode.append("<AREA SHAPE=\"RECT\" HREF=\""+ applicationPath +"/click.do?AC=" + protein.getAc() +
                 " \" COORDS=" + (int)x1 + "," + (int)y1 + "," + x2 + "," + y2 + ">");
 
@@ -656,7 +652,10 @@ public class DrawGraph {
 
         // set the protein as drawn
         ArrayList listOfProteins = graph.getOrderedNodes();
-        drawnNode[listOfProteins.indexOf(protein)] = true;
+
+        int z = listOfProteins.indexOf(protein);
+        if (z != -1)
+           drawnNode[z] = true;
     } // drawNode
 
 
@@ -793,6 +792,10 @@ public class DrawGraph {
         for (int x = 0; x<max; x++) {
             // don't draw central protein now
             Node centralProtein = (Node) centrals.get(x);
+            if (centralProtein == null) {
+                continue;
+            }
+
             drawnNode[listOfProteins.indexOf(centralProtein)] = true;
         }
 
@@ -808,6 +811,7 @@ public class DrawGraph {
         for (int x = 0; x<max; x++) {
             // draw visible central protein over the rest, with bold font.
             Node centralProtein = (Node) centrals.get(x);
+            if ( centralProtein == null ) continue;
             if (((Boolean) centralProtein.get(Constants.ATTRIBUTE_VISIBLE)).booleanValue() == true) {
                 drawNode(centralProtein, g, boldFontLabel);
             }
