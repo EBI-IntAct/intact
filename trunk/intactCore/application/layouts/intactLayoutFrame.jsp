@@ -26,24 +26,23 @@
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
     <link rel="stylesheet" type="text/css" href="styles/intact.css"/>
-
 </head>
 
-<frameset cols="12%,*" border=0>
+    <frameset cols="12%,*" border=0>
 
-   <frame src="<tiles:getAsString name="sidebar"/>" name="sidebarFrame">
+       <frame src="<tiles:getAsString name="sidebar"/>" name="sidebarFrame">
 
-   <frameset ROWS="7%,*, 9%">
-      <frame src="<tiles:getAsString name="header"/>"  name="headerFrame">
-      <frame src="<tiles:getAsString name="content"/>" name="contentFrame">
-      <frame src="footerFrame.jsp"  name="footerFrame">
-   </frameset>
+       <frameset rows="8%,*, 9%">
+          <frame src="<tiles:getAsString name="header"/>"  name="headerFrame">
+          <frame src="<tiles:getAsString name="content"/>" name="contentFrame">
+          <frame src="footerFrame.jsp"  name="footerFrame">
+       </frameset>
 
-   <noframes>
-   Your browser doesn't support frames.
-   </noframes>
+       <noframes>
+       Your browser doesn't support frames.
+       </noframes>
 
-</frameset>
+    </frameset>
 
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0">
 
