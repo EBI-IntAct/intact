@@ -19,6 +19,7 @@ content of the scripts directory :
     (1) Writing interface and implementation (package tulip)
 	  uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/TulipAccess.java
 	  uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/TulipAccessImpl.java
+	  uk/ac/ebi/intact/application/hierarchView/business/tulip/webService/ProteinCoordinate.java
 
 
     (2) Generated a WSDL file (here : tulip.wsdl)
@@ -40,38 +41,70 @@ content of the scripts directory :
 	     tulip.wsdl
 
 
+
         I keep only WSDD files and modify deploy.wsdd to make it use my own implementation of the service.
 
-	    <!-- Use this file to deploy some handlers/chains and services      -->
-	    <!-- Two ways to do this:                                           -->
-	    <!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
-	    <!--      after the axis server is running                          -->
-	    <!-- or                                                             -->
-	    <!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
-	    <!--      from the same directory that the Axis engine runs         -->
 
-	    <deployment
-		xmlns="http://xml.apache.org/axis/wsdd/"
-		xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
 
-	      <!-- Services from TulipAccessService WSDL service -->
 
-	      <service name="tulip" provider="java:RPC">
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
 
- * remove *       <parameter name="className" value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.generated.TulipSoapBindingImpl"/>
-	    
- * replace by *   <parameter name="className" value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.TulipAccessImpl"/>
-	    
-		  <operation name="getComputedTlpContent" returnQName="return" >
-		    <parameter name="in0" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>
-		  </operation>
-		  <operation name="getLineSeparator" returnQName="return" >
-		  </operation>
-		  <parameter name="allowedMethods" value="getComputedTlpContent getLineSeparator"/>
-		  <parameter name="scope" value="Session"/>
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
 
-	      </service>
-	    </deployment>
+  <!-- Services from TulipAccessService WSDL service -->
+
+  <service name="tulip" provider="java:RPC">
+
+* REMOVE *     <parameter name="className" value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.generated.TulipSoapBindingImpl"/>
+
+* REPLACE BY * <parameter name="className" value="uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.TulipAccessImpl"/>
+
+      <operation name="getComputedTlpContent" returnQName="return" >
+        <parameter name="in0" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>
+        <parameter name="in1" type="tns:string" xmlns:tns="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </operation>
+      <parameter name="allowedMethods" value="getComputedTlpContent"/>
+      <parameter name="scope" value="Session"/>
+
+      <typeMapping
+        xmlns:ns="urn:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService"
+        qname="ns:ProteinCoordinate"
+        
+* REMOVE *       type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.generated.ProteinCoordinate"
+
+* REPLACE BY *   type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.ProteinCoordinate"
+
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="urn:tulip"
+        qname="ns:ArrayOf_tns1_ProteinCoordinate"
+
+* REMOVE *       type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.generated.ProteinCoordinate[]"
+
+* REPLACE BY *   type="java:uk.ac.ebi.intact.application.hierarchView.business.tulip.webService.ProteinCoordinate[]"
+
+
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>
+
+
+
+
 
 
     (4) Created a jar file with inside my class files : interface and implementation in a package 
@@ -121,11 +154,12 @@ content of the scripts directory :
  -------
             To make run that web service, some additionnal steps are mandatory :
 
-                 - have a working installation of Tulip libraries,
-                 - run the 'Serveur' binary file provided by Bordeaux
-                   it wait for client remote connection (with cli),
+                 - have a working installation of Tulip libraries and dependencies (GCC 2.96, MESA, QT...),
+		 - be sure that the console is fully working.
+                 - if you choose to use the remote access run the 'Serveur' binary file 
+		   it wait for client remote connection (with cli).
                  - have installed in the right place binary files from Bordeaux (cli, console)
                    which allow the Tulip remote access.
-                   cli use the console to access Tulip library.
+                   Serveur use the console to access Tulip library.
 
-
+		 ALL files (console, Serveur and cli) source are provided in the tulipRemote-src.tar.gz archive.
