@@ -25,9 +25,9 @@
 
 <%-- Fill the form before the display --%>
 <%
-    DynaBean form = user.getDynaBean(formName, request);
-    user.getView().fillEditorSpecificInfo(form);
-    request.setAttribute(formName, form);
+//    DynaBean form = user.getDynaBean(formName, request);
+//    user.getView().fillEditorSpecificInfo(form);
+//    request.setAttribute(formName, form);
 %>
 
 <html:form action="/biosource/info">

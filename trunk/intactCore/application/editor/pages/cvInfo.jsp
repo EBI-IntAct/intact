@@ -1,4 +1,4 @@
-<%@ page import="org.apache.commons.beanutils.DynaBean"
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"
 %>
  <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
@@ -23,21 +23,10 @@
 
 <%-- Class wide declarations. --%>
 <%!
-    String formName = "cvInfoForm";
-%>
-
-<%-- Fill the form before the display --%>
-<%
-    DynaBean form = user.getDynaBean(formName, request);
-    user.getView().fillCvInfo(form);
-    request.setAttribute(formName, form);
+    String formName = EditorConstants.FORM_CVINFO;
 %>
 
 <script language="JavaScript" type="text/javascript">
-    // Copy the suggested value.
-    function copy(value) {
-        cvInfoForm.shortLabel.value = value;
-    }
 
     // This is a global variable to setup a window.
     var newWindow;
@@ -46,20 +35,22 @@
     // front if it is focusable.
     function makeNewWindow(link) {
         if (!newWindow || newWindow.closed) {
-            newWindow = window.open(link, "display");
+            newWindow = window.open(link, "display", "height=500,width=600");
+            newWindow.focus();
         }
         else if (newWindow.focus) {
-            newWindow.location.href = link;
             newWindow.focus();
+            newWindow.location.href = link;
         }
    }
 
     // Will be invoked when user selects graph button. An AC must be selected.
     // This in trun will create a new widow.
-    function show(label) {
-        var link = "http://localhost:8080:/intact/editor?shortLabel=" + label;
-        window.alert(link);
-        //makeNewWindow(link);
+    function show(topic, label) {
+        var link = "http://localhost:8080/intact/editor/do/display?topic="
+            + topic + "&shortLabel=" + label;
+        //window.alert(link);
+        makeNewWindow(link);
     }
 </script>
 
@@ -111,6 +102,11 @@
                 </td>
             </tr>
             <tr class="tableRowEven">
+                <td class="tableCell" colspan="4">
+                    The existing short labels are:
+                </td>
+            </tr>
+            <tr class="tableRowOdd">
                 <td class="tableCell" colspan="4">
                     <editor:displayShortLabels/>
                 </td>

@@ -12,8 +12,7 @@
 
 <%@ page language="java"%>
 <%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
-                 uk.ac.ebi.intact.application.editor.struts.view.EditBean,
-                 uk.ac.ebi.intact.application.editor.struts.view.EditForm"%>
+                 uk.ac.ebi.intact.application.editor.struts.view.EditBean"%>
 
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
@@ -33,12 +32,6 @@
     String formName = EditorConstants.FORM_XREF_EDIT;
     String viewState = EditBean.VIEW;
     String saveState = EditBean.SAVE;
-%>
-
-<%
-    // Fill with form data for this page to display.
-    EditForm form = (EditForm) session.getAttribute(formName);
-    user.getView().populateXrefs(form);
 %>
 
 <h3>Crossreferences</h3>
@@ -102,7 +95,7 @@
                     <nested:equal name="<%=formName%>"
                         property="editState" value="<%=viewState%>">
                         <td class="tableCell">
-                            <nested:write property="database"/>
+                            <nested:write property="databaseLink" filter="false"/>
                         </td>
                         <td class="tableCell">
                             <nested:write property="primaryId"/>
@@ -114,7 +107,7 @@
                             <nested:write property="releaseNumber"/>
                         </td>
                         <td class="tableCell">
-                            <nested:write property="qualifier"/>
+                            <nested:write property="qualifierLink" filter="false"/>
                         </td>
                     </nested:equal>
 
