@@ -582,6 +582,45 @@ public class IntactHelper implements SearchI, Serializable {
 
     //other various search methods......
 
+    /**
+     * Search which provides an Iterator rather than a Collection. This is particularly
+     * useful for web applications which may need to close result data for DB resource
+     * reasons (the iterator from this method can be passed to <code>closeResults</code>).
+     * @param objectType - the object type to be searched
+     * @param searchParam - the parameter to search on (eg field)
+     * @param searchValue - the search value to match with the parameter
+     *
+     * @return Iterator - a "DB aware" Iterator over the results - null if no match found
+     *
+     * @exception IntactException - thrown if problems are encountered during the search process
+     */
+    public Iterator iterSearch(String objectType, String searchParam, String searchValue)
+                                                                    throws IntactException {
+        Iterator result = null;
+        try {
+
+            result = ((ObjectBridgeDAO)dao).iteratorFind(objectType, searchParam, searchValue);
+
+        } catch (SearchException se) {
+
+            //return to action servlet witha forward to error page command
+            String msg = "intact helper: query by Iterator failed.. \n";
+            throw new IntactException(msg + "reason: " + se.getNestedMessage(), se.getRootCause());
+
+        }
+        return result;
+
+    }
+
+    /**
+     * Closes result data.
+     * @param items The Iterator used to retrieve the data originally.
+     * @exception IllegalArgumentException thrown if the Iterator is an invalid type
+     */
+    public void closeData(Iterator items) {
+        ((ObjectBridgeDAO)dao).closeResults(items);
+    }
+
 
     /**
      *  This method provides a means of searching intact objects, within the constraints
@@ -1435,15 +1474,11 @@ public class IntactHelper implements SearchI, Serializable {
 
         System.out.println("subGraph called: " + startNode.getAc() + " Depth: " + graphDepth);
 
-        if (startNode instanceof Interaction) {
-            graph = subGraphPartial((Interaction) startNode, graphDepth, experiments, complexExpansion, graph);
-        } else if (startNode instanceof Interactor) {
-            graph = subGraphPartial(startNode, graphDepth, experiments, complexExpansion, graph);
-        }
+        graph = subGraphPartial(startNode, graphDepth, experiments, complexExpansion, graph);
 
         return graph;
 
-    }
+    };
 
     private Graph subGraphPartial(Interactor startNode,
                                   int graphDepth,
