@@ -88,11 +88,6 @@ public class BioSourceAction extends SubmitFormAction {
             // Non integer value for taxid. Display the error in the input page.
             return mapping.getInputForward();
         }
-        // Any existing tax ids?
-        if (taxIdExists(user, taxid, request)) {
-			return mapping.getInputForward();
-        }
-        
         // This shouldn't cause a class cast exception as we had
         // already created the correct editor view bean.
         BioSourceViewBean bioview = (BioSourceViewBean) user.getView();
@@ -142,6 +137,12 @@ public class BioSourceAction extends SubmitFormAction {
         bioview.setShortLabel(newtLabel);
         bioview.setFullName(newtName);
         bioview.setTaxId(taxid);
+
+		// Any existing tax ids?
+		if (taxIdExists(user, taxid, request)) {
+			;
+//			return mapping.getInputForward();
+		}
 
         return mapping.findForward(SUCCESS);
     }

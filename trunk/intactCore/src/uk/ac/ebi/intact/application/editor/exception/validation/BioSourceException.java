@@ -21,4 +21,13 @@ public class BioSourceException extends ValidationException {
     public BioSourceException(String mkey) {
         super(mkey, "bs.validation");
     }
+
+	/**
+	 * Construst with given filter key and message key.
+	 * @param fkey the filter key.
+	 * @param mkey the message key.
+	 */
+	public BioSourceException(String fkey, String mkey) {
+		super(mkey, fkey);
+	}    
 }

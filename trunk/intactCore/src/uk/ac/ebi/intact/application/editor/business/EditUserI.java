@@ -378,4 +378,13 @@ public interface EditUserI extends IntactUserI, Serializable {
      * Releases the lock held by the user.
      */
     public void releaseLock();
+    
+    /**
+     * Returns the BioSource for given tax id.
+     * @param taxId the tax id to get the BioSOurce for.
+     * @return the BioSource for <code>taxid</code> or <code>null</code> if
+     * none found. 
+     * @throws SearchException for errors in searching for the tax id.
+     */
+	public BioSource getBioSourceByTaxId(String taxId) throws SearchException;
 }
