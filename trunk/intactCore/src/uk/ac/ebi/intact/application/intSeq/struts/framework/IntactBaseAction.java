@@ -16,13 +16,12 @@ import uk.ac.ebi.intact.application.intSeq.business.RunSimilaritySearch;
 import uk.ac.ebi.intact.application.intSeq.business.Constants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.util.PropertyLoader;
+import uk.ac.ebi.intact.util.SearchReplace;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
  * Super class for all Intact related action classes.
@@ -311,7 +310,9 @@ public abstract class IntactBaseAction extends Action {
         String srsProteinSearchUrl = getProperty("intSeq.SRS.getProteins.url");
         logger.info ("URL: " + srsProteinSearchUrl);
         // replace ${SEARCH_STRING} by the search string
-        srsProteinSearchUrl = replace (srsProteinSearchUrl, "${SEARCH_STRING}", searchString);
+        srsProteinSearchUrl = SearchReplace.replace (srsProteinSearchUrl, "${SEARCH_STRING}", searchString);
+        logger.info( "After replacement: URL=" + srsProteinSearchUrl );
+
         return srsProteinSearchUrl;
     }
 
@@ -320,47 +321,10 @@ public abstract class IntactBaseAction extends Action {
         String srsSequenceSearchUrl = getProperty("intSeq.SRS.getSequence.url");
         logger.info ("URL: " + srsSequenceSearchUrl);
         // replace ${PROTEIN_AC} by the search string
-        String srsProteinSearchUrl = replace (srsSequenceSearchUrl, "${PROTEIN_AC}", proteinAc);
+        String srsProteinSearchUrl = SearchReplace.replace (srsSequenceSearchUrl, "${PROTEIN_AC}", proteinAc);
+        logger.info( "After replacement: URL=" + srsProteinSearchUrl );
+
         return srsProteinSearchUrl;
-    }
-
-
-    /**
-     * Managment of search replace with regular expression
-     */
-    static Pattern escaper = Pattern.compile("([^a-zA-z0-9])");
-    /**
-     * Escape all non alphabetical caracters.
-     * ${TEST} becomes \$\{TEST\}
-     *
-     * @param str the pattern to modify
-     * @return an new pattern with all non alphabetical caracters protected with a '\'.
-     */
-    public String escapeRE (String str) {
-        return escaper.matcher(str).replaceAll("\\\\$1");
-    }
-
-    /**
-     * Perform a search replace on a text
-     *
-     * @param text the text to work on.
-     * @param patternStr the string to look for
-     * @param replacement the replacement string
-     * @return the modified text
-     */
-    public String replace (String text, String patternStr, String replacement) {
-        String escapedPatternStr = escapeRE(patternStr);
-        logger.info ("Replace " + patternStr + " by " + replacement + " in " + text);
-        logger.info ("Escaped pattern: " + escapedPatternStr);
-        // Compile regular expression
-        Pattern pattern = Pattern.compile (escapedPatternStr);
-
-        // Replace all occurrences of pattern in input
-        Matcher matcher = pattern.matcher (text);
-        String result = matcher.replaceAll (replacement);
-        logger.info ("After replacement: " + result);
-
-        return result;
     }
 
 }
