@@ -12,7 +12,7 @@ import org.apache.struts.action.ActionError;
 
 import uk.ac.ebi.intact.application.search.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search.business.IntactServiceIF;
-import uk.ac.ebi.intact.application.search.struts.framework.util.WebIntactConstants;
+import uk.ac.ebi.intact.application.search.struts.framework.util.SearchConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -37,7 +37,7 @@ public abstract class IntactBaseAction extends Action {
      */
     protected IntactServiceIF getIntactService() {
         IntactServiceIF service = (IntactServiceIF)
-            getApplicationObject(WebIntactConstants.INTACT_SERVICE);
+            getApplicationObject(SearchConstants.INTACT_SERVICE);
         return service;
     }
 
@@ -50,7 +50,7 @@ public abstract class IntactBaseAction extends Action {
      */
     protected IntactUserIF getIntactUser(HttpSession session) {
         IntactUserIF service = (IntactUserIF)
-            session.getAttribute(WebIntactConstants.INTACT_USER);
+            session.getAttribute(SearchConstants.INTACT_USER);
         return service;
     }
 
