@@ -148,15 +148,6 @@
                     <var-value>${menu-pat}</var-value>
                 </var>
             </field>
-
-            <!-- BioSource property -->
-            <field property="organism" depends="mask">
-                <msg name="mask" key="error.int.biosrc"/>
-                <var>
-                    <var-name>mask</var-name>
-                    <var-value>${menu-pat}</var-value>
-                </var>
-            </field>
         </form>
 
         <!-- ==================== BioSource Form ========================= -->

@@ -106,7 +106,7 @@
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:select property="organism" name="intForm" styleClass="inputRequired">
+            <html:select property="organism" name="intForm">
                 <html:options name="organismmenu" />
             </html:select>
             <html:errors property="organism"/>
