@@ -30,17 +30,19 @@ public class IntactException extends Exception {
     public IntactException(String msg, Exception e) {
 
         super(msg);
-        e.fillInStackTrace();
-        nestedMessage = e.getMessage();
-        if(e instanceof SearchException) {
 
-            //filter to intiital cause up...
-            rootCause = ((SearchException)e).getRootCause();
-        }
-        else {
-            rootCause = e;
-        }
+        if (e != null) {
+            e.fillInStackTrace();
+            nestedMessage = e.getMessage();
+            if(e instanceof SearchException) {
 
+                //filter to initital cause up...
+                rootCause = ((SearchException)e).getRootCause();
+            }
+            else {
+                rootCause = e;
+            }
+        }
     }
 
     public String getNestedMessage() {
@@ -53,6 +55,10 @@ public class IntactException extends Exception {
 
             return "No nested messages have been passed on.";
         }
+    }
+
+    public boolean rootCauseExists () {
+        return (rootCause != null);
     }
 
     public Exception getRootCause() {
