@@ -177,11 +177,19 @@
             <tr class="Protein">
                 <td colspan="5">
                     <xsl:for-each select="components/Component/Protein">
+                        <!-- sort Protein labels alphabetically -->
+                        <xsl:sort select="@shortLabel"></xsl:sort>
                         <xsl:call-template name="draw-checkbox-no-td"/>
                         <xsl:variable name="title">
                             <xsl:value-of select="../CvComponentRole/@shortLabel"/>
                         </xsl:variable>
-                        <xsl:value-of select="@shortLabel"/>
+
+                        <!-- put link on the Protein short label -->
+                        <xsl:call-template name="draw_label_link">
+                            <xsl:with-param name="label" select="@shortLabel"/>
+                            <xsl:with-param name="type" select="'Protein'"/>
+                        </xsl:call-template>
+                        <!-- <xsl:value-of select="@shortLabel"/> -->
                         <acronym title="{$title}">[<xsl:value-of select="substring(../CvComponentRole/@shortLabel, 1, 1)"/>]</acronym>
                         <!-- Avoid printing  ',' for the last protein -->
                         <xsl:if test="not(position()=last())">, </xsl:if>
@@ -364,6 +372,19 @@ CvTissue | CvTopic | CvXrefQualifier">
         <td>
             <a href="{$link}"><xsl:value-of select="$ac"/></a>
         </td>
+    </xsl:template>
+
+    <!--
+    ****************************************************************************
+    ** template for turning a short label into a link.
+    *************************************************************************-->
+    <xsl:template name="draw_label_link">
+        <xsl:param name="label"/>
+        <xsl:param name="type"/>
+        <xsl:variable name="link">
+            <xsl:value-of select="concat($searchLink, $label, '&amp;', 'searchClass=', $type)"/>
+        </xsl:variable>
+            <a href="{$link}"><xsl:value-of select="$label"/></a>
     </xsl:template>
 
     <!--
