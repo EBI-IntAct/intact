@@ -38,7 +38,7 @@ public class CommentBean extends AbstractEditKeyBean {
     private String myAnnotatedText;
 
     /**
-     * Default constructor.
+     * Default constructor. Used for creating a new annotation.
      *
      * @see #reset()
      */

@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 
@@ -69,27 +70,32 @@ public class InteractionViewBean extends AbstractEditViewBean {
     private transient List myExperimentsToHold = new ArrayList();
 
     /**
-     * The collection of Proteins. Transient as it is only valid for the
+     * The collection of Components. Transient as it is only valid for the
      * current display.
      */
-    private transient List myProteins = new ArrayList();
+    private transient List myComponents = new ArrayList();
 
     /**
-     * Holds Proteins to del. This collection is cleared once the user
+     * Holds Components to del. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient List myProteinsToDel = new ArrayList();
+    private transient List myComponentsToDel = new ArrayList();
 
     /**
-     * Holds Proteins to update. This collection is cleared once the user
+     * Holds Components to update. This collection is cleared once the user
      * commits the transaction.
      */
-    private transient Collection myProteinsToUpdate = new ArrayList();
+    private transient Set myComponentsToUpdate = new HashSet();
 
     /**
      * This holds the AC of the experiment from this bean is construected.
      */
     private String mySourceExperimentAc;
+
+    /**
+     * Maps: From Feature AC -> Dest feature AC
+     */
+    private Map myFeatureFromAcToDestAc = new HashMap();
 
     // Override the super method to initialize this class specific resetting.
     protected void reset(Class clazz) {
@@ -152,11 +158,55 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         // Add cloned proteins as new proteins.
         for (Iterator iter = interaction.getComponents().iterator(); iter.hasNext();) {
-            ProteinBean pb = new ProteinBean((Component) iter.next());
-            myProteins.add(pb);
-            addProteinToUpdate(pb);
+            ComponentBean cb = new ComponentBean((Component) iter.next());
+            myComponents.add(cb);
+            addProteinToUpdate(cb);
         }
     }
+
+    /**
+     * Returns the Component, for given protein AC belongs. The search is limited
+     * to the current interaction and comparision is based on the AC of a
+     * Component's interactor.
+     * @param proteinAc the AC of the protein to get the component.
+     * @return the Component where given protein AC belongs. <code>null</code>
+     * is returned if no component exists for <code>proteinAc</code>.
+     */
+//    public Component getComponent(String proteinAc) {
+//        // The current Interaction.
+//        Interaction intact = (Interaction) getAnnotatedObject();
+//
+//        for (Iterator iter = intact.getComponents().iterator(); iter.hasNext();) {
+//            Component comp = (Component) iter.next();
+//            // Comparision is on the AC.
+//            if (comp.getInteractor().getAc().equals(proteinAc)) {
+//                return comp;
+//            }
+//        }
+//        return null;
+//    }
+
+    /**
+     * Returns the Component, the given protein AC belongs. The search is limited
+     * to the current interaction and comparision is based on the AC of a
+     * Component's interactor.
+     * @param proteinAc the AC of the protein to get the component.
+     * @return the Component where given protein AC belongs. <code>null</code>
+     * is returned if no component exists for <code>proteinAc</code>.
+     */
+//    public Component getComponent(String proteinAc) {
+//        // The current Interaction.
+//        Interaction intact = (Interaction) getAnnotatedObject();
+//
+//        for (Iterator iter = intact.getComponents().iterator(); iter.hasNext();) {
+//            Component comp = (Component) iter.next();
+//            // Comparision is on the AC.
+//            if (comp.getInteractor().getAc().equals(proteinAc)) {
+//                return comp;
+//            }
+//        }
+//        return null;
+//    }
 
     // Implements abstract methods
 
@@ -264,7 +314,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return "editor.interaction";
     }
 
-    // Override to provide set experiment from the bean.
+    // Override to copy data from the form.
     public void copyPropertiesFrom(EditorActionForm editorForm) {
         // Set the common values by calling super first.
         super.copyPropertiesFrom(editorForm);
@@ -289,14 +339,14 @@ public class InteractionViewBean extends AbstractEditViewBean {
 
         intform.setExperiments(getExperiments());
         intform.setExpsOnHold(getHoldExperiments());
-        intform.setProteins(getProteins());
+        intform.setComponents(getComponents());
     }
 
     public void sanityCheck(EditUserI user) throws ValidationException,
             SearchException {
         // Look for any unsaved or error proteins.
-        for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
-            ProteinBean pb = (ProteinBean) iter.next();
+        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
+            ComponentBean pb = (ComponentBean) iter.next();
             if (!pb.getEditState().equals(AbstractEditBean.VIEW)) {
                 throw new InteractionException("int.unsaved.prot",
                         "error.int.sanity.unsaved.prot");
@@ -322,8 +372,8 @@ public class InteractionViewBean extends AbstractEditViewBean {
 //            throw new InteractionException("error.int.validation.biosrc");
 //        }
 //        // Look for any unsaved or error proteins.
-//        for (Iterator iter = myProteins.iterator(); iter.hasNext();) {
-//            ProteinBean pb = (ProteinBean) iter.next();
+//        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
+//            ComponentBean pb = (ComponentBean) iter.next();
 //            if (!pb.getEditState().equals(AbstractEditBean.VIEW)) {
 //                throw new InteractionException();
 //            }
@@ -339,7 +389,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public List getOrganismMenu() throws SearchException {
         int mode = (myOrganism == null) ? 1 : 0;
-        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISMS, mode);
+        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISM, mode);
     }
 
     /**
@@ -351,7 +401,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      */
     public List getInteractionTypeMenu() throws SearchException {
         int mode = (myInteractionType == null) ? 1 : 0;
-        return getMenuFactory().getDagMenu(EditorMenuFactory.INTERACTION_TYPES, mode);
+        return getMenuFactory().getDagMenu(EditorMenuFactory.INTERACTION_TYPE, mode);
     }
 
     /**
@@ -360,7 +410,7 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @throws SearchException for errors in constructing the menu.
      */
     public List getEditProteinRoleMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.ROLES, 0);
+        return getMenuFactory().getMenu(EditorMenuFactory.ROLE, 0);
     }
 
     /**
@@ -369,11 +419,11 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @throws SearchException for errors in constructing the menu.
      */
     public List getAddProteinRoleMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.ROLES, 1);
+        return getMenuFactory().getMenu(EditorMenuFactory.ROLE, 1);
     }
 
     public List getAddBioSourceMenu() throws SearchException {
-        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISMS, 1);
+        return getMenuFactory().getMenu(EditorMenuFactory.ORGANISM, 1);
     }
 
     public void setKD(Float kd) {
@@ -548,12 +598,12 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @param protein the Protein to add.
      *
      * <pre>
-     * post: myProteins = myProteins@pre + 1
+     * post: myComponents = myComponents@pre + 1
      * </pre>
      */
     public void addProtein(Protein protein) {
         // Add to the view.
-        myProteins.add(new ProteinBean(protein));
+        myComponents.add(new ComponentBean(protein));
     }
 
     /**
@@ -561,69 +611,84 @@ public class InteractionViewBean extends AbstractEditViewBean {
      * @param pos the position in the current Protein collection.
      *
      * <pre>
-     * post: myProteinsToDel = myProteinsToDel@pre + 1
-     * post: myProteins = myProteins@pre - 1
+     * post: myComponentsToDel = myComponentsToDel@pre + 1
+     * post: myComponents = myComponents@pre - 1
      * </pre>
      */
     public void delProtein(int pos) {
         // Remove from the view as well; need the index because we need to
         // remove a specific bean (not just any bean which returns true for
         // equals method).
-        ProteinBean pb = (ProteinBean) myProteins.remove(pos);
+        ComponentBean cb = (ComponentBean) myComponents.remove(pos);
         // Add to the container to delete proteins.
-        myProteinsToDel.add(pb);
+        myComponentsToDel.add(cb);
         // Remove from the update list if it has already been added.
-        myProteinsToUpdate.remove(pb);
+        myComponentsToUpdate.remove(cb);
     }
 
     /**
-     * Adds a Protein bean to update.
-     * @param pb a <code>ProteinBean</code> object to update.
+     * Adds a Component bean to update.
+     * @param cb a <code>ComponentBean</code> object to update.
      *
      * <pre>
-     * post: myProteinsToUpdate = myProteinsToUpdate@pre + 1
-     * post: myProteins = myProteins@pre
+     * post: myComponentsToUpdate = myComponentsToUpdate@pre + 1
+     * post: myComponents = myComponents@pre
      * </pre>
      */
-    public void addProteinToUpdate(ProteinBean pb) {
-        myProteinsToUpdate.add(pb);
+    public void addProteinToUpdate(ComponentBean cb) {
+        myComponentsToUpdate.add(cb);
+
+        // Need to update the update component bean collection for it to
+        // persist properly.
+        for (Iterator iterator = myComponentsToUpdate.iterator(); iterator.hasNext();) {
+            ComponentBean bean = (ComponentBean) iterator.next();
+            System.out.println("Found in the update components: " + bean.getAc());
+//            if (bean.getAc() != null && bean.getAc().equals(comp.getAc())) {
+//                int idx = myComponentsToUpdate.indexOf(comp);
+//                if (idx != -1) {
+//                    // Remove the existing component to update.
+//                    myComponentsToUpdate.remove(idx);
+//                    // Add
+//                }
+//            }
+        }
     }
 
     /**
      * Removes all the unsaved proteins for the current protein collection. A
-     * protein bean whose state equivalent to {@link ProteinBean.SAVE_NEW} is
+     * protein bean whose state equivalent to {@link ComponentBean.SAVE_NEW} is
      * considered as unsaved.
      */
     public void removeUnsavedProteins() {
-        CollectionUtils.filter(myProteins, ProteinBeanPredicate.ourInstance);
+        CollectionUtils.filter(myComponents, ProteinBeanPredicate.ourInstance);
     }
 
     /**
-     * Returns a collection of <code>ProteinBean</code> objects.
+     * Returns a collection of <code>ComponentBean</code> objects.
      *
      * <pre>
      * post: return != null
-     * post: return->forall(obj : Object | obj.oclIsTypeOf(ProteinBean))
+     * post: return->forall(obj : Object | obj.oclIsTypeOf(ComponentBean))
      * </pre>
      */
-    public List getProteins() {
-        return myProteins;
+    public List getComponents() {
+        return myComponents;
     }
 
     /**
-     * Returns a <code>ProteinBean</code> at given location.
-     * @param index the position to return <code>ProteinBean</code>.
-     * @return <code>ProteinBean</code> at <code>index</code>.
+     * Returns a <code>ComponentBean</code> at given location.
+     * @param index the position to return <code>ComponentBean</code>.
+     * @return <code>ComponentBean</code> at <code>index</code>.
      *
      * <pre>
-     * pre: index >=0 and index < myProteins->size
+     * pre: index >=0 and index < myComponents->size
      * post: return != null
-     * post: return = myProteins->at(index)
+     * post: return = myComponents->at(index)
      * </pre>
      */
-    public ProteinBean getProtein(int index) {
-        return (ProteinBean) myProteins.get(index);
-    }
+//    public ComponentBean getProtein(int index) {
+//        return (ComponentBean) myComponents.get(index);
+//    }
 
     // Override super to add extra.
     public void clearTransactions() {
@@ -636,9 +701,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
         myExperimentsToHold.clear();
 
         // Clear proteins.
-        myProteins.clear();
-        myProteinsToDel.clear();
-        myProteinsToUpdate.clear();
+        myComponents.clear();
+        myComponentsToDel.clear();
+        myComponentsToUpdate.clear();
     }
 
     /**
@@ -676,13 +741,69 @@ public class InteractionViewBean extends AbstractEditViewBean {
         return getAc() != null;
     }
 
+    /**
+     * Updates the Feature bean within a Component. If this is a new Feature,
+     * it will add as a bean to the appropriate component. Any existing matching
+     * bean is removed before adding the updated feature (at the same location).
+     * @param feature the feature to update.
+     */
+    public void saveFeature(Feature feature) {
+        // The component bean the feature belongs to.
+        ComponentBean comp = null;
+
+        // The ac to match to retrieve the component.
+        String compAc = feature.getComponent().getAc();
+
+        // Find the component bean this feature bean belongs to.
+        for (Iterator iterator = myComponents.iterator(); iterator.hasNext();) {
+            ComponentBean cb = (ComponentBean) iterator.next();
+            if (cb.getAc().equals(compAc)) {
+                comp = cb;
+                break;
+            }
+        }
+        // We should have this component.
+        assert comp != null;
+
+        comp.saveFeature(feature);
+    }
+
+    public void deleteFeature(Feature feature) {
+        // The component bean the feature belongs to.
+        ComponentBean comp = null;
+
+        // The ac to match to retrieve the component.
+        String compAc = feature.getComponent().getAc();
+
+        // Find the component bean this feature bean belongs to.
+        for (Iterator iterator = myComponents.iterator(); iterator.hasNext();) {
+            ComponentBean cb = (ComponentBean) iterator.next();
+            if (cb.getAc().equals(compAc)) {
+                comp = cb;
+                break;
+            }
+        }
+        // We should have this component.
+        assert comp != null;
+
+        // Remove from the component beans.
+        comp.delFeature(feature);
+
+        // Update this component for it to persist correctly.
+        addProteinToUpdate(comp);
+    }
+
+    public void addFeatureLink(String fromAc, String toAc) {
+        myFeatureFromAcToDestAc.put(fromAc, toAc);
+    }
+
     // Helper methods
 
     private void makeProteinBeans(Collection components) {
-        myProteins.clear();
+        myComponents.clear();
         for (Iterator iter = components.iterator(); iter.hasNext();) {
             Component comp = (Component) iter.next();
-            myProteins.add(new ProteinBean(comp));
+            myComponents.add(new ComponentBean(comp));
         }
     }
 
@@ -740,9 +861,9 @@ public class InteractionViewBean extends AbstractEditViewBean {
             intact.addExperiment(exp);
         }
 
-        // Delete proteins and remove it from the interaction.
-        for (Iterator iter = myProteinsToDel.iterator(); iter.hasNext();) {
-            Component comp = ((ProteinBean) iter.next()).getComponent(user);
+        // Delete components and remove it from the interaction.
+        for (Iterator iter = myComponentsToDel.iterator(); iter.hasNext();) {
+            Component comp = ((ComponentBean) iter.next()).getComponent(user);
             // No need to delete from persistent storage if the link to this
             // Protein is not persisted.
             if ((comp == null) || (comp.getAc() == null)) {
@@ -751,11 +872,17 @@ public class InteractionViewBean extends AbstractEditViewBean {
             user.delete(comp);
             intact.removeComponent(comp);
         }
-        // Update proteins.
-        for (Iterator iter = myProteinsToUpdate.iterator(); iter.hasNext();) {
-            ProteinBean pb = (ProteinBean) iter.next();
-            pb.setInteraction((Interaction) getAnnotatedObject());
-            Component comp = pb.getComponent(user);
+
+        // Update components.
+        for (Iterator iter1 = myComponentsToUpdate.iterator(); iter1.hasNext();) {
+            ComponentBean cb = (ComponentBean) iter1.next();
+            // Delete features if there are any features to delete.
+            for (Iterator iter2 = cb.getFeaturesToDelete().iterator(); iter2.hasNext();) {
+                Feature feature = (Feature) iter2.next();
+                user.delete(feature);
+            }
+            cb.setInteraction((Interaction) getAnnotatedObject());
+            Component comp = cb.getComponent(user);
             intact.addComponent(comp);
             if (user.isPersistent(comp)) {
                 user.update(comp);
@@ -764,6 +891,17 @@ public class InteractionViewBean extends AbstractEditViewBean {
                 user.create(comp);
             }
         }
+
+        // Update any features to link.
+        for (Iterator iter = myFeatureFromAcToDestAc.keySet().iterator(); iter.hasNext();) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            Feature srcFeature = (Feature) user.getObjectByAc(Feature.class,
+                    (String) entry.getKey());
+            Feature toFeature = (Feature) user.getObjectByAc(Feature.class,
+                    (String) entry.getValue());
+            srcFeature.setBoundDomain(toFeature);
+        }
+
         // No need to test whether this 'intact' persistent or not because we
         // know it has been already persisted by persist() call.
         user.update(intact);
@@ -796,119 +934,12 @@ public class InteractionViewBean extends AbstractEditViewBean {
         private static ProteinBeanPredicate ourInstance = new ProteinBeanPredicate();
 
         public boolean evaluate(Object object) {
-            return !((ProteinBean) object).getEditState().equals(
-                    ProteinBean.SAVE_NEW);
+            return !((ComponentBean) object).getEditState().equals(
+                    ComponentBean.SAVE_NEW);
         }
     }
 
     // End of Inner class -----------------------------------------------------
 
     // Sanity checking routines
-
-    /**
-    * Performs Interaction checks.
-    * @exception uk.ac.ebi.intact.business.IntactException thrown if there was a search problem
-    */
-//    private void checkBaitAndPrey(EditUserI user) throws IntactException, SearchException  {
-//
-//        //check 7
-//            Collection components = getProteins();
-//            int preyCount    = 0,
-//                baitCount    = 0,
-//                neutralCount = 0;
-//            for (Iterator iterator = getProteins().iterator(); iterator.hasNext();) {
-//                Component component = ((ProteinBean) iterator.next()).getComponent(user);
-//
-//                // The role.
-//                String role = component.getCvComponentRole().getShortLabel();
-//
-//                if (role.equals("bait")) {
-//                    baitCount++;
-//                }
-//                if (role.equals("prey")) {
-//                    preyCount++;
-//                }
-//                if (role.equals("neutral")) {
-//                    neutralCount++;
-//                }
-//            }
-//
-//            // TODO: we have to consider Components as 3 distinct groups: bait-prey, agent-target and neutral
-//            // TODO: we are not allowed to mix categories,
-//            // TODO: if you have a bait you must have at least one prey
-//            // TODO: if you have a target you must have at least one agent ----- NOT DONE YET
-//            // TODO: else you must have at least 2 neutral components
-//            if ( preyCount == 0 && baitCount == 0 ) {
-//                if ( neutralCount <= 1 ) {
-//                    getUserInfo(interactionWithNeitherPreyNorBaitCheck, interaction);
-//                }
-//            } else {
-//                if (baitCount == 0) {
-//                    getUserInfo(interactionWithNoBaitCheck, interaction);
-//                } else if (preyCount == 0) {
-//                    getUserInfo(interactionWithNoPreyCheck, interaction);
-//                }
-//            }
-//        }
-//        //now dump the results...
-//        writeResults(interactionWithNeitherPreyNorBaitCheck);
-//        writeResults(interactionWithNoBaitCheck);
-//        writeResults(interactionWithNoPreyCheck);
-//        writer.println();
-//
-//    }
-//
-//    /**
-//     * Performs checks against Proteins.
-//     * @throws IntactException Thrown if there were Helper problems
-//     * @throws SQLException thrown if there were DB access problems
-//     */
-//    public void checkProteins() throws IntactException, SQLException {
-//
-//        //checks 5 and 6 (easier if done together)
-//        for (Iterator it = interactions.iterator(); it.hasNext();) {
-//
-//            Interaction interaction = (Interaction) it.next();
-//            Collection components = interaction.getComponents();
-//            int originalSize = components.size();
-//            int matchCount = 0;
-//            Protein proteinToCheck = null;
-//            if (components.size() > 0) {
-//                Component firstOne = (Component) components.iterator().next();
-//
-//                if (firstOne.getInteractor() instanceof Protein) {
-//                    proteinToCheck = (Protein) firstOne.getInteractor();
-//                    components.remove(firstOne); //don't check it twice!!
-//                } else {
-//                    //not interested (for now) in Interactions that have
-//                    //interactors other than Proteins (for now)...
-//                    return;
-//                }
-//
-//                for (Iterator iter = components.iterator(); iter.hasNext();) {
-//                    Component comp = (Component) iter.next();
-//                    Interactor interactor = comp.getInteractor();
-//                    if (interactor.equals(proteinToCheck)) {
-//                        //check it against the first one..
-//                        matchCount++;
-//                    }
-//                }
-//                //now compare the count and the original - if they are the
-//                //same then we have found one that needs to be flagged..
-//                if (matchCount == originalSize) {
-//                    getUserInfo(singleProteinCheck, interaction);
-//                }
-//
-//            } else {
-//                //Interaction has no Components!! This is in fact test 5...
-//                getUserInfo(noProteinCheck, interaction);
-//            }
-//        }
-//
-//        writeResults(singleProteinCheck);
-//        writer.println();
-//        writeResults(noProteinCheck);
-//        writer.println();
-//
-//    }
 }

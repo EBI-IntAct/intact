@@ -89,8 +89,8 @@ public class EditorActionForm extends ValidatorForm {
 
     public EditorActionForm() {
         // Initialize them to avoid Edit Experiment/Interaction error.
-        setNewAnnotation(new CommentBean());
-        setNewXref(new XreferenceBean());
+        myNewAnnotation = new CommentBean();
+        myNewXref = new XreferenceBean();
     }
 
     // Getter/Setter methods for form attributes.
@@ -165,27 +165,16 @@ public class EditorActionForm extends ValidatorForm {
         return (XreferenceBean) myXrefs.get(myDispatchIndex);
     }
 
-    public void setNewAnnotation(CommentBean cb) {
-        myNewAnnotation = cb;
-    }
-
     public CommentBean getNewAnnotation() {
         return myNewAnnotation;
-    }
-
-    public void resetNewAnnotation() {
-        myNewAnnotation.reset();
-    }
-
-    public void setNewXref(XreferenceBean xb) {
-        myNewXref = xb;
     }
 
     public XreferenceBean getNewXref() {
         return myNewXref;
     }
 
-    public void resetNewXref() {
+    public void resetNewBeans() {
+        myNewAnnotation.reset();
         myNewXref.reset();
     }
 
@@ -197,6 +186,10 @@ public class EditorActionForm extends ValidatorForm {
         return myDispatch;
     }
 
+    public void resetDispatch() {
+        myDispatch = "";
+    }
+
     public String getAnchor() {
         return myAnchor;
     }
@@ -205,18 +198,15 @@ public class EditorActionForm extends ValidatorForm {
         myAnchor = anchor;
     }
 
-    public void resetAnchor() {
-        setAnchor("");
-    }
-
-    protected void setDispatch(int index, String value) {
-        myDispatchIndex = index;
-        setDispatch(value);
-    }
-
     public int getDispatchIndex() {
         return myDispatchIndex;
     }
+
+//    public void reset() {
+//        myNewAnnotation.reset();
+//        myNewXref.reset();
+//        myDispatch = "";
+//    }
 
     /**
      * Validate the properties that have been set from the HTTP request.
@@ -281,5 +271,10 @@ public class EditorActionForm extends ValidatorForm {
             }
         }
         return errors;
+    }
+
+    protected void setDispatch(int index, String value) {
+        myDispatchIndex = index;
+        setDispatch(value);
     }
 }

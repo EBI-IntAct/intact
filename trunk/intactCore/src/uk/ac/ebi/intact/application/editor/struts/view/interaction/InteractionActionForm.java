@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
-All rights reserved. Please see the file LICENSE
-in the root directory of this distribution.
-*/
+ Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
+ All rights reserved. Please see the file LICENSE
+ in the root directory of this distribution.
+ */
 
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
@@ -10,18 +10,25 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
+import org.apache.struts.Globals;
+import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * The form to edit bio experiment data.
- *
+ * 
  * @author Sugath Mudali (smudali@ebi.ac.uk)
- * @version $Id$
+ * @version $Id: InteractionActionForm.java,v 1.5 2004/06/15 16:03:02 smudali
+ * Exp $
  */
 public class InteractionActionForm extends EditorActionForm {
 
@@ -73,12 +80,27 @@ public class InteractionActionForm extends EditorActionForm {
     /**
      * The list of proteins in the current interaction.
      */
-    private List myProteins;
+    private List myComponents;
 
     /**
      * The list of proteins on hold for the current interaction.
      */
     private List myExpsOnHold;
+
+    /**
+     * List of checked link items.
+     */
+    //    private List myLinkedItems;
+    /**
+     * Stores the feature dispatch action (to determine what course of action to
+     * take when Edit/Delete Feature button selected).
+     */
+    private String myFeatureDispatch;
+
+    /**
+     * The AC of the selected feature.
+     */
+    private String mySelectedFeatureAc;
 
     // Setter / Getter methods.
     public void setKd(Float kd) {
@@ -159,19 +181,35 @@ public class InteractionActionForm extends EditorActionForm {
         return myExperiments;
     }
 
-    public void setProteins(List proteins) {
-        if (myProteins != null) {
-            // No need to create a new proteins if both collections contain same.
+    public void setComponents(List comps) {
+        if (myComponents != null) {
+            // No need to create a new proteins if both collections contain
+            // same.
             // This might be the case for page refresh for other than proteins.
-            if (CollectionUtils.isEqualCollection(myProteins,  proteins)) {
+            if (CollectionUtils.isEqualCollection(myComponents, comps)) {
+                Logger.getLogger(EditorConstants.LOGGER).debug(
+                        "THEY ARE EQUAL collections");
                 return;
             }
         }
-        myProteins = new ArrayList(proteins);
+        // Set the call back for features.
+        //        for (Iterator iterator1 = comps.iterator(); iterator1.hasNext();) {
+        //            ComponentBean cb = (ComponentBean) iterator1.next();
+        //            for (Iterator iterator2 = cb.getFeatures().iterator();
+        // iterator2.hasNext();) {
+        //                FeatureBean fb = (FeatureBean) iterator2.next();
+        //                fb.setCallBack(this);
+        //            }
+        //        }
+        Logger.getLogger(EditorConstants.LOGGER)
+                .debug("Setting the components");
+        myComponents = new ArrayList(comps);
+
     }
 
-    public List getProteins() {
-        return myProteins;
+    public List getComponents() {
+        //        System.out.println("getting proteins");
+        return myComponents;
     }
 
     public void setExpsOnHold(List exps) {
@@ -208,44 +246,211 @@ public class InteractionActionForm extends EditorActionForm {
         setDispatch(index, value);
     }
 
-    public ProteinBean getSelectedProtein() {
-        return (ProteinBean) myProteins.get(getDispatchIndex());
+    public ComponentBean getSelectedComponent() {
+        return (ComponentBean) myComponents.get(getDispatchIndex());
+    }
+
+    public String getDispatchFeature() {
+        return myFeatureDispatch;
+    }
+
+    public void setDispatchFeature(String dispatch) {
+        myFeatureDispatch = dispatch;
+    }
+
+//    public void setSelectedFeatureAc(String ac) {
+//        mySelectedFeatureAc = ac;
+//    }
+
+//    public String getSelectedFeatureAc() {
+//        return mySelectedFeatureAc;
+//    }
+
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
+        super.reset(mapping, request);
+        if (myComponents == null) {
+            return;
+        }
+        for (Iterator iterator = myComponents.iterator(); iterator.hasNext();) {
+            ComponentBean compBean = (ComponentBean) iterator.next();
+            for (Iterator iterator1 = compBean.getFeatures().iterator(); iterator1
+                    .hasNext();) {
+                FeatureBean featureBean = (FeatureBean) iterator1.next();
+                featureBean.setLinked(false);//"off");
+            }
+        }
     }
 
     /**
+     * Returns an array that contains ACs of two selected features. This method
+     * asseumns that {@link #validate(ActionMapping, HttpServletRequest)}has
+     * been called prior to calling this method because it returns the first two
+     * selected features (even when the user has incorrcetly selected more than
+     * two features).
+     * 
+     * @return an array containing ACs of two selected features.
+     */
+    public FeatureBean[] getFeatureACsForLink() {
+        // The two ACs to return.
+        FeatureBean[] fbs = new FeatureBean[2];
+
+        int idx = 0;
+        // Get the feature ACs for two linked items.
+        for (Iterator iter0 = getComponents().iterator(); iter0.hasNext()
+                && fbs[1] == null;) {
+            ComponentBean compBean = (ComponentBean) iter0.next();
+            for (Iterator iter1 = compBean.getFeatures().iterator(); iter1
+                    .hasNext()
+                    && fbs[1] == null;) {
+                FeatureBean featureBean = (FeatureBean) iter1.next();
+                if (featureBean.isLinked()) {
+                    fbs[idx] = featureBean;
+                    ++idx;
+                }
+            }
+        }
+        return fbs;
+    }
+
+    /**
+     * Returns the selected feature bean by way of selecting edit/delete feature
+     * buttons.
+     * @return the selected feature bean. <code>null</code> is returned
+     * if a Feature wasn't selected.
+     */
+    public FeatureBean getSelectedFeature() {
+        for (Iterator iter1 = myComponents.iterator(); iter1.hasNext();) {
+            ComponentBean cb = (ComponentBean) iter1.next();
+            for (Iterator iter2 = cb.getFeatures().iterator(); iter2.hasNext();) {
+                FeatureBean fb = (FeatureBean) iter2.next();
+                if (fb.isSelected()) {
+                    return fb;
+                }
+            }
+        }
+        return null;
+    }
+
+//    public void updateFeature(FeatureBean fb) {
+//        for (Iterator iter = myComponents.iterator(); iter.hasNext();) {
+//            ComponentBean cb = (ComponentBean) iter.next();
+//            List features = cb.getFeatures();
+//            if (features.contains(fb)) {
+//                int idx = features.indexOf(fb);
+//                features.remove(idx);
+//                features.add(idx, fb);
+//                break;
+//            }
+//        }
+//    }
+
+    //    public String getLinked() {
+    //        return "true";
+    //    }
+    //
+    //    public void setLinked(int index, String value) {
+    //        System.out.println("Index: " + index + " value: " + value);
+    //    }
+    //
+    //    public ComponentBean getProteins(int idx) {
+    //        System.out.println("Getting the protein at: " + idx);
+    //        return (ComponentBean) myComponents.get(idx);
+    //    }
+    //
+    //    public void setProteins(int idx) {
+    //        System.out.println("Setting the protein at: " + idx);
+    //    }
+    //
+    //    public FeatureBean getFeatures(int x) {
+    //        System.out.println("in get features");
+    //        return null;
+    //    }
+    //    public void setFeatureCmd(int index, int y, String value) {
+    //        System.out.println("Received in the interaction action form: " + index +
+    // " value: " + value);
+    //    }
+    //
+    //    public void setFeatureCmd(String value) {
+    //        System.out.println("Received in the interaction action form: " + value);
+    //    }
+    //
+    /**
      * Validates Interaction info page.
-     *
+     * 
      * @param mapping the mapping used to select this instance
      * @param request the servlet request we are processing
-     * @return <tt>ActionErrors</tt> object that contains validation errors. If
-     * no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
+     * @return <tt>ActionErrors</tt> object that contains validation errors.
+     * If no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
      * object is returned.
      */
-//    public ActionErrors validate(ActionMapping mapping,
-//                                 HttpServletRequest request) {
-//        ActionErrors errors = super.validate(mapping, request);
-//
-//        // Only proceed if super method does not find any errors.
-//        if ((errors != null) && !errors.isEmpty()) {
-//            return errors;
-//        }
-//        // Must select from the drop down list.
-//        if (getInteractionType().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-//            errors = new ActionErrors();
-//            errors.add("int.interaction", new ActionError("error.int.cvtype"));
-//            return errors;
-//        }
-//        if (getOrganism().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-//            errors = new ActionErrors();
-//            errors.add("int.organism", new ActionError("error.int.biosrc"));
-//            return errors;
-//        }
-//        // Must have at least one experiment. This is a business decision.
-////        if (getExperiments().isEmpty()) {
-////            errors = new ActionErrors();
-////            errors.add(ActionErrors.GLOBAL_ERROR,
-////                    new ActionError("error.int.validation.exp"));
-////        }
-//        return errors;
-//    }
+    public ActionErrors validate(ActionMapping mapping,
+            HttpServletRequest request) {
+        ActionErrors errors = super.validate(mapping, request);
+
+        // Only proceed if super method does not find any errors.
+        if ((errors != null) && !errors.isEmpty()) {
+            return errors;
+        }
+
+        // The dispatch parameter to find out which button was pressed.
+        String dispatch = getDispatch();
+
+        if (dispatch != null) {
+            // Message resources to access button labels.
+            MessageResources msgres = ((MessageResources) request
+                    .getAttribute(Globals.MESSAGES_KEY));
+
+            // Trap errors for linking two features.
+            if (dispatch.equals(msgres
+                    .getMessage("int.proteins.button.feature.link"))) {
+                errors = validateLinkTwoFeatures();
+                //                int count = 0;
+                //                for (Iterator iter0 = getComponents().iterator();
+                // iter0.hasNext();) {
+                //                    ComponentBean cb = (ComponentBean) iter0.next();
+                //                    for (Iterator iter1 =
+                // cb.getFeatures().iterator();iter1.hasNext();) {
+                //                        FeatureBean fb = (FeatureBean) iter1.next();
+                //                        if (fb.isLinked()) {
+                //                            ++count;
+                //                        }
+                //                    }
+                //                }
+                //                if (count != 2) {
+                //                    errors = new ActionErrors();
+                //                    errors.add("feature.link",
+                //                            new ActionError("error.int.feature.link"));
+                //                }
+            }
+        }
+        return errors;
+    }
+
+    /**
+     * Validates the form for when Link Selected Features button was selected.
+     * 
+     * @return errors if two features not selected (exactly). A null is returned
+     * if there no errors.
+     */
+    private ActionErrors validateLinkTwoFeatures() {
+        ActionErrors errors = null;
+        int count = 0;
+        for (Iterator iter0 = getComponents().iterator(); iter0.hasNext()
+                && count <= 2;) {
+            ComponentBean cb = (ComponentBean) iter0.next();
+            for (Iterator iter1 = cb.getFeatures().iterator(); iter1.hasNext()
+                    && count <= 2;) {
+                FeatureBean fb = (FeatureBean) iter1.next();
+                if (fb.isLinked()) {
+                    ++count;
+                }
+            }
+        }
+        if (count != 2) {
+            errors = new ActionErrors();
+            errors.add("feature.link",
+                    new ActionError("error.int.feature.link"));
+        }
+        return errors;
+    }
 }

@@ -80,6 +80,14 @@ public abstract class AbstractEditKeyBean extends AbstractEditBean {
         return false;
     }
 
+    public int hashCode() {
+        int result = 0;
+        // Long attribute converted to twon ints and factored in.
+        result = 17 * result + (int)(myKey >>> 32);
+        result = 17 * result + (int)(myKey & 0xFFFFFFFF);
+        return result;
+    }
+    
     /**
      * Returns the key assigned to this bean.
      * @return the key as a long.

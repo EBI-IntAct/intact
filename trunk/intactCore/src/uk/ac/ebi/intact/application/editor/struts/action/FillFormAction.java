@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Enumeration;
 
 /**
  * Fills the form with values for ac, short label and full name.
@@ -30,11 +31,12 @@ public class FillFormAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-//        System.out.println("At the beginning of form dispatch");
+//        LOGGER.debug("At the beginning of fill form action");
 //        for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
 //            String para = (String) e.nextElement();
-//            System.out.println("parameters: " + para + " - " + request.getParameter(para));
+//            LOGGER.debug("parameter: " + para + " - " + request.getParameter(para));
 //        }
+
         // The editor form.
         EditorActionForm editorForm = (EditorActionForm) form;
 
@@ -51,11 +53,13 @@ public class FillFormAction extends AbstractEditorAction {
         // Fill the form.
         view.copyPropertiesTo(editorForm);
 
-        // Reset annotation and xref forms.
-        editorForm.resetNewAnnotation();
-        editorForm.resetNewXref();
+        // Reset any new beans (such as annotations & xrefs).
+        editorForm.resetNewBeans();
 
-        // Straight to the editor.
+        // Reset the dispatch action.
+        editorForm.resetDispatch();
+        
+        // To the editor.
         return mapping.findForward(SUCCESS);
     }
 

@@ -20,8 +20,10 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -267,6 +269,40 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         // experiment will correctly return to the result page with single
         // experiment (or else it will display the last edited Interaction).
         user.updateSearchCache(annobj);
+    }
+
+
+    /**
+     * Sets the destination interaction to edit. As a pre requisite
+     * the existing view must be of Feature type.
+     * @param request the Http request to access the user.
+     * @throws SessionExpiredException if the session is expired.
+     * @throws SearchException unable to access the interaction to go back to.
+     *
+     * <pre>
+     * pre: getIntactUser(request).getView() instanceof FeatureViewBean
+     * </pre>
+     */
+    protected void setDestinationInteraction(HttpServletRequest request)
+            throws SessionExpiredException, SearchException {
+        // Handler to the edit user.
+        EditUserI user = getIntactUser(request);
+
+        // The current view.
+        FeatureViewBean view = (FeatureViewBean) user.getView();
+        
+        // The AC of the interaction.
+//        String ac = ((FeatureViewBean) user.getView()).getSourceInteractionAc();
+
+        // The interaction we have been editing.
+        AnnotatedObject annobj = view.getParentView().getAnnotatedObject();//(AnnotatedObject) user.getObjectByAc(
+//                Interaction.class, ac);
+
+        // Set the topic.
+        user.setSelectedTopic(getService().getTopic(Interaction.class));
+
+        // The interaction we going back to.
+        user.setView(annobj);
     }
 
     /**
