@@ -15,6 +15,8 @@ import java.net.URLConnection;
 
 import java.io.IOException;
 
+import uk.ac.ebi.intact.business.IntactException;
+
 /**
  * The proxy to the Go server. An example for the use of this class:
  * <pre>
@@ -24,10 +26,9 @@ import java.io.IOException;
  * System.out.println ( response );
  * </pre>
  *
- * @see uk.ac.ebi.intact.util.test.GoServerProxyTest
- *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
+ * @see uk.ac.ebi.intact.util.test.GoServerProxyTest
  */
 public class GoServerProxy {
 
@@ -39,7 +40,7 @@ public class GoServerProxy {
 
     public static final String DEFAULT_EGO_URL = "http://www.ebi.ac.uk/ego/DisplayGoTerm";
 
-    public static final String EGO_QUERY = "?id="+ GOID_FLAG +"&intact=xml";
+    public static final String EGO_QUERY = "?id=" + GOID_FLAG + "&intact=xml";
 
     ///////////////////
     // Instance Data
@@ -57,56 +58,99 @@ public class GoServerProxy {
      * @param url the URL to connect to the server.
      */
     public GoServerProxy( String url ) {
-        if (url == null)
+        if( url == null )
             myURL = DEFAULT_EGO_URL;
         else
             myURL = url;
     }
 
-    public GoServerProxy( ) {
+    public GoServerProxy() {
         myURL = DEFAULT_EGO_URL;
     }
 
+
     /**
-     * Queries the Newt server with given tax id.
-     * @param goId the tax id to query the Newt server.
-     * @return an array with two elements. The first element contains
-     * the short label and the second contains the full name (scientific name).
-     * It is possible for the server to return empty values for both.
-     * @exception IOException for network errors.
-     * @exception GoIdNotFoundException thrown when the server fails to find
-     * a response for GO id.
+     * Queries the ego (http://www.ebi.ac.uk/ego) server with given GO term id.
+     *
+     * @param goId the GO term to query the ego server.
+     *
+     * @return the GO term definition.
+     *
+     * @throws IOException           for network errors.
+     * @throws GoIdNotFoundException thrown when the server fails to find a response for GO id.
      */
-    public GoResponse query (String goId)
+    public GoResponse query( String goId )
             throws IOException,
-            GoIdNotFoundException {
+                   GoIdNotFoundException {
 
         GoResponse goRes = null;
 
         // Query the ego server.
-        GoHandler goHandler = getGoResponse( goId );
-        if (goHandler == null) {
-            throw new GoIdNotFoundException ( goId );
+        GoHandler goHandler ; // = getGoResponse( goId );
+
+        try {
+            goHandler = getGoResponse( goId );
+        } catch( SAXException e ) {
+            throw new GoIdNotFoundException( goId, e );
+        }
+
+        if( goHandler == null ) {
+            throw new GoIdNotFoundException( goId );
         }
 
         // Values from newt stored in
-        goRes = new GoResponse ( goId,
-                goHandler.getName(),
-                goHandler.getCategory() );
+        goRes = new GoResponse( goId,
+                                goHandler.getName(),
+                                goHandler.getCategory() );
+        return goRes;
+    }
+
+    /**
+     * Queries the ego (http://www.ebi.ac.uk/ego) server with given GO term id.
+     *
+     * @param is   the content of the GO term's XML definition.
+     * @param goId the GO term to query the ego server.
+     *
+     * @return the GO term definition.
+     *
+     * @throws IOException           for network errors.
+     * @throws GoIdNotFoundException thrown when the server fails to find a response for GO id.
+     */
+    public GoResponse query( InputStream is, String goId )
+            throws IOException,
+                   GoIdNotFoundException {
+
+        GoResponse goRes = null;
+
+        // Query the ego server.
+        GoHandler goHandler = null;
+        try {
+            goHandler = getGoResponse( is );
+        } catch( SAXException e ) {
+            throw new GoIdNotFoundException( goId, e );
+        }
+
+        if( goHandler == null ) {
+            throw new GoIdNotFoundException( goId );
+        }
+
+        // Values from newt stored in
+        goRes = new GoResponse( goId,
+                                goHandler.getName(),
+                                goHandler.getCategory() );
+
         return goRes;
     }
 
     // Helper methods
 
-    private GoHandler getGoResponse(String goId)
+    private GoHandler getGoResponse( String goId )
             throws IOException,
-            GoIdNotFoundException {
+                   SAXException {
 
-        String query = SearchReplace.replace ( EGO_QUERY, GOID_FLAG, goId );
+        String query = SearchReplace.replace( EGO_QUERY, GOID_FLAG, goId );
 
-        GoHandler goHandler = null;
-
-        URL url = new URL (myURL + query);
+        URL url = new URL( myURL + query );
         URLConnection servletConnection = url.openConnection();
 
         // Turn off caching
@@ -116,30 +160,16 @@ public class GoServerProxy {
         servletConnection.setDoOutput( true );
 
         // The reader to read response from the server.
+        GoHandler goHandler = null;
         InputStream inputStream = null;
         try {
             inputStream = servletConnection.getInputStream();
-            InputSource source = new InputSource( inputStream );
-            SAXParser parser   = new SAXParser( );
-            goHandler = new GoHandler();
-            parser.setContentHandler( goHandler );
-
-            try {
-                parser.parse( source );
-            } catch ( SAXException e ) {
-                e.printStackTrace() ;
-                throw new GoIdNotFoundException( goId );
-            } catch ( IOException e ) {
-                e.printStackTrace() ;
-                throw e;
-            }
-        }
-        finally {
-            if (inputStream != null) {
+            goHandler = getGoResponse( inputStream );
+        } finally {
+            if( inputStream != null ) {
                 try {
                     inputStream.close();
-                }
-                catch (IOException ioe) {
+                } catch( IOException ioe ) {
                 }
             }
         }
@@ -148,41 +178,60 @@ public class GoServerProxy {
     } // getGoResponse
 
 
+    private GoHandler getGoResponse( InputStream inputStream )
+            throws IOException,
+                   SAXException {
+
+        GoHandler goHandler = null;
+        InputSource source = new InputSource( inputStream );
+        SAXParser parser = new SAXParser();
+        goHandler = new GoHandler();
+        parser.setContentHandler( goHandler );
+
+        try {
+            parser.parse( source );
+        } catch( IOException e ) {
+            throw e;
+        }
+
+        return goHandler;
+    }
 
     ///////////////////////
     // Inner class
     ///////////////////////
 
     public static class GoResponse {
+
         private String goId;
         private String name;
         private String category;
 
-        public GoResponse ( String goId, String name, String category ) {
+        public GoResponse( String goId, String name, String category ) {
             this.goId = goId;
             this.name = name;
             this.category = category;
         }
 
-        public String getGoId () {
+        public String getGoId() {
             return goId;
         }
 
-        public String getName () {
+        public String getName() {
             return name;
         }
 
-        public String getCategory () {
+        public String getCategory() {
             return category;
         }
 
         public String toString() {
-            StringBuffer sb = new StringBuffer(128);
+            StringBuffer sb = new StringBuffer( 128 );
 
-            sb.append ( GoResponse.class.getName() );
-            sb.append ( "\nID: " + goId);
-            sb.append ( "\nName: " + name );
-            sb.append ( "\nCategory: " + category);
+            sb.append( GoResponse.class.getName() );
+            sb.append( "\nID: " + goId );
+            sb.append( "\nName: " + name );
+            sb.append( "\nCategory: " + category );
 
             return sb.toString();
         }
@@ -190,14 +239,14 @@ public class GoServerProxy {
 
     /**
      * Parse the XML output given by the EGO web site.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * Example:
-     *
-     *   http://www.ebi.ac.uk/ego/DisplayGoTerm?id=GO:0000074&intact=xml
-     *
-     *   gives
-     *
+     * <p/>
+     * http://www.ebi.ac.uk/ego/DisplayGoTerm?id=GO:0000074&intact=xml
+     * <p/>
+     * gives
+     * <p/>
      * <pre>
      *   &lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
      *   &lt;page&gt;
@@ -247,16 +296,16 @@ public class GoServerProxy {
         /**
          * Buffer containing temporarily the content of the curently parsed tag.
          */
-        private StringBuffer contentTagBuffer = new StringBuffer(64);
+        private StringBuffer contentTagBuffer = new StringBuffer( 64 );
 
         ///////////////////////////////////////
         // getter for the extracted attributes
         ///////////////////////////////////////
-        public String getName () {
+        public String getName() {
             return name;
         }
 
-        public String getCategory () {
+        public String getCategory() {
             return category;
         }
 
@@ -264,7 +313,7 @@ public class GoServerProxy {
         // Parsing logic
         ///////////////////
 
-        final public void characters( final char[] ch, final int start, final int len ){
+        final public void characters( final char[] ch, final int start, final int len ) {
             contentTagBuffer.append( ch, start, len );
         }
 
@@ -283,45 +332,67 @@ public class GoServerProxy {
          */
         public void endElement( String namespaceURI,
                                 String localName,
-                                String rawName)
+                                String rawName )
                 throws SAXException {
 
-            if (localName.equals( NAME )) {
+            if( localName.equals( NAME ) ) {
 
-                this.name        = contentTagBuffer.toString().trim();
+                this.name = contentTagBuffer.toString().trim();
                 contentTagBuffer = new StringBuffer( 64 );
 
-            } else if (localName.equals( CATEGORY )) {
+            } else if( localName.equals( CATEGORY ) ) {
 
-                this.category    = contentTagBuffer.toString().trim();
+                this.category = contentTagBuffer.toString().trim();
                 contentTagBuffer = new StringBuffer( 64 );
             }
         }
 
 
         /*
-        * Methods that aren't necessary in this parser but need to be
-        * declared in order to respect the ContentHandler interface
-        */
-        public void startDocument() throws SAXException { }
-        public void endDocument() throws SAXException { }
-        public void startElement( String namespaceURI, String localName, String rawName, Attributes atts ) throws SAXException { }
-        public void processingInstruction( String target, String data ) throws SAXException {}
-        public void startPrefixMapping( String prefix, String uri ) throws SAXException { }
-        public void ignorableWhitespace( char[] text, int start, int length ) throws SAXException { }
-        public void endPrefixMapping( String prefix ) throws SAXException { }
-        public void skippedEntity( String name ) throws SAXException { }
-        public void setDocumentLocator( Locator locator ) { }
-    } // GoHandler
+         * Methods that aren't necessary in this parser but need to be
+         * declared in order to respect the ContentHandler interface.
+         */
+        public void startDocument() throws SAXException {
+        }
+
+        public void endDocument() throws SAXException {
+        }
+
+        public void startElement( String namespaceURI, String localName, String rawName, Attributes atts ) throws SAXException {
+        }
+
+        public void processingInstruction( String target, String data ) throws SAXException {
+        }
+
+        public void startPrefixMapping( String prefix, String uri ) throws SAXException {
+        }
+
+        public void ignorableWhitespace( char[] text, int start, int length ) throws SAXException {
+        }
+
+        public void endPrefixMapping( String prefix ) throws SAXException {
+        }
+
+        public void skippedEntity( String name ) throws SAXException {
+        }
+
+        public void setDocumentLocator( Locator locator ) {
+        }
+    } // class GoHandler
 
 
     /*
      * Exception class for when a tax id is not found.
      */
-    public static class GoIdNotFoundException extends Exception {
-        public GoIdNotFoundException(String goId) {
-            super("Failed to find a match for " + goId);
-        }
-    }
+    public static class GoIdNotFoundException extends IntactException {
 
-} // GoServerProxy
+        public GoIdNotFoundException( String goId ) {
+            super( "Failed to find a match for " + goId );
+        }
+
+        public GoIdNotFoundException( String goId, Exception nested ) {
+            super( "Failed to find a match for " + goId, nested );
+        }
+    } // class GoIdNotFoundException
+
+} // class GoServerProxy
