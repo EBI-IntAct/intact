@@ -10,7 +10,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -156,17 +155,8 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
         // The annotation we are editing at the moment.
         CommentBean cb = editorForm.getSelectedAnnotation();
 
-        // Handler to the EditUserI.
-        EditUserI user = getIntactUser(request);
-
-        // The current view of the edit session.
-        AbstractEditViewBean view = user.getView();
-
-        // The updated annotation bean.
-        CommentBean cbup = new CommentBean(cb.getAnnotation(user), cb.getKey());
-
-        // Save the bean in the view.
-        view.saveComment(cb, cbup);
+        // Save the annotation in the view.
+        getIntactUser(request).getView().saveAnnotation(cb);
 
         // Back to the view mode.
         cb.setEditState(AbstractEditBean.VIEW);
