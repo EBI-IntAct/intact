@@ -284,22 +284,6 @@ public class LockManager {
     public void releaseAllLocks(String owner) {
         // Holds locks to release; to avoid concurrent modification ex.
         List locks = getLocks(owner);
-
-//        try {
-//            myRWLock.readLock().acquire();
-//            for (Iterator iter = myLocks.iterator(); iter.hasNext();) {
-//                LockObject lock = (LockObject) iter.next();
-//                if (lock.getOwner().equals(owner)) {
-//                    locks.add(lock);
-//                }
-//            }
-//        }
-//        catch (InterruptedException ie) {
-//            ourLogger.info(ie);
-//        }
-//        finally {
-//            myRWLock.readLock().release();
-//        }
         try {
             // Need to get the write lock to remove.
             myRWLock.writeLock().acquire();
