@@ -7,7 +7,7 @@
     Version: $Id$
 --%>
 
-<html:form action="/cv/login" focus="username">
+<html:form action="/cv/login" focus="username" onsubmit="return validateLoginForm(this)">
     <table border="0" width="100%">
 
         <tr>
@@ -38,3 +38,4 @@
         </tr>
     </table>
 </html:form>
+<html:javascript formName="loginForm"/>
