@@ -1,6 +1,6 @@
 #!/bin/sh
 
 rm tulip.wsdl
-rm -rf wsdd uk
+rm -rf wsdd/*.wsdd uk
 rm *.jar
 

@@ -39,9 +39,12 @@ public class TulipAccessImpl implements TulipAccess {
   /**
    * Had to be moved in a property file
    */
-  private static String TULIP_BINARY_FILE = "/scratch/tulipRemote/cli";  
-  private static String TULIP_IP          = "arafel.ebi.ac.uk";
-  private static String TULIP_PORT        = "2000";
+  private static String TULIP_BINARY_CLIENT_FILE  = "/scratch/tulipRemote/cli";
+  private static String TULIP_IP                  = "arafel.ebi.ac.uk";
+  private static String TULIP_PORT                = "2000";
+
+  private static String TULIP_BINARY_CONSOLE_FILE = "/scratch/tulipRemote/console";
+
 
 
   /**
@@ -118,24 +121,6 @@ public class TulipAccessImpl implements TulipAccess {
 
     // Store the content in a file on hard disk
     if (!storeInputFile (inputFile, tlpContent)) return null;
-
-    // test the validity of the mask
-    if ((null == optionMask) || (0 == optionMask.length())) {
-      // warning log : mask undefined
-      optionMask = DEFAULT_MASK;
-    } else {
-      int i = 0;
-      try {
-	i = Integer.parseInt (optionMask);
-      } catch (NumberFormatException nfe) {
-	// warning log : invalid mask format
-	optionMask = DEFAULT_MASK;
-      }
-      if ((i < 0) || (i > 65535)) {
-	// warning log : mask out of range
-	optionMask = DEFAULT_MASK;
-      }      
-    }
 
     // call the tulip client in a new process
     if (!computeTlpFile (inputFile, outputFile, optionMask)) return null;
@@ -223,26 +208,49 @@ public class TulipAccessImpl implements TulipAccess {
     * @return true if the computed file is well generated, false else.
     */  
   private boolean computeTlpFile (String anInputFile, String anOutputFile, String aMask) {
+
+    // test the validity of the mask, set to a default value if it's wrong.
+    if ((null == aMask) || (0 == aMask.length())) {
+      // warning log : mask undefined
+      aMask = DEFAULT_MASK;
+    } else {
+      int i = 0;
+      try {
+	i = Integer.parseInt (aMask);
+      } catch (NumberFormatException nfe) {
+	// warning log : invalid mask format
+	aMask = DEFAULT_MASK;
+      }
+      if ((i < 0) || (i > 65535)) {
+	// warning log : mask out of range
+	aMask = DEFAULT_MASK;
+      }      
+    }
+
     try {
       Runtime runtime = Runtime.getRuntime();
-      
-      // set the mask to the default value if it's wrong
-      if ((null == aMask) || (aMask.length() < 1)) {
-	aMask = DEFAULT_MASK;
-      } else {
-	try {
-	  int i = Integer.parseInt (aMask);
-	} catch (NumberFormatException e) {
-	  aMask = DEFAULT_MASK;
-	}
-      }
+    
+      /**
+       * Use the remote Tulip access via the cli <--> Serveur binary files.
+       */
 
-      Process process = runtime.exec (TULIP_BINARY_FILE + " " +
-				      TULIP_IP + " " + 
-				      TULIP_PORT + " " + 
+//       Process process = runtime.exec (TULIP_BINARY_CLIENT_FILE + " " +
+// 				      TULIP_IP + " " + 
+// 				      TULIP_PORT + " " + 
+// 				      anInputFile + " " + 
+// 				      anOutputFile + " " +
+// 				      aMask);
+
+      /**
+       * Use the console binary file to access Tulip library, indeed, 
+       * Tulip have to be installed on the same conputer
+       */
+
+      Process process = runtime.exec (TULIP_BINARY_CONSOLE_FILE + " " +
 				      anInputFile + " " + 
 				      anOutputFile + " " +
 				      aMask);
+
       process.waitFor();
     } catch ( Exception e ) {
       // an error occurs during execution of the process
@@ -358,6 +366,11 @@ public class TulipAccessImpl implements TulipAccess {
 
 	     currentLine = bufferedReader.readLine();
 	   } // while
+
+	   // stop reading file
+	   
+
+
 	 } // if "viewLayout"
        } // if "property"
       } // while

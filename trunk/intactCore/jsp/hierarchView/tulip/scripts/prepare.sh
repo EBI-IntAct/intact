@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # clean
-rm -rf wsdd
+rm -f wsdd/*.wsdd
 rm -rf uk
 
 
