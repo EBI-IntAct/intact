@@ -48,19 +48,19 @@ public class ExperimentHoldAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        EditForm theform = (EditForm) form;
+        EditForm editform = (EditForm) form;
 
         // The current view of the edit session.
         InteractionViewBean view =
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // The bean associated with the current action.
-        ExperimentBean expbean = (ExperimentBean) theform.getSelectedBean();
+        ExperimentBean expbean = view.getHoldExperiment(editform.getIndex());
 
         // We must have the experiment bean.
         assert expbean != null;
 
-        if (theform.buttonPressed("Add")) {
+        if (editform.buttonPressed("Add")) {
             // Avoid duplicates.
             if (view.experimentExists(expbean)) {
                 ActionErrors errors = new ActionErrors();
@@ -79,6 +79,6 @@ public class ExperimentHoldAction extends AbstractEditorAction {
             // Must have pressed 'Hide'.
             view.hideExperimentToHold(expbean);
         }
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }

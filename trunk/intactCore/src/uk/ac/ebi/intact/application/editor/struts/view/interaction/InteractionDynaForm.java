@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 
 /**
- * The form to edit interaction data.
+ * The form to validate interaction info data.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -22,7 +22,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
 public class InteractionDynaForm extends DynaValidatorForm {
 
     /**
-     * Validate the properties that have been set from the HTTP request.
+     * Validates Interaction info page.
      *
      * @param mapping the mapping used to select this instance
      * @param request the servlet request we are processing
@@ -33,33 +33,18 @@ public class InteractionDynaForm extends DynaValidatorForm {
     public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
-        String organism = ((String) get("organism")).trim();
-        String interaction = ((String) get("interactionType")).trim();
+        String organism = (String) get("organism");
+        String interaction = (String) get("interactionType");
 
         // Must select from the drop down list.
         if (interaction.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors.add("int.interaction", new ActionError("error.dropdown.list"));
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.int.biosrc"));
         }
         else if (organism.equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors.add("int.organism", new ActionError("error.dropdown.list"));
-        }
-        if (errors.isEmpty()) {
-            // No errors; set the trimmed values (no need to trim again in the
-            // action class.
-            set("organism", organism);
-            set("interactionType", interaction);
+            errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.int.cvtype"));
         }
         return errors;
-    }
-
-    /**
-     * Reset all properties to their default values.
-     *
-     * @param mapping the mapping used to select this instance
-     * @param request the servlet request we are processing
-     */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
-        set("organism", EditorMenuFactory.SELECT_LIST_ITEM);
-        set("interactionType", EditorMenuFactory.SELECT_LIST_ITEM);
     }
 }

@@ -30,7 +30,7 @@ public class ProteinBean extends EditBean implements Serializable {
      * indicates saving a new item. This state is only used by proteins.jsp
      * to save new componets as as result of a search.
      */
-    public static final String SAVE_NEW = "saveNew";
+    private static final String SAVE_NEW = "saveNew";
 
     /**
      * Identifier for an error bean.
@@ -40,8 +40,8 @@ public class ProteinBean extends EditBean implements Serializable {
     /**
      * The formatter to format Protein error messages.
      */
-    private static final MessageFormat FORMATTER =
-            new MessageFormat("Protein ({0}) with similar role ({1}) already exists!");
+//    private static final MessageFormat FORMATTER =
+//            new MessageFormat("Protein ({0}) with similar role ({1}) already exists!");
 
     // Instance Data
 
@@ -89,7 +89,7 @@ public class ProteinBean extends EditBean implements Serializable {
     /**
      * Holds error arguments.
      */
-    private Object[] myErrorArgs;
+//    private Object[] myErrorArgs;
 
     /**
      * Instantiate an object of this class from a Protein instance.
@@ -188,23 +188,23 @@ public class ProteinBean extends EditBean implements Serializable {
         myOrganism = organism;
     }
 
-    public void setError(String label, String role) {
-        if (myErrorArgs == null) {
-            myErrorArgs = new Object[]{label, role};
-        }
-        else {
-            myErrorArgs[0] = label;
-            myErrorArgs[1] = role;
-        }
-    }
+//    public void setError(String label, String role) {
+//        if (myErrorArgs == null) {
+//            myErrorArgs = new Object[]{label, role};
+//        }
+//        else {
+//            myErrorArgs[0] = label;
+//            myErrorArgs[1] = role;
+//        }
+//    }
 
     /**
      * The formatted error message
      * @return the error message after applying the formatter.
      */
-    public String getError() {
-        return FORMATTER.format(myErrorArgs);
-    }
+//    public String getError() {
+//        return FORMATTER.format(myErrorArgs);
+//    }
 
     // Override Objects's equal method.
 

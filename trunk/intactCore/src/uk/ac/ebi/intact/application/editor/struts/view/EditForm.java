@@ -62,7 +62,9 @@ public class EditForm extends ActionForm {
 
     /**
      * Returns the selected bean.
-     * @return the selected bean.
+     * @return the selected bean. This can result in a null pointer exception
+     * if the form is not in a session scope. So, only use this method for a form
+     * stored in a session.
      */
     public Object getSelectedBean() {
         return myItems.get(myIndex);

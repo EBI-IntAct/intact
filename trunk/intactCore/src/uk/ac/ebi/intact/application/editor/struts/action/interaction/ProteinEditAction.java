@@ -6,14 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
-import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.view.EditBean;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,23 +45,23 @@ public class ProteinEditAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        EditForm theform = (EditForm) form;
+        EditForm editform = (EditForm) form;
 
         // The current view of the edit session.
         InteractionViewBean viewbean =
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // The bean associated with the current action.
-        ProteinBean pb = (ProteinBean) theform.getSelectedBean();
+        ProteinBean pb = (ProteinBean) editform.getSelectedBean();
 
         // We must have the protein bean.
         assert pb != null;
 
-        if (theform.editPressed()) {
+        if (editform.editPressed()) {
             // Must save this bean.
             pb.setEditState(EditBean.SAVE);
         }
-        else if (theform.savePressed()) {
+        else if (editform.savePressed()) {
             if (viewbean.hasDuplicates(pb)) {
                 ActionErrors errors = new ActionErrors();
                 errors.add(ActionErrors.GLOBAL_ERROR,
@@ -71,27 +69,21 @@ public class ProteinEditAction extends AbstractEditorAction {
                                 pb.getShortLabel(), pb.getRole()));
                 saveErrors(request, errors);
                 pb.setEditState(ProteinBean.ERROR);
-//                pb.setError(pb.getShortLabel(), pb.getRole());
-//                System.out.println("mapping is " + inputForward(mapping));
                 return mapping.getInputForward();
-//                return inputForward(mapping);
-//                return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
             }
-//            else {
-                // The protein to update.
-                viewbean.addProteinToUpdate(pb);
-                // Back to the view mode.
-                pb.setEditState(EditBean.VIEW);
-//            }
+            // The protein to update.
+            viewbean.addProteinToUpdate(pb);
+            // Back to the view mode.
+            pb.setEditState(EditBean.VIEW);
         }
-        else if (theform.deletePressed()) {
+        else if (editform.deletePressed()) {
             // Delete is pressed.
-            viewbean.delProtein(pb, theform.getIndex());
+            viewbean.delProtein(pb, editform.getIndex());
         }
         else {
             // Unknown operation; should never get here.
             assert false;
         }
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }

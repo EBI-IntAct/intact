@@ -49,13 +49,14 @@ public class CommentEditAction extends AbstractEditorAction {
             throws Exception {
         EditForm editform = (EditForm) form;
 
+        // The current view of the edit session.
+        AbstractEditViewBean view = getIntactUser(request).getView();
+
+        // The bean associated with the current action.
         CommentBean cb = (CommentBean) editform.getSelectedBean();
 
         // We must have the annotation bean.
         assert cb != null;
-
-        // The current view of the edit session.
-        AbstractEditViewBean view = getIntactUser(request).getView();
 
         if (editform.editPressed()) {
             // Must save this bean.

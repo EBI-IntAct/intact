@@ -6,11 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import org.apache.struts.action.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,21 +46,16 @@ public class InteractionAction extends AbstractEditorAction {
         // The form to access input data.
         DynaActionForm theForm = (DynaActionForm) form;
 
-        // Handler to the current user.
-        EditUserI user = super.getIntactUser(request);
-
         // This shouldn't crash the application as we had
         // already created the correct editor view bean.
-        InteractionViewBean view = (InteractionViewBean) user.getView();
+        InteractionViewBean view =
+                (InteractionViewBean) getIntactUser(request).getView();
 
         // Set the view bean with the new values.
         view.setKD((Float) theForm.get("kD"));
         view.setOrganism((String) theForm.get("organism"));
         view.setInteractionType((String) theForm.get("interactionType"));
 
-        // Clear previous entries and reset to the default values.
-        theForm.reset(mapping, request);
-
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }

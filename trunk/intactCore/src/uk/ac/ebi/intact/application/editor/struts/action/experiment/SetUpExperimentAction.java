@@ -36,13 +36,13 @@ public class SetUpExperimentAction extends AbstractEditorAction {
 
         // Preserve existing values of the form.
 
-        if (isPropertyEmpty(dynaForm, "organism")) {
+        if (isPropertyNullOrEmpty(dynaForm, "organism")) {
             dynaForm.set("organism", view.getOrganism());
         }
-        if (isPropertyEmpty(dynaForm, "inter")) {
+        if (isPropertyNullOrEmpty(dynaForm, "inter")) {
             dynaForm.set("inter", view.getSelectedInter());
         }
-        if (isPropertyEmpty(dynaForm, "ident")) {
+        if (isPropertyNullOrEmpty(dynaForm, "ident")) {
             dynaForm.set("ident", view.getSelectedIdent());
         }
         return mapping.findForward(EditorConstants.FORWARD_EDITOR);

@@ -307,13 +307,28 @@ public abstract class AbstractEditorAction extends Action {
     }
 
     /**
-     * Returns true if the property for given name is empty.
+     * Returns true if the property for given name is empty. This assumes the
+     * property value for given name is a String object.
      * @param form the form to check.
      * @param name the name of the property to check.
      * @return true if <code>name</code> is empty in <code>form</code>.
+     *
+     * <pre>
+     * pre: form.get(name).class.getName() == java.lang.String
+     * </pre>
      */
-    protected boolean isPropertyEmpty(DynaActionForm form, String name) {
-        return isPropertyEmpty((String) form.get(name));
+    protected boolean isPropertyNullOrEmpty(DynaActionForm form, String name) {
+        return isPropertyNull(form, name) || isPropertyEmpty((String) form.get(name));
+    }
+
+    /**
+     * Returns true if the property for given name is null.
+     * @param form the form to check.
+     * @param name the name of the property to check.
+     * @return true if <code>name</code> is null in <code>form</code>.
+     */
+    protected boolean isPropertyNull(DynaActionForm form, String name) {
+        return form.get(name) == null;
     }
 
     /**
@@ -322,7 +337,7 @@ public abstract class AbstractEditorAction extends Action {
      * @return true if <code>value</code> is empty; any excess spaces
      * are removed before checking for empty.
      */
-    protected boolean isPropertyEmpty(String value) {
+    private boolean isPropertyEmpty(String value) {
         return value.trim().length() == 0;
     }
 

@@ -6,13 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.commons.beanutils.PropertyUtils;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 
 import javax.servlet.http.HttpServletRequest;

@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SearchException;
@@ -62,7 +61,6 @@ public class EditorInfoAction extends AbstractEditorAction {
         // Validate the short label.
         if (!validateShortLabel(user, formlabel, request)) {
             // Display the errors in the input page.
-            System.out.println("mapping for cvinfo " + inputForward(mapping));
             return inputForward(mapping);
         }
         String newlabel = user.getUniqueShortLabel(formlabel);
@@ -71,7 +69,7 @@ public class EditorInfoAction extends AbstractEditorAction {
         viewbean.setShortLabel(newlabel);
         viewbean.setFullName((String) theForm.get("fullName"));
 
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 
     /**

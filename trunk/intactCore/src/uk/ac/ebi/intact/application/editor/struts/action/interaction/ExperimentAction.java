@@ -48,20 +48,21 @@ public class ExperimentAction extends AbstractEditorAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        EditForm theform = (EditForm) form;
+        EditForm editform = (EditForm) form;
 
         // The current view of the edit session.
         InteractionViewBean view =
                 (InteractionViewBean) getIntactUser(request).getView();
 
         // The bean associated with the current action.
-        ExperimentBean expbean = (ExperimentBean) theform.getSelectedBean();
+        ExperimentBean expbean = view.getExperiment(editform.getIndex());
 
         // We must have the experiment bean.
         assert expbean != null;
 
         // Wants to delete the selected experiment from the Interaction.
         view.delExperiment(expbean);
-        return mapping.findForward(EditorConstants.FORWARD_SUCCESS);
+
+        return mapping.findForward(FORWARD_SUCCESS);
     }
 }
