@@ -38,12 +38,12 @@
 </display:table>
 
 --%>
-
 <%
     //Now get the XML source, the XSL source,
     //apply the stylesheet transformation and write the result out...
     StreamSource xml = new StreamSource(new StringReader(viewbean.getAsXml()));
-    String xslFile =  session.getServletContext().getInitParameter(WebIntactConstants.XSL_FILE);
+    String filename =  session.getServletContext().getInitParameter(WebIntactConstants.XSL_FILE);
+    String xslFile =  session.getServletContext().getRealPath(filename);
     StreamSource xsl = new StreamSource(new File(xslFile));
 
     //write to the JSP output stream
