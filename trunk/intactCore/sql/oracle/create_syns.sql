@@ -52,7 +52,11 @@ begin
    for r_tab in (select 'create public synonym '||table_name||' for &intactAccount'||'.'||table_name||';' syn from all_tables where owner=upper('&intactAccount')  ) loop
       dbms_output.put_line (r_tab.syn);
    end loop;
-  
+
+   for r_seq in (select 'create public synonym '||sequence_name||' for &intactAccount'||'.'||sequence_name||';' syn from all_sequences where sequence_owner=upper('&intactAccount')  ) loop
+      dbms_output.put_line (r_seq.syn);
+   end loop;
+ 
 end;
 /
 

@@ -55,6 +55,17 @@ begin
    for r_tab in (select 'grant select, insert,update,delete on '||table_name||' to INTACT_CURATOR ;' ddl from user_tables) loop
       dbms_output.put_line (r_tab.ddl);
    end loop;
+
+
+   dbms_output.put_line (chr(10));
+   dbms_output.put_line (chr(10));
+
+   for r_seq in (select 'grant select on '||sequence_name||' to INTACT_CURATOR ;' ddl from user_sequences ) loop
+      dbms_output.put_line (r_seq.ddl);
+   end loop;
+
+
+
 end;
 /
 
