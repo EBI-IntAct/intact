@@ -38,13 +38,13 @@ public class IntactTypesGeneratorTest extends TestCase {
      */
     public void testDoIt() {
         // The path to access resources.
-        String resPath = "./src/uk/ac/ebi/intact.application.cvedit.struts.framework/util/test/";
+        String resPath = "../../src/uk/ac/ebi/intact/application/cvedit/struts/framework/util/test/";
 
         // The test resource.
         String testResource = resPath + "TestIntactTypes.properties";
 
         IntactTypesGenerator gen =
-            new IntactTypesGenerator("../classes", testResource);
+            new IntactTypesGenerator("../../classes", testResource);
         try {
             // Generate the Intact Types resource.
             gen.doIt();
