@@ -68,11 +68,6 @@ public interface WebIntactConstants {
     public static final String FORWARD_CREATE = "add";
 
     /**
-     * True if a single match was found.
-     */
-    public static final String SINGLE_MATCH = "singleResult";
-
-    /**
      * Used as a key to identify a page to display when no matches are found
      * from a search.
      */
@@ -94,11 +89,6 @@ public interface WebIntactConstants {
     public static final String CREATE_NEW = "createNew";
 
     /**
-     * The search criteria key to display in the results JSP.
-     */
-    public static final String SEARCH_CRITERIA = "searchCriteria";
-
-    /**
      * Used as a key to identify a mapping filename (for Castor).
      * the value is defined in the web.xml file
      */
@@ -114,7 +104,7 @@ public interface WebIntactConstants {
      * A key to identify an intact object types property file -
      * its value is defined in the web.xml file as a servlet context parameter.
      */
-    public static final String INTACT_TYPES_FILE = "intacttypesfile";
+//    public static final String INTACT_TYPES_FILE = "intacttypesfile";
 
     /**
      * The bean to display short labels when the user is adding a new CV obj.
