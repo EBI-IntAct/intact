@@ -51,7 +51,7 @@
 		}
 	}
 </script>
-<h1><span style="font-weight: bold;">Ambiguous search results</span></h1>
+<span style="font-weight: bold; font-size:16px; color:#336666;">Ambiguous search results</span>
 <intact:documentation section="mine.ambiguous.result" />
 <span style="font-weight:bold;"></span>
 <h4>The parameters you have entered returned ambiguous search results. 
