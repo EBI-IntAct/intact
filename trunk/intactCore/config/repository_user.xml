@@ -32,7 +32,6 @@
     <extent-class class-ref="uk.ac.ebi.intact.model.CvDatabase" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvXrefQualifier" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvTopic" />
-    <extent-class class-ref="uk.ac.ebi.intact.model.CvIdentification" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvDagObject" />
 </class-descriptor>
 
@@ -47,6 +46,7 @@
 	  class="uk.ac.ebi.intact.model.CvDagObject"
 >
     <extent-class class-ref="uk.ac.ebi.intact.model.CvInteraction" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvIdentification" />
 </class-descriptor>
 
 
@@ -1502,7 +1502,7 @@
          jdbc-type="VARCHAR"
       />
 
-      <!-- ********** declared fields for this class (actually inherited from CvObject) ********** -->
+      <!-- ********** declared fields for this class (actually inherited from CvDagObject) ********** -->
 
       <!-- used for class identification -->
       <field-descriptor id="7"
@@ -1518,6 +1518,30 @@
          <foreignkey field-id-ref="2"/>
       </reference-descriptor>
 
+      <!-- CvDagObject has an n:m self-reference to implement a DAG structure. 
+           This is the parent reference. -->
+     <collection-descriptor
+     proxy="true"
+         name="parent"
+         element-class-ref="uk.ac.ebi.intact.model.CvIdentification"
+         indirection-table="ia_Cv2Cv"
+      >
+         <fk-pointing-to-this-class column="child_ac"/>
+         <fk-pointing-to-element-class column="parent_ac"/>
+      </collection-descriptor>
+
+      <!-- CvDagObject has an n:m self-reference to implement a DAG structure. 
+           This is the child reference. -->
+     <collection-descriptor
+     proxy="true"
+         name="child"
+         element-class-ref="uk.ac.ebi.intact.model.CvIdentification"
+         indirection-table="ia_Cv2Cv"
+      >
+         <fk-pointing-to-this-class column="parent_ac"/>
+         <fk-pointing-to-element-class column="child_ac"/>
+      </collection-descriptor>
+ 
       <!-- ************ fields inherited from AnnotatedObject ********* -->
 
       <collection-descriptor
@@ -1530,8 +1554,8 @@
 
       <!-- Annotations and CvObjects are linked via a (non-qualified) indirection
             table CVOBJECT2ANNOT -->
-    <collection-descriptor
-    proxy="true"
+     <collection-descriptor
+     proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          indirection-table="ia_CVOBJECT2ANNOT"
