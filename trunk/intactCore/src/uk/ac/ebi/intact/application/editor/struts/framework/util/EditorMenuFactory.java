@@ -307,9 +307,11 @@ public class EditorMenuFactory {
         }
         // Special case for dag menu items.
         if (key.startsWith(DAG_PREFIX)) {
-            return normalize(list);
+            list = normalize(list);
         }
-        return list;
+        String[] items = (String[]) list.toArray(new String[0]);
+        Arrays.sort(items);
+        return Arrays.asList(items);
     }
 
     /**
