@@ -423,13 +423,6 @@ public class UpdateProteins implements UpdateProteinsI {
             try {
                 helper.update (bioSource);
             } catch (IntactException ie) {
-                System.out.println("oldTaxId = " + oldTax);
-                System.out.println("oldShort = " + oldShort);
-                System.out.println("oldFull  = " + oldFull);
-
-                System.out.println("bioSource:" + bioSource);
-                System.out.println("newtBioSource:" + newtBioSource);
-
                 throw ie;
             }
         }
@@ -695,8 +688,6 @@ public class UpdateProteins implements UpdateProteinsI {
                 }
             }
         } catch (IntactException ie) {
-            System.out.println(ie.getRootCause());
-            ie.printStackTrace();
             logger.error (ie.getRootCause(), ie);
 
             writeEntry2file();
@@ -716,6 +707,31 @@ public class UpdateProteins implements UpdateProteinsI {
     } // createProteinFromSPTrEntry
 
 
+    public void addNewXref (AnnotatedObject current, Xref xref)  {
+        // Make sure the xref does not yet exist in the object
+        Collection xrefs = current.getXref();
+        for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
+            Xref anXref = (Xref) iterator.next();
+            if (anXref.equals(xref)) {
+                return;
+            }
+        }
+
+        // add the xref to the AnnotatedObject
+        current.addXref (xref);
+
+        // That test is done to avoid to record in the database an Xref
+        // which is already linked to that AnnotatedObject.
+        if (xref.getParentAc() == current.getAc()) {
+            try {
+                helper.create(xref);
+            } catch (Exception e_xref) {
+                logger.error ("Error when creating an Xref for protein " + current, e_xref);
+            }
+        }
+    }
+
+
     /**
      * update all Xref specific to a database.
      * That procedure is used when creating and updating a Protein Xref.
@@ -732,31 +748,33 @@ public class UpdateProteins implements UpdateProteinsI {
                                 final String database,
                                 final CvDatabase cvDatabase) throws SPTRException{
 
+        boolean needUpdate = false;
+
         // create existing GO Xrefs
         SPTRCrossReference cr[] = sptrEntry.getCrossReferences (database);
 
         for (int i = 0; i < cr.length; i++) {
-            SPTRCrossReference xref = cr[i];
-            String ac = xref.getAccessionNumber();
-            String id = xref.getPropertyValue(SPTRCrossReference.PROPERTY_DESCRIPTION);
+            SPTRCrossReference sptrXref = cr[i];
+            String ac = sptrXref.getAccessionNumber();
+            String id = sptrXref.getPropertyValue(SPTRCrossReference.PROPERTY_DESCRIPTION);
 
-            Xref goXref = new Xref ( myInstitution,
-                                     cvDatabase,
-                                     ac,
-                                     id, null, null) ;
+            Xref xref = new Xref ( myInstitution,
+                                   cvDatabase,
+                                   ac,
+                                   id, null, null) ;
 
             Collection xrefs = protein.getXref();
-            if (! xrefs.contains(goXref)) {
+            if (! xrefs.contains(xref)) {
                 // link the Xref to the protein and record it in the database
-                addNewXref (protein, goXref);
+                addNewXref (protein, xref);
                 logger.info ("CREATE "+ database +" Xref[AC: " + ac + ", Id: " + id + "]");
-                return true;
+                needUpdate = needUpdate || true;
             } else {
                 logger.info ("SKIP: "+ database +" Xref[AC: " + ac + ", Id: " + id + "] already exists");
             }
         }
 
-        return false;
+        return needUpdate;
     }
 
     /**
@@ -992,6 +1010,13 @@ public class UpdateProteins implements UpdateProteinsI {
 
                 entryCount++;
 
+                /**
+                 *  E X I T   H E R E
+                 *  after n iteration
+                 */
+//                if (entryCount == 20) return proteinCreated + proteinUpdated;
+
+
                 // Check if there is any exception remaining in the Entry before to use it
                 if (entryIterator.hadException()) {
                     Exception originalException = entryIterator.getException().getOriginalException();
@@ -1070,29 +1095,6 @@ public class UpdateProteins implements UpdateProteinsI {
         if (debugOnScreen) System.out.println ("Entry processed:    " + getEntryProcessededCount());
         if (debugOnScreen) System.out.println ("Entry skipped:      " + getEntrySkippedCount());
 
-    }
-
-
-    public void addNewXref (AnnotatedObject current, Xref xref)  {
-        // Make sure the xref does not yet exist in the object
-        Collection xrefs = current.getXref();
-        for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
-            Xref anXref = (Xref) iterator.next();
-            if (anXref.equals(xref)) return;
-        }
-
-        // add the xref to the AnnotatedObject
-        current.addXref (xref);
-
-        // That test is done to avoid to record in the database an Xref
-        // which is already linked to that AnnotatedObject.
-        if (xref.getParentAc() == current.getAc()) {
-            try {
-                helper.create(xref);
-            } catch (Exception e_xref) {
-                e_xref.printStackTrace();
-            }
-        }
     }
 
 
