@@ -578,9 +578,11 @@ public class GoUtils {
             if (deleteold) {
                 // Delete all old data
                 myHelper.deleteAllElements(current.getXrefs());
-                current.getXrefs().removeAll(current.getXrefs());
+                current.getXrefs().clear();
                 myHelper.deleteAllElements(current.getAnnotations());
-                current.getAnnotations().removeAll(current.getAnnotations());
+                current.getAnnotations().clear();
+                myHelper.deleteAllElements(current.getAliases());
+                current.getAliases().clear();
             }
         }
         if (shortLabelExist(label, current.getAc())) {
@@ -605,7 +607,7 @@ public class GoUtils {
                 Annotation annotation = new Annotation(inst, cvtopic);
                 annotation.setAnnotationText((String) texts.next());
 
-                // Avoidn duplicate annotations.
+                // Avoid duplicate annotations.
                 if (current.getAnnotations().contains(annotation)) {
                     continue;
                 }
