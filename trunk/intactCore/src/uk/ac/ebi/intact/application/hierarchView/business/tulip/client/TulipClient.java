@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessService;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator;
 import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.Chrono;
 import uk.ac.ebi.intact.application.hierarchView.struts.StrutsConstants;
 
 import java.rmi.RemoteException;
@@ -108,7 +109,12 @@ public class TulipClient {
 
         if (null != tulip) {
             try {
+                Chrono chrono = new Chrono ();
+                chrono.start();
                 pc = tulip.getComputedTlpContent (tlpContent, mask);
+                chrono.stop();
+                String msg = "Time for computing coordinates " + chrono;
+                logger.info(msg);
             } catch (RemoteException re) {
                 logger.error ("Unable to retreive proteins' coordinates", re);
                 throw re;
