@@ -1,0 +1,55 @@
+shortlabel: flybase
+term: FlyBase - A Database of the Drosophila Genome
+search-url: http://flybase.net/cgi-bin/fbannq.html?acc=${ac}
+url: http://fbserver.gen.cam.ac.uk:7081/
+
+shortlabel: go
+term: Gene Ontology
+url: http://www.geneontology.org/
+definition: The Gene Ontology.
+search-url: http://www.ebi.ac.uk/ego/DisplayGoTerm?id=${ac}
+
+shortlabel: intact
+term: IntAct molecular InterAction database
+url: http://www.ebi.ac.uk/intact/
+search-url: http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=${ac}
+
+shortlabel: interpro
+term: InterPro
+search-url: http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=${ac}
+url: http://www.ebi.ac.uk/interpro
+definition: InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
+
+shortlabel: newt
+term: New EBI Web Taxonomy
+search-url: http://www.ebi.ac.uk/newt/display?search=${ac}
+url: http://www.ebi.ac.uk/newt/index.html
+definition: NEWT is the taxonomy database maintained by the Swiss-Prot group. It integrates taxonomy data compiled in the NCBI database and data specific to the Swiss-Prot protein knowledgebase. 
+
+shortlabel: pdb
+term: Protein Data Bank
+
+shortlabel: psi-mi
+term: Proteomics Standards Initiative - Molecular Interaction XML format CVs
+definition: The HUPO Proteomics Standards Initiative has developed controlled vocabularies for protein interaction data. These CVs are fully integrated into IntAct, therefore no search-url is given, only the URL of the PSI documentation.
+url: http://psidev.sf.net/mi/xml/doc/user/index.html
+url: http://psidev.sf.net/mi/controlledVocab/psi-mi.dag.html
+
+shortlabel: pubmed
+term: PubMed
+url: http://www.ncbi.nlm.nih.gov/PubMed/
+definition: Citation database of the National Library of Medicine, US.
+search-url: http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=${ac}&dopt=Abstract
+
+shortlabel: sgd
+term: Saccharomyces Genome Database
+url: http://genome-www.stanford.edu/Saccharomyces/
+search-url: http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=${ac}
+
+shortlabel: uniprot
+term: UniProt protein sequence database
+search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+([uniprot-acc:${ac}]|[uniprot-isoid:${ac}])+-view+SwissEntry
+search-url-ascii: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+([uniprot-acc:${ac}]|[uniprot-isoid:${ac}])+-vn+2+-ascii
+url: http://www.uniprot.org/
+definition: The UniProt protein sequence database.
+

@@ -1,0 +1,33 @@
+/* For tables only; the cell is editable */
+td.editCell {
+    font-size: 8pt;
+    font-family: Arial, verdana, sans-serif;
+    text-align: left;
+    vertical-align: top;
+    background-color: #ff8c00
+}
+
+/* For tables only; error cell. */
+td.errorCell {
+    color: white;
+    background-color: red
+}
+
+/* Where the input is required. */
+.inputRequired {
+    background-color: #ccffcc
+}
+
+/* For warning messages. */
+.warning {
+    background-color: #90ee90
+}
+
+/* For severe warnings such as read only experiments */
+.severe-warning {
+    background-color: red;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14pt;
+    font-weight: bold;
+}
