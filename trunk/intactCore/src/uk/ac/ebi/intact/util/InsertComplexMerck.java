@@ -57,8 +57,10 @@ public class InsertComplexMerck {
      */
     private BioSource bioSource;
 
-    private CvDatabase medline, sptr;
+    private CvDatabase sptr;
+    private CvDatabase pubmed;
     CvComponentRole bait, prey;
+
     /**
      * The interaction type used for everything - kept here to avoid lots of
      * unnecessary DB calls. Needs to be set for everything anyway
@@ -108,6 +110,11 @@ public class InsertComplexMerck {
         sptr = (CvDatabase) helper.getObjectByLabel( CvDatabase.class, "sptr" );
         if ( sptr == null ){
             throw new IntactException ( "Could not find the CvDatabase: sptr. Stop processing." );
+        }
+
+        pubmed = (CvDatabase) helper.getObjectByLabel ( CvDatabase.class, "pubmed" );
+        if ( pubmed == null ){
+            throw new IntactException ( "Could not find the CvDatabase: pubmed. Stop processing." );
         }
 
         bait = (CvComponentRole) helper.getObjectByLabel( CvComponentRole.class, "bait" );
@@ -177,9 +184,8 @@ public class InsertComplexMerck {
      * @param protein the Protein we are checking in
      * @param ac the ac with
      * @return true if the given protein can be described by the given SPTR accession number, else false.
-     * @throws IntactException
      */
-    private boolean isThatACBelongsToThatProtein( Protein protein, String ac ) throws IntactException {
+    private boolean isThatACBelongsToThatProtein( Protein protein, String ac ) {
         if ( isSpliceVariantAC( ac ) ) {
             // Check for the shortLabel
             if ( protein.getShortLabel().equals( ac ) )
@@ -309,13 +315,7 @@ public class InsertComplexMerck {
             // Create the pubmed reference if the experiment Label is just a number.
             try {
                 Integer.parseInt( experimentLabel );
-
-                // TODO could be centralized.
-                CvXrefQualifier pubmedXref = (CvXrefQualifier) helper.getObjectByLabel( CvXrefQualifier.class, "pubmed" );
-                // TODO could be centralized.
-                CvDatabase pubmedDB = (CvDatabase) helper.getObjectByLabel ( CvDatabase.class, "pubmed" );
-
-                Xref pubmedRef = new Xref( owner, pubmedDB, experimentLabel, null, null, pubmedXref );
+                Xref pubmedRef = new Xref( owner, pubmed, experimentLabel, null, null, null );
 
                 persist( pubmedRef );
 
@@ -353,11 +353,13 @@ public class InsertComplexMerck {
                 insertComponent( interaction, preyAc, bioSource.getTaxId(), prey );
             }
             // Add auxiliary data as comment
-            CvTopic topic = (CvTopic) helper.getObjectByLabel( CvTopic.class, commentTopicLabel );
-            Annotation comment = new Annotation( owner, topic );
-            comment.setAnnotationText( commentTopicDescription );
-            persist( comment );
-            interaction.addAnnotation( comment );
+            if ( commentTopicDescription != null && ! commentTopicDescription.trim().equals( "" ) ) {
+                CvTopic topic = (CvTopic) helper.getObjectByLabel( CvTopic.class, commentTopicLabel );
+                Annotation comment = new Annotation( owner, topic );
+                comment.setAnnotationText( commentTopicDescription );
+                persist( comment );
+                interaction.addAnnotation( comment );
+            }
 
             // link interaction to experiment
             experiment.addInteraction( interaction );
