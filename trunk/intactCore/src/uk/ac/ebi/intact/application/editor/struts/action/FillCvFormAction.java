@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.commons.beanutils.DynaBean;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -43,24 +42,4 @@ public class FillCvFormAction  extends AbstractEditorAction {
         // Straight to the editor.
         return mapping.findForward("success");
     }
-
-    /**
-     * Creates a new DynaBean.
-     * @param formName the name of the form configured in the struts
-     * configuration file.
-     * @param request the HTTP request to get the application configuration.
-     * @return new <code>DynaBean</code> instance.
-     * @throws InstantiationException errors in creating the bean
-     * @throws IllegalAccessException errors in creating the bean
-     */
-//    private DynaBean createForm(String formName, HttpServletRequest request)
-//            throws InstantiationException, IllegalAccessException {
-//        // Fill the form to edit short label and full name.
-//        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(
-//            Globals.MODULE_KEY);
-//        FormBeanConfig config = appConfig.findFormBeanConfig(formName);
-//        DynaActionFormClass dynaClass =
-//                DynaActionFormClass.createDynaActionFormClass(config);
-//        return dynaClass.newInstance();
-//    }
 }
