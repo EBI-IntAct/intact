@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,7 +56,7 @@ public class SubmitFormAction extends AbstractEditorAction {
         getIntactUser(request).getView().copyPropertiesFrom(editorForm);
 
         // The map containing action paths.
-        Map map = (Map) super.getSession(request).getAttribute("formSubmitMap");
+        Map map = (Map) getApplicationObject(EditorConstants.ACTION_MAP);
 
         // The dispatch value holds the button label.
         String dispatch = editorForm.getDispatch();
@@ -66,25 +67,8 @@ public class SubmitFormAction extends AbstractEditorAction {
         if (path != null) {
             return mapping.findForward(path);
         }
-        // Let the subclass handle this.
-        return handleDispatch(mapping, form, request, dispatch);
-    }
-
-    /**
-     * Subclass must override this to provide to handle the event.
-     * @param mapping the <code>ActionMapping</code> used to select this instance
-     * @param form the optional <code>ActionForm</code> bean for this request
-     * (if any).
-     * @param request the HTTP request we are processing
-     * @param dispatch the dispatch parameter.
-     * @return the next cause of action to take.
-     * @throws Exception for any uncaught errors.
-     */
-    protected ActionForward handleDispatch(ActionMapping mapping,
-                                           ActionForm form,
-                                           HttpServletRequest request,
-                                           String dispatch)
-            throws Exception {
-        return null;
+        LOGGER.info("Received a null mapping; check the EditorActionServlet "
+                + "for setting the action map");
+        return mapping.findForward(FAILURE);
     }
 }

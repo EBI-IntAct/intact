@@ -44,13 +44,6 @@ public class SubmitAction extends SubmitDispatchAction {
         // Handler to the user.
         EditUserI user = getIntactUser(request);
 
-        // Update the bean with form values.
-//        user.getView().updateFromForm((DynaActionForm) form);
-
-        // Intercept before returning back to the result page.
-//        System.out.println("forward: " + forward.getPath());
-//        System.out.println("forward 1: " + mapping.findForward(RESULT).getPath());
-
         if (forward.getPath().equals(mapping.findForward(RESULT).getPath())) {
             // Check and see if we have to go to the experiment page (only
             // applicable for an Interaction editor.
