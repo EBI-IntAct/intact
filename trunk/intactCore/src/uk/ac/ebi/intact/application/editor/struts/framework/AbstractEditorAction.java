@@ -17,8 +17,6 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
-import uk.ac.ebi.intact.application.editor.struts.view.XrefEditForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -43,6 +41,11 @@ public abstract class AbstractEditorAction extends Action {
      * The key to success action.
      */
     protected static final String FORWARD_SUCCESS = "success";
+
+    /**
+     * The key to failure action.
+     */
+    protected static final String FORWARD_FAILURE = "failure";
 
     /**
      * Returns the only instance of Intact Service instance.
@@ -193,35 +196,6 @@ public abstract class AbstractEditorAction extends Action {
         DynaActionFormClass dynaClass =
                 DynaActionFormClass.createDynaActionFormClass(config);
         return dynaClass.newInstance();
-    }
-
-    /**
-     * Returns an edit form from a session object. The forms which require
-     * editing (e.g., annotations, xref and proteins in an interaction) are
-     * stored in a session.
-     * @param request the Http request to retrieve the session.
-     * @param formName the name of the form stored in <code>session</code>.
-     * @return an <code>EditForm</code> stored in <code>session</code>. A
-     * new form is created and stored in the session before returning it.
-     * @exception SessionExpiredException for an expired session.
-     */
-    protected EditForm getEditForm(HttpServletRequest request, String formName)
-            throws SessionExpiredException {
-        HttpSession session = getSession(request);
-        if (session.getAttribute(formName) == null) {
-            // The new form.
-            EditForm form = null;
-            // Special form for xref editing.
-            if (formName.equals(EditorConstants.FORM_XREF_EDIT)) {
-                form = new XrefEditForm();
-            }
-            else {
-                form = new EditForm();
-            }
-            session.setAttribute(formName, form);
-            return form;
-        }
-        return (EditForm) session.getAttribute(formName);
     }
 
     /**
