@@ -7,7 +7,7 @@
 
     <project name="intact-core" basedir="." default="project">
     <property name="project.title" value="Intact Core"/>
-    <property name="project.version" value="0.8"/>
+    <property name="project.version" value="0.1.0"/>
 
     <property name="src.dir"  value="src"/>
     <property name="dest.dir" value="classes"/>
@@ -19,10 +19,11 @@
     <property name="app.dir" value="application"/>
 
     <!-- Repository/OJB file properties -->
-    <property name="rep.template.file" value="${template.dir}/repository.template"/>
-    <property name="rep.dest.file"     value="${config.dir}/repository.xml"/>
-    <property name="ojb.template.file" value="${template.dir}/OJB.template"/>
+    <property name="rep.template.file" value="${template.dir}/repository_database.template"/>
+    <property name="rep.dest.file"     value="${config.dir}/repository_database.xml"/>
+<!--    <property name="ojb.template.file" value="${template.dir}/OJB.template"/>
     <property name="ojb.dest.file"     value="${config.dir}/OJB.properties"/>
+    -->
     <property name="ora.props.file"    value="${config.dir}/oracle.properties"/>
     <property name="pg.props.file"     value="${config.dir}/postgres.properties"/>
 
@@ -69,6 +70,12 @@
             <include name="*.jar"/>
         </fileset>
 
+        <!-- search specific jar files. -->
+        <pathelement location="${app.dir}/search2/WEB-INF/classes"/>
+        <fileset dir="${app.dir}/search2/WEB-INF/lib">
+            <include name="*.jar"/>
+        </fileset>
+
         <!-- hv specific jar files. -->
         <pathelement location="${app.dir}/hierarchView/WEB-INF/classes"/>
         <fileset dir="${app.dir}/hierarchView/WEB-INF/lib">
@@ -84,7 +91,7 @@
     <target name="set-target-env" description="Sets the target environment">
         <!-- Delete existing environment files. -->
         <delete file="${rep.dest.file}" quiet="true"/>
-        <delete file="${ojb.dest.file}" quiet="true"/>
+<!--         <delete file="${ojb.dest.file}" quiet="true"/>   -->
         <antcall target="${target.env}"/>
     </target>
 
@@ -215,12 +222,12 @@
         </replace>
 
         <!-- Copy the template to config directory -->
-        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
+<!--        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/> -->
 
         <!-- Set the postgres sequence manager -->
 
         <!-- Copy the template to config directory -->
-        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
+ <!--        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
 
         <replace file="${ojb.dest.file}">
             <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.PostgresSequenceManager" />
@@ -229,6 +236,7 @@
         <replace file="${ojb.dest.file}">
             <replacefilter token="[CACHEIMPLEMENTATION]" value="${ojb.ObjectCacheClass}"/>
         </replace>
+        -->
     </target>
 
     <!-- =================================================================== -->
@@ -259,7 +267,7 @@
         </replace>
 
         <!-- Copy the template to config directory -->
-        <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
+ <!--       <copy file="${ojb.template.file}" tofile="${ojb.dest.file}"/>
 
         <replace file="${ojb.dest.file}">
             <replacefilter token="@SEQ_MANAGER@" value="uk.ac.ebi.intact.persistence.OracleSequenceManager"/>
@@ -268,6 +276,7 @@
         <replace file="${ojb.dest.file}">
             <replacefilter token="[CACHEIMPLEMENTATION]" value="${ojb.ObjectCacheClass}"/>
         </replace>
+        -->
     </target>
 
     <!-- =================================================================== -->
@@ -420,7 +429,7 @@
         <javadoc destdir="${jdoc.dir}" author="true" version="true" use="true"
             windowtitle="Intact core API Documentation"
             doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
-            bottom="&lt;i&gt;IntAct Project - EMBL-EBI 2004 - intact-help@ebi.ac.uk  &lt;/i&gt;" source="1.4">
+            bottom="&lt;i&gt;Chris Lewington EMBL-EBI 2002 - clewing@ebi.ac.uk&lt;/i&gt;" source="1.4">
 
             <!-- Exclude javadoc for test packages. -->
             <packageset dir="${src.dir}">
