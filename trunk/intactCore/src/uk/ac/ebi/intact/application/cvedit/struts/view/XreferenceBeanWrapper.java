@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -20,7 +20,7 @@ public class XreferenceBeanWrapper extends TableDecorator {
      * Returns the hyperlink to delete a X'reference.
      */
     public String getDeleteLink() {
-        String ac = ((XreferenceBean) super.getObject()).getAc();
-        return "<a href=\"delXref.do?ac=" + ac + "\">Delete</a>";
+        long key = ((XreferenceBean) super.getObject()).getKey();
+        return "<a href=\"delXref.do?key=" + key + "\">Delete</a>";
     }
 }
