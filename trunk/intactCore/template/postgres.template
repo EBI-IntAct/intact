@@ -1,4 +1,7 @@
 username=YOUR-POSTGRES-USERNAME
 password=YOUR-POSTGRES-PASSWORD
 dbalias=YOUR-POSTGRES-DATABASE-ALIAS, e.g. INTACT-DEVELOPMENT
+
+# This property is no longer required as it is set within the
+# build file.
 subprotocol=e.g. postgresql (local DB) or postgresql://your.machine.url:Portnumber/dbname:username (remote DB)

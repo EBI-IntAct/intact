@@ -1,4 +1,7 @@
 username=YOUR-ORACLE-USERNAME
 password=YOUR-ORACLE-PASSWORD
 dbalias=YOUR-ORACLE-DATABASE-ALIAS, e.g. INTACT-DEVELOPMENT
+
+# This property is no longer required as it is set within the
+# build file.
 subprotocol=e.g. oracle:thin:@your.machine.url:Portnumber
