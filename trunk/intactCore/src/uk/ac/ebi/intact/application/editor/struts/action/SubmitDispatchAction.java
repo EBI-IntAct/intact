@@ -278,10 +278,6 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
             }
         }
         if (submit) {
-            // Need to rebuild the menu again as the short label may have been
-            // changed. Remove it from cache.
-            view.removeMenu();
-
             // Update the search cache.
             ResultBean rb = new ResultBean(view.getAnnotatedObject());
             user.updateSearchCache(rb);
