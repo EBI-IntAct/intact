@@ -17,8 +17,12 @@
 
         <form name="cvInfoForm">
             <field property="shortLabel" depends="required, mask, maxlength">
-                <msg name="mask" key="cvinfo.label.mask"/>
-         	    <msg name="maxlength" key="cvinfo.label.maxlength"/>
+                <msg name="mask" key="errors.shortlabel.mask"/>
+         	    <msg name="maxlength" key="errors.shortlabel.maxlength"/>
+
+                <arg0 key="cvinfo.label.shortlabel"/>
+                <arg1 name="maxlength" key="${var:maxlength}" resource="false"/>
+
                 <var>
                     <var-name>mask</var-name>
                     <var-value>^[a-z0-9\-:]+$</var-value>
@@ -27,6 +31,18 @@
                 <var>
                     <var-name>maxlength</var-name>
                     <var-value>20</var-value>
+                </var>
+            </field>
+
+        </form>
+
+        <form name="bioSourceForm">
+            <field property="taxId" depends="required, mask">
+                <msg name="mask" key="errors.taxid.mask"/>
+                <arg0 key="biosource.taxid.label"/>
+                <var>
+                    <var-name>mask</var-name>
+                    <var-value>^\d+$</var-value>
                 </var>
             </field>
         </form>
