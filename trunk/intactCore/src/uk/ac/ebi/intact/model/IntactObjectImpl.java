@@ -14,7 +14,8 @@ import java.sql.Timestamp;
  * @author intact team
  * @version $Id$
  */
-public abstract class IntactObjectImpl implements IntactObject, Serializable {
+public abstract class IntactObjectImpl implements IntactObject, Serializable,
+        Cloneable {
 
     /**
      * This is used in toString() in order to be platform compatible.
@@ -117,7 +118,15 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable {
         }
     }
 
-
+    /**
+     * Makes a clone of this intact object.
+     * @return a cloned version of the current instance.
+     * @throws CloneNotSupportedException to indicate that an instance cannot be
+     * cloned.
+     */
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
     ///////////////////////////////////////
     // instance methods

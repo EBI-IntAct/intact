@@ -7,10 +7,7 @@ package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Represents an interaction.
@@ -132,43 +129,6 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         //TODO  Q: does it make sense to create Interactions (and Proteins) without any Xrefs?
 
     }
-
-	public Interaction copy() {
-		// The interaction to return. This is empty but we will fill data later.
-		Interaction interaction = new InteractionImpl();
-        
-        // Share the owner.
-        interaction.setOwner(getOwner());
-        // "-x" is added as the suffix.
-        interaction.setShortLabel(getShortLabel() + "-x");
-        interaction.setFullName(getFullName());
-        interaction.setKD(getKD());
-        
-        // Experiments are not copied.
-        interaction.setExperiments(Collections.EMPTY_LIST);
-        
-        // Share the cv interaction type and biosource.
-        interaction.setCvInteractionType(getCvInteractionType());
-        interaction.setBioSource(getBioSource());
-        
-        // New components, will contain same number of componets.
-        Collection comps= new ArrayList(getComponents().size());
-        for (Iterator iter =getComponents().iterator(); iter.hasNext(); ) {
-            Component comp = (Component) iter.next();
-            // Add as a new componet with shared Protein.
-            comps.add(new Component(comp.getOwner(), interaction,
-                comp.getInteractor(), comp.getCvComponentRole()));
-        }
-        interaction.setComponents(comps);
-        
-        // Copy xrefs.
-        Collection xrefs = new ArrayList(getXrefs().size());
-        for (Iterator iter = getXrefs().iterator(); iter.hasNext();) {
-            xrefs.add(((Xref) iter.next()).copy());
-        }
-        interaction.setXrefs(xrefs);
-		return interaction;
-	}
 
 	///////////////////////////////////////
     //access methods for attributes
@@ -327,6 +287,38 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         return code;
     }
 
+    /**
+     * Returns a cloned version of the current object.
+     * @return a cloned version of the current Interaction with the folowing
+     * exceptions.
+     * <ul>
+     * <li>Experiments are not cloned. The experiments for the cloned
+     * interaction is empty.</li>
+     * <li>New components but with the same proteins. The new components has the
+     * cloned interaction as their interaction.</li>
+     * </ul>
+     * @throws CloneNotSupportedException
+     */
+    public Object clone() throws CloneNotSupportedException {
+        InteractionImpl copy =  (InteractionImpl) super.clone();
+
+        // Not copying any experiments.
+        copy.experiments = Collections.EMPTY_LIST;
+
+        // New components, will contain same number of componets.
+        copy.components = (List) ((ArrayList) components).clone();
+
+        // Make deep copies.
+        for (int i = 0; i < components.size(); i++) {
+            Component comp = (Component) ((List) components).get(i);
+            // The cloned component.
+            Component copyComp = (Component) comp.clone();
+            // Set the interactor as the current cloned interactions.
+            copyComp.setInteractionForClone(copy);
+            ((List) copy.components).set(i, copyComp);
+        }
+        return copy;
+    }
 
     public String toString() {
         String result;

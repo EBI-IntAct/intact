@@ -324,6 +324,30 @@ public abstract class AnnotatedObjectImpl extends BasicObjectImpl implements Ann
         return code;
     }
 
+    public Object clone() throws CloneNotSupportedException {
+        AnnotatedObjectImpl copy = (AnnotatedObjectImpl) super.clone();
+
+        // Append the "-x" to the short label.
+        copy.shortLabel += "-x";
+
+        // Clone annotations
+        copy.annotations = (List) ((ArrayList) annotations).clone();
+        // Make deep copies.
+        for (int i = 0; i < annotations.size(); i++) {
+            Annotation annot = (Annotation) ((List) annotations).get(i);
+            ((List) copy.annotations).set(i, (Annotation) annot.clone());
+        }
+        // Clone xrefs.
+        copy.xrefs = (List) ((ArrayList) xrefs).clone();
+        // Make deep copies.
+        for (int i = 0; i < xrefs.size(); i++) {
+            Xref xref = (Xref) ((List) xrefs).get(i);
+            ((List) copy.xrefs).set(i, (Xref) xref.clone());
+        }
+
+        return copy;
+    }
+
     public String toString() {
         return this.getAc() + "; owner=" + this.getOwner().getAc()
                 + "; name=" + this.shortLabel + "; fullname=" + fullName;

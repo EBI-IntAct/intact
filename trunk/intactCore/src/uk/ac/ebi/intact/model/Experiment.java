@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Collections;
 
 /**
  * Represents one experiment. Describes the conditions in which
@@ -246,6 +247,26 @@ public class Experiment extends AnnotatedObjectImpl implements Editable {
         return result;
     }
 
+    /**
+     * Returns a cloned version of the current object.
+     * @return a cloned version of the current Experiment with following
+     * exceptions.
+     * <ul>
+     * <li>Interactions are not cloned. The interactions for the cloned
+     * experiment is empty</li>
+     * <li>New components but with the same proteins. The new components has the
+     * cloned interaction as their interaction.</li>
+     * </ul>
+     * @throws CloneNotSupportedException
+     */
+    public Object clone() throws CloneNotSupportedException {
+        Experiment copy = (Experiment) super.clone();
+
+        // Not copying any interactions.
+        copy.interactions = Collections.EMPTY_LIST;
+
+        return copy;
+    }
 
     ///////////////////////////////////////
     // instance methods
