@@ -100,7 +100,7 @@ public class UpdateProteins {
     public void addBioSource(String orgName, String taxId) throws Exception {
         BioSource bs = new BioSource() ;
         bs.setOwner((Institution) helper.getObjectByLabel(Institution.class, "EBI")) ;
-        bs.setScientificName(orgName) ;
+        bs.setFullName(orgName) ;
         bs.setTaxId(taxId) ;
         dao.create(bs) ;
     }

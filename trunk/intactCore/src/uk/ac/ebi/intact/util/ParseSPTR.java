@@ -245,7 +245,7 @@ public class ParseSPTR {
 
     /**
      * Appends the TrEMBL KW line to a given FlatFile using a ViewHelper
-     * @param controller The TremblController that holds the data
+     * @param action The TremblController that holds the data
      * @param ff The FlatFile that holds the preliminary flat file output
      * @param helper The ViewHelper that holds further layout information
      * @return A Vector contatining errors that occured during line geration
@@ -459,7 +459,7 @@ public class ParseSPTR {
 
     /**
      * Appends the TrEMBL GN line to a given FlatFile using a ViewHelper
-     * @param controller The TremblController that holds the data
+     * @param action The TremblController that holds the data
      * @param ff The FlatFile that holds the preliminary flat file output
      * @param helper The ViewHelper that holds further layout information
      * @return A Vector contatining errors that occured during line geration
