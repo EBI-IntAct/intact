@@ -91,8 +91,10 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
+        <pathelement path="${root.lib.dir}/commons-lang-1.0.jar"/>
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
         <pathelement path="${intact.app.dir}/lib/commons-logging.jar"/>
+
     </path>
 
     <!-- =================================================================== -->
