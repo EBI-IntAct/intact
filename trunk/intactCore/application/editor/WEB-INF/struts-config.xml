@@ -37,195 +37,19 @@
 
         <!-- Form for a CV object -->
         <form-bean name="cvForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.cv.CvDynaForm">
-            <form-property name="ac" type="java.lang.String"/>
-            <form-property name="shortLabel" type="java.lang.String"/>
-            <form-property name="fullName" type="java.lang.String"/>
-
-            <!-- For annotations -->
-            <form-property name="annotations"
-                type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean[]"/>
-            <form-property name="annotCmd" type="java.lang.String[]"/>
-
-            <!-- For adding an annotation -->
-            <form-property name="annotation"
-                type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean"/>
-
-            <!-- For xrefs -->
-            <form-property name="xrefs"
-                type="uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean[]"/>
-            <form-property name="xrefCmd" type="java.lang.String[]"/>
-
-            <!-- For adding an xref -->
-            <form-property name="xref"
-                type="uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean"/>
-
-            <!-- The index position of the current Edit/Save/Delete action; common to any
-                 object on the form.
-                 -->
-            <form-property name="idx" type="java.lang.Integer"/>
-
-            <!-- This property indicates the action: Save, Submit, Cancel, Delete and
-                 Adding Annotation/Xref.
-                 -->
-            <form-property name="dispatch" type="java.lang.String"/>
-        </form-bean>
+            type="uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm"/>
 
         <!-- Form for an Experiment -->
         <form-bean name="expForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentDynaForm">
-            <form-property name="ac" type="java.lang.String"/>
-            <form-property name="shortLabel" type="java.lang.String"/>
-            <form-property name="fullName" type="java.lang.String"/>
-
-            <!-- Experiment specific information -->
-            <form-property name="organism" type="java.lang.String"/>
-            <form-property name="inter" type="java.lang.String"/>
-            <form-property name="ident" type="java.lang.String"/>
-
-            <!-- Property to set AC related to an Interaction when a button
-                 is pressed
-            -->
-            <form-property name="intac" type="java.lang.String"/>
-
-            <!-- Search parameters for an experiment -->
-            <form-property name="intSearchLabel" type="java.lang.String"/>
-            <form-property name="intSearchAC" type="java.lang.String"/>
-
-            <!-- For annotations -->
-            <form-property name="annotations"
-                type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean[]"/>
-            <form-property name="annotCmd" type="java.lang.String[]"/>
-
-            <!-- For adding an annotation -->
-            <form-property name="annotation"
-                type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean"/>
-
-            <!-- For xrefs -->
-            <form-property name="xrefs"
-                type="uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean[]"/>
-            <form-property name="xrefCmd" type="java.lang.String[]"/>
-
-            <!-- For adding an xref -->
-            <form-property name="xref"
-                type="uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean"/>
-
-            <!-- The index position of the current Edit/Save/Delete action; common to any
-                 object on the form.
-                 -->
-            <form-property name="idx" type="java.lang.Integer"/>
-
-            <!-- This property indicates the action: Save, Submit, Cancel, Delete and
-                 Adding Annotation/Xref.
-                 -->
-            <form-property name="dispatch" type="java.lang.String"/>
-        </form-bean>
+            type="uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm"/>
 
         <!-- Form for a BioSource -->
         <form-bean name="bsForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceDynaForm">
-            <form-property name="ac" type="java.lang.String"/>
-            <form-property name="shortLabel" type="java.lang.String"/>
-            <form-property name="fullName" type="java.lang.String"/>
-
-            <!-- BioSource specific information -->
-            <form-property name="taxId" type="java.lang.String"/>
-            <form-property name="cellType" type="java.lang.String"/>
-            <form-property name="tissue" type="java.lang.String"/>
-
-            <!-- For annotations -->
-            <form-property name="annotations"
-                type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean[]"/>
-            <form-property name="annotCmd" type="java.lang.String[]"/>
-
-            <!-- For adding an annotation -->
-            <form-property name="annotation"
-                type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean"/>
-
-            <!-- For xrefs -->
-            <form-property name="xrefs"
-                type="uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean[]"/>
-            <form-property name="xrefCmd" type="java.lang.String[]"/>
-
-            <!-- For adding an xref -->
-            <form-property name="xref"
-                type="uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean"/>
-
-            <!-- The index position of the current Edit/Save/Delete action; common to any
-                 object on the form.
-                 -->
-            <form-property name="idx" type="java.lang.Integer"/>
-
-            <!-- This property indicates the action: Save, Submit, Cancel, Delete and
-                 Adding Annotation/Xref.
-                 -->
-            <form-property name="dispatch" type="java.lang.String"/>
-        </form-bean>
+            type="uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionForm"/>
 
         <!-- Form for an Interaction -->
         <form-bean name="intForm"
-            type="uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionDynaForm">
-            <form-property name="ac" type="java.lang.String"/>
-            <form-property name="shortLabel" type="java.lang.String"/>
-            <form-property name="fullName" type="java.lang.String"/>
-
-            <!-- Interaction specific information -->
-            <form-property name="kD" type="java.lang.Float"/>
-            <form-property name="organism" type="java.lang.String"/>
-            <form-property name="interactionType" type="java.lang.String"/>
-
-            <!-- Experiments for this interaction -->
-            <form-property name="exps"
-                type="uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean[]"/>
-            <form-property name="expCmd" type="java.lang.String[]"/>
-
-            <!-- Experiments for this interaction -->
-            <form-property name="expshold"
-                type="uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean[]"/>
-            <form-property name="expsholdCmd" type="java.lang.String[]"/>
-
-            <!-- Search parameters for an experiment -->
-            <form-property name="expSearchLabel" type="java.lang.String"/>
-            <form-property name="expSearchAC" type="java.lang.String"/>
-
-            <!-- For Proteins -->
-            <form-property name="proteins"
-                type="uk.ac.ebi.intact.application.editor.struts.view.interaction.ProteinBean[]"/>
-            <form-property name="protCmd" type="java.lang.String[]"/>
-
-            <!-- Search parameters for a Protein -->
-            <form-property name="protSearchLabel" type="java.lang.String"/>
-            <form-property name="protSearchAC" type="java.lang.String"/>
-            <form-property name="protSearchSpAC" type="java.lang.String"/>
-
-            <!-- For Annotations -->
-            <form-property name="annotations"
-                type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean[]"/>
-            <form-property name="annotCmd" type="java.lang.String[]"/>
-
-            <!-- For adding an annotation -->
-            <form-property name="annotation"
-                type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean"/>
-
-            <!-- For xrefs -->
-            <form-property name="xrefs"
-                type="uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean[]"/>
-            <form-property name="xrefCmd" type="java.lang.String[]"/>
-
-            <!-- For adding an xref -->
-            <form-property name="xref"
-                type="uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean"/>
-
-            <!-- The index position of the current Edit/Save/Delete action; common to any
-                 object on the form.
-                 -->
-            <form-property name="idx" type="java.lang.Integer"/>
-
-            <!-- This property indicates the action: Save, Submit, Cancel, Delete and
-                 Adding Annotation/Xref.
-                 -->
-            <form-property name="dispatch" type="java.lang.String"/>
-        </form-bean>
+            type="uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm"/>
     </form-beans>
 
     <!-- ========== Global Exceptions ======================================= -->
@@ -241,7 +65,7 @@
             handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
             type="uk.ac.ebi.intact.application.editor.exception.SearchException"
             key="dummy.key"
-            path="/do/fillCvForm"/>
+            path="/do/cv/fill/form"/>
 
         <!-- Uses the input for validation exceptions -->
         <exception
@@ -345,17 +169,17 @@
         <action path="/choose"
             type="uk.ac.ebi.intact.application.editor.struts.action.EditorChoiceAction"
             scope="request">
-            <forward name="cv" path="/do/fillCvForm"/>
-            <forward name="exp" path="/do/fillExpForm"/>
-            <forward name="biosrc" path="/do/fillBsForm"/>
-            <forward name="int" path="/do/fillIntForm"/>
+            <forward name="cv" path="/do/cv/fill/form"/>
+            <forward name="exp" path="/do/exp/fill/form"/>
+            <forward name="biosrc" path="/do/bs/fill/form"/>
+            <forward name="int" path="/do/int/fill/form"/>
         </action>
 
         <!-- ==================== Actions for setting up editors ========== -->
 
         <!-- This action fills the cv form. -->
-        <action path="/fillCvForm"
-            type="uk.ac.ebi.intact.application.editor.struts.action.FillCvFormAction"
+        <action path="/cv/fill/form"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
             name="cvForm"
             validate="false"
             scope="session">
@@ -363,8 +187,8 @@
         </action>
 
         <!-- This action fills the exp form. -->
-        <action path="/fillExpForm"
-            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.FillExperimentFormAction"
+        <action path="/exp/fill/form"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
             name="expForm"
             validate="false"
             scope="session">
@@ -372,8 +196,8 @@
         </action>
 
         <!-- Populates the biosource form. -->
-        <action path="/fillBsForm"
-            type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.FillBioSrcFormAction"
+        <action path="/bs/fill/form"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
             name="bsForm"
             validate="false"
             scope="session">
@@ -381,8 +205,8 @@
         </action>
 
         <!-- This action fills the Interaction form. -->
-        <action path="/fillIntForm"
-            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.FillInteractionFormAction"
+        <action path="/int/fill/form"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillFormAction"
             name="intForm"
             validate="false"
             scope="session">
@@ -412,11 +236,11 @@
         <action path="/cvSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
             name="cvForm"
-            input="/do/fillCvForm"
+            input="/do/cv/fill/form"
             validate="true"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/fillCvForm"/>
+            <forward name="success" path="/do/cv/fill/form"/>
 
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the search page  (global) -->
@@ -428,7 +252,7 @@
         <action path="/cvAnnotSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
             name="cvForm"
-            input="/do/fillCvForm"
+            input="/do/cv/fill/form"
             validate="false"
             scope="session" />
 
@@ -438,7 +262,7 @@
         <action path="/cvXrefSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
             name="cvForm"
-            input="/do/fillCvForm"
+            input="/do/cv/fill/form"
             validate="false"
             scope="session" />
 
@@ -472,11 +296,11 @@
         <action path="/expSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
             name="expForm"
-            input="/do/fillExpForm"
+            input="/do/exp/fill/form"
             validate="true"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/fillExpForm"/>
+            <forward name="success" path="/do/exp/fill/form"/>
 
             <!-- Back to the results page as we got here from a search result (global) -->
         </action>
@@ -487,7 +311,7 @@
         <action path="/expAnnotSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
             name="expForm"
-            input="/do/fillExpForm"
+            input="/do/exp/fill/form"
             validate="false"
             scope="session" />
 
@@ -497,7 +321,7 @@
         <action path="/expXrefSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
             name="expForm"
-            input="/do/fillExpForm"
+            input="/do/exp/fill/form"
             validate="false"
             scope="session" />
 
@@ -506,7 +330,7 @@
         <action path="/interaction"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionAction"
             name="expForm"
-            input="/do/fillExpForm"
+            input="/do/exp/fill/form"
             validate="false"
             scope="session" >
             <forward name="editInt" path="/do/intLink"/>
@@ -518,10 +342,10 @@
         <action path="/intLink"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionLinkAction"
             name="expForm"
-            input="/do/fillExpForm"
+            input="/do/exp/fill/form"
             validate="true"
             scope="session" >
-            <forward name="success" path="/do/fillIntForm"/>
+            <forward name="success" path="/do/int/fill/form"/>
         </action>
 
         <!-- Action to handle when an experiment is added to an Interaction
@@ -530,10 +354,10 @@
         <action path="/intHold"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionHoldAction"
             name="expForm"
-            input="/do/fillExpForm"
+            input="/do/exp/fill/form"
             validate="false"
             scope="session" >
-            <forward name="success" path="/do/fillExpForm"/>
+            <forward name="success" path="/do/exp/fill/form"/>
         </action>
 
         <!-- Action to handle when an interaction is added to the experiment or
@@ -542,11 +366,11 @@
         <action path="/intSearch"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionDispatchAction"
             name="expForm"
-            input="/do/fillExpForm"
+            input="/do/exp/fill/form"
             validate="false"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/fillExpForm"/>
+            <forward name="success" path="/do/exp/fill/form"/>
         </action>
 
         <!-- ============= Actions related to BioSource editor ============ -->
@@ -573,11 +397,11 @@
         <action path="/bsSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
             name="bsForm"
-            input="/do/fillBsForm"
+            input="/do/bs/fill/form"
             validate="true"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/fillBsForm"/>
+            <forward name="success" path="/do/bs/fill/form"/>
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the search page  (global) -->
         </action>
@@ -588,7 +412,7 @@
         <action path="/bsAnnotSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
             name="bsForm"
-            input="/do/fillBsForm"
+            input="/do/bs/fill/form"
             validate="false"
             scope="session" />
 
@@ -598,7 +422,7 @@
         <action path="/bsXrefSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
             name="bsForm"
-            input="/do/fillBsForm"
+            input="/do/bs/fill/form"
             validate="false"
             scope="session" />
 
@@ -609,10 +433,10 @@
         <action path="/taxid"
             type="uk.ac.ebi.intact.application.editor.struts.action.biosrc.BioSourceAction"
             name="bsForm"
-            input="/do/fillBsForm"
+            input="/do/bs/fill/form"
             validate="false"
             scope="session">
-            <forward name="success" path="/do/fillBsForm"/>
+            <forward name="success" path="/do/bs/fill/form"/>
         </action>
 
         <!-- ============= Actions related to Interaction editor ============ -->
@@ -646,15 +470,15 @@
         <action path="/intSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.SubmitAction"
             name="intForm"
-            input="/do/fillIntForm"
+            input="/do/int/fill/form"
             validate="true"
             scope="session"
             parameter="dispatch">
             <!-- Back to the input page -->
-            <forward name="success" path="/do/fillIntForm"/>
+            <forward name="success" path="/do/int/fill/form"/>
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the experiment editor (where we came from) -->
-            <forward name="experiment" path="/do/fillExpForm"/>
+            <forward name="experiment" path="/do/exp/fill/form"/>
         </action>
 
         <!-- Action to handle when a button (edit/save/delete) related to annotation
@@ -663,7 +487,7 @@
         <action path="/intAnnotSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.AnnotationDispatchAction"
             name="intForm"
-            input="/do/fillIntForm"
+            input="/do/int/fill/form"
             validate="false"
             scope="session" />
 
@@ -673,7 +497,7 @@
         <action path="/intXrefSubmit"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefDispatchAction"
             name="intForm"
-            input="/do/fillIntForm"
+            input="/do/int/fill/form"
             validate="false"
             scope="session" />
 
@@ -684,7 +508,7 @@
             name="intForm"
             validate="false"
             scope="session" >
-            <forward name="success" path="/do/fillIntForm"/>
+            <forward name="success" path="/do/int/fill/form"/>
         </action>
 
         <!-- Action to handle when an experiment is added to an Interaction
@@ -693,10 +517,10 @@
         <action path="/expHold"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentHoldAction"
             name="intForm"
-            input="/do/fillIntForm"
+            input="/do/int/fill/form"
             validate="false"
             scope="session" >
-            <forward name="success" path="/do/fillIntForm"/>
+            <forward name="success" path="/do/int/fill/form"/>
         </action>
 
         <!-- Action to handle when an experiment is added to an Interaction
@@ -705,34 +529,34 @@
         <action path="/expSearch"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentDispatchAction"
             name="intForm"
-            input="/do/fillIntForm"
+            input="/do/int/fill/form"
             validate="false"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/fillIntForm"/>
+            <forward name="success" path="/do/int/fill/form"/>
         </action>
 
         <!-- Action to handle when a Protein is saved/deleted or edited. -->
         <action path="/prot"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinDispatchAction"
             name="intForm"
-            input="/do/fillIntForm"
+            input="/do/int/fill/form"
             validate="true"
             scope="session"
             parameter="dispatch">
-            <forward name="success" path="/do/fillIntForm"/>
-            <forward name="failure" path="/do/fillIntForm"/>
+            <forward name="success" path="/do/int/fill/form"/>
+            <forward name="failure" path="/do/int/fill/form"/>
         </action>
 
         <!-- Action to handle for the Protein search. -->
         <action path="/protSearch"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ProteinSearchAction"
             name="intForm"
-            input="/do/fillIntForm"
+            input="/do/int/fill/form"
             validate="false"
             scope="session">
-            <forward name="success" path="/do/fillIntForm"/>
-            <forward name="failure" path="/do/fillIntForm"/>
+            <forward name="success" path="/do/int/fill/form"/>
+            <forward name="failure" path="/do/int/fill/form"/>
         </action>
 
         <!-- ========== Common actions shared by various editors ========== -->
@@ -744,7 +568,7 @@
             scope="session">
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the experiment editor (where we came from) -->
-            <forward name="experiment" path="/do/fillExpForm"/>
+            <forward name="experiment" path="/do/exp/fill/form"/>
         </action>
 
         <!-- Action to handle when the current edit record is deleted. -->
@@ -755,7 +579,7 @@
             <!-- Back to the search page  (global) -->
             <!-- error goes to the global error action -->
             <!-- Back to the experiment editor (where we came from) -->
-            <forward name="experiment" path="/do/fillExpForm"/>
+            <forward name="experiment" path="/do/exp/fill/form"/>
         </action>
 
         <!-- ============================================================== -->

@@ -17,6 +17,7 @@
 <jsp:include page="../js.jsp" />
 
 <html:form action="/intDispatch" focus="shortLabel">
+    <html:hidden property="anchor" />
 
     <jsp:include page="info.jsp" />
     <p></p>

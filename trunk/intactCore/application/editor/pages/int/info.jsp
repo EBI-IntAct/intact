@@ -83,7 +83,7 @@
 
     <tr class="tableRowEven">
         <td class="tableCell">
-            <html:text property="kD" name="intForm" size="5"
+            <html:text property="kd" name="intForm" size="5"
                 maxlength="16"/>
         </td>
 

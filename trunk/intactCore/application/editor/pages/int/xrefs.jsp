@@ -26,7 +26,7 @@
 
 <h3>Crossreferences</h3>
 
-<c:if test="${not empty intForm.map.xrefs}">
+<c:if test="${not empty intForm.xrefs}">
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
         <tr class="tableRowHeader">
             <th class="tableCellHeader" width="2%"></th>
@@ -51,7 +51,7 @@
         </tr>
         <%-- To calculate row or even row --%>
         <c:set var="row"/>
-        <c:forEach var="xrefs" items="${intForm.map.xrefs}">
+        <c:forEach var="xrefs" items="${intForm.xrefs}">
             <!-- Different styles for even or odd rows -->
             <c:choose>
                 <c:when test="${row % 2 == 0}">
