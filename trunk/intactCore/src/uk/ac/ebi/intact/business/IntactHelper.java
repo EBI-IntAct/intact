@@ -248,7 +248,7 @@ public class IntactHelper implements SearchI, Serializable {
      * validates a user's credentials against the data store.
      *
      * @param user the username
-     * @param password the user password (may be null)
+     * @param passowrd the user password (may be null)
      *
      * @return boolean true if valid details, false if not (including a null username).
      */
@@ -266,7 +266,7 @@ public class IntactHelper implements SearchI, Serializable {
      * Note that any previous data may be lost, and a subsequent call to open()
      * will result in a new connection being established to the persitent store.
      *
-     * @exception IntactException thrown if the store was unable to be closed.
+     * @exception thrown if the store was unable to be closed.
      */
     public void closeStore() throws IntactException {
 
@@ -277,25 +277,6 @@ public class IntactHelper implements SearchI, Serializable {
         catch(Exception de) {
 
             throw new IntactException("failed to close data source!", de);
-        }
-    }
-
-    /**
-     * opens the data source. This method should only be used if you want to
-     * explicitly manage the opening/clsoing yourself - in most cases you should
-     * leave this to the Helper class and the persistence layer.
-     *
-     * @exception IntactException thrown if the store was unable to be opened.
-     */
-    public void openStore() throws IntactException {
-
-        try {
-
-            dao.open();
-        }
-        catch(Exception de) {
-
-            throw new IntactException("failed to open data source!", de);
         }
     }
 
@@ -368,7 +349,7 @@ public class IntactHelper implements SearchI, Serializable {
     /**
      *  This method provides a create operation for intact objects.
      *
-     * @param objects - a collection of intact objects to be created
+     * @param types - a collection of intact objects to be created
      *
      * @exception IntactException - thrown if a problem arises during the creation process
      *
@@ -502,6 +483,13 @@ public class IntactHelper implements SearchI, Serializable {
 
        }
 
+    /**
+     * Cancels the update for the given object.
+     * @param obj the object to cancel the update for.
+     */
+    public void cancelUpdate(Object obj) {
+        dao.removeFromCache(obj);
+    }
 
     /*------------------------ search facilities ---------------------------------------
 
