@@ -18,11 +18,14 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact"%>
 
+<jsp:useBean id="user" scope="session"
+    class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
+
 <html:form action="/sidebar" focus="searchString">
     <table>
         <tr>
             <td align="left">
-                <html:select property="topic">
+                <html:select property="topic" value="<%=user.getSelectedTopic()%>">
                     <html:options name="<%=EditorConstants.EDITOR_TOPICS%>"/>
                 </html:select>
             </td>
@@ -37,7 +40,8 @@
                                 <bean:message key="button.search"/>
                             </html:submit>
                         </td>
-                        <td><html:text property="searchString" size="12"/></td>
+                        <td><html:text property="searchString" size="12"
+                            value="<%=user.getSearchInput()%>"/></td>
                         <td>
                             <intact:documentation section="editor.search" />
                         </td>
