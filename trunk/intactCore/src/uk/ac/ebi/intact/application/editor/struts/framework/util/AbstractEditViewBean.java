@@ -756,12 +756,6 @@ public abstract class AbstractEditViewBean implements Serializable {
      */
     protected abstract void clearMenus();
 
-    /**
-     * Preloads menus.
-     * @exception IntactException for errors in loading menus.
-     */
-    protected abstract void loadMenus() throws IntactException;
-
     // Helper Methods
 
     /**

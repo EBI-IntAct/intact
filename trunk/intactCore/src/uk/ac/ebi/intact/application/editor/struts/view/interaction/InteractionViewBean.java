@@ -296,51 +296,15 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
     }
 
-    public void loadMenus() throws IntactException {
-        // Holds the menu name.
-        String name;
-
-        // Temp variable to hold a menu.
-        List menu;
-
-        // Handler to the menu factory.
-        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
-
-        // The Intact helper to construct menus.
-        IntactHelper helper = new IntactHelper();
-
-        try {
-            myMenus.putAll(super.getMenus(helper));
-
-            // The organism menu
-            name = EditorMenuFactory.ORGANISM;
-            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
-
-            // The interactiontype menu.
-            name = EditorMenuFactory.INTERACTION_TYPE;
-            int mode = (myInteractionType == null) ? 1 : 0;
-            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
-
-            // Protein role edit menu
-            name = EditorMenuFactory.ROLE;
-            menu = menuFactory.getMenu(name, 0, helper);
-            myMenus.put(name, menu);
-        }
-        finally {
-            helper.closeStore();
-        }
-        // Add the Role add menu.
-        name = EditorMenuFactory.ROLE;
-        menu = (List) myMenus.get(name);
-        myMenus.put(name + "_", menuFactory.convertToAddMenu(name, menu));
-    }
-
     /**
      * Override to provide the menus for this view.
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref, organism (add), interaction type and role (add & edit).
      */
-    public Map getMenus() {
+    public Map getMenus() throws IntactException {
+        if (myMenus.isEmpty()) {
+            loadMenus();
+        }
         return myMenus;
     }
 
@@ -939,6 +903,47 @@ public class InteractionViewBean extends AbstractEditViewBean {
         }
         // Not found the bean, return null.
         return null;
+    }
+
+    // Helper methods
+
+    private void loadMenus() throws IntactException {
+        // Holds the menu name.
+        String name;
+
+        // Temp variable to hold a menu.
+        List menu;
+
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
+
+        // The Intact helper to construct menus.
+        IntactHelper helper = new IntactHelper();
+
+        try {
+            myMenus.putAll(super.getMenus(helper));
+
+            // The organism menu
+            name = EditorMenuFactory.ORGANISM;
+            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
+
+            // The interactiontype menu.
+            name = EditorMenuFactory.INTERACTION_TYPE;
+            int mode = (myInteractionType == null) ? 1 : 0;
+            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+
+            // Protein role edit menu
+            name = EditorMenuFactory.ROLE;
+            menu = menuFactory.getMenu(name, 0, helper);
+            myMenus.put(name, menu);
+        }
+        finally {
+            helper.closeStore();
+        }
+        // Add the Role add menu.
+        name = EditorMenuFactory.ROLE;
+        menu = (List) myMenus.get(name);
+        myMenus.put(name + "_", menuFactory.convertToAddMenu(name, menu));
     }
 
     private void makeProteinBeans(Collection components) {
