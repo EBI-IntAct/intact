@@ -29,6 +29,7 @@ import org.w3c.dom.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import javax.xml.transform.dom.*;
+import javax.xml.parsers.*;
 import org.w3c.dom.traversal.*;
 
 
@@ -238,15 +239,17 @@ public class ViewAction extends IntactBaseAction {
                         //return with errors...
                         super.log("modify XML failed" + ie.toString());
                     }
-                    catch(Exception e) {
+                    catch(ParserConfigurationException e) {
                         //just to pick up the transformer exceptions
                     }
                 }
                 if(((ViewForm)form).expandAllSelected()) {
                     try {
+                        //first make sure the view state is updated for the given AC
+                        System.out.println("setting view state of " + ac + " to expanded..");
+                        String id = "tbl_" + beanId + "_";
+                        modeMap.put(id+ac, new Integer(XmlBuilder.EXPAND_NODES));
 
-                        //due to the recursive nature of the tree here we only expand down to
-                        //Xrefs, and also for CvObjects only do a compact one..
                         TransformerFactory tf = TransformerFactory.newInstance();
                         Transformer transformer = tf.newTransformer();
                         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -257,15 +260,12 @@ public class ViewAction extends IntactBaseAction {
                         Document doc1 = bean.getAsXmlDoc();
                         transformer.transform(new DOMSource(doc1), new StreamResult(System.out));
                         System.out.println();
-                        //need to start at the tree Node that was selected for expand -
-                        //otherwise the whole tree will be done!
-                        //NB don't expand the siblings of the first Node to check,
-                        //so pass empty Collection...
+                        //get the Element in the tree with this AC (usually the root object)
+                        //and then expand it all..
                         Element start = bean.getElement(ac);
                         if(start != null) {
-                            System.out.println("found element with AC " + ac + " - expanding from there..");
-                            String id = "tabl_" + beanId + "_";
-                            this.expandTree(bean, start, new ArrayList(), id, modeMap);
+                            System.out.println("found element with AC " + ac + " - expanding it in full..");
+                            this.expandTree(bean, start.getTagName(), id, modeMap);
                         }
                         //no-op if the AC doesn't exist for some reason in the tree
                         System.out.println();
@@ -279,7 +279,7 @@ public class ViewAction extends IntactBaseAction {
                         //return with errors...
                         super.log("modify XML failed during full expansion" + ie.toString());
                     }
-                    catch(Exception e) {
+                    catch(ParserConfigurationException e) {
                         //transformer only
                     }
 
@@ -294,7 +294,7 @@ public class ViewAction extends IntactBaseAction {
             if(!beanIds.isEmpty()) {
                 System.out.println("marking all sub-elements of beans to contract...");
                 for(Iterator iter = beanIds.iterator(); iter.hasNext();) {
-                    this.updateExpandedAcs(modeMap, (String)iter.next());
+                    this.updateViewState(modeMap, (String)iter.next(), XmlBuilder.CONTRACT_NODES);
                 }
             }
         }
@@ -351,25 +351,28 @@ public class ViewAction extends IntactBaseAction {
     }
 
     /**
-     * Updates the mode Map for the items related to the root object
-     * when it needs contracting. In other words, sub-items need to be marked as contracted
+     * Updates the mode Map for the items related to the root object, particularly
+     * when it needs contracting. In other words, in that case sub-items need to be marked as contracted
      * because otherwise the next time the root object is expanded, the sub-items will have
-     * the wrong mode associated with them.
+     * the wrong mode associated with them. This method can of course be used as a general
+     * utility to update view states in general, but the case outlined would be typical use.
      *
      * @param modes The Map of view modes for bean keys known so far
+     * @param mode The mode to use on the ACs for bulk change
      * @param id The id of the Bean we are interested in
      */
-    private void updateExpandedAcs (Map modes, String id) {
+    private void updateViewState(Map modes, String id, int mode) {
 
         //make sure all items associated with this bean are set to contracted
-        System.out.println("setting items associated with bean " + id + " to contracted...");
+        System.out.println("setting items associated with bean " + id + " to new mode...");
         for (Iterator iter = modes.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 String key = (String) entry.getKey();
                 System.out.println("known key: " + key);
                 if (key.indexOf("tbl_" + id +"_") != -1) {
-                    entry.setValue(new Integer(XmlBuilder.CONTRACT_NODES));
-                    System.out.println("marked as contracted: " + key);
+                    entry.setValue(new Integer(mode));
+                    System.out.println("marked as mode " + mode + ": " + key);
+                    System.out.println("(1=expanded, 2=contracted)");
 
                 }
        }
@@ -402,113 +405,69 @@ public class ViewAction extends IntactBaseAction {
      * to ensure cache and view consistency.
      *
      * @param bean The bean whose Document is to be expanded
-     * @param currentNode The first Node of the tree identifying the tree level and hence
-     * @param siblings The siblings of the current Node
-     * @param id The id of the bean (used to identify ACs in the xapnded set)
+     * @param tagName The name of the type of tags which are to be expanded
+     * @param id The bean ID
      * @param modes The current Map of view modes for the known keys
-     * where to start expanding from.
      *
      * @exception IntactException thrown if there was a modify problem
+     * @exception ParserConfigurationException if there was a problem obtaining the XML from the bean
      */
-    private void expandTree(IntactViewBean bean, Node currentNode, List siblings, String id, Map modes) throws IntactException {
+    private void expandTree(IntactViewBean bean, String tagName, String id, Map modes) throws ParserConfigurationException, IntactException {
 
         //Basic algorithm:
-        //for each Node in a list of siblings:
-        //get the ACs of the Node's children, then expand the bean for those ACs;
-        //when the siblings are all done, move down to the next level of the DOM tree;
-        //repeat the above until all Nodes at one level are either Xrefs or compact CvObjects
+        //depending on the tag name, either simply expand in full (Protein)
+        //or expand in full then call expandTree again with the next tag type down.
+        //For example, an Experiment should then move to Interactions. the recursion will
+        //take care of the rest if each tag type is handled correctly.
 
-        System.out.println("current Node AC: " + ((Element)currentNode).getAttribute("ac"));
-        System.out.println("current Node Tag: " + ((Element)currentNode).getTagName());
-        Node nextSibling = null;
+        //find all the ACs for this tag type in the bean, then expand them first of all
+        List acList = new ArrayList(); //make sure we have a non-empty one
+        acList = this.getAcs(bean, tagName);
+        bean.modifyXml(XmlBuilder.EXPAND_NODES, acList);
 
-        //local copy of siblings
-        List remainingSibs = new ArrayList();
-        if(!siblings.isEmpty()) {
-            Node sib = (Node)siblings.get(0);
-            if(sib != null) {
-                System.out.println("current Node first sibling: " + sib.getNodeType() + sib.getNodeName());
-            }
-            else { System.out.println("no next sibling!!"); }
-            Iterator siblingIter = siblings.iterator();
-            while(siblingIter.hasNext()) {
-                Object obj = siblingIter.next();
-                if(obj instanceof Element) {
-                    Element e = (Element)obj;
-                    System.out.println("sibling AC: " + e.getAttribute("ac"));
-                    System.out.println("sibling Tag: " + e.getTagName());
-                    remainingSibs.add(e);
-                }
-                else { System.out.println("sibling type wrong! Type is " + ((Node)obj).getNodeType()); }
+        //update the state, just to be sure
+        this.updateViewState(modes, id, XmlBuilder.EXPAND_NODES);
+
+        //now consider each tag type in turn we are interested in...
+        if(tagName.equals("Protein")) {
+            //base case.....do nothing more
+            return;
+        }
+        if(tagName.equals("Interaction")) {
+            //do the Components, then recurse
+            this.doComponents(bean.getAsXmlDoc(), bean, XmlBuilder.EXPAND_NODES);
+            this.expandTree(bean, "Protein", id, modes);
+        }
+        if(tagName.equals("Experiment")) {
+            this.expandTree(bean, "Interaction", id, modes);
+        }
+
+    }
+
+    /**
+     * Gets all of the ACs for a given tag name in an XML document
+     * @param bean The bean to examine
+     * @tag The element type we want the ACs for
+     *
+     * @return List the list of ACs for that tag type (empty if none found)
+     * @exception ParserConfigurationException if there was a problem getting the XML from the bean
+     */
+    private List getAcs(IntactViewBean bean, String tag) throws ParserConfigurationException {
+
+        List result = new ArrayList();
+        //set up a NodeIterator for the bean
+        Document doc = bean.getAsXmlDoc();
+        Node root = doc.getDocumentElement();
+        NodeIterator nodeIter = ((DocumentTraversal)doc).createNodeIterator(root, NodeFilter.SHOW_ALL,null,true);
+        Node n = null;
+        System.out.println("collecting " + tag + " ACs in bean...");
+        while((n = nodeIter.nextNode()) != null) {
+            Element e = (Element)n;
+            if((e.getTagName().equals(tag))) {
+                System.out.println(tag + " AC found:" + e.getAttribute("ac"));
+                result.add(e.getAttribute("ac"));
             }
         }
-        else {System.out.println("current Node has no siblings - continuing..."); }
-
-        //base case - all Nodes at this level are Xrefs, or CvObjects
-        if((((Element)currentNode).getTagName().equals("Xref")) ||
-            (((Element)currentNode).getTagName().startsWith("Cv"))) {
-            boolean done = true;
-            if(!siblings.isEmpty()) {
-                Iterator it = siblings.iterator();
-                while(it.hasNext()) {
-                    Node checkNode = (Node)it.next();
-                    if(!((Element)checkNode).getTagName().equals("Xref") &
-                        !(((Element)currentNode).getTagName().startsWith("Cv"))) {
-                        //found one - better start here instead
-                        System.out.println("found a non-Xref/CvObject sibling - changing target node to it..");
-                        currentNode = checkNode;
-                        done = false;
-                        break;
-                    }
-                }
-            }
-            System.out.println("done expanding for node " + ((Element)currentNode).getAttribute("ac"));
-            if(done) return;
-        }
-        List childAcs = new ArrayList();
-        NodeList children = currentNode.getChildNodes();
-        Element nextLevelChild = (Element)children.item(0);
-        System.out.println("next level first Node: " + nextLevelChild.getAttribute("ac"));
-        System.out.println("Children of current node " + ((Element)currentNode).getAttribute("ac") + ":");
-        for(int i=0; i<children.getLength(); i++) {
-            Element childElem = (Element)children.item(i);
-            String childAc = childElem.getAttribute("ac");
-            if(childElem.hasAttribute("ac")) {
-                System.out.println("child: " + childElem.getAttribute("ac"));
-            }
-            else {System.out.println("child has no AC - tag name: " + childElem.getTagName()); }
-            childAcs.add(childAc);
-
-            //update it in the mode Map (even though it is not yet expanded for
-            //this bean, but it will be..)
-            String key = id + childAc;
-            Integer val = (Integer)modes.get(key);
-            if(val != null) {
-                modes.remove(key);
-                modes.put(key, new Integer(XmlBuilder.EXPAND_NODES));
-            }
-
-            //add the children into the sibling list for the next level down
-            remainingSibs.add(childElem);
-        }
-        //got the current Node's child ACs, so now modify the bean data
-        System.out.println("modifying bean with child ACs..");
-        bean.modifyXml(XmlBuilder.EXPAND_NODES, childAcs);
-
-        //now do the siblings and move to the next level
-        if(!siblings.isEmpty()) {
-            System.out.println("now doing siblings...");
-            Iterator sibIterator = siblings.iterator();
-
-            while(sibIterator.hasNext()) {
-                this.expandTree(bean, (Node)sibIterator.next(), siblings, id, modes);
-            }
-        }
-        else {System.out.println("no siblings to check"); }
-        System.out.println("now moving down to next level...");
-        //take out the next level "first" child as it is the first node to check at the
-        //next level
-        remainingSibs.remove(nextLevelChild);
-        this.expandTree(bean, nextLevelChild, remainingSibs, id, modes);
+        return result;
     }
 }
