@@ -7,15 +7,14 @@ package uk.ac.ebi.intact.model;
 
 /**
  * An alternative name for the object.
- *
- * <p>
+ * <p/>
+ * <p/>
  * Currently, the name of the Alias is set to lowercase.
  * </p>
  *
- * @see uk.ac.ebi.intact.model.CvAliasType
- *
  * @author hhe, Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
+ * @see uk.ac.ebi.intact.model.CvAliasType
  */
 public class Alias extends BasicObjectImpl {
 
@@ -47,6 +46,7 @@ public class Alias extends BasicObjectImpl {
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     private Alias() {
@@ -56,18 +56,17 @@ public class Alias extends BasicObjectImpl {
     /**
      * Create a new Alias for the given Annotated object
      *
-     * @param anOwner The institution owning this Alias
+     * @param anOwner         The institution owning this Alias
      * @param annotatedObject the object to which we'll add a new Alias
-     * @param cvAliasType the CvAliasType (may be null)
-     * @param name the name of the alias (namy be null)
-     *
+     * @param cvAliasType     the CvAliasType (may be null)
+     * @param name            the name of the alias (namy be null)
      * @see uk.ac.ebi.intact.model.CvAliasType
      * @see uk.ac.ebi.intact.model.AnnotatedObject
      */
-    public Alias ( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
-        setOwner(anOwner);
+    public Alias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
+        setOwner( anOwner );
         String ac = annotatedObject.getAc();
-        if ( ac == null ){
+        if( ac == null ) {
             throw new IllegalArgumentException( "The given Annotated object doesn't have an AC." );
         }
 
@@ -86,10 +85,15 @@ public class Alias extends BasicObjectImpl {
     public void setName( String name ) {
 
         if( name != null ) {
+
+            // delete leading and trailing spaces.
+            name = name.trim();
+
             if( name.length() >= MAX_ALIAS_NAME_LEN ) {
                 name = name.substring( 0, MAX_ALIAS_NAME_LEN );
             }
         }
+
         this.name = name;
     }
 
@@ -108,20 +112,21 @@ public class Alias extends BasicObjectImpl {
         return cvAliasType;
     }
 
-    public void setCvAliasType(CvAliasType cvAliasType) {
+    public void setCvAliasType( CvAliasType cvAliasType ) {
         this.cvAliasType = cvAliasType;
     }
 
     /**
      * Equality for Aliases is currently based on equality for
      * <code>CvAliasTypes</code> and names.
-     * @see uk.ac.ebi.intact.model.CvAliasType
+     *
      * @param o The object to check
      * @return true if the parameter equals this object, false otherwise
+     * @see uk.ac.ebi.intact.model.CvAliasType
      */
-    public boolean equals ( Object o ) {
-        if ( this == o ) return true;
-        if ( !(o instanceof Alias) ) return false;
+    public boolean equals( Object o ) {
+        if( this == o ) return true;
+        if( !( o instanceof Alias ) ) return false;
 
         //NO! BasicObject's equals is the Java Object one!!
         //if ( !super.equals ( o ) ) return false;
@@ -130,31 +135,30 @@ public class Alias extends BasicObjectImpl {
 
         //NB according to the constructor, cvAliasType and name may be null,
         //so need to handle this here....
-        if(cvAliasType != null) {
-            if (!cvAliasType.equals(alias.cvAliasType)) return false;
-        }
-        else {
-           if (alias.cvAliasType != null) return false;
+        if( cvAliasType != null ) {
+            if( !cvAliasType.equals( alias.cvAliasType ) ) return false;
+        } else {
+            if( alias.cvAliasType != null ) return false;
         }
 
-        if(name != null) {
-            if (!name.equals(alias.name)) return false;
-        }
-        else return alias.name == null;
+        if( name != null ) {
+            if( !name.equals( alias.name ) ) return false;
+        } else
+            return alias.name == null;
 
         return true;
     }
 
-    public int hashCode () {
+    public int hashCode() {
         int result = 29;
-        if(name != null) result = 29 * result + name.hashCode ();
-        if (cvAliasType != null) result = 29 * result + cvAliasType.hashCode ();
+        if( name != null ) result = 29 * result + name.hashCode();
+        if( cvAliasType != null ) result = 29 * result + cvAliasType.hashCode();
         return result;
     }
 
     public String toString() {
         return "Alias[name: " + name + ", type: " +
-                (cvAliasType != null ? cvAliasType .getShortLabel() : "" ) + "]";
+               ( cvAliasType != null ? cvAliasType.getShortLabel() : "" ) + "]";
     }
 
 } // end Alias
