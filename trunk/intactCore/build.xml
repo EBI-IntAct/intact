@@ -444,15 +444,20 @@
 
     <!-- =================================================================== -->
 
-    <!-- Runs tests using junit task. -->
-    <target name="junit-test" depends="compile-core" description="Runs JUnit tests">
+	<!-- JUnit Targets -->
+
+<!-- individual package tests using junit task. -->
+
+
+    <!-- util package test target. -->
+    <target name="util-test" depends="compile-core" description="Runs JUnit tests">
         <junit printsummary="withOutAndErr">
             <test name="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </junit>
     </target>
 
-	<!-- Runs individual package tests using junit task. -->
+	<!-- model package test target. -->
     <target name="model-test" depends="compile-core" description="Runs model JUnit tests">
         <junit printsummary="withOutAndErr">
             <test name="uk.ac.ebi.intact.model.test.AllJUnitTests"/>
@@ -460,25 +465,20 @@
         </junit>
     </target>
 
-
-    <!-- =================================================================== -->
-
-    <!-- Runs the JUnit tester directly. The output is redirected to std out -->
-<!-- <arg value="uk.ac.ebi.intact.model.test.AllJUnitTests"/> -->
-<!-- <arg value="uk.ac.ebi.intact.util.test.AllJUnitTests"/> -->
-<!-- <arg value="uk.ac.ebi.intact.business.test.AllJUnitTests"/> -->
-
-    <target name="junit-test-stdout" depends="compile-core"
-            description="Runs JUnit directly with output directed to stdout">
-        <java classname="junit.textui.TestRunner" fork="true">
-		<arg value="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
-		<classpath refid="project.class.path"/>
-        </java>
+	<!-- business package (ie helper) test target. -->
+	<target name="helper-test" depends="compile-core" description="Runs model JUnit tests">
+        <junit printsummary="withOutAndErr">
+            <test name="uk.ac.ebi.intact.business.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </junit>
     </target>
 
     <!-- =================================================================== -->
  
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
+    <!-- There is one target for each set of package tests -->
+
+	<!-- model target -->
     <target name="test-model-stdout" depends="compile-core"
             description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
@@ -487,12 +487,34 @@
         </java>
     </target>
 
+	<!-- helper target -->
+	<target name="test-helper-stdout" depends="compile-core"
+            description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="uk.ac.ebi.intact.business.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+	<!-- util target -->
+	<target name="test-util-stdout" depends="compile-core"
+            description="Runs JUnit directly with output directed to stdout">
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="uk.ac.ebi.intact.util.test.AllJUnitTests"/>
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
+
+
+
 
     <!-- =================================================================== -->
 
-    <!-- An alias for for junit-test -->
-    <target name="test">
-        <antcall target="junit-test-stdout"/>
+    <!-- An alias for for all junit-tests -->
+    <target name="test-all">
+        <antcall target="test-model-stdout"/>
+	  <antcall target="test-helper-stdout"/>
+	  <antcall target="test-util-stdout"/>
     </target>
 
     <!-- =================================================================== -->
