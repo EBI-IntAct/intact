@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Implementation of <strong>Action</strong> that validates a user access.
  *
- * @author Konrad Paszkiewicz (konrad.paszkiewicz@ebi.ac.uk)
+ * @author Konrad Paszkiewicz (konrad.paszkiewicz@ic.ac.uk)
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
@@ -42,17 +42,20 @@ public final class PredictionAction extends AbstractPredictAction {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
             throws Exception {
-        // Access the predict user; don't create a new session.
-        PredictUser user = getPredictUser(request);
-
         // The dyna form.
         DynaActionForm dynaform = (DynaActionForm) form;
 
         // Retrieve the specie chosen by the user.
         String specie = (String) dynaform.get("specie");
-        List results = user.getDbInfo(specie);
 
-        //request.setAttribute("SPECIES", species_collection);
+        // Access the predict user; don't create a new session.
+        PredictUser user = getPredictUser(request);
+
+        // Set the current specie.
+        user.setSpecie(specie);
+
+        // Save the results in the request for the JSP to access.
+        List results = user.getDbInfo(specie);
         request.setAttribute(PredictConstants.PREDICTION, results);
 
         // Forward control to the specified success URI
