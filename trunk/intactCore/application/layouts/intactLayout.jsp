@@ -23,7 +23,9 @@
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="-1">
-    <tiles:insert attribute="institution.header"/>
+    <title><tiles:getAsString name="title"/></title>
+    <html:base/>
+    <link rel="stylesheet" type="text/css" href="styles/intact.css"/>
 </head>
 
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0">
