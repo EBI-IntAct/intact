@@ -57,8 +57,8 @@
         type="java.lang.String"/>
 
     <%
-        String uri = request.getContextPath() + "/do/result?ac="
-                + view.getAc() + "&searchClass=Experiment";
+        String uri = request.getContextPath() + "/do/secure/edit?ac="
+                + view.getAc() + "&topic=Experiment";
     %>
 
     <display:table width="100%" name="ints" pagesize="<%=pageSize%>"
