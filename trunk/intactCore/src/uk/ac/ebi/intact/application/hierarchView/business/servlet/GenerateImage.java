@@ -8,9 +8,13 @@ import java.text.*;
 
 import java.io.IOException;
 
+import org.w3c.dom.Document;
+
+import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
 import uk.ac.ebi.intact.application.hierarchView.business.image.ImageBean;
 import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
-//import uk.ac.ebi.intact.application.hierarchView.business.Constants;
+import uk.ac.ebi.intact.application.hierarchView.business.image.ConvertSVG;
 
 /**
    Purpose: <br>
@@ -44,18 +48,50 @@ public class GenerateImage extends HttpServlet {
     // binary output
     ServletOutputStream out = aResponse.getOutputStream();
     
+    // take the parameter in the request
+    String format = (String) aRequest.getParameter("format");
+
+    String className = null;
+    Properties propertiesBusiness = PropertyLoader.load (uk.ac.ebi.intact.application.hierarchView.business.Constants.PROPERTY_FILE);
+
+    if (null != propertiesBusiness) {
+      className = propertiesBusiness.getProperty ("hierarchView.image.format." + format + ".class" );
+    }
+
+    ConvertSVG convert = ConvertSVG.getConvertSVG(className);
+
     // Encode the off-screen image into a JPEG and send it to the client
-    aResponse.setContentType("image/png");
+
+    String typeMime = convert.getMimeType();
+    aResponse.setContentType(typeMime);
+   
 
     // get the current user session
     HttpSession session = aRequest.getSession();
-    ImageBean ib = (ImageBean) session.getAttribute (Constants.ATTRIBUTE_IMAGE_BEAN);
+    ImageBean ib = (ImageBean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_IMAGE_BEAN);
 
-    if (null == ib) return;
-
-    if (null != ib.getImageData()) {
-      out.write (ib.getImageData());
+    if (null == ib) {
+      System.out.println("ib == null");
+      return;
     }
+
+    Document document = ib.getDocument();
+    if (null != document) {
+      try {
+	byte[] imageData = convert.convert(document);
+	if (null != imageData) {
+	  System.out.println("lenght = " + imageData.length);
+	  out.write (imageData);
+	}
+	else System.out.println("imageData is null");
+      }
+      catch (Exception e) {
+	e.printStackTrace(); 
+	System.out.println("Impossible to convert the document");
+      }
+    }
+    else System.out.println("document is null");
+    
 
     out.flush ();
     out.close ();
