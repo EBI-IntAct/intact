@@ -1,6 +1,5 @@
-<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants,
-                 uk.ac.ebi.intact.application.editor.business.EditorService,
-                 uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory"%>
+<%@ page import="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory"%>
+
 <!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
@@ -15,11 +14,8 @@
 
 <%@ page language="java"%>
 
-<%
-    // To Allow access to Editor Service.
-    EditorService service = (EditorService)
-            application.getAttribute(EditorConstants.EDITOR_SERVICE);
-%>
+<jsp:useBean id="service" scope="application"
+    class="uk.ac.ebi.intact.application.editor.business.EditorService"/>
 
 <script language="JavaScript" type="text/javascript">
     // This is a global variable to setup a window.
