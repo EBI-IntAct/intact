@@ -18,6 +18,9 @@ import java.util.Collection;
 
 public class DRLineExportTest extends TestCase {
 
+    /**
+     * Alow us to handle a Protein to which we can set an AC.
+     */
     private class TestableProtein extends ProteinImpl {
 
         public TestableProtein( Institution owner, BioSource source, String shortLabel ) {
@@ -44,9 +47,12 @@ public class DRLineExportTest extends TestCase {
     private Interaction interaction1a;
     private Interaction interaction2a;
     private Interaction interaction3a;
+    private Interaction interaction4a;
 
     private Interaction interaction1b;
     private Interaction interaction2b;
+
+    private Interaction interaction1c;
 
     private Protein protein1;
     private Protein protein1SpliceVariant;
@@ -151,10 +157,12 @@ public class DRLineExportTest extends TestCase {
      *      1a (P1 P2)
      *      2a (P2 P3)
      *      3a (P3 P3)
+     *      4a (P1 P2 P3 P4) -- won't be taken into account as it has more than two interactor.
      *   [OR]
-     *     P1 (I1a)
-     *     P2 (I1a, I2a)
-     *     P3 (I2a, I3a, I3a)
+     *     P1 (I1a, I4a)
+     *     P2 (I1a, I2a, I4a)
+     *     P3 (I2a, I3a, I3a, I4a)
+     *     P4 (I4a)
      * </pre>
      *
      * @return an experiment with well known interactions and interactors.
@@ -200,16 +208,27 @@ public class DRLineExportTest extends TestCase {
         interaction3a.addAnnotation( new Annotation( institution, topic1 ) );
         interaction3a.addAnnotation( new Annotation( institution, topic1 ) );
 
+        interaction4a = new InteractionImpl( experiments, new ArrayList(), null, "int3a", institution );
+        interaction4a.addAnnotation( new Annotation( institution, topic1 ) );
+        interaction4a.addAnnotation( new Annotation( institution, topic1 ) );
+
         //now link up interactions and proteins via some components..
         componentRole = new CvComponentRole( institution, "role" );
 
         // Creating the Conponent (it updates the Interaction and Protein).
         new Component( institution, interaction1a, protein1, componentRole );
         new Component( institution, interaction1a, protein2, componentRole );
+
         new Component( institution, interaction2a, protein2, componentRole );
         new Component( institution, interaction2a, protein3, componentRole );
+
         new Component( institution, interaction3a, protein3, componentRole );
         new Component( institution, interaction3a, protein3, componentRole );
+
+        new Component( institution, interaction4a, protein1, componentRole );
+        new Component( institution, interaction4a, protein2, componentRole );
+        new Component( institution, interaction4a, protein3, componentRole );
+        new Component( institution, interaction4a, protein4, componentRole );
 
         // link up experiment and interactions
         experiment.addInteraction( interaction1a );
@@ -544,8 +563,8 @@ public class DRLineExportTest extends TestCase {
     }
 
 
-    /////////////////////////////////////////////////////////////////////////
-    // (Test set 3) Handling of the retrieval of a Protein Uniprot identity
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // (Test set 3) Handling of the retrieval of a Protein Uniprot identity and IntAct master AC
 
     public void testGetUniprotID() {
 
@@ -554,6 +573,18 @@ public class DRLineExportTest extends TestCase {
         String id = exporter.getUniprotID( protein1 );
         assertNotNull( id );
         assertEquals( "PROTEIN1", id );
+    }
+
+    public void testGetMasterAC() {
+
+        DRLineExport exporter = getDrLineExporter( false );
+
+        String id = exporter.getMasterAc( protein1SpliceVariant );
+        assertNotNull( id );
+        assertEquals( "EBI-123", id );
+
+        id = exporter.getMasterAc( protein1 );
+        assertNull( id );
     }
 
 
@@ -947,4 +978,71 @@ public class DRLineExportTest extends TestCase {
         assertNotNull( uniprotID );
         assertEquals( "PROTEIN4", uniprotID );
     }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // (Test set 9) Handling of the protein eligibility based on interactions having more than 2 interactors
+
+    public void testGetProteinEligibleForExport_InteractionWithMoreThanTwoInteractor() {
+
+        DRLineExport exporter = getDrLineExporter( false );
+
+        Experiment experimentA = initExperimentA();
+        Experiment experimentB = initExperimentB();
+
+        // make them exportable - even if we are going to flag it as negative ;o) negative is dominant!
+        Annotation annotation = new Annotation( institution, uniprotDrExport );
+        annotation.setAnnotationText( "yes" );
+
+        experimentA.addAnnotation( annotation );
+        experimentB.addAnnotation( annotation );
+
+        Annotation negativeAnnotation = new Annotation( institution, negative );
+        experimentA.addAnnotation( negativeAnnotation );
+
+        /**
+         * Explanation of what should happen
+         *
+         * Here is the configuration of the interactions and proteins
+         *
+         *     I1a  (P1 P2)  \
+         *     I2a  (P2 P3)  |> Experiment A *
+         *     I3a  (P3 P3) /
+         *
+         *     I1b (P1 P2)  \_ Experiemnt B
+         *     I2b (P4 P4)  /
+         *  [OR]
+         *     P1  A(I1a)   B(I1b)
+         *     P2  A(I1a, I2a)   B(I1b, I2b)
+         *     P3  A(I2a, I3a, I3a)
+         *     P4  B(I2b, I2b)
+         *
+         * We flagged the experiment A ( * ) which implicitly means that all of its interaction are negative too !
+         * P1: no problem because has at least 1 interaction with no negative interaction (I1b)
+         * P2: no problem because has at least 2 interaction with no negative interaction (I1b, I2b)
+         * P3: not exported because all 3 interaction are negative
+         * P4: no problem because not linked to any negative interaction
+         *
+         * export should contains P1, P2 and P4.
+         */
+
+        String uniprotID = null;
+
+        uniprotID = exporter.getProteinExportStatus( protein1, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN1", uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein2, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN2", uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein3, null );
+        assertNull( uniprotID );
+
+        uniprotID = exporter.getProteinExportStatus( protein4, null );
+        assertNotNull( uniprotID );
+        assertEquals( "PROTEIN4", uniprotID );
+    }
+
+
 }
