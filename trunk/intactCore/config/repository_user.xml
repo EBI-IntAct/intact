@@ -601,8 +601,7 @@ maps to multiple tables, fields are repeated in each descriptor of a subclass
     table Int2Exp..... -->
     <collection-descriptor
         name="interactions"
-        proxy="true"
-        element-class-ref="uk.ac.ebi.intact.model.Interaction"
+        element-class-ref="uk.ac.ebi.intact.model.InteractionImpl"
         indirection-table="ia_INT2EXP"
         >
         <fk-pointing-to-this-class column="experiment_ac"/>
