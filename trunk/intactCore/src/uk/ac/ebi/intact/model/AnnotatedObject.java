@@ -132,6 +132,7 @@ public abstract class AnnotatedObject extends BasicObject {
     /**
      * Adds an xref to the object. The xref will only be added
      * if an equivalent xref is not yet part of the object.
+     *
      */
     public void addXref(Xref aXref) {
         if (! this.xref.contains(aXref)) {
@@ -218,11 +219,15 @@ public abstract class AnnotatedObject extends BasicObject {
 
     /** Returns true if the "important" attributes are equal.
      */
-    public boolean equals(Object obj){
+    public boolean equals (Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AnnotatedObject)) return false;
+        if (!super.equals(o)) return false;
 
-        return (super.equals(obj) &&
-                Utilities.equals(this.shortLabel, ((AnnotatedObject)obj).getShortLabel()) &&
-                Utilities.equals(this.fullName, ((AnnotatedObject)obj).getFullName()));
+        final AnnotatedObject annotatedObject = (AnnotatedObject) o;
+
+        return (Utilities.equals (this.shortLabel, annotatedObject.getShortLabel()) &&
+                Utilities.equals (this.fullName, annotatedObject.getFullName()));
     }
 
     /** This class overwrites equals. To ensure proper functioning of HashTable,
@@ -233,8 +238,8 @@ public abstract class AnnotatedObject extends BasicObject {
 
         int code = super.hashCode();
 
-        if (null != shortLabel) code += shortLabel.hashCode();
-        if (null != fullName) code += fullName.hashCode();
+        if (null != shortLabel) code = 29 * code + shortLabel.hashCode();
+        if (null != fullName)   code = 29 * code + fullName.hashCode();
 
         return code;
     }
@@ -243,8 +248,6 @@ public abstract class AnnotatedObject extends BasicObject {
         return this.getAc() + "; owner=" + this.ownerAc
                 + "; name=" + this.shortLabel + "\n";
     }
-
-
 
 } // end AnnotatedObject
 
