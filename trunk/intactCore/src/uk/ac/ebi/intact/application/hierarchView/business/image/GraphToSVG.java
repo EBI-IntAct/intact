@@ -828,9 +828,9 @@ public class GraphToSVG
 
 
     /**
-     * Generate the image data and put it into a bean with the corresponding HTML MAP code.
+     * Create an Container with the SVG DOM and the HTML MAP code.
      *
-     * @return the bean initialized with the image and the MAP code. null if an error occured.
+     * @return the bean initialized with the SVG DOM and the MAP code.
      */
     public ImageBean getImageBean () {
 
@@ -838,7 +838,6 @@ public class GraphToSVG
         ib.setMapCode(mapCode.toString());
         ib.setDocument(document);
 
-        document = null;
         return ib;
     } // getImageBean
 
