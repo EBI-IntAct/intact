@@ -143,12 +143,10 @@ public class Institution extends IntactObjectImpl implements Serializable {
 
         final Institution institution = (Institution) o;
 
-        //need checks as we currently still have a no-arg constructor...
-        if( shortLabel != null ) {
-            if( !shortLabel.equals( institution.shortLabel ) ) return false;
-        } else {
-            if( institution.shortLabel != null ) return false;
+        if( !shortLabel.equals( institution.shortLabel ) ) {
+            return false;
         }
+
         if( fullName != null ) {
             return ( fullName.equals( institution.fullName ) );
         }
@@ -167,7 +165,7 @@ public class Institution extends IntactObjectImpl implements Serializable {
         int code = 29;
 
         //still need shortLabel check as we still have no-arg constructor..
-        if( shortLabel != null ) code = 29 * code + shortLabel.hashCode();
+        code = 29 * code + shortLabel.hashCode();
         if( null != fullName ) code = 29 * code + fullName.hashCode();
 
         return code;
