@@ -65,6 +65,21 @@ public class EditorMenuFactory {
     public static final String IDENTIFICATIONS = "Identifications";
 
     /**
+     * The name for the interaction type list.
+     */
+    public static final String INTERACTION_TYPES = "InteractionTypes";
+
+    /**
+     * The name for the experiment list.
+     */
+    public static final String EXPERIMENTS = "Experiments";
+
+    /**
+     * The name for the role list.
+     */
+    public static final String ROLES = "Roles";
+
+    /**
      * Maps: List Name -> List type. Common to all the users and it is immutable.
      */
     private static final Map theirNameToType = new HashMap();
@@ -94,6 +109,9 @@ public class EditorMenuFactory {
         theirNameToType.put(ORGANISMS, BioSource.class);
         theirNameToType.put(INTERACTIONS, CvInteraction.class);
         theirNameToType.put(IDENTIFICATIONS, CvIdentification.class);
+        theirNameToType.put(INTERACTION_TYPES, CvInteractionType.class);
+        theirNameToType.put(EXPERIMENTS, Experiment.class);
+        theirNameToType.put(ROLES, CvComponentRole.class);
     }
 
     /**
@@ -123,8 +141,7 @@ public class EditorMenuFactory {
                 // Cache it for later use.
                 list = makeList(name, mode);
                 myNameToEditItems.put(name, list);
-            }
-            else {
+            } else {
                 // Retrieve it from cache.
                 list = (List) myNameToEditItems.get(name);
             }
@@ -134,8 +151,7 @@ public class EditorMenuFactory {
             // Cache it for later use.
             list = makeList(name, mode);
             myNameToAddItems.put(name, list);
-        }
-        else {
+        } else {
             // Retrieve it from cache.
             list = (List) myNameToAddItems.get(name);
         }
@@ -144,18 +160,51 @@ public class EditorMenuFactory {
 
     /**
      * Returns the menus for an experiment.
-     * @param mode 0 for add or edit; see the documentation for
+     * @param mode 1 for add or 0 for edit; see the documentation for
      * {@link #getMenu(String, int)}
      * @return a map name -> menu; the valid names (keys) are: {@link #ORGANISMS},
      * {@link #INTERACTIONS} and {@link #IDENTIFICATIONS}.
-     * @throws SearchException for errors in contructing the menu.
+     * @throws SearchException for errors in constructing the menu.
      */
     public Map getExperimentMenus(int mode) throws SearchException {
         // The map to put menus.
         Map map = new HashMap();
-        map.put(ORGANISMS, getMenu(ORGANISMS, mode));
-        map.put(INTERACTIONS, getMenu(INTERACTIONS, mode));
-        map.put(IDENTIFICATIONS, getMenu(IDENTIFICATIONS, mode));
+        storeMenu(map, ORGANISMS, mode);
+        storeMenu(map, INTERACTIONS, mode);
+        storeMenu(map, IDENTIFICATIONS, mode);
+        return map;
+    }
+
+    /**
+     * Returns the menus for an interaction.
+     * @param mode 1 for add or 0 for edit; see the documentation for
+     * {@link #getMenu(String, int)}
+     * @return a map name -> menu; the valid names (keys) are: {@link #ORGANISMS},
+     * {@link #INTERACTIONS} and {@link #EXPERIMENTS}.
+     * @throws SearchException for errors in constructing the menu.
+     */
+    public Map getInteractionMenus(int mode) throws SearchException {
+        // The map to put menus.
+        Map map = new HashMap();
+        storeMenu(map, ORGANISMS, mode);
+        storeMenu(map, INTERACTION_TYPES, mode);
+        storeMenu(map, EXPERIMENTS, mode);
+        return map;
+    }
+
+    /**
+     * Returns the menus for a Protein.
+     * @param mode 1 for add or 0 for edit; see the documentation for
+     * {@link #getMenu(String, int)}
+     * @return a map name -> menu; the valid names (keys) are: {@link #ORGANISMS}
+     * and {@link #ROLES}.
+     * @throws SearchException for errors in constructing the menu.
+     */
+    public Map getProteinMenus(int mode) throws SearchException {
+        // The map to put menus.
+        Map map = new HashMap();
+        storeMenu(map, ORGANISMS, mode);
+        storeMenu(map, ROLES, mode);
         return map;
     }
 
@@ -190,6 +239,8 @@ public class EditorMenuFactory {
         }
     }
 
+    // Helper methods
+
     /**
      * This method creates a list for given class.
      *
@@ -207,8 +258,7 @@ public class EditorMenuFactory {
         Class clazz = (Class) theirNameToType.get(key);
         try {
             v = AnnotatedObject.getMenuList(clazz, myHelper, true);
-        }
-        catch (IntactException ie) {
+        } catch (IntactException ie) {
             throw new SearchException("Search failed: " + ie.getNestedMessage());
         }
         // Guard against the null pointer.
@@ -225,5 +275,17 @@ public class EditorMenuFactory {
             list.add(iter.next());
         }
         return list;
+    }
+
+    /**
+     * Stores the menu in the given map.
+     * @param map the map to store a menu.
+     * @param name the name of the menu.
+     * @param mode 0 for an edit menu; 1 for an add menu.
+     * @throws SearchException for errors in constructing the menu.
+     */
+    private void storeMenu(Map map, String name, int mode)
+            throws SearchException {
+        map.put(name, getMenu(name, mode));
     }
 }
