@@ -94,7 +94,7 @@ public class GoHighlightmentSource extends HighlightmentSource {
 
         // get Xref collection
         Collection xRef = interactor.getXref();
-        logger.info(result.size() + "Xref found");
+        logger.info(xRef.size() + " Xref found");
         Iterator xRefIterator = xRef.iterator() ;
 
         while (xRefIterator.hasNext() ) {
