@@ -79,10 +79,11 @@ public class TulipClient {
     if (null != tulip) {
       try {
 	pc = (ProteinCoordinate[]) tulip.getComputedTlpContent (tlpContent, mask);
-      } catch (java.rmi.RemoteException se) {}
+      } catch (java.rmi.RemoteException se) {
+	System.out.println ("Exception during retreiving proteins' coordinate");
+	se.printStackTrace ();
+      }
     }
-
-    System.out.println ("size = " + pc.length);
 
     return pc;
   } // getComputedTlpContent

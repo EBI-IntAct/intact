@@ -259,20 +259,24 @@ public class InteractionNetwork extends Graph {
     // get coordinates
     result    = client.getComputedTlpContent(dataTlp);
 
-    // update protein coordinates
-    for (int i = 0; i < result.length; i++) {
-      ProteinCoordinate p = result[i];
-
-      Float x  = new Float (p.getX());
-      Float y  = new Float (p.getY());
-
-      // nodes are labelled from 1 to n int the tlp file and from 0 to n-1 int the collection.
-      Node protein = (Node) this.nodeList.get (p.getId() - 1);
-      
-      // Store coordinates in the protein
-      protein.put (Constants.ATTRIBUTE_COORDINATE_X, x);
-      protein.put (Constants.ATTRIBUTE_COORDINATE_Y, y);
-    } // for
+    if (null == result) {
+      throw new IOException ("Tulip send back no data.");
+    } else {
+      // update protein coordinates
+      for (int i = 0; i < result.length; i++) {
+	ProteinCoordinate p = result[i];
+	
+	Float x  = new Float (p.getX());
+	Float y  = new Float (p.getY());
+	
+	// nodes are labelled from 1 to n int the tlp file and from 0 to n-1 int the collection.
+	Node protein = (Node) this.nodeList.get (p.getId() - 1);
+	
+	// Store coordinates in the protein
+	protein.put (Constants.ATTRIBUTE_COORDINATE_X, x);
+	protein.put (Constants.ATTRIBUTE_COORDINATE_Y, y);
+      } // for
+    } // else
     
   } //importDataToImage
 
