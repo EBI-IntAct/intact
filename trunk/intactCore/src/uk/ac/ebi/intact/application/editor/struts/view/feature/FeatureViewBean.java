@@ -561,7 +561,8 @@ public class FeatureViewBean extends AbstractEditViewBean {
         }
         // No need to test whether this 'feature' persistent or not because we
         // know it has been already persisted by persist() call.
-        user.update(feature);
+        // Looks like we can do without this method call.
+//        user.update(feature);
     }
 
     private void turnOnMutationMode() {
