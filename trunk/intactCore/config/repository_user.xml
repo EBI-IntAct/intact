@@ -1629,6 +1629,65 @@
 
 
 
+<!-- class "Statistics" dependant of the IntAct model -->
+<class-descriptor
+    class="uk.ac.ebi.intact.util.IntactStatistics"
+    table="ia_statistics"
+    >
+    <field-descriptor id="1"
+         name="ac"
+         column="ac"
+         jdbc-type="INTEGER"
+         primarykey="true"
+         autoincrement="false"
+         nullable="false"
+      />
+    <field-descriptor id="2"
+        name="timestamp"
+        column="timestamp"
+        jdbc-type="TIMESTAMP"
+        nullable="false"
+       />
+    <field-descriptor id="3"
+        name="proteinNumber"
+        column="protein_number"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+    <field-descriptor id="4"
+        name="interactionNumber"
+        column="interaction_number"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+    <field-descriptor id="5"
+        name="binaryInteractions"
+        column="binary_interactions"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+    <field-descriptor id="6"
+        name="complexInteractions"
+        column="complex_interactions"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+    <field-descriptor id="7"
+        name="experimentNumber"
+        column="experiment_number"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+    <field-descriptor id="8"
+        name="termNumber"
+        column="term_number"
+        jdbc-type="INTEGER"
+        nullable="false"
+        />
+</class-descriptor>
+
+
+
 <!-- Definitions for Sequence Chunk -->
 <class-descriptor
    class="uk.ac.ebi.intact.model.SequenceChunk"
@@ -1662,7 +1721,5 @@
    />
 
 </class-descriptor>
-
-
 
 <!-- Mapping of User defined classes ends here -->
