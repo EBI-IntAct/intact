@@ -51,7 +51,8 @@
         <!-- Form for editing annotations -->
 <!--        <form-bean name="commentEditForm"-->
 <!--            type="org.apache.struts.action.DynaActionForm">-->
-<!--            <form-property name="comments" type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean[]"/>-->
+<!--            <form-property name="items" type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean[]"/>-->
+<!--            <form-property name="cmd" type="java.lang.String[]"/>-->
 <!--        </form-bean>-->
         <form-bean name="commentEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.view.EditForm"/>
@@ -250,17 +251,17 @@
             name="cvInfoForm"
             validate="false"
             scope="request">
-            <forward name="success" path="/do/setUpEditor"/>
+            <forward name="success" path="/do/fillAnnotForm"/>
         </action>
 
         <!-- This action fills the annotation form. -->
-<!--        <action path="/fillAnnotForm"-->
-<!--            type="uk.ac.ebi.intact.application.editor.struts.action.FillAnnotFormAction"-->
-<!--            name="commentEditForm"-->
-<!--            validate="false"-->
-<!--            scope="session">-->
-<!--            <forward name="success" path="/do/fillXrefForm"/>-->
-<!--        </action>-->
+        <action path="/fillAnnotForm"
+            type="uk.ac.ebi.intact.application.editor.struts.action.FillAnnotFormAction"
+            name="commentEditForm"
+            validate="false"
+            scope="session">
+            <forward name="success" path="/do/setUpEditor"/>
+        </action>
 
         <!-- This action fills the xreference form. -->
 <!--        <action path="/fillXrefForm"-->
