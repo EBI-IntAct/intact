@@ -8,6 +8,9 @@ package uk.ac.ebi.intact.application.cvedit.struts.view;
 
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl;
+
+import java.io.Serializable;
 
 /**
  * Bean to store data for x'references.
@@ -15,23 +18,17 @@ import uk.ac.ebi.intact.model.CvXrefQualifier;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class XreferenceBean {
+public class XreferenceBean implements Serializable {
+
+    /**
+     * The unique identifier for this bean.
+     */
+    private long myKey;
 
     /**
      * Reference to the Xref object this instance is created with.
      */
     private Xref myXref;
-
-    /**
-     * Stores the state of the transaction when this bean was added. This
-     * state in only set during the construction of an instance of this class.
-     */
-    private boolean myInTransaction;
-
-    /**
-     * The accession number.
-     */
-    private String myAc;
 
     /**
      * The database name.
@@ -59,28 +56,14 @@ public class XreferenceBean {
     private String myReferenceQualifer;
 
     /**
-     * Instantiate an object of this class from a Xref object. The
-     * bean is not involved in a transaction.
+     * Instantiate an object of this class from a Xref object.
      *
      * @param annot the <code>Xref</code> object to construct an
      * instance of this class.
      */
     public XreferenceBean(Xref xref) {
-        this(xref, false);
-    }
-
-    /**
-     * Instantiate an object of this class from a Xref object with
-     * the transaction state when the bean was added.
-     *
-     * @param xref the <code>Xref</code> object to construct an
-     * instance of this class.
-     * @param state the state of the transaction when bean was added.
-     */
-    public XreferenceBean(Xref xref, boolean state) {
+        myKey = IntactUserImpl.getId();
         myXref = xref;
-        myInTransaction = state;
-        myAc = xref.getAc();
         myDatabaseName = xref.cvDatabase.getShortLabel();
         myPrimaryId = xref.getPrimaryId();
         mySecondaryId = xref.getSecondaryId();
@@ -94,33 +77,17 @@ public class XreferenceBean {
     }
 
     /**
+     * Return the key for this object.
+     */
+    public long getKey() {
+        return myKey;
+    }
+
+    /**
      * Returns the reference to the Xref object this instance is created with.
      */
     public Xref getXref() {
         return myXref;
-    }
-
-    /**
-     * Returns true if this object is in a transaction.
-     */
-    public boolean inTransaction() {
-        return myInTransaction;
-    }
-
-    /**
-     * Returns the accession number.
-     */
-    public String getAc() {
-        return myAc;
-    }
-
-    /**
-     * Sets the accession number.
-     *
-     * @param the accession number to set.
-     */
-    public void setAc(String ac) {
-        myAc = ac;
     }
 
     /**
@@ -171,8 +138,8 @@ public class XreferenceBean {
 
     /**
      * Compares <code>obj</code> with this object according to
-     * Java's equals() contract. Only returns <tt>true</tt> if the accesssion
-     * numbers match for a similar object type.
+     * Java's equals() contract. Only returns <tt>true</tt> if the internal
+     * keys for both objects match.
      *
      * @param obj the object to compare.
      */
@@ -182,10 +149,8 @@ public class XreferenceBean {
             return true;
         }
         if ((obj != null) && (obj.getClass() == getClass())) {
-            // Can safely cast it.
-            XreferenceBean other = (XreferenceBean) obj;
-            // Accession numbers must match.
-            return myAc.equals(other.getAc());
+            // Same class; can safely cast it.
+            return myKey == ((XreferenceBean) obj).getKey();
         }
         return false;
     }
