@@ -48,11 +48,12 @@
     <property name="intact.context.dir"          value="${intact.app.dir}/context"/>
     <property name="statisticView-context-file"  value="statisticView-context.xml"/>
 
+    <!-- The name of the last modified file -->
+    <property name="last.modified.file" value="last-modified.txt"/>
+
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
-    <!-- Intact Application location -->
-    <property name="pages.dir"          value="pages"/>
 
     <!-- This project specific paths. -->
 
@@ -85,6 +86,15 @@
         <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
         <!-- This target is called to display messages if tomcat is not present. -->
         <ant dir=".." inheritAll="false" target="check-tomcat"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp. -->
+    <target name="set-tstamp">
+        <tstamp>
+            <format property="TODAY" pattern="yyyy-MM-dd" locale="en"/>
+        </tstamp>
     </target>
 
     <!-- =================================================================== -->
@@ -186,20 +196,19 @@
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-            depends="set-db-type, war-pg, war-oracle"/>
+            depends="set-db-type, set-tstamp, war-postgres, war-oracle"/>
 
     <!-- =================================================================== -->
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
-    <target name="build-war" depends="compile, make-jar" description="Builds a war file">
+    <target name="build-war" depends="compile, gen-last-modified-file, make-jar" description="Builds a war file">
+
+        <!-- Delete the generated files -->
+        <delete dir="${dist.dir}" quiet="true"/>
 
         <!-- Create the distribution dir if it doesn't exist. -->
         <mkdir dir="${dist.dir}" />
-
-        <!-- Delete the war file or else it will keep the old one -->
-        <delete file="${dist.dir}/${war.file}" quiet="true"/>
-
         <!-- Create the tld dir if it doesn't exist. -->
         <mkdir dir="${tld.dir}" />
 
@@ -244,7 +253,7 @@
             </fileset>
         </copy>
 
-        <war destfile="${dist.dir}/${war.file}" webxml="WEB-INF/web.xml">
+        <war destfile="${dist.dir}/${war.name}" webxml="WEB-INF/web.xml">
             <fileset dir="${basedir}">
                 <include name="*.jsp"/>
                 <include name="${layouts.dir}/**"/>
@@ -278,6 +287,8 @@
             <!-- StatisticView classes and config files. -->
             <classes dir="${dest.dir}"/>
         </war>
+
+        <antcall target="gen-context-file" />
     </target>
 
     <!-- =================================================================== -->
@@ -293,33 +304,45 @@
         </condition>
     </target>
 
-
     <!-- =================================================================== -->
 
     <!--
-        Builds a war file with postgres; should be called only after calling
-        set-db-type. -->
+         Builds a war file with postgres;
+         should be called only after calling set-db-type.
+      -->
 
-    <target name="war-pg" description="Builds a war file" if="postgres">
-        <echo message="Building a war for postgres"/>
+    <target name="war-postgres" if="postgres">
+        <!-- Load postgres properties. -->
+        <property file="${intact.root}/config/postgres.properties" />
+
+        <echo message="Building a war for postgres ${dbalias} database"/>
+        <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
+
         <antcall target="build-war">
             <param name="db" value="postgresql.jar"/>
+            <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
 
     <!-- =================================================================== -->
 
     <!--
-        Builds a war file with oracle; should be called only after calling
-        set-db-type. -->
+        Builds a war file for oracle database;
+        should be called only after calling set-db-type.
+      -->
 
-    <target name="war-oracle" description="Builds a war file" if="oracle">
-        <echo message="Building a war for oracle"/>
+    <target name="war-oracle" description="Builds a war file for oracle" if="oracle">
+        <!-- Load oracle properties. -->
+        <property file="${intact.root}/config/oracle.properties" />
+
+        <echo message="Building a war for oracle ${dbalias} database"/>
+        <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
+
         <antcall target="build-war">
             <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+            <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
-
 
     <!-- =================================================================== -->
 
@@ -329,15 +352,14 @@
     <target name="deploy" description="Deploys the WAR file on the Tomcat server"
         depends="war">
 
-        <copy file="${dist.dir}/${war.file}" todir="${tomcat.home}/webapps"/>
         <echo message="Now you have to restart Tomcat ... "/>
 
         <ant dir=".." inheritAll="false" target="deploy">
-            <property name="war" value="statisticView/${dist.dir}/${war.file}"/>
+            <property name="war" value="statisticView/${dist.dir}/${war.name}"/>
         </ant>
 
         <!-- Copy context files in the Tomcat's webapps directory -->
-        <copy file="${intact.context.dir}/${statisticView-context-file}"
+        <copy file="${dist.dir}/${statisticView-context-file}"
               todir="${webapps.dir}" overwrite="yes"/>
     </target>
 
@@ -373,18 +395,30 @@
 
     <!-- =================================================================== -->
 
-    <!-- Restarts the Tomcat server. -->
+    <!-- Generates the last modified date file. -->
 
-    <target name="restart-tomcat">
-        <ant dir=".." inheritAll="false" target="restart-tomcat"/>
+    <target name="gen-last-modified-file">
+        <ant dir=".." inheritAll="false" target="gen-last-modified-file">
+            <property name="file" value="statisticView/${last.modified.file}"/>
+        </ant>
     </target>
 
     <!-- =================================================================== -->
 
-    <!-- Displays the status of Tomcat server. -->
+    <!-- Create the context file. -->
 
-    <target name="status-tomcat">
-        <ant dir=".." inheritAll="false" target="status-tomcat"/>
+    <target name="gen-context-file">
+        <echo message="Creating the context file..."/>
+
+        <!-- Copy the template file -->
+        <copy todir="${dist.dir}"
+              file="${intact.context.dir}/${statisticView-context-file}"
+              overwrite="true" />
+
+        <!-- Customize the context file -->
+        <replace file="${dist.dir}/${statisticView-context-file}"
+                 token="[WAR.FILE.NAME]"
+                 value="${war.name}" />
     </target>
 
 </project>

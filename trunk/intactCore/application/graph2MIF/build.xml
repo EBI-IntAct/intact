@@ -4,8 +4,8 @@
      Author: Henning Mersch - hmersch@ebi.ac.uk
      Version: $Id$
 -->
-<project name="Graph2MIFWS" basedir="." default="compile">
-    <property name="project.title" value="Graph2MIFWS"/>
+<project name="graph2MIFWS" basedir="." default="compile">
+    <property name="project.title" value="graph2MIFWS"/>
     <property name="project.version" value="0.5"/>
 
     <!-- Intact core locations -->
@@ -21,7 +21,8 @@
     <property name="intact.app.dir" value=".."/>
 
     <!-- context path for graph2MIF store in the application level -->
-    <property name="intact.context.dir" value="${intact.app.dir}/context"/>
+    <property name="intact.context.dir"     value="${intact.app.dir}/context"/>
+    <property name="graph2MIF.context.file" value="graph2MIF-context.xml"/>
 
     <property environment="env"/>
     <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
@@ -33,7 +34,7 @@
     <property name="dist.dir" value="dist"/>
 	<property name="docs.dir" value="doc/api"/>
     <property name="war.file" value="graph2mif.war"/>
-	<property name="test-ac" value="EBI-42"/>
+	<property name="test-ac" value="EBI-818"/>
 	<property name="test-depth" value="1"/>
 	<property name="test-strictmif" value="false"/>
 
@@ -92,6 +93,15 @@
         <tstamp/>
         <mkdir dir="${basedir}/${lib.dir}"/>
         <available file="${root.jar.file}" type="file" property="intact.jar.present"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Sets the time stamp. -->
+    <target name="set-tstamp">
+        <tstamp>
+            <format property="TODAY" pattern="yyyy-MM-dd" locale="en"/>
+        </tstamp>
     </target>
 
     <!-- =================================================================== -->
@@ -200,13 +210,13 @@
     <!-- Builds a war file using the current database setup. -->
 
     <target name="war" description="Builds a war file"
-        depends="set-db-type, war-pg, war-oracle"/>
+        depends="set-tstamp, set-db-type, war-postgres, war-oracle"/>
 
     <!-- =================================================================== -->
 
     <!-- Builds a war file. The database to include is specified as a parameter. -->
 
-    <target name="build-war" depends="compile">
+    <target name="build-war" depends="compile, gen-context-file">
 
         <!-- Copy XML (configuration) files -->
         <copy todir="${temp.web}/WEB-INF">
@@ -227,7 +237,7 @@
                 <include name="jaxrpc.jar"/>
                 <include name="commons-lang-1.0.jar"/>
                 <include name="commons-pool.jar"/>
-                <include name="jakarta-ojb-0.9.7.jar"/> <!-- ??? -->  
+                <include name="jakarta-ojb-0.9.7.jar"/>
                 <include name="log4j-1.2.5.jar"/>
                 <include name="xercesImpl.jar"/>
                 <include name="xml-apis.jar"/>
@@ -258,6 +268,7 @@
     <!-- =================================================================== -->
 
     <!-- Sets the database type using the values given in build.properties. -->
+
     <target name="set-db-type">
         <condition property="postgres">
             <contains string="${target.env}" substring="-postgres-"/>
@@ -270,26 +281,40 @@
     <!-- =================================================================== -->
 
     <!--
-        Builds a war file with postgres; should be called only after calling
-        set-db-type. -->
+         Builds a war file with postgres;
+         should be called only after calling set-db-type.
+      -->
 
-    <target name="war-pg" description="Builds a war file" if="postgres">
-        <echo message="Building a war for postgres"/>
+    <target name="war-postgres" if="postgres">
+        <!-- Load postgres properties. -->
+        <property file="${intact.root}/config/postgres.properties" />
+
+        <echo message="Building a war for postgres ${dbalias} database"/>
+        <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
+
         <antcall target="build-war">
             <param name="db" value="postgresql.jar"/>
+            <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
 
     <!-- =================================================================== -->
 
     <!--
-        Builds a war file with oracle; should be called only after calling
-        set-db-type. -->
+        Builds a war file for oracle database;
+        should be called only after calling set-db-type.
+      -->
 
-    <target name="war-oracle" description="Builds a war file" if="oracle">
-        <echo message="Building a war for oracle"/>
+    <target name="war-oracle" description="Builds a war file for oracle" if="oracle">
+        <!-- Load oracle properties. -->
+        <property file="${intact.root}/config/oracle.properties" />
+
+        <echo message="Building a war for oracle ${dbalias} database"/>
+        <property name="war.name" value="${ant.project.name}-${dbalias}-${TODAY}.war"/>
+
         <antcall target="build-war">
             <param name="db" value="jdbc_oracle8i_thin_8.1.6.2.0.jar"/>
+            <param name="war.file" value="${war.name}"/>
         </antcall>
     </target>
 
@@ -297,13 +322,12 @@
 
     <!-- Deploys the war file on the Tomcat server. -->
     <target name="deploy" description="Deploys the WAR file on the Tomcat server">
-        <copy todir="${webapps.dir}" file="${dist.dir}/${war.file}"/>
+        <copy todir="${webapps.dir}/" file="${dist.dir}/${war.name}"/>
 
-	  <!-- use this for web7 !
-        <ant dir=".." inheritAll="false" target="deploy">
-            <property name="war" value="Graph2MIF/${dist.dir}/${war.file}"/>
-        </ant>
-		-->
+        <echo>
+            After the war file as been expanded by Tomcat (or yourself),
+            please deploy the context file manually.
+        </echo>
 
     </target>
 
@@ -317,7 +341,7 @@
         </ant>
 
         <!-- Delete context files from the Tomcat's webapps directory -->
-        <delete file="${webapps.dir}/graph2MIF" quiet="true"/>
+        <delete file="${webapps.dir}/${graph2MIF.context.file}" quiet="true"/>
     </target>
 
     <!-- =================================================================== -->
@@ -346,6 +370,7 @@
 		  <classpath refid="project.class.path"/>
 		</javac>
 	</target>
+
     <!-- =================================================================== -->
     <!-- Run example webservice client application. -->
     <target name="run-wsclient" depends="wsclient"
@@ -359,6 +384,7 @@
 			  <classpath refid="project.class.path"/>
 		</java>
 	</target>
+
     <!-- =================================================================== -->
     <!-- Compile example console application. -->
     <target name="console"
@@ -369,6 +395,7 @@
 		  <classpath refid="project.class.path"/>
 		</javac>
 	</target>
+
     <!-- =================================================================== -->
     <!-- Run example webservice client application. -->
     <target name="run-console" depends="console"
@@ -381,4 +408,27 @@
 			  <classpath refid="project.class.path"/>
 		</java>
 	</target>
+
+    <!-- =================================================================== -->
+
+    <!-- Create the context file. -->
+
+    <target name="gen-context-file">
+        <echo message="Creating the context file..."/>
+
+        <!-- Copy the template file -->
+        <copy todir="${dist.dir}"
+              file="${intact.context.dir}/${graph2MIF.context.file}"
+              overwrite="true" />
+
+        <!-- Customize the context file -->
+        <replace file="${dist.dir}/${graph2MIF.context.file}"
+                 token="[WAR.FILE.NAME]"
+                 value="${war.file}" />
+
+        <replace file="${dist.dir}/${graph2MIF.context.file}"
+                 token=".war"
+                 value="" />
+    </target>
+
 </project>
