@@ -12,7 +12,6 @@ package uk.ac.ebi.intact.application.statisticView.business;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-
 public final class Constants {
 
     /**
@@ -20,5 +19,4 @@ public final class Constants {
      * cf. config/log4j.properties
      */
     public static final String LOGGER_NAME = "stat";
-
 }
