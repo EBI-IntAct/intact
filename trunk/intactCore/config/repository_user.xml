@@ -54,7 +54,7 @@
 
 <class-descriptor
     class="uk.ac.ebi.intact.model.Protein"
-    table="Interactor"
+    table="ia_Interactor"
 >
       <!-- ***************** fields from superclasses ********************* -->
       <!-- fields from BasicObject... -->
@@ -167,7 +167,7 @@
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
          proxy="true"
-         indirection-table="INT2ANNOT"
+         indirection-table="ia_INT2ANNOT"
 
       >
          <fk-pointing-to-this-class column="interactor_ac"/>
@@ -189,7 +189,7 @@
    <!-- descriptor for Interaction.....-->
    <class-descriptor
       class="uk.ac.ebi.intact.model.Interaction"
-      table="Interactor"
+      table="ia_Interactor"
    >
 
    <!-- ***************** fields from superclasses ********************* -->
@@ -299,7 +299,7 @@
          proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="INT2ANNOT"
+         indirection-table="ia_INT2ANNOT"
       >
          <fk-pointing-to-this-class column="interactor_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -311,7 +311,7 @@
       proxy="true"
          name="experiment"
          element-class-ref="uk.ac.ebi.intact.model.Experiment"
-         indirection-table="INT2EXP"
+         indirection-table="ia_INT2EXP"
       >
          <fk-pointing-to-this-class column="interaction_ac"/>
          <fk-pointing-to-element-class column="experiment_ac"/>
@@ -348,7 +348,7 @@
 <!-- Definitions for Experiment -->
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.Experiment"
-	  table="Experiment"
+	  table="ia_Experiment"
    >
 
    <!-- ************** fields inherited from BasicObject **************** -->
@@ -465,7 +465,7 @@
       proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="EXP2ANNOT"
+         indirection-table="ia_EXP2ANNOT"
       >
          <fk-pointing-to-this-class column="experiment_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -478,7 +478,7 @@
      proxy="true"
          name="interaction"
          element-class-ref="uk.ac.ebi.intact.model.Interaction"
-         indirection-table="INT2EXP"
+         indirection-table="ia_INT2EXP"
       >
          <fk-pointing-to-this-class column="experiment_ac"/>
          <fk-pointing-to-element-class column="interaction_ac"/>
@@ -490,7 +490,7 @@
    <!-- Definitions for Biosource -->
   <class-descriptor
 	  class="uk.ac.ebi.intact.model.BioSource"
-      table="BioSource"
+      table="ia_BioSource"
    >
      <field-descriptor id="1"
          name="ac"
@@ -559,7 +559,7 @@
          proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="BIOSOURCE2ANNOT"
+         indirection-table="ia_BIOSOURCE2ANNOT"
       >
          <fk-pointing-to-this-class column="biosource_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -577,7 +577,7 @@
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.Annotation"
 
-	  table="Annotation"
+	  table="ia_Annotation"
    >
 
    <!-- ************ fields inherited from BasicObject ****************** -->
@@ -651,7 +651,7 @@
    <!-- Definitions for Institution -->
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.Institution"
-	  table="Institution"
+	  table="ia_Institution"
    >
    <!-- *********** fields identical to BasicObject ************** -->
    <field-descriptor id="1"
@@ -704,7 +704,7 @@
 <!-- Definitions for IntactNode -->
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.IntactNode"
-	  table="IntactNode"
+	  table="ia_IntactNode"
    >
       <field-descriptor id="1"
          name="ac"
@@ -785,7 +785,7 @@
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.Xref"
 
-	  table="Xref"
+	  table="ia_Xref"
    >
       <!-- ************** fields inherited from BasicObject ******************* -->
       <!-- fields from BasicObject... -->
@@ -883,7 +883,7 @@
    <!-- Definitions for Component -->
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.Component"
-      table="Component"
+      table="ia_Component"
    >
 
    <!-- ***************** inherited from BasicObject ************** -->
@@ -995,7 +995,7 @@
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.CvXrefQualifier"
 
-	  table="ControlledVocab"
+	  table="ia_ControlledVocab"
    >
 
    <!-- ******** fields inherited from BasicObject *****************-->
@@ -1069,7 +1069,7 @@
       proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="CVOBJECT2ANNOT"
+         indirection-table="ia_CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1082,7 +1082,7 @@
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.CvDatabase"
 
-	  table="ControlledVocab"
+	  table="ia_ControlledVocab"
    >
 
    <!-- ******** fields inherited from BasicObject *****************-->
@@ -1155,7 +1155,7 @@
      proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="CVOBJECT2ANNOT"
+         indirection-table="ia_CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1171,7 +1171,7 @@
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.CvTopic"
 
-	  table="ControlledVocab"
+	  table="ia_ControlledVocab"
    >
 
    <!-- ******** fields inherited from BasicObject *****************-->
@@ -1246,7 +1246,7 @@
      proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="CVOBJECT2ANNOT"
+         indirection-table="ia_CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1257,7 +1257,7 @@
 <!-- Definitions for CvInteractionType....-->
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.CvInteractionType"
-	  table="ControlledVocab"
+	  table="ia_ControlledVocab"
    >
 
    <!-- ******** fields inherited from BasicObject *****************-->
@@ -1332,7 +1332,7 @@
      proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="CVOBJECT2ANNOT"
+         indirection-table="ia_CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1343,7 +1343,7 @@
 <!-- Definitions for CvInteraction....-->
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.CvInteraction"
-	  table="ControlledVocab"
+	  table="ia_ControlledVocab"
    >
 
    <!-- ******** fields inherited from BasicObject *****************-->
@@ -1407,7 +1407,7 @@
      proxy="true"
          name="parent"
          element-class-ref="uk.ac.ebi.intact.model.CvInteraction"
-         indirection-table="Cv2Cv"
+         indirection-table="ia_Cv2Cv"
       >
          <fk-pointing-to-this-class column="child_ac"/>
          <fk-pointing-to-element-class column="parent_ac"/>
@@ -1419,7 +1419,7 @@
      proxy="true"
          name="child"
          element-class-ref="uk.ac.ebi.intact.model.CvInteraction"
-         indirection-table="Cv2Cv"
+         indirection-table="ia_Cv2Cv"
       >
          <fk-pointing-to-this-class column="parent_ac"/>
          <fk-pointing-to-element-class column="child_ac"/>
@@ -1441,7 +1441,7 @@
      proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="CVOBJECT2ANNOT"
+         indirection-table="ia_CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1452,7 +1452,7 @@
 <!-- Definitions for CvIdentification....-->
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.CvIdentification"
-	  table="ControlledVocab"
+	  table="ia_ControlledVocab"
    >
 
    <!-- ******** fields inherited from BasicObject *****************-->
@@ -1526,7 +1526,7 @@
     proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="CVOBJECT2ANNOT"
+         indirection-table="ia_CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
@@ -1537,7 +1537,7 @@
 <!-- Definitions for CvComponentRole....-->
    <class-descriptor
 	  class="uk.ac.ebi.intact.model.CvComponentRole"
-	  table="ControlledVocab"
+	  table="ia_ControlledVocab"
    >
 
    <!-- ******** fields inherited from BasicObject *****************-->
@@ -1611,7 +1611,7 @@
      proxy="true"
          name="annotation"
          element-class-ref="uk.ac.ebi.intact.model.Annotation"
-         indirection-table="CVOBJECT2ANNOT"
+         indirection-table="ia_CVOBJECT2ANNOT"
       >
          <fk-pointing-to-this-class column="cvobject_ac"/>
          <fk-pointing-to-element-class column="annotation_ac"/>
