@@ -19,7 +19,7 @@
 SET DOC OFF
 
 -- Institution
-INSERT INTO Institution (shortLabel, fullName, postalAddress, url, ac)
+INSERT INTO IA_Institution (shortLabel, fullName, postalAddress, url, ac)
      VALUES ( 'EBI',
 	      'European Bioinformatics Institute',
 	      'European Bioinformatics Institute\n' ||
@@ -30,59 +30,59 @@ INSERT INTO Institution (shortLabel, fullName, postalAddress, url, ac)
 	      'EBI-' || Intact_ac.nextval);
 
 -- Node
-INSERT INTO intactnode (ac, ownerprefix, owner_ac)
+INSERT INTO IA_intactnode (ac, ownerprefix, owner_ac)
     SELECT  'EBI-' || Intact_ac.nextval,
           'EBI',
 	      ac
-         FROM Institution
+         FROM IA_Institution
         WHERE shortLabel='EBI';
 
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, owner_ac)
+INSERT INTO IA_ControlledVocab (ac, objClass, shortLabel, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'uk.ac.ebi.intact.model.CvComponentRole',
 	      'bait',
 	      ac
-         FROM Institution
+         FROM IA_Institution
         WHERE shortLabel='EBI';
 
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, owner_ac)
+INSERT INTO IA_ControlledVocab (ac, objClass, shortLabel, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'uk.ac.ebi.intact.model.CvComponentRole',
 	      'prey',
 	      ac
-         FROM Institution
+         FROM IA_Institution
         WHERE shortLabel='EBI';
 
-INSERT INTO Experiment (ac, shortLabel, owner_ac)
+INSERT INTO IA_Experiment (ac, shortLabel, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'gavin',
 	      ac
-         FROM Institution
+         FROM IA_Institution
         WHERE shortLabel='EBI';
 
-INSERT INTO Experiment (ac, shortLabel, owner_ac)
+INSERT INTO IA_Experiment (ac, shortLabel, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'ho',
 	      ac
-         FROM Institution
+         FROM IA_Institution
         WHERE shortLabel='EBI';
 
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
+INSERT INTO IA_ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'uk.ac.ebi.intact.model.CvTopic',
 	      'definition',
 	      'Definition of the controlled vocabulary term',
 	      ac
-         FROM Institution
+         FROM IA_Institution
         WHERE shortLabel='EBI';
 
-INSERT INTO ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
+INSERT INTO IA_ControlledVocab (ac, objClass, shortLabel, fullName, owner_ac)
        SELECT 'EBI-' || Intact_ac.nextval,
 	      'uk.ac.ebi.intact.model.CvTopic',
 	      'comment',
 	      'Comment for public view',
 	      ac
-         FROM Institution
+         FROM IA_Institution
         WHERE shortLabel='EBI';
 
 commit;
