@@ -92,7 +92,7 @@ public class MineHelper {
      * @return @throws MineException whether a search accession number could not
      *         been mapped to a node in the graph
      */
-    private Map getSearchNodes(Map graphMap, Collection searchAC)
+    private Map getSearchNodes( Map graphMap, Collection searchAC )
             throws MineException {
         // map to store the mapping of a node to a SearchObject
         Map map = new Hashtable();
@@ -102,12 +102,12 @@ public class MineHelper {
         int size = searchAC.size();
 
         // the accession numbers are iterated
-        for (Iterator iter = searchAC.iterator(); iter.hasNext();) {
+        for ( Iterator iter = searchAC.iterator(); iter.hasNext(); ) {
             // the current accession number is fetched
-            accessionNumber = (String) iter.next();
+            accessionNumber = ( String ) iter.next();
 
             // the node for the current accession number is fetched
-            node = (Vertex) graphMap.get( accessionNumber );
+            node = ( Vertex ) graphMap.get( accessionNumber );
 
             // there should be an entry for the given accession number
             // so if not -> an exception is thrown.
@@ -115,7 +115,7 @@ public class MineHelper {
                 throw new MineException();
             }
             // a new SearchObject is stored
-            map.put( node, new SearchObject( i++, size ) );
+            map.put( node , new SearchObject( i++, size ) );
         }
         return map;
     }
@@ -130,10 +130,10 @@ public class MineHelper {
      * 
      * @param searchFor the accession numbers one wants to compute the minimal
      *            network.
-     * @return @throws SQLException whether something failed on the database
-     *         level
+     * @return a map
+     * @throws SQLException whether something failed on the database level
      */
-    public Map getNetworkMap(Collection searchFor) throws SQLException {
+    public Map getNetworkMap( Collection searchFor ) throws SQLException {
         Map networks = new Hashtable();
         // statement to select the taxis and graphid for every interactor
         PreparedStatement pstm = intactUser.getDBConnection().prepareStatement(
@@ -145,11 +145,11 @@ public class MineHelper {
         Collection search;
         // every given accession number is taken and its graphid and taxid
         // is fetched
-        for (Iterator iter = searchFor.iterator(); iter.hasNext();) {
-            ac = (String) iter.next();
+        for ( Iterator iter = searchFor.iterator(); iter.hasNext(); ) {
+            ac = ( String ) iter.next();
             // the accesion number is set in the sql statement
-            pstm.setString( 1, ac );
-            pstm.setString( 2, ac );
+            pstm.setString( 1 , ac );
+            pstm.setString( 2 , ac );
             set = pstm.executeQuery();
 
             // if no data was found for the given accession number
@@ -165,14 +165,14 @@ public class MineHelper {
             // the accession number is added to the other numbers belonging
             // to the key
             if ( networks.containsKey( key ) ) {
-                ( (Collection) networks.get( key ) ).add( ac );
+                ( ( Collection ) networks.get( key ) ).add( ac );
             }
             else {
                 // a new collection is created to store the accession
                 // numbers
                 search = new ArrayList();
                 search.add( ac );
-                networks.put( key, search );
+                networks.put( key , search );
             }
             set.close();
         }
@@ -189,11 +189,11 @@ public class MineHelper {
      * @return @throws MineException whether the computation fails
      * @throws SQLException
      */
-    public void computeMiNe(GraphData graphData, Collection searchAc)
+    public void computeMiNe( GraphData graphData, Collection searchAc )
             throws MineException {
         // the map which maps the nodes of the graph and the SearchObjects is
         // created (Vertex -> SearchObject)
-        Map searchMap = getSearchNodes( graphData.getAccMap(), searchAc );
+        Map searchMap = getSearchNodes( graphData.getAccMap() , searchAc );
 
         Graph graph = graphData.getGraph();
         // the structure to store the informations for the algorithm
@@ -201,7 +201,7 @@ public class MineHelper {
         Dijkstra d = new Dijkstra( storage, searchMap );
 
         // for easy access the nodes are rearranged into an array
-        Vertex[] nodes = (Vertex[]) searchMap.keySet().toArray(
+        Vertex[] nodes = ( Vertex[] ) searchMap.keySet().toArray(
                 new Vertex[searchMap.keySet().size()] );
 
         // all possible combinations of the nodes are considered.
@@ -211,13 +211,13 @@ public class MineHelper {
         // A -> C
         // B -> C
         SearchObject so1, so2;
-        for (int i = 0; i < nodes.length; i++) {
+        for ( int i = 0; i < nodes.length; i++ ) {
             // the searchobject for the current node is fetched
-            so1 = (SearchObject) searchMap.get( nodes[i] );
+            so1 = ( SearchObject ) searchMap.get( nodes[i] );
 
-            for (int j = i + 1; j < nodes.length; j++) {
+            for ( int j = i + 1; j < nodes.length; j++ ) {
                 // the searchobject for the other node is fetched
-                so2 = (SearchObject) searchMap.get( nodes[j] );
+                so2 = ( SearchObject ) searchMap.get( nodes[j] );
 
                 // if a path was already found for the current two searchobjects
                 // no search is started !
@@ -225,7 +225,7 @@ public class MineHelper {
                     // the shortest path for the two nodes
                     Constants.LOGGER.info( "search starts from " + nodes[i]
                             + " to " + nodes[j] );
-                    d.execute( graph, nodes[i], nodes[j] );
+                    d.execute( graph , nodes[i] , nodes[j] );
                     storage.cleanup();
                 }
             }
@@ -236,8 +236,8 @@ public class MineHelper {
         Collection miNe = new HashSet();
         Edge edge;
         Sequence shortestPath;
-        for (Iterator iter = searchMap.values().iterator(); iter.hasNext();) {
-            so1 = (SearchObject) iter.next();
+        for ( Iterator iter = searchMap.values().iterator(); iter.hasNext(); ) {
+            so1 = ( SearchObject ) iter.next();
             shortestPath = so1.getPath();
             // it can happen that a search has no path e.g. if the node is
             // to far away from every other node ! then no path could have found
@@ -245,10 +245,10 @@ public class MineHelper {
             if ( shortestPath == null ) {
                 continue;
             }
-            for (ObjectIterator edgeIter = shortestPath.elements(); edgeIter
-                    .hasNext();) {
+            for ( ObjectIterator edgeIter = shortestPath.elements(); edgeIter
+                    .hasNext(); ) {
                 // the current edge of the path
-                edge = (Edge) edgeIter.nextObject();
+                edge = ( Edge ) edgeIter.nextObject();
                 // the end nodes of the edges are fetched
                 nodes = graph.endVertices( edge );
 
@@ -276,18 +276,9 @@ public class MineHelper {
                 intactUser.addToSingletons( searchAc );
             }
         }
-        // if a path was found the shortlabels of the accession numbers in
-        // this path are added to the path of the user
+        // the minimal connecting network is added to the path of the user
         else {
-            try {
-                intactUser.addToPath( getShortLabels( miNe ) );
-            }
-            // something went wrong and no shortlabels could be found. to
-            // provide that the application nevertheless go on the accession
-            // numbers are stored
-            catch ( SQLException e ) {
-                intactUser.addToPath( miNe );
-            }
+            intactUser.addToPath( miNe );
         }
     }
 
@@ -298,7 +289,7 @@ public class MineHelper {
      * @return the shortlabels of the accession numbers
      * @throws SQLException whether something failed on the database level
      */
-    public Collection getShortLabels(Collection acs) throws SQLException {
+    public Collection getShortLabels( Collection acs ) throws SQLException {
         // easily allows 8 acs with the size of 11 {e.g. EBI-1111111} letters
         // which is enough in most cases
         StringBuffer buf = new StringBuffer( 96 );
@@ -307,7 +298,7 @@ public class MineHelper {
         // the collection of the accession numbers is exploded to the
         // stringbuffer for the sql statement.
         // [1,2,3,4] -> "'1','2','3','4'"
-        for (Iterator iter = acs.iterator(); iter.hasNext();) {
+        for ( Iterator iter = acs.iterator(); iter.hasNext(); ) {
             ac = iter.next().toString();
             buf.append( SQL_DELIMITER ).append( ac ).append( SQL_DELIMITER );
             if ( iter.hasNext() ) {

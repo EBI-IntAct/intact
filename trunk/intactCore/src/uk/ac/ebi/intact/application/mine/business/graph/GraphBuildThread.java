@@ -16,9 +16,11 @@ import jdsl.graph.ref.IncidenceListGraph;
 
 import org.shiftone.cache.Cache;
 
+import uk.ac.ebi.intact.application.mine.business.Constants;
 import uk.ac.ebi.intact.application.mine.business.IntactUserI;
 import uk.ac.ebi.intact.application.mine.business.graph.model.EdgeObject;
 import uk.ac.ebi.intact.application.mine.business.graph.model.GraphData;
+import uk.ac.ebi.intact.application.mine.business.graph.model.NodeObject;
 
 /**
  * @author Andreas Groscurth
@@ -54,7 +56,7 @@ public class GraphBuildThread extends Thread {
             // and pushed it into the cache
             synchronized ( running ) {
                 // the data is stored in the cache
-                cache.addObject( toProcceed, gd );
+                cache.addObject( toProcceed , gd );
                 // work is done -> remove it from the running structure
                 running.remove( toProcceed );
             }
@@ -72,12 +74,14 @@ public class GraphBuildThread extends Thread {
      * @return the graphData
      * @throws SQLException
      */
-    private GraphData buildGraph(Integer graphid) throws SQLException {
+    private GraphData buildGraph( Integer graphid ) throws SQLException {
+        Constants.LOGGER.info( "build graph for " + graphid );
         Statement stm = intactUser.getDBConnection().createStatement();
         ResultSet set = null;
         IncidenceListGraph graph = null;
         Vertex v1, v2;
-        String protein1_ac, protein2_ac, interaction_ac;
+        String protein1_ac, protein2_ac, interaction_ac, shortLabel1, shortLabel2;
+
         Map nodeLabelMap = new Hashtable();
 
         set = stm.executeQuery( SELECT_QUERY + graphid );
@@ -86,35 +90,42 @@ public class GraphBuildThread extends Thread {
         while ( set.next() ) {
             // the two interactors are fetched
             protein1_ac = set.getString( 1 ).trim().toUpperCase();
-            protein2_ac = set.getString( 2 ).trim().toUpperCase();
+            shortLabel1 = set.getString( 2 );
+            protein2_ac = set.getString( 3 ).trim().toUpperCase();
+            shortLabel2 = set.getString( 4 );
             // the interaction_ac of the interactions
-            interaction_ac = set.getString( 5 );
-
+            interaction_ac = set.getString( 6 );
             // if the map does not contain the interactor_ac
             // this means the interactor is not yet in the graph
             if ( !nodeLabelMap.containsKey( protein1_ac ) ) {
-                v1 = graph.insertVertex( protein1_ac );
-                nodeLabelMap.put( protein1_ac, v1 );
+                v1 = graph.insertVertex( new NodeObject( protein1_ac,
+                        shortLabel1 ) );
+                nodeLabelMap.put( protein1_ac , v1 );
             }
+
             // if the map does not contain the interactor_ac
             // this means the interactor is not yet in the graph
             if ( !nodeLabelMap.containsKey( protein2_ac ) ) {
-                v2 = graph.insertVertex( protein2_ac );
-                nodeLabelMap.put( protein2_ac, v2 );
+                v2 = graph.insertVertex( new NodeObject( protein2_ac,
+                        shortLabel2 ) );
+                nodeLabelMap.put( protein2_ac , v2 );
             }
+
             // because it can happens that just one of the if tests
             // is succesful which means the protein1_ac may be old and
             // different
             // to the node v1 - the correct node for the given
             // interactor_ac has to be fetched from the map
-            v1 = (Vertex) nodeLabelMap.get( protein1_ac );
-            v2 = (Vertex) nodeLabelMap.get( protein2_ac );
+            v1 = ( Vertex ) nodeLabelMap.get( protein1_ac );
+            v2 = ( Vertex ) nodeLabelMap.get( protein2_ac );
+
             // the edge between these two nodes is inserted
-            graph.insertEdge( v1, v2, new EdgeObject( interaction_ac, set
-                    .getDouble( 6 ) ) );
+            graph.insertEdge( v1 , v2 , new EdgeObject( interaction_ac, set
+                    .getDouble( 7 ) ) );
         }
         set.close();
         stm.close();
+
         return new GraphData( graph, nodeLabelMap );
     }
 }
