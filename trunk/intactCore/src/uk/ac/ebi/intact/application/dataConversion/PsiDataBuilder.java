@@ -1080,13 +1080,19 @@ public class PsiDataBuilder implements DataBuilder {
         }  //not required here - so dont worry
 
 
-
         // getCvFeatureIdentification()
         Element psiFeatureDetection = null;
         try {
             if( feature.getCvFeatureIdentification() != null ) {
                 psiFeatureDetection = doCvFeatureIdentification( feature.getCvFeatureIdentification() );
-                psiFeature.appendChild( psiFeatureDetection );
+
+                if( psiFeatureDetection.getChildNodes().getLength() > 0 ) {
+                    psiFeature.appendChild( psiFeatureDetection );
+                } else {
+                    System.err.println( "" );
+                    System.err.println( feature.getCvFeatureIdentification() + " generated an empty <featureDetection/>." );
+                    System.err.println( "" );
+                }
             }
         } catch ( ElementNotParseableException e ) {
             logger.info( "cvFeatureIdentification failed (not required):" + e.getMessage() );
@@ -1100,7 +1106,19 @@ public class PsiDataBuilder implements DataBuilder {
 
             case 0:
 
-                Element location = createVoidLocation();
+                Component component = feature.getComponent();
+                Interactor interactor = component.getInteractor();
+                int start = 0, stop = 0;
+
+                if( interactor instanceof Protein ) {
+                    String sequence = ( (Protein) interactor).getSequence();
+
+                    if( sequence != null ) {
+                        start = 1;
+                        stop = sequence.length();
+                    }
+                }
+                Element location = createUndeterminedLocation( start, stop );
 
                 // if the featureDetection exists, insert the location before.
                 if( psiFeatureDetection != null ) {
@@ -1186,26 +1204,22 @@ public class PsiDataBuilder implements DataBuilder {
     /**
      * That method is used to cope with the fact that IntAct Feature might not have a Range,
      * though PSI 1 requires a location, hence we generate a dummy one + a comment as a work around.
-     *
-     * @param session
-     * @param parent
      */
-    public static final String NO_RANGE = "-1";
-    private Element createVoidLocation() {
+    private Element createUndeterminedLocation( int start, int stop ) {
 
         Element locationElement = doc.createElement( "location" );
 
         // Processing begin
         Element beginElement = doc.createElement( "begin" );
-        beginElement.setAttribute( "position", NO_RANGE );
+        beginElement.setAttribute( "position", ""+start );
         locationElement.appendChild( beginElement );
 
         // Processing end
         Element endElement = doc.createElement( "end" );
-        endElement.setAttribute( "position", NO_RANGE );
+        endElement.setAttribute( "position", ""+stop );
         locationElement.appendChild( endElement );
 
-        Comment comment = doc.createComment( "The location(-1, -1) is volontary wrong in order to reflect its abscence from the related IntAct Feature." );
+        Comment comment = doc.createComment( "That location the whole protein which means that it is undetermined." );
         beginElement.getParentNode().insertBefore(comment, beginElement);
 
         return locationElement;
