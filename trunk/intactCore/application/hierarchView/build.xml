@@ -572,9 +572,11 @@ Author: Samuel Kerrien, Sugath Mudali (smudali@ebi.ac.uk)
                 <include name="intact-core.jar"/>
             </lib>
 
-            <!-- Include common jar files for struts (except for the latest struts).
-            from the application level. -->
-            <lib dir="${intact.app.dir}/lib"/>
+            <!-- Include common jar files -->
+            <lib dir="${intact.app.dir}/lib">
+               <exclude name="standard.jar"/>
+               <exclude name="jstl.jar"/>
+            </lib>
 
             <!-- Include common jar files from intact core. -->
             <lib dir="${root.lib.dir}">
