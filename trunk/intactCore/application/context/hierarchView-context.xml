@@ -1,0 +1,7 @@
+<!--
+        Context configuration for hierarchView
+        version : $Id$
+  -->
+
+<Context path="/intact/hierarchView" docBase="app-dir/hierarchView.war">
+</Context>
