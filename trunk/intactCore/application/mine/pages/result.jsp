@@ -14,10 +14,9 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
 <%	IntactUserI user = (IntactUserI)session.getAttribute(Constants.USER);
-	Constants.LOGGER.warn(user);
+
 	String link = request.getContextPath();
 	link = link.substring(0, link.lastIndexOf("/") + 1); 
-	Constants.LOGGER.warn(link);
 	link = user.getHVLink(link);
 %>
 <meta http-equiv="refresh" content="3; URL=<%= link %>">
