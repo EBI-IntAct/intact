@@ -19,6 +19,7 @@
 
     <!-- Intact application location. -->
     <property name="intact.app.dir" value=".."/>
+    <property name="intact.app.lib.dir" value="${intact.app.dir}/lib"/>
 
     <!-- context path for editor store in the application level -->
     <property name="intact.context.dir" value="${intact.app.dir}/context"/>
@@ -55,6 +56,9 @@
 
     <property name="ant.dir" value="${root.lib.dir}/ant"/>
 
+    <!-- Where is HttpUnit located? -->
+    <property name="httpunit.install.dir" value="${intact.app.lib.dir}/test/httpunit"/>
+
     <!-- Build working classpath -->
     <path id="project.class.path">
         <!-- Project specific jar files. -->
@@ -73,10 +77,10 @@
         <pathelement path="${root.lib.dir}/jakarta-regexp-1.2.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
-        <pathelement path="${intact.app.dir}/lib/struts.jar"/>
-        <pathelement path="${intact.app.dir}/lib/commons-collections.jar"/>
-        <pathelement path="${intact.app.dir}/lib/commons-lang.jar"/>
-        <pathelement path="${intact.app.dir}/lib/commons-beanutils.jar"/>
+        <pathelement path="${intact.app.lib.dir}/struts.jar"/>
+        <pathelement path="${intact.app.lib.dir}/commons-collections.jar"/>
+        <pathelement path="${intact.app.lib.dir}/commons-lang.jar"/>
+        <pathelement path="${intact.app.lib.dir}/commons-beanutils.jar"/>
     </path>
 
     <path id="project.test.class.path">
@@ -92,9 +96,18 @@
         <pathelement path="${root.jar.file}"/>
 
         <!-- Runtime jar files. -->
+        <fileset dir="${httpunit.install.dir}/lib">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- Support jar files for http unit testing -->
+        <fileset dir="${httpunit.install.dir}/jars">
+            <include name="**/*.jar"/>
+        </fileset>
         <fileset dir="${root.lib.dir}">
             <include name="junit.jar"/>
             <include name="servlet.jar"/>
+            <include name="xercesImpl.jar"/>
         </fileset>
     </path>
 
@@ -295,7 +308,7 @@
             <!-- Inlcude the intact core -->
             <fileset dir="${root.dist.dir}"/>
             <!-- Inlcude application common jar files. -->
-            <fileset dir="${intact.app.dir}/lib"/>
+            <fileset dir="${intact.app.lib.dir}"/>
             <!-- Include required jar files from intact core. -->
             <fileset dir="${root.lib.dir}">
                 <include name="jakarta-ojb-0.9.7.jar"/>
@@ -470,6 +483,46 @@
 
     <!-- =================================================================== -->
 
+    <!-- Runs the web testing in simple mode (without generating reports) -->
+    <target name="junit-web-simple"
+        description="Runs JUnit directly with output directed to stdout">
+
+        <available file="${temp.web}/WEB-INF/lib" type="dir"
+            property="temp.web.present"/>
+
+        <!-- Display a message if the temp web dir is not present -->
+        <antcall target="check-war"/>
+
+        <antcall target="run-junit-simple">
+            <param name="test.class"
+                value="uk.ac.ebi.intact.application.editor.test.pg.AllJUnitTests"/>
+        </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Displays a message to indicate that temp war directory
+         is not present. -->
+    <target name="check-war" unless="temp.web.present">
+        <echo message="Temp web directory not present; please run ant war first"/>
+    </target>
+
+    <!-- =================================================================== -->
+
+    <!-- Runs the given junit tester class without generating any reports -->
+    <target name="run-junit-simple" if="temp.web.present">
+
+        <!-- Only call this if the temp web dir is present -->
+        <antcall target="compile-all"/>
+
+        <java classname="junit.textui.TestRunner" fork="true">
+            <arg value="${test.class}"/>
+            <classpath refid="project.test.class.path"/>
+        </java>
+    </target>
+
+    <!-- =================================================================== -->
+
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
     <target name="junit-test-stdout" depends="war, compile-all"
         description="Runs JUnit directly with output directed to stdout">
@@ -489,7 +542,7 @@
         description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner" fork="true">
             <arg value=
-                "uk.ac.ebi.intact.application.editor.struts.framework.util.test.AllJUnitTests"/>
+                "uk.ac.ebi.intact.application.editor.test.pg.AllJUnitTests"/>
             <classpath refid="project.test.class.path"/>
         </java>
     </target>
