@@ -850,7 +850,7 @@ public class ObjectBridgeDAO implements DAO, Serializable {
             }
             //build a normal Criteria query, if class is cached locally or not (
             //if found locally, would have returned by here)
-            if(val.indexOf('*') != -1) {
+            /*if(val.indexOf('*') != -1) {
 
                 //search value contains a wildcard - check to see if 'like' or
                 //a full wildacrd search is needed
@@ -868,12 +868,12 @@ public class ObjectBridgeDAO implements DAO, Serializable {
                     crit.addLike(col, val);
                 }
             }
-            else {
+            else {*/
 
                 //fully specified search value
                 crit = new Criteria();
                 crit.addEqualTo(col, val);
-            }
+            //}
             logger.info("criteria built OK");
             query = new QueryByCriteria(searchClass, crit);
             logger.info("query by criteria built OK: " + type + " " + col + " " + val);
