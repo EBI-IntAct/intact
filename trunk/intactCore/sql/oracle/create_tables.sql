@@ -1278,3 +1278,12 @@ set term off
             FROM ia_pubmed p
       	ORDER BY pubmedid asc, updated desc;
 
+/* ************************************************
+  	Interactions table for mine
+   ************************************************
+*/
+PROMPT Creating table "IA_Interctions"
+CREATE TABLE ia_interactions (p1ac VARCHAR2(20),p2ac VARCHAR2(20),bac VARCHAR2(20),iac VARCHAR2(20),weight NUMBER(4,3),graphid
+ INTEGER);
+
+
