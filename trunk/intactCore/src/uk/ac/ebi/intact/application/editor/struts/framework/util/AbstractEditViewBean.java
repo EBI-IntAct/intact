@@ -173,7 +173,14 @@ public abstract class AbstractEditViewBean implements Serializable {
         return true;
     }
 
+    /**
+     * Resets the bean with given object.
+     * @param obj either an Annotated object or a Class. The class type is used
+     * when creating a view bean for a new object. For an existing object,
+     * AnnotatedObject is used.
+     */
     public void reset(Object obj) {
+        // Check for annotated object.
         if (AnnotatedObject.class.isAssignableFrom(obj.getClass())) {
             reset((AnnotatedObject) obj);
         }
@@ -188,7 +195,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * that time).
      * @param clazz the Class of the new annotated object.
      */
-    public void reset(Class clazz) {
+    protected void reset(Class clazz) {
         myEditClass = clazz;
 
         // Set them to null as they may have previous values.
@@ -208,7 +215,7 @@ public abstract class AbstractEditViewBean implements Serializable {
      * Resets with the bean using an existing Annotated object.
      * @param annot <code>AnnotatedObject</code> object to set this bean.
      */
-    public void reset(AnnotatedObject annot) {
+    protected void reset(AnnotatedObject annot) {
         // Need to get the real object for a proxy type.
         setAnnotatedObject((AnnotatedObject) IntactHelper.getRealIntactObject(annot));
         myEditClass = IntactHelper.getRealClassName(annot);
