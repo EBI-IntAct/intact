@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSessionBindingListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
+import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
@@ -35,9 +36,8 @@ import org.apache.log4j.Logger;
  * @author Originaly : Chris Lewington, Sugath Mudali (smudali@ebi.ac.uk)
  *         Modified by Samuel Kerrien (skerrien@ebi.ac.uk)
  */
-public class IntactUser implements HttpSessionBindingListener {
+public class IntactUser implements Serializable, HttpSessionBindingListener {
 
-    // LOGGER
     static Logger logger = Logger.getLogger(uk.ac.ebi.intact.application.hierarchView.business.Constants.LOGGER_NAME);
 
     private IntactHelper intactHelper;
@@ -157,7 +157,6 @@ public class IntactUser implements HttpSessionBindingListener {
     public void valueUnbound (HttpSessionBindingEvent event) {
         try {
             this.intactHelper.closeStore();
-            this.intactHelper = null;
             logger.info ("IntactHelper datasource closed (cause: removing attribute from session)");
         }
         catch(IntactException ie) {
