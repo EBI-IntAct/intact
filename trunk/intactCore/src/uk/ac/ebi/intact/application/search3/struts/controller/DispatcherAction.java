@@ -13,9 +13,9 @@ import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.framework.util.SearchConstants;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Experiment;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +47,6 @@ public class DispatcherAction extends IntactBaseAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
-
 
 
         //first check to see if we just need to forward for a tabbed page of an existing result
@@ -86,7 +85,7 @@ public class DispatcherAction extends IntactBaseAction {
         String binaryValue = user.getBinaryValue(); // this was set in the search Action
 
         // check if it's a binary request
-        if (binaryValue != null && !binaryValue.equals("")) {           
+        if (binaryValue != null && !binaryValue.equals("")) {
             return mapping.findForward(SearchConstants.FORWARD_BINARYPROTEIN_ACTION);
         }
 
@@ -126,6 +125,12 @@ public class DispatcherAction extends IntactBaseAction {
                 //need to send to partners view Action (single or multiple)...
                 logger.info("Dispatcher: forwarding to Protein partners action");
                 return mapping.findForward(SearchConstants.FORWARD_BINARY_ACTION);
+
+            } else if (results.size() > 1) {
+
+                logger.info("Dispatcher: forwarding to Protein beans action");
+                return mapping.findForward(SearchConstants.FORWARD_SIMPLE_ACTION);
+
             }
 
             //otherwise must be a standard 'Protein beans' view (link from another internal page)..
@@ -158,13 +163,20 @@ public class DispatcherAction extends IntactBaseAction {
         //case it should do a single view..
         //Not a protein - deal with the others...
 
-         if ((results.size() == 1) &
+        if ((results.size() == 1) &
                 (Experiment.class.isAssignableFrom(resultItem.getClass()))) {
             //only use the single view for Proteins (dealt with above),
             //Experiment and Controlled vocabulary - Interactions
             // still need to be displayed in the context of an Experiment
             logger.info("Dispatcher ask forward to DetailAction");
             return mapping.findForward(SearchConstants.FORWARD_DETAILS_ACTION);
+        } else if ((results.size() > 1) &
+                (Experiment.class.isAssignableFrom(resultItem.getClass()))) {
+            //only use the single view for Proteins (dealt with above),
+            //Experiment and Controlled vocabulary - Interactions
+            // still need to be displayed in the context of an Experiment
+            logger.info("Dispatcher ask forward to DetailAction");
+            return mapping.findForward(SearchConstants.FORWARD_SIMPLE_ACTION);
         }
 
 
@@ -175,6 +187,13 @@ public class DispatcherAction extends IntactBaseAction {
             // still need to be displayed in the context of an Experiment
             logger.info("Dispatcher ask forward to SingleResultAction");
             return mapping.findForward(SearchConstants.FORWARD_SINGLE_ACTION);
+        } else if ((results.size() > 1) &
+                (Interaction.class.isAssignableFrom(resultItem.getClass()))) {
+            //only use the single view for Proteins (dealt with above),
+            //Experiment and Controlled vocabulary - Interactions
+            // still need to be displayed in the context of an Experiment
+            logger.info("Dispatcher ask forward to SingleResultAction");
+            return mapping.findForward(SearchConstants.FORWARD_SIMPLE_ACTION);
         }
 
         logger.info("Dispatcher ask forward to DetailsResultAction");
