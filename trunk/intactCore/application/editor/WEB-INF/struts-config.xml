@@ -246,7 +246,7 @@
 <!--        <forward name="success" path="/do/fillCvForm"/>-->
         <forward name="failure" path="error.layout"/>
         <!-- Fill the form with search results -->
-        <forward name="results" path="/do/fillResultForm"/>
+        <forward name="result" path="/do/fillResultForm"/>
         <!-- Back to the search page. -->
         <forward name="search" path="search.layout"/>
     </global-forwards>
@@ -312,7 +312,7 @@
             <!-- Single item found for the search -->
             <forward name="single" path="/do/choose"/>
             <!-- Select the appropriate editor for the new record. -->
-            <forward name="created" path="/do/choose"/>
+            <forward name="create" path="/do/choose"/>
         </action>
 
         <!-- Process a new search for a Editor Object. -->
@@ -330,7 +330,7 @@
         </action>
 
         <!-- Process when a user selects an Editor object from a search result. -->
-        <action path="/results"
+        <action path="/result"
             name="resultForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.ResultAction"
             scope="request">
