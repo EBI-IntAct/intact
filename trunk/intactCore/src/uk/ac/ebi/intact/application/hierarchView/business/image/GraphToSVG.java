@@ -123,8 +123,8 @@ public class GraphToSVG
     /**
      * Size of the image
      */
-    private float imageSizex;
-    private float imageSizey;
+    private int imageSizex;
+    private int imageSizey;
 
     /**
      *  allow to apply a resizing of the image components
@@ -140,7 +140,7 @@ public class GraphToSVG
     /**
      *
      */
-    private float borderSize;
+    private int borderSize;
 
     /**
      * Internal margin of a node
@@ -167,7 +167,7 @@ public class GraphToSVG
     private Color  borderColor;
     private String borderEnable;
 
-    private float imageLength, imageHeight;
+    private int imageLength, imageHeight;
 
     private String shapeEnable;
 
@@ -453,9 +453,9 @@ public class GraphToSVG
 
         this.fontLabel     = new Font (fontName, Font.PLAIN, intFontSize);
         this.boldFontLabel = new Font (fontName, Font.BOLD, intFontSize+1);
-        this.borderSize    = (new Float(border)).floatValue();
-        this.imageLength     = (new Float(xSize)).floatValue();
-        this.imageHeight     = (new Float(ySize)).floatValue();
+        this.borderSize    = (new Integer(border)).intValue();
+        this.imageLength     = (new Integer(xSize)).intValue();
+        this.imageHeight     = (new Integer(ySize)).intValue();
 
         if (null == this.edgeAntialiased) {
             /* Log error */
@@ -774,7 +774,7 @@ public class GraphToSVG
         this.document = impl.createDocument(svgNS, "svg", null);
 
         SVGGraphics2D svgGenerator = new SVGGraphics2D (this.document);
-        svgGenerator.setSVGCanvasSize (new Dimension ((int)imageSizex, (int)imageSizey));
+        svgGenerator.setSVGCanvasSize (new Dimension (imageSizex, imageSizey));
 
         SVGGraphics2D g = svgGenerator;
 
@@ -782,8 +782,8 @@ public class GraphToSVG
         g.setColor (this.backgroundColor);
         g.fillRect (0,
                     0,
-                    (int) imageSizex,
-                    (int) imageSizey);
+                    imageSizex,
+                    imageSizey);
 
         if (textAntialiased.equalsIgnoreCase ("enable")) {
             // Enable antialiasing for text
@@ -844,8 +844,8 @@ public class GraphToSVG
             g.setColor (borderColor);
             g.drawRect (0,
                         0,
-                        (int) imageSizex - 1,
-                        (int) imageSizey - 1);
+                        imageSizex - 1,
+                        imageSizey - 1);
         }
 
         // The following populates the document root with the generated SVG content.
@@ -864,6 +864,8 @@ public class GraphToSVG
         ImageBean ib = new ImageBean ();
         ib.setMapCode(mapCode.toString());
         ib.setDocument(document);
+        ib.setImageHeight(imageSizey);
+        ib.setImageWidth(imageSizex);
 
         return ib;
     }

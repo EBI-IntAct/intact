@@ -24,13 +24,6 @@ public class ImageBean  {
      */
     private Document document;
 
-    /**
-     * HTML MAP code.
-     */
-    private String mapCode;
-
-    /*************************************************** Setters and getters */
-
     public void setDocument (Document aDocument) {
         document = aDocument;
     }
@@ -39,6 +32,13 @@ public class ImageBean  {
         return document;
     }
 
+
+
+    /**
+     * HTML MAP code.
+     */
+    private String mapCode;
+
     public void setMapCode (String aMapCode) {
         mapCode = aMapCode;
     }
@@ -46,5 +46,31 @@ public class ImageBean  {
     public String getMapCode () {
         return mapCode;
     }
+
+
+
+    /**
+     * Size of the image
+     */
+    private int imageHeight;
+    private int imageWidth;
+
+    public int getImageHeight() {
+        return imageHeight;
+    }
+
+    public void setImageHeight(int imageHeight) {
+        this.imageHeight = imageHeight;
+    }
+
+    public int getImageWidth() {
+        return imageWidth;
+    }
+
+    public void setImageWidth(int imageWidth) {
+        this.imageWidth = imageWidth;
+    }
+
+
 }
 
