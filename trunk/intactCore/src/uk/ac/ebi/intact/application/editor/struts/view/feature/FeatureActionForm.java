@@ -6,20 +6,22 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collection;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * The action form for the Feature editor.
@@ -28,6 +30,12 @@ import java.util.Collection;
  * @version $Id$
  */
 public class FeatureActionForm extends EditorActionForm {
+
+    /**
+     * The pattern to match for a mutation entry.
+     * Patern: starts with an alpha character, followed by digits and an alpha char.
+     */
+    public static final Pattern MUT_ITEM_REGX = Pattern.compile("^[a-z]+(\\d+)[a-z]+$");
 
     /**
      * The parent ac
@@ -43,11 +51,6 @@ public class FeatureActionForm extends EditorActionForm {
      * The parent fullname.
      */
     private String myParentFullName;
-
-    /**
-     * The selected defined feature (hidden field attribute).
-     */
-    private String mySelectedDefinedFeature;
 
     /**
      * The feature type.
@@ -68,6 +71,8 @@ public class FeatureActionForm extends EditorActionForm {
      * The new range as a bean.
      */
     private RangeBean myNewRange = new RangeBean();
+
+    private boolean myMutationState;
 
     // Getter/Setter methods.
 
@@ -93,14 +98,6 @@ public class FeatureActionForm extends EditorActionForm {
 
     public void setParentFullName(String fullname) {
         myParentFullName = fullname;
-    }
-
-    public void setDefinedFeature(String label) {
-        mySelectedDefinedFeature = label;
-    }
-
-    public String getDefinedFeature() {
-        return mySelectedDefinedFeature;
     }
 
     public String getFeatureType() {
@@ -172,6 +169,10 @@ public class FeatureActionForm extends EditorActionForm {
         return (RangeBean) myRanges.get(getDispatchIndex());
     }
 
+    public void setMutationState(boolean state) {
+        myMutationState = state;
+    }
+
     /**
      * Validate the properties that have been set from the HTTP request.
      *
@@ -213,14 +214,25 @@ public class FeatureActionForm extends EditorActionForm {
         // Trap errors for Saving/Submitting the feature.
         else if (dispatch.equals(msgres.getMessage("button.submit"))
                 || dispatch.equals(msgres.getMessage("button.save.continue"))) {
-            // Must have ranges.
-            if (myRanges.isEmpty()) {
-                errors = new ActionErrors();
-                errors.add("feature.range.empty", new ActionError("error.feature.range.empty"));
+            // Check the full name for Feature mutations.
+            EditorService service = (EditorService)
+                    super.getServlet().getServletContext().getAttribute(EditorConstants.EDITOR_SERVICE);
+            // Do the mutation specific validation in mutation mode.
+            if (myMutationState) {
+                System.out.println("Just about to do mutation validation");
+                errors = validateMutations(service);
             }
             else {
-                // Check for unsaved ranges.
-                errors = checkUnsavedRanges();
+                // Must have ranges.
+                if (myRanges.isEmpty()) {
+                    errors = new ActionErrors();
+                    errors.add("feature.range.empty",
+                            new ActionError("error.feature.range.empty"));
+                }
+                else {
+                    // Check for unsaved ranges.
+                    errors = checkUnsavedRanges();
+                }
             }
         }
         return errors;
@@ -241,10 +253,56 @@ public class FeatureActionForm extends EditorActionForm {
             // They all must be in view mode. Flag an error if not.
             if (!rb.getEditState().equals(AbstractEditBean.VIEW)) {
                 errors = new ActionErrors();
-                errors.add("feature.range.unsaved", new ActionError("error.feature.range.unsaved"));
+                errors.add("feature.range.unsaved",
+                        new ActionError("error.feature.range.unsaved"));
                 break;
             }
         }
         return errors;
+    }
+
+    private ActionErrors validateMutations(EditorService service) {
+        // The errors to return.
+        ActionErrors errors = null;
+
+        StringTokenizer stk1 = new StringTokenizer(getFullName(),
+                service.getResource("mutation.feature.sep"));
+        if (!stk1.hasMoreTokens()) {
+            // No Features given in the full name.
+            errors = new ActionErrors();
+            errors.add("feature.mutation.empty",
+                    new ActionError("error.feature.mutation.empty"));
+            return errors;
+        }
+        // Found some features.
+
+        // The range separator.
+        String sep = service.getResource("mutation.range.sep");
+        do {
+            String feature = stk1.nextToken();
+            StringTokenizer stk2 = new StringTokenizer(feature, sep);
+            if (!stk2.hasMoreTokens()) {
+                // Only a single range specified
+                errors = validateMutationElement(feature);
+                continue;
+            }
+            do {
+                // Ranges specified
+                errors = validateMutationElement(stk2.nextToken());
+            } while (stk2.hasMoreTokens() && (errors == null));
+        } while (stk1.hasMoreTokens() && (errors == null));
+        return errors;
+    }
+
+    private ActionErrors validateMutationElement(String element) {
+        Matcher matcher = MUT_ITEM_REGX.matcher(element.trim());
+        if (!matcher.matches()) {
+            // Invalid entry.
+            ActionErrors errors = new ActionErrors();
+            errors.add("feature.mutation.invalid",
+                    new ActionError("error.feature.mutation.invalid", element));
+            return errors;
+        }
+        return null;
     }
 }

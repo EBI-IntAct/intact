@@ -746,6 +746,15 @@ public abstract class AbstractEditViewBean implements Serializable {
         return true;
     }
 
+    /**
+     * By default editor objects can be saved by selecting Save & Continue button from
+     * edit screen. However, Mutation Features cannot save and continue.
+     * @return true as by default editor objects should be saved.
+     */
+    public boolean getSaveState() {
+        return true;
+    }
+
     // Protected Methods
 
     /**
