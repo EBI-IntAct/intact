@@ -268,6 +268,7 @@ public abstract class IntactBaseAction extends Action {
         }
         catch (IntactException ie) {
             logger.error ("Could not initialize user's settings", ie);
+            logger.error("Could not initialize user's settings - ROOT CAUSE:", ie.getRootCause());
             String applicationPath = aRequest.getContextPath();
             addError ("error.datasource.notCreated", applicationPath);
             return null;
@@ -358,7 +359,6 @@ public abstract class IntactBaseAction extends Action {
         GraphHelper gh         = new GraphHelper( user );
         Collection interactors = null;
         Collection criterias   = null;
-        String query           = null;
 
         Chrono chrono  = new Chrono();
         chrono.start();
@@ -385,10 +385,15 @@ public abstract class IntactBaseAction extends Action {
                 } else if ( interactorsFound == 0 ) {
 
                     logger.error ("nothing found for: " + queryString);
-                    if (in == null)
-                        addError ( "error.protein.notFound", query );
-                    else
-                        addMessage ("warning.protein.notFound", query );
+
+                    for ( Iterator iterator = criterias.iterator (); iterator.hasNext (); ) {
+                        CriteriaBean criteria = (CriteriaBean) iterator.next ();
+
+                        if (in == null)
+                            addError ( "error.protein.notFound", criteria.getQuery() );
+                        else
+                            addMessage ("warning.protein.notFound", criteria.getQuery() );
+                    }
 
                     return; // stop there !
                 }
@@ -433,10 +438,11 @@ public abstract class IntactBaseAction extends Action {
 
                     for ( Iterator iterator = criterias.iterator (); iterator.hasNext (); ) {
                         CriteriaBean criteria = (CriteriaBean) iterator.next ();
-                        if ( criteria.hasGivenResults() )
+                        if ( criteria.hasGivenResults() ) {
                             in.addCriteria( criteria );
-                        else
+                        } else {
                             addMessage ( "warning.protein.notFound", criteria.getQuery() );
+                        }
                     }
                     break;
 
