@@ -339,6 +339,36 @@ public class IntactHelper implements SearchI, Serializable {
 
        }
 
+    /**
+     * Convenience method to create a single object in persistent store.
+     *
+     * @param obj The object to be created
+     *
+     * @exception IntactException thrown if the creation failed
+     */
+    public void create(Object obj) throws IntactException {
+
+        try {
+
+            if(dao == null) dao = dataSource.getDAO();
+
+                //just to be safe, restrict write access..
+                synchronized(this) {
+
+                    dao.create(obj);
+
+                }
+
+        }
+        catch(Exception de) {
+
+            String msg = "intact helper: single object creation failed for class " + obj.getClass().getName();
+            throw new IntactException(msg, de);
+
+        }
+
+    }
+
         /**
         *  This method provides an update operation.
         *
