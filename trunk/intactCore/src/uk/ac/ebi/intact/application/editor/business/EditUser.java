@@ -463,6 +463,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myProteinFactory.insertSPTrProteins(pid);
     }
 
+    public Exception getProteinParseException() {
+        // Map of exceptions.
+        Map map = myProteinFactory.getParsingExceptions();
+        // Only interested in the first entry as the parsing is limited to a
+        // single entry.
+        return (Exception) map.values().iterator().next();
+    }
+
     public Collection search1(String objectType, String searchParam,
                               String searchValue) throws SearchException {
         // Retrieve an object...
