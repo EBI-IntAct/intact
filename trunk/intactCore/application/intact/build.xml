@@ -20,8 +20,8 @@
 
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
-    
-     <!-- The jdbc properties. -->
+
+    <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
     <!-- Intact application location. -->
@@ -120,7 +120,6 @@
                 <include name="*.css"/>
                 <include name="*.xsl"/>
                 <include name="*.html"/>
-                <include name="robot.txt"/>
 
                 <!-- doc related -->
                 <include name="*.jsp"/>
