@@ -31,6 +31,8 @@
     <!-- The build properties. -->
     <property file="${intact.root}/config/build.properties"/>
 
+    <property name="intact.app.lib.dir" value="${intact.app.dir}/lib"/>
+
     <!-- The jdbc properties. -->
     <property file="${intact.root}/config/jdbc.properties"/>
 
@@ -48,6 +50,10 @@
     <property name="tld.dir" value="WEB-INF/tld"/>
     <property name="dest.dir" value="WEB-INF/classes"/>
     <property name="docs.dir" value="doc/api"/>
+
+    <!-- Where is HttpUnit located? -->
+    <property name="httpunit.install.dir" value="${intact.app.lib.dir}/test/httpunit"/>
+
 
     <!-- The name of the last modified file -->
     <property name="last.modified.file" value="last-modified.txt"/>
@@ -73,6 +79,7 @@
         <pathelement path="${root.lib.dir}/servlet.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.8.jar"/>
         <pathelement path="${root.lib.dir}/commons-dbcp-1.1.jar"/>
+        <pathelement path="${root.lib.dir}/xercesImpl.jar"/>
 
         <!-- NB these probably need upgrading from the intact lib directory.. -->
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
@@ -81,7 +88,21 @@
         <pathelement path="${intact.app.dir}/lib/commons-beanutils.jar"/>
         <pathelement path="${intact.app.dir}/lib/concurrent.jar"/>
 
+        <!-- http unit test -->
+        <pathelement path="${httpunit.install.dir}/lib/httpunit.jar"/>
+        <pathelement path="${httpunit.install.dir}/jars/js.jar"/>
+        <pathelement path="${httpunit.install.dir}/jars/Tidy.jar"/>
+        <pathelement path="${httpunit.install.dir}/jars/netkohtml.jar"/>
+        <pathelement path="${httpunit.install.dir}/jars/xmlParserAPIs.jar"/>
+
+
+
+        <fileset dir="${root.lib.dir}">
+            <include name="junit.jar"/>
+        </fileset>
+
     </path>
+
 
     <!-- =================================================================== -->
 
@@ -146,7 +167,6 @@
                 <exclude name="singleProtein.jsp"/>
                 <!-- these are the new JSPs and HTML files (for search mockups Dec 2004)-->
                 <exclude name="binaryProtein.jsp"/>
-                <exclude name="sidebarFooter.jsp"/>
                 <exclude name="tooLarge.jsp"/>
                 <exclude name="bioSource.jsp"/>
                 <exclude name="cvObject.jsp"/>
@@ -413,26 +433,13 @@
 
     <!-- =================================================================== -->
 
-    <!-- These unit tests only run one tests in a single package; we need to add
-         a utility class which can run all the unit tests together.
-     -->
-    <!-- Runs tests using junit. -->
-    <target name="junit-test" depends="compile" description="Run JUnit tests">
-        <junit printsummary="withOutAndErr">
-            <test name=
-                "uk.ac.ebi.intact.application.search3.struts.framework.util.test.AllJUnitTests"/>
-            <classpath refid="project.class.path"/>
-        </junit>
-    </target>
-
-    <!-- =================================================================== -->
 
     <!-- Runs the JUnit tester directly. The output is redirected to std out -->
-    <target name="junit-test-stdout" depends="compile"
+    <target name="junit-test" depends="compile"
         description="Runs JUnit directly with output directed to stdout">
         <java classname="junit.textui.TestRunner">
             <arg value=
-                "uk.ac.ebi.intact.application.search3.struts.framework.util.test.AllJUnitTests"/>
+                "uk.ac.ebi.intact.application.search3.test.AllJUnitTests"/>
             <classpath refid="project.class.path"/>
         </java>
     </target>
