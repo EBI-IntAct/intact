@@ -72,6 +72,7 @@
         <pathelement path="${root.lib.dir}/jakarta-ojb-0.9.7.jar"/>
         <pathelement path="${root.lib.dir}/log4j-1.2.5.jar"/>
         <pathelement path="${root.lib.dir}/servlet.jar"/>
+        <pathelement path="${root.lib.dir}/commons-pool.jar"/>
         <pathelement path="${intact.app.dir}/lib/struts.jar"/>
     </path>
 
@@ -211,6 +212,8 @@
                 <include name="struts-tiles.tld"/>
 
                 <include name="display.tld"/>
+
+                <include name="intact.tld"/>
             </fileset>
         </copy>
 
@@ -265,6 +268,7 @@
 			<lib dir="${root.lib.dir}">
 				<include name="jakarta-ojb-0.9.7.jar"/>
 				<include name="log4j-1.2.5.jar"/>
+				<include name="commons-pool.jar"/>
                 <include name="${db}"/>
 			</lib>
 
