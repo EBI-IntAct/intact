@@ -11,6 +11,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +49,9 @@ public class CancelFormAction extends AbstractEditorAction {
 
         // Cancel the current edit session.
         user.cancelEdit();
+
+        // Release the lock.
+        user.releaseLock(getLockManager());
 
         // Back to the search page.
         return mapping.findForward(SEARCH);

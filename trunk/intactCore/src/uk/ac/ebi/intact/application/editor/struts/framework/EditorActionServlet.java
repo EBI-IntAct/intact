@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionServlet;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -55,5 +56,6 @@ public class EditorActionServlet extends ActionServlet {
         // Make them accessible for any servlets within the server.
         ctx.setAttribute(EditorConstants.EDITOR_SERVICE, service);
         ctx.setAttribute(EditorConstants.EDITOR_TOPICS, service.getIntactTypes());
+        ctx.setAttribute(EditorConstants.LOCK_MGR, LockManager.getInstance());
     }
 }

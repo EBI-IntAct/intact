@@ -265,12 +265,18 @@ public class SubmitDispatchAction extends AbstractEditorDispatchAction {
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
+        finally {
+            // Release the lock only for submit.
+            if (submit) {
+                user.releaseLock(getLockManager());
+            }
+        }
         if (submit) {
             // Need to rebuild the menu again as the short label may have been
             // changed. Remove it from cache.
             view.removeMenu();
             // Update the search cache.
-            user.updateSearchCache();
+            user.updateSearchCache(getLockManager());
             // Only show the submitted record.
             return mapping.findForward(RESULT);
         }

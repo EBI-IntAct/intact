@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.business.IntactException;
@@ -30,6 +31,7 @@ import uk.ac.ebi.intact.util.*;
 
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
+import javax.servlet.ServletContext;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.*;
@@ -255,6 +257,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * method sets the logout time.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
+        ServletContext ctx = event.getSession().getServletContext();
+        LockManager lmr = (LockManager) ctx.getAttribute(EditorConstants.LOCK_MGR);
+        // Release any locks.
+        releaseLock(lmr);
         try {
             logoff();
         }
@@ -372,8 +378,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public void delete() throws IntactException {
         myEditView.clear();
-        // Remove the current edit object from the cache.
-//        removeFromSearchCache();
         // Remove this from the experiment list.
         if (myEditView.getClass().isAssignableFrom(ExperimentViewBean.class)) {
             removeFromCurrentExperiment((Experiment) myEditView.getAnnotatedObject());
@@ -483,38 +487,20 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myLastQuery;
     }
 
-//    public String getSearchClass() {
-//        return myLastQueryClass;
-//    }
-
-    public void addToSearchCache(Collection results) {
+    public void addToSearchCache(Collection results, LockManager lmr) {
         // Clear previous results.
         mySearchCache.clear();
 
         // Wrap as ResultsBeans for tag library to display.
         for (Iterator iter = results.iterator(); iter.hasNext();) {
-            mySearchCache.add(new ResultBean((AnnotatedObject) iter.next()));
+            mySearchCache.add(new ResultBean((AnnotatedObject) iter.next(), lmr));
         }
     }
 
-    public void updateSearchCache() {
+    public void updateSearchCache(LockManager lmr) {
         // Clear previous results.
         mySearchCache.clear();
-        mySearchCache.add(new ResultBean(myEditView.getAnnotatedObject()));
-//        AnnotatedObject annobj = myEditView.getAnnotatedObject();
-        // Remove from the cache and add it again (this will update any
-        // changes done in the editor).
-//        removeFromSearchCache();
-//        if (mySearchCache.isEmpty()) {
-//            return;
-//        }
-        // Only add to the cache list if they are of same type; the check
-        // is made against the first element (assumes that rest are of same type).
-//        ResultBean rb = (ResultBean) mySearchCache.iterator().next();
-//        if (rb.isSameType(annobj)) {
-            // The same type; add it to the cache.
-//            mySearchCache.add(new ResultBean(annobj));
-//        }
+        mySearchCache.add(new ResultBean(myEditView.getAnnotatedObject(), lmr));
     }
 
     public Collection lookup(String className, String value, boolean cache)
@@ -557,7 +543,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
         if (cache) {
             // Cache the search result statuses.
-//            myLastQueryClass = className;
             myLastQueryInput = value;
             myLastQuery = searchParam + "=" + value;
             mySearchResultStatus = (results.size() == 1)
@@ -732,12 +717,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return xref;
     }
 
-    // Helper methods.
+    public void releaseLock(LockManager lmr) {
+        // Release any locks the user is holding.
+        if (myEditView != null) {
+            lmr.release(myEditView.getAcNoLink());
+        }
+    }
 
-//    private void removeFromSearchCache() {
-//        String ac = myEditView.getAcNoLink();
-//        CollectionUtils.filter(mySearchCache, ResultBean.getPredicate(ac));
-//    }
+    // Helper methods.
 
     /**
      * Starts the editing session.

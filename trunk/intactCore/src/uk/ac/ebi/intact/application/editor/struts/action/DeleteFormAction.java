@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,6 +74,10 @@ public class DeleteFormAction extends AbstractEditorAction {
                     "error.delete", ie1.getNestedMessage()));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
+        }
+        finally {
+            // Release the lock.
+            user.releaseLock(getLockManager());
         }
         // Back to the search page.
         return mapping.findForward(SEARCH);

@@ -12,6 +12,9 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -107,7 +111,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             return mapping.findForward("single");
         }
         // Cache the search results.
-        user.addToSearchCache(results);
+        user.addToSearchCache(results, getLockManager());
 
         // Move to the results page.
         return mapping.findForward(RESULT);
