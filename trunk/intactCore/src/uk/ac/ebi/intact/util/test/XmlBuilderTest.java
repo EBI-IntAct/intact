@@ -157,7 +157,7 @@ public class XmlBuilderTest extends TestCase {
                 System.out.println("getting an example nested AC - assuming we have an expanded Experiment...");
                 if(item instanceof Experiment) {
                     Experiment exp = (Experiment)item;
-                    Collection interactions = exp.getInteraction();
+                    Collection interactions = exp.getInteractions();
 
                     //get an interaction at random...
                     Interaction interaction = (Interaction)interactions.iterator().next();

@@ -255,7 +255,7 @@ public class GoaTools {
 
     public void addNewXref (AnnotatedObject current, final Xref xref)  {
         // Make sure the xref does not yet exist in the object
-        Collection xrefs = current.getXref();
+        Collection xrefs = current.getXrefs();
         for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
             Xref anXref = (Xref) iterator.next();
             if (anXref.equals(xref)) {
@@ -281,7 +281,7 @@ public class GoaTools {
 
     private void updateGoXref ( Institution institution, Protein protein, GoaItem goaItem, CvDatabase database ) {
 
-        Collection xrefs = protein.getXref();
+        Collection xrefs = protein.getXrefs();
         if ( ! isXrefAlreadyExisting( xrefs, goaItem.getGoId(), database ) ) {
             // add a new Xref
             String goId = goaItem.getGoId();

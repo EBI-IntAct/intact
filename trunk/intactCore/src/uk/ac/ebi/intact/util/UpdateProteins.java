@@ -442,7 +442,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
     public void addNewXref (AnnotatedObject current, final Xref xref)  {
         // Make sure the xref does not yet exist in the object
-        Collection xrefs = current.getXref();
+        Collection xrefs = current.getXrefs();
         for (Iterator iterator = xrefs.iterator(); iterator.hasNext();) {
             Xref anXref = (Xref) iterator.next();
             if (anXref.equals(xref)) {
@@ -522,7 +522,7 @@ public class UpdateProteins extends UpdateProteinsI {
                                    ac,
                                    id, null, null) ;
 
-            Collection xrefs = protein.getXref();
+            Collection xrefs = protein.getXrefs();
             if (! xrefs.contains(xref)) {
                 // link the Xref to the protein and record it in the database
                 addNewXref (protein, xref);
@@ -706,7 +706,7 @@ public class UpdateProteins extends UpdateProteinsI {
             sptrXref.setCvXrefQualifier( xrefQualifier );
 
             // check Xrefs
-            Collection xrefs = protein.getXref();
+            Collection xrefs = protein.getXrefs();
             if (! xrefs.contains(sptrXref)) {
                 // link the Xref to the protein and record it in the database
                 addNewXref (protein, sptrXref);
@@ -1183,7 +1183,6 @@ public class UpdateProteins extends UpdateProteinsI {
      * Could be use for loading from a .txl file
      * ./scripts/javaRun.sh UpdateProteins file:///homes/user/mySPTRfile.txl
      *
-     * TODO: check if -Xmm128m -Xmx512m could fix the OutOfMemoryException problem.
      */
     public static void main(String[] args) throws Exception {
 
