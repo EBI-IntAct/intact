@@ -46,14 +46,12 @@
             <form-property name="ac" type="java.lang.String"/>
             <form-property name="shortLabel" type="java.lang.String"/>
             <form-property name="fullName" type="java.lang.String"/>
-            <form-property name="display" type="java.lang.Boolean"/>
         </form-bean>
 
-        <!-- Form for editing a comment -->
+        <!-- Form for editing annotations -->
 <!--        <form-bean name="commentEditForm"-->
-<!--            type="org.apache.struts.validator.DynaValidatorForm">-->
-<!--            <form-property name="items" type="java.lang.String"/>-->
-<!--            <form-property name="description" type="java.lang.String"/>-->
+<!--            type="org.apache.struts.action.DynaActionForm">-->
+<!--            <form-property name="comments" type="uk.ac.ebi.intact.application.editor.struts.view.CommentBean[]"/>-->
 <!--        </form-bean>-->
         <form-bean name="commentEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.view.EditForm"/>
@@ -160,7 +158,8 @@
         <forward name="login" path="/do/welcome"/>
         <forward name="success" path="/do/fillCvForm"/>
         <forward name="failure" path="error.layout"/>
-        <forward name="input" path="/do/setUpEditorForm"/>
+        <forward name="input" path="/do/fillCvForm"/>
+<!--        <forward name="interaction" path="/do/setUpInteractionForm"/>-->
     </global-forwards>
 
     <!-- ========== Action Mapping Definitions ============================== -->
@@ -231,9 +230,8 @@
         </action>
 
         <!---
-            NOTE: Some forms are delcared with session scope. These forms are
-            created in LoginAction class (after a successful login) and saved
-            in a session. This avoids creating a new form for each request.
+            NOTE: Some forms are delcared with session scope because they live
+            beyond a single request.
             -->
 
         <!-- Process when a user selects an Editor object from a search result. -->
@@ -249,29 +247,29 @@
         <!-- This action fills the cv form. -->
         <action path="/fillCvForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.FillCvFormAction"
-            attribute="cvInfoForm"
+            name="cvInfoForm"
             validate="false"
             scope="request">
-            <forward name="success" path="/do/fillAnnotForm"/>
+            <forward name="success" path="/do/setUpEditor"/>
         </action>
 
         <!-- This action fills the annotation form. -->
-        <action path="/fillAnnotForm"
-            type="uk.ac.ebi.intact.application.editor.struts.action.FillAnnotFormAction"
-            name="commentEditForm"
-            validate="false"
-            scope="session">
-            <forward name="success" path="/do/fillXrefForm"/>
-        </action>
+<!--        <action path="/fillAnnotForm"-->
+<!--            type="uk.ac.ebi.intact.application.editor.struts.action.FillAnnotFormAction"-->
+<!--            name="commentEditForm"-->
+<!--            validate="false"-->
+<!--            scope="session">-->
+<!--            <forward name="success" path="/do/fillXrefForm"/>-->
+<!--        </action>-->
 
         <!-- This action fills the xreference form. -->
-        <action path="/fillXrefForm"
-            type="uk.ac.ebi.intact.application.editor.struts.action.FillXrefFormAction"
-            name="xrefEditForm"
-            validate="false"
-            scope="session">
-            <forward name="success" path="/do/setUpEditor"/>
-        </action>
+<!--        <action path="/fillXrefForm"-->
+<!--            type="uk.ac.ebi.intact.application.editor.struts.action.FillXrefFormAction"-->
+<!--            name="xrefEditForm"-->
+<!--            validate="false"-->
+<!--            scope="session">-->
+<!--            <forward name="success" path="/do/setUpEditor"/>-->
+<!--        </action>-->
 
         <!-- Chooses which Editor to forward to. -->
         <action path="/setUpEditor"
@@ -377,7 +375,6 @@
         <action path="/interaction/experiment"
             type="uk.ac.ebi.intact.application.editor.struts.action.interaction.ExperimentAction"
             name="intExperimentForm"
-            input="/do/fillCvForm"
             scope="request">
         </action>
 
@@ -404,6 +401,7 @@
             validate="true"
             input="/do/fillCvForm"
             scope="session">
+<!--            <forward name="success" path="/do/setUpInteractionForm"/>-->
         </action>
 
         <!-- Handles when the user clicks to save Interaction info. -->
@@ -421,7 +419,7 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.CommentAddAction"
             name="commentAddForm"
             validate="true"
-            input="/do/fillAnnotForm"
+            input="/do/fillCvForm"
             scope="request">
         </action>
 
@@ -429,6 +427,8 @@
         <action path="/comment/edit"
             type="uk.ac.ebi.intact.application.editor.struts.action.CommentEditAction"
             name="commentEditForm"
+            validate="false"
+            input="/do/fillCvForm"
             scope="session">
         </action>
 
@@ -439,7 +439,7 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefAddAction"
             name="xrefAddForm"
             validate="true"
-            input="/do/fillXrefForm"
+            input="/do/fillCvForm"
             scope="request">
         </action>
 
@@ -448,7 +448,7 @@
             name="xrefEditForm"
             type="uk.ac.ebi.intact.application.editor.struts.action.XrefEditAction"
             validate="true"
-            input="/do/fillXrefForm"
+            input="/do/fillCvForm"
             scope="session">
         </action>
 
