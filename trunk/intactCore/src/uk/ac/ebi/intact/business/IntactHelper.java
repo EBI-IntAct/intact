@@ -312,14 +312,9 @@ public class IntactHelper implements SearchI, Externalizable {
 
     /**
      * Provides the database name that is being connected to.
-     *
      * @return String the database name, or an empty String if the query fails
-     *
-     * @exception org.apache.ojb.broker.accesslayer.LookupException thrown on error
-     *            getting the Connection
-     * @exception SQLException thrown if the metatdata can't be obtained
      */
-    public String getDbName() throws LookupException, SQLException {
+    public String getDbName() {
         return dao.getDbName();
     }
 
