@@ -22,8 +22,6 @@ public class Protein extends Interactor {
     //attributes used for mapping BasicObjects - project synchron
     public String  cvProteinFormAc;
 
-
-    private String polymerSeqAc;
     protected String formOfAc;
 
     /**
