@@ -114,6 +114,7 @@ public abstract class UpdateProteinsI {
     /**
      * @param helper    IntactHelper object to access (read/write) the database.
      * @param cacheSize the number of valid biosource to cache during the update process.
+     *
      * @throws UpdateException
      */
     public UpdateProteinsI( IntactHelper helper, int cacheSize ) throws UpdateException {
@@ -129,6 +130,7 @@ public abstract class UpdateProteinsI {
      * Default constructor which initialize the bioSource cache to default.
      *
      * @param helper IntactHelper object to access (read/write) the database.
+     *
      * @throws UpdateException
      */
     public UpdateProteinsI( IntactHelper helper, boolean setOutputOn ) throws UpdateException {
@@ -144,6 +146,7 @@ public abstract class UpdateProteinsI {
      * Default constructor which initialize the bioSource cache to default.
      *
      * @param helper IntactHelper object to access (read/write) the database.
+     *
      * @throws UpdateException
      */
     public UpdateProteinsI( IntactHelper helper ) throws UpdateException {
@@ -213,7 +216,7 @@ public abstract class UpdateProteinsI {
             goDatabase = (CvDatabase) getCvObject( CvDatabase.class, "go" );
             interproDatabase = (CvDatabase) getCvObject( CvDatabase.class, "interpro" );
             flybaseDatabase = (CvDatabase) getCvObject( CvDatabase.class, "flybase" );
-            reactomeDatabase = (CvDatabase) getCvObject( CvDatabase.class, "reactome" );
+            reactomeDatabase = (CvDatabase) getCvObject( CvDatabase.class, "reactome-protein" );
             hugeDatabase = (CvDatabase) getCvObject( CvDatabase.class, "huge" );
 
             identityXrefQualifier = (CvXrefQualifier) getCvObject( CvXrefQualifier.class, "identity" );
@@ -241,7 +244,9 @@ public abstract class UpdateProteinsI {
      *
      * @param clazz      the Class we are looking for
      * @param shortlabel the shortlabel of the object we are looking for
+     *
      * @return the CvObject of type <code>clazz</code> and having the shortlabel <code>shorltabel<code>.
+     *
      * @throws IntactException if the search failed
      * @throws UpdateException if the object is not found.
      */
@@ -309,6 +314,7 @@ public abstract class UpdateProteinsI {
      *                    If taxid is empty, insert all protein objects.
      * @param update      If true, update existing Protein objects according to the retrieved data.
      *                    else, skip existing Protein objects.
+     *
      * @return Collection of protein objects created/updated.
      */
     public abstract Collection insertSPTrProteins( InputStream inputStream, String taxid, boolean update );
@@ -325,6 +331,7 @@ public abstract class UpdateProteinsI {
      *                  If taxid is empty, insert all protein objects.
      * @param update    If true, update existing Protein objects according to the retrieved data.
      *                  else, skip existing Protein objects.
+     *
      * @return The number of protein objects created.
      */
     public abstract int insertSPTrProteinsFromURL( String sourceUrl, String taxid, boolean update );
@@ -335,6 +342,7 @@ public abstract class UpdateProteinsI {
      * If a SPTr entry contains more than one organism, one IntAct entry will be created for each organism.
      *
      * @param proteinAc SPTR Accession number of the protein to insert/update
+     *
      * @return a set of created/updated protein.
      */
     public abstract Collection insertSPTrProteins( String proteinAc );
@@ -348,6 +356,7 @@ public abstract class UpdateProteinsI {
      * @param taxId     The tax id the protein should have
      * @param update    If true, update existing Protein objects according to the retrieved data.
      *                  else, skip existing Protein objects.
+     *
      * @return a set of created/updated protein.
      */
     public abstract Collection insertSPTrProteins( String proteinAc, String taxId, boolean update );
@@ -359,6 +368,7 @@ public abstract class UpdateProteinsI {
      * @param anAc      The primary identifier of the protein in the external database.
      * @param aDatabase The database in which the protein is listed.
      * @param aTaxId    The tax id the protein should have
+     *
      * @return the protein created or retrieved from the IntAct database
      */
     public abstract Protein insertSimpleProtein( String anAc, CvDatabase aDatabase, String aTaxId )
@@ -371,6 +381,7 @@ public abstract class UpdateProteinsI {
      * function.
      *
      * @param sptrAC a SPTR AC
+     *
      * @return a full URL.
      */
     public abstract String getUrl( String sptrAC );
@@ -381,6 +392,7 @@ public abstract class UpdateProteinsI {
      *
      * @param current the object to which we add a new Xref
      * @param xref    the Xref to add to the AnnotatedObject
+     *
      * @return true if the object as been added, else false.
      */
     public abstract boolean addNewXref( AnnotatedObject current, final Xref xref );
