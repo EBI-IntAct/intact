@@ -35,10 +35,9 @@
     }
 
     // Will be invoked when the user selects on a link.
-    function show(topic, label) {
-        var link = "<%=service.getSearchURL(request)%>"
-            + "?searchString=" + label + "&searchClass=" + topic;
-        //    window.alert(link);
+    function show(label) {
+        var link = "<%=service.getSearchURL(request)%>" + "?searchString=" + label;
+        //window.alert(link);
         makeNewWindow(link);
     }
 
@@ -49,7 +48,7 @@
     }
 
     // Links to the search via the column heading.
-    // type - the type for search, eg., CvTopic
+    // type - the type for search, eg., CvTopic -- this is no longer required now
     // form - the name of the form where the link is
     // n    - the column number
     function showColumnLink(type, form, n) {
@@ -58,6 +57,6 @@
             alert("Please select an item from the list first!");
             return;
         }
-        show(type, v);
+        show(v);
     }
 </script>

@@ -307,11 +307,8 @@ public abstract class AbstractEditViewBean implements Serializable {
         if (getAc() == null) {
             return "";
         }
-        String className = getEditClass().getName();
-        int lastPos = className.lastIndexOf('.');
-        String type = className.substring(lastPos + 1);
-        return "<a href=\"" + "javascript:show('" + type + "', " + "'"
-                + getShortLabel() + "')\"" + ">" + getAc() + "</a>";
+        return "<a href=\"" + "javascript:show('" + getShortLabel() + "')\""
+                + ">" + getAc() + "</a>";
     }
 
     /**

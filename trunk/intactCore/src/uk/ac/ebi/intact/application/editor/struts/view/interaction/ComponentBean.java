@@ -167,7 +167,7 @@ public class ComponentBean extends AbstractEditKeyBean {
     }
 
     public String getShortLabelLink() {
-        return getLink("Protein", getShortLabel());
+        return getLink(getShortLabel());
     }
 
     public String getSpAc() {

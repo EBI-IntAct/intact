@@ -80,7 +80,7 @@ public class ExperimentBean extends AbstractEditBean implements Serializable {
      * @return the topic as a browsable link.
      */
     public String getShortLabelLink() {
-        return getLink("Experiment", myExperiment.getShortLabel());
+        return getLink(myExperiment.getShortLabel());
     }
 
     // Override Objects's equal method.
