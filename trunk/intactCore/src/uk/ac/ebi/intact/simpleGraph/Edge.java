@@ -29,4 +29,20 @@ public class Edge extends BasicGraph implements EdgeI {
     public void setNode2(NodeI node2) {
         this.node2 = node2;
     }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Edge)) return false;
+        if (!super.equals(o)) return false;
+
+        final Edge edge = (Edge) o;
+        final String edgeAC1 = edge.getNode1().getAc(),
+                     edgeAC2 = edge.getNode2().getAc();
+        final String AC1 = node1.getAc(),
+                     AC2 = node2.getAc();
+
+        return ((edgeAC1.equals(AC1) && edgeAC2.equals(AC2)) ||
+                (edgeAC1.equals(AC2) && edgeAC2.equals(AC1)));
+    }
+
 }

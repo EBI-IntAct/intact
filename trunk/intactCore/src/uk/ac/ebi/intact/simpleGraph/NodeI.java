@@ -10,5 +10,7 @@ public interface NodeI {
     // access methods for attributes
     String getAc();
 
-    void setAc(String ac);
+//    void setAc(String ac);
+
+    public boolean equals(Object o);
 }
