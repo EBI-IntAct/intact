@@ -16,7 +16,6 @@ import javax.servlet.http.*;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants;
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
-import uk.ac.ebi.intact.application.cvedit.struts.view.*;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.SearchException;
@@ -120,28 +119,6 @@ public class SearchAction extends IntactBaseAction {
 
         // Move to the results page.
         return mapping.findForward(WebIntactConstants.FORWARD_RESULTS);
-    }
-
-    private Collection getAllShortLabels(IntactUserIF user, String classname)
-        throws SearchException {
-        // The collection to return.
-        Collection labels = new ArrayList();
-
-        // Holds the result from the search.
-        Collection results = user.search(classname,
-            WebIntactConstants.SEARCH_BY_LABEL, "*");
-
-        for (Iterator iter = results.iterator(); iter.hasNext();) {
-            ShortLabelObject labelobj = new ShortLabelObject();
-
-            // Only MAX_COLS at a time.
-            for (int i = 0; (i < ShortLabelObject.MAX_COLS) && iter.hasNext();
-                 i++) {
-                labelobj.setValue(i, ((CvObject) iter.next()).getShortLabel());
-            }
-            labels.add(labelobj);
-        }
-        return labels;
     }
 
     /**
