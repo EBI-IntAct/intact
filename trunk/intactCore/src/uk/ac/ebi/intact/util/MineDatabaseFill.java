@@ -34,7 +34,7 @@ import java.util.*;
  */
 public class MineDatabaseFill {
     // MiNe relevant database table
-    private static final String INTERACTION_TABLE = "ia_interactions";
+    private static final String INTERACTION_TABLE = "groscurt.ia_interactions";
     // SQL statement to select all interactors from a specific interaction
     private static final String SELECT_INTERACTOR = "SELECT C.interactor_ac, C.role, I.objclass "
             + "FROM ia_component C, ia_interactor I WHERE C.interaction_ac=? AND C.interactor_ac = I.ac";
@@ -68,6 +68,8 @@ public class MineDatabaseFill {
 
     private static String bait_id;
 
+    private static Collection proccessedAcs = new HashSet();
+
     /**
      * Fills the database needed for the MiNe project. <br>
      * 
@@ -81,7 +83,7 @@ public class MineDatabaseFill {
         // Displays the user and instance against which we are working.
         try {
             System.out.println( "Database: " + helper.getDbName() );
-            System.out.println( "User:     " + helper.getDbUserName() );
+            System.out.println( "User: " + helper.getDbUserName() );
         }
         catch ( LookupException e ) {
             e.printStackTrace();
@@ -90,134 +92,84 @@ public class MineDatabaseFill {
         Connection con = helper.getJDBCConnection();
         Statement stm = con.createStatement();
 
-        // get the EBI - ID for a bait
-        ResultSet set = stm.executeQuery( SELECT_BAIT_ID );
-        if ( set.next() ) {
-            bait_id = set.getString( 1 );
-            System.out.println( "bait id: " + bait_id );
-        }
-        else {
-            System.err
-                    .println( "no identifier for a bait could be found in the database !" );
-            set.close();
-            stm.close();
-            con.close();
-            System.exit( 0 );
+        /*
+         * // get the EBI - ID for a bait ResultSet set = stm.executeQuery(
+         * SELECT_BAIT_ID ); if ( set.next() ) { bait_id = set.getString( 1 ); }
+         * else { System.err .println( "no identifier for a bait could be found
+         * in the database !" ); set.close(); stm.close(); con.close();
+         * System.exit( 0 ); } set.close(); // the existing data is truncated
+         * System.out.println( "Truncate existing table" ); stm.executeUpdate(
+         * "TRUNCATE TABLE " + INTERACTION_TABLE ); // the inserSTM is a
+         * statement to insert the MINE relevant data PreparedStatement
+         * insertDataStatement = con .prepareStatement( INSERT_QUERY );
+         * System.out.println( "insert interaction data" ); // all interactions
+         * are fetched from the interactor table ResultSet interactionSet =
+         * stm.executeQuery( SELECT_INTERACTIONS ); // statement to get all
+         * interactors with its role of a particular // interaction
+         * PreparedStatement interactorSelect = con .prepareStatement(
+         * SELECT_INTERACTOR ); // statement to get the taxid for a particular
+         * interactor PreparedStatement taxidSelect = con.prepareStatement(
+         * SELECT_TAXID ); // because it can happen that we want to have access
+         * to an element // via an index an arraylist is taken. The number of
+         * baits should be // small enough so no array copying is needed. List
+         * baits = new ArrayList(); // because it can happen that we want to
+         * insert an element at a specific // position an arraylist is taken
+         * List interactors = new ArrayList(); String interactionAC, bait,
+         * taxID; ResultSet taxIDSet; Collection taxIDs = new HashSet(); int j =
+         * 0; // goes through every interactor which is an interaction while (
+         * interactionSet.next() ) { // the interaction ac is stored
+         * interactionAC = interactionSet.getString( 1 ).toUpperCase(); if ( j++ %
+         * 100 == 0 ) { System.out.print( "." ); } // the lists with the
+         * interactors are cleared to reuse them for the // next interaction
+         * baits.clear(); interactors.clear(); // all interactors for the given
+         * interaction_ac are fetched getInteractors( interactors, baits,
+         * interactionAC, interactorSelect ); // the number indicates at which
+         * position in the interactors list // the insertion into the MiNe table
+         * shall start // default value is of course 0. int interactorStart = 0; //
+         * if no bait was found if ( baits.isEmpty() ) { // the interactors are
+         * sorted alphanumerically Collections.sort( interactors ); // the
+         * alphanumerically smallest is taken as bait bait = (String)
+         * interactors.get( 0 ); // because the first of the interactors is
+         * taken as bait we have // to start with the second interactor to
+         * insert in the table interactorStart = 1; } // at least one bait was
+         * found else { // if there are more than one baits, they are sorted and
+         * the // alphanumerically smallest one is taken as bait if (
+         * baits.size() > 1 ) { Collections.sort( baits ); } bait = (String)
+         * baits.get( 0 ); } // the taxid for the bait is determined
+         * taxidSelect.setString( 1, bait ); taxIDSet =
+         * taxidSelect.executeQuery(); taxIDSet.next(); taxID =
+         * taxIDSet.getString( 1 ).toUpperCase(); // taxIDs is a HashSet -> so
+         * no test for duplicates are needed ! // all taxids are stored for the
+         * computation of the different // connecting networks taxIDs.add( taxID );
+         * insertDataStatement.setString( 1, bait );
+         * insertDataStatement.setString( 3, taxID );
+         * insertDataStatement.setString( 4, interactionAC ); taxIDSet.close(); //
+         * every interactor is added with the bait as an interaction // in the
+         * table for (int i = interactorStart, n = interactors.size(); i < n;
+         * i++) { insertDataStatement .setString( 2, (String) interactors.get( i ) );
+         * insertDataStatement.executeUpdate(); } // if there are more than one
+         * baits, the interactions between // the protein used as bait and the
+         * remaining ones are added. for (int i = 1, n = baits.size(); i < n;
+         * i++) { insertDataStatement.setString( 2, (String) baits.get( i ) );
+         * insertDataStatement.executeUpdate(); } } interactionSet.close();
+         * insertDataStatement.close(); interactorSelect.close(); stm.close();
+         * System.out.println(); // all interaction which are annotated as
+         * negativ or which occur in a // negativ experiment are deleted.
+         * deleteInteractions( con );
+         */
+
+        String query = "SELECT DISTINCT taxid FROM ia_interactions";
+        ResultSet set = stm.executeQuery( query );
+        while ( set.next() ) {
+            setGraphIDBio( con, set.getString( 1 ) );
         }
         set.close();
-
-        // the existing data is truncated
-        System.out.println( "Truncate existing table" );
-        stm.executeUpdate( "TRUNCATE TABLE " + INTERACTION_TABLE );
-        // the inserSTM is a statement to insert the MINE relevant data
-        PreparedStatement insertDataStatement = con
-                .prepareStatement( INSERT_QUERY );
-
-        System.out.println( "insert interaction data" );
-        // all interactions are fetched from the interactor table
-        ResultSet interactionSet = stm.executeQuery( SELECT_INTERACTIONS );
-        // statement to get all interactors with its role of a particular
-        // interaction
-        PreparedStatement interactorSelect = con
-                .prepareStatement( SELECT_INTERACTOR );
-        // statement to get the taxid for a particular interactor
-        PreparedStatement taxidSelect = con.prepareStatement( SELECT_TAXID );
-
-        // because it can happen that we want to have access to an element
-        // via an index an arraylist is taken. The number of baits should be
-        // small enough so no array copying is needed.
-        List baits = new ArrayList();
-        // because it can happen that we want to insert an element at a specific
-        // position an arraylist is taken
-        List interactors = new ArrayList();
-        String interactionAC, bait, taxID;
-        ResultSet taxIDSet;
-        Collection taxIDs = new HashSet();
-
-        int j = 0;
-        // goes through every interactor which is an interaction
-        while ( interactionSet.next() ) {
-            // the interaction ac is stored
-            interactionAC = interactionSet.getString( 1 ).toUpperCase();
-
-            if ( j++ % 100 == 0 ) {
-                System.out.print( "." );
-            }
-            // the lists with the interactors are cleared to reuse them for the
-            // next interaction
-            baits.clear();
-            interactors.clear();
-
-            // all interactors for the given interaction_ac are fetched
-            getInteractors( interactors, baits, interactionAC, interactorSelect );
-
-            // the number indicates at which position in the interactors list
-            // the insertion into the MiNe table shall start
-            // default value is of course 0.
-            int interactorStart = 0;
-
-            // if no bait was found
-            if ( baits.isEmpty() ) {
-                // the interactors are sorted alphanumerically
-                Collections.sort( interactors );
-                // the alphanumerically smallest is taken as bait
-                bait = (String) interactors.get( 0 );
-                // because the first of the interactors is taken as bait we have
-                // to start with the second interactor to insert in the table
-                interactorStart = 1;
-            }
-            // at least one bait was found
-            else {
-                // if there are more than one baits, they are sorted and the
-                // alphanumerically smallest one is taken as bait
-                if ( baits.size() > 1 ) {
-                    Collections.sort( baits );
-                }
-                bait = (String) baits.get( 0 );
-            }
-
-            // the taxid for the bait is determined
-            taxidSelect.setString( 1, bait );
-            taxIDSet = taxidSelect.executeQuery();
-            taxIDSet.next();
-            taxID = taxIDSet.getString( 1 ).toUpperCase();
-            // taxIDs is a HashSet -> so no test for duplicates are needed !
-            // all taxids are stored for the computation of the different
-            // connecting networks
-            taxIDs.add( taxID );
-
-            insertDataStatement.setString( 1, bait );
-            insertDataStatement.setString( 3, taxID );
-            insertDataStatement.setString( 4, interactionAC );
-            taxIDSet.close();
-            // every interactor is added with the bait as an interaction
-            // in the table
-            for (int i = interactorStart, n = interactors.size(); i < n; i++) {
-                insertDataStatement
-                        .setString( 2, (String) interactors.get( i ) );
-                insertDataStatement.executeUpdate();
-            }
-            // if there are more than one baits, the interactions between
-            // the protein used as bait and the remaining ones are added.
-            for (int i = 1, n = baits.size(); i < n; i++) {
-                insertDataStatement.setString( 2, (String) baits.get( i ) );
-                insertDataStatement.executeUpdate();
-            }
-        }
-        interactionSet.close();
-        insertDataStatement.close();
-        interactorSelect.close();
         stm.close();
-        System.out.println();
-
-        // all interaction which are annotated as negativ or which occur in a
-        // negativ experiment are deleted.
-        deleteInteractions( con );
-
         System.out.println( "Compute connecting graphs" );
-        for (Iterator iter = taxIDs.iterator(); iter.hasNext();) {
-            setGraphIDBio( con, (String) iter.next() );
-        }
+        /*
+         * for (Iterator iter = taxIDs.iterator(); iter.hasNext();) {
+         * setGraphIDBio( con, (String) iter.next() ); }
+         */
         con.close();
         System.out.println();
     }
@@ -327,97 +279,77 @@ public class MineDatabaseFill {
      */
     private static void setGraphIDBio(Connection con, String taxid)
             throws SQLException {
+        System.out.print(".");
         graphid++;
-        System.out.print( "." );
-        // query fetches all entries where the graphid is not set yet
+		// query fetches all entries where the graphid is not set yet
+		String query = "SELECT protein1_ac FROM "+ INTERACTION_TABLE +" WHERE graphid IS NULL "
+				+ "AND taxid='" + taxid + "'";
+		Statement stm = con.createStatement();
+		ResultSet set = stm.executeQuery(query);
+		// if no result is available the biosource completed
+		if (!set.next()) {
+			return;
+		}
+		String ac = set.getString(1);
 
-        Statement stm = con.createStatement();
-        // we are just interested in the first found entry
-        stm.setFetchSize( 1 );
-        ResultSet set = stm.executeQuery( "SELECT protein1_ac FROM "
-                + INTERACTION_TABLE + " WHERE graphid IS NULL " + "AND taxid='"
-                + taxid + "'" );
-        // if no result is available the taxid completed
-        if ( !set.next() ) {
-            set.close();
-            stm.close();
-            return;
-        }
-        set.close();
-        stm.close();
-        String currentAC = set.getString( 1 );
+		Stack stack = new Stack();
+		stack.push(ac);
+		
+		//
+		PreparedStatement selectprotein1_ac = con.prepareStatement("SELECT "
+				+ "protein1_ac FROM "+ INTERACTION_TABLE +" WHERE protein2_ac=? " + "AND taxid='"
+				+ taxid + "' AND graphid IS NULL");
+		PreparedStatement selectprotein2_ac = con.prepareStatement("SELECT "
+				+ "protein2_ac FROM "+ INTERACTION_TABLE +" WHERE protein1_ac=? " + "AND taxid='"
+				+ taxid + "' AND graphid IS NULL");
 
-        // the stack stores all accession numbers which are part of the current
-        // connecting network.
-        Stack acsToProcceed = new Stack();
-        acsToProcceed.push( currentAC );
+		PreparedStatement updatePST = con
+				.prepareStatement("UPDATE "+ INTERACTION_TABLE +
+						" SET graphID=? WHERE protein1_ac=? OR protein2_ac=? AND taxid='" +
+						taxid + "' AND graphid IS NULL");
 
-        PreparedStatement selectInteractors = con.prepareStatement( "SELECT "
-                + "protein1_ac, protein2_ac FROM " + INTERACTION_TABLE
-                + " WHERE protein1_ac =? OR protein2_ac=? " + "AND taxid='"
-                + taxid + " AND graphid IS NULL" );
+		// the stack stores each element which is
+		// part of the current connection network
+		// therefore: as long as there are elements in
+		// the stack -> there are still elements in the connection graph
+		while (!stack.isEmpty()) {
+			// get the current ac nr from the stack
+			ac = (String)stack.pop();
+			selectprotein1_ac.setString(1, ac);
+			selectprotein2_ac.setString(1, ac);
 
-        PreparedStatement updateGraphid = con
-                .prepareStatement( "UPDATE "
-                        + INTERACTION_TABLE
-                        + "SET graphID=? WHERE protein1_ac=? OR protein2_ac=? AND taxid='"
-                        + taxid + "' AND graphid IS NULL" );
+			set = selectprotein1_ac.executeQuery();
+			// select all acnr which have an interaction with
+			// the current ac nr and push them onto the stack
+			while (set.next()) {
+				String protein1_ac = set.getString(1);
+				if (!stack.contains(protein1_ac)) {
+					stack.push(protein1_ac);
+				}
+			}
+			set.close();
 
-        String interactor1, interactor2;
+			// select all acnr which have an interaction with
+			// the current ac nr and push them onto the stack
+			set = selectprotein2_ac.executeQuery();
+			while (set.next()) {
+				String protein2_ac = set.getString(1);
+				if (!stack.contains(protein2_ac)) {
+					stack.push(protein2_ac);
+				}
+			}
 
-        // the stack stores each element which is
-        // part of the current connecting network
-        // therefore: as long as there are elements in
-        // the stack -> there are still elements in the connecting graph
-        int j = 0;
-        while ( !acsToProcceed.isEmpty() ) {
-            if ( j++ % 50 == 0 ) {
-                System.out.print( "." );
-            }
-            // get the current ac nr from the stack
-            currentAC = (String) acsToProcceed.pop();
-            selectInteractors.setString( 1, currentAC );
-            selectInteractors.setString( 2, currentAC );
-
-            // flag whether there are new elements in the stack
-            boolean foundACs = false;
-
-            set = selectInteractors.executeQuery();
-            while ( set.next() ) {
-                interactor1 = set.getString( 1 );
-                interactor2 = set.getString( 2 );
-
-                // if the found interactor is not the same as the current
-                // interactor -> a new interactor was found -> the interactor is
-                // pushed in the stack
-                if ( !currentAC.equals( interactor1 ) ) {
-                    acsToProcceed.push( interactor1 );
-                    foundACs = true;
-                }
-                if ( !currentAC.equals( interactor2 ) ) {
-                    acsToProcceed.push( interactor2 );
-                    foundACs = true;
-                }
-            }
-
-            set.close();
-
-            // if new elements are in the stack we have to set the graphid for
-            // all current found elements.
-            // if no new elements were found no update is done so that no
-            // conflicts can occur with overwriting a previous graphid.
-            if ( foundACs ) {
-                updateGraphid.setInt( 1, graphid );
-                updateGraphid.setString( 2, currentAC );
-                updateGraphid.setString( 3, currentAC );
-                updateGraphid.executeUpdate();
-            }
-        }
-        selectInteractors.close();
-        updateGraphid.close();
-        // the method is called recursively to check if there are more conneting
-        // networks for the current taxid
-        setGraphIDBio( con, taxid );
+			set.close();
+			updatePST.setInt(1, graphid);
+			updatePST.setString(2, ac);
+			updatePST.setString(3, ac);
+			updatePST.executeUpdate();
+		}
+		selectprotein1_ac.close();
+		selectprotein2_ac.close();
+		updatePST.close();
+		stm.close();
+		setGraphIDBio(con, taxid);
     }
 
     public static void main(String[] args) {
