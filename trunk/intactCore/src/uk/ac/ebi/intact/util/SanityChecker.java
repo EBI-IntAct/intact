@@ -925,7 +925,7 @@ public class SanityChecker {
             System.out.print( "checking data integrity..." );
             checker = new SanityChecker( helper );
 
-            checker.test();
+//            checker.test();
 
             long start = System.currentTimeMillis();
             //do checks here.....
