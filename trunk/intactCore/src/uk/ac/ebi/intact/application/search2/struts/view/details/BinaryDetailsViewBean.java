@@ -54,8 +54,8 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
      * @param link the link to the help page.
      * @exception NullPointerException thrown thrown if the collection if null or empty.
      */
-    public BinaryDetailsViewBean( Collection objects, String link ) {
-        super(objects, link);
+    public BinaryDetailsViewBean( Collection objects, String link, String contextPath ) {
+        super(objects, link, contextPath);
     }
 
 
@@ -159,7 +159,8 @@ public class BinaryDetailsViewBean extends DetailsViewBean {
             HtmlBuilderManager.getInstance().getHtml( writer,
                                                       binaryData,
                                                       getHighlightMap(),
-                                                      getHelpLink() );
+                                                      getHelpLink(),
+                                                      getContextPath());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             try {

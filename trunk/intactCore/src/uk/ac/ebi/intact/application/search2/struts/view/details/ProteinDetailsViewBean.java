@@ -33,8 +33,8 @@ public class ProteinDetailsViewBean extends DetailsViewBean {
      * @param link the link to the help page.
      * @exception java.lang.NullPointerException thrown thrown if the collection if null or empty.
      */
-    public ProteinDetailsViewBean( Collection objects, String link ) {
-        super(objects, link);
+    public ProteinDetailsViewBean( Collection objects, String link, String contextPath ) {
+        super(objects, link, contextPath);
     }
 
 

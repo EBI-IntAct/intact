@@ -24,9 +24,9 @@ public class DetailsResultAction extends AbstractResulltAction {
     // Abstract methods implementation
     ///////////////////////////////////
 
-    protected AbstractViewBean getAbstractViewBean ( Collection results, IntactUserIF user ) {
+    protected AbstractViewBean getAbstractViewBean ( Collection results, IntactUserIF user, String contextPath ) {
 
         super.log( "details action: building view beans..." );
-        return ViewBeanFactory.getInstance().getDetailsViewBean ( results, user.getHelpLink() );
+        return ViewBeanFactory.getInstance().getDetailsViewBean ( results, user.getHelpLink(), contextPath );
     }
 }

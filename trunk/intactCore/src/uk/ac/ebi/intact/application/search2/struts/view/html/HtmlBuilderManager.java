@@ -76,10 +76,10 @@ public class HtmlBuilderManager {
      * @throws InvocationTargetException If an exception occured in the method called by reflexion.
      * @throws IllegalAccessException
      */
-    public void getHtml( Writer writer, Collection objects, Set highlights, String link)
+    public void getHtml( Writer writer, Collection objects, Set highlights, String link, String contextPath)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        HtmlBuilder builder = new HtmlBuilder(writer, highlights, link);
+        HtmlBuilder builder = new HtmlBuilder(writer, highlights, link, contextPath);
         for (Iterator iterator = objects.iterator(); iterator.hasNext();) {
                 AnnotatedObject  obj = (AnnotatedObject) iterator.next();
                 this.buildHtml( builder, obj );
@@ -100,10 +100,10 @@ public class HtmlBuilderManager {
      * @throws InvocationTargetException If an exception occured in the method called by reflexion.
      * @throws IllegalAccessException
      */
-    public void getHtml( Writer writer, Object object, Set highlights, String link )
+    public void getHtml( Writer writer, Object object, Set highlights, String link, String contextPath )
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        HtmlBuilder builder = new HtmlBuilder(writer, highlights, link);
+        HtmlBuilder builder = new HtmlBuilder(writer, highlights, link, contextPath);
         this.buildHtml(builder, object );
     }
 
