@@ -13,6 +13,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@page import="java.io.*" %>
 <%@page import="java.util.Properties"%>
+<%@page import="java.util.Collection"%>
 
 
 <html:html locale="true">
@@ -64,7 +65,8 @@
 
    ImageBean imageBean   = (ImageBean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_IMAGE_BEAN); 
 
-   String keys           = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_KEYS);
+  // String keys           = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_KEYS);
+   Collection keys       = (Collection)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_KEYS);
    String methodLabel    = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_METHOD_LABEL);
    String methodClass    = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_METHOD_CLASS);
    String behaviour      = (String)  session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_BEHAVIOUR);
@@ -227,7 +229,7 @@ if (AC != null)
    /**
    * Apply an highlighting if AC != null, keys != null and behaviour != null
    */
-   if ((null != AC) && (null != keys) && (behaviour != null)) {
+   if ((null != AC) && (null != keys) && (behaviour != null) && (null != in)) {
        HighlightProteins hp = new HighlightProteins(methodClass, behaviour, session, in);
 
        imageBean = (ImageBean) session.getAttribute (uk.ac.ebi.intact.application.hierarchView.struts.Constants.ATTRIBUTE_IMAGE_BEAN);
@@ -250,12 +252,10 @@ if (AC != null)
        if (null != propertiesBusiness) {
 	  mapName = propertiesBusiness.getProperty ("hierarchView.image.map.name");
        }
-
+       
 %>
 
        <p align="left">
-         #proteins : <b><%= in.sizeNodes() %></b> <br>
-	 #interactions : <b><%= in.sizeEdges() %></b>
 	 <center>          
              <img src="/hierarchView/GenerateImage" USEMAP="#<%= mapName %>" border ="0">
            <br>
@@ -270,7 +270,7 @@ if (AC != null)
     /**
      *  Display only that form if an AC is in the session and the user have already requested an highlighting 
      */
-    if (null != AC && keys != null) { 
+    if (null != AC && keys != null && null != in) { 
 
 %>
 
