@@ -18,7 +18,8 @@ import java.util.Collection;
  * @author Sugath Mudali (smudali@ebi.ac.uk), modified by Chris Lewington
  * @version $Id$
  */
-public interface IntactUserIF {
+public interface IntactUserIF
+        extends uk.ac.ebi.intact.application.commons.business.IntactUserI {
 
     /**
      * Return the search criteria.
