@@ -57,20 +57,10 @@ public interface CvEditConstants {
     public static final String FORWARD_EDIT = "edit";
 
     /**
-     * Forward to the CV delete confirm page.
-     */
-    public static final String FORWARD_DEL_CONFIRM = "delConfirm";
-
-    /**
      * Used as a key to identify a page to display when matches are found
      * from a search.
      */
     public static final String FORWARD_MATCHES = "match";
-
-    /**
-     * Forward to create a CV object (short label).
-     */
-    public static final String FORWARD_CREATE = "add";
 
     /**
      * Used as a key to identify a page to display when no matches are found
@@ -82,28 +72,6 @@ public interface CvEditConstants {
      * Forward to refresh the screen.
      */
     public static final String FORWARD_REFRESH = "refresh";
-
-    /**
-     * Search by Label.
-     */
-    public static final String SEARCH_BY_LABEL = "shortLabel";
-
-    /**
-     * Used as a key to identify a mapping filename (for Castor).
-     * the value is defined in the web.xml file
-     */
-    public static final String MAPPING_FILE = "mappingfile";
-
-    /**
-     * Used as a key to identify a datasource class - its value
-     * is deifned in the web.xml file as a servlet context parameter
-     */
-    public static final String DATA_SOURCE = "datasource";
-
-    /**
-     * The bean to display short labels when the user is adding a new CV obj.
-     */
-    public static final String SHORT_LABEL_BEAN = "labelBean";
 
     /**
      * The name of the CV info form.
