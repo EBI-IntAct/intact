@@ -67,6 +67,8 @@ public class ProteinEditAction extends AbstractEditorAction {
         else if (theForm.savePressed()) {
             if (viewbean.hasDuplicates(pb)) {
                 pb.setEditState(ProteinBean.ERROR);
+                pb.setError(pb.getShortLabel(), pb.getRole());
+                return inputForward(mapping);
             }
             else {
                 // The protein to update.
