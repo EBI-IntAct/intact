@@ -521,11 +521,16 @@ public class FeatureViewBean extends AbstractEditViewBean {
     private void persistCurrentView(EditUserI user) throws IntactException, SearchException {
         // The current feature.
         Feature feature = (Feature) getAnnotatedObject();
-        
+
+        // The sequence to set in Ranges.
+        String sequence = ((Protein) myComponent.getInteractor()).getSequence();
+
         // Add new ranges.
         for (Iterator iter = getRangesToAdd().iterator(); iter.hasNext();) {
             // Create the updated range.
             Range range = ((RangeBean) iter.next()).getRange(user);
+            // Set the sequence for the range.
+            range.setSequenceRaw(sequence);
             // Avoid creating duplicate Ranges.
             if (feature.getRanges().contains(range)) {
                 continue;
@@ -545,6 +550,7 @@ public class FeatureViewBean extends AbstractEditViewBean {
         for (Iterator iter = myRangesToUpdate.iterator(); iter.hasNext();) {
             // Update the 'updated' range.
             Range range = ((RangeBean) iter.next()).getRange(user);
+            range.setSequenceRaw(sequence);
             user.update(range);
         }
         // No need to test whether this 'feature' persistent or not because we
