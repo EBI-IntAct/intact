@@ -7,15 +7,16 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Experiment;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -79,7 +80,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         }
         // We have edited/added experiments in the current session.
         view.addExperimentToHold(recentExps);
-//        return mapping.findForward(SUCCESS);
+
         return mapping.getInputForward();
     }
 
@@ -108,41 +109,56 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
             errors.add("int.exp.search",
                     new ActionError("error.int.exp.search.input"));
             saveErrors(request, errors);
+            setAnchor(request, intform);
             return mapping.getInputForward();
         }
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // The collection to hold experiments.
-        Collection experiments = user.search1(Experiment.class.getName(), searchParam,
-                searchValue);
+        // The maximum experiments allowed.
+        int max = getService().getInteger("exp.search.limit");
+
+        // The wrapper to hold lookup result.
+        ResultWrapper rw = null;
+        try {
+            rw = user.lookup(Experiment.class, searchParam, searchValue, max);
+        }
+        catch (IntactException ie) {
+            // This can only happen when problems with creating an internal helper
+            // This error is already logged from the User class.
+            ActionErrors errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.intact"));
+            saveErrors(request, errors);
+            return mapping.findForward(FAILURE);
+        }
+
+        // Check the size
+        if (rw.isTooLarge()) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("int.exp.search", new ActionError("error.int.exp.search.many",
+                    Integer.toString(rw.getPossibleResultSize()), searchParam, Integer.toString(max)));
+            saveErrors(request, errors);
+            setAnchor(request, intform);
+            // Report back to the form.
+            return mapping.getInputForward();
+        }
+
         // Search found any results?
-        if (experiments.isEmpty()) {
+        if (rw.isEmpty()) {
             ActionErrors errors = new ActionErrors();
             errors.add("int.exp.search",
                     new ActionError("error.int.exp.search.empty", searchParam));
             saveErrors(request, errors);
-            return mapping.getInputForward();
-        }
-        // The number of Experiments retrieved from the search.
-        int size = experiments.size();
-
-        // Just an arbitrary number for the moment.
-        if (size > 10) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("int.exp.search",
-                    new ActionError("error.int.exp.search.many",
-                            Integer.toString(size), searchParam, "10"));
-            saveErrors(request, errors);
+            setAnchor(request, intform);
+            // Report back to the form.
             return mapping.getInputForward();
         }
         // The current view of the edit session.
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
         // Add the search result to the holder.
-        view.addExperimentToHold(experiments);
+        view.addExperimentToHold(rw.getResult());
 
         return mapping.getInputForward();
-//        return mapping.findForward(SUCCESS);
     }
 }

@@ -7,15 +7,16 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Protein;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,6 +79,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
             errors.add("int.prot.search",
                     new ActionError("error.int.protein.search.input"));
             saveErrors(request, errors);
+            setAnchor(request, intform);
             return mapping.getInputForward();
         }
         // The default values for search.
@@ -91,6 +93,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
                 errors.add("int.prot.search",
                         new ActionError("error.int.protein.search.ac"));
                 saveErrors(request, errors);
+                setAnchor(request, intform);
                 return mapping.getInputForward();
             }
             value = ac;
@@ -103,6 +106,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
                 errors.add("int.prot.search",
                         new ActionError("error.int.protein.search.sp"));
                 saveErrors(request, errors);
+                setAnchor(request, intform);
                 return mapping.getInputForward();
             }
             value = spAc;
@@ -111,17 +115,41 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // Handler to the current user.
         EditUserI user = getIntactUser(request);
 
-        // The collection to hold proteins.
-        Collection proteins;
+        // The maximum proteins allowed.
+        int max = getService().getInteger("protein.search.limit");
+
+        // The wrapper to hold lookup result.
+        ResultWrapper rw = null;
 
         if (param.equals("spAc")) {
-            proteins = user.getSPTRProteins(value);
+            rw = user.getSPTRProteins(value, max);
         }
         else {
-            proteins = user.search1(Protein.class.getName(), param, value);
+            try {
+                rw = user.lookup(Protein.class, param, value, max);
+            }
+            catch (IntactException ie) {
+                // This can only happen when problems with creating an internal helper
+                // This error is already logged from the User class.
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.intact"));
+                saveErrors(request, errors);
+                return mapping.findForward(FAILURE);
+            }
         }
+        // Check the size
+        if (rw.isTooLarge()) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("int.prot.search", new ActionError("error.int.protein.search.many",
+                    Integer.toString(rw.getPossibleResultSize()), param, Integer.toString(max)));
+            saveErrors(request, errors);
+            setAnchor(request, intform);
+            // Report back to the form.
+            return mapping.getInputForward();
+        }
+
         // Search found any results?
-        if (proteins.isEmpty()) {
+        if (rw.isEmpty()) {
             // The error to display on the web page.
             ActionErrors errors = new ActionErrors();
             // Log the error if we have one.
@@ -136,27 +164,17 @@ public class ProteinSearchAction extends AbstractEditorAction {
                         new ActionError("error.int.protein.search.empty", param));
             }
             saveErrors(request, errors);
-            return mapping.getInputForward();
-        }
-        // The number of Proteins retrieved from the search.
-        int psize = proteins.size();
-
-        // The protein search limit.
-        String protlimit = getService().getResource("protein.search.limit");
-        if (psize > Integer.parseInt(protlimit)) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("int.prot.search",
-                    new ActionError("error.int.protein.search.many",
-                            Integer.toString(psize), param, protlimit));
-            saveErrors(request, errors);
+            setAnchor(request, intform);
             return mapping.getInputForward();
         }
         // Can safely cast it as we have the correct editor view bean.
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
-        for (Iterator iter = proteins.iterator(); iter.hasNext();) {
+        for (Iterator iter = rw.getResult().iterator(); iter.hasNext();) {
             view.addProtein((Protein) iter.next());
         }
+        // The anchor is set via the Search protein button.
+        setAnchor(request, intform);
         return mapping.getInputForward();
     }
 }

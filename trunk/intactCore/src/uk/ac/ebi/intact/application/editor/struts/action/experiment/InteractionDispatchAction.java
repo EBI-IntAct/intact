@@ -7,15 +7,16 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.commons.search.ResultWrapper;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -113,36 +114,48 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
-        // The collection to hold interactions
-        Collection ints = user.search1(Interaction.class.getName(), searchParam,
-                searchValue);
+        // The maximum interactions allowed.
+        int max = getService().getInteger("int.search.limit");
+
+        // The wrapper to hold lookup result.
+        ResultWrapper rw = null;
+        try {
+            rw = user.lookup(Interaction.class, searchParam, searchValue, max);
+        }
+        catch (IntactException ie) {
+            // This can only happen when problems with creating an internal helper
+            // This error is already logged from the User class.
+            ActionErrors errors = new ActionErrors();
+            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.intact"));
+            saveErrors(request, errors);
+            return mapping.findForward(FAILURE);
+        }
+
+        // Check the size
+        if (rw.isTooLarge()) {
+            ActionErrors errors = new ActionErrors();
+            errors.add("exp.int.search", new ActionError("error.exp.int.search.many",
+                    Integer.toString(rw.getPossibleResultSize()), searchParam, Integer.toString(max)));
+            saveErrors(request, errors);
+            // Report back to the form.
+            return mapping.getInputForward();
+        }
+
         // Search found any results?
-        if (ints.isEmpty()) {
+        if (rw.isEmpty()) {
             ActionErrors errors = new ActionErrors();
             errors.add("exp.int.search",
                     new ActionError("error.exp.int.search.empty", searchParam));
             saveErrors(request, errors);
+            // Report back to the form.
             return mapping.getInputForward();
         }
-        // The number of Interactions retrieved from the search.
-        int intsize = ints.size();
+        // The current view of the edit session.
+        ExperimentViewBean view = (ExperimentViewBean) user.getView();
 
-        // The interaction search limit.
-        String intlimit = getService().getResource("int.search.limit");
-        if (intsize > Integer.parseInt(intlimit)) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("exp.int.search",
-                    new ActionError("error.exp.int.search.many",
-                            Integer.toString(intsize), searchParam, intlimit));
-            saveErrors(request, errors);
-        }
-        else {
-            // The current view of the edit session.
-            ExperimentViewBean view = (ExperimentViewBean) user.getView();
+        // Add the search result to the holder.
+        view.addInteractionToHold(rw.getResult());
 
-            // Add the search result to the holder.
-            view.addInteractionToHold(ints);
-        }
         return mapping.getInputForward();
     }
 }
