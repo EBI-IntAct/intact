@@ -33,13 +33,17 @@ shortlabel: example
 term: Example
 definition: Comment topic used to mark examples, normally used for the explanation of controlled vocabulary terms.
 
+shortlabel: exp-modification
+term: Modifications of an existing experimental method.
+definition: Modifications of experimental method/s described in the controlled vocabulary.
+
 shortlabel: function
 term: Biological Function of the Object
 function: Describes the biological function of the Object.
 
 shortlabel: inhibition
-term: Inhibitior of an interaction.
-definition: The interaction between the proteinsor complex formation between the proteins is disrupted by this biological entity or by this modification of the interactors.
+term: Inhibitor of an interaction.
+definition: The interaction between the proteins or the formation of a  complex is disrupted by this biological entity or by this modification of the interactors.
 example: EBI-447320: 'Interaction between ep300 and hif1a is disrupted by chetomin'. The information will be added under annotation topic 'inhibition' in interaction.
 example: EBI-447720 'Autophosphorylation of IRAK-1 inhibits the interaction between IRAK-1 and MYD88' This information is added under annotation topic 'inhibition'
 
