@@ -8,12 +8,12 @@
     <property name="project.title" value="Intact Core"/>
     <property name="project.version" value="0.1.0"/>
 
-    <property name="src.dir" value="src"/>
+    <property name="src.dir"  value="src"/>
     <property name="dest.dir" value="classes"/>
     <property name="jdoc.dir" value="doc/api"/>
 
     <!-- The non core files. -->
-    <property name="non.core.files" value="**/intact/application/**, **/intact/synchron/**"/>
+    <property name="non.core.files" value="**/intact/application/**"/>
 
     <!-- Where the distribution files are going to be (jar) -->
     <property name="dist.dir" value="dist"/>
@@ -77,11 +77,20 @@
 
     <!-- Copy configuration files. -->
     <target name="copyConfigFiles">
+        <!--
         <copy todir="${dest.dir}/config" filtering="on">
             <fileset dir="config">
                 <include name="*.properties"/>
                 <include name="*.xml"/>
                 <include name="*.dtd"/>
+            </fileset>
+        </copy>
+        -->
+        <!-- Experimental purposes only; just copy only necessary files -->
+        <copy todir="${dest.dir}/config" filtering="on">
+            <fileset dir="config">
+                <include name="repository*.xml"/>
+                <include name="repository.dtd"/>
             </fileset>
         </copy>
 
