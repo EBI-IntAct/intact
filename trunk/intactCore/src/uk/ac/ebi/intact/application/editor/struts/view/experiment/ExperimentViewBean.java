@@ -279,43 +279,16 @@ public class ExperimentViewBean extends AbstractEditViewBean {
 //        }
 //    }
 
-    public void loadMenus() throws IntactException {
-        // Handler to the menu factory.
-        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
-
-        // The Intact helper to construct menus.
-        IntactHelper helper = new IntactHelper();
-
-        try {
-            myMenus.putAll(super.getMenus(helper));
-
-            // The organism menu
-            String name = EditorMenuFactory.ORGANISM;
-            int mode = (myOrganism == null) ? 1 : 0;
-            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
-
-            // The CVInteraction menu.
-            name = EditorMenuFactory.INTERACTION;
-            mode = (myInter == null) ? 1 : 0;
-            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
-
-            // The CVIdentification menu.
-            name = EditorMenuFactory.IDENTIFICATION;
-            mode = (myIdent == null) ? 1 : 0;
-            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
-        }
-        finally {
-            helper.closeStore();
-        }
-    }
-
     /**
      * Override to provide the menus for this view.
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref, organism (add or edit), CV interaction (add or edit) and
      * CV identification (add or edit).
      */
-    public Map getMenus() {
+    public Map getMenus() throws IntactException {
+        if (myMenus.isEmpty()) {
+            loadMenus();
+        }
         return myMenus;
     }
 
@@ -477,6 +450,36 @@ public class ExperimentViewBean extends AbstractEditViewBean {
     }
 
     // Helper methods
+
+    private void loadMenus() throws IntactException {
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
+
+        // The Intact helper to construct menus.
+        IntactHelper helper = new IntactHelper();
+
+        try {
+            myMenus.putAll(super.getMenus(helper));
+
+            // The organism menu
+            String name = EditorMenuFactory.ORGANISM;
+            int mode = (myOrganism == null) ? 1 : 0;
+            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+
+            // The CVInteraction menu.
+            name = EditorMenuFactory.INTERACTION;
+            mode = (myInter == null) ? 1 : 0;
+            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+
+            // The CVIdentification menu.
+            name = EditorMenuFactory.IDENTIFICATION;
+            mode = (myIdent == null) ? 1 : 0;
+            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+        }
+        finally {
+            helper.closeStore();
+        }
+    }
 
     private void makeInteractionBeans(Collection ints) {
         for (Iterator iter = ints.iterator(); iter.hasNext();) {

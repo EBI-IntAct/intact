@@ -252,36 +252,15 @@ public class FeatureViewBean extends AbstractEditViewBean {
         myRangesToUpdate.clear();
     }
 
-    public void loadMenus() throws IntactException {
-        // Handler to the menu factory.
-        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
-
-        // The Intact helper to construct menus.
-        IntactHelper helper = new IntactHelper();
-
-        try {
-            myMenus.putAll(super.getMenus(helper));
-
-            // The feature type menu
-            String name = EditorMenuFactory.FEATURE_TYPE;
-            int mode = (getCvFeatureType() == null) ? 1 : 0;
-            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
-
-            // The feature identification menu.
-            name = EditorMenuFactory.FEATURE_IDENTIFICATION;
-            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
-        }
-        finally {
-            helper.closeStore();
-        }
-    }
-
     /**
      * Override to provide the menus for this view.
      * @return a map of menus for this view. It consists of common menus for
      * annotation/xref, feature type (add or edit), feature identification (add).
      */
-    public Map getMenus() {
+    public Map getMenus() throws IntactException {
+        if (myMenus.isEmpty()) {
+            loadMenus();
+        }
         return myMenus;
     }
 
@@ -484,6 +463,30 @@ public class FeatureViewBean extends AbstractEditViewBean {
     }
 
     // Helper methods.
+
+    private void loadMenus() throws IntactException {
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
+
+        // The Intact helper to construct menus.
+        IntactHelper helper = new IntactHelper();
+
+        try {
+            myMenus.putAll(super.getMenus(helper));
+
+            // The feature type menu
+            String name = EditorMenuFactory.FEATURE_TYPE;
+            int mode = (getCvFeatureType() == null) ? 1 : 0;
+            myMenus.put(name, menuFactory.getMenu(name, mode, helper));
+
+            // The feature identification menu.
+            name = EditorMenuFactory.FEATURE_IDENTIFICATION;
+            myMenus.put(name, menuFactory.getMenu(name, 1, helper));
+        }
+        finally {
+            helper.closeStore();
+        }
+    }
 
     private String getParentAc() {
         return myComponent.getInteractor().getAc();

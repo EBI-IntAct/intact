@@ -151,7 +151,19 @@ public class SequenceViewBean extends AbstractEditViewBean {
         }
     }
 
-    public void loadMenus() throws IntactException {
+    /**
+     * Override to provide the menus for this view.
+     * @return a map of menus for this view. It consists of common menus for
+     * annotation/xref and organism (add or edit).
+     */
+    public Map getMenus() throws IntactException {
+        if (myMenus.isEmpty()) {
+            loadMenus();
+        }
+        return myMenus;
+    }
+
+    private void loadMenus() throws IntactException {
         // The Intact helper to construct menus.
         IntactHelper helper = new IntactHelper();
 
@@ -165,14 +177,5 @@ public class SequenceViewBean extends AbstractEditViewBean {
         finally {
             helper.closeStore();
         }
-    }
-
-    /**
-     * Override to provide the menus for this view.
-     * @return a map of menus for this view. It consists of common menus for
-     * annotation/xref and organism (add or edit).
-     */
-    public Map getMenus() {
-        return myMenus;
     }
 }
