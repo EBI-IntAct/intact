@@ -47,4 +47,9 @@ public interface ForwardConstants {
      * from a search.
      */
     public static final String NO_MATCH = "noMatch";
+
+    /**
+     * Forward to the experiment editor from the interaction editor.
+     */
+    public static final String EXP = "experiment";
 }

@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
@@ -19,12 +19,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Links to the interaction editor from the current experiment.
+ * Links to an interaction button from an experiment.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionLinkAction extends AbstractEditorAction {
+public class InteractionLinkAction extends SubmitDispatchAction {
 
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
@@ -40,8 +40,18 @@ public class InteractionLinkAction extends AbstractEditorAction {
         // The protein we are editing at the moment.
         InteractionBean ib = ((InteractionBean[]) dynaform.get("ints"))[idx];
 
-        // We must have the protein bean.
+        // We must have this Interaction bean.
         assert ib != null;
+
+        // Save the experiment first.
+        ActionForward forward = save(mapping, form, request, response);
+
+//        System.out.println("Forward path: " + forward.getPath() + " name: " + forward.getName());
+        // Check for any errors to display in the input page.
+        if (forward.getPath().equals(mapping.getInputForward().getPath())) {
+            return forward;
+        }
+        // No errors. Linking starts from here.
 
         // Check the lock.
         LockManager lmr = LockManager.getInstance();
@@ -72,8 +82,6 @@ public class InteractionLinkAction extends AbstractEditorAction {
 
         // Set the experiment AC, so we can come back to this experiment again.
         ((InteractionViewBean) user.getView()).setSourceExperimentAc(expAc);
-
-        System.out.println("FINSHED linkinteraction");
 
         // Update the form.
         return mapping.findForward(SUCCESS);

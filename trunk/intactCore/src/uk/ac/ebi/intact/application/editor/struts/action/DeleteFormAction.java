@@ -9,7 +9,10 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Experiment;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,6 +84,15 @@ public class DeleteFormAction extends AbstractEditorAction {
         }
         // Remove this current bean from the recent lists.
         user.getView().removeFromRecentList(user);
+
+        // Check and see if we have to go to the experiment page (only
+        // applicable for an Interaction editor).
+        if (returnToExperiment(request)) {
+            // Sets the destination experiment to return to.
+            setDestinationExperiment(request);
+            // Back to the experiment editor.
+            return mapping.findForward(EXP);
+        }
         // Back to the search page.
         return mapping.findForward(SEARCH);
     }

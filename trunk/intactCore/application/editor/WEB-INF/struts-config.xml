@@ -249,6 +249,12 @@
             type="uk.ac.ebi.intact.application.editor.exception.SearchException"
             key="dummy.key"
             path="/do/fillCvForm"/>
+
+        <!-- Uses the input for validation exceptions -->
+        <exception
+            handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
+            type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
+            key="dummy.key"/>
     </global-exceptions>
 
     <!-- ========== Global Forward Definitions ============================== -->
@@ -405,7 +411,7 @@
             scope="session">
 
             <forward name="submit" path="/do/cvSubmit"/>
-            <forward name="save" path="/do/cvSubmit"/>
+<!--            <forward name="save" path="/do/cvSubmit"/>-->
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/cvAnnotSubmit"/>
@@ -423,10 +429,10 @@
             <forward name="success" path="/do/fillCvForm"/>
 
             <!-- Uses the input for validation exceptions -->
-            <exception
-                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
-                key="dummy.key"/>
+<!--            <exception-->
+<!--                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"-->
+<!--                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"-->
+<!--                key="dummy.key"/>-->
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the search page  (global) -->
         </action>
@@ -474,7 +480,7 @@
             <forward name="intSearch" path="/do/intSearch"/>
         </action>
 
-        <!-- Action to handle when the Submit/Cancel/Delete button is pressed.
+        <!-- Action to handle when the Submit button is pressed.
              Note the same action as CV is used here. It is because there are
              no actions specific to the Experiment editor.
              -->
@@ -488,12 +494,11 @@
             <forward name="success" path="/do/fillExpForm"/>
 
             <!-- Uses the input for validation exceptions -->
-            <exception
-                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
-                key="dummy.key"/>
+<!--            <exception-->
+<!--                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"-->
+<!--                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"-->
+<!--                key="dummy.key"/>-->
             <!-- Back to the results page as we got here from a search result (global) -->
-            <!-- Back to the search page  (global) -->
         </action>
 
         <!-- Action to handle when a button (edit/save/delete) related to annotation
@@ -521,33 +526,20 @@
         <action path="/interaction"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionAction"
             name="expForm"
+            input="/do/fillExpForm"
             validate="false"
             scope="session" >
-<!--            <forward name="expSave" path="/do/expSave"/>-->
-            <forward name="success" path="/do/intLink"/>
+            <forward name="editInt" path="/do/intLink"/>
         </action>
-<!---->
-<!--        <action path="/expSave"-->
-<!--            type="uk.ac.ebi.intact.application.editor.struts.action.experiment.ExperimentSaveAction"-->
-<!--            name="expForm"-->
-<!--            input="/do/fillExpForm"-->
-<!--            validate="true"-->
-<!--            scope="session">-->
-<!--            <forward name="success" path="/do/intLink"/>-->
-<!---->
-<!-- Uses the input for validation exceptions -->
-<!--            <exception-->
-<!--                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"-->
-<!--                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"-->
-<!--                key="dummy.key"/>-->
-<!--        </action>-->
 
-        <!-- Links an Interaction from an Experiment.
+        <!-- Links an Interaction from an Experiment. The validate must be set to
+             true for the form to be validated before saving the current experiment.
         -->
         <action path="/intLink"
             type="uk.ac.ebi.intact.application.editor.struts.action.experiment.InteractionLinkAction"
             name="expForm"
-            validate="false"
+            input="/do/fillExpForm"
+            validate="true"
             scope="session" >
             <forward name="success" path="/do/fillIntForm"/>
         </action>
@@ -590,7 +582,7 @@
             scope="session">
 
             <forward name="submit" path="/do/bsSubmit"/>
-            <forward name="save" path="/do/bsSubmit"/>
+<!--            <forward name="save" path="/do/bsSubmit"/>-->
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
             <forward name="annotation" path="/do/bsAnnotSubmit"/>
@@ -609,10 +601,10 @@
             <forward name="success" path="/do/fillBsForm"/>
 
             <!-- Uses the input for validation exceptions -->
-            <exception
-                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
-                key="dummy.key"/>
+<!--            <exception-->
+<!--                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"-->
+<!--                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"-->
+<!--                key="dummy.key"/>-->
             <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the search page  (global) -->
         </action>
@@ -662,35 +654,33 @@
             scope="session">
 
             <forward name="submit" path="/do/intSubmit"/>
-            <forward name="save" path="/do/intSubmit"/>
             <forward name="cancel" path="/do/cancel"/>
             <forward name="delete" path="/do/delete"/>
+
             <forward name="annotation" path="/do/intAnnotSubmit"/>
             <forward name="xref" path="/do/intXrefSubmit"/>
+
             <forward name="expDel" path="/do/expDel"/>
             <forward name="expHold" path="/do/expHold"/>
             <forward name="expSearch" path="/do/expSearch"/>
+
             <forward name="prot" path="/do/prot"/>
             <forward name="protSearch" path="/do/protSearch"/>
         </action>
 
-        <!-- Action to handle when the Submit/Cancel/Delete button is pressed -->
+        <!-- Action to handle when an Interaction is Submitted -->
         <action path="/intSubmit"
-            type="uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction"
+            type="uk.ac.ebi.intact.application.editor.struts.action.interaction.SubmitAction"
             name="intForm"
             input="/do/fillIntForm"
             validate="true"
             scope="session"
             parameter="dispatch">
+            <!-- Back to the input page -->
             <forward name="success" path="/do/fillIntForm"/>
-
-            <!-- Uses the input for validation exceptions -->
-            <exception
-                handler="uk.ac.ebi.intact.application.editor.struts.framework.util.EditorExceptionHandler"
-                type="uk.ac.ebi.intact.application.editor.exception.validation.ValidationException"
-                key="dummy.key"/>
             <!-- Back to the results page as we got here from a search result (global) -->
-            <!-- Back to the search page  (global) -->
+            <!-- Back to the experiment editor (where we came from) -->
+            <forward name="experiment" path="/do/fillExpForm"/>
         </action>
 
         <!-- Action to handle when a button (edit/save/delete) related to annotation
@@ -779,7 +769,6 @@
             validate="false"
             scope="session">
             <!-- Back to the results page as we got here from a search result (global) -->
-            <!-- Back to the search page  (global) -->
             <!-- Back to the experiment editor (where we came from) -->
             <forward name="experiment" path="/do/fillExpForm"/>
         </action>
@@ -789,9 +778,10 @@
             type="uk.ac.ebi.intact.application.editor.struts.action.DeleteFormAction"
             validate="false"
             scope="session">
-            <!-- Back to the results page as we got here from a search result (global) -->
             <!-- Back to the search page  (global) -->
             <!-- error goes to the global error action -->
+            <!-- Back to the experiment editor (where we came from) -->
+            <forward name="experiment" path="/do/fillExpForm"/>
         </action>
 
     </action-mappings>

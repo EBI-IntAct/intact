@@ -30,7 +30,6 @@ import uk.ac.ebi.intact.persistence.DAOSource;
 import uk.ac.ebi.intact.persistence.DataSourceException;
 import uk.ac.ebi.intact.util.*;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.io.IOException;
@@ -222,8 +221,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * method sets the logout time.
      */
     public void valueUnbound(HttpSessionBindingEvent event) {
-        // Release any locks.
-//        releaseLock();
         try {
             logoff();
         }
@@ -303,7 +300,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public void setView(Class clazz) {
         // Start editing the object.
-        this.startEditing();
+        startEditing();
         // Get the new view for the new edit object.
         myEditView = myViewFactory.factory(clazz);
         myEditView.setAnnotatedClass(clazz);
@@ -312,7 +309,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public void setView(AnnotatedObject annot) {
         // Start editing the object.
-        this.startEditing();
+        startEditing();
         // Get the new view for the new edit object.
         myEditView = myViewFactory.factory(annot.getClass());
         myEditView.setAnnotatedObject(annot);
@@ -321,6 +318,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public String getSelectedTopic() {
         return mySelectedTopic;
+    }
+
+    public void setSelectedTopic(String topic) {
+        mySelectedTopic = topic;
     }
 
     public Institution getInstitution() {
@@ -342,20 +343,24 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditState;
     }
 
+    public void startEditing() {
+        myEditState = true;
+    }
+
     public void begin() throws IntactException {
         myHelper.startTransaction(BusinessConstants.OBJECT_TX);
     }
 
     public void commit() throws IntactException {
         myHelper.finishTransaction();
-        this.endEditing();
+        endEditing();
         // Clear the cache; this will force the OJB to read from the database.
         myHelper.removeFromCache(myEditView.getAnnotatedObject());
     }
 
     public void rollback() throws IntactException {
         myHelper.undoTransaction();
-        this.endEditing();
+        endEditing();
     }
 
     public void create(Object object) throws IntactException {
@@ -387,7 +392,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public void cancelEdit() {
-        this.endEditing();
+        endEditing();
         myEditView.clearTransactions();
     }
 
@@ -513,7 +518,11 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     }
 
     public String getUniqueShortLabel(String shortlabel) throws SearchException {
-        return this.getUniqueShortLabel(shortlabel, myEditView.getAc());
+        // Need to change to lower case as uppercases are not allowed for a name.
+        String ac = myEditView.getAc();
+        // If ac is null, just a template as the suggested value.
+        return this.getUniqueShortLabel(shortlabel, ac == null ? "xxx-xx"
+                : ac.toLowerCase());
     }
 
     public String getUniqueShortLabel(String shortlabel, String extAc)
@@ -739,13 +748,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         String className = myEditView.getEditClass().getName();
         // Strip the package name from the class name.
         mySelectedTopic = className.substring(className.lastIndexOf('.') + 1);
-    }
-
-    /**
-     * Starts the editing session.
-     */
-    private void startEditing() {
-        myEditState = true;
     }
 
     /**

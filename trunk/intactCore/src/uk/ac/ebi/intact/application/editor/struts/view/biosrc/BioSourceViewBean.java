@@ -56,7 +56,6 @@ public class BioSourceViewBean extends AbstractEditViewBean {
             else {
                 // Read it from the peristent system.
                 bs = (BioSource) user.getObjectByAc(getEditClass(), getAc());
-                bs.setShortLabel(getShortLabel());
                 bs.setTaxId(getTaxId());
             }
             // Set the current biosource as the annotated object.

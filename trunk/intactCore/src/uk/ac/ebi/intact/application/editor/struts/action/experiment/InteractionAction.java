@@ -11,10 +11,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.util.MessageResources;
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionBean;
-import uk.ac.ebi.intact.application.editor.struts.action.SubmitDispatchAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,44 +38,33 @@ public class InteractionAction extends SubmitDispatchAction {
         // The index position of the annotation.
         int idx = ((Integer) dynaform.get("idx")).intValue();
 
+        // The protein we are editing at the moment.
+        InteractionBean ib = ((InteractionBean[]) dynaform.get("ints"))[idx];
+
+        // We must have this Interaction bean.
+        assert ib != null;
+
         // The command associated with the index.
         String cmd = ((String[]) dynaform.get("intCmd"))[idx];
 
         // Message resources to access button labels.
         MessageResources msgres = getResources(request);
 
+        // Check for edit Interaction.
         if (cmd.equals(msgres.getMessage("exp.int.button.edit"))) {
-            return save(mapping, form, request, response);
-//            return mapping.findForward("expSave");
+            // Pass the control to another action to edit an interaction.
+            return mapping.findForward("editInt");
         }
-        // default is delete.
-        return delete(mapping, form, request, response);
-    }
-
-    private ActionForward delete(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response)
-            throws Exception {
-        // The dyna form.
-        DynaActionForm dynaform = (DynaActionForm) form;
-
-        // The index position of the annotation.
-        int idx = ((Integer) dynaform.get("idx")).intValue();
+        // default is to delete an interaction from the experiment.
 
         // The current view of the edit session.
         ExperimentViewBean view =
                 (ExperimentViewBean) getIntactUser(request).getView();
 
-        // The bean associated with the current action.
-        InteractionBean ib = ((InteractionBean[]) dynaform.get("ints"))[idx];
-
-        // We must have the bean.
-        assert ib != null;
-
-        // Wants to delete the selected interaction.
+        // Delete the selected interaction.
         view.delInteraction(ib);
 
+        // Back to the input page.
         return mapping.getInputForward();
     }
 }
