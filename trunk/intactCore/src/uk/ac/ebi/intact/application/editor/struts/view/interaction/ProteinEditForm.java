@@ -9,6 +9,8 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionError;
+import org.apache.struts.util.MessageResources;
+import org.apache.struts.Globals;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -84,7 +86,10 @@ public class ProteinEditForm extends EditForm {
                                  HttpServletRequest request) {
 
         // No need for validation if delete button is pressed.
-        if (deletePressed()) {
+        MessageResources msgres = (MessageResources) request.getAttribute(
+                Globals.MESSAGES_KEY);
+        if (hasPressed(msgres.getMessage("button.delete"))) {
+            System.out.println("No need for validation");
             return null;
         }
         // The bean associated with the current action.

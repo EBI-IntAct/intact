@@ -92,38 +92,11 @@ public class EditForm extends ActionForm {
     }
 
     /**
-     * True if Edit button was pressed.
-     * @return true if Edit button was pressed; for all other instances false
-     * is returned as long as some command is selected (ie., not null).
-     */
-    public boolean editPressed() {
-        return myCommand.equals("Edit");
-    }
-
-    /**
-     * True if Delete button was pressed.
-     * @return true if Delete button was pressed; for all other instances false
-     * is returned as long as some command is selected (ie., not null).
-     */
-    public boolean deletePressed() {
-        return myCommand.equals("Delete");
-    }
-
-    /**
-     * True if Save button was pressed.
-     * @return true if Save button was pressed; for all other instances false
-     * is returned as long as some command is selected (ie., not null).
-     */
-    public boolean savePressed() {
-        return myCommand.equals("Save");
-    }
-
-    /**
      * True if a button with given title is pressed.
      * @param title the title of the button to compare.
      * @return <code>true</code> if <code>title</code> is pressed.
      */
-    public boolean buttonPressed(String title) {
+    public boolean hasPressed(String title) {
         return myCommand.equals(title);
     }
 }

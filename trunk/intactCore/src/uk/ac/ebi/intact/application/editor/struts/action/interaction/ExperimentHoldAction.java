@@ -6,14 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
-import uk.ac.ebi.intact.application.editor.business.EditUserI;
-
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
+import uk.ac.ebi.intact.application.editor.struts.view.EditForm;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,7 +57,7 @@ public class ExperimentHoldAction extends AbstractEditorAction {
         // We must have the experiment bean.
         assert expbean != null;
 
-        if (editform.buttonPressed("Add")) {
+        if (editform.hasPressed(getResources(request).getMessage("button.add"))) {
             // Avoid duplicates.
             if (view.experimentExists(expbean)) {
                 ActionErrors errors = new ActionErrors();

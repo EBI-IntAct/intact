@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Set;
-import java.util.Iterator;
 
 /**
  * The action class to search an Experiment (in the context of an Interaction).
@@ -58,7 +57,9 @@ public class ExperimentSearchAction extends AbstractEditorAction {
         // Can safely cast it as we have the correct editor view bean.
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
-        if (action.equals("Get recent")) {
+        // Check for the button title.
+        if (action.equals(getResources(request).getMessage(
+                "int.exp.button.recent"))) {
             Set recentExps = user.getCurrentExperiments();
             if (recentExps.isEmpty()) {
                 ActionErrors errors = new ActionErrors();
