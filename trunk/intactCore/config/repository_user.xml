@@ -47,7 +47,7 @@
     <extent-class class-ref="uk.ac.ebi.intact.model.CvInteraction" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvIdentification" />
     <extent-class class-ref="uk.ac.ebi.intact.model.CvInteractionType" />
-    <extent-class class-ref="uk.ac.ebi.intact.application.goDensity.business.dag.CvGoNode" />
+    <extent-class class-ref="uk.ac.ebi.intact.model.CvGoNode" />
 </class-descriptor>
 
 <class-descriptor
@@ -1793,7 +1793,7 @@
 
 <!-- Definitions for CvGoNode ....-->
    <class-descriptor
-	  class="uk.ac.ebi.intact.application.goDensity.business.dag.CvGoNode"
+	  class="uk.ac.ebi.intact.model.CvGoNode"
 	  table="ia_ControlledVocab"
    >
 
@@ -1857,7 +1857,7 @@
      <collection-descriptor
      proxy="true"
          name="parent"
-         element-class-ref="uk.ac.ebi.intact.application.goDensity.business.dag.CvGoNode"
+         element-class-ref="uk.ac.ebi.intact.model.CvGoNode"
          indirection-table="ia_Cv2Cv"
       >
          <fk-pointing-to-this-class column="child_ac"/>
@@ -1869,7 +1869,7 @@
      <collection-descriptor
      proxy="false"
          name="child"
-         element-class-ref="uk.ac.ebi.intact.application.goDensity.business.dag.CvGoNode"
+         element-class-ref="uk.ac.ebi.intact.model.CvGoNode"
          indirection-table="ia_Cv2Cv"
       >
          <fk-pointing-to-this-class column="parent_ac"/>
