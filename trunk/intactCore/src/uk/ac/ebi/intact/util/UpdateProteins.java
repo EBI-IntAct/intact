@@ -133,7 +133,7 @@ import java.util.*;
 public class UpdateProteins extends UpdateProteinsI {
 
     // TODO: ask when run in command line about an alternative location for the error file.
-    private static final String ENTRY_OUTPUT_FILE = "/tmp/Entries.error";
+    private static final String ENTRY_OUTPUT_FILE = "C:/intact_log/Entries.error";
 
     // to record entry error
     private String filename = null;
@@ -260,13 +260,11 @@ public class UpdateProteins extends UpdateProteinsI {
         entrySkipped = 0;
     }
 
-    public final String getUrl( String sptrAC ) {
+    public final String getUrl( String uniprotAC ) {
 
-        // example: http://srs.ebi.ac.uk/srs7bin/cgi-bin/wgetz?-e+[SWALL-acc:P12345]+-vn+2+-ascii
-        String url = "http://srs.ebi.ac.uk/srs7bin/cgi-bin/wgetz?-e+[SWALL-acc:"
-                     + sptrAC + "]+-vn+2+-ascii";
-
-        return url;
+        // the SRS url has been collected from the CvDatabase( uniprot ) during the initialisation process
+        // and saved under srsUrl.
+        return SearchReplace.replace( srsUrl, "${ac}", uniprotAC );
     }
 
     // TODO: the server might be busy, create a retry method ...
@@ -743,7 +741,7 @@ public class UpdateProteins extends UpdateProteinsI {
                                     }
                                 } else {
                                     // Store the splice variant in the list we'll return
-                                    this.proteins.add( protein );
+                                    this.proteins.add( spliceVariant );
                                 }
 
                                 // remove that splice variant from the collection.
@@ -1673,10 +1671,10 @@ public class UpdateProteins extends UpdateProteinsI {
             throw new IllegalArgumentException( "The protein AC MUST not be null or empty." );
         }
 
-        int index = proteinAc.indexOf( "-" ); // search for splice variant (eg: P123456-1)
-        if( index != -1 ) {
-            proteinAc = proteinAc.substring( 0, index ); // will return P123456.
-        }
+//        int index = proteinAc.indexOf( "-" ); // search for splice variant (eg: P123456-1)
+//        if( index != -1 ) {
+//            proteinAc = proteinAc.substring( 0, index ); // will return P123456.
+//        }
 
         String url = getUrl( proteinAc );
         int i = insertSPTrProteinsFromURL( url, null, true );
@@ -1715,10 +1713,10 @@ public class UpdateProteins extends UpdateProteinsI {
             throw new IllegalArgumentException( "The protein AC MUST not be null or empty." );
         }
 
-        int index = proteinAc.indexOf( "-" ); // search for splice variant (eg: P123456-1)
-        if( index != -1 ) {
-            proteinAc = proteinAc.substring( 0, index ); // will return P123456.
-        }
+//        int index = proteinAc.indexOf( "-" ); // search for splice variant (eg: P123456-1)
+//        if( index != -1 ) {
+//            proteinAc = proteinAc.substring( 0, index ); // will return P123456.
+//        }
 
         String url = getUrl( proteinAc );
         int i = insertSPTrProteinsFromURL( url, taxId, update );
