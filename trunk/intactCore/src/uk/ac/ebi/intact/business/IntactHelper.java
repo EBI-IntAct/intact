@@ -75,6 +75,13 @@ public class IntactHelper implements SearchI, Serializable {
         if (dao != null) dao.clearCache();
     }
 
+    /**
+     * Removes given object from the cache.
+     * @param obj the object to clear from the OJB cache.
+     */
+    public void removeFromCache(Object obj) {
+        dao.removeFromCache(obj);
+    }
 
     /*
     public boolean isCachedClass(Class clazz) {
