@@ -79,6 +79,6 @@ drop table ia_statistics ;
 drop sequence statistics_seq ;
 
 drop table ia_payg;
-drop table create_edge;
+drop table current_edge;
 drop table temp_node; 
 
