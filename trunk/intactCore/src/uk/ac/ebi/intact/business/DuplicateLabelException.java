@@ -13,9 +13,16 @@ package uk.ac.ebi.intact.business;
 
 public class DuplicateLabelException extends IntactException {
 
-    public DuplicateLabelException() {
+    /**
+     * @param criteria the criteria with which we did the search
+     * @param object the Class of the object we were searching for
+     */
+    public DuplicateLabelException( String criteria, String object ) {
+        super( "Search by label: "+ criteria +", returned more than one result of type: " + object );
+    }
 
-        super("Search by label returned more than one result");
+    public DuplicateLabelException() {
+        super( "Search by label returned more than one result" );
     }
 
 }
