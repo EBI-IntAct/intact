@@ -49,20 +49,6 @@ public class SubmitButtonAction extends CommonDispatchAction {
         // The current view.
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
-        // Check for feature that have been saved with -x (as a result of cloning).
-//        if (view.hasFeatureWithClonedSuffix()) {
-//            // Just a warning to the user.
-//            ActionMessages msgs = new ActionMessages();
-//            msgs.add(ActionMessages.GLOBAL_MESSAGE,
-//                    new ActionMessage("message.feature.label"));
-//            saveMessages(request, msgs);
-//        }
-
-        // TODO debuuging statement to monitor why submitting an interaction
-        // is not returning back to the experiment as it should.
-        LOGGER.error("Current interaction: " + view.getAc() + " Source exp: "
-                + view.getSourceExperimentAc());
-
         // Do we have to return to the experiment editor?
         if (returnToExperiment(request)) {
             // The AC of the experiment.
