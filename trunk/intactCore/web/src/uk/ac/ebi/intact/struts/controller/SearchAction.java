@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.  
-All rights reserved. Please see the file LICENSE 
+Copyright (c) 2002 The European Bioinformatics Institute, and others.
+All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
@@ -111,7 +111,7 @@ public class SearchAction extends IntactBaseAction {
 
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
-            errors.add("no.ds", new ActionError("error.no.datasource"));
+            errors.add(super.INTACT_ERROR, new ActionError("error.intact.helper"));
             super.saveErrors(request, errors);
             return (mapping.findForward(WebIntactConstants.FORWARD_FAILURE));
         }
@@ -127,7 +127,7 @@ public class SearchAction extends IntactBaseAction {
 
                 // The errors to report back.
                 ActionErrors errors = new ActionErrors();
-                errors.add("no.match", new ActionError("error.no.match"));
+                errors.add(super.INTACT_ERROR, new ActionError("error.no.match"));
                 super.saveErrors(request, errors);
                 return (mapping.findForward(WebIntactConstants.FORWARD_FAILURE));
             }
@@ -159,7 +159,7 @@ public class SearchAction extends IntactBaseAction {
 
             // The errors to report back.
             ActionErrors errors = new ActionErrors();
-            errors.add("search.error", new ActionError("error.search"));
+            errors.add(super.INTACT_ERROR, new ActionError("error.search"));
             super.saveErrors(request, errors);
             return (mapping.findForward(WebIntactConstants.FORWARD_FAILURE));
         }
