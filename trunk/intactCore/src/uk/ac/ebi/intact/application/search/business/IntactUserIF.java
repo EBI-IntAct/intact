@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.search.business;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.util.XmlBuilder;
 
 import java.util.Collection;
 
@@ -47,4 +48,10 @@ public interface IntactUserIF {
      * @return IntactHelper the helper instance for this user
      */
     public IntactHelper getHelper();
+
+    /**
+     * Provides a builder class for generating and manipulating XML as rewuired.
+     * @return
+     */
+    public XmlBuilder getXmlBuilder();
 }

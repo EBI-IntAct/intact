@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.business.*;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.XmlBuilder;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -34,13 +35,21 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     private IntactHelper helper;
 
     /**
+     * An Xml Builder for use in XML creation and
+     * manipulation during a user session
+     */
+    private XmlBuilder builder;
+
+    /**
      * The search criteria.
      */
     private String searchCriteria;
 
     /**
      * Constructs an instance of this class with given mapping file and
-     * the name of the data source class.
+     * the name of the data source class. Side-effects of this constructor
+     * are that the User instance also has an <code>IntactHelper</code> and
+     * an <code>XmlBuilder</code> created for use during a user session.
      *
      * @param mapping the name of the mapping file.
      * @param dsClass the class name of the Data Source.
@@ -49,8 +58,8 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
      *  could be due to the errors in repository files or the underlying
      *  persistent mechanism rejected <code>user</code> and
      *  <code>password</code> combination.
-     * @exception IntactException thrown for any error in creating lists such
-     *  as topics, database names etc.
+     * @exception IntactException thrown for any error in creating an IntactHelper,
+     * XmlBuilder etc
      */
     public IntactUserImpl(String mapping, String dsClass)
         throws DataSourceException, IntactException {
@@ -62,8 +71,9 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
         fileMap.put(Constants.MAPPING_FILE_KEY, mapping);
         ds.setConfig(fileMap);
 
-        // build a helper for use throughout a session
+        // build a helper and XmlBuilder for use throughout a session
         this.helper = new IntactHelper(ds);
+        this.builder = new XmlBuilder(this.helper);
     }
 
     // Implements HttpSessionBindingListener
@@ -82,6 +92,7 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
 
         try {
             this.helper.closeStore();
+            this.builder = null;
         }
         catch(IntactException ie) {
             //failed to close the store - not sure what to do here yet....
@@ -104,5 +115,9 @@ public class IntactUserImpl implements IntactUserIF, HttpSessionBindingListener 
     public IntactHelper getHelper() {
 
         return this.helper;
+    }
+
+    public XmlBuilder getXmlBuilder() {
+        return this.builder;
     }
 }
