@@ -15,9 +15,8 @@ public final class Constants {
   /**
    * Where to find the property file
    */
-  public static final String PROPERTY_FILE = "/config/ApplicationResources.properties";
-
-
+  //public static final String PROPERTY_FILE = "/config/ApplicationResources.properties";
+  public static final String PROPERTY_FILE = "/config/Graph.properties";
 
   /**
    * The attribute which allows to access the width of the image graph.
