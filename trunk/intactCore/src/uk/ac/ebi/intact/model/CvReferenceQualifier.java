@@ -21,6 +21,12 @@ import java.util.*;
  */
 public class CvReferenceQualifier extends CvObject {
 
+    /**
+     * Cache a Vector of all shortLabels of the class, e.g. for menus.
+     *
+     */
+    protected static Vector menuList = null;
+
 
 } // end CvReferenceQualifier
 

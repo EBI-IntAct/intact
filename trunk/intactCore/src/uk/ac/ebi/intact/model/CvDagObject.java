@@ -4,6 +4,9 @@
  */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.business.IntactException;
+
 import java.util.*;
 
 /**
@@ -15,6 +18,12 @@ import java.util.*;
  *
  */
 public abstract class CvDagObject extends CvObject {
+
+    /**
+     * Cache a Vector of all shortLabels of the class, e.g. for menus.
+     *
+     */
+    protected static Vector menuList = null;
 
    ///////////////////////////////////////
    // associations
@@ -64,6 +73,12 @@ public abstract class CvDagObject extends CvObject {
     }
 
     // * Specific DAG methods
+
+    /** Add the ancestors of the current node to the set of currentAncestors.
+     *
+     * @param currentAncestors Ancestors collected so far.
+     * @return currentAncestors, with all the ancestors of the current node added.
+     */
     private Set ancestors(Set currentAncestors){
        for (Iterator i = this.getParents().iterator(); i.hasNext();) {
            CvDagObject current = (CvDagObject) i.next();
@@ -81,23 +96,58 @@ public abstract class CvDagObject extends CvObject {
     }
 
     /**
-     * @param currentDepth Current depth in the tree. Translated into leading blanks.
-     * @return the current objects and all its descendents as an indented Tree.
+     * Produce a vector of shortLabels which can be used to create a selection list, eg for menus.
+     * The structure of the tree will be represented by indentation, a shortLabel of level two in the hierarchy
+     * will have two leading blanks.
+     *
+     * @param currentDepth the current indentation level.
+     * @param menuList The list of labels collected so far.
+     * @param current The start node. Labels for the node and its descendents will be added to the menuList.
+     * @return A vector of shortlabels.
      */
-    private String toIndentedTree(int currentDepth){
-        StringBuffer currentTree = new StringBuffer();
+    private static Vector getMenuList(int currentDepth, Vector menuList, CvDagObject current){
+
+        StringBuffer currentTerm = new StringBuffer();
         for (int i = 0; i<currentDepth; i++) {
-            currentTree.append(' ');
+            currentTerm.append(' ');
         }
-        currentTree.append(this.getShortLabel() + "\n");
-        for (Iterator iterator = child.iterator(); iterator.hasNext();) {
-            currentTree.append(((CvDagObject) iterator.next()).toIndentedTree(currentDepth+1));
+        currentTerm.append(current.getShortLabel());
+        menuList.add(currentTerm);
+        for (Iterator iterator = current.child.iterator(); iterator.hasNext();) {
+            menuList = getMenuList(currentDepth+1, menuList, (CvDagObject) iterator.next());
         }
-        return currentTree.toString();
+
+        return menuList;
     }
 
-    public String toIndentedTree(){
-        return toIndentedTree(0);
+    /**
+     * Produce a vector of shortLabels which can be used to create a selection list, eg for menus.
+     * The structure of the tree will be represented by indentation, a shortLabel of level two in the hierarchy
+     * will have two leading blanks.
+     *
+     * @param targetClass The class for which to return the menu list.
+     * @param helper Database access object
+     * @param forceUpdate If true, an update of the list is forced.
+     *
+     * @return Vector of Strings. Each string one shortlabel.
+     */
+    public static Vector getMenuList(Class targetClass, IntactHelper helper, boolean forceUpdate)
+            throws IntactException {
+        if ((menuList == null) || forceUpdate){
+            menuList = new Vector();
+            // get an arbitrary element of the target class
+            Collection allElements = helper.search(targetClass.getName(),"ac","*");
+            Iterator i = allElements.iterator();
+            CvDagObject current = (CvDagObject) i.next();
+
+            // get the root element
+            current = current.getRoot();
+
+            // update the list
+            menuList = getMenuList(0, menuList, current);
+        }
+
+        return menuList;
     }
 
     /**
@@ -182,6 +232,11 @@ public abstract class CvDagObject extends CvObject {
         return termLine.toString();
     }
 
+    /** Create the GO flat file representation of the current object and all its descendants.
+     *
+     * @return a single string containing the GO DAG flatfile representation
+     * of the current object and all its descendants.
+     */
     public String toGoDag(){
         return toGoDag(0, this);
     }
