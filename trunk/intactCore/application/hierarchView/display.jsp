@@ -5,7 +5,7 @@
    - All rights reserved. Please see the file LICENSE
    - in the root directory of this distribution.
    -
-   - Allows to forward to the main page of the application.
+   - Allows to submit a query without passing by the home page.
    -
    - @author Samuel Kerrien (skerrien@ebi.ac.uk)
    - @version $Id$
@@ -16,10 +16,34 @@
 <html:html>
 
 <head>
-     <base target="_top"/>
+     <title>hierarchView: external request management</title>
 </head>
 
 <body bgcolor="white">
+
+        <blockquote>
+            <blockquote>
+                <blockquote>
+                    <table>
+                      <tr>
+                        <td>
+                            <img src="<%=request.getContextPath()%>/images/clockT.gif" border="0">
+                        </td>
+                        <td>
+                            <strong>
+                                <font color="#000080">
+                                    Please wait, your request is being processed.
+                                    <br>
+                                    Graphical view of the interaction network centered on the
+                                    Interactor AC: <%= request.getParameter ("AC") %>.
+                                </font>
+                            </strong>
+                        </td>
+                      <tr>
+                    </table>
+                </blockquote>
+            </blockquote>
+        </blockquote>
 
     <form action="<%=request.getContextPath()%>/display.do" method="post">
           <input type="hidden" name="host" />
