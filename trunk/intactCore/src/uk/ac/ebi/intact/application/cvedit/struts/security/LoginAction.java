@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.cvedit.struts.security;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.ArrayList;
 
 import uk.ac.ebi.intact.application.cvedit.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.cvedit.exception.InvalidLoginException;
@@ -49,9 +51,11 @@ public class LoginAction extends IntactBaseAction {
      * @exception ServletException if a servlet exception occurs
      */
     public ActionForward perform(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws IOException, ServletException {
+            HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        // Clear any previous errors.
+        super.clearErrors();
+
         // Get the user's login name and password. They should have already
         // validated by the ActionForm.
         LoginForm theForm = (LoginForm) form;
@@ -67,44 +71,83 @@ public class LoginAction extends IntactBaseAction {
 
         // Create an instance of IntactService.
         IntactUserIF user = null;
-        try {
-            user = new IntactUserImpl(repfile, ds, username, password);
+
+        // Create a new session if it hasn't created before.
+        HttpSession session = request.getSession();
+        if (session.isNew()) {
+            // New session.
+            Date createTime = new Date(session.getCreationTime());
+            super.log("Starting a new session; created at: " + createTime);
         }
-        catch (DataSourceException de) {
-            // Unable to get a data source...can't proceed
-            super.log(ExceptionUtils.getStackTrace(de));
-            // The errors to report back.
-            ActionErrors errors = new ActionErrors();
-            errors.add(super.INTACT_ERROR, new ActionError("error.invalid.user"));
-            super.saveErrors(request, errors);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+        else {
+            // Using an existing session.
+            Date startTime = new Date(session.getCreationTime());
+            Date endTime = new Date(session.getLastAccessedTime());
+            super.log("Using a session created on time: " + startTime +
+                " and last accessed at " + endTime);
+            user = super.getIntactUser(session);
+//            super.log("Previous sessions stats");
+//            super.log("Logged in at: " + user.loginTime() + " logged off at: " +
+//                user.logoffTime());
+//            super.log("Was working on: " + user.getSelectedTopic());
         }
-        catch (IntactException ie) {
-            // Unable to access the intact helper.
-            super.log(ExceptionUtils.getStackTrace(ie));
-            // The errors to report back.
-            ActionErrors errors = new ActionErrors();
-            errors.add(super.INTACT_ERROR, new ActionError("error.helper"));
-            super.saveErrors(request, errors);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
-        }
-        catch (SearchException se) {
-            // Unable to construct lists such as topics, db names etc.
-            super.log(ExceptionUtils.getStackTrace(se));
-            // The errors to report back.
-            ActionErrors errors = new ActionErrors();
-            errors.add(super.INTACT_ERROR, new ActionError("error.search"));
-            super.saveErrors(request, errors);
-            return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+        // user could be null if the user was logged off.
+        if (user == null) {
+            super.log("Creating a new user");
+            try {
+                user = new IntactUserImpl(repfile, ds, username, password);
+            }
+            catch (DataSourceException de) {
+                // Unable to get a data source...can't proceed
+                super.log(ExceptionUtils.getStackTrace(de));
+                // The errors to report back.
+                super.addError("error.invalid.user", de.getMessage());
+                super.saveErrors(request);
+                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            }
+            catch (IntactException ie) {
+                // Unable to access the intact helper.
+                super.log(ExceptionUtils.getStackTrace(ie));
+                // The errors to report back.
+                super.addError("error.helper", ie.getMessage());
+                super.saveErrors(request);
+                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            }
+            catch (InvalidLoginException ile) {
+                super.log("User " + user + " with " + password +
+                    " is rejected by the user as an invalid user");
+                // The errors to report back.
+                super.addError("error.invalid.user", "Unauthorised user");
+                super.saveErrors(request);
+                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            }
+            catch (SearchException se) {
+                // Unable to construct lists such as topics, db names etc.
+                super.log(ExceptionUtils.getStackTrace(se));
+                // The errors to report back.
+                super.addError("error.search", se.getMessage());
+                super.saveErrors(request);
+                return mapping.findForward(WebIntactConstants.FORWARD_FAILURE);
+            }
         }
         // Have a valid user. set the topic selected.
         user.setSelectedTopic(theForm.getTopic());
         // Save the info in the user session object for us to retrieve later.
         super.log("user selected " + theForm.getTopic());
 
-        // Save the user. For the moment, create a new session.
-        HttpSession session = request.getSession(false);
+        // Need to access the user later.
         session.setAttribute(WebIntactConstants.INTACT_USER, user);
+
+        // Set up the various containers for this session.
+        session.setAttribute(WebIntactConstants.ANNOTS_TO_DELETE,
+            new ArrayList());
+        session.setAttribute(WebIntactConstants.ANNOTS_TO_ADD,
+            new ArrayList());
+        session.setAttribute(WebIntactConstants.XREFS_TO_DELETE,
+            new ArrayList());
+        session.setAttribute(WebIntactConstants.XREFS_TO_ADD,
+            new ArrayList());
+
 //
 //    UserContainer existingContainer = null;
 //    HttpSession session = request.getSession(false);
