@@ -5,8 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.persistence;
 
-import org.exolab.castor.jdo.OQLQuery;
-
 import java.util.*;
 
 /**
