@@ -18,15 +18,15 @@
     <definition name="search.menu.links" path="/layouts/menu.jsp">
         <put name="title" value="Links"/>
         <putList name="items">
-            <item value="Logout" link="/do/logout"/>
+            <item value="Logout" link="/editor/do/logout"/>
         </putList>
     </definition>
 
     <!-- Menu for the results page -->
     <definition name="result.menu.links" extends="search.menu.links">
         <putList name="items">
-            <item value="New Search"  link="/do/search/new"/>
-            <item value="Logout" link="/do/logout"/>
+            <item value="New Search"  link="/editor/do/search/new"/>
+            <item value="Logout" link="/editor/do/logout"/>
         </putList>
     </definition>
 
