@@ -55,17 +55,22 @@ public final class EntryPersister {
             monitor.show();
         }
         int current = 0;
-        Interaction intactInteraction = null;
         for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
             final InteractionTag interaction = (InteractionTag) iterator.next();
             try {
-                intactInteraction = InteractionPersister.persist( interaction, helper );
+                Collection createdInteractions = InteractionPersister.persist( interaction, helper );
+
                 if( guiEnabled ) {
+                    StringBuffer sb = new StringBuffer( 64 );
+                    for ( Iterator iterator1 = createdInteractions.iterator(); iterator1.hasNext(); ) {
+                        Interaction interaction1 = (Interaction) iterator1.next();
+                        sb.append( interaction1.getShortLabel() ).append( ' ' );
+                    }
                     final String status;
-                    if( intactInteraction == null ) {
-                        status = "";
+                    if( sb.length() > 0 ) {
+                        status = sb.append( "created" ).toString();
                     } else {
-                        status = intactInteraction.getShortLabel() + " created";
+                        status = "No interaction created";
                     }
                     monitor.setStatus( status );
                 }
