@@ -22,9 +22,9 @@
 <jsp:useBean id="user" scope="session"
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
-<c:set var="viewbean" value="${user.view}"/>
 <%-- The list of topics --%>
-<c:set var="topiclist" value="${viewbean.editAnnotationMenus}"/>
+<c:set var="viewbean" value="${user.view}"/>
+<c:set var="topiclist" value="${viewbean.editTopicMenu}"/>
 
 <%-- Class wide declarations. --%>
 <%!

@@ -20,7 +20,7 @@
     class="uk.ac.ebi.intact.application.editor.business.EditUser"/>
 
 <%-- The list of topics --%>
-<c:set var="topiclist" value="${user.view.addAnnotationMenus}"/>
+<c:set var="topiclist" value="${user.view.addTopicMenu}"/>
 
 <!-- Adds a new comment. This will invoke addComment action. -->
 <html:form action="/comment/add">
@@ -46,7 +46,6 @@
                 <html:select property="topic">
                     <html:options name="topiclist" />
                 </html:select>
-                <html:errors property="comment.topic"/>
             </td>
             <td class="tableCell" align="left" valign="top">
                 <html:textarea property="description" rows="3" cols="70"/>
