@@ -1018,27 +1018,26 @@ set term off
    'The tax id of the bio source.';
 set term on
 
---PROMPT Creating table "CURRENT_EDGE"
---CREATE TABLE CURRENT_EDGE(
---     NIDA VARCHAR2(20)
---    ,NIDB VARCHAR2(20)
---    ,SEEN INTEGER
---    ,CONF INTEGER
---    ,SPECIES VARCHAR(20)
---)
---TABLESPACE &&intactMainTablespace
---PCTFREE    15
---;
---
---PROMPT Creating table "TEMP_NODE"
---CREATE TABLE TEMP_NODE(
---     NID VARCHAR(20)
---    ,SPECIES VARCHAR2(20)
---)
---TABLESPACE &&intactMainTablespace
---PCTFREE    15
---;
+PROMPT Creating table "IA_Payg_Current_Edge"
+CREATE TABLE IA_Payg_Current_Edge(
+     NIDA VARCHAR2(20)
+    ,NIDB VARCHAR2(20)
+    ,SEEN INTEGER
+    ,CONF INTEGER
+    ,SPECIES VARCHAR(20)
+)
+TABLESPACE &&intactMainTablespace
+PCTFREE    15
+;
 
+PROMPT Creating table "IA_Payg_Temp_Node"
+  CREATE TABLE IA_Payg_Temp_Node(
+       NID VARCHAR(20)
+      ,SPECIES VARCHAR2(20)
+  )
+TABLESPACE &&intactMainTablespace
+PCTFREE    15
+;
 
 
 set term on
