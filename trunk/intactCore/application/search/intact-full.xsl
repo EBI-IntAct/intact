@@ -109,7 +109,11 @@
         <tr class="Interaction">
             <xsl:call-template name="draw-checkbox"/>
             <td><b>Interaction</b></td>
-            <xsl:apply-templates select="@ac"/>
+            <xsl:call-template name="draw_link">
+                <xsl:with-param name="ac" select="@ac"/>
+                <xsl:with-param name="type" select="'Interaction'"/>
+            </xsl:call-template>
+
             <td>
                 <xsl:value-of select="@shortLabel"/>
             </td>
@@ -220,7 +224,6 @@
             </tr>
         </xsl:for-each>
 
-
         <xsl:for-each select="xrefs/Xref">
             <tr class="Protein">
                 <xsl:call-template name="draw-xrefs"/>
@@ -233,15 +236,14 @@
     ****************************************************************************
     ** Template for AC attribute.
     *************************************************************************-->
-    <xsl:template match="@ac">
+    <xsl:template name="draw_link">
+        <xsl:param name="ac"/>
+        <xsl:param name="type"/>
         <xsl:variable name="link">
-            <xsl:variable name="ac">
-                <xsl:value-of select="."/>
-            </xsl:variable>
-            <xsl:value-of select="concat($searchLink, $ac)"/>
+            <xsl:value-of select="concat($searchLink, $ac, '&amp;', 'searchClass=', $type)"/>
         </xsl:variable>
         <td>
-            <a href="{$link}"><xsl:value-of select="."/></a>
+            <a href="{$link}"><xsl:value-of select="$ac"/></a>
         </td>
     </xsl:template>
 
