@@ -34,7 +34,7 @@ public class Annotation extends BasicObjectImpl {
     // associations
 
     /**
-     * TODO comments
+     * Type of the annotation
      */
     private CvTopic cvTopic;
 
@@ -42,6 +42,7 @@ public class Annotation extends BasicObjectImpl {
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     private Annotation() {
@@ -54,17 +55,35 @@ public class Annotation extends BasicObjectImpl {
      * a non-null Institution specified. A side-effect of this constructor is to
      * set the <code>created</code> and <code>updated</code> fields of the instance
      * to the current time.
+     *
      * @param owner The <code>Institution</code> which 'owns' this BioSource
      * @param topic Refers to the controlled vocabulary topic this Annotation relates
-     * to. This should be non-null.
-     * @exception NullPointerException thrown if no Institution specified.
+     *              to. This should be non-null.
+     * @throws NullPointerException thrown if no Institution specified.
      */
-    public Annotation(Institution owner, CvTopic topic) {
+    public Annotation( Institution owner, CvTopic topic ) {
 
         //super call sets creation time data
-        super(owner);
-        if(topic == null) throw new NullPointerException("valid Annotation must have an associated topic!");
-        this.cvTopic = topic;
+        super( owner );
+        setCvTopic( topic );
+    }
+
+    /**
+     * Creates a valid Annotation instance. A valid instance must have at least
+     * a non-null Institution specified. A side-effect of this constructor is to
+     * set the <code>created</code> and <code>updated</code> fields of the instance
+     * to the current time.
+     *
+     * @param owner          The <code>Institution</code> which 'owns' this BioSource
+     * @param topic          Refers to the controlled vocabulary topic this Annotation relates
+     *                       to. This should be non-null.
+     * @param annotationText the test of the annotation.
+     * @throws NullPointerException thrown if no Institution specified.
+     */
+    public Annotation( Institution owner, CvTopic topic, String annotationText ) {
+
+        this( owner, topic );
+        setAnnotationText( annotationText );
     }
 
     ///////////////////////////////////////
@@ -73,7 +92,14 @@ public class Annotation extends BasicObjectImpl {
     public String getAnnotationText() {
         return annotationText;
     }
-    public void setAnnotationText(String annotationText) {
+
+    public void setAnnotationText( String annotationText ) {
+
+        if( annotationText != null ) {
+            // delete leading and trailing spaces.
+            annotationText = annotationText.trim();
+        }
+
         this.annotationText = annotationText;
     }
 
@@ -83,7 +109,13 @@ public class Annotation extends BasicObjectImpl {
     public CvTopic getCvTopic() {
         return cvTopic;
     }
-    public void setCvTopic(CvTopic cvTopic) {
+
+    public void setCvTopic( CvTopic cvTopic ) {
+
+        if( cvTopic == null ) {
+            throw new NullPointerException( "valid Annotation must have an associated topic!" );
+        }
+
         this.cvTopic = cvTopic;
     }
 
@@ -92,16 +124,17 @@ public class Annotation extends BasicObjectImpl {
         return this.cvTopicAc;
     }
 
-    public void setCvTopicAc(String ac){
+    public void setCvTopicAc( String ac ) {
         this.cvTopicAc = ac;
     }
 
     /**
      * Equality for Annotations is currently based on equality for
      * <code>CvTopics</code> and annotationText (a String).
-     * @see uk.ac.ebi.intact.model.CvTopic
+     *
      * @param o The object to check
      * @return true if the parameter equals this object, false otherwise
+     * @see uk.ac.ebi.intact.model.CvTopic
      */
     public boolean equals( Object o ) {
         if( this == o ) {
@@ -129,31 +162,25 @@ public class Annotation extends BasicObjectImpl {
             return ac.equals( annotation.ac );
         }
 
-
-        if( cvTopic != null ) {
-            if( !cvTopic.equals( annotation.cvTopic ) ) {
-                return false;
-            }
-        } else {
-            if( annotation.cvTopic != null ) {
-                return false;
-            }
+        if( !cvTopic.equals( annotation.cvTopic ) ) {
+            return false;
         }
-
 
         //get to here and cvTopics are equal (null or non-null)
         if( annotationText != null ) {
             return annotationText.equals( annotation.annotationText );
         }
+
         return annotation.annotationText == null;
     }
 
     /**
      * This class overwrites equals. To ensure proper functioning of HashTable,
      * hashCode must be overwritten, too.
-     * @return  hash code of the object.
+     *
+     * @return hash code of the object.
      */
-    public int hashCode(){
+    public int hashCode() {
 
         int code = 29;
         if( ac != null ) {
@@ -172,7 +199,7 @@ public class Annotation extends BasicObjectImpl {
     }
 
     public String toString() {
-        return "Annotation[type: " + (cvTopic != null ? cvTopic.getShortLabel() : "" ) +
+        return "Annotation[type: " + ( cvTopic != null ? cvTopic.getShortLabel() : "" ) +
                ", text: " + annotationText + "]";
     }
 
