@@ -14,6 +14,8 @@ begin
                          ,'IA_GODENS_GOPROT'
                          ,'IA_GODENS_DENSITY'
                          ,'IA_PAYG'
+                         ,'IA_PAYG_CURRENT_EDGE'
+                         ,'IA_PAYG_TEMP_NODE'
                         )   
    ) loop
       dbms_output.put_line ('PROMPT Creating audit trigger for '||r_tab.table_name);
