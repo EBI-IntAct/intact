@@ -10,7 +10,6 @@ import java.util.*;
 
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpServletRequest;
 
 import uk.ac.ebi.intact.persistence.*;
 import uk.ac.ebi.intact.model.*;
@@ -23,10 +22,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.ResultBean;
 import uk.ac.ebi.intact.util.GoTools;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.beanutils.DynaBean;
-import org.apache.struts.config.ModuleConfig;
-import org.apache.struts.config.FormBeanConfig;
-import org.apache.struts.Globals;
-import org.apache.struts.action.DynaActionFormClass;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -443,16 +438,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         catch (IntactException ie) {
             throw new SearchException("Search failed: " + ie.getNestedMessage());
         }
-    }
-
-    public DynaBean createForm(String formName, HttpServletRequest request)
-            throws InstantiationException, IllegalAccessException {
-        ModuleConfig appConfig = (ModuleConfig) request.getAttribute(
-                Globals.MODULE_KEY);
-        FormBeanConfig config = appConfig.findFormBeanConfig(formName);
-        DynaActionFormClass dynaClass =
-                DynaActionFormClass.createDynaActionFormClass(config);
-        return dynaClass.newInstance();
     }
 
     public void populateSearchResult(DynaBean dynaForm) {
