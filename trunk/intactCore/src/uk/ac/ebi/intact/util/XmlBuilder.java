@@ -107,8 +107,9 @@ public class XmlBuilder implements Serializable {
      * objects. The Document produced is at the "first level" of the
      * object tree, ie only the String and primitive attributes are generated. A deeper
      * level of document generation (expanding object references and
-     * Collections) can be obtained from the <code>expandDoc</code>
-     * method.
+     * Collections) can be obtained from the <code>modifyDoc</code>
+     * method. It is assumed that all objects passed as parameters will have a non-null
+     * AC attribute set to allow for cacheing.
      *
      * @param items The group of objects for which an XML format is required
      *
@@ -118,7 +119,11 @@ public class XmlBuilder implements Serializable {
     public  Document buildXml(Collection items) throws ParserConfigurationException {
 
         Element elem = null;
+
+        //NB Need to get the item's ACs and cache via them - makes it specific...
         String ac = null;
+
+
 
         //create a document to hold the elements as they get built
         /*
@@ -141,14 +146,36 @@ public class XmlBuilder implements Serializable {
         while(it.hasNext()) {
 
             Object item = it.next();
+            //Need the try/catch because the Field.get throws the exceptions but
+            //the getReferences method changes the security anyway so the expcetions will
+            //never be thrown
+            try {
+
+                //to avoid using intact classes (keeps it a little more flexible)
+                //get the references and find the AC from that...
+                List referenceList = this.getReferences(item, new HashSet());
+                Iterator iter = referenceList.iterator();
+                while(iter.hasNext()) {
+                    Field field = (Field)iter.next();
+                    if(field.getName().equals("ac")) {
+                        ac = (String)field.get(item);
+                        break;
+                    }
+                }
+            }
+            catch(IllegalArgumentException iae) {
+            }
+            catch(IllegalAccessException ie) {
+            }
 
             //try the cache first..
-            elem = (Element)compactCache.get(item);
+            elem = (Element)compactCache.get(ac);
 
             if(elem == null) {
                 //get the compact Element then cache it
                 elem = this.buildCompactElem(item);
-                if(ac != null) compactCache.put(item, elem);
+                System.out.println("cacheing compact Element for item AC= " + ac);
+                if(ac != null) compactCache.put(ac, elem);
             }
 
             //import the new Element first (it was created by a different Document)
@@ -205,13 +232,16 @@ public class XmlBuilder implements Serializable {
                 Element result = null;
                 if(mode == XmlBuilder.EXPAND_NODES) {
                     result = (Element)expandedCache.get(key);
+                    if(result != null) System.out.println("expand requested -found " + key + "in cache");
                 }
                 else {
                     //default to contracted
                     result = (Element)compactCache.get(key);
+                    if(result != null) System.out.println("default to contract -found " + key + "in cache");
                 }
                 if(result == null) {
 
+                    System.out.println("XML not in cache - building it...");
                     //get from DB/OJB cache, then save it locally
                     //NB *** this bit is intact specific *** -
                     //need to know what type to search on..
@@ -228,7 +258,7 @@ public class XmlBuilder implements Serializable {
                     }
                     if(searchResults.size() > 1) {
 
-                        //something odd - AC is supposed to be unique! Report an error..
+                        //something odd - AC is supposed to be unique! Do something...
                     }
                     Object obj = searchResults.iterator().next();
 
@@ -237,18 +267,16 @@ public class XmlBuilder implements Serializable {
                         expandedCache.put(key, result);
                     }
                     else {
-
                         //default to compact
                         result = this.buildCompactElem(obj);
                         compactCache.put(key, result);
-
                     }
-
                 }
 
                 //import the new Element into the current document so we can use it
                 Node newNode = dc.importNode(result, true);
 
+                System.out.println("about to walk the tree...");
                 //now find the item for modification in the Document then replace
                 //its element in the main Document with the new one
                 String ac = (String)key;
@@ -263,8 +291,20 @@ public class XmlBuilder implements Serializable {
 
                         //found the node we want - replace it
                         oldNode = walker.getCurrentNode();
+                        System.out.println("Node to replace: AC =: " + ((Element)oldNode).getAttribute("ac"));
+                        System.out.println("Node to replace: Type =: " + ((Element)oldNode).getTagName());
+
                         Node parent = oldNode.getParentNode();
+                        System.out.println("Parent: AC =: " + ((Element)parent).getAttribute("ac"));
+                        System.out.println("Parent: Type =: " + ((Element)parent).getTagName());
+                        System.out.println("New child: AC =: " + ((Element)newNode).getAttribute("ac"));
+                        System.out.println("New child: Type =: " + ((Element)newNode).getTagName());
+
                         parent.replaceChild(newNode, oldNode);
+                        System.out.println("Where I am in the tree: " + ((Element)walker.getCurrentNode()).getTagName());
+                        System.out.println("Where I am in the tree: " + ((Element)walker.getCurrentNode()).getAttribute("ac"));
+                        System.out.println("setting walker back to replaced node.....");
+                        walker.setCurrentNode(newNode);
                     }
                     //carry on - may be more than one element with this AC...
                 }
@@ -273,6 +313,9 @@ public class XmlBuilder implements Serializable {
         catch(IntactException ie) {
 
             //something failed during search - deal with it..
+            System.out.println("got a searching exception");
+            System.out.println(ie.getMessage() + ie.getNestedMessage());
+            ie.printStackTrace();
         }
 
         return dc;
@@ -339,7 +382,7 @@ public class XmlBuilder implements Serializable {
                     }
                 }
                 catch(IllegalArgumentException ie) {
-                    //shouldn't happen - fields obtained form item in the first place!
+                    //shouldn't happen - fields obtained from item in the first place!
                 }
                 catch(IllegalAccessException ia) {
                     //shouldn't happen - security overriden in getAllFields already
@@ -393,7 +436,7 @@ public class XmlBuilder implements Serializable {
         Element refElement = null;
         Iterator it = objRefs.iterator();
 
-        //references...
+        //references... (NB should they be cached, as they are displayed but not explicitly referenced?)
         while(it.hasNext()) {
 
             try {
@@ -421,18 +464,30 @@ public class XmlBuilder implements Serializable {
         while(it.hasNext()) {
 
             try {
-            Field collectionField = (Field)it.next();
-            Collection items = (Collection)collectionField.get(obj);
-            Iterator iter = items.iterator();
-            while(iter.hasNext()) {
+                Field collectionField = (Field)it.next();
+                String fieldName = collectionField.getName();
+                if(!fieldName.endsWith("s")) {
+                    //put an 's' on the end - helps readability in most cases
+                    //as Collections are plural but sometimes the reference names
+                    //are not! This may sometimes give some odd results, but will mostly be OK
+                    fieldName = fieldName + "s";
+                }
 
-                //reuse the refElement to access each item of the Collection
-                refElement = this.buildCompactElem(iter.next());
+                //create a collector Node in the same Document as elem
+                Element collectionElem = doc.createElement(fieldName);
+                Collection items = (Collection)collectionField.get(obj);
+                Iterator iter = items.iterator();
+                while(iter.hasNext()) {
+                    Object item = iter.next();
 
-                //import the new Node and append it
-                Node newItemNode = doc.importNode(refElement, true);
-                elem.appendChild(newItemNode);
-            }
+                    //reuse the refElement to access each item of the Collection,
+                    //NB cache each one? it exists as compact but no AC references it...
+                    refElement = this.buildCompactElem(item);
+                    Node newItemNode = doc.importNode(refElement, true); //build returns Element from a different doc
+                    collectionElem.appendChild(newItemNode);
+                }
+
+                elem.appendChild(collectionElem);
             }
             catch(IllegalAccessException ia) {
                 //shouldn't happen - security overriden already
@@ -499,10 +554,10 @@ public class XmlBuilder implements Serializable {
 
     /**
      * obtain all the reference fields of an object apart from those specified
-     * to be ingnored in the parameter set.
+     * to be ignored in the parameter set.
      *
      * @param obj The object to reflect upon
-     * @param onesToIgnore The set of Classes of fields to be left out
+     * @param onesToIgnore The set of Classes of fields to be left out (must be non-null, but may be empty)
      * @return List a list of object references, or an empty list if
      * the object contains only primitives, Collections or objects of type in the set to ignore.
      */
@@ -551,5 +606,103 @@ public class XmlBuilder implements Serializable {
         }
         return result;
     }
+
+     //------------------------ other stuff ---------------------------
+
+  /**
+   Searchs and returns the first node which is identified by the input
+   parameters, localname and namespaceURI. The localname and namespaceURI
+   should uniquely identify a certain element type. Performs a depth first
+   search.
+   @param nodename The nodename of an element
+   @param root The DOM tree element to be searched
+   @returns null if no matching element found, otherwise a reference to the first
+   matching element.
+   **/
+   /*public Node findElementNode(String searchnodename, Node root){
+
+     Node matchingNode = null;
+
+
+     //Check to see if root is the desired element. If so return a root.
+     String nodeName = root.getNodeName();
+
+     if((nodeName != null) & (nodeName.equals(searchnodename)))
+                return root;
+
+     //Check to see if root has any children if not return null
+     if(!(root.hasChildNodes()))
+                return null;
+
+     //Root has children, so continue searching for them
+     NodeList childNodes = root.getChildNodes();
+     int noChildren = childNodes.getLength();
+     for(int i = 0; i < noChildren; i++){
+         if(matchingNode == null){
+                Node child = childNodes.item(i);
+                matchingNode = findElementNode(searchnodename,child);
+         } else break;
+
+     }
+
+     return matchingNode;
+   }
+*/
+
+   /**
+    Will create a documentFragment of the replacingDocument, will import the
+    replacingDocument as a node of the replacedDocument, and then will replace
+    the replaceNode with the documentFragment of replacingDocument.
+    @param replacedDocument The document which will have a node replace
+    @param replacingDocument The document that will replace a node
+    @param replacedNode The node in replacedDocument that will be replaced
+    @return The new version of replacedDocument will replacedNode replaced
+    **/
+    /*public Node replaceNode(Document replacedDocument,
+                                Document replacingDocument,
+                                Node replacedNode){
+
+    //Create a documentFragment of the replacingDocument
+    DocumentFragment docFrag = replacingDocument.createDocumentFragment();
+    Element rootElement = replacingDocument.getDocumentElement();
+    docFrag.appendChild(rootElement);
+
+
+    //Import docFrag under the ownership of replacedDocument
+    Node replacingNode =
+        ((replacedDocument).importNode(docFrag, true));
+
+
+    //In order to replace the node need to retrieve replacedNode's parent
+    Node replaceNodeParent = replacedNode.getParentNode();
+    replaceNodeParent.replaceChild(replacingNode, replacedNode);
+    return replacedDocument;
+    }
+*/
+
+    //------- just for info on usage ----------------
+
+        //The first xml file is the replacedDocument, and the second is the
+        //replacingDocument
+
+       /*try {
+        ReplacingNode replaceFunction = new ReplacingNode();
+        Document replacingDocument = replaceFunction.parseFileToDom(args[1]);
+        Document replacedDocument = replaceFunction.parseFileToDom(args[0]);
+        Node replacedNode = replaceFunction.
+                        findElementNode(args[2], replacedDocument.getDocumentElement());
+
+        if(replacedNode != null){
+        Node modifiedReplacedDocument = replaceFunction.
+                replaceNode(replacedDocument, replacingDocument, replacedNode);
+        replaceFunction.printOutDocument(replacedDocument, "output.xml");
+        }else
+                System.out.println("replace node is null");
+
+       }catch(Exception e){
+        e.printStackTrace();
+       }
+     }*/
+
 
 }
