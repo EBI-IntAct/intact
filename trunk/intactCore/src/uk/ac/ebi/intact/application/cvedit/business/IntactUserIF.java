@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * This interface represents an Intact user.
+ * This interface provides methods specific to a user.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
@@ -63,7 +63,8 @@ public interface IntactUserIF {
     public Institution getInstitution() throws SearchException;
 
     /**
-     * Returns the list for given list name.
+     * Returns the list for given list name. Lists are cached to provide
+     * efficient list constructions.
      *
      * @param name the name of the list.
      *
@@ -91,6 +92,21 @@ public interface IntactUserIF {
     public boolean isListEmpty(String name);
 
     /**
+     * Update lists for given name. This involves contruction of a new list
+     * by retrieveing matching records from the persistent system. No action
+     * is taken if <code>clazz</code> is not of valid list type.
+     *
+     * @param clazz the type to update the list. The list only updates for
+     * the following types: CvTopic, CvDatabase and CvXrefQualifier.
+     *
+     * @exception SearchException for errors in searching the persistent system
+     * to update the list.
+     */
+    public void updateList(Class clazz) throws SearchException;
+
+    // Transaction Methods
+
+    /**
      * Wrapper to begin a transaction via OJB layer.
      *
      * @exception TransactionException for errors in starting a transaction.
@@ -115,6 +131,8 @@ public interface IntactUserIF {
      * @exception IntactException for errors in rolling back a transaction.
      */
     public void rollback() throws IntactException;
+
+    // Persistent Methods
 
     /**
      * Wrapper to persist an object in the underlying persistence system.
@@ -146,6 +164,8 @@ public interface IntactUserIF {
      */
     public void delete(Object object) throws IntactException;
 
+    // Other misc methods
+
     /**
      * Sets the given CV Object as the current object the user is working
      * presently.
@@ -164,6 +184,8 @@ public interface IntactUserIF {
      */
     public CvObject getCurrentEditObject();
 
+    // Search methods
+
     /**
      * Return an Object by classname and shortLabel.
      *
@@ -181,7 +203,7 @@ public interface IntactUserIF {
      *
      * @param object the object to clear from the cache.
      */
-    public void removeFromCache(Object object);
+//    public void removeFromCache(Object object);
 
     /**
      * This method provides a means of searching intact objects, within the constraints
@@ -198,6 +220,21 @@ public interface IntactUserIF {
      */
     public Collection search(String objectType, String searchParam,
                               String searchValue) throws SearchException;
+
+    // Session methods
+
+    /**
+     * Logs off from the application. This will close the connection to
+     * the persistent storage.
+     *
+     * @exception IntactException for problems with logging off.
+     */
+    public void logoff() throws IntactException;
+
+    /**
+     * Returns the session started time.
+     */
+    public Date loginTime();
 
     /**
      * Returns the time the use logs off from the application.
