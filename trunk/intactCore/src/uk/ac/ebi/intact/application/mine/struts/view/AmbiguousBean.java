@@ -35,6 +35,21 @@ public class AmbiguousBean extends ActionForm {
     private String searchAc;
     private static String context;
 
+    public int hashCode() {
+        return searchAc.hashCode();
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AmbiguousBean)) {
+            return false;
+        }
+        AmbiguousBean element = (AmbiguousBean) o;
+        return element.searchAc.equals(searchAc);
+    }
+
     /**
      * @param searchAc The searchAc to set.
      */
@@ -104,6 +119,13 @@ public class AmbiguousBean extends ActionForm {
         return proteins;
     }
 
+    /**
+     * Returns wether the search returned an ambigious result. This is the case
+     * when more than one protein was found or at least one interaction or on
+     * experiment.
+     * 
+     * @return wether an ambiguous result exists.
+     */
     public boolean hasAmbiguousResult() {
         return proteins.size() > 1 || proteins.size() == 0
                 || interactions.size() != 0 || experiments.size() != 0;

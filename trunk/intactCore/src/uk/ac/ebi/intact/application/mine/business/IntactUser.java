@@ -29,7 +29,6 @@ public class IntactUser implements IntactUserI {
     private IntactHelper intactHelper;
     private Collection paths;
     private Map graphMap;
-    private Collection search;
     private Collection singletons;
 
     /**
@@ -154,24 +153,6 @@ public class IntactUser implements IntactUserI {
     /*
      * (non-Javadoc)
      * 
-     * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#setSearch(java.util.Collection)
-     */
-    public void setSearch(Collection search) {
-        this.search = search;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getSearch()
-     */
-    public Collection getSearch() {
-        return search;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see uk.ac.ebi.intact.application.mine.business.IntactUserI#getMineData(uk.ac.ebi.intact.application.mine.business.graph.model.NetworkKey)
      */
     public MineData getMineData(NetworkKey key) {
@@ -206,9 +187,6 @@ public class IntactUser implements IntactUserI {
     public void clearAll() {
         if (paths != null) {
             paths.clear();
-        }
-        if (search != null) {
-            search.clear();
         }
         if (singletons != null) {
             singletons.clear();
