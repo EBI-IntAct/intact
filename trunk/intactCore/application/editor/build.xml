@@ -223,6 +223,8 @@
                 <exclude name="*Frame.jsp"/>
                 <!--  No EBI header for this application (yet) -->
                 <exclude name="ebiHeaderLayout.jsp"/>
+                <!-- Editor header for this application; exclude the general one -->
+                <exclude name="headerLayout.jsp"/>
             </fileset>
             <!-- Editor specific layouts -->
             <fileset dir="layouts"/>
@@ -231,6 +233,8 @@
         <!-- Common images -->
         <copy todir="${temp.web}/images">
             <fileset dir="${intact.app.dir}/images"/>
+            <!-- The image files for editor help -->
+            <fileset dir="images"/>
         </copy>
 
         <!-- Common/Editor jsp files -->
@@ -245,6 +249,9 @@
 
         <!-- The welcome file at the root. -->
         <copy file="welcome.jsp" todir="${temp.web}"/>
+
+        <!-- The Editor help file -->
+        <copy file="editor.html" todir="${temp.web}"/>
 
          <!-- Common struts standard tld files -->
         <copy todir="${temp.web}/WEB-INF/tld">
