@@ -5,8 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model.test;
 
-import junit.framework.*;
-import uk.ac.ebi.intact.test.FirstTest;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * A template for AllJUnitTests class.
@@ -39,7 +40,7 @@ public class AllJUnitTests extends TestCase {
         // Add tests one by one.
         //suite.addTest(AnnotatedObjectTest.suite());
         suite.addTest(EqualityTests.suite());
-        //suite.addTest(SecondTest.suite());
+        suite.addTest(InteractionImplTest.suite());
         return suite;
     }
 }
