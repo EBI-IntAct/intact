@@ -104,7 +104,7 @@ public class CalcBinInteractionData extends Key2HashSet {
             logger.debug("\n\n - - - - - > aInteraction" + aInteraction.getAc());
             ArrayList someBaitComponents = new ArrayList();
             ArrayList someOtherComponents = new ArrayList();
-            Collection someComponents = aInteraction.getComponent();
+            Collection someComponents = aInteraction.getComponents();
             Iterator itSomeComponents = someComponents.iterator();
             while (itSomeComponents.hasNext()) {
                 Component component = (Component) itSomeComponents.next();
@@ -169,7 +169,7 @@ public class CalcBinInteractionData extends Key2HashSet {
             String aBait = (String) enumBaits.nextElement();
 
             // get for this single bait the "real" Interactor and for this all Xrefs (incl. GO-terms)
-            Collection someBaitXrefs = ((Interactor) _helper.getObjectByAc(Interactor.class, aBait)).getXref();
+            Collection someBaitXrefs = ((Interactor) _helper.getObjectByAc(Interactor.class, aBait)).getXrefs();
 
             // get for this bait all possible preys and iterate over it
             Collection somePreys = this.getValueByKey(aBait);
@@ -178,7 +178,7 @@ public class CalcBinInteractionData extends Key2HashSet {
                 String aPrey = (String) itSomePreys.next();
 
                 // get for this single prey the "real" Interactor and for this all Xrefs (incl. GO-terms)
-                Collection somePreyXrefs = ((Interactor) _helper.getObjectByAc(Interactor.class, aPrey)).getXref();
+                Collection somePreyXrefs = ((Interactor) _helper.getObjectByAc(Interactor.class, aPrey)).getXrefs();
 
                 // now, iterate over all bait xrefs which are a goterm and within this loop iterate over all
                 // prey xrefs which are a goterm and fill the table.

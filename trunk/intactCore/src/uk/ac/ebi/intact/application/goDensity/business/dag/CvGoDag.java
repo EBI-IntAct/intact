@@ -144,7 +144,7 @@ public class CvGoDag {
      * @throws KeyNotFoundException if goId doesn't exist as an CvGoNode Object
      */
     public Collection getChilds(String goId) throws KeyNotFoundException {
-        return this.getCvGoNode(goId).getChilds(); // type CvGoNodes
+        return this.getCvGoNode(goId).getChildren(); // type CvGoNodes
     }
 
     /**
@@ -252,7 +252,7 @@ public class CvGoDag {
                     System.out.println(".");
                 }
 
-                Iterator itSomeChilds = node.getChilds().iterator();
+                Iterator itSomeChilds = node.getChildren().iterator();
                 while (itSomeChilds.hasNext()) {
                     CvGoNode child = (CvGoNode) itSomeChilds.next();
                     _psDag.setString(1, nodeGoId);
