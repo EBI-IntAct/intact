@@ -4,8 +4,15 @@ import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessService;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipAccessServiceLocator;
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.TulipSoapBindingStub;
-
 import uk.ac.ebi.intact.application.hierarchView.business.tulip.client.generated.ProteinCoordinate;
+
+import uk.ac.ebi.intact.application.hierarchView.business.PropertyLoader;
+import uk.ac.ebi.intact.application.hierarchView.struts.Constants;
+import java.util.Properties;
+
+// JDK
+import java.net.URL;
+import java.net.MalformedURLException;
 
 
 /**
@@ -36,17 +43,35 @@ public class TulipClient {
    */
    public TulipClient () {
     try {
-      // Make a service
+      // Make a service locator (allow to find the service)
       TulipAccessServiceLocator serviceLocator = new TulipAccessServiceLocator();
       
       // get a service object
       TulipAccessService service = (TulipAccessService) serviceLocator;
-      
+
+      // Look in the property file where is the web service
+      Properties properties = PropertyLoader.load (Constants.PROPERTY_FILE);
+      String tulipAdress = null;
+      if (null != properties) {
+	tulipAdress = properties.getProperty ("webService.adress");
+      } else {
+	tulip = null;
+	return;
+      }
+
+      URL tulipUrl = new URL (tulipAdress);
+
       // Now use the service to get a stub
-      tulip = service.getTulip();
-    } catch (javax.xml.rpc.ServiceException se) {
+      tulip = service.getTulip (tulipUrl);    
+
+    } catch (MalformedURLException e) {
       tulip = null;
     }
+    catch (javax.xml.rpc.ServiceException se) {
+      tulip = null;
+    }
+
+
   } // constructor
 
 
