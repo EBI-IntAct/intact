@@ -1,63 +1,116 @@
+body {
+    margin-top: 0pt;
+    margin-left: 0pt;
+    margin-right: 0pt;
+    margin-bottom: 0pt;
+}
 
-	body {
-		margin-top: 0px;
-		margin-left: 0px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		}
-	body, td, p {
-		font-family: verdana, sans-serif;
-		font-size: 12px;
-		}
+body, input, td, th, p {
+    font-family: Arial, verdana, sans-serif;
+    font-size: 12px;
+}
 
-h1 {color: #000000; font-size: 18px; font-family: verdana,arial,lucida console,sans-serif,monospace; font-weight: bold; text-decoration: none; bottom-margin: 15px;}
+h1 {
+    color: #000000;
+    background-color: transparent;
+    font-size: 18px;
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 15pt;
+}
 
-h2 {color: #000000; font-size: 16px; font-family: verdana,arial,lucida console,sans-serif,monospace; font-weight: bold; text-decoration: none; bottom-margin: 12px;}
+h2 {
+    color: #000000;
+    background-color: transparent;
+    font-size: 16px;
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 12px;
+}
 
-h3 {color: #000000; font-size: 14px; font-family: verdana,arial,lucida console,sans-serif,monospace; font-weight: bold; text-decoration: none; bottom-margin: 10px;}
+h3 {
+    color: #000000;
+    background-color: transparent;
+    font-size: 14px;
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
 
-.header {color: #000000; font-size: 24px; font-family: verdana,arial,lucida console,sans-serif,monospace; font-weight: bold; text-decoration: none; bottom-margin: 10px;}
+.header {
+    color: #000000;
+    background-color: transparent;
+    font-size: 24pt;
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
 
 .footer {
-    color: #000000; font-size: 11px;
-    font-family: verdana,arial,lucida
-    console,sans-serif,monospace; text-decoration: none; font-weight: normal;
+    color: #000000;
+    font-size: 11pt;
+    background-color: transparent;
+    font-family: Arial, verdana, sans-serif;
+    text-decoration: none;
+    font-weight: normal;
 }
 
 tr.tableRowHeader {
-  font-family: verdana, tahoma, arial, helvetica;
-  font-weight: bold;
-  font-size: 12px;
-  background-color: #ffcc00;
+    font-family: Arial, verdana, sans-serif;
+    color: inherit;
+    background-color: #ffcc00;
 }
+
+th.tableCellHeader {
+    font-size: 10pt;
+    font-family: Arial, verdana, sans-serif;
+    text-decoration: none;
+    font-weight: bold;
+}
+
 a.tableCellHeader {
-  font-family: verdana, tahoma, arial, helvetica;
-  font-weight: bold;
-  text-decoration: none;
-  color: black;
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    background-color: transparent;
 }
+
 a.tableCellHeader:hover {
-  font-family: verdana, tahoma, arial, helvetica;
-  font-weight: bold;
-  text-decoration: underline;
-  color: black;
+    font-family: Arial, verdana, sans-serif;
+    font-weight: bold;
+    text-decoration: underline;
+    color: black;
+    background-color: transparent;
 }
+
 tr.tableRowOdd {
-  font-family: verdana, tahoma, arial, helvetica;
-  background-color: #ffffff
+    font-family: Arial, verdana, sans-serif;
+    color: inherit;
+    background-color: #ffffff
 }
+
 tr.tableRowEven {
-  font-family: verdana, tahoma, arial, helvetica;
-  background-color: #ffeeaa
+    font-family: Arial, verdana, sans-serif;
+    color: inherit;
+    background-color: #ffeeaa
 }
+
 td.tableCell {
-  font-family: verdana, tahoma, arial, helvetica;
-  text-align: left;
-  vertical-align: top;
+    font-size: 8pt;
+    font-family: Arial, verdana, sans-serif;
+    text-align: left;
+    vertical-align: top;
 }
+
 td.tableErrorCell {
-  font-family: verdana, tahoma, arial, helvetica;
-  text-align: left;
-  vertical-align: top;
-  color: red;
+    font-family: Arial, verdana, sans-serif;
+    text-align: left;
+    vertical-align: top;
+    color: red;
+    background-color: transparent;
 }
