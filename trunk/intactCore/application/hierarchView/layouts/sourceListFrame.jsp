@@ -16,7 +16,6 @@
 <html:html>
 
 <head>
-<%--    <html:base target="_top"/>--%>
     <base target="_top">
 
     <meta http-equiv="cache-control" content="no-cache">
