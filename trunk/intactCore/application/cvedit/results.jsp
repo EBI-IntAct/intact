@@ -1,4 +1,3 @@
-<%@ page import="uk.ac.ebi.intact.application.cvedit.struts.framework.util.WebIntactConstants"%>
  <%--
    /**
     * Logon page. Prompts a user with with user name and password.
@@ -10,19 +9,31 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 
 <%@ page language="java" %>
+
+<!-- Display tag library -->
 <%@ taglib uri="http://jakarta.apache.org/taglibs/display" prefix="display" %>
+
+<!-- JSTL tag libraries-->
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
 <!-- Our own tags to display CV topics -->
 <%@ taglib uri="/WEB-INF/tld/intact.tld" prefix="intact" %>
 
+<jsp:useBean id="intactuser" scope="session"
+    class="uk.ac.ebi.intact.application.cvedit.business.IntactUserImpl"/>
+
+<!-- Need to to save this in a page context for display library to access -->
+<% pageContext.setAttribute("matchlist", intactuser.getCacheSearchResult()); %>
+
 <jsp:include page="header.jsp" flush="true" />
 
-<h1>Search Results from WebIntact for
-    <%=session.getAttribute(WebIntactConstants.SEARCH_CRITERIA) %></h1>
+Topic: <b><c:out value="${intactuser.selectedTopic}"/></b>
+&nbsp;&nbsp;Query: <b><c:out value="${intactuser.searchQuery}"/></b>
+
 <!-- a line to separate the header -->
 <hr size=2>
 
-<display:table width="75%" name="match"
+<display:table width="100%" name="matchlist"
     decorator="uk.ac.ebi.intact.application.cvedit.struts.view.Wrapper">
     <display:column property="ac" title="AC"
         href="results.do" paramId="shortLabel" paramProperty="shortLabel" />
