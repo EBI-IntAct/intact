@@ -24,11 +24,14 @@ Search class: <c:out value="${user.searchClass}"/>
 <%-- Need to to save this in a page context for display library to access --%>
 <c:set var="searchlist" value="${user.searchResult}"/>
 
+<%-- Javascript code to link to the search page. --%>
+<jsp:include page="js.jsp" />
+
 <html:form action="/results">
     <display:table width="100%" name="searchlist"
         decorator="uk.ac.ebi.intact.application.editor.struts.view.Wrapper">
-        <display:column property="link" title="AC" />
-        <display:column property="shortLabel" title="Short Label" />
+        <display:column property="searchLink" title="AC" />
+        <display:column property="editorLink" title="Short Label" />
         <display:column property="fullName" title="Full Name" />
     </display:table>
 </html:form>
