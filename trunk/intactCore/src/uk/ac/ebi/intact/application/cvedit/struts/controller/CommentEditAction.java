@@ -12,11 +12,8 @@ import uk.ac.ebi.intact.application.cvedit.struts.view.CvViewBean;
 import uk.ac.ebi.intact.application.cvedit.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.cvedit.struts.view.EditForm;
 import uk.ac.ebi.intact.application.cvedit.business.IntactUserIF;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.SearchException;
 
 import org.apache.struts.action.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
