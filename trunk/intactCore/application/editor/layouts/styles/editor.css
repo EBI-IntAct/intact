@@ -12,5 +12,5 @@ td.errorCell {
 }
 
 .inputRequired {
-    border-color: red;
+    color: black; background-color: tomato
 }
