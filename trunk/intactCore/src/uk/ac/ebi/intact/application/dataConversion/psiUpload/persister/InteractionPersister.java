@@ -808,7 +808,13 @@ public final class InteractionPersister {
     private static ProteinHolder getProtein( final ProteinParticipantTag proteinParticipant ) {
 
         final ProteinInteractorTag proteinInteractor = proteinParticipant.getProteinInteractor();
-        final BioSource bioSource = OrganismChecker.getBioSource( proteinInteractor.getOrganism() );
+
+        OrganismTag organism = proteinInteractor.getOrganism();
+        BioSource bioSource = null;
+        if( organism != null ) {
+            bioSource = OrganismChecker.getBioSource( proteinInteractor.getOrganism() );
+        }
+
         final String proteinId = proteinInteractor.getUniprotXref().getId();
 
         return ProteinInteractorChecker.getProtein( proteinId, bioSource );
